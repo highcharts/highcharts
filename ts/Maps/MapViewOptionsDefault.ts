@@ -45,6 +45,22 @@ const defaultOptions: MapViewOptions = {
     center: [0, 0],
 
     /**
+     * Fit the map to a geometry object consisting of individual points or
+     * polygons. This is practical for responsive maps where we want to focus on
+     * a specific area regardless of map size - unlike setting `center` and
+     * `zoom`, where the view doesn't scale with different map sizes.
+     *
+     * The geometry can be combined with the [padding](#mapView.padding) option
+     * to avoid touching the edges of the chart.
+     *
+     * @type {object}
+     * @since 10.3.3
+     *
+     * @sample maps/mapview/fittogeometry Fitting the view to geometries
+     */
+    fitToGeometry: void 0,
+
+    /**
      * Prevents the end user from zooming too far in on the map. See
      * [zoom](#mapView.zoom).
      *
@@ -60,8 +76,13 @@ const defaultOptions: MapViewOptions = {
      * number signifies pixels, and a percentage is relative to the plot area
      * size.
      *
+     * An array sets individual padding for the sides in the order [top, right,
+     * bottom, left].
+     *
      * @sample {highmaps} maps/chart/plotbackgroundcolor-color
      *         Visible plot area and percentage padding
+     * @sample {highmaps} maps/demo/mappoint-mapmarker
+     *         Padding for individual sides
      * @type  {number|string|Array<number|string>}
      */
     padding: 0,
@@ -72,7 +93,7 @@ const defaultOptions: MapViewOptions = {
      *
      * @type   {Object}
      *
-     * @sample maps/mapview/projection-explorer
+     * @sample maps/demo/projection-explorer
      *         Projection explorer
      * @sample maps/demo/topojson-projection
      *         Orthographic projection
@@ -88,7 +109,7 @@ const defaultOptions: MapViewOptions = {
          * `LambertConformalConic`, `Miller`, `Orthographic` and `WebMercator`.
          *
          * @type   {string}
-         * @sample maps/mapview/projection-explorer
+         * @sample maps/demo/projection-explorer
          *         Projection explorer
          * @sample maps/mapview/projection-custom-proj4js
          *         Custom UTM projection definition
@@ -106,7 +127,7 @@ const defaultOptions: MapViewOptions = {
          *
          * @sample maps/mapview/projection-parallels
          *         LCC projection with parallels
-         * @sample maps/mapview/projection-explorer
+         * @sample maps/demo/projection-explorer
          *         Projection explorer
          * @type {Array<number>}
          */
@@ -121,7 +142,7 @@ const defaultOptions: MapViewOptions = {
          * * `phi` shifts the latitudes by the given value. Can be omitted.
          * * `gamma` applies a _roll_. Can be omitted.
          *
-         * @sample maps/mapview/projection-explorer
+         * @sample maps/demo/projection-explorer
          *         Projection explorer
          * @sample maps/mapview/projection-america-centric
          *         America-centric world map

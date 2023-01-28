@@ -35,7 +35,7 @@ Highcharts.chart('container', {
     series: [{
         type: 'line',
         name: 'Regression Line',
-        color: "#b6c1ff",
+        color: '#b6c1ff',
         data: [
             [750.5, 4.89E+00],
             [119749.43, 8.13E+00]
@@ -51,8 +51,8 @@ Highcharts.chart('container', {
         enableMouseTracking: false
     }, {
         keys: ['x', 'y', 'name'],
-        color: "#FFB6C1",
-        name: "Life Satisfaction",
+        color: '#FFB6C1',
+        name: 'Life Satisfaction',
         data: [
             [1747.98, 3.98, 'Afghanistan'],
             [11024.92, 4.61, 'Albania'],

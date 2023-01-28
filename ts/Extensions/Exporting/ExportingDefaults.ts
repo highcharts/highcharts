@@ -58,6 +58,14 @@ const exporting: ExportingOptions = {
      */
 
     /**
+     * Allows the end user to sort the data table by clicking on column headers.
+     *
+     * @since 10.3.3
+     * @apioption exporting.allowTableSorting
+     */
+    allowTableSorting: true,
+
+    /**
      * Additional chart options to be merged into the chart before exporting to
      * an image format. This does not apply to printing the chart via the export
      * menu.
@@ -739,7 +747,7 @@ const navigation: NavigationOptions = {
          *
          * @type      boolean
          * @default   false
-         * @since     next
+         * @since 10.3.0
          * @apioption navigation.buttonOptions.useHTML
          */
 

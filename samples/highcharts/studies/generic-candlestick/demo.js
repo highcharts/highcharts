@@ -198,7 +198,7 @@
                             point.shapeArgs.width / 8 * (i * 2 + 1)
                         );
 
-                        //halfWidth = mathRound(point.barW / 2);
+                        // halfWidth = mathRound(point.barW / 2);
 
                         boxpath = [
                             'M',
@@ -270,27 +270,27 @@ window.chart = new Highcharts.StockChart({
     chart: {
         ignoreHiddenSeries: false,
         width: null,
-        renderTo: "container",
+        renderTo: 'container',
         plotBorderWidth: 2,
-        plotBorderColor: "#E4E4E4",
+        plotBorderColor: '#E4E4E4',
         spacingTop: 20,
         style: {
-            overflow: "visible"
+            overflow: 'visible'
         }
     },
     yAxis: [{
         tickLength: 5,
-        gridLineColor: "#EFEFEF",
+        gridLineColor: '#EFEFEF',
         title: {
-            align: "high",
+            align: 'high',
             rotation: 0,
-            text: "m",
+            text: 'm',
             offset: 30,
             y: 30,
             x: 22,
             style: {
-                color: "#000000",
-                fontWeight: "bold"
+                color: '#000000',
+                fontWeight: 'bold'
             },
             enabled: true
         },
@@ -305,23 +305,23 @@ window.chart = new Highcharts.StockChart({
             x: -8,
             enabled: true,
             style: {
-                fontSize: "12px",
-                fontFamily: "Arial, Verdana, Helvetica, sans-serif",
-                color: "#000000"
+                fontSize: '12px',
+                fontFamily: 'Arial, Verdana, Helvetica, sans-serif',
+                color: '#000000'
             },
-            overflow: "justify"
+            overflow: 'justify'
         },
         opposite: false,
         index: 0
     }],
     tooltip: {
         formatter: function () {
-            return "test";
+            return 'test';
         }
     },
     series: [{
-        id: "ge_swh_0pct",
-        name: "ge_swh_0pct",
+        id: 'ge_swh_0pct',
+        name: 'ge_swh_0pct',
         data: [
             [1432663200000, 1.6, 1.6, 1.6, 1.6, 1.6, 1.6],
             [1432684800000, 1.4, 1.5, 1.5, 1.5, 1.6, 1.6],
@@ -365,13 +365,13 @@ window.chart = new Highcharts.StockChart({
             [1433505600000, 1, 1.3, 1.6, 2.5, 3.1, 4.1],
             [1433527200000, 1, 1.3, 1.5, 2.3, 2.9, 3.6]
         ],
-        color: "#2F7ED8",
+        color: '#2F7ED8',
         fillColor: null,
         marker: {
             enabled: false
         },
-        type: "genericcandlestick",
-        dashStyle: "Solid",
+        type: 'genericcandlestick',
+        dashStyle: 'Solid',
         zIndex: 0,
         yAxis: 0,
         visible: true,
@@ -384,8 +384,8 @@ window.chart = new Highcharts.StockChart({
             enabled: false
         }
     }, {
-        id: "ge_swh_50pct",
-        name: "ge_swh_50pct",
+        id: 'ge_swh_50pct',
+        name: 'ge_swh_50pct',
         data: [
             [1432663200000, 1.6],
             [1432684800000, 1.5],
@@ -429,13 +429,13 @@ window.chart = new Highcharts.StockChart({
             [1433505600000, 1.9],
             [1433527200000, 1.9]
         ],
-        color: "#000000",
+        color: '#000000',
         fillColor: null,
         marker: {
             enabled: false
         },
-        type: "spline",
-        dashStyle: "Solid",
+        type: 'spline',
+        dashStyle: 'Solid',
         zIndex: 5,
         yAxis: 0,
         visible: true,
@@ -449,8 +449,8 @@ window.chart = new Highcharts.StockChart({
         },
         _symbolIndex: 0
     }, {
-        id: "waveheigth",
-        name: "waveheigth",
+        id: 'waveheigth',
+        name: 'waveheigth',
         data: [{
             x: 1432663200000,
             y: 1.7,
@@ -684,13 +684,13 @@ window.chart = new Highcharts.StockChart({
                 lineColor: null
             }
         }],
-        color: "#00c2e8",
+        color: '#00c2e8',
         fillColor: null,
         marker: {
             enabled: false
         },
-        type: "spline",
-        dashStyle: "Solid",
+        type: 'spline',
+        dashStyle: 'Solid',
         zIndex: 5,
         yAxis: 0,
         visible: true,

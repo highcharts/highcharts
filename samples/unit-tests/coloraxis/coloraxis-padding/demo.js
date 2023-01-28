@@ -52,11 +52,11 @@ QUnit.test('Color axis padding with long labels (#15551)', function (assert) {
         ]
     });
 
-    const labelItemWidth = chart.series[0].colorAxis.legendItemWidth,
+    const labelWidth = chart.series[0].colorAxis.legendItem.labelWidth,
         shortWidth = 50;
 
     assert.ok(
-        labelItemWidth > shortWidth,
+        labelWidth > shortWidth,
         'Long labels should get enough width (#15551).'
     );
 });

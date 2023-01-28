@@ -65,8 +65,6 @@ declare module './PointLike' {
         distributeBox?: R.BoxObject;
         dlBox?: BBoxObject;
         dlOptions?: DataLabelOptions;
-        graphic?: SVGElement;
-        graphics?: Array<SVGElement>;
         /** @deprecated */
         positionIndex?: unknown;
         top?: number;
@@ -84,7 +82,6 @@ declare module './PointOptions' {
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointLabels?: boolean;
-        /** @deprecated */
         dataLabelsGroup?: SVGElement;
         dataLabelPositioners?: DataLabel.PositionersObject;
         alignDataLabel(
@@ -196,10 +193,7 @@ namespace DataLabel {
             chart = this.chart,
             inverted = this.isCartesian && chart.inverted,
             enabledDataSorting = this.enabledDataSorting,
-            plotX = pick(
-                point.dlBox && (point.dlBox as any).centerX,
-                point.plotX
-            ),
+            plotX = point.plotX,
             plotY = point.plotY,
             rotation = options.rotation,
             align = options.align,
@@ -238,6 +232,7 @@ namespace DataLabel {
             visible =
                 this.visible &&
                 point.visible !== false &&
+                defined(plotX) &&
                 (
                     point.series.forceDL ||
                     (enabledDataSorting && !justify) ||
@@ -263,7 +258,8 @@ namespace DataLabel {
                     )
                 );
 
-        if (visible && defined(plotX) && defined(plotY)) {
+        const pos = point.pos();
+        if (visible && pos) {
 
             if (rotation) {
                 dataLabel.attr({ align });
@@ -278,8 +274,8 @@ namespace DataLabel {
 
             // The alignment box is a singular point
             alignTo = extend({
-                x: inverted ? this.yAxis.len - plotY : plotX,
-                y: Math.round(inverted ? this.xAxis.len - plotX : plotY),
+                x: pos[0],
+                y: Math.round(pos[1]),
                 width: 0,
                 height: 0
             }, alignTo);
@@ -388,12 +384,8 @@ namespace DataLabel {
             // arrow pointing to thie point
             if (options.shape && !rotation) {
                 dataLabel[isNew ? 'attr' : 'animate']({
-                    anchorX: inverted ?
-                        chart.plotWidth - (point.plotY as any) :
-                        point.plotX,
-                    anchorY: inverted ?
-                        chart.plotHeight - (point.plotX as any) :
-                        point.plotY
+                    anchorX: pos[0],
+                    anchorY: pos[1]
                 });
             }
         }
@@ -479,8 +471,9 @@ namespace DataLabel {
             pointOptions: Array<DataLabelOptions&AnyRecord>,
             dataLabelsGroup: SVGElement;
 
-        const dataLabelAnim = (seriesDlOptions as any).animation,
-            animationConfig = (seriesDlOptions as any).defer ?
+        const firstDLOptions = splat(seriesDlOptions)[0],
+            dataLabelAnim = firstDLOptions.animation,
+            animationConfig = firstDLOptions.defer ?
                 getDeferredAnimation(chart, dataLabelAnim, series) :
                 { defer: 0, duration: 0 };
 
@@ -638,8 +631,16 @@ namespace DataLabel {
                         };
 
                         if (!chart.styledMode) {
-                            attr.fill = labelOptions.backgroundColor;
-                            attr.stroke = labelOptions.borderColor;
+                            const {
+                                backgroundColor,
+                                borderColor
+                            } = labelOptions;
+                            attr.fill = backgroundColor === 'auto' ?
+                                point.color :
+                                backgroundColor;
+                            attr.stroke = borderColor === 'auto' ?
+                                point.color :
+                                borderColor;
                             attr['stroke-width'] = labelOptions.borderWidth;
                         }
 

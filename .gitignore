@@ -32,7 +32,7 @@
 /utils/samples/temp/
 /utils/samples/nightly/
 
-/tree*.json
+/tree*
 
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github
@@ -53,6 +53,7 @@ nbproject/
 .idea/
 *.iml
 *.error_log
+*.tsbuildinfo
 
 *.access_log
 

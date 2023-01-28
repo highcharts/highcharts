@@ -21,7 +21,6 @@ import type ColorAxis from '../../Core/Axis/Color/ColorAxis';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
-import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
@@ -210,7 +209,7 @@ class HeatmapSeries extends ScatterSeries {
             /**
              * @ignore-option
              */
-            overflow: false as any,
+            overflow: 'allow',
             padding: 0 // #3837
         },
         /**
@@ -428,15 +427,15 @@ class HeatmapSeries extends ScatterSeries {
      */
     public drawPoints(): void {
 
-        // In styled mode, use CSS, otherwise the fill used in the style
-        // sheet will take precedence over the fill attribute.
+        // In styled mode, use CSS, otherwise the fill used in the style sheet
+        // will take precedence over the fill attribute.
         const seriesMarkerOptions = this.options.marker || {};
 
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
             Series.prototype.drawPoints.call(this);
             this.points.forEach((point): void => {
                 if (point.graphic) {
-                    (point.graphic as any)[
+                    point.graphic[
                         this.chart.styledMode ? 'css' : 'animate'
                     ](this.colorAttribs(point));
 
@@ -498,11 +497,10 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public init(): void {
-        let options;
+        super.init.apply(this, arguments);
 
-        Series.prototype.init.apply(this, arguments as any);
+        const options = this.options;
 
-        options = this.options;
         // #3758, prevent resetting in setData
         options.pointRange = pick(options.pointRange, options.colsize || 1);
         // general point range
@@ -521,7 +519,7 @@ class HeatmapSeries extends ScatterSeries {
         // then we could save ourselves some tests for .hasImage etc. And the
         // evaluation of borderRadius would be moved to `markerAttribs`.
         if (options.marker) {
-            (options.marker as any).r = options.borderRadius;
+            options.marker.r = options.borderRadius;
         }
     }
 
@@ -530,17 +528,11 @@ class HeatmapSeries extends ScatterSeries {
      */
     public markerAttribs(
         point: HeatmapPoint,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
-        let pointMarkerOptions = point.marker || {},
-            seriesMarkerOptions = this.options.marker || {},
-            seriesStateOptions: PointStateHoverOptions,
-            pointStateOptions: PointStateHoverOptions,
-            shapeArgs = point.shapeArgs || {},
-            hasImage = point.hasImage,
-            attribs: SVGAttributes = {};
+        const shapeArgs = point.shapeArgs || {};
 
-        if (hasImage) {
+        if (point.hasImage) {
             return {
                 x: point.plotX,
                 y: point.plotY
@@ -549,35 +541,49 @@ class HeatmapSeries extends ScatterSeries {
 
         // Setting width and height attributes on image does not affect on its
         // dimensions.
-        if (state) {
-            seriesStateOptions = (
-                (seriesMarkerOptions as any).states[state] || {}
+        if (state && state !== 'normal') {
+            const pointMarkerOptions = point.options.marker || {},
+                seriesMarkerOptions = this.options.marker || {},
+                seriesStateOptions = (
+                    seriesMarkerOptions.states &&
+                    seriesMarkerOptions.states[state]
+                ) || {},
+                pointStateOptions = (
+                    pointMarkerOptions.states &&
+                    pointMarkerOptions.states[state]
+                ) || {};
+
+            // Set new width and height basing on state options.
+            const width = (
+                pointStateOptions.width ||
+                seriesStateOptions.width ||
+                shapeArgs.width ||
+                0
+            ) + (
+                pointStateOptions.widthPlus ||
+                seriesStateOptions.widthPlus ||
+                0
             );
-            pointStateOptions = pointMarkerOptions.states &&
-                (pointMarkerOptions.states as any)[state] || {};
 
-            [['width', 'x'], ['height', 'y']].forEach(function (
-                dimension
-            ): void {
-                // Set new width and height basing on state options.
-                (attribs as any)[dimension[0]] = (
-                    (pointStateOptions as any)[dimension[0]] ||
-                    (seriesStateOptions as any)[dimension[0]] ||
-                    (shapeArgs as any)[dimension[0]]
-                ) + (
-                    (pointStateOptions as any)[dimension[0] + 'Plus'] ||
-                    (seriesStateOptions as any)[dimension[0] + 'Plus'] || 0
-                );
+            const height = (
+                pointStateOptions.height ||
+                seriesStateOptions.height ||
+                shapeArgs.height ||
+                0
+            ) + (
+                pointStateOptions.heightPlus ||
+                seriesStateOptions.heightPlus ||
+                0
+            );
 
-                // Align marker by a new size.
-                (attribs as any)[dimension[1]] =
-                    (shapeArgs as any)[dimension[1]] +
-                    ((shapeArgs as any)[dimension[0]] -
-                    (attribs as any)[dimension[0]]) / 2;
-            });
+            // Align marker by the new size.
+            const x = (shapeArgs.x || 0) + ((shapeArgs.width || 0) - width) / 2,
+                y = (shapeArgs.y || 0) + ((shapeArgs.height || 0) - height) / 2;
+
+            return { x, y, width, height };
         }
 
-        return state ? attribs : shapeArgs;
+        return shapeArgs;
     }
 
     /**
@@ -587,14 +593,12 @@ class HeatmapSeries extends ScatterSeries {
         point?: HeatmapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        let series = this,
+        const series = this,
             attr = Series.prototype.pointAttribs.call(series, point, state),
             seriesOptions = series.options || {},
             plotOptions = series.chart.options.plotOptions || {},
             seriesPlotOptions = plotOptions.series || {},
             heatmapPlotOptions = plotOptions.heatmap || {},
-            stateOptions,
-            brightness,
             // Get old properties in order to keep backward compatibility
             borderColor =
                 (point && point.options.borderColor) ||
@@ -618,44 +622,36 @@ class HeatmapSeries extends ScatterSeries {
         // Apply old borderWidth property if exists.
         attr['stroke-width'] = borderWidth;
 
-        if (state) {
-            stateOptions =
-                merge(
-                    (seriesOptions.states as any)[state],
+        if (state && state !== 'normal') {
+            const stateOptions = merge(
+                (
+                    seriesOptions.states &&
+                    seriesOptions.states[state]
+                ),
+                (
                     seriesOptions.marker &&
-                    (seriesOptions.marker.states as any)[state],
+                    seriesOptions.marker.states &&
+                    seriesOptions.marker.states[state]
+                ),
+                (
                     point &&
                     point.options.states &&
-                    (point.options.states as any)[state] || {}
-                );
-            brightness = stateOptions.brightness;
+                    point.options.states[state] || {}
+                )
+            );
 
             attr.fill =
                 stateOptions.color ||
-                Color.parse(attr.fill).brighten(brightness || 0).get();
+                Color.parse(attr.fill).brighten(
+                    stateOptions.brightness || 0
+                ).get();
 
-            attr.stroke = stateOptions.lineColor;
+            (attr as any).stroke = (
+                stateOptions.lineColor || attr.stroke
+            ); // #17896
         }
 
         return attr;
-    }
-
-    /**
-     * @private
-     */
-    public setClip(animation?: (boolean|AnimationOptions)): void {
-        const series = this,
-            chart = series.chart;
-
-        Series.prototype.setClip.apply(series, arguments);
-        if (series.options.clip !== false || animation) {
-            (series.markerGroup as any)
-                .clip(
-                    (animation || series.clipBox) && series.sharedClipKey ?
-                        chart.sharedClips[series.sharedClipKey] :
-                        chart.clipRect
-                );
-        }
     }
 
     /**
@@ -670,57 +666,51 @@ class HeatmapSeries extends ScatterSeries {
 
         series.generatePoints();
         series.points.forEach(function (point): void {
-            let pointAttr,
-                sizeDiff,
-                hasImage,
-                cellAttr = point.getCellAttributes(),
-                shapeArgs: SVGAttributes = {};
+            const cellAttr = point.getCellAttributes();
 
-            shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2);
-            shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2);
-            shapeArgs.width = Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0);
-            shapeArgs.height = Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0);
+            let x = Math.min(cellAttr.x1, cellAttr.x2),
+                y = Math.min(cellAttr.y1, cellAttr.y2),
+                width = Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0),
+                height = Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0);
 
-            hasImage = point.hasImage =
-                (point.marker && point.marker.symbol || symbol || '')
-                    .indexOf('url') === 0;
+            point.hasImage = (
+                point.marker && point.marker.symbol || symbol || ''
+            ).indexOf('url') === 0;
 
-            // If marker shape is regular (symetric), find shorter
-            // cell's side.
+            // If marker shape is regular (square), find the shorter cell's
+            // side.
             if (hasRegularShape) {
-                sizeDiff = Math.abs(shapeArgs.width - shapeArgs.height);
-                shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2) +
-                    (shapeArgs.width < shapeArgs.height ? 0 : sizeDiff / 2);
-                shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2) +
-                    (shapeArgs.width < shapeArgs.height ? sizeDiff / 2 : 0);
-                shapeArgs.width = shapeArgs.height =
-                    Math.min(shapeArgs.width, shapeArgs.height);
+                const sizeDiff = Math.abs(width - height);
+                x = Math.min(cellAttr.x1, cellAttr.x2) +
+                    (width < height ? 0 : sizeDiff / 2);
+                y = Math.min(cellAttr.y1, cellAttr.y2) +
+                    (width < height ? sizeDiff / 2 : 0);
+                width = height = Math.min(width, height);
             }
 
-            pointAttr = {
-                plotX: (cellAttr.x1 + cellAttr.x2) / 2,
-                plotY: (cellAttr.y1 + cellAttr.y2) / 2,
-                clientX: (cellAttr.x1 + cellAttr.x2) / 2,
-                shapeType: 'path',
-                shapeArgs: merge(true, shapeArgs, {
+
+            if (point.hasImage) {
+                point.marker = { width, height };
+            }
+
+            point.plotX = point.clientX = (cellAttr.x1 + cellAttr.x2) / 2;
+            point.plotY = (cellAttr.y1 + cellAttr.y2) / 2;
+
+            point.shapeType = 'path';
+            point.shapeArgs = merge<SVGAttributes>(
+                true,
+                { x, y, width, height },
+                {
                     d: symbols[shape](
-                        shapeArgs.x,
-                        shapeArgs.y,
-                        shapeArgs.width,
-                        shapeArgs.height,
+                        x,
+                        y,
+                        width,
+                        height,
                         { r: options.borderRadius }
                     )
-                })
-            };
+                }
+            );
 
-            if (hasImage) {
-                point.marker = {
-                    width: shapeArgs.width,
-                    height: shapeArgs.height
-                };
-            }
-
-            extend(point, pointAttr);
         });
 
         fireEvent(series, 'afterTranslate');
@@ -758,6 +748,8 @@ extend(HeatmapSeries.prototype, {
     pointArrayMap: ['y', 'value'],
 
     pointClass: HeatmapPoint,
+
+    specialGroup: 'group',
 
     trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 

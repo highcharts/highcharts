@@ -1,0 +1,12 @@
+---
+name: Bar race
+authors:
+  - Sebastian Wedzel, Gøran Slettemark, Torstein Hønsi
+requiresManualTesting: true
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - Column and bar charts:
+      priority: 3
+...

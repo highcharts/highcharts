@@ -22,11 +22,11 @@ import type RangeSelector from './RangeSelector';
 import type Time from '../../Core/Time';
 import type { VerticalAlignValue } from '../../Core/Renderer/AlignObject';
 
-import DO from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const {
     defaultOptions,
     setOptions
-} = DO;
+} = D;
 import RangeSelectorDefaults from './RangeSelectorDefaults.js';
 import U from '../../Core/Utilities.js';
 const {

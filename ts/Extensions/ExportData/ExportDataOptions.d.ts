@@ -24,7 +24,7 @@ declare module '../Exporting/ExportingOptions' {
     }
 }
 
-declare module '../../Core/LangOptions' {
+declare module '../../Core/Options' {
     interface LangOptions {
         downloadCSV?: string;
         downloadXLS?: string;

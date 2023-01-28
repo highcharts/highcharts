@@ -1,0 +1,38 @@
+ul {
+    text-align: center;
+    margin-right: 9%;
+}
+
+@media screen and (max-width: 600px) {
+    .gridMap {
+        width: 80% !important;
+    }
+
+    .reduce > ul > li {
+        width: 45% !important;
+    }
+}
+
+.reduce > ul > li {
+    display: inline-block;
+    width: 25%;
+}
+
+.gridMap {
+    border: 1px solid;
+    height: 200px;
+    width: 100%;
+    margin: 1px;
+}
+
+.reduce {
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+}

@@ -1,284 +1,284 @@
 var data = [{
-    name: "creativity",
+    name: 'creativity',
     weight: 31
 }, {
-    name: "creative",
+    name: 'creative',
     weight: 22
 }, {
-    name: "intelligence",
+    name: 'intelligence',
     weight: 15
 }, {
-    name: "more",
+    name: 'more',
     weight: 12
 }, {
-    name: "people",
+    name: 'people',
     weight: 12
 }, {
-    name: "theory",
+    name: 'theory',
     weight: 11
 }, {
-    name: "problem",
+    name: 'problem',
     weight: 11
 }, {
-    name: "thinking",
+    name: 'thinking',
     weight: 11
 }, {
-    name: "been",
+    name: 'been',
     weight: 11
 }, {
-    name: "can",
+    name: 'can',
     weight: 11
 }, {
-    name: "process",
+    name: 'process',
     weight: 11
 }, {
-    name: "new",
+    name: 'new',
     weight: 10
 }, {
-    name: "individual",
+    name: 'individual',
     weight: 10
 }, {
-    name: "model",
+    name: 'model',
     weight: 10
 }, {
-    name: "ideas",
+    name: 'ideas',
     weight: 9
 }, {
-    name: "levels",
+    name: 'levels',
     weight: 9
 }, {
-    name: "processes",
+    name: 'processes',
     weight: 9
 }, {
-    name: "different",
+    name: 'different',
     weight: 9
 }, {
-    name: "high",
+    name: 'high',
     weight: 9
 }, {
-    name: "motivation",
+    name: 'motivation',
     weight: 9
 }, {
-    name: "research",
+    name: 'research',
     weight: 9
 }, {
-    name: "work",
+    name: 'work',
     weight: 8
 }, {
-    name: "cognitive",
+    name: 'cognitive',
     weight: 8
 }, {
-    name: "team",
+    name: 'team',
     weight: 8
 }, {
-    name: "divergent",
+    name: 'divergent',
     weight: 8
 }, {
-    name: "tests",
+    name: 'tests',
     weight: 8
 }, {
-    name: "study",
+    name: 'study',
     weight: 8
 }, {
-    name: "measures",
+    name: 'measures',
     weight: 8
 }, {
-    name: "theories",
+    name: 'theories',
     weight: 8
 }, {
-    name: "found",
+    name: 'found',
     weight: 8
 }, {
-    name: "solving",
+    name: 'solving',
     weight: 7
 }, {
-    name: "knowledge",
+    name: 'knowledge',
     weight: 7
 }, {
-    name: "iq",
+    name: 'iq',
     weight: 7
 }, {
-    name: "working",
+    name: 'working',
     weight: 7
 }, {
-    name: "positive",
+    name: 'positive',
     weight: 7
 }, {
-    name: "idea",
+    name: 'idea',
     weight: 7
 }, {
-    name: "studies",
+    name: 'studies',
     weight: 7
 }, {
-    name: "number",
+    name: 'number',
     weight: 7
 }, {
-    name: "person",
+    name: 'person',
     weight: 7
 }, {
-    name: "researchers",
+    name: 'researchers',
     weight: 7
 }, {
-    name: "task",
+    name: 'task',
     weight: 7
 }, {
-    name: "affect",
+    name: 'affect',
     weight: 7
 }, {
-    name: "group",
+    name: 'group',
     weight: 7
 }, {
-    name: "memory",
+    name: 'memory',
     weight: 7
 }, {
-    name: "creation",
+    name: 'creation',
     weight: 7
 }, {
-    name: "individuals",
+    name: 'individuals',
     weight: 7
 }, {
-    name: "concept",
+    name: 'concept',
     weight: 7
 }, {
-    name: "learning",
+    name: 'learning',
     weight: 7
 }, {
-    name: "given",
+    name: 'given',
     weight: 7
 }, {
-    name: "ability",
+    name: 'ability',
     weight: 7
 }, {
-    name: "approach",
+    name: 'approach',
     weight: 7
 }, {
-    name: "innovation",
+    name: 'innovation',
     weight: 7
 }, {
-    name: "malevolent",
+    name: 'malevolent',
     weight: 7
 }, {
-    name: "most",
+    name: 'most',
     weight: 7
 }, {
-    name: "frontal",
+    name: 'frontal',
     weight: 6
 }, {
-    name: "related",
+    name: 'related',
     weight: 6
 }, {
-    name: "data",
+    name: 'data',
     weight: 6
 }, {
-    name: "reported",
+    name: 'reported',
     weight: 6
 }, {
-    name: "incubation",
+    name: 'incubation',
     weight: 6
 }, {
-    name: "thought",
+    name: 'thought',
     weight: 6
 }, {
-    name: "intrinsic",
+    name: 'intrinsic',
     weight: 6
 }, {
-    name: "used",
+    name: 'used',
     weight: 6
 }, {
-    name: "implicit",
+    name: 'implicit',
     weight: 6
 }, {
-    name: "increase",
+    name: 'increase',
     weight: 6
 }, {
-    name: "general",
+    name: 'general',
     weight: 6
 }, {
-    name: "mental",
+    name: 'mental',
     weight: 6
 }, {
-    name: "early",
+    name: 'early',
     weight: 6
 }, {
-    name: "economic",
+    name: 'economic',
     weight: 6
 }, {
-    name: "level",
+    name: 'level',
     weight: 6
 }, {
-    name: "students",
+    name: 'students',
     weight: 6
 }, {
-    name: "human",
+    name: 'human',
     weight: 6
 }, {
-    name: "constructs",
+    name: 'constructs',
     weight: 6
 }, {
-    name: "problems",
+    name: 'problems',
     weight: 6
 }, {
-    name: "elements",
+    name: 'elements',
     weight: 6
 }, {
-    name: "proposed",
+    name: 'proposed',
     weight: 6
 }, {
-    name: "lobe",
+    name: 'lobe',
     weight: 6
 }, {
-    name: "participants",
+    name: 'participants',
     weight: 6
 }, {
-    name: "according",
+    name: 'according',
     weight: 6
 }, {
-    name: "key",
+    name: 'key',
     weight: 6
 }, {
-    name: "century",
+    name: 'century',
     weight: 6
 }, {
-    name: "type",
+    name: 'type',
     weight: 6
 }, {
-    name: "skills",
+    name: 'skills',
     weight: 6
 }, {
-    name: "relationship",
+    name: 'relationship',
     weight: 6
 }, {
-    name: "will",
+    name: 'will',
     weight: 6
 }, {
-    name: "environment",
+    name: 'environment',
     weight: 6
 }, {
-    name: "time",
+    name: 'time',
     weight: 6
 }, {
-    name: "view",
+    name: 'view',
     weight: 6
 }, {
-    name: "create",
+    name: 'create',
     weight: 6
 }, {
-    name: "worldview",
+    name: 'worldview',
     weight: 6
 }, {
-    name: "processing",
+    name: 'processing',
     weight: 6
 }, {
-    name: "seen",
+    name: 'seen',
     weight: 6
 }, {
-    name: "aggression",
+    name: 'aggression',
     weight: 6
 }, {
-    name: "result",
+    name: 'result',
     weight: 6
 }, {
-    name: "correlation",
+    name: 'correlation',
     weight: 6
 }];
 

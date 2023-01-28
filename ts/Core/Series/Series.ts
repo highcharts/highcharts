@@ -41,8 +41,7 @@ import type {
 } from './SeriesOptions';
 import type {
     SeriesTypeOptions,
-    SeriesTypePlotOptions,
-    SeriesTypeRegistry
+    SeriesTypePlotOptions
 } from './SeriesType';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -55,8 +54,8 @@ const {
     animObject,
     setAnimation
 } = A;
-import DO from '../DefaultOptions.js';
-const { defaultOptions } = DO;
+import D from '../Defaults.js';
+const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -2236,60 +2235,64 @@ class Series {
             if (stacking &&
                 series.visible &&
                 stack &&
-                stack[xValue as any]
+                stack[xValue]
             ) {
                 stackIndicator = series.getStackIndicator(
                     stackIndicator,
-                    xValue as any,
-                    series.index as any
+                    xValue,
+                    series.index
                 );
 
-                if (!point.isNull) {
-                    pointStack = stack[xValue as any];
-                    stackValues =
-                        pointStack.points[stackIndicator.key as any];
-                }
-            }
-
-            if (isArray(stackValues)) {
-                yBottom = stackValues[0];
-                yValue = stackValues[1];
-
-                if (yBottom === stackThreshold &&
-                    (stackIndicator as any).key ===
-                        (stack as any)[xValue as any].base
-                ) {
-                    yBottom = pick<number|undefined, number>(
-                        (isNumber(threshold) && threshold) as any,
-                        yAxis.min as any
-                    );
+                if (!point.isNull && stackIndicator.key) {
+                    pointStack = stack[xValue];
+                    stackValues = pointStack.points[stackIndicator.key];
                 }
 
-                // #1200, #1232
-                if (yAxis.positiveValuesOnly && yBottom <= 0) {
-                    yBottom = null as any;
+                if (pointStack && isArray(stackValues)) {
+                    yBottom = stackValues[0];
+                    yValue = stackValues[1];
+
+                    if (yBottom === stackThreshold &&
+                        stackIndicator.key === stack[xValue].base
+                    ) {
+                        yBottom = pick(
+                            isNumber(threshold) ? threshold : yAxis.min
+                        );
+                    }
+
+                    // #1200, #1232
+                    if (
+                        yAxis.positiveValuesOnly &&
+                        defined(yBottom) &&
+                        yBottom <= 0
+                    ) {
+                        yBottom = void 0;
+                    }
+
+                    point.total = point.stackTotal = pick(pointStack.total);
+                    point.percentage = defined(point.y) && pointStack.total ?
+                        (point.y / pointStack.total * 100) : void 0;
+                    point.stackY = yValue;
+
+                    // Place the stack label
+
+                    // in case of variwide series (where widths of points are
+                    // different in most cases), stack labels are positioned
+                    // wrongly, so the call of the setOffset is omited here and
+                    // labels are correctly positioned later, at the end of the
+                    // variwide's translate function (#10962)
+                    if (!(series as any).irregularWidths) {
+                        pointStack.setOffset(
+                            series.pointXOffset || 0,
+                            series.barW || 0,
+                            void 0,
+                            void 0,
+                            void 0,
+                            series.xAxis
+                        );
+                    }
+
                 }
-
-                point.total = point.stackTotal = (pointStack as any).total;
-                point.percentage =
-                    (pointStack as any).total &&
-                    ((point.y as any) / (pointStack as any).total * 100);
-                point.stackY = yValue;
-
-                // Place the stack label
-
-                // in case of variwide series (where widths of points are
-                // different in most cases), stack labels are positioned
-                // wrongly, so the call of the setOffset is omited here and
-                // labels are correctly positioned later, at the end of the
-                // variwide's translate function (#10962)
-                if (!(series as any).irregularWidths) {
-                    (pointStack as any).setOffset(
-                        series.pointXOffset || 0,
-                        series.barW || 0
-                    );
-                }
-
             }
 
             // Set translated yBottom or remove it
@@ -2297,7 +2300,7 @@ class Series {
                 limitedRange(yAxis.translate(
                     (yBottom as any), 0 as any, 1 as any, 0 as any, 1 as any
                 )) :
-                null as any;
+                void 0;
 
             // General hook, used for Highcharts Stock compare and cumulative
             if (series.dataModify) {
@@ -2533,13 +2536,15 @@ class Series {
                 animationClipRect = chart.renderer.clipRect(clipBox);
                 chart.sharedClips[animationClipKey] = animationClipRect;
 
+                // The marker clip box. The number 99 is a safe margin to avoid
+                // markers being clipped during animation.
                 const markerClipBox = {
-                    // Include the width of the first marker
-                    x: inverted ? (chart.plotSizeX || 0) + 99 : -99,
-                    y: inverted ? -chart.plotLeft : -chart.plotTop,
-                    width: 99,
-                    height: inverted ? chart.chartWidth : chart.chartHeight
+                    x: inverted ? -99 : -99,
+                    y: inverted ? -99 : -99,
+                    width: inverted ? chart.plotWidth + 199 : 99,
+                    height: inverted ? 99 : chart.plotHeight + 199
                 };
+
                 markerAnimationClipRect = chart.renderer.clipRect(
                     markerClipBox
                 );
@@ -2577,12 +2582,13 @@ class Series {
                         step.apply(fx, arguments);
                     }
                     if (
+                        fx.prop === 'width' &&
                         markerAnimationClipRect &&
                         markerAnimationClipRect.element
                     ) {
                         markerAnimationClipRect.attr(
-                            fx.prop,
-                            fx.prop === 'width' ? val + 99 : val
+                            inverted ? 'height' : 'width',
+                            val + 99
                         );
                     }
                 };
@@ -2630,12 +2636,10 @@ class Series {
     public drawPoints(points: Array<Point> = this.points): void {
         const series = this,
             chart = series.chart,
-            options = series.options,
+            styledMode = chart.styledMode,
+            { colorAxis, options } = series,
             seriesMarkerOptions = options.marker,
-            markerGroup = (
-                (series as any)[series.specialGroup as any] ||
-                series.markerGroup
-            ),
+            markerGroup = series[series.specialGroup || 'markerGroup'],
             xAxis = series.xAxis,
             globallyEnabled = pick(
                 (seriesMarkerOptions as any).enabled,
@@ -2694,19 +2698,17 @@ class Series {
                     }
 
                     const isInside = point.isInside !== false;
-                    if (graphic) { // update
-                        // Since the marker group isn't clipped, each
-                        // individual marker must be toggled
-                        graphic[isInside ? 'show' : 'hide'](isInside)
-                            .animate(markerAttribs);
-
-                    } else if (
+                    if (
+                        !graphic &&
                         isInside &&
                         ((markerAttribs.width || 0) > 0 || point.hasImage)
                     ) {
 
                         /**
-                         * The graphic representation of the point.
+                         * SVG graphic representing the point in the chart. In
+                         * some cases it may be a hidden graphic to improve
+                         * accessibility.
+                         *
                          * Typically this is a simple shape, like a `rect`
                          * for column charts or `path` for line markers, but
                          * for some complex series types like boxplot or 3D
@@ -2715,8 +2717,10 @@ class Series {
                          * the first time {@link Series#drawPoints} runs,
                          * and updated and moved on subsequent runs.
                          *
-                         * @name Point#graphic
-                         * @type {SVGElement}
+                         * @see Highcharts.Point#graphics
+                         *
+                         * @name Highcharts.Point#graphic
+                         * @type {Highcharts.SVGElement|undefined}
                          */
                         point.graphic = graphic = chart.renderer
                             .symbol(
@@ -2751,13 +2755,23 @@ class Series {
                     }
 
                     // Presentational attributes
-                    if (graphic && !chart.styledMode) {
-                        graphic[verb](
-                            series.pointAttribs(
-                                point,
-                                (point.selected && 'select') as any
+                    if (graphic) {
+                        const pointAttr = series.pointAttribs(
+                            point,
+                            (
+                                (styledMode || !point.selected) ?
+                                    void 0 :
+                                    'select'
                             )
                         );
+
+                        if (!styledMode) {
+                            graphic[verb](pointAttr);
+                        } else if (colorAxis) { // #14114
+                            graphic['css']({
+                                fill: pointAttr.fill
+                            });
+                        }
                     }
 
                     if (graphic) {
@@ -2799,7 +2813,9 @@ class Series {
             symbol = (
                 pointMarkerOptions.symbol ||
                 (seriesMarkerOptions as any).symbol
-            );
+            ),
+            attribs: SVGAttributes = {};
+
         let seriesStateOptions: SeriesStateHoverOptions,
             pointStateOptions: PointStateHoverOptions,
             radius: number|undefined = pick(
@@ -2828,13 +2844,17 @@ class Series {
         if (point.hasImage) {
             radius = 0; // and subsequently width and height is not set
         }
-        const attribs: SVGAttributes = isNumber(radius) ? {
-            // Math.floor for #1843:
-            x: seriesOptions.crisp ?
-                Math.floor(point.plotX as any - radius) :
-                (point.plotX as any) - radius,
-            y: (point.plotY as any) - radius
-        } : {};
+
+        const pos = point.pos();
+        if (isNumber(radius) && pos) {
+            attribs.x = pos[0] - radius;
+            attribs.y = pos[1] - radius;
+
+            if (seriesOptions.crisp) {
+                // Math.floor for #1843:
+                attribs.x = Math.floor(attribs.x);
+            }
+        }
 
         if (radius) {
             attribs.width = attribs.height = 2 * radius;
@@ -3203,60 +3223,6 @@ class Series {
     }
 
     /**
-     * Initialize and perform group inversion on series.group and
-     * series.markerGroup.
-     *
-     * @private
-     * @function Highcharts.Series#invertGroups
-     */
-    public invertGroups(inverted?: boolean): void {
-        const series = this,
-            chart = series.chart;
-
-        /**
-         * @private
-         */
-        function setInvert(): void {
-            ['group', 'markerGroup'].forEach(function (
-                groupName: string
-            ): void {
-                if ((series as any)[groupName]) {
-
-                    // VML/HTML needs explicit attributes for flipping
-                    if (chart.renderer.isVML) {
-                        (series as any)[groupName].attr({
-                            width: series.yAxis.len,
-                            height: series.xAxis.len
-                        });
-                    }
-
-                    (series as any)[groupName].width = series.yAxis.len;
-                    (series as any)[groupName].height = series.xAxis.len;
-                    // If inverted polar, don't invert series group
-                    (series as any)[groupName].invert(
-                        series.isRadialSeries ? false : inverted
-                    );
-                }
-            });
-        }
-
-        // Pie, go away (#1736)
-        if (!series.xAxis) {
-            return;
-        }
-
-        // A fixed size is needed for inversion to work
-        series.eventsToUnbind.push(addEvent(chart, 'resize', setInvert));
-
-        // Do it now
-        (setInvert as any)();
-
-        // On subsequent render and redraw, just do setInvert without
-        // setting up events again
-        series.invertGroups = setInvert;
-    }
-
-    /**
      * General abstraction for creating plot groups like series.group,
      * series.dataLabelsGroup and series.markerGroup. On subsequent calls,
      * the group will only be adjusted to the updated plot size.
@@ -3320,7 +3286,7 @@ class Series {
 
         // Place it on first and subsequent (redraw) calls
         group.attr(attrs)[isNew ? 'attr' : 'animate'](
-            this.getPlotBox()
+            this.getPlotBox(name)
         );
 
         return group;
@@ -3331,20 +3297,36 @@ class Series {
      *
      * @function Highcharts.Series#getPlotBox
      */
-    public getPlotBox(): Series.PlotBoxObject {
-        const chart = this.chart;
-        let xAxis = this.xAxis,
-            yAxis = this.yAxis;
+    public getPlotBox(name?: string): Series.PlotBoxTransform {
+        let horAxis = this.xAxis,
+            vertAxis = this.yAxis;
+
+        const chart = this.chart,
+            inverted = (
+                chart.inverted &&
+                !chart.polar &&
+                horAxis &&
+                this.invertible !== false &&
+                name === 'series'
+            );
 
         // Swap axes for inverted (#2339)
         if (chart.inverted) {
-            xAxis = yAxis;
-            yAxis = this.xAxis;
+            horAxis = vertAxis;
+            vertAxis = this.xAxis;
         }
+
         return {
-            translateX: xAxis ? xAxis.left : chart.plotLeft,
-            translateY: yAxis ? yAxis.top : chart.plotTop,
-            scaleX: 1, // #1623
+            translateX: horAxis ? horAxis.left : chart.plotLeft,
+            translateY: vertAxis ? vertAxis.top : chart.plotTop,
+            rotation: inverted ? 90 : 0,
+            rotationOriginX: inverted ?
+                (horAxis.len - vertAxis.len) / 2 :
+                0,
+            rotationOriginY: inverted ?
+                (horAxis.len + vertAxis.len) / 2 :
+                0,
+            scaleX: inverted ? -1 : 1, // #1623
             scaleY: 1
         };
     }
@@ -3428,11 +3410,6 @@ class Series {
             series.animate(true);
         }
 
-        // SVGRenderer needs to know this before drawing elements (#1089,
-        // #1795)
-        group.inverted = pick(series.invertible, series.isCartesian) ?
-            inverted : false;
-
         // Draw the graph if any
         if ((series as any).drawGraph) {
             (series as any).drawGraph();
@@ -3462,9 +3439,6 @@ class Series {
         ) {
             series.drawTracker();
         }
-
-        // Handle inverted series and tracker groups
-        series.invertGroups(inverted);
 
         // Run the animation
         if (series.animate && animDuration) {
@@ -3502,31 +3476,11 @@ class Series {
      * @function Highcharts.Series#redraw
      */
     public redraw(): void {
-        const series = this,
-            chart = series.chart,
-            // cache it here as it is set to false in render, but used after
-            wasDirty = series.isDirty || series.isDirtyData,
-            group = series.group,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis;
+        // Cache it here as it is set to false in render, but used after
+        const wasDirty = this.isDirty || this.isDirtyData;
 
-        // reposition on resize
-        if (group) {
-            if (chart.inverted) {
-                group.attr({
-                    width: chart.plotWidth,
-                    height: chart.plotHeight
-                });
-            }
-
-            group.animate({
-                translateX: pick(xAxis && xAxis.left, chart.plotLeft),
-                translateY: pick(yAxis && yAxis.top, chart.plotTop)
-            });
-        }
-
-        series.translate();
-        series.render();
+        this.translate();
+        this.render();
         if (wasDirty) { // #3868, #3945
             delete this.kdTree;
         }
@@ -4413,12 +4367,17 @@ class Series {
                 kinds.graphic = 1;
                 kinds.dataLabel = 1;
             } else if (!series._hasPointLabels) {
-                const { marker, dataLabels } = seriesOptions;
+                const { marker, dataLabels } = seriesOptions,
+                    oldMarker = oldOptions.marker || {};
+
+                // If the  marker got disabled or changed its symbol, width or
+                // height - destroy
                 if (
                     marker && (
                         marker.enabled === false ||
-                        (oldOptions.marker && oldOptions.marker.symbol) !==
-                            marker.symbol // #10870, #15946
+                        oldMarker.symbol !== marker.symbol || // #10870, #15946
+                        oldMarker.height !== marker.height || // #16274
+                        oldMarker.width !== marker.width // #16274
                     )
                 ) {
                     kinds.graphic = 1;
@@ -4430,7 +4389,7 @@ class Series {
                     kinds.dataLabel = 1;
                 }
             }
-            this.points.forEach(function (point): void {
+            for (const point of this.points) {
                 if (point && point.series) {
                     point.resolveColor();
                     // Destroy elements in order to recreate based on updated
@@ -4445,7 +4404,7 @@ class Series {
                         chart.legend.destroyItem(point);
                     }
                 }
-            }, this);
+            }
         }
 
         series.initialType = initialType;
@@ -4666,7 +4625,7 @@ class Series {
                     );
                 }
 
-                if (graph && !graph.dashstyle) {
+                if (graph && !graph.dashstyle && isNumber(lineWidth)) {
                     attribs = {
                         'stroke-width': lineWidth
                     };
@@ -4757,7 +4716,6 @@ class Series {
     ): void {
         const series = this,
             chart = series.chart,
-            legendItem = series.legendItem,
             ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
             oldVisibility = series.visible;
 
@@ -4792,7 +4750,7 @@ class Series {
         }
 
 
-        if (legendItem) {
+        if (series.legendItem) {
             chart.legend.colorizeItem(series, vis);
         }
 
@@ -4968,7 +4926,7 @@ namespace Series {
         yData: (Array<(number|null)>|Array<Array<(number|null)>>);
     }
 
-    export interface PlotBoxObject {
+    export interface PlotBoxTransform extends SVGAttributes {
         scaleX: number;
         scaleY: number;
         translateX: number;

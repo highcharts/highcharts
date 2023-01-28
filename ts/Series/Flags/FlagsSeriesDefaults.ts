@@ -38,8 +38,8 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @extends      plotOptions.column
  * @excluding    animation, borderColor, borderRadius, borderWidth,
- *               colorByPoint, dataGrouping, pointPadding, pointWidth,
- *               turboThreshold
+ *               colorByPoint, cropThreshold, dataGrouping, pointPadding,
+ *               pointWidth, turboThreshold
  * @product      highstock
  * @optionparent plotOptions.flags
  */
@@ -135,7 +135,10 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
         pointFormat: '{point.text}'
     },
 
-    threshold: null as any,
+    /**
+     * @type {number|null}
+     */
+    threshold: null,
 
     /**
      * The text to display on each flag. This can be defined on series
@@ -269,9 +272,9 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  *
  * @extends   series,plotOptions.flags
  * @excluding animation, borderColor, borderRadius, borderWidth, colorByPoint,
- *            connectNulls, dashStyle, dataGrouping, dataParser, dataURL,
- *            gapSize, gapUnit, linecap, lineWidth, marker, pointPadding,
- *            pointWidth, step, turboThreshold, useOhlcData
+ *            connectNulls, cropThreshold, dashStyle, dataGrouping, dataParser,
+ *            dataURL, gapSize, gapUnit, linecap, lineWidth, marker,
+ *            pointPadding, pointWidth, step, turboThreshold, useOhlcData
  * @product   highstock
  * @apioption series.flags
  */

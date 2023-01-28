@@ -320,7 +320,7 @@ class FlagsSeries extends ColumnSeries {
         }
 
         // Can be a mix of SVG and HTML and we need events for both (#6303)
-        if (options.useHTML) {
+        if (options.useHTML && series.markerGroup) {
             wrap(series.markerGroup, 'on', function (
                 this: FlagsSeries,
                 proceed
@@ -469,12 +469,7 @@ extend(FlagsSeries.prototype, {
      * Inherit the initialization from base Series.
      * @private
      */
-    init: Series.prototype.init,
-    /**
-     * Don't invert the flag marker group (#4960).
-     * @private
-     */
-    invertGroups: noop
+    init: Series.prototype.init
 });
 
 /* *

@@ -43,137 +43,137 @@ Highcharts.chart('container', {
             value: 20.7
         },
         {
-            name: "Belgium",
+            name: 'Belgium',
             value: 97.2
         },
         {
-            name: "Czech Republic",
+            name: 'Czech Republic',
             value: 111.7
         },
         {
-            name: "Netherlands",
+            name: 'Netherlands',
             value: 158.1
         },
         {
-            name: "Spain",
+            name: 'Spain',
             value: 241.6
         },
         {
-            name: "Ukraine",
+            name: 'Ukraine',
             value: 249.1
         },
         {
-            name: "Poland",
+            name: 'Poland',
             value: 298.1
         },
         {
-            name: "France",
+            name: 'France',
             value: 323.7
         },
         {
-            name: "Romania",
+            name: 'Romania',
             value: 78.3
         },
         {
-            name: "United Kingdom",
+            name: 'United Kingdom',
             value: 415.4
         }, {
-            name: "Turkey",
+            name: 'Turkey',
             value: 353.2
         }, {
-            name: "Italy",
+            name: 'Italy',
             value: 337.6
         },
         {
-            name: "Greece",
+            name: 'Greece',
             value: 71.1
         },
         {
-            name: "Austria",
+            name: 'Austria',
             value: 69.8
         },
         {
-            name: "Belarus",
+            name: 'Belarus',
             value: 67.7
         },
         {
-            name: "Serbia",
+            name: 'Serbia',
             value: 59.3
         },
         {
-            name: "Finland",
+            name: 'Finland',
             value: 54.8
         },
         {
-            name: "Bulgaria",
+            name: 'Bulgaria',
             value: 51.2
         },
         {
-            name: "Portugal",
+            name: 'Portugal',
             value: 48.3
         },
         {
-            name: "Norway",
+            name: 'Norway',
             value: 44.4
         },
         {
-            name: "Sweden",
+            name: 'Sweden',
             value: 44.3
         },
         {
-            name: "Hungary",
+            name: 'Hungary',
             value: 43.7
         },
         {
-            name: "Switzerland",
+            name: 'Switzerland',
             value: 40.2
         },
         {
-            name: "Denmark",
+            name: 'Denmark',
             value: 40
         },
         {
-            name: "Slovakia",
+            name: 'Slovakia',
             value: 34.7
         },
         {
-            name: "Ireland",
+            name: 'Ireland',
             value: 34.6
         },
         {
-            name: "Croatia",
+            name: 'Croatia',
             value: 20.7
         },
         {
-            name: "Estonia",
+            name: 'Estonia',
             value: 19.4
         },
         {
-            name: "Slovenia",
+            name: 'Slovenia',
             value: 16.7
         },
         {
-            name: "Lithuania",
+            name: 'Lithuania',
             value: 12.3
         },
         {
-            name: "Luxembourg",
+            name: 'Luxembourg',
             value: 10.4
         },
         {
-            name: "Macedonia",
+            name: 'Macedonia',
             value: 9.5
         },
         {
-            name: "Moldova",
+            name: 'Moldova',
             value: 7.8
         },
         {
-            name: "Latvia",
+            name: 'Latvia',
             value: 7.5
         },
         {
-            name: "Cyprus",
+            name: 'Cyprus',
             value: 7.2
         }]
     }]

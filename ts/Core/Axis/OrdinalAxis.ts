@@ -960,7 +960,8 @@ namespace OrdinalAxis {
                     // between points is identical throughout all series.
                     if (
                         i > 0 &&
-                        series.options.id !== 'highcharts-navigator-series'
+                        series.options.id !== 'highcharts-navigator-series' &&
+                        series.processedXData.length > 1
                     ) {
                         adjustOrdinalExtremesPoints =
                             distanceBetweenPoint !== series.processedXData[1] -
@@ -1416,7 +1417,9 @@ namespace OrdinalAxis {
                         series.points &&
                         defined(series.points[0]) &&
                         defined(series.points[0].plotX) &&
-                        series.points[0].plotX < firstPointX
+                        series.points[0].plotX < firstPointX &&
+                        // #17128
+                        series.points[0].plotX >= pick(axis.min, -Infinity)
                     ) {
                         firstPointX = series.points[0].plotX;
                     }
