@@ -23,6 +23,7 @@ import type {
 import type PriceEnvelopesPoint from './PriceEnvelopesPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
@@ -124,6 +125,17 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
+        /**
+         * Option for fill color between lines in Price Envelopes Indicator.
+         *
+         * @sample {highstock} stock/indicators/indicator-area-fill
+         *      Background fill between lines.
+         *
+         * @type      {Highcharts.Color}
+         * @since     next
+         * @apioption plotOptions.priceenvelopes.fillColor
+         *
+         */
     } as PriceEnvelopesOptions);
 
     /* *
@@ -160,104 +172,13 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         }, this.options);
     }
 
-    public toYData(
-        point: PriceEnvelopesPoint
-    ): [number, number, number] {
-        return [point.top, point.middle, point.bottom];
-    }
-
-    public translate(): void {
-        const indicator = this,
-            translatedEnvelopes = ['plotTop', 'plotMiddle', 'plotBottom'];
-
-        SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
-
-        indicator.points.forEach(
-            function (
-                point: PriceEnvelopesPoint
-            ): void {
-                [point.top, point.middle, point.bottom].forEach(
-                    function (value: number, i: number): void {
-                        if (value !== null) {
-                            (point as any)[translatedEnvelopes[i]] =
-                                indicator.yAxis.toPixels(value, true);
-                        }
-                    }
-                );
-            }
-        );
-    }
-
-    public drawGraph(): void {
-        let indicator = this,
-            middleLinePoints: Array<
-            PriceEnvelopesPoint
-            > = indicator.points,
-            pointsLength: number = middleLinePoints.length,
-            middleLineOptions: PriceEnvelopesOptions = (
-                indicator.options
-            ),
-            middleLinePath: (
-                SVGElement|undefined
-            ) = indicator.graph,
-            gappedExtend:
-            PriceEnvelopesIndicator.GappedExtensionObject = {
-                options: {
-                    gapSize: middleLineOptions.gapSize
-                }
-            },
-            deviations: Array<Array<(
-                Partial<PriceEnvelopesPoint>
-            )>> = [[], []], // top and bottom point place holders
-            point: PriceEnvelopesPoint;
-
-        // Generate points for top and bottom lines:
-        while (pointsLength--) {
-            point = middleLinePoints[pointsLength];
-            deviations[0].push({
-                plotX: point.plotX,
-                plotY: point.plotTop,
-                isNull: point.isNull
-            });
-            deviations[1].push({
-                plotX: point.plotX,
-                plotY: point.plotBottom,
-                isNull: point.isNull
-            });
-        }
-
-        // Modify options and generate lines:
-        ['topLine', 'bottomLine'].forEach(
-            function (lineName: string, i: number): void {
-                indicator.points = (deviations[i] as any);
-                indicator.options = merge(
-                    (middleLineOptions as any)[lineName].styles,
-                    gappedExtend
-                );
-                indicator.graph = (indicator as any)['graph' + lineName];
-                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(
-                    indicator
-                );
-
-                // Now save lines:
-                (indicator as any)['graph' + lineName] = indicator.graph;
-            }
-        );
-
-        // Restore options and draw a middle line:
-        indicator.points = middleLinePoints;
-        indicator.options = middleLineOptions;
-        indicator.graph = middleLinePath;
-        SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
-    }
-
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PriceEnvelopesParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
-            topPercent: number = (params.topBand as any),
-            botPercent: number = (params.bottomBand as any),
+        let period = params.period,
+            topPercent = params.topBand,
+            botPercent = params.bottomBand,
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
@@ -320,23 +241,27 @@ class PriceEnvelopesIndicator extends SMAIndicator {
  *
  * */
 
-interface PriceEnvelopesIndicator {
+interface PriceEnvelopesIndicator extends MultipleLinesComposition.IndicatorComposition {
+    linesApiNames: Array<string>;
     nameComponents: Array<string>;
     nameBase: string;
     parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
-    pointValKey: string;
-
+    pointArrayMap: Array<keyof PriceEnvelopesPoint>;
     pointClass: typeof PriceEnvelopesPoint;
+    pointValKey: string;
 }
 
 extend(PriceEnvelopesIndicator.prototype, {
+    areaLinesNames: ['top', 'bottom'],
+    linesApiNames: ['topLine', 'bottomLine'],
     nameComponents: ['period', 'topBand', 'bottomBand'],
     nameBase: 'Price envelopes',
     pointArrayMap: ['top', 'middle', 'bottom'],
     parallelArrays: ['x', 'y', 'top', 'bottom'],
     pointValKey: 'middle'
 });
+
+MultipleLinesComposition.compose(PriceEnvelopesIndicator);
 
 /* *
  *
