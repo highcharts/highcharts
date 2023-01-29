@@ -1,12 +1,5 @@
 /**
  * Corner radius for column charts
- *
- * @todo
- * - Stacks, refactor math for reuse of top and bottom logic
- * - Optionally round only end or also base of the stack
- * - Columnrange, both ends rounded. Requires translate to be refactored to
- *   ordered events so we can put rounding after columnrange translate.
- * - What next? Core inclusion, separate module or update the featured plugin?
  */
 
 (function (H) {
@@ -42,7 +35,7 @@
 
             // Get the radius
             const r = Math.min(
-                    relativeLength(this.options.cornerRadius, width),
+                    relativeLength(this.options.borderRadius, width),
                     width / 2
                 ) || 0,
                 flip = (point.negative ? -1 : 1) * (reversed ? -1 : 1) === -1;
@@ -83,14 +76,14 @@
                 g = [x, y + height - rBtm],
                 h = [x, y + rTop];
 
+            const applyPythagoras = (r, altitude) => Math.sqrt(
+                Math.pow(r, 2) - Math.pow(altitude, 2)
+            );
+
             // Inside stacks, cut off part of the top
             const cutTop = rTop && y - stackY;
             if (cutTop) {
-                // Apply Pythagoras
-                const altitude = rTop - cutTop,
-                    base = Math.sqrt(
-                        Math.pow(rTop, 2) - Math.pow(altitude, 2)
-                    );
+                const base = applyPythagoras(rTop, rTop - cutTop);
                 a[0] -= base;
                 b[0] += base;
                 c[1] = h[1] = y + rTop - cutTop;
@@ -99,11 +92,7 @@
             // Column is lower than the radius. Cut off bottom inside the top
             // radius.
             if (height < rTop - cutTop) {
-                // Apply Pythagoras
-                const altitude = rTop - cutTop - height,
-                    base = Math.sqrt(
-                        Math.pow(rTop, 2) - Math.pow(altitude, 2)
-                    );
+                const base = applyPythagoras(rTop, rTop - cutTop - height);
                 c[0] = d[0] = x + width - rTop + base;
                 e[0] = Math.min(c[0], e[0]);
                 f[0] = Math.max(d[0], f[0]);
@@ -114,11 +103,7 @@
             // Inside stacks, cut off part of the bottom
             const cutBtm = rBtm && (stackY + stackHeight) - (y + height);
             if (cutBtm) {
-                // Apply Pythagoras
-                const altitude = rBtm - cutBtm,
-                    base = Math.sqrt(
-                        Math.pow(rBtm, 2) - Math.pow(altitude, 2)
-                    );
+                const base = applyPythagoras(rBtm, rBtm - cutBtm);
                 e[0] += base;
                 f[0] -= base;
                 d[1] = g[1] = y + height - rBtm + cutBtm;
@@ -126,16 +111,12 @@
 
             // Cut off top inside the bottom radius
             if (height < rBtm - cutBtm) {
-                const altitude = rBtm - cutBtm - height,
-                    base = Math.sqrt(
-                        Math.pow(rBtm, 2) - Math.pow(altitude, 2)
-                    );
+                const base = applyPythagoras(rBtm, rBtm - cutBtm - height);
                 c[0] = d[0] = x + width - rBtm + base;
                 b[0] = Math.min(c[0], b[0]);
                 a[0] = Math.max(d[0], a[0]);
                 g[0] = h[0] = x + rBtm - base;
                 d[1] = g[1] = y;
-
             }
 
             // Preserve the box for data labels
@@ -185,7 +166,7 @@ const chart = Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            cornerRadius: '50%',
+            borderRadius: '50%',
             borderWidth: 2,
             borderColor: '#666',
             dataLabels: {
@@ -204,7 +185,7 @@ const chart = Highcharts.chart('container', {
         data: [150, 20, 30, -120],
         name: 'Denmark'
     }],
-    colors: ["#d7bfff", "#af80ff", "#5920b9", "#48208b"]
+    colors: ['#d7bfff', '#af80ff', '#5920b9', '#48208b']
 });
 
 
@@ -215,7 +196,7 @@ document.querySelectorAll('button.corner-radius').forEach(btn => {
             chart.update({
                 plotOptions: {
                     series: {
-                        cornerRadius: btn.dataset.value
+                        borderRadius: btn.dataset.value
                     }
                 }
             });
