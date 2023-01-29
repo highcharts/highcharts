@@ -31,6 +31,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
+    addEvent,
     extend,
     merge,
     correctFloat,
@@ -246,6 +247,13 @@ class AOIndicator extends SMAIndicator {
     }
 }
 
+addEvent(
+    AOIndicator,
+    'afterTranslate',
+    H.seriesTypes.column.prototype.afterTranslate
+);
+
+
 /* *
  *
  *  Class Prototype
@@ -259,7 +267,6 @@ interface AOIndicator {
     crispCol: typeof columnProto.crispCol;
     drawPoints: typeof columnProto.drawPoints;
     getColumnMetrics: typeof columnProto.getColumnMetrics;
-    translate: typeof columnProto.translate;
 }
 
 extend(AOIndicator.prototype, {
@@ -270,7 +277,6 @@ extend(AOIndicator.prototype, {
     markerAttribs: noop as any,
     getColumnMetrics: columnProto.getColumnMetrics,
     crispCol: columnProto.crispCol,
-    translate: columnProto.translate,
     drawPoints: columnProto.drawPoints
 });
 

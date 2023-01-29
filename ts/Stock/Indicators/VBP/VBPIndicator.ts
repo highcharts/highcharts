@@ -429,99 +429,6 @@ class VBPIndicator extends SMAIndicator {
         }
     }
 
-    public translate(): void {
-        let indicator = this,
-            options: VBPOptions = indicator.options,
-            chart: Chart = indicator.chart,
-            yAxis: AxisType = indicator.yAxis,
-            yAxisMin: number = (yAxis.min as any),
-            zoneLinesOptions: VBPIndicator.VBPIndicatorStyleOptions = (
-                indicator.options.zoneLines as any
-            ),
-            priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject> = (
-                indicator.priceZones
-            ),
-            yBarOffset = 0,
-            indicatorPoints: Array<VBPPoint>,
-            volumeDataArray: Array<number>,
-            maxVolume: number,
-            primalBarWidth: number,
-            barHeight: number,
-            barHeightP: number,
-            oldBarHeight: number,
-            barWidth: number,
-            pointPadding: number,
-            chartPlotTop: number,
-            barX: number,
-            barY: number;
-
-        columnProto.translate.apply(indicator);
-        indicatorPoints = indicator.points;
-
-        // Do translate operation when points exist
-        if (indicatorPoints.length) {
-            pointPadding = (options.pointPadding as any) < 0.5 ?
-                (options.pointPadding as any) :
-                0.1;
-            volumeDataArray = indicator.volumeDataArray;
-            maxVolume = arrayMax(volumeDataArray);
-            primalBarWidth = chart.plotWidth / 2;
-            chartPlotTop = chart.plotTop;
-            barHeight = abs(yAxis.toPixels(yAxisMin) -
-                yAxis.toPixels(yAxisMin + indicator.rangeStep));
-            oldBarHeight = abs(yAxis.toPixels(yAxisMin) -
-                yAxis.toPixels(yAxisMin + indicator.rangeStep));
-
-            if (pointPadding) {
-                barHeightP = abs(barHeight * (1 - 2 * pointPadding));
-                yBarOffset = abs((barHeight - barHeightP) / 2);
-                barHeight = abs(barHeightP);
-            }
-
-            indicatorPoints.forEach(
-                function (
-                    point: VBPPoint,
-                    index: number
-                ): void {
-                    barX = point.barX = point.plotX = 0;
-                    barY = point.plotY = (
-                        yAxis.toPixels(priceZones[index].start) -
-                        chartPlotTop -
-                        (
-                            yAxis.reversed ?
-                                (barHeight - oldBarHeight) :
-                                barHeight
-                        ) -
-                        yBarOffset
-                    );
-                    barWidth = correctFloat(
-                        primalBarWidth *
-                        priceZones[index].wholeVolumeData / maxVolume
-                    );
-                    point.pointWidth = barWidth;
-
-                    point.shapeArgs = indicator.crispCol.apply( // eslint-disable-line no-useless-call
-                        indicator,
-                        [barX, barY, barWidth, barHeight]
-                    );
-
-                    point.volumeNeg = priceZones[index].negativeVolumeData;
-                    point.volumePos = priceZones[index].positiveVolumeData;
-                    point.volumeAll = priceZones[index].wholeVolumeData;
-                }
-            );
-
-            if (zoneLinesOptions.enabled) {
-                indicator.drawZones(
-                    chart,
-                    yAxis,
-                    indicator.zoneStarts,
-                    (zoneLinesOptions.styles as any)
-                );
-            }
-        }
-    }
-
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: VBPParamsOptions
@@ -832,6 +739,104 @@ class VBPIndicator extends SMAIndicator {
         }
     }
 }
+
+addEvent(
+    VBPIndicator,
+    'afterTranslate',
+    H.seriesTypes.column.prototype.afterTranslate
+);
+
+addEvent(VBPIndicator, 'afterTranslate', function (): void {
+    let indicator = this,
+        options: VBPOptions = indicator.options,
+        chart: Chart = indicator.chart,
+        yAxis: AxisType = indicator.yAxis,
+        yAxisMin: number = (yAxis.min as any),
+        zoneLinesOptions: VBPIndicator.VBPIndicatorStyleOptions = (
+            indicator.options.zoneLines as any
+        ),
+        priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject> = (
+            indicator.priceZones
+        ),
+        yBarOffset = 0,
+        indicatorPoints: Array<VBPPoint>,
+        volumeDataArray: Array<number>,
+        maxVolume: number,
+        primalBarWidth: number,
+        barHeight: number,
+        barHeightP: number,
+        oldBarHeight: number,
+        barWidth: number,
+        pointPadding: number,
+        chartPlotTop: number,
+        barX: number,
+        barY: number;
+
+    indicatorPoints = indicator.points;
+
+    // Do translate operation when points exist
+    if (indicatorPoints.length) {
+        pointPadding = (options.pointPadding as any) < 0.5 ?
+            (options.pointPadding as any) :
+            0.1;
+        volumeDataArray = indicator.volumeDataArray;
+        maxVolume = arrayMax(volumeDataArray);
+        primalBarWidth = chart.plotWidth / 2;
+        chartPlotTop = chart.plotTop;
+        barHeight = abs(yAxis.toPixels(yAxisMin) -
+            yAxis.toPixels(yAxisMin + indicator.rangeStep));
+        oldBarHeight = abs(yAxis.toPixels(yAxisMin) -
+            yAxis.toPixels(yAxisMin + indicator.rangeStep));
+
+        if (pointPadding) {
+            barHeightP = abs(barHeight * (1 - 2 * pointPadding));
+            yBarOffset = abs((barHeight - barHeightP) / 2);
+            barHeight = abs(barHeightP);
+        }
+
+        indicatorPoints.forEach(
+            function (
+                point: VBPPoint,
+                index: number
+            ): void {
+                barX = point.barX = point.plotX = 0;
+                barY = point.plotY = (
+                    yAxis.toPixels(priceZones[index].start) -
+                    chartPlotTop -
+                    (
+                        yAxis.reversed ?
+                            (barHeight - oldBarHeight) :
+                            barHeight
+                    ) -
+                    yBarOffset
+                );
+                barWidth = correctFloat(
+                    primalBarWidth *
+                    priceZones[index].wholeVolumeData / maxVolume
+                );
+                point.pointWidth = barWidth;
+
+                point.shapeArgs = indicator.crispCol.apply( // eslint-disable-line no-useless-call
+                    indicator,
+                    [barX, barY, barWidth, barHeight]
+                );
+
+                point.volumeNeg = priceZones[index].negativeVolumeData;
+                point.volumePos = priceZones[index].positiveVolumeData;
+                point.volumeAll = priceZones[index].wholeVolumeData;
+            }
+        );
+
+        if (zoneLinesOptions.enabled) {
+            indicator.drawZones(
+                chart,
+                yAxis,
+                indicator.zoneStarts,
+                (zoneLinesOptions.styles as any)
+            );
+        }
+    }
+});
 
 /* *
  *

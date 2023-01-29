@@ -23,17 +23,16 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Series from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        column: {
-            prototype: colProto
-        },
+        column: ColumnSeries,
         dumbbell: {
             prototype: dumbbellProto
-        },
-        scatter: ScatterSeries
+        }
     }
 } = SeriesRegistry;
+const colProto = ColumnSeries.prototype;
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     extend,
     merge
 } = U;
@@ -161,6 +160,12 @@ class LollipopSeries extends Series {
     }
 }
 
+addEvent(
+    LollipopSeries,
+    'afterTranslate',
+    ColumnSeries.prototype.afterTranslate
+);
+
 /* *
  *
  *  Class Prototype
@@ -175,7 +180,6 @@ interface LollipopSeries {
     getColumnMetrics: typeof colProto['getColumnMetrics'];
     getConnectorAttribs: typeof dumbbellProto['getConnectorAttribs'];
     pointClass: typeof LollipopPoint;
-    translate: typeof colProto['translate'];
 }
 
 extend(LollipopSeries.prototype, {
@@ -185,8 +189,7 @@ extend(LollipopSeries.prototype, {
     drawDataLabels: colProto.drawDataLabels,
     getColumnMetrics: colProto.getColumnMetrics,
     getConnectorAttribs: dumbbellProto.getConnectorAttribs,
-    pointClass: LollipopPoint,
-    translate: colProto.translate
+    pointClass: LollipopPoint
 });
 
 /* *

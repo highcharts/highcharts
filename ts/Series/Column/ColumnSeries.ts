@@ -44,6 +44,7 @@ import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     clamp,
     css,
     defined,
@@ -480,7 +481,7 @@ class ColumnSeries extends Series {
      * @private
      * @function Highcharts.seriesTypes.column#translate
      */
-    public translate(): void {
+    public afterTranslate(): void {
         const series = this,
             chart = series.chart,
             options = series.options,
@@ -516,8 +517,6 @@ class ColumnSeries extends Series {
         if (options.pointPadding) {
             seriesBarW = Math.ceil(seriesBarW);
         }
-
-        Series.prototype.translate.apply(series);
 
         // Record the new values
         series.points.forEach(function (point): void {
@@ -927,6 +926,13 @@ class ColumnSeries extends Series {
     /* eslint-enable valid-jsdoc */
 
 }
+
+addEvent(
+    ColumnSeries,
+    'afterTranslate',
+    ColumnSeries.prototype.afterTranslate,
+    { order: 1 }
+);
 
 /* *
  *

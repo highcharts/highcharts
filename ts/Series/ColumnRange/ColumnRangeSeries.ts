@@ -37,6 +37,7 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     clamp,
     extend,
     isNumber,
@@ -140,7 +141,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
      * Translate data points from raw values x and y to plotX and plotY
      * @private
      */
-    public translate(): void {
+    public afterTranslate(): void {
         const yAxis = this.yAxis,
             xAxis = this.xAxis,
             startAngleRad = (xAxis as RadialAxis.AxisComposition).startAngleRad,
@@ -151,7 +152,6 @@ class ColumnRangeSeries extends AreaRangeSeries {
         let height: number,
             heightDifference: number,
             start: number,
-            plotHigh: number,
             y: number;
 
         // eslint-disable-next-line valid-jsdoc
@@ -162,9 +162,6 @@ class ColumnRangeSeries extends AreaRangeSeries {
         function safeBounds(pixelPos: number): number {
             return clamp(pixelPos, -safeDistance, safeDistance);
         }
-
-
-        columnProto.translate.apply(this);
 
         // Set plotLow and plotHigh
         this.points.forEach((point): void => {
@@ -263,6 +260,19 @@ class ColumnRangeSeries extends AreaRangeSeries {
     }
 
 }
+
+addEvent(
+    ColumnRangeSeries,
+    'afterTranslate',
+    columnProto.afterTranslate,
+    { order: 1 }
+);
+addEvent(
+    ColumnRangeSeries,
+    'afterTranslate',
+    ColumnRangeSeries.prototype.afterTranslate,
+    { order: 2 }
+);
 
 /* *
  *

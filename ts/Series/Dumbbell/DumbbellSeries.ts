@@ -35,15 +35,15 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         arearange: AreaRangeSeries,
-        columnrange: {
-            prototype: columnRangeProto
-        }
+        columnrange: ColumnRangeSeries
     }
 } = SeriesRegistry;
 const { prototype: areaRangeProto } = AreaRangeSeries;
+const { prototype: columnRangeProto } = ColumnRangeSeries;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     extend,
     merge,
     pick
@@ -340,46 +340,6 @@ class DumbbellSeries extends AreaRangeSeries {
     }
 
     /**
-     * Translate each point to the plot area coordinate system and find
-     * shape positions
-     *
-     * @private
-     *
-     * @function Highcharts.seriesTypes.dumbbell#translate
-     *
-     * @param {Highcharts.Series} this The series of points.
-     *
-     */
-    public translate(): void {
-
-        const inverted = this.chart.inverted;
-
-        // Calculate shapeargs
-        this.setShapeArgs.apply(this);
-
-        // Calculate point low / high values
-        this.translatePoint.apply(this, arguments as any);
-
-        // Correct x position
-        this.points.forEach((point): void => {
-            const { pointWidth, shapeArgs = {}, tooltipPos } = point;
-
-            point.plotX = shapeArgs.x || 0;
-            shapeArgs.x = point.plotX - pointWidth / 2;
-
-            if (tooltipPos) {
-                if (inverted) {
-                    tooltipPos[1] = this.xAxis.len - point.plotX;
-                } else {
-                    tooltipPos[0] = point.plotX;
-                }
-            }
-        });
-
-        this.columnMetrics.offset -= this.columnMetrics.width / 2;
-    }
-
-    /**
      * Extend the arearange series' drawPoints method by applying a connector
      * and coloring markers.
      * @private
@@ -485,6 +445,44 @@ class DumbbellSeries extends AreaRangeSeries {
     }
 }
 
+// Since dumbbell inherits AreaRange, the Column and Columnrange afterTranslate
+// handlers must be inserted before it.
+addEvent(
+    DumbbellSeries,
+    'afterTranslate',
+    ColumnSeries.prototype.afterTranslate,
+    { order: -2 }
+);
+
+addEvent(
+    DumbbellSeries,
+    'afterTranslate',
+    columnRangeProto.afterTranslate,
+    { order: -1 }
+);
+
+addEvent(DumbbellSeries, 'afterTranslate', function (): void {
+    const inverted = this.chart.inverted;
+
+    // Correct x position
+    this.points.forEach((point): void => {
+        const { pointWidth, shapeArgs = {}, tooltipPos } = point;
+
+        point.plotX = shapeArgs.x || 0;
+        shapeArgs.x = point.plotX - pointWidth / 2;
+
+        if (tooltipPos) {
+            if (inverted) {
+                tooltipPos[1] = this.xAxis.len - point.plotX;
+            } else {
+                tooltipPos[0] = point.plotX;
+            }
+        }
+    });
+
+    this.columnMetrics.offset -= this.columnMetrics.width / 2;
+});
+
 /* *
  *
  *  Prototype properties
@@ -495,8 +493,6 @@ interface DumbbellSeries {
     pointClass: typeof DumbbellPoint;
     crispCol: typeof colProto.crispCol;
     trackerGroups: Array<string>;
-    translatePoint: typeof AreaRangeSeries.prototype['translate'];
-    setShapeArgs: typeof columnRangeProto['translate'];
     seriesDrawPoints: typeof AreaRangeSeries.prototype['drawPoints'];
 }
 extend(DumbbellSeries.prototype, {
@@ -504,10 +500,8 @@ extend(DumbbellSeries.prototype, {
     drawGraph: noop,
     drawTracker: ColumnSeries.prototype.drawTracker,
     pointClass: DumbbellPoint,
-    setShapeArgs: columnRangeProto.translate,
     seriesDrawPoints: areaRangeProto.drawPoints,
-    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    translatePoint: areaRangeProto.translate
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
 
 /* *

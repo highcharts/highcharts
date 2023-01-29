@@ -38,6 +38,7 @@ const {
 import U from '../../../Core/Utilities.js';
 import ColorString from '../../../Core/Color/ColorString';
 const {
+    addEvent,
     extend,
     correctFloat,
     defined,
@@ -265,29 +266,6 @@ class MACDIndicator extends SMAIndicator {
         point: MACDPoint
     ): Array<number> {
         return [point.y, point.signal, point.MACD];
-    }
-
-    public translate(): void {
-        const indicator = this,
-            plotNames: Array<string> = ['plotSignal', 'plotMACD'];
-
-        H.seriesTypes.column.prototype.translate.apply(indicator);
-
-        indicator.points.forEach(
-            function (point: MACDPoint): void {
-                [point.signal, point.MACD].forEach(
-                    function (value: number, i: number): void {
-                        if (value !== null) {
-                            (point as any)[plotNames[i]] =
-                            indicator.yAxis.toPixels(
-                                value,
-                                true
-                            );
-                        }
-                    }
-                );
-            }
-        );
     }
 
     public destroy(): void {
@@ -521,6 +499,33 @@ class MACDIndicator extends SMAIndicator {
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 }
+
+addEvent(
+    MACDIndicator,
+    'afterTranslate',
+    H.seriesTypes.column.prototype.afterTranslate
+);
+addEvent(MACDIndicator, 'afterTranslate', function (): void {
+
+    const indicator = this,
+        plotNames: Array<string> = ['plotSignal', 'plotMACD'];
+
+    indicator.points.forEach(
+        function (point: MACDPoint): void {
+            [point.signal, point.MACD].forEach(
+                function (value: number, i: number): void {
+                    if (value !== null) {
+                        (point as any)[plotNames[i]] =
+                        indicator.yAxis.toPixels(
+                            value,
+                            true
+                        );
+                    }
+                }
+            );
+        }
+    );
+});
 
 /* *
  *

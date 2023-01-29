@@ -270,6 +270,36 @@ class AreaRangeSeries extends AreaSeries {
         point.plotLowX = point.plotX;
     }
 
+    public afterTranslate(): void {
+
+        // Set plotLow and plotHigh
+
+        this.points.forEach((point): void => {
+            const high = point.high,
+                plotY = point.plotY;
+
+            if (point.isNull) {
+                point.plotY = void 0;
+            } else {
+                point.plotLow = plotY;
+
+                // Calculate plotHigh value based on each yAxis scale (#15752)
+                point.plotHigh = isNumber(high) ? this.yAxis.translate(
+                    this.dataModify ?
+                        this.dataModify.modifyValue(high) : high,
+                    false,
+                    true,
+                    void 0,
+                    true
+                ) : void 0;
+
+                if (this.dataModify) {
+                    point.yBottom = point.plotHigh;
+                }
+            }
+        });
+    }
+
     /**
      * Extend the line series' getSegmentPath method by applying the segment
      * path to both lower and higher values of the range.
@@ -646,42 +676,14 @@ class AreaRangeSeries extends AreaSeries {
 
 }
 
-addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
-
-    // Set plotLow and plotHigh
-
-    // Rules out lollipop, but lollipop should not inherit range series in the
-    // first place
-    if (this.pointArrayMap.join(',') === 'low,high') {
-        this.points.forEach((point): void => {
-            const high = point.high,
-                plotY = point.plotY;
-
-            if (point.isNull) {
-                point.plotY = void 0;
-            } else {
-                point.plotLow = plotY;
-
-                // Calculate plotHigh value based on each yAxis scale (#15752)
-                point.plotHigh = isNumber(high) ? this.yAxis.translate(
-                    this.dataModify ?
-                        this.dataModify.modifyValue(high) : high,
-                    false,
-                    true,
-                    void 0,
-                    true
-                ) : void 0;
-
-                if (this.dataModify) {
-                    point.yBottom = point.plotHigh;
-                }
-            }
-        });
-    }
-}, { order: 0 });
+addEvent(
+    AreaRangeSeries,
+    'afterTranslate',
+    AreaRangeSeries.prototype.afterTranslate,
+    { order: 0 }
+);
 
 addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
-    const inverted = this.chart.inverted;
     this.points.forEach((point): void => {
         // Postprocessing after the PolarComposition's afterTranslate
         if (this.chart.polar) {
