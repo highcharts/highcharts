@@ -541,11 +541,8 @@ class NavigationBindings {
 
                         if (
                             bindings &&
-                            (
-                                !bindings.button.className.indexOf ||
-                                bindings.button.className
-                                    .indexOf('highcharts-disabled-btn') === -1
-                            )
+                            (!bindings.button.classList
+                                .contains('highcharts-disabled-btn'))
                         ) {
                             navigation.bindingsButtonClick(
                                 bindings.button,
