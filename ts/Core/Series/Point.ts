@@ -133,7 +133,7 @@ class Point {
 
     public graphic?: SVGElement;
 
-    public graphics?: Array<SVGElement>;
+    public graphics?: Array<SVGElement|undefined>;
 
     public id: string = void 0 as any;
 
@@ -466,7 +466,7 @@ class Point {
 
         props.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
-                if (item.element) {
+                if (item && item.element) {
                     item.destroy();
                 }
             });
@@ -811,6 +811,30 @@ class Point {
             }
         }
         return ret;
+    }
+
+    /**
+     * Get the pixel position of the point relative to the plot area.
+     * @private
+     * @function Highcharts.Point#pos
+     */
+    public pos(
+        chartCoordinates?: boolean,
+        plotY: number|undefined = this.plotY
+    ): [number, number]|undefined {
+        const { plotX, series } = this,
+            { chart, xAxis, yAxis } = series;
+        let posX = 0,
+            posY = 0;
+        if (isNumber(plotX) && isNumber(plotY)) {
+            if (chartCoordinates) {
+                posX = xAxis ? xAxis.pos : chart.plotLeft;
+                posY = yAxis ? yAxis.pos : chart.plotTop;
+            }
+            return chart.inverted && xAxis && yAxis ?
+                [yAxis.len - plotY + posY, xAxis.len - plotX + posX] :
+                [plotX + posX, plotY + posY];
+        }
     }
 
     /**
@@ -1563,15 +1587,14 @@ class Point {
      *         The path definition.
      */
     public haloPath(size: number): SVGPath {
-        const series = this.series,
-            chart = series.chart;
+        const pos = this.pos();
 
-        return chart.renderer.symbols.circle(
-            Math.floor(this.plotX as any) - size,
-            (this.plotY as any) - size,
+        return pos ? this.series.chart.renderer.symbols.circle(
+            Math.floor(pos[0]) - size,
+            pos[1] - size,
             size * 2,
             size * 2
-        );
+        ) : [];
     }
 
 }

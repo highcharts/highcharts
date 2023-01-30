@@ -1,0 +1,6 @@
+---
+ name: Histogram calculator
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

@@ -1431,12 +1431,12 @@ class SVGRenderer implements SVGRendererLike {
             // image may be centered within the symbol, as is the case when
             // image shapes are used as label backgrounds, for example in flags.
             img.imgwidth = pick(
-                symbolSizes[imageSrc] && symbolSizes[imageSrc].width,
-                options && options.width
+                options && options.width,
+                symbolSizes[imageSrc] && symbolSizes[imageSrc].width
             );
             img.imgheight = pick(
-                symbolSizes[imageSrc] && symbolSizes[imageSrc].height,
-                options && options.height
+                options && options.height,
+                symbolSizes[imageSrc] && symbolSizes[imageSrc].height
             );
             /**
              * Set the size and position

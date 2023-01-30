@@ -456,7 +456,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('Stack labels styles options #13330', function (assert) {
+QUnit.test('Stack labels various', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -493,6 +493,7 @@ QUnit.test('Stack labels styles options #13330', function (assert) {
         ]
     });
 
+    // Styles options (#13330)
     const stackLabel = chart.yAxis[0].stacking.stacks['column,,,'][0];
 
     assert.strictEqual(
@@ -522,6 +523,26 @@ QUnit.test('Stack labels styles options #13330', function (assert) {
         'This stack-label box r atribute should be same as ' +
             'set in options #13330'
     );
+
+    // Verify labels are not orphaned or duplicated (#2336)
+    assert.strictEqual(
+        chart.container.querySelectorAll(
+            '.highcharts-stack-labels .highcharts-label'
+        ).length,
+        2,
+        'There should be two labels initially'
+    );
+
+    chart.setSize(300, undefined, false);
+
+    assert.strictEqual(
+        chart.container.querySelectorAll(
+            '.highcharts-stack-labels .highcharts-label'
+        ).length,
+        2,
+        'There should still be two labels after redraw'
+    );
+
 });
 
 QUnit.test(
@@ -664,4 +685,279 @@ QUnit.test('#8742: Some stackLabels did not render with dataLabels enabled', ass
             `${type}: All stackLabels should be visible`
         );
     });
+});
+
+QUnit.test('Stack labels - scrollable plot Area #12133.', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bar',
+            scrollablePlotArea: {
+                minHeight: 600
+            }
+        },
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            }
+        },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true
+                },
+                stacking: 'normal'
+            }
+        },
+        series: [{
+            data: [6, 11, 3, 4, 2, 9, 7, 7, 5, 5, 4, 2, 2, 1]
+        }, {
+            data: [29, 8, 11, 8, 6, 0, 0, 0, 0, 0, 1, 1, 0, 0]
+        }]
+    });
+    const getStack = chart => {
+        const stacks = chart.yAxis[0].stacking.stacks,
+            stackKey = Object.keys(stacks)[0];
+
+        return stacks[stackKey][0].label;
+    };
+    const stack = getStack(chart),
+        dataLabel = chart.series[0].points[0].dataLabel;
+
+    assert.close(
+        stack.alignAttr.y,
+        dataLabel.alignAttr.y,
+        1,
+        'the `y` position should be the same for dataLabel and stackLabel'
+    );
+});
+
+QUnit.test('Stack labels - Axis left set', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            }
+        },
+        xAxis: [
+            { width: '50%' },
+            {
+                left: '50%',
+                width: '50%',
+                offset: 0
+            }
+        ],
+        plotOptions: {
+            series: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        series: [
+            {
+                data: [133, 156, 947, 408],
+                xAxis: 1
+            },
+            {
+                data: [973, 914, 1054, 732],
+                xAxis: 1
+            }
+        ]
+    });
+
+    const getStack = chart => {
+        const stacks = chart.yAxis[0].stacking.stacks,
+            stackKey = Object.keys(stacks)[0];
+
+        return stacks[stackKey][0].label;
+    };
+
+    const stack = getStack(chart),
+        dataLabel = chart.series[0].points[0].dataLabel,
+        stackX = stack.absoluteBox.x + stack.absoluteBox.width / 2,
+        dataLabelX = dataLabel.absoluteBox.x + dataLabel.absoluteBox.width / 2;
+
+    assert.close(
+        stackX,
+        dataLabelX,
+        1,
+        'the middle of stackLabel and dataLabel should be similar.'
+    );
+});
+
+
+// Not implemented yet
+QUnit.skip('Stack labels - center in category', assert => {
+    Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                centerInCategory: true
+            }
+        },
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            }
+        },
+        series: [
+            {
+                stack: 0,
+                data: [15, 0, 0]
+            },
+            {
+                stack: 0,
+                data: [22, 14, 17]
+            },
+            {
+                stack: 1,
+                data: [2, null, 0]
+            },
+            {
+                stack: 1,
+                data: [0, null, 6]
+            },
+            {
+                stack: 2,
+                data: [44, 7, null]
+            }
+        ]
+    });
+    assert.ok(true);
+});
+
+QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
+    const getOptions = (inverted, reversed) => ({
+        chart: {
+            inverted,
+            type: 'column'
+        },
+        title: {
+            text: `chart.inverted: ${inverted}, yAxis.reversed: ${reversed}`,
+            style: {
+                fontSize: '14px'
+            }
+        },
+        xAxis: {
+            categories: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+        },
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            },
+            reversed,
+            minPadding: 0,
+            maxPadding: 0
+        },
+        credits: {
+            enabled: false
+        },
+        plotOptions: {
+            bar: {
+                /* pointPadding:0 */
+            },
+            series: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'normal',
+                        textOutline: 'none',
+                        color: '#888'
+                    }
+                }
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        series: [{
+            data: [1, 2, 3, -1, -2, -3]
+        }, {
+            data: [1, 2, 3, -1, -2, -3]
+        }]
+    });
+
+    const chart = Highcharts.chart('container', getOptions(false, true));
+    let alignOptions1 = chart.yAxis[0].stacking.stacks['column,,,'][0].alignOptions;
+    let alignOptions2 = chart.yAxis[0].stacking.stacks['-column,,,'][3].alignOptions;
+
+    assert.equal(
+        alignOptions1.align,
+        'center',
+        'positive value not inverted chart reversed axis '
+    );
+    assert.equal(
+        alignOptions1.verticalAlign,
+        'bottom',
+        'positive value not inverted chart reversed axis '
+    );
+    assert.equal(
+        alignOptions2.align,
+        'center',
+        'negative value not inverted chart, reversed axis'
+    );
+    assert.equal(
+        alignOptions2.verticalAlign,
+        'top',
+        'negative value not inverted chart, reversed axis'
+    );
+    chart.update(getOptions(true, true));
+    alignOptions1 = chart.yAxis[0].stacking.stacks['column,,,'][0].alignOptions;
+    alignOptions2 = chart.yAxis[0].stacking.stacks['-column,,,'][3].alignOptions;
+
+    assert.equal(
+        alignOptions1.align,
+        'left',
+        'positive value inverted chart reversed axis '
+    );
+    assert.equal(
+        alignOptions1.verticalAlign,
+        'middle',
+        'positive value inverted chart reversed axis '
+    );
+    assert.equal(
+        alignOptions2.align,
+        'right',
+        'negative value inverted chart, reversed axis'
+    );
+    assert.equal(
+        alignOptions2.verticalAlign,
+        'middle',
+        'negative value inverted chart, reversed axis'
+    );
+    chart.update(getOptions(true, false));
+    alignOptions1 = chart.yAxis[0].stacking.stacks['column,,,'][0].alignOptions;
+    alignOptions2 = chart.yAxis[0].stacking.stacks['-column,,,'][3].alignOptions;
+
+    assert.equal(
+        alignOptions1.align,
+        'right',
+        'positive value inverted chart not reversed axis '
+    );
+    assert.equal(
+        alignOptions1.verticalAlign,
+        'middle',
+        'positive value inverted chart not reversed axis '
+    );
+    assert.equal(
+        alignOptions2.align,
+        'left',
+        'negative value inverted chart not reversed axis'
+    );
+    assert.equal(
+        alignOptions2.verticalAlign,
+        'middle',
+        'negative value inverted chart not reversed axis'
+    );
 });

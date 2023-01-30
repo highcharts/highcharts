@@ -55,6 +55,7 @@ const {
 import U from '../../Core/Utilities.js';
 import SunburstNode from './SunburstNode.js';
 const {
+    defined,
     error,
     extend,
     isNumber,
@@ -199,7 +200,14 @@ function getDlOptions(
                 ((point.outerArcLength as any) + point.innerArcLength) / 2
             );
         } else {
-            (options.style as any).width = shape.radius;
+            if (
+                !defined((options.style as any).width) &&
+                shape.radius
+            ) {
+                (options.style as any).width = point.node.level === 1 ?
+                    2 * shape.radius :
+                    shape.radius;
+            }
         }
 
         if (

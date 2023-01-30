@@ -226,7 +226,7 @@ QUnit.test(
             dataLabelDInitPos = dataLabelD.y;
             // Old point
             assert.close(
-                pointC.plotX,
+                series.yAxis.len - pointC.plotY,
                 pointC.graphic.getBBox().x,
                 2,
                 'Time 0 - point has not started moving'
@@ -268,7 +268,8 @@ QUnit.test(
             setTimeout(function () {
                 // Old point
                 assert.strictEqual(
-                    pointC.plotX - pointC.graphic.getBBox().x > 50,
+                    (series.yAxis.len - pointC.plotY) -
+                    pointC.graphic.getBBox().x > 50,
                     true,
                     'Time 200 - point should be in a process of removing animation'
                 );
@@ -328,7 +329,7 @@ QUnit.test(
                 // New point
                 assert.close(
                     pointD.graphic.getBBox().x,
-                    pointD.plotX,
+                    series.yAxis.len - pointD.plotY,
                     2,
                     'Time 600 - new point should be placed in the final position'
                 );
@@ -343,7 +344,7 @@ QUnit.test(
                 assert.strictEqual(
                     dataLabelD.y < chart.chartHeight,
                     true,
-                    'Time 600 - ldataabel has been created below the chart'
+                    'Time 600 - datalabel has been created below the chart'
                 );
                 done();
             }, 600);

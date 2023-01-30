@@ -73,7 +73,7 @@ class SVGLabel extends SVGElement {
     public static textProps: Array<keyof CSSObject> = [
         'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
         'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
-        'textOutline', 'textOverflow', 'width'
+        'textOutline', 'textOverflow', 'whiteSpace', 'width'
     ];
 
     /* *
@@ -224,16 +224,10 @@ class SVGLabel extends SVGElement {
             });
             this.text.css(textStyles);
 
-            const isWidth = 'width' in textStyles,
-                isFontStyle = (
-                    'fontSize' in textStyles ||
-                    'fontWeight' in textStyles
-                );
-
-            // Update existing text, box (#9400, #12163)
-            if (isFontStyle) {
+            // Update existing text, box (#9400, #12163, #18212)
+            if ('fontSize' in textStyles || 'fontWeight' in textStyles) {
                 this.updateTextPadding();
-            } else if (isWidth) {
+            } else if ('width' in textStyles || 'textOverflow' in textStyles) {
                 this.updateBoxSize();
             }
 

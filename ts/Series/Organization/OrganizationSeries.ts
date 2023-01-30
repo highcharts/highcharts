@@ -344,7 +344,7 @@ class OrganizationSeries extends SankeySeries {
                 };
             } else {
                 point.shapeArgs = {
-                    d: PathUtilities.curvedPath(
+                    d: PathUtilities.applyRadius(
                         [
                             ['M', x1, y1],
                             ['L', xMiddle, y1],

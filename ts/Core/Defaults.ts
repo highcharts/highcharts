@@ -2149,6 +2149,8 @@ const defaultOptions: Options = {
          * tooltips for charts with multiple line series, generally making them
          * easier to read. This option takes precedence over `tooltip.shared`.
          *
+         * Not supported for [polar](#chart.polar) and [inverted](#chart.inverted) charts.
+         *
          * @productdesc {highstock} In Highcharts Stock, tooltips are split
          * by default since v6.0.0. Stock charts typically contain
          * multi-dimension points and multiple panes, making split tooltips
@@ -2592,9 +2594,7 @@ const defaultOptions: Options = {
             /** @internal */
             cursor: 'default',
             /** @internal */
-            fontSize: '12px',
-            /** @internal */
-            whiteSpace: 'nowrap'
+            fontSize: '12px'
         },
 
         /**
