@@ -37,11 +37,17 @@ function getSubtitle() {
             useHTML: true,
             text: getSubtitle(),
             floating: true,
-            verticalAlign: 'middle'
+            verticalAlign: 'middle',
+            y: 30
         },
 
         legend: {
             enabled: false
+        },
+
+        tooltip: {
+            valueDecimals: 2,
+            valueSuffix: ' TWh'
         },
 
         plotOptions: {
@@ -53,7 +59,8 @@ function getSubtitle() {
                 innerSize: '80%',
                 dataLabels: {
                     enabled: true,
-                    distance: -20,
+                    crop: false,
+                    distance: '-10%',
                     style: {
                         fontWeight: 'bold',
                         fontSize: '16px'
@@ -69,37 +76,7 @@ function getSubtitle() {
                 name: startYear,
                 data: getData(startYear)[1]
             }
-        ],
-        responsive: {
-            rules: [
-                {
-                    condition: {
-                        maxWidth: 550
-                    },
-                    chartOptions: {
-                        plotOptions: {
-                            series: {
-                                dataLabels: [
-                                    {
-                                        enabled: true,
-                                        y: 8
-                                    },
-                                    {
-                                        enabled: true,
-                                        format: '{point.name}',
-                                        y: -8,
-                                        style: {
-                                            fontWeight: 'normal',
-                                            opacity: 0.7
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
-            ]
-        }
+        ]
     });
 })();
 
