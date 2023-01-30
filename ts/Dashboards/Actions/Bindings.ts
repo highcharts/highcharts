@@ -14,7 +14,6 @@
  *
  * */
 
-/* eslint-disable */
 import type ComponentTypes from '../Component/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
@@ -144,7 +143,7 @@ class Bindings {
 
             // events
             if (optionsEvents && optionsEvents.click) {
-                addEvent(componentContainer, 'click', () => {
+                addEvent(componentContainer, 'click', ():void => {
                     optionsEvents.click();
 
                     if (
@@ -183,28 +182,37 @@ class Bindings {
         cellContainer: HTMLElement|undefined
     ): (Component|undefined) {
         let component: (Component|undefined);
+        let componentClass;
 
         switch (json.$class) {
             case 'HTML':
-                component = HTMLComponent.fromJSON(json as HTMLComponent.ClassJSON);
+                component = HTMLComponent.fromJSON(
+                    json as HTMLComponent.ClassJSON
+                );
                 break;
             case 'Highcharts':
-                const componentClass = Component.getComponent(json.$class);
+                componentClass = Component.getComponent(json.$class);
                 if (componentClass) {
                     component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
                 }
                 break;
             case 'DataGrid':
-                component = DataGridComponent.fromJSON(json as DataGridComponent.ClassJSON);
+                component = DataGridComponent.fromJSON(
+                    json as DataGridComponent.ClassJSON
+                );
                 break;
             // case 'kpi':
-            //     component = KPIComponent.fromJSON(json as KPIComponent.ClassJSON);
+            //     component = KPIComponent.fromJSON(
+            //         json as KPIComponent.ClassJSON
+            //     );
             //     break;
             default:
                 return;
         }
 
-        component?.render();
+        if (component) {
+            component.render();
+        }
 
         // update cell size (when component is wider, cell should adjust)
         // this.updateSize();
