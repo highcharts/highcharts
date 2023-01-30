@@ -30,8 +30,6 @@ namespace ComponentUtilities {
      *
      * */
 
-    /* eslint-disable require-jsdoc */
-
     export function getMargins(
         element: HTMLElement,
         includeBorders: boolean = true

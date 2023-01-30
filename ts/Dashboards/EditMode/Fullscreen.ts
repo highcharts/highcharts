@@ -16,6 +16,7 @@
 
 import Dashboard from '../Dashboard.js';
 import U from '../../Core/Utilities.js';
+import Globals from '../Globals.js';
 
 const { addEvent } = U;
 
@@ -26,10 +27,14 @@ class Fullscreen {
     *  Constructor
     *
     * */
-
     constructor(DashboardClass: Dashboard) {
         this.isOpen = false;
         this.dashboard = DashboardClass;
+
+        // add class to allow scroll element
+        this.dashboard.dashboardWrapper.classList.add(
+            Globals.classNamePrefix + '-dashboards-fullscreen'
+        );
     }
 
     /* *
@@ -71,7 +76,7 @@ class Fullscreen {
 
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         const unbindChange = addEvent(
-            dashboard.container.ownerDocument, // dashboard's document
+            dashboard.dashboardWrapper.ownerDocument, // dashboard's document
             'fullscreenchange',
             function (): void {
                 if (fullscreen.isOpen) {
@@ -88,7 +93,7 @@ class Fullscreen {
             unbindChange();
         };
 
-        const promise = dashboard.container.requestFullscreen();
+        const promise = dashboard.dashboardWrapper.requestFullscreen();
 
         // eslint-disable-next-line highcharts/quote-members
         promise.catch((): void => {
@@ -106,9 +111,9 @@ class Fullscreen {
         // Don't fire exitFullscreen() when user exited using 'Escape' button.
         if (
             fullscreen.isOpen &&
-            dashboard.container.ownerDocument instanceof Document
+            dashboard.dashboardWrapper.ownerDocument instanceof Document
         ) {
-            void dashboard.container.ownerDocument.exitFullscreen();
+            void dashboard.dashboardWrapper.ownerDocument.exitFullscreen();
         }
 
         // Unbind event as it's necessary only before exiting from fullscreen.

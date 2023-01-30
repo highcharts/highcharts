@@ -15,7 +15,7 @@ body {
 }
 
 .hd,
-.highcharts-dashboards {
+.hd-dashboards-wrapper {
     background-color: #F3F3F3;
     padding: 20px 10px;
     position: relative;
@@ -23,10 +23,10 @@ body {
     min-height: 500px;
     transition: 0.5s;
     overflow-x: scroll;
+}
 
-    &:fullscreen {
-        overflow: scroll;
-    }
+.hd-dashboards-fullscreen:fullscreen {
+    overflow: scroll;
 }
 
 .main-title {
