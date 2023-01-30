@@ -36,7 +36,7 @@ import Series from '../../Core/Series/Series.js';
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import StackItem from '../../Core/Axis/Stacking/StackItem.js';
+import StackItem, { StackBoxProps } from '../../Core/Axis/Stacking/StackItem.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -354,7 +354,7 @@ wrap(
         _zIndex?: number,
         parent?: SVGElement
     ): void {
-        if (prop !== 'dataLabelsGroup') {
+        if (prop !== 'dataLabelsGroup' && prop !== 'markerGroup') {
             if (this.chart.is3d()) {
                 if ((this as any)[prop]) {
                     delete (this as any)[prop];
@@ -367,7 +367,7 @@ wrap(
                     (this as any)[prop] = this.chart.columnGroup;
                     this.chart.columnGroup.attr(this.getPlotBox());
                     (this as any)[prop].survive = true;
-                    if (prop === 'group' || prop === 'markerGroup') {
+                    if (prop === 'group') {
                         arguments[3] = 'visible';
                         // For 3D column group and markerGroup should be visible
                     }
@@ -583,16 +583,14 @@ wrap(Series.prototype, 'alignDataLabel', function (
 wrap(StackItem.prototype, 'getStackBox', function (
     this: StackItem,
     proceed: Function,
-    chart: Chart,
-    stackItem: StackItem,
-    x: number,
-    y: number,
-    xWidth: number,
-    h: number,
-    axis: Axis
+    stackBoxProps: StackBoxProps
 ): void { // #3946
     const stackBox = proceed.apply(this, [].slice.call(arguments, 1));
     // Only do this for 3D graph
+    const stackItem = this,
+        chart = this.axis.chart,
+        { width: xWidth } = stackBoxProps;
+
     if (chart.is3d() && stackItem.base) {
         // First element of stackItem.base is an index of base series.
         const baseSeriesInd = +(stackItem.base).split(',')[0];
@@ -608,7 +606,7 @@ wrap(StackItem.prototype, 'getStackBox', function (
             columnSeries instanceof SeriesRegistry.seriesTypes.column
         ) {
             let dLPosition = {
-                x: stackBox.x + (chart.inverted ? h : xWidth / 2),
+                x: stackBox.x + (chart.inverted ? stackBox.height : xWidth / 2),
                 y: stackBox.y,
                 z: (columnSeries.options as any).depth / 2
             };

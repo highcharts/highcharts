@@ -11,27 +11,26 @@
     --color-axis-labels: #e7e7ec;
     --color-background: #5352be;
     --color-title: #f0f0f0;
+    --color-text: #000;
+    --color-tooltip-background: #dadae2;
 }
 
-#kpi-data,
-#kpi-frost,
-#kpi-ice,
-#kpi-max-temperature,
-#kpi-rain,
-#kpi-temperature {
+#kpi-layout {
+    --color-axis-labels: #a7a4b0;
     --color-background: #fff;
+    --color-gauge: #4caffe;
     --color-hover: #5352be;
     --color-hover-text: #fff;
+    --color-pane: #eee;
+    --color-pane-line: #ccc;
     --color-text: #2f2b38;
 }
 
-.highcharts-dashboard.hd-dark-mode #kpi-data,
-.highcharts-dashboard.hd-dark-mode #kpi-frost,
-.highcharts-dashboard.hd-dark-mode #kpi-ice,
-.highcharts-dashboard.hd-dark-mode #kpi-max-temperature,
-.highcharts-dashboard.hd-dark-mode #kpi-rain,
-.highcharts-dashboard.hd-dark-mode #kpi-temperature {
+.highcharts-dashboards.hd-dark-mode #kpi-layout {
+    --color-axis-labels: #838394;
     --color-background: #0d0d0d;
+    --color-pane: #20202c;
+    --color-pane-line: #838394;
     --color-text: #dadae2;
 }
 
@@ -53,7 +52,7 @@
     --color-row2-background: #f7f7f7;
 }
 
-.highcharts-dashboard.hd-dark-mode #selection-grid {
+.highcharts-dashboards.hd-dark-mode #selection-grid {
     --color-background: #20202c;
     --color-border: #4a4a53;
     --color-header-background: #0d0d0d;
@@ -79,7 +78,7 @@
     --color-thumb-line: #f7f7f7;
 }
 
-.highcharts-dashboard.hd-dark-mode #time-range-selector {
+.highcharts-dashboards.hd-dark-mode #time-range-selector {
     --color-axis-labels: #e7e7ec;
     --color-background: #0d0d0d;
     --color-grid: #838394;
@@ -104,9 +103,10 @@
     --color-navigation-text: #20202b;
     --color-text: #000;
     --color-text-border: #fff;
+    --color-tooltip-background: #dadae2;
 }
 
-.highcharts-dashboard.hd-dark-mode #world-map {
+.highcharts-dashboards.hd-dark-mode #world-map {
     --color-navigation: #20202b;
     --color-navigation-line: #646478;
     --color-navigation-text: #838393;
@@ -115,17 +115,15 @@
 @media (prefers-color-scheme: dark) {
     /* dark mode */
 
-    .highcharts-dashboard {
+    .highcharts-dashboards {
         --color-dashboard: #46475d;
     }
 
-    #kpi-data,
-    #kpi-frost,
-    #kpi-ice,
-    #kpi-max-temperature,
-    #kpi-rain,
-    #kpi-temperature {
+    #kpi-layout {
+        --color-axis-labels: #838394;
         --color-background: #0d0d0d;
+        --color-pane: #20202c;
+        --color-pane-line: #838394;
         --color-text: #dadae2;
     }
 
@@ -167,11 +165,11 @@
  *
  * */
 
-.highcharts-dashboard.hd-dark-mode {
+.highcharts-dashboards.hd-dark-mode {
     background-color: #46475d;
 }
 
-.highcharts-dashboard.hd-dark-mode .hd-edit-context-menu-btn {
+.highcharts-dashboards.hd-dark-mode .hd-edit-context-menu-btn {
     filter: invert(1);
 }
 
@@ -203,37 +201,110 @@
     fill: var(--color-axis-labels);
 }
 
+#city-chart .highcharts-tooltip {
+    fill: none;
+    filter: none;
+    stroke: none;
+}
+
+#city-chart div.highcharts-tooltip {
+    color: var(--color-text);
+}
+
+#city-chart .highcharts-tooltip-box {
+    fill: var(--color-tooltip-background);
+    fill-opacity: 1;
+    stroke: none;
+}
+
 /* *
  *
  *  KPI
  *
  * */
 
-.hd-component-kpi,
-.hd-component-kpi-value-wrap {
+#kpi-layout .hd-component {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+#kpi-layout .hd-component-kpi-content {
+    background: none;
+}
+
+#kpi-layout .hd-component-kpi-chart-container {
+    align-self: center;
+    margin: auto;
+}
+
+#kpi-layout .hd-component-kpi-chart-container text {
+    fill: var(--color-text);
+}
+
+#kpi-layout .hd-component-kpi-chart-container .highcharts-axis-labels text {
+    fill: var(--color-axis);
+}
+
+#kpi-layout .hd-component-kpi-chart-container .highcharts-background {
+    fill: none;
+    stroke: none;
+}
+
+#kpi-layout .hd-component-kpi-chart-container .highcharts-label {
+    font-size: 32px;
+}
+
+#kpi-layout .hd-component-kpi-chart-container .highcharts-pane {
+    fill: var(--color-pane);
+    fill-opacity: 1;
+    stroke: var(--color-pane-line);
+}
+
+#kpi-layout .hd-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
+    fill: var(--color-gauge);
+    stroke: none;
+}
+
+#kpi-layout .hd-component-kpi-chart-container .highcharts-title {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#kpi-layout .hd-cell-state-hover:hover .hd-component,
+#kpi-layout .hd-cell-state-active .hd-component {
+    background-color: var(--color-hover);
+    color: var(--color-hover-text);
+}
+
+#kpi-layout .hd-cell-state-hover:hover text,
+#kpi-layout .hd-cell-state-active text {
+    fill: var(--color-hover-text);
+}
+
+#kpi-layout .hd-cell-state-hover:hover .highcharts-axis-labels text,
+#kpi-layout .hd-cell-state-active .highcharts-axis-labels text {
+    fill: var(--color-hover-text);
+}
+
+#kpi-data .hd-component {
+    cursor: default;
+}
+
+#kpi-data .hd-component-kpi,
+#kpi-data .hd-component-kpi-value-wrap {
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: space-evenly;
-}
-
-.hd-component-kpi > *,
-.hd-component-kpi-value-wrap > * {
-    align-self: center;
-    flex: none;
-    margin: auto;
-}
-
-.hd-component-kpi {
     text-align: center;
 }
 
-.hd-component-kpi-content {
-    background: none;
-}
-
-.hd-component-kpi-value-wrap {
-    height: 100%;
+#kpi-data .hd-component-kpi > *,
+#kpi-data .hd-component-kpi-value-wrap > * {
+    align-self: center;
+    flex: none;
+    margin: auto;
 }
 
 #kpi-data .hd-component-title {
@@ -247,39 +318,15 @@
     vertical-align: middle;
 }
 
+#kpi-data .hd-component-kpi-value-wrap {
+    height: 100%;
+}
+
 #kpi-data .hd-component-kpi-value::before {
     content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMxLjc0NTggMjkuNDE4OEwxNy4zNDYgMS40MTg3NUMxNy4wNTE1IDAuODQ2MjUgMTYuNTQ0NSAwLjUgMTYgMC41QzE1LjQ1NTUgMC41IDE0Ljk0ODUgMC44NDYyNSAxNC42NTQgMS40MTg3NUwwLjI1NDE1NSAyOS40MTg4QzAuMDk4NzU4MSAyOS43MjA5IDAuMDExMzIwOCAzMC4wNjk4IDAuMDAxMDI3MTcgMzAuNDI4N0MtMC4wMDkyNjY0NiAzMC43ODc3IDAuMDU3OTYzNSAzMS4xNDM1IDAuMTk1NjU1IDMxLjQ1ODdDMC4zMzM0MTEgMzEuNzczOSAwLjUzNjUxOCAzMi4wMzcgMC43ODM2NDggMzIuMjIwMkMxLjAzMDc4IDMyLjQwMzQgMS4zMTI4MSAzMi41IDEuNjAwMTQgMzIuNUgzMC4zOTk5QzMwLjk4NTQgMzIuNSAzMS41MjM4IDMyLjEwMDYgMzEuODA0MyAzMS40NTgxQzMxLjk0MiAzMS4xNDMgMzIuMDA5MyAzMC43ODczIDMxLjk5OSAzMC40Mjg0QzMxLjk4ODcgMzAuMDY5NSAzMS45MDEyIDI5LjcyMDggMzEuNzQ1OCAyOS40MTg4Wk0xNiA2LjE5ODc1TDIwLjI2OTUgMTQuNUgxNkwxMi44IDE4LjVMMTAuODk3MSAxNi4xMjEzTDE2IDYuMTk4NzVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
     display: inline-block;
     margin-right: 0.25em;
     vertical-align: middle;
-}
-
-#kpi-data .hd-component,
-#kpi-frost .hd-component,
-#kpi-ice .hd-component,
-#kpi-max-temperature .hd-component,
-#kpi-rain .hd-component,
-#kpi-temperature .hd-component {
-    background-color: var(--color-background);
-    color: var(--color-text);
-}
-
-.hd-cell.hd-cell-state-hover {
-    cursor: pointer;
-}
-
-#kpi-frost.hd-cell-state-hover:hover .hd-component,
-#kpi-frost.hd-cell-state-active .hd-component,
-#kpi-ice.hd-cell-state-hover:hover .hd-component,
-#kpi-ice.hd-cell-state-active .hd-component,
-#kpi-max-temperature.hd-cell-state-hover:hover .hd-component,
-#kpi-max-temperature.hd-cell-state-active .hd-component,
-#kpi-rain.hd-cell-state-hover:hover .hd-component,
-#kpi-rain.hd-cell-state-active .hd-component,
-#kpi-temperature.hd-cell-state-hover:hover .hd-component,
-#kpi-temperature.hd-cell-state-active .hd-component {
-    background-color: var(--color-hover);
-    color: var(--color-hover-text);
 }
 
 /* *
@@ -474,6 +521,7 @@
     paint-order: stroke;
     stroke: var(--color-marker-border);
     stroke-width: 2;
+    cursor: pointer;
 }
 
 #world-map .highcharts-series-1 .highcharts-point:hover,
@@ -488,11 +536,11 @@
 }
 
 #world-map div.highcharts-tooltip {
-    color: var(--color-marker-text);
+    color: var(--color-text);
 }
 
 #world-map .highcharts-tooltip-box {
-    fill: var(--color-background);
+    fill: var(--color-tooltip-background);
     fill-opacity: 1;
     stroke: none;
 }
@@ -506,7 +554,7 @@
 }
 
 /* Safari fix for manual dark mode */
-.highcharts-dashboard.hd-dark-mode #world-map .highcharts-series-1 .highcharts-data-label text {
+.highcharts-dashboards.hd-dark-mode #world-map .highcharts-series-1 .highcharts-data-label text {
     paint-order: stroke;
     stroke-width: 2px;
 }
@@ -529,7 +577,7 @@
     color: #fff;
 }
 
-.hd-edit-enabled.highcharts-dashboard {
+.hd-edit-enabled.highcharts-dashboards {
     background-color: rgba(36, 29, 58, 0.2);
 }
 
@@ -566,6 +614,6 @@
     background: #646479;
 }
 
-.highcharts-dashboard > .hd-edit-drop-pointer {
+.highcharts-dashboards > .hd-edit-drop-pointer {
     background: #ff8d64;
 }

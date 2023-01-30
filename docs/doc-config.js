@@ -18,7 +18,6 @@ module.exports = {
         'export-module/legacy-export-servers',
         'maps/latlon',
         'stock/compare',
-        'chart-and-series-types/treegraph-chart',
         'stock/cumulative-sum'
     ],
     /* List of old paths that should be redirected */

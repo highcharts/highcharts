@@ -42,6 +42,7 @@
 	"code/modules/networkgraph.src.js",
 	"code/modules/pareto.src.js",
 	"code/modules/pattern-fill.src.js",
+	"code/modules/pictorial.src.js",
 	"code/modules/price-indicator.src.js",
 	"code/modules/sankey.src.js",
 	"code/modules/arc-diagram.src.js",

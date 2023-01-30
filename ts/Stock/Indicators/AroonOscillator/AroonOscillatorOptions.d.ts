@@ -10,6 +10,7 @@
  *  Imports
  *
  * */
+
 import type {
     AroonOptions,
     AroonParamsOptions
@@ -36,4 +37,5 @@ export interface AroonOscillatorParamsOptions
  *  Default Export
  *
  * */
+
 export default AroonOscillatorOptions;

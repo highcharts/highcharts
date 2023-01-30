@@ -68,7 +68,13 @@ class MapLineSeries extends MapSeries {
      */
     public static defaultOptions: MapLineSeriesOptions = merge(MapSeries.defaultOptions, {
         /**
-         * The width of the map line.
+         * Pixel width of the mapline line.
+         *
+         * @type      {number}
+         * @since 10.3.3
+         * @product   highmaps
+         * @default   1
+         * @apioption plotOptions.mapline.lineWidth
          */
         lineWidth: 1,
 
@@ -243,6 +249,15 @@ export default MapLineSeries;
  * @since 10.2.0
  * @product   highmaps
  * @apioption plotOptions.mapline.states.hover.lineWidth
+ */
+
+/**
+ * Pixel width of the mapline line.
+ *
+ * @type      {number|undefined}
+ * @since 10.3.3
+ * @product   highmaps
+ * @apioption series.mapline.data.lineWidth
  */
 
 /**

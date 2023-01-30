@@ -816,7 +816,7 @@ interface BubbleSeries {
     bubblePadding: boolean;
     isBubble: true;
     pointClass: typeof BubblePoint;
-    specialGroup: string;
+    specialGroup: 'group'|'markerGroup';
     zoneAxis: string;
 }
 
