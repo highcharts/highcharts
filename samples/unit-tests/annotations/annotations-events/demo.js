@@ -4,6 +4,7 @@ QUnit.test('Annotations events - general', function (assert) {
         removeEventCalled = 0,
         closeEventCalled = 0,
         circleAfterUpdateCalled = 0,
+        customButtonClicked = 0,
         popupOptions,
         getShapes = function () {
             return [
@@ -28,6 +29,17 @@ QUnit.test('Annotations events - general', function (assert) {
             ];
         },
         chart = Highcharts.chart('container', {
+            exporting: {
+                buttons: {
+                    customButton: {
+                        className: 'highcharts-label-annotation button',
+                        symbol: 'triangle',
+                        onclick() {
+                            customButtonClicked++;
+                        }
+                    }
+                }
+            },
             annotations: [
                 {
                     shapes: getShapes(),
@@ -66,6 +78,7 @@ QUnit.test('Annotations events - general', function (assert) {
                 }
             ],
             navigation: {
+                bindingsClassName: 'highcharts-button-symbol',
                 events: {
                     showPopup: function (event) {
                         popupOptions = event.options;
@@ -209,5 +222,14 @@ QUnit.test('Annotations events - general', function (assert) {
     assert.ok(
         closeEventCalled,
         '#15730: Popup should close when hiding annotation'
+    );
+
+    const customButton = chart.exportSVGElements[3].element;
+    Highcharts.fireEvent(customButton, 'click');
+    controller.click(150, 150);
+    assert.ok(
+        customButtonClicked && chart.annotations[2].options.visible,
+        `#16675: Annotation should be added from the custom button, that has a
+        custom SVG symbol.`
     );
 });

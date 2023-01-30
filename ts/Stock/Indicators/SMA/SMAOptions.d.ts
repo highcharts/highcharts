@@ -30,4 +30,10 @@ export interface SMAParamsOptions {
     period?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default SMAOptions;

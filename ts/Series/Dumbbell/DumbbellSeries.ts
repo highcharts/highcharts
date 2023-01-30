@@ -313,7 +313,7 @@ class DumbbellSeries extends AreaRangeSeries {
                 .attr({
                     zIndex: -1
                 })
-                .add(series.markerGroup);
+                .add(series.group);
         }
 
         point.connector[verb](this.getConnectorAttribs(point));
@@ -351,6 +351,9 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      */
     public translate(): void {
+
+        const inverted = this.chart.inverted;
+
         // Calculate shapeargs
         this.setShapeArgs.apply(this);
 
@@ -358,13 +361,19 @@ class DumbbellSeries extends AreaRangeSeries {
         this.translatePoint.apply(this, arguments as any);
 
         // Correct x position
-        this.points.forEach(function (point): void {
-            const shapeArgs = point.shapeArgs,
-                pointWidth = point.pointWidth;
+        this.points.forEach((point): void => {
+            const { pointWidth, shapeArgs = {}, tooltipPos } = point;
 
-            point.plotX = (shapeArgs as any).x;
-            (shapeArgs as any).x = point.plotX - pointWidth / 2;
-            (point.tooltipPos as any) = null;
+            point.plotX = shapeArgs.x || 0;
+            shapeArgs.x = point.plotX - pointWidth / 2;
+
+            if (tooltipPos) {
+                if (inverted) {
+                    tooltipPos[1] = this.xAxis.len - point.plotX;
+                } else {
+                    tooltipPos[0] = point.plotX;
+                }
+            }
         });
 
         this.columnMetrics.offset -= this.columnMetrics.width / 2;

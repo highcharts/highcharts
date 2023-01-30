@@ -168,7 +168,7 @@ class LinearRegressionIndicator extends SMAIndicator {
         yData: Array<number>
     ): RegressionLineParametersObject {
         // least squares method
-        let yIndex: number = (this.options.params as any).index,
+        const yIndex: number = (this.options.params as any).index,
             getSingleYValue = function (
                 yValue: (number|Array<number>),
                 yIndex: number
@@ -187,13 +187,13 @@ class LinearRegressionIndicator extends SMAIndicator {
                     return getSingleYValue(val, yIndex) + accY;
                 }, 0),
             xMean: number = xSum / xData.length,
-            yMean: number = ySum / yData.length,
-            xError: number,
+            yMean: number = ySum / yData.length;
+
+        let xError: number,
             yError: number,
-            formulaNumerator = 0,
-            formulaDenominator = 0,
             i: number,
-            slope: number;
+            formulaNumerator = 0,
+            formulaDenominator = 0;
 
         for (i = 0; i < xData.length; i++) {
             xError = xData[i] - xMean;
@@ -202,7 +202,7 @@ class LinearRegressionIndicator extends SMAIndicator {
             formulaDenominator += Math.pow(xError, 2);
         }
 
-        slope = formulaDenominator ?
+        const slope: number = formulaDenominator ?
             formulaNumerator / formulaDenominator : 0; // don't divide by 0
 
         return {
@@ -296,13 +296,9 @@ class LinearRegressionIndicator extends SMAIndicator {
         regressionSeriesParams:
         LinearRegressionParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        let xData: Array<number> = (baseSeries.xData as any),
+        const xData: Array<number> = (baseSeries.xData as any),
             yData: Array<number> = (baseSeries.yData as any),
             period: number = (regressionSeriesParams.period as any),
-            lineParameters: RegressionLineParametersObject,
-            i: number,
-            periodStart: number,
-            periodEnd: number,
             // format required to be returned
             indicatorData: IndicatorValuesObject<
             TLinkedSeries
@@ -311,13 +307,18 @@ class LinearRegressionIndicator extends SMAIndicator {
                 yData: [],
                 values: []
             } as any,
+            xAxisUnit: number = (this.options.params as any).xAxisUnit ||
+            this.findClosestDistance(xData);
+
+        let lineParameters: RegressionLineParametersObject,
+            i: number,
+            periodStart: number,
+            periodEnd: number,
             endPointX: number,
             endPointY: number,
             periodXData: Array<number>,
             periodYData: Array<number>,
-            periodTransformedXData: Array<number>,
-            xAxisUnit: number = (this.options.params as any).xAxisUnit ||
-                this.findClosestDistance(xData);
+            periodTransformedXData: Array<number>;
 
         // Iteration logic: x value of the last point within the period
         // (end point) is used to represent the y value (regression)
@@ -359,6 +360,7 @@ class LinearRegressionIndicator extends SMAIndicator {
  *  Class Prototype
  *
  * */
+
 interface LinearRegressionIndicator {
     pointClass: typeof LinearRegressionPoint;
     nameBase: string;
@@ -369,11 +371,11 @@ extend(LinearRegressionIndicator.prototype, {
 });
 
 
-/**
+/* *
  *
  * Registry
  *
- */
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {

@@ -31,4 +31,10 @@ export interface CMFParamsOptions extends SMAParamsOptions {
     volumeSeriesID?: string;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default CMFOptions;

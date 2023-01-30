@@ -104,6 +104,7 @@ class SMAIndicator extends LineSeries {
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
      */
+
     public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
         /**
          * The name of the series as shown in the legend, tooltip etc. If not
@@ -180,8 +181,6 @@ class SMAIndicator extends LineSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      */
@@ -198,8 +197,8 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public getName(): string {
-        let name = this.name,
-            params: Array<string> = [];
+        const params: Array<string> = [];
+        let name = this.name;
 
         if (!name) {
 
@@ -227,18 +226,18 @@ class SMAIndicator extends LineSeries {
         series: TLinkedSeries,
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = params.period as any,
+        const period: number = params.period as any,
             xVal: Array<number> = series.xData as any,
             yVal: Array<(number|Array<(number|null)>|null)> = series.yData as any,
             yValLen = yVal.length,
-            range = 0,
-            sum = 0,
             SMA: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
+            yData: Array<number> = [];
+        let i: (number|undefined),
             index = -1,
-            i: (number|undefined),
-            SMAPoint: (Array<number>|undefined);
+            range = 0,
+            SMAPoint: (Array<number>|undefined),
+            sum = 0;
 
         if (xVal.length < period) {
             return;
@@ -372,7 +371,8 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public recalculateValues(): void {
-        const indicator = this,
+        const croppedDataValues = [],
+            indicator = this,
             oldData = indicator.points || [],
             oldDataLength = (indicator.xData || []).length,
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
@@ -380,9 +380,7 @@ class SMAIndicator extends LineSeries {
                 xData: [],
                 yData: []
             };
-        let processedData: IndicatorValuesObject<typeof LineSeries.prototype>,
-            croppedDataValues = [],
-            overwriteData = true,
+        let overwriteData = true,
             oldFirstPointIndex,
             oldLastPointIndex,
             croppedData,
@@ -395,7 +393,7 @@ class SMAIndicator extends LineSeries {
         // we will try to access Series object without any properties
         // (except for prototyped ones). This is what happens
         // for example when using Axis.setDataGrouping(). See #16670
-        processedData = indicator.linkedParent.options &&
+        const processedData: IndicatorValuesObject<typeof LineSeries.prototype> = indicator.linkedParent.options &&
             indicator.linkedParent.yData && // #18176, #18177 indicators should
             indicator.linkedParent.yData.length ? // work with empty dataset
             (
@@ -482,7 +480,8 @@ class SMAIndicator extends LineSeries {
             indicator.isDirty = true;
             indicator.redraw();
         }
-        indicator.isDirtyData = false;
+
+        indicator.isDirtyData = !!indicator.linkedSeries;
     }
 
     /**
@@ -508,9 +507,6 @@ class SMAIndicator extends LineSeries {
 
         return;
     }
-
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
