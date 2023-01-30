@@ -56,5 +56,17 @@ QUnit.test(
             0.0000000001,
             'Line width in mapline should have a value of 10 on hover state (#5201, #17105).'
         );
+
+        chart.series[1].points[0].update({
+            lineWidth: 15
+        });
+
+        const pointLineWidth = chart.series[1].points[0].graphic['stroke-width'];
+        chart.mapView.zoomBy(2);
+
+        assert.ok(
+            chart.series[1].points[0].graphic['stroke-width'] < pointLineWidth,
+            'Line width set on point in mapline should scale down on zoom, #18166.'
+        );
     }
 );

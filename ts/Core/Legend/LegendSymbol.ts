@@ -102,26 +102,42 @@ namespace LegendSymbol {
 
         let attr: SVGAttributes = {},
             legendSymbol,
-            markerOptions = options.marker;
+            markerOptions = options.marker,
+            lineSizer = 0;
 
         // Draw the line
         if (!this.chart.styledMode) {
             attr = {
-                'stroke-width': options.lineWidth || 0
+                'stroke-width': Math.min(options.lineWidth || 0, 24)
             };
+
             if (options.dashStyle) {
                 attr.dashstyle = options.dashStyle;
+            } else if (options.linecap !== 'square') {
+                attr['stroke-linecap'] = 'round';
             }
         }
 
         legendItem.line = renderer
-            .path([
-                ['M', 0, verticalCenter],
-                ['L', symbolWidth, verticalCenter]
-            ])
+            .path()
             .addClass('highcharts-graph')
             .attr(attr)
             .add(legendItemGroup);
+
+        if (attr['stroke-linecap']) {
+            lineSizer = Math.min(
+                legendItem.line.strokeWidth(),
+                symbolWidth
+            ) / 2;
+        }
+
+        legendItem.line
+            .attr({
+                d: [
+                    ['M', lineSizer, verticalCenter],
+                    ['L', symbolWidth - lineSizer, verticalCenter]
+                ]
+            });
 
         // Draw the marker
         if (markerOptions && markerOptions.enabled !== false && symbolWidth) {

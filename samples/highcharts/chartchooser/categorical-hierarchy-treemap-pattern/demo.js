@@ -24,7 +24,7 @@ Highcharts.chart('container', {
                         enabled: true,
                         color: '#000000',
                         style: {
-                            textOutline: false,
+                            textOutline: '5px contrast',
                             fontSize: 18
                         },
                         zIndex: 9

@@ -447,6 +447,9 @@ class TreemapSeries extends ScatterSeries {
          * @sample highcharts/demo/sunburst/
          *         Sunburst with color variation
          *
+         * @sample highcharts/series-treegraph/color-variation
+         *         Treegraph nodes with color variation
+         *
          * @since     6.0.0
          * @product   highcharts
          * @apioption plotOptions.treemap.levels.colorVariation
