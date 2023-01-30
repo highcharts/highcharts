@@ -1823,25 +1823,11 @@ class Chart {
                     }
                 });
 
-                setTimeout((): void => {
-                    chart.resizeObserver &&
-                        chart.resizeObserver.observe(chart.renderTo);
-                });
+                // setTimeout((): void => {
+                //     chart.resizeObserver &&
+                //         chart.resizeObserver.observe(chart.renderTo);
+                // });
             }
-            // else {
-            //     // Fallback for more legacy browser versions.
-            //     this.unbindReflow = addEvent(win, 'resize', function (
-            //         e: Event
-            //     ): void {
-            //         // a removed event listener still runs in Edge and IE if
-            //         // listener was removed while the event runs, so check if
-            //         // the chart is not destroyed (#11609)
-            //         if (chart.options) {
-            //             chart.reflow(e);
-            //         }
-            //     });
-            //     addEvent(this, 'destroy', this.unbindReflow);
-            // }
         } else if (reflow !== false && !this.unbindReflow) {
             this.unbindReflow = addEvent(win, 'resize', function (
                 e: Event
