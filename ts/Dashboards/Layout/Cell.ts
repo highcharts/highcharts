@@ -59,7 +59,7 @@ class Cell extends GUIElement {
                 row,
                 {
                     id: id,
-                    parentContainerId: row.container && row.container.id ||
+                    parentContainerId: (row.container && row.container.id) ||
                         options.parentContainerId,
                     mountedComponentJSON: options.mountedComponentJSON,
                     style: options.style
