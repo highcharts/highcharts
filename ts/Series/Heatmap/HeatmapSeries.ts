@@ -50,8 +50,7 @@ const {
     fireEvent,
     isNumber,
     merge,
-    pick,
-    pInt
+    pick
 } = U;
 
 /* *
@@ -441,6 +440,7 @@ class HeatmapSeries extends ScatterSeries {
             seriesMarkerOptions = heatmap.options.marker || {};
 
         if (heatmap.options.interpolation) {
+
             const chart = heatmap.chart,
                 ctx = heatmap.getContext(),
                 canvas = heatmap.canvas,
@@ -449,13 +449,18 @@ class HeatmapSeries extends ScatterSeries {
             if (canvas && ctx && colorAxis) {
                 const width = canvas.width - 1,
                     height = canvas.height - 1,
-                    { image, data, scaleValue } = heatmap,
+                    data = heatmap.data,
+                    image = heatmap.image,
                     { min: xMin, max: xMax } = heatmap.getXExtremes(
                         heatmap.xData || []
                     ),
                     { dataMin: yMin, dataMax: yMax } = heatmap.getExtremes(),
                     xSpan = xMax - xMin,
                     ySpan = (yMax as number) - (yMin as number);
+
+                if (image) {
+                    image.destroy();
+                }
 
                 while (data.length) {
                     const p = data.pop() as HeatmapPoint,
@@ -466,13 +471,13 @@ class HeatmapSeries extends ScatterSeries {
                     ) as string;
 
                     ctx.fillRect(
-                        scaleValue(
+                        heatmap.scaleValue(
                             x,
                             xSpan,
                             width,
                             xMin as number
                         ),
-                        scaleValue(
+                        heatmap.scaleValue(
                             ((yMax as number) - y),
                             ySpan,
                             height,
@@ -483,18 +488,14 @@ class HeatmapSeries extends ScatterSeries {
                     );
                 }
 
-                heatmap.image = !image ?
+                heatmap.image =
                     chart.renderer.image(
                         canvas.toDataURL(),
                         0,
                         0,
                         chart.plotWidth,
                         chart.plotHeight
-                    ).add(heatmap.group) :
-                    image.attr({
-                        width: chart.plotWidth,
-                        height: chart.plotHeight
-                    });
+                    ).add(heatmap.group);
             }
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
             Series.prototype.drawPoints.call(heatmap);
@@ -518,7 +519,6 @@ class HeatmapSeries extends ScatterSeries {
     public getContext(): CanvasRenderingContext2D | undefined {
         const series = this,
             { canvas, context } = series;
-
         if (canvas && context) {
             context.clearRect(0, 0, canvas.width, canvas.height);
         } else {
