@@ -1823,10 +1823,10 @@ class Chart {
                     }
                 });
 
-                // setTimeout((): void => {
-                //     chart.resizeObserver &&
-                //         chart.resizeObserver.observe(chart.renderTo);
-                // });
+                setTimeout((): void => {
+                    chart.resizeObserver;
+                    // chart.resizeObserver.observe(chart.renderTo);
+                });
             }
         } else if (reflow !== false && !this.unbindReflow) {
             this.unbindReflow = addEvent(win, 'resize', function (
