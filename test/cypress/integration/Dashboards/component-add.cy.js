@@ -63,9 +63,6 @@ describe('Add component through UI', () => {
         grabComponent('chart');
         dropComponent('#dashboard-col-0')
         hideSidebar(); // Hide sidebar to avoid interference with the next test.
-        cy.get('.hd-edit-resize-snap-x').trigger('mousedown');
-        cy.get('.hd-cell').eq(1).trigger('mousemove');
-        cy.get('.hd-cell').eq(1).trigger('mouseup');
         cy.dashboard().then((dashboard) => {
             assert.equal(
                 dashboard.layouts[0].rows[0].cells.length,
