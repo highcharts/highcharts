@@ -14,7 +14,6 @@
  *
  * */
 
-/* eslint-disable require-jsdoc */
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
 const {
