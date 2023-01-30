@@ -20,20 +20,15 @@ interface ProviderGetURL {
     ): string;
 }
 
-export interface minMaxZoomObject {
-    minZoom: number,
-    maxZoom: number
-}
-
 export declare class ProviderDefinition {
     subdomains?: Array<string>;
     themes: Themes;
     credits: Themes;
-    initialProjectionName: String;
+    minZoom: DeepPartial<number>;
+    maxZoom: DeepPartial<number>;
+    initialProjectionName: DeepPartial<string>;
     getURL: ProviderGetURL;
-    getProjectionName: Function;
     getCredits: Function;
-    getMinMaxZoom: Function;
 }
 
 export default ProviderDefinition;

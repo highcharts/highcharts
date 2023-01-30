@@ -219,7 +219,7 @@ class TiledWebMapSeries extends MapSeries {
                 }
 
                 const def = new ProviderDefinition(),
-                    providerProjection = def.getProjectionName();
+                    { initialProjectionName: providerProjection } = def;
 
                 // Add as credits.text, to prevent changing the default mapText
                 const creditsText = pick(
@@ -322,7 +322,7 @@ class TiledWebMapSeries extends MapSeries {
                     topLeftArr = mapView.projection.def.inverse(
                         [topLeftUnits.x, topLeftUnits.y]),
                     topLeft = {
-                        lon: topLeftArr[0] - Math.abs(lambda),
+                        lon: topLeftArr[0] - lambda,
                         lat: topLeftArr[1]
                     },
                     bottomRightUnits = mapView.pixelsToProjectedUnits({
@@ -423,7 +423,7 @@ class TiledWebMapSeries extends MapSeries {
 
             if (ProviderDefinition) {
                 const def = new ProviderDefinition(),
-                    providerProjectionName = def.getProjectionName();
+                    { initialProjectionName: providerProjectionName } = def;
 
                 mapView.update({
                     projection: {
@@ -447,8 +447,8 @@ addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
         const ProviderDefinition =
             TilesProvidersRegistry[twm.provider.type],
             def = new ProviderDefinition(),
-            providerProjectionName: string = def.getProjectionName(),
-            { minZoom, maxZoom } = def.getMinMaxZoom();
+            { initialProjectionName: providerProjectionName } = def,
+            { minZoom, maxZoom } = def;
 
         if (geoBounds) {
             const { x1, y1, x2, y2 } = geoBounds;

@@ -114,7 +114,7 @@ QUnit.test('Tiled Web Map on the chart', assert => {
 
     const initialProjectionName =
         new Highcharts.Series.types.tiledwebmap
-            .TilesProvidersRegistry.OpenStreetMap().getProjectionName();
+            .TilesProvidersRegistry.OpenStreetMap().initialProjectionName;
 
     assert.strictEqual(
         chart.mapView.projection.options.name,

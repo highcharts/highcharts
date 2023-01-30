@@ -5,7 +5,6 @@
 'use strict';
 
 import type ProviderDefinition from '../ProviderDefinition';
-import { minMaxZoomObject } from '../ProviderDefinition';
 
 import U from '../../Core/Utilities.js';
 
@@ -90,16 +89,5 @@ export default class Stamen implements ProviderDefinition {
             .replace('{s}', chosenSubdomain);
 
         return url;
-    }
-
-    getProjectionName(): String {
-        return this.initialProjectionName;
-    }
-
-    getMinMaxZoom(): minMaxZoomObject {
-        return {
-            minZoom: this.minZoom,
-            maxZoom: this.maxZoom
-        };
     }
 }

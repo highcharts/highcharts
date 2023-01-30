@@ -62,7 +62,8 @@
                 },
                 states: {
                     hover: {
-                        borderWidth: 5
+                        borderWidth: 5,
+                        linecap: 'round'
                     }
                 }
             }
