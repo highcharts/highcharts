@@ -165,8 +165,6 @@ class ThresholdComponent extends Component {
     }
 }
 
-/* eslint-disable valid-jsdoc */
-
 namespace ThresholdComponent {
     export type ComponentType = ThresholdComponent;
 
