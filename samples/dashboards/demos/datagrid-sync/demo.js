@@ -5,8 +5,28 @@ const store = new CSVStore(void 0, {
     csv: csvData,
     firstRowAsNames: true
 });
-
 store.load();
+
+const chartOptions = {
+    xAxis: {
+        type: 'category'
+    },
+    chart: {
+        animation: false,
+        type: 'column'
+    },
+    title: {
+        text: 'Drag points to update the data grid'
+    },
+    plotOptions: {
+        series: {
+            dragDrop: {
+                draggableY: true,
+                dragPrecisionY: 1
+            }
+        }
+    }
+};
 
 const dashboard = new Dashboards.Dashboard('container', {
     store: store,
@@ -18,6 +38,8 @@ const dashboard = new Dashboards.Dashboard('container', {
                     id: 'dashboard-col-0'
                 }, {
                     id: 'dashboard-col-1'
+                }, {
+                    id: 'dashboard-col-2'
                 }]
             }]
         }]
@@ -34,25 +56,34 @@ const dashboard = new Dashboards.Dashboard('container', {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
-            chartOptions: {
-                xAxis: {
-                    type: 'category'
-                },
-                chart: {
-                    animation: false,
-                    type: 'column'
-                },
-                plotOptions: {
-                    series: {
-                        dragDrop: {
-                            draggableY: true,
-                            dragPrecisionY: 1
-                        }
-                    }
+            title: {
+                text: 'allowStoreUpdate: true',
+                style: {
+                    textAlign: 'center'
                 }
-            }
+            },
+            chartOptions
         }, {
             cell: 'dashboard-col-1',
+            store,
+            type: 'Highcharts',
+            sync: {
+                tooltip: true
+            },
+            tableAxisMap: {
+                Food: 'x',
+                'Vitamin A': 'y'
+            },
+            title: {
+                text: 'allowStoreUpdate: false',
+                style: {
+                    textAlign: 'center'
+                }
+            },
+            allowStoreUpdate: false,
+            chartOptions
+        }, {
+            cell: 'dashboard-col-2',
             type: 'DataGrid',
             store,
             editable: true,
