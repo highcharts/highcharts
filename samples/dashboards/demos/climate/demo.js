@@ -12,7 +12,7 @@ const dataTemperatures = {
     F: 'Farenheit',
     K: 'Kelvin'
 };
-const initialMin = Date.UTC(2010);
+const initialMin = Date.UTC(2010, 0, 5);
 const minRange = 30 * 24 * 3600 * 1000; // 30 days
 const maxRange = 2 * 365 * 24 * 3600 * 1000; // 2 years
 const defaultCity = 'New York';
@@ -36,6 +36,10 @@ async function setupDashboard() {
     citiesData = await buildCitiesData();
     buildSymbols();
 
+    const cityData = await buildCityChartData(
+        initialMin,
+        initialMin + maxRange
+    );
     const defaultCityStore = await dataPool.getStore(defaultCity);
     const map = await fetch(
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
@@ -87,7 +91,7 @@ async function setupDashboard() {
                     },
                     series: [{
                         name: defaultCity,
-                        data: defaultCityStore.table.modified.getRows(
+                        data: defaultCityStore.table.getRows(
                             void 0,
                             void 0,
                             ['time', dataScope]
@@ -129,23 +133,11 @@ async function setupDashboard() {
                     maxRange: maxRange,
                     events: {
                         afterSetExtremes: async function (e) {
-                            const minValue = e.min || e.target.min;
-                            const maxValue = e.max || e.target.max;
                             const table =
                                 await dataPool.getStoreTable(cityScope);
-
-                            table.setModifier(new Dashboards.RangeModifier({
-                                ranges: [{
-                                    column: 'time',
-                                    minValue,
-                                    maxValue
-                                }]
-                            }));
-
-                            const data = table.modified.getRows(
-                                void 0,
-                                void 0,
-                                ['time', dataScope]
+                            const data = await buildCityChartData(
+                                e.min || e.target.min,
+                                e.max || e.target.max
                             );
                             const lastPoint = data[data.length - 1];
                             const startIndex =
@@ -330,7 +322,7 @@ async function setupDashboard() {
                 series: [{
                     type: 'spline',
                     name: defaultCity,
-                    data: [],
+                    data: cityData,
                     animation: false,
                     animationLimit: 0,
                     events: {
@@ -785,6 +777,20 @@ async function buildCitiesMap() {
             };
         })
         .sort(city => city.lat);
+}
+
+async function buildCityChartData(minValue, maxValue) {
+    const table = await dataPool.getStoreTable(cityScope);
+
+    table.setModifier(new Dashboards.RangeModifier({
+        ranges: [{
+            column: 'time',
+            minValue,
+            maxValue
+        }]
+    }));
+
+    return table.modified.getRows(void 0, void 0, ['time', dataScope]);
 }
 
 function buildColorAxis() {
