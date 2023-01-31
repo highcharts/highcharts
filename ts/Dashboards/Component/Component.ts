@@ -570,6 +570,19 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public setTitle(titleOptions: Component.TextOptionsType): void {
         const previousTitle = this.titleElement;
+
+        if (
+            !titleOptions ||
+              typeof titleOptions === 'string' ?
+                titleOptions === '' :
+                titleOptions.text === ''
+        ) {
+            if (previousTitle) {
+                previousTitle.remove();
+            }
+            return;
+        }
+
         const titleElement =
             Component.createTextElement('h1', 'title', titleOptions);
 
@@ -584,6 +597,18 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public setCaption(captionOptions: Component.TextOptionsType): void {
         const previousCaption = this.captionElement;
+        if (
+            !captionOptions ||
+              typeof captionOptions === 'string' ?
+                captionOptions === '' :
+                captionOptions.text === ''
+        ) {
+            if (previousCaption) {
+                previousCaption.remove();
+            }
+            return;
+        }
+
         const captionElement =
             Component.createTextElement('div', 'caption', captionOptions);
 
