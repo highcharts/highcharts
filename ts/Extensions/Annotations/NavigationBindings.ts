@@ -541,8 +541,8 @@ class NavigationBindings {
 
                         if (
                             bindings &&
-                            bindings.button.className
-                                .indexOf('highcharts-disabled-btn') === -1
+                            (!bindings.button.classList
+                                .contains('highcharts-disabled-btn'))
                         ) {
                             navigation.bindingsButtonClick(
                                 bindings.button,
@@ -1109,7 +1109,7 @@ class NavigationBindings {
             classNames: Array<[string, HTMLDOMElement]> = [],
             elemClassName: (string|null|undefined);
 
-        while (element) {
+        while (element && element.tagName) {
             elemClassName = attr(element, 'class');
             if (elemClassName) {
                 classNames = classNames.concat(

@@ -2038,6 +2038,9 @@ namespace AxisDefaults {
          * ]]
          * ```
          *
+         * @sample {highcharts} highcharts/xaxis/units/
+         *         Axis units demonstrated
+         *
          * @type      {Array<Array<string,(Array<number>|null)>>}
          * @product   highcharts highstock gantt
          * @apioption xAxis.units
