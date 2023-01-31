@@ -73,8 +73,7 @@ namespace FlagsSymbols {
         const RendererClass = RendererRegistry.getRendererType();
 
         // The symbol callbacks are generated on the SVGRenderer object in all
-        // browsers. Even VML browsers need this in order to generate shapes in
-        // export. Now share them with the VMLRenderer.
+        // browsers.
         if (modifiedMembers.indexOf(RendererClass)) {
             modifiedMembers.push(RendererClass);
 

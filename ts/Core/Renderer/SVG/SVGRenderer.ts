@@ -95,8 +95,7 @@ let hasInternalReferenceBug: (boolean|undefined);
  * Allows direct access to the Highcharts rendering layer in order to draw
  * primitive shapes like circles, rectangles, paths or text directly on a chart,
  * or independent from any chart. The SVGRenderer represents a wrapper object
- * for SVG in modern browsers. Through the VMLRenderer, part of the `oldie.js`
- * module, it also brings vector graphics to IE <= 8.
+ * for SVG in modern browsers.
  *
  * An existing chart's renderer can be accessed through {@link Chart.renderer}.
  * The renderer can also be used completely decoupled from a chart.
@@ -536,11 +535,8 @@ class SVGRenderer implements SVGRendererLike {
         destroyObjectProperties(renderer.gradients || {});
         renderer.gradients = null as any;
 
-        // Defs are null in VMLRenderer
-        // Otherwise, destroy them here.
-        if (rendererDefs) {
-            renderer.defs = rendererDefs.destroy() as any;
-        }
+
+        renderer.defs = rendererDefs.destroy() as any;
 
         // Remove sub pixel fix handler (#982)
         if (renderer.unSubPixelFix) {
@@ -2139,8 +2135,7 @@ interface SVGRenderer extends SVGRendererLike {
 extend(SVGRenderer.prototype, {
 
     /**
-     * A pointer to the renderer's associated Element class. The VMLRenderer
-     * will have a pointer to VMLElement here.
+     * A pointer to the renderer's associated Element class.
      *
      * @name Highcharts.SVGRenderer#Element
      * @type {Highcharts.SVGElement}

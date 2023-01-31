@@ -1035,9 +1035,8 @@ class Navigator {
                 pick(
                     navigator.scrollbar.options.liveRedraw,
 
-                    // By default, don't run live redraw on VML, on touch
+                    // By default, don't run live redraw on touch
                     // devices or if the chart is in boost.
-                    H.svg &&
                     !isTouchDevice &&
                     !this.chart.boosted
                 )

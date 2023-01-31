@@ -169,8 +169,7 @@ class HTMLElement extends SVGElement {
     }
 
     /**
-     * Apply CSS to HTML elements. This is used in text within SVG rendering and
-     * by the VML renderer
+     * Apply CSS to HTML elements. This is used in text within SVG rendering.
      * @private
      */
     public htmlCss(styles: CSSObject): HTMLElement {
@@ -212,7 +211,7 @@ class HTMLElement extends SVGElement {
     }
 
     /**
-     * VML and useHTML method for calculating the bounding box based on offsets.
+     * useHTML method for calculating the bounding box based on offsets.
      */
     public htmlGetBBox(): BBoxObject {
         const wrapper = this,
@@ -224,158 +223,6 @@ class HTMLElement extends SVGElement {
             width: element.offsetWidth,
             height: element.offsetHeight
         };
-    }
-
-    /**
-     * VML override private method to update elements based on internal
-     * properties based on SVG transform.
-     * @private
-     */
-    public htmlUpdateTransform(): void {
-        // aligning non added elements is expensive
-        if (!this.added) {
-            this.alignOnAdd = true;
-            return;
-        }
-
-        const wrapper = this,
-            renderer = wrapper.renderer,
-            elem = wrapper.element,
-            translateX = wrapper.translateX || 0,
-            translateY = wrapper.translateY || 0,
-            x = wrapper.x || 0,
-            y = wrapper.y || 0,
-            align = wrapper.textAlign || 'left',
-            alignCorrection = ({
-                left: 0, center: 0.5, right: 1
-            } as Record<string, number>)[align],
-            styles = wrapper.styles,
-            whiteSpace = styles && styles.whiteSpace;
-
-        /** @private */
-        function getTextPxLength(): number {
-            if (wrapper.textPxLength) {
-                return wrapper.textPxLength;
-            }
-            // Reset multiline/ellipsis in order to read width (#4928,
-            // #5417)
-            css(elem, {
-                width: '',
-                whiteSpace: whiteSpace || 'nowrap'
-            });
-            return elem.offsetWidth;
-        }
-
-        // apply translate
-        css(elem, {
-            marginLeft: translateX as any,
-            marginTop: translateY as any
-        });
-
-        if (!renderer.styledMode && wrapper.shadows) { // used in labels/tooltip
-            wrapper.shadows.forEach(function (
-                shadow: DOMElementType
-            ): void {
-                css(shadow, {
-                    marginLeft: translateX + 1 as any,
-                    marginTop: translateY + 1 as any
-                });
-            });
-        }
-
-        if (elem.tagName === 'SPAN') {
-            const rotation = wrapper.rotation,
-                textWidth = wrapper.textWidth && pInt(wrapper.textWidth),
-                currentTextTransform = [
-                    rotation,
-                    align,
-                    elem.innerHTML,
-                    wrapper.textWidth,
-                    wrapper.textAlign
-                ].join(',');
-
-            let baseline,
-                hasBoxWidthChanged = false;
-
-            // Update textWidth. Use the memoized textPxLength if possible, to
-            // avoid the getTextPxLength function using elem.offsetWidth.
-            // Calling offsetWidth affects rendering time as it forces layout
-            // (#7656).
-            if (textWidth !== wrapper.oldTextWidth) { // #983, #1254
-                const textPxLength = getTextPxLength();
-                if (
-                    (
-                        (textWidth > wrapper.oldTextWidth) ||
-                        textPxLength > textWidth
-                    ) && (
-                        // Only set the width if the text is able to word-wrap,
-                        // or text-overflow is ellipsis (#9537)
-                        /[ \-]/.test(elem.textContent || elem.innerText) ||
-                        elem.style.textOverflow === 'ellipsis'
-                    )
-                ) {
-                    css(elem, {
-                        width: (textPxLength > textWidth) || rotation ?
-                            textWidth + 'px' :
-                            'auto', // #16261
-                        display: 'block',
-                        whiteSpace: whiteSpace || 'normal' // #3331
-                    });
-                    wrapper.oldTextWidth = textWidth;
-                    hasBoxWidthChanged = true; // #8159
-                }
-            }
-            wrapper.hasBoxWidthChanged = hasBoxWidthChanged; // #8159
-
-
-            // Do the calculations and DOM access only if properties changed
-            if (currentTextTransform !== wrapper.cTT) {
-                baseline = renderer.fontMetrics(
-                    elem.style.fontSize as any,
-                    elem
-                ).b;
-
-                // Renderer specific handling of span rotation, but only if we
-                // have something to update.
-                if (
-                    defined(rotation) &&
-                    (
-                        (rotation !== (wrapper.oldRotation || 0)) ||
-                        (align !== wrapper.oldAlign)
-                    )
-                ) {
-                    wrapper.setSpanRotation(
-                        rotation as any,
-                        alignCorrection,
-                        baseline
-                    );
-                }
-
-                (wrapper.getSpanCorrection as any)(
-                    // Avoid elem.offsetWidth if we can, it affects rendering
-                    // time heavily (#7656)
-                    (
-                        (!defined(rotation) && wrapper.textPxLength) || // #7920
-                        elem.offsetWidth
-                    ),
-                    baseline,
-                    alignCorrection,
-                    rotation,
-                    align
-                );
-            }
-
-            // apply position with correction
-            css(elem, {
-                left: (x + (wrapper.xCorr || 0)) + 'px',
-                top: (y + (wrapper.yCorr || 0)) + 'px'
-            });
-
-            // record current text transform
-            wrapper.cTT = currentTextTransform;
-            wrapper.oldRotation = rotation;
-            wrapper.oldAlign = align;
-        }
     }
 
     /**

@@ -468,8 +468,7 @@ class MapSeries extends ScatterSeries {
 
     /**
      * The initial animation for the map series. By default, animation is
-     * disabled. Animation of map shapes is not at all supported in VML
-     * browsers.
+     * disabled.
      * @private
      */
     public animate(init?: boolean): void {

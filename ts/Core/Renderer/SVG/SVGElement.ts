@@ -1528,7 +1528,7 @@ class SVGElement implements SVGElementLike {
                 }
 
 
-            // VML Renderer or useHTML within SVG
+            // useHTML within SVG
             } else {
 
                 bBox = wrapper.htmlGetBBox();

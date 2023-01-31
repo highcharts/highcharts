@@ -1717,7 +1717,7 @@ namespace Exporting {
 
     /**
      * Exporting module only. A collection of fixes on the produced SVG to
-     * account for expando properties, browser bugs, VML problems and other.
+     * account for expando properties, browser bugs.
      * Returns a cleaned SVG.
      *
      * @private

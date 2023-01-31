@@ -1774,8 +1774,8 @@ class Chart {
 
         delete chart.pointer.chartPosition;
 
-        // Width and height checks for display:none. Target is doc in IE8 and
-        // Opera, win in Firefox, Chrome and IE9.
+        // Width and height checks for display:none. Target is doc in Opera
+        // and win in Firefox, Chrome and IE9.
         if (
             !hasUserSize &&
             !chart.isPrinting &&

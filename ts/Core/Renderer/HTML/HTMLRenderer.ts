@@ -92,8 +92,8 @@ class HTMLRenderer extends SVGRenderer {
      * */
 
     /**
-     * Create HTML text node. This is used by the VML renderer as well as the
-     * SVG renderer through the useHTML option.
+     * Create HTML text node. This is used by the SVG renderer through the
+     * useHTML option.
      *
      * @private
      * @function Highcharts.SVGRenderer#html
@@ -174,7 +174,7 @@ class HTMLRenderer extends SVGRenderer {
             key?: string
         ): void {
             if (key === 'align') {
-                // Do not overwrite the SVGElement.align method. Same as VML.
+                // Do not overwrite the SVGElement.align method.
                 wrapper.alignValue = wrapper.textAlign = value as any;
             } else {
                 wrapper[key as any] = value;
@@ -345,12 +345,6 @@ class HTMLRenderer extends SVGRenderer {
                 }
 
                 (htmlGroup as any).appendChild(element);
-
-                // Shared with VML:
-                wrapper.added = true;
-                if (wrapper.alignOnAdd) {
-                    wrapper.htmlUpdateTransform();
-                }
 
                 return wrapper;
             };

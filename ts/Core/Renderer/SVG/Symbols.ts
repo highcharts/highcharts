@@ -120,8 +120,7 @@ function arc(
 }
 
 /**
- * Callout shape used for default tooltips, also used for rounded
- * rectangles in VML
+ * Callout shape used for default tooltips.
  */
 function callout(
     x: number,
