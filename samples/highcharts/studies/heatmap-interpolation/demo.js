@@ -34,10 +34,23 @@ const chart = Highcharts.chart('container', {
     }]
 });
 
-console.log(chart.series[0]);
-
 document.getElementById('interpolation-toggle').addEventListener('click', e => {
     chart.series[0].update({
         interpolation: e.target.checked
     });
+});
+
+document.getElementById('data-toggle').addEventListener('click', e => {
+    chart.series[0].update(
+        {
+            data: e.target.checked ?
+                [
+                    { x: 13, y: 0, value: 1 },
+                    { x: 1, y: 1, value: 20 },
+                    { x: 2, y: 2, value: -28 },
+                    { x: 3, y: 3, value: 18 }
+                ] :
+                JSON.parse(document.getElementById('data').innerText)
+        }
+    );
 });

@@ -441,18 +441,19 @@ class HeatmapSeries extends ScatterSeries {
 
         if (heatmap.options.interpolation) {
             const chart = heatmap.chart,
+                { plotWidth, plotHeight } = chart,
                 image = heatmap.image,
                 resize = image && !(
-                    image.width === chart.plotWidth &&
-                    image.height === chart.plotHeight
+                    image.width === plotWidth &&
+                    image.height === plotHeight
                 ),
                 ctx = heatmap.getContext(),
                 canvas = heatmap.canvas,
                 colorAxis = chart.colorAxis && chart.colorAxis[0];
 
             if (canvas && ctx && colorAxis) {
-                const width = canvas.width - 1,
-                    height = canvas.height - 1,
+                const canvasWidth = canvas.width - 1,
+                    canvasHeight = canvas.height - 1,
                     data = heatmap.data,
                     { min: xMin, max: xMax } = heatmap.getXExtremes(
                         heatmap.xData || []
@@ -479,12 +480,12 @@ class HeatmapSeries extends ScatterSeries {
                         scaleValue(
                             x,
                             [xMin, xMax],
-                            [0, width]
+                            [0, canvasWidth]
                         ),
                         scaleValue(
                             ((yMax as number) - y),
                             [yMin as number, yMax as number],
-                            [0, height]
+                            [0, canvasHeight]
                         ),
                         1,
                         1
@@ -493,17 +494,18 @@ class HeatmapSeries extends ScatterSeries {
 
                 if (resize) {
                     image.attr({
-                        width: chart.plotWidth,
-                        height: chart.plotHeight
+                        width: plotWidth,
+                        height: plotHeight
                     });
                 } else if (!image) {
                     heatmap.image = chart.renderer.image(
                         canvas.toDataURL(),
                         0,
                         0,
-                        chart.plotWidth,
-                        chart.plotHeight
+                        plotWidth,
+                        plotHeight
                     ).add(heatmap.group);
+                    return;
                 }
             }
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
