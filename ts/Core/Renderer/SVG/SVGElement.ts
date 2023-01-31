@@ -1527,7 +1527,6 @@ class SVGElement implements SVGElementLike {
                     bBox = { x: 0, y: 0, width: 0, height: 0 };
                 }
 
-
             // useHTML within SVG
             } else {
 

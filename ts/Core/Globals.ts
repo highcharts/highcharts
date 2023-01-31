@@ -91,6 +91,25 @@ declare global {
             qualifiedName: string,
             value: (boolean|number|string)
         ): void;
+
+        //From the old OldIE.ts file
+        /** @deprecated */
+        currentStyle?: ElementCSSInlineStyle;
+        /** @deprecated */
+        mozRequestFullScreen: Function;
+        /** @deprecated */
+        msMatchesSelector: Element['matches'];
+        /** @deprecated */
+        msRequestFullscreen: Function;
+        /** @deprecated */
+        webkitMatchesSelector: Element['matches'];
+        /** @deprecated */
+        webkitRequestFullScreen: Function;
+    }
+
+    interface HTMLCanvasElement {
+        /** @deprecated */
+        msToBlob: Function;
     }
 
     interface HTMLElement {
@@ -101,6 +120,24 @@ declare global {
         easeInOutSine(pos: number): number;
     }
 
+    class MSBlobBuilder extends Blob {
+        /** @deprecated */
+        append: Function;
+        /** @deprecated */
+        getBlob: Function;
+    }
+
+    class MSPointerEvent implements Partial<PointerEvent> {
+        /** @deprecated */
+        readonly MSPOINTER_TYPE_TOUCH: string;
+        readonly pointerType: undefined;
+    }
+
+    interface Navigator {
+        /** @deprecated */
+        msSaveOrOpenBlob: Function;
+    }
+
     interface ObjectConstructor {
         /**
          * Sets the prototype of a specified object o to object proto or null.
@@ -109,6 +146,13 @@ declare global {
          * @param proto The value of the new prototype or null.
          */
         setPrototypeOf?<T>(o: T, proto: object | null): T;
+    }
+
+    interface PointerEvent {
+        /** @deprecated */
+        readonly MSPOINTER_TYPE_TOUCH: string;
+        /** @deprecated */
+        readonly toElement: Element;
     }
 
     interface SVGElement {
@@ -122,12 +166,6 @@ declare global {
 
     interface TouchList {
         changedTouches: Array<Touch>;
-    }
-
-    class MSPointerEvent implements Partial<PointerEvent> {
-        /** @deprecated */
-        readonly MSPOINTER_TYPE_TOUCH: string;
-        readonly pointerType: undefined;
     }
 
     interface Window {
@@ -145,43 +183,19 @@ declare global {
         webkitURL?: typeof URL;
     }
 
-    interface Element {
+    interface GlobalOptions {
         /** @deprecated */
-        currentStyle?: ElementCSSInlineStyle;
+        canvasToolsURL?: string;
         /** @deprecated */
-        mozRequestFullScreen: Function;
+        Date?: Function;
         /** @deprecated */
-        msMatchesSelector: Element['matches'];
+        getTimezoneOffset?: Function;
         /** @deprecated */
-        msRequestFullscreen: Function;
+        timezone?: string;
         /** @deprecated */
-        webkitMatchesSelector: Element['matches'];
+        timezoneOffset?: number;
         /** @deprecated */
-        webkitRequestFullScreen: Function;
-    }
-
-    interface PointerEvent {
-        /** @deprecated */
-        readonly MSPOINTER_TYPE_TOUCH: string;
-        /** @deprecated */
-        readonly toElement: Element;
-    }
-
-    interface HTMLCanvasElement {
-        /** @deprecated */
-        msToBlob: Function;
-    }
-
-    class MSBlobBuilder extends Blob {
-        /** @deprecated */
-        append: Function;
-        /** @deprecated */
-        getBlob: Function;
-    }
-
-    interface Navigator {
-        /** @deprecated */
-        msSaveOrOpenBlob: Function;
+        useUTC?: boolean;
     }
 
     namespace Intl {
