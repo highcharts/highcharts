@@ -1817,15 +1817,15 @@ class Chart {
 
         if (chart && reflow !== false) {
             if (typeof ResizeObserver === 'function') {
-                chart.resizeObserver = new ResizeObserver((entries): void => {
-                    window.requestAnimationFrame(():void => {
-                        if (!Array.isArray(entries) || !entries.length) {
-                            return;
-                        }
-                        if (chart.options && chart.hasLoaded) {
-                            chart.reflow();
-                        }
-                    });
+                chart.resizeObserver = new ResizeObserver((): void => {
+                    if (chart.options && chart.hasLoaded) {
+                        chart.reflow();
+                    }
+                });
+
+                win.addEventListener('error', function(e): void {
+                    // eslint-disable-next-line no-console
+                    console.error(e.message);
                 });
 
                 setTimeout((): void => {
@@ -1833,7 +1833,7 @@ class Chart {
                         chart.resizeObserver.observe instanceof Function &&
                         chart.resizeObserver.observe(chart.renderTo);
                     // chart.resizeObserver.observe(chart.renderTo);
-                }, 100);
+                });
             }
         } else if (reflow !== false && !this.unbindReflow) {
             this.unbindReflow = addEvent(win, 'resize', function (
