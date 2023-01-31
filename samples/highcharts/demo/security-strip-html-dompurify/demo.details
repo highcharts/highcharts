@@ -1,0 +1,6 @@
+---
+name: Strip HTML with DOMPurify
+authors:
+  - Torstein Hønsi
+js_wrap: b
+...
