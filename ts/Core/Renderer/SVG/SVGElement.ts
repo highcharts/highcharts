@@ -66,13 +66,11 @@ const {
     fireEvent,
     isArray,
     isFunction,
-    isNumber,
     isString,
     merge,
     objectEach,
     pick,
     pInt,
-    removeEvent,
     syncTimeout,
     uniqueKey
 } = U;
@@ -531,7 +529,7 @@ class SVGElement implements SVGElementLike {
 
         // When the page is hidden save resources in the background by not
         // running animation at all (#9749).
-        if (pick(doc.hidden, false)) {
+        if (doc.hidden) {
             animOptions.duration = 0;
         }
 
