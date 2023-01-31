@@ -440,8 +440,12 @@ class HeatmapSeries extends ScatterSeries {
             seriesMarkerOptions = heatmap.options.marker || {};
 
         if (heatmap.options.interpolation) {
-
             const chart = heatmap.chart,
+                image = heatmap.image,
+                resize = image && !(
+                    image.width === chart.plotWidth &&
+                    image.height === chart.plotHeight
+                ),
                 ctx = heatmap.getContext(),
                 canvas = heatmap.canvas,
                 colorAxis = chart.colorAxis && chart.colorAxis[0];
@@ -450,12 +454,19 @@ class HeatmapSeries extends ScatterSeries {
                 const width = canvas.width - 1,
                     height = canvas.height - 1,
                     data = heatmap.data,
-                    image = heatmap.image,
                     { min: xMin, max: xMax } = heatmap.getXExtremes(
                         heatmap.xData || []
                     ),
-                    { dataMin: yMin, dataMax: yMax } = heatmap.getExtremes();
-
+                    { dataMin: yMin, dataMax: yMax } = heatmap.getExtremes(),
+                    scaleValue = function (
+                        value: number, from: number[], to: number[]
+                    ): number {
+                        const scale = (to[1] - to[0]) / (from[1] - from[0]);
+                        const capped = Math.min(
+                            from[1], Math.max(from[0], value)
+                        ) - from[0];
+                        return ~~(capped * scale + to[0]);
+                    };
 
                 data.forEach((p: HeatmapPoint): void => {
                     const { value, x, y } = p;
@@ -465,12 +476,12 @@ class HeatmapSeries extends ScatterSeries {
                     ) as string;
 
                     ctx.fillRect(
-                        heatmap.scaleValue(
+                        scaleValue(
                             x,
                             [xMin, xMax],
                             [0, width]
                         ),
-                        heatmap.scaleValue(
+                        scaleValue(
                             ((yMax as number) - y),
                             [yMin as number, yMax as number],
                             [0, height]
@@ -478,20 +489,22 @@ class HeatmapSeries extends ScatterSeries {
                         1,
                         1
                     );
-
                 });
-                heatmap.image = !image ?
-                    chart.renderer.image(
+
+                if (resize) {
+                    image.attr({
+                        width: chart.plotWidth,
+                        height: chart.plotHeight
+                    });
+                } else if (!image) {
+                    heatmap.image = chart.renderer.image(
                         canvas.toDataURL(),
                         0,
                         0,
                         chart.plotWidth,
                         chart.plotHeight
-                    ).add(heatmap.group) :
-                    image.attr({
-                        width: chart.plotWidth,
-                        height: chart.plotHeight
-                    });
+                    ).add(heatmap.group);
+                }
             }
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
             Series.prototype.drawPoints.call(heatmap);
@@ -742,14 +755,6 @@ class HeatmapSeries extends ScatterSeries {
         }
 
         return attr;
-    }
-    /**
-     * @private
-     */
-    public scaleValue(value: number, from: number[], to: number[]): number {
-        const scale = (to[1] - to[0]) / (from[1] - from[0]);
-        const capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
-        return ~~(capped * scale + to[0]);
     }
 
     /**
