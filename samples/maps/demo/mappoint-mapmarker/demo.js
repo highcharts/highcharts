@@ -80,7 +80,8 @@
             showInLegend: false,
             borderColor: 'blue',
             opacity: 0.3,
-            borderWidth: 10
+            borderWidth: 10,
+            linecap: 'round'
         }, {
             allAreas: true,
             name: 'Countries',

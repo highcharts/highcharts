@@ -50,7 +50,7 @@ const getBuildOptions = input => {
     );
     const type = ['classic'];
     const mapTypeToSource = {
-        classic: './code/es-modules',
+        classic: join(output, 'es-modules'),
         css: './code/js/es-modules'
     };
     return {
@@ -102,10 +102,9 @@ const getListOfDependencies = (files, pathSource) => {
 
 const getTime = () => (new Date()).toTimeString().substr(0, 8);
 
-const watchSourceFiles = (event, { type: types, version }) => {
+const watchSourceFiles = (event, { output, type: types, version }) => {
     const pathFile = event.path;
     const base = './js/';
-    const output = './code/';
     const pathRelative = relative(base, pathFile);
     console.log([
         '',
@@ -153,6 +152,7 @@ const watchESModules = (event, options, type, dependencies, pathESMasters) => {
     const {
         debug,
         fileOptions,
+        output,
         version
     } = options;
     return buildDistFromModules({
@@ -160,7 +160,7 @@ const watchESModules = (event, options, type, dependencies, pathESMasters) => {
         debug,
         fileOptions,
         files: filesModified,
-        output: './code/',
+        output,
         type: [type],
         version
     });
@@ -169,18 +169,18 @@ const watchESModules = (event, options, type, dependencies, pathESMasters) => {
 const fnFirstBuild = options => {
     // Build all module files
     const pathJSParts = './js/';
-    const pathESModules = './code/';
     const {
         type: types,
         mapTypeToSource,
         debug,
         fileOptions,
         files,
+        output,
         version
     } = options;
     buildModules({
         base: pathJSParts,
-        output: pathESModules,
+        output,
         type: types,
         version
     });
@@ -193,7 +193,7 @@ const fnFirstBuild = options => {
             debug,
             fileOptions,
             files,
-            output: './code/',
+            output,
             type: [type],
             version
         }));

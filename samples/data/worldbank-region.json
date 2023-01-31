@@ -1,0 +1,273 @@
+[
+  {
+    "page": 1,
+    "pages": 1,
+    "per_page": 20,
+    "total": 20,
+    "sourceid": "2",
+    "sourcename": "World Development Indicators",
+    "lastupdated": "2022-09-16"
+  },
+  [
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2021",
+      "value": 8.32248413075069,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2020",
+      "value": -5.23983299024215,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2019",
+      "value": 3.9138443956036,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2018",
+      "value": 6.3732590431798,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2017",
+      "value": 6.44478302549638,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2016",
+      "value": 7.67146359572604,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2015",
+      "value": 7.36869834772671,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2014",
+      "value": 6.89691308507234,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2013",
+      "value": 6.01577938863586,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2012",
+      "value": 5.47662279472875,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2011",
+      "value": 5.09907003747171,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2010",
+      "value": 7.46578183832693,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2009",
+      "value": 6.92888468114113,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2008",
+      "value": 3.2602198466105,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2007",
+      "value": 7.23186238643439,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2006",
+      "value": 7.6264881408888,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2005",
+      "value": 7.5183489858248,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2004",
+      "value": 7.51203798098645,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2003",
+      "value": 7.253383362267,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "8S", "value": "South Asia" },
+      "countryiso3code": "SAS",
+      "date": "2002",
+      "value": 3.60186970387497,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    }
+  ]
+]

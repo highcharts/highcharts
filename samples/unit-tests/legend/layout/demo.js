@@ -55,7 +55,22 @@ QUnit.test('Legend layout', function (assert) {
     );
 
     chart.legend.update({
-        useHTML: true
+        layout: 'vertical'
+    });
+
+    assert.ok(
+        chart.legend.group.getBBox().height < 200,
+        'The legend items should be laid out succesively (#18362)'
+    );
+    assert.ok(
+        chart.legend.group.translateY + chart.legend.group.getBBox().height <
+            chart.chartHeight,
+        'The legend items should not spill out of the chart (#18362)'
+    );
+
+    chart.legend.update({
+        useHTML: true,
+        layout: 'proximate'
     });
 
     assert.ok(
