@@ -1828,7 +1828,7 @@ class Chart {
                         chart.resizeObserver.observe instanceof Function &&
                         chart.resizeObserver.observe(chart.renderTo);
                     // chart.resizeObserver.observe(chart.renderTo);
-                });
+                }, 100);
             }
         } else if (reflow !== false && !this.unbindReflow) {
             this.unbindReflow = addEvent(win, 'resize', function (
