@@ -177,6 +177,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             true
         );
 
+        this.setOptions();
         this.sync = new HighchartsComponent.Sync(
             this,
             this.syncHandlers
@@ -185,7 +186,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             this.options.chartOptions ||
             { chart: {} } as Partial<Options>
         );
-        this.setOptions();
 
         if (this.store) {
             this.on('tableChanged', (): void => this.updateSeries());
