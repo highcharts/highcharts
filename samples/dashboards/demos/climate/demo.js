@@ -36,11 +36,8 @@ async function setupDashboard() {
     citiesData = await buildCitiesData();
     buildSymbols();
 
-    const cityData = await buildCityChartData(
-        initialMin,
-        initialMin + maxRange
-    );
-    const defaultCityStore = await dataPool.getStore(defaultCity);
+    const cityData = await buildCityData(initialMin, initialMin + maxRange);
+    const cityStore = await dataPool.getStore(cityScope);
     const map = await fetch(
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
@@ -90,8 +87,8 @@ async function setupDashboard() {
                         height: 14
                     },
                     series: [{
-                        name: defaultCity,
-                        data: defaultCityStore.table.getRows(
+                        name: cityScope,
+                        data: cityStore.table.getRows(
                             void 0,
                             void 0,
                             ['time', dataScope]
@@ -135,7 +132,7 @@ async function setupDashboard() {
                         afterSetExtremes: async function (e) {
                             const table =
                                 await dataPool.getStoreTable(cityScope);
-                            const data = await buildCityChartData(
+                            const data = await buildCityData(
                                 e.min || e.target.min,
                                 e.max || e.target.max
                             );
@@ -147,8 +144,11 @@ async function setupDashboard() {
 
                             citiesMap.setData(await buildCitiesMap());
 
-                            updateKPI(table.modified, worldDate);
-                            updateKPIData();
+                            updateKPI();
+
+                            if (!cityGrid || !citySeries) {
+                                return; // not ready
+                            }
 
                             cityGrid.scrollToRow(startIndex);
                             cityGrid.update(); // Force redraw;
@@ -244,7 +244,7 @@ async function setupDashboard() {
                             cityGrid.dataTable = store.table;
                             cityGrid.update(); // force redraw
 
-                            updateKPIData();
+                            updateKPI();
                         }
                     },
                     marker: {
@@ -307,6 +307,7 @@ async function setupDashboard() {
         }, {
             cell: 'city-chart',
             type: 'Highcharts',
+            store: cityStore,
             sync: {
                 tooltip: true
             },
@@ -376,6 +377,10 @@ async function setupDashboard() {
         }, {
             cell: 'selection-grid',
             type: 'DataGrid',
+            store: cityStore,
+            sync: {
+                tooltip: true
+            },
             dataGridOptions: {
                 cellHeight: 38,
                 editable: false
@@ -386,10 +391,6 @@ async function setupDashboard() {
                     // call action
                     cityGrid = this.dataGrid;
                 }
-            },
-            store: defaultCityStore,
-            sync: {
-                tooltip: true
             }
         }, {
             cell: 'kpi-data',
@@ -403,7 +404,7 @@ async function setupDashboard() {
             events: {
                 mount: function () {
                     kpis.data = this;
-                    updateKPIData();
+                    updateKPI();
                 }
             }
         }, {
@@ -586,10 +587,7 @@ async function setupDashboard() {
                                     dataScope,
                                     cityScope
                                 );
-                                updateKPI(
-                                    citiesData[cityScope].store.table.modified,
-                                    worldDate
-                                );
+                                updateKPI();
                             }
                         }
                     }
@@ -779,7 +777,7 @@ async function buildCitiesMap() {
         .sort(city => city.lat);
 }
 
-async function buildCityChartData(minValue, maxValue) {
+async function buildCityData(minValue, maxValue) {
     const table = await dataPool.getStoreTable(cityScope);
 
     table.setModifier(new Dashboards.RangeModifier({
@@ -1027,37 +1025,32 @@ function tooltipFormatter(value, city) {
     return tooltip;
 }
 
-function updateKPI(table, time) {
-    for (
-        const [key, kpi] of Object.entries(kpis)
-    ) {
-        if (key === 'data') {
-            continue;
-        }
-        kpi.update({
-            chartOptions: {
-                series: [{
-                    data: [
-                        table.getCellAsNumber(
-                            key + (key[0] === 'T' ? temperatureScale : ''),
-                            table.getRowIndexBy('time', time)
-                        ) || 0
-                    ]
-                }]
-            }
-        });
-    }
-}
-
-function updateKPIData() {
+function updateKPI() {
     const data = citiesData[cityScope];
+    const table = data.store.table.modified;
 
-    // update KPI data
-    kpis.data.update({
-        title: data.name,
-        value: data.elevation,
-        subtitle: 'Elevation'
-    });
+    for (const [key, kpi] of Object.entries(kpis)) {
+        if (key === 'data') {
+            kpis.data.update({
+                title: data.name,
+                value: data.elevation,
+                subtitle: 'Elevation'
+            });
+        } else {
+            kpi.update({
+                chartOptions: {
+                    series: [{
+                        data: [
+                            table.getCellAsNumber(
+                                key + (key[0] === 'T' ? temperatureScale : ''),
+                                table.getRowIndexBy('time', worldDate)
+                            ) || 0
+                        ]
+                    }]
+                }
+            });
+        }
+    }
 }
 
 function syncRefreshCharts(store, dataScope, cityScope) {
