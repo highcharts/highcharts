@@ -37,6 +37,7 @@ Gulp.registry(new GulpForwardReference());
     'dist-upload-samples-resources',
     'dist-upload-studies',
     'dist-upload-more',
+    'dashboards/api-docs',
     'jsdoc',
     'jsdoc-classes',
     'jsdoc-clean',

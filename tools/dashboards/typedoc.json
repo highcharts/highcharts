@@ -1,0 +1,15 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "categorizeByGroup": false,
+    "basePath": "../../ts/",
+    "disableSources": true,
+    "entryPoints": [
+        "../../ts/Dashboards/Dashboard.ts",
+        "../../ts/Data/DataTable.ts"
+    ],
+    "excludeInternal": true,
+    "hideGenerator": true,
+    "name": "Highcharts Dashboards",
+    "readme": "../../docs/dashboards/your-first-dashboard.md",
+    "out": "../../build/api/dashboards-2"
+}
