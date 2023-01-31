@@ -42,6 +42,7 @@ import U from '../../Core/Utilities.js';
 const {
     css,
     extend,
+    isNumber,
     merge,
     pick
 } = U;
@@ -229,7 +230,7 @@ class OrganizationSeries extends SankeySeries {
 
             delete attribs.fill;
         } else {
-            if (borderRadius) {
+            if (isNumber(borderRadius)) {
                 attribs.r = borderRadius;
             }
         }
