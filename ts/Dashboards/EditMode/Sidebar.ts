@@ -27,6 +27,8 @@ import EditRenderer from './EditRenderer.js';
 import Bindings from '../Actions/Bindings.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
+import type Component from '../Component/Component.js';
+import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent.js';
 
 const {
     merge,
@@ -838,7 +840,7 @@ class Sidebar {
                     type = componentSettings[key].type;
 
                     if (key === 'chartType') {
-                        const chartTypesEnum: Array<string> = [
+                        const chartTypesEnum = [
                             'column',
                             'line',
                             'scatter',
@@ -846,14 +848,19 @@ class Sidebar {
                             'pie'
                         ];
 
-                        const chartOpts =
-                            (currentComponent as any).chartOptions;
+                        // eslint-disable-next-line
+                        const chartOpts = (currentComponent as HighchartsComponent).chartOptions;
 
-                        const chartType =
-                            (chartOpts.chart && chartOpts.chart.type) ||
-                            (chartOpts.series && chartOpts.series[0].type);
+                        const chartType = chartOpts &&
+                            (
+                                (chartOpts.chart && chartOpts.chart.type) ||
+                                (chartOpts.series && chartOpts.series[0].type)
+                            );
 
-                        if (chartTypesEnum.indexOf(chartType) !== -1) {
+                        if (
+                            chartType &&
+                            chartTypesEnum.indexOf(chartType) !== -1
+                        ) {
                             chartTypes = {
                                 items: chartTypesEnum,
                                 value: chartType
@@ -988,13 +995,13 @@ class Sidebar {
 
                     if (
                         fieldId === 'chartOptions' &&
-                        (updatedSettings as any).chartOptions &&
+                        (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions && // eslint-disable-line
                         chartType &&
                         chartType[0]
                     ) {
-                        (updatedSettings as any).chartOptions =
+                        (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions = // eslint-disable-line
                             merge(
-                                (updatedSettings as any).chartOptions,
+                                (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions, // eslint-disable-line
                                 {
                                     chart: {
                                         type: (chartType[0] as any).value
