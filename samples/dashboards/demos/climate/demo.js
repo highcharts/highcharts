@@ -624,29 +624,32 @@ async function setupDashboard() {
                             rows: [{
                                 cells: [{
                                     id: 'kpi-data',
-                                    width: '33.333%'
+                                    width: '33.333%',
+                                    height: '204px'
                                 }, {
                                     id: 'kpi-temperature',
-                                    width: '33.333%'
+                                    width: '33.333%',
+                                    height: '204px'
                                 }, {
                                     id: 'kpi-max-temperature',
-                                    width: '33.333%'
+                                    width: '33.333%',
+                                    height: '204px'
                                 }]
                             }, {
                                 cells: [{
                                     id: 'kpi-rain',
-                                    width: '33.333%'
+                                    width: '33.333%',
+                                    height: '204px'
                                 }, {
                                     id: 'kpi-ice',
-                                    width: '33.333%'
+                                    width: '33.333%',
+                                    height: '204px'
                                 }, {
                                     id: 'kpi-frost',
-                                    width: '33.333%'
+                                    width: '33.333%',
+                                    height: '204px'
                                 }]
-                            }],
-                            style: {
-                                height: '204px'
-                            }
+                            }]
                         }
                     }]
                 }, {
@@ -656,10 +659,7 @@ async function setupDashboard() {
                     }, {
                         id: 'city-chart',
                         width: '50%'
-                    }],
-                    style: {
-                        height: '414px'
-                    }
+                    }]
                 }]
             }]
         }
