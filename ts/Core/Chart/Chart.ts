@@ -1817,10 +1817,15 @@ class Chart {
 
         if (chart && reflow !== false) {
             if (typeof ResizeObserver === 'function') {
-                chart.resizeObserver = new ResizeObserver((): void => {
-                    if (chart.options && chart.hasLoaded) {
-                        chart.reflow();
-                    }
+                chart.resizeObserver = new ResizeObserver((entries): void => {
+                    window.requestAnimationFrame(():void => {
+                        if (!Array.isArray(entries) || !entries.length) {
+                            return;
+                        }
+                        if (chart.options && chart.hasLoaded) {
+                            chart.reflow();
+                        }
+                    });
                 });
 
                 setTimeout((): void => {
