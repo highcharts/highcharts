@@ -1824,7 +1824,9 @@ class Chart {
                 });
 
                 setTimeout((): void => {
-                    chart.resizeObserver;
+                    chart.resizeObserver &&
+                        chart.resizeObserver.observe instanceof Function &&
+                        chart.resizeObserver.observe(chart.renderTo);
                     // chart.resizeObserver.observe(chart.renderTo);
                 });
             }
