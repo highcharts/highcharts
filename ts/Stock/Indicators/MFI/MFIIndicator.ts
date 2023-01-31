@@ -157,6 +157,7 @@ class MFIIndicator extends SMAIndicator {
             yData: Array<number> = [],
             positiveMoneyFlow: Array<number> = [],
             negativeMoneyFlow: Array<number> = [];
+
         let newTypicalPrice: number,
             oldTypicalPrice: number,
             rawMoneyFlow: number,
@@ -189,8 +190,10 @@ class MFIIndicator extends SMAIndicator {
         ) {
             return;
         }
+
         // Calculate first typical price
         newTypicalPrice = calculateTypicalPrice(yVal[range]);
+
         // Accumulate first N-points
         while (range < period + 1) {
             // Calculate if up or down
