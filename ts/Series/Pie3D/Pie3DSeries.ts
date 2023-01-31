@@ -96,8 +96,6 @@ class Pie3DSeries extends PieSeries {
                 group = this.group,
                 markerGroup = this.markerGroup;
 
-
-
             if (animation === true) {
                 animation = {};
             }
