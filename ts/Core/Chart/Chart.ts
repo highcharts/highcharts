@@ -1823,7 +1823,7 @@ class Chart {
                     }
                 });
 
-                win.addEventListener('error', function(e): void {
+                win.addEventListener('error', function (e): void {
                     // eslint-disable-next-line no-console
                     console.error(e.message);
                 });
