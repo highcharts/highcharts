@@ -124,7 +124,10 @@ class Cell extends GUIElement {
                 style: merge(
                     layoutOptions.style,
                     rowOptions.style,
-                    options.style
+                    options.style,
+                    {
+                        height: options.height
+                    }
                 )
             });
 

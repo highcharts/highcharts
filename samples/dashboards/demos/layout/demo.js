@@ -83,7 +83,8 @@ let dashboard = new Dashboards.Dashboard('container', {
             cellClassName: 'custom-cell',
             rows: [{
                 cells: [{
-                    id: 'dashboard-col-0'
+                    id: 'dashboard-col-0',
+                    height: '400px'
                 }, {
                     id: 'dashboard-col-1'
                 }]
