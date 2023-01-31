@@ -1,39 +1,78 @@
-QUnit.test('Tiled Web Map loading tiles from providers', assert => {
-    const replaceVariables = (url, x, y, zoom) => url
-        .replace('{x}', x.toString())
-        .replace('{y}', y.toString())
-        .replace('{z}', zoom.toString())
-        .replace('{zoom}', zoom.toString());
-
-    const renderer = new Highcharts.Renderer(
-        document.getElementById('container'),
-        400,
-        400
-    );
-
-    const providers = ['OpenStreetMap', 'Gaode', 'Stamen'];
-    const done = assert.async(providers.length);
-
-    providers.forEach(provider => {
-        const twm = Highcharts.Series.types.tiledwebmap,
-            newProvider = new twm.TilesProvidersRegistry[provider](),
-            url = newProvider.getURL(),
-            newUrl = replaceVariables(url, 7, 7, 4);
-
-        const tile = renderer.image(newUrl, 0, 0)
-            .add()
-            .on('load', () => {
-                assert.strictEqual(
-                    tile.getBBox().width,
-                    256,
-                    `Tiles should be loaded from ${provider} provider.`
-                );
-                done();
-            });
-    });
-});
-
 QUnit.test('Tiled Web Map on the chart', assert => {
+    // Adding fake-provider only for testing purposes
+    (function (H) {
+        const { error } = H;
+        class TestProviderDefinition {
+            constructor() {
+                this.subdomains = [''];
+                this.themes = {
+                    standard: 'testimage.png',
+                    favidon: 'favicon.ico'
+                };
+                this.initialProjectionName = 'WebMercator';
+                this.credits = {
+                    standard: 'Test Provider'
+                };
+                this.minZoom = 0;
+                this.maxZoom = 19;
+            }
+
+            getCredits() {
+                return this.credits.standard;
+            }
+
+            getURL(subdomain, theme) {
+                const { themes, subdomains } = this;
+                let chosenTheme,
+                    chosenSubdomain;
+
+                // Check for themes
+                if (
+                    (
+                        theme &&
+                        !Object.prototype.hasOwnProperty.call(themes, theme)
+                    ) ||
+                    !theme
+                ) {
+                    if (theme) {
+                        error(
+                            'Missing option: Tiles provider theme cannot be reached, ' +
+                            'using standard provider theme.',
+                            false
+                        );
+                    }
+                    chosenTheme = 'standard';
+                } else {
+                    chosenTheme = theme;
+                }
+
+                // Check for subdomains
+                if ((subdomain && subdomains.indexOf(subdomain) === -1) ||
+                    !subdomain
+                ) {
+                    if (subdomain) {
+                        error(
+                            'Missing option: Tiles provider subdomain cannot be ' +
+                            'reached, using default provider subdomain.',
+                            false
+                        );
+                    }
+                    chosenSubdomain = subdomains[0];
+                } else {
+                    chosenSubdomain = subdomain;
+                }
+
+                const url = themes[chosenTheme]
+                    .replace('{s}', chosenSubdomain);
+
+                return url;
+            }
+        }
+
+        H.seriesTypes.tiledwebmap.TilesProvidersRegistry.TestProvider =
+            TestProviderDefinition;
+    }(Highcharts));
+
     const chart = Highcharts.mapChart('container', {
             mapView: {
                 zoom: 2
@@ -41,7 +80,7 @@ QUnit.test('Tiled Web Map on the chart', assert => {
             series: [{
                 type: 'tiledwebmap',
                 provider: {
-                    type: 'OpenStreetMap'
+                    type: 'TestProvider'
                 }
             }]
         }),
@@ -88,7 +127,7 @@ QUnit.test('Tiled Web Map on the chart', assert => {
 
     series.update({
         provider: {
-            type: 'OpenStreetMap',
+            type: 'TestProvider',
             theme: 'BadTheme'
         }
     });
@@ -114,7 +153,7 @@ QUnit.test('Tiled Web Map on the chart', assert => {
 
     const initialProjectionName =
         new Highcharts.Series.types.tiledwebmap
-            .TilesProvidersRegistry.OpenStreetMap().initialProjectionName;
+            .TilesProvidersRegistry.TestProvider().initialProjectionName;
 
     assert.strictEqual(
         chart.mapView.projection.options.name,

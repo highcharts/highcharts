@@ -206,7 +206,7 @@ class TiledWebMapSeries extends MapSeries {
             scaledTileSize = scale * 256;
 
         if (provider && (provider.type || provider.url)) {
-            if (provider.type) {
+            if (provider.type && !provider.url) {
                 const ProviderDefinition =
                 TiledWebMapSeries.TilesProvidersRegistry[provider.type];
 
