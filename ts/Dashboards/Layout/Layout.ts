@@ -14,7 +14,6 @@
  *
  * */
 
-/* eslint-disable */
 import type CSSJSONObject from '../CSSJSONObject';
 import type Dashboard from '../Dashboard.js';
 import type JSON from '../../Core/JSON';
@@ -138,7 +137,7 @@ class Layout extends GUIElement {
                 render: dashboard.guiEnabled,
                 parentContainer: parentContainer,
                 attribs: {
-                    id: options.id + (options.copyId ? '_' + options.copyId : ''),
+                    id: options.id + (this.copyId ? '_' + this.copyId : ''),
                     className: Globals.classNames.layout + ' ' +
                         layoutClassName
                 },
@@ -200,7 +199,7 @@ class Layout extends GUIElement {
         const layout = this,
             rowsElements = pick(
                 layout.options.rows,
-                layout.container?.getElementsByClassName(
+                layout.container && layout.container.getElementsByClassName(
                     layout.options.rowClassName || ''
                 )
             ) || [];
@@ -243,6 +242,7 @@ class Layout extends GUIElement {
      * The container for a new row HTML element.
      *
      * @return {Row}
+     * Returns the Row object.
      */
     public addRow(
         options: Row.Options,
@@ -316,9 +316,15 @@ class Layout extends GUIElement {
 
         if (row.container) {
             if (nextRow && nextRow.container) {
-                nextRow.container.parentNode.insertBefore(row.container, nextRow.container);
+                nextRow.container.parentNode.insertBefore(
+                    row.container,
+                    nextRow.container
+                );
             } else if (prevRow && prevRow.container) {
-                prevRow.container.parentNode.insertBefore(row.container, prevRow.container.nextSibling);
+                prevRow.container.parentNode.insertBefore(
+                    row.container,
+                    prevRow.container.nextSibling
+                );
             }
 
             this.rows.splice(index, 0, row);

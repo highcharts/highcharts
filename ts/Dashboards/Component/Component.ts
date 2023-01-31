@@ -14,8 +14,6 @@
  *
  * */
 
-/* eslint-disable require-jsdoc */
-
 'use strict';
 
 import type Cell from '../Layout/Cell.js';
