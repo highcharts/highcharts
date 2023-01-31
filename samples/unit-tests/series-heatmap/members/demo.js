@@ -253,7 +253,7 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
     assert.strictEqual(
         point.graphic.attr('stroke'),
         chart.series[0].color,
-        `Point's stroke should be set on hover, #17856.`
+        'Point\'s stroke should be set on hover, #17856.'
     );
 });
 

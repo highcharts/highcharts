@@ -88,11 +88,11 @@ const employees = [{ x: 1257033600000, y: 1 },
     { x: 1552521600000, y: 28 },
     { x: 1554076800000, y: 29 },
     { x: 1557100800000, y: 30 },
-    { x: 1559520000000, y: 31 }, //june 02 2019
-    { x: 1560816000000, y: 30 }, //06-17-2019
-    { x: 1565568000000, y: 31 }, //08-11-2019
-    { x: 1565654400000, y: 32 }, //08-12-2019
-    { x: 1566172800000, y: 33 }, //08-18-2019
+    { x: 1559520000000, y: 31 }, // june 02 2019
+    { x: 1560816000000, y: 30 }, // 06-17-2019
+    { x: 1565568000000, y: 31 }, // 08-11-2019
+    { x: 1565654400000, y: 32 }, // 08-12-2019
+    { x: 1566172800000, y: 33 }, // 08-18-2019
     { x: Date.UTC(2019, 8, 30), y: 31 },
     { x: Date.UTC(2020, 0, 11), y: 29 },
     { x: Date.UTC(2020, 1, 21), y: 28 },
@@ -449,7 +449,7 @@ const options = {
             pointFormat: '{point.name}<br><b>{point.y}</b>',
             valueSuffix: ' employees'
         },
-        data: employees//getTurnover()
+        data: employees// getTurnover()
 
     }
     ],
@@ -485,7 +485,7 @@ const options = {
 
 if (Highcharts.Series.types.flags) {
     options.series.push(
-        //0
+        // 0
         {
             type: 'flags',
             name: 'Highmaps',
@@ -502,7 +502,7 @@ if (Highcharts.Series.types.flags) {
             }],
             showInLegend: false
         },
-        //1
+        // 1
         {
             type: 'flags',
             name: 'Highcharts',
@@ -598,7 +598,7 @@ if (Highcharts.Series.types.flags) {
             ],
             showInLegend: false
         },
-        //2
+        // 2
         {
             type: 'flags',
             name: 'logo',
@@ -612,7 +612,7 @@ if (Highcharts.Series.types.flags) {
             showInLegend: false
 
         },
-        //3
+        // 3
         {
             type: 'flags',
             useHTML: true,
@@ -663,7 +663,7 @@ if (Highcharts.Series.types.flags) {
             allowOverlapX: false,
             showInLegend: false
         },
-        //4
+        // 4
         {
             type: 'flags',
             name: 'Gantt',

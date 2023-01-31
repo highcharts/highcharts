@@ -1,0 +1,6 @@
+---
+name: GeoJSON tester
+authors:
+  - Torstein Hønsi
+js_wrap: b
+...

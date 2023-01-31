@@ -1,0 +1,6 @@
+---
+ name: Speedometer with dual axes
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

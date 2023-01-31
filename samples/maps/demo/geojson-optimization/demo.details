@@ -1,0 +1,6 @@
+---
+name: GeoJSON optimizer
+authors:
+  - Torstein Hønsi
+js_wrap: b
+...
