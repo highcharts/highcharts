@@ -57,7 +57,8 @@ class KPIComponent extends Component {
     public static defaultChartOptions: DeepPartial<Options> = {
         chart: {
             type: 'spline',
-            backgroundColor: 'transparent'
+            backgroundColor: 'transparent',
+            height: 200
         },
         title: {
             text: void 0
