@@ -19,9 +19,32 @@ const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
 
 const {
+    isObject,
+    merge,
     relativeLength,
     wrap
 } = U;
+
+export interface BorderRadiusOptions {
+    radius: number|string;
+    scope: 'point'|'stack';
+    where: 'end'|'all';
+}
+
+const defaultOptions: BorderRadiusOptions = {
+    radius: 0,
+    scope: 'stack',
+    where: 'end'
+};
+
+const optionsToObject = (
+    options?: number|string|Partial<BorderRadiusOptions>
+): BorderRadiusOptions => {
+    if (!isObject(options)) {
+        options = { radius: options || 0 };
+    }
+    return merge(defaultOptions, options);
+};
 
 wrap(seriesTypes.column.prototype, 'translate', function (
     this: ColumnSeries,
@@ -30,6 +53,7 @@ wrap(seriesTypes.column.prototype, 'translate', function (
     proceed.call(this);
 
     const yAxis = this.yAxis,
+        borderRadius = optionsToObject(this.options.borderRadius),
         reversed = yAxis.options.reversed;
 
     for (const point of this.points) {
@@ -37,7 +61,8 @@ wrap(seriesTypes.column.prototype, 'translate', function (
 
         let stackY = y,
             stackHeight = height;
-        if (point.stackTotal) {
+
+        if (borderRadius.scope === 'stack' && point.stackTotal) {
             const stackEnd = yAxis.translate(
                     point.stackTotal, false, true, false, true
                 ),
@@ -56,12 +81,19 @@ wrap(seriesTypes.column.prototype, 'translate', function (
 
         // Get the radius
         const r = Math.min(
-                relativeLength(this.options.borderRadius || 0, width),
+                relativeLength(borderRadius.radius, width),
                 width / 2
             ) || 0,
             flip = (point.negative ? -1 : 1) * (reversed ? -1 : 1) === -1;
+
+        // where = 'end'
         let rTop = flip ? 0 : r,
             rBtm = flip ? r : 0;
+
+        // All corners
+        if (borderRadius.where === 'all') {
+            rTop = rBtm = r;
+        }
 
         // Deep in stack, cancel rounding
         if (rTop && rTop < y - stackY) {
@@ -71,20 +103,25 @@ wrap(seriesTypes.column.prototype, 'translate', function (
             rBtm = 0;
         }
 
+        // Radius exceeds the available height => decrease radius
+        if (rTop > 0 && rBtm > 0 && rTop + rBtm > stackHeight) {
+            rTop = rBtm = stackHeight / 2;
+        }
+
 
         /*
 
         The naming of control points:
 
-            / a -------- b \
-            /                \
+          / a -------- b \
+         /                \
         h                  c
         |                  |
         |                  |
         |                  |
         g                  d
-            \                /
-            \ f -------- e /
+         \                /
+          \ f -------- e /
 
         */
 

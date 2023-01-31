@@ -13,6 +13,11 @@ const chart = Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
+            _borderRadius: {
+                radius: '20px',
+                scope: 'stack',
+                where: 'end'
+            },
             borderRadius: '50%',
             borderWidth: 2,
             borderColor: '#666',
