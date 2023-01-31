@@ -1816,9 +1816,12 @@ class Chart {
         if (chart && reflow !== false) {
             if (typeof ResizeObserver === 'function') {
                 chart.resizeObserver = new ResizeObserver((): void => {
-                    if (chart.options && chart.hasLoaded) {
-                        chart.reflow();
-                    }
+                    win.requestAnimationFrame &&
+                        win.requestAnimationFrame((): void => {
+                            if (chart.options && chart.hasLoaded) {
+                                chart.reflow();
+                            }
+                        });
                 });
 
                 setTimeout((): void => {
