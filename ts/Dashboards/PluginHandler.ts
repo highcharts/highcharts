@@ -29,6 +29,9 @@ import Sync from './Component/Sync/Sync.js';
  *
  * */
 
+/**
+ * @namespace Dashboards.PluginHandler
+ */
 namespace PluginHandler {
 
     /* *
@@ -65,6 +68,9 @@ namespace PluginHandler {
 
     /**
      * Revision of the Dashboard plugin API.
+     *
+     * @name Dashboards.PluginHandler.revision
+     * @type {number}
      */
     export const revision: number = 0;
 
@@ -77,7 +83,9 @@ namespace PluginHandler {
     /**
      * Adds a dashboard plugin.
      *
-     * @param {Dashboard.Plugin} plugin
+     * @function Dashboards.PluginHandler.addPlugin
+     *
+     * @param {Dashboards.Plugin} plugin
      * Dashboard plugin to register.
      *
      * @param {string} [key]
@@ -120,6 +128,8 @@ namespace PluginHandler {
 
     /**
      * Removes a dashboard plugin.
+     *
+     * @function Dashboards.PluginHandler.removePlugin
      *
      * @param {string} key
      * Plugin key in the registry.

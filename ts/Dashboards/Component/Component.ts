@@ -57,6 +57,11 @@ import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
 
+/**
+ * @abstract
+ * @class
+ * @name Dashboards.Component
+ */
 abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
 
     public static createTextElement(
@@ -876,11 +881,9 @@ namespace Component {
     const nameRegExp = /^function\s+(\w*?)(?:Component)?\s*\(/;
 
     /**
-   *
-   * Record of component classes
-   * @todo
-   *
-   */
+     * Record of component classes
+     * @todo implement? ¯\_(ツ)_/¯
+     */
     export const registry: Record<string, Class<Component>> = {};
 
     /* *

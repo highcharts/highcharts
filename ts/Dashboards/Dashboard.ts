@@ -51,7 +51,9 @@ const {
  * Creates a dashboard with components like charts, tables, and HTML.
  *
  * @class
- * @name Dashboard.Dashboard
+ * @name Dashboards.Dashboard
+ *
+ * @extends Dashboards.Serializable
  */
 class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
 

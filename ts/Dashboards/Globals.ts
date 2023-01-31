@@ -36,7 +36,7 @@ import type Dashboard from './Dashboard';
 /**
  * Global Dashboard namespace in classic `<scripts>`-based implementations.
  *
- * @namespace Dashboard
+ * @namespace Dashboards
  */
 namespace Globals {
 
@@ -47,9 +47,7 @@ namespace Globals {
      * */
 
     /**
-     *
      * Prefix of a GUIElement HTML class name.
-     *
      */
     export const classNamePrefix = 'hd-';
 

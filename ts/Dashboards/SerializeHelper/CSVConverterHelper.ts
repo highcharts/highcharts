@@ -45,7 +45,7 @@ function toJSON(obj: CSVConverter): CSVConverterHelper.JSON {
 /**
  * Check if the Object on the input is the correct Object to be serialized
  * @param obj Obj to check
- * @return {obj is CSVConverter} If object is CSVConverter
+ * @return {boolean} If object is CSVConverter
  */
 function jsonSupportFor(obj: unknown): obj is CSVConverter {
     return obj instanceof CSVConverter;

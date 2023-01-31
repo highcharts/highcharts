@@ -46,7 +46,7 @@ function toJSON(obj: GoogleSheetsConverter): GoogleSheetsConverterHelper.JSON {
 /**
  * Check if the Object on the input is the correct Object to be serialized
  * @param obj Obj to check
- * @return {obj is GoogleSheetsConverter} If object is GoogleSheetsConverter
+ * @return {boolean} If object is GoogleSheetsConverter
  */
 function jsonSupportFor(obj: unknown): obj is GoogleSheetsConverter {
     return obj instanceof GoogleSheetsConverter;

@@ -47,7 +47,7 @@ function toJSON(obj: HTMLTableConverter): HTMLTableConverterHelper.JSON {
 /**
  * Check if the Object on the input is the correct Object to be serialized
  * @param obj Obj to check
- * @return {obj is HTMLTableConverter} If object is HTMLTableConverter
+ * @return {boolean} If object is HTMLTableConverter
  */
 function jsonSupportFor(obj: unknown): obj is HTMLTableConverter {
     return obj instanceof HTMLTableConverter;

@@ -30,16 +30,16 @@ import type CoreJSON from '../Core/JSON';
 /**
  * Interface to convert objects from and to JSON.
  *
- * @interface Serializable
+ * @interface Dashboards.Serializable
  */
 interface Serializable<T extends AnyRecord, TJSON extends Serializable.JSON<string>> {
 
     /**
      * Converts the given JSON to a class instance.
      *
-     * @function Serializable.fromJSON
+     * @function Dashboards.Serializable.fromJSON
      *
-     * @param {Serializable.JSON} json
+     * @param {Dashboards.Serializable.JSON} json
      * JSON to deserialize as a class instance or object.
      *
      * @return {AnyRecord}
@@ -50,9 +50,9 @@ interface Serializable<T extends AnyRecord, TJSON extends Serializable.JSON<stri
     /**
      * Converts the given class instance to JSON.
      *
-     * @function Serializable.toJSON
+     * @function Dashboards.Serializable.toJSON
      *
-     * @return {Serializable.JSON}
+     * @return {Dashboards.Serializable.JSON}
      * Returns the JSON of the class instance or object.
      */
     toJSON(): TJSON;
@@ -299,3 +299,36 @@ namespace Serializable {
  * */
 
 export default Serializable;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Interface to convert objects from and to JSON.
+ *
+ * @interface Dashboards.Serializable
+ */
+/**
+ * Converts the given JSON to a class instance.
+ *
+ * @function Dashboards.Serializable.fromJSON
+ *
+ * @param {Dashboards.Serializable.JSON} json
+ * JSON to deserialize as a class instance or object.
+ *
+ * @return {AnyRecord}
+ * Returns the class instance or object, or throws an exception.
+ */
+/**
+ * Converts the given class instance to JSON.
+ *
+ * @function Dashboards.Serializable.toJSON
+ *
+ * @return {Dashboards.Serializable.JSON}
+ * Returns the JSON of the class instance or object.
+ */
+
+'';

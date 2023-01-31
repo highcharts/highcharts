@@ -36,6 +36,12 @@ const {
     merge
 } = U;
 
+/**
+ * @class
+ * @name Dashboards.KPIComponent
+ *
+ * @extends Dashboards.Component
+ */
 class KPIComponent extends Component {
     public static charter?: typeof G;
 

@@ -46,6 +46,13 @@ AST.allowedAttributes = [
     ...AST.allowedAttributes,
     'for', 'value', 'checked', 'src', 'name', 'selected'];
 AST.allowedReferences = [...AST.allowedReferences, 'data:image/'];
+
+/**
+ * @class
+ * @name Dashboards.HTMLComponent
+ *
+ * @extends Dashboards.Component
+ */
 class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
     /* *

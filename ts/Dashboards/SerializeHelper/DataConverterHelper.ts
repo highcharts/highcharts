@@ -46,7 +46,7 @@ function toJSON(obj: DataConverter): DataConverterHelper.JSON {
 /**
  * Check if the Object on the input is the correct Object to be serialized
  * @param obj Obj to check
- * @return {obj is DataConverter} If object is DataConverter
+ * @return {boolean} If object is DataConverter
  */
 function jsonSupportFor(obj: unknown): obj is DataConverter {
     return obj instanceof DataConverter;
