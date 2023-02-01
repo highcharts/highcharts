@@ -441,24 +441,30 @@ class HeatmapSeries extends ScatterSeries {
 
         if (heatmap.options.interpolation) {
             const chart = heatmap.chart,
-                { plotWidth, plotHeight } = chart,
-                image = heatmap.image,
-                resize = image && !(
-                    image.width === plotWidth &&
-                    image.height === plotHeight
-                ),
                 ctx = heatmap.getContext(),
                 canvas = heatmap.canvas,
                 colorAxis = chart.colorAxis && chart.colorAxis[0];
 
             if (canvas && ctx && colorAxis) {
-                const canvasWidth = canvas.width - 1,
-                    canvasHeight = canvas.height - 1,
+                const { plotWidth, plotHeight } = chart,
+                    image = heatmap.image,
+                    resize = image && !(
+                        image.width === plotWidth &&
+                        image.height === plotHeight
+                    ),
                     data = heatmap.data,
-                    { min: xMin, max: xMax } = heatmap.getXExtremes(
+                    { colsize, rowsize } = heatmap.options,
+                    xExtremes = heatmap.getXExtremes(
                         heatmap.xData || []
                     ),
-                    { dataMin: yMin, dataMax: yMax } = heatmap.getExtremes(),
+                    yExtremes = heatmap.getExtremes(),
+                    fromXRange = [xExtremes.min, xExtremes.max],
+                    fromYRange = [
+                        yExtremes.dataMin,
+                        yExtremes.dataMax
+                    ] as number[],
+                    toXRange = [0, canvas.width - 1],
+                    toYRange = [0, canvas.height - 1],
                     scaleValue = function (
                         value: number, from: number[], to: number[]
                     ): number {
@@ -479,16 +485,16 @@ class HeatmapSeries extends ScatterSeries {
                     ctx.fillRect(
                         scaleValue(
                             x,
-                            [xMin, xMax],
-                            [0, canvasWidth]
+                            fromXRange,
+                            toXRange
                         ),
                         scaleValue(
-                            ((yMax as number) - y),
-                            [yMin as number, yMax as number],
-                            [0, canvasHeight]
+                            ((yExtremes.dataMax as number) - y),
+                            fromYRange,
+                            toYRange
                         ),
-                        1,
-                        1
+                        (colsize || 1),
+                        (rowsize || 1)
                     );
                 });
 

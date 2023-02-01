@@ -7,3 +7,18 @@
 #data {
     display: none;
 }
+
+#toolbar {
+    display: flex;
+    justify-content: space-around;
+}
+
+#col-slider-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+#col-slider-wrapper > output {
+    display: flex;
+    justify-content: center;
+}

@@ -24,14 +24,21 @@ const chart = Highcharts.chart('container', {
     series: [{
         interpolation: true,
         colsize: 24 * 36e5, // one day
-        data: JSON.parse(document.getElementById('data').innerText),
-        _data: [
-            [0, 0, -5],
-            [0, 1, 0],
-            [1, 0, 5],
-            [1, 1, 10]
-        ]
+        data: JSON.parse(document.getElementById('data').innerText)
     }]
+});
+
+const colSlider = document.getElementById('col-range');
+const colSliderOutput = document.getElementById('col-slider-output');
+colSliderOutput.innerHTML = `${colSlider.value} * 36e5`;
+
+colSlider.addEventListener('input', () => {
+    colSliderOutput.innerHTML = `${colSlider.value} * 36e5`;
+    chart.series[0].update(
+        {
+            colsize: colSlider.value * 36e5
+        }
+    );
 });
 
 document.getElementById('interpolation-toggle').addEventListener('click', e => {
@@ -45,10 +52,10 @@ document.getElementById('data-toggle').addEventListener('click', e => {
         {
             data: e.target.checked ?
                 [
-                    { x: 13, y: 0, value: 1 },
+                    { x: 0, y: 0, value: 1 },
                     { x: 1, y: 1, value: 20 },
-                    { x: 2, y: 2, value: -28 },
-                    { x: 3, y: 3, value: 18 }
+                    { x: 2, y: 2, value: 12 },
+                    { x: 3, y: 3, value: 8 }
                 ] :
                 JSON.parse(document.getElementById('data').innerText)
         }
