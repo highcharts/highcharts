@@ -190,13 +190,13 @@ class MACDIndicator extends SMAIndicator {
      *
      * */
 
+    public currentLineZone?: string;
     public data: Array<MACDPoint> = void 0 as any;
+    public graphmacd?: SVGElement;
+    public graphsignal?: SVGElement;
+    public macdZones: MACDZonesOptions = void 0 as any;
     public options: MACDOptions = void 0 as any;
     public points: Array<MACDPoint> = void 0 as any;
-    public currentLineZone: (string|null) = void 0 as any;
-    public graphmacd: (SVGElement|undefined) = void 0 as any;
-    public graphsignal: (SVGElement|undefined) = void 0 as any;
-    public macdZones: MACDZonesOptions = void 0 as any;
     public signalZones: MACDZonesOptions = void 0 as any;
 
     /* *
@@ -363,7 +363,7 @@ class MACDIndicator extends SMAIndicator {
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.zones = histogramZones;
-        indicator.currentLineZone = null;
+        indicator.currentLineZone = void 0;
         // indicator.graph = null;
     }
 
