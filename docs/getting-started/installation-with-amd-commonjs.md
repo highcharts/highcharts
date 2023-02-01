@@ -1,4 +1,4 @@
-Installation with AMD and CommonJS modules
+Installation with AMD or CommonJS modules
 ==========================================
 
 ## AMD

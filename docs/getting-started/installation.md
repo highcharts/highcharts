@@ -42,7 +42,7 @@ Highcharts can be loaded using ECMAScript modules, both from the npm package and
 
 ### 5. Load Highcharts as an AMD or CommonJS module
 
-Highcharts is compatible with AMD module loaders such as RequireJS, and can also be loaded as CommonJS modules, for example with Node.js. More info can be found on [installation with AMD and CommonJS](https://highcharts.com/docs/getting-started/installation-with-amd-commonjs).
+Highcharts is compatible with AMD module loaders such as RequireJS, and can also be loaded as CommonJS modules, for example with Node.js. More info can be found on [installation with AMD or CommonJS](https://highcharts.com/docs/getting-started/installation-with-amd-commonjs).
 
 
 ## Loading Highcharts Stock, Highcharts Maps and Highcharts Gantt

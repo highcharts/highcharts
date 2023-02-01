@@ -1,4 +1,4 @@
-Highcharts JS is a JavaScript charting library based on SVG and WebGL/canvas.
+Highcharts JS is a JavaScript charting library based on SVG and WebGL/Canvas.
 
 * Official website: [www.highcharts.com](http://www.highcharts.com)
 * Download page: [www.highcharts.com/download](http://www.highcharts.com/download)
