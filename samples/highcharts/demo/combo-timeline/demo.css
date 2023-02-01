@@ -44,3 +44,168 @@
 .highcharts-data-table tr:hover {
     background: #f1f7ff;
 }
+
+#container .highcharts-axis-title {
+    font-weight: 700;
+    fill: #46465c !important;
+}
+
+#container .highcharts-axis-labels text {
+    fill: #46465c !important;
+    font-size: 14px;
+}
+
+#container .highcharts-yaxis {
+    visibility: hidden;
+}
+
+#container .highcharts-yaxis-labels text:last-of-type {
+    opacity: 0;
+}
+
+#container .highcharts-plot-band-label:nth-of-type(1) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    border: 0 solid #000;
+    width: 20px;
+}
+
+#container .time-2 {
+    fill: #d9dbf8;
+    fill-opacity: 1;
+}
+
+#container .time-3 {
+    fill: #fffaf0;
+    fill-opacity: 1;
+}
+
+#container .time-4 {
+    fill: #dff9e7;
+    fill-opacity: 1;
+}
+
+#container .revenue,
+#container .revenue .highcharts-area {
+    fill: rgb(102 153 161);
+    stroke: rgb(102 153 161);
+    fill-opacity: 0.2;
+    stroke-width: 1px;
+}
+
+#container .employees,
+#container .employees .highcharts-area {
+    fill: #5749ad;
+    stroke: #5749ad;
+    fill-opacity: 0.2;
+    stroke-width: 1px;
+}
+
+#container .highcharts-legend-item.revenue,
+#container .highcharts-legend-item.employees {
+    fill-opacity: 1;
+}
+
+#container .award .highcharts-label {
+    color: #fff;
+}
+
+#container .highcharts-label span {
+    transform: translateY(-3px);
+}
+
+#container .highcharts-markers.product {
+    transform: none;
+}
+
+#container .highcharts-markers.highcharts-series-3.product .highcharts-label:nth-of-type(4) .highcharts-label-box,
+#container .highcharts-markers.highcharts-series-3.product .highcharts-label:nth-of-type(10) .highcharts-label-box,
+#container .highcharts-markers.highcharts-series-2.product .highcharts-label .highcharts-label-box,
+#container .highcharts-markers.highcharts-series-6.product .highcharts-label .highcharts-label-box {
+    transform: translate(-46px, -88px);
+}
+
+#container .highcharts-flags-series.cloud .highcharts-point text,
+#container .highcharts-flags-series.product .highcharts-point text,
+#container .highcharts-flags-series.maps .highcharts-point text,
+#container .highcharts-flags-series.stock .highcharts-point text,
+#container .highcharts-flags-series.award .highcharts-point text {
+    fill: #fff;
+}
+
+#container .highcharts-flags-series.maps,
+#container .highcharts-flags-series.product {
+    clip-path: none !important;
+}
+
+#container .highcharts-flags-series.product .highcharts-label text {
+    transform: translate(0, -6px);
+}
+
+#container .highcharts-flags-series.maps .highcharts-label text,
+#container .highcharts-flags-series.cloud .highcharts-label text {
+    transform: translate(0, -24px);
+}
+
+#container .highcharts-flags-series.award .highcharts-label text {
+    transform: translate(21px, -4px);
+}
+
+#container .highcharts-flags-series.product .highcharts-label:nth-of-type(4) text {
+    transform: translate(0, -62px);
+}
+
+#container .highcharts-flags-series.product .highcharts-label:nth-of-type(4) image {
+    transform: translate(-40.5px, -87px);
+}
+
+#container .highcharts-series-2.product .highcharts-label:nth-of-type(1) text,
+#container .highcharts-series-3.product .highcharts-label:nth-of-type(4) text,
+#container .highcharts-series-3.product .highcharts-label:nth-of-type(10) text,
+#container .highcharts-series-6.product .highcharts-label:nth-of-type(1) text {
+    transform: translate(-2px, -62px);
+}
+
+#container .award.highcharts-flags-series .highcharts-point .highcharts-label-box {
+    transition: fill 250ms;
+}
+
+#container .award p {
+    margin-left: 50%;
+}
+
+#container .award p.wide {
+    margin-left: 40%;
+}
+
+.tip .tip-box {
+    fill: #46465c;
+    stroke: transparent;
+    color: #f0f0f0;
+    max-width: 200px;
+}
+
+.highcharts-tooltip-box {
+    stroke-width: 1px;
+    fill: #46465c;
+    stroke: #46465c;
+    fill-opacity: 1;
+}
+
+.highcharts-tooltip text,
+.highcharts-tooltip tspan {
+    fill: #f0f0f0 !important;
+    color: #f0f0f0 !important;
+    white-space: normal;
+}
+
+@media screen  and (min-width: 530px) {
+    #container .highcharts-markers.product {
+        transform: translate(10px, 51px);
+    }
+
+    #container .highcharts-yaxis {
+        visibility: visible;
+    }
+}

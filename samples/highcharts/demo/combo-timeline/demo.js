@@ -9,8 +9,8 @@
  */
 function onChartLoad() {
 
-    var centerX = 140,
-        centerY = 110,
+    var centerX = 120,
+        centerY = 200,
         path = [],
         angle,
         radius,
@@ -20,6 +20,7 @@ function onChartLoad() {
         spike,
         empImage,
         big5,
+        littleYears,
         label,
         left,
         right,
@@ -32,7 +33,7 @@ function onChartLoad() {
 
     // Draw the spiked disc
     for (angle = 0; angle < 2 * Math.PI; angle += Math.PI / 24) {
-        radius = spike ? 80 : 70;
+        radius = spike ? 70 : 60;
         path.push(
             'L',
             centerX + radius * Math.cos(angle),
@@ -66,18 +67,37 @@ function onChartLoad() {
         })
         .css({
             color: 'white',
-            fontSize: '100px',
-            fontStyle: 'italic',
-            fontFamily: '\'Brush Script MT\', sans-serif'
+            fontSize: '60px',
+            fontStyle: 'none',
+            fontWeight: 'bold',
+            fontFamily: '\'Arial\', sans-serif'
         })
         .add();
     big5.attr({
         x: centerX - big5.getBBox().width / 2,
-        y: centerY + 14
+        y: centerY - 5
+    });
+
+    // little year
+    littleYears = this.renderer.text('years')
+        .attr({
+            zIndex: 6
+        })
+        .css({
+            color: 'white',
+            fontSize: '22px',
+            fontStyle: 'none',
+            fontWeight: 'normal',
+            fontFamily: '\'Brush Script MT\', sans-serif'
+        })
+        .add();
+    littleYears.attr({
+        x: centerX - littleYears.getBBox().width / 2,
+        y: centerY + 10
     });
 
     // Draw the label
-    label = this.renderer.text('Highcharts Anniversary')
+    label = this.renderer.text('Highcharts')
         .attr({
             zIndex: 6
         })
@@ -91,47 +111,47 @@ function onChartLoad() {
 
     label.attr({
         x: left,
-        y: centerY + 44
+        y: centerY + 28
     });
 
     // The band
     left = centerX - 90;
-    right = centerX + 90;
-    this.renderer
-        .path([
-            'M', left, centerY + 30,
-            'L', right, centerY + 30,
-            right, centerY + 50,
-            left, centerY + 50,
-            'z',
-            'M', left, centerY + 40,
-            'L', left - 20, centerY + 40,
-            left - 10, centerY + 50,
-            left - 20, centerY + 60,
-            left + 10, centerY + 60,
-            left, centerY + 50,
-            left + 10, centerY + 60,
-            left + 10, centerY + 50,
-            left, centerY + 50,
-            'z',
-            'M', right, centerY + 40,
-            'L', right + 20, centerY + 40,
-            right + 10, centerY + 50,
-            right + 20, centerY + 60,
-            right - 10, centerY + 60,
-            right, centerY + 50,
-            right - 10, centerY + 60,
-            right - 10, centerY + 50,
-            right, centerY + 50,
-            'z'
-        ])
-        .attr({
-            fill: badgeColor,
-            stroke: '#FFFFFF',
-            'stroke-width': 1,
-            zIndex: 5
-        })
-        .add();
+    // right = centerX + 90;
+    // this.renderer
+    //     .path([
+    //         'M', left, centerY + 30,
+    //         'L', right, centerY + 30,
+    //         right, centerY + 50,
+    //         left, centerY + 50,
+    //         'z',
+    //         'M', left, centerY + 40,
+    //         'L', left - 20, centerY + 40,
+    //         left - 10, centerY + 50,
+    //         left - 20, centerY + 60,
+    //         left + 10, centerY + 60,
+    //         left, centerY + 50,
+    //         left + 10, centerY + 60,
+    //         left + 10, centerY + 50,
+    //         left, centerY + 50,
+    //         'z',
+    //         'M', right, centerY + 40,
+    //         'L', right + 20, centerY + 40,
+    //         right + 10, centerY + 50,
+    //         right + 20, centerY + 60,
+    //         right - 10, centerY + 60,
+    //         right, centerY + 50,
+    //         right - 10, centerY + 60,
+    //         right - 10, centerY + 50,
+    //         right, centerY + 50,
+    //         'z'
+    //     ])
+    //     .attr({
+    //         fill: badgeColor,
+    //         stroke: '#FFFFFF',
+    //         'stroke-width': 1,
+    //         zIndex: 5
+    //     })
+    //     .add();
 
     // 2009-2014
     years = this.renderer.text('2009-2014')
@@ -146,7 +166,7 @@ function onChartLoad() {
         .add();
     years.attr({
         x: centerX - years.getBBox().width / 2,
-        y: centerY + 62
+        y: centerY + 42
     });
 
     // Prepare mouseover
@@ -184,12 +204,19 @@ function onChartLoad() {
     }
 }
 
+const imgPath = 'https://cdn.rawgit.com/highcharts/highcharts/0b81a74ecd2fbd2e9b24489bf476f8baecc218e1/samples/graphics/homepage/';
+
 const options = {
     chart: {
         events: {
             load: onChartLoad
+        },
+        scrollablePlotArea: {
+            minWidth: 700,
+            scrollPositionX: 0
         }
     },
+    colors: ['#46465c', '#6699a1', '#5749ad'],
     xAxis: {
         type: 'datetime',
         minTickInterval: 365 * 24 * 36e5,
@@ -199,33 +226,33 @@ const options = {
         plotBands: [{
             from: Date.UTC(2009, 10, 27),
             to: Date.UTC(2010, 11, 1),
-            color: '#EFFFFF',
+            className: 'time-1',
             label: {
                 text: '<em>Offices:</em><br> Torstein\'s basement',
                 style: {
-                    color: '#999999'
+                    color: '#46465c'
                 },
-                y: 180
+                y: 30
             }
         }, {
             from: Date.UTC(2010, 11, 1),
             to: Date.UTC(2013, 9, 1),
-            color: '#FFFFEF',
+            className: 'time-2',
             label: {
                 text: '<em>Offices:</em><br> Tomtebu',
                 style: {
-                    color: '#999999'
+                    color: '#46465c'
                 },
                 y: 30
             }
         }, {
             from: Date.UTC(2013, 9, 1),
             to: Date.UTC(2014, 10, 27),
-            color: '#FFEFFF',
+            className: 'time-3',
             label: {
                 text: '<em>Offices:</em><br> VikØrsta',
                 style: {
-                    color: '#999999'
+                    color: '#46465c'
                 },
                 y: 30
             }
@@ -243,7 +270,8 @@ const options = {
     },
     tooltip: {
         style: {
-            width: '250px'
+            width: '250px',
+            color: '#f0f0f0'
         }
     },
     yAxis: [{
@@ -279,7 +307,7 @@ const options = {
                 symbol: 'circle',
                 radius: 2
             },
-            fillOpacity: 0.5
+            fillOpacity: 0.2
         },
         flags: {
             tooltip: {
@@ -366,7 +394,7 @@ const options = {
     }, {
         name: 'Revenue',
         id: 'revenue',
-        type: 'area',
+        type: 'areaspline',
         data: [
             [1257033600000, 2],
             [1259625600000, 3],
@@ -470,19 +498,21 @@ if (Highcharts.Series.types.flags) {
     options.series.push({
         type: 'flags',
         name: 'Cloud',
+        className: 'cloud',
         color: '#333333',
-        shape: 'squarepin',
-        y: -80,
+        shape: 'url(' + imgPath + 'product.png)',
+        y: -45,
         data: [
-            { x: Date.UTC(2014, 4, 1), text: 'Highcharts Cloud Beta', title: 'Cloud', shape: 'squarepin' }
+            { x: Date.UTC(2014, 4, 1), text: 'Highcharts Cloud Beta', title: 'Cloud' }
         ],
         showInLegend: false
     }, {
         type: 'flags',
         name: 'Highmaps',
-        color: '#333333',
-        shape: 'squarepin',
-        y: -55,
+        className: 'maps',
+        color: '#fff',
+        shape: 'url(' + imgPath + 'product.png)',
+        y: -66,
         data: [
             { x: Date.UTC(2014, 5, 13), text: 'Highmaps version 1.0 released', title: 'Maps' }
         ],
@@ -490,13 +520,14 @@ if (Highcharts.Series.types.flags) {
     }, {
         type: 'flags',
         name: 'Highcharts',
+        className: 'product',
         color: '#333333',
-        shape: 'circlepin',
+        shape: 'url(' + imgPath + 'version.png)',
         data: [
             { x: Date.UTC(2009, 10, 27), text: 'Highcharts version 1.0 released', title: '1.0' },
             { x: Date.UTC(2010, 6, 13), text: 'Ported from canvas to SVG rendering', title: '2.0' },
             { x: Date.UTC(2010, 10, 23), text: 'Dynamically resize and scale to text labels', title: '2.1' },
-            { x: Date.UTC(2011, 9, 18), text: 'Highcharts Stock version 1.0 released', title: 'Stock', shape: 'squarepin' },
+            { x: Date.UTC(2011, 9, 18), text: 'Highcharts Stock version 1.0 released', title: 'Stock',  shape: 'url(' + imgPath + 'product.png)' },
             { x: Date.UTC(2012, 7, 24), text: 'Gauges, polar charts and range series', title: '2.3' },
             { x: Date.UTC(2013, 2, 22), text: 'Multitouch support, more series types', title: '3.0' },
             { x: Date.UTC(2014, 3, 22), text: '3D charts, heatmaps', title: '4.0' }
@@ -505,8 +536,8 @@ if (Highcharts.Series.types.flags) {
     }, {
         type: 'flags',
         name: 'Events',
-        color: '#333333',
-        fillColor: 'rgba(255,255,255,0.8)',
+        className: 'award',
+        shape: 'url(' + imgPath + 'award.png)',
         data: [
             { x: Date.UTC(2012, 10, 1), text: 'Highsoft won "Entrepeneur of the Year" in Sogn og Fjordane, Norway', title: 'Award' },
             { x: Date.UTC(2012, 11, 25), text: 'Packt Publishing published <em>Learning Highcharts by Example</em>. Since then, many other books are written about Highcharts.', title: 'First book' },
