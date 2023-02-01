@@ -36,7 +36,6 @@ async function setupDashboard() {
     citiesData = await buildCitiesData();
     buildSymbols();
 
-    const cityData = await buildCityData(initialMin, initialMin + maxRange);
     const cityStore = await dataPool.getStore(cityScope);
     const map = await fetch(
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
@@ -340,7 +339,6 @@ async function setupDashboard() {
                 series: [{
                     type: 'spline',
                     name: defaultCity,
-                    // data: cityData,
                     animation: false,
                     animationLimit: 0,
                     events: {
