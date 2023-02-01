@@ -58,7 +58,7 @@ describe('Add component through UI', () => {
     it('should be able to add a chart component and resize it', function() {
         grabComponent('chart');
         dropComponent('#dashboard-col-0')
-        hideSidebar(); // Hide sidebar to avoid interference with the next test.
+        cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
         cy.dashboard().then((dashboard) => {
             assert.equal(
                 dashboard.layouts[0].rows[0].cells.length,
@@ -79,7 +79,7 @@ describe('Add component through UI', () => {
     it('DataGrid component should be added.', function() {
         grabComponent('datagrid');
         dropComponent('#dashboard-col-0')
-        hideSidebar(); // Hide sidebar to avoid interference with the next test.
+        cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
         cy.dashboard().then((dashboard) => {
             assert.equal(
                 dashboard.layouts[0].rows[0].cells.length,
