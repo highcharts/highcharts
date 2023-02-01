@@ -19,6 +19,7 @@ import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type Serializable from '../Serializable';
 import type KPIComponent from '../Component/KPIComponent';
+import type DataStore from '../../Data/Stores/DataStore';
 
 import Cell from '../Layout/Cell.js';
 import Component from '../Component/Component.js';
@@ -27,6 +28,7 @@ import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridCompone
 import Layout from '../Layout/Layout.js';
 import Row from '../Layout/Row.js';
 import Globals from '../Globals.js';
+import DataTable from '../../Data/DataTable';
 import U from '../../Core/Utilities.js';
 const {
     fireEvent,
