@@ -632,6 +632,8 @@ class ColumnSeries extends Series {
                     [barX, barY, barW, barH]
             );
         });
+
+        fireEvent(this, 'afterColumnTranslate');
     }
 
     /**

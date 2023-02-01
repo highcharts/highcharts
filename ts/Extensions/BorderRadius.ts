@@ -12,17 +12,20 @@
 
 'use strict';
 
-import type ColumnSeries from '../Series/Column/ColumnSeries.js';
-
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const { seriesTypes } = SeriesRegistry;
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
+
 import U from '../Core/Utilities.js';
 
 const {
+    addEvent,
     isObject,
     merge,
-    relativeLength,
-    wrap
+    relativeLength
 } = U;
 
 export interface BorderRadiusOptions {
@@ -46,12 +49,7 @@ const optionsToObject = (
     return merge(defaultOptions, options);
 };
 
-wrap(seriesTypes.column.prototype, 'translate', function (
-    this: ColumnSeries,
-    proceed
-): void {
-    proceed.call(this);
-
+addEvent(ColumnSeries, 'afterColumnTranslate', function (): void {
     const yAxis = this.yAxis,
         borderRadius = optionsToObject(this.options.borderRadius),
         reversed = yAxis.options.reversed;
