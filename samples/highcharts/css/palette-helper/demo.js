@@ -17,9 +17,11 @@ const generate = () => {
         highlightPreview = document.getElementById('highlight-preview');
     document.body.style.backgroundColor = backgroundColor;
     document.body.style.color = neutralColor100;
-    [...document.querySelectorAll('pre,a')].forEach(element => {
-        element.style.color = highlightColor100;
-    });
+    [...document.querySelectorAll('.demo-content pre,.demo-content a')].forEach(
+        element => {
+            element.style.color = highlightColor100;
+        }
+    );
 
     pre.innerText = '';
 
