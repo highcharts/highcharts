@@ -21,24 +21,23 @@
     /* UI colors */
     --highcharts-background-color: #333;
 
-    /* Neutral */
-    --highcharts-neutral-hue: 0deg;
-    --highcharts-neutral-saturation: 0%;
-    --highcharts-neutral-color-100: hsl(var(--highcharts-neutral-hue) var(--highcharts-neutral-saturation) 100%);
-    --highcharts-neutral-color-80: hsl(var(--highcharts-neutral-hue) var(--highcharts-neutral-saturation) 84%);
-    --highcharts-neutral-color-60: hsl(var(--highcharts-neutral-hue) var(--highcharts-neutral-saturation) 68%);
-    --highcharts-neutral-color-40: hsl(var(--highcharts-neutral-hue) var(--highcharts-neutral-saturation) 52%);
-    --highcharts-neutral-color-20: hsl(var(--highcharts-neutral-hue) var(--highcharts-neutral-saturation) 36%);
-    --highcharts-neutral-color-10: hsl(var(--highcharts-neutral-hue) var(--highcharts-neutral-saturation) 28%);
-    --highcharts-neutral-color-5: hsl(var(--highcharts-neutral-hue) var(--highcharts-neutral-saturation) 24%);
-    --highcharts-neutral-color-3: hsl(var(--highcharts-neutral-hue) var(--highcharts-neutral-saturation) 22%);
+    /*
+        Neutral color variations
+        https://www.highcharts.com/samples/highcharts/css/palette-helper
+    */
+    --highcharts-neutral-color-100: rgb(255, 255, 255);
+    --highcharts-neutral-color-80: rgb(214, 214, 214);
+    --highcharts-neutral-color-60: rgb(173, 173, 173);
+    --highcharts-neutral-color-40: rgb(133, 133, 133);
+    --highcharts-neutral-color-20: rgb(92, 92, 92);
+    --highcharts-neutral-color-10: rgb(71, 71, 71);
+    --highcharts-neutral-color-5: rgb(61, 61, 61);
+    --highcharts-neutral-color-3: rgb(57, 57, 57);
 
-    /* Highlight */
-    --highcharts-highlight-hue: 200deg;
-    --highcharts-highlight-saturation: 100%;
-    --highcharts-highlight-color-100: hsl(var(--highcharts-highlight-hue) var(--highcharts-highlight-saturation) 80%);
-    --highcharts-highlight-color-80: hsl(var(--highcharts-highlight-hue) var(--highcharts-highlight-saturation) 64%);
-    --highcharts-highlight-color-60: hsl(var(--highcharts-highlight-hue) var(--highcharts-highlight-saturation) 48%);
-    --highcharts-highlight-color-20: hsl(var(--highcharts-highlight-hue) var(--highcharts-highlight-saturation) 16%);
-    --highcharts-highlight-color-10: hsl(var(--highcharts-highlight-hue) var(--highcharts-highlight-saturation) 8%);
+    /* Highlight color variations */
+    --highcharts-highlight-color-100: rgb(122, 167, 255);
+    --highcharts-highlight-color-80: rgb(108, 144, 214);
+    --highcharts-highlight-color-60: rgb(94, 121, 173);
+    --highcharts-highlight-color-20: rgb(65, 74, 92);
+    --highcharts-highlight-color-10: rgb(58, 63, 71);
 }

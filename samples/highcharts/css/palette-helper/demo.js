@@ -35,7 +35,7 @@ const generate = () => {
             backgroundColorObj,
             (100 - weight) / 100
         );
-        pre.innerText += `--highcharts-neutral-color-${weight} = ${color};\n`;
+        pre.innerText += `--highcharts-neutral-color-${weight}: ${color};\n`;
 
         let preview = document.getElementById(`neutral-preview-${weight}`);
         if (!preview) {
@@ -58,7 +58,7 @@ const generate = () => {
             backgroundColorObj,
             (100 - weight) / 100
         );
-        pre.innerText += `--highcharts-highlight-color-${weight} = ${color};\n`;
+        pre.innerText += `--highcharts-highlight-color-${weight}: ${color};\n`;
 
         let preview = document.getElementById(`highlight-preview-${weight}`);
         if (!preview) {
