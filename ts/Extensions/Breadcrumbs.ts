@@ -28,7 +28,6 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import BreadcrumbsDefaults from './Breadcrumbs/BreadcrumbsDefaults.js';
 import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/Defaults.js';
-const { defaultOptions } = D;
 import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
@@ -73,51 +72,123 @@ declare global {
         interface DrilldownOptions {
             breadcrumbs?: BreadcrumbsOptions;
         }
-        class Breadcrumbs {
-            public constructor(
-                chart: Chart,
-                userOptions?: DeepPartial<BreadcrumbsOptions>
+    }
+}
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedMembers: Array<unknown> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Shift the drillUpButton to make the space for resetZoomButton, #8095.
+ * @private
+ */
+function onChartAfterShowResetZoom(
+    this: Chart
+): void {
+    const chart = this;
+    if (chart.breadcrumbs) {
+        const bbox = chart.resetZoomButton &&
+            chart.resetZoomButton.getBBox(),
+            breadcrumbsOptions = chart.breadcrumbs.options;
+
+        if (
+            bbox &&
+            breadcrumbsOptions.position.align === 'right' &&
+            breadcrumbsOptions.relativeTo === 'plotBox'
+        ) {
+            chart.breadcrumbs.alignBreadcrumbsGroup(
+                -bbox.width - breadcrumbsOptions.buttonSpacing
             );
-            chart: Chart;
-            level: number;
-            isDirty: boolean;
-            yOffset?: number;
-            getLevel(
-                this: Breadcrumbs
-            ): number;
-            setList(
-                this: Breadcrumbs,
-                list: Array<BreadcrumbOptions>
-            ): void;
-            setLevel(
-                this: Breadcrumbs,
-            ): void;
-            updateProperties(
-                this: Breadcrumbs,
-                list: Array<BreadcrumbOptions>
-            ): void;
         }
     }
 }
 
-// Add language support.
-extend(
-    defaultOptions.lang,
-    /**
-     * @optionparent lang
-     *
-     * @private
-     */
-    {
-        /**
-         * @since 10.0.0
-         * @product  highcharts
-         *
-         * @private
-         */
-        mainBreadcrumb: 'Main'
+/**
+ * Remove resize/afterSetExtremes at chart destroy.
+ * @private
+ */
+function onChartDestroy(
+    this: Chart
+): void {
+    if (this.breadcrumbs) {
+        this.breadcrumbs.destroy();
+        this.breadcrumbs = void 0 as Breadcrumbs|undefined;
     }
-);
+}
+
+/**
+ * Logic for making space for the buttons above the plot area
+ * @private
+ */
+function onChartGetMargins(
+    this: Chart
+): void {
+    const breadcrumbs = this.breadcrumbs;
+
+    if (
+        breadcrumbs &&
+        !breadcrumbs.options.floating &&
+        breadcrumbs.level
+    ) {
+        const breadcrumbsOptions = breadcrumbs.options,
+            buttonTheme = breadcrumbsOptions.buttonTheme,
+            breadcrumbsHeight = (
+                (buttonTheme.height || 0) +
+                2 * (buttonTheme.padding || 0) +
+                breadcrumbsOptions.buttonSpacing
+            ),
+            verticalAlign = breadcrumbsOptions.position.verticalAlign;
+
+        if (verticalAlign === 'bottom') {
+            this.marginBottom = (
+                this.marginBottom || 0
+            ) + breadcrumbsHeight;
+            breadcrumbs.yOffset = breadcrumbsHeight;
+        } else if (verticalAlign !== 'middle') {
+            this.plotTop += breadcrumbsHeight;
+            breadcrumbs.yOffset = -breadcrumbsHeight;
+        } else {
+            breadcrumbs.yOffset = void 0;
+        }
+    }
+}
+
+/**
+ * @private
+ */
+function onChartRedraw(
+    this: Chart
+): void {
+    this.breadcrumbs && this.breadcrumbs.redraw();
+}
+
+/**
+ * After zooming out, shift the drillUpButton to the previous position, #8095.
+ * @private
+ */
+function onChartSelection(
+    this: Chart,
+    event: any
+): void {
+    if (
+        event.resetSelection === true &&
+        this.breadcrumbs
+    ) {
+        this.breadcrumbs.alignBreadcrumbsGroup();
+    }
+}
 
 /* *
  *
@@ -145,7 +216,37 @@ class Breadcrumbs {
      *
      * */
 
-    public static defaultOptions = BreadcrumbsDefaults;
+    public static defaultOptions = BreadcrumbsDefaults.options;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    public static compose(
+        ChartClass: typeof Chart,
+        highchartsDefaultOptions: typeof D.defaultOptions
+    ): void {
+        if (composedMembers.indexOf(ChartClass) === -1) {
+            composedMembers.push(ChartClass);
+
+            addEvent(Chart, 'destroy', onChartDestroy);
+            addEvent(Chart, 'afterShowResetZoom', onChartAfterShowResetZoom);
+            addEvent(Chart, 'getMargins', onChartGetMargins);
+            addEvent(Chart, 'redraw', onChartRedraw);
+            addEvent(Chart, 'selection', onChartSelection);
+        }
+        if (composedMembers.indexOf(highchartsDefaultOptions) === -1) {
+            composedMembers.push(highchartsDefaultOptions);
+
+            // Add language support.
+            extend(
+                highchartsDefaultOptions.lang,
+                BreadcrumbsDefaults.lang
+            );
+        }
+    }
 
     /* *
      *
@@ -818,88 +919,6 @@ class Breadcrumbs {
             }
         });
     }
-}
-
-/* eslint-disable no-invalid-this */
-
-if (!H.Breadcrumbs) {
-    H.Breadcrumbs = Breadcrumbs as typeof Breadcrumbs;
-
-    // Logic for making space for the buttons above the plot area
-    addEvent(Chart, 'getMargins', function (): void {
-        const breadcrumbs = this.breadcrumbs;
-
-        if (
-            breadcrumbs &&
-            !breadcrumbs.options.floating &&
-            breadcrumbs.level
-        ) {
-            const breadcrumbsOptions = breadcrumbs.options,
-                buttonTheme = breadcrumbsOptions.buttonTheme,
-                breadcrumbsHeight = (
-                    (buttonTheme.height || 0) +
-                    2 * (buttonTheme.padding || 0) +
-                    breadcrumbsOptions.buttonSpacing
-                ),
-                verticalAlign = breadcrumbsOptions.position.verticalAlign;
-
-            if (verticalAlign === 'bottom') {
-                this.marginBottom = (
-                    this.marginBottom || 0
-                ) + breadcrumbsHeight;
-                breadcrumbs.yOffset = breadcrumbsHeight;
-            } else if (verticalAlign !== 'middle') {
-                this.plotTop += breadcrumbsHeight;
-                breadcrumbs.yOffset = -breadcrumbsHeight;
-            } else {
-                breadcrumbs.yOffset = void 0;
-            }
-        }
-    });
-
-    addEvent(Chart, 'redraw', function (): void {
-        this.breadcrumbs && this.breadcrumbs.redraw();
-    });
-
-    // Remove resize/afterSetExtremes at chart destroy
-    addEvent(Chart, 'destroy', function destroyEvents(): void {
-        if (this.breadcrumbs) {
-            this.breadcrumbs.destroy();
-            this.breadcrumbs = void 0 as Breadcrumbs|undefined;
-        }
-    });
-
-    // Shift the drillUpButton to make the space for resetZoomButton, #8095.
-    addEvent(Chart, 'afterShowResetZoom', function (): void {
-        const chart = this;
-        if (chart.breadcrumbs) {
-            const bbox = chart.resetZoomButton &&
-                chart.resetZoomButton.getBBox(),
-                breadcrumbsOptions = chart.breadcrumbs.options;
-
-            if (
-                bbox &&
-                breadcrumbsOptions.position.align === 'right' &&
-                breadcrumbsOptions.relativeTo === 'plotBox'
-            ) {
-                chart.breadcrumbs.alignBreadcrumbsGroup(
-                    -bbox.width - breadcrumbsOptions.buttonSpacing
-                );
-            }
-        }
-    });
-
-    // After zooming out, shift the drillUpButton
-    // to the previous position, #8095.
-    addEvent(Chart, 'selection', function (event: any): void {
-        if (
-            event.resetSelection === true &&
-            this.breadcrumbs
-        ) {
-            this.breadcrumbs.alignBreadcrumbsGroup();
-        }
-    });
-
 }
 
 /* *

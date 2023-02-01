@@ -14,3 +14,4 @@ import '../../Series/Treemap/TreemapSeries.js';
 import Breadcrumbs from '../../Extensions/Breadcrumbs.js';
 const G: AnyRecord = Highcharts;
 G.Breadcrumbs = Breadcrumbs;
+Breadcrumbs.compose(G.Chart, G.defaultOptions);
