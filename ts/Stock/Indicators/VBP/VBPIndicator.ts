@@ -535,10 +535,10 @@ class VBPIndicator extends SMAIndicator {
             xData: Array<number> = [],
             yData: Array<number> = [],
             isOHLC: boolean,
+            priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject>,
             volumeSeries: LineSeries = (
-                chart.get(params.volumeSeriesID as any) as any
-            ),
-            priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject>;
+                chart.get(params.volumeSeriesID) as LineSeries
+            );
 
         // Checks if base series exists
         if (!series.chart) {
@@ -552,7 +552,7 @@ class VBPIndicator extends SMAIndicator {
         }
 
         // Checks if volume series exists and if it has data
-        if (!volumeSeries || !volumeSeries.data.length) {
+        if (!(volumeSeries && volumeSeries.data && volumeSeries.data.length)) {
             const errorMessage = volumeSeries && !volumeSeries.data.length ?
                 ' does not contain any data.' :
                 ' not found! Check `volumeSeriesID`.';
