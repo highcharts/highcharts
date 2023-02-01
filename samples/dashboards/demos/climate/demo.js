@@ -315,6 +315,19 @@ async function setupDashboard() {
             sync: {
                 tooltip: true
             },
+            tableAxisMap: {
+                time: null,
+                FD: null,
+                ID: null,
+                RR1: null,
+                TN: null,
+                TX: null,
+                TNC: null,
+                TNF: null,
+                TXC: null,
+                TXF: null,
+                Date: null
+            },
             chartOptions: {
                 chart: {
                     spacing: [40, 40, 40, 10],
@@ -327,7 +340,7 @@ async function setupDashboard() {
                 series: [{
                     type: 'spline',
                     name: defaultCity,
-                    data: cityData,
+                    // data: cityData,
                     animation: false,
                     animationLimit: 0,
                     events: {
