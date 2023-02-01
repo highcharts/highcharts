@@ -60,9 +60,35 @@ QUnit.test('Marker should not move after hover(#4586)', function (assert) {
 });
 
 QUnit.test('Marker size and position', function (assert) {
-    var series = Highcharts.chart('container', {
+    let onlyOnce = true,
+        now = false;
+
+    const series = Highcharts.chart('container', {
         chart: {
-            animation: false
+            animation: false,
+            events: {
+                render() {
+                    if (onlyOnce && now) {
+                        onlyOnce = false;
+                        this.series[0].update({
+                            marker: {
+                                width: 45,
+                                height: 45
+                            }
+                        });
+
+                        assert.deepEqual(
+                            [
+                                this.series[0].points[0].graphic.attr('width'),
+                                this.series[0].points[0].graphic.attr('height')
+                            ],
+                            [45, 45],
+                            `Markers should update their size on series update,
+                            if the size was NOT initially set.`
+                        );
+                    }
+                }
+            }
         },
         accessibility: {
             enabled: false // A11y forces markers
@@ -159,7 +185,8 @@ QUnit.test('Marker size and position', function (assert) {
     series.update({
         marker: {
             enabled: false,
-            symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+            symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)',
+            radius: void 0
         }
     });
 
@@ -184,11 +211,13 @@ QUnit.test('Marker size and position', function (assert) {
 
     series.update({
         marker: {
-            enabled: true,
-            width: 25,
-            height: 25
+            enabled: true
         }
     });
+
+    // Run test from chart.events.render, #18305
+    now = true;
+    series.chart.redraw();
 
     series.update({
         marker: {
@@ -203,9 +232,9 @@ QUnit.test('Marker size and position', function (assert) {
             series.points[0].graphic.attr('height')
         ],
         [50, 50],
-        'Markers should update their width and height on series update.'
+        `Markers should update their size on series update, if the size was
+        initially set.`
     );
-
 });
 
 QUnit.test('visibility', assert => {

@@ -258,7 +258,8 @@ namespace DataLabel {
                     )
                 );
 
-        if (visible && defined(plotX) && defined(plotY)) {
+        const pos = point.pos();
+        if (visible && pos) {
 
             if (rotation) {
                 dataLabel.attr({ align });
@@ -273,8 +274,8 @@ namespace DataLabel {
 
             // The alignment box is a singular point
             alignTo = extend({
-                x: inverted ? this.yAxis.len - plotY : plotX,
-                y: Math.round(inverted ? this.xAxis.len - plotX : plotY),
+                x: pos[0],
+                y: Math.round(pos[1]),
                 width: 0,
                 height: 0
             }, alignTo);
@@ -383,8 +384,8 @@ namespace DataLabel {
             // arrow pointing to thie point
             if (options.shape && !rotation) {
                 dataLabel[isNew ? 'attr' : 'animate']({
-                    anchorX: inverted ? chart.plotWidth - plotY : plotX,
-                    anchorY: inverted ? chart.plotHeight - plotX : plotY
+                    anchorX: pos[0],
+                    anchorY: pos[1]
                 });
             }
         }
@@ -470,8 +471,9 @@ namespace DataLabel {
             pointOptions: Array<DataLabelOptions&AnyRecord>,
             dataLabelsGroup: SVGElement;
 
-        const dataLabelAnim = (seriesDlOptions as any).animation,
-            animationConfig = (seriesDlOptions as any).defer ?
+        const firstDLOptions = splat(seriesDlOptions)[0],
+            dataLabelAnim = firstDLOptions.animation,
+            animationConfig = firstDLOptions.defer ?
                 getDeferredAnimation(chart, dataLabelAnim, series) :
                 { defer: 0, duration: 0 };
 

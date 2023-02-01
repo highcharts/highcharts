@@ -38,16 +38,7 @@ function getProperties() {
                 }
             });
         }
-
-        if (!properties['browserstack.username']) {
-            throw new Error();
-        }
-    } catch (e) {
-        throw new Error(
-            'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
-            'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
-        );
-    }
+    } catch (e) {}
     return properties;
 }
 
@@ -201,7 +192,9 @@ module.exports = function (config) {
     // Browsers
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
-        ['ChromeHeadless'];
+        // Use karma.defaultbrowser=FirefoxHeadless to bypass WebGL problems in
+        // Chrome 109
+        [getProperties()['karma.defaultbrowser'] || 'ChromeHeadless'];
     if (argv.oldie) {
         browsers = ['Win.IE8'];
     } else if (argv.browsers === 'all') {
@@ -209,7 +202,7 @@ module.exports = function (config) {
     }
 
     const browserCount = argv.browsercount || (Math.max(1, os.cpus().length - 2));
-    if (!argv.browsers && browserCount && !isNaN(browserCount)  && browserCount > 1) {
+    if (!argv.browsers && browserCount && !isNaN(browserCount) && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         frameworks = [...frameworks, 'sharding'];
         // create a duplicate of the added browsers ${numberOfInstances} times.
@@ -219,7 +212,7 @@ module.exports = function (config) {
             }
             return browserInstances;
         }, [])
-        : new Array(browserCount).fill('ChromeHeadless');
+        : new Array(browserCount).fill(browsers[0]);
     } else {
         if (argv.splitbrowsers) {
             browsers = argv.splitbrowsers.split(',');
@@ -321,6 +314,9 @@ module.exports = function (config) {
 
             // Custom data source
             'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
+            'samples/highcharts/blog/gdp-growth-annual/demo.js',
+            'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.js',
+            'samples/highcharts/blog//gdp-growth-multiple-request/demo.js',
 
             // Error #13, renders to other divs than #container. Sets global
             // options.
@@ -569,8 +565,16 @@ module.exports = function (config) {
         options.browserDisconnectTimeout = 30000; // default 2000
     }
 
-    if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
+    if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
         let properties = getProperties();
+
+        if (!properties['browserstack.username']) {
+            throw new Error(
+                'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
+                'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
+            );
+        }
+
         const randomString = Math.random().toString(36).substring(7);
 
         options.browserStack = {

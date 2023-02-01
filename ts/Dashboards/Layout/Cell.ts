@@ -14,8 +14,6 @@
  *
  * */
 
-/* eslint-disable */
-
 'use strict';
 
 import type CSSJSONObject from '../CSSJSONObject';
@@ -61,7 +59,7 @@ class Cell extends GUIElement {
                 row,
                 {
                     id: id,
-                    parentContainerId: row.container?.id ||
+                    parentContainerId: (row.container && row.container.id) ||
                         options.parentContainerId,
                     mountedComponentJSON: options.mountedComponentJSON,
                     style: options.style
@@ -126,7 +124,10 @@ class Cell extends GUIElement {
                 style: merge(
                     layoutOptions.style,
                     rowOptions.style,
-                    options.style
+                    options.style,
+                    {
+                        height: options.height
+                    }
                 )
             });
 
@@ -150,12 +151,13 @@ class Cell extends GUIElement {
             if (this.options.layout) {
                 const dashboard = this.row.layout.dashboard,
                     Layout = this.row.layout.constructor as typeof LayoutType;
+                const optionsGui = dashboard.options.gui;
 
                 this.nestedLayout = new Layout(
                     dashboard,
                     merge(
                         {},
-                        dashboard.options.gui?.layoutOptions,
+                        optionsGui && optionsGui.layoutOptions,
                         this.options.layout,
                         {
                             parentContainerId: options.id
@@ -203,7 +205,7 @@ class Cell extends GUIElement {
     /**
      * Cell highlight flag.
      */
-     public isHighlighted?: boolean;
+    public isHighlighted?: boolean;
 
     /**
      * Mount component from JSON.
@@ -215,6 +217,8 @@ class Cell extends GUIElement {
      * Cell container
      *
      * @return {boolean}
+     * Returns true, if the component created from JSON is mounted,
+     * otherwise false.
      */
     public mountComponentFromJSON(
         json: Component.JSON,
@@ -274,8 +278,9 @@ class Cell extends GUIElement {
             options: {
                 containerId: (cell.container as HTMLElement).id,
                 parentContainerId: rowContainerId,
-                mountedComponentJSON: cell.mountedComponent?.toJSON(),
-                style: cell.options.style,
+                mountedComponentJSON:
+                    cell.mountedComponent && cell.mountedComponent.toJSON(),
+                style: cell.options.style
             }
         };
     }
@@ -284,7 +289,7 @@ class Cell extends GUIElement {
         setVisible: boolean = true
     ): void {
         const cell = this,
-            row = cell.row
+            row = cell.row;
 
         super.changeVisibility(setVisible);
 
@@ -295,8 +300,8 @@ class Cell extends GUIElement {
             cell.row.show();
         }
 
-        setTimeout(() => {
-            fireEvent(row, 'cellChange', { row, cell })
+        setTimeout(():void => {
+            fireEvent(row, 'cellChange', { row, cell });
         }, 0);
     }
 
@@ -310,7 +315,9 @@ class Cell extends GUIElement {
         if (level <= cell.row.layout.level) {
             if (cell.row.layout.level === level) {
                 return cell;
-            } else if (cell.row.layout.level - 1 >= 0) {
+            }
+
+            if (cell.row.layout.level - 1 >= 0) {
                 parentCell = cell.row.layout.parentCell;
 
                 if (parentCell) {
@@ -338,7 +345,11 @@ class Cell extends GUIElement {
             if (Math.abs(cellOffset - parentCellOffset) < levelMaxGap) {
                 levels = [
                     ...levels,
-                    ...parentCell.getOverlappingLevels(align, levelMaxGap, parentCellOffset)
+                    ...parentCell.getOverlappingLevels(
+                        align,
+                        levelMaxGap,
+                        parentCellOffset
+                    )
                 ];
             }
         }
@@ -348,18 +359,27 @@ class Cell extends GUIElement {
 
     public reflow(
         dashContainerSize?: string
-    ) {
+    ):void {
         const cell = this,
-            cntSize = dashContainerSize || cell.row.layout.dashboard.getLayoutContainerSize(),
+            cntSize = dashContainerSize ||
+                cell.row.layout.dashboard.getLayoutContainerSize(),
             respoOptions = cell.options.responsive;
 
         let width;
 
         if (cell.container) {
-            if (respoOptions && respoOptions[cntSize] && respoOptions[cntSize].width) {
-                width = GUIElement.getPercentageWidth(respoOptions[cntSize].width);
+            if (
+                respoOptions &&
+                respoOptions[cntSize] &&
+                respoOptions[cntSize].width
+            ) {
+                width = GUIElement.getPercentageWidth(
+                    respoOptions[cntSize].width
+                );
             } else if (cell.options.width) {
-                width = GUIElement.getPercentageWidth(cell.options.width);
+                width = GUIElement.getPercentageWidth(
+                    cell.options.width
+                );
             }
 
             cell.setSize(width || 'auto');
@@ -400,7 +420,7 @@ class Cell extends GUIElement {
                     }
                 }
             }
-    
+
             // Call cellResize dashboard event.
             fireEvent(cell.row.layout.dashboard, 'cellResize', { cell: cell });
             fireEvent(cell.row, 'cellChange', { cell: cell, row: cell.row });
@@ -413,7 +433,8 @@ class Cell extends GUIElement {
         rwdMode?: string // small, medium, large
     ): void {
         const cell = this,
-            cntSize = rwdMode || cell.row.layout.dashboard.getLayoutContainerSize();
+            cntSize = rwdMode ||
+                cell.row.layout.dashboard.getLayoutContainerSize();
 
         if (!cell.options.responsive) {
             cell.options.responsive = {};
@@ -432,7 +453,9 @@ class Cell extends GUIElement {
 
         if (cell.container && editMode) {
             const cnt = cell.container,
-                isSet = cnt.classList.contains(EditGlobals.classNames.cellEditHighlight);
+                isSet = cnt.classList.contains(
+                    EditGlobals.classNames.cellEditHighlight
+                );
 
             if (!remove && !isSet) {
                 cnt.classList.add(EditGlobals.classNames.cellEditHighlight);
@@ -457,7 +480,7 @@ class Cell extends GUIElement {
         const cell = this;
 
         cell.row.layout.dashboard.mountedComponents.forEach(
-            mountedComponent => {
+            (mountedComponent):void => {
                 if (mountedComponent.cell.container) {
                     mountedComponent.cell.container.classList.remove(
                         Globals.classNames.cellActive
@@ -465,7 +488,7 @@ class Cell extends GUIElement {
                 }
             }
         );
-        
+
         // apply class
         if (cell.container) {
             cell.container.classList.add(

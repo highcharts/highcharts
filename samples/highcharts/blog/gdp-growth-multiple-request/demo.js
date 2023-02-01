@@ -1,9 +1,9 @@
 // Set up URL request
 
-var urlCountry = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank-country.json';
-var urlRegion = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank-region.json';
-var urlIncome = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank-income.json';
-var urlWorld = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/worldbank-indicator.json';
+var urlCountry = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-country.json';
+var urlRegion = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-region.json';
+var urlIncome = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-income.json';
+var urlWorld = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@22a6cc01/samples/data/worldbank-indicator.json';
 
 
 var date = [],

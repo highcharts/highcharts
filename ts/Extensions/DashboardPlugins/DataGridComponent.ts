@@ -207,10 +207,14 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
                     cells.forEach((cell: HTMLElement): void => {
                         if (cell.childElementCount > 0) {
                             const input =
-                                cell.childNodes[0] as HTMLInputElement;
+                                cell.childNodes[0] as HTMLInputElement,
+                                convertedInputValue =
+                                    typeof e.cellValue === 'string' ?
+                                        input.value :
+                                        +input.value;
 
                             if (cell.dataset.columnName === e.columnName &&
-                                +input.value === e.cellValue
+                                convertedInputValue === e.cellValue
                             ) {
                                 shouldUpdateTheGrid = false;
                             }

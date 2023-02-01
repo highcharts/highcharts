@@ -113,24 +113,13 @@ class APOIndicator extends EMAIndicator {
         series: TLinkedSeries,
         params: APOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let periods: Array<number> = (params.periods as number[]),
+        const periods: Array<number> = (params.periods as number[]),
             index: number = (params.index as number),
             // 0- date, 1- Absolute price oscillator
             APO: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            periodsOffset: number,
-            // Shorter Period EMA
-            SPE: (
-                IndicatorValuesObject<TLinkedSeries> |
-                undefined
-            ),
-            // Longer Period EMA
-            LPE: (
-                IndicatorValuesObject<TLinkedSeries> |
-                undefined
-            ),
-            oscillator: number,
+            yData: Array<number> = [];
+        let oscillator: number,
             i: number;
 
         // Check if periods are correct
@@ -142,22 +131,26 @@ class APOIndicator extends EMAIndicator {
             return;
         }
 
-        SPE = EMAIndicator.prototype.getValues.call(this, series, {
-            index: index,
-            period: periods[0]
-        }) as IndicatorValuesObject<TLinkedSeries>;
+        // Shorter Period EMA
+        const SPE: (IndicatorValuesObject<TLinkedSeries> | undefined) =
+            super.getValues.call(this, series, {
+                index: index,
+                period: periods[0]
+            }) as IndicatorValuesObject<TLinkedSeries>;
 
-        LPE = EMAIndicator.prototype.getValues.call(this, series, {
-            index: index,
-            period: periods[1]
-        }) as IndicatorValuesObject<TLinkedSeries>;
+        // Longer Period EMA
+        const LPE: (IndicatorValuesObject<TLinkedSeries> | undefined) =
+            super.getValues.call(this, series, {
+                index: index,
+                period: periods[1]
+            }) as IndicatorValuesObject<TLinkedSeries>;
 
         // Check if ema is calculated properly, if not skip
         if (!SPE || !LPE) {
             return;
         }
 
-        periodsOffset = periods[1] - periods[0];
+        const periodsOffset: number = periods[1] - periods[0];
 
         for (i = 0; i < LPE.yData.length; i++) {
             oscillator = (

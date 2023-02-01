@@ -85,6 +85,12 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
+            /**
+             * Whether to allow the component to edit the store to which it is
+             * attached.
+             * @default true
+             */
+            allowStoreUpdate: true,
             chartClassName: 'chart-container',
             chartID: 'chart-' + uniqueKey(),
             chartOptions: {
@@ -267,7 +273,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     private setupStoreUpdate(): void {
         const { store, chart } = this;
 
-        if (store && chart) {
+        if (store && chart && this.options.allowStoreUpdate) {
             chart.series.forEach((series): void => {
                 series.points.forEach((point): void => {
                     addEvent(point, 'drag', (): void => {
@@ -306,7 +312,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     }
 
     private updateSeries(): void {
-        // Heuristically create series from the store datatable
+        // Heuristically create series from the store dataTable
         if (this.chart && this.store) {
             this.presentationTable = this.presentationModifier ?
                 this.store.table.modified.clone() :
@@ -550,6 +556,7 @@ namespace HighchartsComponent {
     }>;
 
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
+        allowStoreUpdate?: boolean,
         chartConstructor: ConstructorType;
     }
 

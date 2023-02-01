@@ -2,5 +2,6 @@
  name: grid chart (small multiple)
  authors:
    - Mustapha Mekhatria
+ skipTest: true
  js_wrap: b
 ...

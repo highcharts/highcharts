@@ -32,6 +32,10 @@ Cypress.Commands.add('dashboard', () =>
     }))
 );
 
+Cypress.Commands.add('hideSidebar', () =>
+    cy.get('.hd-edit-sidebar-button-nav.hd-edit-close-btn').click()
+);
+
 Cypress.Commands.add('chart', () =>
     cy.window().then(win => new Cypress.Promise((resolve, reject) => {
         const H = win.Highcharts;

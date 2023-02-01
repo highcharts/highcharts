@@ -49,6 +49,14 @@ Run `gulp test` on the root to pre-check. Read more at
 Useful Tips for Setting Up Tests
 --------------------------------
 
+**Using data from `/samples/data`***
+If you have a large data set, it is better to put it in `/samples/data` than to
+paste it inline in demo.js or demo.html. These files must be loaded via `cdn.jsdelivr.net` in order to work both on our website, locally and on jsFiddle.
+1. Add your file to `/samples/data`.
+2. Perform a commit and take note of the commit hash.
+3. Now in your sample (`demo.js`), load the data from jsdelivr.net, for example 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/aapl.json', where the part after 'highcharts@' is the commit hash from last point. Note that this now works in the utils because the utils are rewriting the URL and loading locally.
+4. Next time you push your commits, this will work online as well.
+
 **Mouse events** are emulated using the
 [TestController](https://github.com/highcharts/highcharts/blob/master/test/test-controller.js)
 that is available in the test environment.
