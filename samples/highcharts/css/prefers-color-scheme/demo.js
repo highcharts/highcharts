@@ -57,7 +57,7 @@ Highcharts.chart('container', {
 [...document.querySelectorAll('input[name="color-mode"]')]
     .forEach(input => {
         input.addEventListener('click', e => {
-            document.getElementById('container')
-                .className = `theme-${e.target.value}`;
+            document.getElementById('container').className =
+                e.target.value === 'none' ? '' : `highcharts-${e.target.value}`;
         });
     });

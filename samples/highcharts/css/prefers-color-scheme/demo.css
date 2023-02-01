@@ -15,7 +15,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    #container.theme-auto {
+    :root:not(:has(.highcharts-light)) {
         /* Colors for data series and points */
         --highcharts-color-0: #b3597c;
         --highcharts-color-1: #c4688c;
@@ -52,7 +52,7 @@
     }
 }
 
-#container.theme-dark {
+.highcharts-dark {
     /* Colors for data series and points */
     --highcharts-color-0: #b3597c;
     --highcharts-color-1: #c4688c;
