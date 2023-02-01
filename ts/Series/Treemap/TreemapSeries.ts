@@ -56,7 +56,7 @@ import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
 import TU from '../TreeUtilities.js';
-import Breadcrumbs from '../../Extensions/Breadcrumbs.js';
+import Breadcrumbs from '../../Extensions/Breadcrumbs/Breadcrumbs.js';
 const {
     getColor,
     getLevelOptions,

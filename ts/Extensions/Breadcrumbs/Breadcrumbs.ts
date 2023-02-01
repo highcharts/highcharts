@@ -21,17 +21,16 @@
 import type {
     BreadcrumbOptions,
     BreadcrumbsOptions
-} from './Breadcrumbs/BreadcrumbsOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+} from './BreadcrumbsOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import BreadcrumbsDefaults from './Breadcrumbs/BreadcrumbsDefaults.js';
-import Chart from '../Core/Chart/Chart.js';
-import D from '../Core/Defaults.js';
-import F from '../Core/FormatUtilities.js';
+import BreadcrumbsDefaults from './BreadcrumbsDefaults.js';
+import Chart from '../../Core/Chart/Chart.js';
+import D from '../../Core/Defaults.js';
+import F from '../../Core/FormatUtilities.js';
 const { format } = F;
-import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     objectEach,
@@ -49,32 +48,19 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         breadcrumbsBottomMargin?: boolean;
         breadcrumbsTopMargin?: boolean;
         breadcrumbs?: Breadcrumbs;
     }
 }
-declare module '../Core/Options' {
+declare module '../../Core/Options' {
     interface LangOptions {
         breadcrumbsToLabel?: string;
         mainBreadcrumb?: string;
     }
 }
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface DrilldownOptions {
-            breadcrumbs?: BreadcrumbsOptions;
-        }
-    }
-}
-
 
 /* *
  *
