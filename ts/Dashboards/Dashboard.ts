@@ -376,12 +376,42 @@ namespace Dashboard {
      *
      * */
 
+    /**
+     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+     * tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+     * veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+     * commodo consequat.
+     */
     export interface Options {
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         gui?: GUIOptions;
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         editMode?: EditMode.Options;
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         components?: Array<Bindings.ComponentOptions>;
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         componentOptions?: Partial<Bindings.ComponentOptions>;
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         layoutsJSON?: Array<Layout.JSON>;
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         respoBreakpoints?: RespoBreakpoints;
     }
 
@@ -393,15 +423,51 @@ namespace Dashboard {
         respoBreakpoints?: RespoBreakpoints;
     }
 
+    /**
+     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+     * tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+     * veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+     * commodo consequat.
+     */
     export interface RespoBreakpoints extends JSON.Object {
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         small: number;
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         medium: number;
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         large: number;
     }
 
+    /**
+     * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+     * tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+     * veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+     * commodo consequat.
+     */
     export interface GUIOptions {
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         enabled: boolean;
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         layoutOptions: Partial<Layout.Options>;
+        /**
+         * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+         * eiusmod tempor incididunt ut labore et dolore magna aliqua.
+         */
         layouts: Array<Layout.Options>;
     }
 
