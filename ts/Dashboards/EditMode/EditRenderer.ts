@@ -73,28 +73,48 @@ class EditRenderer {
     }
 
     public static renderSelect(
-        options: Array<string>,
-        parentElement: HTMLDOMElement
+        parentElement: HTMLDOMElement,
+        options: SelectFormField
     ): HTMLDOMElement|undefined {
         let customSelect;
+        let selectOption;
 
         if (parentElement) {
+            if (options.title) {
+                EditRenderer.renderText(
+                    parentElement,
+                    options.title
+                );
+            }
+
             customSelect = createElement(
                 'select',
                 {
-                    className: EditGlobals.classNames.customSelect
+                    id: options.id || '',
+                    name: options.name || '',
+                    className: EditGlobals.classNames.customSelect,
+                    value: options.value || 'column'
                 },
                 {},
                 parentElement
             );
 
-            for (let i = 0, iEnd = options.length; i < iEnd; ++i) {
-                createElement(
+            // i from -1 for creating extra empty option selector
+            for (let i = -1, iEnd = options.items.length; i < iEnd; ++i) {
+                selectOption = createElement(
                     'option',
-                    {},
+                    {
+                        value: options.items[i] || '',
+                        textContent: options.items[i] || ''
+                    },
                     {},
                     customSelect
                 );
+
+                // select value if exists
+                if (options.items[i] === options.value) {
+                    selectOption.setAttribute('selected', true);
+                }
             }
         }
 
@@ -312,6 +332,14 @@ export interface FormField {
     callback?: Function;
     title?: string;
     value?: string;
+}
+
+export interface SelectFormField {
+    id: string;
+    name: string;
+    title: string;
+    value: string;
+    items: Array<string>;
 }
 
 export default EditRenderer;

@@ -14,6 +14,8 @@
  *
  * */
 
+import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
+
 import EditMode from './EditMode.js';
 import U from '../../Core/Utilities.js';
 import Cell from '../Layout/Cell.js';
@@ -845,17 +847,50 @@ class Sidebar {
             const activeTabContainer = activeTab && activeTab.content &&
                 activeTab && activeTab.content.container;
             let type;
+            let chartTypes = {};
 
             for (const key in componentSettings) {
                 if (componentSettings[key]) {
                     type = componentSettings[key].type;
+
+                    if (key === 'chartType') {
+                        const chartTypesEnum = [
+                            'column',
+                            'line',
+                            'scatter',
+                            'spline',
+                            'pie'
+                        ];
+
+                        // eslint-disable-next-line
+                        const chartOpts = (currentComponent as HighchartsComponent).chartOptions;
+
+                        const chartType = chartOpts &&
+                            (
+                                (chartOpts.chart && chartOpts.chart.type) ||
+                                (chartOpts.series && chartOpts.series[0].type)
+                            );
+
+                        if (
+                            chartType &&
+                            chartTypesEnum.indexOf(chartType) !== -1
+                        ) {
+                            chartTypes = {
+                                items: chartTypesEnum,
+                                value: chartType
+                            };
+                        } else {
+                            break;
+                        }
+                    }
 
                     (menuItems as any)[key] = {
                         id: key,
                         type: type === 'text' ? 'input' : type,
                         text: (lang as any)[key] || key,
                         isActive: true,
-                        value: componentSettings[key].value
+                        value: componentSettings[key].value,
+                        ...chartTypes
                     };
 
                     items.push(
@@ -958,6 +993,8 @@ class Sidebar {
             activeTab.contentContainer.querySelectorAll(
                 'input, textarea'
             ) || [];
+        const chartType = activeTab &&
+            activeTab.contentContainer.querySelectorAll('#chartType');
         const updatedSettings = {};
         const mountedComponent = (this.context as Cell).mountedComponent;
         let fieldId;
@@ -970,6 +1007,23 @@ class Sidebar {
                     (updatedSettings as any)[fieldId] = JSON.parse(
                         (formFields[i] as HTMLTextAreaElement).value
                     );
+
+                    if (
+                        fieldId === 'chartOptions' &&
+                        (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions && // eslint-disable-line
+                        chartType &&
+                        chartType[0]
+                    ) {
+                        (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions = // eslint-disable-line
+                            merge(
+                                (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions, // eslint-disable-line
+                                {
+                                    chart: {
+                                        type: (chartType[0] as any).value
+                                    }
+                                }
+                            );
+                    }
                 } catch {
                     (updatedSettings as any)[fieldId] =
                         (formFields[i] as (HTMLInputElement)).value;
