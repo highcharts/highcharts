@@ -5,7 +5,7 @@ Visualizing the work breakdown structure of a project involves also describing t
 
 _Code example of defining dependencies_
 
-<iframe src="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/gantt/gantt/task-dependencies/embedded/result,js/" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>
+<iframe src="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/gantt/gantt/one-milestone-point/embedded/result,js/" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;" allow="fullscreen"></iframe>
 
 Customize dependency connectors
 -------------------------------
