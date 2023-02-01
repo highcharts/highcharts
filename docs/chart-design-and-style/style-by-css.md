@@ -7,7 +7,7 @@ When the [chart.styledMode](https://api.highcharts.com/highcharts/chart.styledMo
 
 Highcharts comes with a default CSS file, [css/highcharts.css](https://code.highcharts.com/css/highcharts.css).
 
-To customize your styles, you can [create your own themes](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode), or just add your own individual CSS variables or rules. See our [CSS colors demo](https://www.highcharts.com/samples/highcharts/css/colors) to experiment with the default CSS.
+To customize your styles, you can create your own themes, or just add your own individual CSS variables or rules. See the [Custom themes article](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode) for details.
 
 
 WHAT CAN BE STYLED?
@@ -20,7 +20,7 @@ However, layout and positioning of elements like the title or legend cannot be c
 WHAT CSS RULES APPLY
 --------------------
 
-Depending on how you prefer to work, you can use the browser's developer console to select SVG elements in the chart and see what CSS rules apply to it. But beware that (as of 2016) Firefox does this best. Chrome and Safari doesn't show all affected rules for SVG elements.
+Depending on how you prefer to work, you can use the browser's developer console to select SVG elements in the chart and see what CSS rules apply to it.
 
 In addition to these, most elements, especially those where you can add multiple items, like axes, series, points etc, have a _className_ option. Use this to apply specific styling. See this [example of axis styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/axis/).
 
