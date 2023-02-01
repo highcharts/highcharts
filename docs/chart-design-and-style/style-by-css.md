@@ -9,6 +9,8 @@ Highcharts comes with a default CSS file, [css/highcharts.css](https://code.high
 
 To customize your styles, you can create your own themes, or just add your own individual CSS variables or rules. See the [Custom themes article](https://www.highcharts.com/docs/chart-design-and-style/custom-themes-in-styled-mode) for details.
 
+Highcharts since v11 honors the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature. If you end user prefers dark mode, the Highcharts CSS will pick this up and set the CSS color variables accordingly. To avoid this, you can set either the `.highcharts-light` or `.highcharts-dark` class name on the chart container. See a [live demo for switching between modes](https://www.highcharts.com/samples/highcharts/css/prefers-color-scheme).
+
 
 WHAT CAN BE STYLED?
 -------------------

@@ -5,9 +5,9 @@ Highcharts allows you to create your own custom charts’ theme using CSS.
 
 The default the CSS file for [styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css) is available as `/css/highcharts.css` on the root of `code.highcharts.com` as well as under version folders.
 
-In the `highcharts.css` file, there are declared variables which define the most important and popular components of the charts. Use them to easily style the chart in the customs theme. As a result, there is no need to overwrite all CSS classes.
+In the `highcharts.css` file, there are CSS variables for all the colors used in the chart, both for the data and for the GUI like labels, borders and such. Use them to easily style the chart in the customs theme. As a result, there is no need to overwrite all CSS classes.
 
-In addition to the data colors, Highcharts uses two ranges of colors called the neutral and the highlight colors. These range from a full contrast color with a weight of 100, to low-contrast variations with lower weight. You can use the [Palette Helper](https://www.highcharts.com/samples/highcharts/css/palette-helper) tool to generate these variations.
+Highcharts uses two ranges of colors called the neutral and the highlight colors. These range from a full contrast color with a weight of 100, to low-contrast variations with lower weight. You can use the [Palette Helper](https://www.highcharts.com/samples/highcharts/css/palette-helper) tool to generate these variations.
 
 Featured themes
 ---------------
