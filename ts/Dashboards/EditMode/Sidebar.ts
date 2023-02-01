@@ -14,7 +14,7 @@
  *
  * */
 
-import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent.js';
+import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 
 import EditMode from './EditMode.js';
 import U from '../../Core/Utilities.js';
