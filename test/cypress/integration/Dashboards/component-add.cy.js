@@ -13,10 +13,6 @@ function dropComponent(elementName) {
     cy.get(elementName).first().trigger('mouseup', 'right', {force: true});
 }
 
-function hideSidebar() {
-    cy.get('.hd-edit-sidebar-button-nav.hd-edit-close-btn').click()
-}
-
 describe('Add component through UI', () => {
     beforeEach(() => {
         cy.visit('/dashboards/cypress/add-layout');
@@ -40,7 +36,7 @@ describe('Add component through UI', () => {
     it('should be able to add a HTML component', function() {
         grabComponent('HTML');
         dropComponent('#dashboard-col-0');
-        hideSidebar(); // Hide sidebar to avoid interference with the next test.
+        cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
         cy.dashboard().then((dashboard) => {
             assert.equal(
                 dashboard.layouts[0].rows[0].cells.length,
