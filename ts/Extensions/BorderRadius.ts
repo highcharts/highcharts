@@ -12,13 +12,9 @@
 
 'use strict';
 
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+import type ColumnSeries from '../Series/Column/ColumnSeries';
 
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 
 const {
@@ -31,13 +27,13 @@ const {
 export interface BorderRadiusOptions {
     radius: number|string;
     scope: 'point'|'stack';
-    where: 'end'|'all';
+    where?: 'end'|'all';
 }
 
 const defaultOptions: BorderRadiusOptions = {
     radius: 0,
     scope: 'stack',
-    where: 'end'
+    where: void 0
 };
 
 const optionsToObject = (
@@ -49,7 +45,8 @@ const optionsToObject = (
     return merge(defaultOptions, options);
 };
 
-addEvent(ColumnSeries, 'afterColumnTranslate', function (): void {
+addEvent(Series as unknown as ColumnSeries, 'afterColumnTranslate', function (
+): void {
     const yAxis = this.yAxis,
         borderRadius = optionsToObject(this.options.borderRadius),
         reversed = yAxis.options.reversed;
@@ -89,7 +86,10 @@ addEvent(ColumnSeries, 'afterColumnTranslate', function (): void {
             rBtm = flip ? r : 0;
 
         // All corners
-        if (borderRadius.where === 'all') {
+        const where = borderRadius.where || (
+            this.pointArrayMap?.join(',') === 'low,high' ? 'all' : 'end'
+        );
+        if (where === 'all') {
             rTop = rBtm = r;
         }
 
@@ -206,4 +206,4 @@ addEvent(ColumnSeries, 'afterColumnTranslate', function (): void {
         };
 
     }
-});
+}, { order: 9 });
