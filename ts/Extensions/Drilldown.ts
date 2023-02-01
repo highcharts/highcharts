@@ -19,6 +19,7 @@ import type {
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type { BreadcrumbOptions } from './Breadcrumbs/BreadcrumbsOptions';
 import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
 import type ColorType from '../Core/Color/ColorType';
 import type {
@@ -906,8 +907,10 @@ Chart.prototype.applyDrilldown = function (): void {
  * @return {Array<Breadcrumbs.BreadcrumbOptions>}
  *        List for Highcharts Breadcrumbs.
  */
-const createBreadcrumbsList = function (chart: Chart): Array<Breadcrumbs.BreadcrumbOptions> {
-    const list: Array<Breadcrumbs.BreadcrumbOptions> = [],
+const createBreadcrumbsList = function (
+    chart: Chart
+): Array<BreadcrumbOptions> {
+    const list: Array<BreadcrumbOptions> = [],
         drilldownLevels = chart.drilldownLevels;
 
     // The list is based on drilldown levels from the chart object

@@ -18,7 +18,9 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type {
+    BreadcrumbOptions
+} from '../../Extensions/Breadcrumbs/BreadcrumbsOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition';
 import type ColorType from '../../Core/Color/ColorType';
@@ -928,7 +930,7 @@ class TreemapSeries extends ScatterSeries {
     public createList(e: any): any {
         const chart = this.chart,
             breadcrumbs = chart.breadcrumbs,
-            list: Array<Breadcrumbs.BreadcrumbOptions> = [];
+            list: Array<BreadcrumbOptions> = [];
 
         if (breadcrumbs) {
 
