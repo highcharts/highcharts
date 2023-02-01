@@ -18,6 +18,8 @@
  *
  * */
 
+import type BreadcrumbsOptions from './BreadcrumbsOptions';
+
 import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
@@ -36,7 +38,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @product highcharts
  * @optionparent navigation.breadcrumbs
  */
-const BreadcrumbsDefaults = {
+const BreadcrumbsDefaults: BreadcrumbsOptions = {
     /**
      * A collection of attributes for the buttons. The object takes SVG
      * attributes like `fill`, `stroke`, `stroke-width`, as well as `style`,

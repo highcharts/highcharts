@@ -19,32 +19,20 @@
  * */
 
 import type {
-    AlignValue,
-    VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
-import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
-import type {
-    CSSObject
-} from '../Core/Renderer/CSSObject';
-import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
+    BreadcrumbOptions,
+    BreadcrumbsOptions
+} from './Breadcrumbs/BreadcrumbsOptions';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import BreadcrumbsDefaults from './Breadcrumbs/BreadcrumbsDefaults.js';
 import Chart from '../Core/Chart/Chart.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
+import F from '../Core/FormatUtilities.js';
+const { format } = F;
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-import F from '../Core/FormatUtilities.js';
-import SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import SeriesOptions from '../Core/Series/SeriesOptions';
-import type {
-    PointOptions,
-    PointShortOptions
-} from '../Core/Series/PointOptions';
-const {
-    format
-} = F;
 const {
     addEvent,
     objectEach,
@@ -75,16 +63,6 @@ declare module '../Core/Options' {
         mainBreadcrumb?: string;
     }
 }
-declare module '../Series/Treemap/TreemapSeriesOptions' {
-    interface TreemapSeriesOptions {
-        breadcrumbs?: Breadcrumbs.BreadcrumbsOptions;
-    }
-}
-declare module '../Extensions/Exporting/NavigationOptions' {
-    interface NavigationOptions {
-        breadcrumbs?: Breadcrumbs.BreadcrumbsOptions;
-    }
-}
 
 /**
  * Internal types
@@ -93,12 +71,12 @@ declare module '../Extensions/Exporting/NavigationOptions' {
 declare global {
     namespace Highcharts {
         interface DrilldownOptions {
-            breadcrumbs?: Breadcrumbs.BreadcrumbsOptions;
+            breadcrumbs?: BreadcrumbsOptions;
         }
         class Breadcrumbs {
             public constructor(
                 chart: Chart,
-                userOptions?: DeepPartial<Breadcrumbs.BreadcrumbsOptions>
+                userOptions?: DeepPartial<BreadcrumbsOptions>
             );
             chart: Chart;
             level: number;
@@ -109,14 +87,14 @@ declare global {
             ): number;
             setList(
                 this: Breadcrumbs,
-                list: Array<Breadcrumbs.BreadcrumbOptions>
+                list: Array<BreadcrumbOptions>
             ): void;
             setLevel(
                 this: Breadcrumbs,
             ): void;
             updateProperties(
                 this: Breadcrumbs,
-                list: Array<Breadcrumbs.BreadcrumbOptions>
+                list: Array<BreadcrumbOptions>
             ): void;
         }
     }
@@ -171,20 +149,14 @@ class Breadcrumbs {
 
     /* *
      *
-     * Properties
+     *  Constructor
      *
      * */
 
-    public group?: SVGElement = void 0;
-    public list: Array<Breadcrumbs.BreadcrumbOptions> = [];
-    public elementList: { [x: string]: Breadcrumbs.BreadcrumbElement } = {};
-    public chart: Chart;
-    public isDirty: boolean = true;
-    public level: number = 0;
-    public options: Breadcrumbs.BreadcrumbsOptions = void 0 as any;
-    public yOffset?: number;
-
-    public constructor(chart: Chart, userOptions?: Partial<Breadcrumbs.BreadcrumbsOptions>) {
+    public constructor(
+        chart: Chart,
+        userOptions?: Partial<BreadcrumbsOptions>
+    ) {
         const chartOptions = merge(
             chart.options.drilldown &&
                 chart.options.drilldown.drillUpButton,
@@ -197,6 +169,27 @@ class Breadcrumbs {
         this.options = chartOptions || {};
     }
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public chart: Chart;
+    public elementList: { [x: string]: Breadcrumbs.BreadcrumbElement } = {};
+    public group?: SVGElement;
+    public isDirty: boolean = true;
+    public level: number = 0;
+    public list: Array<BreadcrumbOptions> = [];
+    public options: BreadcrumbsOptions;
+    public yOffset?: number;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
      * Update Breadcrumbs properties, like level and list.
      *
@@ -207,7 +200,7 @@ class Breadcrumbs {
      *        Breadcrumbs class.
      */
     public updateProperties(
-        list: Array<Breadcrumbs.BreadcrumbOptions>
+        list: Array<BreadcrumbOptions>
     ): void {
         this.setList(list);
         this.setLevel();
@@ -226,7 +219,7 @@ class Breadcrumbs {
      *        Breadcrumbs list.
      */
     public setList(
-        list: Array<Breadcrumbs.BreadcrumbOptions>
+        list: Array<BreadcrumbOptions>
     ): void {
         this.list = list;
     }
@@ -271,7 +264,7 @@ class Breadcrumbs {
      *         Formatted text.
      */
     public getButtonText(
-        breadcrumb: Breadcrumbs.BreadcrumbOptions
+        breadcrumb: BreadcrumbOptions
     ): string {
         const breadcrumbs = this,
             chart = breadcrumbs.chart,
@@ -499,7 +492,7 @@ class Breadcrumbs {
      *        Returns the SVG button
      */
     public renderButton(
-        breadcrumb: Breadcrumbs.BreadcrumbOptions,
+        breadcrumb: BreadcrumbOptions,
         posX: number,
         posY: number
     ): SVGElement {
@@ -608,7 +601,7 @@ class Breadcrumbs {
      *        Redraw flag
      */
     public update(
-        options: DeepPartial<Breadcrumbs.BreadcrumbsOptions>
+        options: DeepPartial<BreadcrumbsOptions>
     ): void {
         merge(true, this.options, options);
         this.destroy();
@@ -916,55 +909,11 @@ if (!H.Breadcrumbs) {
  * */
 
 namespace Breadcrumbs {
-    export interface BreadcrumbsOptions {
-        buttonTheme: ButtonThemeObject;
-        buttonSpacing: number;
-        events?: BreadcrumbsButtonsEventsOptions;
-        floating: boolean;
-        format?: string;
-        formatter?: BreadcrumbsButtonsFormatter;
-        relativeTo?: ButtonRelativeToValue;
-        rtl: boolean;
-        position: BreadcrumbsAlignOptions;
-        separator: SeparatorOptions;
-        showFullPath: boolean;
-        style: CSSObject;
-        useHTML: boolean;
-        zIndex: number;
-    }
-
-    export type BreadcrumbOptions = {
-        level: number,
-        levelOptions: SeriesOptions|PointOptions|PointShortOptions
-    };
     export type BreadcrumbElement = {
         button?: SVGElement,
         separator?: SVGElement,
         updated?: boolean
     };
-    export interface BreadcrumbsAlignOptions {
-        align: AlignValue;
-        verticalAlign: VerticalAlignValue;
-        x: number;
-        y: number;
-        width?: number;
-        height?: number;
-    }
-    export interface BreadcrumbsClickCallbackFunction {
-        (e: Event, breadcrumb: BreadcrumbOptions): (boolean|undefined);
-    }
-    export interface BreadcrumbsButtonsEventsOptions {
-        click?: BreadcrumbsClickCallbackFunction;
-    }
-    export interface BreadcrumbsButtonsFormatter {
-        (
-            breadcrumb: BreadcrumbOptions
-        ): (string);
-    }
-    export interface SeparatorOptions {
-        text: string;
-        style: CSSObject
-    }
 }
 
 
