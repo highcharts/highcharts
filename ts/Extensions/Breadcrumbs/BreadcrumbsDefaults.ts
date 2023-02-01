@@ -29,6 +29,21 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * */
 
 /**
+ * @optionparent lang
+ *
+ * @private
+ */
+const lang = {
+    /**
+     * @since 10.0.0
+     * @product  highcharts
+     *
+     * @private
+     */
+    mainBreadcrumb: 'Main'
+};
+
+/**
  * Options for breadcrumbs. Breadcrumbs general options are defined in
  * `navigation.breadcrumbs`. Specific options for drilldown are set in
  * `drilldown.breadcrumbs` and for tree-like series traversing, in
@@ -38,7 +53,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @product highcharts
  * @optionparent navigation.breadcrumbs
  */
-const BreadcrumbsDefaults: BreadcrumbsOptions = {
+const options: BreadcrumbsOptions = {
     /**
      * A collection of attributes for the buttons. The object takes SVG
      * attributes like `fill`, `stroke`, `stroke-width`, as well as `style`,
@@ -271,5 +286,10 @@ const BreadcrumbsDefaults: BreadcrumbsOptions = {
  *  Default Export
  *
  * */
+
+const BreadcrumbsDefaults = {
+    lang,
+    options
+};
 
 export default BreadcrumbsDefaults;

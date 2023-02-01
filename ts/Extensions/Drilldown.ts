@@ -1181,7 +1181,7 @@ addEvent(Chart, 'render', function (): void {
     });
 });
 
-addEvent(H.Breadcrumbs, 'up', function (
+addEvent(Breadcrumbs, 'up', function (
     e: any
 ): void {
     const chart = this.chart,
