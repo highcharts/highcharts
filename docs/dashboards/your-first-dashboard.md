@@ -31,7 +31,7 @@ Thus we have to import the main dashboard package, the Highcharts library and a 
 
 
     ```js
-        const dashboard = new Dashboard.Dashboard('container', {...})
+        const dashboard = new Dashboards.Dashboard('container', {...})
     ```
 
 5.  As options, you have to provide two essential things:
