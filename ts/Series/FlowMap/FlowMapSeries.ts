@@ -230,13 +230,13 @@ class FlowMapSeries extends MapLineSeries {
              * consists of the `headerFormat` and `pointFormat`, which can be
              * edited. Variables are enclosed by curly brackets. Available
              * variables are `series.name`, `point.options.from`,
-             * `point.options.to`, `point.weight` and other properties in the
+             * `point.options.to`, `point.options.weight` and other properties in the
              * same form.
              *
              * @product   highmaps
              */
             headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
-            pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.weight}</b>'
+            pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.options.weight}</b>'
         }
     } as FlowMapSeriesOptions);
 
@@ -409,6 +409,8 @@ class FlowMapSeries extends MapLineSeries {
 
         const width = this.options.width,
             weight = point.options.weight || this.options.weight;
+
+        point.options.weight = weight;
 
         if (width && !weight) {
             return width;
