@@ -26,6 +26,7 @@
 
 import type JSON from '../Core/JSON';
 
+import DashboardAccessibility from './Accessibility/DashboardsAccessibility.js';
 import Bindings from './Actions/Bindings.js';
 import Globals from './Globals.js';
 import EditMode from './EditMode/EditMode.js';
@@ -116,6 +117,9 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
 
         this.index = Globals.dashboards.length;
         Globals.dashboards.push(this);
+
+        // a11y module
+        this.a11y = new DashboardAccessibility(this);
     }
 
     /* *
@@ -135,6 +139,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     public layoutsWrapper: globalThis.HTMLElement;
     public mountedComponents: Array<Bindings.MountedComponentsOptions>;
     public options: Dashboard.Options;
+    public a11y: DashboardAccessibility.Options;
 
     /* *
      *
