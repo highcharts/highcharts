@@ -887,8 +887,9 @@ class MapSeries extends ScatterSeries {
             }
         });
 
-        this.drawMapDataLabels();
-
+        if (!this.isDrilling) {
+            this.drawMapDataLabels();
+        }
     }
 
     /**

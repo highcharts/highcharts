@@ -870,6 +870,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         xAxis.userMin = xAxis.userMax = null as any;
         yAxis.userMin = yAxis.userMax = null as any;
     }
+    newSeries.isDrilling = true;
 
     // Run fancy cross-animation on supported and equal types
     if (oldSeries.type === newSeries.type) {

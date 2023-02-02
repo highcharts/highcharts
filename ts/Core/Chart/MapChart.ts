@@ -285,9 +285,11 @@ addEvent(MapChart, 'applyDrilldown', function (e): boolean {
                 chart.options.drilldown.mapZooming
             ) {
                 chart.redraw();
-                if (chart.mapView) { // TO DO try to remove MapSeries
+                if (chart.mapView) {
+                    level.lowerSeries.isDrilling = false;
                     chart.mapView.fitToBounds(
                         (level.lowerSeries as MapSeries).bounds);
+                    level.lowerSeries.isDrilling = true;
                 }
             }
 
@@ -328,9 +330,13 @@ addEvent(MapChart, 'applyDrilldown', function (e): boolean {
                             if (chart.mapView) {
                                 chart.series.forEach((series): void => {
                                     series.isDirtyData = true;
+                                    // series.isDrilling = false;
                                 });
                                 chart.mapView.setView(void 0, 1);
                             }
+                            chart.series.forEach((series): void => {
+                                series.isDrilling = false;
+                            });
                             fireEvent(chart, 'afterApplyDrilldown');
                         });
                     }
@@ -374,6 +380,7 @@ addEvent(MapChart, 'finishDrillUp', function (e): boolean {
             if (zoomingDrill) {
                 // stop hovering while drilling down
                 oldSeries.isDrilling = true;
+                newSeries.isDrilling = true;
                 chart.redraw(false);
                 // Fit to previous bounds
                 chart.mapView.fitToBounds(
@@ -437,6 +444,7 @@ addEvent(MapChart, 'finishDrillUp', function (e): boolean {
                 }
             }
 
+            newSeries.isDrilling = false;
             if (chart.ddDupes) {
                 chart.ddDupes.length = 0; // #3315
             } // #8324
