@@ -663,6 +663,7 @@ function onSeriesAfterTranslate(
 
     if (this.chart.polar && this.xAxis) {
         const series = this as PolarSeriesComposition,
+            { xAxis, yAxis } = series,
             chart = series.chart;
 
         // Prepare k-d-tree handling. It searches by angle (clientX) in
@@ -701,9 +702,18 @@ function onSeriesAfterTranslate(
                     // Destroy column's graphic
                     points[i].plotY = NaN;
                 } else {
+                    // On a log axis, zero values are nulled in Series.ts. But
+                    // unless we consider positive values only logic, they will
+                    // be set to valid again here. #18422.
+                    const invalidLog = (
+                        yAxis.positiveValuesOnly &&
+                        !yAxis.validatePositiveValue(points[i].y) ||
+                        xAxis.positiveValuesOnly &&
+                        !xAxis.validatePositiveValue(points[i].x)
+                    );
+
                     // Restore isNull flag
-                    points[i].isNull =
-                        points[i].isValid && !points[i].isValid();
+                    points[i].isNull = invalidLog || !points[i].isValid();
                 }
             }
         }
@@ -1088,7 +1098,7 @@ function wrapColumnSeriesTranslate(
                     (start < series.translatedThreshold ? start : end)) as any -
                         startAngleRad;
 
-            } else {
+            } else if (!point.isNull) {
                 start = barX + startAngleRad;
 
                 // Changed the way polar columns are drawn in order to make
