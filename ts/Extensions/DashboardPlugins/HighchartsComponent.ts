@@ -109,7 +109,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             editableOptionsBindings: {
                 ...Component.defaultOptions.editableOptionsBindings,
                 skipRedraw: [
-                    ...(Component.defaultOptions.editableOptionsBindings?.skipRedraw || []),
+                    ...Component.defaultOptions
+                        .editableOptionsBindings.skipRedraw,
                     'chartOptions'
                 ]
             },
@@ -147,10 +148,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     }
 
     /* *
-   *
-   *  Properties
-   *
-   * */
+    *
+    *  Properties
+    *
+    * */
 
     public chartOptions: Partial<Options>;
     public chart: Chart | undefined;
@@ -160,10 +161,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     public sync: Component['sync'];
     /* *
-   *
-   *  Constructor
-   *
-   * */
+    *
+    *  Constructor
+    *
+    * */
 
     constructor(options: Partial<HighchartsComponent.ComponentOptions>) {
         options = merge(

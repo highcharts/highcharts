@@ -68,7 +68,7 @@ class EditableOptions {
     constructor(
         component: Component,
         bindings: EditableOptions.OptionsBindings =
-          EditableOptions.defaultBindings
+        EditableOptions.defaultBindings
     ) {
         this.component = component;
         this.bindings = bindings;
@@ -77,8 +77,11 @@ class EditableOptions {
     public getEditableOptions(): (EditableOptions.getOptionsType | undefined) {
         const { options } = this.component;
         const { keyMap, typeMap } =
-          merge(EditableOptions.defaultBindings, this.bindings);
+            merge(EditableOptions.defaultBindings, this.bindings);
 
+        /**
+         *
+         */
         function getType(
             nodeName: string,
             branch: Record<string, any>
