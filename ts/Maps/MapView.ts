@@ -117,18 +117,17 @@ const mergeCollections = <
  * The map view handles zooming and centering on the map, and various
  * client-side projection capabilities.
  *
- * On a chart instance, the map view is available as `chart.mapView`.
+ * On a chart instance of `MapChart`, the map view is available as `chart.mapView`.
  *
  * @class
  * @name Highcharts.MapView
  *
- * @param {Highcharts.Chart} chart
- *        The Chart instance
+ * @param {Highcharts.MapChart} chart
+ *        The MapChart instance
  * @param {Highcharts.MapViewOptions} options
  *        MapView options
  */
 class MapView {
-
     public center: LonLatArray;
     public fitToGeometryCache?: MapBounds;
     public geoMap?: GeoJSON;
