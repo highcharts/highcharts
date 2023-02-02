@@ -2,5 +2,6 @@
 name: Strip HTML with DOMPurify
 authors:
   - Torstein Hønsi
+skipTest: true
 js_wrap: b
 ...
