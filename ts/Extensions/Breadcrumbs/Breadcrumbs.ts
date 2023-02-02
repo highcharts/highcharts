@@ -811,6 +811,7 @@ class Breadcrumbs {
      * @requires  modules/breadcrumbs
      *
      * @function Highcharts.Breadcrumbs#updateListElements
+     *
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
@@ -818,6 +819,7 @@ class Breadcrumbs {
         const breadcrumbs = this,
             elementList = breadcrumbs.elementList,
             buttonSpacing = breadcrumbs.options.buttonSpacing,
+            posY = buttonSpacing,
             list = breadcrumbs.list,
             rtl = breadcrumbs.options.rtl,
             rtlFactor = rtl ? -1 : 1,
@@ -840,14 +842,16 @@ class Breadcrumbs {
         let posX = breadcrumbs.group ?
                 updateXPosition(breadcrumbs.group, buttonSpacing) :
                 buttonSpacing,
-            posY = buttonSpacing,
-            currentBreadcrumb;
+            currentBreadcrumb,
+            breadcrumb: BreadcrumbOptions;
 
-        list.forEach(function (breadcrumb, index): void {
-            const isLast: boolean = index === list.length - 1;
+        for (let i = 0, iEnd = list.length; i < iEnd; ++i) {
+            const isLast: boolean = i === iEnd - 1;
 
             let button: SVGElement|undefined,
                 separator: SVGElement | undefined;
+
+            breadcrumb = list[i];
 
             if (elementList[breadcrumb.level]) {
                 currentBreadcrumb = elementList[breadcrumb.level];
@@ -903,7 +907,7 @@ class Breadcrumbs {
             if (button) {
                 button.setState(isLast ? 2 : 0);
             }
-        });
+        }
     }
 }
 
