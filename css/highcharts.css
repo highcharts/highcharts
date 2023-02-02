@@ -6,7 +6,8 @@
  * License: www.highcharts.com/license
  */
 
-:root {
+:root,
+.highcharts-light {
     /* Colors for data series and points. */
     --highcharts-color-0: #7cb5ec;
     --highcharts-color-1: #434348;
@@ -78,7 +79,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    :root:not(:has(.highcharts-light)) {
+    :root {
         /* UI colors */
         --highcharts-background-color: #333333;
 

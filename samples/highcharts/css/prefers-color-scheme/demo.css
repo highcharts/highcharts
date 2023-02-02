@@ -15,7 +15,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    :root:not(:has(.highcharts-light)) {
+    :root {
         /* Colors for data series and points */
         --highcharts-color-0: #b3597c;
         --highcharts-color-1: #c4688c;
@@ -27,7 +27,7 @@
         --highcharts-color-7: #b27fd6;
 
         /* UI colors */
-        --highcharts-background-color: hsl(0deg 0% 20%);
+        --highcharts-background-color: #333;
 
         /*
             Neutral color variations
