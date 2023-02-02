@@ -38,8 +38,7 @@ Highcharts.chart('container', {
     },
 
     yAxis: {
-        min: 0.01,
-        type: 'logarithmic',
+        min: 0,
         endOnTick: false,
         showLastLabel: true,
         title: {
