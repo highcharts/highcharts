@@ -521,8 +521,8 @@ function getSVG(chart) {
             );
 
         if (chart.styledMode) {
-            var css = document.getElementById('highcharts.css');
-            if (css) {
+            var highchartsCSS = document.getElementById('highcharts.css');
+            if (highchartsCSS) {
                 svg = svg
                     // Get the typography styling right
                     .replace(
@@ -534,7 +534,17 @@ function getSVG(chart) {
                     // Insert highcharts.css
                     .replace(
                         '</defs>',
-                        '<style>' + css.innerText + '</style></defs>'
+                        '<style>' + highchartsCSS.innerText + '</style></defs>'
+                );
+            }
+
+            var demoCSS = document.getElementById('demo.css');
+            if (demoCSS) {
+                svg = svg
+                    // Insert demo.css
+                    .replace(
+                        '</defs>',
+                        '<style>' + demoCSS.innerText + '</style></defs>'
                 );
             }
         }

@@ -685,11 +685,19 @@ function createVisualTestTemplate(argv, samplePath, js, assertion) {
     // Include highcharts.css, to be inserted into the SVG in
     // karma-setup.js:getSVG
     if (scriptBody.indexOf('styledMode: true') !== -1) {
-        var css = fs.readFileSync(
+        const highchartsCSS = fs.readFileSync(
             path.join(__dirname, '../code/css/highcharts.css'),
             'utf8'
         );
-        html += '<style id="highcharts.css">' + css + '</style>';
+        html += `<style id="highcharts.css">${highchartsCSS}</style>`;
+
+        const demoCSS = fs.readFileSync(
+            path.join(__dirname, `../samples/${samplePath}/demo.css`),
+            'utf8'
+        );
+
+        html += `<style id="demo.css">${demoCSS}</style>`;
+
     }
 
     resets = JSON.stringify(resets);
