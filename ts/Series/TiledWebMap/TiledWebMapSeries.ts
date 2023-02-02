@@ -407,10 +407,20 @@ class TiledWebMapSeries extends MapSeries {
 
     public update(): void {
         const series = this,
+            { transformGroups } = series,
             chart = this.chart,
             mapView = chart.mapView,
             options = arguments[0],
             { provider } = options;
+
+        if (transformGroups) {
+            transformGroups.forEach((group): void => {
+                if (Object.keys(group).length !== 0) {
+                    group.destroy();
+                }
+            });
+            this.transformGroups = [];
+        }
 
         if (
             mapView &&
