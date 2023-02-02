@@ -101,7 +101,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             'title',
             'caption'
         ],
-        editableOptionsBindings: void 0
+        editableOptionsBindings: EditableOptions.defaultBindings
     };
 
     public parentElement: HTMLElement;
@@ -133,13 +133,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public abstract sync: Sync;
 
     /**
-   * Timeouts for calls to `Component.resizeTo()`
-   */
+ * Timeouts for calls to `Component.resizeTo()`
+ */
     protected resizeTimeouts: number[] = [];
 
     /**
-   * Timeouts for resizing the content. I.e. `chart.setSize()`
-   */
+ * Timeouts for resizing the content. I.e. `chart.setSize()`
+ */
     protected innerResizeTimeouts: number[] = [];
 
     constructor(options: Partial<Component.ComponentOptions>) {
@@ -154,7 +154,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             if (!el) {
                 throw new Error(
                     'Could not find element with id: ' +
-                    this.options.parentElement
+          this.options.parentElement
                 );
             }
             this.parentElement = el;
@@ -176,7 +176,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         this.hasLoaded = false;
         this.shouldRedraw = true;
         this.editableOptions =
-            new EditableOptions(this, options.editableOptionsBindings);
+      new EditableOptions(this, options.editableOptionsBindings);
 
         this.presentationModifier = this.options.presentationModifier;
 
@@ -200,9 +200,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * Handles the sync options. Applies the given defaults if no
-     * specific callback given
-     */
+   * Handles the sync options. Applies the given defaults if no
+   * specific callback given
+   */
     protected handleSyncOptions(
         defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
     ): Component['syncHandlers'] {
@@ -231,7 +231,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     // Setup listeners on cell/other things up the chain
     private attachCellListeneres(): void {
-        // remove old listeners
+    // remove old listeners
         while (this.cellListeners.length) {
             const destroy = this.cellListeners.pop();
             if (destroy) {
@@ -254,7 +254,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                         const { row } = e;
                         if (row && this.parentCell) {
                             const hasLeftTheRow =
-                                row.getCellIndex(this.parentCell) === void 0;
+                row.getCellIndex(this.parentCell) === void 0;
                             if (hasLeftTheRow) {
                                 if (this.parentCell) {
                                     this.setCell(this.parentCell);
@@ -338,7 +338,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     public setStore(store: Component.StoreTypes | undefined): this {
-        // Clean up old event listeners
+    // Clean up old event listeners
         while (this.tableEvents.length) {
             const eventCallback = this.tableEvents.pop();
             if (typeof eventCallback === 'function') {
@@ -405,40 +405,40 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     private getContentHeight(): number {
         const parentHeight =
-            this.dimensions.height || Number(getStyle(this.element, 'height'));
+      this.dimensions.height || Number(getStyle(this.element, 'height'));
         const titleHeight = this.titleElement ?
             this.titleElement.clientHeight + getMargins(this.titleElement).y :
             0;
         const captionHeight = this.captionElement ?
             this.captionElement.clientHeight +
-            getMargins(this.captionElement).y :
+      getMargins(this.captionElement).y :
             0;
 
         return parentHeight - titleHeight - captionHeight;
     }
 
     /**
-   * Resize the component
-   * @param {number|string|null} [width]
-   * The width to set the component to.
-   * Can be pixels, a percentage string or null.
-   * Null will unset the style
-   * @param {number|string|null} [height]
-   * The height to set the component to.
-   * Can be pixels, a percentage string or null.
-   * Null will unset the style.
-   */
+ * Resize the component
+ * @param {number|string|null} [width]
+ * The width to set the component to.
+ * Can be pixels, a percentage string or null.
+ * Null will unset the style
+ * @param {number|string|null} [height]
+ * The height to set the component to.
+ * Can be pixels, a percentage string or null.
+ * Null will unset the style.
+ */
     public resize(
         width?: number | string | null,
         height?: number | string | null
     ): void {
-        // if (!this.resizeTimeout) {
-        //     this.resizeTimeout = requestAnimationFrame(() => {
+    // if (!this.resizeTimeout) {
+    //     this.resizeTimeout = requestAnimationFrame(() => {
 
         if (height) {
             // Get offset for border, padding
             const pad =
-                getPaddings(this.element).y + getMargins(this.element).y;
+        getPaddings(this.element).y + getMargins(this.element).y;
 
             this.dimensions.height = relativeLength(
                 height, Number(getStyle(this.parentElement, 'height'))
@@ -448,7 +448,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
         if (width) {
             const pad =
-                getPaddings(this.element).x + getMargins(this.element).x;
+        getPaddings(this.element).x + getMargins(this.element).x;
             this.dimensions.width = relativeLength(
                 width, Number(getStyle(this.parentElement, 'width'))
             ) - pad;
@@ -469,10 +469,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             width,
             height
         });
-        //         cancelAnimationFrame(this.resizeTimeout)
-        //         this.resizeTimeout = 0;
-        //     });
-        // }
+    //         cancelAnimationFrame(this.resizeTimeout)
+    //         this.resizeTimeout = 0;
+    //     });
+    // }
     }
 
     public resizeTo(element: HTMLElement): void {
@@ -504,16 +504,16 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
    * @return {this}
    * The component for chaining
    */
-    public update(newOptions: Partial<Component.ComponentOptions>, redraw = true): this {
-        // Update options
+    public update(newOptions: Partial<Component.ComponentOptions>, redraw = false): this {
+    // Update options
         let shouldForceRedraw = false;
 
         if (!redraw) {
             const currentOptions = this.options;
 
-            // TODO: should be registered by each component type
-            // and possibly configurable
-            const optionNamesToSkip = ['chartOptions'];
+            const optionNamesToSkip = this.editableOptions.bindings ?
+                this.editableOptions.bindings.skipRedraw :
+                [];
 
             const newOptionKeys = Object.keys(newOptions);
             for (let i = 0; i < newOptionKeys.length; i++) {
@@ -541,8 +541,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
                     // so might want to do a deeper comparison
                     if (
                         typeof oldOptionValue === 'object' &&
-                          JSON.stringify(oldOptionValue) !==
-                          JSON.stringify(newOptionValue)
+                            JSON.stringify(oldOptionValue) !==
+                            JSON.stringify(newOptionValue)
                     ) {
                         shouldForceRedraw = true;
                         break;
@@ -558,7 +558,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
         this.options = merge(this.options, newOptions);
         fireEvent(this, 'update', {
-            options: newOptions
+            options: newOptions,
+            shouldForceRedraw
         });
 
         if (redraw || shouldForceRedraw) {
@@ -572,8 +573,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         const previousTitle = this.titleElement;
 
         if (
-            !titleOptions ||
-              typeof titleOptions === 'string' ?
+            !titleOptions || typeof titleOptions === 'string' ?
                 titleOptions === '' :
                 titleOptions.text === ''
         ) {
@@ -584,7 +584,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
 
         const titleElement =
-            Component.createTextElement('h1', 'title', titleOptions);
+          Component.createTextElement('h1', 'title', titleOptions);
 
         if (titleElement) {
             this.titleElement = titleElement;
@@ -599,7 +599,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         const previousCaption = this.captionElement;
         if (
             !captionOptions ||
-              typeof captionOptions === 'string' ?
+        typeof captionOptions === 'string' ?
                 captionOptions === '' :
                 captionOptions.text === ''
         ) {
@@ -610,7 +610,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
 
         const captionElement =
-            Component.createTextElement('div', 'caption', captionOptions);
+      Component.createTextElement('div', 'caption', captionOptions);
 
         if (captionElement) {
             this.captionElement = captionElement;
@@ -622,11 +622,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * Handles setting things up on initial render
-   *
-   * @return {this}
-   * The component for chaining
-   */
+ * Handles setting things up on initial render
+ *
+ * @return {this}
+ * The component for chaining
+ */
     public load(): this {
 
         // Set up the store on inital load if it has not been done
@@ -684,9 +684,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * @return {this}
-     * The component for chaining
-     */
+   * @return {this}
+   * The component for chaining
+   */
     public render(): this {
         if (this.shouldRedraw || !this.hasLoaded) {
             this.load();
@@ -701,12 +701,12 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * @todo redraw should (usually) call render
-   * @return {this}
-   * The component for chaining
-   */
+ * @todo redraw should (usually) call render
+ * @return {this}
+ * The component for chaining
+ */
     public redraw(): this {
-        // Do a redraw
+    // Do a redraw
         const e = {
             component: this
         };
@@ -719,9 +719,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * @todo Should perhaps also remove the component from the registry
-   * or set an `isactive` flag to false
-   */
+ * @todo Should perhaps also remove the component from the registry
+ * or set an `isactive` flag to false
+ */
     public destroy(): void {
         while (this.element.firstChild) {
             this.element.firstChild.remove();
@@ -771,18 +771,18 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
         if (
             typeof message === 'object' &&
-            typeof message.callback === 'function'
+      typeof message.callback === 'function'
         ) {
             message.callback.apply(this);
         }
     }
 
     /**
-   * Converts the class instance to a class JSON.
-   *
-   * @return {Component.JSON}
-   * Class JSON of this Component instance.
-   */
+ * Converts the class instance to a class JSON.
+ *
+ * @return {Component.JSON}
+ * Class JSON of this Component instance.
+ */
     public toJSON(): Component.JSON {
         const dimensions: Record<'width' | 'height', number> = {
             width: 0,
@@ -819,29 +819,29 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 namespace Component {
 
     /* *
-   *
-   *  Declarations
-   *
-   * */
+ *
+ *  Declarations
+ *
+ * */
 
     export interface JSON extends Serializable.JSON<string> {
-        // store?: DataStore.ClassJSON;
+    // store?: DataStore.ClassJSON;
         options: ComponentOptionsJSON;
     }
 
     /**
-   * The basic events
-   */
+ * The basic events
+ */
     export type EventTypes =
-        ResizeEvent |
-        UpdateEvent |
-        TableChangedEvent |
-        LoadEvent |
-        RenderEvent |
-        RedrawEvent |
-        JSONEvent |
-        MessageEvent |
-        PresentationModifierEvent;
+    ResizeEvent |
+    UpdateEvent |
+    TableChangedEvent |
+    LoadEvent |
+    RenderEvent |
+    RedrawEvent |
+    JSONEvent |
+    MessageEvent |
+    PresentationModifierEvent;
 
     export type ResizeEvent = Event<'resize', {
         readonly type: 'resize';
@@ -868,7 +868,7 @@ namespace Component {
     }>;
     export type TableChangedEvent = Event<'tableChanged', {}>;
     export type PresentationModifierEvent =
-        Component.Event<'afterPresentationModifier', { table: DataTable }>;
+    Component.Event<'afterPresentationModifier', { table: DataTable }>;
 
 
     export type Event<
@@ -890,14 +890,14 @@ namespace Component {
         navigationBindings?: NavigationBindingsOptionsObject[];
         events?: Record<string, Function>;
         editableOptions: Array<string>;
-        editableOptionsBindings?: EditableOptions.BindingsType;
+        editableOptionsBindings?: EditableOptions.OptionsBindings;
         presentationModifier?: DataModifier;
         sync: SyncOptions;
     }
 
     // JSON compatible options for export
     export interface ComponentOptionsJSON extends JSON.Object {
-        // store?: DataStore.ClassJSON; // store id
+    // store?: DataStore.ClassJSON; // store id
         parentElement: string; // ID?
         style?: {};
         dimensions?: { width: number; height: number };
@@ -932,41 +932,41 @@ namespace Component {
     };
 
     /* *
-   *
-   *  Constants
-   *
-   * */
+ *
+ *  Constants
+ *
+ * */
 
     /**
-   *
-   * Record of component instances
-   *
-   */
+ *
+ * Record of component instances
+ *
+ */
     export const instanceRegistry: Record<string, ComponentType> = {};
 
     /**
-   * Regular expression to extract the  name (group 1) from the
-   * stringified class type.
-   */
+ * Regular expression to extract the  name (group 1) from the
+ * stringified class type.
+ */
     const nameRegExp = /^function\s+(\w*?)(?:Component)?\s*\(/;
 
     /**
-   *
-   * Record of component classes
-   * @todo
-   *
-   */
+ *
+ * Record of component classes
+ * @todo
+ *
+ */
     export const registry: Record<string, Class<Component>> = {};
 
     /* *
-   *
-   *  Functions
-   *
-   * */
+ *
+ *  Functions
+ *
+ * */
 
     /**
-     *
-     */
+   *
+   */
     export function addComponent<T extends Class<Component>>(
         componentClass: T
     ): boolean {
@@ -974,7 +974,7 @@ namespace Component {
 
         if (
             typeof name === 'undefined' ||
-            registry[name]
+      registry[name]
         ) {
             return false;
         }
@@ -985,79 +985,79 @@ namespace Component {
     }
 
     /**
-     *
-     */
+   *
+   */
     export function getAllComponentNames(): Array<string> {
         return Object.keys(Component.registry);
     }
 
     /**
-     *
-     */
+   *
+   */
     export function getAllComponents(): Record<string, Class<Component>> {
         return merge(Component.registry);
     }
 
     /**
-   * Extracts the name from a given component class.
-   *
-   * @param {DataStore} component
-   * Component class to extract the name from.
-   *
-   * @return {string}
-   * Component name, if the extraction was successful, otherwise an empty
-   * string.
-   */
+ * Extracts the name from a given component class.
+ *
+ * @param {DataStore} component
+ * Component class to extract the name from.
+ *
+ * @return {string}
+ * Component name, if the extraction was successful, otherwise an empty
+ * string.
+ */
     export function getName(
         component: (NewableFunction | ComponentType)
     ): string {
         return (
             component.toString().match(nameRegExp) ||
-            ['', '']
+      ['', '']
         )[1];
     }
 
     /**
-   * Adds a component instance to the registry
-   * @param {Component} component
-   * The component to add
-   */
+ * Adds a component instance to the registry
+ * @param {Component} component
+ * The component to add
+ */
     export function addInstance(component: ComponentType): void {
         Component.instanceRegistry[component.id] = component;
 
     }
 
     /**
-   * Removes a component instance from the registry
-   * @param {Component} component
-   * The component to remove
-   */
+ * Removes a component instance from the registry
+ * @param {Component} component
+ * The component to remove
+ */
     export function removeInstance(component: Component<any>): void {
         delete Component.instanceRegistry[component.id];
     }
 
     /**
-   * Retrieves the IDs of the registered component instances
-   * @return {string[]}
-   * Array of component IDs
-   */
+ * Retrieves the IDs of the registered component instances
+ * @return {string[]}
+ * Array of component IDs
+ */
     export function getAllInstanceIDs(): string[] {
         return Object.keys(instanceRegistry);
     }
 
     /**
-   * Retrieves all registered component instances
-   * @return {ComponentType[]}
-   * Array of components
-   */
+ * Retrieves all registered component instances
+ * @return {ComponentType[]}
+ * Array of components
+ */
     export function getAllInstances(): Component<any>[] {
         const ids = getAllInstanceIDs();
         return ids.map((id): Component<any> => instanceRegistry[id]);
     }
 
     /**
-     *
-     */
+   *
+   */
     export function getComponent<T extends Class<Component>>(
         key: string
     ): (T | undefined) {
@@ -1065,14 +1065,14 @@ namespace Component {
     }
 
     /**
-     *
-     */
+   *
+   */
     export function getInstanceById(id: string): ComponentType | undefined {
         return instanceRegistry[id];
     }
     /**
-     *
-     */
+   *
+   */
     export function relayMessage(
         sender: ComponentType | ComponentGroup,
         // Are there cases where a group should be the sender?
@@ -1108,7 +1108,7 @@ namespace Component {
                         if (component && component.id !== sender.id) {
                             if (
                                 component.type === recipient ||
-                                recipient === 'all'
+                recipient === 'all'
                             ) {
                                 emit(component);
                             }

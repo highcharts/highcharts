@@ -73,10 +73,10 @@ declare module '../../Core/GlobalsLike' {
 class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEvents> {
 
     /* *
-     *
-     *  Static properties
-     *
-     * */
+   *
+   *  Static properties
+   *
+   * */
 
     public static charter?: typeof G;
 
@@ -98,14 +98,21 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             },
             chartConstructor: '',
             editableOptions:
-                  Component.defaultOptions.editableOptions.concat(
-                      [
-                          'chartOptions',
-                          'chartType',
-                          'chartClassName',
-                          'chartID'
-                      ]
-                  ),
+            Component.defaultOptions.editableOptions.concat(
+                [
+                    'chartType',
+                    'chartOptions',
+                    'chartClassName',
+                    'chartID'
+                ]
+            ),
+            editableOptionsBindings: {
+                ...Component.defaultOptions.editableOptionsBindings,
+                skipRedraw: [
+                    ...(Component.defaultOptions.editableOptionsBindings?.skipRedraw || []),
+                    'chartOptions'
+                ]
+            },
             syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}
         });
@@ -140,10 +147,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     }
 
     /* *
-     *
-     *  Properties
-     *
-     * */
+   *
+   *  Properties
+   *
+   * */
 
     public chartOptions: Partial<Options>;
     public chart: Chart | undefined;
@@ -153,10 +160,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     public sync: Component['sync'];
     /* *
-     *
-     *  Constructor
-     *
-     * */
+   *
+   *  Constructor
+   *
+   * */
 
     constructor(options: Partial<HighchartsComponent.ComponentOptions>) {
         options = merge(
