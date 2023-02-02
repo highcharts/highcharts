@@ -521,21 +521,22 @@ function getSVG(chart) {
             );
 
         if (chart.styledMode) {
-            svg = svg.replace(
-                '</defs>',
-                '<style>' +
-                '* {' +
-                '   fill: rgba(0, 0, 0, 0.1);' +
-                '   stroke: black;' +
-                '   stroke-width: 1px;' +
-                '}' +
-                'text, tspan {' +
-                '    fill: blue;' +
-                '    stroke: none;' +
-                '}' +
-                '</style>' +
-                '</defs>'
-            );
+            var css = document.getElementById('highcharts.css');
+            if (css) {
+                svg = svg
+                    // Get the typography styling right
+                    .replace(
+                        ' class="highcharts-root" ',
+                        ' class="highcharts-root highcharts-container" ' +
+                            'style="width:auto; height:auto" '
+                    )
+
+                    // Insert highcharts.css
+                    .replace(
+                        '</defs>',
+                        '<style>' + css.innerText + '</style></defs>'
+                );
+            }
         }
 
         // Renderer samples

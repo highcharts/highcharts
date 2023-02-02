@@ -648,7 +648,7 @@ module.exports = function (config) {
     config.set(options);
 };
 
-function createVisualTestTemplate(argv, path, js, assertion) {
+function createVisualTestTemplate(argv, samplePath, js, assertion) {
     let scriptBody = resolveJSON(js);
 
     // Don't do intervals (typically for gauge samples, add point etc)
@@ -666,7 +666,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
         '$1_animation: '
     );
 
-    let html = getHTML(path);
+    let html = getHTML(samplePath);
     let resets = [];
 
     // Reset global options, but only if necessary
@@ -682,9 +682,19 @@ function createVisualTestTemplate(argv, path, js, assertion) {
         resets.push('callbacks');
     }
 
+    // Include highcharts.css, to be inserted into the SVG in
+    // karma-setup.js:getSVG
+    if (scriptBody.indexOf('styledMode: true') !== -1) {
+        var css = fs.readFileSync(
+            path.join(__dirname, '../code/css/highcharts.css'),
+            'utf8'
+        );
+        html += '<style id="highcharts.css">' + css + '</style>';
+    }
+
     resets = JSON.stringify(resets);
     return `
-        QUnit.test('${path}', function (assert) {
+        QUnit.test('${samplePath}', function (assert) {
             // Apply demo.html
             document.getElementById('demo-html').innerHTML = \`${html}\`;
 
