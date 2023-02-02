@@ -1,5 +1,5 @@
 /* *
- * OpenStreetMap provider, used for tile map services
+ * Gaode provider, used for tile map services
  * */
 
 'use strict';
@@ -13,23 +13,21 @@ const {
     pick
 } = U;
 
-export default class OpenStreetMap implements ProviderDefinition {
-    subdomains = ['a', 'b', 'c'];
+export default class Gaode implements ProviderDefinition {
+    subdomains = [''];
 
     themes = {
-        standard: 'https://{s}.tile.openstreetmap.org/{zoom}/{x}/{y}.png',
-        hot: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'
+        standard: 'https://cdn.lima-labs.com/{zoom}/{x}/{y}.png?api=demo'
     };
 
     initialProjectionName = 'WebMercator';
 
     credits = {
-        standard: `Map data \u00a92023 <a href="https://www.openstreetmap.org/copyright">
-            OpenStreetMap</a>`
+        standard: 'Map data \u00a92023 <a href="https://maps.lima-labs.com/">LimaLabs</a>'
     };
 
     minZoom = 0;
-    maxZoom = 19.99999;
+    maxZoom = 20.99999;
 
     getCredits(theme: string | undefined): string {
         return pick(
@@ -69,8 +67,8 @@ export default class OpenStreetMap implements ProviderDefinition {
         ) {
             if (subdomain) {
                 error(
-                    'Missing option: Tiles provider subdomain cannot be' +
-                    ' reached, using default provider subdomain.',
+                    'Missing option: Tiles provider subdomain cannot be ' +
+                    'reached, using default provider subdomain.',
                     false
                 );
             }

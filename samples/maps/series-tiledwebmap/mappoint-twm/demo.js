@@ -15,8 +15,7 @@ Highcharts.mapChart('container', {
         type: 'tiledwebmap',
         name: 'Open Street Map tiles',
         provider: {
-            type: 'OpenStreetMap',
-            url: 'testimage.png'
+            type: 'OpenStreetMap'
         }
     }, {
         type: 'mappoint',

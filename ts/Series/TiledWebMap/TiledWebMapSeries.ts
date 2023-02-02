@@ -227,9 +227,15 @@ class TiledWebMapSeries extends MapSeries {
                     'Highcharts.com ' + def.getCredits(provider.theme)
                 );
 
-                chart.addCredits({
-                    text: creditsText
-                });
+                if (chart.credits) {
+                    chart.credits.update({
+                        text: creditsText
+                    });
+                } else {
+                    chart.addCredits({
+                        text: creditsText
+                    });
+                }
 
                 provider.url = def.getURL(
                     provider.subdomain,

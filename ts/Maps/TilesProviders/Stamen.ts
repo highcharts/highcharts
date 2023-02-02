@@ -9,7 +9,8 @@ import type ProviderDefinition from '../ProviderDefinition';
 import U from '../../Core/Utilities.js';
 
 const {
-    error
+    error,
+    pick
 } = U;
 
 export default class Stamen implements ProviderDefinition {
@@ -38,10 +39,10 @@ export default class Stamen implements ProviderDefinition {
     maxZoom = 16.99999;
 
     getCredits(theme: string | undefined): string {
-        if (theme === 'watercolor') {
-            return this.credits.watercolor;
-        }
-        return this.credits.standard;
+        return pick(
+            this.credits[theme as keyof typeof this.credits],
+            this.credits['standard']
+        );
     }
 
     getURL(

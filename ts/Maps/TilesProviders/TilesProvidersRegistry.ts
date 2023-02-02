@@ -11,11 +11,13 @@ import type ProviderDefinition from '../ProviderDefinition';
 import OpenStreetMap from './OpenStreetMap.js';
 import Gaode from './Gaode.js';
 import Stamen from './Stamen.js';
+import LimaLabs from './LimaLabs.js';
 
 const registry: Record<string, typeof ProviderDefinition> = {
     OpenStreetMap,
     Gaode,
-    Stamen
+    Stamen,
+    LimaLabs
 };
 
 export default registry;

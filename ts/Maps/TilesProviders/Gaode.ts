@@ -9,7 +9,8 @@ import type ProviderDefinition from '../ProviderDefinition';
 import U from '../../Core/Utilities.js';
 
 const {
-    error
+    error,
+    pick
 } = U;
 
 export default class Gaode implements ProviderDefinition {
@@ -30,7 +31,10 @@ export default class Gaode implements ProviderDefinition {
     maxZoom = 9.99999;
 
     getCredits(theme: string | undefined): string {
-        return this.credits.standard;
+        return pick(
+            this.credits[theme as keyof typeof this.credits],
+            this.credits['standard']
+        );
     }
 
     getURL(
