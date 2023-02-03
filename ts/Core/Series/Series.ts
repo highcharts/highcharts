@@ -2192,7 +2192,7 @@ class Series {
             let pointStack,
                 stackValues: (Array<number>|undefined),
                 yValue = point.y,
-                yBottom = point.low;
+                lowValue = point.low;
             const stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(
                 series.negStacks &&
                 (yValue as any) <
@@ -2201,15 +2201,15 @@ class Series {
                     ''
             ) + series.stackKey];
 
-            if (
-                yAxis.positiveValuesOnly &&
-                !yAxis.validatePositiveValue(yValue) ||
-                xAxis.positiveValuesOnly &&
-                !xAxis.validatePositiveValue(xValue)
-            ) {
-                point.isNull = true;
-            }
-
+            plotX = (xAxis.translate as any)( // #3923
+                xValue,
+                false,
+                false,
+                false,
+                true,
+                pointPlacement,
+                this.type === 'flags'
+            );
             /**
              * The translated X value for the point in terms of pixels. Relative
              * to the X axis position if the series has one, otherwise relative
@@ -2218,18 +2218,9 @@ class Series {
              * @name Highcharts.Point#plotX
              * @type {number|undefined}
              */
-            point.plotX = plotX = correctFloat( // #5236
-                // Get the plotX translation
-                limitedRange((xAxis.translate as any)( // #3923
-                    xValue,
-                    0,
-                    0,
-                    0,
-                    1,
-                    pointPlacement,
-                    this.type === 'flags'
-                )) // #3923
-            );
+            point.plotX = isNumber(plotX) ? correctFloat( // #5236
+                limitedRange(plotX) // #3923
+            ) : void 0;
 
             // Calculate the bottom y value for stacked series
             if (stacking &&
@@ -2249,13 +2240,13 @@ class Series {
                 }
 
                 if (pointStack && isArray(stackValues)) {
-                    yBottom = stackValues[0];
+                    lowValue = stackValues[0];
                     yValue = stackValues[1];
 
-                    if (yBottom === stackThreshold &&
+                    if (lowValue === stackThreshold &&
                         stackIndicator.key === stack[xValue].base
                     ) {
-                        yBottom = pick(
+                        lowValue = pick(
                             isNumber(threshold) ? threshold : yAxis.min
                         );
                     }
@@ -2263,10 +2254,10 @@ class Series {
                     // #1200, #1232
                     if (
                         yAxis.positiveValuesOnly &&
-                        defined(yBottom) &&
-                        yBottom <= 0
+                        defined(lowValue) &&
+                        lowValue <= 0
                     ) {
-                        yBottom = void 0;
+                        lowValue = void 0;
                     }
 
                     point.total = point.stackTotal = pick(pointStack.total);
@@ -2296,10 +2287,10 @@ class Series {
             }
 
             // Set translated yBottom or remove it
-            point.yBottom = defined(yBottom) ?
-                limitedRange(yAxis.translate(
-                    (yBottom as any), 0 as any, 1 as any, 0 as any, 1 as any
-                )) :
+            point.yBottom = defined(lowValue) ?
+                limitedRange(
+                    yAxis.translate(lowValue, false, true, false, true)
+                ) :
                 void 0;
 
             // General hook, used for Highcharts Stock compare and cumulative
@@ -2307,25 +2298,21 @@ class Series {
                 yValue = series.dataModify.modifyValue(yValue, i);
             }
 
-            // Set the the plotY value, reset it for redraws
-            // #3201
-            point.plotY = void 0;
-            if (isNumber(yValue)) {
-                const translated = yAxis.translate(
-                    yValue, false, true, false, true
-                );
-                if (typeof translated !== 'undefined') {
-                    /**
-                     * The translated Y value for the point in terms of pixels.
-                     * Relative to the Y axis position if the series has one,
-                     * otherwise relative to the plot area. Depending on the
-                     * series type this value might not be defined.
-                     * @name Highcharts.Point#plotY
-                     * @type {number|undefined}
-                     */
-                    point.plotY = limitedRange(translated);
-                }
+            // Set the the plotY value, reset it for redraws #3201, #18422
+            let plotY: number|undefined;
+            if (isNumber(yValue) && point.plotX !== void 0) {
+                plotY = yAxis.translate(yValue, false, true, false, true);
+                plotY = isNumber(plotY) ? limitedRange(plotY) : void 0;
             }
+            /**
+             * The translated Y value for the point in terms of pixels. Relative
+             * to the Y axis position if the series has one, otherwise relative
+             * to the plot area. Depending on the series type this value might
+             * not be defined.
+             * @name Highcharts.Point#plotY
+             * @type {number|undefined}
+             */
+            point.plotY = plotY;
 
             point.isInside = this.isPointInside(point);
 
@@ -2406,15 +2393,22 @@ class Series {
         // #3916, #5029, #5085
         return (points || this.points || []).filter(
             function (point: Point): boolean {
-                if (insideOnly && !chart.isInsidePlot(
-                    point.plotX as any,
-                    point.plotY as any,
-                    { inverted: chart.inverted }
-                )) {
+                const { plotX, plotY } = point,
+                    // Undefined plotY is treated as null when negative values
+                    // in log axis (#18422)
+                    asNull = !allowNull && (point.isNull || !isNumber(plotY));
+                if (
+                    asNull || (
+                        insideOnly && !chart.isInsidePlot(
+                            plotX as any,
+                            plotY as any,
+                            { inverted: chart.inverted }
+                        )
+                    )
+                ) {
                     return false;
                 }
-                return point.visible !== false &&
-                    (allowNull || !point.isNull);
+                return point.visible !== false;
             }
         );
     }
