@@ -100,23 +100,30 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             editableOptions:
             Component.defaultOptions.editableOptions.concat(
                 [
-                    'chartType',
                     'chartOptions',
+                    'chartType',
                     'chartClassName',
                     'chartID'
                 ]
             ),
-            editableOptionsBindings: {
-                ...Component.defaultOptions.editableOptionsBindings,
-                skipRedraw: [
-                    ...Component.defaultOptions
-                        .editableOptionsBindings.skipRedraw,
-                    'chartOptions'
-                ]
-            },
+            editableOptionsBindings: merge(
+                {
+                    skipRedraw: [
+                        'chartOptions',
+                        'chartType'
+                    ],
+                    keyMap: {
+                        chartOptions: 'textarea',
+                        chartType: 'select'
+                    }
+                },
+                Component.defaultOptions.editableOptionsBindings
+            ),
             syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}
-        });
+        }
+    );
+
 
     public static fromJSON(
         json: HighchartsComponent.ClassJSON

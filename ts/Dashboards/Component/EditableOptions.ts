@@ -41,8 +41,6 @@ class EditableOptions {
     public static defaultBindings: EditableOptions.OptionsBindings = {
         keyMap: {
             color: 'colorPicker',
-            chartOptions: 'textarea',
-            chartType: 'select',
             title: 'text',
             caption: 'text',
             style: 'textarea'
@@ -129,14 +127,13 @@ class EditableOptions {
 
         const record: EditableOptions.getOptionsType = {};
 
-        [
-            ...options.editableOptions
-        ].forEach((optionName: string): void => {
-            const type = getType(optionName, options);
-            if (type) {
-                record[optionName] = type;
-            }
-        });
+        options.editableOptions
+            .forEach((optionName: string): void => {
+                const type = getType(optionName, options);
+                if (type) {
+                    record[optionName] = type;
+                }
+            });
 
         return record;
     }
