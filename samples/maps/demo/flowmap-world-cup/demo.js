@@ -33,6 +33,12 @@
             }
         },
 
+        accessibility: {
+            point: {
+                valueDescriptionFormat: '{xDescription}.'
+            }
+        },
+
         plotOptions: {
             flowmap: {
                 tooltip: {
@@ -201,6 +207,16 @@
         }, {
             type: 'flowmap',
             name: 'Flowmap Series',
+            accessibility: {
+                point: {
+                    valueDescriptionFormat:
+                        'Origin: {point.options.from:.2f}, ' +
+                            'Destination: {point.options.to:.2f}.'
+                },
+                description:
+                    'This is a map showing flight routes to Qatar ' +
+                        'from countries that participated in the 2022 World Cup.'
+            },
             fillOpacity: 1,
             width: 0.2,
             color: '#550d6566',

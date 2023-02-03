@@ -24,6 +24,12 @@
             enabled: false
         },
 
+        accessibility: {
+            point: {
+                valueDescriptionFormat: '{xDescription}.'
+            }
+        },
+
         plotOptions: {
             mappoint: {
                 tooltip: {
@@ -88,6 +94,10 @@
         }, {
             type: 'flowmap',
             name: 'Flow route',
+            accessibility: {
+                description:
+                'This is a demonstration of the flowmap using weighted links.'
+            },
             linkedTo: ':previous',
             minWidth: 5,
             maxWidth: 15,

@@ -46,6 +46,12 @@
             enabled: false
         },
 
+        accessibility: {
+            point: {
+                valueDescriptionFormat: '{xDescription}.'
+            }
+        },
+
         plotOptions: {
             series: {
                 states: {
@@ -58,6 +64,11 @@
                 tooltip: {
                     headerFormat: '',
                     pointFormat: '{point.name}<br/>years ago'
+                }
+            },
+            flowmap: {
+                tooltip: {
+                    pointFormat: '{point.options.from} \u2192 {point.options.to}'
                 }
             }
         },
@@ -125,6 +136,14 @@
             name: 'Migrations',
             color: 'rgb(205, 91, 147)',
             type: 'flowmap',
+            accessibility: {
+                point: {
+                    valueDescriptionFormat:
+                        'Origin: {point.options.from:.2f}, Destination: {point.options.to:.2f}.'
+                },
+                description:
+                    'This is a map showing where early humans migrated.'
+            },
             minWidth: 5,
             maxWidth: 15,
             growTowards: false,
