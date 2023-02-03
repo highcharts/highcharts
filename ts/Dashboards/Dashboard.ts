@@ -139,7 +139,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     public layoutsWrapper: globalThis.HTMLElement;
     public mountedComponents: Array<Bindings.MountedComponentsOptions>;
     public options: Dashboard.Options;
-    public a11y: DashboardAccessibility.Options;
+    public a11y: DashboardAccessibility;
 
     /* *
      *

@@ -13,13 +13,13 @@
 
 'use strict';
 
-import Dashboard from '../Dashboard.js';
-
 /* *
  *
  *  Imports
  *
  * */
+
+import Dashboard from '../Dashboard.js';
 
 /* *
  *
@@ -73,11 +73,7 @@ class DashboardsAccessibility {
     }
 }
 
-namespace DashboardsAccessibility {
-    export interface Options {
-        addTabIndexToCells: Function
-    }
-}
+// namespace DashboardsAccessibility { }
 
 /* *
  *
