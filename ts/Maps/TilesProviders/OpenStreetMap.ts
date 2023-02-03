@@ -29,7 +29,7 @@ export default class OpenStreetMap implements ProviderDefinition {
     };
 
     minZoom = 0;
-    maxZoom = 19.99999;
+    maxZoom = 19;
 
     getCredits(theme: string | undefined): string {
         return pick(

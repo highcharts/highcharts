@@ -106,6 +106,8 @@ class TiledWebMapSeries extends MapSeries {
     tiles: Record<string, TileItem> = {};
     tilesOffsetX: number = 0;
     tilesOffsetY: number = 0;
+    minZoom: number | undefined;
+    maxZoom: number | undefined;
     public static TilesProvidersRegistry = TilesProvidersRegistry;
 
     /**
@@ -197,10 +199,10 @@ class TiledWebMapSeries extends MapSeries {
             options = this.options,
             provider = options.provider,
             { zoom } = mapView,
-            zoomFloor = zoom < 0 ? 0 : Math.floor(zoom),
-            maxTile = Math.pow(2, zoomFloor),
             worldSize = 400.979322,
-            tileSize = 256,
+            tileSize = 256;
+        let zoomFloor = zoom < 0 ? 0 : Math.floor(zoom),
+            maxTile = Math.pow(2, zoomFloor),
             scale = ((tileSize / worldSize) * Math.pow(2, zoom)) /
                 ((tileSize / worldSize) * Math.pow(2, zoomFloor)),
             scaledTileSize = scale * 256;
@@ -220,6 +222,9 @@ class TiledWebMapSeries extends MapSeries {
 
                 const def = new ProviderDefinition(),
                     { initialProjectionName: providerProjection } = def;
+
+                this.minZoom = def.minZoom;
+                this.maxZoom = def.maxZoom;
 
                 // Add as credits.text, to prevent changing the default mapText
                 const creditsText = pick(
@@ -252,6 +257,21 @@ class TiledWebMapSeries extends MapSeries {
                         false
                     );
                 }
+            }
+
+            // if zoom is smaller/higher than supported by provider
+            if (this.minZoom && zoomFloor < this.minZoom) {
+                zoomFloor = this.minZoom;
+                maxTile = Math.pow(2, zoomFloor);
+                scale = ((tileSize / worldSize) * Math.pow(2, zoom)) /
+                    ((tileSize / worldSize) * Math.pow(2, zoomFloor));
+                scaledTileSize = scale * 256;
+            } else if (this.maxZoom && zoomFloor > this.maxZoom) {
+                zoomFloor = this.maxZoom;
+                maxTile = Math.pow(2, zoomFloor);
+                scale = ((tileSize / worldSize) * Math.pow(2, zoom)) /
+                    ((tileSize / worldSize) * Math.pow(2, zoomFloor));
+                scaledTileSize = scale * 256;
             }
 
             if (mapView.projection && mapView.projection.def) {
@@ -347,9 +367,8 @@ class TiledWebMapSeries extends MapSeries {
                     topLeft.lat > mapView.projection.maxLatitude ||
                     bottomRight.lat < -1 * mapView.projection.maxLatitude
                 ) {
-                    topLeft.lat = topLeft.lat % mapView.projection.maxLatitude;
-                    bottomRight.lat =
-                        bottomRight.lat % mapView.projection.maxLatitude;
+                    topLeft.lat = mapView.projection.maxLatitude;
+                    bottomRight.lat = -1 * mapView.projection.maxLatitude;
                 }
 
                 const startPos = this.lonLatToTile(topLeft, zoomFloor),
@@ -463,8 +482,7 @@ addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
         const ProviderDefinition =
             TilesProvidersRegistry[twm.provider.type],
             def = new ProviderDefinition(),
-            { initialProjectionName: providerProjectionName } = def,
-            { minZoom, maxZoom } = def;
+            { initialProjectionName: providerProjectionName } = def;
 
         if (geoBounds) {
             const { x1, y1, x2, y2 } = geoBounds;
@@ -473,17 +491,13 @@ addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
                     name: providerProjectionName,
                     parallels: [y1, y2],
                     rotation: [-(x1 + x2) / 2]
-                },
-                minZoom: minZoom,
-                maxZoom: maxZoom
+                }
             };
         } else {
             this.recommendedMapView = {
                 projection: {
                     name: providerProjectionName
-                },
-                minZoom: minZoom,
-                maxZoom: maxZoom
+                }
             };
         }
 

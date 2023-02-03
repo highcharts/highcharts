@@ -36,7 +36,7 @@ export default class Stamen implements ProviderDefinition {
     };
 
     minZoom = 0;
-    maxZoom = 16.99999;
+    maxZoom = 16;
 
     getCredits(theme: string | undefined): string {
         return pick(

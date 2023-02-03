@@ -27,7 +27,7 @@ export default class Gaode implements ProviderDefinition {
     };
 
     minZoom = 0;
-    maxZoom = 20.99999;
+    maxZoom = 20;
 
     getCredits(theme: string | undefined): string {
         return pick(
