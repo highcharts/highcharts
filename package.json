@@ -51,6 +51,7 @@
     "aws-sdk": "^2.1212.0",
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
+    "clean-jsdoc-theme": "^4.2.3",
     "cloudflare": "^2.9.1",
     "colors": "^1.4.0",
     "cypress": "^12.0.2",

@@ -1,0 +1,43 @@
+{
+    "opts": {
+        "destination": "build/api/dashboards-3/",
+        "encoding": "utf8",
+        "mainpagetitle": "Highcharts Dashboards",
+        "pedantic": true,
+        "private": true,
+        "readme": "docs/dashboards/your-first-dashboard.md",
+        "recurse": true,
+        "template": "node_modules/clean-jsdoc-theme",
+        "theme_opts": {
+            "default_theme": "light"
+        }
+    },
+    "plugins": [
+        "./node_modules/jsdoc/plugins/underscore",
+        "./node_modules/jsdoc/plugins/escapeHTML",
+        "./node_modules/jsdoc/plugins/markdown"
+    ],
+    "markdown": {
+        "hardwrap": false,
+        "idInHeadings": true
+    },
+    "source": {
+        "includePattern": ".+\\.jsx?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": [
+            "jsdoc"
+        ]
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": true,
+        "showInheritedInNav": true,
+        "useLongnameInNav": false,
+        "default": {
+            "outputSourceFiles": false
+        }
+    }
+}
