@@ -1370,6 +1370,13 @@ class MapViewInset extends MapView {
 
 // Initialize the MapView after initialization, but before firstRender
 addEvent(MapChart, 'afterInit', function (): void {
+    /**
+     * The map view handles zooming and centering on the map, and various
+     * client-side projection capabilities.
+     *
+     * @name Highcharts.MapChart#mapView
+     * @type {Highcharts.MapView|undefined}
+     */
     this.mapView = new MapView(this, this.options.mapView);
 });
 
