@@ -2201,14 +2201,8 @@ class Series {
                     ''
             ) + series.stackKey];
 
-            plotX = (xAxis.translate as any)( // #3923
-                xValue,
-                false,
-                false,
-                false,
-                true,
-                pointPlacement,
-                this.type === 'flags'
+            plotX = xAxis.translate( // #3923
+                xValue, false, false, false, true, pointPlacement
             );
             /**
              * The translated X value for the point in terms of pixels. Relative
@@ -2319,11 +2313,11 @@ class Series {
             // Set client related positions for mouse tracking
             point.clientX = dynamicallyPlaced ?
                 correctFloat(xAxis.translate(
-                    xValue as any,
-                    0 as any,
-                    0 as any,
-                    0 as any,
-                    1 as any,
+                    xValue,
+                    false,
+                    false,
+                    false,
+                    true,
                     pointPlacement
                 )) :
                 plotX; // #1514, #5383, #5518
