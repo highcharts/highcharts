@@ -89,7 +89,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('The currentPriceIndicator label should be visible, #14879.',
+QUnit.test('Price indicator labels rendering and visibility, #14879, #17790.',
     function (assert) {
         const chart = Highcharts.stockChart('container', {
             stockTools: {
@@ -101,13 +101,13 @@ QUnit.test('The currentPriceIndicator label should be visible, #14879.',
                 }
             },
             series: [{
-                compare: 'percent',
-                data: [100, 1, 1, 10, 1],
+                data: [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
                 lastPrice: {
                     enabled: true,
-                    color: 'red'
+                    label: {
+                        enabled: true
+                    }
                 },
-                // label
                 lastVisiblePrice: {
                     enabled: true,
                     label: {
@@ -120,7 +120,15 @@ QUnit.test('The currentPriceIndicator label should be visible, #14879.',
         assert.strictEqual(
             chart.series[0].lastVisiblePrice.visibility,
             'inherit',
-            'Last visible price label should be visible.'
+            'Last visible price label should be visible, #14879.'
+        );
+
+        chart.xAxis[0].setExtremes(2, 4); // 'Drag' the chart to redraw labels
+
+        assert.strictEqual(
+            document.querySelectorAll('.highcharts-crosshair-label').length,
+            2, // One for lastPrice label, one for lastVisiblePrice label
+            'There should only be two price labels rendered, #17790.'
         );
     }
 );
