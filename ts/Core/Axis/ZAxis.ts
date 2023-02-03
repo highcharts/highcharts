@@ -192,7 +192,7 @@ class ZAxis extends Axis implements AxisLike {
                 this.hasVisibleSeries = true;
 
                 // Validate threshold in logarithmic axes
-                if (this.logarithmic && (threshold as any) <= 0) {
+                if (this.positiveValuesOnly && (threshold as any) <= 0) {
                     threshold = void 0;
                 }
 
