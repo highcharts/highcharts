@@ -1810,12 +1810,9 @@ class Chart {
         const chart = this;
 
         const runReflow = (e: any): void => {
-            // Request animation frame because of looping in Safari
-            setTimeout((): void => {
-                if (chart.options?.chart.reflow && chart.hasLoaded) {
-                    chart.reflow(e);
-                }
-            });
+            if (chart.options?.chart.reflow && chart.hasLoaded) {
+                chart.reflow(e);
+            }
         };
 
         if (typeof ResizeObserver === 'function') {
