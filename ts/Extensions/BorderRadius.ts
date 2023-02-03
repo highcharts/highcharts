@@ -13,8 +13,13 @@
 'use strict';
 
 import type ColumnSeries from '../Series/Column/ColumnSeries';
+import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 
 const {
@@ -28,6 +33,16 @@ export interface BorderRadiusOptions {
     radius: number|string;
     scope: 'point'|'stack';
     where?: 'end'|'all';
+}
+
+/**
+ * Internal types
+ * @private
+ */
+declare module '../Core/Renderer/SVG/SymbolOptions' {
+    interface SymbolOptions {
+        borderRadius?: number|string;
+    }
 }
 
 const defaultOptions: BorderRadiusOptions = {
@@ -44,6 +59,79 @@ const optionsToObject = (
     }
     return merge(defaultOptions, options);
 };
+
+// Extend arc with borderRadius
+const arc = SVGRenderer.prototype.symbols.arc;
+SVGRenderer.prototype.symbols.arc = function (
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    options?: SymbolOptions
+): SVGPath {
+    const path = arc(x, y, w, h, options),
+        { borderRadius, innerR, r, start, end } = options || {};
+
+    if (
+        typeof borderRadius === 'number' &&
+        typeof r === 'number' &&
+        typeof start === 'number' &&
+        typeof end === 'number'
+    ) {
+        const fractionAlongOuterPerimeter = borderRadius / (2 * Math.PI * r),
+            angleOfBorderRadius = fractionAlongOuterPerimeter * (2 * Math.PI);
+
+        // First move to the start position along the perimeter. But we want to
+        // start one borderRadius closer to the center.
+        if (path[0] && path[0][0] === 'M') {
+            path[0][1] = x + (r - borderRadius) * Math.cos(start);
+            path[0][2] = y + (r - borderRadius) * Math.sin(start);
+        }
+
+        // Now draw an arc towards a point one borderRadius out along the
+        // perimeter
+        path.splice(1, 0, [
+            'A',
+            borderRadius,
+            borderRadius,
+            0, // slanting,
+            0, // long arc
+            1, // clockwise
+            x + r * Math.cos(start + angleOfBorderRadius),
+            y + r * Math.sin(start + angleOfBorderRadius)
+        ]);
+
+        // The main outer arc should stop one borderRadius before hitting the
+        // end point along the perimeter.
+        if (path[2] && path[2][0] === 'A') {
+            path[2][6] = x + r * Math.cos(end - angleOfBorderRadius);
+            path[2][7] = y + r * Math.sin(end - angleOfBorderRadius);
+        }
+
+        // Draw an arc towards a point on the end angle, but one borderRadius
+        // closer to the center relative to the perimeter.
+        path.splice(3, 0, [
+            'A',
+            borderRadius,
+            borderRadius,
+            0,
+            0,
+            1,
+            x + (r - borderRadius) * Math.cos(end),
+            y + (r - borderRadius) * Math.sin(end)
+        ]);
+    }
+
+    return path;
+};
+
+addEvent(seriesTypes.pie, 'afterTranslate', function (): void {
+    const borderRadius = optionsToObject(this.options.borderRadius);
+
+    for (const point of this.points) {
+        (point.shapeArgs as SymbolOptions).borderRadius = borderRadius.radius;
+    }
+});
 
 addEvent(Series as unknown as ColumnSeries, 'afterColumnTranslate', function (
 ): void {

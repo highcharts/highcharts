@@ -1,4 +1,4 @@
-const chart = Highcharts.chart('container', {
+const columnChart = Highcharts.chart('container-1', {
     chart: {
         type: 'column'
     },
@@ -45,7 +45,7 @@ document.querySelectorAll('button.corner-radius').forEach(btn => {
     btn.addEventListener(
         'click',
         () => {
-            chart.update({
+            columnChart.update({
                 plotOptions: {
                     series: {
                         borderRadius: btn.dataset.value
@@ -60,11 +60,45 @@ document.querySelectorAll('button.chart-type').forEach(btn => {
     btn.addEventListener(
         'click',
         () => {
-            chart.update({
+            columnChart.update({
                 chart: {
                     type: btn.dataset.value
                 }
             });
         }
     );
+});
+
+Highcharts.chart('container-2', {
+    chart: {
+        type: 'pie'
+    },
+    xAxis: {
+        categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
+    },
+    accessibility: {
+        enabled: false
+    },
+    title: {
+        text: 'Pie with rounded corners'
+    },
+    plotOptions: {
+        series: {
+            borderRadius: 10,
+            borderWidth: 2,
+            borderColor: 'white',
+            dataLabels: {
+                enabled: true
+            },
+            size: '80%'
+        }
+    },
+    series: [{
+        data: [{
+            y: 1,
+            sliced: true
+        }, 3, 2, 4],
+        name: 'Norway'
+    }],
+    colors: ['#d7bfff', '#af80ff', '#5920b9', '#48208b']
 });
