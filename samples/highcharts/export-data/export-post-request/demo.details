@@ -2,5 +2,6 @@
 name: Sending a POST request to export
 authors:
   - Torstein Hønsi
+skipTest: true
 js_wrap: b
 ...
