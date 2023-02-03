@@ -268,7 +268,6 @@ class Axis {
     public pointRange: number = void 0 as any;
     public pointRangePadding: number = void 0 as any;
     public pos: number = void 0 as any;
-    public positiveValuesOnly: boolean = void 0 as any;
     public reserveSpaceDefault?: boolean;
     public reversed?: boolean;
     public right: number = void 0 as any;
@@ -446,9 +445,6 @@ class Axis {
 
         // Placeholder for plotlines and plotbands groups
         axis.plotLinesAndBandsGroups = {};
-
-        // Shorthand types
-        axis.positiveValuesOnly = !!axis.logarithmic;
 
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
@@ -713,7 +709,7 @@ class Axis {
                     axis.hasVisibleSeries = true;
 
                     // Validate threshold in logarithmic axes
-                    if (axis.positiveValuesOnly && (threshold as any) <= 0) {
+                    if (axis.logarithmic && (threshold as any) <= 0) {
                         threshold = null as any;
                     }
 
@@ -790,10 +786,7 @@ class Axis {
                         }
                         // If any series has a hard threshold, it takes
                         // precedence
-                        if (
-                            !seriesOptions.softThreshold ||
-                            axis.positiveValuesOnly
-                        ) {
+                        if (!seriesOptions.softThreshold || axis.logarithmic) {
                             axis.softThreshold = false;
                         }
                     }
@@ -1688,7 +1681,6 @@ class Axis {
 
         if (log) {
             if (
-                axis.positiveValuesOnly &&
                 !secondPass &&
                 Math.min(
                     axis.min as any, pick(axis.dataMin, axis.min as any)
