@@ -2012,7 +2012,7 @@ class Series {
             // Handle X outside the viewed area. This does not work with
             // non-sorted data like scatter (#7639).
             shoulder = this.requireSorting ? this.cropShoulder : 0,
-            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false;
+            log = yAxis ? yAxis.logarithmic : false;
             // #2117, need to compensate for log X axis
         let xExtremes,
             validValue,
@@ -2043,7 +2043,7 @@ class Series {
             // point outside the visible range (#7061), consider y extremes.
             validValue = (
                 (isNumber(y) || isArray(y)) &&
-                (((y as any).length || y > 0) || !positiveValuesOnly)
+                (((y as any).length || y > 0) || !log)
             );
             withinRange = (
                 forceExtremesFromAll ||
@@ -2247,7 +2247,7 @@ class Series {
 
                     // #1200, #1232
                     if (
-                        yAxis.positiveValuesOnly &&
+                        yAxis.logarithmic &&
                         defined(lowValue) &&
                         lowValue <= 0
                     ) {
