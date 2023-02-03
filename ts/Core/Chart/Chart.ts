@@ -349,7 +349,6 @@ class Chart {
     public pointCount: number = void 0 as any;
     public pointer: Pointer = void 0 as any;
     public reflowTimeout?: number;
-    public resizeObserver?: ResizeObserver;
     public renderer: Chart.Renderer = void 0 as any;
     public renderTo: globalThis.HTMLElement = void 0 as any;
     public series: Array<Series> = void 0 as any;
@@ -363,7 +362,6 @@ class Chart {
     public time: Time = void 0 as any;
     public title?: SVGElement;
     public titleOffset: Array<number> = void 0 as any;
-    public unbindReflow?: Function;
     public userOptions: Partial<Options> = void 0 as any;
     public xAxis: Array<AxisType> = void 0 as any;
     public yAxis: Array<AxisType> = void 0 as any;
@@ -1769,8 +1767,7 @@ class Chart {
                 defined(optionsChart.height)
             ),
             width = optionsChart.width || getStyle(renderTo, 'width'),
-            height = optionsChart.height || getStyle(renderTo, 'height'),
-            target = e ? e.target : win;
+            height = optionsChart.height || getStyle(renderTo, 'height');
 
         delete chart.pointer.chartPosition;
 
@@ -1780,8 +1777,7 @@ class Chart {
             !hasUserSize &&
             !chart.isPrinting &&
             width &&
-            height &&
-            (target === win || target === doc)
+            height
         ) {
             if (
                 width !== chart.containerWidth ||
@@ -1810,42 +1806,25 @@ class Chart {
      * @private
      * @function Highcharts.Chart#setReflow
      */
-    public setReflow(reflow?: boolean): void {
+    public setReflow(): void {
         const chart = this;
 
-        if (chart && reflow !== false) {
-            if (typeof ResizeObserver === 'function') {
-                chart.resizeObserver = new ResizeObserver((): void => {
-                    win.requestAnimationFrame &&
-                        win.requestAnimationFrame((): void => {
-                            if (chart.options && chart.hasLoaded) {
-                                chart.reflow();
-                            }
-                        });
-                });
+        const runReflow = (e: any): void => {
+            // Request animation frame because of looping in Safari
+            setTimeout((): void => {
+                if (chart.options?.chart.reflow && chart.hasLoaded) {
+                    chart.reflow(e);
+                }
+            });
+        };
 
-                setTimeout((): void => {
-                    chart.resizeObserver &&
-                        chart.resizeObserver.observe(chart.renderTo);
-                });
-            } else {
-                // Fallback for more legacy browser versions.
-                this.unbindReflow = addEvent(win, 'resize', function (
-                    e: Event
-                ): void {
-                    // a removed event listener still runs in Edge and IE if the
-                    // listener was removed while the event runs, so check if
-                    // the chart is not destroyed (#11609)
-                    if (chart.options) {
-                        chart.reflow(e);
-                    }
-                });
-                addEvent(this, 'destroy', this.unbindReflow);
-            }
-        } else if (reflow === false && this.unbindReflow) {
+        if (typeof ResizeObserver === 'function') {
+            (new ResizeObserver(runReflow)).observe(chart.renderTo);
 
-            // Unbind and unset
-            this.unbindReflow = this.unbindReflow();
+        // Fallback for more legacy browser versions.
+        } else {
+            const unbind = addEvent(win, 'resize', runReflow);
+            addEvent(this, 'destroy', unbind);
         }
     }
 
@@ -2791,7 +2770,7 @@ class Chart {
 
         // Set up auto resize, check for not destroyed (#6068)
         if (defined(this.index)) {
-            this.setReflow(this.options.chart.reflow);
+            this.setReflow();
         }
 
         this.warnIfA11yModuleNotLoaded();
@@ -3227,10 +3206,6 @@ class Chart {
             // Setter function
             if ('className' in optionsChart) {
                 chart.setClassName(optionsChart.className);
-            }
-
-            if ('reflow' in optionsChart) {
-                chart.setReflow(optionsChart.reflow);
             }
 
             if (
