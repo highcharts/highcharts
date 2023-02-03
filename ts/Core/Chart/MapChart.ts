@@ -50,14 +50,6 @@ declare module './ChartLike'{
  */
 class MapChart extends Chart {
     /**
-     * The map view handles zooming and centering on the map, and various
-     * client-side projection capabilities.
-     *
-     * @name Highcharts.MapChart#mapView
-     * @type {Highcharts.MapView|undefined}
-     */
-
-    /**
      * Initializes the chart. The constructor's arguments are passed on
      * directly.
      *
