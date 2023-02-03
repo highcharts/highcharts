@@ -1089,7 +1089,7 @@ function wrapColumnSeriesTranslate(
                     (start < series.translatedThreshold ? start : end)) as any -
                         startAngleRad;
 
-            } else if (!point.isNull) {
+            } else {
                 start = barX + startAngleRad;
 
                 // Changed the way polar columns are drawn in order to make
