@@ -45,7 +45,6 @@ const {
     defined,
     extend,
     isArray,
-    isString,
     merge,
     pick,
     relativeLength
@@ -70,7 +69,7 @@ class FlowMapSeries extends MapLineSeries {
 
     /**
      * A flowmap series is a series laid out on top of a map series allowing to
-     * display route paths (e.g. flights or ships routes) or flows on a map. It
+     * display route paths (e.g. flight or ship routes) or flows on a map. It
      * creates a link between two points on a map chart.
      *
      * @since        next
