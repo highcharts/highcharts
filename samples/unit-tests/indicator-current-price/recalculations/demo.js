@@ -47,7 +47,7 @@ QUnit.test('Test current and last price indicator.', function (assert) {
     );
 
     assert.ok(
-        chart.series[1].crossLabel.hasClass('highcharts-color-1'),
+        chart.series[1].lastVisiblePriceLabel.hasClass('highcharts-color-1'),
         '#15706: Second lastVisiblePrice label should have correct color class'
     );
 });
@@ -118,9 +118,9 @@ QUnit.test('The currentPriceIndicator label should be visible, #14879.',
         });
 
         assert.strictEqual(
-            chart.series[0].crossLabel.visibility,
+            chart.series[0].lastVisiblePrice.visibility,
             'inherit',
-            'Crosshair label should be visible.'
+            'Last visible price label should be visible.'
         );
     }
 );
