@@ -21,11 +21,7 @@
  * */
 
 import type { YAxisOptions } from '../Core/Axis/AxisOptions';
-import type ColorType from '../Core/Color/ColorType';
-import type {
-    CursorValue
-} from '../Core/Renderer/CSSObject';
-import type DashStyleValue from '../Core/Renderer/DashStyleValue';
+import type { AxisResizeOptions, AxisResizerOptions } from './DragPanes/ResizerAxisOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
@@ -61,10 +57,8 @@ declare module '../Core/Axis/AxisLike' {
 }
 
 declare module '../Core/Axis/AxisOptions' {
-    interface AxisOptions {
-        maxLength?: (number|string);
-        minLength?: (number|string);
-        resize?: Highcharts.YAxisResizeOptions;
+    interface AxisOptions extends AxisResizerOptions {
+        // nothing more to add
     }
 }
 
@@ -80,20 +74,6 @@ declare module '../Core/Chart/ChartLike' {
  */
 declare global {
     namespace Highcharts {
-        interface YAxisResizeControlledAxisOptions {
-            next?: Array<number|string>;
-            prev?: Array<number|string>;
-        }
-        interface YAxisResizeOptions {
-            controlledAxis?: YAxisResizeControlledAxisOptions;
-            cursor?: CursorValue;
-            enabled?: boolean;
-            lineColor?: ColorType;
-            lineDashStyle?: DashStyleValue;
-            lineWidth?: number;
-            x?: number;
-            y?: number;
-        }
         class AxisResizer {
             public constructor(axis: Axis);
             public axis: Axis;
@@ -105,7 +85,7 @@ declare global {
             public mouseDownHandler?: Function;
             public mouseMoveHandler?: Function;
             public mouseUpHandler?: Function;
-            public options: YAxisResizeOptions;
+            public options: AxisResizeOptions;
             public addMouseEvents(): void;
             public destroy(): void;
             public init(axis: Axis, update?: boolean): void;
@@ -139,7 +119,7 @@ declare global {
 class AxisResizer {
 
     // Default options for AxisResizer.
-    public static resizerOptions: DeepPartial<YAxisOptions> = {
+    public static resizerOptions: AxisResizerOptions = {
         /**
          * Minimal size of a resizable axis. Could be set as a percent
          * of plot area or pixel size.
@@ -315,7 +295,7 @@ class AxisResizer {
     public mouseDownHandler?: Function;
     public mouseMoveHandler?: Function;
     public mouseUpHandler?: Function;
-    public options: Highcharts.YAxisResizeOptions = void 0 as any;
+    public options: AxisResizeOptions = void 0 as any;
 
     /**
      * Initialize the AxisResizer object.
