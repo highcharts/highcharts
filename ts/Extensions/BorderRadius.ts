@@ -19,6 +19,7 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
+import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 
@@ -41,7 +42,7 @@ export interface BorderRadiusOptions {
  */
 declare module '../Core/Renderer/SVG/SymbolOptions' {
     interface SymbolOptions {
-        borderRadius?: number|string;
+        borderRadius?: number;
     }
 }
 
@@ -70,15 +71,26 @@ SVGRenderer.prototype.symbols.arc = function (
     options?: SymbolOptions
 ): SVGPath {
     const path = arc(x, y, w, h, options),
-        { borderRadius, innerR, r, start, end } = options || {};
+        { innerR, r, start, end } = options || {};
 
     if (
-        typeof borderRadius === 'number' &&
         typeof r === 'number' &&
         typeof start === 'number' &&
         typeof end === 'number'
     ) {
-        const fractionAlongOuterPerimeter = borderRadius / (2 * Math.PI * r),
+        const circumference = (2 * Math.PI * r),
+            borderRadius = Math.min(
+                options?.borderRadius || 0,
+                // For smaller pie slices, cap the radius to half the sector
+                circumference * 0.5 * ((end - start) / (2 * Math.PI)),
+                // Hard cap because the current algorithm assumes the corner
+                // meet at right angles. More sophisticated arc calculation (a
+                // circle's tangent of the arc) is needed if we want to remove
+                // this cap.
+                // https://stackoverflow.com/questions/49436868/algorithm-for-rounding-a-corner-between-line-and-arc
+                circumference / 40
+            ),
+            fractionAlongOuterPerimeter = borderRadius / circumference,
             angleOfBorderRadius = fractionAlongOuterPerimeter * (2 * Math.PI);
 
         // First move to the start position along the perimeter. But we want to
@@ -124,12 +136,18 @@ SVGRenderer.prototype.symbols.arc = function (
 
     return path;
 };
+SVGElement.symbolCustomAttribs.push('borderRadius');
 
 addEvent(seriesTypes.pie, 'afterTranslate', function (): void {
     const borderRadius = optionsToObject(this.options.borderRadius);
 
     for (const point of this.points) {
-        (point.shapeArgs as SymbolOptions).borderRadius = borderRadius.radius;
+        const shapeArgs = point.shapeArgs as SymbolOptions|undefined;
+        if (shapeArgs) {
+            shapeArgs.borderRadius = relativeLength(
+                borderRadius.radius, shapeArgs.r || 0
+            );
+        }
     }
 });
 

@@ -1,4 +1,5 @@
-const columnChart = Highcharts.chart('container-1', {
+//*
+Highcharts.chart('container-1', {
     chart: {
         type: 'column'
     },
@@ -40,17 +41,20 @@ const columnChart = Highcharts.chart('container-1', {
     colors: ['#d7bfff', '#af80ff', '#5920b9', '#48208b']
 });
 
+// */
 
 document.querySelectorAll('button.corner-radius').forEach(btn => {
     btn.addEventListener(
         'click',
         () => {
-            columnChart.update({
-                plotOptions: {
-                    series: {
-                        borderRadius: btn.dataset.value
+            Highcharts.charts.forEach(chart => {
+                chart.update({
+                    plotOptions: {
+                        series: {
+                            borderRadius: btn.dataset.value
+                        }
                     }
-                }
+                });
             });
         }
     );
@@ -60,7 +64,7 @@ document.querySelectorAll('button.chart-type').forEach(btn => {
     btn.addEventListener(
         'click',
         () => {
-            columnChart.update({
+            Highcharts.charts[0].update({
                 chart: {
                     type: btn.dataset.value
                 }
@@ -84,13 +88,14 @@ Highcharts.chart('container-2', {
     },
     plotOptions: {
         series: {
-            borderRadius: 10,
+            borderRadius: '50%',
             borderWidth: 2,
             borderColor: 'white',
             dataLabels: {
-                enabled: true
+                enabled: false
             },
-            size: '80%'
+            size: '80%',
+            innerSize: '50%'
         }
     },
     series: [{
