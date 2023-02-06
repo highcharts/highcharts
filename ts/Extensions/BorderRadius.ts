@@ -79,70 +79,114 @@ SVGRenderer.prototype.symbols.arc = function (
     options?: SymbolOptions
 ): SVGPath {
     const path = arc(x, y, w, h, options),
-        { innerR, r, start, end } = options || {};
+        { innerR = 0, r = 0, start = 0, end = 0 } = options || {};
 
-    if (
-        options &&
-        typeof r === 'number' &&
-        typeof start === 'number' &&
-        typeof end === 'number'
-    ) {
-        const alpha = end - start,
-            borderRadius = Math.min(
-                options.borderRadius || 0,
-                // Cap to half the sector radius
-                (r - (options.innerR || 0)) / 2,
-                // For smaller pie slices, cap to the largest small circle that
-                // can be fitted within the sector
-                (r * Math.sin(alpha / 2)) / (1 + Math.sin(alpha / 2))
-            ),
-            angleOfBorderRadius = Math.asin(borderRadius / (r - borderRadius)),
-            distanceBigCenterToStartArc = (
-                Math.cos(angleOfBorderRadius) *
-                (r - borderRadius)
-            );
+    const alpha = end - start,
+        borderRadius = Math.min(
+            options?.borderRadius || 0,
+            // Cap to half the sector radius
+            (r - innerR) / 2,
+            // For smaller pie slices, cap to the largest small circle that
+            // can be fitted within the sector
+            (r * Math.sin(alpha / 2)) / (1 + Math.sin(alpha / 2))
+        ),
+        // The angle that the radius of the small arc takes up in the
+        // big arc
+        angleOfBorderRadiusOuter = Math.asin(
+            borderRadius / (r - borderRadius)
+        ),
+        angleOfBorderRadiusInner = Math.asin(
+            borderRadius / (innerR + borderRadius)
+        ),
+        // The distance from the center of the big arc to the starting point
+        // of the small arc
+        distanceBigCenterToStartArcOuter = (
+            Math.cos(angleOfBorderRadiusOuter) *
+            (r - borderRadius)
+        ),
+        distanceBigCenterToStartArcInner = (
+            Math.cos(angleOfBorderRadiusInner) *
+            (innerR + borderRadius)
+        );
 
 
-        // First move to the start position along the perimeter. But we want to
-        // start one borderRadius closer to the center.
-        if (path[0] && path[0][0] === 'M') {
-            path[0][1] = x + distanceBigCenterToStartArc * Math.cos(start);
-            path[0][2] = y + distanceBigCenterToStartArc * Math.sin(start);
-        }
-
-        // Now draw an arc towards the point where the small circle touches the
-        // great circle.
-        path.splice(1, 0, [
-            'A',
-            borderRadius,
-            borderRadius,
-            0, // slanting,
-            0, // long arc
-            1, // clockwise
-            x + r * Math.cos(start + angleOfBorderRadius),
-            y + r * Math.sin(start + angleOfBorderRadius)
-        ]);
-
-        // The main outer arc should stop where the next small circle touches
-        // the great circle.
-        if (path[2] && path[2][0] === 'A') {
-            path[2][6] = x + r * Math.cos(end - angleOfBorderRadius);
-            path[2][7] = y + r * Math.sin(end - angleOfBorderRadius);
-        }
-
-        // Draw an arc towards a point on the end angle, but one borderRadius
-        // closer to the center relative to the perimeter.
-        path.splice(3, 0, [
-            'A',
-            borderRadius,
-            borderRadius,
-            0,
-            0,
-            1,
-            x + distanceBigCenterToStartArc * Math.cos(end),
-            y + distanceBigCenterToStartArc * Math.sin(end)
-        ]);
+    // First move to the start position along the perimeter. But we want to
+    // start one borderRadius closer to the center.
+    if (path[0] && path[0][0] === 'M') {
+        path[0][1] = x + distanceBigCenterToStartArcOuter * Math.cos(start);
+        path[0][2] = y + distanceBigCenterToStartArcOuter * Math.sin(start);
     }
+
+    // Now draw an arc towards the point where the small circle touches the
+    // great circle.
+    path.splice(1, 0, [
+        'A',
+        borderRadius,
+        borderRadius,
+        0, // slanting,
+        0, // long arc
+        1, // clockwise
+        x + r * Math.cos(start + angleOfBorderRadiusOuter),
+        y + r * Math.sin(start + angleOfBorderRadiusOuter)
+    ]);
+
+    // The main outer arc should stop where the next small circle touches
+    // the great circle.
+    if (path[2] && path[2][0] === 'A') {
+        path[2][6] = x + r * Math.cos(end - angleOfBorderRadiusOuter);
+        path[2][7] = y + r * Math.sin(end - angleOfBorderRadiusOuter);
+    }
+
+    // Draw an arc towards a point on the end angle, but one borderRadius
+    // closer to the center relative to the perimeter.
+    path.splice(3, 0, [
+        'A',
+        borderRadius,
+        borderRadius,
+        0,
+        0,
+        1,
+        x + distanceBigCenterToStartArcOuter * Math.cos(end),
+        y + distanceBigCenterToStartArcOuter * Math.sin(end)
+    ]);
+
+    if (path[4] && path[4][0] === 'L') {
+        path[4][1] = x + distanceBigCenterToStartArcInner * Math.cos(end);
+        path[4][2] = y + distanceBigCenterToStartArcInner * Math.sin(end);
+    }
+
+    // Now draw an arc towards the point where the small circle touches the
+    // inner great circle.
+    path.splice(5, 0, [
+        'A',
+        borderRadius,
+        borderRadius,
+        0, // slanting,
+        0, // long arc
+        1, // clockwise
+        x + innerR * Math.cos(end - angleOfBorderRadiusInner),
+        y + innerR * Math.sin(end - angleOfBorderRadiusInner)
+    ]);
+
+    // The inner arc should stop where the next small circle touches the inner
+    // great circle.
+    if (path[6] && path[6][0] === 'A') {
+        path[6][6] = x + innerR * Math.cos(start + angleOfBorderRadiusInner);
+        path[6][7] = y + innerR * Math.sin(start + angleOfBorderRadiusInner);
+    }
+
+    // Draw an arc towards a point on the start angle, but one borderRadius
+    // closer to the center relative to the perimeter.
+    path.splice(7, 0, [
+        'A',
+        borderRadius,
+        borderRadius,
+        0,
+        0,
+        1,
+        x + distanceBigCenterToStartArcInner * Math.cos(start),
+        y + distanceBigCenterToStartArcInner * Math.sin(start)
+    ]);
 
     return path;
 };

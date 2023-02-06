@@ -108,7 +108,8 @@ Highcharts.chart('container-2', {
             dataLabels: {
                 enabled: false
             },
-            size: '80%'
+            size: '80%',
+            innerSize: '50%'
         }
     },
     series: [
@@ -126,6 +127,7 @@ Highcharts.chart('container-2', {
         },
         */
         {
+            animation: false,
             data: [{
                 y: 1,
                 sliced: true
