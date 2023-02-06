@@ -435,11 +435,13 @@ class HeatmapSeries extends ScatterSeries {
      */
     public drawPoints(): void {
         const heatmap = this,
+            heatmapOptions = heatmap.options,
+            interpolation = heatmapOptions.interpolation,
             // In styled mode, use CSS, otherwise the fill used in the style
             // sheet will take precedence over the fill attribute.
-            seriesMarkerOptions = heatmap.options.marker || {};
+            seriesMarkerOptions = heatmapOptions.marker || {};
 
-        if (heatmap.options.interpolation) {
+        if (interpolation) {
             const chart = heatmap.chart,
                 ctx = heatmap.getContext(),
                 canvas = heatmap.canvas,
@@ -453,7 +455,10 @@ class HeatmapSeries extends ScatterSeries {
                         image.height === plotHeight
                     ),
                     data = heatmap.data,
-                    { colsize, rowsize } = heatmap.options,
+                    colsize = heatmap.options.colsize || 1,
+                    rowsize = heatmap.options.rowsize || 1,
+                    toXRange = [0, canvas.width - 1],
+                    toYRange = [0, canvas.height - 1],
                     xExtremes = heatmap.getXExtremes(
                         heatmap.xData || []
                     ),
@@ -463,8 +468,6 @@ class HeatmapSeries extends ScatterSeries {
                         yExtremes.dataMin,
                         yExtremes.dataMax
                     ] as number[],
-                    toXRange = [0, canvas.width - 1],
-                    toYRange = [0, canvas.height - 1],
                     scaleValue = function (
                         value: number, from: number[], to: number[]
                     ): number {
@@ -482,6 +485,8 @@ class HeatmapSeries extends ScatterSeries {
                         value || 0, p
                     ) as string;
 
+                    p.color = 'transparent';
+
                     ctx.fillRect(
                         scaleValue(
                             x,
@@ -493,8 +498,8 @@ class HeatmapSeries extends ScatterSeries {
                             fromYRange,
                             toYRange
                         ),
-                        (colsize || 1),
-                        (rowsize || 1)
+                        colsize,
+                        rowsize
                     );
                 });
 
@@ -511,9 +516,11 @@ class HeatmapSeries extends ScatterSeries {
                         plotWidth,
                         plotHeight
                     ).add(heatmap.group);
-                    return;
                 }
             }
+
+            Series.prototype.drawPoints.call(heatmap);
+
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
             Series.prototype.drawPoints.call(heatmap);
             heatmap.points.forEach((point): void => {
@@ -629,6 +636,7 @@ class HeatmapSeries extends ScatterSeries {
         // top left corner like other symbols are. This should be refactored,
         // then we could save ourselves some tests for .hasImage etc. And the
         // evaluation of borderRadius would be moved to `markerAttribs`.
+
         if (options.marker) {
             options.marker.r = options.borderRadius;
         }
