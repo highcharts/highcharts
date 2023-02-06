@@ -16,7 +16,7 @@ const editor = function () {
                     duration: 4000,
                     easing: 'easeOutQuint'
                 },
-                styledMode: (true),
+                styledMode: true,
                 alignTicks: false,
                 margin: 0,
                 spacing: 0,
@@ -260,7 +260,7 @@ const editor = function () {
                         y: 20,
                         dataLabels: {
                             formatter: function () {
-                                return `<div id="particle-3" 
+                                return `<div id="particle-3"
                                 class="particle"></div>`;
                             }
                         }
@@ -270,7 +270,7 @@ const editor = function () {
                         y: 20,
                         dataLabels: {
                             formatter: function () {
-                                return `<div id="particle-2" 
+                                return `<div id="particle-2"
                                 class="particle"></div>`;
                             }
                         }
@@ -280,7 +280,7 @@ const editor = function () {
                         y: 20,
                         dataLabels: {
                             formatter: function () {
-                                return `<div id="particle-6" 
+                                return `<div id="particle-6"
                                 class="particle"></div>`;
                             }
                         }
@@ -290,7 +290,7 @@ const editor = function () {
                         y: 20,
                         dataLabels: {
                             formatter: function () {
-                                return `<div id="particle-5" 
+                                return `<div id="particle-5"
                                 class="particle"></div>`;
                             }
                         }

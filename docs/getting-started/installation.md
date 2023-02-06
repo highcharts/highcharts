@@ -13,8 +13,6 @@ Include the JavaScript files in the `<head>` section of your web page as shown b
     <script src="https://code.highcharts.com/highcharts.js"></script>
 ```
 
-If you need support for IE6, 7 or 8, you need to include some polyfills. See details in [System Requirements](https://www.highcharts.com/docs/getting-started/system-requirements#oldie).
-
 ### B. Alternatively, load files from your own domain
 
 In the example above the JavaScript files are loaded from ajax.googleapis.com and [code.highcharts.com](https://code.highcharts.com). The Highcharts files can be downloaded from [highcharts.com](https://www.highcharts.com/download/) and put on your webpage. Here is an example with Highcharts served from your own server:
