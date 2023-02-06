@@ -454,11 +454,8 @@ class HeatmapSeries extends ScatterSeries {
                         image.width === plotWidth &&
                         image.height === plotHeight
                     ),
-                    data = heatmap.data,
                     colsize = heatmap.options.colsize || 1,
                     rowsize = heatmap.options.rowsize || 1,
-                    toXRange = [0, canvas.width - 1],
-                    toYRange = [0, canvas.height - 1],
                     xExtremes = heatmap.getXExtremes(
                         heatmap.xData || []
                     ),
@@ -468,6 +465,8 @@ class HeatmapSeries extends ScatterSeries {
                         yExtremes.dataMin,
                         yExtremes.dataMax
                     ] as number[],
+                    toXRange = [0, canvas.width - 1],
+                    toYRange = [0, canvas.height - 1],
                     scaleValue = function (
                         value: number, from: number[], to: number[]
                     ): number {
@@ -475,26 +474,25 @@ class HeatmapSeries extends ScatterSeries {
                         const capped = Math.min(
                             from[1], Math.max(from[0], value)
                         ) - from[0];
+
                         return ~~(capped * scale + to[0]);
                     };
 
-                data.forEach((p: HeatmapPoint): void => {
-                    const { value, x, y } = p;
+                heatmap.points.forEach((p: HeatmapPoint): void => {
+                    p.color = 'transparent';
 
                     ctx.fillStyle = colorAxis.toColor(
-                        value || 0, p
+                        p.value || 0, p
                     ) as string;
-
-                    p.color = 'transparent';
 
                     ctx.fillRect(
                         scaleValue(
-                            x,
+                            p.x,
                             fromXRange,
                             toXRange
                         ),
                         scaleValue(
-                            ((yExtremes.dataMax as number) - y),
+                            ((yExtremes.dataMax as number) - p.y),
                             fromYRange,
                             toYRange
                         ),
@@ -517,10 +515,8 @@ class HeatmapSeries extends ScatterSeries {
                         plotHeight
                     ).add(heatmap.group);
                 }
+                Series.prototype.drawPoints.call(heatmap);
             }
-
-            Series.prototype.drawPoints.call(heatmap);
-
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
             Series.prototype.drawPoints.call(heatmap);
             heatmap.points.forEach((point): void => {
