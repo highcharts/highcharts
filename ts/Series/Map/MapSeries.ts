@@ -498,94 +498,6 @@ class MapSeries extends ScatterSeries {
         }
     }
 
-    /**
-     * Animate in the new series. Depends on the drilldown.js module.
-     * @private
-     */
-    public animateDrilldown(init?: boolean): void {
-        const series = this,
-            chart = this.chart,
-            group = this.group;
-
-        if (chart.renderer.isSVG) {
-            // Initialize the animation
-            if (init && chart.mapView) {
-                group.attr({
-                    opacity: 0.01
-                });
-                chart.mapView.allowTransformAnimation = false;
-                // stop duplicating and overriding animations
-                series.options.inactiveOtherPoints = true;
-                series.options.enableMouseTracking = false;
-
-            // Run the animation
-            } else {
-                group.animate({
-                    opacity: 1
-                }, (this.chart.options.drilldown as any).animation,
-                function (): void {
-                    series.options.inactiveOtherPoints = false;
-                    series.options.enableMouseTracking =
-                        pick(series.userOptions.enableMouseTracking, true);
-                });
-
-                if (chart.drilldown) {
-                    chart.drilldown.fadeInGroup(this.dataLabelsGroup);
-                }
-            }
-        }
-
-    }
-
-    /**
-     * When drilling up, pull out the individual point graphics from the lower
-     * series and animate them into the origin point in the upper series.
-     * @private
-     */
-    public animateDrillupFrom(): void {
-        const series = this,
-            chart = this.chart;
-
-        if (chart.mapView) {
-            chart.mapView.allowTransformAnimation = false;
-        }
-        // stop duplicating and overriding animations
-        series.options.inactiveOtherPoints = true;
-    }
-
-    /**
-     * When drilling up, keep the upper series invisible until the lower series
-     * has moved into place.
-     * @private
-     */
-    public animateDrillupTo(init?: boolean): void {
-        const series = this,
-            chart = this.chart,
-            group = this.group;
-
-        if (chart.renderer.isSVG) {
-
-            // Initialize the animation
-            if (init) {
-                group.attr({
-                    opacity: 0.01
-                });
-                // stop duplicating and overriding animations
-                series.options.inactiveOtherPoints = true;
-
-            // Run the animation
-            } else {
-                group.animate({
-                    opacity: 1
-                }, (this.chart.options.drilldown as any).animation);
-
-                if (chart.drilldown) {
-                    chart.drilldown.fadeInGroup(this.dataLabelsGroup);
-                }
-            }
-        }
-    }
-
     public clearBounds(): void {
         this.points.forEach((point): void => {
             delete point.bounds;
@@ -1393,8 +1305,6 @@ interface MapSeries extends ColorMapComposition.SeriesComposition {
     preserveAspectRatio: boolean;
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
     animate(init?: boolean): void;
-    animateDrilldown(init?: boolean): void;
-    animateDrillupTo(init?: boolean): void;
     doFullTranslate(): boolean;
     drawMapDataLabels(): void;
     drawPoints(): void;
