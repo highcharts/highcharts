@@ -216,13 +216,16 @@ class StochasticIndicator extends SMAIndicator {
                 constantValues = false;
             }
 
-            xData.push(xVal[i]);
+            const length = xData.push(xVal[i]);
 
+            // If N-period previous values are constant which results in NaN %K,
+            // we need to use previous %K value if it is a number,
+            // otherwise we should use null
             if (isNaN(K)) {
                 yData.push([
-                    yData[yData.length - 1] &&
-                        typeof yData[yData.length - 1][0] === 'number' ?
-                        yData[yData.length - 1][0] : null,
+                    yData[length - 2] &&
+                        typeof yData[length - 2][0] === 'number' ?
+                        yData[length - 2][0] : null,
                     null
                 ]);
             } else {
@@ -242,7 +245,7 @@ class StochasticIndicator extends SMAIndicator {
             }
 
             SO.push([xVal[i], K, D]);
-            yData[yData.length - 1][1] = D;
+            yData[length - 1][1] = D;
         }
 
         return {
