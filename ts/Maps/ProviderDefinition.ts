@@ -24,6 +24,7 @@ export declare class ProviderDefinition {
     themes: Themes;
     defaultCredits: String;
     initialProjectionName: DeepPartial<string>;
+    requiresApiKey?: boolean;
 }
 
 export default ProviderDefinition;

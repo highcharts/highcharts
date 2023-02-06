@@ -32,11 +32,24 @@ QUnit.test('Tiled Web Map on the chart', assert => {
             series: [{
                 type: 'tiledwebmap',
                 provider: {
-                    type: 'TestProvider'
+                    type: 'BadProvider'
                 }
             }]
         }),
         series = chart.series[0];
+
+    assert.strictEqual(
+        Object.keys(series.tiles).length,
+        0,
+        `If the provider is defined, but it is not supported there should not be
+        any tiles.`
+    );
+
+    series.update({
+        provider: {
+            type: 'TestProvider'
+        }
+    });
 
     assert.ok(
         Object.keys(series.tiles).length > 0,

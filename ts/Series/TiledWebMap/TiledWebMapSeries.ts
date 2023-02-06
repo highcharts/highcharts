@@ -223,7 +223,7 @@ class TiledWebMapSeries extends MapSeries {
                 const def = new ProviderDefinition(),
                     { initialProjectionName: providerProjection } = def;
                 let theme,
-                    subdomain;
+                    subdomain = '';
 
                 if (provider.theme && defined(def.themes[provider.theme])) {
                     theme = def.themes[provider.theme];
@@ -240,10 +240,10 @@ class TiledWebMapSeries extends MapSeries {
                 if (
                     provider.subdomain &&
                     def.subdomains &&
-                    def.subdomains.indexOf(provider.subdomain) === -1
+                    def.subdomains.indexOf(provider.subdomain) !== -1
                 ) {
                     subdomain = provider.subdomain;
-                } else {
+                } else if (defined(def.subdomains)) {
                     error(
                         'Missing option: Tiles provider subdomain cannot be ' +
                         'reached, using default provider subdomain.',
@@ -252,15 +252,19 @@ class TiledWebMapSeries extends MapSeries {
                     subdomain = pick(def.subdomains && def.subdomains[0], '');
                 }
 
-                if (provider.apiKey) {
-                    theme.url = theme.url.replace('{apikey}', provider.apiKey);
-                } else {
-                    error(
-                        'Missing option: Tiles provider requires API Key to ' +
-                        'to use tiles, use provider.apiKey to provider token.',
-                        false
-                    );
-                    theme.url = theme.url.replace('?apikey={apikey}', '');
+                if (def.requiresApiKey) {
+                    if (provider.apiKey) {
+                        theme.url =
+                            theme.url.replace('{apikey}', provider.apiKey);
+                    } else {
+                        error(
+                            'Missing option: Tiles provider requires API Key ' +
+                            'to use tiles, use provider.apiKey to provide ' +
+                            'token.',
+                            false
+                        );
+                        theme.url = theme.url.replace('?apikey={apikey}', '');
+                    }
                 }
 
                 provider.url = theme.url
@@ -517,28 +521,36 @@ addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
 
     if (twm && twm.provider && twm.provider.type) {
         const ProviderDefinition =
-            TilesProvidersRegistry[twm.provider.type],
-            def = new ProviderDefinition(),
-            { initialProjectionName: providerProjectionName } = def;
+            TilesProvidersRegistry[twm.provider.type];
 
-        if (geoBounds) {
-            const { x1, y1, x2, y2 } = geoBounds;
-            this.recommendedMapView = {
-                projection: {
-                    name: providerProjectionName,
-                    parallels: [y1, y2],
-                    rotation: [-(x1 + x2) / 2]
-                }
-            };
+        if (!defined(ProviderDefinition)) {
+            error(
+                'Provider cannot be reached.',
+                false
+            );
         } else {
-            this.recommendedMapView = {
-                projection: {
-                    name: providerProjectionName
-                }
-            };
-        }
+            const def = new ProviderDefinition(),
+                { initialProjectionName: providerProjectionName } = def;
 
-        return false;
+            if (geoBounds) {
+                const { x1, y1, x2, y2 } = geoBounds;
+                this.recommendedMapView = {
+                    projection: {
+                        name: providerProjectionName,
+                        parallels: [y1, y2],
+                        rotation: [-(x1 + x2) / 2]
+                    }
+                };
+            } else {
+                this.recommendedMapView = {
+                    projection: {
+                        name: providerProjectionName
+                    }
+                };
+            }
+
+            return false;
+        }
     }
 
     return true;

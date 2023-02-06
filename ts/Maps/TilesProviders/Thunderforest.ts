@@ -61,4 +61,6 @@ export default class Thunderforest implements ProviderDefinition {
 
     defaultCredits = `Maps \u00a9 <a href="https://www.thunderforest.com">Thunderforest</a>,
         Data \u00a9 <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>`;
+
+    requiresApiKey = true;
 }

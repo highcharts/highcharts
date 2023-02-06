@@ -7,8 +7,6 @@
 import type ProviderDefinition from '../ProviderDefinition';
 
 export default class LimaLabs implements ProviderDefinition {
-    subdomains = [''];
-
     themes = {
         Standard: {
             url: 'https://cdn.lima-labs.com/{zoom}/{x}/{y}.png?api={apikey}',
@@ -20,4 +18,6 @@ export default class LimaLabs implements ProviderDefinition {
     initialProjectionName = 'WebMercator';
 
     defaultCredits = 'Map data \u00a92023 <a href="https://maps.lima-labs.com/">LimaLabs</a>';
+
+    requiresApiKey = true;
 }
