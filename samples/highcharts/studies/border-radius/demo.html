@@ -1,4 +1,5 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/border-radius.js"></script>
 
 <div id="outer-container">
@@ -13,8 +14,10 @@
         <button class="corner-radius" data-value="0">No radius</button>
     </span>
     <span class="button-group">
-        <button class="chart-type" data-value="column">Column</button>
-        <button class="chart-type" data-value="bar">Bar</button>
+        <button class="inverted" data-value="false">Column</button>
+        <button class="inverted" data-value="true">Bar</button>
+        <button class="polar" data-value="false">Cartesian</button>
+        <button class="polar" data-value="true">Polar</button>
     </span>
 
     <div id="container-2"></div>

@@ -802,7 +802,7 @@ class ColumnSeries extends Series {
                 }
 
                 // Border radius is not stylable (#6900)
-                if (options.borderRadius) {
+                if (options.borderRadius && !chart.polar) {
                     (graphic as any)[verb]({
                         r: options.borderRadius
                     });

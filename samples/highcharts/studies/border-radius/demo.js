@@ -60,13 +60,26 @@ document.querySelectorAll('button.corner-radius').forEach(btn => {
     );
 });
 
-document.querySelectorAll('button.chart-type').forEach(btn => {
+document.querySelectorAll('button.inverted').forEach(btn => {
     btn.addEventListener(
         'click',
         () => {
             Highcharts.charts[0].update({
                 chart: {
-                    type: btn.dataset.value
+                    inverted: btn.dataset.value === 'true'
+                }
+            });
+        }
+    );
+});
+
+document.querySelectorAll('button.polar').forEach(btn => {
+    btn.addEventListener(
+        'click',
+        () => {
+            Highcharts.charts[0].update({
+                chart: {
+                    polar: btn.dataset.value === 'true'
                 }
             });
         }
@@ -113,21 +126,7 @@ Highcharts.chart('container-2', {
         }
     },
     series: [
-        /*
         {
-            data: [{
-                y: 1,
-                sliced: true
-            }, 3, 2, 4],
-            borderRadius: 0,
-            colors: ['white'],
-            borderColor: 'silver',
-            borderWidth: 1,
-            name: 'Norway'
-        },
-        */
-        {
-            animation: false,
             data: [{
                 y: 1,
                 sliced: true
