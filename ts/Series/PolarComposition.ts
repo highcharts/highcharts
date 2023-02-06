@@ -142,7 +142,6 @@ export declare class PolarSeriesComposition extends Series {
     kdByAngle?: boolean;
     points: Array<PolarPoint>;
     polar: PolarAdditions;
-    preventPostTranslate?: boolean;
     startAngleRad: number;
     thresholdAngleRad: number | undefined;
     translatedThreshold?: number;
@@ -682,7 +681,7 @@ function onSeriesAfterTranslate(
         while (i--) {
             // Translate plotX, plotY from angle and radius to true plot
             // coordinates
-            if (!series.preventPostTranslate) {
+            if (!series.is('column')) {
                 series.polar.toXY(points[i]);
             }
 
@@ -921,9 +920,8 @@ function wrapColumnSeriesAlignDataLabel(
  * Extend the column prototype's translate method
  * @private
  */
-function wrapColumnSeriesTranslate(
-    this: (ColumnSeries&PolarSeriesComposition),
-    proceed: Function
+function onAfterColumnTranslate(
+    this: (ColumnSeries&PolarSeriesComposition)
 ): void {
     const series = this,
         options = series.options,
@@ -954,11 +952,6 @@ function wrapColumnSeriesTranslate(
         barX,
         innerR,
         r;
-
-    series.preventPostTranslate = true;
-
-    // Run uber method
-    proceed.call(series);
 
     // Postprocess plot coordinates
     if (xAxis.isRadial) {
@@ -1073,10 +1066,10 @@ function wrapColumnSeriesTranslate(
                 point.shapeArgs = {
                     x: center && center[0],
                     y: center && center[1],
-                    r: r,
-                    innerR: innerR,
-                    start: start,
-                    end: end
+                    r,
+                    innerR,
+                    start,
+                    end
                 };
 
                 // Fade out the points if not inside the polar "plot area"
@@ -1503,9 +1496,15 @@ class PolarAdditions {
 
             const columnProto = ColumnSeriesClass.prototype;
 
+            addEvent(
+                ColumnSeriesClass as any,
+                'afterColumnTranslate',
+                onAfterColumnTranslate,
+                { order: 5 }
+            );
+
             wrap(columnProto, 'alignDataLabel', wrapColumnSeriesAlignDataLabel);
             wrap(columnProto, 'animate', wrapSeriesAnimate);
-            wrap(columnProto, 'translate', wrapColumnSeriesTranslate);
         }
 
         if (
