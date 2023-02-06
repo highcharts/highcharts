@@ -16,6 +16,8 @@
                     const chart = this,
                         providerSelect = document.getElementById('provider'),
                         themeSelect = document.getElementById('theme'),
+                        apikeyInput = document.getElementById('apikey'),
+                        submitAPIkeyBtn = document.getElementById('submitAPIkey'),
                         { TilesProvidersRegistry } =
                             Highcharts.seriesTypes.tiledwebmap;
 
@@ -23,7 +25,8 @@
                         chart.series[0].update({
                             provider: {
                                 type: providerSelect.value,
-                                theme: themeSelect.value
+                                theme: themeSelect.value,
+                                apiKey: apikeyInput.value
                             }
                         });
                     }
@@ -49,11 +52,13 @@
                     loadThemes(providerSelect.value);
 
                     providerSelect.addEventListener('change', function () {
+                        apikeyInput.value = '';
                         themeSelect.innerHTML = '';
                         loadThemes(this.value);
                         updateTWM();
                     });
                     themeSelect.addEventListener('change', updateTWM);
+                    submitAPIkeyBtn.addEventListener('click', updateTWM);
                 }
             }
         },

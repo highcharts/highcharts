@@ -28,7 +28,6 @@
         mapView: {
             center: [10.73028454146517, 59.91261204279989],
             zoom: 13,
-            maxZoom: 15,
             fitToGeometry: {
                 type: 'MultiPoint',
                 coordinates: [

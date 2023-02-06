@@ -46,7 +46,7 @@
             type: 'tiledwebmap',
             provider: {
                 type: 'Stamen',
-                theme: 'watercolor'
+                theme: 'Watercolor'
             },
             showInLegend: false
         }, {

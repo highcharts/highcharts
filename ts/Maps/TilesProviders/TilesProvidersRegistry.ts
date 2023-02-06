@@ -13,13 +13,15 @@ import Stamen from './Stamen.js';
 import LimaLabs from './LimaLabs.js';
 import Thunderforest from './Thunderforest.js';
 import Esri from './Esri.js';
+import USGS from './USGS.js';
 
 const registry: Record<string, typeof ProviderDefinition> = {
     OpenStreetMap,
     Stamen,
     LimaLabs,
     Thunderforest,
-    Esri
+    Esri,
+    USGS
 };
 
 export default registry;

@@ -72,8 +72,8 @@
         series: [{
             type: 'tiledwebmap',
             provider: {
-                type: 'Gaode',
-                theme: 'satelite'
+                type: 'USGS',
+                theme: 'USImagery'
             }
         }, {
             borderColor: colors[0],
