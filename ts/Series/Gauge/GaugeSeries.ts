@@ -487,6 +487,11 @@ class GaugeSeries extends Series {
             // Positions for data label
             point.plotX = center[0];
             point.plotY = center[1];
+
+            if (point.y || point.y === 0) {
+                point.percentage =
+                    ((point.y - yAxis.min) / (yAxis.max - yAxis.min)) * 100;
+            }
         });
     }
 
