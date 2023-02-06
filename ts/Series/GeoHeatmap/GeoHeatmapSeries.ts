@@ -17,7 +17,7 @@
  *
  * */
 
-import type GeoHeatmapSeriesOptions from './GeoHeatmapSeriesOptions';
+import type GeoHeatmapSeriesOptions from './GeoHeatmapSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import GeoHeatmapPoint from './GeoHeatmapPoint.js';
 import MapSeries from '../Map/MapSeries.js';
@@ -60,6 +60,7 @@ class GeoHeatmapSeries extends MapSeries {
      * */
 
     public static defaultOptions: GeoHeatmapSeriesOptions = merge(MapSeries.defaultOptions, {
+        keys: ['lon', 'lat', 'value']
     } as GeoHeatmapSeriesOptions);
 
     /* *
@@ -67,15 +68,15 @@ class GeoHeatmapSeries extends MapSeries {
      *  Properties
      *
      * */
-
     public options: GeoHeatmapSeriesOptions = void 0 as any;
+    public data: Array<GeoHeatmapPoint> = void 0 as any;
+    public points: Array<GeoHeatmapPoint> = void 0 as any;
 
     /* *
      *
      *  Functions
      *
      * */
-
 
 }
 
@@ -84,6 +85,14 @@ class GeoHeatmapSeries extends MapSeries {
  *  Class Prototype
  *
  * */
+
+interface GeoHeatmapSeries {
+    pointClass: typeof GeoHeatmapPoint;
+}
+extend(GeoHeatmapSeries.prototype, {
+    type: 'geoheatmap',
+    pointClass: GeoHeatmapPoint
+});
 
 /* *
  *
