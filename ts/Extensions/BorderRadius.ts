@@ -36,6 +36,14 @@ export interface BorderRadiusOptions {
     where?: 'end'|'all';
 }
 
+/*
+interface CurvePoints {
+    start: [number, number];
+    end: [number, number];
+    cp1: [number, number];
+    cp2: [number, number];
+}
+*/
 /**
  * Internal types
  * @private
@@ -74,34 +82,36 @@ SVGRenderer.prototype.symbols.arc = function (
         { innerR, r, start, end } = options || {};
 
     if (
+        options &&
         typeof r === 'number' &&
         typeof start === 'number' &&
         typeof end === 'number'
     ) {
-        const circumference = (2 * Math.PI * r),
+        const alpha = end - start,
             borderRadius = Math.min(
-                options?.borderRadius || 0,
-                // For smaller pie slices, cap the radius to half the sector
-                circumference * 0.5 * ((end - start) / (2 * Math.PI)),
-                // Hard cap because the current algorithm assumes the corner
-                // meet at right angles. More sophisticated arc calculation (a
-                // circle's tangent of the arc) is needed if we want to remove
-                // this cap.
-                // https://stackoverflow.com/questions/49436868/algorithm-for-rounding-a-corner-between-line-and-arc
-                circumference / 40
+                options.borderRadius || 0,
+                // Cap to half the sector radius
+                (r - (options.innerR || 0)) / 2,
+                // For smaller pie slices, cap to the largest small circle that
+                // can be fitted within the sector
+                (r * Math.sin(alpha / 2)) / (1 + Math.sin(alpha / 2))
             ),
-            fractionAlongOuterPerimeter = borderRadius / circumference,
-            angleOfBorderRadius = fractionAlongOuterPerimeter * (2 * Math.PI);
+            angleOfBorderRadius = Math.asin(borderRadius / (r - borderRadius)),
+            distanceBigCenterToStartArc = (
+                Math.cos(angleOfBorderRadius) *
+                (r - borderRadius)
+            );
+
 
         // First move to the start position along the perimeter. But we want to
         // start one borderRadius closer to the center.
         if (path[0] && path[0][0] === 'M') {
-            path[0][1] = x + (r - borderRadius) * Math.cos(start);
-            path[0][2] = y + (r - borderRadius) * Math.sin(start);
+            path[0][1] = x + distanceBigCenterToStartArc * Math.cos(start);
+            path[0][2] = y + distanceBigCenterToStartArc * Math.sin(start);
         }
 
-        // Now draw an arc towards a point one borderRadius out along the
-        // perimeter
+        // Now draw an arc towards the point where the small circle touches the
+        // great circle.
         path.splice(1, 0, [
             'A',
             borderRadius,
@@ -113,8 +123,8 @@ SVGRenderer.prototype.symbols.arc = function (
             y + r * Math.sin(start + angleOfBorderRadius)
         ]);
 
-        // The main outer arc should stop one borderRadius before hitting the
-        // end point along the perimeter.
+        // The main outer arc should stop where the next small circle touches
+        // the great circle.
         if (path[2] && path[2][0] === 'A') {
             path[2][6] = x + r * Math.cos(end - angleOfBorderRadius);
             path[2][7] = y + r * Math.sin(end - angleOfBorderRadius);
@@ -129,8 +139,8 @@ SVGRenderer.prototype.symbols.arc = function (
             0,
             0,
             1,
-            x + (r - borderRadius) * Math.cos(end),
-            y + (r - borderRadius) * Math.sin(end)
+            x + distanceBigCenterToStartArc * Math.cos(end),
+            y + distanceBigCenterToStartArc * Math.sin(end)
         ]);
     }
 

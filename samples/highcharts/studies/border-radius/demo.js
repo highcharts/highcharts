@@ -73,9 +73,23 @@ document.querySelectorAll('button.chart-type').forEach(btn => {
     );
 });
 
+document.getElementById('range').addEventListener('input', e => {
+    Highcharts.charts.forEach(chart => {
+        chart.update({
+            plotOptions: {
+                series: {
+                    borderRadius: `${e.target.value}%`
+                }
+            }
+        }, undefined, undefined, false);
+    });
+});
+
+//*
 Highcharts.chart('container-2', {
     chart: {
-        type: 'pie'
+        type: 'pie',
+        height: 500
     },
     xAxis: {
         categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
@@ -88,22 +102,51 @@ Highcharts.chart('container-2', {
     },
     plotOptions: {
         series: {
-            borderRadius: '50%',
+            borderRadius: document.getElementById('range').value,
             borderWidth: 2,
             borderColor: 'white',
             dataLabels: {
                 enabled: false
             },
-            size: '80%',
-            innerSize: '50%'
+            size: '80%'
         }
     },
-    series: [{
-        data: [{
-            y: 1,
-            sliced: true
-        }, 3, 2, 4],
-        name: 'Norway'
-    }],
+    series: [
+        /*
+        {
+            data: [{
+                y: 1,
+                sliced: true
+            }, 3, 2, 4],
+            borderRadius: 0,
+            colors: ['white'],
+            borderColor: 'silver',
+            borderWidth: 1,
+            name: 'Norway'
+        },
+        */
+        {
+            data: [{
+                y: 1,
+                sliced: true
+            }, 3, 2, 4],
+            name: 'Norway'
+        }
+    ],
     colors: ['#d7bfff', '#af80ff', '#5920b9', '#48208b']
 });
+// */
+/*
+const renderer = new Highcharts.Renderer(
+    document.getElementById('container-1'),
+    400,
+    400
+);
+
+renderer.arc(200, 200, 200, 0, -Math.PI / 2, 0).attr({
+    fill: '#d7bfff',
+    stroke: 'black',
+    'stroke-width': 1,
+    borderRadius: 200
+}).add();
+*/
