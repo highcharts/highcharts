@@ -27,6 +27,14 @@ import type DataTable from './DataTable';
  *
  * */
 
+/**
+ * This class manages state cursors pointing on {@link Data.DataTable}. It
+ * creates a relation between states of the user interface and the table cells,
+ * columns, or rows.
+ *
+ * @class
+ * @name Data.DataStates
+ */
 class DataStates {
 
     /* *
@@ -38,7 +46,6 @@ class DataStates {
     public constructor() {
         this.listenerMap = {};
         this.stateMap = {};
-        this.tableMap = {};
     }
 
     /* *
@@ -50,17 +57,12 @@ class DataStates {
     /**
      * Contains listeners of states on tables.
      */
-    public listenerMap: DataStates.ListenerMap;
+    public readonly listenerMap: DataStates.ListenerMap;
 
     /**
      * Contains lasting states that are kept over multiple changes.
      */
-    public stateMap: DataStates.StateMap;
-
-    /**
-     * Contains tables that emit states on positions.
-     */
-    public tableMap: DataStates.TableMap;
+    public readonly stateMap: DataStates.StateMap;
 
     /* *
      *
@@ -68,6 +70,35 @@ class DataStates {
      *
      * */
 
+    /**
+     * This function registers a listener for a specific state and table.
+     *
+     * @example
+     * ```TypeScript
+     * dataStates.addListener(myTable.id, 'hover', (e: DataStates.Event) => {
+     *     if (
+     *         e.cursor.tableScope === 'modified' &&
+     *         e.cursor.type === 'position'
+     *     ) {
+     *         console.log(`Hover over row #${e.cursor.row}.`);
+     *     }
+     * });
+     * ```
+     *
+     * @function #addListener
+     *
+     * @param {Data.DataStates.TableId} tableId
+     * The ID of the table to listen to.
+     *
+     * @param {Data.DataStates.State} state
+     * The state on the table to listen to.
+     *
+     * @param {Data.DataStates.Listener} listener
+     * The listener to register.
+     *
+     * @return {Data.DataStates}
+     * Returns the DataStates instance for a call chain.
+     */
     public addListener(
         tableId: DataStates.TableId,
         state: DataStates.State,
@@ -87,15 +118,39 @@ class DataStates {
         return this;
     }
 
-    public addTable(
-        table: DataTable
-    ): this {
-
-        this.tableMap[table.id] = table;
-
-        return this;
-    }
-
+    /**
+     * This function emits a state cursor related to a table. It will provide
+     * lasting state cursors of the table to listeners.
+     *
+     * @example
+     * ```TypeScript
+     * dataStates.emit(myTable, {
+     *     type: 'position',
+     *     column: 'city',
+     *     row: 4,
+     *     state: 'hover',
+     *     tableScope: 'modified'
+     * });
+     * ```
+     *
+     * @function #emitCursor
+     *
+     * @param {Data.DataTable} table
+     * The related table of the cursor.
+     *
+     * @param {Data.DataStates.Cursor} cursor
+     * The state cursor to emit.
+     *
+     * @param {Event} [event]
+     * Optional event information from a related source.
+     *
+     * @param {boolean} [lasting]
+     * Whether this state cursor should be kept until it is cleared with
+     * {@link DataStates#remitCursor}.
+     *
+     * @return {Data.DataStates}
+     * Returns the DataStates instance for a call chain.
+     */
     public emitCursor(
         table: DataTable,
         cursor: DataStates.Cursor,
@@ -141,6 +196,20 @@ class DataStates {
         return this;
     }
 
+    /**
+     * Removes a lasting state cursor.
+     *
+     * @function #remitCursor
+     *
+     * @param {string} tableId
+     * The related table of the cursor.
+     *
+     * @param {Data.DataStates.Cursor} cursor
+     * The copy or reference of the cursor.
+     *
+     * @return {Data.DataStates}
+     * Returns the DataStates instance for a call chain.
+     */
     public remitCursor(
         tableId: string,
         cursor: DataStates.Cursor
@@ -161,6 +230,23 @@ class DataStates {
         return this;
     }
 
+    /**
+     * This function removes a listener.
+     *
+     * @function #addListener
+     *
+     * @param {Data.DataStates.TableId} tableId
+     * The ID of the table the listener is connected to.
+     *
+     * @param {Data.DataStates.State} state
+     * The state on the table the listener is listening to.
+     *
+     * @param {Data.DataStates.Listener} listener
+     * The listener to deregister.
+     *
+     * @return {Data.DataStates}
+     * Returns the DataStates instance for a call chain.
+     */
     public removeListener(
         tableId: DataStates.TableId,
         state: DataStates.State,
@@ -182,25 +268,6 @@ class DataStates {
         return this;
     }
 
-    public removeTable(
-        table: DataTable
-    ): this;
-    public removeTable(
-        tableId: string
-    ): this;
-    public removeTable(
-        tableOrId: (DataTable|string)
-    ): this {
-
-        if (typeof tableOrId === 'object') {
-            tableOrId = tableOrId.id;
-        }
-
-        delete this.tableMap[tableOrId];
-
-        return this;
-    }
-
 }
 
 /* *
@@ -209,6 +276,9 @@ class DataStates {
  *
  * */
 
+/**
+ * @class Data.DataStates
+ */
 namespace DataStates {
 
     /* *
@@ -227,6 +297,7 @@ namespace DataStates {
         column?: string;
         row?: number;
         state: State;
+        tableScope: TableScope;
     }
 
     export interface CursorRange {
@@ -235,6 +306,7 @@ namespace DataStates {
         firstRow: number;
         lastRow: number;
         state: State;
+        tableScope: TableScope;
     }
 
     export interface Event {
@@ -255,6 +327,11 @@ namespace DataStates {
     export type TableId = string;
 
     export type TableMap = Record<TableId, DataTable>;
+
+    export type TableScope = (
+        | 'original'
+        | 'modified'
+    );
 
     /* *
      *
@@ -314,3 +391,70 @@ namespace DataStates {
  * */
 
 export default DataStates;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @typedef {
+ *     Data.DataState.CursorPosition|
+ *     Data.DataState.CursorRange
+ * } Data.DataState.Cursor
+ */
+
+/**
+ * @interface Data.DataState.CursorPosition
+ */
+/**
+ * @name Data.DataState.CursorPosition#type
+ * @type {'position'}
+ */
+/**
+ * @name Data.DataState.CursorPosition#column
+ * @type {string|undefined}
+ */
+/**
+ * @name Data.DataState.CursorPosition#row
+ * @type {number|undefined}
+ */
+/**
+ * @name Data.DataState.CursorPosition#state
+ * @type {string}
+ */
+/**
+ * @name Data.DataState.CursorPosition#tableScope
+ * @type {'original'|'modified'}
+ */
+
+/**
+ * @interface Data.DataState.CursorRange
+ */
+/**
+ * @name Data.DataState.CursorRange#type
+ * @type {'range'}
+ */
+/**
+ * @name Data.DataState.CursorRange#columns
+ * @type {Array<string>|undefined}
+ */
+/**
+ * @name Data.DataState.CursorRange#firstRow
+ * @type {number}
+ */
+/**
+ * @name Data.DataState.CursorRange#lastRow
+ * @type {number}
+ */
+/**
+ * @name Data.DataState.CursorRange#state
+ * @type {string}
+ */
+/**
+ * @name Data.DataState.CursorRange#tableScope
+ * @type {'original'|'modified'}
+ */
+
+'';
