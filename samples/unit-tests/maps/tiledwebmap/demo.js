@@ -1,71 +1,23 @@
 QUnit.test('Tiled Web Map on the chart', assert => {
     // Adding fake-provider only for testing purposes
     (function (H) {
-        const { error } = H;
         class TestProviderDefinition {
             constructor() {
                 this.subdomains = [''];
                 this.themes = {
-                    standard: 'testimage.png',
-                    favidon: 'favicon.ico'
+                    Standard: {
+                        url: 'testimage.png',
+                        minZoom: 0,
+                        maxZoom: 19
+                    },
+                    Favicon: {
+                        url: 'favicon.ico',
+                        minZoom: 0,
+                        maxZoom: 19
+                    }
                 };
                 this.initialProjectionName = 'WebMercator';
-                this.credits = {
-                    standard: 'Test Provider'
-                };
-                this.minZoom = 0;
-                this.maxZoom = 19;
-            }
-
-            getCredits() {
-                return this.credits.standard;
-            }
-
-            getURL(subdomain, theme) {
-                const { themes, subdomains } = this;
-                let chosenTheme,
-                    chosenSubdomain;
-
-                // Check for themes
-                if (
-                    (
-                        theme &&
-                        !Object.prototype.hasOwnProperty.call(themes, theme)
-                    ) ||
-                    !theme
-                ) {
-                    if (theme) {
-                        error(
-                            'Missing option: Tiles provider theme cannot be reached, ' +
-                            'using standard provider theme.',
-                            false
-                        );
-                    }
-                    chosenTheme = 'standard';
-                } else {
-                    chosenTheme = theme;
-                }
-
-                // Check for subdomains
-                if ((subdomain && subdomains.indexOf(subdomain) === -1) ||
-                    !subdomain
-                ) {
-                    if (subdomain) {
-                        error(
-                            'Missing option: Tiles provider subdomain cannot be ' +
-                            'reached, using default provider subdomain.',
-                            false
-                        );
-                    }
-                    chosenSubdomain = subdomains[0];
-                } else {
-                    chosenSubdomain = subdomain;
-                }
-
-                const url = themes[chosenTheme]
-                    .replace('{s}', chosenSubdomain);
-
-                return url;
+                this.defaultCredits = 'Test Provider';
             }
         }
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2021 Torstein Honsi
+ *  (c) 2023 Hubert Kozik
  *
  *  License: www.highcharts.com/license
  *
@@ -8,27 +8,22 @@
  *
  * */
 
-interface Themes {
-    [key: string]: string
+export interface Theme {
+    url: string,
+    minZoom: number,
+    maxZoom: number,
+    credits?: string
 }
 
-interface ProviderGetURL {
-    (
-        subdomain?: string | undefined,
-        theme?: string | undefined,
-        apiKey?: string | undefined
-    ): string;
+export interface Themes {
+    [key: string]: Theme
 }
 
 export declare class ProviderDefinition {
     subdomains?: Array<string>;
     themes: Themes;
-    credits: Themes;
-    minZoom: DeepPartial<number>;
-    maxZoom: DeepPartial<number>;
+    defaultCredits: String;
     initialProjectionName: DeepPartial<string>;
-    getURL: ProviderGetURL;
-    getCredits: Function;
 }
 
 export default ProviderDefinition;

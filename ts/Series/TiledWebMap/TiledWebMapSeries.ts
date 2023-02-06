@@ -222,14 +222,57 @@ class TiledWebMapSeries extends MapSeries {
 
                 const def = new ProviderDefinition(),
                     { initialProjectionName: providerProjection } = def;
+                let theme,
+                    subdomain;
 
-                this.minZoom = def.minZoom;
-                this.maxZoom = def.maxZoom;
+                if (provider.theme && defined(def.themes[provider.theme])) {
+                    theme = def.themes[provider.theme];
+                } else {
+                    // if nothing set take first theme
+                    theme = def.themes[Object.keys(def.themes)[0]];
+                    error(
+                        'Missing option: Tiles provider theme cannot be ' +
+                        'reached, using standard provider theme.',
+                        false
+                    );
+                }
+
+                if (
+                    provider.subdomain &&
+                    def.subdomains &&
+                    def.subdomains.indexOf(provider.subdomain) === -1
+                ) {
+                    subdomain = provider.subdomain;
+                } else {
+                    error(
+                        'Missing option: Tiles provider subdomain cannot be ' +
+                        'reached, using default provider subdomain.',
+                        false
+                    );
+                    subdomain = pick(def.subdomains && def.subdomains[0], '');
+                }
+
+                if (provider.apiKey) {
+                    theme.url = theme.url.replace('{apikey}', provider.apiKey);
+                } else {
+                    error(
+                        'Missing option: Tiles provider requires API Key to ' +
+                        'to use tiles, use provider.apiKey to provider token.',
+                        false
+                    );
+                    theme.url = theme.url.replace('?apikey={apikey}', '');
+                }
+
+                provider.url = theme.url
+                    .replace('{s}', subdomain);
+
+                this.minZoom = theme.minZoom;
+                this.maxZoom = theme.maxZoom;
 
                 // Add as credits.text, to prevent changing the default mapText
                 const creditsText = pick(
                     chart.userOptions.credits && chart.userOptions.credits.text,
-                    'Highcharts.com ' + def.getCredits(provider.theme)
+                    'Highcharts.com ' + pick(theme.credits, def.defaultCredits)
                 );
 
                 if (chart.credits) {
@@ -241,12 +284,6 @@ class TiledWebMapSeries extends MapSeries {
                         text: creditsText
                     });
                 }
-
-                provider.url = def.getURL(
-                    provider.subdomain,
-                    provider.theme,
-                    provider.apiKey
-                );
 
                 if (
                     mapView.projection.options.name !== providerProjection
