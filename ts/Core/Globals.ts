@@ -92,7 +92,6 @@ declare global {
             value: (boolean|number|string)
         ): void;
 
-        //From the old OldIE.ts file
         /** @deprecated */
         currentStyle?: ElementCSSInlineStyle;
         /** @deprecated */

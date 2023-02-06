@@ -371,6 +371,18 @@ const defaultOptions: Options = {
      * @apioption global.timezone
      */
 
+    /**
+     * This option is deprecated since v6.0.5. Instead, use
+     * [time.timezoneOffset](#time.timezoneOffset) that supports individual
+     * time settings per chart.
+     *
+     * @deprecated
+     *
+     * @type      {number}
+     * @product   highcharts highstock
+     * @apioption global.timezoneOffset
+     */
+    global: {},
 
     /**
      * Time options that can apply globally or to individual charts. These
@@ -2708,10 +2720,12 @@ function setOptions(
     merge(true, defaultOptions, options);
 
     // Update the time object
-    if (options.time) {
+    if (options.time || options.global) {
         if (H.time) {
             H.time.update(merge(
+                defaultOptions.global,
                 defaultOptions.time,
+                options.global,
                 options.time
             ));
         } else {
