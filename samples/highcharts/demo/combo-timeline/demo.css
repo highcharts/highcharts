@@ -1,48 +1,17 @@
-#container,
-.highcharts-data-table table {
-    min-width: 310px;
-    max-width: 900px;
+#container {
+    min-width: 300px;
+    max-width: 1000px;
     margin: 1em auto;
 }
 
-#container {
-    height: 480px;
-}
-
-.highcharts-data-table table {
-    font-family: Verdana, sans-serif;
+table {
     border-collapse: collapse;
-    border: 1px solid #ebebeb;
-    margin: 10px auto;
-    text-align: center;
-    width: 100%;
-    max-width: 500px;
 }
 
-.highcharts-data-table caption {
-    padding: 1em 0;
-    font-size: 1.2em;
-    color: #555;
-}
-
-.highcharts-data-table th {
-    font-weight: 600;
+table td,
+table th {
+    border: 1px solid silver;
     padding: 0.5em;
-}
-
-.highcharts-data-table td,
-.highcharts-data-table th,
-.highcharts-data-table caption {
-    padding: 0.5em;
-}
-
-.highcharts-data-table thead tr,
-.highcharts-data-table tr:nth-child(even) {
-    background: #f8f8f8;
-}
-
-.highcharts-data-table tr:hover {
-    background: #f1f7ff;
 }
 
 #container .highcharts-axis-title {
@@ -135,7 +104,8 @@
 }
 
 #container .highcharts-flags-series.maps,
-#container .highcharts-flags-series.product {
+#container .highcharts-flags-series.product,
+#container .highcharts-flags-series.cloud {
     clip-path: none !important;
 }
 
@@ -143,8 +113,7 @@
     transform: translate(0, -6px);
 }
 
-#container .highcharts-flags-series.maps .highcharts-label text,
-#container .highcharts-flags-series.cloud .highcharts-label text {
+#container .highcharts-flags-series.maps .highcharts-label text {
     transform: translate(0, -24px);
 }
 
@@ -177,6 +146,12 @@
 
 #container .award p.wide {
     margin-left: 40%;
+}
+
+#container .highcharts-label-box {
+    fill: #46465c;
+
+    /* transform: translate(0, -30px) */
 }
 
 .tip .tip-box {
