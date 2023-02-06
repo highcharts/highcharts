@@ -614,6 +614,9 @@ export default TiledWebMapSeries;
 /**
  * Provider type to pull data (tiles) from.
  *
+ * @sample maps/series-tiledwebmap/basic-configuration-twm
+ *         Basic configuration for TiledWebMap
+ *
  * @type      {string}
  * @since     next
  * @product   highmaps
@@ -624,6 +627,9 @@ export default TiledWebMapSeries;
  * Set a tiles theme. Check the providers documentation for official
  * list of available themes.
  *
+ * @sample maps/series-tiledwebmap/basic-configuration-twm
+ *         Basic configuration for TiledWebMap
+ *
  * @type      {string}
  * @since     next
  * @product   highmaps
@@ -633,6 +639,9 @@ export default TiledWebMapSeries;
 /**
  * Subdomain required by each provider. Check the providers documentation for
  * available subdomains.
+ *
+ * @sample maps/series-tiledwebmap/basic-configuration-twm
+ *         Basic configuration for TiledWebMap
  *
  * @type      {string}
  * @since     next
@@ -652,7 +661,11 @@ export default TiledWebMapSeries;
 /**
  * Custom URL for providers not specified in [providers type](#series.
  * tiledwebmap.provider.type). Available variables to use in URL are: `{x}`,
- * `{y}`, `{z}` or `{zoom}`.
+ * `{y}`, `{z}` or `{zoom}`. Remember to always specify a projection, when
+ * using a custom URL.
+ *
+ * @sample maps/series-tiledwebmap/custom-url-twm
+ *         Custom URL with projection in TiledWebMap configuration
  *
  * @type      {string}
  * @since     next
