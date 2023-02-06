@@ -69,6 +69,11 @@
                 tooltip: {
                     headerFormat: '{point.point.id}<br>',
                     pointFormat: 'Lat: {point.lat} Lon: {point.lon}'
+                },
+                accessibility: {
+                    point: {
+                        valueDescriptionFormat: '{xDescription}.'
+                    }
                 }
             }
         },
@@ -142,6 +147,9 @@
             zIndex: 1,
             type: 'flowmap',
             linkedTo: ':previous',
+            accessibility: {
+                description: 'This is a map showing the ship route.'
+            },
             fillColor: Highcharts.getOptions().colors[0],
             color: '#000',
             name: 'Ship Routes',

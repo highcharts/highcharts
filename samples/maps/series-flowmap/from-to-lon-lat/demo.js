@@ -27,6 +27,14 @@
         }, {
             type: 'flowmap',
             name: 'FlowMap Series',
+            accessibility: {
+                point: {
+                    valueDescriptionFormat:
+                        'Origin: {point.options.from}, Destination: {point.options.to}.'
+                },
+                description:
+                    'This is a map using coordinates directly.'
+            },
             growTowards: true,
             weight: 1,
             data: [{

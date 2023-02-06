@@ -639,7 +639,12 @@ function defaultSeriesDescriptionFormatter(
         ) + (
             shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo + '.' : ''
         ),
-        formatStr = chart.options.accessibility.series.descriptionFormat || '';
+        formatStr = pick(
+            series.options.accessibility &&
+                series.options.accessibility.descriptionFormat,
+            chart.options.accessibility.series.descriptionFormat,
+            ''
+        );
 
     return format(formatStr, {
         seriesDescription: summary,

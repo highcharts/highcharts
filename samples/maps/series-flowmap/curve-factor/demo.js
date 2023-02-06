@@ -16,6 +16,12 @@
             enabled: true
         },
 
+        accessibility: {
+            point: {
+                valueDescriptionFormat: '{xDescription}.'
+            }
+        },
+
         plotOptions: {
             flowmap: {
                 tooltip: {
@@ -96,6 +102,14 @@
             }]
         }, {
             type: 'flowmap',
+            accessibility: {
+                point: {
+                    valueDescriptionFormat:
+                        'Origin: {point.options.from}, Destination: {point.options.to}.'
+                },
+                description:
+                    'This is a map demonstrating curves.'
+            },
             linkedTo: ':previous',
             markerEnd: {
                 enabled: false

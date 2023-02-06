@@ -19,12 +19,25 @@
                     headerFormat: null,
                     pointFormat: `{point.options.from} \u2192
                         {point.options.to}`
+                },
+                accessibility: {
+                    point: {
+                        valueDescriptionFormat:
+                            'Origin: {point.options.from}, Destination: {point.options.to}.'
+                    },
+                    description:
+                        'This is a map showing flight routes.'
                 }
             },
             mappoint: {
                 tooltip: {
                     headerFormat: '{point.point.id}<br>',
                     pointFormat: 'Lat: {point.lat} Lon: {point.lon}'
+                },
+                accessibility: {
+                    point: {
+                        valueDescriptionFormat: '{xDescription}.'
+                    }
                 }
             }
         },

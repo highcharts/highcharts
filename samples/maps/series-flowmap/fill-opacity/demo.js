@@ -20,12 +20,25 @@
             flowmap: {
                 minWidth: 5,
                 maxWidth: 15,
-                growTowards: true
+                growTowards: true,
+                accessibility: {
+                    point: {
+                        valueDescriptionFormat:
+                            'Origin: {point.options.from}, Destination: {point.options.to}.'
+                    },
+                    description:
+                        'This is a map demonstrating fill and opacity.'
+                }
             },
             mappoint: {
                 tooltip: {
                     headerFormat: '{point.point.id}<br>',
                     pointFormat: 'Lat: {point.lat} Lon: {point.lon}'
+                },
+                accessibility: {
+                    point: {
+                        valueDescriptionFormat: '{xDescription}.'
+                    }
                 }
             }
         },
