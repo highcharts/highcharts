@@ -552,10 +552,14 @@ class VBPIndicator extends SMAIndicator {
         }
 
         // Checks if volume series exists and if it has data
-        if (!(volumeSeries && volumeSeries.data && volumeSeries.data.length)) {
-            const errorMessage = volumeSeries && !volumeSeries.data.length ?
-                ' does not contain any data.' :
-                ' not found! Check `volumeSeriesID`.';
+        if (
+            !volumeSeries ||
+            !volumeSeries.processedXData.length
+        ) {
+            const errorMessage =
+                volumeSeries && !volumeSeries.processedXData.length ?
+                    ' does not contain any data.' :
+                    ' not found! Check `volumeSeriesID`.';
 
             error(
                 'Series ' +
