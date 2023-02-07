@@ -504,6 +504,13 @@ const ChartDefaults: ChartOptions = {
      * are required to style the chart. The default style sheet is
      * available from `https://code.highcharts.com/css/highcharts.css`.
      *
+     * [Read more in the docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
+     * on what classes and variables are available.
+     *
+     * @sample highcharts/css/colors
+     *         Color theming with CSS
+     * @sample highcharts/css/prefers-color-scheme
+     *         Dynamic theme based on system settings
      * @type       {boolean}
      * @default    false
      * @since      7.0
