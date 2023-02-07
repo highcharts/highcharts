@@ -101,13 +101,13 @@ QUnit.test('Price indicator labels rendering and visibility, #14879, #17790.',
                 }
             },
             series: [{
-                data: [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+                compare: 'percent',
+                data: [100, 1, 1, 10, 1],
                 lastPrice: {
                     enabled: true,
-                    label: {
-                        enabled: true
-                    }
+                    color: 'red'
                 },
+                // label
                 lastVisiblePrice: {
                     enabled: true,
                     label: {
@@ -122,6 +122,16 @@ QUnit.test('Price indicator labels rendering and visibility, #14879, #17790.',
             'inherit',
             'Last visible price label should be visible, #14879.'
         );
+
+        chart.series[0].update({
+            data: [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+            lastPrice: {
+                enabled: true,
+                label: {
+                    enabled: true
+                }
+            }
+        });
 
         chart.xAxis[0].setExtremes(2, 4); // 'Drag' the chart to redraw labels
 
