@@ -271,12 +271,11 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     public resize(
         width?: number | string | null,
         height?: number | string | null
-    ): this {
+    ): void {
         if (this.dataGrid) {
             super.resize(width, height);
             this.dataGrid.setSize(width, height);
         }
-        return this;
     }
 
     public update(options: Partial<DataGridComponent.DataGridOptions>): this {
