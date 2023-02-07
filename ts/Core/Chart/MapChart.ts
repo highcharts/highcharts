@@ -27,21 +27,10 @@ const { getOptions } = D;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
-    addEvent,
-    fireEvent,
     merge,
     pick
 } = U;
 import '../../Maps/MapSymbols.js';
-import type SeriesOptions from '../Series/SeriesOptions';
-import MapPoint from '../../Series/Map/MapPoint';
-import MapSeries from '../../Series/Map/MapSeries';
-import type {
-    AnimationOptions
-} from '../../Core/Animation/AnimationOptions';
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
-
 
 declare module './ChartLike'{
     interface ChartLike {
