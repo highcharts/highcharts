@@ -28,13 +28,22 @@ Example of `yourtheme.css`
 
     @import 'https://code.highcharts.com/css/highcharts.css';
 
-    /* This will re-declare variables */
+    /* This will re-declare variables globally */
     :root {
       --highcharts-color-0: #f45b5b;
     }
 
-    /* This will use a different variable for some elements, in this case use a
-    more contrasted color variation for the axis labels */
+    /* This will overwrite variables for different charts */
+    #container-1 {
+      --highcharts-color-0: #f45b5b;
+    }
+
+    #container-2 {
+      --highcharts-color-0: #dedede;
+    }
+
+    /* This will use a different variable for some elements, in this case a more
+    contrasted color variation for the axis labels */
     .highcharts-axis-labels {
       fill: var(--highcharts-neutral-color-100);
     }
@@ -61,4 +70,8 @@ Highcharts offers three different themes by default. There are available as CSS 
 *   [grid-light.css](https://code.highcharts.com/css/themes/grid-light.css)
 
 
+Legacy
+______
+Prior to Highcharts v11, the CSS was generated from a SASS file
+`highcharts.scss`. [Read the old docs](https://github.com/highcharts/highcharts/blob/v10.3.3/docs/chart-design-and-style/custom-themes-in-styled-mode.md) on how to set up and modify that.
 

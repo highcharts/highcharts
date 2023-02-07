@@ -267,7 +267,7 @@
 }
 
 .highcharts-credits:hover {
-    fill: black;
+    fill: var(--highcharts-neutral-color-100);
     font-size: 1em;
 }
 
@@ -1059,7 +1059,7 @@ text.highcharts-drilldown-data-label,
 /* Drag-panes module */
 .highcharts-axis-resizer {
     cursor: ns-resize;
-    stroke: black;
+    stroke: var(--highcharts-neutral-color-100);
     stroke-width: 2px;
 }
 
