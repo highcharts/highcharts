@@ -2208,7 +2208,13 @@ class SeriesBuilder {
         // The name comes from the first column (excluding the x column)
         if (typeof this.name === 'undefined' && builder.readers.length >= 2) {
             columnIndexes = builder.getReferencedColumnIndexes();
-            if (columnIndexes.length >= 2) {
+
+            // #10005, to find name for series take into account only x and y
+            while (columnIndexes.length > 2) {
+                columnIndexes.pop();
+            }
+
+            if (columnIndexes.length === 2) {
                 // remove the first one (x col)
                 columnIndexes.shift();
 
