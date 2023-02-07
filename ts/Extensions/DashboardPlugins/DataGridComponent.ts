@@ -147,6 +147,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     public dataGridOptions: Partial<Options>;
     public options: DataGridComponent.DataGridOptions;
     public sync: Component['sync'];
+    // private updatingSize?: boolean;
 
     /* *
      *
@@ -267,6 +268,17 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     public redraw(): this {
         super.redraw();
         return this.render();
+    }
+
+    public resize(
+        width?: number | string | null,
+        height?: number | string | null
+    ): this {
+        if (this.dataGrid) {
+            super.resize(width, height);
+            this.dataGrid.setSize(width, height);
+        }
+        return this;
     }
 
     public update(options: Partial<DataGridComponent.DataGridOptions>): this {
