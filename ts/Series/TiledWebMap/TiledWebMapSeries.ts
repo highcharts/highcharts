@@ -298,6 +298,14 @@ class TiledWebMapSeries extends MapSeries {
                         false
                     );
                 }
+            } else {
+                if (!mapView.projection.options.name) {
+                    error(
+                        'Set the correct map projection supported by custom ' +
+                        'provider.',
+                        false
+                    );
+                }
             }
 
             // if zoom is smaller/higher than supported by provider
@@ -519,7 +527,7 @@ addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
             (s: any): boolean => s.type === 'tiledwebmap')[0],
         { geoBounds } = e;
 
-    if (twm && twm.provider && twm.provider.type) {
+    if (twm && twm.provider && twm.provider.type && !twm.provider.url) {
         const ProviderDefinition =
             TilesProvidersRegistry[twm.provider.type];
 
