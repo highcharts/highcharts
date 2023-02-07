@@ -6,7 +6,7 @@
 
     // Prepare demo data. The data is joined to map using value of 'hc-key'
     // property by default. See API docs for 'joinBy' for more info on linking
-    // data and map.
+    // data and map. This data was copied from no-all-all demo.
     const data = [
         ['no-tf-5429', 10], ['no-tf-5427', 11], ['no-vl-4625', 12],
         ['no-tf-5401', 13], ['no-td-5052', 14], ['no-mr-1576', 15],
@@ -151,6 +151,10 @@
             zoom: 4
         },
 
+        legend: {
+            enabled: false
+        },
+
         colorAxis: {
             min: 0,
             minColor: '#f7cad3',
@@ -167,6 +171,8 @@
         }, {
             data: data,
             name: 'Random data',
+            borderColor: 'black',
+            borderWidth: 0.5,
             states: {
                 hover: {
                     color: '#ffff00'

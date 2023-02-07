@@ -50,7 +50,7 @@
                     formatter: function () {
                         if (
                             this.point.properties &&
-                            this.point.properties.labelrank.toString() < 5
+                            this.point.properties.labelrank < 5
                         ) {
                             return this.point.properties['iso-a2'];
                         }

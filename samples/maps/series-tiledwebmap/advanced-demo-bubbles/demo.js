@@ -13,7 +13,7 @@
             },
 
             title: {
-                text: 'World population 2013 by country'
+                text: 'World population 2016 by country'
             },
 
             subtitle: {
@@ -56,32 +56,32 @@
                 },
                 data: [{
                     name: 'London',
-                    lat: 51.507222,
-                    lon: -0.1275
+                    lat: 51.51,
+                    lon: -0.13
                 }, {
                     name: 'Vik i Sogn',
-                    lat: 61.087220,
-                    lon: 6.579700
+                    lat: 61.09,
+                    lon: 6.58
                 }, {
                     name: 'Krakow',
-                    lon: 19.944981,
-                    lat: 50.064651
+                    lon: 19.94,
+                    lat: 50.06
                 }, {
                     name: 'Kowloon',
-                    lon: 114.183,
-                    lat: 22.317
+                    lon: 114.18,
+                    lat: 22.32
                 }, {
                     name: 'Windhoek',
-                    lat: -22.55900,
-                    lon: 17.06429
+                    lat: -22.56,
+                    lon: 17.06
                 }, {
                     name: 'Doha',
-                    lat: 25.28547,
-                    lon: 51.53037
+                    lat: 25.29,
+                    lon: 51.53
                 }, {
                     name: 'Vancouver',
-                    lat: 49.28315,
-                    lon: -123.12202
+                    lat: 49.28,
+                    lon: -123.12
                 }]
             }, {
                 type: 'mapline',
@@ -97,8 +97,8 @@
                     geometry: {
                         type: 'LineString',
                         coordinates: [
-                            [-123.12202, 49.28315], // Vancouver
-                            [-0.1275, 51.507222] // London
+                            [-123.12, 49.28], // Vancouver
+                            [-0.13, 51.51] // London
                         ]
                     },
                     color: '#ff8800'
@@ -106,8 +106,8 @@
                     geometry: {
                         type: 'LineString',
                         coordinates: [
-                            [51.53037, 25.28547], // Doha
-                            [114.183, 22.317] // Kowloon
+                            [51.53, 25.29], // Doha
+                            [114.18, 22.32] // Kowloon
                         ]
                     },
                     color: '#12b6ed'

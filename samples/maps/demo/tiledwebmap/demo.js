@@ -7,10 +7,12 @@ Highcharts.mapChart('container', {
         enabled: true
     },
 
+    legend: {
+        enabled: false
+    },
+
     mapView: {
-        projection: {
-            name: 'WebMercator'
-        },
+        center: [10, 50],
         zoom: 4
     },
 
