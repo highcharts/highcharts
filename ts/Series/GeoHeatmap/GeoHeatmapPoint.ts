@@ -22,6 +22,10 @@ import MapPoint from '../Map/MapPoint.js';
 import GeoHeatmapPointOptions from '../GeoHeatmap/GeoHeatmapPointOptions.js';
 import GeoHeatmapSeries from '../GeoHeatmap/GeoHeatmapSeries.js';
 import { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import U from '../../Core/Utilities.js';
+const {
+    isNumber
+} = U;
 
 /* *
  *
@@ -37,27 +41,29 @@ class GeoHeatmapPoint extends MapPoint {
         options: (GeoHeatmapPointOptions|PointShortOptions),
         x?: number
     ): GeoHeatmapPoint {
+        const point = super.applyOptions.call(this, options, x),
+            lat = point.options.lat,
+            lon = point.options.lon;
 
-        let point: GeoHeatmapPoint =
-            super.applyOptions.call(this, options, x) as any,
-            lat = point.options.lat || 0,
-            lon = point.options.lon || 0,
-            colsize = this.series.options.colsize || 1,
-            rowsize = this.series.options.rowsize || 1,
-            x1 = lon - (colsize as number) / 2,
-            y1 = lat - (rowsize as number) / 2;
+        if (isNumber(lon) && isNumber(lat)) {
+            const colsize = this.series.options.colsize || 1,
+                rowsize = this.series.options.rowsize || 1,
+                x1 = lon - colsize / 2,
+                y1 = lat - rowsize / 2;
 
-        point.options.geometry = ({
-            type: 'Polygon',
-            coordinates: [
-                [
-                    [x1, y1],
-                    [x1 + colsize, y1],
-                    [x1 + colsize, y1 + rowsize],
-                    [x1, y1 + rowsize]
+            point.geometry = point.options.geometry = {
+                type: 'Polygon',
+                // A rectangle centered in lon/lat
+                coordinates: [
+                    [
+                        [x1, y1],
+                        [x1 + colsize, y1],
+                        [x1 + colsize, y1 + rowsize],
+                        [x1, y1 + rowsize]
+                    ]
                 ]
-            ]
-        }) as any;
+            };
+        }
 
         return point;
     }

@@ -61,7 +61,7 @@ class GeoHeatmapSeries extends MapSeries {
 
     public static defaultOptions: GeoHeatmapSeriesOptions = merge(MapSeries.defaultOptions, {
         keys: ['lon', 'lat', 'value']
-    } as GeoHeatmapSeriesOptions);
+    });
 
     /* *
      *
