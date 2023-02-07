@@ -14,11 +14,6 @@ Highcharts.chart('container-1', {
     },
     plotOptions: {
         series: {
-            _borderRadius: {
-                radius: '20px',
-                scope: 'stack',
-                where: 'end'
-            },
             borderRadius: '50%',
             borderWidth: 2,
             borderColor: '#666',
@@ -86,7 +81,20 @@ document.querySelectorAll('button.polar').forEach(btn => {
     );
 });
 
+const label = document.querySelector('label[for="range"]');
+const updateLabel = input => {
+    label.innerText = `${input.value}%`;
+
+    const position = (input.value - input.min) / (input.max - input.min),
+        percent = Math.round(position * 100),
+        pxAdjust = Math.round(label.offsetWidth * position);
+    label.style.left = `calc(${percent}% - ${pxAdjust}px)`;
+};
+updateLabel(document.getElementById('range'));
+
 document.getElementById('range').addEventListener('input', e => {
+    updateLabel(e.target);
+
     Highcharts.charts.forEach(chart => {
         chart.update({
             plotOptions: {

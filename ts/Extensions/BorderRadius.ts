@@ -199,7 +199,8 @@ addEvent(seriesTypes.pie, 'afterTranslate', function (): void {
         const shapeArgs = point.shapeArgs as SymbolOptions|undefined;
         if (shapeArgs) {
             shapeArgs.borderRadius = relativeLength(
-                borderRadius.radius, shapeArgs.r || 0
+                borderRadius.radius,
+                (shapeArgs.r || 0) - (shapeArgs.innerR || 0)
             );
         }
     }
@@ -210,6 +211,7 @@ addEvent(
     'afterColumnTranslate',
     function (): void {
         const yAxis = this.yAxis,
+            inverted = this.chart.inverted,
             borderRadius = optionsToObject(this.options.borderRadius),
             reversed = yAxis.options.reversed;
 
@@ -377,7 +379,19 @@ addEvent(
                         ['Z']
                     ]
                 };
+
+            // Polar column and polar bar
+            } else if (point.shapeType === 'arc') {
+                const shapeArgs = point.shapeArgs as SymbolOptions;
+                if (shapeArgs) {
+                    shapeArgs.borderRadius = relativeLength(
+                        borderRadius.radius,
+                        (shapeArgs.r || 0) -
+                            ((inverted && shapeArgs.innerR) || 0)
+                    );
+                }
             }
+
         }
     },
     { order: 9 }
