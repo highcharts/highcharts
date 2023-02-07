@@ -801,13 +801,6 @@ class ColumnSeries extends Series {
                     );
                 }
 
-                // Border radius is not stylable (#6900)
-                if (options.borderRadius && !chart.polar) {
-                    (graphic as any)[verb]({
-                        r: options.borderRadius
-                    });
-                }
-
                 // Presentational
                 if (!chart.styledMode) {
                     (graphic as any)[verb](series.pointAttribs(

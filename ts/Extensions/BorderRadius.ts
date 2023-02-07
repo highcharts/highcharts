@@ -236,7 +236,7 @@ addEvent(
     Series as unknown as ColumnSeries,
     'afterColumnTranslate',
     function (): void {
-        if (this.options.borderRadius) {
+        if (this.options.borderRadius && !this.is('xrange')) {
             const yAxis = this.yAxis,
                 inverted = this.chart.inverted,
                 borderRadius = optionsToObject(this.options.borderRadius),
@@ -352,10 +352,12 @@ addEvent(
                         c[1] = h[1] = y + rTop - cutTop;
                     }
 
-                    // Column is lower than the radius. Cut off bottom inside the
-                    // top radius.
+                    // Column is lower than the radius. Cut off bottom inside
+                    // the top radius.
                     if (height < rTop - cutTop) {
-                        const base = applyPythagoras(rTop, rTop - cutTop - height);
+                        const base = applyPythagoras(
+                            rTop, rTop - cutTop - height
+                        );
                         c[0] = d[0] = x + width - rTop + base;
                         e[0] = Math.min(c[0], e[0]);
                         f[0] = Math.max(d[0], f[0]);
@@ -364,7 +366,8 @@ addEvent(
                     }
 
                     // Inside stacks, cut off part of the bottom
-                    const cutBtm = rBtm && (stackY + stackHeight) - (y + height);
+                    const cutBtm = rBtm && (stackY + stackHeight) -
+                        (y + height);
                     if (cutBtm) {
                         const base = applyPythagoras(rBtm, rBtm - cutBtm);
                         e[0] += base;
@@ -374,7 +377,9 @@ addEvent(
 
                     // Cut off top inside the bottom radius
                     if (height < rBtm - cutBtm) {
-                        const base = applyPythagoras(rBtm, rBtm - cutBtm - height);
+                        const base = applyPythagoras(
+                            rBtm, rBtm - cutBtm - height
+                        );
                         c[0] = d[0] = x + width - rBtm + base;
                         b[0] = Math.min(c[0], b[0]);
                         a[0] = Math.max(d[0], a[0]);
