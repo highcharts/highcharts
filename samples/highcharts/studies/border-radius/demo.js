@@ -14,7 +14,7 @@ Highcharts.chart('container-1', {
     },
     plotOptions: {
         series: {
-            borderRadius: '50%',
+            borderRadius: `${document.getElementById('range').value}%`,
             borderWidth: 2,
             borderColor: '#666',
             dataLabels: {
@@ -123,7 +123,7 @@ Highcharts.chart('container-2', {
     },
     plotOptions: {
         series: {
-            borderRadius: document.getElementById('range').value,
+            borderRadius: `${document.getElementById('range').value}%`,
             borderWidth: 2,
             borderColor: 'white',
             dataLabels: {

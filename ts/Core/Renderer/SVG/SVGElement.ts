@@ -145,7 +145,6 @@ class SVGElement implements SVGElementLike {
         'height',
         'innerR',
         'r',
-        'rounded',
         'start',
         'width',
         'x',
