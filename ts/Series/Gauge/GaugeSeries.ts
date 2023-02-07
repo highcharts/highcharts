@@ -46,7 +46,8 @@ const {
     extend,
     merge,
     pick,
-    pInt
+    pInt,
+    defined
 } = U;
 
 
@@ -488,7 +489,7 @@ class GaugeSeries extends Series {
             point.plotX = center[0];
             point.plotY = center[1];
 
-            if (point.y || point.y === 0) {
+            if (defined(point.y) && yAxis.max - yAxis.min) {
                 point.percentage =
                     ((point.y - yAxis.min) / (yAxis.max - yAxis.min)) * 100;
             }
