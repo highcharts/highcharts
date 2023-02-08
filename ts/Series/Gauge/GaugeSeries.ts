@@ -491,7 +491,7 @@ class GaugeSeries extends Series {
 
             if (defined(point.y) && yAxis.max - yAxis.min) {
                 point.percentage =
-                    ((point.y - yAxis.min) / (yAxis.max - yAxis.min)) * 100;
+                    (point.y - yAxis.min) / (yAxis.max - yAxis.min) * 100;
             }
         });
     }
