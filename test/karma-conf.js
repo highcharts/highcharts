@@ -690,6 +690,45 @@ function createVisualTestTemplate(argv, samplePath, js, assertion) {
         resets.push('callbacks');
     }
 
+    // Include demo.css and its imports (highcharcts.css or theme) to be
+    // inserted into the SVG in karma-setup.js:getSVG
+    /*
+    let css = fs.readFileSync(
+        path.join(__dirname, `../samples/${samplePath}/demo.css`),
+        'utf8'
+    );
+
+    if (css) {
+        const regex = /@import ("|')([a-zA-Z:\/\.\-\?\+]+)("|');/g,
+            regexDeep = /@import ("|')([a-zA-Z:\/\.\-\?\+]+)("|');/g;
+
+        let match;
+        while (match = regex.exec(css)) {
+            let url = match[2],
+                importedCSS = '';
+
+            if (url.indexOf('https://code.highcharts.com/css/') === 0) {
+                url = url.replace(
+                    'https://code.highcharts.com/css/',
+                    '../code/css/'
+                );
+                importedCSS = fs.readFileSync(
+                    path.join(__dirname, url),
+                    'utf8'
+                );
+                // Strip deep imports like fonts inside themes
+                importedCSS = importedCSS.replace(regexDeep, '');
+            }
+            // If our own, inserts the content of the CSS, otherwise removes the
+            // @import statement
+            css = css.replace(match[0], importedCSS);
+        }
+
+        html += `<style id="demo.css">${css}</style>`;
+
+    }
+    */
+
     // Include highcharts.css, to be inserted into the SVG in
     // karma-setup.js:getSVG
     if (scriptBody.indexOf('styledMode: true') !== -1) {
@@ -709,7 +748,8 @@ function createVisualTestTemplate(argv, samplePath, js, assertion) {
                 // Remove all imported CSS because fonts make it unstable, and
                 // to avoid loading over network. We have highcharts.css
                 // already. Reconsider this if we want better visual tests for
-                // themes.
+                // themes. An attempt was made in the commented code above, but
+                // abandoned cause time was running.
                 .replace(/@import [^;]+;/, '');
 
             html += `<style id="demo.css">${demoCSS}</style>`;
