@@ -192,6 +192,10 @@ class StochasticIndicator extends SMAIndicator {
             return;
         }
 
+        // If the value of initial points is constant, wait until it changes
+        // to calculate correct Stochastic values
+        let constantValues = true,
+            j = 0;
         // For a N-period, we start from N-1 point, to calculate Nth point
         // That is why we later need to comprehend slice() elements list
         // with (+1)
@@ -205,11 +209,31 @@ class StochasticIndicator extends SMAIndicator {
             HL = extremes[1] - LL;
             K = CL / HL * 100;
 
-            xData.push(xVal[i]);
-            yData.push([K, null]);
+            if (isNaN(K) && constantValues) {
+                j++;
+                continue;
+            } else if (constantValues && !isNaN(K)) {
+                constantValues = false;
+            }
+
+            const length = xData.push(xVal[i]);
+
+            // If N-period previous values are constant which results in NaN %K,
+            // we need to use previous %K value if it is a number,
+            // otherwise we should use null
+            if (isNaN(K)) {
+                yData.push([
+                    yData[length - 2] &&
+                        typeof yData[length - 2][0] === 'number' ?
+                        yData[length - 2][0] : null,
+                    null
+                ]);
+            } else {
+                yData.push([K, null]);
+            }
 
             // Calculate smoothed %D, which is SMA of %K
-            if (i >= (periodK - 1) + (periodD - 1)) {
+            if (i >= j + (periodK - 1) + (periodD - 1)) {
                 points = SeriesRegistry.seriesTypes.sma.prototype.getValues
                     .call(this, ({
                         xData: xData.slice(-periodD),
@@ -221,7 +245,7 @@ class StochasticIndicator extends SMAIndicator {
             }
 
             SO.push([xVal[i], K, D]);
-            yData[yData.length - 1][1] = D;
+            yData[length - 1][1] = D;
         }
 
         return {

@@ -47,7 +47,7 @@ QUnit.test('Test current and last price indicator.', function (assert) {
     );
 
     assert.ok(
-        chart.series[1].crossLabel.hasClass('highcharts-color-1'),
+        chart.series[1].lastVisiblePriceLabel.hasClass('highcharts-color-1'),
         '#15706: Second lastVisiblePrice label should have correct color class'
     );
 });
@@ -89,7 +89,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('The currentPriceIndicator label should be visible, #14879.',
+QUnit.test('Price indicator labels rendering and visibility, #14879, #17790.',
     function (assert) {
         const chart = Highcharts.stockChart('container', {
             stockTools: {
@@ -118,9 +118,27 @@ QUnit.test('The currentPriceIndicator label should be visible, #14879.',
         });
 
         assert.strictEqual(
-            chart.series[0].crossLabel.visibility,
+            chart.series[0].lastVisiblePrice.visibility,
             'inherit',
-            'Crosshair label should be visible.'
+            'Last visible price label should be visible, #14879.'
+        );
+
+        chart.series[0].update({
+            data: [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1],
+            lastPrice: {
+                enabled: true,
+                label: {
+                    enabled: true
+                }
+            }
+        });
+
+        chart.xAxis[0].setExtremes(2, 4); // 'Drag' the chart to redraw labels
+
+        assert.strictEqual(
+            document.querySelectorAll('.highcharts-crosshair-label').length,
+            2, // One for lastPrice label, one for lastVisiblePrice label
+            'There should only be two price labels rendered, #17790.'
         );
     }
 );
