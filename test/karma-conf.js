@@ -50,10 +50,18 @@ function getProperties() {
 function getHTML(path) {
     let html = fs.readFileSync(`samples/${path}/demo.html`, 'utf8');
 
-    html = html.replace(
-        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-        ''
-    );
+    html = html
+        .replace(
+            /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+            ''
+        )
+        // Google fonts mess up the calculation of bounding boxes because they
+        // load async, so sometimes they're loaded prior to screenshot,
+        // sometimes not
+        .replace(
+            /<link[a-z"=:\.\/ ]+(fonts.googleapis.com|fonts.gstatic.com)[^>]+>/gi,
+            ''
+        );
 
     return html + '\n';
 }
@@ -691,12 +699,21 @@ function createVisualTestTemplate(argv, samplePath, js, assertion) {
         );
         html += `<style id="highcharts.css">${highchartsCSS}</style>`;
 
-        const demoCSS = fs.readFileSync(
+        let demoCSS = fs.readFileSync(
             path.join(__dirname, `../samples/${samplePath}/demo.css`),
             'utf8'
         );
 
-        html += `<style id="demo.css">${demoCSS}</style>`;
+        if (demoCSS) {
+            demoCSS = demoCSS
+                // Remove all imported CSS because fonts make it unstable, and
+                // to avoid loading over network. We have highcharts.css
+                // already. Reconsider this if we want better visual tests for
+                // themes.
+                .replace(/@import [^;]+;/, '');
+
+            html += `<style id="demo.css">${demoCSS}</style>`;
+        }
 
     }
 
