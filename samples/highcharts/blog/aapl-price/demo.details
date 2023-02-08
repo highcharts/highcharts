@@ -1,6 +1,0 @@
----
- name: AAPL Price
- authors:
-   - Mustapha Mekhatria
- js_wrap: b
-...
