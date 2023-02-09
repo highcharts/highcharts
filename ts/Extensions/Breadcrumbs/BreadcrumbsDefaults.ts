@@ -31,13 +31,11 @@ import { Palette } from '../../Core/Color/Palettes.js';
 
 /**
  * @optionparent lang
- *
- * @private
  */
 const lang: Partial<LangOptions> = {
     /**
-     * @since 10.0.0
-     * @product  highcharts
+     * @since   10.0.0
+     * @product highcharts
      *
      * @private
      */
@@ -50,8 +48,8 @@ const lang: Partial<LangOptions> = {
  * `drilldown.breadcrumbs` and for tree-like series traversing, in
  * `plotOptions[series].breadcrumbs`.
  *
- * @since 10.0.0
- * @product highcharts
+ * @since        10.0.0
+ * @product      highcharts
  * @optionparent navigation.breadcrumbs
  */
 const options: BreadcrumbsOptions = {
@@ -67,9 +65,9 @@ const options: BreadcrumbsOptions = {
      * @sample {highcharts} highcharts/breadcrumbs/single-button
      *         Themed, single button
      *
-     * @type       {Highcharts.SVGAttributes}
-     * @since 10.0.0
-     * @product    highcharts
+     * @type    {Highcharts.SVGAttributes}
+     * @since   10.0.0
+     * @product highcharts
      */
     buttonTheme: {
         /** @ignore */
@@ -96,7 +94,7 @@ const options: BreadcrumbsOptions = {
     /**
      * The default padding for each button and separator in each direction.
      *
-     * @type      {number}
+     * @type  {number}
      * @since 10.0.0
      */
     buttonSpacing: 5,
@@ -116,7 +114,7 @@ const options: BreadcrumbsOptions = {
      * Return false to stop default buttons click action.
      *
      * @type      {Highcharts.BreadcrumbsClickCallbackFunction}
-     * @since 10.0.0
+     * @since     10.0.0
      * @apioption navigation.breadcrumbs.events.click
      */
 
@@ -127,7 +125,8 @@ const options: BreadcrumbsOptions = {
      *
      * @sample highcharts/breadcrumbs/single-button
      *         Floating button
-     * @type      {boolean}
+     *
+     * @type  {boolean}
      * @since 10.0.0
      */
     floating: false,
@@ -149,7 +148,7 @@ const options: BreadcrumbsOptions = {
      * Callback function to format the breadcrumb text from scratch.
      *
      * @type      {Highcharts.BreadcrumbsFormatterCallbackFunction}
-     * @since 10.0.0
+     * @since     10.0.0
      * @default   undefined
      * @apioption navigation.breadcrumbs.formatter
      */
@@ -158,10 +157,10 @@ const options: BreadcrumbsOptions = {
      * What box to align the button to. Can be either `plotBox` or
      * `spacingBox`.
      *
-     * @type       {Highcharts.ButtonRelativeToValue}
-     * @default    plotBox
-     * @since 10.0.0
-     * @product    highcharts highmaps
+     * @type    {Highcharts.ButtonRelativeToValue}
+     * @default plotBox
+     * @since   10.0.0
+     * @product highcharts highmaps
      */
     relativeTo: 'plotBox',
 
@@ -169,10 +168,11 @@ const options: BreadcrumbsOptions = {
      * Whether to reverse the order of buttons. This is common in Arabic
      * and Hebrew.
      *
-     * @type       {boolean}
+     * @sample {highcharts} highcharts/breadcrumbs/rtl
+     *         Breadcrumbs in RTL
+     *
+     * @type  {boolean}
      * @since 10.2.0
-     * @sample     {highcharts} highcharts/breadcrumbs/rtl
-     *             Breadcrumbs in RTL
      */
     rtl: false,
 
@@ -181,11 +181,13 @@ const options: BreadcrumbsOptions = {
      * aligned properly for the default chart layout (title,  subtitle,
      * legend, range selector) for the custom chart layout set the position
      * properties.
-     * @type       {Highcharts.BreadcrumbsAlignOptions}
-     * @since 10.0.0
-     * @product    highcharts highmaps
-     * @sample     {highcharts} highcharts/breadcrumbs/single-button
-     *             Single, right aligned button
+     *
+     * @sample  {highcharts} highcharts/breadcrumbs/single-button
+     *          Single, right aligned button
+     *
+     * @type    {Highcharts.BreadcrumbsAlignOptions}
+     * @since   10.0.0
+     * @product highcharts highmaps
      */
     position: {
         /**
@@ -226,8 +228,8 @@ const options: BreadcrumbsOptions = {
      */
     separator: {
         /**
-         * @type {string}
-         * @since 10.0.0
+         * @type    {string}
+         * @since   10.0.0
          * @product highcharts
          */
         text: '/',
@@ -236,7 +238,7 @@ const options: BreadcrumbsOptions = {
          *
          * In styled mode, the breadcrumbs separators are styled by the
          * `.highcharts-separator` rule with its different states.
-         *  @type {Highcharts.CSSObject}
+         *  @type  {Highcharts.CSSObject}
          *  @since 10.0.0
          */
         style: {
@@ -247,10 +249,11 @@ const options: BreadcrumbsOptions = {
     /**
      * Show full path or only a single button.
      *
-     * @type      {boolean}
-     * @since 10.0.0
      * @sample {highcharts} highcharts/breadcrumbs/single-button
-     *          Single, styled button
+     *         Single, styled button
+     *
+     * @type  {boolean}
+     * @since 10.0.0
      */
     showFullPath: true,
 
@@ -260,15 +263,16 @@ const options: BreadcrumbsOptions = {
      * In styled mode, the breadcrumbs buttons are styled by the
      * `.highcharts-breadcrumbs-buttons .highcharts-button` rule with its
      * different states.
-     *  @type {Highcharts.SVGAttributes}
-     *  @since 10.0.0
+     *
+     * @type  {Highcharts.SVGAttributes}
+     * @since 10.0.0
      */
     style: {},
 
     /**
      * Whether to use HTML to render the breadcrumbs items texts.
      *
-     * @type      {boolean}
+     * @type  {boolean}
      * @since 10.0.0
      */
     useHTML: false,
@@ -276,7 +280,7 @@ const options: BreadcrumbsOptions = {
     /**
      * The z index of the breadcrumbs group.
      *
-     * @type      {number}
+     * @type  {number}
      * @since 10.0.0
      */
     zIndex: 7
