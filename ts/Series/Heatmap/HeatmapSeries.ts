@@ -449,6 +449,10 @@ class HeatmapSeries extends ScatterSeries {
 
             if (canvas && ctx && colorAxis) {
                 const { plotWidth, plotHeight } = chart,
+                    drawNormalPoints = (
+                        !heatmap.boosted &&
+                        heatmap.tooltipOptions.enabled
+                    ),
                     image = heatmap.image,
                     resize = image && !(
                         image.width === plotWidth &&
@@ -456,15 +460,10 @@ class HeatmapSeries extends ScatterSeries {
                     ),
                     colsize = heatmap.options.colsize || 1,
                     rowsize = heatmap.options.rowsize || 1,
-                    xExtremes = heatmap.getXExtremes(
-                        heatmap.xData || []
-                    ),
-                    yExtremes = heatmap.getExtremes(),
+                    xExtremes = heatmap.xAxis.getExtremes(),
+                    yExtremes = heatmap.yAxis.getExtremes(),
                     fromXRange = [xExtremes.min, xExtremes.max],
-                    fromYRange = [
-                        yExtremes.dataMin,
-                        yExtremes.dataMax
-                    ] as number[],
+                    fromYRange = [yExtremes.dataMin, yExtremes.dataMax],
                     toXRange = [0, canvas.width - 1],
                     toYRange = [0, canvas.height - 1],
                     scaleValue = function (
@@ -478,28 +477,37 @@ class HeatmapSeries extends ScatterSeries {
                         return ~~(capped * scale + to[0]);
                     };
 
-                heatmap.points.forEach((p: HeatmapPoint): void => {
-                    p.color = 'transparent';
+                heatmap.points.forEach((p: HeatmapPoint, i: number): void => {
+                    if (drawNormalPoints) {
+                        p.color = 'transparent';
+                    }
 
                     ctx.fillStyle = colorAxis.toColor(
                         p.value || 0, p
                     ) as string;
 
+                    const scaleX = scaleValue(
+                        p.x,
+                        fromXRange,
+                        toXRange
+                    );
+                    const scaleY = scaleValue(
+                        ((yExtremes.dataMax as number) - p.y),
+                        fromYRange,
+                        toYRange
+                    );
+
                     ctx.fillRect(
-                        scaleValue(
-                            p.x,
-                            fromXRange,
-                            toXRange
-                        ),
-                        scaleValue(
-                            ((yExtremes.dataMax as number) - p.y),
-                            fromYRange,
-                            toYRange
-                        ),
+                        scaleX,
+                        scaleY,
                         colsize,
                         rowsize
                     );
                 });
+
+                if (drawNormalPoints) {
+                    Series.prototype.drawPoints.call(heatmap);
+                }
 
                 if (resize) {
                     image.attr({
@@ -515,7 +523,6 @@ class HeatmapSeries extends ScatterSeries {
                         plotHeight
                     ).add(heatmap.group);
                 }
-                Series.prototype.drawPoints.call(heatmap);
             }
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
             Series.prototype.drawPoints.call(heatmap);
