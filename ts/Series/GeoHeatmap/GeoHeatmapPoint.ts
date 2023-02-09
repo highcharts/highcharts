@@ -17,12 +17,20 @@
  *
  * */
 
-
-import MapPoint from '../Map/MapPoint.js';
 import GeoHeatmapPointOptions from '../GeoHeatmap/GeoHeatmapPointOptions.js';
 import GeoHeatmapSeries from '../GeoHeatmap/GeoHeatmapSeries.js';
 import { PointShortOptions } from '../../Core/Series/PointOptions.js';
 import U from '../../Core/Utilities.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
+const {
+    map: {
+        prototype: {
+            pointClass: MapPoint
+        }
+    }
+} = SeriesRegistry.seriesTypes;
+
 const {
     isNumber
 } = U;

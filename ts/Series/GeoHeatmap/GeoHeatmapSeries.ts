@@ -20,7 +20,13 @@
 import type GeoHeatmapSeriesOptions from './GeoHeatmapSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import GeoHeatmapPoint from './GeoHeatmapPoint.js';
-import MapSeries from '../Map/MapSeries.js';
+
+const {
+    seriesTypes: {
+        map: MapSeries
+    }
+} = SeriesRegistry;
+
 import U from '../../Core/Utilities.js';
 
 const {
