@@ -6,6 +6,16 @@
  *
  * */
 
+.hd-dashboards-wrapper {
+    --button-filter: none;
+    --color-background: none;
+}
+
+.hd-dashboards-wrapper.hd-dark-mode {
+    --button-filter: invert(1);
+    --color-background: #46475d;
+}
+
 #city-chart {
     --color-axis: #f7f7f7;
     --color-axis-labels: #e7e7ec;
@@ -116,7 +126,8 @@
     /* dark mode */
 
     .hd-dashboards-wrapper {
-        --color-dashboard: #46475d;
+        --button-filter: invert(1);
+        --color-background: #46475d;
     }
 
     #kpi-layout {
@@ -165,12 +176,12 @@
  *
  * */
 
-.hd-dashboards-wrapper.hd-dark-mode {
-    background-color: #46475d;
+div.hd-dashboards-wrapper {
+    background-color: var(--color-background);
 }
 
-.hd-dashboards-wrapper.hd-dark-mode .hd-edit-context-menu-btn {
-    filter: invert(1);
+div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
+    filter: var(--button-filter);
 }
 
 /* *

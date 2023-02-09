@@ -692,18 +692,22 @@ class Sidebar {
             // detect position of right sidebar
             isRightSidebar = context ? this.detectRightSidebar() : false;
 
+            // apply sidebar init position
             if (isRightSidebar) {
                 sidebar.container.classList.add(
                     EditGlobals.classNames.editSidebarRight
                 );
-                sidebar.container.classList.add(
-                    EditGlobals.classNames.editSidebarRightShow
-                );
-            } else {
-                sidebar.container.classList.add(
-                    EditGlobals.classNames.editSidebarShow
-                );
             }
+
+            // run showing animation by adding css class
+            setTimeout(():void => {
+                sidebar.container.classList.add(
+                    EditGlobals.classNames[
+                        isRightSidebar ?
+                            'editSidebarRightShow' : 'editSidebarShow'
+                    ]
+                );
+            }, 0);
 
             // Disable resizer.
             if (editMode.resizer) {
