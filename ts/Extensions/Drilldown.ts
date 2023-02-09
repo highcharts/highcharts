@@ -58,9 +58,8 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
 import '../Series/Column/ColumnSeries.js';
-import MapPoint from '../Series/Map/MapPoint.js';
-import MapSeries from '../Series/Map/MapSeries.js';
-import MapChart from '../Core/Chart/MapChart.js';
+import type MapPointType from '../Series/Map/MapPoint.js';
+import type MapSeriesType from '../Series/Map/MapSeries.js';
 import Breadcrumbs from './Breadcrumbs/Breadcrumbs.js';
 
 const {
@@ -74,7 +73,8 @@ const {
     syncTimeout
 } = U;
 
-const PieSeries = seriesTypes.pie;
+const PieSeries = seriesTypes.pie,
+    MapSeries = seriesTypes.map;
 let ddSeriesId = 1;
 
 declare module '../Core/Axis/AxisLike' {
@@ -1646,13 +1646,17 @@ if (MapSeries) {
         }
     });
 
-    addEvent(MapChart, 'addSeriesAsDrilldown', function (e): boolean {
+    addEvent(Chart, 'addSeriesAsDrilldown', function (e): boolean {
+        if (!(this.mapView)) {
+            return true;
+        }
+
         const chart = this,
             {
                 point,
                 options
             }: {
-                point: MapPoint,
+                point: MapPointType,
                 options: SeriesOptions
             } = e as any;
 
@@ -1705,7 +1709,11 @@ if (MapSeries) {
         return false; // to prevent default function from fireEvent
     });
 
-    addEvent(MapChart, 'applyDrilldown', function (e): boolean {
+    addEvent(Chart, 'applyDrilldown', function (e): boolean {
+        if (!(this.mapView)) {
+            return true;
+        }
+
         const chart = this;
 
         let drilldownLevels = this.drilldownLevels,
@@ -1728,7 +1736,7 @@ if (MapSeries) {
                     if (chart.mapView) {
                         level.lowerSeries.isDrilling = false;
                         chart.mapView.fitToBounds(
-                            (level.lowerSeries as MapSeries).bounds);
+                            (level.lowerSeries as MapSeriesType).bounds);
                         level.lowerSeries.isDrilling = true;
                     }
                 }
@@ -1790,11 +1798,19 @@ if (MapSeries) {
     });
 
     // to prevent default function from fireEvent
-    addEvent(MapChart, 'midDrillUp', function (): boolean {
+    addEvent(Chart, 'midDrillUp', function (): boolean {
+        if (!(this.mapView)) {
+            return true;
+        }
+
         return false;
     });
 
-    addEvent(MapChart, 'finishDrillUp', function (e): boolean {
+    addEvent(Chart, 'finishDrillUp', function (e): boolean {
+        if (!(this.mapView)) {
+            return true;
+        }
+
         const chart = this,
             {
                 shouldAnimate,
@@ -1802,8 +1818,8 @@ if (MapSeries) {
                 newSeries
             }: {
                 shouldAnimate: boolean,
-                oldSeries: MapSeries,
-                newSeries: MapSeries
+                oldSeries: MapSeriesType,
+                newSeries: MapSeriesType
             } = e as any,
             zoomingDrill = chart.options.drilldown &&
                 chart.options.drilldown.animation &&
