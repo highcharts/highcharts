@@ -64,7 +64,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 duration: 2000,
                 easing: 'easeOutQuint'
             },
-            styledMode: (true),
+            styledMode: true,
             margin: 0,
             spacing: 0,
             alignTicks: false,

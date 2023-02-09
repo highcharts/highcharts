@@ -1,6 +1,0 @@
----
- name: Activity Gauge
- authors:
-   - Torstein Hønsi
- js_wrap: b
-...

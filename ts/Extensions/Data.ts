@@ -2184,8 +2184,6 @@ class SeriesBuilder {
             pointIsArray = builder.pointIsArray,
             point = pointIsArray ? [] as Array<T> : {} as Record<string, T>;
 
-        let columnIndexes;
-
         // Loop each reader and ask it to read its value.
         // Then, build an array or point based on the readers names.
         builder.readers.forEach((reader): void => {
@@ -2207,7 +2205,20 @@ class SeriesBuilder {
 
         // The name comes from the first column (excluding the x column)
         if (typeof this.name === 'undefined' && builder.readers.length >= 2) {
-            columnIndexes = builder.getReferencedColumnIndexes();
+            const columnIndexes: number[] = [];
+
+            builder.readers.forEach(function (reader): void {
+                if (
+                    reader.configName === 'x' ||
+                    reader.configName === 'name' ||
+                    reader.configName === 'y'
+                ) {
+                    if (typeof reader.columnIndex !== 'undefined') {
+                        columnIndexes.push(reader.columnIndex);
+                    }
+                }
+            });
+
             if (columnIndexes.length >= 2) {
                 // remove the first one (x col)
                 columnIndexes.shift();
