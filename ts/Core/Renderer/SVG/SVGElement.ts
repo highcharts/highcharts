@@ -2539,7 +2539,7 @@ class SVGElement implements SVGElementLike {
                     ) {
                         parentNode.insertBefore(
                             element,
-                            childNodes[i + 1] || null // null for oldIE export
+                            childNodes[i + 1]
                         );
                         inserted = true;
                     }
@@ -2549,7 +2549,7 @@ class SVGElement implements SVGElementLike {
             if (!inserted) {
                 parentNode.insertBefore(
                     element,
-                    childNodes[svgParent ? 3 : 0] || null // null for oldIE
+                    childNodes[svgParent ? 3 : 0]
                 );
                 inserted = true;
             }

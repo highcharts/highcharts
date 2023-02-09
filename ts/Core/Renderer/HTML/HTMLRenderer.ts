@@ -339,7 +339,6 @@ class HTMLRenderer extends SVGRenderer {
 
             (htmlGroup as any).appendChild(element);
 
-            // Shared with VML:
             wrapper.added = true;
             if (wrapper.alignOnAdd) {
                 wrapper.htmlUpdateTransform();

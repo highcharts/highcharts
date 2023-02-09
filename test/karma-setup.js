@@ -184,7 +184,7 @@ XMLHttpRequest.prototype.send = function () {
     }
 }
 
-// Hijack fetch to run local sources. Note the oldIE-friendly syntax.
+// Hijack fetch to run local sources.
 if (window.Promise) {
     window.fetch = function (url) {
         return new Promise(function (resolve, reject) {

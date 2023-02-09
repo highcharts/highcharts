@@ -226,8 +226,6 @@ class HTMLElement extends SVGElement {
     }
 
     /**
-     * VML override private method to update elements based on internal
-     * properties based on SVG transform.
      * @private
      */
     public htmlUpdateTransform(): void {

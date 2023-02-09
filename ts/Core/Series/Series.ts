@@ -1472,15 +1472,12 @@ class Series {
                 }
             } else {
                 for (i = 0; i < dataLength; i++) {
-                    // stray commas in oldIE:
-                    if (typeof data[i] !== 'undefined') {
-                        pt = { series: series };
-                        series.pointClass.prototype.applyOptions.apply(
-                            pt,
-                            [data[i]]
-                        );
-                        series.updateParallelArrays(pt as any, i);
-                    }
+                    pt = { series: series };
+                    series.pointClass.prototype.applyOptions.apply(
+                        pt,
+                        [data[i]]
+                    );
+                    series.updateParallelArrays(pt as any, i);
                 }
             }
 
