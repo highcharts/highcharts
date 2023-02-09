@@ -29,6 +29,7 @@ let dashboard = new Dashboard('container-nested-layout', {
         enabled: true,
         contextMenu: {
             enabled: true,
+            icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
             items: ['editMode', {
                 id: 'export-dashboard',
                 text: 'Export dashboard',
@@ -115,6 +116,7 @@ let dashboard = new Dashboard('container-nested-layout', {
         chartOptions: {
             chart: {
                 animation: false
+                // type: 'line'
             },
             series: [{
                 name: 'Series from options',
