@@ -484,8 +484,8 @@ namespace Dashboard {
     /**
      * Global Dashboard settings.
      *
-     * @name Dashboard.Dashboard.defaultOptions
-     * @type {Dashboard.Options}
+     * @name Dashboards.Dashboard.defaultOptions
+     * @type {Dashboards.Dashboard.Options}
      *//**
      * @product dashboard
      * @optionparent

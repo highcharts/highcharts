@@ -50,6 +50,7 @@
     "@typescript-eslint/parser": "^5.41.0",
     "aws-sdk": "^2.1212.0",
     "babel-eslint": "^10.1.0",
+    "better-docs": "^2.7.2",
     "browserify": "^17.0.0",
     "clean-jsdoc-theme": "^4.2.3",
     "cloudflare": "^2.9.1",
