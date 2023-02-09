@@ -3353,7 +3353,7 @@ class Series {
             chartSeriesGroup = chart.seriesGroup,
             inverted = chart.inverted;
 
-        let animDuration = (!series.finishedAnimating && chart.renderer.isSVG) ?
+        let animDuration = (!series.finishedAnimating) ?
             animOptions.duration : 0;
 
         fireEvent(this, 'render');

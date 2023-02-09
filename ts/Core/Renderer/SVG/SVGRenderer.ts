@@ -209,7 +209,6 @@ class SVGRenderer implements SVGRendererLike {
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
-    public isSVG: boolean = void 0 as any;
     public style: CSSObject = void 0 as any;
     public styledMode?: boolean;
     public unSubPixelFix?: Function;
@@ -292,9 +291,6 @@ class SVGRenderer implements SVGRendererLike {
         if (container.innerHTML.indexOf('xmlns') === -1) {
             attr(element, 'xmlns', this.SVG_NS);
         }
-
-        // object properties
-        renderer.isSVG = true;
 
         this.box = element as any;
         this.boxWrapper = boxWrapper;

@@ -475,28 +475,26 @@ class MapSeries extends ScatterSeries {
         const { chart, group } = this,
             animation = animObject(this.options.animation);
 
-        if (chart.renderer.isSVG) {
 
-            // Initialize the animation
-            if (init) {
+        // Initialize the animation
+        if (init) {
 
-                // Scale down the group and place it in the center
-                group.attr({
-                    translateX: chart.plotLeft + chart.plotWidth / 2,
-                    translateY: chart.plotTop + chart.plotHeight / 2,
-                    scaleX: 0.001, // #1499
-                    scaleY: 0.001
-                });
+            // Scale down the group and place it in the center
+            group.attr({
+                translateX: chart.plotLeft + chart.plotWidth / 2,
+                translateY: chart.plotTop + chart.plotHeight / 2,
+                scaleX: 0.001, // #1499
+                scaleY: 0.001
+            });
 
-            // Run the animation
-            } else {
-                group.animate({
-                    translateX: chart.plotLeft,
-                    translateY: chart.plotTop,
-                    scaleX: 1,
-                    scaleY: 1
-                }, animation);
-            }
+        // Run the animation
+        } else {
+            group.animate({
+                translateX: chart.plotLeft,
+                translateY: chart.plotTop,
+                scaleX: 1,
+                scaleY: 1
+            }, animation);
         }
     }
 
@@ -508,36 +506,32 @@ class MapSeries extends ScatterSeries {
         const chart = this.chart,
             group = this.group;
 
-        if (chart.renderer.isSVG) {
+        // Initialize the animation
+        if (init) {
+            // Scale down the group and place it in the center. This is a
+            // regression from <= v9.2, when it animated from the old point.
+            group.attr({
+                translateX: chart.plotLeft + chart.plotWidth / 2,
+                translateY: chart.plotTop + chart.plotHeight / 2,
+                scaleX: 0.1,
+                scaleY: 0.1,
+                opacity: 0.01
+            });
 
-            // Initialize the animation
-            if (init) {
-                // Scale down the group and place it in the center. This is a
-                // regression from <= v9.2, when it animated from the old point.
-                group.attr({
-                    translateX: chart.plotLeft + chart.plotWidth / 2,
-                    translateY: chart.plotTop + chart.plotHeight / 2,
-                    scaleX: 0.1,
-                    scaleY: 0.1,
-                    opacity: 0.01
-                });
+        // Run the animation
+        } else {
+            group.animate({
+                translateX: chart.plotLeft,
+                translateY: chart.plotTop,
+                scaleX: 1,
+                scaleY: 1,
+                opacity: 1
+            }, (this.chart.options.drilldown as any).animation);
 
-            // Run the animation
-            } else {
-                group.animate({
-                    translateX: chart.plotLeft,
-                    translateY: chart.plotTop,
-                    scaleX: 1,
-                    scaleY: 1,
-                    opacity: 1
-                }, (this.chart.options.drilldown as any).animation);
-
-                if (chart.drilldown) {
-                    chart.drilldown.fadeInGroup(this.dataLabelsGroup);
-                }
+            if (chart.drilldown) {
+                chart.drilldown.fadeInGroup(this.dataLabelsGroup);
             }
         }
-
     }
 
     /**
@@ -547,16 +541,13 @@ class MapSeries extends ScatterSeries {
      */
     public animateDrillupFrom(): void {
         const chart = this.chart;
-
-        if (chart.renderer.isSVG) {
-            this.group.animate({
-                translateX: chart.plotLeft + chart.plotWidth / 2,
-                translateY: chart.plotTop + chart.plotHeight / 2,
-                scaleX: 0.1,
-                scaleY: 0.1,
-                opacity: 0.01
-            });
-        }
+        this.group.animate({
+            translateX: chart.plotLeft + chart.plotWidth / 2,
+            translateY: chart.plotTop + chart.plotHeight / 2,
+            scaleX: 0.1,
+            scaleY: 0.1,
+            opacity: 0.01
+        });
     }
 
     /**
