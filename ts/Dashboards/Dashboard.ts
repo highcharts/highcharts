@@ -169,7 +169,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
 
         if (isString(renderTo)) {
             dashboard.dashboardWrapper = renderTo =
-                window.document.getElementById(renderTo as any) as any;
+                window.document.getElementById(renderTo) as HTMLElement;
         }
 
         // Display an error if the renderTo is wrong
@@ -178,7 +178,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         }
 
         // Clear the container from any content.
-        dashboard.dashboardWrapper.innerHTML = '';
+        renderTo.innerHTML = '';
 
         // add wrapper
         dashboard.container = createElement(
