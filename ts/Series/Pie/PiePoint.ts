@@ -114,8 +114,8 @@ class PiePoint extends Point {
 
         return connectorShape.call(this, {
             // pass simplified label position object for user's convenience
-            x: (labelPosition as any).final.x,
-            y: (labelPosition as any).final.y,
+            x: (labelPosition as any).computed.x,
+            y: (labelPosition as any).computed.y,
             alignment: (labelPosition as any).alignment
         }, (labelPosition as any).connectorPosition, options);
     }
@@ -423,7 +423,7 @@ namespace PiePoint {
     export interface LabelPositionObject {
         alignment: AlignValue;
         connectorPosition: LabelConnectorPositionObject;
-        'final': Record<string, undefined>;
+        computed: Record<string, undefined>;
         natural: CorePositionObject;
     }
 
