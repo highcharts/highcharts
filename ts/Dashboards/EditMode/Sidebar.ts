@@ -172,10 +172,6 @@ class Sidebar {
                         return sidebar.onDropNewComponent(dropContext, {
                             cell: '',
                             type: 'html',
-                            dimensions: {
-                                width: 200,
-                                height: 200
-                            },
                             elements: [{
                                 tagName: 'img',
                                 attributes: {
