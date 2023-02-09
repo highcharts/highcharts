@@ -6,6 +6,7 @@
 /**
  * Fires on chart load, called from the chart.events.load option.
  */
+
 function onChartLoad() {
     var centerX = 120,
         centerY = 200,
@@ -568,6 +569,84 @@ const options = {
             }
         }
     },
+    annotations: [
+        {
+            draggable: '',
+            onSeries: 'revenue',
+            labels: [
+                {
+                    point: {
+                        x: Date.UTC(2012, 10, 1),
+                        y: 30,
+                        xAxis: 0,
+                        yAxis: 0
+                    },
+                    text: 'Award',
+                    x: -10
+                },
+                {
+                    point: {
+                        x: Date.UTC(2012, 11, 25),
+                        y: 40,
+                        xAxis: 0,
+                        yAxis: 0
+                    },
+                    text: 'First Book',
+                    x: -10
+                },
+                {
+                    point: {
+                        x: Date.UTC(2013, 4, 25),
+                        y: 50,
+                        xAxis: 0,
+                        yAxis: 0
+                    },
+                    text: 'Award',
+                    x: -10
+                },
+                {
+                    point: {
+                        x: Date.UTC(2014, 4, 25),
+                        y: 55,
+                        xAxis: 0,
+                        yAxis: 0
+                    },
+                    text: 'Award',
+                    x: -10
+                },
+                {
+                    point: {
+                        x: Date.UTC(2018, 11, 13),
+                        y: 90,
+                        xAxis: 0,
+                        yAxis: 0
+                    },
+                    text: 'Award',
+                    x: -10
+                },
+                {
+                    point: {
+                        x: Date.UTC(2017, 9, 20),
+                        y: 80,
+                        xAxis: 0,
+                        yAxis: 0
+                    },
+                    text: 'Award',
+                    x: -10
+                }
+            ],
+            labelOptions: {
+                verticalAlign: 'top',
+                y: 15,
+                color: 'white',
+                backgroundColor: 'rgb(87, 73, 173)',
+                borderColor: 'rgb(87, 73, 173)',
+                style: {
+                    color: 'white'
+                }
+            }
+        }
+    ],
     series: [
         {
             name: 'Revenue',
@@ -762,9 +841,10 @@ if (Highcharts.Series.types.flags) {
             type: 'flags',
             name: 'Highmaps',
             className: 'maps',
-            color: '#fff',
-            shape: 'url(' + imgPath + 'product.png)',
-            y: -66,
+            fillColor: '#2a2a2a',
+            lineColor: '#2a2a2a',
+            shape: 'squarepin',
+            y: -80,
             data: [
                 {
                     x: Date.UTC(2014, 5, 13),
@@ -776,8 +856,26 @@ if (Highcharts.Series.types.flags) {
         },
         {
             type: 'flags',
+            name: 'Highstock',
+            className: 'stock',
+            fillColor: '#2a2a2a',
+            lineColor: '#2a2a2a',
+            shape: 'squarepin',
+            y: -66,
+            data: [
+                {
+                    x: Date.UTC(2011, 9, 18),
+                    text: 'Highcharts Stock version 1.0 released',
+                    title: 'Stock'
+                }
+            ],
+            showInLegend: false
+        },
+        {
+            type: 'flags',
             name: 'Cloud',
-            color: '#333333',
+            fillColor: '#46465c',
+            lineColor: '#46465c',
             shape: 'squarepin',
             className: 'cloud',
             y: -55,
@@ -800,12 +898,15 @@ if (Highcharts.Series.types.flags) {
             ],
             showInLegend: false
         },
+
         {
             type: 'flags',
             name: 'Highcharts',
             className: 'product',
-            color: '#333333',
-            shape: 'url(' + imgPath + 'version.png)',
+            fillColor: '#7a7a92',
+            lineColor: '#7a7a92',
+            shape: 'squarepin',
+            y: -30,
             data: [
                 {
                     x: Date.UTC(2009, 10, 27),
@@ -821,12 +922,6 @@ if (Highcharts.Series.types.flags) {
                     x: Date.UTC(2010, 10, 23),
                     text: 'Dynamically resize and scale to text labels',
                     title: '2.1'
-                },
-                {
-                    x: Date.UTC(2011, 9, 18),
-                    text: 'Highcharts Stock version 1.0 released',
-                    title: 'Stock',
-                    shape: 'url(' + imgPath + 'product.png)'
                 },
                 {
                     x: Date.UTC(2012, 7, 24),
@@ -875,7 +970,9 @@ if (Highcharts.Series.types.flags) {
                 }
             ],
             showInLegend: false
-        },
+        }
+        /*
+
         {
             type: 'flags',
             name: 'Events',
@@ -894,7 +991,7 @@ if (Highcharts.Series.types.flags) {
                 },
                 {
                     x: Date.UTC(2013, 4, 25),
-                    text: 'Highsoft nominated Norway\'s Startup of the Year',
+                    text: "Highsoft nominated Norway's Startup of the Year",
                     title: 'Award'
                 },
                 {
@@ -914,10 +1011,11 @@ if (Highcharts.Series.types.flags) {
                     title: 'Award'
                 }
             ],
+
             onSeries: 'revenue',
             showInLegend: false
         }
+        */
     );
 }
-
 Highcharts.chart('container', options);
