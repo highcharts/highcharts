@@ -15,6 +15,11 @@ Highcharts.chart('container', {
     tooltip: {
         valueSuffix: ' million liters'
     },
+    plotOptions: {
+        series: {
+            borderRadius: '25%'
+        }
+    },
     series: [{
         type: 'column',
         name: '2020',

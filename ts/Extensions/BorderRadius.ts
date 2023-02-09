@@ -242,7 +242,11 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
         Series as unknown as ColumnSeries,
         'afterColumnTranslate',
         function (): void {
-            if (this.options.borderRadius && !this.is('xrange')) {
+            if (
+                this.options.borderRadius &&
+                !this.is('xrange') &&
+                !(this.chart.is3d && this.chart.is3d())
+            ) {
                 const yAxis = this.yAxis,
                     inverted = this.chart.inverted,
                     borderRadius = optionsToObject(this.options.borderRadius),
