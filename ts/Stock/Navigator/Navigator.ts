@@ -1041,7 +1041,6 @@ class Navigator {
                     !this.chart.boosted
                 )
             ) {
-                (e as any).DOMType = e.type; // DOMType is for IE8
                 setTimeout(function (): void {
                     navigator.onMouseUp(e);
                 }, 0);

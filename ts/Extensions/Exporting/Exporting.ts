@@ -1054,8 +1054,7 @@ namespace Exporting {
                 exportingOptions.filename.replace(/\//g, '-') :
                 this.getFilename(),
             type: exportingOptions.type,
-            // IE8 fails to post undefined correctly, so use 0
-            width: exportingOptions.width || 0,
+            width: exportingOptions.width,
             scale: exportingOptions.scale,
             svg: svg
         }, exportingOptions.formAttributes as any);

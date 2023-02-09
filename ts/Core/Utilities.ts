@@ -1844,8 +1844,7 @@ function fireEvent<T>(
                 // the zoom-out button in Chrome.
                 target: el,
                 // If the type is not set, we're running a custom event
-                // (#2297). If it is set, we're running a browser event,
-                // and setting it will cause en error in IE8 (#2465).
+                // (#2297). If it is set, we're running a browser event.
                 type: type
             });
         }

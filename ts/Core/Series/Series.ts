@@ -3218,7 +3218,7 @@ class Series {
         const isNew = !group,
             attrs: SVGAttributes = {
                 visibility,
-                zIndex: zIndex || 0.1 // IE8 and pointer logic use this
+                zIndex: zIndex || 0.1 // Pointer logic uses this
             };
 
         // Avoid setting undefined opacity, or in styled mode
@@ -3352,8 +3352,7 @@ class Series {
             hasRendered = series.hasRendered,
             chartSeriesGroup = chart.seriesGroup,
             inverted = chart.inverted;
-        // Animation doesn't work in IE8 quirks when the group div is
-        // hidden, and looks bad in other oldIE
+
         let animDuration = (!series.finishedAnimating && chart.renderer.isSVG) ?
             animOptions.duration : 0;
 
@@ -3763,9 +3762,6 @@ class Series {
             /*
              * Empirical lowest possible opacities for TRACKER_FILL for an
              * element to stay invisible but clickable
-             * IE6: 0.002
-             * IE7: 0.002
-             * IE8: 0.002
              * IE9: 0.00000000001 (unlimited)
              * IE10: 0.0001 (exporting only)
              * FF: 0.00000000001 (unlimited)
