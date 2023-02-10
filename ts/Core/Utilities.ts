@@ -1275,10 +1275,7 @@ function getStyle(
     prop: string,
     toInt?: boolean
 ): (number|string|undefined) {
-    const customGetStyle: typeof getStyle = (
-        (H as any).getStyle || // oldie getStyle
-        getStyle
-    );
+    const customGetStyle: typeof getStyle = (H as any).getStyle;
 
     let style: (number|string|undefined);
 
@@ -1320,11 +1317,6 @@ function getStyle(
                 (customGetStyle(el, 'padding-bottom', true) || 0)
             )
         );
-    }
-
-    if (!win.getComputedStyle) {
-        // SVG not supported, forgot to load oldie.js?
-        error(27, true);
     }
 
     // Otherwise, get the computed style
