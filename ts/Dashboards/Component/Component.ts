@@ -95,8 +95,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         },
         sync: Sync.defaultHandlers,
         editableOptions: [
-            // 'id',
-            'store',
             'style',
             'title',
             'caption'
