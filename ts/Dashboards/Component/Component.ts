@@ -825,7 +825,6 @@ namespace Component {
         // store?: DataStore.ClassJSON; // store id
         parentElement: string; // ID?
         style?: {};
-        dimensions?: { width: number; height: number };
         className?: string;
         type: string;
         id: string;

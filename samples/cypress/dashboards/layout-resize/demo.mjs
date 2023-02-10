@@ -189,10 +189,6 @@ let dashboard = new Dashboard('container', {
                 type: 'pie'
             }
         },
-        /*dimensions: {
-            width: 400,
-            height: 400
-        },*/
         events: {
             mount: function () {
                 // call action
@@ -203,10 +199,6 @@ let dashboard = new Dashboard('container', {
     }, {
         cell: 'dashboard-col-1',
         type: 'html',
-        dimensions: {
-            width: 200,
-            height: 200
-        },
         elements: [{
             tagName: 'img',
             attributes: {
@@ -225,9 +217,6 @@ let dashboard = new Dashboard('container', {
             chart: {
                 animation: false
             }
-        },
-        dimensions: {
-            // width: '100%'
         },
         events: {
             mount: function () {
@@ -248,9 +237,6 @@ let dashboard = new Dashboard('container', {
                 type: 'pie'
             }
         },
-        dimensions: {
-            // width: '100%'
-        },
         events: {
             mount: function () {
                 // call action
@@ -269,9 +255,6 @@ let dashboard = new Dashboard('container', {
                 animation: false,
                 type: 'column'
             }
-        },
-        dimensions: {
-            // width: '100%'
         },
         events: {
             mount: function () {
@@ -335,10 +318,6 @@ let dashboard = new Dashboard('container', {
             chart: {
                 animation: false
             }
-        },
-        dimensions: {
-            // width: '100%'
-            //height:  400
         },
         events: {
             mount: function () {

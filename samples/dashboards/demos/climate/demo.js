@@ -417,9 +417,6 @@ async function setupDashboard() {
         }, {
             cell: 'kpi-data',
             type: 'KPI',
-            dimensions: {
-                height: 150
-            },
             title: cityScope,
             value: 10,
             valueFormatter: v => `${v.toFixed(0)}m`,

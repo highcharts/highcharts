@@ -18,9 +18,6 @@ const dashboard = new Dashboards.Dashboard('container', {
     components: [{
         type: 'html',
         cell: 'dashboard-1',
-        dimentions: {
-            height: 500
-        },
         elements: [{
             tagName: 'img',
             attributes: {
