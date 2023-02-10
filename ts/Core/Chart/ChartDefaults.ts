@@ -1015,6 +1015,19 @@ const ChartDefaults: ChartOptions = {
      */
     zooming: {
         /**
+         * Dynamic mode allows you to change the zoom type when making a
+         * selection on the chart. Move sides to center:
+         * horizontally - the zoom area expands vertically to the full height,
+         * vertically - the zoom area expand horizontally to its full width.
+         *
+         * @type       {boolean}
+         * @since      next
+         * @default    {highcharts} undefined
+         * @product    highcharts highstock gantt
+         * @apioption  chart.zooming.dynamic
+         */
+
+        /**
          * Equivalent to [type](#chart.zooming.type), but for multitouch
          * gestures only. By default, the `pinchType` is the same as the
          * `type` setting. However, pinching can be enabled separately in
@@ -1032,64 +1045,8 @@ const ChartDefaults: ChartOptions = {
          */
 
         /**
-         * Corners that appear during zoom. Move the sides in horizontally,
-         * the zoom area increases vertically in full height, move vertically
-         * the zoom area expands horizontally to its full width.
-         * @since      next
-         * @sample     highcharts/chart/zooming-markings
-         *             Zoom markings enabled with length
-         * @apioption  chart.zooming.markings
-         */
-        markings: {
-            /**
-             * Name of dash style that can be used.
-             * @type       {Highcharts.DashStyleValue}
-             * @since      next
-             * @default    Solid
-             * @apioption  chart.zooming.markings.dashstyle
-             */
-            dashstyle: 'Solid',
-
-            /**
-             * Enabled or disabled the markings.
-             * @type       {boolean}
-             * @since      next
-             * @default    false
-             * @apioption  chart.zooming.markings.enabled
-             */
-            enabled: false,
-
-            /**
-             * The color of markers.
-             * @type       {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since      next
-             * @default    Palette.highlightColor80
-             * @apioption  chart.zooming.markings.stroke
-             */
-            stroke: Palette.highlightColor80,
-
-            /**
-             * Width of markings.
-             * @type       {number}
-             * @since      next
-             * @default    1
-             * @apioption  chart.zooming.markings.strokeWidth
-             */
-            strokeWidth: 1,
-
-            /**
-             * Length of markings.
-             * @type       {number}
-             * @since      next
-             * @default    10
-             * @apioption  chart.zooming.markings.length
-             */
-            length: 10
-        },
-
-        /**
          * Decides in what dimensions the user can zoom by dragging the mouse.
-         * Can be one of `x`, `y` or `xy`.
+         * Can be one of `x`, `y`, `xy`.
          *
          * @declare    Highcharts.OptionsChartZoomingTypeValue
          * @type       {string}
@@ -1126,6 +1083,16 @@ const ChartDefaults: ChartOptions = {
          * @product highcharts highstock gantt
          */
         singleTouch: false,
+
+        /**
+         * Threshold decide how is min length of zoom area selection.
+         *
+         * @type       {number}
+         * @since      next
+         * @default    10
+         * @product    highcharts highstock gantt
+         * @apioption  chart.zooming.threshold
+         */
 
         /**
          * The button that appears after a selection zoom, allowing the user

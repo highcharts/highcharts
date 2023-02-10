@@ -3593,7 +3593,6 @@ class Chart {
 
         let displayButton = false,
             hasZoomed;
-
         // If zoom is called with no arguments, reset the axes
         if (!event || event.resetSelection) {
             chart.axes.forEach(function (axis): void {

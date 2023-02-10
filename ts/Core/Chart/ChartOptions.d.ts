@@ -174,18 +174,15 @@ export interface ChartSelectionContextObject {
 }
 
 export interface ChartZoomingOptions {
+    dynamic?: boolean;
     key?: string;
-    markings?: MarkingsOptions;
     pinchType?: string;
     resetButton?: ChartResetZoomButtonOptions;
     singleTouch: boolean;
+    threshold?: number;
     type?: ('x'|'xy'|'y');
 }
 
-export interface MarkingsOptions extends SVGAttributes {
-    enabled?: boolean;
-    length: number;
-}
 /* *
  *
  *  Default Export

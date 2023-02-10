@@ -28,7 +28,6 @@ import type {
 } from './PointerEvent';
 import type Series from './Series/Series';
 import type SVGElement from './Renderer/SVG/SVGElement';
-import type { MarkingsOptions } from './Chart/ChartOptions';
 
 import Color from './Color/Color.js';
 const { parse: color } = Color;
@@ -151,8 +150,6 @@ class Pointer {
     public isDirectTouch?: boolean;
 
     public lastValidTouch: object = {};
-
-    public markings?: SVGElement;
 
     public mouseDownX?: number;
 
@@ -299,7 +296,14 @@ class Pointer {
                     } = this,
                     attrs = e.attrs;
 
-                let size;
+                let size,
+                    width,
+                    height,
+                    x,
+                    y,
+                    dynamic = chart.options.chart.zooming.dynamic,
+                    threshold = chart.options.chart.zooming.threshold,
+                    selectionMarker = this.selectionMarker;
 
                 attrs.x = chart.plotLeft;
                 attrs.y = chart.plotTop;
@@ -307,17 +311,45 @@ class Pointer {
                 attrs.height = zoomVert ? 1 : chart.plotHeight;
 
                 // Adjust the width of the selection marker
-                if (zoomHor) {
+                if (selectionMarker && zoomHor) {
                     size = chartX - mouseDownX;
-                    attrs.width = Math.abs(size);
+                    width = attrs.width = Math.abs(size);
                     attrs.x = (size > 0 ? 0 : size) + mouseDownX;
+                    if (threshold) {
+                        if ((width < threshold && dynamic) ||
+                            (width < threshold)) {
+                            selectionMarker.attr({
+                                width: chart.plotWidth,
+                                x: chart.plotLeft
+                            });
+                        } else {
+                            selectionMarker.attr({
+                                width: width,
+                                x: (size > 0 ? 0 : size) + mouseDownX
+                            });
+                        }
+                    }
                 }
 
                 // Adjust the height of the selection marker
-                if (zoomVert) {
+                if (selectionMarker && zoomVert) {
                     size = chartY - mouseDownY;
-                    attrs.height = Math.abs(size);
+                    height = attrs.height = Math.abs(size);
                     attrs.y = (size > 0 ? 0 : size) + mouseDownY;
+                    if (threshold) {
+                        if ((height < threshold && dynamic) ||
+                            (height < threshold)) {
+                            selectionMarker.attr({
+                                height: chart.plotHeight,
+                                y: chart.plotTop
+                            });
+                        } else {
+                            selectionMarker.attr({
+                                height: height,
+                                y: (size > 0 ? 0 : size) + mouseDownY
+                            });
+                        }
+                    }
                 }
             }
         );
@@ -345,21 +377,14 @@ class Pointer {
                 chartOptions.panning,
             panKey = (
                 chartOptions.panKey && (e as any)[chartOptions.panKey + 'Key']
-            ),
-            markingsEnable = isObject(chartOptions.zooming.markings) ?
-                chartOptions.zooming.markings &&
-                chartOptions.zooming.markings.enabled :
-                chartOptions.zooming.markings,
-            markings = chartOptions.zooming.markings;
+            );
 
         let chartX = e.chartX,
             chartY = e.chartY,
             clickedInside,
-            size,
-            sizeLimit = markings && markings.length,
-            width,
-            height,
-            selectionMarker = this.selectionMarker;
+            dynamic = chartOptions.zooming.dynamic,
+            selectionMarker = this.selectionMarker,
+            threshold = chartOptions.zooming.threshold;
 
         // If the device supports both touch and mouse (like IE11), and we are
         // touch-dragging inside the plot area, don't handle the mouse event.
@@ -381,15 +406,14 @@ class Pointer {
         } else if (chartY > plotTop + plotHeight) {
             chartY = plotTop + plotHeight;
         }
-
         // determine if the mouse has moved more than 10px
         this.hasDragged = Math.sqrt(
             Math.pow(mouseDownX - chartX, 2) +
             Math.pow(mouseDownY - chartY, 2)
         );
-        // length limit when markings are connected
-        sizeLimit = sizeLimit ? sizeLimit * 2 : 20;
-        if (this.hasDragged > sizeLimit) {
+        // threshold decide how is min length of zoom area selection
+        threshold = threshold ? threshold * 2 : 20;
+        if (this.hasDragged > threshold) {
             clickedInside = chart.isInsidePlot(
                 mouseDownX - plotLeft,
                 mouseDownY - plotTop,
@@ -429,55 +453,13 @@ class Pointer {
                     }
                 }
             }
-
-            // adjust the width of the selection marker
-            if (selectionMarker && this.zoomHor) {
-                size = chartX - mouseDownX;
-                width = Math.abs(size);
-                if (width < sizeLimit && markingsEnable) {
-                    selectionMarker.attr({
-                        width: plotWidth,
-                        x: plotLeft
-                    });
-
-                    sizeLimit = -1;
-                } else {
-                    selectionMarker.attr({
-                        width: width,
-                        x: (size > 0 ? 0 : size) + mouseDownX
-                    });
-                }
-            }
-            // adjust the height of the selection marker
-            if (selectionMarker && this.zoomVert) {
-                size = chartY - mouseDownY;
-                height = Math.abs(size);
-                if (height < sizeLimit && markingsEnable) {
-                    selectionMarker.attr({
-                        height: plotHeight,
-                        y: plotTop
-                    });
-                } else {
-                    selectionMarker.attr({
-                        height: height,
-                        y: (size > 0 ? 0 : size) + mouseDownY
-                    });
-                }
-            }
             // selection marker is done
-            if (
-                selectionMarker &&
-                chartOptions.zooming.markings &&
-                chartOptions.zooming.markings.enabled
-            ) {
-                this.createMarkings(selectionMarker.getBBox(),
-                    chartOptions.zooming.markings);
-            }
-            if (selectionMarker) {
+            if (selectionMarker && !dynamic) {
                 selectionMarker.attr(
                     attrs
                 );
             }
+
             // panning
             if (clickedInside &&
                 !selectionMarker &&
@@ -627,12 +609,6 @@ class Pointer {
 
             }
 
-            // Remove markings
-            if (this.selectionMarker && this.markings) {
-                this.markings.destroy();
-                delete this.markings;
-            }
-
             if (isNumber(chart.index)) {
                 this.selectionMarker = this.selectionMarker.destroy();
             }
@@ -651,47 +627,6 @@ class Pointer {
             chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
             this.pinchDown = [];
         }
-    }
-
-    /**
-     * Markers appearing of the zoom box corners.
-     * @private
-     * @function Highcharts.Pointer#createMarkings
-     */
-    public createMarkings(box: BBoxObject, options: MarkingsOptions): void {
-        let x1 = box.x,
-            y1 = box.y,
-            x2 = x1 + box.width,
-            y2 = y1 + box.height,
-            len = options.length;
-
-        if (!this.markings) {
-            this.markings = this.chart.renderer.path().add();
-        }
-        this.markings.attr({
-            d: [
-                ['M', x1, y1],
-                ['L', x1 + len, y1],
-                ['M', x2 - len, y1],
-                ['L', x2, y1],
-                ['M', x1, y1],
-                ['L', x1, y1 + len],
-                ['M', x2, y1],
-                ['L', x2, y1 + len],
-                ['M', x1, y2],
-                ['L', x1 + len, y2],
-                ['M', x1, y2],
-                ['L', x1, y2 - len],
-                ['M', x2, y2],
-                ['L', x2 - len, y2],
-                ['M', x2, y2],
-                ['L', x2, y2 - len]
-            ],
-            'stroke-width': options.strokeWidth,
-            stroke: options.stroke,
-            dashstyle: options.dashstyle,
-            zIndex: 8
-        });
     }
 
     /**
