@@ -19,8 +19,8 @@ import TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProvidersRegistry.js';
-import MapView from '../../Maps/MapView.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import Chart from '../../Core/Chart/Chart.js';
 
 const {
     seriesTypes: {
@@ -521,9 +521,9 @@ class TiledWebMapSeries extends MapSeries {
     }
 }
 
-addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
+addEvent(Chart, 'beforeMapViewInit', function (e: any): boolean {
     const twm: TiledWebMapSeriesOptions =
-        (e.seriesOptions || []).filter(
+        (this.options.series || []).filter(
             (s: any): boolean => s.type === 'tiledwebmap')[0],
         { geoBounds } = e;
 
@@ -540,21 +540,23 @@ addEvent(MapView, 'beforeMapViewInit', function (e: any): boolean {
             const def = new ProviderDefinition(),
                 { initialProjectionName: providerProjectionName } = def;
 
-            if (geoBounds) {
-                const { x1, y1, x2, y2 } = geoBounds;
-                this.recommendedMapView = {
-                    projection: {
-                        name: providerProjectionName,
-                        parallels: [y1, y2],
-                        rotation: [-(x1 + x2) / 2]
-                    }
-                };
-            } else {
-                this.recommendedMapView = {
-                    projection: {
-                        name: providerProjectionName
-                    }
-                };
+            if (this.options.mapView) {
+                if (geoBounds) {
+                    const { x1, y1, x2, y2 } = geoBounds;
+                    this.options.mapView.recommendedMapView = {
+                        projection: {
+                            name: providerProjectionName,
+                            parallels: [y1, y2],
+                            rotation: [-(x1 + x2) / 2]
+                        }
+                    };
+                } else {
+                    this.options.mapView.recommendedMapView = {
+                        projection: {
+                            name: providerProjectionName
+                        }
+                    };
+                }
             }
 
             return false;

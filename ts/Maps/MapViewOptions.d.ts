@@ -75,10 +75,10 @@ export interface MapViewOptions {
     center: LonLatArray;
     insetOptions?: MapViewInsetOptionsOptions;
     insets?: MapViewInsetsOptions[];
-    minZoom?: number;
     maxZoom?: number;
     padding: MapViewPaddingType;
     projection?: ProjectionOptions;
+    recommendedMapView?: DeepPartial<MapViewOptions>;
     zoom?: number;
 }
 

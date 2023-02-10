@@ -215,6 +215,8 @@ class MapView {
         chart: Chart,
         options?: DeepPartial<MapViewOptions>
     ) {
+        let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
+        let recommendedProjection: DeepPartial<ProjectionOptions>|undefined;
         if (!(this instanceof MapViewInset)) {
 
             // Handle the global map and series-level mapData
@@ -224,16 +226,15 @@ class MapView {
                     (s): (MapDataType|undefined) => s.mapData
                 )
             ]
-                .map((mapData): GeoJSON|undefined =>
-                    this.getGeoMap(mapData));
+                .map((mapData): GeoJSON|undefined => this.getGeoMap(mapData));
 
 
             const allGeoBounds: MapBounds[] = [];
             geoMaps.forEach((geoMap): void => {
                 if (geoMap) {
                     // Use the first geo map as main
-                    if (!this.recommendedMapView) {
-                        this.recommendedMapView =
+                    if (!recommendedMapView) {
+                        recommendedMapView =
                             geoMap['hc-recommended-mapview'];
                     }
 
@@ -255,16 +256,15 @@ class MapView {
             // the map or in user options
 
             fireEvent(
-                this,
+                chart,
                 'beforeMapViewInit',
                 {
-                    seriesOptions: chart.options.series,
                     geoBounds
                 },
                 function (): void {
                     if (geoBounds) {
                         const { x1, y1, x2, y2 } = geoBounds;
-                        this.recommendedProjection =
+                        recommendedProjection =
                             (x2 - x1 > 180 && y2 - y1 > 90) ?
                                 // Wide angle, go for the world view
                                 {
@@ -286,16 +286,22 @@ class MapView {
 
         this.userOptions = options || {};
 
+        if (
+            chart.options.mapView &&
+            chart.options.mapView.recommendedMapView
+        ) {
+            recommendedMapView = chart.options.mapView.recommendedMapView;
+        }
+
         const o = merge(
             defaultOptions,
-            { projection: this.recommendedProjection },
-            this.recommendedMapView,
+            { projection: recommendedProjection },
+            recommendedMapView,
             options
         );
 
         // Merge the inset collections by id, or index if id missing
-        const recInsets =
-            this.recommendedMapView && this.recommendedMapView.insets,
+        const recInsets = recommendedMapView && recommendedMapView.insets,
             optInsets = options && options.insets;
         if (recInsets && optInsets) {
             (o as any).insets = MapView.mergeInsets(recInsets, optInsets);
