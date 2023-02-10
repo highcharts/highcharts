@@ -29,6 +29,7 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     correctFloat,
@@ -226,296 +227,6 @@ class WaterfallSeries extends ColumnSeries {
             if (isNumber(y) && (point.isIntermediateSum || point.isSum)) {
                 point.y = correctFloat(y);
             }
-        }
-    }
-
-    // Translate data points from raw values
-    public translate(): void {
-        const series = this,
-            options = series.options,
-            yAxis = series.yAxis,
-            minPointLength = pick(options.minPointLength, 5),
-            halfMinPointLength = minPointLength / 2,
-            threshold = options.threshold || 0,
-            stacking = options.stacking,
-            actualStack = yAxis.waterfall.stacks[series.stackKey];
-
-        let previousIntermediate = threshold,
-            previousY = threshold,
-            y,
-            total,
-            yPos,
-            hPos;
-
-        // run column series translate
-        ColumnSeries.prototype.translate.apply(series);
-
-        const points = series.points;
-
-        for (let i = 0; i < points.length; i++) {
-            const point = points[i],
-                yValue = series.processedYData[i],
-                shapeArgs = point.shapeArgs;
-
-            if (!shapeArgs || !isNumber(yValue)) {
-                continue;
-            }
-
-            const range = [0, yValue],
-                pointY = point.y;
-
-            // code responsible for correct positions of stacked points
-            // starts here
-            if (stacking) {
-                if (actualStack) {
-                    const actualStackX = actualStack[i];
-
-                    if (stacking === 'overlap') {
-                        total =
-                            actualStackX.stackState[actualStackX.stateIndex--];
-
-                        y = pointY >= 0 ? total : total - pointY;
-                        if (ownProp(actualStackX, 'absolutePos')) {
-                            delete actualStackX.absolutePos;
-                        }
-
-                        if (ownProp(actualStackX, 'absoluteNeg')) {
-                            delete actualStackX.absoluteNeg;
-                        }
-                    } else {
-                        if (pointY >= 0) {
-                            total = actualStackX.threshold +
-                                actualStackX.posTotal;
-
-                            actualStackX.posTotal -= pointY;
-                            y = total;
-                        } else {
-                            total = actualStackX.threshold +
-                                actualStackX.negTotal;
-
-                            actualStackX.negTotal -= pointY;
-                            y = total - pointY;
-                        }
-
-                        if (!actualStackX.posTotal) {
-                            if (
-                                isNumber(actualStackX.absolutePos) &&
-                                ownProp(actualStackX, 'absolutePos')
-                            ) {
-                                actualStackX.posTotal =
-                                    actualStackX.absolutePos;
-                                delete actualStackX.absolutePos;
-                            }
-                        }
-
-                        if (!actualStackX.negTotal) {
-                            if (
-                                isNumber(actualStackX.absoluteNeg) &&
-                                ownProp(actualStackX, 'absoluteNeg')
-                            ) {
-                                actualStackX.negTotal =
-                                    actualStackX.absoluteNeg;
-                                delete actualStackX.absoluteNeg;
-                            }
-                        }
-                    }
-
-                    if (!point.isSum) {
-                        // the connectorThreshold property is later used in
-                        // getCrispPath function to draw a connector line in a
-                        // correct place
-                        actualStackX.connectorThreshold =
-                            actualStackX.threshold + actualStackX.stackTotal;
-                    }
-
-                    if (yAxis.reversed) {
-                        yPos = (pointY >= 0) ? (y - pointY) : (y + pointY);
-                        hPos = y;
-                    } else {
-                        yPos = y;
-                        hPos = y - pointY;
-                    }
-
-                    point.below = yPos <= threshold;
-
-                    shapeArgs.y = yAxis.translate(
-                        yPos,
-                        false,
-                        true,
-                        false,
-                        true
-                    );
-                    shapeArgs.height = Math.abs(
-                        shapeArgs.y -
-                        yAxis.translate(
-                            hPos,
-                            false,
-                            true,
-                            false,
-                            true
-                        )
-                    );
-
-                    const dummyStackItem = yAxis.waterfall.dummyStackItem;
-                    if (dummyStackItem) {
-                        dummyStackItem.x = i;
-                        dummyStackItem.label = actualStack[i].label;
-                        dummyStackItem.setOffset(
-                            series.pointXOffset || 0,
-                            series.barW || 0,
-                            series.stackedYNeg[i],
-                            series.stackedYPos[i],
-                            void 0,
-                            this.xAxis
-                        );
-                    }
-                }
-            } else {
-                // up points
-                y = Math.max(
-                    previousY,
-                    previousY + pointY
-                ) + range[0];
-                shapeArgs.y = yAxis.translate(y, false, true, false, true);
-
-                // sum points
-                if (point.isSum) {
-                    shapeArgs.y = yAxis.translate(
-                        range[1],
-                        false,
-                        true,
-                        false,
-                        true
-                    );
-                    shapeArgs.height = Math.min(
-                        yAxis.translate(
-                            range[0],
-                            false,
-                            true,
-                            false,
-                            true
-                        ),
-                        yAxis.len
-                    ) - shapeArgs.y; // #4256
-
-                    point.below = range[1] <= threshold;
-                } else if (point.isIntermediateSum) {
-                    if (pointY >= 0) {
-                        yPos = range[1] + previousIntermediate;
-                        hPos = previousIntermediate;
-                    } else {
-                        yPos = previousIntermediate;
-                        hPos = range[1] + previousIntermediate;
-                    }
-
-                    if (yAxis.reversed) {
-                        // swapping values
-                        yPos ^= hPos;
-                        hPos ^= yPos;
-                        yPos ^= hPos;
-                    }
-
-                    shapeArgs.y = yAxis.translate(
-                        yPos,
-                        false,
-                        true,
-                        false,
-                        true
-                    );
-                    shapeArgs.height = Math.abs(
-                        shapeArgs.y -
-                        Math.min(
-                            yAxis.translate(
-                                hPos,
-                                false,
-                                true,
-                                false,
-                                true
-                            ),
-                            yAxis.len
-                        )
-                    );
-
-                    previousIntermediate += range[1];
-                    point.below = yPos <= threshold;
-
-                // If it's not the sum point, update previous stack end position
-                // and get shape height (#3886)
-                } else {
-                    shapeArgs.height = yValue > 0 ?
-                        yAxis.translate(
-                            previousY,
-                            false,
-                            true,
-                            false,
-                            true
-                        ) - shapeArgs.y :
-                        yAxis.translate(
-                            previousY,
-                            false,
-                            true,
-                            false,
-                            true
-                        ) - yAxis.translate(
-                            previousY - yValue,
-                            false,
-                            true,
-                            false,
-                            true
-                        );
-
-                    previousY += yValue;
-                    point.below = previousY < threshold;
-                }
-
-                // #3952 Negative sum or intermediate sum not rendered correctly
-                if (shapeArgs.height < 0) {
-                    shapeArgs.y += shapeArgs.height;
-                    shapeArgs.height *= -1;
-                }
-            }
-
-            point.plotY = shapeArgs.y =
-                Math.round(shapeArgs.y || 0) - (series.borderWidth % 2) / 2;
-            // #3151
-            shapeArgs.height =
-                Math.max(Math.round(shapeArgs.height || 0), 0.001);
-            point.yBottom = shapeArgs.y + shapeArgs.height;
-
-            if (shapeArgs.height <= minPointLength && !point.isNull) {
-                shapeArgs.height = minPointLength;
-                shapeArgs.y -= halfMinPointLength;
-                point.plotY = shapeArgs.y;
-                if (point.y < 0) {
-                    point.minPointLengthOffset = -halfMinPointLength;
-                } else {
-                    point.minPointLengthOffset = halfMinPointLength;
-                }
-            } else {
-                if (point.isNull) {
-                    shapeArgs.width = 0;
-                }
-                point.minPointLengthOffset = 0;
-            }
-
-            // Correct tooltip placement (#3014)
-            const tooltipY =
-                point.plotY + (point.negative ? shapeArgs.height : 0);
-
-            if (point.below) { // #15334
-                point.plotY += shapeArgs.height;
-            }
-
-            if (point.tooltipPos) {
-                if (series.chart.inverted) {
-                    point.tooltipPos[0] = yAxis.len - tooltipY;
-                } else {
-                    point.tooltipPos[1] = tooltipY;
-                }
-            }
-
-            // Check point position after recalculation (#16788)
-            point.isInside = this.isPointInside(point);
         }
     }
 
@@ -950,6 +661,292 @@ class WaterfallSeries extends ColumnSeries {
     }
 
 }
+
+// Translate data points from raw values
+addEvent(WaterfallSeries, 'afterColumnTranslate', function (
+    this: WaterfallSeries
+): void {
+    const series = this,
+        { options, points, yAxis } = series,
+        minPointLength = pick(options.minPointLength, 5),
+        halfMinPointLength = minPointLength / 2,
+        threshold = options.threshold || 0,
+        stacking = options.stacking,
+        actualStack = yAxis.waterfall.stacks[series.stackKey];
+
+    let previousIntermediate = threshold,
+        previousY = threshold,
+        y,
+        total,
+        yPos,
+        hPos;
+
+    for (let i = 0; i < points.length; i++) {
+        const point = points[i],
+            yValue = series.processedYData[i],
+            shapeArgs = point.shapeArgs;
+
+        if (!shapeArgs || !isNumber(yValue)) {
+            continue;
+        }
+
+        const range = [0, yValue],
+            pointY = point.y;
+
+        // code responsible for correct positions of stacked points
+        // starts here
+        if (stacking) {
+            if (actualStack) {
+                const actualStackX = actualStack[i];
+
+                if (stacking === 'overlap') {
+                    total =
+                        actualStackX.stackState[actualStackX.stateIndex--];
+
+                    y = pointY >= 0 ? total : total - pointY;
+                    if (ownProp(actualStackX, 'absolutePos')) {
+                        delete actualStackX.absolutePos;
+                    }
+
+                    if (ownProp(actualStackX, 'absoluteNeg')) {
+                        delete actualStackX.absoluteNeg;
+                    }
+                } else {
+                    if (pointY >= 0) {
+                        total = actualStackX.threshold +
+                            actualStackX.posTotal;
+
+                        actualStackX.posTotal -= pointY;
+                        y = total;
+                    } else {
+                        total = actualStackX.threshold +
+                            actualStackX.negTotal;
+
+                        actualStackX.negTotal -= pointY;
+                        y = total - pointY;
+                    }
+
+                    if (!actualStackX.posTotal) {
+                        if (
+                            isNumber(actualStackX.absolutePos) &&
+                            ownProp(actualStackX, 'absolutePos')
+                        ) {
+                            actualStackX.posTotal =
+                                actualStackX.absolutePos;
+                            delete actualStackX.absolutePos;
+                        }
+                    }
+
+                    if (!actualStackX.negTotal) {
+                        if (
+                            isNumber(actualStackX.absoluteNeg) &&
+                            ownProp(actualStackX, 'absoluteNeg')
+                        ) {
+                            actualStackX.negTotal =
+                                actualStackX.absoluteNeg;
+                            delete actualStackX.absoluteNeg;
+                        }
+                    }
+                }
+
+                if (!point.isSum) {
+                    // the connectorThreshold property is later used in
+                    // getCrispPath function to draw a connector line in a
+                    // correct place
+                    actualStackX.connectorThreshold =
+                        actualStackX.threshold + actualStackX.stackTotal;
+                }
+
+                if (yAxis.reversed) {
+                    yPos = (pointY >= 0) ? (y - pointY) : (y + pointY);
+                    hPos = y;
+                } else {
+                    yPos = y;
+                    hPos = y - pointY;
+                }
+
+                point.below = yPos <= threshold;
+
+                shapeArgs.y = yAxis.translate(
+                    yPos,
+                    false,
+                    true,
+                    false,
+                    true
+                );
+                shapeArgs.height = Math.abs(
+                    shapeArgs.y -
+                    yAxis.translate(
+                        hPos,
+                        false,
+                        true,
+                        false,
+                        true
+                    )
+                );
+
+                const dummyStackItem = yAxis.waterfall.dummyStackItem;
+                if (dummyStackItem) {
+                    dummyStackItem.x = i;
+                    dummyStackItem.label = actualStack[i].label;
+                    dummyStackItem.setOffset(
+                        series.pointXOffset || 0,
+                        series.barW || 0,
+                        series.stackedYNeg[i],
+                        series.stackedYPos[i],
+                        void 0,
+                        this.xAxis
+                    );
+                }
+            }
+        } else {
+            // up points
+            y = Math.max(
+                previousY,
+                previousY + pointY
+            ) + range[0];
+            shapeArgs.y = yAxis.translate(y, false, true, false, true);
+
+            // sum points
+            if (point.isSum) {
+                shapeArgs.y = yAxis.translate(
+                    range[1],
+                    false,
+                    true,
+                    false,
+                    true
+                );
+                shapeArgs.height = Math.min(
+                    yAxis.translate(
+                        range[0],
+                        false,
+                        true,
+                        false,
+                        true
+                    ),
+                    yAxis.len
+                ) - shapeArgs.y; // #4256
+
+                point.below = range[1] <= threshold;
+            } else if (point.isIntermediateSum) {
+                if (pointY >= 0) {
+                    yPos = range[1] + previousIntermediate;
+                    hPos = previousIntermediate;
+                } else {
+                    yPos = previousIntermediate;
+                    hPos = range[1] + previousIntermediate;
+                }
+
+                if (yAxis.reversed) {
+                    // swapping values
+                    yPos ^= hPos;
+                    hPos ^= yPos;
+                    yPos ^= hPos;
+                }
+
+                shapeArgs.y = yAxis.translate(
+                    yPos,
+                    false,
+                    true,
+                    false,
+                    true
+                );
+                shapeArgs.height = Math.abs(
+                    shapeArgs.y -
+                    Math.min(
+                        yAxis.translate(
+                            hPos,
+                            false,
+                            true,
+                            false,
+                            true
+                        ),
+                        yAxis.len
+                    )
+                );
+
+                previousIntermediate += range[1];
+                point.below = yPos <= threshold;
+
+            // If it's not the sum point, update previous stack end position
+            // and get shape height (#3886)
+            } else {
+                shapeArgs.height = yValue > 0 ?
+                    yAxis.translate(
+                        previousY,
+                        false,
+                        true,
+                        false,
+                        true
+                    ) - shapeArgs.y :
+                    yAxis.translate(
+                        previousY,
+                        false,
+                        true,
+                        false,
+                        true
+                    ) - yAxis.translate(
+                        previousY - yValue,
+                        false,
+                        true,
+                        false,
+                        true
+                    );
+
+                previousY += yValue;
+                point.below = previousY < threshold;
+            }
+
+            // #3952 Negative sum or intermediate sum not rendered correctly
+            if (shapeArgs.height < 0) {
+                shapeArgs.y += shapeArgs.height;
+                shapeArgs.height *= -1;
+            }
+        }
+
+        point.plotY = shapeArgs.y =
+            Math.round(shapeArgs.y || 0) - (series.borderWidth % 2) / 2;
+        // #3151
+        shapeArgs.height =
+            Math.max(Math.round(shapeArgs.height || 0), 0.001);
+        point.yBottom = shapeArgs.y + shapeArgs.height;
+
+        if (shapeArgs.height <= minPointLength && !point.isNull) {
+            shapeArgs.height = minPointLength;
+            shapeArgs.y -= halfMinPointLength;
+            point.plotY = shapeArgs.y;
+            if (point.y < 0) {
+                point.minPointLengthOffset = -halfMinPointLength;
+            } else {
+                point.minPointLengthOffset = halfMinPointLength;
+            }
+        } else {
+            if (point.isNull) {
+                shapeArgs.width = 0;
+            }
+            point.minPointLengthOffset = 0;
+        }
+
+        // Correct tooltip placement (#3014)
+        const tooltipY =
+            point.plotY + (point.negative ? shapeArgs.height : 0);
+
+        if (point.below) { // #15334
+            point.plotY += shapeArgs.height;
+        }
+
+        if (point.tooltipPos) {
+            if (series.chart.inverted) {
+                point.tooltipPos[0] = yAxis.len - tooltipY;
+            } else {
+                point.tooltipPos[1] = tooltipY;
+            }
+        }
+
+        // Check point position after recalculation (#16788)
+        point.isInside = this.isPointInside(point);
+    }
+}, { order: 2 });
 
 interface WaterfallSeries {
     getZonesGraphs: typeof LineSeries.prototype.getZonesGraphs;

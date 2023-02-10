@@ -633,6 +633,10 @@ class ColumnSeries extends Series {
             );
         });
 
+        // Fire a specific event after column translate. We could instead apply
+        // all the column logic in an `afterTranslate` event handler, but there
+        // are so many other series types that use the column translation, that
+        // it is more convenient to have a specific event for it.
         fireEvent(this, 'afterColumnTranslate');
     }
 
