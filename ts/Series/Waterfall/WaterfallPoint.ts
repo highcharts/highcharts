@@ -49,8 +49,6 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
 
     public series: WaterfallSeries = void 0 as any;
 
-    public y: any;
-
     /* *
      *
      * Functions

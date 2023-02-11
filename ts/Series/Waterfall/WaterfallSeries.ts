@@ -320,7 +320,7 @@ class WaterfallSeries extends ColumnSeries {
         const upColor = this.options.upColor;
 
         // Set or reset up color (#3710, update to negative)
-        if (upColor && !point.options.color) {
+        if (upColor && !point.options.color && isNumber(point.y)) {
             point.color = point.y > 0 ? upColor : void 0;
         }
 
@@ -350,7 +350,7 @@ class WaterfallSeries extends ColumnSeries {
         this: WaterfallSeries
     ): SVGPath {
 
-        let data = this.data,
+        const data = this.data,
             yAxis = this.yAxis,
             length = data.length,
             graphNormalizer =
@@ -359,36 +359,30 @@ class WaterfallSeries extends ColumnSeries {
             reversedXAxis = this.xAxis.reversed,
             reversedYAxis = this.yAxis.reversed,
             stacking = this.options.stacking,
-            path: SVGPath = [],
-            connectorThreshold,
-            prevStack,
-            prevStackX,
-            prevPoint,
-            yPos,
-            isPos,
-            prevBox: BBoxObject|undefined,
-            i: (number|undefined);
+            path: SVGPath = [];
 
-        for (i = 1; i < length; i++) {
-            const box = data[i].box;
-            prevPoint = data[i - 1];
-            prevBox = data[i - 1].box;
+        for (let i = 1; i < length; i++) {
+            const box = data[i].box,
+                prevPoint = data[i - 1],
+                prevY = prevPoint.y || 0,
+                prevBox = data[i - 1].box;
 
             if (!box || !prevBox) {
                 continue;
             }
 
-            prevStack = yAxis.waterfall.stacks[this.stackKey];
-            isPos = prevPoint.y > 0 ? -prevBox.height : 0;
+            const prevStack = yAxis.waterfall.stacks[this.stackKey],
+                isPos = prevY > 0 ? -prevBox.height : 0;
 
             if (prevStack && prevBox && box) {
-                prevStackX = (prevStack as any)[i - 1];
+                const prevStackX = (prevStack as any)[i - 1];
 
                 // y position of the connector is different when series are
                 // stacked, yAxis is reversed and it also depends on point's
                 // value
+                let yPos: number;
                 if (stacking) {
-                    connectorThreshold = prevStackX.connectorThreshold;
+                    const connectorThreshold = prevStackX.connectorThreshold;
 
                     yPos = Math.round(
                         (yAxis.translate(
@@ -427,8 +421,8 @@ class WaterfallSeries extends ColumnSeries {
                 prevBox &&
                 path.length &&
                 (
-                    (!stacking && prevPoint.y < 0 && !reversedYAxis) ||
-                    (prevPoint.y > 0 && reversedYAxis)
+                    (!stacking && prevY < 0 && !reversedYAxis) ||
+                    (prevY > 0 && reversedYAxis)
                 )
             ) {
                 const nextLast = path[path.length - 2];
@@ -688,7 +682,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
 
     for (let i = 0; i < points.length; i++) {
         const point = points[i],
-            yValue = series.processedYData[i],
+            yValue = series.processedYData[i] as number,
             shapeArgs = point.shapeArgs,
             box: BBoxObject = extend({
                 x: 0,
@@ -699,12 +693,8 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
 
         point.box = box;
 
-        if (!shapeArgs || !isNumber(yValue)) {
-            continue;
-        }
-
         const range = [0, yValue],
-            pointY = point.y;
+            pointY = point.y || 0;
 
         // code responsible for correct positions of stacked points
         // starts here
@@ -928,12 +918,13 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
             box.height = minPointLength;
             box.y -= halfMinPointLength;
             point.plotY = box.y;
-            if (point.y < 0) {
+            if (pointY < 0) {
                 point.minPointLengthOffset = -halfMinPointLength;
             } else {
                 point.minPointLengthOffset = halfMinPointLength;
             }
         } else {
+            // #8024, empty gaps in the line for null data
             if (point.isNull) {
                 box.width = 0;
             }
