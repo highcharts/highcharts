@@ -300,12 +300,34 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                         let rTop = flip ? 0 : r,
                             rBtm = flip ? r : 0;
 
-                        // All corners
-                        const where = borderRadius.where || (
-                            this.pointArrayMap?.join(',') === 'low,high' ?
-                                'all' :
-                                'end'
-                        );
+                        // Handle the where option
+                        let where = borderRadius.where;
+
+                        // Columnrange
+                        if (
+                            !where && this.pointArrayMap?.join(',') ===
+                            'low,high'
+                        ) {
+                            where = 'all';
+                        }
+
+                        // Waterfall, hanging columns should have rounding on
+                        // all sides
+                        if (
+                            !where &&
+                            this.is('waterfall') &&
+                            Math.abs(
+                                (point.yBottom || 0) -
+                                (this.translatedThreshold || 0)
+                            ) > this.borderWidth
+                        ) {
+                            where = 'all';
+                        }
+
+                        if (!where) {
+                            where = 'end';
+                        }
+
                         if (where === 'all') {
                             rTop = rBtm = r;
                         }

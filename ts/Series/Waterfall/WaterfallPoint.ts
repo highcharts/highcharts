@@ -14,6 +14,7 @@
  *
  * */
 
+import BBoxObject from '../../Core/Renderer/BBoxObject';
 import type WaterfallPointOptions from './WaterfallPointOptions';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import Point from '../../Core/Series/Point.js';
@@ -35,6 +36,8 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
     public below?: boolean;
+
+    public box?: BBoxObject;
 
     public isIntermediateSum?: boolean;
 

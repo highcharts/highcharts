@@ -10,6 +10,7 @@
 
 'use strict';
 
+import BBoxObject from '../../Core/Renderer/BBoxObject';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -365,18 +366,22 @@ class WaterfallSeries extends ColumnSeries {
             prevPoint,
             yPos,
             isPos,
-            prevArgs,
-            pointArgs,
+            prevBox: BBoxObject|undefined,
             i: (number|undefined);
 
         for (i = 1; i < length; i++) {
-            pointArgs = data[i].shapeArgs;
+            const box = data[i].box;
             prevPoint = data[i - 1];
-            prevArgs = data[i - 1].shapeArgs;
-            prevStack = yAxis.waterfall.stacks[this.stackKey];
-            isPos = prevPoint.y > 0 ? -(prevArgs as any).height : 0;
+            prevBox = data[i - 1].box;
 
-            if (prevStack && prevArgs && pointArgs) {
+            if (!box || !prevBox) {
+                continue;
+            }
+
+            prevStack = yAxis.waterfall.stacks[this.stackKey];
+            isPos = prevPoint.y > 0 ? -prevBox.height : 0;
+
+            if (prevStack && prevBox && box) {
                 prevStackX = (prevStack as any)[i - 1];
 
                 // y position of the connector is different when series are
@@ -397,21 +402,21 @@ class WaterfallSeries extends ColumnSeries {
                     ) - graphNormalizer;
                 } else {
                     yPos =
-                        (prevArgs as any).y + prevPoint.minPointLengthOffset +
+                        (prevBox as any).y + prevPoint.minPointLengthOffset +
                         borderNormalizer - graphNormalizer;
                 }
 
                 path.push([
                     'M',
-                    (prevArgs.x || 0) + (reversedXAxis ?
+                    (prevBox.x || 0) + (reversedXAxis ?
                         0 :
-                        (prevArgs.width || 0)
+                        (prevBox.width || 0)
                     ),
                     yPos
                 ], [
                     'L',
-                    (pointArgs.x || 0) + (reversedXAxis ?
-                        (pointArgs.width || 0) :
+                    (box.x || 0) + (reversedXAxis ?
+                        (box.width || 0) :
                         0
                     ),
                     yPos
@@ -419,7 +424,7 @@ class WaterfallSeries extends ColumnSeries {
             }
 
             if (
-                prevArgs &&
+                prevBox &&
                 path.length &&
                 (
                     (!stacking && prevPoint.y < 0 && !reversedYAxis) ||
@@ -428,11 +433,11 @@ class WaterfallSeries extends ColumnSeries {
             ) {
                 const nextLast = path[path.length - 2];
                 if (nextLast && typeof nextLast[2] === 'number') {
-                    nextLast[2] += prevArgs.height || 0;
+                    nextLast[2] += prevBox.height || 0;
                 }
                 const last = path[path.length - 1];
                 if (last && typeof last[2] === 'number') {
-                    last[2] += prevArgs.height || 0;
+                    last[2] += prevBox.height || 0;
                 }
             }
 
@@ -684,7 +689,15 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
     for (let i = 0; i < points.length; i++) {
         const point = points[i],
             yValue = series.processedYData[i],
-            shapeArgs = point.shapeArgs;
+            shapeArgs = point.shapeArgs,
+            box: BBoxObject = extend({
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0
+            }, shapeArgs || {});
+
+        point.box = box;
 
         if (!shapeArgs || !isNumber(yValue)) {
             continue;
@@ -767,15 +780,15 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
 
                 point.below = yPos <= threshold;
 
-                shapeArgs.y = yAxis.translate(
+                box.y = yAxis.translate(
                     yPos,
                     false,
                     true,
                     false,
                     true
                 );
-                shapeArgs.height = Math.abs(
-                    shapeArgs.y -
+                box.height = Math.abs(
+                    box.y -
                     yAxis.translate(
                         hPos,
                         false,
@@ -805,18 +818,18 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
                 previousY,
                 previousY + pointY
             ) + range[0];
-            shapeArgs.y = yAxis.translate(y, false, true, false, true);
+            box.y = yAxis.translate(y, false, true, false, true);
 
             // sum points
             if (point.isSum) {
-                shapeArgs.y = yAxis.translate(
+                box.y = yAxis.translate(
                     range[1],
                     false,
                     true,
                     false,
                     true
                 );
-                shapeArgs.height = Math.min(
+                box.height = Math.min(
                     yAxis.translate(
                         range[0],
                         false,
@@ -825,7 +838,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
                         true
                     ),
                     yAxis.len
-                ) - shapeArgs.y; // #4256
+                ) - box.y; // #4256
 
                 point.below = range[1] <= threshold;
             } else if (point.isIntermediateSum) {
@@ -844,15 +857,15 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
                     yPos ^= hPos;
                 }
 
-                shapeArgs.y = yAxis.translate(
+                box.y = yAxis.translate(
                     yPos,
                     false,
                     true,
                     false,
                     true
                 );
-                shapeArgs.height = Math.abs(
-                    shapeArgs.y -
+                box.height = Math.abs(
+                    box.y -
                     Math.min(
                         yAxis.translate(
                             hPos,
@@ -871,14 +884,14 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
             // If it's not the sum point, update previous stack end position
             // and get shape height (#3886)
             } else {
-                shapeArgs.height = yValue > 0 ?
+                box.height = yValue > 0 ?
                     yAxis.translate(
                         previousY,
                         false,
                         true,
                         false,
                         true
-                    ) - shapeArgs.y :
+                    ) - box.y :
                     yAxis.translate(
                         previousY,
                         false,
@@ -898,23 +911,23 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
             }
 
             // #3952 Negative sum or intermediate sum not rendered correctly
-            if (shapeArgs.height < 0) {
-                shapeArgs.y += shapeArgs.height;
-                shapeArgs.height *= -1;
+            if (box.height < 0) {
+                box.y += box.height;
+                box.height *= -1;
             }
         }
 
-        point.plotY = shapeArgs.y =
-            Math.round(shapeArgs.y || 0) - (series.borderWidth % 2) / 2;
+        point.plotY = box.y =
+            Math.round(box.y || 0) - (series.borderWidth % 2) / 2;
         // #3151
-        shapeArgs.height =
-            Math.max(Math.round(shapeArgs.height || 0), 0.001);
-        point.yBottom = shapeArgs.y + shapeArgs.height;
+        box.height =
+            Math.max(Math.round(box.height || 0), 0.001);
+        point.yBottom = box.y + box.height;
 
-        if (shapeArgs.height <= minPointLength && !point.isNull) {
-            shapeArgs.height = minPointLength;
-            shapeArgs.y -= halfMinPointLength;
-            point.plotY = shapeArgs.y;
+        if (box.height <= minPointLength && !point.isNull) {
+            box.height = minPointLength;
+            box.y -= halfMinPointLength;
+            point.plotY = box.y;
             if (point.y < 0) {
                 point.minPointLengthOffset = -halfMinPointLength;
             } else {
@@ -922,17 +935,17 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
             }
         } else {
             if (point.isNull) {
-                shapeArgs.width = 0;
+                box.width = 0;
             }
             point.minPointLengthOffset = 0;
         }
 
         // Correct tooltip placement (#3014)
         const tooltipY =
-            point.plotY + (point.negative ? shapeArgs.height : 0);
+            point.plotY + (point.negative ? box.height : 0);
 
         if (point.below) { // #15334
-            point.plotY += shapeArgs.height;
+            point.plotY += box.height;
         }
 
         if (point.tooltipPos) {
@@ -945,6 +958,8 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (
 
         // Check point position after recalculation (#16788)
         point.isInside = this.isPointInside(point);
+
+        merge(true, point.shapeArgs, box);
     }
 }, { order: 2 });
 
