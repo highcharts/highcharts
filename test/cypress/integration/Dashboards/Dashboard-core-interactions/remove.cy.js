@@ -1,12 +1,13 @@
 describe('Remove the dashboard with nested layout.', () => {
     before(() => {
-        cy.visit('/dashboards/demos/layout-nested', {});
+        cy.visit('/dashboards/cypress/component-datagrid');
     });
 
     it('Dashboard should be removed without errors', () => {
-        cy.get('.hd-edit-context-menu-btn').click();
-        cy.get('.hd-edit-context-menu-item').contains('Delete current dashboard').click();
-        cy.get('.hd-dashboards-wrapper').should('not.exist');
-        cy.get('#container').should('exist');
+        cy.dashboard().then(dashboard => {
+            dashboard.destroy();
+            cy.get('.hd-dashboards-wrapper').should('not.exist');
+            cy.get('#container').should('exist');
+        });
     });
 });
