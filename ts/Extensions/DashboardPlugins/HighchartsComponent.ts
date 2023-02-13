@@ -107,6 +107,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 ]
             ),
             editableOptionsBindings: merge(
+                Component.defaultOptions.editableOptionsBindings,
                 {
                     skipRedraw: [
                         'chartOptions',
@@ -116,8 +117,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                         chartOptions: 'textarea',
                         chartType: 'select'
                     }
-                },
-                Component.defaultOptions.editableOptionsBindings
+                }
             ),
             syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}
