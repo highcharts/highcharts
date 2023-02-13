@@ -277,9 +277,6 @@ class Layout extends GUIElement {
         layout.rows.forEach(function (row): void {
             row.destroy();
         });
-        // for (let i = 0, iEnd = layout.rows.length; i < iEnd; ++i) {
-        //     layout.rows[i].destroy();
-        // }
 
         if (layout.parentCell) {
             layout.parentCell.destroy();
