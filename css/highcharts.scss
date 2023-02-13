@@ -740,6 +740,12 @@ input.highcharts-range-selector {
     font-weight: bold;
     text-align: center;
 }
+.highcharts-button.highcharts-zoom-in text {
+    transform: translateX(2.25px);
+}
+.highcharts-button.highcharts-zoom-out text {
+    transform: translateX(3.75px);
+}
 .highcharts-mapview-inset-border {
     stroke: $neutral-color-20;
     stroke-width: 1px;
