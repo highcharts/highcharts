@@ -131,13 +131,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public abstract sync: Sync;
 
     /**
- * Timeouts for calls to `Component.resizeTo()`
- */
+     * Timeouts for calls to `Component.resizeTo()`
+     */
     protected resizeTimeouts: number[] = [];
 
     /**
- * Timeouts for resizing the content. I.e. `chart.setSize()`
- */
+     * Timeouts for resizing the content. I.e. `chart.setSize()`
+     */
     protected innerResizeTimeouts: number[] = [];
 
     constructor(options: Partial<Component.ComponentOptions>) {
@@ -198,9 +198,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * Handles the sync options. Applies the given defaults if no
-   * specific callback given
-   */
+    * Handles the sync options. Applies the given defaults if no
+    * specific callback given
+    */
     protected handleSyncOptions(
         defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
     ): Component['syncHandlers'] {
@@ -416,16 +416,16 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
- * Resize the component
- * @param {number|string|null} [width]
- * The width to set the component to.
- * Can be pixels, a percentage string or null.
- * Null will unset the style
- * @param {number|string|null} [height]
- * The height to set the component to.
- * Can be pixels, a percentage string or null.
- * Null will unset the style.
- */
+     * Resize the component
+     * @param {number|string|null} [width]
+     * The width to set the component to.
+     * Can be pixels, a percentage string or null.
+     * Null will unset the style
+     * @param {number|string|null} [height]
+     * The height to set the component to.
+     * Can be pixels, a percentage string or null.
+     * Null will unset the style.
+     */
     public resize(
         width?: number | string | null,
         height?: number | string | null
@@ -495,13 +495,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * Handles updating via options
-   * @param {Partial<Component.ComponentOptions>} newOptions
-   * The options to apply
-   *
-   * @return {this}
-   * The component for chaining
-   */
+    * Handles updating via options
+    * @param {Partial<Component.ComponentOptions>} newOptions
+    * The options to apply
+    *
+    * @return {this}
+    * The component for chaining
+    */
     public update(newOptions: Partial<Component.ComponentOptions>, redraw = false): this {
         // Update options
         let shouldForceRedraw = false;
@@ -620,11 +620,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
- * Handles setting things up on initial render
- *
- * @return {this}
- * The component for chaining
- */
+     * Handles setting things up on initial render
+     *
+     * @return {this}
+     * The component for chaining
+     */
     public load(): this {
 
         // Set up the store on inital load if it has not been done
@@ -682,9 +682,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * @return {this}
-   * The component for chaining
-   */
+     * @return {this}
+     * The component for chaining
+     */
     public render(): this {
         if (this.shouldRedraw || !this.hasLoaded) {
             this.load();
@@ -699,10 +699,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
- * @todo redraw should (usually) call render
- * @return {this}
- * The component for chaining
- */
+     * @todo redraw should (usually) call render
+     * @return {this}
+     * The component for chaining
+     */
     public redraw(): this {
         // Do a redraw
         const e = {
@@ -717,9 +717,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
- * @todo Should perhaps also remove the component from the registry
- * or set an `isactive` flag to false
- */
+     * @todo Should perhaps also remove the component from the registry
+     * or set an `isactive` flag to false
+     */
     public destroy(): void {
         while (this.element.firstChild) {
             this.element.firstChild.remove();
@@ -776,11 +776,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
- * Converts the class instance to a class JSON.
- *
- * @return {Component.JSON}
- * Class JSON of this Component instance.
- */
+     * Converts the class instance to a class JSON.
+     *
+     * @return {Component.JSON}
+     * Class JSON of this Component instance.
+     */
     public toJSON(): Component.JSON {
         const dimensions: Record<'width' | 'height', number> = {
             width: 0,
