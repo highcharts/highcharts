@@ -1,4 +1,4 @@
-describe('Remove the dashboard with nested layout.', () => {
+describe('Remove the dashboard.', () => {
     before(() => {
         cy.visit('/dashboards/cypress/component-datagrid');
     });

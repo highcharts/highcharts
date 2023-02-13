@@ -293,11 +293,10 @@ class Row extends GUIElement {
 
         if (row.layout) {
             row.layout.unmountRow(row);
-            const destroyLayout = layout.rows.length === 0;
 
             super.destroy();
 
-            if (destroyLayout) {
+            if (layout.rows.length === 0) {
                 layout.destroy();
             }
         }
