@@ -38,7 +38,6 @@ const {
     merge,
     addEvent,
     error,
-    isString,
     objectEach,
     uniqueKey,
     createElement
@@ -156,7 +155,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     }
 
     /**
-     * initContainer
+     * Initialize the container for the dashboard.
      *
      * @param {string|Highcharts.HTMLDOMElement} [renderTo]
      * The DOM element to render to, or its id.
@@ -167,12 +166,11 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     ): void {
         const dashboard = this;
 
-        if (isString(renderTo)) {
-            dashboard.dashboardWrapper = renderTo =
-                window.document.getElementById(renderTo) as HTMLElement;
+        if (typeof renderTo === 'string') {
+            renderTo = window.document.getElementById(renderTo) as HTMLElement;
         }
 
-        // Display an error if the renderTo is wrong
+        // Display an error if the renderTo doesn't exist.
         if (!renderTo) {
             error(13, true);
         }
@@ -180,7 +178,10 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         // Clear the container from any content.
         renderTo.innerHTML = '';
 
-        // add wrapper
+        // Set the main wrapper container.
+        dashboard.dashboardWrapper = renderTo;
+
+        // Add container for the dashboard.
         dashboard.container = createElement(
             'div', {
                 className: Globals.classNames.dashboardsContainer
