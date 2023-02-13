@@ -21,7 +21,7 @@ QUnit.test('Tiled Web Map on the chart', assert => {
             }
         }
 
-        H.seriesTypes.tiledwebmap.TilesProvidersRegistry.TestProvider =
+        H.TilesProvidersRegistry.TestProvider =
             TestProviderDefinition;
     }(Highcharts));
 
@@ -117,8 +117,8 @@ QUnit.test('Tiled Web Map on the chart', assert => {
     );
 
     const initialProjectionName =
-        new Highcharts.Series.types.tiledwebmap
-            .TilesProvidersRegistry.TestProvider().initialProjectionName;
+        new Highcharts.TilesProvidersRegistry
+            .TestProvider().initialProjectionName;
 
     assert.strictEqual(
         chart.mapView.projection.options.name,

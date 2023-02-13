@@ -18,8 +18,7 @@
                         themeSelect = document.getElementById('theme'),
                         apikeyInput = document.getElementById('apikey'),
                         submitAPIkeyBtn = document.getElementById('submitAPIkey'),
-                        { TilesProvidersRegistry } =
-                            Highcharts.seriesTypes.tiledwebmap;
+                        { TilesProvidersRegistry } = Highcharts;
 
                     function updateTWM() {
                         chart.series[0].update({

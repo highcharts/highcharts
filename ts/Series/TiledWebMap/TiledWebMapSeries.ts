@@ -116,7 +116,6 @@ class TiledWebMapSeries extends MapSeries {
     tilesOffsetY: number = 0;
     minZoom: number | undefined;
     maxZoom: number | undefined;
-    public static TilesProvidersRegistry = TilesProvidersRegistry;
 
     /**
      *
@@ -218,7 +217,7 @@ class TiledWebMapSeries extends MapSeries {
         if (provider && (provider.type || provider.url)) {
             if (provider.type && !provider.url) {
                 const ProviderDefinition =
-                TiledWebMapSeries.TilesProvidersRegistry[provider.type];
+                    TilesProvidersRegistry[provider.type];
 
                 if (!defined(ProviderDefinition)) {
                     error(
@@ -510,8 +509,7 @@ class TiledWebMapSeries extends MapSeries {
             provider &&
             provider.type
         ) {
-            const ProviderDefinition =
-                TiledWebMapSeries.TilesProvidersRegistry[provider.type];
+            const ProviderDefinition = TilesProvidersRegistry[provider.type];
 
             if (ProviderDefinition) {
                 const def = new ProviderDefinition(),
