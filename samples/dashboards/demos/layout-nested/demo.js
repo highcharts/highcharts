@@ -18,7 +18,15 @@ const dashboard = new Dashboards.Dashboard('container', {
         enabled: true,
         contextMenu: {
             enabled: true,
-            items: ['editMode']
+            items: ['editMode', 'viewFullscreen', {
+                id: 'delete-dashboard',
+                text: 'Delete current dashboard',
+                events: {
+                    click: function () {
+                        dashboard.destroy();
+                    }
+                }
+            }]
         }
     },
     gui: {

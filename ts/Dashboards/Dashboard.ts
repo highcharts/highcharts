@@ -231,7 +231,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     }
 
     /**
-     * Destroy the element and its layouts.
+     * Destroy the whole dashboard, its layouts and elements.
      */
     public destroy(): void {
         const dashboard = this;
