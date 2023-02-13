@@ -21,7 +21,6 @@
 
 import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
-import type DataTable from '../../Data/DataTable';
 
 import Component from '../../Dashboards/Component/Component.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
@@ -267,6 +266,16 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     public redraw(): this {
         super.redraw();
         return this.render();
+    }
+
+    public resize(
+        width?: number | string | null,
+        height?: number | string | null
+    ): void {
+        if (this.dataGrid) {
+            super.resize(width, height);
+            this.dataGrid.setSize(width, height);
+        }
     }
 
     public update(options: Partial<DataGridComponent.DataGridOptions>): this {
