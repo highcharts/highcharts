@@ -24,7 +24,7 @@ const store = new CSVStore(void 0, {
 
 store.load();
 
-const dashboard = new Dashboard.Dashboard('container', {
+Dashboard.board('container', {
     store: store,
     gui: {
         layouts: [{

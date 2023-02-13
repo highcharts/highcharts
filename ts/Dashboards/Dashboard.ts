@@ -190,6 +190,13 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         );
     }
 
+    public static board(
+        renderTo: (string|globalThis.HTMLElement),
+        options: Dashboard.Options
+    ): Dashboard {
+        return new Dashboard(renderTo, options);
+    }
+
     public setLayouts(guiOptions: Dashboard.GUIOptions): void {
         const dashboard = this,
             layoutsOptions = guiOptions.layouts;

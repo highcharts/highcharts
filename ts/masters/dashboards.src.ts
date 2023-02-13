@@ -53,9 +53,9 @@ declare global {
 const D = {
     ...Globals,
     ...Utilities,
-    _modules: (typeof _modules === 'undefined' ? {} : _modules),
+    Board: Dashboard,
+    board: Dashboard.board,
     CSVStore,
-    Dashboard,
     DataGrid,
     DataOnDemand,
     DataTable,
@@ -64,7 +64,8 @@ const D = {
     HTMLTableStore,
     PluginHandler,
     RangeModifier,
-    Sync
+    Sync,
+    _modules: (typeof _modules === 'undefined' ? {} : _modules)
 };
 
 /* *

@@ -2,7 +2,7 @@ function random(max, min = 0) {
     return Math.floor(min + Math.random() * (max - min));
 }
 
-const dashboard = new Dashboards.Dashboard('container', {
+const dashboard = new Dashboards.Board('container', {
     components: [{
         cell: 'kpi-00',
         type: 'KPI',
