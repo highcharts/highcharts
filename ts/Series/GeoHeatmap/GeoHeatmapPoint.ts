@@ -67,7 +67,8 @@ class GeoHeatmapPoint extends MapPoint {
                         [x1, y1],
                         [x1 + colsize, y1],
                         [x1 + colsize, y1 + rowsize],
-                        [x1, y1 + rowsize]
+                        [x1, y1 + rowsize],
+                        [x1, y1]
                     ]
                 ]
             };
