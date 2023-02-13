@@ -233,13 +233,16 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     /**
      * Destroy the element and its layouts.
      */
-    public destroy(): undefined {
+    public destroy(): void {
         const dashboard = this;
 
         // Destroy layouts.
         for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
             dashboard.layouts[i].destroy();
         }
+
+        // Destroy container.
+        dashboard.container.remove();
 
         // @ToDo Destroy bindings.
 
