@@ -1,11 +1,11 @@
-describe('Udate component class via UI', () => {
+describe('Editable component options', () => {
     beforeEach(() => {
         cy.visit('/cypress/dashboards/dashboard-layout');
         cy.viewport(1200, 1000);
         cy.enableEditMode();
     });
 
-    it('should be able to open edit mode', function() {
+    it('should be able update chart ID via edit mode GUI', function() {
 
         const newChartID= 'myNewChart';
 
