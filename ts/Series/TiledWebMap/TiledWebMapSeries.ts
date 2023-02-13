@@ -83,6 +83,14 @@ class TiledWebMapSeries extends MapSeries {
      *         OpenStreetMap demo
      *
      * @extends      plotOptions.map
+     * @excluding    affectsMapView, allAreas, allowPointSelect, animation,
+     * animationLimit, boostBlending, boostThreshold, borderColor, borderWidth,
+     * clip, color, colorAxis, colorByPoint, colorIndex, colorKey, colors,
+     * cursor, dashStyle, dataLabels, dataParser, dataURL, dragDrop,
+     * enableMouseTracking, findNearestPointBy, joinBy, keys, marker,
+     * negativeColor, nullColor, nullInteraction, onPoint, point,
+     * pointDescriptionFormatter, provider, selected, shadow, showCheckbox,
+     * stickyTracking, tooltip, type
      * @product      highmaps
      * @optionparent plotOptions.tiledwebmap
      */
@@ -608,7 +616,13 @@ export default TiledWebMapSeries;
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.tiledwebmap
- * @excluding dataParser, dataURL, marker
+ * @excluding affectsMapView, allAreas, allowPointSelect, animation,
+ * animationLimit, boostBlending, boostThreshold, borderColor, borderWidth,
+ * clip, color, colorAxis, colorByPoint, colorIndex, colorKey, colors, cursor,
+ * dashStyle, dataLabels, dataParser, dataURL, dragDrop, enableMouseTracking,
+ * findNearestPointBy, joinBy, keys, marker, negativeColor, nullColor,
+ * nullInteraction, onPoint, point, pointDescriptionFormatter, selected, shadow,
+ * showCheckbox, stickyTracking, tooltip, type
  * @product   highmaps
  * @apioption series.tiledwebmap
  */
@@ -624,7 +638,7 @@ export default TiledWebMapSeries;
 /**
  * Provider type to pull data (tiles) from.
  *
- * @sample maps/series-tiledwebmap/basic-configuration-twm
+ * @sample maps/series-tiledwebmap/basic-configuration
  *         Basic configuration for TiledWebMap
  *
  * @type      {string}
@@ -637,7 +651,7 @@ export default TiledWebMapSeries;
  * Set a tiles theme. Check the providers documentation for official
  * list of available themes.
  *
- * @sample maps/series-tiledwebmap/basic-configuration-twm
+ * @sample maps/series-tiledwebmap/basic-configuration
  *         Basic configuration for TiledWebMap
  *
  * @type      {string}
@@ -650,7 +664,7 @@ export default TiledWebMapSeries;
  * Subdomain required by each provider. Check the providers documentation for
  * available subdomains.
  *
- * @sample maps/series-tiledwebmap/basic-configuration-twm
+ * @sample maps/series-tiledwebmap/basic-configuration
  *         Basic configuration for TiledWebMap
  *
  * @type      {string}
@@ -674,7 +688,7 @@ export default TiledWebMapSeries;
  * `{y}`, `{z}` or `{zoom}`. Remember to always specify a projection, when
  * using a custom URL.
  *
- * @sample maps/series-tiledwebmap/custom-url-twm
+ * @sample maps/series-tiledwebmap/custom-url
  *         Custom URL with projection in TiledWebMap configuration
  *
  * @type      {string}

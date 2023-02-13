@@ -27,7 +27,15 @@
         },
 
         legend: {
-            enabled: false
+            enabled: true,
+            symbolHeight: 0.001,
+            itemDistance: 0,
+            labelFormatter() {
+                const name = this.name,
+                    borderColor = this.userOptions.borderColor;
+
+                return `<span style='color: ${borderColor}'>⬤</span> ${name}`;
+            }
         },
 
         mapNavigation: {
@@ -71,6 +79,7 @@
 
         series: [{
             type: 'tiledwebmap',
+            showInLegend: false,
             provider: {
                 type: 'USGS',
                 theme: 'USImagery'
