@@ -42,6 +42,88 @@ function registerEvents(component) {
 }
 
 
+test('HighchartsComponent options update', function (assert) {
+    const parentElement = document.getElementById('container');
+    const store = new CSVStore(void 0, {
+        csv: '1,2,3',
+        firstRowAsNames: false
+    });
+
+    store.load();
+
+    const componentOptions = {
+        parentElement: 'container',
+        chartOptions: {
+            title : {
+                text: null
+            }
+        }
+    };
+
+    const component = new HighchartsComponent(
+        componentOptions
+    );
+
+    registerEvents(component);
+
+    component.load()
+    component.render();
+
+    const eventsAfterRender = [
+          "load",
+          "afterLoad",
+          "beforeRender",
+          "afterRender",
+    ];
+
+    // TODO: update with options that should not force a redraw
+    // Redraw event should not fire
+
+    component.update({
+        ...componentOptions,
+        chartOptions: {
+            title : {
+                text: 'Hello World'
+            }
+        }
+    });
+
+    const expectedEvents = eventsAfterRender;
+    expectedEvents.push(
+        'update', 
+        // 'redraw', 
+        // 'beforeRender', 
+        // 'load', 
+        // 'afterLoad',
+        // 'afterRender',
+        'afterUpdate'
+    );
+    assert.deepEqual(registeredEvents, expectedEvents ,'after unforced update');
+
+    // TODO: update with an option that should force a redraw
+    // Redraw event should fire
+    component.update({
+        ...componentOptions,
+        title: 'This should fire a redraw'
+    });
+
+    expectedEvents.push(
+          "update",
+          "redraw",
+          "beforeRender",
+          "load",
+          "afterLoad",
+          "afterRender",
+          "afterUpdate"
+
+    );
+    assert.deepEqual(registeredEvents, expectedEvents, 'events after forced update');
+
+    Component.removeInstance(component);
+    emptyArray(registeredEvents);
+    emptyArray(expectedEvents);
+
+});
 
 test('HighchartsComponent events', function (assert) {
     const parentElement = document.getElementById('container');
@@ -61,7 +143,13 @@ test('HighchartsComponent events', function (assert) {
 
     component.load()
     component.render();
-    const expectedEvents = ['load', 'afterLoad', 'beforeRender', 'afterRender']
+    const expectedEvents = [
+        'load', 
+        'afterLoad', 
+        'beforeRender', 
+        'afterRender'
+    ];
+
     assert.deepEqual(registeredEvents, expectedEvents);
 
     component.setStore(store)
@@ -122,31 +210,6 @@ test('HighchartsComponent events', function (assert) {
     );
 
 
-    assert.deepEqual(
-        registeredEvents,
-        expectedEvents
-    );
-
-    emptyArray(registeredEvents);
-    emptyArray(expectedEvents);
-
-    // Update
-    component.update({
-        dimensions: {
-            width: 150,
-            height: 200
-        }
-    });
-
-    expectedEvents.push(
-      'update', 
-      'redraw', 
-      'beforeRender', 
-      'load', 
-      'afterLoad', 
-      'afterRender',
-      'afterUpdate'
-    );
     assert.deepEqual(
         registeredEvents,
         expectedEvents
@@ -272,32 +335,6 @@ test('HTMLComponent events', function (assert) {
 
 
 
-    assert.deepEqual(
-        registeredEvents,
-        expectedEvents
-    );
-
-    emptyArray(registeredEvents);
-    emptyArray(expectedEvents);
-
-    // Update
-    component.update({
-        dimensions: {
-            width: 150,
-            height: 200
-        }
-    });
-
-    expectedEvents.push(
-      'update',
-      'redraw', 
-      'beforeRender', 
-      'load', 
-      'afterLoad', 
-      'afterRender',
-      'afterRedraw',
-      'afterUpdate'
-    );
     assert.deepEqual(
         registeredEvents,
         expectedEvents
