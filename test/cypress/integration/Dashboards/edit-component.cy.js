@@ -2,8 +2,7 @@ describe('Udate component class via UI', () => {
     beforeEach(() => {
         cy.visit('/cypress/dashboards/dashboard-layout');
         cy.viewport(1200, 1000);
-        cy.get('.hd-edit-context-menu-btn').click();
-        cy.get('.hd-edit-toggle-slider').click();
+        cy.enableEditMode();
     });
 
     it('should be able to open edit mode', function() {
