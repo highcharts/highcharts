@@ -65,24 +65,92 @@ class GeoHeatmapSeries extends MapSeries {
      *
      * */
 
-    public static defaultOptions: GeoHeatmapSeriesOptions = merge(MapSeries.defaultOptions, {
-        keys: ['lon', 'lat', 'value']
-    });
+    /**
+     * A geoheatmap series is a variety of heatmap series, composed into
+     * the map projection, where the units are expressed in the latitude
+     * and longitude, and individual values contained in a matrix are
+     * represented as colors.
+     *
+     * @sample maps/demo/geoheatmap/
+     *         GeoHeatmap chart
+     *
+     * @extends      plotOptions.map
+     * @since        next
+     * @product      highmaps
+     * @excluding    joinBy
+     * @requires     modules/geoheatmap
+     * @optionparent plotOptions.geoheatmap
+     */
+
+    public static defaultOptions: GeoHeatmapSeriesOptions =
+        merge(MapSeries.defaultOptions, {
+            /**
+             * The keys property defines how the fields in data array should be
+             * interpretated.
+             *
+             */
+            keys: ['lon', 'lat', 'value'],
+
+            /**
+             * The opacity of the geoheatmap series.
+             *
+             * @type      {number}
+             * @since     next
+             * @product   highmaps
+             * @default   0.7
+             * @apioption plotOptions.geoheatmap.opacity
+             */
+            opacity: 0.7,
+
+            /**
+             * The z index of the geoheatmap series.
+             *
+             * @type      {number}
+             * @since     next
+             * @product   highmaps
+             * @default   2
+             * @apioption plotOptions.geoheatmap.zIndex
+             */
+            zIndex: 2
+
+            /**
+             * The column size - how many longitude units each column in the
+             * geoheatmap should span.
+             *
+             * @sample maps/demo/geoheatmap/
+             *         GeoHeatmap chart
+             *
+             * @type      {number}
+             * @default   1
+             * @since     next
+             * @product   highcharts highmaps
+             * @apioption plotOptions.geoheatmap.colsize
+             */
+
+            /**
+             * The rowsize size - how many latitude units each row in the
+             * geoheatmap should span.
+             *
+             * @sample maps/demo/geoheatmap/
+             *         GeoHeatmap chart
+             *
+             * @type      {number}
+             * @default   1
+             * @since     next
+             * @product   highcharts highmaps
+             * @apioption plotOptions.geoheatmap.rowsize
+             */
+        } as GeoHeatmapSeriesOptions);
 
     /* *
      *
      *  Properties
      *
      * */
+
     public options: GeoHeatmapSeriesOptions = void 0 as any;
     public data: Array<GeoHeatmapPoint> = void 0 as any;
     public points: Array<GeoHeatmapPoint> = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
 
 }
 
@@ -123,14 +191,8 @@ export default GeoHeatmapSeries;
 
 /* *
  *
- *  API Declarations
- *
- * */
-
-/* *
- *
  *  API Options
  *
  * */
 
-''; // adds doclets above to transpiled file
+''; // adds doclets above to the transpiled file
