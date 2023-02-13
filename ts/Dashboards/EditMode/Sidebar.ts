@@ -636,6 +636,12 @@ class Sidebar {
 
         if (sidebar.activeTab) {
             sidebar.activeTab.isActive = false;
+
+            // remove previous options
+            if (sidebar.componentEditableOptions) {
+                sidebar.componentEditableOptions.destroy();
+            }
+
             sidebar.activeTab.element.classList.remove(
                 EditGlobals.classNames.editSidebarTabActive
             );
@@ -833,17 +839,10 @@ class Sidebar {
         const componentSettings = currentComponent &&
             currentComponent.editableOptions.getEditableOptions();
 
-        if (
-            sidebar.componentEditableOptions &&
-            cell.id === sidebar.componentEditableOptions.currentElementId
-        ) {
-            return;
-        }
-
         if (componentSettings) {
             const menuItems = {};
             const items: Array<string> = [];
-            const activeTab = sidebar.activeTab && sidebar.activeTab;
+            const activeTab = sidebar.activeTab;
             const activeTabContainer = activeTab && activeTab.content &&
                 activeTab && activeTab.content.container;
             let type;
