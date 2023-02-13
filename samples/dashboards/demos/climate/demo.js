@@ -144,7 +144,10 @@ async function setupDashboard() {
 
                             citiesMap.setData(await buildCitiesMap());
 
-                            updateKPI();
+                            // Update only if dragging the navigator
+                            if (e.trigger === 'navigator') {
+                                updateKPI(false);
+                            }
 
                             if (!cityGrid || !citySeries) {
                                 return; // not ready
@@ -248,7 +251,7 @@ async function setupDashboard() {
                             cityGrid.dataTable = store.table;
                             cityGrid.update(); // force redraw
 
-                            updateKPI();
+                            updateKPI(true);
                         }
                     },
                     marker: {
@@ -332,7 +335,9 @@ async function setupDashboard() {
                 chart: {
                     spacing: [40, 40, 40, 10],
                     styledMode: true,
-                    type: 'spline'
+                    type: 'spline',
+                    animation: false,
+                    animationLimit: 0
                 },
                 credits: {
                     enabled: false
@@ -412,9 +417,6 @@ async function setupDashboard() {
         }, {
             cell: 'kpi-data',
             type: 'KPI',
-            dimensions: {
-                height: 150
-            },
             title: cityScope,
             value: 10,
             valueFormatter: v => `${v.toFixed(0)}m`,
@@ -604,7 +606,7 @@ async function setupDashboard() {
                                     dataScope,
                                     cityScope
                                 );
-                                updateKPI();
+                                updateKPI(true);
                             }
                         }
                     }
@@ -908,6 +910,8 @@ function buildKPIChartOptions(dataScope) {
                 },
                 y: -34
             },
+            animation: false,
+            animationLimit: 0,
             enableMouseTracking: false,
             innerRadius: '90%',
             radius: '120%'
@@ -1042,7 +1046,7 @@ function tooltipFormatter(value, city) {
     return tooltip;
 }
 
-function updateKPI() {
+function updateKPI(animation) {
     const data = citiesData[cityScope];
     const table = data.store.table.modified;
 
@@ -1054,18 +1058,14 @@ function updateKPI() {
                 subtitle: 'Elevation'
             });
         } else {
-            kpi.update({
-                chartOptions: {
-                    series: [{
-                        data: [
-                            table.getCellAsNumber(
-                                key + (key[0] === 'T' ? temperatureScale : ''),
-                                table.getRowIndexBy('time', worldDate)
-                            ) || 0
-                        ]
-                    }]
-                }
-            });
+            kpi.chart.series[0].points[0].update(
+                table.getCellAsNumber(
+                    key + (key[0] === 'T' ? temperatureScale : ''),
+                    table.getRowIndexBy('time', worldDate)
+                ) || 0,
+                true,
+                animation
+            );
         }
     }
 }
@@ -1093,6 +1093,9 @@ function syncRefreshCharts(store, dataScope, cityScope) {
 
     // update chart
     citySeries.chart.update({
+        chart: {
+            animation: true
+        },
         title: {
             text: cityScope
         }
@@ -1132,5 +1135,14 @@ function syncRefreshCharts(store, dataScope, cityScope) {
 
     buildCitiesMap().then(data => {
         citiesMap.setData(data);
+    });
+
+    // Reset the animation.
+    setTimeout(() => {
+        citySeries.chart.update({
+            chart: {
+                animation: false
+            }
+        }, false);
     });
 }
