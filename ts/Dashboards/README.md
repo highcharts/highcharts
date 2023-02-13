@@ -82,7 +82,7 @@ You also need a placeholder for that dashboard. In this example we will use a di
 ```
 Than the dashboard can be created:
 ``` JS
-    const dashboard = new Dashboards.Dashboard('container', {
+    Dashboards.board('container', {
         gui: {
             layouts: [{
                 id: 'layout-1',
