@@ -21,13 +21,13 @@
  *
  * */
 
-import type DataEventEmitter from './DataEventEmitter';
-import type LineSeries from '../Series/Line/LineSeries';
-import type PointOptions from '../Core/Series/PointOptions';
-import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type DataEvent from '../../Data/DataEvent';
+import type LineSeries from '../../Series/Line/LineSeries';
+import type PointOptions from './PointOptions';
+import type SeriesOptions from './SeriesOptions';
 
-import DataTable from './DataTable.js';
-import U from '../Core/Utilities.js';
+import DataTable from '../../Data/DataTable.js';
+import U from '../Utilities.js';
 const {
     defined,
     uniqueKey
@@ -107,7 +107,7 @@ class DataSeriesConverter {
      * @return {Array<PointOptions>}
      * Returns an array of series points opitons.
      */
-    getSeriesData(seriesId: string): Array<PointOptions> {
+    public getSeriesData(seriesId: string): Array<PointOptions> {
         const converter = this,
             table = converter.table,
             seriesData = [];
@@ -157,7 +157,7 @@ class DataSeriesConverter {
      * @return {Array<SeriesOptions>}
      * Returns an array of series opitons.
      */
-    getAllSeriesData(): Array<SeriesOptions> {
+    public getAllSeriesData(): Array<SeriesOptions> {
         const converter = this,
             seriesOptions: Array<SeriesOptions> = [];
 
@@ -181,12 +181,12 @@ class DataSeriesConverter {
      * @param {Array<LineSeries>} allSeries
      * Array of series options to store in the converter.
      *
-     * @param {DataEventEmitter.EventDetail} eventDetail
+     * @param {DataEvent.Detail} eventDetail
      * Custom information for pending events.
      */
-    updateTable(
+    public updateTable(
         allSeries: Array<LineSeries>,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): void {
         const table = this.table;
 
@@ -302,12 +302,21 @@ class DataSeriesConverter {
         }
     }
 }
+
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
+
 namespace DataSeriesConverter {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface Options {
         seriesOptions?: Array<SeriesOptions>;
     }
@@ -317,10 +326,13 @@ namespace DataSeriesConverter {
         pointArrayMap: Array<string>;
         options: SeriesOptions;
     }
+
 }
+
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default DataSeriesConverter;

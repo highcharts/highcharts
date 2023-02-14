@@ -3,18 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 
-function sineData (_request, response, _next) {
-    const csv = [[ 'X', 'sin(n)', 'sin(-n)' ]];
-
-    for (let i = 0, iEnd = 10, x; i < iEnd; ++i) {
-        x = 3184606 + Math.random();
-        csv.push([x, Math.sin(x), Math.sin(-x)]);
-    }
-
-    response.end(csv.map(line => line.join(',')).join('\n'));
-}
-sineData.url = '/data/sine-data.csv';
-
 /**
  * Get browserstack credentials from the environment variables.
  * e.g for Mac/Linux run the below with correct credentials or
@@ -162,12 +150,13 @@ module.exports = function (config) {
     let options = {
         basePath: '../../', // Root relative to this file
         frameworks: ['qunit'],
-        middleware: ['data'],
         files: [].concat([
             // Set up
             'vendor/require.js',
             'test/test-controller.js',
             'test/test-utilities.js',
+            'test/json-sources.js',
+            'test/typescript-karma/karma-fetch.js',
             'test/typescript-karma/karma-setup.js',
             {
                 included: false,
@@ -181,7 +170,7 @@ module.exports = function (config) {
         ], tests),
 
         reporters: ['progress'],
-        port: 9876,  // karma web server port
+        port: 9876, // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
         browsers: browsers,
@@ -189,23 +178,7 @@ module.exports = function (config) {
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity,
         reportSlowerThan: 3000,
-        plugins: [
-            'karma-*',
-            {
-                'middleware:data': [
-                    'factory',
-                    function (config) {
-                        return function (request, response, next) {
-                            if (request.url === sineData.url) {
-                                sineData(request, response, next);
-                            } else {
-                                next();
-                            }
-                        }
-                    }
-                ]
-            }
-        ],
+        plugins: [ 'karma-*' ],
 
         formatError: function (s) {
             let ret = s;

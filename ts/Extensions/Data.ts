@@ -18,7 +18,7 @@
  *
  * */
 
-import type DataConverter from '../Data/DataConverter';
+import type DataConverter from '../Data/Converters/DataConverter';
 import type JSON from '../Core/JSON';
 import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
