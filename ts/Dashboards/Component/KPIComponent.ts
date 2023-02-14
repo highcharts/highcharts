@@ -119,10 +119,10 @@ class KPIComponent extends Component {
         this.valueWrap = createElement('div', {
             className: `${Component.defaultOptions.className}-kpi-value-wrap`
         });
-        this.value = createElement('div', {
+        this.value = createElement('span', {
             className: `${Component.defaultOptions.className}-kpi-value`
         });
-        this.subtitle = createElement('div', {
+        this.subtitle = createElement('span', {
             className: this.getSubtitleClassName()
         });
         this.chartContainer = createElement('figure', {
