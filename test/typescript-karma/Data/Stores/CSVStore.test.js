@@ -1,6 +1,5 @@
-import CSVStore from '/base/js/Data/Stores/CSVStore.js'
-import { registerStoreEvents, testExportedDataTable } from './utils.js'
-import DataTable from '/base/js/Data/DataTable.js';
+import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
+import { registerStoreEvents, testExportedDataTable } from './utils.js';
 
 const { test, only } = QUnit;
 
@@ -71,7 +70,7 @@ test('CSVStore from string, with decimalpoint option', function(assert){
     assert.strictEqual(
         typeof store.table.getCell('Value', 2),
         'number',
-        'The parser should be able to guess this decimalpoint'
+        'The converter should be able to guess this decimalpoint'
     )
 
     store = new CSVStore(undefined,
@@ -112,9 +111,7 @@ test('CSV with ""s', (assert) => {
 "s",5
 12,"5"
 `
-    const datastore = new CSVStore(undefined, {
-        csv
-    });
+    const datastore = new CSVStore(undefined, { csv });
 
     datastore.load();
 
@@ -129,7 +126,7 @@ test('CSV with ""s', (assert) => {
     })
 
     assert.strictEqual(
-        datastore.save().split('\n')[1].split(',')[0],
+        datastore.converter.export(datastore).split('\n')[1].split(',')[0],
         '\"12\"',
         'The first value (12) should be quoted when exported to csv, if dataType is set to string'
     )
@@ -149,7 +146,6 @@ test('CSVStore from URL', function (assert) {
         csvURL: '/data/sine-data.csv',
         enablePolling: true
     });
-
 
     registerStoreEvents(datastore, registeredEvents, assert)
 
@@ -184,8 +180,8 @@ test('CSVStore from URL', function (assert) {
         pollNumber++;
 
         // Stop polling
-        if (pollNumber > 1) {
-            datastore.options.enablePolling = false;
+        if (pollNumber > 2) {
+            datastore.stopPolling();
         }
 
         function getExpectedEvents(){
@@ -202,8 +198,7 @@ test('CSVStore from URL', function (assert) {
         assert.deepEqual(registeredEvents, getExpectedEvents(), 'Events are fired in correct order');
         assert.ok(e.csv, 'AfterLoad event has CSV attached')
 
-        doneLoading()
-        ;
+        doneLoading();
     });
 
     datastore.on('load', (e) => {
@@ -223,9 +218,6 @@ test('CSVStore from URL', function (assert) {
 
 // TODO: test amount of retries, event orders
 test('CSVStore error', function(assert){
-
-    const registeredEvents = [];
-
     const datastore = new CSVStore(undefined, {
         csvURL: ''
     });

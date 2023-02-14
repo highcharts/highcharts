@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2022 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -32,7 +32,7 @@ export interface StoreTypeRegistry {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
