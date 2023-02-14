@@ -306,10 +306,6 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
     cursor: default;
 }
 
-/* .hd-cell > .hd-component.hd-component-kpi > .hd-component.hd-component-kpi-content {
-    display: block;
-} */
-
 #kpi-data .hd-component-kpi,
 #kpi-data .hd-component-kpi-value-wrap {
     display: flex;
