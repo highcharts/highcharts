@@ -2145,7 +2145,7 @@ Chart.prototype.setGuideBoxState = function (
 
     return (guideBox as any)
         .attr({
-            className: stateOptions.className,
+            'class': stateOptions.className,
             stroke: stateOptions.lineColor,
             strokeWidth: stateOptions.lineWidth,
             fill: stateOptions.color,
