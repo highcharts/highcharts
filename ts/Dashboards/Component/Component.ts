@@ -495,14 +495,21 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-    * Handles updating via options
-    * @param {Partial<Component.ComponentOptions>} newOptions
-    * The options to apply
-    *
-    * @return {this}
-    * The component for chaining
-    */
-    public update(newOptions: Partial<Component.ComponentOptions>, redraw = false): this {
+     * Handles updating via options
+     * @param {Partial<Component.ComponentOptions>} newOptions
+     * The options to apply
+     *
+     * @param {boolean} redraw
+     * Set to true if the update should redraw the component.
+     * If `false` the component will be redrawn only if options are changed.
+     *
+     * @return {this}
+     * The component for chaining
+     */
+    public update(
+        newOptions: Partial<Component.ComponentOptions>,
+        redraw: boolean = false
+    ): this {
         // Update options
         let shouldForceRedraw = false;
 

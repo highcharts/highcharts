@@ -220,18 +220,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         Component.addInstance(this);
     }
 
-    public setOptions(): void {
-        if (this.options.chartClassName) {
-            this.chartContainer.classList.add(this.options.chartClassName);
-        }
-
-        if (this.options.chartID) {
-            this.chartContainer.id = this.options.chartID;
-        }
-
-        this.syncHandlers = this.handleSyncOptions(HighchartsSyncHandlers);
-    }
-
     /* *
      *
      *  Class methods
@@ -300,6 +288,21 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 });
             });
         }
+    }
+
+    /**
+     * Internal method for handling option updates
+     */
+    private setOptions(): void {
+        if (this.options.chartClassName) {
+            this.chartContainer.classList.add(this.options.chartClassName);
+        }
+
+        if (this.options.chartID) {
+            this.chartContainer.id = this.options.chartID;
+        }
+
+        this.syncHandlers = this.handleSyncOptions(HighchartsSyncHandlers);
     }
 
     /**
