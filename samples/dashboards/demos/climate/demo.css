@@ -266,6 +266,10 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
     font-size: 32px;
 }
 
+.hd-component-kpi-chart-container {
+    max-width: 100%;
+}
+
 #kpi-layout .hd-component-kpi-chart-container .highcharts-pane {
     fill: var(--color-pane);
     fill-opacity: 1;
@@ -301,6 +305,10 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
 #kpi-data .hd-component {
     cursor: default;
 }
+
+/* .hd-cell > .hd-component.hd-component-kpi > .hd-component.hd-component-kpi-content {
+    display: block;
+} */
 
 #kpi-data .hd-component-kpi,
 #kpi-data .hd-component-kpi-value-wrap {

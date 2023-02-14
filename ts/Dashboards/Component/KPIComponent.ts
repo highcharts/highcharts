@@ -57,8 +57,7 @@ class KPIComponent extends Component {
     public static defaultChartOptions: DeepPartial<Options> = {
         chart: {
             type: 'spline',
-            backgroundColor: 'transparent',
-            height: 200
+            backgroundColor: 'transparent'
         },
         title: {
             text: void 0
@@ -134,6 +133,8 @@ class KPIComponent extends Component {
     public load(): this {
         super.load();
 
+        this.contentElement.style.display = 'flex';
+        this.contentElement.style.flexDirection = 'column';
         this.contentElement.appendChild(this.valueWrap);
         this.valueWrap.appendChild(this.value);
         this.valueWrap.appendChild(this.subtitle);
@@ -260,9 +261,6 @@ class KPIComponent extends Component {
             AST.setElementHTML(this.subtitle, this.getSubtitle());
 
             this.prevValue = prevValue;
-            this.valueWrap.style.flex = '1';
-        } else {
-            this.valueWrap.style.flex = '0';
         }
 
         if (style) {
