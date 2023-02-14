@@ -1,7 +1,5 @@
 import Dashboard from  '../../../../code/es-modules/Dashboards/Dashboard.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
-
-// Bring in other forms of Highcharts
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
@@ -116,7 +114,6 @@ let dashboard = new Dashboard('container-nested-layout', {
         chartOptions: {
             chart: {
                 animation: false
-                // type: 'line'
             },
             series: [{
                 name: 'Series from options',
