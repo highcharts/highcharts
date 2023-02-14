@@ -143,6 +143,7 @@ function arrowHalf(
  */
 function compose(SVGRendererClass: typeof SVGRenderer): void {
     if (composedMembers.indexOf(SVGRendererClass) === -1) {
+        composedMembers.push(SVGRendererClass);
         const symbols = SVGRendererClass.prototype.symbols;
         symbols.arrow = arrow;
         symbols['arrow-filled'] = triangleLeft;
