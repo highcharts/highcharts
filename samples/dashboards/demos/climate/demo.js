@@ -42,7 +42,7 @@ async function setupDashboard() {
     ).then(response => response.json());
     const mapPoints = await buildCitiesMap();
 
-    return new Promise(resolve => new Dashboards.Board('container', {
+    return new Promise(resolve => Dashboards.board('container', {
         components: [{
             cell: 'time-range-selector',
             type: 'Highcharts',
