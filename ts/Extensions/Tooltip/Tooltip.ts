@@ -61,6 +61,12 @@ const {
  *
  * */
 
+declare module '../../Core/Chart/ChartLike' {
+    interface ChartLike {
+        tooltip?: Tooltip;
+    }
+}
+
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
         isHeader?: boolean;

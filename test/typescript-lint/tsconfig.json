@@ -213,6 +213,9 @@
         "../../code/modules/timeline.d.ts",
         "../../code/modules/timeline.src.d.ts",
 
+        "../../code/modules/tooltip.d.ts",
+        "../../code/modules/tooltip.src.d.ts",
+
         "../../code/modules/treegraph.d.ts",
         "../../code/modules/treegraph.src.d.ts",
 

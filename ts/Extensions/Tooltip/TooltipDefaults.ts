@@ -38,6 +38,9 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * series or point.
  *
  * @declare Highcharts.TooltipOptions
+ * @optionparent tooltip
+ *
+ * @private
  */
 const TooltipDefaults: TooltipOptions = {
 

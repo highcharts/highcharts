@@ -37,7 +37,6 @@ const {
     noop
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
-import Tooltip from '../Extensions/Tooltip/Tooltip.js';
 import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
 import BBoxObject from './Renderer/BBoxObject';
@@ -72,7 +71,6 @@ declare module './Chart/ChartLike'{
         mouseDownX?: number;
         mouseDownY?: number;
         mouseIsDown?: (boolean|string);
-        tooltip?: Tooltip;
     }
 }
 
