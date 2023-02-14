@@ -1015,17 +1015,9 @@ class Pointer {
         this.pinchDown = [];
         this.lastValidTouch = {};
 
-        if (Tooltip) {
-            /**
-             * Tooltip object for points of series.
-             *
-             * @name Highcharts.Chart#tooltip
-             * @type {Highcharts.Tooltip}
-             */
-            chart.tooltip = new Tooltip(chart, options.tooltip as any);
-        }
-
         this.setDOMEvents();
+
+        fireEvent(this, 'afterInit');
     }
 
     /**

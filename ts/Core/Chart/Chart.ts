@@ -446,14 +446,6 @@ class Chart {
                 }
             });
 
-            // User options have higher priority than default options
-            // (#6218). In case of exporting: path is changed
-            (options.tooltip as any).userOptions = (
-                userOptions.chart &&
-                userOptions.chart.forExport &&
-                (userOptions.tooltip as any).userOptions
-            ) || userOptions.tooltip;
-
             /**
              * The original options given to the constructor or a chart factory
              * like {@link Highcharts.chart} and {@link Highcharts.stockChart}.

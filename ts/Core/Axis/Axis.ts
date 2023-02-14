@@ -514,7 +514,10 @@ class Axis {
          */
         const crosshair = pick(
             options.crosshair,
-            splat((chart.options.tooltip as any).crosshairs)[isXAxis ? 0 : 1]
+            splat(
+                chart.options.tooltip &&
+                chart.options.tooltip.crosshairs
+            )[isXAxis ? 0 : 1]
         );
         axis.crosshair = crosshair === true ? {} : crosshair;
 

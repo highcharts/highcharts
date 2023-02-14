@@ -75,6 +75,8 @@ export interface TooltipOptions {
     stickOnContact: boolean;
     style: CSSObject;
     useHTML: boolean;
+    /** @deprecated */
+    userOptions?: TooltipOptions;
     valueDecimals?: number;
     valuePrefix?: string;
     valueSuffix?: string;

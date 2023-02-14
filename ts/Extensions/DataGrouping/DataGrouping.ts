@@ -53,12 +53,15 @@ const composedMembers: Array<Function> = [];
 function compose(
     AxisClass: typeof Axis,
     SeriesClass: typeof Series,
-    TooltipClass: typeof Tooltip
+    TooltipClass?: typeof Tooltip
 ): void {
     DataGroupingAxisComposition.compose(AxisClass);
     DataGroupingSeriesComposition.compose(SeriesClass);
 
-    if (composedMembers.indexOf(TooltipClass) === -1) {
+    if (
+        TooltipClass &&
+        composedMembers.indexOf(TooltipClass) === -1
+    ) {
         composedMembers.push(TooltipClass);
 
         addEvent(TooltipClass, 'headerFormatter', onTooltipHeaderFormatter);

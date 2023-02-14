@@ -17,7 +17,9 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
+import type Defaults from '../../Core/Defaults';
 import type Point from '../../Core/Series/Point';
+import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type RectangleObject from '../../Core/Renderer/RectangleObject';
@@ -34,6 +36,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import TooltipDefaults from './TooltipDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -106,7 +109,7 @@ interface BoxObject extends R.BoxObject {
  * @param {Highcharts.Chart} chart
  * The chart instance.
  *
- * @param {Highcharts.TooltipOptions} options
+ * @param {Partial<Highcharts.TooltipOptions>} [options]
  * Tooltip options.
  */
 class Tooltip {
@@ -119,7 +122,7 @@ class Tooltip {
 
     public constructor(
         chart: Chart,
-        options: TooltipOptions
+        options?: Partial<TooltipOptions>
     ) {
         this.chart = chart;
         this.init(chart, options);
@@ -833,16 +836,21 @@ class Tooltip {
     }
 
     /**
+     * Initialize tooltip.
+     *
      * @private
      * @function Highcharts.Tooltip#init
      *
      * @param {Highcharts.Chart} chart
      *        The chart instance.
      *
-     * @param {Highcharts.TooltipOptions} options
+     * @param {Partial<Highcharts.TooltipOptions>} [options]
      *        Tooltip options.
      */
-    public init(chart: Chart, options: TooltipOptions): void {
+    public init(
+        chart: Chart,
+        options: Partial<TooltipOptions> = TooltipDefaults
+    ): void {
 
         /**
          * Chart of the tooltip.
@@ -860,7 +868,7 @@ class Tooltip {
          * @name Highcharts.Tooltip#options
          * @type {Highcharts.TooltipOptions}
          */
-        this.options = options;
+        this.options = merge(TooltipDefaults, options);
 
         /**
          * List of crosshairs.
@@ -1843,16 +1851,25 @@ class Tooltip {
  * */
 
 namespace Tooltip {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface FormatterCallbackFunction {
         (
             this: FormatterContextObject,
             tooltip: Tooltip
         ): (false|string|Array<string>);
     }
+
     export interface FormatterContextObject extends Point.PointLabelObject {
         points?: Array<FormatterContextObject>;
 
     }
+
     export interface PositionerCallbackFunction {
         (
             this: Tooltip,
@@ -1861,12 +1878,96 @@ namespace Tooltip {
             point: (Point|PositionerPointObject)
         ): PositionObject;
     }
+
     export interface PositionerPointObject {
         isHeader: true;
         plotX: number;
         plotY: number;
     }
+
     export type ShapeValue = ('callout'|'circle'|'square'|'rect');
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(
+        setOptions: typeof Defaults.setOptions,
+        ChartClass: typeof Chart,
+        PointerClass: typeof Pointer
+    ): void {
+
+        if (composedMembers.indexOf(setOptions) === -1) {
+            composedMembers.indexOf(setOptions);
+
+            setOptions({ tooltip: TooltipDefaults });
+        }
+
+        if (composedMembers.indexOf(ChartClass) === -1) {
+            composedMembers.push(ChartClass);
+
+            addEvent(ChartClass, 'afterInit', onChartAfterInit);
+        }
+
+        if (composedMembers.indexOf(PointerClass) === -1) {
+            composedMembers.push(PointerClass);
+
+            addEvent(PointerClass, 'afterInit', onPointerAfterInit);
+        }
+
+    }
+
+    /**
+     * @private
+     */
+    function onChartAfterInit(
+        this: Chart
+    ): void {
+        const options = this.options,
+            userOptions = this.userOptions;
+
+        // User options have higher priority than default options
+        // (#6218). In case of exporting: path is changed
+        if (options.tooltip) {
+            options.tooltip.userOptions = (
+                userOptions.chart &&
+                userOptions.chart.forExport &&
+                userOptions.tooltip &&
+                userOptions.tooltip.userOptions
+            ) || userOptions.tooltip;
+        }
+    }
+
+    /**
+     * @private
+     */
+    function onPointerAfterInit(
+        this: Pointer
+    ): void {
+        const chart = this.chart;
+
+        /**
+         * Tooltip object for points of series.
+         *
+         * @name Highcharts.Chart#tooltip
+         * @type {Highcharts.Tooltip}
+         */
+        chart.tooltip = new Tooltip(chart, chart.options.tooltip);
+    }
+
 }
 
 /* *

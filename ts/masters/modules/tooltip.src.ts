@@ -34,3 +34,5 @@ const G: AnyRecord = Highcharts;
  * */
 
 G.Tooltip = Tooltip;
+
+Tooltip.compose(G.setOptions, G.Chart, G.Pointer);
