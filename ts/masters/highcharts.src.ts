@@ -24,7 +24,6 @@ import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import LogarithmicAxis from '../Core/Axis/LogarithmicAxis.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import Tick from '../Core/Axis/Tick.js';
-import Tooltip from '../Core/Tooltip.js';
 import Point from '../Core/Series/Point.js';
 import Pointer from '../Core/Pointer.js';
 import MSPointer from '../Core/MSPointer.js';
@@ -74,7 +73,6 @@ G.SVGElement = SVGElement;
 G.SVGRenderer = SVGRenderer;
 G.Tick = Tick;
 G.Time = Time;
-G.Tooltip = Tooltip;
 // Color
 G.Color = Color;
 G.color = Color.parse;

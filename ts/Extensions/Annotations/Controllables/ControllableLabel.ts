@@ -30,7 +30,7 @@ import Controllable from './Controllable.js';
 import F from '../../../Core/FormatUtilities.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
-import Tooltip from '../../../Core/Tooltip.js';
+import Tooltip from '../../Tooltip/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,

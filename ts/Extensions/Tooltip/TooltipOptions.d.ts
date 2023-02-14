@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2023 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,12 +14,12 @@
  *
  * */
 
-import type ColorType from './Color/ColorType';
-import type CSSObject from './Renderer/CSSObject';
-import type F from './FormatUtilities';
-import type Point from '../Core/Series/Point';
-import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
-import type Time from './Time';
+import type ColorType from '../../Core/Color/ColorType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type F from '../../Core/FormatUtilities';
+import type Point from '../../Core/Series/Point';
+import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
+import type Time from '../../Core/Time';
 import type Tooltip from './Tooltip';
 
 /* *
@@ -28,9 +28,15 @@ import type Tooltip from './Tooltip';
  *
  * */
 
-declare module './Options' {
+declare module '../../Core/Options' {
     interface Options {
         tooltip?: TooltipOptions;
+    }
+}
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        tooltip?: DeepPartial<TooltipOptions>;
     }
 }
 
@@ -45,6 +51,7 @@ export interface TooltipOptions {
     /** @deprecated */
     crosshairs?: any;
     dateTimeLabelFormats: Time.DateTimeLabelFormatsOption;
+    distance?: number;
     enabled: boolean;
     followPointer?: boolean;
     followTouchMove?: boolean;

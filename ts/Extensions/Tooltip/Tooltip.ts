@@ -16,26 +16,25 @@
  *
  * */
 
-import type Axis from './Axis/Axis';
-import type Chart from './Chart/Chart';
-import type Point from './Series/Point';
-import type PointerEvent from './PointerEvent';
-import type PositionObject from './Renderer/PositionObject';
-import type RectangleObject from './Renderer/RectangleObject';
-import type SVGAttributes from './Renderer/SVG/SVGAttributes';
-import type SVGElement from './Renderer/SVG/SVGElement';
-import type SVGRenderer from './Renderer/SVG/SVGRenderer';
+import type Chart from '../../Core/Chart/Chart';
+import type Point from '../../Core/Series/Point';
+import type PointerEvent from '../../Core/PointerEvent';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type RectangleObject from '../../Core/Renderer/RectangleObject';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type TooltipOptions from './TooltipOptions';
 
-import F from './FormatUtilities.js';
+import F from '../../Core/FormatUtilities.js';
 const { format } = F;
-import H from './Globals.js';
+import H from '../../Core/Globals.js';
 const { doc } = H;
-import { Palette } from './Color/Palettes.js';
-import R from './Renderer/RendererUtilities.js';
+import { Palette } from '../../Core/Color/Palettes.js';
+import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
-import RendererRegistry from './Renderer/RendererRegistry.js';
-import U from './Utilities.js';
+import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     clamp,
@@ -59,29 +58,23 @@ const {
  *
  * */
 
-declare module './Series/PointLike' {
+declare module '../../Core/Series/PointLike' {
     interface PointLike {
         isHeader?: boolean;
         tooltipPos?: Array<number>;
     }
 }
 
-declare module './Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         noSharedTooltip?: boolean;
         tt?: SVGElement;
     }
 }
 
-declare module './Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         tooltip?: DeepPartial<TooltipOptions>;
-    }
-}
-
-declare module '../Core/TooltipOptions'{
-    interface TooltipOptions {
-        distance?: number;
     }
 }
 

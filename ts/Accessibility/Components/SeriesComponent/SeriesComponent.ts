@@ -33,7 +33,7 @@ import Series from '../../../Core/Series/Series.js';
 import SeriesDescriber from './SeriesDescriber.js';
 const { describeSeries } = SeriesDescriber;
 import SeriesKeyboardNavigation from './SeriesKeyboardNavigation.js';
-import Tooltip from '../../../Core/Tooltip.js';
+import Tooltip from '../../../Extensions/Tooltip/Tooltip.js';
 
 
 /* *
