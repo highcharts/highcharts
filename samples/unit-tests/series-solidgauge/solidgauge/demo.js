@@ -225,7 +225,10 @@ QUnit.test('Solid gauge updates', function (assert) {
                 type: 'solidgauge'
             },
 
-            yAxis: [{}],
+            yAxis: [{
+                min: 0,
+                max: 20
+            }],
 
             series: [
                 {
@@ -234,10 +237,11 @@ QUnit.test('Solid gauge updates', function (assert) {
                 }
             ]
         }),
-        point = chart.series[0].points[0];
+        point = chart.series[0].points[0],
+        yAxis = chart.yAxis[0];
 
     assert.strictEqual(
-        chart.yAxis[0].options.labels.style.color,
+        yAxis.options.labels.style.color,
         'red',
         '#16112: Axis options set by setOptions should be picked up'
     );
@@ -262,5 +266,11 @@ QUnit.test('Solid gauge updates', function (assert) {
         point.graphic.element.getAttribute('stroke-linecap'),
         'round',
         'linecap should be updated (#12445)'
+    );
+
+    assert.strictEqual(
+        point.percentage,
+        (point.y - yAxis.min) / (yAxis.max - yAxis.min) * 100,
+        'percentage should be correctly calculated (#18448)'
     );
 });

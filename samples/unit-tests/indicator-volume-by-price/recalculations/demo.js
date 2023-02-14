@@ -272,3 +272,76 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Indicator is removed after series remove.'
     );
 });
+
+QUnit.test('VBP series errors.', function (assert) {
+    function createChart(volumeSeries, vbpSeries) {
+        const chart = Highcharts.chart('container', {
+            series: [{
+                id: 'quotes',
+                type: 'candlestick',
+                data: [{
+                    x: 1515042000000,
+                    y: 99.6,
+                    high: 100,
+                    low: 99,
+                    open: 99.5,
+                    close: 99.6
+                }, {
+                    x: 1515042000001,
+                    y: 99.6,
+                    high: 100,
+                    low: 99,
+                    open: 99.5,
+                    close: 99.6
+                }]
+            },
+            volumeSeries,
+            vbpSeries
+            ]
+        });
+        chart.destroy();
+    }
+
+    assert.throws(
+        () => createChart({
+            id: 'volumes',
+            type: 'column',
+            data: [{
+                x: 1515042000000,
+                y: 1000
+            }, {
+                x: 1515042000001,
+                y: 1001
+            }]
+        }, {
+            linkedTo: 'quotes',
+            type: 'vbp',
+            params: {
+                ranges: 1,
+                volumeSeriesID: 'wrongID'
+            }
+        }),
+        new Error('Series wrongID not found! Check `volumeSeriesID`.'),
+        `VBP indicator should throw a correct error, when VBP indicator has
+        wrong ID set.`
+    );
+
+    assert.throws(
+        () => createChart({
+            id: 'volumes',
+            type: 'column',
+            data: []
+        }, {
+            linkedTo: 'quotes',
+            type: 'vbp',
+            params: {
+                ranges: 1,
+                volumeSeriesID: 'volumes'
+            }
+        }),
+        new Error('Series volumes does not contain any data.'),
+        `VBP indicator should throw a correct error, when volume series linked
+        to the indicator does not contain any data.`
+    );
+
+});
