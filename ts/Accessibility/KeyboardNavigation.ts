@@ -299,7 +299,10 @@ class KeyboardNavigation {
         ) {
             const chart = this.chart;
 
-            if (!(e.target && chart.container.contains(e.target as any))) {
+            if (
+                !e.target ||
+                !chart.container.contains(e.target as HTMLElement)
+            ) {
                 const curMod = this.modules &&
                         this.modules[this.currentModuleIx || 0];
                 if (curMod && curMod.terminate) {
