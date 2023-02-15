@@ -266,6 +266,10 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
     font-size: 32px;
 }
 
+.hd-component-kpi-chart-container {
+    max-width: 100%;
+}
+
 #kpi-layout .hd-component-kpi-chart-container .highcharts-pane {
     fill: var(--color-pane);
     fill-opacity: 1;
