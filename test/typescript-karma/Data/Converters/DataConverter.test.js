@@ -1,4 +1,4 @@
-import DataConverter from '/base/js/Data/DataConverter.js';
+import DataConverter from '/base/js/Data/Converters/DataConverter.js';
 import DataTable from '/base/js/Data/DataTable.js';
 
 const {test, only} = QUnit;

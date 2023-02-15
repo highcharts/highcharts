@@ -19,8 +19,9 @@
         "rootDir": ".",
         "target": "es5",
         "lib": [
-            "dom",
-            "es5"
+            "DOM",
+            "ES5",
+            "ES2015.Promise"
         ],
         "types": [
             "jquery",

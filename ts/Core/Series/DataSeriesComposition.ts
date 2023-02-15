@@ -1,18 +1,33 @@
 /* *
  *
+ *  (c) 2020-2022 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sophie Bremer
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
  *  Imports
  *
  * */
 
-import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type {
     PointOptions,
     PointShortOptions
-} from '../Core/Series/PointOptions';
-import type Series from '../Core/Series/Series';
+} from './PointOptions';
+import type Series from './Series';
 
-import DataTable from './DataTable.js';
-import U from '../Core/Utilities.js';
+import DataTable from '../../Data/DataTable.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     fireEvent,
@@ -27,13 +42,13 @@ const {
  *
  * */
 
-declare module '../Core/Series/SeriesLike' {
+declare module './SeriesLike' {
     interface SeriesLike {
         datas?: DataSeriesAdditions;
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module './SeriesOptions' {
     interface SeriesOptions {
         dataAsColumns?: boolean;
     }
