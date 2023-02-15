@@ -297,7 +297,6 @@ namespace DataStates {
         column?: string;
         row?: number;
         state: State;
-        tableScope: TableScope;
     }
 
     export interface CursorRange {
@@ -306,7 +305,6 @@ namespace DataStates {
         firstRow: number;
         lastRow: number;
         state: State;
-        tableScope: TableScope;
     }
 
     export interface Event {
@@ -327,11 +325,6 @@ namespace DataStates {
     export type TableId = string;
 
     export type TableMap = Record<TableId, DataTable>;
-
-    export type TableScope = (
-        | 'original'
-        | 'modified'
-    );
 
     /* *
      *
@@ -380,6 +373,101 @@ namespace DataStates {
         }
 
         return -1;
+    }
+
+    /**
+     * Checks whether two cursor share the same properties.
+     * @private
+     */
+    export function isEqual(
+        cursorA: Cursor,
+        cursorB: Cursor
+    ): boolean {
+        if (cursorA.type === 'position' && cursorB.type === 'position') {
+            return (
+                cursorA.column === cursorB.column &&
+                cursorA.row === cursorB.row &&
+                cursorA.state === cursorB.state
+            );
+        }
+        if (cursorA.type === 'range' && cursorB.type === 'range') {
+            return (
+                (
+                    JSON.stringify(cursorA.columns) ===
+                    JSON.stringify(cursorB.columns)
+                ) &&
+                cursorA.firstRow === cursorB.firstRow &&
+                cursorA.lastRow === cursorB.lastRow
+            );
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether a cursor is in a range.
+     * @private
+     */
+    export function isInRange(
+        needle: Cursor,
+        range: Cursor
+    ): boolean {
+
+        if (range.type === 'position') {
+            range = toRange(range);
+        }
+
+        if (needle.type === 'position') {
+            needle = toRange(needle, range);
+        }
+
+        const needleColumns = needle.columns;
+        const rangeColumns = range.columns;
+
+        return (
+            needle.firstRow >= range.firstRow &&
+            needle.lastRow <= range.lastRow &&
+            (
+                !needleColumns ||
+                !rangeColumns ||
+                needleColumns.every(
+                    (column): boolean => rangeColumns.indexOf(column) >= 0
+                )
+            )
+        );
+    }
+
+    /**
+     * @private
+     */
+    export function toRange(
+        cursor: Cursor,
+        defaultRange?: CursorRange
+    ): CursorRange {
+
+        if (cursor.type === 'range') {
+            return cursor;
+        }
+
+        const range: CursorRange = {
+            type: 'range',
+            firstRow: (
+                cursor.row ??
+                (defaultRange && defaultRange.firstRow) ??
+                0
+            ),
+            lastRow: (
+                cursor.row ??
+                (defaultRange && defaultRange.lastRow) ??
+                Number.MAX_VALUE
+            ),
+            state: cursor.state
+        };
+
+        if (typeof cursor.column !== 'undefined') {
+            range.columns = [cursor.column];
+        }
+
+        return range;
     }
 
 }
