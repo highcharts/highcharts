@@ -150,7 +150,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     public chartContainer: HTMLElement;
     public options: HighchartsComponent.ComponentOptions;
     public chartConstructor: HighchartsComponent.ConstructorType;
-
     public sync: Component['sync'];
     /* *
      *
@@ -207,11 +206,11 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             });
         }
 
-
         this.innerResizeTimeouts = [];
 
         // Add the component instance to the registry
         Component.addInstance(this);
+
     }
 
     /* *
@@ -233,14 +232,23 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     }
 
     public render(): this {
-        this.emit({ type: 'beforeRender' });
-        super.render();
-        this.chart = this.initChart();
-        this.updateSeries();
-        this.sync.start();
-        this.emit({ type: 'afterRender' });
-        this.setupStoreUpdate();
+        const hcComponent = this;
 
+        hcComponent.emit({ type: 'beforeRender' });
+        super.render();
+        hcComponent.chart = hcComponent.initChart();
+        hcComponent.updateSeries();
+        hcComponent.sync.start();
+        hcComponent.emit({ type: 'afterRender' });
+        hcComponent.setupStoreUpdate();
+
+        addEvent(hcComponent.chart, 'update', function (e):void {
+            hcComponent.updateComponentOptions({
+                chartOptions: {
+                    ...(e as any).options
+                }
+            }, false);
+        });
         return this;
     }
 
@@ -301,9 +309,21 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
         table.setCell(columnName, rowNumber, valueToSet);
     }
+    /**
+     * Handles updating via options
+     * @param {Partial<Component.ComponentOptions>} options
+     * The options to apply
+     *
+     * @param {boolean} redraw
+     * The flag triggers the main redraw operation
+     */
+    private updateComponentOptions(options: Partial<HighchartsComponent.ComponentOptions>, redraw = true): void {
+        super.update(options, redraw);
+    }
 
     public update(options: Partial<HighchartsComponent.ComponentOptions>): this {
-        super.update(options);
+        this.updateComponentOptions(options);
+
         if (this.chart) {
             this.chart.update(this.options.chartOptions || {});
         }

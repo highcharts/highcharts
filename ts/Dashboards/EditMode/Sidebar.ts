@@ -862,7 +862,7 @@ class Sidebar {
                         ];
 
                         // eslint-disable-next-line
-                        const chartOpts = (currentComponent as HighchartsComponent).chartOptions;
+                        const chartOpts = (currentComponent as HighchartsComponent).options.chartOptions;
 
                         const chartType = chartOpts &&
                             (
