@@ -21,10 +21,10 @@ import type ControllableOptions from './ControllableOptions';
 import type MockPointOptions from '../MockPointOptions';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type Tooltip from '../../Tooltip/Tooltip';
 
 import ControlPoint from '../ControlPoint.js';
 import MockPoint from '../MockPoint.js';
-import Tooltip from '../../Tooltip/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
     isObject,
@@ -148,9 +148,11 @@ abstract class Controllable {
             chart = point.series.chart,
             box = point.mock ?
                 point.toAnchor() :
-                Tooltip.prototype.getAnchor.call({
+                chart.tooltip &&
+                chart.tooltip.getAnchor.call({
                     chart: point.series.chart
-                }, point),
+                }, point) ||
+                [0, 0, 0, 0],
 
             anchor = {
                 x: box[0] + (this.options.x || 0),
@@ -356,18 +358,6 @@ abstract class Controllable {
     }
 
     /**
-     * Render a controllable.
-     * @private
-     */
-    public render(
-        _parentGroup?: SVGElement
-    ): void {
-        this.controlPoints.forEach(
-            (controlPoint): void => controlPoint.render()
-        );
-    }
-
-    /**
      * Redraw a controllable.
      * @private
      */
@@ -376,6 +366,18 @@ abstract class Controllable {
     ): void {
         this.controlPoints.forEach(
             (controlPoint): void => controlPoint.redraw(animation)
+        );
+    }
+
+    /**
+     * Render a controllable.
+     * @private
+     */
+    public render(
+        _parentGroup?: SVGElement
+    ): void {
+        this.controlPoints.forEach(
+            (controlPoint): void => controlPoint.render()
         );
     }
 
