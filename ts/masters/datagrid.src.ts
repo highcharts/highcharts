@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v@product.version@ (@product.date@)
+ * @license Highcharts Dashboards v0.0.2 (@product.date@)
  * @module highcharts/datagrid
  * @requires window
  *
