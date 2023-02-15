@@ -13,12 +13,16 @@
     --highcharts-dashboard-neutral-color-50: #808080;
     --highcharts-dashboard-neutral-color-20: #cccccc;
     --highcharts-dashboard-neutral-color-0: #ffffff;
+    --highcharts-dashboard-red-color: #e01d5a;
+    --highcharts-dashboard-blue-border-color: rgba(26, 54, 126, 0.125);
+
     --highcharts-dashboards-transparent: transparent;
 
     //General
     --highcharts-dashboards-main-background-color: #fff;
     --highcharts-dashboard-wrapper-background-color: #F3F3F3;
     --highcharts-dashboards-main-font-color: #000;
+    --highcharts-dashboard-shadow-color: rgba(4, 9, 20, 0.03);
 
     // Pointer
     --highcharts-dashboards-pointer-selected-color: #2196F3;
@@ -29,14 +33,16 @@
 
     // Edit row
     --highcharts-dashboards-edit-row-color: #7bb343;
+    --highcharts-dashboards-edit-row-contrast-color: #1A5E20;
     --highcharts-dashboards-edit-row-highlight-color: rgba(224, 239, 173, 0.70);
 
     // Edit cell
     --highcharts-dashboards-edit-cell-color: #1779BA;
-    --highcharts-dashboards-highlight-cell-color: rgba(0, 0, 0, 0.6);
+    --highcharts-dashboards-highlight-cell-color: rgba(0, 0, 0, 0.5);
 
     // Sidebar
     --highcharts-dashboards-sidebar-button-color: #2196F3;
+    --highcharts-dashboards-sidebar-button-contrast-color: #0d47a1;
 
 }
 
@@ -172,7 +178,11 @@ body {
     cursor: grab;
     pointer-events: none;
     background-color: var(--highcharts-dashboards-main-background-color);
-    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    box-shadow:
+        0 0.46875rem 2.1875rem var(--highcharts-dashboard-shadow-color),
+        0 0.9375rem 1.40625rem var(--highcharts-dashboard-shadow-color),
+        0 0.25rem 0.53125rem var(--highcharts-dashboard-shadow-color),
+        0 0.125rem 0.1875rem var(--highcharts-dashboard-shadow-color);
 }
 
 .hd-edit-resize-pointer {
@@ -216,7 +226,11 @@ body {
     position: relative;
     margin: 5px;
     background-color: var(--highcharts-dashboards-main-background-color);
-    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    box-shadow:
+        0 0.46875rem 2.1875rem var(--highcharts-dashboard-shadow-color),
+        0 0.9375rem 1.40625rem var(--highcharts-dashboard-shadow-color),
+        0 0.25rem 0.53125rem var(--highcharts-dashboard-shadow-color),
+        0 0.125rem 0.1875rem var(--highcharts-dashboard-shadow-color);
     background-clip: border-box;
     overflow: auto;
 }
@@ -258,7 +272,7 @@ body {
 .hd-cell > .hd-component .title-wrapper {
     margin: 0px;
     padding-bottom: 15px;
-    border-bottom: 1px solid rgba(26, 54, 126, 0.125);
+    border-bottom: 1px solid var(--highcharts-dashboard-blue-border-color);
 }
 
 .hd-toolbar {
@@ -273,13 +287,13 @@ body {
 .hd-toolbar .tools-row {
     display: inline-block;
     float: left;
-    background-color: #839bc4;
+    background-color: var(--highcharts-dashboard-neutral-color-50);
     padding: 0px 10px;
 }
 
 .hd-toolbar .tools-cell {
     display: inline-block;
-    background-color: #c3cad8;
+    background-color: var(--highcharts-dashboard-neutral-color-20);
     padding: 0px 10px;
 }
 
@@ -365,7 +379,7 @@ body {
     text-align: center;
     font-size: 2em;
     display: none;
-    background: #bbd1ed;
+    background: var(--highcharts-dashboard-neutral-color-20);
 }
 
 .hidden,
@@ -390,9 +404,13 @@ h1 {
 #popup {
     position: absolute;
     width: 250px;
-    border: 1px solid rgba(26, 54, 126, 0.125);
+    border: 1px solid var(--highcharts-dashboard-blue-border-color);
     border-radius: 2px;
-    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    box-shadow:
+        0 0.46875rem 2.1875rem var(--highcharts-dashboard-shadow-color),
+        0 0.9375rem 1.40625rem var(--highcharts-dashboard-shadow-color),
+        0 0.25rem 0.53125rem var(--highcharts-dashboard-shadow-color),
+        0 0.125rem 0.1875rem var(--highcharts-dashboard-shadow-color);
     left: calc(50% - 126px);
     z-index: 1000;
     padding: 20px;
@@ -411,14 +429,17 @@ h1 {
 
 // Edit Mode
 .hd-edit-context-menu {
-    /*border: 1px solid #555;*/
     background-color: var(--highcharts-dashboards-main-background-color);
     margin-left: auto;
     border-radius: 3px;
     position: absolute;
     display: none;
     z-index: 9999;
-    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    box-shadow:
+        0 0.46875rem 2.1875rem var(--highcharts-dashboard-shadow-color),
+        0 0.9375rem 1.40625rem var(--highcharts-dashboard-shadow-color),
+        0 0.25rem 0.53125rem var(--highcharts-dashboard-shadow-color),
+        0 0.125rem 0.1875rem var(--highcharts-dashboard-shadow-color);
 }
 
 .hd-edit-context-menu-btn {
@@ -437,7 +458,7 @@ h1 {
 }
 
 .hd-edit-context-menu-btn:hover {
-    border: 1px solid #4B4B4D;
+    border: 1px solid var(--highcharts-dashboard-neutral-color-80);
 }
 
 .hd-edit-menu-item {
@@ -474,7 +495,11 @@ h1 {
     position: absolute;
     z-index: 99;
     border-radius: 3px;
-    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    box-shadow:
+    0 0.46875rem 2.1875rem var(--highcharts-dashboard-shadow-color),
+    0 0.9375rem 1.40625rem var(--highcharts-dashboard-shadow-color),
+    0 0.25rem 0.53125rem var(--highcharts-dashboard-shadow-color),
+    0 0.125rem 0.1875rem var(--highcharts-dashboard-shadow-color);
 }
 
 .hd-edit-toolbar-item div {
@@ -503,7 +528,7 @@ h1 {
         }
     }
     .hd-edit-toolbar-item:hover {
-        background-color: #1A5E20;
+        background-color: var(--highcharts-dashboards-edit-row-contrast-color);
     }
 }
 
@@ -517,7 +542,7 @@ h1 {
     border-bottom-right-radius: 5px;
     color: var(--highcharts-dashboards-main-background-color);
     .hd-edit-toolbar-item:hover {
-        background-color: #0d47a1;
+        background-color: var(--highcharts-dashboards-sidebar-button-contrast-color);
     }
 }
 
@@ -612,7 +637,7 @@ h1 {
 
 .hd-edit-sidebar .hd-edit-button:hover,
 .hd-edit-sidebar-item button:hover {
-    background-color: #0d47a1;
+    background-color: var(--highcharts-dashboards-sidebar-button-contrast-color);
 }
 
 .hd-edit-button.hd-edit-sidebar-button-nav {
@@ -629,7 +654,7 @@ h1 {
 
 .hd-edit-sidebar-button-nav.hd-edit-close-btn:hover {
     background-color: var(--highcharts-dashboards-main-background-color);
-    border: 1px solid #0d47a1;
+    border: 1px solid var(--highcharts-dashboards-sidebar-button-contrast-color);
 }
 
 .hd-edit-sidebar .hd-edit-button {
@@ -653,7 +678,7 @@ h1 {
 }
 
 .hd-edit-sidebar .hd-edit-label-text {
-    background: #EAF1F8;
+    background: var(--highcharts-dashboard-neutral-color-20);
     border: 1px solid var(--highcharts-dashboard-neutral-color-20);
     width: 100%;
     color: var(--highcharts-dashboards-main-font-color);
@@ -788,12 +813,12 @@ h1 {
 }
 
 .highcharts-popup .hd-edit-popup-content button.hd-edit-popup-confirm-btn {
-    background-color: #e01d5a;
+    background-color: var(--highcharts-dashboard-red-color);
     color: var(--highcharts-dashboards-main-font-color);
 }
 
 .hd-edit-overlay {
-    background:rgba(0, 0, 0, 0.5);
+    background: var(--highcharts-dashboards-highlight-cell-color);
     display: none;
     width: 100%;
     height: 100%;
