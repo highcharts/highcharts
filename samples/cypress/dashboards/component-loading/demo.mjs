@@ -1,4 +1,4 @@
-import Dashboard from '../../../../code/es-modules/Dashboards/Dashboard.js';
+import Board from '../../../../code/es-modules/Dashboards/Board.js';
 import PluginHandler from '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
@@ -6,7 +6,7 @@ import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPl
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-const dashboard = new Dashboard('container', {
+const board = new Board('container', {
     editMode: {
         enabled: true
     },

@@ -181,7 +181,7 @@ class Resizer {
         const minHeight = options.styles.minHeight;
         const snapWidth = this.options.snap.width || 0;
         const snapHeight = this.options.snap.height || 0;
-        const dashboardContainer = this.editMode.dashboard.container;
+        const dashboardContainer = this.editMode.board.container;
 
         // right snap
         this.snapXR = createElement(
@@ -248,7 +248,7 @@ class Resizer {
         // set position of snaps
         const cellOffsets = GUIElement.getOffsets(
             cell,
-            this.editMode.dashboard.container
+            this.editMode.board.container
         );
         const left = cellOffsets.left || 0;
         const top = cellOffsets.top || 0;
@@ -337,7 +337,7 @@ class Resizer {
 
         // Call cellResize dashboard event.
         if (cellResize) {
-            fireEvent(this.editMode.dashboard, 'cellResize', {
+            fireEvent(this.editMode.board, 'cellResize', {
                 cell: cellResize
             });
             fireEvent(cellResize.row, 'cellChange', {
@@ -447,7 +447,7 @@ class Resizer {
         if (
             currentCell &&
             cellContainer &&
-            !((currentCell.row.layout.dashboard.editMode || {}).dragDrop || {})
+            !((currentCell.row.layout.board.editMode || {}).dragDrop || {})
                 .isActive
         ) {
             const cellOffsets = GUIElement.getOffsets(currentCell);
@@ -473,7 +473,7 @@ class Resizer {
                 cellContainer.style.height = e.clientY - cellOffsets.top + 'px';
             }
             // Call cellResize dashboard event.
-            fireEvent(this.editMode.dashboard, 'cellResize', {
+            fireEvent(this.editMode.board, 'cellResize', {
                 cell: currentCell
             });
             fireEvent(currentCell.row, 'cellChange', {

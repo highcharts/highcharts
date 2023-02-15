@@ -19,7 +19,7 @@
  *
  * */
 
-import Dashboard from '../Dashboard.js';
+import Board from '../Board.js';
 
 /* *
  *
@@ -41,9 +41,9 @@ class DashboardsAccessibility {
     * */
 
     public constructor(
-        dashboard: Dashboard
+        board: Board
     ) {
-        this.dashboard = dashboard;
+        this.board = board;
 
         this.addTabIndexToCells();
     }
@@ -53,7 +53,7 @@ class DashboardsAccessibility {
      *  Properties
      *
      * */
-    public dashboard: Dashboard;
+    public board: Board;
 
     /* *
     *
@@ -61,7 +61,7 @@ class DashboardsAccessibility {
     *
     * */
     public addTabIndexToCells():void {
-        const components = this.dashboard.mountedComponents;
+        const components = this.board.mountedComponents;
         let cell;
 
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {

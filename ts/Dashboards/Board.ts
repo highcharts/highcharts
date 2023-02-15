@@ -53,9 +53,9 @@ const {
  * Creates a dashboard with components like charts, tables, and HTML.
  *
  * @class
- * @name Dashboard.Dashboard
+ * @name Board
  */
-class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
+class Board implements Serializable<Board, Board.JSON> {
 
     /* *
      *
@@ -65,9 +65,9 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
 
     public constructor(
         renderTo: (string|globalThis.HTMLElement),
-        options: Dashboard.Options
+        options: Board.Options
     ) {
-        this.options = merge(Dashboard.defaultOptions, options);
+        this.options = merge(Board.defaultOptions, options);
         this.layouts = [];
         this.guiEnabled = (this.options.gui || {}).enabled;
         this.mountedComponents = [];
@@ -114,8 +114,8 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         // Add fullscreen support.
         this.fullscreen = new Fullscreen(this);
 
-        this.index = Globals.dashboards.length;
-        Globals.dashboards.push(this);
+        this.index = Globals.boards.length;
+        Globals.boards.push(this);
 
         // a11y module
         this.a11y = new DashboardAccessibility(this);
@@ -128,7 +128,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
      * */
 
     public container: globalThis.HTMLElement = void 0 as any;
-    public dashboardWrapper: globalThis.HTMLElement = void 0 as any;
+    public boardWrapper: globalThis.HTMLElement = void 0 as any;
     public editMode?: EditMode;
     public fullscreen?: Fullscreen;
     public guiEnabled: (boolean|undefined);
@@ -137,7 +137,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     public layouts: Array<Layout>;
     public layoutsWrapper: globalThis.HTMLElement;
     public mountedComponents: Array<Bindings.MountedComponentsOptions>;
-    public options: Dashboard.Options;
+    public options: Board.Options;
     public a11y: DashboardAccessibility;
 
     /* *
@@ -147,10 +147,10 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
      * */
 
     private initEvents(): void {
-        const dashboard = this;
+        const board = this;
 
         addEvent(window, 'resize', function (): void {
-            dashboard.reflow();
+            board.reflow();
         });
     }
 
@@ -164,7 +164,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     public initContainer(
         renderTo: (string|globalThis.HTMLElement)
     ): void {
-        const dashboard = this;
+        const board = this;
 
         if (typeof renderTo === 'string') {
             renderTo = window.document.getElementById(renderTo) as HTMLElement;
@@ -179,25 +179,44 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         renderTo.innerHTML = '';
 
         // Set the main wrapper container.
-        dashboard.dashboardWrapper = renderTo;
+        board.boardWrapper = renderTo;
 
-        // Add container for the dashboard.
-        dashboard.container = createElement(
+        // Add container for the board.
+        board.container = createElement(
             'div', {
-                className: Globals.classNames.dashboardsContainer
+                className: Globals.classNames.boardContainer
             }, {},
-            this.dashboardWrapper
+            this.boardWrapper
         );
     }
 
-    public setLayouts(guiOptions: Dashboard.GUIOptions): void {
-        const dashboard = this,
+    /**
+     * Factory function for creating a new dashboard.
+     *
+     * @param  {(string|globalThis.HTMLElement)} [renderTo]
+     * The DOM element to render to, or its id.
+     *
+     * @param  {Board.Options} options
+     * The options for the dashboard.
+     *
+     * @return {Board}
+     * The new dashboard.
+     */
+    public static board(
+        renderTo: (string|globalThis.HTMLElement),
+        options: Board.Options
+    ): Board {
+        return new Board(renderTo, options);
+    }
+
+    public setLayouts(guiOptions: Board.GUIOptions): void {
+        const board = this,
             layoutsOptions = guiOptions.layouts;
 
         for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
-            dashboard.layouts.push(
+            board.layouts.push(
                 new Layout(
-                    dashboard,
+                    board,
                     merge({}, guiOptions.layoutOptions, layoutsOptions[i])
                 )
             );
@@ -205,15 +224,15 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     }
 
     public setLayoutsFromJSON(json: Array<Layout.JSON>): void {
-        const dashboard = this;
+        const board = this;
 
         let layout;
 
         for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            layout = Layout.fromJSON(json[i], dashboard);
+            layout = Layout.fromJSON(json[i], board);
 
             if (layout) {
-                dashboard.layouts.push(layout);
+                board.layouts.push(layout);
             }
         }
     }
@@ -234,24 +253,24 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
      * Destroy the whole dashboard, its layouts and elements.
      */
     public destroy(): void {
-        const dashboard = this;
+        const board = this;
 
         // Destroy layouts.
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            dashboard.layouts[i].destroy();
+        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+            board.layouts[i].destroy();
         }
 
         // Destroy container.
-        dashboard.container.remove();
+        board.container.remove();
 
         // @ToDo Destroy bindings.
 
         // Delete all properties.
-        objectEach(dashboard, function (val: unknown, key: string): void {
-            delete (dashboard as Record<string, any>)[key];
+        objectEach(board, function (val: unknown, key: string): void {
+            delete (board as Record<string, any>)[key];
         });
 
-        Globals.dashboards[this.index] = void 0;
+        Globals.boards[this.index] = void 0;
 
         return;
     }
@@ -272,9 +291,9 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     }
 
     public getLayoutContainerSize(): string {
-        const dashboard = this,
-            respoOptions = dashboard.options.respoBreakpoints,
-            cntWidth = (dashboard.layoutsWrapper || {}).clientWidth;
+        const board = this,
+            respoOptions = board.options.respoBreakpoints,
+            cntWidth = (board.layoutsWrapper || {}).clientWidth;
 
         let size = Globals.respoBreakpoints.large;
 
@@ -293,18 +312,18 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     }
 
     public reflow(): void {
-        const dashboard = this,
-            cntSize = dashboard.getLayoutContainerSize();
+        const board = this,
+            cntSize = board.getLayoutContainerSize();
 
         let layout, row, cell;
 
-        if (dashboard.editMode) {
-            dashboard.editMode.hideToolbars(['cell', 'row']);
-            dashboard.editMode.hideContextPointer();
+        if (board.editMode) {
+            board.editMode.hideToolbars(['cell', 'row']);
+            board.editMode.hideContextPointer();
         }
 
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            layout = dashboard.layouts[i];
+        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+            layout = board.layouts[i];
 
             for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
                 row = layout.rows[j];
@@ -327,11 +346,11 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
      * Returns the class instance or object, or throws an exception.
      */
     public fromJSON(
-        json: Dashboard.JSON
-    ): Dashboard {
+        json: Board.JSON
+    ): Board {
         const options = json.options;
 
-        return new Dashboard(
+        return new Board(
             options.containerId,
             {
                 layoutsJSON: options.layouts,
@@ -345,26 +364,26 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     /**
      * Converts the class instance to a class JSON.
      *
-     * @return {Dashboard.JSON}
+     * @return {Board.JSON}
      * Class JSON of this Dashboard instance.
      */
-    public toJSON(): Dashboard.JSON {
-        const dashboard = this,
+    public toJSON(): Board.JSON {
+        const board = this,
             layouts = [];
 
         // Get layouts JSON.
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            layouts.push(dashboard.layouts[i].toJSON());
+        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+            layouts.push(board.layouts[i].toJSON());
         }
 
         return {
-            $class: 'Dashboard',
+            $class: 'Board',
             options: {
-                containerId: dashboard.container.id,
-                guiEnabled: dashboard.guiEnabled,
+                containerId: board.container.id,
+                guiEnabled: board.guiEnabled,
                 layouts: layouts,
-                componentOptions: dashboard.options.componentOptions,
-                respoBreakpoints: dashboard.options.respoBreakpoints
+                componentOptions: board.options.componentOptions,
+                respoBreakpoints: board.options.respoBreakpoints
             }
         };
     }
@@ -377,7 +396,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
  *
  * */
 
-namespace Dashboard {
+namespace Board {
 
     /* *
      *
@@ -414,7 +433,7 @@ namespace Dashboard {
         layouts: Array<Layout.Options>;
     }
 
-    export interface JSON extends Serializable.JSON<'Dashboard'> {
+    export interface JSON extends Serializable.JSON<'Board'> {
         options: OptionsJSON;
     }
 
@@ -427,13 +446,13 @@ namespace Dashboard {
     /**
      * Global Dashboard settings.
      *
-     * @name Dashboard.Dashboard.defaultOptions
-     * @type {Dashboard.Options}
+     * @name Board.defaultOptions
+     * @type {Board.Options}
      *//**
      * @product dashboard
      * @optionparent
      */
-    export const defaultOptions: Dashboard.Options = {
+    export const defaultOptions: Board.Options = {
         gui: {
             enabled: true,
             layoutOptions: {
@@ -461,12 +480,12 @@ namespace Dashboard {
      * */
 
     /**
-     * Import layouts from the local storage
+     * Import layouts from the local storage.
      *
-     * @return {Dashboard.Dashboard|undefined}
-     * The Dashboard
+     * @return {Board|undefined}
+     * Returns the Dashboard instance or undefined.
      */
-    export function importLocal(): (Dashboard|undefined) {
+    export function importLocal(): (Board|undefined) {
         const dashboardJSON = localStorage.getItem(
             // Dashboard.prefix + this.id,
             Globals.classNamePrefix + '1' // temporary for demo test
@@ -475,7 +494,7 @@ namespace Dashboard {
         if (dashboardJSON) {
             try {
                 return Serializable
-                    .fromJSON(JSON.parse(dashboardJSON)) as Dashboard;
+                    .fromJSON(JSON.parse(dashboardJSON)) as Board;
             } catch (e) {
                 // nothing to do
             }
@@ -490,7 +509,7 @@ namespace Dashboard {
  *
  * */
 
-Serializable.registerClassPrototype('Dashboard', Dashboard.prototype);
+Serializable.registerClassPrototype('Board', Board.prototype);
 
 /* *
  *
@@ -498,4 +517,4 @@ Serializable.registerClassPrototype('Dashboard', Dashboard.prototype);
  *
  * */
 
-export default Dashboard;
+export default Board;

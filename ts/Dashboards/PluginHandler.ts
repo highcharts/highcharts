@@ -20,7 +20,7 @@
  * */
 
 import Component from './Component/Component.js';
-import Dashboard from './Dashboard.js';
+import Board from './Board.js';
 import Sync from './Component/Sync/Sync.js';
 
 /* *
@@ -48,7 +48,7 @@ namespace PluginHandler {
 
     export interface Event {
         Component: typeof Component;
-        Dashboard: typeof Dashboard;
+        Board: typeof Board;
         Sync: typeof Sync;
         revision: number;
     }
@@ -110,7 +110,7 @@ namespace PluginHandler {
 
         onRegister({
             Component,
-            Dashboard,
+            Board,
             Sync,
             revision
         });
@@ -131,7 +131,7 @@ namespace PluginHandler {
         if (registry[key]) {
             registry[key].onUnregister({
                 Component,
-                Dashboard,
+                Board,
                 Sync,
                 revision
             });

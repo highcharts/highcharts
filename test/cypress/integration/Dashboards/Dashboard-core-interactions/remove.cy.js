@@ -4,8 +4,8 @@ describe('Remove the dashboard.', () => {
     });
 
     it('Dashboard should be removed without errors', () => {
-        cy.dashboard().then(dashboard => {
-            dashboard.destroy();
+        cy.board().then(board => {
+            board.destroy();
             cy.get('.hd-dashboards-wrapper').should('not.exist');
             cy.get('#container').should('exist');
         });

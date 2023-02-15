@@ -17,7 +17,7 @@
  * */
 
 import CSVStore from '../Data/Stores/CSVStore.js';
-import Dashboard from '../Dashboards/Dashboard.js';
+import Board from '../Dashboards/Board.js';
 import DataOnDemand from '../Data/DataOnDemand.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';
@@ -53,9 +53,9 @@ declare global {
 const D = {
     ...Globals,
     ...Utilities,
-    _modules: (typeof _modules === 'undefined' ? {} : _modules),
+    Board,
+    board: Board.board,
     CSVStore,
-    Dashboard,
     DataGrid,
     DataOnDemand,
     DataTable,
@@ -64,7 +64,8 @@ const D = {
     HTMLTableStore,
     PluginHandler,
     RangeModifier,
-    Sync
+    Sync,
+    _modules: (typeof _modules === 'undefined' ? {} : _modules)
 };
 
 /* *

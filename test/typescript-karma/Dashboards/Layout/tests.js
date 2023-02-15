@@ -1,6 +1,6 @@
-import Dashboard from '/base/code/es-modules/Dashboards/Dashboard.js';
+import Board from '/base/code/es-modules/Dashboards/Board.js';
 import DashboardGlobals from '/base/code/es-modules/Dashboards/Globals.js';
-const { test, only, skip } = QUnit;
+const { test, skip } = QUnit;
 
 function setupContainer() {
     const container = document.createElement('div');
@@ -66,7 +66,7 @@ test('Components in layout with no row style', function (assert) {
         'Text should be set before adding dashboard.'
     );
 
-    const dashboard = new Dashboard(container.id, {
+    const board = new Board(container.id, {
         gui: {
             enabled: true,
             layouts
@@ -97,7 +97,7 @@ skip('Components in rows with set height', function (assert) {
         padding: '5px'
     }
 
-    const dashboard = new Dashboard(container.id, {
+    const board = new Board(container.id, {
         gui: {
             enabled: true,
             layouts
@@ -125,7 +125,7 @@ skip('Components in layout with set width', function (assert) {
         width: '800px'
     }
 
-    const dashboard = new Dashboard(container.id, {
+    const board = new Board(container.id, {
         gui: {
             enabled: true,
             layouts
@@ -154,7 +154,7 @@ test('Components and rows in layout with set height', function (assert) {
         height: '800px'
     }
 
-    const dashboard = new Dashboard(container.id, {
+    const board = new Board(container.id, {
         gui: {
             enabled: true,
             layouts

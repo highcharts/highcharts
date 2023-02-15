@@ -15,7 +15,7 @@
  * */
 
 import type CSSJSONObject from '../CSSJSONObject';
-import type Dashboard from '../Dashboard.js';
+import type Board from '../Board.js';
 import type JSON from '../../Core/JSON';
 import type Serializable from '../Serializable';
 
@@ -41,17 +41,17 @@ class Layout extends GUIElement {
 
     public static fromJSON(
         json: Layout.JSON,
-        dashboard: Dashboard
+        board: Board
     ): Layout|undefined {
         const options = json.options,
             // Check if layout container exists.
             container = document.getElementById(json.options.containerId),
             layout = new Layout(
-                dashboard,
+                board,
                 {
                     id: options.containerId,
                     copyId: container ? uniqueKey() : '',
-                    parentContainerId: dashboard.container.id ||
+                    parentContainerId: board.container.id ||
                         options.parentContainerId,
                     rowsJSON: options.rows,
                     style: options.style
@@ -60,7 +60,7 @@ class Layout extends GUIElement {
 
         // Save layout in the dashboard.
         if (layout) {
-            dashboard.layouts.push(layout);
+            board.layouts.push(layout);
         }
 
         return layout;
@@ -68,7 +68,7 @@ class Layout extends GUIElement {
 
     public static importLocal(
         id: string,
-        dashboard: Dashboard
+        board: Board
     ): Layout|undefined {
         const layoutOptions = localStorage.getItem(
             Globals.classNamePrefix + id
@@ -77,7 +77,7 @@ class Layout extends GUIElement {
         let layout;
 
         if (layoutOptions) {
-            layout = Layout.fromJSON(JSON.parse(layoutOptions), dashboard);
+            layout = Layout.fromJSON(JSON.parse(layoutOptions), board);
         }
 
         return layout;
@@ -92,21 +92,21 @@ class Layout extends GUIElement {
     /**
      * Constructs an instance of the Layout class.
      *
-     * @param {Dashboard} dashboard
+     * @param {Dashboard} board
      * Reference to the dashboard instance.
      *
      * @param {Layout.Options} options
      * Options for the layout.
      */
     public constructor(
-        dashboard: Dashboard,
+        board: Board,
         options: Layout.Options,
         parentCell?: Cell
     ) {
         super();
 
         this.type = Globals.guiElementType.layout;
-        this.dashboard = dashboard;
+        this.board = board;
         this.rows = [];
         this.options = options;
         this.isVisible = true;
@@ -114,7 +114,7 @@ class Layout extends GUIElement {
         // Get parent container
         const parentContainer = document.getElementById(
             options.parentContainerId || ''
-        ) || dashboard.layoutsWrapper;
+        ) || board.layoutsWrapper;
 
         // Set layout level.
         if (parentCell) {
@@ -134,7 +134,7 @@ class Layout extends GUIElement {
                 layoutClassName = layoutOptions.rowClassName || '';
 
             this.setElementContainer({
-                render: dashboard.guiEnabled,
+                render: board.guiEnabled,
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id + (this.copyId ? '_' + this.copyId : ''),
@@ -168,7 +168,7 @@ class Layout extends GUIElement {
     /**
      * Reference to the dashboard instance.
      */
-    public dashboard: Dashboard;
+    public board: Board;
 
     /**
      * Array of the layout rows.
@@ -210,7 +210,7 @@ class Layout extends GUIElement {
         for (i = 0, iEnd = rowsElements.length; i < iEnd; ++i) {
             rowElement = rowsElements[i];
             layout.addRow(
-                layout.dashboard.guiEnabled ? rowElement : {},
+                layout.board.guiEnabled ? rowElement : {},
                 rowElement instanceof HTMLElement ? rowElement : void 0
             );
         }
@@ -259,8 +259,8 @@ class Layout extends GUIElement {
         }
 
         // Set editMode events.
-        if (layout.dashboard.editMode) {
-            layout.dashboard.editMode.setRowEvents(row);
+        if (layout.board.editMode) {
+            layout.board.editMode.setRowEvents(row);
         }
 
         return row;
@@ -380,7 +380,7 @@ class Layout extends GUIElement {
      */
     public toJSON(): Layout.JSON {
         const layout = this,
-            dashboardContainerId = (layout.dashboard.container || {}).id || '',
+            dashboardContainerId = (layout.board.container || {}).id || '',
             rows = [];
 
         // Get rows JSON.

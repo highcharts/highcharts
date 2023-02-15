@@ -1,4 +1,4 @@
-import Dashboard from  '../../../../code/es-modules/Dashboards/Dashboard.js';
+import Board from  '../../../../code/es-modules/Dashboards/Board.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
 
 // Bring in other forms of Highcharts
@@ -24,7 +24,7 @@ const chartDemo = {
     }
 };
 
-let dashboard = new Dashboard('container-nested-layout', {
+let board = new Board('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -34,7 +34,7 @@ let dashboard = new Dashboard('container-nested-layout', {
                 text: 'Export dashboard',
                 events: {
                     click: function () {
-                        dashboard.exportLocal();
+                        board.exportLocal();
                     }
                 }
             }, {
@@ -42,7 +42,7 @@ let dashboard = new Dashboard('container-nested-layout', {
                 text: 'Delete current dashboard',
                 events: {
                     click: function () {
-                        dashboard.destroy();
+                        board.destroy();
                     }
                 }
             }, {
@@ -50,7 +50,7 @@ let dashboard = new Dashboard('container-nested-layout', {
                 text: 'Import saved dashboard',
                 events: {
                     click: function () {
-                        dashboard = Dashboard.importLocal();
+                        board = Board.importLocal();
                     }
                 }
             }, {
@@ -58,8 +58,8 @@ let dashboard = new Dashboard('container-nested-layout', {
                 text: 'Export 1 layout',
                 events: {
                     click: function () {
-                        exportedLayoutId = dashboard.layouts[0].options.id;
-                        dashboard.layouts[0].exportLocal();
+                        exportedLayoutId = board.layouts[0].options.id;
+                        board.layouts[0].exportLocal();
                     }
                 }
             }, {
@@ -67,7 +67,7 @@ let dashboard = new Dashboard('container-nested-layout', {
                 text: 'Delete 1 layout',
                 events: {
                     click: function () {
-                        dashboard.layouts[0].destroy();
+                        board.layouts[0].destroy();
                     }
                 }
             }, {
@@ -75,7 +75,7 @@ let dashboard = new Dashboard('container-nested-layout', {
                 text: 'Import saved layout',
                 events: {
                     click: function () {
-                        const layout = dashboard.importLayoutLocal(
+                        const layout = board.importLayoutLocal(
                             exportedLayoutId
                         );
                         console.log('Imported layout: ', layout);
@@ -104,7 +104,7 @@ let dashboard = new Dashboard('container-nested-layout', {
                 cells: [{
                     id: 'dashboard-col-nolayout-0'
                 }, {
-                    id: 'dashboard-col-layout-0',
+                    id: 'dashboard-col-layout-0'
                 }]
             }]
         }]

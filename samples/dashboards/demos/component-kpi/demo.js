@@ -2,7 +2,7 @@ function random(max, min = 0) {
     return Math.floor(min + Math.random() * (max - min));
 }
 
-const dashboard = new Dashboards.Dashboard('container', {
+const board = new Dashboards.Board('container', {
     components: [{
         cell: 'kpi-00',
         type: 'KPI',
@@ -130,7 +130,7 @@ const dashboard = new Dashboards.Dashboard('container', {
 });
 
 function setValues() {
-    dashboard.mountedComponents.forEach(element => {
+    board.mountedComponents.forEach(element => {
         const chart = element.component.chart,
             randomValue = random(1000);
 

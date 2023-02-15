@@ -66,7 +66,7 @@ class EditContextMenu extends Menu {
         parent?: HTMLElement
     ) {
         super(
-            editMode.dashboard.container,
+            editMode.board.container,
             merge(EditContextMenu.defaultOptions, options || {}),
             editMode
         );
