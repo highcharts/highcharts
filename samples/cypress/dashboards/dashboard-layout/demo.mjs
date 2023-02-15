@@ -1,4 +1,4 @@
-import Dashboard from  '../../../../code/es-modules/Dashboards/Dashboard.js';
+import Board from  '../../../../code/es-modules/Dashboards/Board.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
 
 // Bring in other forms of Highcharts
@@ -24,7 +24,7 @@ const chartDemo = {
     }
 };
 
-let dashboard = new Dashboard('container-nested-layout', {
+let dashboard = new Board('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -50,7 +50,7 @@ let dashboard = new Dashboard('container-nested-layout', {
                 text: 'Import saved dashboard',
                 events: {
                     click: function () {
-                        dashboard = Dashboard.importLocal();
+                        dashboard = Board.importLocal();
                     }
                 }
             }, {
@@ -104,7 +104,7 @@ let dashboard = new Dashboard('container-nested-layout', {
                 cells: [{
                     id: 'dashboard-col-nolayout-0'
                 }, {
-                    id: 'dashboard-col-layout-0',
+                    id: 'dashboard-col-layout-0'
                 }]
             }]
         }]

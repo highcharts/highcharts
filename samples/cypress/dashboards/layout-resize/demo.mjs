@@ -1,6 +1,7 @@
-import Dashboard from  '../../../../code/es-modules/Dashboards/Dashboard.js';
+import Board from  '../../../../code/es-modules/Dashboards/Board.js';
 
-let dashboard = new Dashboard('container', {
+let exportedLayoutId;
+let dashboard = new Board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -28,7 +29,7 @@ let dashboard = new Dashboard('container', {
                 text: 'Import saved dashboard',
                 events: {
                     click: function () {
-                        dashboard = Dashboard.importLocal();
+                        dashboard = Board.importLocal();
                     }
                 }
             }, {
@@ -53,7 +54,8 @@ let dashboard = new Dashboard('container', {
                 text: 'Import saved layout',
                 events: {
                     click: function () {
-                        const layout = dashboard.importLayoutLocal(exportedLayoutId);
+                        const layout =
+                            dashboard.importLayoutLocal(exportedLayoutId);
                     }
                 }
             }]
