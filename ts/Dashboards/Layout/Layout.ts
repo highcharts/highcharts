@@ -274,7 +274,7 @@ class Layout extends GUIElement {
         const layout = this;
 
         // Destroy rows.
-        for (let i = 0, iEnd = layout.rows.length; i < iEnd; ++i) {
+        for (let i = layout.rows.length - 1; i >= 0; i--) {
             layout.rows[i].destroy();
         }
 

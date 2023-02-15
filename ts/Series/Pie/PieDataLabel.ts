@@ -426,8 +426,10 @@ namespace ColumnDataLabel {
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
-                (labelPosition as any).final.x = x;
-                (labelPosition as any).final.y = y;
+                if (labelPosition) {
+                    labelPosition.computed.x = x;
+                    labelPosition.computed.y = y;
+                }
 
                 // Detect overflowing data labels
                 if (pick((options as any).crop, true)) {

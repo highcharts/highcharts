@@ -250,7 +250,7 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     /**
-     * Destroy the element and its layouts.
+     * Destroy the whole dashboard, its layouts and elements.
      */
     public destroy(): void {
         const dashboard = this;
@@ -259,6 +259,9 @@ class Board implements Serializable<Board, Board.JSON> {
         for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
             dashboard.layouts[i].destroy();
         }
+
+        // Destroy container.
+        dashboard.container.remove();
 
         // @ToDo Destroy bindings.
 

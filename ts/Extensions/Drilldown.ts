@@ -19,6 +19,10 @@ import type {
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type {
+    BreadcrumbOptions,
+    BreadcrumbsOptions
+} from './Breadcrumbs/BreadcrumbsOptions';
 import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
 import type ColorType from '../Core/Color/ColorType';
 import type {
@@ -53,7 +57,7 @@ const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
-import Breadcrumbs from './Breadcrumbs.js';
+import Breadcrumbs from './Breadcrumbs/Breadcrumbs.js';
 
 const {
     addEvent,
@@ -208,6 +212,7 @@ declare global {
             );
             allowPointDrilldown?: boolean;
             animation?: (boolean|Partial<AnimationOptions>);
+            breadcrumbs?: BreadcrumbsOptions;
             drillUpButton?: DrilldownDrillUpButtonOptions;
             series?: Array<SeriesTypeOptions>;
         }
@@ -906,8 +911,10 @@ Chart.prototype.applyDrilldown = function (): void {
  * @return {Array<Breadcrumbs.BreadcrumbOptions>}
  *        List for Highcharts Breadcrumbs.
  */
-const createBreadcrumbsList = function (chart: Chart): Array<Breadcrumbs.BreadcrumbOptions> {
-    const list: Array<Breadcrumbs.BreadcrumbOptions> = [],
+const createBreadcrumbsList = function (
+    chart: Chart
+): Array<BreadcrumbOptions> {
+    const list: Array<BreadcrumbOptions> = [],
         drilldownLevels = chart.drilldownLevels;
 
     // The list is based on drilldown levels from the chart object
@@ -1178,7 +1185,7 @@ addEvent(Chart, 'render', function (): void {
     });
 });
 
-addEvent(H.Breadcrumbs, 'up', function (
+addEvent(Breadcrumbs, 'up', function (
     e: any
 ): void {
     const chart = this.chart,

@@ -189,7 +189,7 @@ class Point {
     public options: PointOptions = void 0 as any;
 
     /**
-     * The percentage for points in a stacked series or pies.
+     * The percentage for points in a stacked series, pies or gauges.
      *
      * @name Highcharts.Point#percentage
      * @type {number|undefined}

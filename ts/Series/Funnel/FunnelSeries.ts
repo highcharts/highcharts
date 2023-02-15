@@ -365,7 +365,7 @@ class FunnelSeries extends PieSeries {
                     x: 0,
                     y: y as any
                 },
-                'final': {
+                computed: {
                     // used for generating connector path -
                     // initialized later in drawDataLabels function
                     // x: undefined,
