@@ -24,7 +24,7 @@ import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type SankeyPoint from './SankeyPoint';
 import type SankeySeries from './SankeySeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Extensions/Tooltip/TooltipOptions';
+import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *

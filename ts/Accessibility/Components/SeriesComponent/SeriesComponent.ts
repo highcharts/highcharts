@@ -23,7 +23,7 @@ import type Accessibility from '../../Accessibility';
 import type Chart from '../../../Core/Chart/Chart';
 import type KeyboardNavigationHandler from '../../KeyboardNavigationHandler';
 import type Point from '../../../Core/Series/Point';
-import type Tooltip from '../../../Extensions/Tooltip/Tooltip';
+import type Tooltip from '../../../Core/Tooltip';
 
 import AccessibilityComponent from '../../AccessibilityComponent.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';

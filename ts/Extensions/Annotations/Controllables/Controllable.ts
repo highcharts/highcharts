@@ -21,7 +21,6 @@ import type ControllableOptions from './ControllableOptions';
 import type MockPointOptions from '../MockPointOptions';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import type Tooltip from '../../Tooltip/Tooltip';
 
 import ControlPoint from '../ControlPoint.js';
 import MockPoint from '../MockPoint.js';

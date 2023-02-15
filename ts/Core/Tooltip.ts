@@ -16,28 +16,27 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type Defaults from '../../Core/Defaults';
-import type Point from '../../Core/Series/Point';
-import type Pointer from '../../Core/Pointer';
-import type PointerEvent from '../../Core/PointerEvent';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type RectangleObject from '../../Core/Renderer/RectangleObject';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type Chart from './Chart/Chart';
+import type Defaults from './Defaults';
+import type Point from './Series/Point';
+import type Pointer from './Pointer';
+import type PointerEvent from './PointerEvent';
+import type PositionObject from './Renderer/PositionObject';
+import type RectangleObject from './Renderer/RectangleObject';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type SVGElement from './Renderer/SVG/SVGElement';
+import type SVGRenderer from './Renderer/SVG/SVGRenderer';
 import type TooltipOptions from './TooltipOptions';
 
-import F from '../../Core/FormatUtilities.js';
+import F from './FormatUtilities.js';
 const { format } = F;
-import H from '../../Core/Globals.js';
+import H from './Globals.js';
 const { doc } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
-import R from '../../Core/Renderer/RendererUtilities.js';
+import { Palette } from './Color/Palettes.js';
+import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
-import TooltipDefaults from './TooltipDefaults.js';
-import U from '../../Core/Utilities.js';
+import RendererRegistry from './Renderer/RendererRegistry.js';
+import U from './Utilities.js';
 const {
     addEvent,
     clamp,
@@ -61,27 +60,27 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
+declare module './Chart/ChartLike' {
     interface ChartLike {
         tooltip?: Tooltip;
     }
 }
 
-declare module '../../Core/Series/PointLike' {
+declare module './Series/PointLike' {
     interface PointLike {
         isHeader?: boolean;
         tooltipPos?: Array<number>;
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
+declare module './Series/SeriesLike' {
     interface SeriesLike {
         noSharedTooltip?: boolean;
         tt?: SVGElement;
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module './Series/SeriesOptions' {
     interface SeriesOptions {
         tooltip?: DeepPartial<TooltipOptions>;
     }
@@ -115,7 +114,7 @@ interface BoxObject extends R.BoxObject {
  * @param {Highcharts.Chart} chart
  * The chart instance.
  *
- * @param {Partial<Highcharts.TooltipOptions>} [options]
+ * @param {Highcharts.TooltipOptions} options
  * Tooltip options.
  */
 class Tooltip {
@@ -128,7 +127,7 @@ class Tooltip {
 
     public constructor(
         chart: Chart,
-        options?: Partial<TooltipOptions>
+        options: TooltipOptions
     ) {
         this.chart = chart;
         this.init(chart, options);
@@ -850,12 +849,12 @@ class Tooltip {
      * @param {Highcharts.Chart} chart
      *        The chart instance.
      *
-     * @param {Partial<Highcharts.TooltipOptions>} [options]
+     * @param {Highcharts.TooltipOptions} options
      *        Tooltip options.
      */
     public init(
         chart: Chart,
-        options: Partial<TooltipOptions> = TooltipDefaults
+        options: TooltipOptions
     ): void {
 
         /**
@@ -874,7 +873,7 @@ class Tooltip {
          * @name Highcharts.Tooltip#options
          * @type {Highcharts.TooltipOptions}
          */
-        this.options = merge(TooltipDefaults, options);
+        this.options = options;
 
         /**
          * List of crosshairs.
@@ -1911,67 +1910,24 @@ namespace Tooltip {
      * @private
      */
     export function compose(
-        setOptions: typeof Defaults.setOptions,
-        ChartClass: typeof Chart,
         PointerClass: typeof Pointer
     ): void {
-
-        if (composedMembers.indexOf(setOptions) === -1) {
-            composedMembers.indexOf(setOptions);
-
-            setOptions({ tooltip: TooltipDefaults });
-        }
-
-        if (composedMembers.indexOf(ChartClass) === -1) {
-            composedMembers.push(ChartClass);
-
-            addEvent(ChartClass, 'afterInit', onChartAfterInit);
-        }
-
         if (composedMembers.indexOf(PointerClass) === -1) {
             composedMembers.push(PointerClass);
+            addEvent(PointerClass, 'afterInit', function (): void {
+                const chart = this.chart;
 
-            addEvent(PointerClass, 'afterInit', onPointerAfterInit);
+                if (chart.options.tooltip) {
+                    /**
+                     * Tooltip object for points of series.
+                     *
+                     * @name Highcharts.Chart#tooltip
+                     * @type {Highcharts.Tooltip}
+                     */
+                    chart.tooltip = new Tooltip(chart, chart.options.tooltip);
+                }
+            });
         }
-
-    }
-
-    /**
-     * @private
-     */
-    function onChartAfterInit(
-        this: Chart
-    ): void {
-        const options = this.options,
-            userOptions = this.userOptions;
-
-        // User options have higher priority than default options
-        // (#6218). In case of exporting: path is changed
-        if (options.tooltip) {
-            options.tooltip.userOptions = (
-                userOptions.chart &&
-                userOptions.chart.forExport &&
-                userOptions.tooltip &&
-                userOptions.tooltip.userOptions
-            ) || userOptions.tooltip;
-        }
-    }
-
-    /**
-     * @private
-     */
-    function onPointerAfterInit(
-        this: Pointer
-    ): void {
-        const chart = this.chart;
-
-        /**
-         * Tooltip object for points of series.
-         *
-         * @name Highcharts.Chart#tooltip
-         * @type {Highcharts.Tooltip}
-         */
-        chart.tooltip = new Tooltip(chart, chart.options.tooltip);
     }
 
 }

@@ -14,12 +14,12 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type F from '../../Core/FormatUtilities';
-import type Point from '../../Core/Series/Point';
-import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
-import type Time from '../../Core/Time';
+import type ColorType from './Color/ColorType';
+import type CSSObject from './Renderer/CSSObject';
+import type F from './FormatUtilities';
+import type Point from './Series/Point';
+import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
+import type Time from './Time';
 import type Tooltip from './Tooltip';
 
 /* *
@@ -28,13 +28,13 @@ import type Tooltip from './Tooltip';
  *
  * */
 
-declare module '../../Core/Options' {
+declare module './Options' {
     interface Options {
         tooltip?: TooltipOptions;
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module './Series/SeriesOptions' {
     interface SeriesOptions {
         tooltip?: DeepPartial<TooltipOptions>;
     }

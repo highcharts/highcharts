@@ -19,7 +19,7 @@
 import type Axis from '../../Core/Axis/Axis';
 import type Series from '../../Core/Series/Series';
 import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
-import type Tooltip from '../Tooltip/Tooltip';
+import type Tooltip from '../../Core/Tooltip';
 
 import DataGroupingAxisComposition from './DataGroupingAxisComposition.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';

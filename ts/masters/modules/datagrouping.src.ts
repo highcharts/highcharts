@@ -10,7 +10,6 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import './tooltip.src.js';
 import Highcharts from '../../Core/Globals.js';
 import ApproximationDefaults from '../../Extensions/DataGrouping/ApproximationDefaults.js';
 import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
