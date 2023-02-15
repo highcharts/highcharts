@@ -112,7 +112,7 @@ class Cell extends GUIElement {
                 cellClassName = layoutOptions.cellClassName || '';
 
             this.setElementContainer({
-                render: row.layout.dashboard.guiEnabled,
+                render: row.layout.board.guiEnabled,
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id,
@@ -144,12 +144,12 @@ class Cell extends GUIElement {
 
             // nested layout
             if (this.options.layout) {
-                const dashboard = this.row.layout.dashboard,
+                const board = this.row.layout.board,
                     Layout = this.row.layout.constructor as typeof LayoutType;
-                const optionsGui = dashboard.options.gui;
+                const optionsGui = board.options.gui;
 
                 this.nestedLayout = new Layout(
-                    dashboard,
+                    board,
                     merge(
                         {},
                         optionsGui && optionsGui.layoutOptions,
@@ -357,7 +357,7 @@ class Cell extends GUIElement {
     ):void {
         const cell = this,
             cntSize = dashContainerSize ||
-                cell.row.layout.dashboard.getLayoutContainerSize(),
+                cell.row.layout.board.getLayoutContainerSize(),
             respoOptions = cell.options.responsive;
 
         let width;
@@ -385,7 +385,7 @@ class Cell extends GUIElement {
         width: string // % value or 'auto'
     ): void {
         const cell = this,
-            editMode = cell.row.layout.dashboard.editMode;
+            editMode = cell.row.layout.board.editMode;
 
         if (cell.container) {
             if (width === 'auto' && cell.container.style.flex !== '1 1 0%') {
@@ -416,8 +416,8 @@ class Cell extends GUIElement {
                 }
             }
 
-            // Call cellResize dashboard event.
-            fireEvent(cell.row.layout.dashboard, 'cellResize', { cell: cell });
+            // Call cellResize board event.
+            fireEvent(cell.row.layout.board, 'cellResize', { cell: cell });
             fireEvent(cell.row, 'cellChange', { cell: cell, row: cell.row });
         }
     }
@@ -429,7 +429,7 @@ class Cell extends GUIElement {
     ): void {
         const cell = this,
             cntSize = rwdMode ||
-                cell.row.layout.dashboard.getLayoutContainerSize();
+                cell.row.layout.board.getLayoutContainerSize();
 
         if (!cell.options.responsive) {
             cell.options.responsive = {};
@@ -444,7 +444,7 @@ class Cell extends GUIElement {
         remove?: boolean
     ): void {
         const cell = this,
-            editMode = cell.row.layout.dashboard.editMode;
+            editMode = cell.row.layout.board.editMode;
 
         if (cell.container && editMode) {
             const cnt = cell.container,
@@ -454,14 +454,14 @@ class Cell extends GUIElement {
 
             if (!remove && !isSet) {
                 cnt.classList.add(EditGlobals.classNames.cellEditHighlight);
-                cell.row.layout.dashboard.container.classList.add(
+                cell.row.layout.board.container.classList.add(
                     EditGlobals.classNames.dashboardCellEditHighlightActive
                 );
 
                 cell.isHighlighted = true;
             } else if (remove && isSet) {
                 cnt.classList.remove(EditGlobals.classNames.cellEditHighlight);
-                cell.row.layout.dashboard.container.classList.remove(
+                cell.row.layout.board.container.classList.remove(
                     EditGlobals.classNames.dashboardCellEditHighlightActive
                 );
 
@@ -474,7 +474,7 @@ class Cell extends GUIElement {
         // reset other boxes
         const cell = this;
 
-        cell.row.layout.dashboard.mountedComponents.forEach(
+        cell.row.layout.board.mountedComponents.forEach(
             (mountedComponent):void => {
                 if (mountedComponent.cell.container) {
                     mountedComponent.cell.container.classList.remove(

@@ -1,5 +1,5 @@
 let exportedLayoutId;
-let dashboard = new Dashboards.Board('container', {
+let board = new Dashboards.Board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -9,7 +9,7 @@ let dashboard = new Dashboards.Board('container', {
                 text: 'Export dashboard',
                 events: {
                     click: function () {
-                        dashboard.exportLocal();
+                        board.exportLocal();
                     }
                 }
             }, {
@@ -17,7 +17,7 @@ let dashboard = new Dashboards.Board('container', {
                 text: 'Delete current dashboard',
                 events: {
                     click: function () {
-                        dashboard.destroy();
+                        board.destroy();
                     }
                 }
             }, {
@@ -25,7 +25,7 @@ let dashboard = new Dashboards.Board('container', {
                 text: 'Import saved dashboard',
                 events: {
                     click: function () {
-                        dashboard = Dashboards.importLocal();
+                        board = Dashboards.importLocal();
                     }
                 }
             }, {
@@ -33,8 +33,8 @@ let dashboard = new Dashboards.Board('container', {
                 text: 'Export 1 layout',
                 events: {
                     click: function () {
-                        exportedLayoutId = dashboard.layouts[0].options.id;
-                        dashboard.layouts[0].exportLocal();
+                        exportedLayoutId = board.layouts[0].options.id;
+                        board.layouts[0].exportLocal();
                     }
                 }
             }, {
@@ -42,7 +42,7 @@ let dashboard = new Dashboards.Board('container', {
                 text: 'Delete 1 layout',
                 events: {
                     click: function () {
-                        dashboard.layouts[0].destroy();
+                        board.layouts[0].destroy();
                     }
                 }
             }, {
@@ -50,7 +50,7 @@ let dashboard = new Dashboards.Board('container', {
                 text: 'Import saved layout',
                 events: {
                     click: function () {
-                        const layout = dashboard.importLayoutLocal(
+                        const layout = board.importLayoutLocal(
                             exportedLayoutId
                         );
                         console.log('Imported layout: ', layout);

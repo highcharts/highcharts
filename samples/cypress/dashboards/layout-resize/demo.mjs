@@ -1,7 +1,7 @@
 import Board from  '../../../../code/es-modules/Dashboards/Board.js';
 
 let exportedLayoutId;
-let dashboard = new Board('container', {
+let board = new Board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -12,7 +12,7 @@ let dashboard = new Board('container', {
                 text: 'Export dashboard',
                 events: {
                     click: function () {
-                        dashboard.exportLocal();
+                        board.exportLocal();
 
                     }
                 }
@@ -21,7 +21,7 @@ let dashboard = new Board('container', {
                 text: 'Delete current dashboard',
                 events: {
                     click: function () {
-                        dashboard.destroy();
+                        board.destroy();
                     }
                 }
             }, {
@@ -29,7 +29,7 @@ let dashboard = new Board('container', {
                 text: 'Import saved dashboard',
                 events: {
                     click: function () {
-                        dashboard = Board.importLocal();
+                        board = Board.importLocal();
                     }
                 }
             }, {
@@ -37,8 +37,8 @@ let dashboard = new Board('container', {
                 text: 'Export 1 layout',
                 events: {
                     click: function () {
-                        exportedLayoutId = dashboard.layouts[0].options.id;
-                        dashboard.layouts[0].exportLocal();
+                        exportedLayoutId = board.layouts[0].options.id;
+                        board.layouts[0].exportLocal();
                     }
                 }
             }, {
@@ -46,7 +46,7 @@ let dashboard = new Board('container', {
                 text: 'Delete 1 layout',
                 events: {
                     click: function () {
-                        dashboard.layouts[0].destroy();
+                        board.layouts[0].destroy();
                     }
                 }
             }, {
@@ -55,7 +55,7 @@ let dashboard = new Board('container', {
                 events: {
                     click: function () {
                         const layout =
-                            dashboard.importLayoutLocal(exportedLayoutId);
+                            board.importLayoutLocal(exportedLayoutId);
                     }
                 }
             }]
@@ -329,4 +329,4 @@ let dashboard = new Board('container', {
     }]
 });
 
-dashboard.editMode.activateEditMode();
+board.editMode.activateEditMode();

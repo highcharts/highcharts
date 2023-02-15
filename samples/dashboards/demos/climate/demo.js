@@ -575,17 +575,17 @@ async function setupDashboard() {
                         text: 'Dark mode',
                         events: {
                             click: function () {
-                                const dashboard = this.menu.editMode.dashboard,
+                                const board = this.menu.editMode.board,
                                     darModeClass =
                                         Dashboards.classNamePrefix + 'dark-mode';
 
                                 darkMode = !darkMode;
 
                                 if (darkMode) {
-                                    dashboard.container.classList
+                                    board.container.classList
                                         .add(darModeClass);
                                 } else {
-                                    dashboard.container.classList
+                                    board.container.classList
                                         .remove(darModeClass);
                                 }
                             }
@@ -600,7 +600,7 @@ async function setupDashboard() {
                                 temperatureScale = temperatureScale === 'C' ? 'F' : 'C';
                                 dataScope = 'TX' + temperatureScale;
 
-                                // Update the dashboard.
+                                // Update the board.
                                 syncRefreshCharts(
                                     citiesData[cityScope].store,
                                     dataScope,

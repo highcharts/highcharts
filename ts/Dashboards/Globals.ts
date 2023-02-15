@@ -60,7 +60,7 @@ namespace Globals {
         cellActive: classNamePrefix + 'cell-state-active',
         row: classNamePrefix + 'row',
         layoutsWrapper: classNamePrefix + 'layouts-wrapper',
-        dashboardsContainer: classNamePrefix + 'dashboards-wrapper'
+        boardContainer: classNamePrefix + 'dashboards-wrapper'
     };
 
     export const guiElementType: Record<string, GUIElement.GUIElementType> = {
@@ -75,7 +75,7 @@ namespace Globals {
         large: 'large'
     };
 
-    export const dashboards: Array<Board|undefined> = [];
+    export const boards: Array<Board|undefined> = [];
 
     export const win = window;
 

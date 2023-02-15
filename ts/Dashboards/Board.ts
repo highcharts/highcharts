@@ -114,8 +114,8 @@ class Board implements Serializable<Board, Board.JSON> {
         // Add fullscreen support.
         this.fullscreen = new Fullscreen(this);
 
-        this.index = Globals.dashboards.length;
-        Globals.dashboards.push(this);
+        this.index = Globals.boards.length;
+        Globals.boards.push(this);
 
         // a11y module
         this.a11y = new DashboardAccessibility(this);
@@ -128,7 +128,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * */
 
     public container: globalThis.HTMLElement = void 0 as any;
-    public dashboardWrapper: globalThis.HTMLElement = void 0 as any;
+    public boardWrapper: globalThis.HTMLElement = void 0 as any;
     public editMode?: EditMode;
     public fullscreen?: Fullscreen;
     public guiEnabled: (boolean|undefined);
@@ -147,10 +147,10 @@ class Board implements Serializable<Board, Board.JSON> {
      * */
 
     private initEvents(): void {
-        const dashboard = this;
+        const board = this;
 
         addEvent(window, 'resize', function (): void {
-            dashboard.reflow();
+            board.reflow();
         });
     }
 
@@ -164,7 +164,7 @@ class Board implements Serializable<Board, Board.JSON> {
     public initContainer(
         renderTo: (string|globalThis.HTMLElement)
     ): void {
-        const dashboard = this;
+        const board = this;
 
         if (typeof renderTo === 'string') {
             renderTo = window.document.getElementById(renderTo) as HTMLElement;
@@ -179,14 +179,14 @@ class Board implements Serializable<Board, Board.JSON> {
         renderTo.innerHTML = '';
 
         // Set the main wrapper container.
-        dashboard.dashboardWrapper = renderTo;
+        board.boardWrapper = renderTo;
 
-        // Add container for the dashboard.
-        dashboard.container = createElement(
+        // Add container for the board.
+        board.container = createElement(
             'div', {
-                className: Globals.classNames.dashboardsContainer
+                className: Globals.classNames.boardContainer
             }, {},
-            this.dashboardWrapper
+            this.boardWrapper
         );
     }
 
@@ -210,13 +210,13 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     public setLayouts(guiOptions: Board.GUIOptions): void {
-        const dashboard = this,
+        const board = this,
             layoutsOptions = guiOptions.layouts;
 
         for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
-            dashboard.layouts.push(
+            board.layouts.push(
                 new Layout(
-                    dashboard,
+                    board,
                     merge({}, guiOptions.layoutOptions, layoutsOptions[i])
                 )
             );
@@ -224,15 +224,15 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     public setLayoutsFromJSON(json: Array<Layout.JSON>): void {
-        const dashboard = this;
+        const board = this;
 
         let layout;
 
         for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            layout = Layout.fromJSON(json[i], dashboard);
+            layout = Layout.fromJSON(json[i], board);
 
             if (layout) {
-                dashboard.layouts.push(layout);
+                board.layouts.push(layout);
             }
         }
     }
@@ -253,24 +253,24 @@ class Board implements Serializable<Board, Board.JSON> {
      * Destroy the whole dashboard, its layouts and elements.
      */
     public destroy(): void {
-        const dashboard = this;
+        const board = this;
 
         // Destroy layouts.
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            dashboard.layouts[i].destroy();
+        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+            board.layouts[i].destroy();
         }
 
         // Destroy container.
-        dashboard.container.remove();
+        board.container.remove();
 
         // @ToDo Destroy bindings.
 
         // Delete all properties.
-        objectEach(dashboard, function (val: unknown, key: string): void {
-            delete (dashboard as Record<string, any>)[key];
+        objectEach(board, function (val: unknown, key: string): void {
+            delete (board as Record<string, any>)[key];
         });
 
-        Globals.dashboards[this.index] = void 0;
+        Globals.boards[this.index] = void 0;
 
         return;
     }
@@ -291,9 +291,9 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     public getLayoutContainerSize(): string {
-        const dashboard = this,
-            respoOptions = dashboard.options.respoBreakpoints,
-            cntWidth = (dashboard.layoutsWrapper || {}).clientWidth;
+        const board = this,
+            respoOptions = board.options.respoBreakpoints,
+            cntWidth = (board.layoutsWrapper || {}).clientWidth;
 
         let size = Globals.respoBreakpoints.large;
 
@@ -312,18 +312,18 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     public reflow(): void {
-        const dashboard = this,
-            cntSize = dashboard.getLayoutContainerSize();
+        const board = this,
+            cntSize = board.getLayoutContainerSize();
 
         let layout, row, cell;
 
-        if (dashboard.editMode) {
-            dashboard.editMode.hideToolbars(['cell', 'row']);
-            dashboard.editMode.hideContextPointer();
+        if (board.editMode) {
+            board.editMode.hideToolbars(['cell', 'row']);
+            board.editMode.hideContextPointer();
         }
 
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            layout = dashboard.layouts[i];
+        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+            layout = board.layouts[i];
 
             for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
                 row = layout.rows[j];
@@ -368,22 +368,22 @@ class Board implements Serializable<Board, Board.JSON> {
      * Class JSON of this Dashboard instance.
      */
     public toJSON(): Board.JSON {
-        const dashboard = this,
+        const board = this,
             layouts = [];
 
         // Get layouts JSON.
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            layouts.push(dashboard.layouts[i].toJSON());
+        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+            layouts.push(board.layouts[i].toJSON());
         }
 
         return {
             $class: 'Board',
             options: {
-                containerId: dashboard.container.id,
-                guiEnabled: dashboard.guiEnabled,
+                containerId: board.container.id,
+                guiEnabled: board.guiEnabled,
                 layouts: layouts,
-                componentOptions: dashboard.options.componentOptions,
-                respoBreakpoints: dashboard.options.respoBreakpoints
+                componentOptions: board.options.componentOptions,
+                respoBreakpoints: board.options.respoBreakpoints
             }
         };
     }

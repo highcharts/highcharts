@@ -6,7 +6,7 @@ import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPl
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-const dashboard = new Board('container', {
+const board = new Board('container', {
     editMode: {
         enabled: true
     },

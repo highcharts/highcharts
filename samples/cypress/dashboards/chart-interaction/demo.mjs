@@ -19,7 +19,7 @@ store.load();
 
 console.log(store);
 
-const dashboard = new Board('container', {
+const board = new Board('container', {
     gui: {
         enabled: true,
         layouts: [{
@@ -99,7 +99,7 @@ const dashboard = new Board('container', {
 });
 
 window.addEventListener('resize', e => {
-    dashboard.mountedComponents.forEach(({ component }) => {
+    board.mountedComponents.forEach(({ component }) => {
         component.resize();
     });
 });

@@ -238,10 +238,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
 
         if (this.parentCell && Object.keys(this.parentCell).length) {
-            const dashboard = this.parentCell.row.layout.dashboard;
+            const board = this.parentCell.row.layout.board;
             this.cellListeners.push(
                 // Listen for resize on dashboard
-                addEvent(dashboard, 'cellResize', (): void => {
+                addEvent(board, 'cellResize', (): void => {
                     this.resizeTo(this.parentElement);
                 }),
                 // Listen for changed parent

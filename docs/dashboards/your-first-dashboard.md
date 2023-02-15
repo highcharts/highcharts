@@ -37,7 +37,7 @@ Thus we have to import the main dashboard package, the Highcharts library and a 
     or the class `Dashboards.Board` to create a new instance of the dashboard:
 
     ```js
-        const dashboard = new Dashboards.Board('container', {...})
+        const board = new Dashboards.Board('container', {...})
     ```
 
 5.  As options, you have to provide two essential things:
