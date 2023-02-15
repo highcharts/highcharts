@@ -5,6 +5,13 @@
  *
  * License: www.highcharts.com/license
  */
+
+:root {
+    --highcharts-dashboards-main-background-color: #fff;
+    --highcharts-dashboard-wrapper-background-color: #F3F3F3;
+    --highcharts-dashboards-main-font-color: #000;
+}
+
 body {
     background-color: #F1F4F6;
     -webkit-user-select: none;
@@ -16,7 +23,7 @@ body {
 
 .hd,
 .hd-dashboards-wrapper {
-    background-color: #F3F3F3;
+    background-color: var(--highcharts-dashboard-wrapper-background-color);
     padding: 20px 10px;
     position: relative;
     overflow: hidden;
@@ -141,7 +148,7 @@ body {
     display: none;
     cursor: grab;
     pointer-events: none;
-    background-color: rgb(255, 255, 255);
+    background-color: var(--highcharts-dashboards-main-background-color);
     box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
 }
 
@@ -185,7 +192,7 @@ body {
 .hd-cell > .hd-component {
     position: relative;
     margin: 5px;
-    background-color: #fff;
+    background-color: var(--highcharts-dashboards-main-background-color);
     box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
     background-clip: border-box;
     overflow: auto;
@@ -199,7 +206,7 @@ body {
 
 .hd-edit-resize-snap {
     position: absolute;
-    background: #fff;
+    background: var(--highcharts-dashboards-main-background-color);
     border-radius: 9999px;
     border: 1px solid gray;
     z-index: 10;
@@ -366,7 +373,7 @@ h1 {
     left: calc(50% - 126px);
     z-index: 1000;
     padding: 20px;
-    background: #fff;
+    background: var(--highcharts-dashboards-main-background-color);
     top: 30%;
 }
 
@@ -382,7 +389,7 @@ h1 {
 // Edit Mode
 .hd-edit-context-menu {
     /*border: 1px solid #555;*/
-    background-color: #fff;
+    background-color: var(--highcharts-dashboards-main-background-color);
     margin-left: auto;
     border-radius: 3px;
     position: absolute;
@@ -428,7 +435,7 @@ h1 {
 }
 
 .hd-edit-context-menu-item:hover {
-    color: #000;
+    color: var(--highcharts-dashboards-main-font-color);
 }
 
 .hd-edit-separator {
@@ -485,7 +492,7 @@ h1 {
     background: #1779BA;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    color: #fff;
+    color: var(--highcharts-dashboards-main-background-color);
     .hd-edit-toolbar-item:hover {
         background-color: #0d47a1;
     }
@@ -521,7 +528,7 @@ h1 {
     left: -340px; // width + paddings
     transition: 0.5s;
     width: 300px;
-    background: #fff;
+    background-color: var(--highcharts-dashboards-main-background-color);
     color:#a6a6a6;
     position: absolute;
     z-index: 1000;
@@ -589,7 +596,7 @@ h1 {
     min-width: 34px;
     min-height: 34px;
     background-position: 50% 50%;
-    background-color: #fff;
+    background-color: var(--highcharts-dashboards-main-background-color);
 }
 
 .hd-edit-sidebar-button-nav.hd-edit-close-btn {
@@ -598,7 +605,7 @@ h1 {
 }
 
 .hd-edit-sidebar-button-nav.hd-edit-close-btn:hover {
-    background-color: #fff;
+    background-color: var(--highcharts-dashboards-main-background-color);
     border: 1px solid #0d47a1;
 }
 
@@ -626,7 +633,7 @@ h1 {
     background: #EAF1F8;
     border: 1px solid #EBEBEB;
     width: 100%;
-    color: #000;
+    color: var(--highcharts-dashboards-main-font-color);
     font-weight: bold;
     padding: 3px;
     margin-top: 15px;
@@ -695,7 +702,7 @@ h1 {
     border-bottom: 3px solid transparent;
     transition: 0.3s;
     font-size: 0.876em;
-    color: #000;
+    color: var(--highcharts-dashboards-main-font-color);
     margin-left: 25px;
 }
 
@@ -759,7 +766,7 @@ h1 {
 
 .highcharts-popup .hd-edit-popup-content button.hd-edit-popup-confirm-btn {
     background-color: #e01d5a;
-    color: #000;
+    color: var(--highcharts-dashboards-main-font-color);
 }
 
 .hd-edit-overlay {
