@@ -15,7 +15,7 @@
  * */
 
 import U from '../../Core/Utilities.js';
-import Dashboard from '../Dashboard.js';
+import Board from '../Board.js';
 import EditGlobals from './EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
@@ -73,7 +73,7 @@ class EditMode {
     *
     * */
     constructor(
-        dashboard: Dashboard,
+        dashboard: Board,
         options: EditMode.Options|undefined
     ) {
         this.options = merge(EditMode.defaultOptions, options || {});
@@ -125,7 +125,7 @@ class EditMode {
 
     private active: boolean = false;
     public options: EditMode.Options;
-    public dashboard: Dashboard;
+    public dashboard: Board;
     public lang: EditGlobals.LangOptions;
     public renderer: EditRenderer;
     public cellToolbar?: CellEditToolbar;

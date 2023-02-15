@@ -25,7 +25,7 @@
  * */
 
 import type GUIElement from './Layout/GUIElement';
-import type Dashboard from './Dashboard';
+import type Board from './Board';
 
 /* *
  *
@@ -75,7 +75,7 @@ namespace Globals {
         large: 'large'
     };
 
-    export const dashboards: Array<Dashboard|undefined> = [];
+    export const dashboards: Array<Board|undefined> = [];
 
     export const win = window;
 

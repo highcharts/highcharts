@@ -19,7 +19,7 @@
  *
  * */
 
-import Dashboard from '../Dashboard.js';
+import Board from '../Board.js';
 
 /* *
  *
@@ -41,7 +41,7 @@ class DashboardsAccessibility {
     * */
 
     public constructor(
-        dashboard: Dashboard
+        dashboard: Board
     ) {
         this.dashboard = dashboard;
 
@@ -53,7 +53,7 @@ class DashboardsAccessibility {
      *  Properties
      *
      * */
-    public dashboard: Dashboard;
+    public dashboard: Board;
 
     /* *
     *

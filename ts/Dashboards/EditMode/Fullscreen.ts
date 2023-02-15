@@ -14,7 +14,7 @@
  *
  * */
 
-import Dashboard from '../Dashboard.js';
+import Board from '../Board.js';
 import U from '../../Core/Utilities.js';
 import Globals from '../Globals.js';
 
@@ -27,7 +27,7 @@ class Fullscreen {
     *  Constructor
     *
     * */
-    constructor(DashboardClass: Dashboard) {
+    constructor(DashboardClass: Board) {
         this.isOpen = false;
         this.dashboard = DashboardClass;
 
@@ -43,7 +43,7 @@ class Fullscreen {
     *
     * */
 
-    public dashboard: Dashboard;
+    public dashboard: Board;
     public isOpen: boolean;
     private unbindFullscreenEvent?: Function;
 
