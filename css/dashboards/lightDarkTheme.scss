@@ -11,11 +11,10 @@
     --highcharts-dashboard-neutral-color-0: #ffffff;
 }
 
-@media (prefers-color-scheme: light) {
-    .highcharts-background {
-        fill: var(--highcharts-dashboard-neutral-color-0);
-    }
+.highcharts-background {
+    fill: var(--highcharts-dashboard-neutral-color-0);
 }
+
 @media (prefers-color-scheme: dark) {
     .highcharts-background {
         fill: var(--highcharts-dashboard-neutral-color-50);
