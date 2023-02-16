@@ -480,7 +480,7 @@ test('HighchartsComponent resizing', function(assert) {
 
     const { width, height } = component.element.style
     assert.ok(true)
-})
+});
 
 test('Chart update in HighchartsComponent', function(assert) {
     const parent = document.createElement('div');
@@ -507,7 +507,7 @@ test('Chart update in HighchartsComponent', function(assert) {
     });
 
     assert.deepEqual(component.options.chartOptions.title.text, 'updated');
-})
+});
 
 test('toJSON', function(assert) {
     const container = document.createElement('div');
