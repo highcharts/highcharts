@@ -180,7 +180,12 @@ class Cell extends GUIElement {
      */
     public id: string;
 
-    public readonly type = Globals.guiElementType.cell; /**
+    /**
+     * The type of GUI element.
+     */
+    public readonly type = Globals.guiElementType.cell;
+
+    /**
      * Reference to the row instance.
      */
     public row: Row;
