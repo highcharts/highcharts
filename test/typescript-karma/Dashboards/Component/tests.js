@@ -506,7 +506,7 @@ test('Chart update in HighchartsComponent', function(assert) {
         }
     });
 
-    assert.deepEqual(component.options.chartOptions.title.text, 'updated');
+    assert.strictEqual(component.options.chartOptions.title.text, 'updated');
 });
 
 test('toJSON', function(assert) {
