@@ -184,9 +184,13 @@ class DataStates {
             const e: DataStates.Event = {
                 cursor,
                 cursors: cursors || [],
-                event,
+                states: this,
                 table
             };
+
+            if (event) {
+                e.event = event;
+            }
 
             for (let i = 0, iEnd = listeners.length; i < iEnd; ++i) {
                 listeners[i].call(this, e);
@@ -220,7 +224,7 @@ class DataStates {
         );
 
         if (cursors) {
-            const index = DataStates.getIndexOfCursor(cursor, cursors);
+            const index = DataStates.getIndex(cursor, cursors);
 
             if (index >= 0) {
                 cursors.splice(index, 1);
@@ -311,6 +315,7 @@ namespace DataStates {
         event?: globalThis.Event;
         cursor: Cursor;
         cursors: Array<Cursor>;
+        states: DataStates;
         table: DataTable;
     }
 
@@ -336,7 +341,7 @@ namespace DataStates {
      * Finds the index of an cursor in an array.
      * @private
      */
-    export function getIndexOfCursor(
+    export function getIndex(
         needle: DataStates.Cursor,
         cursors: Array<DataStates.Cursor>
     ): number {

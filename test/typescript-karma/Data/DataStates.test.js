@@ -1,4 +1,92 @@
 import DataStates from '/base/code/es-modules/Data/DataStates.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
+
+QUnit.test('DataStates.emitCursor', function (assert) {
+    const done = assert.async(2),
+        event = new Event('event'),
+        states = new DataStates(),
+        table = new DataTable({
+            a: [0, 1, 2],
+            b: [10, 11, 12]
+        });
+
+    states
+        .addListener(table.id, 'test2', function (e) {
+            const expectedCursor = {
+                type: 'range',
+                firstRow: 2,
+                lastRow: 9,
+                state: 'test2'
+            };
+
+            assert.strictEqual(
+                this,
+                states,
+                'Listener scope should be a DataStates instance by default.'
+            );
+
+            assert.deepEqual(
+                e,
+                {
+                    cursor: expectedCursor,
+                    cursors: [],
+                    states,
+                    table
+                },
+                'Emitted event should have expected structure.'
+            );
+
+            done();
+        })
+        .addListener(table.id, 'test3', function (e) {
+            const expectedCursor = {
+                type: 'range',
+                firstRow: 0,
+                lastRow: 2,
+                state: 'test3'
+            };
+
+            assert.strictEqual(
+                this,
+                states,
+                'Listener scope should be a DataStates instance by default.'
+            );
+
+            assert.deepEqual(
+                e,
+                {
+                    cursor: expectedCursor,
+                    cursors: [expectedCursor],
+                    event,
+                    states,
+                    table
+                },
+                'Lasting event should have expected structure.'
+            );
+
+            done();
+        });
+
+    states
+        .emitCursor(table, {
+            type: 'position',
+            column: 'a',
+            row: 1,
+            state: 'test1'
+        })
+        .emitCursor(table, {
+            type: 'range',
+            firstRow: 2,
+            lastRow: 9,
+            state: 'test2'
+        })
+        .emitCursor(table, {
+            type: 'range',
+            firstRow: 0,
+            lastRow: 2,
+            state: 'test3'
+        }, event, true);
+});
 
 QUnit.test('DataStates.isEqual', function (assert) {
     // position
@@ -179,7 +267,7 @@ QUnit.test('DataStates.isInRange', function (assert) {
         DataStates.isInRange({
             type: 'position',
             column: 'a',
-            states: 'test1'
+            state: 'test1'
         }, cursorRange),
         'Cursor should be in range.'
     );
@@ -187,7 +275,7 @@ QUnit.test('DataStates.isInRange', function (assert) {
         DataStates.isInRange({
             type: 'position',
             column: 'z',
-            states: 'test2'
+            state: 'test2'
         }, cursorRange),
         'Cursor should not be in range.'
     );
@@ -196,7 +284,7 @@ QUnit.test('DataStates.isInRange', function (assert) {
             type: 'position',
             column: 'b',
             row: 2,
-            states: 'test3'
+            state: 'test3'
         }, cursorRange),
         'Cursor should be in range.'
     );
@@ -205,7 +293,7 @@ QUnit.test('DataStates.isInRange', function (assert) {
             type: 'position',
             column: 'b',
             row: 20,
-            states: 'test4'
+            state: 'test4'
         }, cursorRange),
         'Cursor should not be in range.'
     );
@@ -214,7 +302,7 @@ QUnit.test('DataStates.isInRange', function (assert) {
             type: 'position',
             column: 'z',
             row: 2,
-            states: 'test4'
+            state: 'test4'
         }, cursorRange),
         'Cursor should not be in range.'
     );
