@@ -36,6 +36,10 @@ export interface PackedBubbleSeriesOptions extends BubbleSeriesOptions {
     draggable?: boolean;
     layoutAlgorithm?: PackedBubbleLayout.Options;
     minSize?: (number|string);
+    x?: number;
+    y?: number;
+    centerX?: number,
+    centerY?: number,
     states?: SeriesStatesOptions<PackedBubbleSeries>;
     useSimulation?: boolean;
 }

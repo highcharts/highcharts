@@ -166,6 +166,7 @@ export function testHighchartsMoreSeries() {
         'errorbar',
         'gauge',
         'packedbubble',
+        'packedbubbleaxis',
         'polygon',
         'waterfall'
     ];

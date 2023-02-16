@@ -50,6 +50,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import PackedBubbleAxisSeries from '../PackedBubbleAxis/PackedBubbleAxisSeries';
 const {
     addEvent,
     clamp,

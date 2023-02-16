@@ -183,8 +183,10 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
                 centerX = (node.series.parentNode as any).plotX;
                 centerY = (node.series.parentNode as any).plotY;
             } else {
-                centerX = box.width / 2;
-                centerY = box.height / 2;
+                centerX = node.series.options.centerX ||
+                    box.width / 2;
+                centerY = node.series.options.centerY ||
+                    box.height / 2;
             }
 
             node.plotX = node.prevX = pick(
@@ -318,6 +320,7 @@ namespace PackedBubbleLayout {
         enableSimulation?: boolean;
         friction?: number;
         gravitationalConstant?: number;
+        gravitationalConstantY?: number;
         initialPositionRadius?: number;
         marker?: PackedBubbleSeriesOptions['marker'];
         maxIterations?: number;
