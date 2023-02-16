@@ -317,11 +317,16 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      * @param {boolean} redraw
      * The flag triggers the main redraw operation
      */
-    private updateComponentOptions(options: Partial<HighchartsComponent.ComponentOptions>, redraw = true): void {
+    private updateComponentOptions(
+        options: Partial<HighchartsComponent.ComponentOptions>,
+        redraw = true
+    ): void {
         super.update(options, redraw);
     }
 
-    public update(options: Partial<HighchartsComponent.ComponentOptions>): this {
+    public update(
+        options: Partial<HighchartsComponent.ComponentOptions>
+    ): this {
         this.updateComponentOptions(options);
 
         if (this.chart) {
