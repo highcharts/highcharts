@@ -18,17 +18,15 @@ import type ComponentTypes from '../Component/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type Serializable from '../Serializable';
-import type KPIComponent from '../Component/KPIComponent';
-import type DataStore from '../../Data/Stores/DataStore';
+import type Cell from '../Layout/Cell.js';
+import type Layout from '../Layout/Layout.js';
+import type Row from '../Layout/Row.js';
 
-import Cell from '../Layout/Cell.js';
 import Component from '../Component/Component.js';
 import HTMLComponent from '../Component/HTMLComponent.js';
 import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
-import Layout from '../Layout/Layout.js';
-import Row from '../Layout/Row.js';
 import Globals from '../Globals.js';
-import DataTable from '../../Data/DataTable';
+import KPIComponent from '../Component/KPIComponent.js';
 import U from '../../Core/Utilities.js';
 const {
     fireEvent,
@@ -203,11 +201,12 @@ class Bindings {
                     json as DataGridComponent.ClassJSON
                 );
                 break;
-            // case 'kpi':
-            //     component = KPIComponent.fromJSON(
-            //         json as KPIComponent.ClassJSON
-            //     );
-            //     break;
+            case 'KPI':
+                componentClass = Component.getComponent(json.$class);
+                if (componentClass) {
+                    component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
+                }
+                break;
             default:
                 return;
         }
@@ -226,17 +225,35 @@ class Bindings {
 
     public static getCell(idOrElement: string): Cell|undefined {
         const cell = Bindings.getGUIElement(idOrElement);
-        return cell instanceof Cell ? cell : void 0;
+
+        if (!cell) {
+            return;
+        }
+        let isCellType = cell?.getType() === 'cell';
+
+        return isCellType ? (cell as Cell) : void 0;
     }
 
     public static getRow(idOrElement: string): Row|undefined {
         const row = Bindings.getGUIElement(idOrElement);
-        return row instanceof Row ? row : void 0;
+
+        if (!row) {
+            return;
+        }
+        let isRowType = row?.getType() === 'row';
+
+        return isRowType ? (row as Row) : void 0;
     }
 
     public static getLayout(idOrElement: string): Layout|undefined {
         const layout = Bindings.getGUIElement(idOrElement);
-        return layout instanceof Layout ? layout : void 0;
+
+        if (!layout) {
+            return;
+        }
+        let isLayoutType = layout?.getType() === 'layout';
+
+        return isLayoutType ? (layout as Layout) : void 0;
     }
 
 }

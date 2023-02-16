@@ -114,7 +114,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         json: HighchartsComponent.ClassJSON
     ): HighchartsComponent {
         const options = json.options;
-        const chartOptions = JSON.parse(json.options.chartOptions || '');
+        const chartOptions = JSON.parse(json.options.chartOptions || '{}');
         // const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
 
         const component = new HighchartsComponent(
