@@ -24,11 +24,20 @@
         "../../code/highcharts.d.ts",
         "../../code/highcharts.src.d.ts",
 
+        "../../code/highcharts-more.d.ts",
+        "../../code/highcharts-more.src.d.ts",
+
         "../../code/highcharts-3d.d.ts",
         "../../code/highcharts-3d.src.d.ts",
 
-        "../../code/highcharts-more.d.ts",
-        "../../code/highcharts-more.src.d.ts",
+        "../../code/modules/stock.d.ts",
+        "../../code/modules/stock.src.d.ts",
+
+        "../../code/modules/map.d.ts",
+        "../../code/modules/map.src.d.ts",
+
+        "../../code/modules/gantt.d.ts",
+        "../../code/modules/gantt.src.d.ts",
 
         "../../code/modules/accessibility.d.ts",
         "../../code/modules/accessibility.src.d.ts",
@@ -108,9 +117,6 @@
         "../../code/modules/funnel3d.d.ts",
         "../../code/modules/funnel3d.src.d.ts",
 
-        "../../code/modules/gantt.d.ts",
-        "../../code/modules/gantt.src.d.ts",
-
         "../../code/modules/grid-axis.d.ts",
         "../../code/modules/grid-axis.src.d.ts",
 
@@ -131,9 +137,6 @@
 
         "../../code/modules/lollipop.d.ts",
         "../../code/modules/lollipop.src.d.ts",
-
-        "../../code/modules/map.d.ts",
-        "../../code/modules/map.src.d.ts",
 
         "../../code/modules/marker-clusters.d.ts",
         "../../code/modules/marker-clusters.src.d.ts",
@@ -194,9 +197,6 @@
 
         "../../code/modules/static-scale.d.ts",
         "../../code/modules/static-scale.src.d.ts",
-
-        "../../code/modules/stock.d.ts",
-        "../../code/modules/stock.src.d.ts",
 
         "../../code/modules/stock-tools.d.ts",
         "../../code/modules/stock-tools.src.d.ts",

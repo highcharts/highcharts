@@ -208,7 +208,7 @@ namespace Globals {
      *         Adding support for week number
      *
      * @name Highcharts.dateFormats
-     * @type {Record<string, Highcharts.TimeFormatCallbackFunction>}
+     * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
      */
     export const dateFormats: GlobalsLike['dateFormats'] = {};
 

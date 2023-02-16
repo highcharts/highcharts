@@ -32,14 +32,26 @@ const {
 } = U;
 import '../../Maps/MapSymbols.js';
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module './ChartLike'{
     interface ChartLike {
         mapView?: MapView;
     }
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
- * Map-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
+ * Map-optimized chart. Use Chart for common charts.
  *
  * @requires modules/map
  *
@@ -60,7 +72,6 @@ class MapChart extends Chart {
      * @param {Function} [callback]
      *        Function to run when the chart has loaded and and all external
      *        images are loaded.
-     *
      *
      * @emits Highcharts.MapChart#event:init
      * @emits Highcharts.MapChart#event:afterInit
@@ -104,18 +115,35 @@ class MapChart extends Chart {
     }
 }
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace MapChart {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
     /**
      * Contains all loaded map data for Highmaps.
      *
      * @requires modules/map
      *
      * @name Highcharts.maps
-     * @type {Record<string,*>}
+     * @type {Highcharts.Dictionary<*>}
      */
     export const maps: AnyRecord = {};
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * The factory function for creating new map charts. Creates a new {@link
@@ -162,6 +190,7 @@ namespace MapChart {
      * @function Highcharts.splitPath
      *
      * @param {string|Array<string|number>} path
+     * SVG path
      *
      * @return {Highcharts.SVGPathArray}
      * Splitted SVG path

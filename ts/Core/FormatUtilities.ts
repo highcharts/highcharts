@@ -108,7 +108,7 @@ function dateFormat(
  * @param {string} str
  *        The string to format.
  *
- * @param {Record<string, *>} ctx
+ * @param {Highcharts.Dictionary<*>} ctx
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *

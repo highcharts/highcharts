@@ -29,6 +29,9 @@ import type {
     CSSObject,
     CursorValue
 } from '../Core/Renderer/CSSObject';
+import type MapChart from '../Core/Chart/MapChart';
+import type MapPoint from '../Series/Map/MapPoint';
+import type MapSeries from '../Series/Map/MapSeries';
 import type Options from '../Core/Options';
 import type {
     PointOptions,
@@ -58,9 +61,6 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
 import '../Series/Column/ColumnSeries.js';
-import MapPoint from '../Series/Map/MapPoint.js';
-import MapSeries from '../Series/Map/MapSeries.js';
-import MapChart from '../Core/Chart/MapChart.js';
 import Breadcrumbs from './Breadcrumbs/Breadcrumbs.js';
 
 const {
@@ -1544,8 +1544,9 @@ if (PieSeries) {
     });
 }
 
-if (MapSeries) {
-    extend(MapSeries.prototype, {
+const Highmaps = H as any;
+if (Highmaps.MapSeries) {
+    extend(Highmaps.MapSeries.prototype, {
         /**
          * Animate in the new series.
          * @private
@@ -1646,8 +1647,8 @@ if (MapSeries) {
         }
     });
 
-    addEvent(MapChart, 'addSeriesAsDrilldown', function (e): boolean {
-        const chart = this,
+    addEvent(Highmaps.MapChart, 'addSeriesAsDrilldown', function (e): boolean {
+        const chart: MapChart = this,
             {
                 point,
                 options
@@ -1705,11 +1706,11 @@ if (MapSeries) {
         return false; // to prevent default function from fireEvent
     });
 
-    addEvent(MapChart, 'applyDrilldown', function (e): boolean {
-        const chart = this;
+    addEvent(Highmaps.MapChart, 'applyDrilldown', function (e): boolean {
+        const chart: MapChart = this,
+            drilldownLevels = this.drilldownLevels;
 
-        let drilldownLevels = this.drilldownLevels,
-            levelToRemove: (number|undefined);
+        let levelToRemove: (number|undefined);
 
         if (drilldownLevels && drilldownLevels.length > 0) {
             // #3352, async loading
@@ -1790,12 +1791,12 @@ if (MapSeries) {
     });
 
     // to prevent default function from fireEvent
-    addEvent(MapChart, 'midDrillUp', function (): boolean {
+    addEvent(Highmaps.MapChart, 'midDrillUp', function (): boolean {
         return false;
     });
 
-    addEvent(MapChart, 'finishDrillUp', function (e): boolean {
-        const chart = this,
+    addEvent(Highmaps.MapChart, 'finishDrillUp', function (e): boolean {
+        const chart: MapChart = this,
             {
                 shouldAnimate,
                 oldSeries,
