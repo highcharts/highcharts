@@ -242,11 +242,11 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         hcComponent.emit({ type: 'afterRender' });
         hcComponent.setupStoreUpdate();
 
-        addEvent(hcComponent.chart, 'update', function (e):void {
+        addEvent(hcComponent.chart, 'afterUpdate', function ():void {
+            const options = this.options;
+
             hcComponent.updateComponentOptions({
-                chartOptions: {
-                    ...(e as any).options
-                }
+                chartOptions: options
             }, false);
         });
         return this;
