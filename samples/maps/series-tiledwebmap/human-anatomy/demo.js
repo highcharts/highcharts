@@ -3,12 +3,12 @@
         constructor() {
             this.themes = {
                 Female: {
-                    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/graphics/human-anatomy-tiles/female/{zoom}/{x}/{y}.png',
+                    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@b58f45082b/samples/graphics/human-anatomy-tiles/female/{zoom}/{x}/{y}.png',
                     minZoom: 1,
                     maxZoom: 3
                 },
                 Male: {
-                    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/graphics/human-anatomy-tiles/male/{zoom}/{x}/{y}.png',
+                    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@b58f45082b/samples/graphics/human-anatomy-tiles/male/{zoom}/{x}/{y}.png',
                     minZoom: 1,
                     maxZoom: 3
                 }
