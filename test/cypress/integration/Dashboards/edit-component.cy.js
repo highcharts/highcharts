@@ -16,7 +16,7 @@ describe('Editable component options', () => {
         cy.get('@chartIDfield').invoke('val').then(exisitingVal =>{
 
             cy.get('@chartIDfield').clear().type(newChartID);
-            cy.get(':nth-child(2) > .hd-edit-tabs-buttons-wrapper > :nth-child(1)').click()
+            cy.contains('Apply').click()
             cy.get('#' + newChartID);
 
             // TODO when handler is updated
