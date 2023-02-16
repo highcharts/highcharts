@@ -84,13 +84,6 @@ class GeoHeatmapSeries extends MapSeries {
 
     public static defaultOptions: GeoHeatmapSeriesOptions =
         merge(MapSeries.defaultOptions, {
-            /**
-             * The keys property defines how the fields in data array should be
-             * interpretated.
-             *
-             */
-            keys: ['lon', 'lat', 'value'],
-
             tooltip: {
                 pointFormat: 'Lat: {point.lat}, Lon: {point.lon}, Value: {point.value}<br/>'
             },
@@ -182,10 +175,12 @@ class GeoHeatmapSeries extends MapSeries {
 
 interface GeoHeatmapSeries {
     pointClass: typeof GeoHeatmapPoint;
+    pointArrayMap: Array<string>;
 }
 extend(GeoHeatmapSeries.prototype, {
     type: 'geoheatmap',
-    pointClass: GeoHeatmapPoint
+    pointClass: GeoHeatmapPoint,
+    pointArrayMap: ['lon', 'lat', 'value']
 });
 
 /* *
