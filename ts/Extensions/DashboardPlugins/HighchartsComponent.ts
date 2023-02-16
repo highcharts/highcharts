@@ -442,9 +442,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     private initChart(): Chart {
         if (this.chart) {
-            // if (this.chart.series.length) {
-            //     return this.chart;
-            // }
             this.chart.destroy();
         }
         return this.constructChart();
