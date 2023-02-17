@@ -55,7 +55,6 @@ const D = {
     Board,
     board: Board.board,
     CSVStore,
-    DataGrid,
     DataOnDemand,
     DataTable,
     GoogleSheetsStore,
