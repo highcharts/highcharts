@@ -216,9 +216,7 @@ async function setupDashboard() {
                         animation: false,
                         crop: false,
                         enabled: true,
-                        formatter: function () {
-                            return Math.round(this.y);
-                        },
+                        format: '{y:.0f}',
                         inside: true,
                         padding: 0,
                         verticalAlign: 'bottom',
@@ -377,12 +375,7 @@ async function setupDashboard() {
                 xAxis: {
                     type: 'datetime',
                     labels: {
-                        formatter: function () {
-                            return Highcharts.time.dateFormat(
-                                '%e. %b',
-                                this.value
-                            );
-                        }
+                        format: '{value:%e. %b}'
                     }
                 },
                 yAxis: {
@@ -419,7 +412,7 @@ async function setupDashboard() {
             type: 'KPI',
             title: cityScope,
             value: 10,
-            valueFormatter: v => `${v.toFixed(0)}m`,
+            valueFormat: '{value:.0f}m',
             events: {
                 mount: function () {
                     kpis.data = this;
@@ -905,9 +898,7 @@ function buildKPIChartOptions(dataScope) {
                 ) || 0;
             })()],
             dataLabels: {
-                formatter: function () {
-                    return Math.round(this.y);
-                },
+                format: '{y:.0f}',
                 y: -34
             },
             animation: false,
