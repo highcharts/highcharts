@@ -5,15 +5,18 @@
  *
  * License: www.highcharts.com/license
  */
-$gray: #808080;
-
-@media (prefers-color-scheme: light) {
-    .highcharts-background {
-        fill: white;
-    }
+ :root {
+    // Base colors
+    --highcharts-dashboards-neutral-color-50: #808080;
+    --highcharts-dashboards-neutral-color-0: #ffffff;
 }
+
+.highcharts-background {
+    fill: var(--highcharts-dashboards-neutral-color-0);
+}
+
 @media (prefers-color-scheme: dark) {
     .highcharts-background {
-        fill: $gray;
+        fill: var(--highcharts-dashboards-neutral-color-50);
     }
 }
