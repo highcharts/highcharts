@@ -663,6 +663,7 @@ function onSeriesAfterTranslate(
 
     if (this.chart.polar && this.xAxis) {
         const series = this as PolarSeriesComposition,
+            { xAxis, yAxis } = series,
             chart = series.chart;
 
         // Prepare k-d-tree handling. It searches by angle (clientX) in

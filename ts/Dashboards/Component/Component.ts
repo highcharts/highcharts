@@ -95,8 +95,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         },
         sync: Sync.defaultHandlers,
         editableOptions: [
-            // 'id',
-            'store',
             'style',
             'title',
             'caption'
@@ -240,10 +238,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
 
         if (this.parentCell && Object.keys(this.parentCell).length) {
-            const dashboard = this.parentCell.row.layout.dashboard;
+            const board = this.parentCell.row.layout.board;
             this.cellListeners.push(
                 // Listen for resize on dashboard
-                addEvent(dashboard, 'cellResize', (): void => {
+                addEvent(board, 'cellResize', (): void => {
                     this.resizeTo(this.parentElement);
                 }),
                 // Listen for changed parent
@@ -825,7 +823,6 @@ namespace Component {
         // store?: DataStore.ClassJSON; // store id
         parentElement: string; // ID?
         style?: {};
-        dimensions?: { width: number; height: number };
         className?: string;
         type: string;
         id: string;

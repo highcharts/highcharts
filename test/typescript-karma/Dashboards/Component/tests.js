@@ -145,6 +145,8 @@ test('HighchartsComponent events', function (assert) {
       'load', 
       'afterLoad', 
       'afterRender',
+      'update',
+      'update',
       'afterUpdate'
     );
     assert.deepEqual(
@@ -478,7 +480,34 @@ test('HighchartsComponent resizing', function(assert) {
 
     const { width, height } = component.element.style
     assert.ok(true)
-})
+});
+
+test('Chart update in HighchartsComponent', function(assert) {
+    const parent = document.createElement('div');
+    parent.id = 'test';
+    parent.style.width = '500px';
+    document.getElementById('container').appendChild(parent);
+
+    const component = new HighchartsComponent({
+        parentElement: parent,
+        chartOptions: {
+            title: {
+                text: 'test'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }
+    }).render();
+
+    component.chart.update({
+        title: {
+            text: 'updated'
+        }
+    });
+
+    assert.strictEqual(component.options.chartOptions.title.text, 'updated');
+});
 
 test('toJSON', function(assert) {
     const container = document.createElement('div');

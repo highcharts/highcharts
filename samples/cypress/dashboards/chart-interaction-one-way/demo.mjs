@@ -1,6 +1,6 @@
 import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
-import Dashboard from '../../../../code/es-modules/Dashboards/Dashboard.js';
-import PluginHandler from '../../../../code/es-modules/Dashboard/PluginHandler.js';
+import Board from '../../../../code/es-modules/Dashboards/Board';
+import PluginHandler from '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
 
@@ -18,7 +18,7 @@ const store = new CSVStore(undefined, {
 
 store.load();
 
-new Dashboard('container', {
+new Board('container', {
   gui: {
     enabled: true,
     layouts: [{

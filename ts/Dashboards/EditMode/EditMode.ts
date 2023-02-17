@@ -15,7 +15,7 @@
  * */
 
 import U from '../../Core/Utilities.js';
-import Dashboard from '../Dashboard.js';
+import Board from '../Board.js';
 import EditGlobals from './EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
@@ -73,11 +73,11 @@ class EditMode {
     *
     * */
     constructor(
-        dashboard: Dashboard,
+        board: Board,
         options: EditMode.Options|undefined
     ) {
         this.options = merge(EditMode.defaultOptions, options || {});
-        this.dashboard = dashboard;
+        this.board = board;
         this.lang = merge({}, EditGlobals.lang, this.options.lang);
 
         // Init renderer.
@@ -89,7 +89,7 @@ class EditMode {
                 'div',
                 { className: EditGlobals.classNames.contextDetectionPointer },
                 {},
-                this.dashboard.container
+                this.board.container
             )
         };
 
@@ -97,13 +97,13 @@ class EditMode {
         this.isContextDetectionActive = false;
         this.tools = {};
         this.rwdMenu = [];
-        this.rwdMode = this.dashboard.getLayoutContainerSize();
+        this.rwdMode = this.board.getLayoutContainerSize();
 
         this.createTools();
 
         this.confirmationPopup = new ConfirmationPopup(
             this,
-            dashboard.container,
+            board.container,
             this.options.confirmationPopup
         );
 
@@ -112,7 +112,7 @@ class EditMode {
             'div', {
                 className: EditGlobals.classNames.editOverlay
             }, {},
-            dashboard.container
+            board.container
         );
         this.isEditOverlayActive = false;
     }
@@ -125,7 +125,7 @@ class EditMode {
 
     private active: boolean = false;
     public options: EditMode.Options;
-    public dashboard: Dashboard;
+    public board: Board;
     public lang: EditGlobals.LangOptions;
     public renderer: EditRenderer;
     public cellToolbar?: CellEditToolbar;
@@ -160,7 +160,7 @@ class EditMode {
         // Init contextMenu if doesn't exist.
         if (!editMode.tools.contextMenu) {
             editMode.tools.contextMenu = new EditContextMenu(
-                editMode.dashboard.container,
+                editMode.board.container,
                 editMode.options.contextMenu || {},
                 editMode
             );
@@ -227,10 +227,10 @@ class EditMode {
 
     private initEvents(): void {
         const editMode = this,
-            dashboard = editMode.dashboard;
+            board = editMode.board;
 
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            editMode.setLayoutEvents(dashboard.layouts[i]);
+        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+            editMode.setLayoutEvents(board.layouts[i]);
         }
 
         if (editMode.cellToolbar) {
@@ -272,16 +272,16 @@ class EditMode {
         }
 
         addEvent(
-            dashboard.layoutsWrapper,
+            board.layoutsWrapper,
             'mousemove',
             editMode.onDetectContext.bind(editMode)
         );
         addEvent(
-            dashboard.layoutsWrapper,
+            board.layoutsWrapper,
             'click',
             editMode.onContextConfirm.bind(editMode)
         );
-        addEvent(dashboard.layoutsWrapper, 'mouseleave', (): void => {
+        addEvent(board.layoutsWrapper, 'mouseleave', (): void => {
             editMode.hideContextPointer();
         });
     }
@@ -405,7 +405,7 @@ class EditMode {
         }
 
         // Set edit mode active class to dashboard.
-        editMode.dashboard.container.classList.add(
+        editMode.board.container.classList.add(
             EditGlobals.classNames.editModeEnabled
         );
 
@@ -415,7 +415,7 @@ class EditMode {
         }
 
         // Sets proper rwd mode.
-        editMode.rwdMode = editMode.dashboard.getLayoutContainerSize();
+        editMode.rwdMode = editMode.board.getLayoutContainerSize();
 
         // show reponsive buttons
         this.showRwdButtons();
@@ -426,7 +426,7 @@ class EditMode {
 
     public deactivateEditMode(): void {
         const editMode = this,
-            dashboardCnt = editMode.dashboard.container;
+            dashboardCnt = editMode.board.container;
 
         dashboardCnt.classList.remove(
             EditGlobals.classNames.editModeEnabled
@@ -454,7 +454,7 @@ class EditMode {
         this.hideRwdButtons();
 
         // disable responsive width
-        this.dashboard.layoutsWrapper.style.width = '100%';
+        this.board.layoutsWrapper.style.width = '100%';
 
         editMode.active = false;
         editMode.stopContextDetection();
@@ -565,9 +565,9 @@ class EditMode {
         this.tools.container = document.createElement('div');
         this.tools.container.classList.add(EditGlobals.classNames.editTools);
 
-        this.dashboard.layoutsWrapper.parentNode.insertBefore(
+        this.board.layoutsWrapper.parentNode.insertBefore(
             this.tools.container,
-            this.dashboard.layoutsWrapper
+            this.board.layoutsWrapper
         );
 
         // create context menu button
@@ -608,7 +608,7 @@ class EditMode {
     }
 
     private createRwdMenu(): void {
-        const rwdBreakingPoints = this.dashboard.options.respoBreakpoints;
+        const rwdBreakingPoints = this.board.options.respoBreakpoints;
         const toolsContainer = this.tools.container;
         const options = this.options;
         const rwdIcons =
@@ -623,12 +623,12 @@ class EditMode {
                         icon: (rwdIcons as any)[key] || '',
                         value: key,
                         callback: (): void => {
-                            this.dashboard.layoutsWrapper.style.width =
+                            this.board.layoutsWrapper.style.width =
                                 rwdBreakingPoints[key] + 'px';
                             this.rwdMode = key;
 
                             // reflow elements
-                            this.dashboard.reflow();
+                            this.board.reflow();
                         },
                         style: {
                             display: 'none'
@@ -680,7 +680,7 @@ class EditMode {
 
             if (cellContext) {
                 const cellContextOffsets = GUIElement
-                    .getOffsets(cellContext, editMode.dashboard.container);
+                    .getOffsets(cellContext, editMode.board.container);
                 const { width, height } = GUIElement
                     .getDimFromOffsets(cellContextOffsets);
 

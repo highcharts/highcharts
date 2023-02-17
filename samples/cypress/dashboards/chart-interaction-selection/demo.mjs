@@ -1,5 +1,5 @@
 import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
-import Dashboard from  '../../../../code/es-modules/Dashboards/Dashboard.js';
+import Board from  '../../../../code/es-modules/Dashboards/Board.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from  '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from  '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
@@ -17,7 +17,7 @@ const store = new CSVStore(undefined, {
 });
 store.load();
 
-const dashboard = new Dashboard('container', {
+const board = new Board('container', {
     gui: {
         enabled: true,
         layouts: [{
@@ -88,8 +88,8 @@ const dashboard = new Dashboard('container', {
         events: {},
         store,
         sync: {
-          'selection': true,  
-          'panning': true
+            selection: true,
+            panning: true
         }
     }, {
         cell: 'dashboard-col-1',
@@ -112,18 +112,18 @@ const dashboard = new Dashboard('container', {
         events: {},
         store,
         sync: {
-          'selection': true,  
-          'panning': true
+            selection: true,
+            panning: true
         }
     }]
 });
 
 window.addEventListener('resize', e => {
-    dashboard.mountedComponents.forEach(({ component }) => {
+    board.mountedComponents.forEach(({ component }) => {
         component.resize();
     });
 });
 
-dashboard.mountedComponents.forEach(({ component }) => {
+board.mountedComponents.forEach(({ component }) => {
     console.log(component);
 });

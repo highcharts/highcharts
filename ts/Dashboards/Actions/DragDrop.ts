@@ -75,7 +75,7 @@ class DragDrop {
             'div',
             { className: EditGlobals.classNames.dragMock },
             {},
-            editMode.dashboard.container
+            editMode.board.container
         );
 
         this.dropPointer = {
@@ -85,7 +85,7 @@ class DragDrop {
                 'div',
                 { className: EditGlobals.classNames.dropPointer },
                 {},
-                editMode.dashboard.container
+                editMode.board.container
             )
         };
 
@@ -210,7 +210,7 @@ class DragDrop {
     ): void {
         const dragDrop = this,
             dashBoundingRect =
-                dragDrop.editMode.dashboard.container.getBoundingClientRect(),
+                dragDrop.editMode.board.container.getBoundingClientRect(),
             offset = dragDrop.mockElement.clientWidth / 2,
             x = mouseEvent.clientX - dashBoundingRect.left - offset,
             y = mouseEvent.clientY - dashBoundingRect.top - offset;
@@ -260,9 +260,9 @@ class DragDrop {
             if (context.getType() === Globals.guiElementType.cell) {
                 const draggedCell = context as Cell;
 
-                // Call cellResize dashboard event.
+                // Call cellResize board event.
                 fireEvent(
-                    this.editMode.dashboard,
+                    this.editMode.board,
                     'cellResize',
                     { cell: context }
                 );
@@ -401,7 +401,7 @@ class DragDrop {
             if (align) {
                 const dropContextRowOffsets = GUIElement.getOffsets(
                     dragDrop.dropContext,
-                    dragDrop.editMode.dashboard.container
+                    dragDrop.editMode.board.container
                 );
                 const { width, height } = GUIElement
                     .getDimFromOffsets(dropContextRowOffsets);
@@ -448,10 +448,10 @@ class DragDrop {
                     (dragDrop.dropPointer.align === 'bottom' ? 1 : 0)
             );
 
-            // Call cellResize dashboard event.
+            // Call cellResize board event.
             if (draggedRow.cells[0]) {
                 fireEvent(
-                    dragDrop.editMode.dashboard,
+                    dragDrop.editMode.board,
                     'cellResize',
                     { cell: draggedRow.cells[0] }
                 );
@@ -527,7 +527,7 @@ class DragDrop {
 
         if (align === 'right' || align === 'left') {
             const dropContextOffsets = GUIElement.getOffsets(
-                dragDrop.dropContext, dragDrop.editMode.dashboard.container);
+                dragDrop.dropContext, dragDrop.editMode.board.container);
             const { width, height } =
                 GUIElement.getDimFromOffsets(dropContextOffsets);
 
@@ -610,7 +610,7 @@ class DragDrop {
 
                 const { width, height } = GUIElement
                         .getDimFromOffsets(cellOffsets),
-                    dashOffsets = dragDrop.editMode.dashboard.container
+                    dashOffsets = dragDrop.editMode.board.container
                         .getBoundingClientRect(),
                     levelHeight = (
                         rowLevelInfo.rowLevel.bottom -
@@ -748,9 +748,9 @@ class DragDrop {
             }
         }
 
-        // Call cellResize dashboard event.
+        // Call cellResize board event.
         fireEvent(
-            dragDrop.editMode.dashboard,
+            dragDrop.editMode.board,
             'cellResize',
             { cell: draggedCell }
         );
