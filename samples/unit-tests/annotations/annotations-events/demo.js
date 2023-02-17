@@ -218,6 +218,32 @@ QUnit.test('Annotations events - general', function (assert) {
         'Annotations\' popup should get correct config for fields (#11716)'
     );
 
+    // Click again to deselect the annotation
+    controller.click(chart.xAxis[0].toPixels(5), chart.yAxis[0].toPixels(20));
+
+    // Call ontouchstart and ontouchend events to simulate touchscreen tap
+    const circle = chart.annotations[0].graphic.element;
+    circle.ontouchstart({
+        touches: [{
+            clientX: chart.xAxis[0].toPixels(5),
+            clientY: chart.yAxis[0].toPixels(20)
+        }]
+    });
+    circle.ontouchend({
+        changedTouches: [{
+            clientX: chart.xAxis[0].toPixels(5),
+            clientY: chart.yAxis[0].toPixels(20)
+        }],
+        preventDefault: function () {}
+    });
+
+    assert.ok(
+        document
+            .querySelector('.highcharts-control-points path')
+            .getAttribute('visibility') !== 'hidden',
+        'Control point for annotation should be visible after touch (#18276).'
+    );
+
     chart.navigationBindings.activeAnnotation.setVisibility();
     assert.ok(
         closeEventCalled,
