@@ -84,6 +84,9 @@ class GeoHeatmapSeries extends MapSeries {
 
     public static defaultOptions: GeoHeatmapSeriesOptions =
         merge(MapSeries.defaultOptions, {
+
+            nullColor: 'transparent',
+
             tooltip: {
                 pointFormat: 'Lat: {point.lat}, Lon: {point.lon}, Value: {point.value}<br/>'
             },
