@@ -861,7 +861,7 @@ class Series {
             (defaultOptions.plotOptions as any).series &&
                 (defaultOptions.plotOptions as any).series.tooltip, // 2
             (defaultOptions.plotOptions as any)[this.type].tooltip, // 3
-            (chartOptions.tooltip && chartOptions.tooltip.userOptions), // 4
+            (chartOptions.tooltip as any).userOptions, // 4
             (plotOptions as any).series &&
             (plotOptions as any).series.tooltip, // 5
             (plotOptions as any)[this.type].tooltip, // 6
@@ -3765,10 +3765,7 @@ class Series {
             chart = series.chart,
             pointer = chart.pointer,
             renderer = chart.renderer,
-            snap = pick(
-                chart.options.tooltip && chart.options.tooltip.snap,
-                10
-            ),
+            snap = (chart.options.tooltip as any).snap,
             tracker = series.tracker,
             onMouseOver = function (e: PointerEvent): void {
                 if (chart.hoverSeries !== series) {
