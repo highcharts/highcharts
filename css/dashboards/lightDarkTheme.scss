@@ -7,16 +7,16 @@
  */
  :root {
     // Base colors
-    --highcharts-dashboard-neutral-color-50: #808080;
-    --highcharts-dashboard-neutral-color-0: #ffffff;
+    --highcharts-dashboards-neutral-color-50: #808080;
+    --highcharts-dashboards-neutral-color-0: #ffffff;
 }
 
 .highcharts-background {
-    fill: var(--highcharts-dashboard-neutral-color-0);
+    fill: var(--highcharts-dashboards-neutral-color-0);
 }
 
 @media (prefers-color-scheme: dark) {
     .highcharts-background {
-        fill: var(--highcharts-dashboard-neutral-color-50);
+        fill: var(--highcharts-dashboards-neutral-color-50);
     }
 }
