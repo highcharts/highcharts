@@ -18,23 +18,22 @@
 
 import type CSSJSONObject from '../CSSJSONObject';
 import type Component from '../Component/Component.js';
-import type ComponentType from '../Component/ComponentType';
 import type JSON from '../../Core/JSON';
-import type LayoutType from './Layout.js';
-import type Row from './Row.js';
+import type LayoutType from './Layout';
+import type Row from './Row';
 import type Serializable from '../Serializable';
 
 import Globals from '../Globals.js';
 import GUIElement from './GUIElement.js';
-import B from '../Actions/Bindings.js';
+import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import EditGlobals from '../EditMode/EditGlobals.js';
 
 const {
     componentFromJSON
-} = B;
-const B2 = B;
+} = Bindings;
+
 const {
     merge,
     fireEvent

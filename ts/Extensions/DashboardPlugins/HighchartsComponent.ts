@@ -207,7 +207,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             });
         }
 
-
         this.innerResizeTimeouts = [];
 
         // Add the component instance to the registry

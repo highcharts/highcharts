@@ -40,18 +40,23 @@ class Bindings {
      *  Functions
      *
      * */
-    private static getGUIElement(idOrElement: string): GUIElement|undefined {
-        const container = typeof idOrElement === 'string' ?
-            document.getElementById(idOrElement) : idOrElement;
+    private static getGUIElement(idOrElement: string): GUIElement | undefined {
+        const container =
+            typeof idOrElement === 'string' ?
+                document.getElementById(idOrElement) :
+                idOrElement;
 
         let guiElement;
 
         if (container instanceof HTMLElement) {
-            fireEvent(container, 'bindedGUIElement', {}, function (
-                e: GUIElement.BindedGUIElementEvent
-            ): void {
-                guiElement = e.guiElement;
-            });
+            fireEvent(
+                container,
+                'bindedGUIElement',
+                {},
+                function (e: GUIElement.BindedGUIElementEvent): void {
+                    guiElement = e.guiElement;
+                }
+            );
         }
 
         return guiElement;
@@ -66,7 +71,7 @@ class Bindings {
         const optionsEvents = options.events;
 
         cell = cell || Bindings.getCell(options.cell);
-        let component: ComponentTypes|undefined;
+        let component: ComponentTypes | undefined;
 
         // add elements to containers
         if (componentContainer) {
@@ -74,9 +79,8 @@ class Bindings {
 
             switch (options.type) {
                 case 'html':
-                    component = new HTMLComponent(merge(
-                        options,
-                        {
+                    component = new HTMLComponent(
+                        merge(options, {
                             parentElement: componentContainer,
                             elements: options.elements
                         })
@@ -84,21 +88,19 @@ class Bindings {
                     break;
                 case 'Highcharts':
                     if (ComponentClass) {
-                        component = new ComponentClass(merge(
-                            options,
-                            {
+                        component = new ComponentClass(
+                            merge(options, {
                                 parentElement: componentContainer,
                                 chartOptions: options.chartOptions,
                                 dimensions: options.dimensions
-                            }
-                        )) as HighchartsComponent;
+                            })
+                        ) as HighchartsComponent;
                     }
                     break;
                 case 'DataGrid':
                     if (ComponentClass) {
-                        component = new ComponentClass(merge(
-                            options,
-                            {
+                        component = new ComponentClass(
+                            merge(options, {
                                 parentElement: componentContainer
                             })
                         ) as DataGridComponent;
@@ -106,9 +108,8 @@ class Bindings {
                     break;
                 case 'KPI':
                     if (ComponentClass) {
-                        component = new ComponentClass(merge(
-                            options,
-                            {
+                        component = new ComponentClass(
+                            merge(options, {
                                 parentElement: componentContainer
                             })
                         ) as KPIComponent;
@@ -143,7 +144,7 @@ class Bindings {
 
             // events
             if (optionsEvents && optionsEvents.click) {
-                addEvent(componentContainer, 'click', ():void => {
+                addEvent(componentContainer, 'click', (): void => {
                     optionsEvents.click();
 
                     if (
@@ -159,14 +160,8 @@ class Bindings {
             }
 
             // states
-            if (
-                componentContainer &&
-                optionsStates &&
-                optionsStates.hover
-            ) {
-                componentContainer.classList.add(
-                    Globals.classNames.cellHover
-                );
+            if (componentContainer && optionsStates && optionsStates.hover) {
+                componentContainer.classList.add(Globals.classNames.cellHover);
             }
         }
 
@@ -178,10 +173,10 @@ class Bindings {
     }
 
     public static componentFromJSON(
-        json: HTMLComponent.ClassJSON|HighchartsComponent.ClassJSON,
-        cellContainer: HTMLElement|undefined
-    ): (Component|undefined) {
-        let component: (Component|undefined);
+        json: HTMLComponent.ClassJSON | HighchartsComponent.ClassJSON,
+        cellContainer: HTMLElement | undefined
+    ): Component | undefined {
+        let component: Component | undefined;
         let componentClass;
 
         switch (json.$class) {
@@ -193,7 +188,12 @@ class Bindings {
             case 'Highcharts':
                 componentClass = Component.getComponent(json.$class);
                 if (componentClass) {
-                    component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
+                    component = (
+                        componentClass as unknown as Serializable<
+                        Component,
+                            typeof json
+                        >
+                    ).fromJSON(json);
                 }
                 break;
             case 'DataGrid':
@@ -204,7 +204,12 @@ class Bindings {
             case 'KPI':
                 componentClass = Component.getComponent(json.$class);
                 if (componentClass) {
-                    component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
+                    component = (
+                        componentClass as unknown as Serializable<
+                        Component,
+                            typeof json
+                        >
+                    ).fromJSON(json);
                 }
                 break;
             default:
@@ -223,39 +228,35 @@ class Bindings {
         return component;
     }
 
-    public static getCell(idOrElement: string): Cell|undefined {
+    public static getCell(idOrElement: string): Cell | undefined {
         const cell = Bindings.getGUIElement(idOrElement);
 
-        if (!cell) {
+        if (!(cell && cell.getType() === 'cell')) {
             return;
         }
-        let isCellType = cell?.getType() === 'cell';
 
-        return isCellType ? (cell as Cell) : void 0;
+        return (cell as Cell);
     }
 
-    public static getRow(idOrElement: string): Row|undefined {
+    public static getRow(idOrElement: string): Row | undefined {
         const row = Bindings.getGUIElement(idOrElement);
 
-        if (!row) {
+        if (!(row && row.getType() === 'row')) {
             return;
         }
-        let isRowType = row?.getType() === 'row';
 
-        return isRowType ? (row as Row) : void 0;
+        return (row as Row);
     }
 
-    public static getLayout(idOrElement: string): Layout|undefined {
+    public static getLayout(idOrElement: string): Layout | undefined {
         const layout = Bindings.getGUIElement(idOrElement);
 
-        if (!layout) {
+        if (!(layout && layout.getType() === 'layout')) {
             return;
         }
-        let isLayoutType = layout?.getType() === 'layout';
 
-        return isLayoutType ? (layout as Layout) : void 0;
+        return layout as Layout;
     }
-
 }
 
 namespace Bindings {
