@@ -152,7 +152,7 @@ class CellEditToolbar extends EditToolbar {
         ) {
             const cellOffsets = GUIElement.getOffsets(
                 cell,
-                toolbar.editMode.dashboard.container
+                toolbar.editMode.board.container
             );
 
             x = cellOffsets.right;
@@ -214,7 +214,7 @@ class CellEditToolbar extends EditToolbar {
             // Call cellResize dashboard event.
             if (row && row.cells && row.cells.length) {
                 fireEvent(
-                    toolbar.editMode.dashboard,
+                    toolbar.editMode.board,
                     'cellResize',
                     { cell: row.cells[0] }
                 );

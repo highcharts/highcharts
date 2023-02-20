@@ -498,8 +498,8 @@ class DataGrid {
     private updateScrollingLength(): void {
         const columnsInPresentationOrder = this.columnNames;
         let i = this.dataTable.getRowCount() - 1;
-        let top = i - this.getNumRowsToDraw();
         let height = 0;
+        const top = i - this.getNumRowsToDraw();
         const outerHeight = this.outerContainer.clientHeight;
 
         // Explicit height is needed for overflow: hidden to work, to make sure
@@ -818,6 +818,27 @@ class DataGrid {
 
         this.draggedResizeHandle = null;
         this.draggedColumnRightIx = null;
+    }
+
+    /**
+     * Update the size of datagrid container
+     * @param {number | string | null} width new width
+     * @param {number | string | null} height new height
+     */
+    public setSize(
+        width?: number | string | null,
+        height?: number | string | null
+    ): void {
+        if (width) {
+            this.innerContainer.style.width = width + 'px';
+        }
+
+        if (height) {
+            this.gridContainer.style.height = height + 'px';
+            this.outerContainer.style.height = height + 'px';
+        }
+
+        this.render();
     }
 }
 

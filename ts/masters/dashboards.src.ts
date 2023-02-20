@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Dashboards v0.0.1 (@product.date@)
+ * @license Highcharts Dashboards v0.0.2 (@product.date@)
  * @module highsoft/dashboard
  * @requires window
  *
@@ -17,7 +17,7 @@
  * */
 
 import CSVStore from '../Data/Stores/CSVStore.js';
-import Dashboard from '../Dashboards/Dashboard.js';
+import Board from '../Dashboards/Board.js';
 import DataOnDemand from '../Data/DataOnDemand.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';
@@ -28,7 +28,6 @@ import PluginHandler from '../Dashboards/PluginHandler.js';
 import RangeModifier from '../Data/Modifiers/RangeModifier.js';
 import Sync from '../Dashboards/Component/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
-import DataGrid from '../DataGrid/DataGrid.js';
 
 /* *
  *
@@ -53,10 +52,9 @@ declare global {
 const D = {
     ...Globals,
     ...Utilities,
-    _modules: (typeof _modules === 'undefined' ? {} : _modules),
+    Board,
+    board: Board.board,
     CSVStore,
-    Dashboard,
-    DataGrid,
     DataOnDemand,
     DataTable,
     GoogleSheetsStore,
@@ -64,7 +62,8 @@ const D = {
     HTMLTableStore,
     PluginHandler,
     RangeModifier,
-    Sync
+    Sync,
+    _modules: (typeof _modules === 'undefined' ? {} : _modules)
 };
 
 /* *

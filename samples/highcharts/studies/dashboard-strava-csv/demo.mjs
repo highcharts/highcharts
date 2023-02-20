@@ -1,6 +1,6 @@
 import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
 import HTMLTableStore from '../../../../code/es-modules/Data/Stores/HTMLTableStore.js';
-import Dashboard from '../../../../code/es-modules/Dashboard/Dashboard.js';
+import Board from '../../../../code/es-modules/Dashboards/Board.js';
 import RangeModifier from '../../../../code/es-modules/Data/Modifiers/RangeModifier.js';
 import ChainModifier from '../../../../code/es-modules/Data/Modifiers/ChainModifier.js';
 import GroupModifier from '../../../../code/es-modules/Data/Modifiers/GroupModifier.js';
@@ -606,7 +606,7 @@ const components = state => [
 ];
 
 function initDashBoard() {
-    return new Dashboard("container", {
+    return new Board("container", {
         gui: gui,
         components: components(state)
     });
@@ -661,7 +661,7 @@ const editMode = {
             text: 'Import saved dashboard',
             events: {
                 click: function () {
-                    dashboard = Dashboard.importLocal();
+                    dashboard = Board.importLocal();
                 }
             }
         }, {

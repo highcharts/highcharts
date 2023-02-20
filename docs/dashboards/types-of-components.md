@@ -30,6 +30,7 @@ The last thing that you have to do is to specify the `type: 'Highcharts'` in the
 To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.
 ```html
     <script src="https://code.highcharts.com/dashboards.js"></script>
+    <script src="https://code.highcharts.com/datagrid.js"></script>
     <script src="https://code.highcharts.com/modules/dashboards-plugin.js"></script>
 ```
 

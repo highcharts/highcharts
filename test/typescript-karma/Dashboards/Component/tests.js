@@ -73,7 +73,7 @@ test('HighchartsComponent options update', function (assert) {
           "load",
           "afterLoad",
           "beforeRender",
-          "afterRender",
+          "afterRender"
     ];
 
     // TODO: update with options that should not force a redraw
@@ -91,11 +91,7 @@ test('HighchartsComponent options update', function (assert) {
     const expectedEvents = eventsAfterRender;
     expectedEvents.push(
         'update', 
-        // 'redraw', 
-        // 'beforeRender', 
-        // 'load', 
-        // 'afterLoad',
-        // 'afterRender',
+        'update', // is triggered by the chart updating
         'afterUpdate'
     );
     assert.deepEqual(registeredEvents, expectedEvents ,'after unforced update');
@@ -114,6 +110,7 @@ test('HighchartsComponent options update', function (assert) {
           "load",
           "afterLoad",
           "afterRender",
+          "update",
           "afterUpdate"
 
     );
@@ -515,7 +512,34 @@ test('HighchartsComponent resizing', function(assert) {
 
     const { width, height } = component.element.style
     assert.ok(true)
-})
+});
+
+test('Chart update in HighchartsComponent', function(assert) {
+    const parent = document.createElement('div');
+    parent.id = 'test';
+    parent.style.width = '500px';
+    document.getElementById('container').appendChild(parent);
+
+    const component = new HighchartsComponent({
+        parentElement: parent,
+        chartOptions: {
+            title: {
+                text: 'test'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }
+    }).render();
+
+    component.chart.update({
+        title: {
+            text: 'updated'
+        }
+    });
+
+    assert.strictEqual(component.options.chartOptions.title.text, 'updated');
+});
 
 test('toJSON', function(assert) {
     const container = document.createElement('div');

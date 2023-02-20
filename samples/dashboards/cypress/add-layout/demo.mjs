@@ -13,8 +13,7 @@ DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
 PluginHandler.addPlugin(DataGridPlugin);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-
-const dashoard = new Dashboards.Dashboard('container', {
+Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {

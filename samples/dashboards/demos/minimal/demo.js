@@ -8,7 +8,7 @@ const csvData = document.getElementById('csv').innerText,
 
 store.load();
 
-const dashboard = new Dashboards.Dashboard('container', {
+Dashboards.board('container', {
     store: store,
     editMode: {
         enabled: true,

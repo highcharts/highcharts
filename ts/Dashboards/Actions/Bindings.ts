@@ -137,7 +137,7 @@ class Bindings {
             component.setCell(cell);
             cell.mountedComponent = component;
 
-            cell.row.layout.dashboard.mountedComponents.push({
+            cell.row.layout.board.mountedComponents.push({
                 options: options,
                 component: component,
                 cell: cell

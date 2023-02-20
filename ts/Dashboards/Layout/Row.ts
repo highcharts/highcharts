@@ -120,7 +120,7 @@ class Row extends GUIElement {
                 rowClassName = layoutOptions.rowClassName || '';
 
             this.setElementContainer({
-                render: layout.dashboard.guiEnabled,
+                render: layout.board.guiEnabled,
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id,
@@ -192,7 +192,7 @@ class Row extends GUIElement {
         for (i = 0, iEnd = cellsElements.length; i < iEnd; ++i) {
             cellElement = cellsElements[i];
             row.addCell(
-                row.layout.dashboard.guiEnabled ? cellElement : { id: '' },
+                row.layout.board.guiEnabled ? cellElement : { id: '' },
                 cellElement instanceof HTMLElement ? cellElement : void 0
             );
         }
@@ -269,8 +269,8 @@ class Row extends GUIElement {
         }
 
         // Set editMode events.
-        if (row.layout.dashboard.editMode) {
-            row.layout.dashboard.editMode.setCellEvents(cell);
+        if (row.layout.board.editMode) {
+            row.layout.board.editMode.setCellEvents(cell);
         }
 
         return cell;
@@ -291,13 +291,14 @@ class Row extends GUIElement {
             }
         }
 
-        row.layout.unmountRow(row);
-        const destroyLayout = layout.rows.length === 0;
+        if (row.layout) {
+            row.layout.unmountRow(row);
 
-        super.destroy();
+            super.destroy();
 
-        if (destroyLayout) {
-            layout.destroy();
+            if (layout.rows.length === 0) {
+                layout.destroy();
+            }
         }
     }
 

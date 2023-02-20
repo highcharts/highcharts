@@ -24,9 +24,9 @@ describe('Add component through UI', () => {
     it('should be able to add a layout', function() {
         grabComponent('layout');
         dropComponent('#dashboard-col-0');
-        cy.dashboard().then((dashboard) => {
+        cy.board().then((board) => {
             assert.equal(
-                dashboard.layouts.length,
+                board.layouts.length,
                 2,
                 'New layout should be added.'
             );
@@ -37,14 +37,14 @@ describe('Add component through UI', () => {
         grabComponent('HTML');
         dropComponent('#dashboard-col-0');
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
-        cy.dashboard().then((dashboard) => {
+        cy.board().then((board) => {
             assert.equal(
-                dashboard.layouts[0].rows[0].cells.length,
+                board.layouts[0].rows[0].cells.length,
                 3,
                 'New cell should be added.'
             );
 
-            const m = dashboard.mountedComponents;
+            const m = board.mountedComponents;
             assert.equal(
                 m[m.length - 1].component.type,
                 'HTML',
@@ -59,14 +59,14 @@ describe('Add component through UI', () => {
         grabComponent('chart');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
-        cy.dashboard().then((dashboard) => {
+        cy.board().then((board) => {
             assert.equal(
-                dashboard.layouts[0].rows[0].cells.length,
+                board.layouts[0].rows[0].cells.length,
                 3,
                 'New cell should be added.'
             );
 
-            const m = dashboard.mountedComponents,
+            const m = board.mountedComponents,
                 component =  m[m.length - 1].component;
             assert.equal(
                 component.type,
@@ -80,13 +80,13 @@ describe('Add component through UI', () => {
         grabComponent('datagrid');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
-        cy.dashboard().then((dashboard) => {
+        cy.board().then((board) => {
             assert.equal(
-                dashboard.layouts[0].rows[0].cells.length,
+                board.layouts[0].rows[0].cells.length,
                 3,
                 'New cell should be added.'
             );
-            const m = dashboard.mountedComponents,
+            const m = board.mountedComponents,
                 component = m[m.length - 1].component;
             assert.equal(
                 component.type,

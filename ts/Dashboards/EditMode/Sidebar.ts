@@ -106,13 +106,13 @@ class Sidebar {
                             (dropContext as Cell).row :
                             (dropContext as Row)
                     ),
-                    dashboard = row.layout.dashboard,
+                    board = row.layout.board,
                     newLayoutName = GUIElement.createElementId('layout'),
                     cellName = GUIElement.createElementId('cell'),
-                    layout = new Layout(dashboard, {
+                    layout = new Layout(board, {
                         id: newLayoutName,
                         copyId: '',
-                        parentContainerId: dashboard.container.id,
+                        parentContainerId: board.container.id,
                         rows: [{
                             cells: [{
                                 id: cellName
@@ -122,7 +122,7 @@ class Sidebar {
                     });
 
                 if (layout) {
-                    dashboard.layouts.push(layout);
+                    board.layouts.push(layout);
                 }
 
                 Bindings.addComponent({
@@ -433,7 +433,7 @@ class Sidebar {
                     ' ' + ((sidebar.options || {}).className || '')
             },
             {},
-            sidebar.editMode.dashboard.container
+            sidebar.editMode.board.container
         );
     }
 
@@ -603,7 +603,7 @@ class Sidebar {
         const sidebar = this;
 
         // Call onCellResize events in active sidebar items.
-        addEvent(sidebar.editMode.dashboard, 'cellResize', function (): void {
+        addEvent(sidebar.editMode.board, 'cellResize', function (): void {
             let item;
 
             if (sidebar.activeTab) {
@@ -636,6 +636,12 @@ class Sidebar {
 
         if (sidebar.activeTab) {
             sidebar.activeTab.isActive = false;
+
+            // remove previous options
+            if (sidebar.componentEditableOptions) {
+                sidebar.componentEditableOptions.destroy();
+            }
+
             sidebar.activeTab.element.classList.remove(
                 EditGlobals.classNames.editSidebarTabActive
             );
@@ -727,7 +733,7 @@ class Sidebar {
 
         const editMode = this.editMode;
         const sidebar = editMode.sidebar;
-        const layoutWrapper = editMode.dashboard.layoutsWrapper;
+        const layoutWrapper = editMode.board.layoutsWrapper;
 
         if (sidebar) {
             return GUIElement.getOffsets(
@@ -766,7 +772,7 @@ class Sidebar {
             .remove(EditGlobals.classNames.editSidebarRight);
         sidebar.container.classList
             .remove(EditGlobals.classNames.editSidebarRightShow);
-        editMode.dashboard.container.style.paddingLeft = '';
+        editMode.board.container.style.paddingLeft = '';
 
         // Remove edit overlay if active.
         if (editMode.isEditOverlayActive) {
@@ -833,17 +839,10 @@ class Sidebar {
         const componentSettings = currentComponent &&
             currentComponent.editableOptions.getEditableOptions();
 
-        if (
-            sidebar.componentEditableOptions &&
-            cell.id === sidebar.componentEditableOptions.currentElementId
-        ) {
-            return;
-        }
-
         if (componentSettings) {
             const menuItems = {};
             const items: Array<string> = [];
-            const activeTab = sidebar.activeTab && sidebar.activeTab;
+            const activeTab = sidebar.activeTab;
             const activeTabContainer = activeTab && activeTab.content &&
                 activeTab && activeTab.content.container;
             let type;
@@ -863,7 +862,7 @@ class Sidebar {
                         ];
 
                         // eslint-disable-next-line
-                        const chartOpts = (currentComponent as HighchartsComponent).chartOptions;
+                        const chartOpts = (currentComponent as HighchartsComponent).options.chartOptions;
 
                         const chartType = chartOpts &&
                             (

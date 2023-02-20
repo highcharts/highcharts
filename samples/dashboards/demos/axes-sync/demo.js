@@ -55,7 +55,7 @@ const csvData = document.getElementById('csv').innerText,
 store1.load();
 store2.load();
 
-const dashboard = new Dashboards.Dashboard('container', {
+Dashboards.board('container', {
     gui: {
         layouts: [{
             id: 'layout-1',

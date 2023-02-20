@@ -8,7 +8,7 @@
 
 'use strict';
 
-import _Dashboard from '../Dashboards/Dashboard.js';
+import _Board from '../Dashboards/Board.js';
 import _Globals from '../Dashboards/Globals.js';
 import _PluginHandler from '../Dashboards/PluginHandler.js';
 import _Sync from '../Dashboards/Component/Sync/Sync.js';
@@ -19,6 +19,6 @@ export const guiElementType = _Globals.guiElementType;
 export const uniqueKey = _Utilities.uniqueKey;
 export const win = _Globals.win;
 
-export const Dashboard = _Dashboard;
+export const Dashboard = _Board;
 export const PluginHandler = _PluginHandler;
 export const Sync = _Sync;

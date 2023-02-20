@@ -46,7 +46,7 @@ abstract class EditToolbar {
                 className: options.className
             },
             void 0,
-            editMode.dashboard.container
+            editMode.board.container
         );
 
         this.editMode = editMode;
@@ -142,8 +142,8 @@ abstract class EditToolbar {
     //     isRow?: boolean
     // ): void {
     //     const components = isRow ?
-    //         (currentElement as Row).layout.dashboard.mountedComponents :
-    //         (currentElement as Cell).row.layout.dashboard.mountedComponents;
+    //         (currentElement as Row).layout.board.mountedComponents :
+    //         (currentElement as Cell).row.layout.board.mountedComponents;
 
     //     // set opacity
     //     for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
@@ -195,8 +195,8 @@ abstract class EditToolbar {
     // ): void {
     //     if (currentElement) {
     //         const components = isRow ?
-    //             (currentElement as Row).layout.dashboard.mountedComponents :
-    //          (currentElement as Cell).row.layout.dashboard.mountedComponents;
+    //             (currentElement as Row).layout.board.mountedComponents :
+    //          (currentElement as Cell).row.layout.board.mountedComponents;
     //         let cellContainer;
 
     //         // set opacity

@@ -72,6 +72,7 @@ function checkJSWrap() {
 }
 
 /**
+ * Checks if demos has valid configuration
  * @return {void}
  */
 function checkDemosConsistency() {
@@ -99,47 +100,73 @@ function checkDemosConsistency() {
     let errors = 0;
 
     glob.sync(
-        process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/demo/*/demo.details'
+        process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/*/*/demo.details'
     ).forEach(detailsFile => {
 
-        try {
-            const details = yaml.load(
-                fs.readFileSync(detailsFile, 'utf-8')
-            );
+        if (/\/samples\/(highcharts|stock|maps|gantt)\/demo\//u.test(detailsFile)) {
+            try {
+                const details = yaml.load(
+                    fs.readFileSync(detailsFile, 'utf-8')
+                );
 
-            if (typeof details !== 'object') {
-                throw new Error('Malformed details file');
-            }
+                if (typeof details !== 'object') {
+                    throw new Error('Malformed details file');
+                }
 
-            const { name, categories: demoCategories, tags: demoTags } = details;
-            if (!name || /High.*demo/.test(name)) {
-                logLib.failure('no name set, or default name used:', detailsFile);
-                errors++;
-            }
-
-            if (!demoCategories || !demoCategories.length) {
-                logLib.failure('no categories found:', detailsFile);
-                errors++;
-            } else {
-                if (!demoCategories.every(category => categories.includes(typeof category === 'object' ? Object.keys(category)[0] : category))) {
-                    logLib.failure('one or more categories are missing from demo-config:', detailsFile);
+                const { name, categories: demoCategories, tags: demoTags } = details;
+                if (!name || /High.*demo/.test(name)) {
+                    logLib.failure('no name set, or default name used:', detailsFile);
                     errors++;
                 }
-            }
 
-            if (!demoTags || !demoTags.length) {
-                logLib.failure('no tags found:', detailsFile);
-                errors++;
-            } else {
-                if (!demoTags.every(tag => tag === 'unlisted' || tags.includes(tag))) {
-                    logLib.failure('one or more tags are missing from demo-config:', detailsFile);
+                if (!demoCategories || !demoCategories.length) {
+                    logLib.failure('no categories found:', detailsFile);
                     errors++;
+                } else {
+                    if (!demoCategories.every(category => categories.includes(typeof category === 'object' ? Object.keys(category)[0] : category))) {
+                        logLib.failure('one or more categories are missing from demo-config:', detailsFile);
+                        errors++;
+                    }
                 }
+
+                if (!demoTags || !demoTags.length) {
+                    logLib.failure('no tags found:', detailsFile);
+                    errors++;
+                } else {
+                    if (!demoTags.every(tag => tag === 'unlisted' || tags.includes(tag))) {
+                        logLib.failure('one or more tags are missing from demo-config:', detailsFile);
+                        errors++;
+                    }
+                }
+
+            } catch (e) {
+                logLib.failure('File not found:', detailsFile);
+                errors++;
             }
 
-        } catch (e) {
-            logLib.failure('File not found:', detailsFile);
-            errors++;
+        } else {
+            try {
+                const details = yaml.load(
+                    fs.readFileSync(detailsFile, 'utf-8')
+                );
+
+                if (typeof details === 'object') {
+                    if (details.categories) {
+                        logLib.failure(
+                            'categories should not be used in demo.details outside demo folder',
+                            detailsFile
+                        );
+                        errors++;
+                    } else if (details.tags) {
+                        logLib.failure(
+                            'tags should not be used in demo.details outside demo folder',
+                            detailsFile
+                        );
+                        errors++;
+                    }
+                }
+            // eslint-disable-next-line
+            } catch (e) {}
         }
     });
 
@@ -149,6 +176,7 @@ function checkDemosConsistency() {
 }
 
 /**
+ * Checks if documentation is added to sidebar file
  * @async
  * @return {void}
  */
@@ -195,6 +223,7 @@ function checkDocsConsistency() {
 }
 
 /**
+ * Saves test run information
  * @return {void}
  */
 function saveRun() {
@@ -223,6 +252,7 @@ function saveRun() {
 }
 
 /**
+ * Checks if tests should run
  * @return {boolean}
  *         True if outdated
  */

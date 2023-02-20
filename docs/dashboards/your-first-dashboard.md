@@ -29,9 +29,15 @@ Thus we have to import the main dashboard package, the Highcharts library and a 
     * the div’s id where the dashboard should be placed (see point 1).
     * the object with dashboard options.
 
+    To do so, you can use factory function `Dashboards.board`:
 
     ```js
-        const dashboard = new Dashboards.Dashboard('container', {...})
+        Dashboards.board('container', {...})
+    ```
+    or the class `Dashboards.Board` to create a new instance of the dashboard:
+
+    ```js
+        const board = new Dashboards.Board('container', {...})
     ```
 
 5.  As options, you have to provide two essential things:

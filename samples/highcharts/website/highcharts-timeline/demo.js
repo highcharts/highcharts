@@ -286,7 +286,7 @@ const imgPath = 'https://cdn.rawgit.com/highcharts/highcharts/0b81a74ecd2fbd2e9b
 const options = {
     chart: {
         height: 600,
-        styledMode: (true),
+        styledMode: true,
         scrollablePlotArea: {
             minWidth: 700,
             scrollPositionX: 0
@@ -628,8 +628,8 @@ if (Highcharts.Series.types.flags) {
                 x: Date.UTC(2012, 11, 25),
                 text:
                 `<p style="margin-top:20px">Packt Publishing published
-                <em>Learning Highcharts by Example</em>.<br>Since 
-                then, many other books have 
+                <em>Learning Highcharts by Example</em>.<br>Since
+                then, many other books have
                 been written about Highcharts.</p>`,
                 title: '<p class="wide">First Book</p>',
                 className: 'book'

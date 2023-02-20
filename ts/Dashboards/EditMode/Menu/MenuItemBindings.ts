@@ -39,7 +39,7 @@ const MenuItemBindings: Record<string, MenuItem.Options> = {
         text: EditGlobals.lang.viewFullscreen,
         events: {
             click: function (this: MenuItem, e: PointerEvent): void {
-                const fullScreen = this.menu.editMode.dashboard.fullscreen;
+                const fullScreen = this.menu.editMode.board.fullscreen;
                 if (fullScreen) {
                     fullScreen.toggle();
                 }

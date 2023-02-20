@@ -28,7 +28,7 @@ const chartOptions = {
     }
 };
 
-const dashboard = new Dashboards.Dashboard('container', {
+Dashboards.board('container', {
     store: store,
     gui: {
         layouts: [{
