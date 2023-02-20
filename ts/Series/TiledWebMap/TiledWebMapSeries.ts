@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2022
+ *  (c) 2010-2023 Hubert Kozik, Kamil Musiałowski
  *
  *  License: www.highcharts.com/license
  *
@@ -33,7 +33,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,
-    extend,
     error,
     merge,
     pick
@@ -44,12 +43,6 @@ const {
  *  Declarations
  *
  * */
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-
-    }
-}
 
 interface TileItem extends SVGElement {
     posX?: number,
@@ -89,7 +82,7 @@ class TiledWebMapSeries extends MapSeries {
      * cursor, dashStyle, dataLabels, dataParser, dataURL, dragDrop,
      * enableMouseTracking, findNearestPointBy, joinBy, keys, marker,
      * negativeColor, nullColor, nullInteraction, onPoint, point,
-     * pointDescriptionFormatter, provider, selected, shadow, showCheckbox,
+     * pointDescriptionFormatter, selected, shadow, showCheckbox,
      * stickyTracking, tooltip, type
      * @product      highmaps
      * @optionparent plotOptions.tiledwebmap
@@ -189,14 +182,14 @@ class TiledWebMapSeries extends MapSeries {
             } = this,
             mapView = chart.mapView;
 
+        if (!mapView) {
+            return;
+        }
         if (!this.tiles) {
             this.tiles = {};
         }
         if (!this.transformGroups) {
             this.transformGroups = [];
-        }
-        if (!mapView) {
-            return;
         }
 
         const {
@@ -571,16 +564,6 @@ addEvent(Chart, 'beforeMapViewInit', function (e: any): boolean {
 
     return true;
 });
-
-/* *
- *
- *  Prototype properties
- *
- * */
-
-interface TiledWebMapSeries {
-    // type: string;
-}
 
 /* *
  *
