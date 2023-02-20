@@ -444,6 +444,55 @@ namespace DataStates {
     /**
      * @private
      */
+    export function toPositions(
+        cursor: Cursor
+    ): Array<CursorPosition> {
+
+        if (cursor.type === 'position') {
+            return [cursor];
+        }
+
+        const columns = (cursor.columns || []);
+        const positions: Array<CursorPosition> = [];
+        const state = cursor.state;
+
+        for (
+            let row = cursor.firstRow,
+                rowEnd = cursor.lastRow;
+            row < rowEnd;
+            ++row
+        ) {
+
+            if (!columns.length) {
+                positions.push({
+                    type: 'position',
+                    row,
+                    state
+                });
+                continue;
+            }
+
+            for (
+                let column = 0,
+                    columnEnd = columns.length;
+                column < columnEnd;
+                ++column
+            ) {
+                positions.push({
+                    type: 'position',
+                    column: columns[column],
+                    row,
+                    state
+                });
+            }
+        }
+
+        return positions;
+    }
+
+    /**
+     * @private
+     */
     export function toRange(
         cursor: Cursor,
         defaultRange?: CursorRange
