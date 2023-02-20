@@ -1,7 +1,5 @@
 import Board from  '../../../../code/es-modules/Dashboards/Board.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
-
-// Bring in other forms of Highcharts
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
@@ -29,6 +27,7 @@ let board = new Board('container-nested-layout', {
         enabled: true,
         contextMenu: {
             enabled: true,
+            icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
             items: ['editMode', {
                 id: 'export-dashboard',
                 text: 'Export dashboard',

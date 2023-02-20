@@ -98,17 +98,32 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             },
             chartConstructor: '',
             editableOptions:
-                  Component.defaultOptions.editableOptions.concat(
-                      [
-                          'chartOptions',
-                          'chartType'
-                          // 'chartClassName',
-                          // 'chartID'
-                      ]
-                  ),
+            Component.defaultOptions.editableOptions.concat(
+                [
+                    'chartOptions',
+                    'chartType',
+                    'chartClassName',
+                    'chartID'
+                ]
+            ),
+            editableOptionsBindings: merge(
+                Component.defaultOptions.editableOptionsBindings,
+                {
+                    skipRedraw: [
+                        'chartOptions',
+                        'chartType'
+                    ],
+                    keyMap: {
+                        chartOptions: 'textarea',
+                        chartType: 'select'
+                    }
+                }
+            ),
             syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}
-        });
+        }
+    );
+
 
     public static fromJSON(
         json: HighchartsComponent.ClassJSON
@@ -176,16 +191,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             true
         );
 
-        // Todo: this.setOptions?
-        if (this.options.chartClassName) {
-            this.chartContainer.classList.add(this.options.chartClassName);
-        }
-        if (this.options.chartID) {
-            this.chartContainer.id = this.options.chartID;
-        }
-
-        this.syncHandlers = this.handleSyncOptions(HighchartsSyncHandlers);
-
+        this.setOptions();
         this.sync = new HighchartsComponent.Sync(
             this,
             this.syncHandlers
@@ -245,9 +251,11 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         addEvent(hcComponent.chart, 'afterUpdate', function ():void {
             const options = this.options;
 
-            hcComponent.updateComponentOptions({
-                chartOptions: options
-            }, false);
+            if (hcComponent.hasLoaded) {
+                hcComponent.updateComponentOptions({
+                    chartOptions: options
+                }, false);
+            }
         });
         return this;
     }
@@ -293,6 +301,21 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     }
 
     /**
+     * Internal method for handling option updates
+     */
+    private setOptions(): void {
+        if (this.options.chartClassName) {
+            this.chartContainer.classList.add(this.options.chartClassName);
+        }
+
+        if (this.options.chartID) {
+            this.chartContainer.id = this.options.chartID;
+        }
+
+        this.syncHandlers = this.handleSyncOptions(HighchartsSyncHandlers);
+    }
+
+    /**
      * Update the store, when the point is being dragged.
      * @param  {Point} point Dragged point.
      * @param  {Component.StoreTypes} store Store to update.
@@ -327,7 +350,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     public update(
         options: Partial<HighchartsComponent.ComponentOptions>
     ): this {
-        this.updateComponentOptions(options);
+        this.updateComponentOptions(options, false);
+        this.setOptions();
 
         if (this.chart) {
             this.chart.update(this.options.chartOptions || {});
@@ -445,9 +469,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     private initChart(): Chart {
         if (this.chart) {
-            if (this.chart.series.length) {
-                return this.chart;
-            }
             this.chart.destroy();
         }
         return this.constructChart();

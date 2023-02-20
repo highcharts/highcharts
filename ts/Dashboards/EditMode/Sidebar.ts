@@ -879,7 +879,7 @@ class Sidebar {
                                 value: chartType
                             };
                         } else {
-                            break;
+                            continue;
                         }
                     }
 
