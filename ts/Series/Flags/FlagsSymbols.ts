@@ -76,13 +76,6 @@ namespace FlagsSymbols {
         // browsers.
         if (modifiedMembers.indexOf(RendererClass)) {
             modifiedMembers.push(RendererClass);
-
-            const symbols = SVGRendererClass.prototype.symbols,
-                vmlSymbols = RendererClass.prototype.symbols;
-
-            vmlSymbols.circlepin = symbols.circlepin;
-            vmlSymbols.flag = symbols.flag.bind(symbols);
-            vmlSymbols.squarepin = symbols.squarepin;
         }
 
     }

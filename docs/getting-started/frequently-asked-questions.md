@@ -26,34 +26,6 @@ For basic usage, Highcharts doesn't refer to any files other than highcharts.js/
 
 * * *
 
-My charts are not showing in Internet Explorer 7 or 8
------------------------------------------------------
-
-The most common reason why a chart works in modern browsers but fails in IE6, 7 and 8, is stray commas in the configuration options. Stray commas are commas after the last item of an object or an array in JavaScript. These will pass silently in modern browsers, but cause a JavaScript error in legacy IE.
-
-```js
-var chart = new Highcharts.Chart({
-    chart: {
-        renderTo: 'container'
-    },
-    xAxis: {
-        type: 'datetime'
-    },
-    series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-                216.4, 194.1, 95.6, 54.4],
-        pointStart: Date.UTC(2012, 0, 1),
-        pointInterval: 24 * 3600 * 1000,
-    }]
-});
-```
-
-[Try it live](https://jsfiddle.net/highcharts/DXnPa/).
-
-Another case where legacy IE fails to show charts, is when the security setting "ActiveX controls and plug-ins" => "Binary and script behavious" is disabled. This happens very rarely on user computers, but we have seen it from time to time on company networks. In this case, IE fails to draw any of the vector graphics, only the the text is shown. 
-
-* * *
-
 Can I use Highcharts with a ... server?
 ---------------------------------------
 
