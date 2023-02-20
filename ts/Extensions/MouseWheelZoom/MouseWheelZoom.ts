@@ -19,9 +19,8 @@
 import type Chart from '../../Core/Chart/Chart';
 import type GlobalsLike from '../../Core/GlobalsLike';
 import type PointerEvent from '../../Core/PointerEvent';
-
-import D from '../../Core/Defaults.js';
-const { setOptions } = D;
+import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -31,35 +30,12 @@ const {
 
 /* *
  *
- *  Declarations
- *
- * */
-
-/*
-    TODO: Declare module options
-
-    interface ?? extends ChartzoomingOptions {
-        zoomByMouseWheel?: MouseWheelZoomingOptions;
-    }
-
-    export interface ChartMouseWheelZoomOptions {
-        enabled: boolean;
-        sensitivity?: number;
-    }
- */
-
-
-/* *
- *
  *  Constants
  *
  * */
 
 const composedClasses: Array<(Function|GlobalsLike)> = [];
-const mockOptions = {
-    enabled: true,
-    sensitivity: 1.1
-};
+
 
 /* *
  *
@@ -71,30 +47,42 @@ const mockOptions = {
  * @private
  */
 const fitToBox = function (
-    inner: any,
-    outer: any
-): any {
-    [['x', 'width'], ['y', 'height']].forEach(function (dim): void {
-        const pos = dim[0],
-            size = dim[1];
+    inner: BBoxObject,
+    outer: BBoxObject
+): BBoxObject {
 
-        if (inner[pos] + inner[size] > outer[pos] + outer[size]) { // right
-            // the general size is greater, fit fully to outer
-            if (inner[size] > outer[size]) {
-                inner[size] = outer[size];
-                inner[pos] = outer[pos];
-            } else { // align right
-                inner[pos] = outer[pos] +
-                    outer[size] - inner[size];
-            }
+    // Fit zoomed window to view.
+    // x and width
+    if (inner.x + inner.width > outer.x + outer.width) {
+        if (inner.x > outer.x) {
+            inner.width = outer.width;
+            inner.x = outer.x;
+        } else {
+            inner.x = outer.x + outer.width - inner.width;
         }
-        if (inner[size] > outer[size]) {
-            inner[size] = outer[size];
+    }
+    if (inner.width > outer.width) {
+        inner.width = outer.width;
+    }
+    if (inner.x < outer.x) {
+        inner.x = outer.x;
+    }
+
+    // y and height
+    if (inner.y + inner.width > outer.y + outer.height) {
+        if (inner.y > outer.y) {
+            inner.height = outer.height;
+            inner.y = outer.y;
+        } else {
+            inner.y = outer.y + outer.height - inner.height;
         }
-        if (inner[pos] < outer[pos]) {
-            inner[pos] = outer[pos];
-        }
-    });
+    }
+    if (inner.height > outer.height) {
+        inner.height = outer.height;
+    }
+    if (inner.y < outer.y) {
+        inner.y = outer.y;
+    }
 
     return inner;
 };
@@ -118,7 +106,7 @@ const zoomBy = function (
         defined(xAxis.dataMax) && defined(xAxis.dataMin) &&
         defined(yAxis.dataMax) && defined(yAxis.dataMin)) {
 
-        let xRange = xAxis.max - xAxis.min,
+        const xRange = xAxis.max - xAxis.min,
             centerX = pick(centerXArg, xAxis.min + xRange / 2),
             newXRange = xRange * howMuch,
             yRange = yAxis.max - yAxis.min,
@@ -146,11 +134,12 @@ const zoomBy = function (
                 newExt.y <= yAxis.dataMin &&
                 newExt.height >= yAxis.dataMax - yAxis.dataMin
             );
-
-        const zoomX = /x/.test(chart.options.chart.zooming.type as string),
-            zoomY = /y/.test(chart.options.chart.zooming.type as string);
+        const wheelOptions = chart.options.chart.zooming.mouseWheelZoom,
+            type = pick((wheelOptions as MouseWheelZoomOptions).type, 'x'),
+            zoomX = /x/.test(type),
+            zoomY = /y/.test(type);
         // Zoom
-        if (typeof howMuch !== 'undefined' && !zoomOut) {
+        if (defined(howMuch) && !zoomOut) {
             if (zoomX) {
                 xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
             }
@@ -177,22 +166,28 @@ const zoomBy = function (
  * @private
  */
 function onAfterGetContainer(this: Chart): void {
-    if (mockOptions.enabled) {
-        const chart = this;
+    const chart = this,
+        wheelZoomOptions = chart.options.chart.zooming.mouseWheelZoom;
+
+    if (wheelZoomOptions) {
 
         addEvent(this.container, 'wheel', (e: PointerEvent): void => {
             e = this.pointer.normalize(e);
             // Firefox uses e.detail, WebKit and IE uses deltaX, deltaY, deltaZ.
-            let delta = e.detail || ((e.deltaY || 0) / 120);
             if (chart.isInsidePlot(
                 e.chartX - chart.plotLeft,
                 e.chartY - chart.plotTop
             )) {
-                const mouseWheelSensitivity = 1.1; // To do: option?
+                const wheelSensitivity = pick(
+                        (wheelZoomOptions as MouseWheelZoomOptions).sensitivity,
+                        1.1
+                    ),
+                    delta = e.detail || ((e.deltaY || 0) / 120);
+
                 zoomBy(
                     chart,
                     Math.pow(
-                        mouseWheelSensitivity,
+                        wheelSensitivity,
                         delta
                     ),
                     chart.xAxis[0].toValue(e.chartX),
@@ -236,3 +231,21 @@ const MouseWheelZoomComposition = {
 };
 
 export default MouseWheelZoomComposition;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Zooming with the mousewheel can be enabled by setting this option to `true`.
+ * More detailed options can be assigned.
+ *
+ * @type      {boolean| MouseWheelZoomOptions}
+ * @since     next
+ * @requires  modules/mouse-wheel-zoom
+ * @apioption chart.zooming.mouseWheelZoom
+ */
+
+(''); // Keeps doclets above in JS file
