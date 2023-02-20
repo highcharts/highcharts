@@ -148,7 +148,7 @@ const ChartDefaults: ChartOptions = {
      *         With a longer duration
      *
      * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
-     * @default   undefined
+     * @default   true
      * @apioption chart.animation
      */
 
