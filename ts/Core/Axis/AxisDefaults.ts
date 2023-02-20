@@ -1279,6 +1279,17 @@ namespace AxisDefaults {
          */
 
         /**
+         * The number of minor ticks per major tick. Works for `linear`,
+         * `logarithmic` and `datetime` axes.
+         *
+         * @sample {highcharts} highcharts/xaxis/minortickspermajor/
+         *         3 minor ticks per major tick on Y axis
+         *
+         * @type {number}
+         */
+        minorTicksPerMajor: 5,
+
+        /**
          * The pixel width of the minor tick mark.
          *
          * @sample {highcharts} highcharts/yaxis/minortickwidth/

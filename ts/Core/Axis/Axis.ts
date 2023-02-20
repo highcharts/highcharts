@@ -1930,6 +1930,7 @@ class Axis {
             tickPositionsOption = options.tickPositions,
             tickPositioner = options.tickPositioner,
             minorTickIntervalOption = this.getMinorTickInterval(),
+            minorTicksPerMajor = this.options.minorTicksPerMajor || 5,
             hasVerticalPanning = this.hasVerticalPanning(),
             isColorAxis = this.coll === 'colorAxis',
             startOnTick = (
@@ -1954,7 +1955,7 @@ class Axis {
         this.minorTickInterval =
             minorTickIntervalOption === 'auto' &&
             this.tickInterval ?
-                this.tickInterval / 5 :
+                this.tickInterval / minorTicksPerMajor :
                 (minorTickIntervalOption as any);
 
         // When there is only one point, or all points have the same value on
