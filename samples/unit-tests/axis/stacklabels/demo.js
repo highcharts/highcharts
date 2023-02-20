@@ -543,6 +543,25 @@ QUnit.test('Stack labels various', function (assert) {
         'There should still be two labels after redraw'
     );
 
+    chart.yAxis[0].update({
+        type: 'logarithmic',
+        stackLabels: {
+            enabled: true,
+            verticalAlign: 'bottom'
+        }
+    });
+
+    const yAxisGridBox = chart.yAxis[0].gridGroup.getBBox(),
+        firstStackLabel =
+            chart.yAxis[0].stacking.stacks['column,,,']['0'].label;
+
+    assert.close(
+        yAxisGridBox.y + yAxisGridBox.height,
+        firstStackLabel.absoluteBox.y + firstStackLabel.absoluteBox.height,
+        1,
+        `#18501: Vertical alignment of stack labels should work with
+        logarithmic axes.`
+    );
 });
 
 QUnit.test(
