@@ -442,87 +442,80 @@ class HeatmapSeries extends ScatterSeries {
             seriesMarkerOptions = heatmapOptions.marker || {};
 
         if (interpolation) {
-            const chart = heatmap.chart,
-                ctx = heatmap.getContext(),
-                canvas = heatmap.canvas,
-                colorAxis = chart.colorAxis && chart.colorAxis[0];
+            const image = heatmap.image,
+                chart = heatmap.chart,
+                { plotWidth, plotHeight } = chart;
 
-            if (canvas && ctx && colorAxis) {
-                const { plotWidth, plotHeight } = chart,
-                    drawNormalPoints = (
-                        !heatmap.boosted &&
-                        heatmap.tooltipOptions.enabled
-                    ),
-                    image = heatmap.image,
-                    resize = image && !(
-                        image.width === plotWidth &&
-                        image.height === plotHeight
-                    ),
-                    colsize = heatmap.options.colsize || 1,
-                    rowsize = heatmap.options.rowsize || 1,
-                    xExtremes = heatmap.xAxis.getExtremes(),
-                    yExtremes = heatmap.yAxis.getExtremes(),
-                    fromXRange = [xExtremes.min, xExtremes.max],
-                    fromYRange = [yExtremes.dataMin, yExtremes.dataMax],
-                    toXRange = [0, canvas.width - 1],
-                    toYRange = [0, canvas.height - 1],
-                    scaleValue = function (
-                        value: number, from: number[], to: number[]
-                    ): number {
-                        const scale = (to[1] - to[0]) / (from[1] - from[0]);
-                        const capped = Math.min(
-                            from[1], Math.max(from[0], value)
-                        ) - from[0];
+            if (!image) {
+                const ctx = heatmap.getContext(),
+                    canvas = heatmap.canvas,
+                    colorAxis = chart.colorAxis && chart.colorAxis[0];
 
-                        return ~~(capped * scale + to[0]);
-                    };
+                if (canvas && ctx && colorAxis) {
+                    const colsize = heatmap.options.colsize || 1,
+                        rowsize = heatmap.options.rowsize || 1,
+                        xExtremes = heatmap.xAxis.getExtremes(),
+                        yExtremes = heatmap.yAxis.getExtremes(),
+                        fromXRange = [xExtremes.min, xExtremes.max],
+                        fromYRange = [yExtremes.dataMin, yExtremes.dataMax],
+                        toXRange = [0, canvas.width - 1],
+                        toYRange = [0, canvas.height - 1],
+                        scaleValue = function (
+                            value: number, from: number[], to: number[]
+                        ): number {
+                            const scale = (to[1] - to[0]) / (from[1] - from[0]);
+                            const capped = Math.min(
+                                from[1], Math.max(from[0], value)
+                            ) - from[0];
 
-                heatmap.points.forEach((p: HeatmapPoint, i: number): void => {
-                    if (drawNormalPoints) {
-                        p.color = 'transparent';
+                            return ~~(capped * scale + to[0]);
+                        };
+
+                    if (!heatmap.boost) {
+                        heatmap.buildKDTree();
                     }
 
-                    ctx.fillStyle = colorAxis.toColor(
-                        p.value || 0, p
-                    ) as string;
+                    heatmap.points.forEach((p: HeatmapPoint): void => {
+                        ctx.fillStyle = colorAxis.toColor(
+                            p.value || 0, p
+                        ) as string;
 
-                    const scaleX = scaleValue(
-                        p.x,
-                        fromXRange,
-                        toXRange
-                    );
-                    const scaleY = scaleValue(
-                        ((yExtremes.dataMax as number) - p.y),
-                        fromYRange,
-                        toYRange
-                    );
+                        const scaleX = scaleValue(
+                            p.x,
+                            fromXRange,
+                            toXRange
+                        );
+                        const scaleY = scaleValue(
+                            ((yExtremes.dataMax as number) - p.y),
+                            fromYRange,
+                            toYRange
+                        );
 
-                    ctx.fillRect(
-                        scaleX,
-                        scaleY,
-                        colsize,
-                        rowsize
-                    );
-                });
-
-                if (drawNormalPoints) {
-                    Series.prototype.drawPoints.call(heatmap);
-                }
-
-                if (resize) {
-                    image.attr({
-                        width: plotWidth,
-                        height: plotHeight
+                        ctx.fillRect(
+                            scaleX,
+                            scaleY,
+                            colsize,
+                            rowsize
+                        );
                     });
-                } else if (!image) {
+
                     heatmap.image = chart.renderer.image(
                         canvas.toDataURL(),
                         0,
                         0,
                         plotWidth,
                         plotHeight
-                    ).add(heatmap.group);
+                    )
+                        .add(heatmap.group);
                 }
+            } else if (!(
+                image.width === plotWidth &&
+                image.height === plotHeight
+            )) {
+                image.attr({
+                    width: plotWidth,
+                    height: plotHeight
+                });
             }
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
             Series.prototype.drawPoints.call(heatmap);

@@ -22,7 +22,6 @@ const chart = Highcharts.chart('container', {
     },
 
     series: [{
-        boostThreshold: 700,
         colsize: 24 * 36e5, // one day
         data: JSON.parse(document.getElementById('data').innerText),
         interpolation: true
