@@ -248,4 +248,26 @@ export default MouseWheelZoomComposition;
  * @apioption chart.zooming.mouseWheelZoom
  */
 
+/**
+ * Adjust the sensitivity of the zoom. Should be a number above `1.0`.
+ *
+ * @type      {number}
+ * @default    1.1
+ * @since     next
+ * @requires  modules/mouse-wheel-zoom
+ * @apioption chart.zooming.mouseWheelZoom.sensitivity
+ */
+
+/**
+ * Decides in what dimensions the user can zoom scrolling the wheel.
+ * Can be one of `x`, `y` or `xy`. If not specified here, it will inherit the
+ * type from the parent `zooming` options.
+ *
+ * @type      {string}
+ * @default   x
+ * @since     next
+ * @requires  modules/mouse-wheel-zoom
+ * @apioption chart.zooming.mouseWheelZoom.type
+ */
+
 (''); // Keeps doclets above in JS file
