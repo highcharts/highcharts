@@ -44,6 +44,7 @@ class DataStates {
      * */
 
     public constructor() {
+        this.emittingRegister = [];
         this.listenerMap = {};
         this.stateMap = {};
     }
@@ -53,6 +54,11 @@ class DataStates {
      *  Properties
      *
      * */
+
+    /**
+     * Contains arguments currently in use of an emitting loop.
+     */
+    private readonly emittingRegister: Array<string>;
 
     /**
      * Contains listeners of states on tables.
@@ -119,6 +125,32 @@ class DataStates {
     }
 
     /**
+     * @private
+     */
+    private buildEmittingTag(
+        e: DataStates.Event
+    ): string {
+        return (
+            e.cursor.type === 'position' ?
+                [
+                    e.table.id,
+                    e.cursor.column,
+                    e.cursor.row,
+                    e.cursor.state,
+                    e.cursor.type
+                ] :
+                [
+                    e.table.id,
+                    e.cursor.columns,
+                    e.cursor.firstRow,
+                    e.cursor.lastRow,
+                    e.cursor.state,
+                    e.cursor.type
+                ]
+        ).join('\0');
+    }
+
+    /**
      * This function emits a state cursor related to a table. It will provide
      * lasting state cursors of the table to listeners.
      *
@@ -157,12 +189,12 @@ class DataStates {
         event?: Event,
         lasting?: boolean
     ): this {
-        const tableId = table.id;
-        const state = cursor.state;
-        const listeners = (
-            this.listenerMap[tableId] &&
-            this.listenerMap[tableId][state]
-        );
+        const tableId = table.id,
+            state = cursor.state,
+            listeners = (
+                this.listenerMap[tableId] &&
+                this.listenerMap[tableId][state]
+            );
 
         if (listeners) {
             const stateMap = this.stateMap[tableId] = (
@@ -192,8 +224,26 @@ class DataStates {
                 e.event = event;
             }
 
-            for (let i = 0, iEnd = listeners.length; i < iEnd; ++i) {
-                listeners[i].call(this, e);
+            const emittingRegister = this.emittingRegister,
+                emittingTag = this.buildEmittingTag(e);
+
+            if (emittingRegister.indexOf(emittingTag) >= 0) {
+                // break call stack loops
+                return this;
+            }
+
+            try {
+                this.emittingRegister.push(emittingTag);
+
+                for (let i = 0, iEnd = listeners.length; i < iEnd; ++i) {
+                    listeners[i].call(this, e);
+                }
+            } finally {
+                const index = this.emittingRegister.indexOf(emittingTag);
+
+                if (index >= 0) {
+                    this.emittingRegister.splice(index, 1);
+                }
             }
         }
 
