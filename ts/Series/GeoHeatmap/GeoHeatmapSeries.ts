@@ -276,36 +276,4 @@ export default GeoHeatmapSeries;
  * @apioption series.geoheatmap.data.value
  */
 
-/**
- * The border width of each geoheatmap tile.
- *
- * In styled mode, the border stroke width is given in the
- * `.highcharts-point` class.
- *
- * @type      {number|null}
- * @default   1
- * @product   highmaps
- * @apioption series.geoheatmap.borderWidth
- */
-
-/**
- * The column size - how many longitude units each column in the
- * geoheatmap should span.
- *
- * @type      {number|null}
- * @default   1
- * @product   highmaps
- * @apioption series.geoheatmap.colsize
- */
-
-/**
- * The rowsize size - how many latitude units each row in the
- * geoheatmap should span.
- *
- * @type      {number|null}
- * @default   1
- * @product   highmaps
- * @apioption series.geoheatmap.rowsize
- */
-
 ''; // adds doclets above to the transpiled file
