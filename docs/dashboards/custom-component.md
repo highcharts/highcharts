@@ -4,8 +4,8 @@ This article shows how to create custom Dashboards Component, in this example Yo
 
 Note, that to create the custom component we are using ES6, to use the `class` and `extends` keywords, which makes creating custom class much easier.
 
-We start by importing the default `Component` class from `Dashboards` namespace, and by creating the class, which will inherit from this class.
-The name of the class will automatically be the name, that will be used to reference this component type, e.g. the class `YouTubeComponent` will be referenced by name: `YouTube`.
+We start by importing the default `Component` class from `Dashboards` namespace. The next step is creating the class which will inherit from the imported `Component` class.
+The name of the class will automatically be the string, that will be used to reference this component type e.g. the class `YouTubeComponent` will be referenced by name: "`YouTube`".
 
 ```js
     const Component = Dashboards.Component;
@@ -17,7 +17,7 @@ The name of the class will automatically be the name, that will be used to refer
 
 Then, depending on what the Component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, which is `videoId`, and since the iframe element needs it size to be defined, the resize method is extended to update ths size of the element.
 
-At the end, the new Component class needs to be addded to the registry, using the `Component.addComponent` method.
+At the end, the new YouTubeComponent class needs to be addded to the registry, using the `Component.addComponent` method.
 
 Whole custom code looks like that:
 
@@ -56,15 +56,23 @@ class YouTubeComponent extends Component {
 Component.addComponent(YouTubeComponent);
 ```
 
-And that's it!
-The component is ready to be used. Now, the new component type can be referenced like that:
+And that's it! The component is ready to be used. Now, the new component type can be referenced like that:
 
 ```js
-{
-    cell: 'cell-id',
-    type: 'YouTube',
-    videoId: 'video-id-from-youtube'
-}
+Dashboards.board({
+    gui: [{
+        layouts: [{
+            rows: [{
+                cells:[{
+                    id: 'cell-id'
+                }]
+            }]
+        }]
+    }],
+    components: [{
+        cell: 'cell-id',
+        type: 'YouTube',
+        videoId: 'video-id-from-youtube'
+}]
 ```
-
 [The live example can be found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/custom-component).
