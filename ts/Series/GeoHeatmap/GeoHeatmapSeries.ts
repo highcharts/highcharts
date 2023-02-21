@@ -144,18 +144,8 @@ class GeoHeatmapSeries extends MapSeries {
              * @product   highmaps
              * @apioption plotOptions.geoheatmap.rowsize
              */
-            rowsize: 1,
+            rowsize: 1
 
-            /**
-             * The z index of the geoheatmap series.
-             *
-             * @type      {number}
-             * @since     next
-             * @product   highmaps
-             * @default   2
-             * @apioption plotOptions.geoheatmap.zIndex
-             */
-            zIndex: 2
         } as GeoHeatmapSeriesOptions);
 
     /* *
@@ -316,16 +306,6 @@ export default GeoHeatmapSeries;
  * @default   1
  * @product   highmaps
  * @apioption series.geoheatmap.rowsize
- */
-
-/**
- * The z index of the geoheatmap series.
- *
- * @type      {number}
- * @since     next
- * @product   highmaps
- * @default   2
- * @apioption plotOptions.geoheatmap.zIndex
  */
 
 ''; // adds doclets above to the transpiled file
