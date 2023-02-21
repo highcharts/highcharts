@@ -329,7 +329,8 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
         true,
         annotationType.prototype.defaultOptions.events,
         {
-            click: selectAndShowPopup
+            click: selectAndShowPopup,
+            touchend: selectAndShowPopup // #18276
         }
     );
 }

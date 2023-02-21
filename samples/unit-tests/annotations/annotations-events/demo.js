@@ -221,21 +221,9 @@ QUnit.test('Annotations events - general', function (assert) {
     // Click again to deselect the annotation
     controller.click(chart.xAxis[0].toPixels(5), chart.yAxis[0].toPixels(20));
 
-    // Call ontouchstart and ontouchend events to simulate touchscreen tap
+    // Call touchend event to simulate touchscreen tap end
     const circle = chart.annotations[0].graphic.element;
-    circle.ontouchstart({
-        touches: [{
-            clientX: chart.xAxis[0].toPixels(5),
-            clientY: chart.yAxis[0].toPixels(20)
-        }]
-    });
-    circle.ontouchend({
-        changedTouches: [{
-            clientX: chart.xAxis[0].toPixels(5),
-            clientY: chart.yAxis[0].toPixels(20)
-        }],
-        preventDefault: function () {}
-    });
+    Highcharts.fireEvent(circle, 'touchend');
 
     assert.ok(
         document
