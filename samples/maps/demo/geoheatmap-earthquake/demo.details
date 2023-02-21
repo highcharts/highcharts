@@ -1,0 +1,10 @@
+---
+name: GeoHeatmap Earthquakes in 2023 
+authors:
+  - Piotr Madej
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Input formats
+...
