@@ -15,7 +15,7 @@
  * */
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type Options from '../../Core/Options.js';
+import type Options from '../../Core/Options';
 import type TextOptions from './TextOptions';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
