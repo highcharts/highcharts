@@ -47,6 +47,12 @@
     --highcharts-dashboards-sidebar-button-contrast-color: #0d47a1;
 }
 
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-dashboards-wrapper-background-color: #808080;
+    }
+}
+
 body {
     -webkit-user-select: none;
     -moz-user-select: none;
