@@ -44,6 +44,7 @@ class DataStates {
      * */
 
     public constructor() {
+        this.emittingRegister = [];
         this.listenerMap = {};
         this.stateMap = {};
     }
@@ -53,6 +54,11 @@ class DataStates {
      *  Properties
      *
      * */
+
+    /**
+     * Contains arguments currently in use of an emitting loop.
+     */
+    private readonly emittingRegister: Array<string>;
 
     /**
      * Contains listeners of states on tables.
@@ -119,6 +125,27 @@ class DataStates {
     }
 
     /**
+     * @private
+     */
+    private deregisterEmitting(
+        e: DataStates.Event
+    ): void {
+        const index = this.emittingRegister.indexOf([
+            e.table.id,
+            e.cursor.column,
+            e.cursor.firstRow,
+            e.cursor.lastRow,
+            e.cursor.row,
+            e.cursor.state,
+            e.cursor.type
+        ].join('\0'));
+
+        if (index >= 0) {
+            this.emittingRegister.splice(index, 1);
+        }
+    }
+
+    /**
      * This function emits a state cursor related to a table. It will provide
      * lasting state cursors of the table to listeners.
      *
@@ -157,12 +184,12 @@ class DataStates {
         event?: Event,
         lasting?: boolean
     ): this {
-        const tableId = table.id;
-        const state = cursor.state;
-        const listeners = (
-            this.listenerMap[tableId] &&
-            this.listenerMap[tableId][state]
-        );
+        const tableId = table.id,
+            state = cursor.state,
+            listeners = (
+                this.listenerMap[tableId] &&
+                this.listenerMap[tableId][state]
+            );
 
         if (listeners) {
             const stateMap = this.stateMap[tableId] = (
@@ -192,12 +219,58 @@ class DataStates {
                 e.event = event;
             }
 
-            for (let i = 0, iEnd = listeners.length; i < iEnd; ++i) {
-                listeners[i].call(this, e);
+            if (this.isEmitting(e)) {
+                // break call stack loops
+                return this;
+            }
+
+            this.registerEmitting(e);
+            try {
+                for (let i = 0, iEnd = listeners.length; i < iEnd; ++i) {
+                    listeners[i].call(this, e);
+                }
+            } finally {
+                this.deregisterEmitting(e);
             }
         }
 
         return this;
+    }
+
+    /**
+     * @private
+     */
+    private isEmitting(
+        e: DataStates.Event
+    ): boolean {
+        return (
+            this.emittingRegister.indexOf([
+                e.table.id,
+                e.cursor.column,
+                e.cursor.firstRow,
+                e.cursor.lastRow,
+                e.cursor.row,
+                e.cursor.state,
+                e.cursor.type
+            ].join('\0')) >= 0
+        );
+    }
+
+    /**
+     * @private
+     */
+    private registerEmitting(
+        e: DataStates.Event
+    ): void {
+        this.emittingRegister.push([
+            e.table.id,
+            e.cursor.column,
+            e.cursor.firstRow,
+            e.cursor.lastRow,
+            e.cursor.row,
+            e.cursor.state,
+            e.cursor.type
+        ].join('\0'));
     }
 
     /**
@@ -299,15 +372,20 @@ namespace DataStates {
     export interface CursorPosition {
         type: 'position';
         column?: string;
+        columns?: undefined;
+        firstRow?: undefined;
+        lastRow?: undefined;
         row?: number;
         state: State;
     }
 
     export interface CursorRange {
         type: 'range';
+        column?: undefined;
         columns?: Array<string>;
         firstRow: number;
         lastRow: number;
+        row?: undefined;
         state: State;
     }
 
