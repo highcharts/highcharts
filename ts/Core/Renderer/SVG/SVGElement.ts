@@ -29,7 +29,6 @@ import type {
 } from '../DOMElementType';
 import type FontMetricsObject from '../FontMetricsObject';
 import type GradientColor from '../../Color/GradientColor';
-import type PositionObject from '../PositionObject';
 import type RectangleObject from '../RectangleObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
@@ -1742,47 +1741,14 @@ class SVGElement implements SVGElementLike {
         eventType: string,
         handler: Function
     ): this {
-        const element = this.element;
-        let touchStartPos: PositionObject;
-        let touchEventFired: boolean;
+        const { onEvents } = this;
 
-        if (H.hasTouch && eventType === 'click') {
-            element.ontouchstart = function (e: TouchEvent): void {
-                // Store touch position
-                touchStartPos = {
-                    x: e.touches[0].clientX,
-                    y: e.touches[0].clientY
-                };
-            };
-
-            // Call event on `ontouchend` instead of `ontouchstart` just like on
-            // `mouseup` event
-            element.ontouchend = function (e: TouchEvent): void {
-                // Check if chart was scrolled (touch position changed more than
-                // 4px)
-                const hasScrolled = touchStartPos.x ? Math.sqrt(
-                    Math.pow(touchStartPos.x - e.changedTouches[0].clientX, 2) +
-                    Math.pow(touchStartPos.y - e.changedTouches[0].clientY, 2)
-                ) >= 4 : false;
-
-                if (!hasScrolled) {
-                    handler.call(element, e);
-                }
-                touchEventFired = true;
-
-                if (e.cancelable !== false) {
-                    // Prevent other events from being fired. #9682
-                    e.preventDefault();
-                }
-            };
-            element.onclick = function (e: MouseEvent): void {
-                if (!touchEventFired) {
-                    handler.call(handler, e);
-                }
-            };
-        } else {
-            (element as any)['on' + eventType] = handler;
+        if (onEvents[eventType]) {
+            // Unbind existing event
+            onEvents[eventType]();
         }
+        onEvents[eventType] = addEvent(this.element, eventType, handler);
+
         return this;
     }
 
