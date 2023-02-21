@@ -151,7 +151,7 @@ export interface AxisOptions {
     minorTickLength: number;
     minorTickPosition: AxisTickPositionValue;
     minorTicks?: boolean;
-    minorTicksPerMajor?: number;
+    minorTicksPerMajor: number;
     minorTickWidth?: number;
     minPadding: number;
     minRange?: number;
