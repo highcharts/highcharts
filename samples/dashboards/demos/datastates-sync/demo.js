@@ -48,28 +48,16 @@ function buildChartOptions(type, table, state) {
                     const series = chart.series[0];
 
                     // react to table states
-                    state.addListener(
-                        table.id,
-                        'mouseOver',
-                        function (e) {
-                            const point = series.data[e.cursor.row];
+                    state.addListener(table.id, 'point.mouseOver', function (e) {
+                        const point = series.data[e.cursor.row];
 
-                            if (chart.hoverPoint !== point) {
-                                chart.tooltip.refresh(point);
-                            }
+                        if (chart.hoverPoint !== point) {
+                            chart.tooltip.refresh(point);
                         }
-                    );
-                    state.addListener(
-                        table.id,
-                        'mouseOut',
-                        function (e) {
-                            const point = series.data[e.cursor.row];
-
-                            if (chart.hoverPoint === point) {
-                                chart.tooltip.hide();
-                            }
-                        }
-                    );
+                    });
+                    state.addListener(table.id, 'point.mouseOut', function () {
+                        chart.tooltip.hide();
+                    });
                 }
             }
         },
@@ -87,15 +75,15 @@ function buildChartOptions(type, table, state) {
                         state.emitCursor(table, {
                             type: 'position',
                             row: this.x,
-                            state: 'mouseOver'
-                        }, this);
+                            state: 'point.mouseOver'
+                        });
                     },
                     mouseOut: function () {
                         state.emitCursor(table, {
                             type: 'position',
                             row: this.x,
-                            state: 'mouseOut'
-                        }, this);
+                            state: 'point.mouseOut'
+                        });
                     }
                 }
             }
