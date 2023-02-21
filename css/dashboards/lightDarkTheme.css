@@ -5,8 +5,8 @@
  *
  * License: www.highcharts.com/license
  */
- :root {
-    // Base colors
+:root {
+    /* Base colors */
     --highcharts-dashboards-neutral-color-50: #808080;
     --highcharts-dashboards-neutral-color-0: #ffffff;
 }

@@ -6,16 +6,19 @@
  * License: www.highcharts.com/license
  */
 
-$grid-color: #ddd !default;
-$background-color: #fff !default;
-$header-background-color: #eee !default;
-$highlight-color: rgba(255, 0, 0, 0.5) !default;
+:root {
+    --highcharts-datagrid-grid-color: #dddddd;
+    --highcharts-datagrid-background-color: #ffffff;
+    --highcharts-datagrid-header-background-color: #eeeeee;
+    --highcharts-datagrid-row-hover-color: #808080;
+    --highcharts-datagrid-highlight-color: rgba(255, 0, 0, 0.5);
+}
 
 .hc-dg-container {
     position: relative;
     height: 100%;
     box-sizing: border-box;
-    border: 1px solid $grid-color;
+    border: 1px solid var(--highcharts-datagrid-grid-color);
 }
 
 .hc-dg-outer-container {
@@ -34,7 +37,7 @@ $highlight-color: rgba(255, 0, 0, 0.5) !default;
 .hc-dg-inner-container {
     display: flex;
     flex-direction: column;
-    position: -webkit-sticky;
+    position: "-webkit-sticky";
     position: sticky;
     top: 0;
     overflow: hidden;
@@ -43,8 +46,8 @@ $highlight-color: rgba(255, 0, 0, 0.5) !default;
 .hc-dg-cell {
     display: flex;
     align-items: center;
-    border-left: 1px solid $grid-color;
-    border-top: 1px solid $grid-color;
+    border-left: 1px solid var(--highcharts-datagrid-grid-color);
+    border-top: 1px solid var(--highcharts-datagrid-grid-color);
     overflow: hidden;
     padding: 0 8px;
     flex: 1;
@@ -60,19 +63,19 @@ $highlight-color: rgba(255, 0, 0, 0.5) !default;
     margin: 0 -8px;
     padding: 0 6px;
     box-sizing: border-box;
-    border: 2px solid $highlight-color;
+    border: 2px solid var(--highcharts-datagrid-highlight-color);
     outline: none;
     font: inherit;
 }
 
 .hc-dg-row {
     display: flex;
-    background: $background-color;
+    background: var(--highcharts-datagrid-background-color);
     width: 100%;
+}
 
-    &.hovered {
-        background-color: #808080;
-    }
+.hc-dg-row.hovered {
+    background-color: var(--highcharts-datagrid-row-hover-color);
 }
 
 .hc-dg-row:first-child .hc-dg-cell {
@@ -82,8 +85,8 @@ $highlight-color: rgba(255, 0, 0, 0.5) !default;
 .hc-dg-column-header {
     display: flex;
     align-items: center;
-    border-left: 1px solid $grid-color;
-    border-bottom: 1px solid $grid-color;
+    border-left: 1px solid var(--highcharts-datagrid-grid-color);
+    border-bottom: 1px solid var(--highcharts-datagrid-grid-color);
     overflow: hidden;
     padding: 0 8px;
     flex: 1;
@@ -97,14 +100,14 @@ $highlight-color: rgba(255, 0, 0, 0.5) !default;
 
 .hc-dg-column-headers {
     display: flex;
-    background-color: $header-background-color;
+    background-color: var(--highcharts-datagrid-header-background-color);
     width: 100%;
 }
 
 .hc-dg-col-resize-handle {
     cursor: ew-resize;
     opacity: 0;
-    background-color: $highlight-color;
+    background-color: var(--highcharts-datagrid-highlight-color);
     position: absolute;
     top: 0;
     width: 5px;
@@ -112,7 +115,7 @@ $highlight-color: rgba(255, 0, 0, 0.5) !default;
 
 .hc-dg-col-resize-crosshair {
     position: absolute;
-    background-color: $highlight-color;
+    background-color: var(--highcharts-datagrid-highlight-color);
     width: 3px;
     left: 0;
     opacity: 0;
