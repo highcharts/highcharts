@@ -1,0 +1,12 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/css/datagrid.css");
+
+#container {
+    height: 402px;
+    width: 800px;
+    margin: 0 auto;
+}
+
+.hc-dg-container {
+    overflow: hidden;
+}
