@@ -62,13 +62,13 @@ class Bindings {
     public static addComponent(
         options: Bindings.ComponentOptions,
         cell?: Cell
-    ): ComponentTypes | undefined {
+    ): Component | undefined {
         const componentContainer = document.getElementById(options.cell);
         const optionsStates = options.states;
         const optionsEvents = options.events;
 
         cell = cell || Bindings.getCell(options.cell);
-        let component: any;
+        let component: Component|undefined;
 
         // add elements to containers
         if (componentContainer) {
@@ -230,7 +230,7 @@ namespace Bindings {
     }
     export interface MountedComponentsOptions {
         options: any;
-        component?: ComponentTypes;
+        component?: Component;
         cell: Cell;
     }
 }
