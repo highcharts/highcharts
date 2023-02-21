@@ -38,7 +38,7 @@
 
     // Edit cell
     --highcharts-dashboards-edit-cell-color: #1779BA;
-    --highcharts-dashboards-highlight-cell-color: rgba(0, 0, 0, 0.5);
+    --highcharts-dashboards-highlight-cell-color: 0, 0, 0;
 
     // Sidebar
     --highcharts-dashboards-sidebar-button-color: #2196F3;
@@ -132,7 +132,7 @@ body {
     }
 
     .hd-edit-cell-highlight {
-        box-shadow: 0 0 0 99998px var(-highcharts-dashboards-highlight-cell-color);
+        box-shadow: 0 0 0 99998px rgba( var(--highcharts-dashboards-highlight-cell-color), 0.5);
         position: relative;
         z-index: 100;
         pointer-events: auto;
@@ -818,7 +818,7 @@ h1 {
 }
 
 .hd-edit-overlay {
-    background: var(--highcharts-dashboards-highlight-cell-color);
+    background: rgba( var(--highcharts-dashboards-highlight-cell-color), 0.5);
     display: none;
     width: 100%;
     height: 100%;
