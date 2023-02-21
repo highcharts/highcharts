@@ -1,6 +1,6 @@
 ---
- name: Highcharts Demo
+ name: Highcharts Dashboards demo
  authors:
-   - Sebastian Bochan, Wojciech Chmiel
+   - Pawel Lysy
  js_wrap: b
 ...
