@@ -1,6 +1,6 @@
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
- * @module highcharts/modules/mousewheelzoom
+ * @module highcharts/modules/mouse-wheel-zoom
  * @requires highcharts
  *
  * Mousewheel zoom module

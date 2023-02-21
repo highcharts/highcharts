@@ -24,8 +24,10 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    isObject,
     pick,
-    defined
+    defined,
+    merge
 } = U;
 
 /* *
@@ -34,7 +36,11 @@ const {
  *
  * */
 
-const composedClasses: Array<(Function|GlobalsLike)> = [];
+const composedClasses: Array<(Function|GlobalsLike)> = [],
+    defaultOptions: MouseWheelZoomOptions = {
+        enabled: true,
+        sensitivity: 1.1
+    };
 
 
 /* *
@@ -42,6 +48,18 @@ const composedClasses: Array<(Function|GlobalsLike)> = [];
  *  Functions
  *
  * */
+
+/**
+ * @private
+ */
+const optionsToObject = (
+    options?: boolean|MouseWheelZoomOptions
+): MouseWheelZoomOptions => {
+    if (!isObject(options)) {
+        return merge(defaultOptions, { enabled: options });
+    }
+    return merge(defaultOptions, options);
+};
 
 /**
  * @private
@@ -97,7 +115,8 @@ const zoomBy = function (
     centerXArg: number,
     centerYArg: number,
     mouseX: number,
-    mouseY: number
+    mouseY: number,
+    options: MouseWheelZoomOptions
 ): void {
     const xAxis = chart.xAxis[0],
         yAxis = chart.yAxis[0];
@@ -134,8 +153,11 @@ const zoomBy = function (
                 newExt.y <= yAxis.dataMin &&
                 newExt.height >= yAxis.dataMax - yAxis.dataMin
             );
-        const wheelOptions = chart.options.chart.zooming.mouseWheelZoom,
-            type = pick((wheelOptions as MouseWheelZoomOptions).type, 'x'),
+        const type = pick(
+                options.type,
+                chart.options.chart.zooming.type,
+                'x'
+            ),
             zoomX = /x/.test(type),
             zoomY = /y/.test(type);
         // Zoom
@@ -167,9 +189,10 @@ const zoomBy = function (
  */
 function onAfterGetContainer(this: Chart): void {
     const chart = this,
-        wheelZoomOptions = chart.options.chart.zooming.mouseWheelZoom;
+        wheelZoomOptions =
+            optionsToObject(chart.options.chart.zooming.mouseWheelZoom);
 
-    if (wheelZoomOptions) {
+    if (wheelZoomOptions.enabled) {
 
         addEvent(this.container, 'wheel', (e: PointerEvent): void => {
             e = this.pointer.normalize(e);
@@ -179,7 +202,7 @@ function onAfterGetContainer(this: Chart): void {
                 e.chartY - chart.plotTop
             )) {
                 const wheelSensitivity = pick(
-                        (wheelZoomOptions as MouseWheelZoomOptions).sensitivity,
+                        wheelZoomOptions.sensitivity,
                         1.1
                     ),
                     delta = e.detail || ((e.deltaY || 0) / 120);
@@ -193,7 +216,8 @@ function onAfterGetContainer(this: Chart): void {
                     chart.xAxis[0].toValue(e.chartX),
                     chart.yAxis[0].toValue(e.chartY),
                     e.chartX,
-                    e.chartY
+                    e.chartY,
+                    wheelZoomOptions
                 );
             }
 
@@ -242,10 +266,20 @@ export default MouseWheelZoomComposition;
  * Zooming with the mousewheel can be enabled by setting this option to `true`.
  * More detailed options can be assigned.
  *
- * @type      {boolean| MouseWheelZoomOptions}
+ * @type      {boolean|MouseWheelZoomOptions}
  * @since     next
  * @requires  modules/mouse-wheel-zoom
  * @apioption chart.zooming.mouseWheelZoom
+ */
+
+/**
+ * Zooming with the mousewheel can be enabled by setting this option to `true`.
+ *
+ * @type      {boolean}
+ * @default   {true}
+ * @since     next
+ * @requires  modules/mouse-wheel-zoom
+ * @apioption chart.zooming.mouseWheelZoom.enabled
  */
 
 /**
