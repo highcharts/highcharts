@@ -21,7 +21,7 @@
 import type OrganizationPointOptions from './OrganizationPointOptions';
 import type OrganizationSeries from './OrganizationSeries';
 import type { OrganizationSeriesNodeOptions } from './OrganizationSeriesOptions';
-import type SankeyPoint from './../Sankey/SankeyPoint';
+import SankeyPoint from './../Sankey/SankeyPoint';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -101,6 +101,17 @@ class OrganizationPoint extends SankeyPointClass {
      *  Functions
      *
      * */
+
+    init(): OrganizationPoint {
+        SankeyPointClass.prototype.init.apply(this, arguments);
+
+        if (!this.isNode) {
+            this.dataLabelOnNull = true;
+            this.formatPrefix = 'link';
+        }
+
+        return this;
+    }
 
     /**
      * All nodes in an org chart are equal width.
