@@ -127,22 +127,27 @@ class DataStates {
     /**
      * @private
      */
-    private deregisterEmitting(
+    private buildEmittingTag(
         e: DataStates.Event
-    ): void {
-        const index = this.emittingRegister.indexOf([
-            e.table.id,
-            e.cursor.column,
-            e.cursor.firstRow,
-            e.cursor.lastRow,
-            e.cursor.row,
-            e.cursor.state,
-            e.cursor.type
-        ].join('\0'));
-
-        if (index >= 0) {
-            this.emittingRegister.splice(index, 1);
-        }
+    ): string {
+        return (
+            e.cursor.type === 'position' ?
+                [
+                    e.table.id,
+                    e.cursor.column,
+                    e.cursor.row,
+                    e.cursor.state,
+                    e.cursor.type
+                ] :
+                [
+                    e.table.id,
+                    e.cursor.columns,
+                    e.cursor.firstRow,
+                    e.cursor.lastRow,
+                    e.cursor.state,
+                    e.cursor.type
+                ]
+        ).join('\0');
     }
 
     /**
@@ -219,58 +224,30 @@ class DataStates {
                 e.event = event;
             }
 
-            if (this.isEmitting(e)) {
+            const emittingRegister = this.emittingRegister,
+                emittingTag = this.buildEmittingTag(e);
+
+            if (emittingRegister.indexOf(emittingTag) >= 0) {
                 // break call stack loops
                 return this;
             }
 
-            this.registerEmitting(e);
             try {
+                this.emittingRegister.push(emittingTag);
+
                 for (let i = 0, iEnd = listeners.length; i < iEnd; ++i) {
                     listeners[i].call(this, e);
                 }
             } finally {
-                this.deregisterEmitting(e);
+                const index = this.emittingRegister.indexOf(emittingTag);
+
+                if (index >= 0) {
+                    this.emittingRegister.splice(index, 1);
+                }
             }
         }
 
         return this;
-    }
-
-    /**
-     * @private
-     */
-    private isEmitting(
-        e: DataStates.Event
-    ): boolean {
-        return (
-            this.emittingRegister.indexOf([
-                e.table.id,
-                e.cursor.column,
-                e.cursor.firstRow,
-                e.cursor.lastRow,
-                e.cursor.row,
-                e.cursor.state,
-                e.cursor.type
-            ].join('\0')) >= 0
-        );
-    }
-
-    /**
-     * @private
-     */
-    private registerEmitting(
-        e: DataStates.Event
-    ): void {
-        this.emittingRegister.push([
-            e.table.id,
-            e.cursor.column,
-            e.cursor.firstRow,
-            e.cursor.lastRow,
-            e.cursor.row,
-            e.cursor.state,
-            e.cursor.type
-        ].join('\0'));
     }
 
     /**
