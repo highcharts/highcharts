@@ -68,56 +68,28 @@ class Bindings {
         const optionsEvents = options.events;
 
         cell = cell || Bindings.getCell(options.cell);
-        let component: ComponentTypes|undefined;
+        let component: any;
 
         // add elements to containers
         if (componentContainer) {
             const ComponentClass = Component.getComponent(options.type);
 
-            switch (options.type) {
-                case 'html':
-                    component = new HTMLComponent(merge(
-                        options,
-                        {
-                            parentElement: componentContainer,
-                            elements: options.elements
-                        })
-                    );
-                    break;
-                case 'Highcharts':
-                    if (ComponentClass) {
-                        component = new ComponentClass(merge(
-                            options,
-                            {
-                                parentElement: componentContainer,
-                                chartOptions: options.chartOptions,
-                                dimensions: options.dimensions
-                            }
-                        )) as HighchartsComponent;
-                    }
-                    break;
-                case 'DataGrid':
-                    if (ComponentClass) {
-                        component = new ComponentClass(merge(
-                            options,
-                            {
-                                parentElement: componentContainer
-                            })
-                        ) as DataGridComponent;
-                    }
-                    break;
-                case 'KPI':
-                    if (ComponentClass) {
-                        component = new ComponentClass(merge(
-                            options,
-                            {
-                                parentElement: componentContainer
-                            })
-                        ) as KPIComponent;
-                    }
-                    break;
-                default:
-                    return;
+            if (options.type === 'html') {
+                component = new HTMLComponent(merge(
+                    options,
+                    {
+                        parentElement: componentContainer
+                    })
+                );
+            } else if (ComponentClass) {
+                component = new ComponentClass(merge(
+                    options,
+                    {
+                        parentElement: componentContainer
+                    })
+                );
+            } else {
+                return;
             }
 
             if (component) {

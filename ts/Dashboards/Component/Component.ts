@@ -952,7 +952,7 @@ namespace Component {
      * Regular expression to extract the  name (group 1) from the
      * stringified class type.
      */
-    const nameRegExp = /^function\s+(\w*?)(?:Component)?\s*\(/;
+    const nameRegExp = /^(?:class|function)\s(\w*?)(?:Component)?\W/;
 
     /**
      *
