@@ -266,7 +266,7 @@ export default MouseWheelZoomComposition;
  * Zooming with the mousewheel can be enabled by setting this option to `true`.
  * More detailed options can be assigned.
  *
- * @type      {boolean|MouseWheelZoomOptions}
+ * @type      {boolean|*}
  * @since     next
  * @requires  modules/mouse-wheel-zoom
  * @apioption chart.zooming.mouseWheelZoom
@@ -286,7 +286,7 @@ export default MouseWheelZoomComposition;
  * Adjust the sensitivity of the zoom. Should be a number above `1.0`.
  *
  * @type      {number}
- * @default    1.1
+ * @default   1.1
  * @since     next
  * @requires  modules/mouse-wheel-zoom
  * @apioption chart.zooming.mouseWheelZoom.sensitivity
