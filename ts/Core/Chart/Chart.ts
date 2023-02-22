@@ -76,7 +76,6 @@ const {
     svg,
     win
 } = H;
-import Legend from '../Legend/Legend.js';
 import MSPointer from '../MSPointer.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
@@ -325,7 +324,6 @@ class Chart {
     public isDirtyLegend?: boolean;
     public isResizing: number = void 0 as any;
     public labelCollectors: Array<Chart.LabelCollectorFunction> = void 0 as any;
-    public legend: Legend = void 0 as any;
     public loadingDiv?: HTMLDOMElement;
     public loadingShown?: boolean;
     public loadingSpan?: HTMLDOMElement;
@@ -2414,106 +2412,102 @@ class Chart {
 
         let correction = 0; // correction for X axis labels
 
-        // Title
-        chart.setTitle();
+        fireEvent(chart, 'rendering', { args: arguments }, function (): void {
 
-        /**
-         * The overview of the chart's series.
-         *
-         * @name Highcharts.Chart#legend
-         * @type {Highcharts.Legend}
-         */
-        chart.legend = new Legend(chart, options.legend as any);
+            // Title
+            chart.setTitle();
 
-        // Get stacks
-        if (chart.getStacks) {
-            chart.getStacks();
-        }
-
-        // Get chart margins
-        chart.getMargins(true);
-        chart.setChartSize();
-
-        // Record preliminary dimensions for later comparison
-        const tempWidth = chart.plotWidth;
-
-        axes.some(function (axis: Axis): (boolean|undefined) {
-            if (
-                axis.horiz &&
-                axis.visible &&
-                axis.options.labels.enabled &&
-                axis.series.length
-            ) {
-                // 21 is the most common correction for X axis labels
-                correction = 21;
-                return true;
+            // Get stacks
+            if (chart.getStacks) {
+                chart.getStacks();
             }
-        } as any);
 
-        // use Math.max to prevent negative plotHeight
-        chart.plotHeight = Math.max(chart.plotHeight - correction, 0);
-        const tempHeight = chart.plotHeight;
+            // Get chart margins
+            chart.getMargins(true);
+            chart.setChartSize();
 
-        // Get margins by pre-rendering axes
-        axes.forEach(function (axis): void {
-            axis.setScale();
-        });
-        chart.getAxisMargins();
+            // Record preliminary dimensions for later comparison
+            const tempWidth = chart.plotWidth;
 
-        // If the plot area size has changed significantly, calculate tick
-        // positions again
-        const redoHorizontal = tempWidth / chart.plotWidth > 1.1;
-        // Height is more sensitive, use lower threshold
-        const redoVertical = tempHeight / chart.plotHeight > 1.05;
-
-        if (redoHorizontal || redoVertical) {
-
-            axes.forEach(function (axis): void {
+            axes.some(function (axis: Axis): (boolean|undefined) {
                 if (
-                    (axis.horiz && redoHorizontal) ||
-                    (!axis.horiz && redoVertical)
+                    axis.horiz &&
+                    axis.visible &&
+                    axis.options.labels.enabled &&
+                    axis.series.length
                 ) {
-                    // update to reflect the new margins
-                    axis.setTickInterval(true);
+                    // 21 is the most common correction for X axis labels
+                    correction = 21;
+                    return true;
                 }
+            } as any);
+
+            // use Math.max to prevent negative plotHeight
+            chart.plotHeight = Math.max(chart.plotHeight - correction, 0);
+            const tempHeight = chart.plotHeight;
+
+            // Get margins by pre-rendering axes
+            axes.forEach(function (axis): void {
+                axis.setScale();
             });
-            chart.getMargins(); // second pass to check for new labels
-        }
+            chart.getAxisMargins();
 
-        // Draw the borders and backgrounds
-        chart.drawChartBox();
+            // If the plot area size has changed significantly, calculate tick
+            // positions again
+            const redoHorizontal = tempWidth / chart.plotWidth > 1.1;
+            // Height is more sensitive, use lower threshold
+            const redoVertical = tempHeight / chart.plotHeight > 1.05;
+
+            if (redoHorizontal || redoVertical) {
+
+                axes.forEach(function (axis): void {
+                    if (
+                        (axis.horiz && redoHorizontal) ||
+                        (!axis.horiz && redoVertical)
+                    ) {
+                        // update to reflect the new margins
+                        axis.setTickInterval(true);
+                    }
+                });
+                chart.getMargins(); // second pass to check for new labels
+            }
+
+            // Draw the borders and backgrounds
+            chart.drawChartBox();
 
 
-        // Axes
-        if (chart.hasCartesianSeries) {
-            renderAxes(axes);
+            // Axes
+            if (chart.hasCartesianSeries) {
+                renderAxes(axes);
 
-        } else if (colorAxis && colorAxis.length) {
-            renderAxes(colorAxis);
-        }
+            } else if (colorAxis && colorAxis.length) {
+                renderAxes(colorAxis);
+            }
 
-        // The series
-        if (!chart.seriesGroup) {
-            chart.seriesGroup = renderer.g('series-group')
-                .attr({ zIndex: 3 })
-                .add();
-        }
-        chart.renderSeries();
+            // The series
+            if (!chart.seriesGroup) {
+                chart.seriesGroup = renderer.g('series-group')
+                    .attr({ zIndex: 3 })
+                    .add();
+            }
+            chart.renderSeries();
 
-        // Labels
-        chart.renderLabels();
+            // Labels
+            chart.renderLabels();
 
-        // Credits
-        chart.addCredits();
+            // Credits
+            chart.addCredits();
 
-        // Handle responsiveness
-        if (chart.setResponsive) {
-            chart.setResponsive();
-        }
+            // Handle responsiveness
+            if (chart.setResponsive) {
+                chart.setResponsive();
+            }
 
-        // Set flag
-        chart.hasRendered = true;
+            // Set flag
+            chart.hasRendered = true;
 
+            fireEvent(chart, 'afterRendering');
+        });
     }
 
     /**

@@ -81,6 +81,7 @@ G.color = Color.parse;
 // Compositions
 HTMLRenderer.compose(SVGRenderer);
 HTMLElement.compose(SVGElement);
+Legend.compose(Chart);
 // DefaultOptions
 G.defaultOptions = Defaults.defaultOptions;
 G.getOptions = Defaults.getOptions;

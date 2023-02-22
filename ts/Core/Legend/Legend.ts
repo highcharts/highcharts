@@ -40,9 +40,7 @@ import F from '../FormatUtilities.js';
 const { format } = F;
 import H from '../Globals.js';
 const {
-    isFirefox,
-    marginNames,
-    win
+    marginNames
 } = H;
 import Point from '../Series/Point.js';
 import R from '../Renderer/RendererUtilities.js';
@@ -70,6 +68,11 @@ const {
  *  Declarations
  *
  * */
+declare module '../Chart/ChartLike' {
+    interface ChartLike {
+        legend: Legend;
+    }
+}
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
@@ -1750,6 +1753,12 @@ interface Legend extends LegendLike {
 
 namespace Legend {
 
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface CheckBoxElement extends HTMLDOMElement {
         checked?: boolean;
         x: number;
@@ -1758,6 +1767,42 @@ namespace Legend {
 
     export type Item = (BubbleLegendItem|Series|Point);
 
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(ChartClass: typeof Chart): void {
+        if (composedMembers.indexOf(ChartClass) === -1) {
+            composedMembers.push(ChartClass);
+            addEvent(ChartClass, 'rendering', function (): void {
+                const chart = this;
+                // Title
+                chart.setTitle();
+
+                /**
+                 * The overview of the chart's series.
+                 *
+                 * @name Highcharts.Chart#legend
+                 * @type {Highcharts.Legend}
+                 */
+                chart.legend = new Legend(chart, chart.options.legend as any);
+
+            });
+        }
+    }
 }
 
 /* *
