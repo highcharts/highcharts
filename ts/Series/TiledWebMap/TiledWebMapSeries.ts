@@ -72,7 +72,7 @@ class TiledWebMapSeries extends MapSeries {
      * A tiledwebmap series allows user to display dynamically joined individual
      * images (tiles) and join them together to create a map.
      *
-     * @sample maps/demo/tiledwebmap/
+     * @sample maps/series-tiledwebmap/only-twm
      *         OpenStreetMap demo
      *
      * @extends      plotOptions.map
