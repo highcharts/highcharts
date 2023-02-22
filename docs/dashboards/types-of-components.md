@@ -9,11 +9,25 @@ Here is the overview of most important parameters, that can be defined for a com
 * `Cell` - id of the cell, in which the component should be placed
 * `Class` - CSS class
 * `Type` - the type of the component.
-* `Events` - object containing a pair of name of the event and callback function that should be called on a given event.
+* `Events` - object containing a pair of name of the event and callback function that should be called on a given event. The list of events can be found in the API Reference but the most common one is `mount`.
 * `Sync` - list of events, which should be synchronized between components.
 
 ### HTML Component
-The most basic and generic component type. Allows you to add everything which could be defiend as HTML, as well as add some custom events, but requires the most configuration. The configuration is AST-like, where you can define the name of the tag, its attributes, and nested children elements. [Check out the basic HTML component demo here.](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/component-html)
+The most basic and generic component type. Allows you to add everything which could be defined as HTML, as well as add some custom events, but requires the most configuration. The configuration is AST-like, where you can define the name of the tag, its attributes, and nested children elements. [Check out the basic HTML component demo here.](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/component-html)
+
+Code snippet:
+``` JS
+    {
+        type: 'html',
+        cell: 'dashboard-1',
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
+            }
+        }]
+    }
+```
 
 ### Highcharts Component
 The option to include a Highcharts chart in one of the components is available out of the box. Here is the set of files that need to be included to make the Highcharts component work.
@@ -46,3 +60,38 @@ Another type of component type, that allows you to visualize key performance ind
 You can define the threshold to change the style of the component, when one value exceeds it and some other useful features to better show what is important to you.
 
 [Here is the example](http://utils.highcharts.local/samples/#view/dashboards/demos/dashboards-component-kpi)
+
+Code snippet:
+``` JS
+   {
+        cell: 'kpi-00',
+        type: 'KPI',
+        title: 'Average revenue',
+        value: 888,
+        threshold: [200, 800],
+        thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d']
+    },
+```
+
+### Component groups
+
+Components can be assigned to groups. Groups are used to synchronize the state of components.
+
+via
+```js
+    group.addComponents(...componentIDs);
+```
+
+or
+```js
+    component.setActiveGroup(groupOrGroupIDOrNull)
+```
+
+Groups which have shared state can be accessible via
+```js
+    component.activeGroup.getSharedState()
+```
+Also you can post data between components in the same group via `postMessage` method.
+```js
+    component.postMessage('hello world');
+```
