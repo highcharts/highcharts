@@ -738,7 +738,8 @@ class Legend {
                 label.attr('y', legend.baseline);
 
                 legend.symbolHeight =
-                    options.symbolHeight || legend.fontMetrics.f;
+                    isNumber(options.symbolHeight) ?
+                        options.symbolHeight : legend.fontMetrics.f;
 
                 if (options.squareSymbol) {
                     legend.symbolWidth = pick(
