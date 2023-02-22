@@ -39,7 +39,7 @@ Dashboards.board('container', {
 });
 
 // Build chart options for each HighchartsComponent
-function buildChartOptions(type, table, state) {
+function buildChartOptions(type, table, states) {
     return {
         chart: {
             events: {
@@ -48,14 +48,14 @@ function buildChartOptions(type, table, state) {
                     const series = chart.series[0];
 
                     // react to table states
-                    state.addListener(table.id, 'point.mouseOver', function (e) {
+                    states.addListener(table.id, 'point.mouseOver', function (e) {
                         const point = series.data[e.cursor.row];
 
                         if (chart.hoverPoint !== point) {
                             chart.tooltip.refresh(point);
                         }
                     });
-                    state.addListener(table.id, 'point.mouseOut', function () {
+                    states.addListener(table.id, 'point.mouseOut', function () {
                         chart.tooltip.hide();
                     });
                 }
@@ -72,14 +72,14 @@ function buildChartOptions(type, table, state) {
                 events: {
                     // emit table states
                     mouseOver: function () {
-                        state.emitCursor(table, {
+                        states.emitCursor(table, {
                             type: 'position',
                             row: this.x,
                             state: 'point.mouseOver'
                         });
                     },
                     mouseOut: function () {
-                        state.emitCursor(table, {
+                        states.emitCursor(table, {
                             type: 'position',
                             row: this.x,
                             state: 'point.mouseOut'
