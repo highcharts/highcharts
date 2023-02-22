@@ -417,7 +417,7 @@ class EditMode {
         // Sets proper rwd mode.
         editMode.rwdMode = editMode.board.getLayoutContainerSize();
 
-        // show reponsive buttons
+        // Show responsive buttons.
         this.showRwdButtons();
 
         editMode.active = true;
@@ -449,12 +449,13 @@ class EditMode {
             editMode.resizer.disableResizer();
         }
 
-
-        // hide reponsive buttons
+        // Hide responsive buttons.
         this.hideRwdButtons();
 
-        // disable responsive width
+        // Disable responsive width and restore elements to their original
+        // positions and sizes.
         this.board.layoutsWrapper.style.width = '100%';
+        this.board.reflow();
 
         editMode.active = false;
         editMode.stopContextDetection();
