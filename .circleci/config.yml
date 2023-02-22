@@ -391,6 +391,11 @@ jobs:
   visual_comparison_with_dashboards:
     <<: *defaults
     description: Visual diff and compare PR with dashboards
+    parameters:
+      reference-branch:
+        description: "The reference branch"
+        type: string
+        default: "dashboards/main"
     steps:
       - <<: *add_gh_keys
       - <<: *add_to_ssh_config
@@ -410,10 +415,9 @@ jobs:
           name: Check Chrome
       - run: sudo apt-get update -y
       - run: sudo apt-get install -y rsync
-      - run: set DASHBOARDS_BRANCH dashboards/main
       - run: | # checkout master at diverge point of current branch and install
-          git checkout $DASHBOARDS_BRANCH && git fetch origin $DASHBOARDS_BRANCH && git reset --hard origin/$DASHBOARDS_BRANCH &&
-          git checkout $(git merge-base $DASHBOARDS_BRANCH ${CIRCLE_BRANCH}) && git log --oneline -5 &&
+          git checkout << parameters.reference-branch >> && git fetch origin << parameters.reference-branch >> && git reset --hard origin/<< parameters.reference-branch >> &&
+          git checkout $(git merge-base << parameters.reference-branch >> ${CIRCLE_BRANCH}) && git log --oneline -5 &&
           npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
       - generate_references_command:
           browsercount: 2
