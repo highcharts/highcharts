@@ -388,6 +388,55 @@ jobs:
       - store_artifacts:
           path: ../visual-test-results
 
+  visual_comparison_with_dashboards:
+    <<: *defaults
+    description: Visual diff and compare PR with dashboards
+    steps:
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - <<: *add_gh_user_config
+      - run: |
+          if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+            echo "Not a PR according to CircleCI, so marking this step successful"
+            circleci step halt
+          fi
+      - <<: *load_workspace
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+          command: |
+            google-chrome --version
+            whereis google-chrome
+          name: Check Chrome
+      - run: sudo apt-get update -y
+      - run: sudo apt-get install -y rsync
+      - run: set DASHBOARDS_BRANCH dashboards/main
+      - run: | # checkout master at diverge point of current branch and install
+          git checkout $DASHBOARDS_BRANCH && git fetch origin $DASHBOARDS_BRANCH && git reset --hard origin/$DASHBOARDS_BRANCH &&
+          git checkout $(git merge-base $DASHBOARDS_BRANCH ${CIRCLE_BRANCH}) && git log --oneline -5 &&
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+      - generate_references_command:
+          browsercount: 2
+      - run: |
+          git checkout ${CIRCLE_BRANCH} && git log --oneline -5 &&
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force
+      # we are forcing success on the below test runs to avoid failing the PR build
+      - run: npx karma start test/karma-conf.js --tests dashboards/*/* --single-run --browsercount 2 --visualcompare || true
+      - run:
+          name: Comment on PR and upload visual test images if any produced
+          command: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} npx gulp update-pr-testresults --fail-silently --user circleci-mu --pr {}
+          when: always
+      - run:
+          name: Save test results where both an reference.svg and candidate.svg exists
+          command: |
+            mkdir ../visual-test-results &&
+            find samples -type d  -exec test -f '{}'/reference.svg -a -f '{}'/candidate.svg \; -print | xargs -I{} rsync -Rri --include="*/" --include="*.svg" --include="*.gif" --exclude="*" {} ../visual-test-results
+          when: always
+      - store_test_results:
+          path: ../visual-test-results
+      - store_artifacts:
+          path: ../visual-test-results
+
   nightly_visual_diff:
     <<: *defaults
     description: Uploads visual test results to S3
@@ -566,7 +615,16 @@ workflows:
           requires: [lint]
           filters:
             branches:
+              ignore: 
+                - master
+                - /db\/.*/
+          context: highcharts-staging
+      - visual_comparison_with_dashboards:
+          requires: [lint]
+          filters:
+            branches:
               ignore: master
+              only: /db\/.*/
           context: highcharts-staging
       - generate_release_reference_images:
           requires: [lint]
