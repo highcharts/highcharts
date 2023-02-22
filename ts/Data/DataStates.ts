@@ -256,7 +256,7 @@ class DataStates {
      * @function #remitCursor
      *
      * @param {string} tableId
-     * The related table of the cursor.
+     * The ID of the related cursor table.
      *
      * @param {Data.DataStates.Cursor} cursor
      * The copy or reference of the cursor.
