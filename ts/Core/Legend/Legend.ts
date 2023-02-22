@@ -40,9 +40,7 @@ import F from '../FormatUtilities.js';
 const { format } = F;
 import H from '../Globals.js';
 const {
-    isFirefox,
-    marginNames,
-    win
+    marginNames
 } = H;
 import Point from '../Series/Point.js';
 import R from '../Renderer/RendererUtilities.js';
@@ -61,8 +59,7 @@ const {
     pick,
     relativeLength,
     stableSort,
-    syncTimeout,
-    wrap
+    syncTimeout
 } = U;
 
 /* *
@@ -738,8 +735,7 @@ class Legend {
                 label.attr('y', legend.baseline);
 
                 legend.symbolHeight =
-                    isNumber(options.symbolHeight) ?
-                        options.symbolHeight : legend.fontMetrics.f;
+                    pick(options.symbolHeight, legend.fontMetrics.f);
 
                 if (options.squareSymbol) {
                     legend.symbolWidth = pick(
