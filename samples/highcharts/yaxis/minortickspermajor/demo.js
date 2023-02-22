@@ -1,7 +1,11 @@
 Highcharts.chart('container', {
+    title: {
+        text: '<em>minorTicksPerMajor</em> is 2'
+    },
+
     yAxis: {
         minorTicks: true,
-        minorTicksPerMajor: 3
+        minorTicksPerMajor: 2
     },
 
     series: [{
