@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         type: 'column'
     },
     legend: {
-        symbolWidth: 40
+        enabled: false
     },
     title: {
         text: 'Palmer Penguin Species'
@@ -23,10 +23,15 @@ Highcharts.chart('container', {
     },
     yAxis: {
         title: {
-            text: 'Count of Penguins'
+            text: 'Count'
         },
         accessibility: {
             description: 'Total number of penguins for each species.'
+        }
+    },
+    plotOptions: {
+        series: {
+            colorByPoint: true
         }
     },
     series: [
