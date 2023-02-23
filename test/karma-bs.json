@@ -47,12 +47,5 @@
         "browser_version": "99.0",
         "os": "Windows",
         "os_version": "10"
-    },
-    "Win.IE": {
-        "base": "BrowserStack",
-        "browser": "ie",
-        "browser_version": "11.0",
-        "os": "Windows",
-        "os_version": "10"
     }
 }

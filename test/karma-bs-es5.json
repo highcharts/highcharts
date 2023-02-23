@@ -1,0 +1,23 @@
+{
+    "Win.Edge": {
+        "base": "BrowserStack",
+        "browser": "edge",
+        "browser_version": "18.0",
+        "os": "Windows",
+        "os_version": "10"
+    },
+    "Win.IE9": {
+        "base": "BrowserStack",
+        "browser": "ie",
+        "browser_version": "9.0",
+        "os": "Windows",
+        "os_version": "7"
+    },
+    "Win.IE": {
+        "base": "BrowserStack",
+        "browser": "ie",
+        "browser_version": "11.0",
+        "os": "Windows",
+        "os_version": "10"
+    }
+}

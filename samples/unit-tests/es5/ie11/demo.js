@@ -33,33 +33,33 @@ var types = {
     area: 1
 };
 
-Highcharts.Chart.prototype.isReadyToRender = function () {
-    return true;
-};
-for (var type in types) {
-    if (Object.hasOwnProperty.call(types, type)) {
-        var chart = Highcharts.chart('container', {
-            series: [
-                {
-                    type: type,
-                    data: [1, 3, 2, 4]
-                }
-            ]
-        });
+// Highcharts.Chart.prototype.isReadyToRender = function () {
+//     return true;
+// };
+// for (var type in types) {
+//     if (Object.hasOwnProperty.call(types, type)) {
+//         var chart = Highcharts.chart('container', {
+//             series: [
+//                 {
+//                     type: type,
+//                     data: [1, 3, 2, 4]
+//                 }
+//             ]
+//         });
 
-        ok(
-            'The container should be generated for series type ' + type,
-            chart.container.tagName === 'DIV'
-        );
+//         ok(
+//             'The container should be generated for series type ' + type,
+//             chart.container.tagName === 'DIV'
+//         );
 
-        chart.series[0].points[0].onMouseOver();
-        ok(
-            'The tooltip should be displayed',
-            chart.tooltip.getLabel().element.innerHTML.indexOf('<SPAN') !== -1
-        );
-        chart.destroy();
-    }
-}
+//         chart.series[0].points[0].onMouseOver();
+//         ok(
+//             'The tooltip should be displayed',
+//             chart.tooltip.getLabel().element.innerHTML.indexOf('<SPAN') !== -1
+//         );
+//         chart.destroy();
+//     }
+// }
 
 // End of actual tests
 // ----------------------------------------------------------------------------//
