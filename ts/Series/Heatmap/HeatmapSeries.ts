@@ -471,7 +471,8 @@ class HeatmapSeries extends ScatterSeries {
                             return ~~(capped * scale + to[0]);
                         };
 
-                    if (!heatmap.boost) {
+                    if (!heatmap.boost && !chart.boost) {
+                        heatmap.directTouch = false;
                         heatmap.buildKDTree();
                     }
 
