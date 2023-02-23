@@ -174,12 +174,12 @@ export interface ChartSelectionContextObject {
 }
 
 export interface ChartZoomingOptions {
+    dragThreshold?: number;
     dynamic?: boolean;
     key?: string;
     pinchType?: string;
     resetButton?: ChartResetZoomButtonOptions;
     singleTouch: boolean;
-    threshold?: number;
     type?: ('x'|'xy'|'y');
 }
 

@@ -299,10 +299,8 @@ class Pointer {
                 let size,
                     width,
                     height,
-                    x,
-                    y,
                     dynamic = chart.options.chart.zooming.dynamic,
-                    threshold = chart.options.chart.zooming.threshold,
+                    dragThreshold = chart.options.chart.zooming.dragThreshold,
                     selectionMarker = this.selectionMarker;
 
                 attrs.x = chart.plotLeft;
@@ -311,13 +309,13 @@ class Pointer {
                 attrs.height = zoomVert ? 1 : chart.plotHeight;
 
                 // Adjust the width of the selection marker
-                if (selectionMarker && zoomHor) {
+                if (zoomHor) {
                     size = chartX - mouseDownX;
                     width = attrs.width = Math.abs(size);
                     attrs.x = (size > 0 ? 0 : size) + mouseDownX;
-                    if (threshold) {
-                        if ((width < threshold && dynamic) ||
-                            (width < threshold)) {
+
+                    if (dragThreshold && selectionMarker) {
+                        if ((width < dragThreshold) && dynamic) {
                             selectionMarker.attr({
                                 width: chart.plotWidth,
                                 x: chart.plotLeft
@@ -332,13 +330,13 @@ class Pointer {
                 }
 
                 // Adjust the height of the selection marker
-                if (selectionMarker && zoomVert) {
+                if (zoomVert) {
                     size = chartY - mouseDownY;
                     height = attrs.height = Math.abs(size);
                     attrs.y = (size > 0 ? 0 : size) + mouseDownY;
-                    if (threshold) {
-                        if ((height < threshold && dynamic) ||
-                            (height < threshold)) {
+
+                    if (dragThreshold && selectionMarker) {
+                        if ((height < dragThreshold) && dynamic) {
                             selectionMarker.attr({
                                 height: chart.plotHeight,
                                 y: chart.plotTop
@@ -384,7 +382,7 @@ class Pointer {
             clickedInside,
             dynamic = chartOptions.zooming.dynamic,
             selectionMarker = this.selectionMarker,
-            threshold = chartOptions.zooming.threshold;
+            dragThreshold = chartOptions.zooming.dragThreshold;
 
         // If the device supports both touch and mouse (like IE11), and we are
         // touch-dragging inside the plot area, don't handle the mouse event.
@@ -412,8 +410,8 @@ class Pointer {
             Math.pow(mouseDownY - chartY, 2)
         );
         // threshold decide how is min length of zoom area selection
-        threshold = threshold ? threshold * 2 : 20;
-        if (this.hasDragged > threshold) {
+        dragThreshold = dragThreshold ? dragThreshold * 2 : 20;
+        if (this.hasDragged > dragThreshold) {
             clickedInside = chart.isInsidePlot(
                 mouseDownX - plotLeft,
                 mouseDownY - plotTop,
@@ -453,11 +451,16 @@ class Pointer {
                     }
                 }
             }
+
             // selection marker is done
-            if (selectionMarker && !dynamic) {
-                selectionMarker.attr(
-                    attrs
-                );
+            if (selectionMarker) {
+                if (dynamic && chartOptions.zooming.type === 'xy') {
+                    selectionMarker;
+                } else {
+                    selectionMarker.attr(
+                        attrs
+                    );
+                }
             }
 
             // panning

@@ -1015,7 +1015,19 @@ const ChartDefaults: ChartOptions = {
      */
     zooming: {
         /**
-         * Dynamic mode allows you to change the zoom type when making a
+         * The minimum number of pixels that must be drag before it counts as
+         * a selection.
+         *
+         * @type       {number}
+         * @since      next
+         * @default    10
+         * @product    highcharts highstock gantt
+         * @apioption  chart.zooming.dragThreshold
+         */
+        dragThreshold: 10,
+
+        /**
+         * Dynamic mode allows to change the zoom type when making a
          * selection on the chart. Move sides to center:
          * horizontally - the zoom area expands vertically to the full height,
          * vertically - the zoom area expand horizontally to its full width.
@@ -1046,11 +1058,11 @@ const ChartDefaults: ChartOptions = {
 
         /**
          * Decides in what dimensions the user can zoom by dragging the mouse.
-         * Can be one of `x`, `y`, `xy`.
+         * Can be one of `x`, `y` or `xy`.
          *
          * @declare    Highcharts.OptionsChartZoomingTypeValue
-         * @type       {string}
          * @default    {highcharts} undefined
+         * @type       {string}
          * @product    highcharts highstock gantt
          * @validvalue ["x", "y", "xy"]
          * @apioption  chart.zooming.type
@@ -1083,16 +1095,6 @@ const ChartDefaults: ChartOptions = {
          * @product highcharts highstock gantt
          */
         singleTouch: false,
-
-        /**
-         * Threshold decide how is min length of zoom area selection.
-         *
-         * @type       {number}
-         * @since      next
-         * @default    10
-         * @product    highcharts highstock gantt
-         * @apioption  chart.zooming.threshold
-         */
 
         /**
          * The button that appears after a selection zoom, allowing the user
