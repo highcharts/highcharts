@@ -76,46 +76,106 @@ class EditRenderer {
         parentElement: HTMLDOMElement,
         options: SelectFormField
     ): HTMLDOMElement|undefined {
-        let customSelect;
         let selectOption;
 
-        if (parentElement) {
-            if (options.title) {
-                EditRenderer.renderText(
-                    parentElement,
-                    options.title
-                );
-            }
+        if (!parentElement) {
+            return;
+        }
 
-            customSelect = createElement(
-                'select',
+        if (options.title) {
+            EditRenderer.renderText(
+                parentElement,
+                options.title
+            );
+        }
+        let customSelect = createElement('div', {
+            className: 'hd-dropdown'
+        },
+        {},
+        parentElement);
+
+        let btn = createElement(
+            'button',
+            { className: 'hd-dropdown-button' },
+            {
+                height: '52px',
+                margin: 0
+            },
+            customSelect
+        );
+        let btnContent = createElement(
+            'div',
+            {},
+            { display: 'flex', height: '100%', 'align-items': 'center' },
+            btn
+        );
+        let icon = createElement(
+            'img',
+            {
+                src: 'https://code.highcharts.com/gfx/stock-icons/series-candlestick.svg',
+                className: 'hd-icon'
+            },
+            {},
+            btnContent
+        );
+        const placeholder = createElement(
+            'span',
+            { textContent: options.value, id: options.id },
+            {},
+            btnContent
+        );
+        createElement(
+            'img',
+            {
+                src: 'https://code.highcharts.com/gfx/stock-icons/series-candlestick.svg'
+            },
+            { height: '100%' },
+            btn
+        );
+
+        let dropdown = createElement(
+            'ul',
+            { className: 'hd-droptown-content' },
+            {
+                display: 'none',
+                padding: '16px 8px'
+            },
+            customSelect
+        );
+        btn.addEventListener('click', function (): void {
+            dropdown.style.display =
+                dropdown.style.display === 'none' ? 'flex' : 'none';
+        });
+
+        for (let i = 0, iEnd = options.items.length; i < iEnd; ++i) {
+
+            selectOption = createElement('li', {}, { margin: 0 }, dropdown);
+            let selectOptionBtn = createElement(
+                'button',
+                { className: 'hd-select-option-button' },
+                { height: '40px', width: '100%' },
+                selectOption
+            );
+            createElement(
+                'img',
                 {
-                    id: options.id || '',
-                    name: options.name || '',
-                    className: EditGlobals.classNames.customSelect,
-                    value: options.value || 'column'
+                    src: 'https://code.highcharts.com/gfx/stock-icons/series-candlestick.svg'
                 },
+                { width: '24px', height: '24px' },
+                selectOptionBtn
+            );
+            const optionValue = options.items[i] || '';
+            createElement(
+                'span',
+                { textContent: optionValue },
                 {},
-                parentElement
+                selectOptionBtn
             );
 
-            // i from -1 for creating extra empty option selector
-            for (let i = -1, iEnd = options.items.length; i < iEnd; ++i) {
-                selectOption = createElement(
-                    'option',
-                    {
-                        value: options.items[i] || '',
-                        textContent: options.items[i] || ''
-                    },
-                    {},
-                    customSelect
-                );
-
-                // select value if exists
-                if (options.items[i] === options.value) {
-                    selectOption.setAttribute('selected', true);
-                }
-            }
+            selectOptionBtn.addEventListener('click', function (): void {
+                dropdown.style.display = 'none';
+                placeholder.textContent = optionValue;
+            });
         }
 
         return customSelect;
@@ -335,6 +395,7 @@ export interface FormField {
 }
 
 export interface SelectFormField {
+    callback?: Function;
     id: string;
     name: string;
     title: string;

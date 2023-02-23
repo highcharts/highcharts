@@ -1018,7 +1018,7 @@ class Sidebar {
                                 (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions, // eslint-disable-line
                                 {
                                     chart: {
-                                        type: (chartType[0] as any).value
+                                        type: chartType[0].textContent
                                     }
                                 }
                             );
