@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2023 Highsoft AS
- *  Authors:
+ *  Authors: Magdalena Gut, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
