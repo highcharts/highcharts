@@ -4,7 +4,7 @@
         ).then(response => response.json()),
         colors = Highcharts.getOptions().colors;
 
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/geoheatmap-cities-dataset.json', function (data) {
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@5c536debb0/samples/data/geoheatmap-cities-dataset.json', function (data) {
         Highcharts.mapChart('container', {
             chart: {
                 map: topology
