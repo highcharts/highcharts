@@ -750,7 +750,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 .css(extend<CSSObject>({
                     color: Palette.backgroundColor,
                     fontWeight: 'normal',
-                    fontSize: '11px',
+                    fontSize: '0.6875em',
                     textAlign: 'center'
                 }, options.style || {}));
         }

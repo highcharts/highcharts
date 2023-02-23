@@ -905,7 +905,7 @@ const navigation: NavigationOptions = {
         /** @ignore-option */
         background: 'none',
         /** @ignore-option */
-        fontSize: isTouchDevice ? '14px' : '11px',
+        fontSize: isTouchDevice ? '0.875em' : '0.6875em',
         /** @ignore-option */
         transition: 'background 250ms, color 250ms'
     },

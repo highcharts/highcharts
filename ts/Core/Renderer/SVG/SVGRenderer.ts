@@ -484,7 +484,7 @@ class SVGRenderer implements SVGRendererLike {
 
             fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
                 'Arial, Helvetica, sans-serif',
-            fontSize: '12px'
+            fontSize: '1rem'
 
         }, style);
         return this.style;
@@ -712,6 +712,7 @@ class SVGRenderer implements SVGRendererLike {
         const normalStyle = merge({
             color: Palette.neutralColor80,
             cursor: 'pointer',
+            fontSize: '0.75em',
             fontWeight: 'normal'
         }, theme.style);
         delete theme.style;

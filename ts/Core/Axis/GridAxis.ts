@@ -777,7 +777,7 @@ function onAfterSetOptions(
             labels: {
                 padding: 2,
                 style: {
-                    fontSize: '13px'
+                    fontSize: '0.8125em'
                 }
             },
 

@@ -1441,7 +1441,7 @@ QUnit.test('Width set from label style (#7028)', function (assert) {
 
     assert.ok(
         Math.floor(chart.xAxis[0].ticks[3].label.getBBox().width) <= 40,
-        'Label width set correctly'
+        'The label width should be less than 40px wide'
     );
 });
 

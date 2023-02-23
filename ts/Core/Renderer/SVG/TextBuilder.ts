@@ -270,7 +270,7 @@ class TextBuilder {
                             0,
                             // Substract the font face to make room for the
                             // ellipsis itself
-                            width - parseInt(this.fontSize || 12, 10)
+                            width - 0.8 * dy
                         ),
                         // Build the text to test for
                         (text: string, currentIndex: number): string =>

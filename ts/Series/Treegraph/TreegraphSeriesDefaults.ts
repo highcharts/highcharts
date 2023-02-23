@@ -174,7 +174,7 @@ const TreegraphSeriesDefaults = {
         style: {
             cursor: 'pointer',
             fontWeight: 'bold',
-            fontSize: '16px'
+            fontSize: '1em'
         }
     },
     /**

@@ -558,8 +558,8 @@ const defaultOptions: Options = {
          *         Styled mode
          *
          * @type      {Highcharts.CSSObject}
-         * @default   {highcharts|highmaps} { "color": "#333333", "fontSize": "18px" }
-         * @default   {highstock} { "color": "#333333", "fontSize": "16px" }
+         * @default   {highcharts|highmaps} { "color": "#333333", "fontSize": "1.125em" }
+         * @default   {highstock} { "color": "#333333", "fontSize": "1em" }
          * @apioption title.style
          */
 
@@ -1477,7 +1477,7 @@ const defaultOptions: Options = {
          *         Item text styles
          *
          * @type    {Highcharts.CSSObject}
-         * @default {"color": "#333333", "cursor": "pointer", "fontSize": "12px", "fontWeight": "bold", "textOverflow": "ellipsis"}
+         * @default {"color": "#333333", "cursor": "pointer", "fontSize": "0.75em", "fontWeight": "bold", "textOverflow": "ellipsis"}
          */
         itemStyle: {
             /**
@@ -1491,7 +1491,7 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            fontSize: '12px',
+            fontSize: '0.75em',
             /**
              * @ignore
              */
@@ -1788,10 +1788,14 @@ const defaultOptions: Options = {
              *      `.highcharts-legend-title` class.
              *
              * @type    {Highcharts.CSSObject}
-             * @default {"fontWeight": "bold"}
+             * @default {"fontSize": "0.75em", "fontWeight": "bold"}
              * @since   3.0
              */
             style: {
+                /**
+                 * @ignore
+                 */
+                fontSize: '0.75em',
                 /**
                  * @ignore
                  */
@@ -2594,7 +2598,7 @@ const defaultOptions: Options = {
             /** @internal */
             cursor: 'default',
             /** @internal */
-            fontSize: '12px'
+            fontSize: '0.75em'
         },
 
         /**
@@ -2714,7 +2718,7 @@ const defaultOptions: Options = {
             /** @internal */
             color: Palette.neutralColor40,
             /** @internal */
-            fontSize: '9px'
+            fontSize: '0.5625em'
         },
 
         /**

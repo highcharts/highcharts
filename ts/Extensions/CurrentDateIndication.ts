@@ -138,7 +138,7 @@ const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
          */
         style: {
             /** @internal */
-            fontSize: '10px'
+            fontSize: '0.625em'
         }
     }
 };

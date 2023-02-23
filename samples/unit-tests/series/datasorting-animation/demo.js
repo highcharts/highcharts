@@ -167,7 +167,10 @@ QUnit.test(
                         reversed: true,
                         type: 'category',
                         labels: {
-                            animate: true
+                            animate: true,
+                            style: {
+                                fontSize: '11px'
+                            }
                         }
                     },
                     series: [

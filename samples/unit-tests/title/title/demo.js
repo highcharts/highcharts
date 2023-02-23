@@ -18,8 +18,8 @@ QUnit.test(
 
         assert.strictEqual(
             chart.title.styles.fontSize,
-            '16px',
-            'Font size is default 16px'
+            '1em',
+            'Font size should be Stock specific default'
         );
 
         Highcharts.setOptions({
