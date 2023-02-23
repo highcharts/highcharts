@@ -413,6 +413,21 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  */
 
 /**
+ * The format string specifying what to show for *links* in the
+ * organization chart.
+ *
+ * Best to use with `linkTextPath` enabled which also requires
+ * turning the `dataLabels.useHTML` to `false`.
+ *
+ * @sample highcharts/series-organization/link-labels
+ *         Organization chart with link labels
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.organization.dataLabels.linkFormat
+ */
+
+/**
  * An image for the node card, will be inserted by the default
  * `dataLabel.nodeFormatter`.
  *

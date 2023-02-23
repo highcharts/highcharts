@@ -47,6 +47,7 @@ export interface OrganizationDataLabelFormatterContext extends SankeyDataLabelFo
 
 export interface OrganizationDataLabelOptions extends SankeyDataLabelOptions {
     nodeFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
+    linkFormat?: string;
 }
 
 export default OrganizationDataLabelOptions;
