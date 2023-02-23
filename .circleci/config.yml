@@ -415,7 +415,7 @@ jobs:
           name: Check Chrome
       - run: sudo apt-get update -y
       - run: sudo apt-get install -y rsync
-      - run: git pull << parameters.reference-branch >> # git might not know it
+      - run: git pull origin << parameters.reference-branch >> # git might not know it
       - run: | # checkout master at diverge point of current branch and install
           git checkout << parameters.reference-branch >> && git fetch origin << parameters.reference-branch >> && git reset --hard origin/<< parameters.reference-branch >> &&
           git checkout $(git merge-base << parameters.reference-branch >> ${CIRCLE_BRANCH}) && git log --oneline -5 &&
