@@ -176,7 +176,7 @@ defaultOptions.noData = {
         /** @ignore */
         fontWeight: 'bold',
         /** @ignore */
-        fontSize: '0.75',
+        fontSize: '0.75em',
         /** @ignore */
         color: Palette.neutralColor60
     }
