@@ -454,10 +454,13 @@ class HeatmapSeries extends ScatterSeries {
                 if (canvas && ctx && colorAxis) {
                     const colsize = heatmap.options.colsize || 1,
                         rowsize = heatmap.options.rowsize || 1,
-                        xExtremes = heatmap.xAxis.getExtremes(),
-                        yExtremes = heatmap.yAxis.getExtremes(),
-                        fromXRange = [xExtremes.min, xExtremes.max],
-                        fromYRange = [yExtremes.dataMin, yExtremes.dataMax],
+                        { min, max } = heatmap.xAxis.getExtremes(),
+                        {
+                            dataMin,
+                            dataMax: yDataMax
+                        } = heatmap.yAxis.getExtremes(),
+                        fromXRange = [min, max],
+                        fromYRange = [dataMin, yDataMax],
                         toXRange = [0, canvas.width - 1],
                         toYRange = [0, canvas.height - 1],
                         scaleValue = function (
@@ -487,7 +490,7 @@ class HeatmapSeries extends ScatterSeries {
                             toXRange
                         );
                         const scaleY = scaleValue(
-                            ((yExtremes.dataMax as number) - p.y),
+                            ((yDataMax as number) - p.y),
                             fromYRange,
                             toYRange
                         );
