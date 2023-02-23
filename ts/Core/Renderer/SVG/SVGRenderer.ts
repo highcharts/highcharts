@@ -1749,6 +1749,8 @@ class SVGRenderer implements SVGRendererLike {
         // Handle different units
         if (/px/.test(fontSize as any)) {
             fontSize = pInt(fontSize);
+
+        // Only if we don't have an element so we can't get computed style
         } else {
             fontSize = 12;
         }

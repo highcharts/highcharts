@@ -1200,7 +1200,10 @@ namespace RadialAxis {
             } else if (!defined(optionsY)) {
                 optionsY = (
                     axis.chart.renderer
-                        .fontMetrics(label.styles && label.styles.fontSize).b -
+                        .fontMetrics(
+                            label.styles && label.styles.fontSize,
+                            label
+                        ).b -
                         labelBBox.height / 2
                 );
             }
