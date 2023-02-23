@@ -15,6 +15,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import ColorType from '../Core/Color/ColorType';
+import Point from '../Core/Series/Point';
 const {
     addEvent,
     isArray,
@@ -372,14 +373,25 @@ addEvent(Series, 'afterRender', function (): void {
         }
 
         if (lastVisiblePrice && lastVisiblePrice.enabled && pLength > 0) {
-            crop = (points[pLength - 1].x === x) || pointRange === null ? 1 : 2;
+            const getLastInsidePoint =
+                function (points: Point[]): (Point|undefined) {
+                    let lastPoint;
+                    for (let i = points.length - 1; i >= 0; i--) {
+                        if (points[i].isInside) {
+                            lastPoint = points[i];
+                            break;
+                        }
+                    }
+
+                    return lastPoint;
+                };
 
             yAxis.crosshair = yAxis.options.crosshair = merge({
                 color: 'transparent' // line invisible by default
             }, seriesOptions.lastVisiblePrice);
 
             yAxis.cross = series.lastVisiblePrice;
-            lastPoint = points[pLength - crop];
+            lastPoint = getLastInsidePoint(points);
 
             if (series.lastVisiblePriceLabel) {
                 series.lastVisiblePriceLabel.destroy();
@@ -394,7 +406,7 @@ addEvent(Series, 'afterRender', function (): void {
 
             if (yAxis.cross) {
                 series.lastVisiblePrice = yAxis.cross;
-                if (typeof lastPoint.y === 'number') {
+                if (lastPoint && typeof lastPoint.y === 'number') {
                     series.lastVisiblePrice.y = lastPoint.y;
                 }
             }
