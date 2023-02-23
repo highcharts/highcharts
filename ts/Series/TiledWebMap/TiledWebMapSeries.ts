@@ -214,7 +214,9 @@ class TiledWebMapSeries extends MapSeries {
 
                 if (!defined(ProviderDefinition)) {
                     error(
-                        'Provider cannot be reached.',
+                        'Highcharts warning: Tiles Provider \'' +
+                        provider.type + '\' not defined in the Provider' +
+                        'Registry.',
                         false
                     );
                     return;
@@ -231,8 +233,9 @@ class TiledWebMapSeries extends MapSeries {
                     // if nothing set take first theme
                     theme = def.themes[Object.keys(def.themes)[0]];
                     error(
-                        'Missing option: Tiles provider theme cannot be ' +
-                        'reached, using standard provider theme.',
+                        'Highcharts warning: The Tiles Provider\'s Theme \'' +
+                        provider.theme + '\' is not defined in the Provider ' +
+                        'definition - falling back to ' + theme + '\'.',
                         false
                     );
                 }
@@ -245,8 +248,10 @@ class TiledWebMapSeries extends MapSeries {
                     subdomain = provider.subdomain;
                 } else if (defined(def.subdomains)) {
                     error(
-                        'Missing option: Tiles provider subdomain cannot be ' +
-                        'reached, using default provider subdomain.',
+                        'Highcharts warning: The Tiles Provider\'s Subdomain ' +
+                        '\'' + provider.subdomain + '\' is not defined in ' +
+                        'the Provider definition - falling back to \'' + theme +
+                        '\'.',
                         false
                     );
                     subdomain = pick(def.subdomains && def.subdomains[0], '');
@@ -258,9 +263,9 @@ class TiledWebMapSeries extends MapSeries {
                             theme.url.replace('{apikey}', provider.apiKey);
                     } else {
                         error(
-                            'Missing option: Tiles provider requires API Key ' +
-                            'to use tiles, use provider.apiKey to provide ' +
-                            'token.',
+                            'Highcharts warning: The Tiles Provider requires ' +
+                            'API Key to use tiles, use provider.apiKey to ' +
+                            'provide a token.',
                             false
                         );
                         theme.url = theme.url.replace('?apikey={apikey}', '');
@@ -293,16 +298,16 @@ class TiledWebMapSeries extends MapSeries {
                     mapView.projection.options.name !== providerProjection
                 ) {
                     error(
-                        'The set projection is different than supported by ' +
-                        'provider.',
+                        'Highcharts warning: The set projection is different ' +
+                        'than supported by Tiles Provider.',
                         false
                     );
                 }
             } else {
                 if (!mapView.projection.options.name) {
                     error(
-                        'Set the correct map projection supported by custom ' +
-                        'provider.',
+                        'Highcharts warning: The set projection is different ' +
+                        'than supported by Tiles Provider.',
                         false
                     );
                 }
@@ -473,7 +478,8 @@ class TiledWebMapSeries extends MapSeries {
             });
         } else {
             error(
-                'Provider cannot be reached.',
+                'Highcharts warning: Tiles Provider not defined in the ' +
+                'Provider Registry.',
                 false
             );
         }
@@ -532,7 +538,8 @@ addEvent(Chart, 'beforeMapViewInit', function (e: any): boolean {
 
         if (!defined(ProviderDefinition)) {
             error(
-                'Provider cannot be reached.',
+                'Highcharts warning: Tiles Provider not defined in the ' +
+                'Provider Registry.',
                 false
             );
         } else {
@@ -629,8 +636,8 @@ export default TiledWebMapSeries;
  */
 
 /**
- * Set a tiles theme. Check the providers documentation for official
- * list of available themes.
+ * Set a tiles theme. Check the [providers documentation](https://www.highcharts.com/docs/maps/tiledwebmap-series)
+ * for official list of available themes.
  *
  * @sample maps/series-tiledwebmap/basic-configuration
  *         Basic configuration for TiledWebMap
@@ -642,8 +649,8 @@ export default TiledWebMapSeries;
  */
 
 /**
- * Subdomain required by each provider. Check the providers documentation for
- * available subdomains.
+ * Subdomain required by each provider. Check the [providers documentation](https://www.highcharts.com/docs/maps/tiledwebmap-series)
+ * for available subdomains.
  *
  * @sample maps/series-tiledwebmap/basic-configuration
  *         Basic configuration for TiledWebMap
