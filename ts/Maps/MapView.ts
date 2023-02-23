@@ -750,8 +750,9 @@ class MapView {
                     (bounds.x1 + bounds.x2) / 2,
                     (bounds.y1 + bounds.y2) / 2
                 ],
-                isDrilling = this.chart.series.some((series): boolean =>
-                    !!series.isDrilling);
+                isDrilling = this.chart.series.some(
+                    (series): boolean | undefined =>
+                        series.isDrilling);
 
             if (!isDrilling) {
                 // Constrain to data bounds
