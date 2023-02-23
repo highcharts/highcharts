@@ -204,6 +204,7 @@ function onHighchartsDisplayError(
             'debugger'
         ).css({
             color: '#ffffff',
+            fontSize: '0.75em',
             width: (chartWidth - 16) + 'px',
             padding: 0
         }).attr({
