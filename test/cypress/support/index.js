@@ -110,7 +110,7 @@ Cypress.Commands.add('selectRange', (range) =>
         .click()
 );
 
-Cypress.Commands.add('enableEditMode', ()=>{
+Cypress.Commands.add('toggleEditMode', ()=>{
     cy.get('.hd-edit-context-menu-btn').click();
     cy.get('.hd-edit-toggle-slider').click();
 });
