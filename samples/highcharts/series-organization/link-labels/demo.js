@@ -13,9 +13,10 @@ Highcharts.chart('container', {
         linkRadius: 0,
         linkLineWidth: 2,
         linkColor: '#ccc',
+        link: {
+            type: 'curved'
+        },
         dataLabels: {
-            useHTML: false,
-            color: '#000000',
             linkFormat: 'from {point.from} to {point.to}',
             linkTextPath: {
                 enabled: true
