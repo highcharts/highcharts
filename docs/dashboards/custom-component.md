@@ -15,11 +15,11 @@ The name of the class will automatically be the string, that will be used to ref
     }
 ```
 
-Then, depending on what the Component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, which is `videoId`, and since the iframe element needs it size to be defined, the resize method is extended to update ths size of the element.
+Then, depending on what the Component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, which is `videoId`, and since the iframe element needs it size to be defined, the resize method is extended to update the size of the element.
 
-At the end, the new YouTubeComponent class needs to be addded to the registry, using the `Component.addComponent` method.
+At the end, the new `YouTubeComponent` class needs to be addded to the registry, using the `Component.addComponent` method.
 
-Whole custom code looks like that:
+The custom code looks like below:
 
 ```js
 class YouTubeComponent extends Component {

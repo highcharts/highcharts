@@ -68,7 +68,7 @@ class Bindings {
         const optionsEvents = options.events;
 
         cell = cell || Bindings.getCell(options.cell);
-        let component: Component|undefined;
+        let component: Component | undefined;
 
         // add elements to containers
         if (componentContainer) {

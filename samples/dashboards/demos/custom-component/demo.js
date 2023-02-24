@@ -10,8 +10,8 @@ class YouTubeComponent extends Component {
 
     resize(width, height) {
         super.resize.call(this, width, height);
-        this.youTubeElement.setAttribute('width', width - 10);
-        this.youTubeElement.setAttribute('height', height - 10);
+        this.youTubeElement.setAttribute('width', width - 10); // padding
+        this.youTubeElement.setAttribute('height', height - 10); // padding
     }
 
     load() {
