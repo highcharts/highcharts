@@ -389,7 +389,6 @@ class SVGLabel extends SVGElement {
      */
     private updateBoxSize(): void {
         const text = this.text,
-            style = text.element.style,
             attribs: SVGAttributes = {},
             padding = this.padding,
             // #12165 error when width is null (auto)

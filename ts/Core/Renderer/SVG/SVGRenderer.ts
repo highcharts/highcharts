@@ -1780,7 +1780,7 @@ class SVGRenderer implements SVGRendererLike {
             SVGElement.prototype.getStyle.call(
                 (element as SVGElement).element ? element : { element },
                 'font-size'
-            )
+            ) || 0
         );
 
         // Empirical values found by comparing font size and bounding box
