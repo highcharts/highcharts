@@ -628,7 +628,8 @@ defaultOptions.drilldown = {
 
     /**
      * Enable or disable zooming into a region of clicked map point you want to
-     * drill into.
+     * drill into. If mapZooming is set to false the drilldown/drillup
+     * animations only fade in/fade out without zooming to a specific map point.
      *
      * @sample    maps/demo/map-drilldown-without-async/
      *            Map drilldown without async maps loading

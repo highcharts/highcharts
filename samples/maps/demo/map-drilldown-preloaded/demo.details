@@ -1,5 +1,5 @@
 ---
-name: Map drilldown without async maps loading
+name: Map drilldown with preloaded data
 authors:
   - Hubert Kozik
 requiresManualTesting: true
