@@ -355,9 +355,15 @@ class StackItem {
             y = axis.toPixels(totalStackValue),
             xAxis = stackBoxProps.xAxis || chart.xAxis[0],
             x = pick(defaultX, xAxis.toPixels(this.x)) + xOffset,
-            yZero = axis.toPixels(boxBottom ? boxBottom :
-                (axis.logarithmic && isNumber(axis.min) ?
-                    Math.pow(10, axis.min) : 0)),
+            yZero = axis.toPixels(
+                boxBottom ||
+                (
+                    isNumber(axis.min) &&
+                    axis.logarithmic &&
+                    axis.logarithmic.lin2log(axis.min)
+                ) ||
+                0
+            ),
             height = Math.abs(y - yZero),
             inverted = chart.inverted,
             neg = stackItem.isNegative;
