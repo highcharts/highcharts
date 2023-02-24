@@ -18,15 +18,17 @@ import type ComponentTypes from '../Component/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type Serializable from '../Serializable';
-import type Cell from '../Layout/Cell.js';
-import type Layout from '../Layout/Layout.js';
-import type Row from '../Layout/Row.js';
+import type KPIComponent from '../Component/KPIComponent';
+import type DataStore from '../../Data/Stores/DataStore';
+import type Cell from '../Layout/Cell';
+import type Layout from '../Layout/Layout';
+import type Row from '../Layout/Row';
 
 import Component from '../Component/Component.js';
 import HTMLComponent from '../Component/HTMLComponent.js';
 import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
 import Globals from '../Globals.js';
-import KPIComponent from '../Component/KPIComponent.js';
+import DataTable from '../../Data/DataTable';
 import U from '../../Core/Utilities.js';
 const {
     fireEvent,
@@ -40,23 +42,18 @@ class Bindings {
      *  Functions
      *
      * */
-    private static getGUIElement(idOrElement: string): GUIElement | undefined {
-        const container =
-            typeof idOrElement === 'string' ?
-                document.getElementById(idOrElement) :
-                idOrElement;
+    private static getGUIElement(idOrElement: string): GUIElement|undefined {
+        const container = typeof idOrElement === 'string' ?
+            document.getElementById(idOrElement) : idOrElement;
 
         let guiElement;
 
         if (container instanceof HTMLElement) {
-            fireEvent(
-                container,
-                'bindedGUIElement',
-                {},
-                function (e: GUIElement.BindedGUIElementEvent): void {
-                    guiElement = e.guiElement;
-                }
-            );
+            fireEvent(container, 'bindedGUIElement', {}, function (
+                e: GUIElement.BindedGUIElementEvent
+            ): void {
+                guiElement = e.guiElement;
+            });
         }
 
         return guiElement;
@@ -71,7 +68,7 @@ class Bindings {
         const optionsEvents = options.events;
 
         cell = cell || Bindings.getCell(options.cell);
-        let component: ComponentTypes | undefined;
+        let component: ComponentTypes|undefined;
 
         // add elements to containers
         if (componentContainer) {
@@ -79,8 +76,9 @@ class Bindings {
 
             switch (options.type) {
                 case 'html':
-                    component = new HTMLComponent(
-                        merge(options, {
+                    component = new HTMLComponent(merge(
+                        options,
+                        {
                             parentElement: componentContainer,
                             elements: options.elements
                         })
@@ -88,19 +86,21 @@ class Bindings {
                     break;
                 case 'Highcharts':
                     if (ComponentClass) {
-                        component = new ComponentClass(
-                            merge(options, {
+                        component = new ComponentClass(merge(
+                            options,
+                            {
                                 parentElement: componentContainer,
                                 chartOptions: options.chartOptions,
                                 dimensions: options.dimensions
-                            })
-                        ) as HighchartsComponent;
+                            }
+                        )) as HighchartsComponent;
                     }
                     break;
                 case 'DataGrid':
                     if (ComponentClass) {
-                        component = new ComponentClass(
-                            merge(options, {
+                        component = new ComponentClass(merge(
+                            options,
+                            {
                                 parentElement: componentContainer
                             })
                         ) as DataGridComponent;
@@ -108,8 +108,9 @@ class Bindings {
                     break;
                 case 'KPI':
                     if (ComponentClass) {
-                        component = new ComponentClass(
-                            merge(options, {
+                        component = new ComponentClass(merge(
+                            options,
+                            {
                                 parentElement: componentContainer
                             })
                         ) as KPIComponent;
@@ -144,7 +145,7 @@ class Bindings {
 
             // events
             if (optionsEvents && optionsEvents.click) {
-                addEvent(componentContainer, 'click', (): void => {
+                addEvent(componentContainer, 'click', ():void => {
                     optionsEvents.click();
 
                     if (
@@ -160,8 +161,14 @@ class Bindings {
             }
 
             // states
-            if (componentContainer && optionsStates && optionsStates.hover) {
-                componentContainer.classList.add(Globals.classNames.cellHover);
+            if (
+                componentContainer &&
+                optionsStates &&
+                optionsStates.hover
+            ) {
+                componentContainer.classList.add(
+                    Globals.classNames.cellHover
+                );
             }
         }
 
@@ -173,10 +180,10 @@ class Bindings {
     }
 
     public static componentFromJSON(
-        json: HTMLComponent.ClassJSON | HighchartsComponent.ClassJSON,
-        cellContainer: HTMLElement | undefined
-    ): Component | undefined {
-        let component: Component | undefined;
+        json: HTMLComponent.ClassJSON|HighchartsComponent.ClassJSON,
+        cellContainer: HTMLElement|undefined
+    ): (Component|undefined) {
+        let component: (Component|undefined);
         let componentClass;
 
         switch (json.$class) {
@@ -188,12 +195,7 @@ class Bindings {
             case 'Highcharts':
                 componentClass = Component.getComponent(json.$class);
                 if (componentClass) {
-                    component = (
-                        componentClass as unknown as Serializable<
-                        Component,
-                            typeof json
-                        >
-                    ).fromJSON(json);
+                    component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
                 }
                 break;
             case 'DataGrid':
@@ -204,12 +206,7 @@ class Bindings {
             case 'KPI':
                 componentClass = Component.getComponent(json.$class);
                 if (componentClass) {
-                    component = (
-                        componentClass as unknown as Serializable<
-                        Component,
-                            typeof json
-                        >
-                    ).fromJSON(json);
+                    component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
                 }
                 break;
             default:
@@ -228,7 +225,7 @@ class Bindings {
         return component;
     }
 
-    public static getCell(idOrElement: string): Cell | undefined {
+    public static getCell(idOrElement: string): Cell|undefined {
         const cell = Bindings.getGUIElement(idOrElement);
 
         if (!(cell && cell.getType() === 'cell')) {
@@ -238,7 +235,7 @@ class Bindings {
         return (cell as Cell);
     }
 
-    public static getRow(idOrElement: string): Row | undefined {
+    public static getRow(idOrElement: string): Row|undefined {
         const row = Bindings.getGUIElement(idOrElement);
 
         if (!(row && row.getType() === 'row')) {
@@ -248,7 +245,7 @@ class Bindings {
         return (row as Row);
     }
 
-    public static getLayout(idOrElement: string): Layout | undefined {
+    public static getLayout(idOrElement: string): Layout|undefined {
         const layout = Bindings.getGUIElement(idOrElement);
 
         if (!(layout && layout.getType() === 'layout')) {
