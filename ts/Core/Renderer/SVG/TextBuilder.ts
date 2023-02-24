@@ -219,7 +219,7 @@ class TextBuilder {
 
                     if (i === 0 && br.previousSibling.nodeType === 1) {
                         wrapper.firstLineMetrics = wrapper.renderer
-                            .fontMetrics(void 0, br.previousSibling as any);
+                            .fontMetrics2(br.previousSibling as DOMElementType);
                     }
 
                     attr(br, {
@@ -378,8 +378,6 @@ class TextBuilder {
      * @return {number} The rendered line height
      */
     private getLineHeight(node: DOMElementType|Text): number {
-        let fontSizeStyle;
-
         // If the node is a text node, use its parent
         const element: DOMElementType|null = (
             node.nodeType === win.Node.TEXT_NODE
@@ -387,19 +385,9 @@ class TextBuilder {
             node.parentElement :
             node as DOMElementType;
 
-        if (!this.renderer.styledMode) {
-            fontSizeStyle =
-                element && /(px|em)$/.test(element.style.fontSize) ?
-                    element.style.fontSize :
-                    (this.fontSize || this.renderer.style.fontSize || 12);
-        }
-
         return this.textLineHeight ?
             parseInt(this.textLineHeight.toString(), 10) :
-            this.renderer.fontMetrics(
-                fontSizeStyle as any,
-                element || this.svgElement.element
-            ).h;
+            this.renderer.fontMetrics2(element || this.svgElement.element).h;
     }
 
     /**

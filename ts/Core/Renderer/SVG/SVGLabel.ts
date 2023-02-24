@@ -410,10 +410,7 @@ class SVGLabel extends SVGElement {
         this.width = this.getPaddedWidth();
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
 
-        const metrics = this.renderer.fontMetrics(
-            style && style.fontSize,
-            text
-        );
+        const metrics = this.renderer.fontMetrics2(text);
 
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)

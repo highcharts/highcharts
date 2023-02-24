@@ -374,10 +374,9 @@ function onAfterGetTitlePosition(
         const xOption = options.title.x;
         const yOption = options.title.y;
         const titleMargin = pick(options.title.margin, horiz ? 5 : 10);
-        const titleFontSize = axis.chart.renderer.fontMetrics(
-            options.title.style.fontSize,
+        const titleFontSize = axisTitle ? axis.chart.renderer.fontMetrics2(
             axisTitle
-        ).f;
+        ).f : 0;
         const crispCorr = tickSize ? tickSize[0] / 2 : 0;
 
         // TODO account for alignment

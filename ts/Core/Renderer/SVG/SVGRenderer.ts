@@ -1715,6 +1715,7 @@ class SVGRenderer implements SVGRendererLike {
      * size.
      *
      * @function Highcharts.SVGRenderer#fontMetrics
+     * @deprecated
      *
      * @param {number|string} [fontSize]
      *        The current font size to inspect. If not given, the font size
@@ -1728,7 +1729,7 @@ class SVGRenderer implements SVGRendererLike {
      */
     public fontMetrics(
         fontSize?: (number|string),
-        elem?: (DOMElementType|SVGElement)
+        elem? : (DOMElementType|SVGElement)
     ): FontMetricsObject {
         if (
             (this.styledMode || !/px/.test(fontSize as any)) &&
@@ -1769,6 +1770,32 @@ class SVGRenderer implements SVGRendererLike {
             h: lineHeight,
             b: baseline,
             f: fontSize
+        };
+    }
+
+    public fontMetrics2(
+        element: (DOMElementType|SVGElement)
+    ): FontMetricsObject {
+        const f = pInt(
+            SVGElement.prototype.getStyle.call(
+                (element as SVGElement).element ? element : { element },
+                'font-size'
+            )
+        );
+
+        // Empirical values found by comparing font size and bounding box
+        // height. Applies to the default font family.
+        // https://jsfiddle.net/highcharts/7xvn7/
+        const h = f < 24 ? f + 3 : Math.round(f * 1.2),
+            b = Math.round(h * 0.8);
+
+        return {
+            // Line height
+            h,
+            // Baseline
+            b,
+            // Font size
+            f
         };
     }
 

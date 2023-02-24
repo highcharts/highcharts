@@ -3666,7 +3666,7 @@ class Axis {
      * @return {Highcharts.PositionObject}
      * X and Y positions for the title.
      */
-    public getTitlePosition(): PositionObject {
+    public getTitlePosition(axisTitle: SVGElement): PositionObject {
         // compute anchor points for each of the title align options
         const horiz = this.horiz,
             axisLeft = this.left,
@@ -3678,11 +3678,7 @@ class Axis {
             offset = this.offset,
             xOption = axisTitleOptions.x,
             yOption = axisTitleOptions.y,
-            axisTitle = this.axisTitle,
-            fontMetrics = this.chart.renderer.fontMetrics(
-                axisTitleOptions.style.fontSize,
-                axisTitle
-            ),
+            fontMetrics = this.chart.renderer.fontMetrics2(axisTitle),
             // The part of a multiline text that is below the baseline of the
             // first line. Subtract 1 to preserve pixel-perfectness from the
             // old behaviour (v5.0.12), where only one line was allowed.
@@ -3980,8 +3976,9 @@ class Axis {
         }
 
         if (axisTitle && showAxis) {
-            const titleXy = axis.getTitlePosition();
-            axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
+            axisTitle[axisTitle.isNew ? 'attr' : 'animate'](
+                axis.getTitlePosition(axisTitle)
+            );
             axisTitle.isNew = false;
         }
 

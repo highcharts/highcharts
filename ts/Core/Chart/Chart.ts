@@ -1308,7 +1308,7 @@ class Chart {
                         titleOptions.style.fontSize
                     );
                 }
-                titleSize = renderer.fontMetrics(titleSize, title).b;
+                titleSize = renderer.fontMetrics2(title).b;
                 title
                     .css({
                         width: (
