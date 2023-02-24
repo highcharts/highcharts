@@ -41,6 +41,7 @@ export interface AnnotationEventsOptions {
     add?: EventCallback<Annotation>;
     click?: EventCallback<Annotation>;
     remove?: EventCallback<Annotation>;
+    touchstart?: EventCallback<Annotation>;
     touchend?: EventCallback<Annotation>;
 }
 
