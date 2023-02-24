@@ -447,7 +447,7 @@ class HeatmapSeries extends ScatterSeries {
             const
                 { image, chart } = heatmap,
                 { plotWidth, plotHeight, inverted } = chart,
-                imgAttr = inverted ? {
+                dimsByInversion = inverted ? {
                     width: plotHeight,
                     height: plotWidth
                 } : {
@@ -464,26 +464,10 @@ class HeatmapSeries extends ScatterSeries {
                     );
 
                 if (canvas && ctx && colorAxis) {
-                    const colsize = heatmapOptions.colsize || 1,
+                    const
+                        colsize = heatmapOptions.colsize || 1,
                         rowsize = heatmapOptions.rowsize || 1,
-                        {
-                            min: xMin,
-                            max: xMax
-                        } = heatmap.xAxis.getExtremes(),
-                        {
-                            dataMin: yMin,
-                            dataMax: yMax
-                        } = heatmap.yAxis.getExtremes(),
                         { width: canvasWidth, height: canvasHeight } = canvas,
-                        xToRange = [
-                            0,
-                            inverted ?
-                                canvasWidth :
-                                canvasWidth - 1
-                        ],
-                        yToRange = [0, canvasHeight - 1],
-                        xFromRange = [xMin, xMax],
-                        yFromRange = [yMin, yMax],
                         scaleToRange = function (
                             value: number,
                             fromRange: number[],
@@ -506,24 +490,32 @@ class HeatmapSeries extends ScatterSeries {
                                 ) + toStart;
                             return ~~(boundingFactor * scale);
                         },
+                        {
+                            min: xMin,
+                            max: xMax
+                        } = heatmap.xAxis.getExtremes(),
                         xScale = function (x: number): number {
                             return scaleToRange(
                                 x,
-                                xFromRange,
-                                xToRange
+                                [xMin, xMax],
+                                [
+                                    0,
+                                    inverted ?
+                                        canvasWidth :
+                                        canvasWidth - 1
+                                ]
                             );
                         },
+                        {
+                            dataMin: yMin,
+                            dataMax: yMax
+                        } = heatmap.yAxis.getExtremes(),
                         yScale = function (y: number): number {
                             return scaleToRange(
                                 (yMax as number) - y,
-                                yFromRange,
-                                yToRange
+                                [yMin, yMax],
+                                [0, canvasHeight - 1]
                             );
-                        },
-                        getPointColor = function (p: HeatmapPoint): string {
-                            return colorAxis.toColor(
-                                p.value || 0, p
-                            ) as string;
                         },
                         argsByInversion = function (p: HeatmapPoint): {
                             x: number,
@@ -545,15 +537,18 @@ class HeatmapSeries extends ScatterSeries {
                                     x, y, rowsize, colsize
                                 }
                             );
-                        };
+                        },
+                        isNotBoosted = (!heatmap.boost && !chart.boost);
 
                     heatmap.points.forEach((p: HeatmapPoint): void => {
-                        ctx.fillStyle = getPointColor(p);
+                        ctx.fillStyle = colorAxis.toColor(
+                            p.value || 0, p
+                        ) as string;
                         const { x, y, colsize, rowsize } = argsByInversion(p);
                         ctx.fillRect(x, y, colsize, rowsize);
                     });
 
-                    if (!heatmap.boost && !chart.boost) {
+                    if (isNotBoosted) {
                         heatmap.options.kdNow = true;
                         heatmap.buildKDTree();
                         heatmap.directTouch = false;
@@ -564,14 +559,14 @@ class HeatmapSeries extends ScatterSeries {
                         0,
                         0
                     )
-                        .attr(imgAttr)
+                        .attr(dimsByInversion)
                         .add(heatmap.group);
                 }
             } else if (!(
-                image.width === plotWidth &&
-                image.height === plotHeight
+                image.width === dimsByInversion.width &&
+                image.height === dimsByInversion.height
             )) {
-                image.attr(imgAttr);
+                image.attr(dimsByInversion);
             }
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
             Series.prototype.drawPoints.call(heatmap);
