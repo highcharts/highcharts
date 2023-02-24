@@ -375,6 +375,17 @@ body {
     transform: translateX(18px);
 }
 
+.hd-edit-sidebar .hd-edit-label-text.hd-edit-toggle-labels {
+    background: none;
+    border: none;
+    display: inline-block;
+    text-transform: uppercase;
+    padding: 0px 5px;
+    float: right;
+    margin: 0px;
+    width: auto;
+}
+
 .add-item {
     text-align: center;
     font-size: 2em;

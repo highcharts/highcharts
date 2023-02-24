@@ -136,10 +136,20 @@ class EditRenderer {
                 );
             }
 
+            if (options.enabledOnOffLabels) {
+                EditRenderer.renderText(
+                    parentElement,
+                    EditGlobals.lang.on,
+                    void 0,
+                    EditGlobals.classNames.toggleLabels
+                );
+            }
+
             toggle = createElement(
                 'label',
                 {
-                    className: EditGlobals.classNames.toggleWrapper
+                    className: EditGlobals.classNames.toggleWrapper +
+                        ' ' + (options.className || '')
                 },
                 {},
                 parentElement
@@ -156,6 +166,15 @@ class EditRenderer {
                 {},
                 toggle
             );
+
+            if (options.enabledOnOffLabels) {
+                EditRenderer.renderText(
+                    parentElement,
+                    EditGlobals.lang.off,
+                    void 0,
+                    EditGlobals.classNames.toggleLabels
+                );
+            }
         }
 
         return toggle;
@@ -164,14 +183,16 @@ class EditRenderer {
     public static renderText(
         parentElement: HTMLDOMElement,
         text: string,
-        callback?: Function
+        callback?: Function,
+        className?: string
     ): HTMLDOMElement|undefined {
         let textElem;
 
         if (parentElement) {
             textElem = createElement(
                 'div', {
-                    className: EditGlobals.classNames.labelText,
+                    className: EditGlobals.classNames.labelText +
+                        ' ' + (className || ''),
                     textContent: text,
                     onclick: callback
                 }, {},
@@ -332,6 +353,8 @@ export interface FormField {
     callback?: Function;
     title?: string;
     value?: string;
+    className?: string;
+    enabledOnOffLabels?: boolean;
 }
 
 export interface SelectFormField {
