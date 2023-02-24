@@ -14,6 +14,7 @@ module.exports = {
         'dashboards/installation',
         'dashboards/your-first-dashboard',
         'dashboards/edit-mode',
+        'dashboards/light-dark-theme',
         'export-module/deprecated-async-option',
         'export-module/legacy-export-servers',
         'maps/latlon',
