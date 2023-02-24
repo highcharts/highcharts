@@ -680,7 +680,7 @@ QUnit.test('Text height', function (assert) {
         });
 
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
+            renderer.fontMetrics(label.element).f,
             parseInt(window.innerWidth / 50, 10),
             'Font size in vw'
         );
@@ -690,7 +690,7 @@ QUnit.test('Text height', function (assert) {
             fontSize: fontSize
         });
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
+            renderer.fontMetrics(label.element).f,
             32,
             'Font size in em'
         );
@@ -700,7 +700,7 @@ QUnit.test('Text height', function (assert) {
             fontSize: fontSize
         });
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
+            renderer.fontMetrics(label.element).f,
             32,
             'Font size in rem'
         );
@@ -710,7 +710,7 @@ QUnit.test('Text height', function (assert) {
             fontSize: fontSize
         });
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
+            renderer.fontMetrics(label.element).f,
             32,
             'Font size in percent'
         );

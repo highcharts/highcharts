@@ -337,7 +337,7 @@ class HTMLElement extends SVGElement {
 
             // Do the calculations and DOM access only if properties changed
             if (currentTextTransform !== wrapper.cTT) {
-                baseline = renderer.fontMetrics2(elem).b;
+                baseline = renderer.fontMetrics(elem).b;
 
                 // Renderer specific handling of span rotation, but only if we
                 // have something to update.

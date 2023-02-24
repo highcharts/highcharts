@@ -374,7 +374,7 @@ function onAfterGetTitlePosition(
         const xOption = options.title.x;
         const yOption = options.title.y;
         const titleMargin = pick(options.title.margin, horiz ? 5 : 10);
-        const titleFontSize = axisTitle ? axis.chart.renderer.fontMetrics2(
+        const titleFontSize = axisTitle ? axis.chart.renderer.fontMetrics(
             axisTitle
         ).f : 0;
         const crispCorr = tickSize ? tickSize[0] / 2 : 0;
@@ -1141,7 +1141,7 @@ function onTickAfterGetLabelPosition(
         );
 
         if (label) {
-            const lblMetrics = chart.renderer.fontMetrics2(label),
+            const lblMetrics = chart.renderer.fontMetrics(label),
                 labelHeight = label.getBBox().height;
 
             // Adjustment to y position to align the label correctly.

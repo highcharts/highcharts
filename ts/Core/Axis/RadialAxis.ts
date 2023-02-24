@@ -1199,7 +1199,7 @@ namespace RadialAxis {
             // Vertically centered
             } else if (!defined(optionsY)) {
                 optionsY = (
-                    axis.chart.renderer.fontMetrics2(label).b -
+                    axis.chart.renderer.fontMetrics(label).b -
                     labelBBox.height / 2
                 );
             }

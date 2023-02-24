@@ -197,7 +197,7 @@ Chart.prototype.hideOverlappingLabels = function (
 
                     // Labels positions are computed from top left corner, so we
                     // need to substract the text height from text nodes too.
-                    lineHeightCorrection = ren.fontMetrics2(label.element).h;
+                    lineHeightCorrection = ren.fontMetrics(label.element).h;
                 }
 
                 boxWidth = label.width - 2 * padding;

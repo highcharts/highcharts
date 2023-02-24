@@ -2911,8 +2911,11 @@ class Axis {
             tick = ticks[Object.keys(ticks)[0]] || {};
 
         return this.chart.renderer.fontMetrics(
-            this.options.labels.style.fontSize,
-            tick.label || tick.movedLabel
+            tick.label ||
+            tick.movedLabel ||
+            // Fall back to a font size of 12 when called from .unsquish(),
+            // because it is too early to measure the tick font size
+            12
         );
     }
 
@@ -3678,7 +3681,7 @@ class Axis {
             offset = this.offset,
             xOption = axisTitleOptions.x,
             yOption = axisTitleOptions.y,
-            fontMetrics = this.chart.renderer.fontMetrics2(axisTitle),
+            fontMetrics = this.chart.renderer.fontMetrics(axisTitle),
             // The part of a multiline text that is below the baseline of the
             // first line. Subtract 1 to preserve pixel-perfectness from the
             // old behaviour (v5.0.12), where only one line was allowed.

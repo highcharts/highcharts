@@ -219,7 +219,7 @@ class TextBuilder {
 
                     if (i === 0 && br.previousSibling.nodeType === 1) {
                         wrapper.firstLineMetrics = wrapper.renderer
-                            .fontMetrics2(br.previousSibling as DOMElementType);
+                            .fontMetrics(br.previousSibling as DOMElementType);
                     }
 
                     attr(br, {
@@ -387,7 +387,7 @@ class TextBuilder {
 
         return this.textLineHeight ?
             parseInt(this.textLineHeight.toString(), 10) :
-            this.renderer.fontMetrics2(element || this.svgElement.element).h;
+            this.renderer.fontMetrics(element || this.svgElement.element).h;
     }
 
     /**
