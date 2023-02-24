@@ -422,8 +422,6 @@ class HeatmapSeries extends ScatterSeries {
 
     public valueMin: number = NaN;
 
-    public buildMyKdTree = true;
-
     /* *
      *
      *  Functions
@@ -436,9 +434,11 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-        const heatmap = this,
+        const
+            heatmap = this,
             heatmapOptions = heatmap.options,
             interpolation = heatmapOptions.interpolation,
+
             // In styled mode, use CSS, otherwise the fill used in the style
             // sheet will take precedence over the fill attribute.
             seriesMarkerOptions = heatmapOptions.marker || {};
@@ -456,7 +456,8 @@ class HeatmapSeries extends ScatterSeries {
                 };
 
             if (!image) {
-                const ctx = heatmap.getContext(),
+                const
+                    ctx = heatmap.getContext(),
                     canvas = heatmap.canvas,
                     colorAxis = (
                         chart.colorAxis &&
@@ -507,8 +508,8 @@ class HeatmapSeries extends ScatterSeries {
                             );
                         },
                         {
-                            dataMin: yMin,
-                            dataMax: yMax
+                            min: yMin,
+                            max: yMax
                         } = heatmap.yAxis.getExtremes(),
                         yScale = function (y: number): number {
                             return scaleToRange(
@@ -540,19 +541,18 @@ class HeatmapSeries extends ScatterSeries {
                         },
                         isNotBoosted = (!heatmap.boost && !chart.boost);
 
-                    heatmap.points.forEach((p: HeatmapPoint): void => {
-                        ctx.fillStyle = colorAxis.toColor(
-                            p.value || 0, p
-                        ) as string;
-                        const { x, y, colsize, rowsize } = argsByInversion(p);
-                        ctx.fillRect(x, y, colsize, rowsize);
-                    });
-
                     if (isNotBoosted) {
-                        heatmap.options.kdNow = true;
                         heatmap.buildKDTree();
                         heatmap.directTouch = false;
                     }
+
+                    heatmap.points.forEach((p: HeatmapPoint): void => {
+                        const { x, y, colsize, rowsize } = argsByInversion(p);
+                        ctx.fillStyle = colorAxis.toColor(
+                            p.value || 0, p
+                        ) as string;
+                        ctx.fillRect(x, y, colsize, rowsize);
+                    });
 
                     heatmap.image = chart.renderer.image(
                         canvas.toDataURL(),
