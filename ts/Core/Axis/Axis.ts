@@ -2907,11 +2907,12 @@ class Axis {
      * @function Highcharts.Axis#labelMetrics
      */
     public labelMetrics(): FontMetricsObject {
-        const index = this.tickPositions && this.tickPositions[0] || 0;
+        const ticks = this.ticks,
+            tick = ticks[Object.keys(ticks)[0]] || {};
 
         return this.chart.renderer.fontMetrics(
             this.options.labels.style.fontSize,
-            this.ticks[index] && this.ticks[index].label
+            tick.label || tick.movedLabel
         );
     }
 
