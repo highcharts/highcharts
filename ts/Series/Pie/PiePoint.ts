@@ -357,37 +357,55 @@ extend(PiePoint.prototype, {
             options: PieDataLabelOptions
         ): SVGPath {
             const touchingSliceAt = connectorPosition.touchingSliceAt,
-                series = this.series,
-                pieCenterX = series.center[0],
+                { dataLabel, series } = this,
+                [cx, cy, diameter] = series.center,
+                r = diameter / 2,
                 plotWidth = series.chart.plotWidth,
                 plotLeft = series.chart.plotLeft,
-                alignment = labelPosition.alignment,
-                radius = (this.shapeArgs as any).r,
-                crookDistance = relativeLength( // % to fraction
-                    options.crookDistance as any, 1
-                ),
-                crookX = alignment === 'left' ?
-                    pieCenterX + radius + (plotWidth + plotLeft -
-                    pieCenterX - radius) * (1 - crookDistance) :
-                    plotLeft + (pieCenterX - radius) * crookDistance,
-                segmentWithCrook: SVGPath.LineTo = [
-                    'L',
-                    crookX,
-                    labelPosition.y
-                ];
+                leftAligned = labelPosition.alignment === 'left',
+                y = labelPosition.y;
+
+            let x = labelPosition.x;
+            /* Render line through (or under) the label
+            if (dataLabel) {
+                x = dataLabel.x + (leftAligned ? 1 : -1) * dataLabel.width;
+            }
+            */
+
+            let crookX = touchingSliceAt.x;
+            if (options.crookDistance) {
+                const crookDistance = relativeLength( // % to fraction
+                    options.crookDistance, 1
+                );
+                crookX = leftAligned ?
+                    cx +
+                    r +
+                    (plotWidth + plotLeft - cx - r) * (1 - crookDistance) :
+                    plotLeft + (cx - r) * crookDistance;
+
+            // When the crookDistance option is undefined, make the bend in the
+            // intersection between the radial line in the middle of the slice,
+            // and the extension of the label position.
+            } else {
+                crookX = cx + (cy - y) * Math.tan(
+                    (this.angle || 0) - Math.PI / 2
+                );
+            }
+
+            const segmentWithCrook: SVGPath.LineTo = ['L', crookX, y];
 
             let useCrook = true;
 
-            // crookedLine formula doesn't make sense if the path overlaps
+            // The crookedLine formula doesn't make sense if the path overlaps
             // the label - use straight line instead in that case
-            if (alignment === 'left' ?
-                (crookX > labelPosition.x || crookX < touchingSliceAt.x) :
-                (crookX < labelPosition.x || crookX > touchingSliceAt.x)) {
+            if (leftAligned ?
+                (crookX > x || crookX < touchingSliceAt.x) :
+                (crookX < x || crookX > touchingSliceAt.x)) {
                 useCrook = false;
             }
 
             // assemble the path
-            const path: SVGPath = [['M', labelPosition.x, labelPosition.y]];
+            const path: SVGPath = [['M', x, y]];
             if (useCrook) {
                 path.push(segmentWithCrook);
             }
