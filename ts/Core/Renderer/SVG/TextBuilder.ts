@@ -95,7 +95,7 @@ class TextBuilder {
             textStr = pick(wrapper.textStr, '').toString() as string,
             hasMarkup = textStr.indexOf('<') !== -1,
             childNodes = textNode.childNodes,
-            tempParent = this.width && !wrapper.added && renderer.box,
+            tempParent = !wrapper.added && renderer.box,
             regexMatchBreaks = /<br.*?>/g,
             // The buildText code is quite heavy, so if we're not changing
             // something that affects the text, skip it (#6113).
@@ -139,7 +139,7 @@ class TextBuilder {
         } else if (textStr !== '') {
 
             if (tempParent) {
-                // attach it to the DOM to read offset width
+                // attach it to the DOM to read offset width and font size
                 tempParent.appendChild(textNode);
             }
 

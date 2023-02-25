@@ -1715,7 +1715,6 @@ class SVGRenderer implements SVGRendererLike {
      * size.
      *
      * @function Highcharts.SVGRenderer#fontMetrics
-     * @deprecated
      *
      * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number} [element]
      *        The element to inspect for a current font size. If a number is
@@ -1727,8 +1726,9 @@ class SVGRenderer implements SVGRendererLike {
     public fontMetrics(
         element: (DOMElementType|SVGElement|number)
     ): FontMetricsObject {
-        const f = isNumber(element) ? element : pInt(
-            SVGElement.prototype.getStyle.call(element, 'font-size') || 0
+        const f = pInt(
+            (isNumber(element) && element) ||
+            SVGElement.prototype.getStyle.call(element, 'font-size')
         );
 
         // Empirical values found by comparing font size and bounding box

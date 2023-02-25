@@ -1369,6 +1369,9 @@ const defaultOptions: Options = {
              * @since     2.2.4
              * @apioption legend.navigation.style
              */
+            style: {
+                fontSize: '0.75em'
+            },
 
             /**
              * The color for the active up or down arrow in the legend page

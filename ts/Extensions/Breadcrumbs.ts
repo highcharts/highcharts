@@ -345,7 +345,8 @@ class Breadcrumbs {
              *  @since 10.0.0
              */
             style: {
-                color: Palette.neutralColor60
+                color: Palette.neutralColor60,
+                fontSize: '0.75em'
             }
         },
 

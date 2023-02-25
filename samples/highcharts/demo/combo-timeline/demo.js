@@ -82,7 +82,8 @@ function onChartLoad() {
             zIndex: 6
         })
         .css({
-            color: '#FFFFFF'
+            color: '#FFFFFF',
+            fontSize: '12px'
         })
         .add();
 
