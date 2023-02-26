@@ -2907,15 +2907,14 @@ class Axis {
      * @function Highcharts.Axis#labelMetrics
      */
     public labelMetrics(): FontMetricsObject {
-        const ticks = this.ticks,
+        const renderer = this.chart.renderer,
+            ticks = this.ticks,
             tick = ticks[Object.keys(ticks)[0]] || {};
 
         return this.chart.renderer.fontMetrics(
             tick.label ||
             tick.movedLabel ||
-            // Fall back to a font size of 12 when called from .unsquish(),
-            // because it is too early to measure the tick font size
-            12
+            renderer.box
         );
     }
 

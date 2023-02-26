@@ -1724,10 +1724,9 @@ class SVGRenderer implements SVGRendererLike {
      *         The font metrics.
      */
     public fontMetrics(
-        element: (DOMElementType|SVGElement|number)
+        element: (DOMElementType|SVGElement)
     ): FontMetricsObject {
         const f = pInt(
-            (isNumber(element) && element) ||
             SVGElement.prototype.getStyle.call(element, 'font-size')
         );
 
