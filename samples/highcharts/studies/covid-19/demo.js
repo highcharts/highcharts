@@ -145,7 +145,7 @@ const createMap = (type = 'confirmed') => {
         const points = mapChart.getSelectedPoints();
         if (points.length) {
             if (e && e.type === 'touchstart') {
-                //document.querySelector('#reset').style.display = 'block';
+                // document.querySelector('#reset').style.display = 'block';
             }
 
             if (points.length === 1) {
@@ -156,7 +156,8 @@ const createMap = (type = 'confirmed') => {
                 document.querySelector('#info .header-text').style.paddingLeft = '40px';
                 document.querySelector('#info .header-text').innerHTML = points[0].name;
                 document.querySelector('#info .subheader')
-                    .innerHTML = `${config.name}, starting the day of the ${config.day0Value}th case<br>`;
+                    .innerHTML = `${config.name}, starting the day of the
+                        ${config.day0Value}th case<br>`;
 
                 if (e && e.type === 'touchstart') {
                     document.querySelector('#info .subheader')
@@ -171,7 +172,8 @@ const createMap = (type = 'confirmed') => {
                 document.querySelector('#info .header-text').style.paddingLeft = 0;
                 document.querySelector('#info .header-text').innerHTML = 'Comparing countries';
                 document.querySelector('#info .subheader')
-                    .innerHTML = `${config.name}, starting the day of the ${config.day0Value}th case<br>`;
+                    .innerHTML = `${config.name}, starting the day of the
+                        ${config.day0Value}th case<br>`;
             }
 
             if (!countryChart) {
@@ -260,7 +262,7 @@ const createMap = (type = 'confirmed') => {
 
         // No selected points
         } else {
-            //document.querySelector('#reset').style.display = 'none';
+            // document.querySelector('#reset').style.display = 'none';
             document.querySelector('#info #flag').className = '';
             document.querySelector('#info .header-text').innerHTML = '';
             document.querySelector('#info .subheader').innerHTML = '';
@@ -311,7 +313,7 @@ const activateButtons = () => {
 };
 
 document.addEventListener('DOMContentLoaded', async function () {
-    const countriesResp = await fetch("https://pomber.github.io/covid19/timeseries.json");
+    const countriesResp = await fetch('https://pomber.github.io/covid19/timeseries.json');
     countries = await countriesResp.json();
     const populationResp = await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population.json');
     population = await populationResp.json();

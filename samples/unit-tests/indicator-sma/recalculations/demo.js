@@ -306,15 +306,15 @@ QUnit.test('Order of series and indicators, #15892.', function (assert) {
             enabled: false
         },
         series: [{
-            id: 'main',
-            data: [13, 14, 15, 13, 14, 15, 13, 14, 15]
-        },
-        {
             type: 'sma',
+            id: 'sma',
             linkedTo: 'main',
             params: {
                 period: 4
             }
+        }, {
+            id: 'main',
+            data: [13, 14, 15, 13, 14, 15, 13, 14, 15]
         }]
     });
 
@@ -328,5 +328,23 @@ QUnit.test('Order of series and indicators, #15892.', function (assert) {
         chart.series[0].processedXData.length,
         `When an indicator is declared before the main series,
         indicator data should be procesed.`
+    );
+
+    chart.addSeries({
+        type: 'sma',
+        linkedTo: 'sma',
+        params: {
+            period: 4
+        }
+    });
+
+    chart.series[1].addPoint(16);
+
+    assert.strictEqual(
+        chart.series[2].points.length,
+        chart.series[0].points.length -
+            chart.series[2].options.params.period + 1,
+        `Indicator linked to another indicator should be recalculated after
+        adding a point to the main series #17190.`
     );
 });

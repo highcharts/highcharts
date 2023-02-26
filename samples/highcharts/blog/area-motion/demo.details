@@ -1,0 +1,6 @@
+---
+ name: Motion Highcharts Fruit Consumption
+ authors:
+   - Lars Cabrera
+ js_wrap: b
+...

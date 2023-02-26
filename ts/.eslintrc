@@ -57,6 +57,7 @@
         "prefer-const": 1, // @todo
         "prefer-spread": 0, // @todo
         "prefer-rest-params": 0, // @todo
+        "require-unicode-regexp": 0,
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "semi": 0,
         "valid-jsdoc": 0,
@@ -106,7 +107,7 @@
         "highcharts/no-highcharts-namespace": 1, // @todo
         "highcharts/no-highcharts-object": 2,
         "highcharts/no-mixin": 1, // @todo
-        "highcharts/no-optional-chaining": 2,
+        "highcharts/no-optional-chaining": 1,
         "highcharts/no-private-constructor-doclet": 0,
         "highcharts/no-wrap": 1, // @todo
         "highcharts/quote-members": 2,

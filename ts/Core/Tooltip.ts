@@ -89,7 +89,9 @@ interface BoxObject extends R.BoxObject {
     anchorX: number;
     anchorY: number;
     boxWidth: number;
+    isHeader?: boolean;
     point: Point;
+    pos?: number;
     tt: SVGElement;
     x: number;
 }
@@ -354,13 +356,19 @@ class Tooltip {
             inverted = chart.inverted,
             plotTop = chart.plotTop,
             plotLeft = chart.plotLeft;
-        let ret: number[],
-            yAxis: (Axis|undefined),
-            xAxis: (Axis|undefined),
-            plotX = 0,
-            plotY = 0;
+        let ret: number[];
 
         points = splat(points);
+
+        // If reversedStacks are false the tooltip position should be taken from
+        // the last point (#17948)
+        if (
+            points[0].series &&
+            points[0].series.yAxis &&
+            !points[0].series.yAxis.options.reversedStacks
+        ) {
+            points = points.slice().reverse();
+        }
 
         // When tooltip follows mouse, relate the position to the mouse
         if (this.followPointer && mouseEvent) {
@@ -379,49 +387,31 @@ class Tooltip {
 
         // Calculate the average position and adjust for axis positions
         } else {
+            let chartX = 0,
+                chartY = 0;
             points.forEach(function (point): void {
-                yAxis = point.series.yAxis;
-                xAxis = point.series.xAxis;
-                plotX += point.plotX || 0;
-                plotY += (
-                    point.plotLow ?
-                        (point.plotLow + (point.plotHigh || 0)) / 2 :
-                        (point.plotY || 0)
-                );
-
-                // Adjust position for positioned axes (top/left settings)
-                if (xAxis && yAxis) {
-                    if (!inverted) { // #1151
-                        plotX += xAxis.pos - plotLeft;
-                        plotY += yAxis.pos - plotTop;
-                    } else { // #14771
-                        plotX += (
-                            plotTop + chart.plotHeight - xAxis.len - xAxis.pos
-                        );
-                        plotY += (
-                            plotLeft + chart.plotWidth - yAxis.len - yAxis.pos
-                        );
-                    }
+                const pos = point.pos(true);
+                if (pos) {
+                    chartX += pos[0];
+                    chartY += pos[1];
                 }
             });
 
-            plotX /= points.length;
-            plotY /= points.length;
-
-            // Use the average position for multiple points
-            ret = [
-                inverted ? chart.plotWidth - plotY : plotX,
-                inverted ? chart.plotHeight - plotX : plotY
-            ];
+            chartX /= points.length;
+            chartY /= points.length;
 
             // When shared, place the tooltip next to the mouse (#424)
             if (this.shared && points.length > 1 && mouseEvent) {
                 if (inverted) {
-                    ret[0] = mouseEvent.chartX - plotLeft;
+                    chartX = mouseEvent.chartX;
                 } else {
-                    ret[1] = mouseEvent.chartY - plotTop;
+                    chartY = mouseEvent.chartY;
                 }
             }
+
+            // Use the average position for multiple points
+            ret = [chartX - plotLeft, chartY - plotTop];
+
         }
         return ret.map(Math.round);
 
@@ -429,7 +419,7 @@ class Tooltip {
 
     /**
      * Get the CSS class names for the tooltip's label. Styles the label
-     * by colorIndex or user-defined CSS.
+     * by `colorIndex` or user-defined CSS.
      *
      * @function Highcharts.Tooltip#getClassName
      *
@@ -450,7 +440,7 @@ class Tooltip {
             'highcharts-label',
             isHeader && 'highcharts-tooltip-header',
             isSplit ? 'highcharts-tooltip-box' : 'highcharts-tooltip',
-            !isHeader && 'highcharts-tooltip-' + pick(
+            !isHeader && 'highcharts-color-' + pick(
                 point.colorIndex, series.colorIndex
             ),
             (seriesOptions && seriesOptions.className)
@@ -1530,7 +1520,7 @@ class Tooltip {
         };
 
         // Get the extremes from series tooltips
-        boxes.forEach(function (box: AnyRecord): void {
+        boxes.forEach(function (box: BoxObject): void {
             const { x, boxWidth, isHeader } = box;
             if (!isHeader) {
                 if (tooltip.outside && chartLeft + x < boxExtremes.left) {
@@ -1546,7 +1536,7 @@ class Tooltip {
             }
         });
 
-        boxes.forEach(function (box: AnyRecord): void {
+        boxes.forEach(function (box: BoxObject): void {
             const {
                 x,
                 anchorX,
@@ -1556,7 +1546,7 @@ class Tooltip {
                     isHeader
                 }
             } = box;
-            const attributes = {
+            const attributes: SVGAttributes = {
                 visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
                 x,
                 /* NOTE: y should equal pos to be consistent with !split
@@ -1564,7 +1554,7 @@ class Tooltip {
                  * to avoid breaking change. Remove distributionBoxTop to make
                  * it consistent.
                  */
-                y: pos + distributionBoxTop,
+                y: (pos || 0) + distributionBoxTop,
                 anchorX,
                 anchorY
             };
@@ -1795,25 +1785,35 @@ class Tooltip {
      * @param {Highcharts.Point} point
      */
     public updatePosition(point: Point): void {
-        const chart = this.chart,
-            options = this.options,
+        const {
+                chart,
+                distance,
+                options
+            } = this,
             pointer = chart.pointer,
             label = this.getLabel(),
             // Needed for outside: true (#11688)
-            chartPosition = pointer.getChartPosition(),
+            { left, top, scaleX, scaleY } = pointer.getChartPosition(),
             pos = (options.positioner || this.getPosition).call(
                 this,
                 label.width,
                 label.height,
                 point
             );
-        let anchorX = (point.plotX as any) + chart.plotLeft,
-            anchorY = (point.plotY as any) + chart.plotTop,
+        let anchorX = (point.plotX || 0) + chart.plotLeft,
+            anchorY = (point.plotY || 0) + chart.plotTop,
             pad;
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
-            pad = options.borderWidth + 2 * this.distance;
+            // Corrects positions, occurs with tooltip positioner (#16944)
+            if (options.positioner) {
+                pos.x += left - distance;
+                pos.y += top - distance;
+            }
+
+            pad = options.borderWidth + 2 * distance;
+
             (this.renderer as any).setSize(
                 label.width + pad,
                 label.height + pad,
@@ -1822,20 +1822,15 @@ class Tooltip {
 
             // Anchor and tooltip container need scaling if chart container has
             // scale transform/css zoom. #11329.
-            if (chartPosition.scaleX !== 1 || chartPosition.scaleY !== 1) {
+            if (scaleX !== 1 || scaleY !== 1) {
                 css(this.container, {
-                    transform: `scale(${
-                        chartPosition.scaleX
-                    }, ${
-                        chartPosition.scaleY
-                    })`
+                    transform: `scale(${scaleX}, ${scaleY})`
                 });
-                anchorX *= chartPosition.scaleX;
-                anchorY *= chartPosition.scaleY;
+                anchorX *= scaleX;
+                anchorY *= scaleY;
             }
-
-            anchorX += chartPosition.left - pos.x;
-            anchorY += chartPosition.top - pos.y;
+            anchorX += left - pos.x;
+            anchorY += top - pos.y;
         }
 
         // do the move

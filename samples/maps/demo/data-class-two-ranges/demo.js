@@ -69,10 +69,12 @@
                     },
 
                     title: {
-                        text: 'US presidential election 2016 results'
+                        text: 'US presidential election 2016 results',
+                        align: 'left'
                     },
                     subtitle: {
-                        text: 'Source: <a href="https://transition.fec.gov/pubrec/fe2016/2016presgeresults.pdf">Federal Election Commission</a>'
+                        text: 'Source: <a href="https://transition.fec.gov/pubrec/fe2016/2016presgeresults.pdf">Federal Election Commission</a>',
+                        align: 'left'
                     },
 
                     legend: {

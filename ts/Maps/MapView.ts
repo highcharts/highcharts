@@ -23,7 +23,8 @@ import type {
     MapViewInsetsOptions,
     MapViewOptions,
     MapViewPaddingType,
-    ProjectedXY
+    ProjectedXY,
+    ProjectedXYArray
 } from './MapViewOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -116,19 +117,19 @@ const mergeCollections = <
  * The map view handles zooming and centering on the map, and various
  * client-side projection capabilities.
  *
- * On a chart instance, the map view is available as `chart.mapView`.
+ * On a chart instance of `MapChart`, the map view is available as `chart.mapView`.
  *
  * @class
  * @name Highcharts.MapView
  *
- * @param {Highcharts.Chart} chart
- *        The Chart instance
+ * @param {Highcharts.MapChart} chart
+ *        The MapChart instance
  * @param {Highcharts.MapViewOptions} options
  *        MapView options
  */
 class MapView {
-
     public center: LonLatArray;
+    public fitToGeometryCache?: MapBounds;
     public geoMap?: GeoJSON;
     public group?: SVGElement;
     public insets: MapViewInset[] = [];
@@ -455,6 +456,8 @@ class MapView {
     }
 
     public getProjectedBounds(): MapBounds|undefined {
+        const projection = this.projection;
+
         const allBounds = this.chart.series.reduce(
             (acc, s): MapBounds[] => {
                 const bounds = s.getProjectedBounds && s.getProjectedBounds();
@@ -468,6 +471,34 @@ class MapView {
             },
             [] as MapBounds[]
         );
+
+        // The bounds option
+        const fitToGeometry = this.options.fitToGeometry;
+        if (fitToGeometry) {
+            if (!this.fitToGeometryCache) {
+                if (fitToGeometry.type === 'MultiPoint') {
+                    const positions = fitToGeometry.coordinates
+                            .map((lonLat): ProjectedXYArray =>
+                                projection.forward(lonLat)
+                            ),
+                        xs = positions.map((pos): number => pos[0]),
+                        ys = positions.map((pos): number => pos[1]);
+
+                    this.fitToGeometryCache = {
+                        x1: Math.min.apply(0, xs),
+                        x2: Math.max.apply(0, xs),
+                        y1: Math.min.apply(0, ys),
+                        y2: Math.max.apply(0, ys)
+                    };
+
+                } else {
+                    this.fitToGeometryCache = boundsFromPath(
+                        projection.path(fitToGeometry)
+                    );
+                }
+            }
+            return this.fitToGeometryCache;
+        }
 
         return this.projection.bounds || MapView.compositeBounds(allBounds);
     }
@@ -925,20 +956,20 @@ class MapView {
 
                     }
 
-
-                } else {
-
-                    const scale = this.getScale();
+                // #17925 Skip NaN values
+                } else if (isNumber(chartX) && isNumber(chartY)) {
+                    // #17238
+                    const scale = this.getScale(),
+                        flipFactor = this.projection.hasCoordinates ? 1 : -1;
 
                     const newCenter = this.projection.inverse([
                         mouseDownCenterProjected[0] +
                             (mouseDownX - chartX) / scale,
                         mouseDownCenterProjected[1] -
-                            (mouseDownY - chartY) / scale
+                            (mouseDownY - chartY) / scale * flipFactor
                     ]);
 
                     this.setView(newCenter, void 0, true, false);
-
                 }
 
                 e.preventDefault();
@@ -1032,6 +1063,10 @@ class MapView {
             isDirtyInsets = true;
         }
 
+        if (isDirtyProjection || 'fitToGeometry' in options) {
+            delete this.fitToGeometryCache;
+        }
+
         if (isDirtyProjection || isDirtyInsets) {
             this.chart.series.forEach((series): void => {
                 const groups = series.transformGroups;
@@ -1069,6 +1104,8 @@ class MapView {
 
         if (options.center || isNumber(options.zoom)) {
             this.setView(this.options.center, options.zoom, false);
+        } else if ('fitToGeometry' in options) {
+            this.fitToBounds(void 0, void 0, false);
         }
 
         if (redraw) {
@@ -1333,6 +1370,13 @@ class MapViewInset extends MapView {
 
 // Initialize the MapView after initialization, but before firstRender
 addEvent(MapChart, 'afterInit', function (): void {
+    /**
+     * The map view handles zooming and centering on the map, and various
+     * client-side projection capabilities.
+     *
+     * @name Highcharts.MapChart#mapView
+     * @type {Highcharts.MapView|undefined}
+     */
     this.mapView = new MapView(this, this.options.mapView);
 });
 

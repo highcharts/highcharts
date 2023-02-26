@@ -50,6 +50,10 @@ declare global {
         ): TReturn;
     }
 
+    interface Class<T = any> extends Function {
+        new(...args: Array<any>): T;
+    }
+
     interface Element {
         /**
          * @private

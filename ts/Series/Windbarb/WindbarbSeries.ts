@@ -438,6 +438,7 @@ interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof WindbarbPoint;
     remove: typeof ColumnSeries.prototype.remove;
+    drawTracker: typeof ColumnSeries.prototype.remove;
     windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
 
 }

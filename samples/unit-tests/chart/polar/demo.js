@@ -33,6 +33,9 @@ QUnit.test('Polar chart data', function (assert) {
 
     chart.series[0].update({
         type: 'spline',
+        dataLabels: {
+            enabled: true
+        },
         data: [
             { x: 45, y: 5 },
             { x: 90, y: 2 },
@@ -46,6 +49,28 @@ QUnit.test('Polar chart data', function (assert) {
             p => p.slice(1).every(Highcharts.isNumber)
         ),
         '#15489: Graph path should not contain any NaN values'
+    );
+
+    assert.ok(
+        [...chart.series[0].dataLabelsGroup.element.childNodes].every(
+            dl => dl.getAttribute('visibility') !== 'hidden'
+        ),
+        '#18147: All data labels should be visible'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    }, false);
+    chart.series[0].update({
+        type: 'bar'
+    });
+
+    assert.ok(
+        true,
+        `#18444: A polar chart with type "bar" and data labels should not cause
+        JavaScript error.`
     );
 });
 QUnit.test(
@@ -70,7 +95,7 @@ QUnit.test(
                         lineWidth: 0
                     },
                     yAxis: {
-                        //This is correct:
+                        // This is correct:
                         alternateGridColor: '#C0FFC0',
                         gridLineInterpolation: 'polygon',
                         title: {

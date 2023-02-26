@@ -2,34 +2,34 @@ const maleColor = { patternIndex: 0 },
     femaleColor = { patternIndex: 5 };
 // Age categories
 const categories = [
-    "0-14",
-    "15-24",
-    "25-44",
-    "45-64",
-    "65-84",
-    "85+",
-    "30-34",
-    "35-39",
-    "40-44",
-    "45-49",
-    "50-54",
-    "55-59",
-    "60-64",
-    "65-69",
-    "70-74",
-    "75-79",
-    "80-84",
-    "85-89",
-    "90-94",
-    "95-99",
-    "100 + "
+    '0-14',
+    '15-24',
+    '25-44',
+    '45-64',
+    '65-84',
+    '85+',
+    '30-34',
+    '35-39',
+    '40-44',
+    '45-49',
+    '50-54',
+    '55-59',
+    '60-64',
+    '65-69',
+    '70-74',
+    '75-79',
+    '80-84',
+    '85-89',
+    '90-94',
+    '95-99',
+    '100 + '
 ];
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "bar"
+        type: 'bar'
     },
     title: {
-        text: "Denmark Population Pyramid 2019"
+        text: 'Denmark Population Pyramid 2019'
     },
     subtitle: {
         text:
@@ -37,7 +37,7 @@ Highcharts.chart("container", {
     },
     accessibility: {
         point: {
-            valueDescriptionFormat: "{index}. Age {xDescription}, {value}%."
+            valueDescriptionFormat: '{index}. Age {xDescription}, {value}%.'
         }
     },
     xAxis: [
@@ -48,7 +48,7 @@ Highcharts.chart("container", {
                 step: 1
             },
             accessibility: {
-                description: "Age (male)"
+                description: 'Age (male)'
             }
         },
         {
@@ -61,7 +61,7 @@ Highcharts.chart("container", {
                 step: 1
             },
             accessibility: {
-                description: "Age (female)"
+                description: 'Age (female)'
             }
         }
     ],
@@ -73,8 +73,8 @@ Highcharts.chart("container", {
             format: '{value}%'
         },
         accessibility: {
-            description: "Percentage population",
-            rangeDescription: "Range: 0 to 5%"
+            description: 'Percentage population',
+            rangeDescription: 'Range: 0 to 5%'
         },
         width: '50%',
         reversed: true
@@ -86,8 +86,8 @@ Highcharts.chart("container", {
             format: '{value}%'
         },
         accessibility: {
-            description: "Percentage population",
-            rangeDescription: "Range: 0 to 5%"
+            description: 'Percentage population',
+            rangeDescription: 'Range: 0 to 5%'
         },
         offset: 0,
         left: '50%',
@@ -96,7 +96,7 @@ Highcharts.chart("container", {
 
     plotOptions: {
         series: {
-            stacking: "normal",
+            stacking: 'normal',
             groupPadding: 0,
             pointPadding: 0
         }
@@ -109,15 +109,15 @@ Highcharts.chart("container", {
 
     series: [
         {
-            name: "Male",
+            name: 'Male',
             color: maleColor,
-            borderColor: "#000000",
+            borderColor: '#000000',
             data: [8.42, 6.39, 12.47, 13.23, 8.44, 0.77]
         },
         {
-            name: "Female",
+            name: 'Female',
             color: femaleColor,
-            borderColor: "#000000",
+            borderColor: '#000000',
             data: [7.98, 6.1, 12.21, 13.25, 9.34, 1.41],
             yAxis: 1
         }

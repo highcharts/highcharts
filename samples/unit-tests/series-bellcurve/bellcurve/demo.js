@@ -44,7 +44,7 @@ QUnit.test('Curve bell', function (assert) {
     assert.ok(bellcurve, 'Curve bell series initialised');
     assert.ok(
         bellcurve.baseSeries === baseSeries,
-        "Curve bell's base series is set correctly"
+        'Curve bell\'s base series is set correctly'
     );
 
     assert.strictEqual(bellcurve.mean, 50.7, 'Mean is set correctly');
@@ -67,7 +67,7 @@ QUnit.test('Curve bell', function (assert) {
     assert.deepEqual(
         bellcurve.points.length,
         25,
-        "After updating bellcurve's pointsInInterval number of points is correct"
+        'After updating bellcurve\'s pointsInInterval number of points is correct'
     );
 
     baseSeries.remove();

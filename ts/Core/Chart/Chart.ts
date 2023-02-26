@@ -362,7 +362,6 @@ class Chart {
     public time: Time = void 0 as any;
     public title?: SVGElement;
     public titleOffset: Array<number> = void 0 as any;
-    public unbindReflow?: Function;
     public userOptions: Partial<Options> = void 0 as any;
     public xAxis: Array<AxisType> = void 0 as any;
     public yAxis: Array<AxisType> = void 0 as any;
@@ -554,7 +553,7 @@ class Chart {
             this.numberFormatter = optionsChart.numberFormatter || numberFormat;
 
             /**
-             * Whether the chart is in styled mode, meaning all presentatinoal
+             * Whether the chart is in styled mode, meaning all presentational
              * attributes are avoided.
              *
              * @name Highcharts.Chart#styledMode
@@ -816,7 +815,8 @@ class Chart {
      * @function Highcharts.Chart#redraw
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
-     * If or how to apply animation to the redraw.
+     * If or how to apply animation to the redraw. When `undefined`, it applies
+     * the animation that is set in the `chart.animation` option.
      *
      * @emits Highcharts.Chart#event:afterSetExtremes
      * @emits Highcharts.Chart#event:beforeRedraw
@@ -1744,15 +1744,12 @@ class Chart {
     }
 
     /**
-     * Reflows the chart to its container. By default, the chart reflows
-     * automatically to its container following a `window.resize` event, as per
-     * the [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
-     * option. However, there are no reliable events for div resize, so if the
-     * container is resized without a window resize event, this must be called
-     * explicitly.
+     * Reflows the chart to its container. By default, the Resize Observer is
+     * attached to the chart's div which allows to reflows the he chart
+     * automatically to its container, as per the
+     * [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
+     * option.
      *
-     * @sample highcharts/members/chart-reflow/
-     *         Resize div and reflow
      * @sample highcharts/chart/events-container/
      *         Pop up and reflow
      *
@@ -1771,8 +1768,7 @@ class Chart {
                 defined(optionsChart.height)
             ),
             width = optionsChart.width || getStyle(renderTo, 'width'),
-            height = optionsChart.height || getStyle(renderTo, 'height'),
-            target = e ? e.target : win;
+            height = optionsChart.height || getStyle(renderTo, 'height');
 
         delete chart.pointer.chartPosition;
 
@@ -1782,8 +1778,7 @@ class Chart {
             !hasUserSize &&
             !chart.isPrinting &&
             width &&
-            height &&
-            (target === win || target === doc)
+            height
         ) {
             if (
                 width !== chart.containerWidth ||
@@ -1812,38 +1807,23 @@ class Chart {
      * @private
      * @function Highcharts.Chart#setReflow
      */
-    public setReflow(reflow?: boolean): void {
+    public setReflow(): void {
         const chart = this;
 
-        if (reflow !== false && !this.unbindReflow) {
-            this.unbindReflow = addEvent(win, 'resize', function (
-                e: Event
-            ): void {
-                // a removed event listener still runs in Edge and IE if the
-                // listener was removed while the event runs, so check if the
-                // chart is not destroyed (#11609)
-                if (chart.options) {
-                    chart.reflow(e);
-                }
-            });
-            addEvent(this, 'destroy', this.unbindReflow);
+        const runReflow = (e: any): void => {
+            if (chart.options?.chart.reflow && chart.hasLoaded) {
+                chart.reflow(e);
+            }
+        };
 
-        } else if (reflow === false && this.unbindReflow) {
+        if (typeof ResizeObserver === 'function') {
+            (new ResizeObserver(runReflow)).observe(chart.renderTo);
 
-            // Unbind and unset
-            this.unbindReflow = this.unbindReflow();
+        // Fallback for more legacy browser versions.
+        } else {
+            const unbind = addEvent(win, 'resize', runReflow);
+            addEvent(this, 'destroy', unbind);
         }
-
-        // The following will add listeners to re-fit the chart before and after
-        // printing (#2284). However it only works in WebKit. Should have worked
-        // in Firefox, but not supported in IE.
-        /*
-        if (win.matchMedia) {
-            win.matchMedia('print').addListener(function reflow() {
-                chart.reflow();
-            });
-        }
-        //*/
     }
 
     /**
@@ -1871,8 +1851,9 @@ class Chart {
      *        be `undefined` in order to preserve the current value, or `null`
      *        in order to adapt to the height of the containing element.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
-     *        Whether and how to apply animation.
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether and how to apply animation. When `undefined`, it applies
+     *        the animation that is set in the `chart.animation` option.
      *
      *
      * @emits Highcharts.Chart#event:endResize
@@ -2788,7 +2769,7 @@ class Chart {
 
         // Set up auto resize, check for not destroyed (#6068)
         if (defined(this.index)) {
-            this.setReflow(this.options.chart.reflow);
+            this.setReflow();
         }
 
         this.warnIfA11yModuleNotLoaded();
@@ -2807,7 +2788,10 @@ class Chart {
             // Make chart behave as an image with the title as alt text
             this.renderer.boxWrapper.attr({
                 role: 'img',
-                'aria-label': (title && title.element.textContent) || ''
+                'aria-label': (
+                    (title && title.element.textContent) || ''
+                // #17753, < is not allowed in SVG attributes
+                ).replace(/</g, '&lt;')
             });
 
             if (!(
@@ -2848,7 +2832,8 @@ class Chart {
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
-     *        configuration.
+     *        configuration. When `undefined`, it applies the animation that is
+     *        set in the `chart.animation` option.
      *
      * @return {Highcharts.Series}
      *         The newly created series object.
@@ -2916,8 +2901,10 @@ class Chart {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
-     *        Whether and how to apply animation in the redraw.
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether and how to apply animation in the redraw. When
+     *        `undefined`, it applies the animation that is set in the
+     *        `chart.animation` option.
      *
      * @return {Highcharts.Axis}
      *         The newly generated Axis object.
@@ -2952,8 +2939,10 @@ class Chart {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
-     *        Whether and how to apply animation in the redraw.
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether and how to apply animation in the redraw. When
+     *        `undefined`, it applies the animation that is set in the
+     *        `chart.animation` option.
      *
      * @return {Highcharts.ColorAxis}
      *         The newly generated Axis object.
@@ -3170,9 +3159,10 @@ class Chart {
      *        series have id's, the new series options will be matched by id,
      *        and the remaining ones removed.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
-     *        configuration.
+     *        configuration. When `undefined`, it applies the animation that is
+     *        set in the `chart.animation` option.
      *
      * @emits Highcharts.Chart#event:update
      * @emits Highcharts.Chart#event:afterUpdate
@@ -3221,10 +3211,6 @@ class Chart {
             // Setter function
             if ('className' in optionsChart) {
                 chart.setClassName(optionsChart.className);
-            }
-
-            if ('reflow' in optionsChart) {
-                chart.setReflow(optionsChart.reflow);
             }
 
             if (

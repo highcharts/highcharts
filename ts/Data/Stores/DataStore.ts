@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2022 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -21,11 +21,11 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 import type StoreType from './StoreType';
 
-import DataParser from '../Parsers/DataParser.js';
+import DataConverter from '../Converters/DataConverter.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -46,7 +46,7 @@ const {
  *
  * @private
  */
-abstract class DataStore<TEventObject extends DataStore.Event> implements DataEventEmitter<TEventObject> {
+abstract class DataStore implements DataEvent.Emitter {
 
     /* *
      *
@@ -60,11 +60,11 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
     private static readonly registry = {} as Record<string, StoreType>;
 
     /**
-     * Regular expression to extract the store name (group 1) from the
-     * stringified class type.
+     * Regular expression to extract the store type (group 1) from the
+     * stringified class constructor.
      */
-    private static readonly nameRegExp = (
-        /^function\s+(\w*?)(?:DataStore)?\s*\(/
+    private static readonly typeRegExp = (
+        /^function\s+(\w*?)(?:DataStore)?\s*\(/u
     );
 
     /* *
@@ -83,39 +83,39 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      *
      * @return {boolean}
      * Returns true, if the registration was successful. False is returned, if
-     * their is already a store registered with this name.
+     * their is already a store registered with this class name.
      */
     public static addStore(dataStore: StoreType): boolean {
-        const name = DataStore.getName(dataStore),
+        const type = DataStore.getType(dataStore),
             registry = DataStore.registry;
 
         if (
-            typeof name === 'undefined' ||
-            registry[name]
+            typeof type === 'undefined' ||
+            registry[type]
         ) {
             return false;
         }
 
-        registry[name] = dataStore;
+        registry[type] = dataStore;
 
         return true;
     }
 
     /**
-     * Returns all registered dataStore names.
+     * Returns all registered DataStore types.
      *
      * @return {Array<string>}
-     * All registered store names.
+     * All registered store types.
      */
-    public static getAllStoreNames(): Array<string> {
+    public static getAllStoreTypes(): Array<string> {
         return Object.keys(DataStore.registry);
     }
 
     /**
      * Returns a copy of the dataStore registry as record object with
-     * dataStore names and their dataStore class.
+     * DataStore type and their class.
      *
-     * @return {Record<string,DataStoreRegistryType>}
+     * @return {Highcharts.Dictionary<DataStoreRegistryType>}
      * Copy of the dataStore registry.
      */
     public static getAllStores(): Record<string, StoreType> {
@@ -123,18 +123,18 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
     }
 
     /**
-     * Extracts the name from a given dataStore class.
+     * Extracts the type from a given DataStore class.
      *
      * @param {DataStore} dataStore
-     * DataStore class to extract the name from.
+     * DataStore class to extract the type from.
      *
      * @return {string}
-     * DataStore name, if the extraction was successful, otherwise an empty
+     * DataStore type, if the extraction was successful, otherwise an empty
      * string.
      */
-    private static getName(dataStore: (NewableFunction|StoreType)): string {
+    private static getType(dataStore: (NewableFunction|StoreType)): string {
         return (
-            dataStore.toString().match(DataStore.nameRegExp) ||
+            dataStore.toString().match(DataStore.typeRegExp) ||
             ['', '']
         )[1];
     }
@@ -143,14 +143,14 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * Returns a dataStore class (aka class constructor) of the given dataStore
      * name.
      *
-     * @param {string} name
-     * Registered class name of the class type.
+     * @param {string} type
+     * Registered class type.
      *
      * @return {DataStoreRegistryType|undefined}
-     * Class type, if the class name was found, otherwise `undefined`.
+     * Class, if the class name was found, otherwise `undefined`.
      */
-    public static getStore(name: string): (StoreType|undefined) {
-        return DataStore.registry[name];
+    public static getStore(type: string): (StoreType|undefined) {
+        return DataStore.registry[type];
     }
 
     /* *
@@ -183,15 +183,20 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * */
 
     /**
-     * The DataParser responsible for handling converting the provided data to
+     * The DataConverter responsible for handling conversion of provided data to
      * a DataStore.
      */
-    public abstract readonly parser: DataParser<DataParser.Event>;
+    public abstract readonly converter: DataConverter;
 
     /**
      * Metadata to describe the store and the content of columns.
      */
     public metadata: DataStore.Metadata;
+
+    /**
+     * Poll timer ID, if active.
+     */
+    public polling?: number;
 
     /**
      * Table managed by this DataStore instance.
@@ -226,10 +231,12 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
     /**
      * Method for applying columns meta information to the whole datastore.
      *
-     * @param {Record<string, DataStore.MetaColumn>} columns
+     * @param {Highcharts.Dictionary<DataStore.MetaColumn>} columns
      * Pairs of column names and MetaColumn objects.
      */
-    public describeColumns(columns: Record<string, DataStore.MetaColumn>): void {
+    public describeColumns(
+        columns: Record<string, DataStore.MetaColumn>
+    ): void {
         const store = this,
             columnNames = Object.keys(columns);
 
@@ -246,7 +253,7 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * @param {DataStore.Event} [e]
      * Event object containing additional event information.
      */
-    public emit(e: TEventObject): void {
+    public emit<E extends DataEvent>(e: E): void {
         fireEvent(this, e.type, e);
     }
 
@@ -256,24 +263,21 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * @param {boolean} [usePresentationState]
      * Whether to use the column order of the presentation state of the table.
      *
-     * @return {Array<string>}
+     * @return {Array<string>|undefined}
      * Order of columns.
      */
-    public getColumnOrder(usePresentationState?: boolean): Array<string> {
+    public getColumnOrder(
+        usePresentationState?: boolean
+    ): (Array<string>|undefined) {
         const store = this,
-            metadata = store.metadata,
-            columns = metadata.columns,
-            columnNames = Object.keys(columns),
-            columnOrder: Array<string> = [];
+            columns = store.metadata.columns,
+            names = Object.keys(columns || {});
 
-        let columnName: string;
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columnName = columnNames[i];
-            columnOrder[pick(columns[columnName].index, i)] = columnName;
+        if (names.length) {
+            return names.sort((a, b): number => (
+                pick(columns[a].index, 0) - pick(columns[b].index, 0)
+            ));
         }
-
-        return columnOrder;
     }
 
     /**
@@ -283,44 +287,28 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * @param {boolean} [usePresentationOrder]
      * Whether to use the column order of the presentation state of the table.
      *
-     * @return {{}}
+     * @return {Highcharts.DataTableColumnCollection}
      * An object with the properties `columnNames` and `columnValues`
      */
-    protected getColumnsForExport(
+    public getSortedColumns(
         usePresentationOrder?: boolean
-    ): DataStore.ColumnsForExportObject {
-        const table = this.table,
-            columnsRecord = table.getColumns(),
-            columnNames = table.getColumnNames();
-
-        const columnOrder = this.getColumnOrder(usePresentationOrder);
-
-        if (columnOrder.length) {
-            columnNames.sort((a, b): number => {
-                if (columnOrder.indexOf(a) < columnOrder.indexOf(b)) {
-                    return 1;
-                }
-                if (columnOrder.indexOf(a) > columnOrder.indexOf(b)) {
-                    return -1;
-                }
-                return 0;
-            });
-        }
-
-        return ({
-            columnNames,
-            columnValues: columnNames.map(
-                (name: string): DataTable.Column => columnsRecord[name]
-            )
-        });
+    ): DataTable.ColumnCollection {
+        return this.table.getColumns(
+            this.getColumnOrder(usePresentationOrder)
+        );
     }
 
     /**
      * The default load method, which fires the `afterLoad` event
+     *
+     * @return {Promise<DataStore>}
+     * The loaded store.
+     *
      * @emits DataStore#afterLoad
      */
-    public load(): void {
+    public load(): Promise<this> {
         fireEvent(this, 'afterLoad', { table: this.table });
+        return Promise.resolve(this);
     }
 
     /**
@@ -329,17 +317,31 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.EventCallback} callback
+     * @param {DataEventEmitter.Callback} callback
      * Function to register for the store callback.
      *
      * @return {Function}
      * Function to unregister callback from the store event.
      */
-    public on(
-        type: TEventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, TEventObject>
+    public on<E extends DataEvent>(
+        type: E['type'],
+        callback: DataEvent.Callback<this, E>
     ): Function {
         return addEvent(this, type, callback);
+    }
+
+    /**
+     * The default save method, which fires the `afterSave` event.
+     *
+     * @return {Promise<DataStore>}
+     * The saved store.
+     *
+     * @emits DataStore#afterSave
+     * @emits DataStore#saveError
+     */
+    public save(): Promise<this> {
+        fireEvent(this, 'saveError', { table: this.table });
+        return Promise.reject(new Error('Not implemented'));
     }
 
     /**
@@ -357,12 +359,52 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
     }
 
     /**
-     * Method for retriving metadata from a single column.
+     * Starts polling new data after the specific timespan in milliseconds.
+     *
+     * @param {number} refreshTime
+     * Refresh time in milliseconds between polls.
+     */
+    public startPolling(
+        refreshTime: number = 1000
+    ): void {
+        const store = this;
+
+        window.clearTimeout(store.polling);
+
+        store.polling = window.setTimeout((): Promise<void> => store
+            .load()['catch'](
+                (error): void => store.emit<DataStore.ErrorEvent>({
+                    type: 'loadError',
+                    error,
+                    table: store.table
+                })
+            )
+            .then((): void => {
+                if (store.polling) {
+                    store.startPolling(refreshTime);
+                }
+            })
+        , refreshTime);
+    }
+
+    /**
+     * Stops polling data.
+     */
+    public stopPolling(): void {
+        const store = this;
+
+        window.clearTimeout(store.polling);
+
+        delete store.polling;
+    }
+
+    /**
+     * Retrieves metadata from a single column.
      *
      * @param {string} name
      * The identifier for the column that should be described
      *
-     * @return {DataStore.MetaColumn | undefined}
+     * @return {DataStore.MetaColumn|undefined}
      * Returns a MetaColumn object if found.
      */
     public whatIs(name: string): (DataStore.MetaColumn | undefined) {
@@ -373,26 +415,38 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
 namespace DataStore {
 
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    /**
+     * The event object that is provided on errors within DataStore
+     */
+    export interface ErrorEvent extends Event {
+        type: ('loadError');
+        error: (string|Error);
+    }
+
     /**
      * The default event object for a datastore
      */
-    export interface Event extends DataEventEmitter.Event {
+    export interface Event extends DataEvent {
         readonly table: DataTable;
     }
 
     /**
-     * Object with columns for object.
+     * The event object that is provided on load events within DataStore
      */
-    export interface ColumnsForExportObject {
-        columnNames: Array<string>;
-        columnValues: Array<DataTable.Column>;
-        columnHeaderFormatter?: Function;
+    export interface LoadEvent extends Event {
+        type: ('load'|'afterLoad');
     }
 
     /**
@@ -424,13 +478,13 @@ namespace DataStore {
 
 declare module './StoreType' {
     interface StoreTypeRegistry {
-        '': typeof DataStore;
+        // '': typeof DataStore;
     }
 }
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

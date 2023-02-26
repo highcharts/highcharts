@@ -140,7 +140,7 @@ QUnit.test('Color axis update (#3207)', function (assert) {
     assert.equal(
         $('.highcharts-legend-item', '#container').length,
         2,
-        "#14283: Color axis should be visible."
+        '#14283: Color axis should be visible.'
     );
 
     chart.colorAxis[0].update({
@@ -150,7 +150,7 @@ QUnit.test('Color axis update (#3207)', function (assert) {
     assert.equal(
         $('.highcharts-legend-item', '#container').length,
         0,
-        "#14283: Color axis should be invisible."
+        '#14283: Color axis should be invisible.'
     );
 
     chart.colorAxis[0].update({

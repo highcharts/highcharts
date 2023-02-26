@@ -19,7 +19,7 @@ Math.easeOutBounce = pos => {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
 const countOffset = 2;
@@ -33,7 +33,7 @@ const iceberg = {
             duration: 3000,
             easing: 'easeOutQuint'
         },
-        styledMode: (true),
+        styledMode: true,
         margin: 0,
         spacing: 0,
         events: {
@@ -51,7 +51,7 @@ const iceberg = {
                 plotBackground.style.fill = '#f0f0f0';
                 title.style.opacity = 1;
 
-                //turn on tooltip
+                // turn on tooltip
                 chart.update({
                     tooltip: {
                         enabled: true
@@ -73,7 +73,7 @@ const iceberg = {
                     }
                 );
 
-                ///style the labels
+                // /style the labels
                 [].forEach.call(
                     document.querySelectorAll('#charts .berg-label'),
                     function (elem) {
@@ -81,7 +81,7 @@ const iceberg = {
                     }
                 );
 
-                ///attach individual 'berg' classes to each berg
+                // /attach individual 'berg' classes to each berg
                 [].forEach.call(
                     document.querySelectorAll('.berg-depth'),
                     function (b, i) {
@@ -89,7 +89,7 @@ const iceberg = {
                     }
                 );
 
-                ///icebergs' opacity
+                // /icebergs' opacity
                 [].forEach.call(
                     document.querySelectorAll('#charts .berg-depth'),
                     function (elem) {
@@ -105,8 +105,8 @@ const iceberg = {
                     }
                 );
 
-                ///for use in redraw function
-                //done = true;
+                // /for use in redraw function
+                // done = true;
 
             },
             redraw: function () {
@@ -158,7 +158,7 @@ const iceberg = {
         floating: true
     },
     xAxis: [
-        //0 -
+        // 0 -
         {
             min: 0,
             max: 20,
@@ -169,7 +169,7 @@ const iceberg = {
                 description: 'values from 0 to 20'
             }
         },
-        //1 -
+        // 1 -
         {
             min: 0,
             max: 20,
@@ -180,7 +180,7 @@ const iceberg = {
                 enabled: false
             }
         },
-        ///2 - for particle group 1
+        // /2 - for particle group 1
         {
             min: 0,
             max: 20,
@@ -190,7 +190,7 @@ const iceberg = {
                 enabled: false
             }
         },
-        ///3 - for particle group 2
+        // /3 - for particle group 2
         {
             min: 0,
             max: 20,
@@ -257,7 +257,7 @@ const iceberg = {
         useHTML: true,
         headerFormat: '',
         positioner: function () {
-            //return { x: 130, y: 365 };
+            // return { x: 130, y: 365 };
             return { x: 53, y: 1170 };
         }
     },
@@ -337,7 +337,7 @@ const iceberg = {
             visible: true
 
         },
-        //1 iceberg types
+        // 1 iceberg types
         {
             type: 'scatter',
             className: 'iceberg-typesX',
@@ -375,7 +375,7 @@ const iceberg = {
             zIndex: 150,
             visible: false
         },
-        ///2 berg 1 bottom
+        // /2 berg 1 bottom
         {
             type: 'line',
             name: 'Pinnacle Icebergs',
@@ -384,7 +384,7 @@ const iceberg = {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
                         <span>
-                        Pinnacle icebergs</span> - a 
+                        Pinnacle icebergs</span> - a
                         large central spire or pyramid.</p>`;
                 }
             },
@@ -415,7 +415,7 @@ const iceberg = {
                 }
             ]
         },
-        ///3 berg 1 top
+        // /3 berg 1 top
         {
             type: 'line',
             name: 'Pinnacle Icebergs',
@@ -443,7 +443,7 @@ const iceberg = {
                         formatter: function () {
                             const htmlString =
                                     `<div class="berg-label">
-                                        <p class="label-title" 
+                                        <p class="label-title"
                                         style="font-weight:700;">Pinnacle</p>
                                         <p  class="label-percent">33%</p>
                                     </div>`;
@@ -457,7 +457,7 @@ const iceberg = {
                 }
             ]
         },
-        //4 berg-2 bottom
+        // 4 berg-2 bottom
         {
             type: 'line',
             accessibility: {
@@ -475,7 +475,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                                <span>Tabular icebergs</span> - 
+                                <span>Tabular icebergs</span> -
                                 horizontal and flat-topped.</p>`;
 
                 }
@@ -502,7 +502,7 @@ const iceberg = {
                 }
             ]
         },
-        ///5 berg-2 top
+        // /5 berg-2 top
         {
             type: 'line',
             name: 'Tabular Icebergs',
@@ -530,7 +530,7 @@ const iceberg = {
                         formatter: function () {
                             const htmlString =
                                     `<div class="berg-label">
-                                        <p class="label-title" 
+                                        <p class="label-title"
                                         style="font-weight:700;">Tabular</p>
                                         <p  class="label-percent">23%</p>
                                     </div>`;
@@ -548,7 +548,7 @@ const iceberg = {
                 }
             ]
         },
-        //6 - berg 3 bottom
+        // 6 - berg 3 bottom
         {
             type: 'line',
             name: 'Dry Dock Icebergs',
@@ -562,7 +562,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                        <span>Dry Dock icebergs</span> - eroded into a 
+                        <span>Dry Dock icebergs</span> - eroded into a
                         U shape.</p>`;
                 }
             },
@@ -597,7 +597,7 @@ const iceberg = {
                 }
             ]
         },
-        //7 - berg 3 top
+        // 7 - berg 3 top
         {
             type: 'line',
             name: 'Dry Dock Icebergs',
@@ -625,7 +625,7 @@ const iceberg = {
                         formatter: function () {
                             const htmlString =
                                     `<div class="berg-label">
-                                        <p class="label-title" 
+                                        <p class="label-title"
                                         style="font-weight:700;">Dry Dock</p>
                                         <p  class="label-percent">19%</p>
                                     </div>`;
@@ -647,7 +647,7 @@ const iceberg = {
                 }
             ]
         },
-        //8 berg 4 bottom
+        // 8 berg 4 bottom
         {
             type: 'line',
             name: 'Dome Icebergs',
@@ -661,7 +661,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                                    <span>Dome icebergs</span> - large, 
+                                    <span>Dome icebergs</span> - large,
                                     smooth, rounded tops.</p>`;
                 }
             },
@@ -695,7 +695,7 @@ const iceberg = {
             }
             ]
         },
-        //9 berg 4 top
+        // 9 berg 4 top
         {
             type: 'line',
             name: 'Dome Icebergs',
@@ -722,7 +722,7 @@ const iceberg = {
                     formatter: function () {
                         const htmlString =
                                 `<div class="berg-label">
-                                    <p class="label-title" 
+                                    <p class="label-title"
                                     style="font-weight:700;">Dome</p>
                                     <p  class="label-percent">15%</p>
                                 </div>`;
@@ -744,7 +744,7 @@ const iceberg = {
             }
             ]
         },
-        { //10 berg 5 bottom
+        { // 10 berg 5 bottom
             type: 'line',
             name: 'Wedge Icebergs',
             className: 'berg-depth',
@@ -757,7 +757,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                                <span>Wedge icebergs</span> - tabular 
+                                <span>Wedge icebergs</span> - tabular
                                 icebergs that have
                                 tilted.</p>`;
 
@@ -782,7 +782,7 @@ const iceberg = {
                 accessibility: { enabled: false }
             }]
         },
-        { //11 berg 5 top
+        { // 11 berg 5 top
             type: 'line',
             name: 'Wedge Icebergs',
             className: 'berg-depth',
@@ -808,7 +808,7 @@ const iceberg = {
                     formatter: function () {
                         const htmlString =
                                 `<div class="berg-label">
-                                    <p class="label-title" 
+                                    <p class="label-title"
                                     style="font-weight:700;">Wedge</p>
                                     <p  class="label-percent">10%</p>
                                 </div>`;
@@ -830,7 +830,7 @@ const iceberg = {
             chartOptions: {
                 tooltip: {
                     positioner: function () {
-                        //return { x: 130, y: 365 };
+                        // return { x: 130, y: 365 };
                         return { x: 50, y: 165 };
                     }
                 },
@@ -843,7 +843,7 @@ const iceberg = {
         {
             condition: {
                 minWidth: 251,
-                maxWidth: 300 ///up to 300
+                maxWidth: 300 // /up to 300
             },
             chartOptions: {
                 tooltip: {
@@ -865,7 +865,7 @@ const iceberg = {
             chartOptions: {
                 tooltip: {
                     positioner: function () {
-                        //return { x: 130, y: 365 };
+                        // return { x: 130, y: 365 };
                         return { x: 70, y: 265 };
                     }
                 },
@@ -911,7 +911,7 @@ const charts = {
             duration: 3000,
             easing: 'easeOutQuint'
         },
-        styledMode: (true),
+        styledMode: true,
         margin: 0,
         spacing: 0,
         accessibility: {
@@ -926,12 +926,12 @@ const charts = {
                 const background = document.getElementsByClassName('highcharts-background')[0];
                 const plotBackground = document.getElementsByClassName('highcharts-plot-background')[0];
 
-                ///if reduced motion, hide the particles while they rotate
+                // /if reduced motion, hide the particles while they rotate
                 if (reduced) {
                     particles.style.transition = 'none';
                     particles.style.opacity = 0;
                 }
-                ///attach individual 'berg' classes to each berg
+                // /attach individual 'berg' classes to each berg
                 [].forEach.call(
                     document.querySelectorAll('.berg-depth'),
                     function (b, i) {
@@ -940,31 +940,31 @@ const charts = {
                 );
 
                 setTimeout(function () {
-                    ///fade out the grid lines
+                    // /fade out the grid lines
                     [].forEach.call(
                         document.querySelectorAll('.highcharts-grid'),
                         g => g.classList.add('fade-out')
                     );
-                    ///if reduced motion, keep the particles hidden
+                    // /if reduced motion, keep the particles hidden
                     if (reduced) {
                         particles.style.opacity = 0;
                     }
                 }, 200);
 
                 setTimeout(function () {
-                    ///if reduced motion, keep the particles hidden
+                    // /if reduced motion, keep the particles hidden
                     if (reduced) {
                         particles.style.opacity = 0;
                     }
-                    ///add rotate to the particles div
+                    // /add rotate to the particles div
                     particles.classList.add('rotate');
 
-                    ///add rotate classes to each individual particle
+                    // /add rotate classes to each individual particle
                     [].forEach.call(
                         document.querySelectorAll('.particle'),
                         p => p.classList.add('rotate')
                     );
-                    ///update the left and right areas
+                    // /update the left and right areas
                     chart.series[8].data[1].update({
                         x: 4,
                         low: 2,
@@ -975,7 +975,7 @@ const charts = {
                         low: 2,
                         high: 14
                     });
-                    ///update the top and bottom areas
+                    // /update the top and bottom areas
                     chart.series[10].update({
                         data: [
                             { x: 0, low: -2, high: -2 },
@@ -993,23 +993,23 @@ const charts = {
                 }, 500);
 
                 setTimeout(function () {
-                    ///if reduced motion, now show the particles
+                    // /if reduced motion, now show the particles
                     if (reduced) {
                         particles.style.opacity = 1;
                     }
                 }, 1000);
 
                 setTimeout(function () {
-                    ///if reduced motion, hide the particles
+                    // /if reduced motion, hide the particles
                     if (reduced) {
                         particles.style.opacity = 0;
                     }
-                    ///hides the lines, left and right areas, top area
+                    // /hides the lines, left and right areas, top area
                     for (let ii = 0; ii < 11; ++ii) {
                         chart.series[ii].hide();
                     }
 
-                    ///updates the bottom area
+                    // /updates the bottom area
                     chart.series[11].update({
                         data: [
                             { x: 0, low: -2, high: 8 },
@@ -1018,12 +1018,12 @@ const charts = {
                         ],
                         zIndex: 40
                     });
-                    ///show y axis
+                    // /show y axis
                     chart.yAxis[0].update({
                         visible: true
                     });
 
-                    ///make all the y axis lines invisible
+                    // /make all the y axis lines invisible
                     [].forEach.call(
                         document.querySelectorAll('.highcharts-grid-line'),
                         function (g) {
@@ -1031,13 +1031,13 @@ const charts = {
                         }
                     );
 
-                    ///update the chart and plot background
+                    // /update the chart and plot background
                     cover.style.fill =  '#30426B';
                     background.style.fill = '#f0f0f0';
                     plotBackground.style.transition = 'fill 2s';
                     plotBackground.style.fill = '#f0f0f0';
 
-                    ///add the iceberg class to each particle
+                    // /add the iceberg class to each particle
                     [].forEach.call(
                         document.querySelectorAll('.particle'),
                         p => p.classList.add('iceberg')
@@ -1056,7 +1056,7 @@ const charts = {
             redraw: function () {
                 const particles = document.getElementsByClassName('particles')[0];
                 particles.style.visiblity = 'hidden';
-                ///ensures that the added styles for the bergs stays in place
+                // /ensures that the added styles for the bergs stays in place
                 [].forEach.call(
                     document.querySelectorAll('.berg-depth'),
                     function (b, i) {
@@ -1064,11 +1064,11 @@ const charts = {
                     }
                 );
                 const subtitle = document.querySelector('#charts .highcharts-subtitle .iceberg-subtitle');
-                ///toggles the subtitle
+                // /toggles the subtitle
                 if (!done) {
                     subtitle.style.opacity = 0;
                 } else {
-                    subtitle.style.transition = "opacity 1s";
+                    subtitle.style.transition = 'opacity 1s';
                     subtitle.style.opacity = 1;
 
 
@@ -1093,14 +1093,14 @@ const charts = {
         floating: true
     },
     xAxis: [
-    //0 -
+    // 0 -
         {
             min: 0,
             max: 20,
             gridLineColor: 'transparent',
             tickInterval: 1
         },
-        //1 -
+        // 1 -
         {
             min: 0,
             max: 20,
@@ -1108,14 +1108,14 @@ const charts = {
             tickInterval: 1,
             reversed: true
         },
-        ///2 - for particle group 1
+        // /2 - for particle group 1
         {
             min: 0,
             max: 20,
             gridLineColor: 'transparent',
             tickInterval: 1
         },
-        ///3 - for particle group 2
+        // /3 - for particle group 2
         {
             min: 0,
             max: 20,
@@ -1240,7 +1240,7 @@ const charts = {
 
     },
     series: [
-        //0 -  line
+        // 0 -  line
         {
             type: 'line',
             className: 'white-line',
@@ -1250,7 +1250,7 @@ const charts = {
             ],
             zIndex: 23
         },
-        //1 - line
+        // 1 - line
         {
             type: 'line',
             className: 'white-line',
@@ -1261,7 +1261,7 @@ const charts = {
             ],
             zIndex: 23
         },
-        //2 - line
+        // 2 - line
         {
             type: 'line',
             lineWidth: 1,
@@ -1273,7 +1273,7 @@ const charts = {
             zIndex: 23
 
         },
-        //3 - line
+        // 3 - line
         {
             type: 'line',
             className: 'white-line',
@@ -1285,7 +1285,7 @@ const charts = {
             zIndex: 23
 
         },
-        //4 - line
+        // 4 - line
         {
             type: 'line',
             className: 'white-line',
@@ -1296,7 +1296,7 @@ const charts = {
             zIndex: 23,
             yAxis: 1
         },
-        //5 - line
+        // 5 - line
         {
             type: 'line',
             className: 'white-line',
@@ -1308,7 +1308,7 @@ const charts = {
             zIndex: 23,
             yAxis: 1
         },
-        //6 - line
+        // 6 - line
         {
             type: 'line',
             lineWidth: 1,
@@ -1321,7 +1321,7 @@ const charts = {
             yAxis: 1
 
         },
-        //7 - line
+        // 7 - line
         {
             type: 'line',
             className: 'white-line',
@@ -1437,7 +1437,7 @@ const charts = {
             xAxis: 2,
             visible: true
         },
-        //13 iceberg types
+        // 13 iceberg types
         {
             type: 'scatter',
             className: 'iceberg-typesX',
@@ -1511,7 +1511,7 @@ const charts = {
             chartOptions: {
                 tooltip: {
                     positioner: function () {
-                        //return { x: 130, y: 365 };
+                        // return { x: 130, y: 365 };
                         return { x: 50, y: 155 };
                     }
                 },
@@ -1524,7 +1524,7 @@ const charts = {
         {
             condition: {
                 minWidth: 251,
-                maxWidth: 300 ///up to 300
+                maxWidth: 300 // /up to 300
             },
             chartOptions: {
                 tooltip: {
@@ -1546,7 +1546,7 @@ const charts = {
             chartOptions: {
                 tooltip: {
                     positioner: function () {
-                        //return { x: 130, y: 365 };
+                        // return { x: 130, y: 365 };
                         return { x: 70, y: 265 };
                     }
                 },

@@ -72,6 +72,49 @@ QUnit.test('Markers for arearange.', function (assert) {
         1, // Marker in the legend
         'No artifacts after zoom in boost mode (#7557)'
     );
+
+    chart.update({
+        chart: {
+            zooming: {
+                type: 'x'
+            }
+        },
+        series: [{
+            marker: {
+                enabled: undefined
+            },
+            boostThreshold: 1000
+        }]
+    });
+
+    const xAxis = chart.xAxis[0];
+
+    xAxis.setExtremes(0, 5);
+    xAxis.setExtremes();
+
+    assert.notOk(
+        !!xAxis.series[0].points[0].graphics[0],
+        `Bottom point's graphic shouldn't exist when chart is zoomed out,
+        #18080.`
+    );
+    assert.notOk(
+        !!xAxis.series[0].points[0].graphics[1],
+        `Top point's graphic shouldn't exist when chart is zoomed out,
+        #18080.`
+    );
+
+    xAxis.setExtremes(0, 5);
+
+    assert.ok(
+        xAxis.series[0].points[0].graphics[0].element,
+        'Bottom point\'s graphic should exist when chart is zoomed, #18080.'
+    );
+
+    assert.ok(
+        xAxis.series[0].points[0].graphics[1].element,
+        'Top point\'s graphic should exist when chart is zoomed, #18080.'
+    );
+
 });
 
 QUnit.test('Zones', function (assert) {

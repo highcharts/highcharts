@@ -106,7 +106,8 @@
         },
 
         title: {
-            text: 'USA 2016 Presidential Election Results'
+            text: 'USA 2016 Presidential Election Results',
+            align: 'left'
         },
 
         // Default options for the pies

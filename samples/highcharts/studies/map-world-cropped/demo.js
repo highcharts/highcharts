@@ -88,7 +88,7 @@ const getBBox = geometry => {
 
     const insets = [];
 
-    toBeMoved.forEach((code, i) => {
+    toBeMoved.forEach(code => {
         const p = geoJSON.features.find(p => p.properties['iso-a2'] === code);
 
         if (p) {
@@ -128,8 +128,8 @@ const getBBox = geometry => {
             if (g) {
                 delete g.properties['hc-middle-x'];
                 delete g.properties['hc-middle-y'];
-                //g.properties.lon = lon;
-                //g.properties.lat = lat;
+                // g.properties.lon = lon;
+                // g.properties.lat = lat;
             }
         }
 

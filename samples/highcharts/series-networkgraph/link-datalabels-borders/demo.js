@@ -6,7 +6,7 @@ Highcharts.chart('container', {
     series: [{
         dataLabels: {
             enabled: true,
-            borderColor: "#000000",
+            borderColor: '#000000',
             borderWidth: 1,
             allowOverlap: true
         },

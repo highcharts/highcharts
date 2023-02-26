@@ -166,12 +166,18 @@ class LineSeries extends Series {
                     'fill': (series.fillGraph && series.color) || 'none'
                 };
 
+                // Apply dash style
                 if (prop[3]) {
                     attribs.dashstyle = prop[3] as any;
+
+                // The reason for the `else if` is that linecaps don't mix well
+                // with dashstyle. The gaps get partially filled by the
+                // linecap.
                 } else if (options.linecap !== 'square') {
                     attribs['stroke-linecap'] =
                         attribs['stroke-linejoin'] = 'round';
                 }
+
                 graph[verb](attribs)
                     // Add shadow to normal series (0) or to first
                     // zone (1) #3932
@@ -232,7 +238,8 @@ class LineSeries extends Series {
 
             const plotX = point.plotX,
                 plotY = point.plotY,
-                lastPoint = (points as any)[i - 1];
+                lastPoint = (points as any)[i - 1],
+                isNull = point.isNull || typeof plotY !== 'number';
             // the path to this point from the previous
             let pathToPoint: SVGPath;
 
@@ -244,11 +251,11 @@ class LineSeries extends Series {
             }
 
             // Line series, nullsAsZeroes is not handled
-            if (point.isNull && !defined(nullsAsZeroes) && i > 0) {
+            if (isNull && !defined(nullsAsZeroes) && i > 0) {
                 gap = !options.connectNulls;
 
             // Area series, nullsAsZeroes is set
-            } else if (point.isNull && !nullsAsZeroes) {
+            } else if (isNull && !nullsAsZeroes) {
                 gap = true;
 
             } else {

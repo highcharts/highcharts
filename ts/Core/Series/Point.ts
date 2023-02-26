@@ -125,40 +125,15 @@ class Point {
 
     public color?: ColorType;
 
-    /**
-     * The point's current color index, used in styled mode instead of
-     * `color`. The color index is inserted in class names used for styling.
-     *
-     * @name Highcharts.Point#colorIndex
-     * @type {number}
-     */
-    public colorIndex?: number = void 0;
+    public colorIndex?: number;
 
     public dataLabels?: Array<SVGLabel>;
 
     public formatPrefix: string = 'point';
 
-    /**
-     * SVG graphic representing the point in the chart. In some cases it may be
-     * a hidden graphic to improve accessibility.
-     *
-     * @see Highcharts.Point#graphics
-     *
-     * @name Highcharts.Point#graphic
-     * @type {Highcharts.SVGElement|undefined}
-     */
     public graphic?: SVGElement;
 
-    /**
-     * Array for multiple SVG graphics representing the point in the chart. Only
-     * used in cases where the point can not be represented by a single graphic.
-     *
-     * @see Highcharts.Point#graphic
-     *
-     * @name Highcharts.Point#graphics
-     * @type {Array<Highcharts.SVGElement>|undefined}
-     */
-    public graphics?: Array<SVGElement>;
+    public graphics?: Array<SVGElement|undefined>;
 
     public id: string = void 0 as any;
 
@@ -214,7 +189,7 @@ class Point {
     public options: PointOptions = void 0 as any;
 
     /**
-     * The percentage for points in a stacked series or pies.
+     * The percentage for points in a stacked series, pies or gauges.
      *
      * @name Highcharts.Point#percentage
      * @type {number|undefined}
@@ -491,7 +466,7 @@ class Point {
 
         props.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
-                if (item.element) {
+                if (item && item.element) {
                     item.destroy();
                 }
             });
@@ -839,6 +814,30 @@ class Point {
     }
 
     /**
+     * Get the pixel position of the point relative to the plot area.
+     * @private
+     * @function Highcharts.Point#pos
+     */
+    public pos(
+        chartCoordinates?: boolean,
+        plotY: number|undefined = this.plotY
+    ): [number, number]|undefined {
+        const { plotX, series } = this,
+            { chart, xAxis, yAxis } = series;
+        let posX = 0,
+            posY = 0;
+        if (isNumber(plotX) && isNumber(plotY)) {
+            if (chartCoordinates) {
+                posX = xAxis ? xAxis.pos : chart.plotLeft;
+                posY = yAxis ? yAxis.pos : chart.plotTop;
+            }
+            return chart.inverted && xAxis && yAxis ?
+                [yAxis.len - plotY + posY, xAxis.len - plotX + posX] :
+                [plotX + posX, plotY + posY];
+        }
+    }
+
+    /**
      * @private
      * @function Highcharts.Point#resolveColor
      */
@@ -874,6 +873,13 @@ class Point {
             colorIndex = series.colorIndex as any;
         }
 
+        /**
+         * The point's current color index, used in styled mode instead of
+         * `color`. The color index is inserted in class names used for styling.
+         *
+         * @name Highcharts.Point#colorIndex
+         * @type {number|undefined}
+         */
         this.colorIndex = pick(this.options.colorIndex, colorIndex);
 
         /**
@@ -1581,15 +1587,14 @@ class Point {
      *         The path definition.
      */
     public haloPath(size: number): SVGPath {
-        const series = this.series,
-            chart = series.chart;
+        const pos = this.pos();
 
-        return chart.renderer.symbols.circle(
-            Math.floor(this.plotX as any) - size,
-            (this.plotY as any) - size,
+        return pos ? this.series.chart.renderer.symbols.circle(
+            Math.floor(pos[0]) - size,
+            pos[1] - size,
             size * 2,
             size * 2
-        );
+        ) : [];
     }
 
 }
