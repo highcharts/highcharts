@@ -325,7 +325,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
         eventArguments.activeAnnotation = true;
     }
 
-    // #18276, show popup on mobile touchend, but not on touchmove
+    // #18276, show popup on touchend, but not on touchmove
     let touchStartX: number,
         touchStartY: number;
 
@@ -341,7 +341,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
         ) >= 4 : false;
 
         if (!hasMoved) {
-            return selectAndShowPopup.call(this, e);
+            selectAndShowPopup.call(this, e);
         }
     }
 
