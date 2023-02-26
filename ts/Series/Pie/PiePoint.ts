@@ -356,23 +356,16 @@ extend(PiePoint.prototype, {
             connectorPosition: PiePoint.LabelConnectorPositionObject,
             options: PieDataLabelOptions
         ): SVGPath {
-            const touchingSliceAt = connectorPosition.touchingSliceAt,
-                { dataLabel, series } = this,
+            const { breakAt, touchingSliceAt } = connectorPosition,
+                { series } = this,
                 [cx, cy, diameter] = series.center,
                 r = diameter / 2,
                 plotWidth = series.chart.plotWidth,
                 plotLeft = series.chart.plotLeft,
                 leftAligned = labelPosition.alignment === 'left',
-                y = labelPosition.y;
+                { x, y } = labelPosition;
 
-            let x = labelPosition.x;
-            /* Render line through (or under) the label
-            if (dataLabel) {
-                x = dataLabel.x + (leftAligned ? 1 : -1) * dataLabel.width;
-            }
-            */
-
-            let crookX = touchingSliceAt.x;
+            let crookX = breakAt.x;
             if (options.crookDistance) {
                 const crookDistance = relativeLength( // % to fraction
                     options.crookDistance, 1
@@ -392,24 +385,22 @@ extend(PiePoint.prototype, {
                 );
             }
 
-            const segmentWithCrook: SVGPath.LineTo = ['L', crookX, y];
-
-            let useCrook = true;
+            const path: SVGPath = [['M', x, y]];
 
             // The crookedLine formula doesn't make sense if the path overlaps
             // the label - use straight line instead in that case
-            if (leftAligned ?
-                (crookX > x || crookX < touchingSliceAt.x) :
-                (crookX < x || crookX > touchingSliceAt.x)) {
-                useCrook = false;
+            if (
+                leftAligned ?
+                    (crookX <= x && crookX >= breakAt.x) :
+                    (crookX >= x && crookX <= breakAt.x)
+            ) {
+                path.push(['L', crookX, y]);
             }
 
-            // assemble the path
-            const path: SVGPath = [['M', x, y]];
-            if (useCrook) {
-                path.push(segmentWithCrook);
-            }
-            path.push(['L', touchingSliceAt.x, touchingSliceAt.y]);
+            path.push(
+                ['L', breakAt.x, breakAt.y],
+                ['L', touchingSliceAt.x, touchingSliceAt.y]
+            );
             return path;
         }
     }
