@@ -19,7 +19,6 @@
  * */
 
 import type AccessibilityComponent from './AccessibilityComponent';
-import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type Legend from '../Core/Legend/Legend';
 import type { Options } from '../Core/Options';
@@ -28,6 +27,7 @@ import type RangeSelector from '../Stock/RangeSelector/RangeSelector';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type { XYPair } from './SimplifyLine';
 
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
@@ -63,6 +63,7 @@ import highContrastTheme from './HighContrastTheme.js';
 import defaultOptionsA11Y from './Options/A11yDefaults.js';
 import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
+import simplifyLine from './SimplifyLine.js';
 
 /* *
  *
@@ -320,6 +321,14 @@ class Accessibility {
         return Object.keys(types);
     }
 
+
+    /**
+     * Get a simplified version of a line series as an array of XY-pairs.
+     * @private
+     */
+    public simplifyLineSeries(series: Series, numPoints: number): XYPair[] {
+        return simplifyLine(series.points, numPoints);
+    }
 }
 
 /* *
