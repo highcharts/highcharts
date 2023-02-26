@@ -5,6 +5,7 @@ Highcharts.chart('container', {
     plotOptions: {
         pie: {
             dataLabels: {
+                connectorShape: 'fixedOffset'
                 // softConnector: true // by default
             }
         }
