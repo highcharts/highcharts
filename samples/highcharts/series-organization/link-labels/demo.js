@@ -10,9 +10,6 @@ Highcharts.chart('container', {
             ['A', 'C'],
             ['C', 'D']
         ],
-        linkRadius: 0,
-        linkLineWidth: 2,
-        linkColor: '#ccc',
         link: {
             type: 'curved'
         },
