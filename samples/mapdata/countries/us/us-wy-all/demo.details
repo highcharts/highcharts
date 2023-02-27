@@ -1,5 +1,5 @@
 ---
- name: Wyoming - Highmaps
- description: Highmaps demo
+ name: Wyoming - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

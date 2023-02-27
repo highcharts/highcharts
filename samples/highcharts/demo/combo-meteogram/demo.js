@@ -5,28 +5,21 @@
  * developers to go beyond the basic chart types and show how the library can
  * be extended programmatically. This is what the demo does:
  *
- * - Loads weather forecast from www.yr.no in form of an XML service. The XML
- *   is translated on the Higcharts website into JSONP for the sake of the demo
- *   being shown on both our website and JSFiddle.
+ * - Loads weather forecast from www.yr.no in form of a JSON service.
  * - When the data arrives async, a Meteogram instance is created. We have
- *   created the Meteogram prototype to provide an organized structure of the different
- *   methods and subroutines associated with the demo.
- * - The parseYrData method parses the data from www.yr.no into several parallel arrays. These
- *   arrays are used directly as the data option for temperature, precipitation
- *   and air pressure. As the temperature data gives only full degrees, we apply
- *   some smoothing on the graph, but keep the original data in the tooltip.
- * - After this, the options structure is build, and the chart generated with the
- *   parsed data.
- * - In the callback (on chart load), we weather icons on top of the temperature series.
- *   The icons are sprites from a single PNG image, placed inside a clipped 30x30
- *   SVG <g> element. VML interprets this as HTML images inside a clipped div.
- * - Lastly, the wind arrows are built and added below the plot area, and a grid is
- *   drawn around them. The wind arrows are basically drawn north-south, then rotated
- *   as per the wind direction.
+ *   created the Meteogram prototype to provide an organized structure of the
+ *   different methods and subroutines associated with the demo.
+ * - The parseYrData method parses the data from www.yr.no into several parallel
+ *   arrays. These arrays are used directly as the data option for temperature,
+ *   precipitation and air pressure.
+ * - After this, the options structure is built, and the chart generated with
+ *   the parsed data.
+ * - On chart load, weather icons and the frames for the wind arrows are
+ *   rendered using custom logic.
  */
 
-function Meteogram(xml, container) {
-    // Parallel arrays for the chart data, these are populated as the XML/JSON file
+function Meteogram(json, container) {
+    // Parallel arrays for the chart data, these are populated as the JSON file
     // is loaded
     this.symbols = [];
     this.precipitations = [];
@@ -36,7 +29,7 @@ function Meteogram(xml, container) {
     this.pressures = [];
 
     // Initialize
-    this.xml = xml;
+    this.json = json;
     this.container = container;
 
     // Run
@@ -44,22 +37,175 @@ function Meteogram(xml, container) {
 }
 
 /**
- * Function to smooth the temperature line. The original data provides only whole degrees,
- * which makes the line graph look jagged. So we apply a running mean on it, but preserve
- * the unaltered value in the tooltip.
+ * Mapping of the symbol code in yr.no's API to the icons in their public
+ * GitHub repo, as well as the text used in the tooltip.
+ *
+ * https://api.met.no/weatherapi/weathericon/2.0/documentation
  */
-Meteogram.prototype.smoothLine = function (data) {
-    var i = data.length,
-        sum,
-        value;
-
-    while (i--) {
-        data[i].value = value = data[i].y; // preserve value for tooltip
-
-        // Set the smoothed value to the average of the closest points, but don't allow
-        // it to differ more than 0.5 degrees from the given value
-        sum = (data[i - 1] || data[i]).y + value + (data[i + 1] || data[i]).y;
-        data[i].y = Math.max(value - 0.5, Math.min(sum / 3, value + 0.5));
+Meteogram.dictionary = {
+    clearsky: {
+        symbol: '01',
+        text: 'Clear sky'
+    },
+    fair: {
+        symbol: '02',
+        text: 'Fair'
+    },
+    partlycloudy: {
+        symbol: '03',
+        text: 'Partly cloudy'
+    },
+    cloudy: {
+        symbol: '04',
+        text: 'Cloudy'
+    },
+    lightrainshowers: {
+        symbol: '40',
+        text: 'Light rain showers'
+    },
+    rainshowers: {
+        symbol: '05',
+        text: 'Rain showers'
+    },
+    heavyrainshowers: {
+        symbol: '41',
+        text: 'Heavy rain showers'
+    },
+    lightrainshowersandthunder: {
+        symbol: '24',
+        text: 'Light rain showers and thunder'
+    },
+    rainshowersandthunder: {
+        symbol: '06',
+        text: 'Rain showers and thunder'
+    },
+    heavyrainshowersandthunder: {
+        symbol: '25',
+        text: 'Heavy rain showers and thunder'
+    },
+    lightsleetshowers: {
+        symbol: '42',
+        text: 'Light sleet showers'
+    },
+    sleetshowers: {
+        symbol: '07',
+        text: 'Sleet showers'
+    },
+    heavysleetshowers: {
+        symbol: '43',
+        text: 'Heavy sleet showers'
+    },
+    lightsleetshowersandthunder: {
+        symbol: '26',
+        text: 'Light sleet showers and thunder'
+    },
+    sleetshowersandthunder: {
+        symbol: '20',
+        text: 'Sleet showers and thunder'
+    },
+    heavysleetshowersandthunder: {
+        symbol: '27',
+        text: 'Heavy sleet showers and thunder'
+    },
+    lightsnowshowers: {
+        symbol: '44',
+        text: 'Light snow showers'
+    },
+    snowshowers: {
+        symbol: '08',
+        text: 'Snow showers'
+    },
+    heavysnowshowers: {
+        symbol: '45',
+        text: 'Heavy show showers'
+    },
+    lightsnowshowersandthunder: {
+        symbol: '28',
+        text: 'Light snow showers and thunder'
+    },
+    snowshowersandthunder: {
+        symbol: '21',
+        text: 'Snow showers and thunder'
+    },
+    heavysnowshowersandthunder: {
+        symbol: '29',
+        text: 'Heavy snow showers and thunder'
+    },
+    lightrain: {
+        symbol: '46',
+        text: 'Light rain'
+    },
+    rain: {
+        symbol: '09',
+        text: 'Rain'
+    },
+    heavyrain: {
+        symbol: '10',
+        text: 'Heavy rain'
+    },
+    lightrainandthunder: {
+        symbol: '30',
+        text: 'Light rain and thunder'
+    },
+    rainandthunder: {
+        symbol: '22',
+        text: 'Rain and thunder'
+    },
+    heavyrainandthunder: {
+        symbol: '11',
+        text: 'Heavy rain and thunder'
+    },
+    lightsleet: {
+        symbol: '47',
+        text: 'Light sleet'
+    },
+    sleet: {
+        symbol: '12',
+        text: 'Sleet'
+    },
+    heavysleet: {
+        symbol: '48',
+        text: 'Heavy sleet'
+    },
+    lightsleetandthunder: {
+        symbol: '31',
+        text: 'Light sleet and thunder'
+    },
+    sleetandthunder: {
+        symbol: '23',
+        text: 'Sleet and thunder'
+    },
+    heavysleetandthunder: {
+        symbol: '32',
+        text: 'Heavy sleet and thunder'
+    },
+    lightsnow: {
+        symbol: '49',
+        text: 'Light snow'
+    },
+    snow: {
+        symbol: '13',
+        text: 'Snow'
+    },
+    heavysnow: {
+        symbol: '50',
+        text: 'Heavy snow'
+    },
+    lightsnowandthunder: {
+        symbol: '33',
+        text: 'Light snow and thunder'
+    },
+    snowandthunder: {
+        symbol: '14',
+        text: 'Snow and thunder'
+    },
+    heavysnowandthunder: {
+        symbol: '34',
+        text: 'Heavy snow and thunder'
+    },
+    fog: {
+        symbol: '15',
+        text: 'Fog'
     }
 };
 
@@ -69,24 +215,31 @@ Meteogram.prototype.smoothLine = function (data) {
  * https://github.com/YR/weather-symbols
  */
 Meteogram.prototype.drawWeatherSymbols = function (chart) {
-    var meteogram = this;
 
     chart.series[0].data.forEach((point, i) => {
-        if (meteogram.resolution > 36e5 || i % 2 === 0) {
+        if (this.resolution > 36e5 || i % 2 === 0) {
 
-            chart.renderer
-                .image(
-                    'https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/' +
-                        meteogram.symbols[i] + '.svg',
-                    point.plotX + chart.plotLeft - 8,
-                    point.plotY + chart.plotTop - 30,
-                    30,
-                    30
-                )
-                .attr({
-                    zIndex: 5
-                })
-                .add();
+            const [symbol, specifier] = this.symbols[i].split('_'),
+                icon = Meteogram.dictionary[symbol].symbol +
+                    ({ day: 'd', night: 'n' }[specifier] || '');
+
+            if (Meteogram.dictionary[symbol]) {
+                chart.renderer
+                    .image(
+                        'https://cdn.jsdelivr.net/gh/nrkno/yr-weather-symbols' +
+                            `@8.0.1/dist/svg/${icon}.svg`,
+                        point.plotX + chart.plotLeft - 8,
+                        point.plotY + chart.plotTop - 30,
+                        30,
+                        30
+                    )
+                    .attr({
+                        zIndex: 5
+                    })
+                    .add();
+            } else {
+                console.log(symbol);
+            }
         }
     });
 };
@@ -96,28 +249,29 @@ Meteogram.prototype.drawWeatherSymbols = function (chart) {
  * Draw blocks around wind arrows, below the plot area
  */
 Meteogram.prototype.drawBlocksForWindArrows = function (chart) {
-    var xAxis = chart.xAxis[0],
-        x,
-        pos,
-        max,
-        isLong,
-        isLast,
-        i;
+    const xAxis = chart.xAxis[0];
 
-    for (pos = xAxis.min, max = xAxis.max, i = 0; pos <= max + 36e5; pos += 36e5, i += 1) {
+    for (
+        let pos = xAxis.min, max = xAxis.max, i = 0;
+        pos <= max + 36e5; pos += 36e5,
+        i += 1
+    ) {
 
         // Get the X position
-        isLast = pos === max + 36e5;
-        x = Math.round(xAxis.toPixels(pos)) + (isLast ? 0.5 : -0.5);
+        const isLast = pos === max + 36e5,
+            x = Math.round(xAxis.toPixels(pos)) + (isLast ? 0.5 : -0.5);
 
         // Draw the vertical dividers and ticks
-        if (this.resolution > 36e5) {
-            isLong = pos % this.resolution === 0;
-        } else {
-            isLong = i % 2 === 0;
-        }
-        chart.renderer.path(['M', x, chart.plotTop + chart.plotHeight + (isLong ? 0 : 28),
-            'L', x, chart.plotTop + chart.plotHeight + 32, 'Z'])
+        const isLong = this.resolution > 36e5 ?
+            pos % this.resolution === 0 :
+            i % 2 === 0;
+
+        chart.renderer
+            .path([
+                'M', x, chart.plotTop + chart.plotHeight + (isLong ? 0 : 28),
+                'L', x, chart.plotTop + chart.plotHeight + 32,
+                'Z'
+            ])
             .attr({
                 stroke: chart.options.chart.plotBorderColor,
                 'stroke-width': 1
@@ -133,19 +287,9 @@ Meteogram.prototype.drawBlocksForWindArrows = function (chart) {
 };
 
 /**
- * Get the title based on the XML data
- */
-Meteogram.prototype.getTitle = function () {
-    return 'Meteogram for ' + this.xml.querySelector('location name').textContent +
-        ', ' + this.xml.querySelector('location country').textContent;
-};
-
-/**
  * Build and return the Highcharts options structure
  */
 Meteogram.prototype.getChartOptions = function () {
-    var meteogram = this;
-
     return {
         chart: {
             renderTo: this.container,
@@ -178,7 +322,7 @@ Meteogram.prototype.getChartOptions = function () {
         },
 
         title: {
-            text: this.getTitle(),
+            text: 'Meteogram for London, England',
             align: 'left',
             style: {
                 whiteSpace: 'nowrap',
@@ -187,8 +331,8 @@ Meteogram.prototype.getChartOptions = function () {
         },
 
         credits: {
-            text: 'Forecast from <a href="http://yr.no">yr.no</a>',
-            href: this.xml.querySelector('credit link').getAttribute('url'),
+            text: 'Forecast from <a href="https://yr.no">yr.no</a>',
+            href: 'https://yr.no',
             position: {
                 x: -40
             }
@@ -228,7 +372,7 @@ Meteogram.prototype.getChartOptions = function () {
                 format: '{value:<span style="font-size: 12px; font-weight: bold">%a</span> %b %e}',
                 align: 'left',
                 x: 3,
-                y: -5
+                y: 8
             },
             opposite: true,
             tickLength: 20,
@@ -321,7 +465,7 @@ Meteogram.prototype.getChartOptions = function () {
             },
             tooltip: {
                 pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-                    '{series.name}: <b>{point.value}°C</b><br/>'
+                    '{series.name}: <b>{point.y}°C</b><br/>'
             },
             zIndex: 1,
             color: '#FF3333',
@@ -341,11 +485,11 @@ Meteogram.prototype.getChartOptions = function () {
             },
             grouping: false,
             dataLabels: {
-                enabled: meteogram.hasPrecipitationError,
-                formatter: function () {
-                    if (this.point.maxvalue > 0) {
-                        return this.point.maxvalue;
-                    }
+                enabled: this.hasPrecipitationError,
+                filter: {
+                    operator: '>',
+                    property: 'maxValue',
+                    value: 0
                 },
                 style: {
                     fontSize: '8px',
@@ -362,15 +506,15 @@ Meteogram.prototype.getChartOptions = function () {
             pointPadding: 0,
             grouping: false,
             dataLabels: {
-                enabled: !meteogram.hasPrecipitationError,
-                formatter: function () {
-                    if (this.y > 0) {
-                        return this.y;
-                    }
+                enabled: !this.hasPrecipitationError,
+                filter: {
+                    operator: '>',
+                    property: 'y',
+                    value: 0
                 },
                 style: {
                     fontSize: '8px',
-                    color: 'gray'
+                    color: '#666'
                 }
             },
             tooltip: {
@@ -406,7 +550,8 @@ Meteogram.prototype.getChartOptions = function () {
 };
 
 /**
- * Post-process the chart from the callback function, the second argument to Highcharts.Chart.
+ * Post-process the chart from the callback function, the second argument
+ * Highcharts.Chart.
  */
 Meteogram.prototype.onChartLoad = function (chart) {
 
@@ -416,119 +561,79 @@ Meteogram.prototype.onChartLoad = function (chart) {
 };
 
 /**
- * Create the chart. This function is called async when the data file is loaded and parsed.
+ * Create the chart. This function is called async when the data file is loaded
+ * and parsed.
  */
 Meteogram.prototype.createChart = function () {
-    var meteogram = this;
-    this.chart = new Highcharts.Chart(this.getChartOptions(), function (chart) {
-        meteogram.onChartLoad(chart);
+    this.chart = new Highcharts.Chart(this.getChartOptions(), chart => {
+        this.onChartLoad(chart);
     });
 };
 
 Meteogram.prototype.error = function () {
-    document.getElementById('loading').innerHTML = '<i class="fa fa-frown-o"></i> Failed loading data, please try again later';
+    document.getElementById('loading').innerHTML =
+        '<i class="fa fa-frown-o"></i> Failed loading data, please try again later';
 };
 
 /**
- * Handle the data. This part of the code is not Highcharts specific, but deals with yr.no's
- * specific data format
+ * Handle the data. This part of the code is not Highcharts specific, but deals
+ * with yr.no's specific data format
  */
 Meteogram.prototype.parseYrData = function () {
 
-    var meteogram = this,
-        xml = this.xml,
-        pointStart,
-        forecast = xml && xml.querySelector('forecast');
+    let pointStart;
 
-    if (!forecast) {
+    if (!this.json) {
         return this.error();
     }
 
-    // The returned xml variable is a JavaScript representation of the provided
-    // XML, generated on the server by running PHP simple_load_xml and
-    // converting it to JavaScript by json_encode.
-    forecast.querySelectorAll('tabular time').forEach((time, i) => {
-        // Get the times - only Safari can't parse ISO8601 so we need to do
-        // some replacements
-        var from = time.getAttribute('from') + ' UTC',
-            to = time.getAttribute('to') + ' UTC';
+    // Loop over hourly (or 6-hourly) forecasts
+    this.json.properties.timeseries.forEach((node, i) => {
 
-        from = from.replace(/-/g, '/').replace('T', ' ');
-        from = Date.parse(from);
-        to = to.replace(/-/g, '/').replace('T', ' ');
-        to = Date.parse(to);
+        const x = Date.parse(node.time),
+            nextHours = node.data.next_1_hours || node.data.next_6_hours,
+            symbolCode = nextHours && nextHours.summary.symbol_code,
+            to = node.data.next_1_hours ? x + 36e5 : x + 6 * 36e5;
 
-        if (to > pointStart + 4 * 24 * 36e5) {
+        if (to > pointStart + 48 * 36e5) {
             return;
         }
 
-        // If it is more than an hour between points, show all symbols
-        if (i === 0) {
-            meteogram.resolution = to - from;
-        }
-
         // Populate the parallel arrays
-        meteogram.symbols.push(
-            time.querySelector('symbol').getAttribute('var')
-                .match(/[0-9]{2}[dnm]?/)[0]
-        );
+        this.symbols.push(nextHours.summary.symbol_code);
 
-        meteogram.temperatures.push({
-            x: from,
-            y: parseInt(
-                time.querySelector('temperature').getAttribute('value'),
-                10
-            ),
+        this.temperatures.push({
+            x,
+            y: node.data.instant.details.air_temperature,
             // custom options used in the tooltip formatter
-            to: to,
-            symbolName: time.querySelector('symbol').getAttribute('name')
+            to,
+            symbolName: Meteogram.dictionary[
+                symbolCode.replace(/_(day|night)$/, '')
+            ].text
         });
 
-        var precipitation = time.querySelector('precipitation');
-        meteogram.precipitations.push({
-            x: from,
-            y: parseFloat(
-                Highcharts.pick(
-                    precipitation.getAttribute('minvalue'),
-                    precipitation.getAttribute('value')
-                )
-            )
+        this.precipitations.push({
+            x,
+            y: nextHours.details.precipitation_amount
         });
-
-        if (precipitation.getAttribute('maxvalue')) {
-            meteogram.hasPrecipitationError = true;
-            meteogram.precipitationsError.push({
-                x: from,
-                y: parseFloat(precipitation.getAttribute('maxvalue')),
-                minvalue: parseFloat(precipitation.getAttribute('minvalue')),
-                maxvalue: parseFloat(precipitation.getAttribute('maxvalue')),
-                value: parseFloat(precipitation.getAttribute('value'))
-            });
-        }
 
         if (i % 2 === 0) {
-            meteogram.winds.push({
-                x: from,
-                value: parseFloat(time.querySelector('windSpeed')
-                    .getAttribute('mps')),
-                direction: parseFloat(time.querySelector('windDirection')
-                    .getAttribute('deg'))
+            this.winds.push({
+                x,
+                value: node.data.instant.details.wind_speed,
+                direction: node.data.instant.details.wind_from_direction
             });
         }
 
-        meteogram.pressures.push({
-            x: from,
-            y: parseFloat(time.querySelector('pressure').getAttribute('value'))
+        this.pressures.push({
+            x,
+            y: node.data.instant.details.air_pressure_at_sea_level
         });
 
         if (i === 0) {
-            pointStart = (from + to) / 2;
+            pointStart = (x + to) / 2;
         }
-    }
-    );
-
-    // Smooth the line
-    this.smoothLine(this.temperatures);
+    });
 
     // Create the chart when the data is loaded
     this.createChart();
@@ -539,41 +644,21 @@ Meteogram.prototype.parseYrData = function () {
 // On DOM ready...
 
 // Set the hash to the yr.no URL we want to parse
-var place,
-    url;
 if (!location.hash) {
-    place = 'United_Kingdom/England/London';
-    //place = 'France/Rhône-Alpes/Val_d\'Isère~2971074';
-    //place = 'Norway/Sogn_og_Fjordane/Vik/Målset';
-    //place = 'United_States/California/San_Francisco';
-    //place = 'United_States/Minnesota/Minneapolis';
-
-    location.hash = 'https://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
+    location.hash = 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=51.50853&lon=-0.12574&altitude=25';
 }
 
-// Then get the XML file through Highcharts' CORS proxy. Our proxy is limited to
-// this specific location. Useing the third party, rate limited cors.io service
-// for experimenting with other locations.
-function getXML(url, cb, cbErr) {
-    const request = new XMLHttpRequest();
-    request.open('GET', url, true);
-
-    request.onload = function () {
-        if (this.status >= 400) {
-            return cbErr();
-        }
-        return cb(new DOMParser().parseFromString(this.response, 'application/xml'));
-    };
-
-    request.send();
-}
-
-url = location.hash.substr(1);
-getXML(url === 'https://www.yr.no/place/United_Kingdom/England/London/forecast_hour_by_hour.xml' ?
-    'https://demo-live-data.highcharts.com/weather-forecast.xml' :
-    'https://cors-anywhere.herokuapp.com/' + url,
-xml => {
-    window.meteogram = new Meteogram(xml, 'container');
-},
-Meteogram.prototype.error
-);
+const url = location.hash.substr(1);
+Highcharts.ajax({
+    url,
+    dataType: 'json',
+    success: json => {
+        window.meteogram = new Meteogram(json, 'container');
+    },
+    error: Meteogram.prototype.error,
+    headers: {
+        // Override the Content-Type to avoid preflight problems with CORS
+        // in the Highcharts demos
+        'Content-Type': 'text/plain'
+    }
+});

@@ -31,6 +31,8 @@ export interface SunburstDataLabelOptions extends DataLabelOptions {
     rotationMode?: SunburstDataLabelRotationValue;
 }
 
-export type SunburstDataLabelRotationValue = ('auto'|'perpendicular'|'parallel'|'circular');
+export type SunburstDataLabelRotationValue = (
+    'auto'|'perpendicular'|'parallel'|'circular'
+);
 
 export default SunburstDataLabelOptions;

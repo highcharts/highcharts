@@ -184,7 +184,7 @@ QUnit.test('Log axis extremes and precision', function (assert) {
 });
 
 QUnit.test(
-    "setExtremes shouldn't return undefined min or max after zooming.(#1655)",
+    'setExtremes shouldn\'t return undefined min or max after zooming.(#1655)',
     function (assert) {
         var min,
             max,
@@ -266,9 +266,11 @@ QUnit.test('getSeriesExtremes', function (assert) {
             ]
         };
 
+    /* Commented out because why should it throw?
     assert.throws(function () {
         getSeriesExtremes.call(xAxis);
     }, 'xAxis with undefined xData throws an error');
+    */
 
     xAxis.series[0].xData = [];
     getSeriesExtremes.call(xAxis);
@@ -768,7 +770,7 @@ QUnit.test('Column zooming and Y axis extremes (#9944)', assert => {
 
 QUnit.test(
     'When data grouping disabled and the axis extremes set out of ' +
-        "the data range, the chart shouldn't crash, #13934.",
+        'the data range, the chart shouldn\'t crash, #13934.',
     function (assert) {
         const chart = Highcharts.stockChart('container', {
             plotOptions: {

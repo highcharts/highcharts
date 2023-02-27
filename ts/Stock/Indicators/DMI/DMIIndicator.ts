@@ -24,14 +24,13 @@ import type {
 import type DMIPoint from './DMIPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import palette from '../../../Core/Color/Palette.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -56,6 +55,13 @@ const {
  * @augments Highcharts.Series
  */
 class DMIIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Directional Movement Index (DMI).
      * This series requires the `linkedTo` option to be set and should
@@ -85,12 +91,15 @@ class DMIIndicator extends SMAIndicator {
             enabled: false
         },
         tooltip: {
-            pointFormat: '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
+            pointFormat: '<span style="color: {point.color}">' +
+                '\u25CF</span><b> {series.name}</b><br/>' +
                 '<span style="color: {point.color}">DX</span>: {point.y}<br/>' +
-                '<span style="color: {point.series.options.plusDILine.styles.lineColor}">+DI</span>' +
-                    ': {point.plusDI}<br/>' +
-                '<span style="color: {point.series.options.minusDILine.styles.lineColor}">-DI</span>' +
-                    ': {point.minusDI}<br/>'
+                '<span style="color: ' +
+                '{point.series.options.plusDILine.styles.lineColor}">' +
+                    '+DI</span>: {point.plusDI}<br/>' +
+                '<span style="color: ' +
+                '{point.series.options.minusDILine.styles.lineColor}">' +
+                    '-DI</span>: {point.minusDI}<br/>'
         },
         /**
          * +DI line options.
@@ -109,7 +118,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.positiveColor // green-ish
+                lineColor: Palette.positiveColor // green-ish
             }
         },
         /**
@@ -129,13 +138,21 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.negativeColor // red-ish
+                lineColor: Palette.negativeColor // red-ish
             }
         },
         dataGrouping: {
             approximation: 'averages'
         }
     } as DMIOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public options: DMIOptions = void 0 as any;
 
     /* *
      *
@@ -329,31 +346,29 @@ class DMIIndicator extends SMAIndicator {
 
 }
 
-interface DMIIndicator {
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface DMIIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof DMIPoint>;
     parallelArrays: Array<string>;
     pointValKey: string;
     linesApiNames: Array<string>;
     pointClass: typeof DMIPoint;
-
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
 }
 extend(DMIIndicator.prototype, {
+    areaLinesNames: [],
     nameBase: 'DMI',
+    linesApiNames: ['plusDILine', 'minusDILine'],
     pointArrayMap: ['y', 'plusDI', 'minusDI'],
     parallelArrays: ['x', 'y', 'plusDI', 'minusDI'],
-    pointValKey: 'y',
-    linesApiNames: ['plusDILine', 'minusDILine'],
-
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    pointValKey: 'y'
 });
+MultipleLinesComposition.compose(DMIIndicator);
 
 /* *
  *
@@ -375,6 +390,12 @@ SeriesRegistry.registerSeriesType('dmi', DMIIndicator);
  * */
 
 export default DMIIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * The Directional Movement Index (DMI) indicator series.

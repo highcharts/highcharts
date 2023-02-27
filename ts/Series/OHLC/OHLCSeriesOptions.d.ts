@@ -15,9 +15,9 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type OHLCSeries from './OHLCSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import HLCSeriesOptions from '../HLC/HLCSeriesOptions';
 
 /* *
  *
@@ -25,7 +25,13 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export interface OHLCSeriesOptions extends ColumnSeriesOptions {
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        useOhlcData?: boolean;
+    }
+}
+
+export interface OHLCSeriesOptions extends HLCSeriesOptions {
     upColor?: ColorType;
     states?: SeriesStatesOptions<OHLCSeries>;
 }

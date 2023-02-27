@@ -1,5 +1,5 @@
 ---
- name: Ontario - Highmaps
- description: Highmaps demo
+ name: Ontario - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

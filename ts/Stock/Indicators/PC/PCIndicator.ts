@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -15,22 +21,19 @@ import type {
     PCParamsOptions
 } from '../PC/PCOptions';
 import type PCPoint from './PCPoint';
-import palette from '../../../Core/Color/Palette.js';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+
+import AU from '../ArrayUtilities.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
+import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
     extend
 } = U;
-
-const getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
 
 /* *
  *
@@ -47,7 +50,14 @@ const getArrayExtremes = ReduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
+class PCIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Price channel (PC). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -68,6 +78,16 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
      */
     public static defaultOptions: PCOptions = merge(SMAIndicator.defaultOptions, {
         /**
+         * Option for fill color between lines in Price channel Indicator.
+         *
+         * @sample {highstock} stock/indicators/indicator-area-fill
+         *      background fill between lines
+         *
+         * @type {Highcharts.Color}
+         * @apioption plotOptions.pc.fillColor
+         *
+         */
+        /**
          * @excluding index
          */
         params: {
@@ -83,7 +103,7 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.colors[2],
+                lineColor: Palettes.colors[2],
                 /**
                  * Pixel width of the line.
                  */
@@ -98,7 +118,7 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.colors[8],
+                lineColor: Palettes.colors[8],
                 /**
                  * Pixel width of the line.
                  */
@@ -111,20 +131,20 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
     } as PCOptions);
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<PCPoint> = void 0 as any;
     public options: PCOptions = void 0 as any;
     public points: Array<PCPoint> = void 0 as any;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -156,7 +176,7 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
         for (i = period; i <= yValLen; i++) {
             date = xVal[i - 1];
             slicedY = yVal.slice(i - period, i);
-            extremes = getArrayExtremes(slicedY, low as any, high as any);
+            extremes = AU.getArrayExtremes(slicedY, low as any, high as any);
             TL = extremes[1];
             BL = extremes[0];
             ML = (TL + BL) / 2;
@@ -174,35 +194,27 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
-interface PCIndicator {
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    toYData: typeof MultipleLinesMixin.toYData;
-    translate: typeof MultipleLinesMixin.translate;
-    linesApiNames: typeof MultipleLinesMixin.linesApiNames;
+interface PCIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof PCPoint>;
     pointClass: typeof PCPoint;
     pointValKey: string;
 }
-
 extend(PCIndicator.prototype, {
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    drawGraph: MultipleLinesMixin.drawGraph,
-    toYData: MultipleLinesMixin.toYData,
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
+    areaLinesNames: ['top', 'bottom'],
     nameBase: 'Price Channel',
     nameComponents: ['period'],
     linesApiNames: ['topLine', 'bottomLine'],
-    translate: MultipleLinesMixin.translate
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle'
 });
+MultipleLinesComposition.compose(PCIndicator);
 
 /* *
  *
@@ -225,6 +237,12 @@ SeriesRegistry.registerSeriesType('pc', PCIndicator);
  * */
 
 export default PCIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Price channel indicator. If the [type](#series.pc.type) option is not

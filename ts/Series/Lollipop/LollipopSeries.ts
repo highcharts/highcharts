@@ -17,25 +17,38 @@
  * */
 
 import type LollipopSeriesOptions from './LollipopSeriesOptions';
+
 import LollipopPoint from './LollipopPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import Series from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        area: {
-            prototype: areaProto
-        },
         column: {
             prototype: colProto
         },
-        dumbbell: DumbbellSeries
+        dumbbell: {
+            prototype: dumbbellProto
+        },
+        scatter: ScatterSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
-    pick,
-    merge,
-    extend
+    extend,
+    merge
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesStateHoverOptions {
+        connectorWidthPlus?: number;
+    }
+}
 
 /* *
  *
@@ -44,7 +57,7 @@ const {
  * */
 
 /**
- * lollipop series type
+ * Lollipop series type
  *
  * @private
  * @class
@@ -53,11 +66,11 @@ const {
  * @augments Highcharts.Series
  *
  */
-class LollipopSeries extends DumbbellSeries {
+class LollipopSeries extends Series {
 
     /* *
      *
-     *  Static properties
+     *  Static Properties
      *
      * */
 
@@ -76,14 +89,12 @@ class LollipopSeries extends DumbbellSeries {
      * @product      highcharts highstock
      * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
      *               lowColor, stickyTracking, trackByArea
-     * @since 8.0.0
+     * @since        8.0.0
      * @optionparent plotOptions.lollipop
      */
     public static defaultOptions: LollipopSeriesOptions = merge(
-        DumbbellSeries.defaultOptions,
+        Series.defaultOptions,
         {
-            /** @ignore-option */
-            lowColor: void 0,
             /** @ignore-option */
             threshold: 0,
             /** @ignore-option */
@@ -103,9 +114,13 @@ class LollipopSeries extends DumbbellSeries {
                     halo: false
                 }
             },
-            tooltip: {
-                pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
-            }
+            /** @ignore-option */
+            lineWidth: 0,
+            dataLabels: {
+                align: void 0,
+                verticalAlign: void 0
+            },
+            pointRange: 1
         } as LollipopSeriesOptions);
 
     /* *
@@ -118,36 +133,60 @@ class LollipopSeries extends DumbbellSeries {
     public options: LollipopSeriesOptions = void 0 as any;
     public points: Array<LollipopPoint> = void 0 as any;
 
-    public toYData(point: LollipopPoint): Array<number> {
-        return [pick(point.y, point.low)];
-    }
+    /**
+     * Extend the series' drawPoints method by applying a connector
+     * and coloring markers.
+     * @private
+     *
+     * @function Highcharts.Series#drawPoints
+     *
+     * @param {Highcharts.Series} this The series of points.
+     *
+     */
+    public drawPoints(): void {
+        const series = this,
+            pointLength = series.points.length;
 
+        let i = 0,
+            point;
+
+        super.drawPoints.apply(series, arguments);
+
+        // Draw connectors
+        while (i < pointLength) {
+            point = series.points[i];
+            series.drawConnector(point);
+            i++;
+        }
+    }
 }
 
 /* *
  *
- *  Prototype properties
+ *  Class Prototype
  *
  * */
 
 interface LollipopSeries {
-    pointClass: typeof LollipopPoint;
-    pointArrayMap: Array<string>;
-    pointValKey: string;
-    translatePoint: typeof areaProto['translate'];
-    drawPoint: typeof areaProto['drawPoints'];
+    alignDataLabel: typeof colProto['alignDataLabel'];
+    crispCol: typeof colProto['crispCol'];
+    drawConnector: typeof dumbbellProto['drawConnector'];
     drawDataLabels: typeof colProto['drawDataLabels'];
-    setShapeArgs: typeof colProto['translate'];
+    getColumnMetrics: typeof colProto['getColumnMetrics'];
+    getConnectorAttribs: typeof dumbbellProto['getConnectorAttribs'];
+    pointClass: typeof LollipopPoint;
+    translate: typeof colProto['translate'];
 }
 
 extend(LollipopSeries.prototype, {
-    pointArrayMap: ['y'],
-    pointValKey: 'y',
-    translatePoint: areaProto.translate,
-    drawPoint: areaProto.drawPoints,
+    alignDataLabel: colProto.alignDataLabel,
+    crispCol: colProto.crispCol,
+    drawConnector: dumbbellProto.drawConnector,
     drawDataLabels: colProto.drawDataLabels,
-    setShapeArgs: colProto.translate,
-    pointClass: LollipopPoint
+    getColumnMetrics: colProto.getColumnMetrics,
+    getConnectorAttribs: dumbbellProto.getConnectorAttribs,
+    pointClass: LollipopPoint,
+    translate: colProto.translate
 });
 
 /* *
@@ -179,7 +218,7 @@ export default LollipopSeries;
  * The `lollipop` series. If the [type](#series.lollipop.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.lollipop,
+ * @extends   series,plotOptions.lollipop
  * @excluding boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
@@ -187,6 +226,7 @@ export default LollipopSeries;
  * @requires  modules/lollipop
  * @apioption series.lollipop
  */
+
 /**
  * An array of data points for the series. For the `lollipop` series type,
  * points can be given in the following ways:
@@ -251,10 +291,11 @@ export default LollipopSeries;
  */
 
 /**
-* The y value of the point.
-*
-* @type      {number|null}
-* @product   highcharts highstock
-* @apioption series.line.data.y
-*/
-''; // adds doclets above to transpiled file
+ * The y value of the point.
+ *
+ * @type      {number|null}
+ * @product   highcharts highstock
+ * @apioption series.line.data.y
+ */
+
+(''); // adds doclets above to transpiled file

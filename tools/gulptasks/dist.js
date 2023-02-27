@@ -10,7 +10,6 @@ const Gulp = require('gulp');
  *
  * */
 
-require('./dist-ant');
 require('./dist-clean');
 require('./dist-copy');
 require('./dist-examples');
@@ -31,12 +30,12 @@ Gulp.task(
         'scripts-ts',
         'scripts-js',
         'scripts-code',
+        'scripts-es5',
         'scripts-compile',
         'dist-clean',
         'dist-copy',
         'dist-examples',
         'dist-productsjs',
-        'dist-api',
         'jsdoc-dts',
         'lint-dts',
         'dist-compress'

@@ -41,7 +41,9 @@ const win = Highcharts.win,
  * @return {string|undefined}
  *         Blob
  */
-const dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL: string): (string|undefined) {
+const dataURLtoBlob = Highcharts.dataURLtoBlob = function (
+    dataURL: string
+): (string|undefined) {
     const parts = dataURL
         .replace(/filename=.*;/, '')
         .match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
@@ -50,11 +52,11 @@ const dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL: string): (st
     if (
         parts &&
         parts.length > 3 &&
-        win.atob &&
+        (win.atob) &&
         win.ArrayBuffer &&
         win.Uint8Array &&
         win.Blob &&
-        domurl.createObjectURL
+        (domurl.createObjectURL)
     ) {
         // Try to convert data URL to Blob
         const binStr = win.atob(parts[3]),
@@ -139,9 +141,9 @@ const downloadURL = Highcharts.downloadURL = function (
 };
 
 
-const exports = {
+const DownloadURL = {
     dataURLtoBlob,
     downloadURL
 };
 
-export default exports;
+export default DownloadURL;

@@ -30,7 +30,7 @@ import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis.js';
-import Palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
 import U from '../../Utilities.js';
 const {
@@ -204,7 +204,7 @@ class PlotLineOrBand {
             /**
              * SVG element of the plot line or band.
              *
-             * @name Highcharts.PlotLineOrBand#svgElement
+             * @name Highcharts.PlotLineOrBand#svgElem
              * @type {Highcharts.SVGElement}
              */
             plotLine.svgElem = svgElem = renderer
@@ -242,7 +242,7 @@ class PlotLineOrBand {
             (svgElem as any).attr({ d: path });
         } else if (svgElem) {
             if (path) {
-                svgElem.show(true);
+                svgElem.show();
                 svgElem.animate({ d: path });
             } else if (svgElem.d) {
                 svgElem.hide();
@@ -345,13 +345,15 @@ class PlotLineOrBand {
             width: arrayMax(xBounds) - x,
             height: arrayMax(yBounds) - y
         });
-
         if (!label.alignValue || label.alignValue === 'left') {
+            const width = optionsLabel.clip ?
+                axis.width : axis.chart.chartWidth;
+
             label.css({
                 width: (
                     label.rotation === 90 ?
                         axis.height - (label.alignAttr.y - axis.top) :
-                        axis.width - (label.alignAttr.x - axis.left)
+                        width - (label.alignAttr.x - axis.left)
                 ) + 'px'
             });
         }
@@ -383,7 +385,7 @@ class PlotLineOrBand {
         // remove it from the lookup
         erase(this.axis.plotLinesAndBands, this);
 
-        delete this.axis;
+        delete (this as Partial<this>).axis;
         destroyObjectProperties(this);
     }
 
@@ -912,6 +914,15 @@ export default PlotLineOrBand;
  * @default    left
  * @since      2.1
  * @apioption  xAxis.plotLines.label.align
+ */
+
+/**
+ * Whether to hide labels that are outside the plot area.
+ *
+ * @type      {boolean}
+ * @default   false
+ * @since 10.3.3
+ * @apioption xAxis.plotLines.labels.clip
  */
 
 /**

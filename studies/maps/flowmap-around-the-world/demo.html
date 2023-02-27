@@ -1,0 +1,159 @@
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/maps/modules/flowmap.js"></script>
+<script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
+
+<div id="container" style="height: 500px; width: 800px; margin: 0 auto;"></div>
+
+<script>
+    (async () => {
+        const topology = await fetch(
+            'https://code.highcharts.com/mapdata/custom/world.topo.json'
+        ).then(response => response.json());
+
+        Highcharts.mapChart('container', {
+            chart: {
+                map: topology
+            },
+
+            title: {
+                text: 'A tour around the world of Phileas Fogg'
+            },
+
+            subtitle: {
+                text: 'From the book by Jules Verne "Around the World in 80 Days"'
+            },
+
+            mapNavigation: {
+                enabled: true
+            },
+
+            series: [{
+                showInLegend: false,
+                states: {
+                    inactive: {
+                        enabled: false
+                    }
+                }
+            }, {
+                type: 'mappoint',
+                name: 'Cities',
+                data: [{
+                    id: 'London',
+                    lat: 51.3,
+                    lon: 0
+                }, {
+                    id: 'Suez',
+                    lat: 29.96,
+                    lon: 32.54
+                }, {
+                    id: 'Bombay',
+                    lat: 19.07,
+                    lon: 72.88
+                }, {
+                    id: 'Calcutta',
+                    lat: 22.57,
+                    lon: 88.3
+                }, {
+                    id: 'Hong Kong',
+                    lat: 22.39,
+                    lon: 114.11
+                }, {
+                    id: 'Yokohama',
+                    lat: 35.44,
+                    lon: 139.64
+                }, {
+                    id: 'San Francisco',
+                    lat: 37.78,
+                    lon: -122.42
+                }, {
+                    id: 'New York',
+                    lat: 40.71,
+                    lon: -74
+                }]
+            }, {
+                type: 'flowmap',
+                linkedTo: ':previous',
+                fillColor: '#37cc5f',
+                fillOpacity: '0.3',
+                color: '#18750f',
+                growTowards: true,
+
+                data: [{
+                    from: 'London',
+                    to: 'Suez',
+                    curveFactor: -1.5,
+                    weight: 7,
+                    markerEnd: {
+                        height: 10,
+                        width: 5
+                    }
+                }, {
+                    from: 'Suez',
+                    to: 'Bombay',
+                    curveFactor: 0.4,
+                    weight: 13,
+                    markerEnd: {
+                        height: 15,
+                        width: 8
+                    }
+                }, {
+                    from: 'Bombay',
+                    to: 'Calcutta',
+                    curveFactor: -0.4,
+                    weight: 3,
+                    markerEnd: {
+                        height: 10,
+                        width: 5
+                    }
+                }, {
+                    from: 'Calcutta',
+                    to: 'Hong Kong',
+                    curveFactor: 0.4,
+                    weight: 13,
+                    markerEnd: {
+                        height: 15,
+                        width: 8
+                    }
+                }, {
+                    from: 'Hong Kong',
+                    to: 'Yokohama',
+                    curveFactor: 0.4,
+                    weight: 6,
+                    markerEnd: {
+                        height: 10,
+                        width: 5
+                    }
+                }, {
+                    from: 'Yokohama',
+                    to: 'San Francisco',
+                    curveFactor: -0.55,
+                    weight: 22,
+                    markerEnd: {
+                        height: 30,
+                        width: 10
+                    }
+                }, {
+                    from: 'San Francisco',
+                    to: 'New York',
+                    curveFactor: -0.7,
+                    weight: 7,
+                    markerEnd: {
+                        height: 15,
+                        width: 8
+                    }
+                }, {
+                    from: 'New York',
+                    to: 'London',
+                    curveFactor: 0.4,
+                    weight: 9,
+                    markerEnd: {
+                        height: 15,
+                        width: 8
+                    }
+                }]
+            }]
+        });
+    })();
+</script>

@@ -1,56 +1,64 @@
-var chart;
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
 
-    // Initiate the chart
-    chart = Highcharts.mapChart('container', {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
 
-        title: {
-            text: 'Update the color axis'
-        },
+    var chart;
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            type: 'logarithmic',
-            minColor: '#FFFFFF',
-            maxColor: '#000000',
-            tickPixelInterval: 100
-        },
+        // Initialize the chart
+        chart = Highcharts.mapChart('container', {
 
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
+            title: {
+                text: 'Update the color axis'
             },
-            tooltip: {
-                valueSuffix: '/km²'
-            }
-        }]
+
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic',
+                minColor: '#FFFFFF',
+                maxColor: '#000000',
+                tickPixelInterval: 100
+            },
+
+            series: [{
+                data: data,
+                mapData: topology,
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
+                }
+            }]
+        });
     });
-});
 
-let blackAndWhite = true,
-    log = true;
+    let blackAndWhite = true,
+        log = true;
 
-document.getElementById('update-color').onclick = () => {
-    const colorAxis = chart.colorAxis[0];
+    document.getElementById('update-color').onclick = () => {
+        const colorAxis = chart.colorAxis[0];
 
-    colorAxis.update({
-        maxColor: blackAndWhite ? '#980043' : '#000000'
-    });
-    blackAndWhite = !blackAndWhite;
-};
+        colorAxis.update({
+            maxColor: blackAndWhite ? '#980043' : '#000000'
+        });
+        blackAndWhite = !blackAndWhite;
+    };
 
-document.getElementById('update-linlog').onclick = () => {
-    const colorAxis = chart.colorAxis[0];
+    document.getElementById('update-linlog').onclick = () => {
+        const colorAxis = chart.colorAxis[0];
 
-    colorAxis.update({
-        type: log ? 'linear' : 'logarithmic'
-    });
-    log = !log;
-};
+        colorAxis.update({
+            type: log ? 'linear' : 'logarithmic'
+        });
+        log = !log;
+    };
+
+})();

@@ -2,6 +2,7 @@
 /* eslint-disable */
 /* global __karma__, Highcharts, Promise, QUnit */
 
+
 /**
  * This file runs in the browser as setup for the karma tests.
  */
@@ -90,6 +91,9 @@ Highcharts.setOptions({
     },
     tooltip: {
         animation: false
+    },
+    drilldown: {
+        animation: false
     }
 });
 // Save default functions from the default options, as they are not stringified
@@ -126,6 +130,7 @@ handleDefaultOptionsFunctions(true);
 Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
+/*
 // Override Highcharts and jQuery ajax functions to load from local
 function ajax(proceed, attr) {
     var success = attr.success;
@@ -148,6 +153,61 @@ Highcharts.wrap(Highcharts, 'ajax', ajax);
 if (window.$) {
     $.getJSON = function (url, callback) { // eslint-disable-line no-undef
         callback(window.JSONSources[url]);
+    };
+}
+*/
+
+// Hijack XHMLHttpRequest to run local JSON sources
+var open = XMLHttpRequest.prototype.open;
+var send = XMLHttpRequest.prototype.send;
+XMLHttpRequest.prototype.open = function (type, url) {
+    this.requestURL = url;
+    return open.apply(this, arguments);
+}
+
+XMLHttpRequest.prototype.send = function () {
+    var localData = this.requestURL && window.JSONSources[this.requestURL];
+    if (localData) {
+        Object.defineProperty(this, 'readyState', {
+            get: function () { return 4; }
+        });
+        Object.defineProperty(this, 'status', {
+            get: function () { return 200; }
+        });
+        Object.defineProperty(this, 'responseText', {
+            get: function () { return JSON.stringify(localData); }
+        });
+
+        this.onreadystatechange();
+    } else {
+        return send.apply(this, arguments);
+    }
+}
+
+// Hijack fetch to run local sources. Note the oldIE-friendly syntax.
+if (window.Promise) {
+    window.fetch = function (url) {
+        return new Promise(function (resolve, reject) {
+            var localData = url && window.JSONSources[url];
+            if (localData) {
+                // Fake the return
+                resolve({
+                    ok: true,
+                    status: 200,
+                    statusText: 'OK',
+                    type: 'basic',
+                    url: url,
+                    json: function () {
+                        return localData;
+                    },
+                    text: function () {
+                        return localData;
+                    }
+                });
+            } else {
+                reject('Sample error, URL "' + url + '" missing in JSONSources (trying to fetch)');
+            }
+        });
     };
 }
 
@@ -210,7 +270,7 @@ if (window.QUnit) {
         !Number.prototype._toString
     ) {
         Number.prototype._toString = Number.prototype.toString;
-        Number.prototype.toString = function(radix) {
+        Number.prototype.toString = function (radix) {
             if (radix) {
                 return Number.prototype._toString.apply(this, arguments);
             } else {
@@ -308,10 +368,18 @@ if (window.QUnit) {
             }
 
             var containerStyle = document.getElementById('container').style;
+            containerStyle.display = '';
+            containerStyle.float = '';
             containerStyle.width = '';
+            containerStyle.maxWidth = '';
+            containerStyle.minWidth = '';
             containerStyle.height = '';
+            containerStyle.maxHeight = '';
+            containerStyle.minHeight = '';
             containerStyle.position = '';
+            containerStyle.bottom = '';
             containerStyle.left = '';
+            containerStyle.right = '';
             containerStyle.top = '';
             containerStyle.zIndex = '';
 
@@ -453,14 +521,35 @@ function getSVG(chart) {
             );
 
         if (chart.styledMode) {
-            svg = svg.replace(
-                '</style>',
-                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } '
-                + 'text, tspan { fill: blue; stroke: none; } </style>'
-            );
+            var highchartsCSS = document.getElementById('highcharts.css');
+            if (highchartsCSS) {
+                svg = svg
+                    // Get the typography styling right
+                    .replace(
+                        ' class="highcharts-root" ',
+                        ' class="highcharts-root highcharts-container" ' +
+                            'style="width:auto; height:auto" '
+                    )
+
+                    // Insert highcharts.css
+                    .replace(
+                        '</defs>',
+                        '<style>' + highchartsCSS.innerText + '</style></defs>'
+                );
+            }
+
+            var demoCSS = document.getElementById('demo.css');
+            if (demoCSS) {
+                svg = svg
+                    // Insert demo.css
+                    .replace(
+                        '</defs>',
+                        '<style>' + demoCSS.innerText + '</style></defs>'
+                );
+            }
         }
 
-    // Renderer samples
+        // Renderer samples
     } else {
         if (document.getElementsByTagName('svg').length) {
             svg = document.getElementsByTagName('svg')[0].outerHTML;
@@ -502,7 +591,7 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 function xhrLoad(url, callback) {
     var xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             callback(xhr);
         }
@@ -627,10 +716,10 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 }
                 resolve(diff);
             })
-            ['catch'](function (error) { // to avoid IE8 failure
-                console.log(error && error.message);
-                resolve(error && error.message); // skip and continue processing
-            });
+        ['catch'](function (error) { // to avoid IE8 failure
+            console.log(error && error.message);
+            resolve(error && error.message); // skip and continue processing
+        });
 
     });
 }

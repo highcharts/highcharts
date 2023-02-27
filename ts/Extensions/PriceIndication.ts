@@ -24,8 +24,9 @@ const {
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         lastPrice?: SVGElement;
+        lastPriceLabel?: SVGElement;
         lastVisiblePrice?: SVGElement;
-        crossLabel?: SVGElement;
+        lastVisiblePriceLabel?: SVGElement;
     }
 }
 
@@ -338,11 +339,18 @@ addEvent(Series, 'afterRender', function (): void {
                     seriesOptions.lastPrice
             ) {
                 // Set the default color from the series, #14888.
-                yAxis.crosshair.color = yAxis.options.crosshair.color = seriesOptions.lastPrice.color || series.color;
+                yAxis.crosshair.color = yAxis.options.crosshair.color =
+                    seriesOptions.lastPrice.color || series.color;
             }
 
             yAxis.cross = series.lastPrice;
             yValue = isArray(y) ? y[3] : y;
+
+            if (series.lastPriceLabel) {
+                series.lastPriceLabel.destroy();
+            }
+
+            delete yAxis.crossLabel;
 
             yAxis.drawCrosshair((null as any), ({
                 x: x,
@@ -354,9 +362,13 @@ addEvent(Series, 'afterRender', function (): void {
             // Save price
             if (series.yAxis.cross) {
                 series.lastPrice = series.yAxis.cross;
-                series.lastPrice.addClass('highcharts-color-' + series.colorIndex); // #15222
+                series.lastPrice.addClass(
+                    'highcharts-color-' + series.colorIndex
+                ); // #15222
                 series.lastPrice.y = yValue;
             }
+
+            series.lastPriceLabel = yAxis.crossLabel;
         }
 
         if (lastVisiblePrice && lastVisiblePrice.enabled && pLength > 0) {
@@ -369,8 +381,8 @@ addEvent(Series, 'afterRender', function (): void {
             yAxis.cross = series.lastVisiblePrice;
             lastPoint = points[pLength - crop];
 
-            if (series.crossLabel) {
-                series.crossLabel.destroy();
+            if (series.lastVisiblePriceLabel) {
+                series.lastVisiblePriceLabel.destroy();
             }
             // Set to undefined to avoid collision with
             // the yAxis crosshair #11480
@@ -387,7 +399,7 @@ addEvent(Series, 'afterRender', function (): void {
                 }
             }
 
-            series.crossLabel = yAxis.crossLabel;
+            series.lastVisiblePriceLabel = yAxis.crossLabel;
         }
 
         // Restore crosshair:

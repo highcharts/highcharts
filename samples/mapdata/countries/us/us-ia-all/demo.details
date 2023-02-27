@@ -1,5 +1,5 @@
 ---
- name: Iowa - Highmaps
- description: Highmaps demo
+ name: Iowa - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

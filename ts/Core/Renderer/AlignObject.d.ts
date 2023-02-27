@@ -13,6 +13,7 @@
  *  Declatations
  *
  * */
+
 export type AlignValue = ('center'|'left'|'right');
 
 export type VerticalAlignValue = ('bottom'|'middle'|'top');
@@ -24,11 +25,12 @@ export interface AlignObject {
     x?: number;
     y?: number;
     width?: number;
+    height?: number;
 }
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

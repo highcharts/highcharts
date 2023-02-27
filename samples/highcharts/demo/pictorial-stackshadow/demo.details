@@ -1,0 +1,13 @@
+---
+name: Pictorial chart
+author:
+  - Magdalena Gut
+js_wrap: b
+alt_text: >-
+  Highcharts pictorial chart JavaScript example visualizes
+  Composition of the human body.
+tags:
+  - Highcharts demo
+categories:
+  - More chart types
+...

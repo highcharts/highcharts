@@ -9,10 +9,14 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: '3D chart with null values'
+        text: 'External trade in goods by country, Norway 2021',
+        align: 'left'
     },
     subtitle: {
-        text: 'Notice the difference between a 0 value and a null point'
+        text: 'Source: ' +
+            '<a href="https://www.ssb.no/en/statbank/table/08804/"' +
+            'target="_blank">SSB</a>',
+        align: 'left'
     },
     plotOptions: {
         column: {
@@ -20,7 +24,8 @@ Highcharts.chart('container', {
         }
     },
     xAxis: {
-        categories: Highcharts.getOptions().lang.shortMonths,
+        categories: ['Belgium', 'China', 'Denmark', 'Fiji', 'Germany', 'Netherlands', 'Russia',
+            'Sweden', 'Turkey', 'United States', 'Unspecified', 'Vietnam'],
         labels: {
             skew3d: true,
             style: {
@@ -30,11 +35,16 @@ Highcharts.chart('container', {
     },
     yAxis: {
         title: {
-            text: null
+            text: 'NOK (million)',
+            margin: 20
         }
     },
+    tooltip: {
+        valueSuffix: ' MNOK'
+    },
     series: [{
-        name: 'Sales',
-        data: [2, 3, null, 4, 0, 5, 1, 4, 6, 3]
+        name: 'Total imports',
+        data: [16076, 112688, 39452, 0, 94352,
+            30495, 21813, 95908, 11596, 53771, null, 8270]
     }]
 });

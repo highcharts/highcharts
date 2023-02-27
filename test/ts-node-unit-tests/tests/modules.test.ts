@@ -54,6 +54,7 @@ export function testStockSeries() {
         'bar',
         'scatter',
         'pie',
+        'hlc',
         'ohlc',
         'candlestick',
         'flags'
@@ -215,10 +216,12 @@ export function testStockIndicators() {
         'bar',
         'scatter',
         'pie',
+        'hlc',
         'ohlc',
         'candlestick',
         'flags',
         'sma',
+        'ema',
         'ad',
         'ao',
         'aroon',
@@ -229,7 +232,6 @@ export function testStockIndicators() {
         'cmf',
         'dmi',
         'dpo',
-        'ema',
         'chaikin',
         'cmo',
         'dema',
@@ -370,7 +372,7 @@ export function testHighchartsWithModules() {
     // Series Label
     require('../../../code/modules/series-label.src')(Highcharts);
     strictEqual(
-        typeof Highcharts.Series.prototype.checkClearPoint,
+        typeof Highcharts.SVGRenderer.prototype.symbols.connector,
         'function',
         'Series Label is loaded.'
     );

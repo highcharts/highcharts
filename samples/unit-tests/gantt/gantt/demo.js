@@ -140,7 +140,7 @@
             'Point with milestone:true is a milestone'
         );
 
-        assert.equal(typeof milestone.d, 'string', "Milestone has a 'd' value");
+        assert.equal(typeof milestone.d, 'string', 'Milestone has a \'d\' value');
 
         // Remove path letters
         path = milestone.d.replace(/[a-zA-Z]/g, '');
@@ -653,7 +653,7 @@
 
             assert.strictEqual(
                 chart.yAxis[0].grid.columns[0].ticks[3].label.visibility,
-                'visible',
+                'inherit',
                 'Tick marker with index 3 should be visible again.'
             );
         }

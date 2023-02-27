@@ -12,20 +12,20 @@
  * */
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from '../SMA/SMAOptions';
-import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
-export interface AroonOptions extends SMAOptions, Highcharts.MultipleLinesIndicatorOptions {
+export interface AroonOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     aroonDown?: Record<string, CSSObject>;
     marker?: PointMarkerOptions;
     params?: AroonParamsOptions;
@@ -34,5 +34,11 @@ export interface AroonOptions extends SMAOptions, Highcharts.MultipleLinesIndica
 export interface AroonParamsOptions extends SMAParamsOptions {
     period?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default AroonOptions;

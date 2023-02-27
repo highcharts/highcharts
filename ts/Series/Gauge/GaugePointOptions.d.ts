@@ -27,7 +27,7 @@ interface GaugePointOptions extends LinePointOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

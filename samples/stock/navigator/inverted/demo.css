@@ -1,9 +1,9 @@
 #container {
-	height: 400px;
-	max-width: 600px;
-	margin: auto;
+    height: 400px;
+    max-width: 600px;
+    margin: auto;
 }
 
 .highcharts-tooltip span {
-	white-space: normal !important;
+    white-space: normal !important;
 }

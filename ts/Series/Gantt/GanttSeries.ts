@@ -41,9 +41,8 @@ const {
     splat
 } = U;
 
-import TreeGridAxis from '../../Core/Axis/TreeGridAxis.js';
+import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
 TreeGridAxis.compose(Axis, Chart, Series, Tick);
-import '../../Extensions/CurrentDateIndication.js';
 import '../../Extensions/StaticScale.js';
 import '../../Gantt/Pathfinder.js';
 
@@ -109,8 +108,14 @@ class GanttSeries extends XRangeSeries {
                     );
                 }
 
-                start = series.chart.time.dateFormat(format as any, point.start as any);
-                end = series.chart.time.dateFormat(format as any, point.end as any);
+                start = series.chart.time.dateFormat(
+                    format as any,
+                    point.start as any
+                );
+                end = series.chart.time.dateFormat(
+                    format as any,
+                    point.end as any
+                );
 
                 retVal += '<br/>';
 
@@ -137,11 +142,11 @@ class GanttSeries extends XRangeSeries {
                 symbol: 'arrow-filled',
                 radius: 4,
                 fill: '#fa0',
-                align: 'left' as 'left'
+                align: 'left' as const
             },
             endMarker: {
                 enabled: false, // Only show arrow on the dependent task
-                align: 'right' as 'right'
+                align: 'right' as const
             }
         }
     } as GanttSeriesOptions);
@@ -198,7 +203,11 @@ class GanttSeries extends XRangeSeries {
             diamondShape: SVGPath;
 
         if (point.options.milestone) {
-            if (isNumber(plotY) && point.y !== null && point.visible !== false) {
+            if (
+                isNumber(plotY) &&
+                point.y !== null &&
+                point.visible !== false
+            ) {
                 diamondShape = renderer.symbols.diamond(
                     shapeArgs.x || 0,
                     shapeArgs.y || 0,
@@ -259,7 +268,7 @@ class GanttSeries extends XRangeSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -268,9 +277,6 @@ interface GanttSeries{
     pointClass: typeof GanttPoint;
 }
 extend(GanttSeries.prototype, { // props - series member overrides
-
-    // Keyboard navigation, don't use nearest vertical mode
-    keyboardMoveVertical: false,
 
     pointArrayMap: ['start', 'end', 'y'],
 

@@ -40,7 +40,7 @@ QUnit.test('Update map navigation (#6369)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.mapNavButtons[0].box.element.getAttribute('fill'),
+        chart.mapNavigation.navButtons[0].box.element.getAttribute('fill'),
         'white',
         'White button'
     );
@@ -56,7 +56,7 @@ QUnit.test('Update map navigation (#6369)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.mapNavButtons[0].box.element.getAttribute('fill'),
+        chart.mapNavigation.navButtons[0].box.element.getAttribute('fill'),
         'black',
         'Black button'
     );
@@ -67,7 +67,7 @@ QUnit.test('Update map navigation (#6369)', function (assert) {
         }
     });
 
-    assert.strictEqual(chart.mapNavButtons[0], undefined, 'No button');
+    assert.strictEqual(chart.mapNavigation.navButtons[0], undefined, 'No button');
 
     chart.update({
         mapNavigation: {
@@ -76,7 +76,7 @@ QUnit.test('Update map navigation (#6369)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.mapNavButtons[0].box.element.getAttribute('fill'),
+        chart.mapNavigation.navButtons[0].box.element.getAttribute('fill'),
         'black',
         'Black button'
     );

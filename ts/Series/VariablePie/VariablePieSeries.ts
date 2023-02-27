@@ -37,6 +37,12 @@ const {
     pick
 } = U;
 
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        maxPxSize?: number;
+        minPxSize?: number;
+    }
+}
 /* *
  *
  *  Class
@@ -431,7 +437,7 @@ class VariablePieSeries extends PieSeries {
                     y: positions[1] + pointRadiusY +
                         Math.sin(angle) * point.labelDistance
                 },
-                'final': {
+                computed: {
                     // used for generating connector path -
                     // initialized later in drawDataLabels function
                     // x: undefined,
@@ -478,7 +484,7 @@ class VariablePieSeries extends PieSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

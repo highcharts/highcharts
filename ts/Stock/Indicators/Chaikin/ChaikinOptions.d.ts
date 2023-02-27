@@ -18,10 +18,10 @@ import type {
 } from '../EMA/EMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface ChaikinOptions extends EMAOptions {
     params?: ChaikinParamsOptions;
@@ -31,5 +31,11 @@ export interface ChaikinParamsOptions extends EMAParamsOptions {
     periods?: Array<number>;
     volumeSeriesID?: string;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ChaikinOptions;

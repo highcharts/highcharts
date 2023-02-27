@@ -1,15 +1,15 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #container {
-	height: 400px;
-	max-width: 800px;
-	margin: 0 auto;
+    height: 400px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 /* General data label style */
 .highcharts-data-label text {
-	fill: black;
-	text-shadow: 1px 1px white, 1px -1px white, -1px -1px white, -1px 1px white;
+    fill: black;
+    text-shadow: 1px 1px white, 1px -1px white, -1px -1px white, -1px 1px white;
 }
 
 /* For the darkest columns, invert the data label text color and shadow */
@@ -18,6 +18,6 @@
 .highcharts-data-label-color-4 text,
 .highcharts-data-label-color-5 text,
 .highcharts-data-label-color-7 text {
-	fill: white;
-	text-shadow: 1px 1px black, 1px -1px black, -1px -1px black, -1px 1px black;
+    fill: white;
+    text-shadow: 1px 1px black, 1px -1px black, -1px -1px black, -1px 1px black;
 }

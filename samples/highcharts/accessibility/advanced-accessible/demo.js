@@ -34,7 +34,7 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
 
             graphic.attr({
                 stroke: point.color || series.color,
-                "stroke-width": 1
+                'stroke-width': 1
             });
 
             graphic[verb]({
@@ -77,11 +77,7 @@ var chart = Highcharts.chart('container', {
         },
 
         series: {
-            descriptionFormatter: function (series) {
-                return series.name + ', series ' + (series.index + 1) + ' of ' +
-                    series.chart.series.length + ' with ' + series.points.length +
-                    ' data points.';
-            }
+            descriptionFormat: '{seriesDescription}'
         },
 
         typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
@@ -115,7 +111,8 @@ var chart = Highcharts.chart('container', {
     },
 
     tooltip: {
-        shared: true
+        shared: true,
+        stickOnContact: true
     },
 
     plotOptions: {

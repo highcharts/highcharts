@@ -3,16 +3,19 @@ Highcharts.chart('container', {
         type: 'area'
     },
     title: {
-        text: 'Historic and Estimated Worldwide Population Distribution by Region'
+        useHTML: true,
+        text: 'Countries/regions with highest Gt CO<sub>2</sub>-emissions',
+        align: 'left'
     },
     subtitle: {
-        text: 'Source: Wikipedia.org'
+        text: 'Source: ' +
+            '<a href="https://energiogklima.no/klimavakten/land-med-hoyest-utslipp/"' +
+            'target="_blank">Energi og Klima</a>',
+        align: 'left'
     },
-    xAxis: {
-        categories: ['1750', '1800', '1850', '1900', '1950', '1999', '2050'],
-        tickmarkPlacement: 'on',
-        title: {
-            enabled: false
+    accessibility: {
+        point: {
+            valueDescriptionFormat: '{index}. {point.category}, {point.y:,.1f} billions, {point.percentage:.1f}%.'
         }
     },
     yAxis: {
@@ -24,44 +27,41 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.0f} millions)<br/>',
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.1f} billion Gt)<br/>',
         split: true
     },
     plotOptions: {
+        series: {
+            pointStart: 1990
+        },
         area: {
             stacking: 'percent',
-            lineColor: '#ffffff',
-            lineWidth: 1,
             marker: {
-                lineWidth: 1,
-                lineColor: '#ffffff'
-            },
-            accessibility: {
-                pointDescriptionFormatter: function (point) {
-                    function round(x) {
-                        return Math.round(x * 100) / 100;
-                    }
-                    return (point.index + 1) + ', ' + point.category + ', ' +
-                        point.y + ' millions, ' + round(point.percentage) + '%, ' +
-                        point.series.name;
-                }
+                enabled: false
             }
         }
     },
     series: [{
-        name: 'Asia',
-        data: [502, 635, 809, 947, 1402, 3634, 5268]
+        name: 'China',
+        data: [2.5, 2.6, 2.7, 2.9, 3.1, 3.4, 3.5, 3.5, 3.4, 3.4, 3.4,
+            3.5, 3.9, 4.5, 5.2, 5.9, 6.5, 7, 7.5, 7.9, 8.6, 9.5, 9.8,
+            10, 10, 9.8, 9.7, 9.9, 10.3, 10.5, 10.7, 10.9
+        ]
     }, {
-        name: 'Africa',
-        data: [106, 107, 111, 133, 221, 767, 1766]
+        name: 'USA',
+        data: [5.1, 5.1, 5.2, 5.3, 5.4, 5.4, 5.6, 5.7, 5.7, 5.8, 6, 5.9,
+            5.9, 6, 6.1, 6.1, 6.1, 6.1, 5.9, 5.5, 5.7, 5.5, 5.3, 5.5,
+            5.5, 5.4, 5.2, 5.2, 5.4, 5.3, 4.7, 5
+        ]
     }, {
-        name: 'Europe',
-        data: [163, 203, 276, 408, 547, 729, 628]
+        name: 'EU',
+        data: [3.9, 3.8, 3.7, 3.6, 3.6, 3.6, 3.7, 3.7, 3.6, 3.6, 3.6, 3.7,
+            3.7, 3.7, 3.8, 3.7, 3.7, 3.7, 3.6, 3.3, 3.4, 3.3, 3.3, 3.2, 3,
+            3.1, 3.1, 3.1, 3, 2.9, 2.6, 2.7]
     }, {
-        name: 'America',
-        data: [18, 31, 54, 156, 339, 818, 1201]
-    }, {
-        name: 'Oceania',
-        data: [2, 2, 2, 6, 13, 30, 46]
+        name: 'India',
+        data: [0.6, 0.6, 0.7, 0.7, 0.7, 0.8, 0.8, 0.9, 0.9, 1, 1, 1,
+            1, 1.1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 2, 2,
+            2.2, 2.3, 2.4, 2.4, 2.6, 2.6, 2.4, 2.7]
     }]
 });

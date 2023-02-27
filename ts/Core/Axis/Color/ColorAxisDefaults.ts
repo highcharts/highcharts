@@ -18,11 +18,11 @@
 
 import type ColorAxis from './ColorAxis';
 
-import Palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 
 /* *
  *
- *  Constants
+ *  API Options
  *
  * */
 
@@ -74,7 +74,8 @@ import Palette from '../../Color/Palette.js';
  *               categories, crosshair, dateTimeLabelFormats, height, left,
  *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
  *               offset, opposite, pane, plotBands, plotLines,
- *               reversedStacks, showEmpty, title, top, width, zoomEnabled
+ *               reversedStacks, scrollbar, showEmpty, title, top, width,
+ *               zoomEnabled
  * @product      highcharts highstock highmaps
  * @type         {*|Array<*>}
  * @optionparent colorAxis
@@ -409,6 +410,10 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * first item is a float between 0 and 1 assigning the relative
      * position in the gradient, and the second item is the color.
      *
+     * @sample highcharts/coloraxis/coloraxis-stops/
+     *         Color axis stops
+     * @sample highcharts/coloraxis/color-key-with-stops/
+     *         Color axis stops with custom colorKey
      * @sample {highmaps} maps/demo/heatmap/
      *         Heatmap with three color stops
      *

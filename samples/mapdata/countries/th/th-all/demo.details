@@ -1,5 +1,5 @@
 ---
- name: Thailand - Highmaps
- description: Highmaps demo
+ name: Thailand - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

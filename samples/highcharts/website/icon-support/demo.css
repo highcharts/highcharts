@@ -1,0 +1,257 @@
+@import "https://code.highcharts.com/css/highcharts.css";
+
+.chart-container .thick {
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+.chart-container .thin {
+    /* transform:translate(0px, 1px); */
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+.chart-container .transparent {
+    opacity: 100%;
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+.chart-container .highcharts-area,
+.chart-container .highcharts-arearange {
+    fill-opacity: 1;
+    stroke: transparent;
+}
+
+.line {
+    color: #fff;
+    stroke: #fff;
+    stroke-width: 1px;
+}
+
+.chart-container .highcharts-container {
+    position: relative;
+    overflow: hidden;
+    width: 500px;
+    height: 500px;
+    text-align: left;
+    line-height: normal;
+    z-index: 0;
+
+    /* #1072 */
+    -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+    user-select: none;
+    touch-action: manipulation;
+    outline: none;
+}
+
+.chart-container .highcharts-background {
+    background-color: "#fff";/* '#F0F0F0', */
+    transition: all 1s;
+}
+
+.chart-container .highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 1px;
+}
+
+.chart-container .highcharts-grid-line {
+    fill: none;
+    stroke: transparent;
+    z-index: 40;
+}
+
+.chart-container .highcharts-plot-band,
+.highcharts-pane {
+    fill: #30426b;
+    fill-opacity: 1;
+    z-index: 30;
+}
+
+.chart-container .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
+.chart-container .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
+.chart-container .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
+.chart-container .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
+    opacity: 100%;
+}
+
+.chart-container .highcharts-series-inactive {
+    opacity: 100%;
+    transition: opacity 50ms;
+}
+
+.chart-container .highcharts-tooltip-0 {
+    filter: drop-shadow(5px 7px 13px rgb(0 0 0 / 14%)) !important;
+    box-shadow: 5px 7px 13px 1px rgb(0 0 0 / 14%);
+}
+
+.chart-container .highcharts-tooltip-box {
+    stroke-width: 0;
+    border: none;
+    stroke: #ebebeb;
+    fill: #fff;
+    fill-opacity: 1;
+}
+
+.chart-container .highcharts-tooltip text {
+    fill: #333;
+    font-family: "IBM Plex Sans", sans-serif;
+}
+
+.chart-container .highcharts-tooltip {
+    z-index: 100;
+}
+
+.chart-container .highcharts-graph {
+    fill: unset;
+    stroke-width: unset;
+    stroke: unset;
+    stroke-linecap: butt;
+    stroke-linejoin: round;
+}
+
+#support {
+    width: 250px;
+    height: 250px;
+}
+
+#support .face {
+    transition: all 2s;
+    transform-origin: center;
+    transform: scale(0.5) rotate(-45deg);
+}
+
+#support .face image {
+    transform-origin: center;
+    width: 150px;
+    transform: translate(-70px, -70px);
+    height: 150px;
+}
+
+#support .head path {
+    stroke-width: 18px;
+}
+
+#support .head {
+    clip-path: url(#myClipSmall);
+    fill: #8087e8;
+    transform-origin: center;
+    transition: all 2s;
+    transform: scale(1.2) rotate(-45deg);
+}
+
+#support .head .highcharts-color-0,
+#support .head .highcharts-color-1,
+#support .head .highcharts-color-2,
+#support .head .highcharts-color-3 {
+    fill: #8087e8;
+}
+
+#support .head-cover {
+    stroke: transparent;
+}
+
+#support .highcharts-plot-background {
+    fill: #46445d;
+    stroke: transparent;
+}
+
+#support .foreground,
+#support .midground {
+    fill: #201836;
+    stroke: transparent;
+}
+
+#support .transparent {
+    fill: transparent;
+    stroke: transparent;
+}
+
+#support .green {
+    fill: #8bf2b6;
+    stroke: #8bf2b6;
+}
+
+#support .particles image {
+    transition: all 3s;
+}
+
+#support .particles .particle-3 {
+    transform: translate(55px, 20px) rotate(50deg) scale(0.6);
+    transform-origin: center;
+}
+
+#support .particles .particle-6 {
+    /* transform:translate(0px,0px) rotate(315deg); */
+    transform: translate(20px, 26px) rotate(0deg) scale(0.5);
+    transform-origin: center;
+}
+
+#support .particles .particle-1 {
+    /* transform:translate(0px,0px) rotate(0deg); */
+    transform: translate(-20px, 32px) rotate(320deg) scale(0.5);
+    transform-origin: center;
+}
+
+#support .particles .particle-5 {
+    transform: translate(-55px, 30px) rotate(-30deg) scale(0.6);
+    transform-origin: center;
+}
+
+@media screen  and (min-width: 500px) {
+    #support {
+        width: 500px;
+        height: 500px;
+    }
+
+    #support .face {
+        transition: all 2s;
+        transform-origin: center;
+        transform: rotate(-45deg);
+    }
+
+    #support .face image {
+        transform-origin: center;
+    }
+
+    #support .head path {
+        stroke-width: 40px;
+    }
+
+    #support .head {
+        clip-path: url(#myClip);
+        fill: #8087e8;
+        transform-origin: center;
+        transition: all 2s;
+        transform: rotate(-45deg);
+    }
+
+    #support .particles .particle-3 {
+        transform: translate(0, 0) rotate(50deg) scale(1);
+        transform-origin: center;
+    }
+
+    #support .particles .particle-6 {
+        /* transform:translate(0px,0px) rotate(315deg); */
+        transform: translate(40px, 4px) rotate(0deg) scale(1);
+        transform-origin: center;
+    }
+
+    #support .particles .particle-1 {
+        /* transform:translate(0px,0px) rotate(0deg); */
+        transform: translate(-20px, 4px) rotate(320deg) scale(1);
+        transform-origin: center;
+    }
+
+    #support .particles .particle-5 {
+        transform: translate(0, 0) rotate(-30deg) scale(1);
+        transform-origin: center;
+    }
+}

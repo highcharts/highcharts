@@ -1,31 +1,18 @@
 let chart;
 
-function getScript(url, cb) {
-    const script = document.createElement('script');
-    script.src = url;
-    script.onload = cb;
-    document.head.appendChild(script);
-}
-
-function showMap(mapKey) {
-    const supportsLatLon = !!Highcharts.maps[mapKey]['hc-transform'];
-
-    // Initiate the chart
+function showMap(topology) {
+    // Initialize the chart
     chart = Highcharts.mapChart('container', {
         chart: {
             events: {
                 click: function (e) {
-                    var series = this.get(document.querySelector('input[name=series]:checked').value),
-                        x = Math.round(e.xAxis[0].value),
-                        y = Math.round(e.yAxis[0].value);
+                    const series = this.get(
+                        document
+                            .querySelector('input[name=series]:checked')
+                            .value
+                    );
 
-                    series.addPoint(supportsLatLon ? this.fromPointToLatLon({
-                        x: x,
-                        y: y
-                    }) : {
-                        x: x,
-                        y: y
-                    });
+                    series.addPoint({ lon: e.lon, lat: e.lat });
                 }
             },
             animation: false
@@ -35,8 +22,7 @@ function showMap(mapKey) {
             text: 'Draw your own points or lines'
         },
 
-        subtitle: supportsLatLon ? {} : {
-            text: 'This map does not support latitude/longitude - x/y coordinates will be used',
+        subtitle: {
             style: {
                 color: 'red'
             }
@@ -54,9 +40,7 @@ function showMap(mapKey) {
         },
 
         tooltip: {
-            pointFormatter: function () {
-                return supportsLatLon ? 'Lat: ' + this.lat.toFixed(3) + ', Lon: ' + this.lon.toFixed(3) : 'x: ' + this.x + ', y: ' + this.y;
-            }
+            pointFormat: 'Lon: {point.lon:.2f}, Lat: {point.lat:.2f}'
         },
 
         plotOptions: {
@@ -66,12 +50,10 @@ function showMap(mapKey) {
                     events: {
                         // Update lat/lon properties after dragging point
                         drop: function () {
-                            var newLatLon;
-                            if (supportsLatLon) {
-                                newLatLon = this.series.chart.fromPointToLatLon(this);
-                                this.lat = newLatLon.lat;
-                                this.lon = newLatLon.lon;
-                            }
+                            const newLatLon = this.series.chart
+                                .fromPointToLatLon(this);
+                            this.lat = newLatLon.lat;
+                            this.lon = newLatLon.lon;
                         }
                     }
                 }
@@ -79,7 +61,7 @@ function showMap(mapKey) {
         },
 
         series: [{
-            mapData: Highcharts.maps[mapKey]
+            mapData: topology
         }, {
             type: 'mappoint',
             id: 'points',
@@ -120,8 +102,12 @@ function showMap(mapKey) {
     });
 }
 
-(function () {
-    showMap('custom/world');
+(async () => {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
+
+    showMap(topology);
 
     const container = document.getElementById('container');
 
@@ -139,14 +125,14 @@ function showMap(mapKey) {
 
         if (chart.get('points').data.length) {
             points = '{\n    type: "mappoint",\n    data: [\n        ' +
-                chart.get('points').data.map(getPointConfigString).join(",\n        ") +
+                chart.get('points').data.map(getPointConfigString).join(',\n        ') +
                 '\n    ]\n}';
             html += '<h3>Points configuration</h3><pre>' + points + '</pre>';
         }
 
         if (chart.get('connected-points').data.length) {
             points = '{\n    type: "mappoint",\n    lineWidth: 2,\n    data: [\n        ' +
-                chart.get('connected-points').data.map(getPointConfigString).join(",\n        ") +
+                chart.get('connected-points').data.map(getPointConfigString).join(',\n        ') +
                 '\n    ]\n}';
             html += '<h3>Connected points configuration</h3><pre>' + points + '</pre>';
         }
@@ -166,14 +152,21 @@ function showMap(mapKey) {
     const select = document.getElementById('maps');
 
     for (const group in Highcharts.mapDataIndex) {
-        if (Object.prototype.hasOwnProperty.call(Highcharts.mapDataIndex, group)) {
+        if (
+            Object.prototype.hasOwnProperty.call(Highcharts.mapDataIndex, group)
+        ) {
             if (group !== 'version') {
                 for (const name in Highcharts.mapDataIndex[group]) {
-                    if (Object.prototype.hasOwnProperty.call(Highcharts.mapDataIndex[group], name)) {
+                    if (
+                        Object.prototype.hasOwnProperty.call(
+                            Highcharts.mapDataIndex[group], name
+                        )
+                    ) {
                         const option = document.createElement('option');
                         option.value = Highcharts.mapDataIndex[group][name];
                         option.innerText = name;
-                        option.selected = name === 'World';
+                        option.selected = name ===
+                            'World, Miller projection, medium resolution';
 
                         select.append(option);
                     }
@@ -182,10 +175,11 @@ function showMap(mapKey) {
         }
     }
 
-    select.addEventListener('change', () => {
+    select.addEventListener('change', async () => {
         const mapKey = select.value.replace(/\.js$/, '');
-        getScript('https://code.highcharts.com/mapdata/' + mapKey + '.js', () => {
-            showMap(mapKey);
-        });
+        const topology = await fetch(
+            `https://code.highcharts.com/mapdata/${mapKey}.topo.json`
+        ).then(response => response.json());
+        showMap(topology);
     });
-}());
+})();

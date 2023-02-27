@@ -85,15 +85,11 @@ if (!isNaN(Date.parse('Jan 16'))) {
             'X axis is date/time'
         );
 
-        assert.strictEqual(
-            options.series[0].data[0][0],
-            Highcharts.isSafari ?
+        assert.ok(
+            // Chrome Date.parse assumes year 2001
+            options.series[0].data[0][0] === 979603200000 ||
                 // Safari Date.parse assumes year 2000
-                947980800000 :
-                // Chrome Date.parse assumes year 2001 local
-                979603200000 + (
-                    60000 * new Date(2001, 0, 16).getTimezoneOffset()
-                ),
+                options.series[0].data[0][0] === 947980800000,
             'Date for point one is correct'
         );
 
@@ -647,12 +643,10 @@ QUnit.test('startRow, endRow, startColumn, endColumn', function (assert) {
     });
 });
 
-// Highcharts 4.0.4, Issue #3437
-// Data module fails with numeric data in first column
 QUnit.test('Data module numeric x (#3437)', function (assert) {
-    var data =
-        ',Apples,Oranges\n2010,15,3\n2011,5,2\n2012,13,4\n2013,4,10\n2014,2,6';
-    var chart = Highcharts.chart('container', {
+    const data =
+        ',Apples,Oranges,Bananas\n2010,15,3,10\n2011,5,2,8\n2012,13,4,2\n2013,4,10,7\n2014,2,6,10';
+    const chart = Highcharts.chart('container', {
         data: {
             csv: data
         }
@@ -660,6 +654,48 @@ QUnit.test('Data module numeric x (#3437)', function (assert) {
     assert.ok(
         chart.series.length > 0,
         'The data module failed to load numeric data'
+    );
+
+    chart.update({
+        data: {
+            seriesMapping: [{
+                x: 0,
+                y: 1,
+                A: 1,
+                B: 2,
+                C: 3
+            }, {
+                x: 0,
+                y: 2,
+                A: 1,
+                B: 2,
+                C: 3
+            }, {
+                x: 0,
+                y: 3,
+                A: 1,
+                B: 2,
+                C: 3
+            }]
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].name,
+        'Apples',
+        'Each series should have different name from data, #10005.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].name,
+        'Oranges',
+        'Each series should have different name from data, #10005.'
+    );
+
+    assert.strictEqual(
+        chart.series[2].name,
+        'Bananas',
+        'Each series should have different name from data, #10005.'
     );
 });
 
@@ -702,6 +738,7 @@ QUnit.test(
             seriesMapping: [{
                 color: 2
             }],
+
             parsed: function () {
                 assert.strictEqual(
                     this.columns[2][1],

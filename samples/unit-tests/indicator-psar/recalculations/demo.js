@@ -212,7 +212,7 @@ QUnit.test('Test PSAR calculations on data updates.', function (assert) {
         'Correct values after point.remove()'
     );
 
-    Highcharts.seriesTypes.psar.prototype.getValues(
+    Highcharts.Series.types.psar.prototype.getValues(
         {
             xData: [0, 1, 2, 3, 4, 5],
             yData: [
@@ -230,7 +230,7 @@ QUnit.test('Test PSAR calculations on data updates.', function (assert) {
     );
     assert.ok(true, 'No errors when data contains multiple null points.');
 
-    Highcharts.seriesTypes.psar.prototype.getValues(
+    Highcharts.Series.types.psar.prototype.getValues(
         {
             xData: [0],
             yData: [1]

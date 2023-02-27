@@ -3,7 +3,7 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
     keys: ['low', 'median', 'high'],
     tooltip: {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: ' +
-            'Low <b>{point.low}</b> - Median <b>{point.median}</b> - High <b>{point.high}</b><br/>'
+            'Low <b>{point.low} NOK</b> - Median <b>{point.median} NOK</b> - High <b>{point.high} NOK</b><br/>'
     }
 }, {
     // Change point shape to a line with three crossing lines for low/median/high
@@ -36,7 +36,7 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
 
             graphic.attr({
                 stroke: point.color || series.color,
-                "stroke-width": 1
+                'stroke-width': 1
             });
 
             graphic[verb]({
@@ -60,11 +60,15 @@ var chart = Highcharts.chart('container', {
     chart: {
         type: 'lowmedhigh'
     },
-
     title: {
-        text: 'Daily company fruit consumption 2019'
+        text: 'Monthly earnings, by level of education in Norway',
+        align: 'left'
     },
-
+    subtitle: {
+        text: 'Source: ' +
+            '<a href="https://www.ssb.no/en/statbank/table/11420/" target="_blank">SSB</a>',
+        align: 'left'
+    },
     accessibility: {
         point: {
             descriptionFormatter: function (point) {
@@ -77,104 +81,66 @@ var chart = Highcharts.chart('container', {
                     point.median + ', high ' + point.high;
             }
         },
-
         series: {
-            descriptionFormatter: function (series) {
-                return series.name + ', series ' + (series.index + 1) + ' of ' +
-                    series.chart.series.length + ' with ' + series.points.length +
-                    ' data points.';
-            }
+            descriptionFormat: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data points.'
         },
-
         typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.' // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
     },
-
     xAxis: [{
         accessibility: {
-            description: 'Months of the year'
+            description: 'Year'
         },
-        categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        crosshair: true
+        crosshair: true,
+        categories: [2015, 2016, 2017, 2018, 2019, 2020, 2021]
     }],
-
     yAxis: {
         title: {
-            text: 'Fruits consumed'
+            text: 'Monthly earnings (NOK)'
         },
         min: 0
     },
-
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 550
-            },
-            chartOptions: {
-                xAxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                }
-            }
-        }]
-    },
-
     tooltip: {
-        shared: true
+        shared: true,
+        stickOnContact: true
     },
-
     plotOptions: {
         series: {
             stickyTracking: true,
             whiskerWidth: 5
         }
     },
-
     series: [{
-        name: 'Plums',
+        name: 'Scientific research and development',
         data: [
-            [0, 8, 19],
-            [1, 11, 23],
-            [3, 16, 28],
-            [2, 15, 28],
-            [1, 15, 27],
-            [0, 9, 21],
-            null,
-            null,
-            [1, 6, 19],
-            [2, 8, 21],
-            [2, 9, 22],
-            [1, 11, 19]
+            [46240, 56720, 69540],
+            [46360, 55050, 67710],
+            [47600,  57040, 69250],
+            [48610, 59030, 72070],
+            [49690, 60770, 75040],
+            [50000, 61170, 75660],
+            [50500, 63020, 78630]
         ]
     }, {
-        name: 'Bananas',
+        name: 'Hospital activities',
         data: [
-            [0, 3, 6],
-            [1, 2, 4],
-            [0, 2, 5],
-            [2, 2, 5],
-            [1, 3, 6],
-            [0, 1, 3],
-            [1, 1, 2],
-            [0, 1, 3],
-            [1, 1, 3],
-            [0, 2, 4],
-            [1, 2, 5],
-            [1, 3, 5]
+            [43310, 53510, 71450],
+            [44280, 53440, 66040],
+            [45790, 55080, 68720],
+            [47500, 56660, 70850],
+            [48420, 58250, 73430],
+            [48560, 58390, 74060],
+            [51100, 63050, 78280]
         ]
     }, {
-        name: 'Apples',
+        name: 'Fire service activities',
         data: [
-            [1, 4, 6],
-            [2, 4, 5],
-            [1, 3, 6],
-            [2, 3, 6],
-            [1, 3, 4],
-            [0, 2, 4],
-            [0, 1, 2],
-            [0, 1, 2],
-            [0, 1, 2],
-            [0, 2, 4],
-            [1, 2, 4],
-            [1, 3, 4]
+            [null, null, null],
+            [37380, 44560, 51450],
+            [38020, 47080, 55230],
+            [null, null,  null],
+            [37360, 44940, 50230],
+            [40560, 46800, 55880],
+            [42390, 47450, 57400]
         ]
     }]
 });

@@ -1,0 +1,6 @@
+---
+ name: Highcharts Static Chart for Stock Product Page
+ authors:
+   - Nancy Dillon
+ js_wrap: b
+...

@@ -1,88 +1,64 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['hu-no', 0],
-    ['hu-bz', 1],
-    ['hu-he', 2],
-    ['hu-jn', 3],
-    ['hu-bu', 4],
-    ['hu-ed', 5],
-    ['hu-sd', 6],
-    ['hu-hv', 7],
-    ['hu-st', 8],
-    ['hu-mi', 9],
-    ['hu-nk', 10],
-    ['hu-so', 11],
-    ['hu-du', 12],
-    ['hu-bk', 13],
-    ['hu-tb', 14],
-    ['hu-fe', 15],
-    ['hu-ke', 16],
-    ['hu-pe', 17],
-    ['hu-sk', 18],
-    ['hu-sz', 19],
-    ['hu-cs', 20],
-    ['hu-be', 21],
-    ['hu-hb', 22],
-    ['hu-sn', 23],
-    ['hu-va', 24],
-    ['hu-sh', 25],
-    ['hu-ba', 26],
-    ['hu-gs', 27],
-    ['hu-to', 28],
-    ['hu-za', 29],
-    ['hu-ze', 30],
-    ['hu-ss', 31],
-    ['hu-mc', 32],
-    ['hu-ny', 33],
-    ['hu-de', 34],
-    ['hu-eg', 35],
-    ['hu-gy', 36],
-    ['hu-ps', 37],
-    ['hu-sf', 38],
-    ['hu-vm', 39],
-    ['hu-ve', 40],
-    ['hu-kv', 41],
-    ['hu-km', 42]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/hu/hu-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/hu/hu-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['hu-no', 10], ['hu-bz', 11], ['hu-he', 12], ['hu-jn', 13],
+        ['hu-bu', 14], ['hu-ed', 15], ['hu-sd', 16], ['hu-hv', 17],
+        ['hu-st', 18], ['hu-mi', 19], ['hu-nk', 20], ['hu-so', 21],
+        ['hu-du', 22], ['hu-bk', 23], ['hu-tb', 24], ['hu-fe', 25],
+        ['hu-ke', 26], ['hu-pe', 27], ['hu-sk', 28], ['hu-sz', 29],
+        ['hu-cs', 30], ['hu-be', 31], ['hu-hb', 32], ['hu-sn', 33],
+        ['hu-va', 34], ['hu-sh', 35], ['hu-ba', 36], ['hu-gs', 37],
+        ['hu-to', 38], ['hu-za', 39], ['hu-ze', 40], ['hu-ss', 41],
+        ['hu-mc', 42], ['hu-ny', 43], ['hu-de', 44], ['hu-eg', 45],
+        ['hu-gy', 46], ['hu-ps', 47], ['hu-sf', 48], ['hu-vm', 49],
+        ['hu-ve', 50], ['hu-kv', 51], ['hu-km', 52]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/hu/hu-all.js">Hungary</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/hu/hu-all.topo.json">Hungary</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

@@ -59,7 +59,7 @@ QUnit.test('Mapping of color key with custom sub option', function (assert) {
 });
 
 QUnit.test('Point color presedence (#4397)', function (assert) {
-    // Initiate the chart
+    // Initialize the chart
     var chart = Highcharts.mapChart('container', {
         title: {
             text: 'Map with inline point paths'

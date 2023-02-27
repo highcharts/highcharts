@@ -18,14 +18,16 @@
  *
  * */
 
-import type StackingAxis from '../../Core/Axis/StackingAxis';
+import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
+import VariwideComposition from './VariwideComposition.js';
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -33,8 +35,6 @@ const {
     merge,
     pick
 } = U;
-
-import './VariwideComposition.js';
 
 
 /* *
@@ -55,9 +55,12 @@ class VariwideSeries extends ColumnSeries {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
+
+    public static compose = VariwideComposition.compose;
+
     /**
      * A variwide chart (related to marimekko chart) is a column chart with a
      * variable width expressing a third dimension.
@@ -92,9 +95,10 @@ class VariwideSeries extends ColumnSeries {
 
     /* *
      *
-     * Properties
+     *  Properties
      *
      * */
+
     public data: Array<VariwidePoint> = void 0 as any;
     public options: VariwideSeriesOptions = void 0 as any;
     public points: Array<VariwidePoint> = void 0 as any;
@@ -107,10 +111,14 @@ class VariwideSeries extends ColumnSeries {
      * Functions
      *
      * */
+
     public processData(force?: boolean): undefined {
         this.totalZ = 0;
         this.relZ = [];
-        SeriesRegistry.seriesTypes.column.prototype.processData.call(this, force);
+        SeriesRegistry.seriesTypes.column.prototype.processData.call(
+            this,
+            force
+        );
 
         (this.xAxis.reversed ?
             (this.zData as any).slice().reverse() :
@@ -133,8 +141,6 @@ class VariwideSeries extends ColumnSeries {
         }
         return;
     }
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Translate an x value inside a given category index into the distorted
@@ -165,8 +171,12 @@ class VariwideSeries extends ColumnSeries {
             relZ = this.relZ,
             i = axis.reversed ? relZ.length - index : index,
             goRight = axis.reversed ? -1 : 1,
-            minPx = axis.toPixels(axis.reversed ? (axis.dataMax || 0) + axis.pointRange : (axis.dataMin || 0)),
-            maxPx = axis.toPixels(axis.reversed ? (axis.dataMin || 0) : (axis.dataMax || 0) + axis.pointRange),
+            minPx = axis.toPixels(axis.reversed ?
+                (axis.dataMax || 0) + axis.pointRange :
+                (axis.dataMin || 0)),
+            maxPx = axis.toPixels(axis.reversed ?
+                (axis.dataMin || 0) :
+                (axis.dataMax || 0) + axis.pointRange),
             len = Math.abs(maxPx - minPx),
             totalZ = this.totalZ,
             left = this.chart.inverted ?
@@ -238,7 +248,7 @@ class VariwideSeries extends ColumnSeries {
                     0 as any,
                     0 as any,
                     1 as any
-                ) as any;
+                );
             }
 
             if (this.options.crisp) {
@@ -269,19 +279,21 @@ class VariwideSeries extends ColumnSeries {
         }
     }
 
-    // Function that corrects stack labels positions
+    /**
+     * Function that corrects stack labels positions
+     * @private
+     */
     public correctStackLabels(): void {
-        let series = this,
+        const series = this,
             options = series.options,
-            yAxis = series.yAxis as StackingAxis.Composition,
-            pointStack,
+            yAxis = series.yAxis as StackingAxis;
+
+        let pointStack,
             pointWidth,
             stack,
             xValue;
 
-        series.points.forEach(function (
-            point: VariwidePoint
-        ): void {
+        for (const point of series.points) {
             xValue = point.x;
             pointWidth = (point.shapeArgs as any).width;
             stack = yAxis.stacking.stacks[(
@@ -299,23 +311,26 @@ class VariwideSeries extends ColumnSeries {
                 pointStack = stack[xValue as any];
                 if (pointStack && !point.isNull) {
                     pointStack.setOffset(
-                        -(pointWidth / 2) || 0,
+                        series.chart.plotLeft - ((pointWidth / 2) || 0),
                         pointWidth || 0,
                         void 0,
                         void 0,
-                        point.plotX
+                        point.plotX,
+                        series.xAxis
                     );
                 }
             }
-        });
+        }
     }
+
 }
 
 /* *
  *
- * Prototype properties
+ *  Class Prototype
  *
  * */
+
 interface VariwideSeries {
     irregularWidths: boolean;
     parallelArrays: Array<string>;
@@ -331,9 +346,10 @@ extend(VariwideSeries.prototype, {
 
 /* *
  *
- * Registry
+ *  Registry
  *
  * */
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variwide: typeof VariwideSeries;
@@ -344,14 +360,15 @@ SeriesRegistry.registerSeriesType('variwide', VariwideSeries);
 
 /* *
  *
- * Default export
+ *  Default Export
  *
  * */
+
 export default VariwideSeries;
 
 /* *
  *
- * API Options
+ *  API Options
  *
  * */
 

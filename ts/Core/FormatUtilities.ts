@@ -18,7 +18,7 @@
 
 import type Chart from './Chart/Chart';
 
-import D from './DefaultOptions.js';
+import D from './Defaults.js';
 const {
     defaultOptions,
     defaultTime
@@ -150,7 +150,10 @@ function format(str: string, ctx: any, chart?: Chart): string {
                 segment = valueAndFormat.join(':');
 
                 if (floatRegex.test(segment)) { // float
-                    const decimals = parseInt((segment.match(decRegex) || ['', '-1'])[1], 10);
+                    const decimals = parseInt(
+                        (segment.match(decRegex) || ['', '-1'])[1],
+                        10
+                    );
                     if (val !== null) {
                         val = numberFormatter(
                             val,

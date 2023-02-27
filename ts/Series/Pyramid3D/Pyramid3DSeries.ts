@@ -39,7 +39,8 @@ const { merge } = U;
 /**
  * The pyramid3d series type.
  *
- * @constructor seriesTypes.pyramid3d
+ * @class
+ * @name Highcharts.seriesTypes.pyramid3d
  * @augments seriesTypes.funnel3d
  * @requires highcharts-3d
  * @requires modules/cylinder
@@ -84,6 +85,9 @@ class Pyramid3DSeries extends Funnel3DSeries {
         neckHeight: 0,
         neckWidth: 0,
         dataLabels: {
+            /**
+             * @default top
+             */
             verticalAlign: 'top'
         }
     } as Pyramid3DSeriesOptions);
@@ -103,7 +107,7 @@ class Pyramid3DSeries extends Funnel3DSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -143,7 +147,7 @@ export default Pyramid3DSeries;
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @since     7.1.0
- * @extends   series.pyramid,plotOptions.pyramid3d
+ * @extends   series,plotOptions.pyramid3d
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase,dataSorting
  * @product   highcharts
  * @sample    {highcharts} highcharts/demo/pyramid3d/ Pyramid3d

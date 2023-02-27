@@ -1,17 +1,18 @@
+// Data retrieved from: https://www.uefa.com/uefachampionsleague/history/
 Highcharts.chart('container', {
     chart: {
         type: 'bar'
     },
     title: {
-        text: 'Stacked bar chart'
+        text: 'UEFA CL top scorers by season'
     },
     xAxis: {
-        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+        categories: ['2020/21', '2019/20', '2018/19', '2017/18', '2016/17']
     },
     yAxis: {
         min: 0,
         title: {
-            text: 'Total fruit consumption'
+            text: 'Goals'
         }
     },
     legend: {
@@ -19,17 +20,20 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            stacking: 'normal'
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true
+            }
         }
     },
     series: [{
-        name: 'John',
-        data: [5, 3, 4, 7, 2]
+        name: 'Cristiano Ronaldo',
+        data: [4, 4, 6, 15, 12]
     }, {
-        name: 'Jane',
-        data: [2, 2, 3, 2, 1]
+        name: 'Lionel Messi',
+        data: [5, 3, 12, 6, 11]
     }, {
-        name: 'Joe',
-        data: [3, 4, 4, 2, 5]
+        name: 'Robert Lewandowski',
+        data: [5, 15, 8, 5, 8]
     }]
 });

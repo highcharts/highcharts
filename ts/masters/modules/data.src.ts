@@ -12,7 +12,7 @@
 'use strict';
 import Highcharts from '../../Core/Globals.js';
 import HttpUtilities from '../../Core/HttpUtilities.js';
-import Data from '../../Extensions/Data/Data.js';
+import Data from '../../Extensions/Data.js';
 const G: AnyRecord = Highcharts;
 // Functions
 G.ajax = HttpUtilities.ajax;
@@ -22,5 +22,3 @@ G.post = HttpUtilities.post;
 // Classes
 G.Data = Data;
 G.HttpUtilities = HttpUtilities;
-// Compositions
-Data.compose(G.Chart);

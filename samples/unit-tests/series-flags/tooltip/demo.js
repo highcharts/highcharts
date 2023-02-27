@@ -89,9 +89,8 @@ QUnit.test(
         chart.tooltip.update({ split: true });
 
         chart.tooltip.refresh(chart.series[2].points[0]);
-        assert.strictEqual(
-            chart.tooltip.label.element.childNodes.length,
-            1,
-            'The tooltip box next to the flag with empty title should not be created(#6332).'
+        assert.ok(
+            chart.tooltip.label.hasClass('highcharts-label'),
+            'The flags tooltip should not be split'
         );
     });

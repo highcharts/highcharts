@@ -1,5 +1,5 @@
 ---
- name: Nicaragua - Highmaps
- description: Highmaps demo
+ name: Nicaragua - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

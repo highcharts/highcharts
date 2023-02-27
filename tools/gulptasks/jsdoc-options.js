@@ -46,7 +46,9 @@ const TREE_FILE = 'tree.json';
  */
 function createApiDocumentation() {
 
-    const apidocs = require('highcharts-documentation-generators').ApiDocs,
+    const apidocs = require(
+            '@highcharts/highcharts-documentation-generators'
+        ).ApiDocs,
         argv = require('yargs').argv,
         fs = require('fs'),
         log = require('./lib/log');
@@ -87,8 +89,9 @@ function createTreeJson() {
         const jsDocConfig = {
             plugins: [
                 path.join(
-                    'node_modules', 'highcharts-documentation-generators',
-                    'jsdoc', 'plugins', 'highcharts.jsdoc'
+                    'node_modules', '@highcharts',
+                    'highcharts-documentation-generators', 'jsdoc', 'plugins',
+                    'highcharts.jsdoc'
                 )
             ]
         };

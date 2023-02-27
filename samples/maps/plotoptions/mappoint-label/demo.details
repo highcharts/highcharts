@@ -1,0 +1,6 @@
+---
+ name: Highcharts Maps with Labels
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

@@ -9,10 +9,10 @@
 'use strict';
 
 /* *
-*
-* Import
-*
-* */
+ *
+ *  Import
+ *
+ * */
 
 import type ColorType from '../../../Core/Color/ColorType';
 import type {
@@ -29,16 +29,27 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
+import ApproximationRegistry from '../../../Extensions/DataGrouping/ApproximationRegistry.js';
 import Axis from '../../../Core/Axis/Axis.js';
 import Color from '../../../Core/Color/Color.js';
-const color = Color.parse;
-import H from '../../../Core/Globals.js';
+const { parse: color } = Color;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: { sma: SMAIndicator }
-} = SeriesRegistry;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-const { defined, extend, isArray, isNumber, merge, objectEach } = U;
+const {
+    defined,
+    extend,
+    isArray,
+    isNumber,
+    merge,
+    objectEach
+} = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -46,21 +57,33 @@ declare module '../../../Core/Series/SeriesLike' {
     }
 }
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-// Utils:
+/**
+ * @private
+ */
 function maxHigh(arr: Array<Array<number>>): number {
     return arr.reduce(function (max: number, res: Array<number>): number {
         return Math.max(max, res[1]);
     }, -Infinity);
 }
 
+/**
+ * @private
+ */
 function minLow(arr: Array<Array<number>>): number {
     return arr.reduce(function (min: number, res: Array<number>): number {
         return Math.min(min, res[2]);
     }, Infinity);
 }
 
+/**
+ * @private
+ */
 function highlowLevel(
     arr: Array<Array<number>>
 ): Record<string, number> {
@@ -70,6 +93,9 @@ function highlowLevel(
     };
 }
 
+/**
+ * @private
+ */
 function getClosestPointRange(axis: Axis): (number|undefined) {
     let closestDataRange: number | undefined,
         loopLength: number,
@@ -97,27 +123,27 @@ function getClosestPointRange(axis: Axis): (number|undefined) {
     return closestDataRange;
 }
 
-// Check two lines intersection (line a1-a2 and b1-b2)
-// Source: https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+/**
+ * Check two lines intersection (line a1-a2 and b1-b2)
+ * Source: https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
+ * @private
+ */
 function checkLineIntersection(
     a1: IKHPoint | undefined,
     a2: IKHPoint | undefined,
     b1: IKHPoint | undefined,
     b2: IKHPoint | undefined
-): boolean | Record<string, number> {
+): (Record<string, number>|undefined) {
     if (a1 && a2 && b1 && b2) {
-        let saX: number = a2.plotX - a1.plotX, // Auxiliary section a2-a1 X
+        const saX: number = a2.plotX - a1.plotX, // Auxiliary section a2-a1 X
             saY: number = a2.plotY - a1.plotY, // Auxiliary section a2-a1 Y
             sbX: number = b2.plotX - b1.plotX, // Auxiliary section b2-b1 X
             sbY: number = b2.plotY - b1.plotY, // Auxiliary section b2-b1 Y
             sabX: number = a1.plotX - b1.plotX, // Auxiliary section a1-b1 X
             sabY: number = a1.plotY - b1.plotY, // Auxiliary section a1-b1 Y
             // First degree Bézier parameters
-            u: number,
-            t: number;
-
-        u = (-saY * sabX + saX * sabY) / (-sbX * saY + saX * sbY);
-        t = (sbX * sabY - sbY * sabX) / (-sbX * saY + saX * sbY);
+            u = (-saY * sabX + saX * sabY) / (-sbX * saY + saX * sbY),
+            t = (sbX * sabY - sbY * sabX) / (-sbX * saY + saX * sbY);
 
         if (u >= 0 && u <= 1 && t >= 0 && t <= 1) {
             return {
@@ -126,12 +152,13 @@ function checkLineIntersection(
             };
         }
     }
-
-    return false;
 }
 
-// Parameter opt (indicator options object) include indicator, points,
-// nextPoints, color, options, gappedExtend and graph properties
+/**
+ * Parameter opt (indicator options object) include indicator, points,
+ * nextPoints, color, options, gappedExtend and graph properties
+ * @private
+ */
 function drawSenkouSpan(
     opt: IKHDrawSenkouSpanObject
 ): void {
@@ -143,31 +170,38 @@ function drawSenkouSpan(
     indicator.options = merge(
         (opt.options.senkouSpan as any).styles,
         opt.gap
-    ) as any;
+    );
     indicator.graph = opt.graph;
     indicator.fillGraph = true;
     SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
 }
 
-// Data integrity in Ichimoku is different than default 'averages':
-// Point: [undefined, value, value, ...] is correct
-// Point: [undefined, undefined, undefined, ...] is incorrect
-H.approximations['ichimoku-averages'] = function ():
-Array<number | null | undefined> | undefined {
-    let ret: Array<number | null | undefined> = [],
-        isEmptyRange: boolean | undefined;
+/**
+ * Data integrity in Ichimoku is different than default 'averages':
+ * Point: [undefined, value, value, ...] is correct
+ * Point: [undefined, undefined, undefined, ...] is incorrect
+ * @private
+ */
+function ichimokuAverages(): Array<(number|null|undefined)> | undefined {
+    const ret: Array<(number|null|undefined)> = [];
+
+    let isEmptyRange: (boolean|undefined);
 
     [].forEach.call(arguments, function (arr, i): void {
-        ret.push(H.approximations.average(arr));
+        ret.push(ApproximationRegistry.average(arr));
         isEmptyRange = !isEmptyRange && typeof ret[i] === 'undefined';
     });
 
     // Return undefined when first elem. is undefined and let
     // sum method handle null (#7377)
     return isEmptyRange ? void 0 : ret;
-};
+}
 
-/* eslint-enable require-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The IKH series type.
@@ -178,13 +212,14 @@ Array<number | null | undefined> | undefined {
  *
  * @augments Highcharts.Series
  */
-
-/* *
-*
-* Class
-*
-* */
 class IKHIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
      * set.
@@ -203,6 +238,7 @@ class IKHIndicator extends SMAIndicator {
      * @requires     stock/indicators/ichimoku-kinko-hyo
      * @optionparent plotOptions.ikh
      */
+
     public static defaultOptions: IKHOptions = merge(
         SMAIndicator.defaultOptions,
         {
@@ -364,28 +400,29 @@ class IKHIndicator extends SMAIndicator {
                 approximation: 'ichimoku-averages'
             }
         } as IKHOptions);
-    /* *
-    *
-    *  Properties
-    *
-    * */
-
-    public data: Array<IKHPoint> = void 0 as any;
-    public options: IKHOptions = void 0 as any;
-    public points: Array<IKHPoint> = void 0 as any;
-    public graphCollection: Array<string> = void 0 as any;
-    public graphsenkouSpan: SVGElement | undefined = void 0 as any;
-    public ikhMap: Record<string, Array<IKHPoint>> = void 0 as any;
-    public nextPoints?: Array<IKHPoint> = void 0 as any;
 
     /* *
-    *
-    * Functions
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
-    public init(this: IKHIndicator): void {
-        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
+    public data: Array<IKHPoint> = [];
+    public options: IKHOptions = {};
+    public points: Array<IKHPoint> = [];
+    public graphCollection: Array<string> = [];
+    public graphsenkouSpan?: SVGElement;
+    public ikhMap?: Record<string, Array<IKHPoint>>;
+    public nextPoints?: Array<IKHPoint>;
+
+    /* *
+     *
+     * Functions
+     *
+     * */
+
+    public init(): void {
+        super.init.apply(this, arguments);
 
         // Set default color for lines:
         this.options = merge(
@@ -442,12 +479,8 @@ class IKHIndicator extends SMAIndicator {
 
         SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
 
-        indicator.points.forEach(function (
-            point: IKHPoint
-        ): void {
-            indicator.pointArrayMap.forEach(function (
-                key: keyof IKHPoint
-            ): void {
+        for (const point of indicator.points) {
+            for (const key of indicator.pointArrayMap) {
                 const pointValue = point[key];
                 if (isNumber(pointValue)) {
                     (point as any)['plot' + key] = indicator.yAxis.toPixels(
@@ -464,15 +497,14 @@ class IKHIndicator extends SMAIndicator {
                     ];
                     point.isNull = false;
                 }
-            });
-        });
+            }
+        }
     }
 
     public drawGraph(): void {
-        let indicator = this,
+        const indicator = this,
             mainLinePoints: Array<IKHPoint> =
                 indicator.points,
-            pointsLength: number = mainLinePoints.length,
             mainLineOptions: IKHOptions = indicator.options,
             mainLinePath = indicator.graph,
             mainColor = indicator.color,
@@ -518,9 +550,11 @@ class IKHIndicator extends SMAIndicator {
             nextPoints: Array<Array<IKHPoint>> = [
                 [], // NextPoints color
                 [] // NextPoints negative color
-            ],
+            ];
+
+        let pointsLength: number = mainLinePoints.length,
             lineIndex = 0,
-            position: string,
+            position: keyof IKHPoint,
             point: IKHPoint,
             i: number,
             startIntersect: number,
@@ -542,7 +576,7 @@ class IKHIndicator extends SMAIndicator {
             for (i = 0; i < pointArrayMapLength; i++) {
                 position = indicator.pointArrayMap[i];
 
-                if (defined((point as any)[position])) {
+                if (defined(point[position])) {
                     allIchimokuPoints[i].push({
                         plotX: point.plotX,
                         plotY: (point as any)['plot' + position],
@@ -559,15 +593,16 @@ class IKHIndicator extends SMAIndicator {
                         ikhMap.senkouSpanA[index],
                         ikhMap.senkouSpanB[index - 1],
                         ikhMap.senkouSpanB[index]
-                    ),
-                    intersectPointObj = {
-                        plotX: (intersect as any).plotX,
-                        plotY: (intersect as any).plotY,
+                    );
+
+                if (intersect) {
+                    const intersectPointObj = {
+                        plotX: intersect.plotX,
+                        plotY: intersect.plotY,
                         isNull: false,
                         intersectPoint: true
                     };
 
-                if (intersect) {
                     // Add intersect point to ichimoku points collection
                     // Create senkouSpan sections
                     ikhMap.senkouSpanA.splice(
@@ -588,10 +623,7 @@ class IKHIndicator extends SMAIndicator {
         // Modify options and generate lines:
         objectEach(
             ikhMap,
-            function (
-                values: Array<IKHPoint>,
-                lineName: string
-            ): void {
+            (values, lineName): void => {
                 if (
                     (mainLineOptions as any)[lineName] &&
                     lineName !== 'senkouSpan'
@@ -606,7 +638,9 @@ class IKHIndicator extends SMAIndicator {
 
                     indicator.fillGraph = false;
                     indicator.color = mainColor;
-                    SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                    SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(
+                        indicator
+                    );
 
                     // Now save line
                     (indicator as any)['graph' + lineName] = indicator.graph;
@@ -618,18 +652,16 @@ class IKHIndicator extends SMAIndicator {
 
         // Generate senkouSpan area:
 
-        // If graphColection exist then remove svg
+        // If graphCollection exist then remove svg
         // element and indicator property
         if (indicator.graphCollection) {
-            indicator.graphCollection.forEach(function (
-                graphName: string
-            ): void {
+            for (const graphName of indicator.graphCollection) {
                 (indicator as any)[graphName].destroy();
                 delete (indicator as any)[graphName];
-            });
+            }
         }
 
-        // Clean grapCollection or initialize it
+        // Clean graphCollection or initialize it
         indicator.graphCollection = [];
 
         // When user set negativeColor property
@@ -659,7 +691,7 @@ class IKHIndicator extends SMAIndicator {
                     const x = Math.floor(sectionPoints.length / 2);
 
                     // When middle points has equal values
-                    // Compare all ponints plotY value sum
+                    // Compare all points plotY value sum
                     if (sectionPoints[x].plotY === sectionNextPoints[x].plotY) {
                         pointsPlotYSum = 0;
                         nextPointsPlotYSum = 0;
@@ -681,8 +713,9 @@ class IKHIndicator extends SMAIndicator {
                         ].concat(sectionNextPoints);
                     } else {
                         // Compare middle point of the section
-                        concatArrIndex =
-                            sectionPoints[x].plotY > sectionNextPoints[x].plotY ? 0 : 1;
+                        concatArrIndex = (
+                            sectionPoints[x].plotY > sectionNextPoints[x].plotY
+                        ) ? 0 : 1;
 
                         points[concatArrIndex] = points[concatArrIndex].concat(
                             sectionPoints
@@ -694,8 +727,9 @@ class IKHIndicator extends SMAIndicator {
                     }
                 } else {
                     // Compare first point of the section
-                    concatArrIndex =
-                        sectionPoints[0].plotY > sectionNextPoints[0].plotY ? 0 : 1;
+                    concatArrIndex = (
+                        sectionPoints[0].plotY > sectionNextPoints[0].plotY
+                    ) ? 0 : 1;
 
                     points[concatArrIndex] = points[concatArrIndex].concat(
                         sectionPoints
@@ -757,8 +791,9 @@ class IKHIndicator extends SMAIndicator {
     }
 
     public getGraphPath(points: Array<LinePoint>): SVGPath {
-        let indicator = this,
-            path: SVGPath = [],
+        const indicator = this;
+
+        let path: SVGPath = [],
             spanA: SVGPath,
             spanAarr: SVGPath = [];
 
@@ -775,7 +810,8 @@ class IKHIndicator extends SMAIndicator {
             if (spanA && spanA.length) {
                 spanA[0][0] = 'L';
 
-                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
+                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath
+                    .call(indicator, points);
 
                 spanAarr = spanA.slice(0, path.length);
 
@@ -784,7 +820,8 @@ class IKHIndicator extends SMAIndicator {
                 }
             }
         } else {
-            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
+            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath
+                .apply(indicator, arguments);
         }
 
         return path;
@@ -794,7 +831,7 @@ class IKHIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: IKHParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined {
-        let period: number = params.period as any,
+        const period: number = params.period as any,
             periodTenkan: number = params.periodTenkan as any,
             periodSenkouSpanB: number = params.periodSenkouSpanB as any,
             xVal: Array<number> = series.xData as any,
@@ -803,9 +840,9 @@ class IKHIndicator extends SMAIndicator {
             yValLen: number = (yVal && yVal.length) || 0,
             closestPointRange: number = getClosestPointRange(xAxis) as any,
             IKH: Array<Array<number | undefined>> = [],
-            xData: Array<number> = [],
-            dateStart: number,
-            date: number | undefined,
+            xData: Array<number> = [];
+
+        let date: number | undefined,
             slicedTSY: Array<Array<number>>,
             slicedKSY: Array<Array<number>>,
             slicedSSBY: Array<Array<number>>,
@@ -829,7 +866,7 @@ class IKHIndicator extends SMAIndicator {
         }
 
         // Add timestamps at the beginning
-        dateStart = xVal[0] - period * closestPointRange;
+        const dateStart = xVal[0] - period * closestPointRange;
 
         for (i = 0; i < period; i++) {
             xData.push(dateStart + i * closestPointRange);
@@ -871,27 +908,31 @@ class IKHIndicator extends SMAIndicator {
                 IKH[i] = [];
             }
 
-            if (typeof IKH[i + period] === 'undefined') {
-                IKH[i + period] = [];
+            if (typeof IKH[i + period - 1] === 'undefined') {
+                IKH[i + period - 1] = [];
             }
 
-            IKH[i + period][0] = TS;
-            IKH[i + period][1] = KS;
-            IKH[i + period][2] = void 0;
+            IKH[i + period - 1][0] = TS;
+            IKH[i + period - 1][1] = KS;
+            IKH[i + period - 1][2] = void 0;
 
-            IKH[i][2] = CS;
+            if (typeof IKH[i + 1] === 'undefined') {
+                IKH[i + 1] = [];
+            }
+
+            IKH[i + 1][2] = CS;
 
             if (i <= period) {
-                IKH[i + period][3] = void 0;
-                IKH[i + period][4] = void 0;
+                IKH[i + period - 1][3] = void 0;
+                IKH[i + period - 1][4] = void 0;
             }
 
-            if (typeof IKH[i + 2 * period] === 'undefined') {
-                IKH[i + 2 * period] = [];
+            if (typeof IKH[i + 2 * period - 2] === 'undefined') {
+                IKH[i + 2 * period - 2] = [];
             }
 
-            IKH[i + 2 * period][3] = SSA;
-            IKH[i + 2 * period][4] = SSB;
+            IKH[i + 2 * period - 2][3] = SSA;
+            IKH[i + 2 * period - 2][4] = SSB;
 
             xData.push(date);
         }
@@ -909,13 +950,12 @@ class IKHIndicator extends SMAIndicator {
     }
 }
 
-/* eslint-disable @typescript-eslint/interface-name-prefix */
-
 /* *
-*
-* Prototype Properties
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface IKHIndicator {
     pointClass: typeof IKHPoint;
     nameComponents: Array<string>;
@@ -934,6 +974,15 @@ extend(IKHIndicator.prototype, {
     pointValKey: 'tenkanSen',
     nameComponents: ['periodSenkouSpanB', 'period', 'periodTenkan']
 });
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+ApproximationRegistry['ichimoku-averages'] = ichimokuAverages;
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ikh: typeof IKHIndicator;
@@ -941,7 +990,19 @@ declare module '../../../Core/Series/SeriesType' {
 }
 SeriesRegistry.registerSeriesType('ikh', IKHIndicator);
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default IKHIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `IKH` series. If the [type](#series.ikh.type) option is not

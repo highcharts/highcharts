@@ -16,9 +16,7 @@ QUnit.test('Basic accessible chart', function (assert) {
 
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute(
-                'aria-label'
-            ),
+            .element.textContent.length,
         'There be screen reader region'
     );
 });
@@ -51,9 +49,7 @@ QUnit.test('Empty chart', function (assert) {
     var chart = Highcharts.chart('container', {});
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute(
-                'aria-label'
-            ),
+            .element.textContent.length,
         'There be screen reader region'
     );
 });
@@ -77,9 +73,81 @@ QUnit.test('Accessible pie', function (assert) {
 
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute(
-                'aria-label'
-            ),
+            .element.textContent.length,
         'There be screen reader region'
     );
+});
+
+QUnit.test('No information region', function (assert) {
+    var chart = Highcharts.chart('container', {
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: ''
+            }
+        },
+        series: [{ data: [1, 2, 3] }]
+    });
+
+    assert.notOk(
+        chart.accessibility.components.infoRegions
+            .screenReaderSections.before.element,
+        'There is no before screen reader region'
+    );
+    assert.ok(
+        chart.accessibility.components.infoRegions
+            .screenReaderSections.after.element,
+        'There is an after screen reader region'
+    );
+
+    chart.update({
+        accessibility: {
+            screenReaderSection: {
+                afterChartFormat: ''
+            }
+        }
+    });
+
+    assert.notOk(
+        chart.accessibility.components.infoRegions
+            .screenReaderSections.after.element,
+        'There is no after screen reader region after update'
+    );
+});
+
+
+QUnit.test('Proxy region', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{ data: [1, 2, 3] }]
+    });
+
+    function testProxyRegions(msgAdd) {
+        assert.ok(
+            chart.accessibility.proxyProvider.beforeChartProxyPosContainer,
+            'There is a before proxy region' + msgAdd
+        );
+        assert.ok(
+            chart.accessibility.proxyProvider.afterChartProxyPosContainer,
+            'There is an after proxy region' + msgAdd
+        );
+        assert.strictEqual(
+            chart.container.querySelectorAll('.highcharts-a11y-proxy-container-before').length, 1,
+            'The is only one before proxy region' + msgAdd
+        );
+        assert.strictEqual(
+            chart.container.querySelectorAll('.highcharts-a11y-proxy-container-after').length, 1,
+            'The is only one after proxy region' + msgAdd
+        );
+    }
+
+    testProxyRegions();
+
+    chart.update({
+        accessibility: {
+            screenReaderSection: {
+                afterChartFormat: 'Anything'
+            }
+        }
+    });
+
+    testProxyRegions(' after update');
 });

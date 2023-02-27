@@ -14,6 +14,7 @@
  *
  * */
 
+import type { NonPlotOptions } from './SeriesOptions';
 import type Series from './Series';
 
 /* *
@@ -22,9 +23,11 @@ import type Series from './Series';
  *
  * */
 
-export type NonPlotOptions = (
-    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|'treemap'|'type'|
-    'xAxis'|'yAxis'|'zIndex'
+/**
+ * All possible series types.
+ */
+export type SeriesType = (
+    SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype']
 );
 
 /**
@@ -36,13 +39,11 @@ export type SeriesTypeOptions = SeriesType['options'];
  * All possible series plotOptions.
  */
 export type SeriesTypePlotOptions = {
-    [K in keyof SeriesTypeRegistry]?: Omit<SeriesTypeRegistry[K]['prototype']['options'], NonPlotOptions>;
+    [K in keyof SeriesTypeRegistry]?: Omit<
+    SeriesTypeRegistry[K]['prototype']['options'],
+    NonPlotOptions
+    >;
 };
-
-/**
- * All possible series types.
- */
-export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype'];
 
 /**
  * Helper interface to add series types to `SeriesOptionsType` and `SeriesType`.
@@ -53,5 +54,11 @@ export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype
 export interface SeriesTypeRegistry {
     [key: string]: typeof Series;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SeriesType;

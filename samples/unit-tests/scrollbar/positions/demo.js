@@ -80,7 +80,7 @@ QUnit.test(
             ]
         });
 
-        Highcharts.each(chart.yAxis, function (axis, index) {
+        chart.yAxis.forEach((axis, index) => {
             assert.strictEqual(
                 axis.scrollbar.x > chart.plotLeft + chart.plotWidth,
                 true,
@@ -293,4 +293,33 @@ QUnit.test('Overlapping scrollbars', assert => {
             );
         }
     });
+});
+
+QUnit.test('Positioning the scrollbar (opposite), #16017.', function (assert) {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            min: 0,
+            max: 5,
+            scrollbar: {
+                enabled: true,
+                opposite: false
+            }
+        },
+        series: [{
+            type: 'bar',
+            data: [4, 3, 5, 6, 2, 3, 4, 3, 5, 6, 2]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].scrollbar.x,
+        10,
+        'The scrollbar should be positioned on the left side of the chart.'
+    );
+    assert.close(
+        chart.xAxis[0].left,
+        56,
+        3, // Firefox
+        'When scrollbar on the left, the axis should have an additional margin.'
+    );
 });

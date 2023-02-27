@@ -67,10 +67,10 @@ QUnit.test('Bottom -90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('y') > 0,
+        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
         'Labels are visible'
     );
-    assert.strictEqual(
+    assert.close(
         Math.round(
             chart.series[0].points[0].dataLabel.element.getBoundingClientRect()
                 .bottom
@@ -79,6 +79,7 @@ QUnit.test('Bottom -90', function (assert) {
             chart.series[0].points[1].dataLabel.element.getBoundingClientRect()
                 .bottom
         ),
+        1.1,
         'Labels are equally bottom aligned'
     );
 });
@@ -90,7 +91,10 @@ QUnit.test('Top -90', function (assert) {
         },
         series: [
             {
-                data: [100, 200],
+                data: [
+                    1000, 2000, 1000, 2000, 1000, 2000, 1000, 2000, 1000,
+                    2000, 1000, 2000, 1000, 2000
+                ],
                 dataLabels: {
                     enabled: true,
                     defer: false,
@@ -105,7 +109,7 @@ QUnit.test('Top -90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('y') > 0,
+        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
         'Labels are visible'
     );
     assert.ok(
@@ -128,6 +132,45 @@ QUnit.test('Top -90', function (assert) {
         ) < 12,
         'Label is top aligned to element'
     );
+
+    chart.series[0].update({
+        dataLabels: {
+            align: 'left'
+        }
+    });
+    const visibilities = chart.series[0].points.map(p =>
+        p.dataLabel.attr('visibility') !== 'hidden'
+    );
+    assert.strictEqual(
+        visibilities.some(v => !v),
+        false,
+        'No elements should be hidden (#9687)'
+    );
+    chart.series[0].update({
+        dataLabels: {
+            rotation: 1
+        }
+    });
+
+    assert.ok(
+        chart.series[0].points[13].dataLabel.attr('visibility') === 'hidden',
+        'Last element should be hidden'
+    );
+
+    chart.series[0].update({
+        dataLabels: {
+            rotation: -90
+        }
+    });
+
+    assert.deepEqual(
+        visibilities,
+        chart.series[0].points.map(p =>
+            p.dataLabel.attr('visibility') !== 'hidden'
+        ),
+        'Labels should be back to original visibility'
+    );
+
 });
 
 QUnit.test('Bottom 90', function (assert) {
@@ -152,7 +195,7 @@ QUnit.test('Bottom 90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('y') > 0,
+        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
         'Labels are visible'
     );
     assert.ok(
@@ -189,7 +232,7 @@ QUnit.test('Top 90', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].points[0].dataLabel.element.getAttribute('y') > 0,
+        chart.series[0].points[0].dataLabel.element.getAttribute('visibility') !== 'hidden',
         'Labels are visible'
     );
     assert.ok(
@@ -444,5 +487,28 @@ QUnit.test('defer:true and exporting (#10661)', assert => {
         ),
         [null, null, null],
         'Data labels should be visible'
+    );
+
+    chart.series[0].update({
+        type: 'line',
+        marker: {
+            enabled: false
+        }
+    });
+
+    chart.series[0].points[0].onMouseOver();
+    chart.series[0].points[0].onMouseOut();
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.element.getAttribute('opacity'),
+        null,
+        `Hovering over points without markers should not set labels opacity,
+        #17957.`
+    );
+    assert.deepEqual(
+        chart.series[0].points.map(p =>
+            p.dataLabel.element.getAttribute('visibility')
+        ),
+        [null, null, null],
+        'Hovering over points without markers should not hide labels, #17957.'
     );
 });

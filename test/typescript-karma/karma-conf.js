@@ -155,6 +155,8 @@ module.exports = function (config) {
             'vendor/require.js',
             'test/test-controller.js',
             'test/test-utilities.js',
+            'test/json-sources.js',
+            'test/typescript-karma/karma-fetch.js',
             'test/typescript-karma/karma-setup.js',
             {
                 included: false,
@@ -168,7 +170,7 @@ module.exports = function (config) {
         ], tests),
 
         reporters: ['progress'],
-        port: 9876,  // karma web server port
+        port: 9876, // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
         browsers: browsers,
@@ -176,9 +178,7 @@ module.exports = function (config) {
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity,
         reportSlowerThan: 3000,
-        plugins: [
-            'karma-*',
-        ],
+        plugins: [ 'karma-*' ],
 
         formatError: function (s) {
             let ret = s;

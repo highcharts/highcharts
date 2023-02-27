@@ -1,71 +1,60 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['nl-nh', 0],
-    ['nl-fr', 1],
-    ['be-bu', 2],
-    ['nl-gr', 3],
-    ['nl-fl', 4],
-    ['nl-ze', 5],
-    ['be-3528', 6],
-    ['be-3529', 7],
-    ['be-489', 8],
-    ['lu-di', 9],
-    ['lu-gr', 10],
-    ['lu-lu', 11],
-    ['nl-nb', 12],
-    ['nl-ut', 13],
-    ['nl-zh', 14],
-    ['nl-dr', 15],
-    ['nl-ge', 16],
-    ['nl-li', 17],
-    ['be-vb', 18],
-    ['be-490', 19],
-    ['nl-ov', 20],
-    ['be-3526', 21],
-    ['be-3527', 22],
-    ['be-3535', 23],
-    ['be-ov', 24],
-    ['be-3534', 25]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'custom/benelux'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/benelux.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['nl-nh', 10], ['nl-fr', 11], ['be-bu', 12], ['nl-gr', 13],
+        ['nl-fl', 14], ['nl-ze', 15], ['be-3528', 16], ['be-3529', 17],
+        ['be-489', 18], ['lu-di', 19], ['lu-gr', 20], ['lu-lu', 21],
+        ['nl-nb', 22], ['nl-ut', 23], ['nl-zh', 24], ['nl-dr', 25],
+        ['nl-ge', 26], ['nl-li', 27], ['be-vb', 28], ['be-490', 29],
+        ['nl-ov', 30], ['be-3526', 31], ['be-3527', 32], ['be-3535', 33],
+        ['be-ov', 34], ['be-3534', 35], [null, 36]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/benelux.js">Benelux</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/benelux.topo.json">Benelux</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

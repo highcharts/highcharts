@@ -1,0 +1,134 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://unpkg.com/topojson-client@3"></script>
+<script src="https://code.highcharts.com/maps/modules/map.js"></script>
+<script src="https://code.highcharts.com/maps/modules/data.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/wordcloud.js"></script>
+
+<script src="https://code.highcharts.com/modules/pattern-fill.js"></script>
+<script src="https://code.highcharts.com/modules/item-series.js"></script>
+<script src="https://code.highcharts.com/modules/histogram-bellcurve.js"></script>
+<script src="https://code.highcharts.com/gantt/modules/draggable-points.js"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+
+<div style="margin-top:20px;display: flex;justify-content: center;width: 100%;">
+	<div>
+		<div id="message">
+			<div class="button-container">
+				<button type="button" id="open" class="btn btn-primary">Open</button>
+			</div>
+
+			<div id="box1" class="box">
+				<div class="box-left ">
+					<div class="inner ">
+					<span>Happy Holidays!</span>
+					</div>
+				</div>
+			</div>
+
+			<div id="box2" class="box">
+				<div class="box-center">
+					<div class="inner">
+					<span></span>
+					</div>
+				</div>
+			</div>
+
+			<div id="box3" class="box">
+				<div class="box-right">
+					<div class="inner">
+					<span></span>
+					</div>
+				</div>
+			</div>
+
+			<div id="box4" class="box row2">
+				<div class="box-left row2">
+					<div class="inner">
+					<span></span>
+					</div>
+				</div>
+			</div>
+
+			<div id="box5" class="box row2 center">
+				<div class="box-center row2">
+					<div class="inner">
+					<p id="center-message">from your friends<br>at Highcharts</p>
+					</div>
+				</div>
+			</div>
+
+			<div id="box6" class="box right row2">
+				<div class="box-right row2">
+					<div class="inner">
+					</div>
+				</div>
+			</div>
+
+			<div id="box7" class="box row3">
+				<div class="box-left row3">
+					<div class="inner">
+					<span></span>
+					</div>
+				</div>
+			</div>
+
+			<div id="box8" class="box row3 center">
+				<div class="box-center row3">
+					<div class="inner">
+					</div>
+				</div>
+			</div>
+
+			<div id="box9" class="box right row3">
+				<div class="box-right row3">
+					<div class="inner">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="charts">
+				<div class="chart-container" id="word-chart"></div>
+				<div class="chart-container" id="snowglobe-chart"></div>
+				<div class="chart-container" id="presents-chart"></div>
+				<div class="chart-container" id="bell-chart"></div>
+				<div class="chart-container" id="ball-chart"></div>
+				<div class="chart-container" id="cane-chart"></div>
+				<div class="chart-container" id="flake-chart"></div>
+				<div class="chart-container" id="tree-chart"></div>
+				<div class="chart-container" id="donut"></div>
+			<!-- <div class="chart-container" id="container"></div> -->
+
+			</div>
+		</div>
+	</div>
+
+	<div id="back">
+		<a href="https://www.highcharts.com">Back to Highcharts.com</a>
+	</div>
+</div>
+
+
+<svg id='patternId' width='0%' height='0%' xmlns='http://www.w3.org/2000/svg'>
+	<defs>
+		<pattern id='redstripe' patternUnits='userSpaceOnUse' width='20' height='30' patternTransform='scale(.5) rotate(45)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(0, 0%, 100%, 1)'/><path d='M0 10h20z'   stroke-width='9.5' stroke='hsla(4, 90%, 58%, 1)' fill='none'/>
+		</pattern>
+		<pattern id='bluestripe' patternUnits='userSpaceOnUse' width='20' height='40' patternTransform='scale(.2) rotate(45)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(0,0%,100%,1)'/><path d='M0 10h20z'   stroke-width='19.5' stroke='hsla(231, 48%, 48%, 1)' fill='none'/><path d='M0 30h20z'   stroke-width='19.5' stroke='hsla(0, 0%, 100%, 1)' fill='none'/></pattern>
+		<pattern id='redstripe2' patternUnits='userSpaceOnUse' width='20' height='40' patternTransform='scale(.2) rotate(45)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(0,0%,100%,1)'/><path d='M0 10h20z'   stroke-width='19.5' stroke='hsla(4, 90%, 58%, 1)' fill='none'/><path d='M0 30h20z'   stroke-width='19.5' stroke='hsla(0, 0%, 100%, 1)' fill='none'/></pattern>
+		<pattern id='stars' patternUnits='userSpaceOnUse' width='20' height='40' patternTransform='scale(.2) rotate(0)'><rect x='0' y='0' width='100%' height='100%' fill='hsla(0,0%,100%,1)'/><path d='M0 20v20h20V20zm10.135 4.9l1.342 3.579 3.845.312-2.996 2.506.897 3.8-3.268-2.056L6.736 35.1l.985-3.848-3.043-2.504 3.935-.18z'  stroke-width='1' stroke='none' fill='hsla(258.5,59.4%,59.4%,1)'/><path d='M0 0v20h20V0zm10.135 4.9l1.342 3.579 3.845.312-2.996 2.506.897 3.8-3.268-2.056L6.736 15.1l.985-3.848-3.043-2.504 3.935-.18z'  stroke-width='1' stroke='none' fill='hsla(339.6,82.2%,51.6%,1)'/></pattern>
+	</defs>
+</svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" >
+	<linearGradient id="bg-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+		<stop offset="5%" stop-color="#005190" />
+		<stop offset="95%" stop-color="#45445d" />
+	</linearGradient>
+</svg>
+
+
+
+
+

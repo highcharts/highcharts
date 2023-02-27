@@ -12,7 +12,6 @@
  *
  * */
 
-import type RequireIndicatorsResultObject from './RequireIndicatorsResultObject';
 import type Series from '../../Core/Series/Series';
 
 /* *
@@ -23,14 +22,12 @@ import type Series from '../../Core/Series/Series';
 
 export interface IndicatorLike extends Series {
     useCommonDataGrouping?: boolean;
-    /** @requires indicators/indicators */
-    requireIndicators(): RequireIndicatorsResultObject;
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-        useCommonDataGrouping?: IndicatorLike['useCommonDataGrouping'];
-    }
-}
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default IndicatorLike;

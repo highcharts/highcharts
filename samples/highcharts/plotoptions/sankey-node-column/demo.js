@@ -18,7 +18,9 @@ Highcharts.chart('container', {
         ],
         nodes: [{
             id: 'US',
-            offset: 130
+            // offset: 130 // deprecated
+            offsetHorizontal: -50,
+            offsetVertical: 130
         }, {
             id: 'EU',
             column: 2

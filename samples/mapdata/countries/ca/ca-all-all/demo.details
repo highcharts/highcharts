@@ -1,5 +1,5 @@
 ---
- name: Canada, admin2 - Highmaps
- description: Highmaps demo
+ name: Canada, admin2 - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

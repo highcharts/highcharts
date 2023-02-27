@@ -16,10 +16,25 @@ QUnit.test(
                 layout: 'vertical'
             }
         });
+
         assert.notEqual(
-            chart.legend.allItems[0]._legendItemPos[1], // eslint-disable-line no-underscore-dangle
-            chart.legend.allItems[1]._legendItemPos[1], // eslint-disable-line no-underscore-dangle
+            chart.legend.allItems[0].legendItem.y,
+            chart.legend.allItems[1].legendItem.y,
             'Legend item has positive height'
+        );
+
+        const initialHeight = chart.legend.legendHeight;
+
+        chart.series[0].update({
+            name: 'Series'
+        });
+
+        const updatedHeight = chart.legend.legendHeight;
+
+        assert.equal(
+            initialHeight,
+            updatedHeight,
+            'Legend items should have same spacing regardless of empty name (#16398)'
         );
     }
 );

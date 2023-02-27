@@ -1,5 +1,5 @@
 QUnit.test(
-    "Tooltip isn't displayed when on column, when yAxis.max is lower than column's value. (#4511)",
+    'Tooltip isn\'t displayed when on column, when yAxis.max is lower than column\'s value. (#4511)',
     function (assert) {
         var chart = $('#container')
             .highcharts({
@@ -154,7 +154,7 @@ QUnit.test('Testing hovering over panes.', function (assert) {
     assert.strictEqual(
         chart.hoverPoint,
         chart.series[0].points[2],
-        "The other pane's point should be ignored" // #11148
+        'The other pane\'s point should be ignored' // #11148
     );
 
     chart.tooltip.hide(0);
@@ -212,10 +212,6 @@ QUnit.test('Tooltip should be shown for value equal to max', function (assert) {
             lineWidth: 0,
             min: 0,
             max: 100
-        },
-
-        tooltip: {
-            //shared: true
         },
 
         series: [
@@ -282,5 +278,28 @@ QUnit.test('Hover state when axis is updated (#12569).', function (assert) {
     assert.ok(
         series.halo && series.halo.visibility !== 'hidden',
         'Halo and hover state should be visible.'
+    );
+});
+
+QUnit.test('Polar chart without stickyTracking, #17359.', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                polar: true
+            },
+            series: [{
+                stickyTracking: false,
+                data: [1, 2, 3, 4, 5]
+            }]
+        }),
+        controller = new TestController(chart),
+        x = 300,
+        y = 120;
+
+    controller.setPosition(x - 1, y - 1);
+    controller.moveTo(x, y);
+
+    assert.ok(
+        chart.tooltip.isHidden,
+        'The tooltip should not be displayed when not hovering over the series.'
     );
 });

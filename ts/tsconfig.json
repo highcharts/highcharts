@@ -3,24 +3,29 @@
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "alwaysStrict": false,
-        "declaration": false,
+        "composite": true,
+        "declaration": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "keyofStringsOnly": true,
         "noEmitOnError": true,
+        // "noEmitHelpers": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitThis": true,
         "strict": true,
         "module": "es6",
+        "moduleResolution": "node",
         "outDir": "../js",
         "rootDir": ".",
         "target": "es5",
         "lib": [
-            "dom",
-            "es5"
+            "DOM",
+            "ES5",
+            "ES2015.Promise"
         ],
         "types": [
-            "jquery"
+            "jquery",
+            "trusted-types"
         ]
     },
     "include": [

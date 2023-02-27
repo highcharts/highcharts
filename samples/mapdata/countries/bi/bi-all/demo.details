@@ -1,5 +1,5 @@
 ---
- name: Burundi - Highmaps
- description: Highmaps demo
+ name: Burundi - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...
