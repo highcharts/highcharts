@@ -632,3 +632,17 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
 .hd-dashboards-wrapper > .hd-edit-drop-pointer {
     background: #ff8d64;
 }
+
+.hd-edit-toggle-wrapper-colored > .hd-edit-toggle-slider,
+.hd-edit-toggle-wrapper.hd-edit-toggle-wrapper-colored input:checked + .hd-edit-toggle-slider {
+    background-color: #4A4A53;
+    border: 1px solid #838394;
+}
+
+.hd-edit-toggle-wrapper-colored > .hd-edit-toggle-slider:before {
+    background-color: #DADAE2;
+    height: 17px;
+    width: 17px;
+    left: 2px;
+    bottom: 2px;
+}
