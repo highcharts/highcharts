@@ -45,6 +45,7 @@ const {
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
+import Axis from '../../Core/Axis/Axis';
 const {
     extend,
     fireEvent,
@@ -466,18 +467,29 @@ class HeatmapSeries extends ScatterSeries {
 
                 if (canvas && ctx && colorAxis) {
                     const
-                        colsize = heatmapOptions.colsize || 1,
-                        rowsize = heatmapOptions.rowsize || 1,
-                        { width: canvasWidth, height: canvasHeight } = canvas,
+                        [colsize, rowsize] = inverted ? [
+                            heatmapOptions.rowsize || 1,
+                            heatmapOptions.colsize || 1
+                        ] : [
+                            heatmapOptions.colsize || 1,
+                            heatmapOptions.rowsize || 1
+                        ],
+                        xToRange = { toStart: 0, toEnd: canvas.width - 1 },
+                        yToRange = { toStart: 0, toEnd: canvas.height - 1 },
+                        xFromRange = heatmap.xAxis.getExtremes(),
+                        yFromRange = heatmap.yAxis.getExtremes(),
                         scaleToRange = function (
                             value: number,
-                            fromRange: number[],
-                            toRange: number[]
+                            {
+                                min: fromStart,
+                                max: fromEnd
+                            }: Axis.ExtremesObject,
+                            { toStart, toEnd }: {
+                                toStart: number,
+                                toEnd: number
+                            }
                         ): number {
                             const
-                                [fromStart, fromEnd] = fromRange,
-                                [toStart, toEnd] = toRange,
-
                                 // Precaution in case value is 0
                                 // or less than start of old range
                                 boundingFactor = Math.min(
@@ -488,56 +500,11 @@ class HeatmapSeries extends ScatterSeries {
                                 scale = (
                                     (toEnd - toStart) /
                                     (fromEnd - fromStart)
-                                ) + toStart;
-                            return ~~(boundingFactor * scale);
-                        },
-                        {
-                            min: xMin,
-                            max: xMax
-                        } = heatmap.xAxis.getExtremes(),
-                        xScale = function (x: number): number {
-                            return scaleToRange(
-                                x,
-                                [xMin, xMax],
-                                [
-                                    0,
-                                    inverted ?
-                                        canvasWidth :
-                                        canvasWidth - 1
-                                ]
-                            );
-                        },
-                        {
-                            min: yMin,
-                            max: yMax
-                        } = heatmap.yAxis.getExtremes(),
-                        yScale = function (y: number): number {
-                            return scaleToRange(
-                                (yMax as number) - y,
-                                [yMin, yMax],
-                                [0, canvasHeight - 1]
-                            );
-                        },
-                        argsByInversion = function (p: HeatmapPoint): {
-                            x: number,
-                            y: number,
-                            colsize: number,
-                            rowsize: number
-                        } {
-                            const
-                                x = xScale(p.x),
-                                y = yScale(p.y);
+                                ) + toStart,
 
-                            return (
-                                inverted ? {
-                                    x: canvasWidth - x - 1,
-                                    y: canvasHeight - y - 1,
-                                    colsize: rowsize,
-                                    rowsize: colsize
-                                } : {
-                                    x, y, rowsize, colsize
-                                }
-                            );
+                                result = ~~(boundingFactor * scale);
+
+                            return inverted ? toEnd - result : result;
                         },
                         isNotBoosted = (!heatmap.boost && !chart.boost);
 
@@ -547,11 +514,23 @@ class HeatmapSeries extends ScatterSeries {
                     }
 
                     heatmap.points.forEach((p: HeatmapPoint): void => {
-                        const { x, y, colsize, rowsize } = argsByInversion(p);
                         ctx.fillStyle = colorAxis.toColor(
                             p.value || 0, p
                         ) as string;
-                        ctx.fillRect(x, y, colsize, rowsize);
+                        ctx.fillRect(
+                            scaleToRange(
+                                p.x,
+                                xFromRange,
+                                xToRange
+                            ),
+                            scaleToRange(
+                                (yFromRange.max as number) - p.y,
+                                yFromRange,
+                                yToRange
+                            ),
+                            colsize,
+                            rowsize
+                        );
                     });
 
                     heatmap.image = chart.renderer.image(
@@ -562,12 +541,14 @@ class HeatmapSeries extends ScatterSeries {
                         .attr(dimsByInversion)
                         .add(heatmap.group);
                 }
+
             } else if (!(
                 image.width === dimsByInversion.width &&
                 image.height === dimsByInversion.height
             )) {
                 image.attr(dimsByInversion);
             }
+
         } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
             Series.prototype.drawPoints.call(heatmap);
             heatmap.points.forEach((point): void => {
