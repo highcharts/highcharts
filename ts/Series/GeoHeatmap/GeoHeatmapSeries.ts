@@ -158,6 +158,25 @@ class GeoHeatmapSeries extends MapSeries {
     public data: Array<GeoHeatmapPoint> = void 0 as any;
     public points: Array<GeoHeatmapPoint> = void 0 as any;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Update all options.
+     * @private
+     */
+    public update(): void {
+        const series = this;
+
+        series.options = merge(series.options, arguments[0]);
+        super.update.apply(series, arguments);
+    }
+
 }
 
 /* *
@@ -196,7 +215,6 @@ SeriesRegistry.registerSeriesType('geoheatmap', GeoHeatmapSeries);
  * */
 
 export default GeoHeatmapSeries;
-
 
 /* *
  *
