@@ -10,7 +10,7 @@
 @import url("../annotations/popup.css");
 
 :root,
-.dashboards-light {
+.highcharts-dashboards-light {
     /* Base colors */
     --highcharts-dashboards-neutral-color-100: #000000;
     --highcharts-dashboards-neutral-color-80: #333333;
@@ -54,7 +54,7 @@
     }
 }
 
-.dashboards-dark {
+.highcharts-dashboards-dark {
     --highcharts-dashboards-wrapper-background-color: #808080;
 }
 

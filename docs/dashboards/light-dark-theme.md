@@ -8,9 +8,9 @@ To use the Light and Dark theme, you need to import the `gui.css` file.
     @import "https://code.highcharts.com/css/dashboards/gui.css";
 ```
 
-By default, the theme is set to light. But it adjusts itself to the user's system settings.  
+By default, the theme is set to the system default theme through the `prefers-color-scheme` media query. But it adjusts itself to the user's system settings.  
 You can also force the color scheme by setting the class to the dashboard container.
 
 ```html
-    <div id="container" class="dashboards-dark ">
+    <div id="container" class="highcharts-dashboards-dark ">
 ```
