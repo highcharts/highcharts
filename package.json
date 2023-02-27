@@ -54,6 +54,7 @@
     "cloudflare": "^2.9.1",
     "colors": "^1.4.0",
     "cypress": "^12.5.0",
+    "cypress-visual-regression": "^2.1.1",
     "dtslint": "^4.2.1",
     "eslint": "^8.33.0",
     "eslint-config-eslint": "^7.0.0",

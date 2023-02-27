@@ -20,6 +20,8 @@ describe('Component loading', () => {
       }
     });
 
+    cy.compareSnapshot('dashboard-loading', 0.1);
   });
+
 
 });

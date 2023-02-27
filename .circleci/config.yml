@@ -235,12 +235,15 @@ jobs:
             whereis google-chrome
       - run:
           name: Run cypress tests (Chrome)
-          command: TZ=UTC npx cypress run --browser chrome --headless
+          command: TZ=UTC npx cypress run --browser chrome --headless --env type=actual 
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/videos
           destination: cypress-chrome
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/screenshots
+          destination: cypress-chrome
+      - store_artifacts:
+          path: /home/circleci/repo/highcharts/cypress/snapshots
           destination: cypress-chrome
 #      - run:
 #          command: |
@@ -387,6 +390,55 @@ jobs:
           path: ../visual-test-results
       - store_artifacts:
           path: ../visual-test-results
+
+  visual_comparison_with_dashboards:
+    <<: *defaults
+    description: Create visual comparison base images
+    parameters:
+      reference-branch:
+        description: "The reference branch"
+        type: string
+        default: "dashboards/main"
+    steps:
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - <<: *add_gh_user_config
+      - run: |
+          if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+            echo "Not a PR according to CircleCI, so marking this step successful"
+            circleci step halt
+          fi
+      - <<: *load_workspace
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+          command: |
+            google-chrome --version
+            whereis google-chrome
+          name: Check Chrome
+      - run: sudo apt-get update -y
+      - run: sudo apt-get install -y rsync
+      - run: git pull origin << parameters.reference-branch >> # git might not know it
+      - run: | # checkout master at diverge point of current branch and install
+          git checkout << parameters.reference-branch >> && git fetch origin << parameters.reference-branch >> && git reset --hard origin/<< parameters.reference-branch >> &&
+          git checkout $(git merge-base << parameters.reference-branch >> ${CIRCLE_BRANCH}) && git log --oneline -5 &&
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+      - generate_references_command:
+          browsercount: 2
+      - run: |
+          git checkout ${CIRCLE_BRANCH} && git log --oneline -5 &&
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force
+      # we are forcing success on the below test runs to avoid failing the PR build
+      - run: 
+        name: Run cypress visual tests as base # only dashboards for now
+        command: npx cypress run --env type=base --config specPattern="**/Dashboards/**/*.cy.js"
+      - store_artifacts:
+          path: /home/circleci/repo/highcharts/cypress/snapshots
+          destination: cypress-chrome
+      - store_artifacts:
+          path: /home/circleci/repo/highcharts/cypress/screenshots
+          destination: cypress-chrome
+      - <<: *persist_workspace
 
   nightly_visual_diff:
     <<: *defaults
@@ -566,7 +618,16 @@ workflows:
           requires: [lint]
           filters:
             branches:
+              ignore: 
+                - master
+                - /db\/.*/
+          context: highcharts-staging
+      - visual_comparison_with_dashboards:
+          requires: [lint]
+          filters:
+            branches:
               ignore: master
+              only: /db\/.*/
           context: highcharts-staging
       - generate_release_reference_images:
           requires: [lint]

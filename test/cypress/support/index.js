@@ -1,3 +1,7 @@
+const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
+
+compareSnapshotCommand();
+
 Cypress.Commands.add('zoom', chartElement => {
     return cy.get(chartElement)
         .trigger('mouseenter')
