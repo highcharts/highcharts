@@ -335,16 +335,8 @@ class SankeySeries extends ColumnSeries {
     }
 
     public drawDataLabels(): void {
-        for (const link of this.points) {
-            const dlOptions = this.options.dataLabels;
-            if (dlOptions && dlOptions.linkTextPath &&
-                dlOptions.linkTextPath.enabled) {
-                link.options.dataLabels = merge(link.options.dataLabels,
-                    { useHTML: false });
-            }
-        }
-
-        super.drawDataLabels();
+        ColumnSeries.prototype.drawDataLabels.call(this, this.points);
+        ColumnSeries.prototype.drawDataLabels.call(this, this.nodes);
     }
 
     /**
