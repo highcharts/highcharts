@@ -33,7 +33,7 @@ class Fullscreen {
 
         // add class to allow scroll element
         this.board.boardWrapper.classList.add(
-            Globals.classNamePrefix + '-dashboards-fullscreen'
+            Globals.classNamePrefix + '-fullscreen'
         );
     }
 

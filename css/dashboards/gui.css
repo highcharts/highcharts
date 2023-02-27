@@ -67,7 +67,7 @@ body {
 }
 
 .highcharts-dashboards,
-.highcharts-dashboards-dashboards-wrapper {
+.highcharts-dashboards-wrapper {
     background-color: var(--highcharts-dashboards-wrapper-background-color);
     padding: 20px 10px;
     position: relative;
@@ -77,7 +77,7 @@ body {
     overflow-x: scroll;
 }
 
-.highcharts-dashboards-dashboards-fullscreen:fullscreen {
+.highcharts-dashboards-fullscreen:fullscreen {
     overflow: scroll;
 }
 
