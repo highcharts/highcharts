@@ -27,20 +27,23 @@ QUnit.test('Interpolated image test', function (assert) {
         ]
     });
 
+
     const heatmap = chart.series[0];
-    const point = heatmap.points[0];
-    const container = chart.container;
+
     assert.strictEqual(heatmap.image.element.tagName, 'image', 'An image-tagname should exist');
 
-    const controller = new TestController(chart);
+    const
+        controller = new TestController(chart),
+        { plotX, plotY } = heatmap.points[0],
+        { container, plotLeft, plotTop } = chart;
 
     controller.moveTo(
-        chart.plotLeft + point.plotX,
-        chart.plotTop + point.plotY
+        plotLeft + plotX,
+        plotTop + plotY
     );
 
     assert.ok(
-        container.getElementsByClassName('highcharts-tooltip') !== (null || undefined),
+        container.getElementsByClassName('highcharts-tooltip') !== undefined,
         'Should have tooltip when hovered'
     );
 });
