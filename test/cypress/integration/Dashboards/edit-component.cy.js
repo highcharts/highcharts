@@ -2,7 +2,7 @@ describe('Editable component options', () => {
     beforeEach(() => {
         cy.visit('/cypress/dashboards/dashboard-layout');
         cy.viewport(1200, 1000);
-        cy.enableEditMode();
+        cy.toggleEditMode();
     });
 
     it('should be able update chart ID via edit mode GUI', function() {
