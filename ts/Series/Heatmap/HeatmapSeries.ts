@@ -450,7 +450,10 @@ class HeatmapSeries extends ScatterSeries {
                 { plotWidth, plotHeight, inverted } = chart,
                 dimsByInversion = inverted ? {
                     width: plotHeight,
-                    height: plotWidth
+                    height: plotWidth,
+                    rotationOriginX: plotHeight / 2,
+                    rotationOriginY: plotWidth / 2,
+                    rotation: 180
                 } : {
                     width: plotWidth,
                     height: plotHeight
@@ -489,9 +492,10 @@ class HeatmapSeries extends ScatterSeries {
                                 toEnd: number
                             }
                         ): number {
+
+                            // Precaution in case value is 0
+                            // or less than start of old range
                             const
-                                // Precaution in case value is 0
-                                // or less than start of old range
                                 boundingFactor = Math.min(
                                     fromEnd,
                                     Math.max(fromStart, value)
@@ -500,15 +504,12 @@ class HeatmapSeries extends ScatterSeries {
                                 scale = (
                                     (toEnd - toStart) /
                                     (fromEnd - fromStart)
-                                ) + toStart,
+                                ) + toStart;
 
-                                result = ~~(boundingFactor * scale);
+                            return ~~(boundingFactor * scale);
+                        };
 
-                            return inverted ? toEnd - result : result;
-                        },
-                        isNotBoosted = (!heatmap.boost && !chart.boost);
-
-                    if (isNotBoosted) {
+                    if (!heatmap.boost && !chart.boost) {
                         heatmap.buildKDTree();
                         heatmap.directTouch = false;
                     }
@@ -524,7 +525,9 @@ class HeatmapSeries extends ScatterSeries {
                                 xToRange
                             ),
                             scaleToRange(
-                                (yFromRange.max as number) - p.y,
+                                inverted ?
+                                    p.y :
+                                    (yFromRange.max as number) - p.y,
                                 yFromRange,
                                 yToRange
                             ),
