@@ -1727,7 +1727,7 @@ class SVGRenderer implements SVGRendererLike {
         element: (DOMElementType|SVGElement)
     ): FontMetricsObject {
         const f = pInt(
-            SVGElement.prototype.getStyle.call(element, 'font-size')
+            SVGElement.prototype.getStyle.call(element, 'font-size') || 0
         );
 
         // Empirical values found by comparing font size and bounding box
