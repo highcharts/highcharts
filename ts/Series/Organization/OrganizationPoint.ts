@@ -21,7 +21,7 @@
 import type OrganizationPointOptions from './OrganizationPointOptions';
 import type OrganizationSeries from './OrganizationSeries';
 import type { OrganizationSeriesNodeOptions } from './OrganizationSeriesOptions';
-import SankeyPoint from './../Sankey/SankeyPoint';
+import type SankeyPoint from './../Sankey/SankeyPoint';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {

@@ -23,6 +23,7 @@ import type {
     SankeyDataLabelFormatterContext,
     SankeyDataLabelOptions
 } from '../Sankey/SankeyDataLabelOptions';
+import type DataLabelTextPathOptions from '../../Core/Series/DataLabelOptions';
 
 /* *
  *
@@ -48,6 +49,7 @@ export interface OrganizationDataLabelFormatterContext extends SankeyDataLabelFo
 export interface OrganizationDataLabelOptions extends SankeyDataLabelOptions {
     nodeFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
     linkFormat?: string;
+    linkFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
 }
 
 export default OrganizationDataLabelOptions;

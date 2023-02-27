@@ -20,6 +20,7 @@
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
+    OrganizationDataLabelsFormatterCallbackFunction,
     OrganizationDataLabelFormatterContext
 } from './OrganizationDataLabelOptions';
 import type OrganizationPoint from './OrganizationPoint';
@@ -28,6 +29,7 @@ import type Point from '../../Core/Series/Point';
 import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
+import { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions';
 
 /* *
  *
@@ -413,20 +415,6 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  */
 
 /**
- * The format string specifying what to show for *links* in the
- * organization chart.
- *
- * Best to use with `linkTextPath` enabled.
- *
- * @sample highcharts/series-organization/link-labels
- *         Organization chart with link labels
- *
- * @type      {string}
- * @product   highcharts
- * @apioption series.organization.dataLabels.linkFormat
- */
-
-/**
  * An image for the node card, will be inserted by the default
  * `dataLabel.nodeFormatter`.
  *
@@ -436,6 +424,52 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  * @type      {string}
  * @product   highcharts
  * @apioption series.organization.nodes.image
+ */
+
+/**
+ * The format string specifying what to show for *links* in the
+ * organization chart.
+ *
+ * Best to use with `linkTextPath` enabled.
+ *
+ * Defaults to `undefined`.
+ *
+ * @sample highcharts/series-organization/link-labels
+ *         Organization chart with link labels
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.organization.dataLabels.linkFormat
+ * @since 10.3.3
+ */
+
+/**
+ * Callback to format data labels for _links_ in the
+ * organization chart. The `linkFormat` option takes
+ * precedence over the `linkFormatter`.
+ *
+ * Defaults to `undefined`.
+ *
+ * @type      {OrganizationDataLabelsFormatterCallbackFunction}
+ * @product   highcharts
+ * @apioption series.organization.dataLabels.linkFormatter
+ * @since 10.3.3
+ */
+
+/**
+ * Options for a _link_ label text which should follow link
+ * connection. Border and background are disabled for a label
+ * that follows a path.
+ *
+ * **Note:** Only SVG-based renderer supports this option.
+ *
+ * @sample highcharts/series-organization/link-labels
+ *         Organization chart with link labels
+ *
+ * @type { DataLabelTextPathOptions }
+ * @product highcharts
+ * @apioption series.organization.dataLabels.linkTextPath
+ * @since 10.3.3
  */
 
 /**
