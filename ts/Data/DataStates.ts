@@ -210,7 +210,9 @@ class DataStates {
                     cursors = stateMap[cursor.state] = [];
                 }
 
-                cursors.push(cursor);
+                if (DataStates.getIndex(cursor, cursors) === -1) {
+                    cursors.push(cursor);
+                }
             }
 
             const e: DataStates.Event = {
