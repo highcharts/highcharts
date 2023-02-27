@@ -1,7 +1,6 @@
 const chart = Highcharts.chart('container', {
     chart: {
-        type: 'heatmap',
-        inverted: true
+        type: 'heatmap'
     },
 
     title: {
@@ -29,11 +28,6 @@ const chart = Highcharts.chart('container', {
     },
 
     series: [{
-        events: {
-            mouseOver: function () {
-                console.log(document.getElementsByClassName('highcharts-tooltip')[0]);
-            }
-        },
         colsize: 24 * 36e5, // one day
         data: JSON.parse(document.getElementById('data').innerText),
         interpolation: true
@@ -73,5 +67,3 @@ document.getElementById('data-toggle').addEventListener('click', e => {
         }
     );
 });
-
-console.log(chart.tooltip);

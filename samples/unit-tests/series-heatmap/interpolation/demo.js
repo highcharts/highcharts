@@ -1,8 +1,7 @@
 QUnit.test('Interpolated image test', function (assert) {
     const chart = Highcharts.chart('container', {
         chart: {
-            type: 'heatmap',
-            inverted: true
+            type: 'heatmap'
         },
 
         colorAxis: {
