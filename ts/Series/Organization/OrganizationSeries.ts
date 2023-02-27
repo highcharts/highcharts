@@ -413,8 +413,7 @@ class OrganizationSeries extends SankeySeries {
     public drawDataLabels(): void {
         const dlOptions = this.options.dataLabels;
 
-        if (dlOptions && dlOptions.linkTextPath &&
-            dlOptions.linkTextPath.enabled) {
+        if (dlOptions.linkTextPath && dlOptions.linkTextPath.enabled) {
             for (const link of this.points) {
                 link.options.dataLabels = merge(link.options.dataLabels,
                     { useHTML: false });

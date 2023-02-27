@@ -29,7 +29,7 @@ import type Point from '../../Core/Series/Point';
 import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
-import { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions';
+import { type DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions';
 
 /* *
  *
@@ -432,15 +432,13 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  *
  * Best to use with `linkTextPath` enabled.
  *
- * Defaults to `undefined`.
- *
  * @sample highcharts/series-organization/link-labels
  *         Organization chart with link labels
  *
  * @type      {string}
  * @product   highcharts
  * @apioption series.organization.dataLabels.linkFormat
- * @since 10.3.3
+ * @since next
  */
 
 /**
@@ -448,12 +446,10 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  * organization chart. The `linkFormat` option takes
  * precedence over the `linkFormatter`.
  *
- * Defaults to `undefined`.
- *
  * @type      {OrganizationDataLabelsFormatterCallbackFunction}
  * @product   highcharts
  * @apioption series.organization.dataLabels.linkFormatter
- * @since 10.3.3
+ * @since next
  */
 
 /**
@@ -469,7 +465,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  * @type { DataLabelTextPathOptions }
  * @product highcharts
  * @apioption series.organization.dataLabels.linkTextPath
- * @since 10.3.3
+ * @since next
  */
 
 /**
