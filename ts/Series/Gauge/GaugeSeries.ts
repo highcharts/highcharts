@@ -46,7 +46,8 @@ const {
     extend,
     merge,
     pick,
-    pInt
+    pInt,
+    defined
 } = U;
 
 
@@ -487,6 +488,11 @@ class GaugeSeries extends Series {
             // Positions for data label
             point.plotX = center[0];
             point.plotY = center[1];
+
+            if (defined(point.y) && yAxis.max - yAxis.min) {
+                point.percentage =
+                    (point.y - yAxis.min) / (yAxis.max - yAxis.min) * 100;
+            }
         });
     }
 

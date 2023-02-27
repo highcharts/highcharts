@@ -118,7 +118,7 @@ const ganttChart = function () {
 
                 }
             },
-            styledMode: (true)
+            styledMode: true
         },
         lang: {
             accessibility: {

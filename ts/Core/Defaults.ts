@@ -1969,6 +1969,9 @@ const defaultOptions: Options = {
          * For touch moves to behave the same way, [followTouchMove](
          * #tooltip.followTouchMove) must be `true` also.
          *
+         * @sample highcharts/tooltip/followpointer/
+         *         Tooltip follow pointer comparison
+         *
          * @type      {boolean}
          * @default   {highcharts} false
          * @default   {highstock} false
@@ -2148,6 +2151,8 @@ const defaultOptions: Options = {
          * to the axis. This is recommended over [shared](#tooltip.shared)
          * tooltips for charts with multiple line series, generally making them
          * easier to read. This option takes precedence over `tooltip.shared`.
+         *
+         * Not supported for [polar](#chart.polar) and [inverted](#chart.inverted) charts.
          *
          * @productdesc {highstock} In Highcharts Stock, tooltips are split
          * by default since v6.0.0. Stock charts typically contain
@@ -2592,9 +2597,7 @@ const defaultOptions: Options = {
             /** @internal */
             cursor: 'default',
             /** @internal */
-            fontSize: '12px',
-            /** @internal */
-            whiteSpace: 'nowrap'
+            fontSize: '12px'
         },
 
         /**

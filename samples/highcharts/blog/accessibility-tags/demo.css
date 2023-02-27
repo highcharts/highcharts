@@ -1,0 +1,15 @@
+.penguins-figure {
+    width: 100%;
+    margin: 0;
+}
+
+#vis-container {
+    height: 400px;
+    width: 100%;
+}
+
+.penguins-figure p {
+    font-family: Verdana, sans-serif;
+    text-align: left;
+    width: 100%;
+}

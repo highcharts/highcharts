@@ -148,7 +148,7 @@ const ChartDefaults: ChartOptions = {
      *         With a longer duration
      *
      * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
-     * @default   undefined
+     * @default   true
      * @apioption chart.animation
      */
 
@@ -235,6 +235,8 @@ const ChartDefaults: ChartOptions = {
      *
      * @sample {highcharts} highcharts/chart/events-load/
      *         Alert on chart load
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      * @sample {highstock} stock/chart/events-load/
      *         Alert on chart load
      * @sample {highmaps} maps/chart/events-load/
@@ -253,6 +255,8 @@ const ChartDefaults: ChartOptions = {
      *
      * @sample {highcharts} highcharts/chart/events-redraw/
      *         Alert on chart redraw
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      * @sample {highstock} stock/chart/events-redraw/
      *         Alert on chart redraw when adding a series or moving the
      *         zoomed range
@@ -268,6 +272,9 @@ const ChartDefaults: ChartOptions = {
     /**
      * Fires after initial load of the chart (directly after the `load`
      * event), and after each redraw (directly after the `redraw` event).
+     *
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      *
      * @type      {Highcharts.ChartRenderCallbackFunction}
      * @since     5.0.7
@@ -766,11 +773,9 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/reflow-false/
      *         False
      *
-     * @type      {boolean}
-     * @default   true
      * @since     2.1
-     * @apioption chart.reflow
      */
+    reflow: true,
 
     /**
      * The HTML element where the chart will be rendered. If it is a string,

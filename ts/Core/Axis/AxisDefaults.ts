@@ -1254,29 +1254,41 @@ namespace AxisDefaults {
         minorTickPosition: 'outside',
 
         /**
-         * Enable or disable minor ticks. Unless
-         * [minorTickInterval](#xAxis.minorTickInterval) is set, the tick
-         * interval is calculated as a fifth of the `tickInterval`.
+         * Enable or disable minor ticks. The interval between the minor ticks
+         * can be controlled either by the
+         * [minorTicksPerMajor](#xAxis.minorTicksPerMajor) setting, or as an
+         * absolute [minorTickInterval](#xAxis.minorTickInterval) value.
          *
          * On a logarithmic axis, minor ticks are laid out based on a best
-         * guess, attempting to enter approximately 5 minor ticks between
-         * each major tick.
+         * guess, attempting to enter an approximate number of minor ticks
+         * between each major tick based on
+         * [minorTicksPerMajor](#xAxis.minorTicksPerMajor).
          *
-         * Prior to v6.0.0, ticks were unabled in auto layout by setting
+         * Prior to v6.0.0, ticks were enabled in auto layout by setting
          * `minorTickInterval` to `"auto"`.
          *
-         * @productdesc {highcharts}
-         * On axes using [categories](#xAxis.categories), minor ticks are not
-         * supported.
+         * @productdesc {highcharts} On axes using
+         * [categories](#xAxis.categories), minor ticks are not supported.
          *
-         * @sample {highcharts} highcharts/yaxis/minorticks-true/
-         *         Enabled on linear Y axis
+         * @sample {highcharts} highcharts/yaxis/minorticks-true/ Enabled on
+         *         linear Y axis
          *
          * @type      {boolean}
          * @default   false
          * @since     6.0.0
          * @apioption xAxis.minorTicks
          */
+
+        /**
+         * The number of minor ticks per major tick. Works for `linear`,
+         * `logarithmic` and `datetime` axes.
+         *
+         * @sample {highcharts} highcharts/yaxis/minortickspermajor/
+         *         2 minor ticks per major tick on Y axis
+         *
+         * @type {number}
+         */
+        minorTicksPerMajor: 5,
 
         /**
          * The pixel width of the minor tick mark.
@@ -2037,6 +2049,9 @@ namespace AxisDefaults {
          *     null
          * ]]
          * ```
+         *
+         * @sample {highcharts} highcharts/xaxis/units/
+         *         Axis units demonstrated
          *
          * @type      {Array<Array<string,(Array<number>|null)>>}
          * @product   highcharts highstock gantt
