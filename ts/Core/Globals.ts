@@ -113,6 +113,13 @@ declare global {
 
     }
 
+    /**
+     * @private
+     * @deprecated
+     * @todo Replace assembler with webpack
+     */
+    const _modules: AnyRecord;
+
 }
 
 /* *

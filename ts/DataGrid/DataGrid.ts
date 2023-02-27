@@ -2,7 +2,7 @@
  *
  *  Data Grid class
  *
- *  (c) 2020-2021 Highsoft AS
+ *  (c) 2020-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -10,6 +10,8 @@
  *
  *  Authors:
  *  - Øystein Moseng
+ *  - Ken-Håvard Lieng
+ *  - Sebastian Bochan
  *
  * */
 
@@ -19,8 +21,9 @@
  *
  * */
 
-import type DataEventEmitter from '../Data/DataEventEmitter';
+import type DataEvent from '../Data/DataEvent';
 import type DataGridOptions from './DataGridOptions';
+
 import DataTable from '../Data/DataTable.js';
 import DataGridUtils from './DataGridUtils.js';
 const {
@@ -49,7 +52,7 @@ const {
  *
  * */
 
-class DataGrid implements DataEventEmitter<DataGrid.Event> {
+class DataGrid implements DataEvent.Emitter {
 
     /* *
      *
@@ -68,8 +71,9 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
     public container: HTMLElement;
     public options: DataGridOptions;
     public dataTable: DataTable;
+    public hoveredRow?: HTMLElement;
+    public rowElements: Array<HTMLElement>;
 
-    private rowElements: Array<HTMLElement>;
     private gridContainer: HTMLElement;
     private outerContainer: HTMLElement;
     private scrollContainer: HTMLElement;
@@ -79,8 +83,8 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
     private columnHeadersContainer?: HTMLElement;
     private columnDragHandlesContainer?: HTMLElement;
     private columnResizeCrosshair?: HTMLElement;
-    private draggedResizeHandle: null|HTMLElement;
-    private draggedColumnRightIx: null|number;
+    private draggedResizeHandle: null | HTMLElement;
+    private draggedColumnRightIx: null | number;
     private dragResizeStart?: number;
     private prevTop = -1;
     private scrollEndRowCount = 0;
@@ -95,7 +99,7 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      *
      * */
 
-    constructor(container: (string|HTMLElement), options: DeepPartial<DataGridOptions>) {
+    constructor(container: (string | HTMLElement), options: DeepPartial<DataGridOptions>) {
         // Initialize containers
         if (typeof container === 'string') {
             const existingContainer = doc.getElementById(container);
@@ -160,7 +164,10 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      *
      * @emits #afterResizeColumn
      */
-    public resizeColumn(width: number, columnNameOrIndex?: (string|number)): void {
+    public resizeColumn(
+        width: number,
+        columnNameOrIndex?: (string | number)
+    ): void {
         const headers = this.columnHeadersContainer;
         const index = typeof columnNameOrIndex === 'string' ?
             this.columnNames.indexOf(columnNameOrIndex) :
@@ -197,7 +204,7 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
 
         this.renderColumnDragHandles();
 
-        this.emit({
+        this.emit<DataGrid.Event>({
             type: 'afterResizeColumn',
             width,
             index,
@@ -214,10 +221,22 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * @param {DataGrid.Event} e
      * Event object with event information.
      */
-    public emit(e: DataGrid.Event): void {
+    public emit<E extends DataEvent>(e: E): void {
         fireEvent(this, e.type, e);
     }
 
+    /**
+     * Add class to given element to toggle highlight.
+     * @param  {HTMLElement} row Row to highlight.
+     * @return {void}
+     */
+    public toggleRowHighlight(row?: HTMLElement): void {
+        if (this.hoveredRow && this.hoveredRow.classList.contains('hovered')) {
+            this.hoveredRow.classList.remove('hovered');
+        }
+        row && (row.classList.contains('hovered') ?
+            row.classList.remove('hovered') : row.classList.add('hovered'));
+    }
 
     /**
      * Registers a callback for a specific event.
@@ -233,13 +252,20 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    public on(
-        type: DataGrid.Event['type'],
-        callback: DataEventEmitter.EventCallback<this, DataGrid.Event>
+    public on<E extends DataEvent>(
+        type: E['type'],
+        callback: DataEvent.Callback<this, E>
     ): Function {
         return addEvent(this, type, callback);
     }
 
+    /**
+     * Scroll to a given row.
+     * @param  {number} row Row number
+     */
+    public scrollToRow(row: number): void {
+        this.outerContainer.scrollTop = row * this.options.cellHeight;
+    }
 
     // ---------------- Private methods
 
@@ -256,7 +282,9 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
     /**
      * Get a reference to the underlying DataTable from options, or create one
      * if needed.
-     * @return {DataTable}
+     *
+     * @return {Highcharts.DataTable}
+     * Table reference
      */
     private initDataTable(): DataTable {
         if (this.options.dataTable) {
@@ -300,8 +328,15 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * Add internal event listeners to the grid.
      */
     private addEvents(): void {
-        this.outerContainer.addEventListener('scroll', (e): void => this.onScroll(e));
-        document.addEventListener('click', (e): void => this.onDocumentClick(e));
+        this.outerContainer.addEventListener('scroll', (e): void => {
+            this.onScroll(e);
+        });
+        document.addEventListener('click', (e): void => {
+            this.onDocumentClick(e);
+        });
+        this.container.addEventListener('mouseover', (e): void => {
+            this.handleMouseOver(e);
+        });
     }
 
 
@@ -311,7 +346,10 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
             scrollTop = clamp(
                 scrollTop,
                 0,
-                this.outerContainer.scrollHeight - this.outerContainer.clientHeight
+                (
+                    this.outerContainer.scrollHeight -
+                    this.outerContainer.clientHeight
+                )
             );
         }
 
@@ -325,11 +363,28 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
         const rowCount = this.getRowCount();
 
         for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
-            const cellElements = this.rowElements[j].childNodes;
+            const rowElement = this.rowElements[j];
+            rowElement.dataset.rowIndex = String(i);
+
+            const cellElements = rowElement.childNodes;
+
+
             for (let k = 0; k < columnsInPresentationOrder.length; k++) {
-                cellElements[k].textContent = dataTableCellToString(
-                    this.dataTable.getCell(columnsInPresentationOrder[k], i)
-                );
+                const cell = cellElements[k] as HTMLElement;
+                const value = this.dataTable
+                    .getCell(columnsInPresentationOrder[k], i);
+                cell.textContent = dataTableCellToString(value);
+
+                // TODO: consider adding these dynamically to the input element
+                cell.dataset.originalData = cell.textContent;
+                cell.dataset.columnName = columnsInPresentationOrder[k];
+                // TODO: get this from the store if set?
+                cell.dataset.dataType = typeof value;
+
+                if (k === 0) { // first column, that is x
+                    rowElement.dataset.rowXIndex =
+                        String(isNumber(value) ? value : i);
+                }
             }
         }
 
@@ -380,6 +435,9 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
                 input.focus();
                 input.value = cellValue || '';
             }
+
+            // Emit for use in extensions
+            this.emit({ type: 'cellClick', input });
         }
     }
 
@@ -398,6 +456,24 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
         }
     }
 
+    /**
+     * Handle hovering over rows- highlight proper row if needed.
+     * @param  {MouseEvent} e Mouse event object.
+     * @return {void}
+     */
+    private handleMouseOver(e: MouseEvent): void {
+        const target = e.target as HTMLElement;
+
+        if (target && target.classList.contains('hc-dg-cell')) {
+            const row = target.parentElement as HTMLElement;
+            this.toggleRowHighlight(row);
+            this.hoveredRow = row;
+            fireEvent(this.container, 'dataGridHover', { row });
+        } else if (this.hoveredRow) {
+            this.toggleRowHighlight();
+            this.hoveredRow = void 0;
+        }
+    }
 
     /**
      * Remove the <input> overlay and update the cell value
@@ -425,8 +501,8 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
     private updateScrollingLength(): void {
         const columnsInPresentationOrder = this.columnNames;
         let i = this.dataTable.getRowCount() - 1;
-        let top = i - this.getNumRowsToDraw();
         let height = 0;
+        const top = i - this.getNumRowsToDraw();
         const outerHeight = this.outerContainer.clientHeight;
 
         // Explicit height is needed for overflow: hidden to work, to make sure
@@ -462,7 +538,8 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
         // row when scrolled to the end
         this.scrollEndTop = height - outerHeight;
 
-        const scrollHeight = (this.getRowCount() + extraRows) * this.options.cellHeight;
+        const scrollHeight =
+            (this.getRowCount() + extraRows) * this.options.cellHeight;
         this.scrollContainer.style.height = scrollHeight + 'px';
     }
 
@@ -470,7 +547,9 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
     private getNumRowsToDraw(): number {
         return Math.min(
             this.getRowCount(),
-            Math.ceil(this.outerContainer.offsetHeight / this.options.cellHeight)
+            Math.ceil(
+                this.outerContainer.offsetHeight / this.options.cellHeight
+            )
         );
     }
 
@@ -517,7 +596,10 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * @param {HTMLElement} parentEl The parent element of the column header.
      * @param {string} columnName The name of the column.
      */
-    private renderColumnHeader(parentEl: HTMLElement, columnName: string): void {
+    private renderColumnHeader(
+        parentEl: HTMLElement,
+        columnName: string
+    ): void {
         let className = 'hc-dg-column-header';
 
         if (!this.isColumnEditable(columnName)) {
@@ -542,11 +624,16 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
 
         emptyHTMLElement(columnHeadersContainer);
 
-        columnNames.forEach(this.renderColumnHeader.bind(this, columnHeadersContainer));
+        columnNames.forEach(
+            this.renderColumnHeader.bind(this, columnHeadersContainer)
+        );
 
         this.headerContainer = makeDiv('hc-dg-header-container');
         this.headerContainer.appendChild(columnHeadersContainer);
-        this.gridContainer.insertBefore(this.headerContainer, this.outerContainer);
+        this.gridContainer.insertBefore(
+            this.headerContainer,
+            this.outerContainer
+        );
     }
 
 
@@ -569,8 +656,10 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
         if (!this.columnHeadersContainer) {
             return;
         }
-        const container = this.columnDragHandlesContainer = this.columnDragHandlesContainer ||
-            makeDiv('hc-dg-col-resize-container');
+        const container = this.columnDragHandlesContainer = (
+            this.columnDragHandlesContainer ||
+            makeDiv('hc-dg-col-resize-container')
+        );
         const columnEls = this.columnHeadersContainer.children;
         const handleHeight = this.options.cellHeight;
 
@@ -591,7 +680,10 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
                     handle.style.opacity = '0';
                 }
             });
-            handle.addEventListener('mousedown', this.onHandleMouseDown.bind(this, handle, i));
+            handle.addEventListener(
+                'mousedown',
+                this.onHandleMouseDown.bind(this, handle, i)
+            );
             container.appendChild(handle);
         }
 
@@ -618,7 +710,10 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * @param {HTMLElement} container The container to place the crosshair in.
      */
     private renderColumnResizeCrosshair(container: HTMLElement): void {
-        const el = this.columnResizeCrosshair = this.columnResizeCrosshair || makeDiv('hc-dg-col-resize-crosshair');
+        const el = this.columnResizeCrosshair = (
+            this.columnResizeCrosshair ||
+            makeDiv('hc-dg-col-resize-crosshair')
+        );
         const handleHeight = this.options.cellHeight;
 
         el.style.top = handleHeight + 'px';
@@ -634,7 +729,11 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
      * @param {number} colRightIx The column ix to the right of the resize handle
      * @param {MouseEvent} e The mousedown event
      */
-    private onHandleMouseDown(handle: HTMLElement, colRightIx: number, e: MouseEvent): void {
+    private onHandleMouseDown(
+        handle: HTMLElement,
+        colRightIx: number,
+        e: MouseEvent
+    ): void {
         if (this.draggedResizeHandle) {
             return;
         }
@@ -645,7 +744,10 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
 
         const crosshair = this.columnResizeCrosshair;
         if (crosshair) {
-            crosshair.style.left = handle.offsetLeft + handle.offsetWidth / 2 - crosshair.offsetWidth / 2 + 'px';
+            crosshair.style.left = (
+                handle.offsetLeft + handle.offsetWidth / 2 -
+                crosshair.offsetWidth / 2 + 'px'
+            );
             crosshair.style.opacity = '1';
         }
     }
@@ -660,7 +762,13 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
         const crosshair = this.columnResizeCrosshair;
         const colRightIx = this.draggedColumnRightIx;
         const colHeaders = this.columnHeadersContainer;
-        if (!handle || !crosshair || colRightIx === null || !colHeaders || !this.dragResizeStart) {
+        if (
+            !handle ||
+            !crosshair ||
+            colRightIx === null ||
+            !colHeaders ||
+            !this.dragResizeStart
+        ) {
             return;
         }
 
@@ -681,7 +789,12 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
         const crosshair = this.columnResizeCrosshair;
         const colRightIx = this.draggedColumnRightIx;
         const colContainer = this.columnHeadersContainer;
-        if (!crosshair || !colContainer || !this.dragResizeStart || colRightIx === null) {
+        if (
+            !crosshair ||
+            !colContainer ||
+            !this.dragResizeStart ||
+            colRightIx === null
+        ) {
             return;
         }
         handle.style.opacity = '0';
@@ -694,10 +807,14 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
         const newWidthRight = colRight.offsetWidth - diff;
         const diffRatioLeft = newWidthLeft / colLeft.offsetWidth;
         const diffRatioRight = newWidthRight / colRight.offsetWidth;
-        const leftFlexRatio =
-            (colLeft.style.flex ? parseFloat(colLeft.style.flex) : 1) * diffRatioLeft;
-        const rightFlexRatio =
-            (colRight.style.flex ? parseFloat(colRight.style.flex) : 1) * diffRatioRight;
+        const leftFlexRatio = (
+            (colLeft.style.flex ? parseFloat(colLeft.style.flex) : 1) *
+            diffRatioLeft
+        );
+        const rightFlexRatio = (
+            (colRight.style.flex ? parseFloat(colRight.style.flex) : 1) *
+            diffRatioRight
+        );
 
         this.resizeColumn(leftFlexRatio, colRightIx - 1);
         this.resizeColumn(rightFlexRatio, colRightIx);
@@ -705,19 +822,61 @@ class DataGrid implements DataEventEmitter<DataGrid.Event> {
         this.draggedResizeHandle = null;
         this.draggedColumnRightIx = null;
     }
+
+    /**
+     * Update the size of datagrid container
+     * @param {number | string | null} width new width
+     * @param {number | string | null} height new height
+     */
+    public setSize(
+        width?: number | string | null,
+        height?: number | string | null
+    ): void {
+        if (width) {
+            this.innerContainer.style.width = width + 'px';
+        }
+
+        if (height) {
+            this.gridContainer.style.height = height + 'px';
+            this.outerContainer.style.height = height + 'px';
+        }
+
+        this.render();
+    }
+
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace DataGrid {
+
     export type Event = (
-        ColumnResizeEvent
+        | CellClickEvent
+        | ColumnResizeEvent
     );
 
-    export interface ColumnResizeEvent {
+    export interface ColumnResizeEvent extends DataEvent {
         readonly type: 'afterResizeColumn';
         readonly width: number;
         readonly index?: number;
         readonly name?: string;
     }
+
+    export interface CellClickEvent {
+        readonly type: 'cellClick';
+        readonly input: HTMLElement;
+    }
+
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default DataGrid;

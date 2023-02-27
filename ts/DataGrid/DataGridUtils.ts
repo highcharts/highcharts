@@ -2,7 +2,7 @@
  *
  *  Data Grid utilities
  *
- *  (c) 2020-2021 Highsoft AS
+ *  (c) 2020-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -13,11 +13,27 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataTable from '../Data/DataTable';
 
-export default {
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+const DataGridUtils = {
     dataTableCellToString(cell: DataTable.CellType): string {
-        return (typeof cell === 'string' || typeof cell === 'number' || typeof cell === 'boolean') ?
+        return (
+            typeof cell === 'string' ||
+            typeof cell === 'number' ||
+            typeof cell === 'boolean'
+        ) ?
             '' + cell :
             '';
     },
@@ -35,3 +51,11 @@ export default {
         return div;
     }
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default DataGridUtils;
