@@ -29,5 +29,5 @@ QUnit.test('Interpolated image test', function (assert) {
 
     var heatmap = chart.series[0];
 
-    assert.ok(heatmap.image, 'Should have an image');
+    assert.strictEqual(heatmap.image.element.tagName, 'image', 'An image-tagname should exist');
 });
