@@ -162,6 +162,7 @@ export interface SeriesAccessibilityKeyboardNavigationOptions {
 
 export interface SeriesAccessibilityOptions {
     description?: string;
+    descriptionFormat?: string;
     enabled?: boolean;
     exposeAsGroupOnly?: boolean;
     keyboardNavigation?: (

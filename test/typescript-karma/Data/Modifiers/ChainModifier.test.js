@@ -1,8 +1,8 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import ChainModifier from '/base/js/Data/Modifiers/ChainModifier.js';
-import GroupModifier from '/base/js/Data/Modifiers/GroupModifier.js';
-import RangeModifier from '/base/js/Data/Modifiers/RangeModifier.js';
-import SortModifier from '/base/js/Data/Modifiers/SortModifier.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
+import ChainModifier from '/base/code/es-modules/Data/Modifiers/ChainModifier.js';
+import GroupModifier from '/base/code/es-modules/Data/Modifiers/GroupModifier.js';
+import RangeModifier from '/base/code/es-modules/Data/Modifiers/RangeModifier.js';
+import SortModifier from '/base/code/es-modules/Data/Modifiers/SortModifier.js';
 
 QUnit.test('ChainModifier.benchmark', function (assert) {
 

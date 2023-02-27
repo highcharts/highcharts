@@ -1976,6 +1976,9 @@ const defaultOptions: Options = {
          * For touch moves to behave the same way, [followTouchMove](
          * #tooltip.followTouchMove) must be `true` also.
          *
+         * @sample highcharts/tooltip/followpointer/
+         *         Tooltip follow pointer comparison
+         *
          * @type      {boolean}
          * @default   {highcharts} false
          * @default   {highstock} false

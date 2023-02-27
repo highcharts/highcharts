@@ -148,7 +148,7 @@ const ChartDefaults: ChartOptions = {
      *         With a longer duration
      *
      * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
-     * @default   undefined
+     * @default   true
      * @apioption chart.animation
      */
 
@@ -780,11 +780,9 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/reflow-false/
      *         False
      *
-     * @type      {boolean}
-     * @default   true
      * @since     2.1
-     * @apioption chart.reflow
      */
+    reflow: true,
 
     /**
      * The HTML element where the chart will be rendered. If it is a string,
