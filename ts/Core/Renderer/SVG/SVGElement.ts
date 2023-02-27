@@ -1460,8 +1460,9 @@ class SVGElement implements SVGElementLike {
             // Properties that affect bounding box
             cacheKey += [
                 '',
-                rotation,
+                renderer.rootFontSize,
                 fontSize,
+                rotation,
                 wrapper.textWidth, // #7874, also useHTML
                 alignValue,
                 styles && styles.textOverflow, // #5968

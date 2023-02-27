@@ -846,6 +846,8 @@ class Chart {
             redrawLegend = chart.isDirtyLegend,
             serie: Series;
 
+        renderer.rootFontSize = renderer.boxWrapper.getStyle('font-size');
+
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
             chart.setResponsive(false);

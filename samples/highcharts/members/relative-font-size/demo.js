@@ -25,9 +25,6 @@ const chart = Highcharts.chart('container', {
 });
 
 document.getElementById('rem').addEventListener('input', e =>  {
-    Object.keys(chart.renderer.cache).forEach(key => {
-        delete chart.renderer.cache[key];
-    });
     const fontSize = `${Number(e.target.value).toFixed(2)}rem`;
     chart.update({
         title: {

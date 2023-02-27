@@ -211,6 +211,7 @@ class SVGRenderer implements SVGRendererLike {
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
     public isSVG: boolean = void 0 as any;
+    public rootFontSize: string|undefined;
     public style: CSSObject = void 0 as any;
     public styledMode?: boolean;
     public unSubPixelFix?: Function;
@@ -318,6 +319,7 @@ class SVGRenderer implements SVGRendererLike {
         renderer.cache = {}; // Cache for numerical bounding boxes
         renderer.cacheKeys = [];
         renderer.imgCount = 0;
+        renderer.rootFontSize = boxWrapper.getStyle('font-size');
 
         renderer.setSize(width, height, false);
 
