@@ -1,7 +1,7 @@
 function grabComponent(name) {
-    cy.get('.hd-edit-tools-btn').contains('Add').click();
-    cy.get('.hd-edit-sidebar-tab').contains('components').click();
-    cy.get('.hd-edit-sidebar-tab-content')
+    cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click();
+    cy.get('.highcharts-dashboards-edit-sidebar-tab').contains('components').click();
+    cy.get('.highcharts-dashboards-edit-sidebar-tab-content')
         .children()
         .contains(name)
         .trigger('mousedown');
@@ -17,8 +17,8 @@ describe('Add component through UI', () => {
     beforeEach(() => {
         cy.visit('/dashboards/cypress/add-layout');
         cy.viewport(1200, 1000);
-        cy.get('.hd-edit-context-menu-btn').click();
-        cy.get('.hd-edit-toggle-slider').click();
+        cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
+        cy.get('.highcharts-dashboards-edit-toggle-slider').click();
     });
 
     it('should be able to add a layout', function() {
@@ -52,7 +52,7 @@ describe('Add component through UI', () => {
             );
         });
         cy.get('#dashboard-col-0').children().click()
-        cy.get('.hd-edit-menu.hd-edit-toolbar-cell').children().should('be.visible')
+        cy.get('.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-cell').children().should('be.visible')
     });
 
     it('should be able to add a chart component and resize it', function() {

@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 /* *
  *
@@ -6,12 +6,12 @@
  *
  * */
 
-.hd-dashboards-wrapper {
+.highcharts-dashboards-dashboards-wrapper {
     --button-filter: none;
     --color-background: none;
 }
 
-.hd-dashboards-wrapper.hd-dark-mode {
+.highcharts-dashboards-dashboards-wrapper.highcharts-dashboards-dark-mode {
     --button-filter: invert(1);
     --color-background: #46475d;
 }
@@ -36,7 +36,7 @@
     --color-text: #2f2b38;
 }
 
-.hd-dashboards-wrapper.hd-dark-mode #kpi-layout {
+.highcharts-dashboards-dashboards-wrapper.highcharts-dashboards-dark-mode #kpi-layout {
     --color-axis-labels: #838394;
     --color-background: #0d0d0d;
     --color-pane: #20202c;
@@ -62,7 +62,7 @@
     --color-row2-background: #f7f7f7;
 }
 
-.hd-dashboards-wrapper.hd-dark-mode #selection-grid {
+.highcharts-dashboards-dashboards-wrapper.highcharts-dashboards-dark-mode #selection-grid {
     --color-background: #20202c;
     --color-border: #4a4a53;
     --color-header-background: #0d0d0d;
@@ -88,7 +88,7 @@
     --color-thumb-line: #f7f7f7;
 }
 
-.hd-dashboards-wrapper.hd-dark-mode #time-range-selector {
+.highcharts-dashboards-dashboards-wrapper.highcharts-dashboards-dark-mode #time-range-selector {
     --color-axis-labels: #e7e7ec;
     --color-background: #0d0d0d;
     --color-grid: #838394;
@@ -116,7 +116,7 @@
     --color-tooltip-background: #dadae2;
 }
 
-.hd-dashboards-wrapper.hd-dark-mode #world-map {
+.highcharts-dashboards-dashboards-wrapper.highcharts-dashboards-dark-mode #world-map {
     --color-navigation: #20202b;
     --color-navigation-line: #646478;
     --color-navigation-text: #838393;
@@ -125,7 +125,7 @@
 @media (prefers-color-scheme: dark) {
     /* dark mode */
 
-    .hd-dashboards-wrapper {
+    .highcharts-dashboards-dashboards-wrapper {
         --button-filter: invert(1);
         --color-background: #46475d;
     }
@@ -176,11 +176,11 @@
  *
  * */
 
-div.hd-dashboards-wrapper {
+div.highcharts-dashboards-dashboards-wrapper {
     background-color: var(--color-background);
 }
 
-div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
+div.highcharts-dashboards-dashboards-wrapper .highcharts-dashboards-edit-context-menu-btn {
     filter: var(--button-filter);
 }
 
@@ -190,7 +190,7 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
  *
  * */
 
-#city-chart .hd-component-content {
+#city-chart .highcharts-dashboards-component-content {
     background: var(--color-background);
 }
 
@@ -234,80 +234,80 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
  *
  * */
 
-#kpi-layout .hd-component {
+#kpi-layout .highcharts-dashboards-component {
     background-color: var(--color-background);
     color: var(--color-text);
     cursor: pointer;
 }
 
-#kpi-layout .hd-component-kpi-content {
+#kpi-layout .highcharts-dashboards-component-kpi-content {
     background: none;
 }
 
-#kpi-layout .hd-component-kpi-chart-container {
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container {
     align-self: center;
     margin: auto;
 }
 
-#kpi-layout .hd-component-kpi-chart-container text {
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container text {
     fill: var(--color-text);
 }
 
-#kpi-layout .hd-component-kpi-chart-container .highcharts-axis-labels text {
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-axis-labels text {
     fill: var(--color-axis);
 }
 
-#kpi-layout .hd-component-kpi-chart-container .highcharts-background {
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-background {
     fill: none;
     stroke: none;
 }
 
-#kpi-layout .hd-component-kpi-chart-container .highcharts-label {
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-label {
     font-size: 32px;
 }
 
-.hd-component-kpi-chart-container {
+.highcharts-dashboards-component-kpi-chart-container {
     max-width: 100%;
 }
 
-#kpi-layout .hd-component-kpi-chart-container .highcharts-pane {
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-pane {
     fill: var(--color-pane);
     fill-opacity: 1;
     stroke: var(--color-pane-line);
 }
 
-#kpi-layout .hd-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
     fill: var(--color-gauge);
     stroke: none;
 }
 
-#kpi-layout .hd-component-kpi-chart-container .highcharts-title {
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-title {
     font-size: 13px;
     font-weight: bold;
 }
 
-#kpi-layout .hd-cell-state-hover:hover .hd-component,
-#kpi-layout .hd-cell-state-active .hd-component {
+#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-dashboards-component,
+#kpi-layout .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
     background-color: var(--color-hover);
     color: var(--color-hover-text);
 }
 
-#kpi-layout .hd-cell-state-hover:hover text,
-#kpi-layout .hd-cell-state-active text {
+#kpi-layout .highcharts-dashboards-cell-state-hover:hover text,
+#kpi-layout .highcharts-dashboards-cell-state-active text {
     fill: var(--color-hover-text);
 }
 
-#kpi-layout .hd-cell-state-hover:hover .highcharts-axis-labels text,
-#kpi-layout .hd-cell-state-active .highcharts-axis-labels text {
+#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text,
+#kpi-layout .highcharts-dashboards-cell-state-active .highcharts-axis-labels text {
     fill: var(--color-hover-text);
 }
 
-#kpi-data .hd-component {
+#kpi-data .highcharts-dashboards-component {
     cursor: default;
 }
 
-#kpi-data .hd-component-kpi,
-#kpi-data .hd-component-kpi-value-wrap {
+#kpi-data .highcharts-dashboards-component-kpi,
+#kpi-data .highcharts-dashboards-component-kpi-value-wrap {
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -315,30 +315,30 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
     text-align: center;
 }
 
-#kpi-data .hd-component-kpi > *,
-#kpi-data .hd-component-kpi-value-wrap > * {
+#kpi-data .highcharts-dashboards-component-kpi > *,
+#kpi-data .highcharts-dashboards-component-kpi-value-wrap > * {
     align-self: center;
     flex: none;
     margin: auto;
 }
 
-#kpi-data .hd-component-title {
+#kpi-data .highcharts-dashboards-component-title {
     margin: 1em;
 }
 
-#kpi-data .hd-component-title::before {
-    content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0LjczNTIgMzEuODU0NEM1LjQyMTIzIDE4LjY4OTQgMy42OTIzOCAxNy4zMzgzIDMuNjkyMzggMTIuNUMzLjY5MjM4IDUuODcyNTYgOS4yMDI3IDAuNSAxNi4wMDAxIDAuNUMyMi43OTc0IDAuNSAyOC4zMDc4IDUuODcyNTYgMjguMzA3OCAxMi41QzI4LjMwNzggMTcuMzM4MyAyNi41Nzg5IDE4LjY4OTQgMTcuMjY0OSAzMS44NTQ0QzE2LjY1MzcgMzIuNzE1MiAxNS4zNDY0IDMyLjcxNTIgMTQuNzM1MiAzMS44NTQ0Wk0xNi4wMDAxIDE3LjVDMTguODMyMyAxNy41IDIxLjEyODMgMTUuMjYxNCAyMS4xMjgzIDEyLjVDMjEuMTI4MyA5LjczODU2IDE4LjgzMjMgNy41IDE2LjAwMDEgNy41QzEzLjE2NzggNy41IDEwLjg3MTkgOS43Mzg1NiAxMC44NzE5IDEyLjVDMTAuODcxOSAxNS4yNjE0IDEzLjE2NzggMTcuNSAxNi4wMDAxIDE3LjVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
+#kpi-data .highcharts-dashboards-component-title::before {
+    content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhighcharts-dashboardsGggZD0iTTE0LjczNTIgMzEuODU0NEM1LjQyMTIzIDE4LjY4OTQgMy42OTIzOCAxNy4zMzgzIDMuNjkyMzggMTIuNUMzLjY5MjM4IDUuODcyNTYgOS4yMDI3IDAuNSAxNi4wMDAxIDAuNUMyMi43OTc0IDAuNSAyOC4zMDc4IDUuODcyNTYgMjguMzA3OCAxMi41QzI4LjMwNzggMTcuMzM4MyAyNi41Nzg5IDE4LjY4OTQgMTcuMjY0OSAzMS44NTQ0QzE2LjY1MzcgMzIuNzE1MiAxNS4zNDY0IDMyLjcxNTIgMTQuNzM1MiAzMS44NTQ0Wk0xNi4wMDAxIDE3LjVDMTguODMyMyAxNy41IDIxLjEyODMgMTUuMjYxNCAyMS4xMjgzIDEyLjVDMjEuMTI4MyA5LjczODU2IDE4LjgzMjMgNy41IDE2LjAwMDEgNy41QzEzLjE2NzggNy41IDEwLjg3MTkgOS43Mzg1NiAxMC44NzE5IDEyLjVDMTAuODcxOSAxNS4yNjE0IDEzLjE2NzggMTcuNSAxNi4wMDAxIDE3LjVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
     display: inline-block;
     margin-right: 0.25em;
     vertical-align: middle;
 }
 
-#kpi-data .hd-component-kpi-value-wrap {
+#kpi-data .highcharts-dashboards-component-kpi-value-wrap {
     height: 100%;
 }
 
-#kpi-data .hd-component-kpi-value::before {
-    content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMxLjc0NTggMjkuNDE4OEwxNy4zNDYgMS40MTg3NUMxNy4wNTE1IDAuODQ2MjUgMTYuNTQ0NSAwLjUgMTYgMC41QzE1LjQ1NTUgMC41IDE0Ljk0ODUgMC44NDYyNSAxNC42NTQgMS40MTg3NUwwLjI1NDE1NSAyOS40MTg4QzAuMDk4NzU4MSAyOS43MjA5IDAuMDExMzIwOCAzMC4wNjk4IDAuMDAxMDI3MTcgMzAuNDI4N0MtMC4wMDkyNjY0NiAzMC43ODc3IDAuMDU3OTYzNSAzMS4xNDM1IDAuMTk1NjU1IDMxLjQ1ODdDMC4zMzM0MTEgMzEuNzczOSAwLjUzNjUxOCAzMi4wMzcgMC43ODM2NDggMzIuMjIwMkMxLjAzMDc4IDMyLjQwMzQgMS4zMTI4MSAzMi41IDEuNjAwMTQgMzIuNUgzMC4zOTk5QzMwLjk4NTQgMzIuNSAzMS41MjM4IDMyLjEwMDYgMzEuODA0MyAzMS40NTgxQzMxLjk0MiAzMS4xNDMgMzIuMDA5MyAzMC43ODczIDMxLjk5OSAzMC40Mjg0QzMxLjk4ODcgMzAuMDY5NSAzMS45MDEyIDI5LjcyMDggMzEuNzQ1OCAyOS40MTg4Wk0xNiA2LjE5ODc1TDIwLjI2OTUgMTQuNUgxNkwxMi44IDE4LjVMMTAuODk3MSAxNi4xMjEzTDE2IDYuMTk4NzVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
+#kpi-data .highcharts-dashboards-component-kpi-value::before {
+    content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhighcharts-dashboardsGggZD0iTTMxLjc0NTggMjkuNDE4OEwxNy4zNDYgMS40MTg3NUMxNy4wNTE1IDAuODQ2MjUgMTYuNTQ0NSAwLjUgMTYgMC41QzE1LjQ1NTUgMC41IDE0Ljk0ODUgMC44NDYyNSAxNC42NTQgMS40MTg3NUwwLjI1NDE1NSAyOS40MTg4QzAuMDk4NzU4MSAyOS43MjA5IDAuMDExMzIwOCAzMC4wNjk4IDAuMDAxMDI3MTcgMzAuNDI4N0MtMC4wMDkyNjY0NiAzMC43ODc3IDAuMDU3OTYzNSAzMS4xNDM1IDAuMTk1NjU1IDMxLjQ1ODdDMC4zMzM0MTEgMzEuNzczOSAwLjUzNjUxOCAzMi4wMzcgMC43ODM2NDggMzIuMjIwMkMxLjAzMDc4IDMyLjQwMzQgMS4zMTI4MSAzMi41IDEuNjAwMTQgMzIuNUgzMC4zOTk5QzMwLjk4NTQgMzIuNSAzMS41MjM4IDMyLjEwMDYgMzEuODA0MyAzMS40NTgxQzMxLjk0MiAzMS4xNDMgMzIuMDA5MyAzMC43ODczIDMxLjk5OSAzMC40Mjg0QzMxLjk4ODcgMzAuMDY5NSAzMS45MDEyIDI5LjcyMDggMzEuNzQ1OCAyOS40MTg4Wk0xNiA2LjE5ODc1TDIwLjI2OTUgMTQuNUgxNkwxMi44IDE4LjVMMTAuODk3MSAxNi4xMjEzTDE2IDYuMTk4NzVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
     display: inline-block;
     margin-right: 0.25em;
     vertical-align: middle;
@@ -350,7 +350,7 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
  *
  * */
 
-#selection-grid .hd-component {
+#selection-grid .highcharts-dashboards-component {
     background-color: var(--color-background);
     padding: 14px;
 }
@@ -404,7 +404,7 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
  *
  * */
 
-#time-range-selector .hd-component-content {
+#time-range-selector .highcharts-dashboards-component-content {
     background: var(--color-background);
 }
 
@@ -476,7 +476,7 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
  *
  * */
 
-#world-map .hd-component-content {
+#world-map .highcharts-dashboards-component-content {
     background: var(--color-background);
 }
 
@@ -569,7 +569,8 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
 }
 
 /* Safari fix for manual dark mode */
-.hd-dashboards-wrapper.hd-dark-mode #world-map .highcharts-series-1 .highcharts-data-label text {
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-dashboards-wrapper.highcharts-dashboards-dark-mode #world-map .highcharts-series-1 .highcharts-data-label text {
     paint-order: stroke;
     stroke-width: 2px;
 }
@@ -580,33 +581,35 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
  *
  * */
 
-.hd-edit-button.hd-edit-tools-btn {
+.highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn {
     background-position: top left;
     background-color: #e7e7ec;
     border-radius: 4px;
     margin: 10px;
 }
 
-.hd-edit-button.hd-edit-tools-btn:hover {
+.highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover {
     background-color: #646479;
     color: #fff;
 }
 
-.hd-edit-enabled.hd-dashboards-wrapper {
+.highcharts-dashboards-edit-enabled.highcharts-dashboards-dashboards-wrapper {
     background-color: rgba(36, 29, 58, 0.2);
 }
 
-.hd-edit-toolbar-cell > .hd-edit-menu-item.hd-edit-toolbar-item {
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-menu-item.highcharts-dashboards-edit-toolbar-item {
     background: #241d3a;
     border-radius: 2px;
 }
 
-.hd-edit-toolbar-row > .hd-edit-menu-item.hd-edit-toolbar-item {
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-toolbar-row > .highcharts-dashboards-edit-menu-item.highcharts-dashboards-edit-toolbar-item {
     background: #646479;
     border-radius: 2px;
 }
 
-.hd-layout > .hd-row.hd-edit-row-context-highlight {
+.highcharts-dashboards-layout > .highcharts-dashboards-row.highcharts-dashboards-edit-row-context-highlight {
     background:
         repeating-linear-gradient(
             -45deg,
@@ -617,18 +620,18 @@ div.hd-dashboards-wrapper .hd-edit-context-menu-btn {
         );
 }
 
-.hd-edit-toolbar > .hd-edit-toolbar-cell-outline {
+.highcharts-dashboards-edit-toolbar > .highcharts-dashboards-edit-toolbar-cell-outline {
     border: 2px solid #241d3a;
 }
 
-.hd-edit-toolbar > .hd-edit-toolbar-row-outline {
+.highcharts-dashboards-edit-toolbar > .highcharts-dashboards-edit-toolbar-row-outline {
     border: 2px solid #646479;
 }
 
-.hd-edit-menu.hd-edit-toolbar-row {
+.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-row {
     background: #646479;
 }
 
-.hd-dashboards-wrapper > .hd-edit-drop-pointer {
+.highcharts-dashboards-dashboards-wrapper > .highcharts-dashboards-edit-drop-pointer {
     background: #ff8d64;
 }

@@ -6,7 +6,7 @@ describe('Remove the dashboard.', () => {
     it('Dashboard should be removed without errors', () => {
         cy.board().then(board => {
             board.destroy();
-            cy.get('.hd-dashboards-wrapper').should('not.exist');
+            cy.get('.highcharts-dashboards-dashboards-wrapper').should('not.exist');
             cy.get('#container').should('exist');
         });
     });
