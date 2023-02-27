@@ -738,7 +738,8 @@ function describeSeries(
 const SeriesDescriber = {
     defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter,
-    describeSeries
+    describeSeries,
+    getPointXDescription
 };
 
 export default SeriesDescriber;

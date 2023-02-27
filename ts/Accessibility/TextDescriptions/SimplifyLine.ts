@@ -14,14 +14,12 @@
 
 'use strict';
 
-import type Point from '../Core/Series/Point';
+import type Point from '../../Core/Series/Point';
 
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     defined
 } = U;
-
-export type XYPair = [number, number];
 
 // Point type with additional internal props for the simplification algorithms.
 type VisvalingamPoint = Point & {
@@ -422,12 +420,11 @@ function additiveVisvalingam(points: Point[], numPoints: number): Point[] {
  *
  * @private
  */
-function simplifyLine(points: Point[], numPoints: number): XYPair[] {
+function simplifyLine(points: Point[], numPoints: number): Point[] {
     const preprocessed = preprocessSimplify(points),
         stage1Threshold = Math.max(numPoints * 1.1, numPoints + 10),
         subtracted = subtractiveVisvalingam(preprocessed, stage1Threshold);
-    return additiveVisvalingam(subtracted, numPoints)
-        .map((p): XYPair => [p.x, p.y as number]);
+    return additiveVisvalingam(subtracted, numPoints);
 }
 
 
@@ -437,4 +434,9 @@ function simplifyLine(points: Point[], numPoints: number): XYPair[] {
  *
  * */
 
-export default simplifyLine;
+const def = {
+    preprocessSimplify,
+    simplifyLine
+};
+
+export default def;

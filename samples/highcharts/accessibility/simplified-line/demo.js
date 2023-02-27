@@ -45,7 +45,7 @@ function updateSimplified(val) {
             newData = chart.accessibility.simplifyLineSeries(
                 sourceSeries,
                 parseFloat(val)
-            );
+            ).map(p => [p.x, p.y]);
         if (chart.series.length < i + 4) {
             chart.addSeries({
                 name: sourceSeries.name + ' (simplified)',

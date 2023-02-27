@@ -27,7 +27,6 @@ import type RangeSelector from '../Stock/RangeSelector/RangeSelector';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type { XYPair } from './SimplifyLine';
 
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
@@ -63,7 +62,11 @@ import highContrastTheme from './HighContrastTheme.js';
 import defaultOptionsA11Y from './Options/A11yDefaults.js';
 import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
-import simplifyLine from './SimplifyLine.js';
+import addLineChartTextDescription from './TextDescriptions/LineTextDescription.js';
+import SL from './TextDescriptions/SimplifyLine.js';
+const {
+    simplifyLine
+} = SL;
 
 /* *
  *
@@ -323,11 +326,20 @@ class Accessibility {
 
 
     /**
-     * Get a simplified version of a line series as an array of XY-pairs.
+     * Get a simplified version of a line series as an array of points.
      * @private
      */
-    public simplifyLineSeries(series: Series, numPoints: number): XYPair[] {
+    public simplifyLineSeries(series: Series, numPoints: number): Point[] {
         return simplifyLine(series.points, numPoints);
+    }
+
+
+    /**
+     * Add an HTML text description before a line chart.
+     * @private
+     */
+    public addLineChartTextDescription(): void {
+        return addLineChartTextDescription(this.chart);
     }
 }
 
