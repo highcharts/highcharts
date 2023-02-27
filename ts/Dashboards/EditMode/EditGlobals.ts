@@ -65,7 +65,7 @@ const EditGlobals: EditGlobals = {
         editSidebarWrapper: PREFIX + 'sidebar-wrapper',
         customSelect: PREFIX + 'custom-select',
         toggleWrapper: PREFIX + 'toggle-wrapper',
-        toggleWrapperDark: PREFIX + 'toggle-wrapper-dark',
+        toggleWrapperColored: PREFIX + 'toggle-wrapper-colored',
         toggleLabels: PREFIX + 'toggle-labels',
         toggleSlider: PREFIX + 'toggle-slider',
         button: PREFIX + 'button',
