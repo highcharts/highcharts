@@ -20,6 +20,7 @@ import CSVStore from '../Data/Stores/CSVStore.js';
 import Board from '../Dashboards/Board.js';
 import Component from '../Dashboards/Component/Component.js';
 import DataOnDemand from '../Data/DataOnDemand.js';
+import DataStates from '../Data/DataStates.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';
 import GoogleSheetsStore from '../Data/Stores/GoogleSheetsStore.js';
@@ -58,6 +59,7 @@ const D = {
     Component,
     CSVStore,
     DataOnDemand,
+    DataStates,
     DataTable,
     GoogleSheetsStore,
     GroupModifier,
