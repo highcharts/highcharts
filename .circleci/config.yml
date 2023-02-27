@@ -430,8 +430,8 @@ jobs:
           npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force
       # we are forcing success on the below test runs to avoid failing the PR build
       - run: 
-        name: Run cypress visual tests as base # only dashboards for now
-        command: npx cypress run --env type=base --config specPattern="**/Dashboards/**/*.cy.js"
+          name: Run cypress visual tests as base # only dashboards for now
+          command: npx cypress run --env type=base --config specPattern="**/Dashboards/**/*.cy.js"
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/snapshots
           destination: cypress-chrome
