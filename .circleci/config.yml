@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@3.0.0
-  browser-tools: circleci/browser-tools@1.2.3
+  browser-tools: circleci/browser-tools@1.4.1
   slack: circleci/slack@3.4.1
 
 parameters:
@@ -236,7 +236,7 @@ jobs:
             whereis google-chrome
       - run:
           name: Run cypress tests (Chrome)
-          command: TZ=UTC npx cypress run --browser chrome --headless --env type=actual 
+          command: TZ=UTC npx cypress run --browser chrome --headless
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/videos
           destination: cypress-chrome
@@ -431,6 +431,10 @@ jobs:
       - run: 
           name: Run cypress visual tests as base # only dashboards for now
           command: npx cypress run --env type=base --config specPattern="**/Dashboards/**/*.cy.js"
+      - run: git checkout ${CIRCLE_BRANCH}
+      - run: 
+          name: Run cypress visual tests as reference # only dashboards for now
+          command: npx cypress run --env type=actual --config specPattern="**/Dashboards/**/*.cy.js"
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/snapshots
           destination: cypress-chrome
