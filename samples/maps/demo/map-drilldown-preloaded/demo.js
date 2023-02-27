@@ -1,32 +1,23 @@
 (async () => {
 
     const nordicTopology = await fetch(
-            'https://code.highcharts.com/mapdata/custom/nordic-countries-core.topo.json'
-        ).then(response => response.json()),
-        noTopology = await fetch(
-            'https://code.highcharts.com/mapdata/countries/no/no-all.topo.json'
-        ).then(response => response.json()),
-        isTopology = await fetch(
-            'https://code.highcharts.com/mapdata/countries/is/is-all.topo.json'
-        ).then(response => response.json()),
-        foTopology = await fetch(
-            'https://code.highcharts.com/mapdata/countries/fo/fo-all.topo.json'
-        ).then(response => response.json()),
-        seTopology = await fetch(
-            'https://code.highcharts.com/mapdata/countries/se/se-all.topo.json'
-        ).then(response => response.json()),
-        fiTopology = await fetch(
-            'https://code.highcharts.com/mapdata/countries/fi/fi-all.topo.json'
-        ).then(response => response.json()),
-        dkTopology = await fetch(
-            'https://code.highcharts.com/mapdata/countries/dk/dk-all.topo.json'
+        'https://code.highcharts.com/mapdata/custom/nordic-countries-core.topo.json'
+    ).then(response => response.json());
+
+    const topologies = {};
+    for (const geometry of nordicTopology.objects.default.geometries) {
+        const key = geometry.properties['hc-key'];
+        topologies[key] = await fetch(
+            'https://code.highcharts.com/mapdata/' +
+            `countries/${key}/${key}-all.topo.json`
         ).then(response => response.json());
+    }
 
     // Create the chart
     Highcharts.mapChart('container', {
 
         title: {
-            text: 'Highcharts Maps drilldown basic demo'
+            text: 'Highcharts Maps drilldown with preloaded maps'
         },
 
         subtitle: {
@@ -97,7 +88,7 @@
             series: [{
                 id: 'norway',
                 name: 'Norway',
-                mapData: noTopology,
+                mapData: topologies.no,
                 data: [
                     ['no-vl-46', 10],
                     ['no-mr-15', 11],
@@ -114,7 +105,7 @@
             }, {
                 id: 'iceland',
                 name: 'Iceland',
-                mapData: isTopology,
+                mapData: topologies.is,
                 data: [
                     ['is-ne', 10],
                     ['is-sl', 11],
@@ -129,14 +120,14 @@
             }, {
                 id: 'faroe-islands',
                 name: 'Faroe Islands',
-                mapData: foTopology,
+                mapData: topologies.fo,
                 data: [
                     ['fo-os', 10]
                 ]
             }, {
                 id: 'sweden',
                 name: 'Sweden',
-                mapData: seTopology,
+                mapData: topologies.se,
                 data: [
                     ['se-4461', 10],
                     ['se-ka', 11],
@@ -164,7 +155,7 @@
             }, {
                 id: 'finland',
                 name: 'Finland',
-                mapData: fiTopology,
+                mapData: topologies.fi,
                 data: [
                     ['fi-3280', 10],
                     ['fi-3272', 11],
@@ -188,7 +179,7 @@
             }, {
                 id: 'denmark',
                 name: 'Denmark',
-                mapData: dkTopology,
+                mapData: topologies.dk,
                 data: [
                     ['dk-6326', 10],
                     ['dk-3564', 11],
