@@ -221,7 +221,7 @@ class BubbleLegendItem {
             connectorSpace : 0;
 
         legendItem.labelWidth = size + connectorSpace + itemDistance;
-        legendItem.labelHeight = size;
+        legendItem.labelHeight = size + maxLabel.height / 2;
     }
 
     /**
