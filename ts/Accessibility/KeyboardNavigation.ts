@@ -92,7 +92,6 @@ class KeyboardNavigation {
     public isClickingChart?: boolean;
     public keyboardReset?: boolean;
     public modules: Array<KeyboardNavigationHandler> = [];
-    public pointerIsOverChart?: boolean;
     public tabindexContainer: HTMLDOMElement = void 0 as any;
     public tabbingInBackwards?: boolean;
 
@@ -142,14 +141,6 @@ class KeyboardNavigation {
                 this.isClickingChart = true;
             })
         );
-
-        ep.addEvent(chart.renderTo, 'mouseover', (): void => {
-            this.pointerIsOverChart = true;
-        });
-
-        ep.addEvent(chart.renderTo, 'mouseout', (): void => {
-            this.pointerIsOverChart = false;
-        });
     }
 
 
@@ -308,7 +299,10 @@ class KeyboardNavigation {
         ) {
             const chart = this.chart;
 
-            if (!this.pointerIsOverChart) {
+            if (
+                !e.target ||
+                !chart.container.contains(e.target as HTMLElement)
+            ) {
                 const curMod = this.modules &&
                         this.modules[this.currentModuleIx || 0];
                 if (curMod && curMod.terminate) {

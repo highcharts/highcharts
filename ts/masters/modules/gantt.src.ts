@@ -18,6 +18,7 @@ import XRangeSeries from '../../Series/XRange/XRangeSeries.js';
 import '../../Series/Gantt/GanttSeries.js';
 import GanttChart from '../../Core/Chart/GanttChart.js';
 import ArrowSymbols from '../../Extensions/ArrowSymbols.js';
+import CurrentDateIndication from '../../Extensions/CurrentDateIndication.js';
 const G: AnyRecord = Highcharts;
 // Classes
 G.GanttChart = GanttChart;
@@ -27,6 +28,7 @@ G.RangeSelector = RangeSelector;
 G.Scrollbar = Scrollbar;
 // Compositions
 ArrowSymbols.compose(G.SVGRenderer);
+CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);
 Navigator.compose(G.Axis, G.Chart, G.Series);
 RangeSelector.compose(G.Axis, G.Chart);
 Scrollbar.compose(G.Axis);
