@@ -1299,18 +1299,9 @@ class Chart {
                     // Floating subtitle (#6574)
                     verticalAlign === 'top' ? titleOffset[0] + 2 : 0;
 
-            let titleSize,
-                height;
-
             if (title) {
 
-                if (!this.styledMode) {
-                    titleSize = (
-                        titleOptions.style &&
-                        titleOptions.style.fontSize
-                    );
-                }
-                titleSize = renderer.fontMetrics(title).b;
+                const titleSize = renderer.fontMetrics(title).b;
                 title
                     .css({
                         width: (
@@ -1320,7 +1311,9 @@ class Chart {
                     });
 
                 // Skip the cache for HTML (#3481, #11666)
-                height = Math.round(title.getBBox(titleOptions.useHTML).height);
+                const height = Math.round(
+                    title.getBBox(titleOptions.useHTML).height
+                );
 
                 title.align(extend({
                     y: verticalAlign === 'bottom' ?
