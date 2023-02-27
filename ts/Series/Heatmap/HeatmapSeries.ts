@@ -484,8 +484,8 @@ class HeatmapSeries extends ScatterSeries {
                         scaleToRange = function (
                             value: number,
                             {
-                                min: fromStart,
-                                max: fromEnd
+                                dataMin: fromStart,
+                                dataMax: fromEnd
                             }: Axis.ExtremesObject,
                             { toStart, toEnd }: {
                                 toStart: number,
@@ -527,7 +527,7 @@ class HeatmapSeries extends ScatterSeries {
                             scaleToRange(
                                 inverted ?
                                     p.y :
-                                    (yFromRange.max as number) - p.y,
+                                    (yFromRange.dataMax as number) - p.y,
                                 yFromRange,
                                 yToRange
                             ),

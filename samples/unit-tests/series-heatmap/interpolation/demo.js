@@ -1,7 +1,8 @@
 QUnit.test('Interpolated image test', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
-            type: 'heatmap'
+            type: 'heatmap',
+            inverted: true
         },
 
         colorAxis: {
@@ -27,7 +28,20 @@ QUnit.test('Interpolated image test', function (assert) {
         ]
     });
 
-    var heatmap = chart.series[0];
-
+    const heatmap = chart.series[0];
+    const point = heatmap.points[0];
+    const container = chart.container;
     assert.strictEqual(heatmap.image.element.tagName, 'image', 'An image-tagname should exist');
+
+    const controller = new TestController(chart);
+
+    controller.moveTo(
+        chart.plotLeft + point.plotX,
+        chart.plotTop + point.plotY
+    );
+
+    assert.ok(
+        container.getElementsByClassName('highcharts-tooltip') !== (null || undefined),
+        'Should have tooltip when hovered'
+    );
 });
