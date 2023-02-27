@@ -2939,7 +2939,9 @@ class Axis {
                 tickInterval
             ),
             rotationOption = labelOptions.rotation,
-            labelMetrics = this.labelMetrics(),
+            // We don't know the actual rendered line height at this point, but
+            // it defaults to 0.75em
+            lineHeight = this.labelMetrics().h * 0.75,
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
@@ -2990,7 +2992,7 @@ class Axis {
                     ) { // #3891
 
                         step = getStep(
-                            Math.abs(labelMetrics.h / Math.sin(deg2rad * rot))
+                            Math.abs(lineHeight / Math.sin(deg2rad * rot))
                         );
 
                         score = step + Math.abs(rot / 360);
@@ -3005,7 +3007,7 @@ class Axis {
             }
 
         } else { // #4411
-            newTickInterval = getStep(labelMetrics.h);
+            newTickInterval = getStep(lineHeight);
         }
 
         this.autoRotation = autoRotation;
