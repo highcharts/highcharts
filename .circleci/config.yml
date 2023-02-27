@@ -48,6 +48,7 @@ add_gh_user_config: &add_gh_user_config
       command: |
         git config --global user.name "CircleCI"
         git config --global user.email "technical+circleci_mu@highsoft.com"
+        git config --global core.editor vim
 
 #######################################
 
