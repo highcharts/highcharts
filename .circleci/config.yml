@@ -638,7 +638,7 @@ workflows:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-staging
       - test_cypress:
-          requires: [lint]
+          requires: [lint, visual_comparison_with_dashboards]
       - test_timezones:
           requires: [lint]
           filters:
