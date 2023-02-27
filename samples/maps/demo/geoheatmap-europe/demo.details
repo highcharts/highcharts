@@ -1,0 +1,11 @@
+---
+name: European Train Stations Near Airports
+authors:
+  - Piotr Madej, Magdalena Gut
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+alt_text: >-
+  Highcharts geoheatmap chart JavaScript example visualizes
+  European Train Stations Near Airports.
+...

@@ -12,7 +12,6 @@
 
             title: {
                 text: 'GeoHeatMap Series Demo',
-                floating: true,
                 align: 'left',
                 style: {
                     textOutline: '2px white'
@@ -20,7 +19,7 @@
             },
 
             subtitle: {
-                text: 'Cities of the World<br> Data source: <a href="https://github.com/lutangar/cities.json">https://github.com/lutangar/cities.json</a>',
+                text: 'Density of Cities in the World by Latitude and Longitude<br> Data source: <a href="https://github.com/lutangar/cities.json">https://github.com/lutangar/cities.json</a>',
                 y: 34,
                 align: 'left'
             },
@@ -31,7 +30,6 @@
 
             mapNavigation: {
                 enabled: true,
-                enableDoubleClickZoomTo: true,
                 buttonOptions: {
                     verticalAlign: 'bottom'
                 }
@@ -42,36 +40,40 @@
                     name: 'Orthographic'
                 }
             },
+
             colorAxis: {
                 dataClasses: [{
                     to: 100,
-                    color: colors[0]
+                    color: 'rgba(51,132,51,0.3)'
                 }, {
                     from: 100,
                     to: 1e3,
-                    color: colors[1]
+                    color: 'rgba(173,255,91,0.3)'
                 }, {
                     from: 1e3,
                     to: 5e3,
-                    color: colors[2]
+                    color: 'rgba(255,173,51,0.3)'
                 }, {
                     from: 5e3,
-                    color: colors[3]
+                    color: 'rgba(214,51,51,0.3)'
                 }]
             },
 
             series: [{
+                name: 'Othographic projection',
                 states: {
                     inactive: {
                         enabled: false
                     }
+                },
+                accessibility: {
+                    exposeAsGroupOnly: true
                 }
             }, {
                 name: 'GeoHeatMap',
-                opacity: 0.6,
+                type: 'geoheatmap',
                 colsize: 10,
                 rowsize: 10,
-                type: 'geoheatmap',
                 data: data
             }]
         });

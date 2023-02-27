@@ -46,10 +46,12 @@ class GeoHeatmapPoint extends MapPoint {
     public series: GeoHeatmapSeries = void 0 as any;
 
     public applyOptions(
-        options: (GeoHeatmapPointOptions|PointShortOptions),
+        options: (GeoHeatmapPointOptions | PointShortOptions),
         x?: number
     ): GeoHeatmapPoint {
-        const point = super.applyOptions.call(this, options, x),
+        const point = super.applyOptions.call(
+                this, options, x
+            ) as GeoHeatmapPoint,
             lat = point.options.lat,
             lon = point.options.lon;
 
