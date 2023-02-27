@@ -18,10 +18,9 @@
 
 import type CSSJSONObject from '../CSSJSONObject';
 import type Component from '../Component/Component.js';
-import type ComponentType from '../Component/ComponentType';
 import type JSON from '../../Core/JSON';
-import type LayoutType from './Layout.js';
-import type Row from './Row.js';
+import type LayoutType from './Layout';
+import type Row from './Row';
 import type Serializable from '../Serializable';
 
 import Globals from '../Globals.js';
@@ -30,6 +29,10 @@ import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import EditGlobals from '../EditMode/EditGlobals.js';
+
+const {
+    componentFromJSON
+} = Bindings;
 
 const {
     merge,
@@ -95,7 +98,6 @@ class Cell extends GUIElement {
     ) {
         super();
 
-        this.type = Globals.guiElementType.cell;
         this.id = options.id;
         this.options = options;
         this.row = row;
@@ -178,6 +180,11 @@ class Cell extends GUIElement {
     public id: string;
 
     /**
+     * The type of GUI element.
+     */
+    public readonly type = Globals.guiElementType.cell;
+
+    /**
      * Reference to the row instance.
      */
     public row: Row;
@@ -225,7 +232,7 @@ class Cell extends GUIElement {
             json.options.parentElement = cell.id;
         }
 
-        const component = Bindings.componentFromJSON(json, cellContainer);
+        const component = componentFromJSON(json, cellContainer);
 
         if (component) {
             cell.mountedComponent = component;

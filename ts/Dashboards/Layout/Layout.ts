@@ -105,7 +105,6 @@ class Layout extends GUIElement {
     ) {
         super();
 
-        this.type = Globals.guiElementType.layout;
         this.board = board;
         this.rows = [];
         this.options = options;
@@ -175,6 +174,10 @@ class Layout extends GUIElement {
      */
     public rows: Array<Row>;
 
+    /**
+     * The type of GUI element.
+     */
+    public readonly type = Globals.guiElementType.layout;
     /**
      * The layout options.
      */
