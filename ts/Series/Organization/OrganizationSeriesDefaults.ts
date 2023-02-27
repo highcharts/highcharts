@@ -430,7 +430,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  * The format string specifying what to show for *links* in the
  * organization chart.
  *
- * Best to use with `linkTextPath` enabled.
+ * Best to use with [`linkTextPath`](#series.organization.dataLabels.linkTextPath) enabled.
  *
  * @sample highcharts/series-organization/link-labels
  *         Organization chart with link labels
