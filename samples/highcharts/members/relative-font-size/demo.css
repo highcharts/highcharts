@@ -1,0 +1,14 @@
+@import "https://code.highcharts.com/css/highcharts.css";
+
+#main {
+    width: 600px;
+    margin: 0 auto;
+}
+
+#container {
+    height: 400px;
+}
+
+input#rem {
+    width: 100%;
+}
