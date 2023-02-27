@@ -729,8 +729,25 @@ class Legend {
             // Get the baseline for the first item - the font size is equal for
             // all
             if (!legend.baseline) {
+                const legendUserOptions = legend.chart.userOptions.legend;
+                let fontSize: string | number | undefined;
+
+                if (legendUserOptions &&
+                    legendUserOptions.itemStyle &&
+                    legendUserOptions.itemStyle.fontSize) {
+                    // if the fontSize is defined by the user
+                    fontSize = legendUserOptions.itemStyle.fontSize;
+                } else if (!legendUserOptions ||
+                    !legendUserOptions.itemStyle ||
+                    !legendUserOptions.itemStyle.font ||
+                    !/px|rem|em/.test(legendUserOptions.itemStyle.font)) {
+                    // if neither fontSize nor font are defined by the user
+                    // then take the default value from itemStyle.fontSize
+                    fontSize = (itemStyle as any).fontSize;
+                }
+
                 legend.fontMetrics = renderer.fontMetrics(
-                    chart.styledMode ? 12 : (itemStyle as any).fontSize,
+                    chart.styledMode ? 12 : fontSize,
                     label
                 );
                 legend.baseline =
