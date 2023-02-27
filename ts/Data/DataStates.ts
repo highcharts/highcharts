@@ -256,10 +256,10 @@ class DataStates {
      * @function #remitCursor
      *
      * @param {string} tableId
-     * The related table of the cursor.
+     * ID of the related cursor table.
      *
      * @param {Data.DataStates.Cursor} cursor
-     * The copy or reference of the cursor.
+     * Copy or reference of the cursor.
      *
      * @return {Data.DataStates}
      * Returns the DataStates instance for a call chain.
