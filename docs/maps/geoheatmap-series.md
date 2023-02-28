@@ -9,7 +9,7 @@ GeoHeatMap similarly as regular [HeatMap](https://www.highcharts.com/docs/chart-
 
 ### Setting up the geo heat map series
 
-Geo Heat Maps require the [modules/geoheatmap.js](https://code.highcharts.com/modules/geoheatmap.js) file to be loaded.
+GeoHeatMap requires the [modules/geoheatmap.js](https://code.highcharts.com/modules/geoheatmap.js) file to be loaded.
 
 The geoheatmap series is defined by setting the type to `geoheatmap`. A geoheatmap has an longitude and latitude to define the positions on a grid of a actual map. The point definitions however, take three values, `lon`, `lat` as well as `value`, which serves as the value for color coding the point. These values can also be given as an array of three numbers. To determine the size of the grid, we use [colsize](https://api.highcharts.com/highmaps/series.geoheatmap.colsize) and [rowsize](https://api.highcharts.com/highmaps/series.geoheatmap.rowsize), respecting the longitude and longitude - how many units each geoheatmap point should span.
 
@@ -29,6 +29,8 @@ series: [{
 ### The color axis
 
 Heat maps borrow a central concept from Highcharts Maps, the color axis. See the docs article on [color axis](https://highcharts.com/docs/maps/color-axis/) for details.
+
+<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/geoheatmap-europe" allow="fullscreen"></iframe>
 
 ### Resources
 
