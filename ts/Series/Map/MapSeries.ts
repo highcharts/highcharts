@@ -25,16 +25,13 @@ import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
-import type PointerEvent from '../../Core/PointerEvent';
 import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type ScatterPoint from '../Scatter/ScatterPoint';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import ColorMapComposition from '../ColorMapComposition.js';
@@ -501,74 +498,6 @@ class MapSeries extends ScatterSeries {
         }
     }
 
-    /**
-     * Animate in the new series. Depends on the drilldown.js module.
-     * @private
-     */
-    public animateDrilldown(init?: boolean): void {
-        const chart = this.chart,
-            group = this.group;
-
-        if (chart.renderer.isSVG) {
-
-            // Initialize the animation
-            if (init) {
-                // Scale down the group and place it in the center. This is a
-                // regression from <= v9.2, when it animated from the old point.
-                group.attr({
-                    translateX: chart.plotLeft + chart.plotWidth / 2,
-                    translateY: chart.plotTop + chart.plotHeight / 2,
-                    scaleX: 0.1,
-                    scaleY: 0.1,
-                    opacity: 0.01
-                });
-
-            // Run the animation
-            } else {
-                group.animate({
-                    translateX: chart.plotLeft,
-                    translateY: chart.plotTop,
-                    scaleX: 1,
-                    scaleY: 1,
-                    opacity: 1
-                }, (this.chart.options.drilldown as any).animation);
-
-                if (chart.drilldown) {
-                    chart.drilldown.fadeInGroup(this.dataLabelsGroup);
-                }
-            }
-        }
-
-    }
-
-    /**
-     * When drilling up, pull out the individual point graphics from the lower
-     * series and animate them into the origin point in the upper series.
-     * @private
-     */
-    public animateDrillupFrom(): void {
-        const chart = this.chart;
-
-        if (chart.renderer.isSVG) {
-            this.group.animate({
-                translateX: chart.plotLeft + chart.plotWidth / 2,
-                translateY: chart.plotTop + chart.plotHeight / 2,
-                scaleX: 0.1,
-                scaleY: 0.1,
-                opacity: 0.01
-            });
-        }
-    }
-
-    /**
-     * When drilling up, keep the upper series invisible until the lower series
-     * has moved into place.
-     * @private
-     */
-    public animateDrillupTo(init?: boolean): void {
-        ColumnSeries.prototype.animateDrillupTo.call(this, init);
-    }
-
     public clearBounds(): void {
         this.points.forEach((point): void => {
             delete point.bounds;
@@ -789,7 +718,11 @@ class MapSeries extends ScatterSeries {
                     }
                 });
             };
-            if (renderer.globalAnimation && chart.hasRendered) {
+            if (
+                renderer.globalAnimation &&
+                chart.hasRendered &&
+                mapView.allowTransformAnimation
+            ) {
                 const startTranslateX = Number(
                     transformGroup.attr('translateX')
                 );
@@ -824,9 +757,37 @@ class MapSeries extends ScatterSeries {
 
                 };
 
+                let animOptions: boolean | Partial<AnimationOptions> | undefined = {};
+
+                if (chart.options.chart) {
+                    animOptions = merge({}, chart.options.chart.animation);
+                }
+
+                if (typeof animOptions !== 'boolean') {
+                    const userStep = animOptions.step;
+
+                    animOptions.step =
+                        function (obj?: { applyDrilldown?: boolean }): void {
+                            if (userStep) {
+                                userStep.apply(this, arguments);
+                            }
+                            step.apply(this, arguments);
+                        };
+                }
+
                 transformGroup
                     .attr({ animator: 0 })
-                    .animate({ animator: 1 }, { step });
+                    .animate({ animator: 1 }, animOptions, function (): void {
+                        if (
+                            typeof renderer.globalAnimation !== 'boolean' &&
+                            renderer.globalAnimation.complete
+                        ) {
+                            // fire complete only from this place
+                            renderer.globalAnimation.complete({
+                                applyDrilldown: true
+                            });
+                        }
+                    });
 
             // When dragging or first rendering, animation is off
             } else {
@@ -838,8 +799,9 @@ class MapSeries extends ScatterSeries {
             }
         });
 
-        this.drawMapDataLabels();
-
+        if (!this.isDrilling) {
+            this.drawMapDataLabels();
+        }
     }
 
     /**
@@ -1343,8 +1305,6 @@ interface MapSeries extends ColorMapComposition.SeriesComposition {
     preserveAspectRatio: boolean;
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
     animate(init?: boolean): void;
-    animateDrilldown(init?: boolean): void;
-    animateDrillupTo(init?: boolean): void;
     doFullTranslate(): boolean;
     drawMapDataLabels(): void;
     drawPoints(): void;

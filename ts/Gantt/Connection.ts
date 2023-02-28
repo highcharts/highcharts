@@ -100,7 +100,6 @@ declare global {
 ''; // detach doclets above
 
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
-import '../Extensions/ArrowSymbols.js';
 
 const deg2rad = H.deg2rad,
     max = Math.max,
