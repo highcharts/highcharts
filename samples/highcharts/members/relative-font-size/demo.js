@@ -5,7 +5,7 @@ const chart = Highcharts.chart('container', {
     },
     subtitle: {
         align: 'left',
-        text: 'Use the slider below the chart to set top-level font size'
+        text: 'Use the buttons above the chart to set top-level font size'
     },
     xAxis: {
         categories: ['Rain', 'Snow', 'Sun', 'Wind']
