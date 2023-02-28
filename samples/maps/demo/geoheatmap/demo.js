@@ -36,8 +36,10 @@
             },
 
             mapView: {
+                maxZoom: 30,
                 projection: {
-                    name: 'Orthographic'
+                    name: 'Orthographic',
+                    rotation: [-20, -20]
                 }
             },
 

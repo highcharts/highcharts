@@ -1,6 +1,7 @@
 /* *
  *
  *  (c) 2010-2023 Highsoft AS
+ *
  *  Authors: Magdalena Gut, Piotr Madej
  *
  *  License: www.highcharts.com/license
@@ -40,11 +41,30 @@ const {
  *  Class
  *
  * */
+
 class GeoHeatmapPoint extends MapPoint {
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public options: GeoHeatmapPointOptions = void 0 as any;
+
     public series: GeoHeatmapSeries = void 0 as any;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
     public applyOptions(
         options: (GeoHeatmapPointOptions | PointShortOptions),
         x?: number
@@ -77,6 +97,9 @@ class GeoHeatmapPoint extends MapPoint {
         }
 
         return point;
+
+        /* eslint-enable valid-jsdoc */
+
     }
 }
 

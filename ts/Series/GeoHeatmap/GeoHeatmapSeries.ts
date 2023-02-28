@@ -1,7 +1,8 @@
 /* *
  *
  *  (c) 2010-2023 Highsoft AS
- *  Authors:
+ *
+ *  Authors: Magdalena Gut, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -33,13 +34,6 @@ const {
     extend,
     merge
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
 
 /* *
  *
@@ -108,8 +102,8 @@ class GeoHeatmapSeries extends MapSeries {
              * The column size - how many longitude units each column in the
              * geoheatmap should span.
              *
-             * @sample maps/demo/geoheatmap/
-             *         GeoHeatmap chart
+             * @sample maps/demo/geoheatmap-europe/
+             *         1 by default, set to 5
              *
              * @type      {number}
              * @default   1
@@ -135,8 +129,8 @@ class GeoHeatmapSeries extends MapSeries {
              * The rowsize size - how many latitude units each row in the
              * geoheatmap should span.
              *
-             * @sample maps/demo/geoheatmap/
-             *         GeoHeatmap chart
+             * @sample maps/demo/geoheatmap-europe/
+             *         1 by default, set to 5
              *
              * @type      {number}
              * @default   1
@@ -155,7 +149,9 @@ class GeoHeatmapSeries extends MapSeries {
      * */
 
     public options: GeoHeatmapSeriesOptions = void 0 as any;
+
     public data: Array<GeoHeatmapPoint> = void 0 as any;
+
     public points: Array<GeoHeatmapPoint> = void 0 as any;
 
     /* *
@@ -167,7 +163,7 @@ class GeoHeatmapSeries extends MapSeries {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * Update all options.
+     * For updated colsize and rowsize options
      * @private
      */
     public update(): void {
