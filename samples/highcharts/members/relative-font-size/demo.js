@@ -1,4 +1,9 @@
 const chart = Highcharts.chart('container', {
+    chart: {
+        style: {
+            fontSize: '100%'
+        }
+    },
     title: {
         align: 'left',
         text: 'Variable font size'
@@ -28,16 +33,31 @@ const chart = Highcharts.chart('container', {
     }]
 });
 
-let fontSizeNum = 1;
+const fontSizes = [
+    '50%',
+    '75%',
+    '85%',
+    '100%',
+    '115%',
+    '125%',
+    '150%',
+    '175%',
+    '200%',
+    '250%',
+    '300%'
+];
+let fontSizeIndex = 3;
 document.querySelectorAll('.font-btn').forEach(btn => {
     btn.addEventListener('click', () =>  {
         if (btn.id === 'font-smaller') {
-            fontSizeNum -= 0.2;
+            fontSizeIndex--;
         } else {
-            fontSizeNum += 0.2;
+            fontSizeIndex++;
         }
-        fontSizeNum = Math.min(2.4, Math.max(0.4, fontSizeNum));
-        const fontSize = fontSizeNum.toFixed(1) + 'rem';
+        fontSizeIndex = Math.min(
+            fontSizes.length - 1, Math.max(0, fontSizeIndex)
+        );
+        const fontSize = fontSizes[fontSizeIndex];
         document.getElementById('font-current').innerText = fontSize;
         chart.update({
             chart: {
