@@ -20,13 +20,13 @@ import type HighchartsComponent from '../../Extensions/DashboardPlugins/Highchar
 import type Serializable from '../Serializable';
 import type KPIComponent from '../Component/KPIComponent';
 import type DataStore from '../../Data/Stores/DataStore';
+import type Cell from '../Layout/Cell';
+import type Layout from '../Layout/Layout';
+import type Row from '../Layout/Row';
 
-import Cell from '../Layout/Cell.js';
 import Component from '../Component/Component.js';
 import HTMLComponent from '../Component/HTMLComponent.js';
 import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
-import Layout from '../Layout/Layout.js';
-import Row from '../Layout/Row.js';
 import Globals from '../Globals.js';
 import DataTable from '../../Data/DataTable';
 import U from '../../Core/Utilities.js';
@@ -62,62 +62,34 @@ class Bindings {
     public static addComponent(
         options: Bindings.ComponentOptions,
         cell?: Cell
-    ): ComponentTypes | undefined {
+    ): Component | undefined {
         const componentContainer = document.getElementById(options.cell);
         const optionsStates = options.states;
         const optionsEvents = options.events;
 
         cell = cell || Bindings.getCell(options.cell);
-        let component: ComponentTypes|undefined;
+        let component: Component | undefined;
 
         // add elements to containers
         if (componentContainer) {
             const ComponentClass = Component.getComponent(options.type);
 
-            switch (options.type) {
-                case 'html':
-                    component = new HTMLComponent(merge(
-                        options,
-                        {
-                            parentElement: componentContainer,
-                            elements: options.elements
-                        })
-                    );
-                    break;
-                case 'Highcharts':
-                    if (ComponentClass) {
-                        component = new ComponentClass(merge(
-                            options,
-                            {
-                                parentElement: componentContainer,
-                                chartOptions: options.chartOptions,
-                                dimensions: options.dimensions
-                            }
-                        )) as HighchartsComponent;
-                    }
-                    break;
-                case 'DataGrid':
-                    if (ComponentClass) {
-                        component = new ComponentClass(merge(
-                            options,
-                            {
-                                parentElement: componentContainer
-                            })
-                        ) as DataGridComponent;
-                    }
-                    break;
-                case 'KPI':
-                    if (ComponentClass) {
-                        component = new ComponentClass(merge(
-                            options,
-                            {
-                                parentElement: componentContainer
-                            })
-                        ) as KPIComponent;
-                    }
-                    break;
-                default:
-                    return;
+            if (options.type === 'html') {
+                component = new HTMLComponent(merge(
+                    options,
+                    {
+                        parentElement: componentContainer
+                    })
+                );
+            } else if (ComponentClass) {
+                component = new ComponentClass(merge(
+                    options,
+                    {
+                        parentElement: componentContainer
+                    })
+                );
+            } else {
+                return;
             }
 
             if (component) {
@@ -203,11 +175,12 @@ class Bindings {
                     json as DataGridComponent.ClassJSON
                 );
                 break;
-            // case 'kpi':
-            //     component = KPIComponent.fromJSON(
-            //         json as KPIComponent.ClassJSON
-            //     );
-            //     break;
+            case 'KPI':
+                componentClass = Component.getComponent(json.$class);
+                if (componentClass) {
+                    component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
+                }
+                break;
             default:
                 return;
         }
@@ -226,19 +199,33 @@ class Bindings {
 
     public static getCell(idOrElement: string): Cell|undefined {
         const cell = Bindings.getGUIElement(idOrElement);
-        return cell instanceof Cell ? cell : void 0;
+
+        if (!(cell && cell.getType() === 'cell')) {
+            return;
+        }
+
+        return (cell as Cell);
     }
 
     public static getRow(idOrElement: string): Row|undefined {
         const row = Bindings.getGUIElement(idOrElement);
-        return row instanceof Row ? row : void 0;
+
+        if (!(row && row.getType() === 'row')) {
+            return;
+        }
+
+        return (row as Row);
     }
 
     public static getLayout(idOrElement: string): Layout|undefined {
         const layout = Bindings.getGUIElement(idOrElement);
-        return layout instanceof Layout ? layout : void 0;
-    }
 
+        if (!(layout && layout.getType() === 'layout')) {
+            return;
+        }
+
+        return layout as Layout;
+    }
 }
 
 namespace Bindings {
@@ -258,7 +245,7 @@ namespace Bindings {
     }
     export interface MountedComponentsOptions {
         options: any;
-        component?: ComponentTypes;
+        component?: Component;
         cell: Cell;
     }
 }

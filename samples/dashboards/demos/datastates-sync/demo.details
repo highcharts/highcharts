@@ -1,0 +1,6 @@
+---
+ name: Highcharts Dashboards Demo
+ author:
+   - Sophie Bremer
+ js_wrap: b
+...

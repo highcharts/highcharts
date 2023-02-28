@@ -62,6 +62,7 @@ module.exports = {
             'maps/map-series',
             'maps/mapline-series',
             'maps/mappoint-series',
+            'maps/flowmap-series',
             'maps/mapbubble-series',
             'maps/marker-clusters',
             'maps/tilemap-series'
@@ -105,7 +106,6 @@ module.exports = {
             'chart-and-series-types/parallel-coordinates-chart',
             'chart-and-series-types/pareto-chart',
             'chart-and-series-types/pie-chart',
-            'chart-and-series-types/pictorial',
             'chart-and-series-types/polar-chart',
             'chart-and-series-types/radial-bar-chart',
             'chart-and-series-types/range-series',

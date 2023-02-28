@@ -26,13 +26,14 @@
 
 import type JSON from '../Core/JSON';
 
-import DashboardAccessibility from './Accessibility/DashboardsAccessibility.js';
 import Bindings from './Actions/Bindings.js';
-import Globals from './Globals.js';
+import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
+import DataStates from '../Data/DataStates.js';
 import EditMode from './EditMode/EditMode.js';
+import Fullscreen from './EditMode/Fullscreen.js';
+import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
-import Fullscreen from './EditMode/Fullscreen.js';
 import U from '../Core/Utilities.js';
 const {
     merge,
@@ -111,6 +112,9 @@ class Board implements Serializable<Board, Board.JSON> {
         // Init events.
         this.initEvents();
 
+        // Add table cursors support.
+        this.states = new DataStates();
+
         // Add fullscreen support.
         this.fullscreen = new Fullscreen(this);
 
@@ -118,7 +122,7 @@ class Board implements Serializable<Board, Board.JSON> {
         Globals.boards.push(this);
 
         // a11y module
-        this.a11y = new DashboardAccessibility(this);
+        this.a11y = new DashboardsAccessibility(this);
     }
 
     /* *
@@ -127,8 +131,9 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      * */
 
-    public container: globalThis.HTMLElement = void 0 as any;
+    public a11y: DashboardsAccessibility;
     public boardWrapper: globalThis.HTMLElement = void 0 as any;
+    public container: globalThis.HTMLElement = void 0 as any;
     public editMode?: EditMode;
     public fullscreen?: Fullscreen;
     public guiEnabled: (boolean|undefined);
@@ -138,7 +143,7 @@ class Board implements Serializable<Board, Board.JSON> {
     public layoutsWrapper: globalThis.HTMLElement;
     public mountedComponents: Array<Bindings.MountedComponentsOptions>;
     public options: Board.Options;
-    public a11y: DashboardAccessibility;
+    public states: DataStates;
 
     /* *
      *

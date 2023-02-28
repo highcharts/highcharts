@@ -21,7 +21,11 @@ const {
 } = U;
 
 namespace EditableOptions {
-    export type BindingsType = Record<'keyMap' | 'typeMap', Record<string, string>>;
+    export interface OptionsBindings {
+        keyMap: Record<string, string>;
+        typeMap: Record<string, string>;
+        skipRedraw: string[]; // keys of options that should not trigger redraw
+    }
 
     export interface getTypesType {
         type?: string;
@@ -34,11 +38,9 @@ namespace EditableOptions {
 
 class EditableOptions {
 
-    public static defaultBindings: EditableOptions.BindingsType = {
+    public static defaultBindings: EditableOptions.OptionsBindings = {
         keyMap: {
             color: 'colorPicker',
-            chartOptions: 'textarea',
-            chartType: 'select',
             title: 'text',
             caption: 'text',
             style: 'textarea'
@@ -47,7 +49,8 @@ class EditableOptions {
             'string': 'text',
             'number': 'input',
             'boolean': 'toggle'
-        }
+        },
+        skipRedraw: []
     };
 
     // Bindings of basic types to "editor components"
@@ -58,13 +61,15 @@ class EditableOptions {
     };
 
     public component: Component;
-    public bindings?: EditableOptions.BindingsType;
+    public bindings: EditableOptions.OptionsBindings;
 
-    constructor(component: Component, bindings?: EditableOptions.BindingsType) {
+    constructor(
+        component: Component,
+        bindings: EditableOptions.OptionsBindings =
+        EditableOptions.defaultBindings
+    ) {
         this.component = component;
-        if (bindings) {
-            this.bindings = bindings;
-        }
+        this.bindings = bindings;
     }
 
     public getEditableOptions(): (EditableOptions.getOptionsType | undefined) {
@@ -72,6 +77,9 @@ class EditableOptions {
         const { keyMap, typeMap } =
             merge(EditableOptions.defaultBindings, this.bindings);
 
+        /**
+         *
+         */
         function getType(
             nodeName: string,
             branch: Record<string, any>
@@ -119,14 +127,13 @@ class EditableOptions {
 
         const record: EditableOptions.getOptionsType = {};
 
-        [
-            ...options.editableOptions
-        ].forEach((optionName: string): void => {
-            const type = getType(optionName, options);
-            if (type) {
-                record[optionName] = type;
-            }
-        });
+        options.editableOptions
+            .forEach((optionName: string): void => {
+                const type = getType(optionName, options);
+                if (type) {
+                    record[optionName] = type;
+                }
+            });
 
         return record;
     }

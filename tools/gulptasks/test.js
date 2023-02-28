@@ -72,6 +72,7 @@ function checkJSWrap() {
 }
 
 /**
+ * Checks if demos has valid configuration
  * @return {void}
  */
 function checkDemosConsistency() {
@@ -175,6 +176,7 @@ function checkDemosConsistency() {
 }
 
 /**
+ * Checks if documentation is added to sidebar file
  * @async
  * @return {void}
  */
@@ -221,6 +223,7 @@ function checkDocsConsistency() {
 }
 
 /**
+ * Saves test run information
  * @return {void}
  */
 function saveRun() {
@@ -249,6 +252,7 @@ function saveRun() {
 }
 
 /**
+ * Checks if tests should run
  * @return {boolean}
  *         True if outdated
  */

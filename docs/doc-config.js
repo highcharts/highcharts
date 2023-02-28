@@ -7,6 +7,7 @@ module.exports = {
      */
     unlisted: [
         'dashboards/components',
+        'dashboards/custom-component',
         'dashboards/types-of-components',
         'dashboards/layout-description',
         'dashboards/sync',
@@ -14,11 +15,13 @@ module.exports = {
         'dashboards/installation',
         'dashboards/your-first-dashboard',
         'dashboards/edit-mode',
+        'dashboards/light-dark-theme',
         'export-module/deprecated-async-option',
         'export-module/legacy-export-servers',
         'maps/latlon',
         'stock/compare',
-        'stock/cumulative-sum'
+        'stock/cumulative-sum',
+        'chart-and-series-types/pictorial'
     ],
     /* List of old paths that should be redirected */
     redirects: [

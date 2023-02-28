@@ -104,7 +104,6 @@ class Row extends GUIElement {
     ) {
         super();
 
-        this.type = Globals.guiElementType.row;
         this.layout = layout;
         this.cells = [];
         this.options = options;
@@ -167,6 +166,10 @@ class Row extends GUIElement {
      */
     public options: Row.Options;
 
+    /**
+     * The type of GUI element.
+     */
+    public readonly type = Globals.guiElementType.row;
     /* *
     *
     *  Functions

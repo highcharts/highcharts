@@ -99,7 +99,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             'title',
             'caption'
         ],
-        editableOptionsBindings: void 0
+        editableOptionsBindings: EditableOptions.defaultBindings
     };
 
     public parentElement: HTMLElement;
@@ -131,13 +131,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public abstract sync: Sync;
 
     /**
-   * Timeouts for calls to `Component.resizeTo()`
-   */
+     * Timeouts for calls to `Component.resizeTo()`
+     */
     protected resizeTimeouts: number[] = [];
 
     /**
-   * Timeouts for resizing the content. I.e. `chart.setSize()`
-   */
+     * Timeouts for resizing the content. I.e. `chart.setSize()`
+     */
     protected innerResizeTimeouts: number[] = [];
 
     constructor(options: Partial<Component.ComponentOptions>) {
@@ -198,9 +198,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * Handles the sync options. Applies the given defaults if no
-     * specific callback given
-     */
+    * Handles the sync options. Applies the given defaults if no
+    * specific callback given
+    */
     protected handleSyncOptions(
         defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
     ): Component['syncHandlers'] {
@@ -416,16 +416,16 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * Resize the component
-   * @param {number|string|null} [width]
-   * The width to set the component to.
-   * Can be pixels, a percentage string or null.
-   * Null will unset the style
-   * @param {number|string|null} [height]
-   * The height to set the component to.
-   * Can be pixels, a percentage string or null.
-   * Null will unset the style.
-   */
+     * Resize the component
+     * @param {number|string|null} [width]
+     * The width to set the component to.
+     * Can be pixels, a percentage string or null.
+     * Null will unset the style
+     * @param {number|string|null} [height]
+     * The height to set the component to.
+     * Can be pixels, a percentage string or null.
+     * Null will unset the style.
+     */
     public resize(
         width?: number | string | null,
         height?: number | string | null
@@ -495,21 +495,79 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * Handles updating via options
-   * @param {Partial<Component.ComponentOptions>} newOptions
-   * The options to apply
-   *
-   * @return {this}
-   * The component for chaining
-   */
-    public update(newOptions: Partial<Component.ComponentOptions>, redraw = true): this {
+     * Handles updating via options
+     * @param {Partial<Component.ComponentOptions>} newOptions
+     * The options to apply
+     *
+     * @param {boolean} redraw
+     * Set to true if the update should redraw the component.
+     * If `false` the component will be redrawn only if options are changed.
+     *
+     * @return {this}
+     * The component for chaining
+     */
+    public update(
+        newOptions: Partial<Component.ComponentOptions>,
+        redraw: boolean = false
+    ): this {
         // Update options
+        let shouldForceRedraw = false;
+
+        if (!redraw) {
+            const currentOptions = this.options;
+
+            const optionNamesToSkip = this.editableOptions.bindings ?
+                this.editableOptions.bindings.skipRedraw :
+                [];
+
+            const newOptionKeys = Object.keys(newOptions);
+            for (let i = 0; i < newOptionKeys.length; i++) {
+                const optionName = newOptionKeys[i];
+                if (
+                    optionNamesToSkip.indexOf(optionName) > -1
+                ) {
+                    continue;
+                }
+
+                if (optionName in currentOptions) {
+                    const oldOptionValue =
+                        (currentOptions as AnyRecord)[optionName];
+                    const newOptionValue =
+                        (newOptions as AnyRecord)[optionName];
+
+                    // If the type has changed, redraw
+                    if (typeof oldOptionValue !== typeof newOptionValue) {
+                        shouldForceRedraw = true;
+                        break;
+                    }
+
+                    // If both are objects, do a quick comparison
+                    // TODO: order should not really matter in a config
+                    // so might want to do a deeper comparison
+                    if (
+                        typeof oldOptionValue === 'object' &&
+                        JSON.stringify(oldOptionValue) !==
+                        JSON.stringify(newOptionValue)
+                    ) {
+                        shouldForceRedraw = true;
+                        break;
+                    }
+
+                    if (oldOptionValue !== newOptionValue) {
+                        shouldForceRedraw = true;
+                        break;
+                    }
+                }
+            }
+        }
+
         this.options = merge(this.options, newOptions);
         fireEvent(this, 'update', {
-            options: newOptions
+            options: newOptions,
+            shouldForceRedraw
         });
 
-        if (redraw) {
+        if (redraw || shouldForceRedraw) {
             this.redraw();
         }
 
@@ -518,6 +576,18 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public setTitle(titleOptions: Component.TextOptionsType): void {
         const previousTitle = this.titleElement;
+
+        if (
+            !titleOptions || typeof titleOptions === 'string' ?
+                titleOptions === '' :
+                titleOptions.text === ''
+        ) {
+            if (previousTitle) {
+                previousTitle.remove();
+            }
+            return;
+        }
+
         const titleElement =
             Component.createTextElement('h1', 'title', titleOptions);
 
@@ -532,6 +602,18 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public setCaption(captionOptions: Component.TextOptionsType): void {
         const previousCaption = this.captionElement;
+        if (
+            !captionOptions ||
+                typeof captionOptions === 'string' ?
+                captionOptions === '' :
+                captionOptions.text === ''
+        ) {
+            if (previousCaption) {
+                previousCaption.remove();
+            }
+            return;
+        }
+
         const captionElement =
             Component.createTextElement('div', 'caption', captionOptions);
 
@@ -545,11 +627,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * Handles setting things up on initial render
-   *
-   * @return {this}
-   * The component for chaining
-   */
+     * Handles setting things up on initial render
+     *
+     * @return {this}
+     * The component for chaining
+     */
     public load(): this {
 
         // Set up the store on inital load if it has not been done
@@ -624,10 +706,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * @todo redraw should (usually) call render
-   * @return {this}
-   * The component for chaining
-   */
+     * @todo redraw should (usually) call render
+     * @return {this}
+     * The component for chaining
+     */
     public redraw(): this {
         // Do a redraw
         const e = {
@@ -642,9 +724,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * @todo Should perhaps also remove the component from the registry
-   * or set an `isactive` flag to false
-   */
+     * @todo Should perhaps also remove the component from the registry
+     * or set an `isactive` flag to false
+     */
     public destroy(): void {
         while (this.element.firstChild) {
             this.element.firstChild.remove();
@@ -701,11 +783,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-   * Converts the class instance to a class JSON.
-   *
-   * @return {Component.JSON}
-   * Class JSON of this Component instance.
-   */
+     * Converts the class instance to a class JSON.
+     *
+     * @return {Component.JSON}
+     * Class JSON of this Component instance.
+     */
     public toJSON(): Component.JSON {
         const dimensions: Record<'width' | 'height', number> = {
             width: 0,
@@ -742,10 +824,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 namespace Component {
 
     /* *
-   *
-   *  Declarations
-   *
-   * */
+    *
+    *  Declarations
+    *
+    * */
 
     export interface JSON extends Serializable.JSON<string> {
         // store?: DataStore.ClassJSON;
@@ -753,8 +835,8 @@ namespace Component {
     }
 
     /**
-   * The basic events
-   */
+     * The basic events
+     */
     export type EventTypes =
         ResizeEvent |
         UpdateEvent |
@@ -813,7 +895,7 @@ namespace Component {
         navigationBindings?: NavigationBindingsOptionsObject[];
         events?: Record<string, Function>;
         editableOptions: Array<string>;
-        editableOptionsBindings?: EditableOptions.BindingsType;
+        editableOptionsBindings: EditableOptions.OptionsBindings;
         presentationModifier?: DataModifier;
         sync: SyncOptions;
     }
@@ -854,37 +936,37 @@ namespace Component {
     };
 
     /* *
-   *
-   *  Constants
-   *
-   * */
+    *
+    *  Constants
+    *
+    * */
 
     /**
-   *
-   * Record of component instances
-   *
-   */
+     *
+     * Record of component instances
+     *
+     */
     export const instanceRegistry: Record<string, ComponentType> = {};
 
     /**
-   * Regular expression to extract the  name (group 1) from the
-   * stringified class type.
-   */
-    const nameRegExp = /^function\s+(\w*?)(?:Component)?\s*\(/;
+     * Regular expression to extract the  name (group 1) from the
+     * stringified class type.
+     */
+    const nameRegExp = /^(?:class|function)\s(\w*?)(?:Component)?\W/;
 
     /**
-   *
-   * Record of component classes
-   * @todo
-   *
-   */
+     *
+     * Record of component classes
+     * @todo
+     *
+     */
     export const registry: Record<string, Class<Component>> = {};
 
     /* *
-   *
-   *  Functions
-   *
-   * */
+    *
+    *  Functions
+    *
+    * */
 
     /**
      *
@@ -921,15 +1003,15 @@ namespace Component {
     }
 
     /**
-   * Extracts the name from a given component class.
-   *
-   * @param {DataStore} component
-   * Component class to extract the name from.
-   *
-   * @return {string}
-   * Component name, if the extraction was successful, otherwise an empty
-   * string.
-   */
+     * Extracts the name from a given component class.
+     *
+     * @param {DataStore} component
+     * Component class to extract the name from.
+     *
+     * @return {string}
+     * Component name, if the extraction was successful, otherwise an empty
+     * string.
+     */
     export function getName(
         component: (NewableFunction | ComponentType)
     ): string {
@@ -940,38 +1022,38 @@ namespace Component {
     }
 
     /**
-   * Adds a component instance to the registry
-   * @param {Component} component
-   * The component to add
-   */
+     * Adds a component instance to the registry
+     * @param {Component} component
+     * The component to add
+     */
     export function addInstance(component: ComponentType): void {
         Component.instanceRegistry[component.id] = component;
 
     }
 
     /**
-   * Removes a component instance from the registry
-   * @param {Component} component
-   * The component to remove
-   */
+     * Removes a component instance from the registry
+     * @param {Component} component
+     * The component to remove
+     */
     export function removeInstance(component: Component<any>): void {
         delete Component.instanceRegistry[component.id];
     }
 
     /**
-   * Retrieves the IDs of the registered component instances
-   * @return {string[]}
-   * Array of component IDs
-   */
+     * Retrieves the IDs of the registered component instances
+     * @return {string[]}
+     * Array of component IDs
+     */
     export function getAllInstanceIDs(): string[] {
         return Object.keys(instanceRegistry);
     }
 
     /**
-   * Retrieves all registered component instances
-   * @return {ComponentType[]}
-   * Array of components
-   */
+     * Retrieves all registered component instances
+     * @return {ComponentType[]}
+     * Array of components
+     */
     export function getAllInstances(): Component<any>[] {
         const ids = getAllInstanceIDs();
         return ids.map((id): Component<any> => instanceRegistry[id]);

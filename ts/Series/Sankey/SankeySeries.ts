@@ -46,7 +46,6 @@ import TU from '../TreeUtilities.js';
 const { getLevelOptions } = TU;
 import U from '../../Core/Utilities.js';
 const {
-    defined,
     extend,
     isObject,
     merge,

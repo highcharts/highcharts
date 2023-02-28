@@ -15,7 +15,7 @@
  * */
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type Options from '../../Core/Options.js';
+import type Options from '../../Core/Options';
 import type TextOptions from './TextOptions';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -349,11 +349,73 @@ class KPIComponent extends Component {
         }
         return '';
     }
+    public toJSON(): KPIComponent.ClassJSON {
+        const base = super.toJSON();
+        const json = {
+            ...base,
+            options: {
+                ...base.options,
+                value: this.options.value,
+                subtitle: JSON.stringify(this.options.subtitle),
+                title: JSON.stringify(this.options.title),
+                threshold: this.options.threshold,
+                style: JSON.stringify(this.options.style),
+                thresholdColors: this.options.thresholdColors,
+                chartOptions: JSON.stringify(this.options.chartOptions),
+                valueFormat: this.options.valueFormat
+            }
+        };
+
+        this.emit({ type: 'toJSON', json: base });
+
+        return json;
+    }
+
+    public static fromJSON(json: KPIComponent.ClassJSON): KPIComponent {
+        const options = json.options;
+        const chartOptions =
+            options.chartOptions && JSON.parse(options.chartOptions);
+        const subtitle = JSON.parse(options.subtitle || '{}');
+        const title = options.title && JSON.parse(options.title);
+        const style = JSON.parse(options.style || '{}');
+        const thresholdColors = options.thresholdColors;
+        const value = options.value;
+        const threshold = options.threshold;
+        const valueFormat = options.valueFormat;
+
+        return new KPIComponent(
+            merge(options, {
+                chartOptions,
+                title,
+                subtitle,
+                style,
+                thresholdColors,
+                value,
+                threshold,
+                valueFormat
+            })
+        );
+    }
 }
 
 namespace KPIComponent {
     export type ComponentType = KPIComponent;
 
+    export interface ClassJSON extends Component.JSON {
+        options: ComponentJSONOptions;
+
+    }
+
+    export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
+        title?: string;
+        chartOptions?: string;
+        style?: string;
+        threshold?: number|Array<number>;
+        thresholdColors?: Array<string>;
+        value?: number|string;
+        subtitle?: string;
+        valueFormat?: string;
+    }
     export interface ComponentOptions extends Component.ComponentOptions {
         chartOptions?: Options;
         style?: CSSObject;
