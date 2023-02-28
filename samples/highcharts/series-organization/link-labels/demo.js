@@ -10,9 +10,6 @@ Highcharts.chart('container', {
             ['A', 'C'],
             ['C', 'D']
         ],
-        link: {
-            type: 'curved'
-        },
         dataLabels: {
             linkFormat: 'from {point.from} to {point.to}',
             linkTextPath: {
