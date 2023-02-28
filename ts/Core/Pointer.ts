@@ -1141,10 +1141,9 @@ class Pointer {
     public onContainerMouseDown(e: MouseEvent): void {
         const isPrimaryButton = ((e.buttons || e.button) & 1) === 1;
 
-        // Normalize before the 'if' for the legacy IE (#7850)
         e = this.normalize(e);
 
-        // #11635, Firefox does not reliable fire move event after click scroll
+        // #11635, Firefox does not reliably fire move event after click scroll
         if (
             H.isFirefox &&
             e.button !== 0
@@ -1152,7 +1151,7 @@ class Pointer {
             this.onContainerMouseMove(e);
         }
 
-        // #11635, limiting to primary button (incl. IE 8 support)
+        // #11635, limiting to primary button
         if (
             typeof e.button === 'undefined' ||
             isPrimaryButton

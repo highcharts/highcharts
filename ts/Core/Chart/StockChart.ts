@@ -282,8 +282,8 @@ namespace StockChart {
      * @param {Highcharts.ChartCallbackFunction} [callback]
      *        A function to execute when the chart object is finished loading
      *        and rendering. In most cases the chart is built in one thread,
-     *        but in Internet Explorer version 8 or less the chart is sometimes
-     *        initialized before the document is ready, and in these cases the
+     *        but in Internet Explorer versions older than 9 the chart sometimes
+     *        initializes before the document is ready, and in these cases the
      *        chart object will not be finished synchronously. As a
      *        consequence, code that relies on the newly built Chart object
      *        should always run in the callback. Defining a
