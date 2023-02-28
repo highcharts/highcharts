@@ -14,7 +14,9 @@ Highcharts.chart('container', {
             linkFormat: 'from {point.from} to {point.to}',
             linkTextPath: {
                 enabled: true,
-                startOffset: '80%'
+                attributes: {
+                    startOffset: '80%'
+                }
             }
         }
     }]
