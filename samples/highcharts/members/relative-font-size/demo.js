@@ -1,15 +1,19 @@
 const chart = Highcharts.chart('container', {
-    chart: {
-        animation: false
-    },
     title: {
-        text: 'Root font size: 1rem'
+        align: 'left',
+        text: 'Variable font size'
     },
     subtitle: {
+        align: 'left',
         text: 'Use the slider below the chart to set top-level font size'
     },
     xAxis: {
         categories: ['Rain', 'Snow', 'Sun', 'Wind']
+    },
+    yAxis: {
+        title: {
+            text: 'Hours'
+        }
     },
     series: [{
         data: [324, 124, 547, 221],
@@ -24,16 +28,23 @@ const chart = Highcharts.chart('container', {
     }]
 });
 
-document.getElementById('rem').addEventListener('input', e =>  {
-    const fontSize = `${Number(e.target.value).toFixed(2)}rem`;
-    chart.update({
-        title: {
-            text: `Root font size: ${fontSize}`
-        },
-        chart: {
-            style: {
-                fontSize
-            }
+let fontSizeNum = 1;
+document.querySelectorAll('.font-btn').forEach(btn => {
+    btn.addEventListener('click', () =>  {
+        if (btn.id === 'font-smaller') {
+            fontSizeNum -= 0.2;
+        } else {
+            fontSizeNum += 0.2;
         }
+        fontSizeNum = Math.min(2.4, Math.max(0.4, fontSizeNum));
+        const fontSize = fontSizeNum.toFixed(1) + 'rem';
+        document.getElementById('font-current').innerText = fontSize;
+        chart.update({
+            chart: {
+                style: {
+                    fontSize
+                }
+            }
+        });
     });
 });
