@@ -499,58 +499,6 @@ class MapSeries extends ScatterSeries {
     }
 
     /**
-     * Animate in the new series. Depends on the drilldown.js module.
-     * @private
-     */
-    public animateDrilldown(init?: boolean): void {
-        const chart = this.chart,
-            group = this.group;
-
-        // Initialize the animation
-        if (init) {
-            // Scale down the group and place it in the center. This is a
-            // regression from <= v9.2, when it animated from the old point.
-            group.attr({
-                translateX: chart.plotLeft + chart.plotWidth / 2,
-                translateY: chart.plotTop + chart.plotHeight / 2,
-                scaleX: 0.1,
-                scaleY: 0.1,
-                opacity: 0.01
-            });
-
-        // Run the animation
-        } else {
-            group.animate({
-                translateX: chart.plotLeft,
-                translateY: chart.plotTop,
-                scaleX: 1,
-                scaleY: 1,
-                opacity: 1
-            }, (this.chart.options.drilldown as any).animation);
-
-            if (chart.drilldown) {
-                chart.drilldown.fadeInGroup(this.dataLabelsGroup);
-            }
-        }
-    }
-
-    /**
-     * When drilling up, pull out the individual point graphics from the lower
-     * series and animate them into the origin point in the upper series.
-     * @private
-     */
-    public animateDrillupFrom(): void {
-        const chart = this.chart;
-        this.group.animate({
-            translateX: chart.plotLeft + chart.plotWidth / 2,
-            translateY: chart.plotTop + chart.plotHeight / 2,
-            scaleX: 0.1,
-            scaleY: 0.1,
-            opacity: 0.01
-        });
-    }
-
-    /**
      * When drilling up, keep the upper series invisible until the lower series
      * has moved into place.
      * @private
