@@ -1301,7 +1301,6 @@ class Chart {
 
             if (title) {
 
-                const titleSize = renderer.fontMetrics(title).b;
                 title
                     .css({
                         width: (
@@ -1310,15 +1309,16 @@ class Chart {
                         ) + 'px'
                     });
 
-                // Skip the cache for HTML (#3481, #11666)
-                const height = Math.round(
-                    title.getBBox(titleOptions.useHTML).height
-                );
+                const baseline = renderer.fontMetrics(title).b,
+                    // Skip the cache for HTML (#3481, #11666)
+                    height = Math.round(
+                        title.getBBox(titleOptions.useHTML).height
+                    );
 
                 title.align(extend({
                     y: verticalAlign === 'bottom' ?
-                        titleSize :
-                        offset + titleSize,
+                        baseline :
+                        offset + baseline,
                     height
                 }, titleOptions), false, 'spacingBox');
 

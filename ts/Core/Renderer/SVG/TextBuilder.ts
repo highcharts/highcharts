@@ -68,11 +68,9 @@ class TextBuilder {
             textStyles && textStyles.textOverflow === 'ellipsis'
         );
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
-        this.fontSize = textStyles && textStyles.fontSize;
     }
 
     public ellipsis: boolean;
-    public fontSize: any;
     public noWrap: boolean;
     public renderer: SVGRenderer;
     public svgElement: SVGElement;
@@ -105,7 +103,7 @@ class TextBuilder {
                 this.noWrap,
                 this.textLineHeight,
                 this.textOutline,
-                this.fontSize,
+                wrapper.getStyle('font-size'),
                 this.width
             ].join(',');
 
