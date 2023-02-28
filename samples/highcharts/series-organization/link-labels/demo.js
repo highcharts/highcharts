@@ -13,7 +13,8 @@ Highcharts.chart('container', {
         dataLabels: {
             linkFormat: 'from {point.from} to {point.to}',
             linkTextPath: {
-                enabled: true
+                enabled: true,
+                startOffset: '80%'
             }
         }
     }]
