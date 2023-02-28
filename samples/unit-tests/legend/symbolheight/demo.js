@@ -52,5 +52,18 @@ QUnit.test(
             `There should be no symbol when legend.symbolHeight is set to 0
             for column chart (squareSymbol is set to true) (#16514).`
         );
+
+        chart.update({
+            legend: {
+                symbolWidth: 0
+            }
+        });
+
+        assert.strictEqual(
+            chart.series[1].legendItem.symbol,
+            void 0,
+            `There should be no symbol when legend.symbolWidth is set to 0
+            for line chart.`
+        );
     }
 );
