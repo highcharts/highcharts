@@ -20,7 +20,7 @@ import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
 import U from '../../../Core/Utilities.js';
 import Menu from './Menu.js';
-import EditRenderer from '../EditRenderer.js';
+import EditRenderer, { SelectFormFieldItem } from '../EditRenderer.js';
 
 const {
     createElement,
@@ -168,7 +168,7 @@ class MenuItem {
                     id: options.id,
                     name: options.id,
                     title: options.text || '',
-                    items: options.items || [],
+                    items: options.items as SelectFormFieldItem[] || [],
                     value: options.value || ''
                 }
             );
@@ -221,7 +221,7 @@ namespace MenuItem {
         icon?: string;
         isActive?: boolean;
         value?: string;
-        items?: Array<string>
+        items?: Array<string> | Array<SelectFormFieldItem>;
     }
 }
 

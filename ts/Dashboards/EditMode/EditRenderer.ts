@@ -74,10 +74,9 @@ class EditRenderer {
 
     public static renderSelect(
         parentElement: HTMLDOMElement,
-        options: SelectFormField
+        options: SelectFormField,
+        callback?: Function
     ): HTMLDOMElement|undefined {
-        let selectOption;
-
         if (!parentElement) {
             return;
         }
@@ -88,36 +87,45 @@ class EditRenderer {
                 options.title
             );
         }
-        let customSelect = createElement('div', {
-            className: 'hd-dropdown'
+        const customSelect = createElement('div', {
+            className: 'highcharts-dashboards-dropdown'
         },
         {},
         parentElement);
 
-        let btn = createElement(
+        const btn = createElement(
             'button',
-            { className: 'hd-dropdown-button' },
+            { className: 'highcharts-dashboards-dropdown-button' },
             {
                 height: '52px',
                 margin: 0
             },
             customSelect
         );
-        let btnContent = createElement(
+        const btnContent = createElement(
             'div',
             {},
             { display: 'flex', height: '100%', 'align-items': 'center' },
             btn
         );
-        let icon = createElement(
-            'img',
-            {
-                src: 'https://code.highcharts.com/gfx/stock-icons/series-candlestick.svg',
-                className: 'hd-icon'
-            },
-            {},
-            btnContent
-        );
+        const iconURL = (
+            U.find(
+                options.items,
+                (item): boolean => item.name === options.value
+            ) || {}
+        ).iconURL;
+
+        if (iconURL) {
+            createElement(
+                'img',
+                {
+                    src: iconURL,
+                    className: 'highcharts-dashboards-icon'
+                },
+                {},
+                btnContent
+            );
+        }
         const placeholder = createElement(
             'span',
             { textContent: options.value, id: options.id },
@@ -127,7 +135,8 @@ class EditRenderer {
         createElement(
             'img',
             {
-                src: 'https://code.highcharts.com/gfx/stock-icons/series-candlestick.svg'
+                className: 'highcharts-dashboards-drowdown-pointer',
+                src: 'https://code.highcharts.com/gfx/dashboard-icons/drowdown-pointer.svg'
             },
             { height: '100%' },
             btn
@@ -135,7 +144,7 @@ class EditRenderer {
 
         let dropdown = createElement(
             'ul',
-            { className: 'hd-droptown-content' },
+            { className: 'highcharts-dashboards-droptown-content' },
             {
                 display: 'none',
                 padding: '16px 8px'
@@ -148,37 +157,48 @@ class EditRenderer {
         });
 
         for (let i = 0, iEnd = options.items.length; i < iEnd; ++i) {
-
-            selectOption = createElement('li', {}, { margin: 0 }, dropdown);
-            let selectOptionBtn = createElement(
-                'button',
-                { className: 'hd-select-option-button' },
-                { height: '40px', width: '100%' },
-                selectOption
+            EditRenderer.renderSelectElement(
+                options.items[i] || {},
+                dropdown,
+                placeholder
             );
+        }
+        return customSelect;
+    }
+
+    private static renderSelectElement(
+        option: SelectFormFieldItem,
+        dropdown: HTMLElement,
+        placeholder: HTMLElement
+    ): void {
+        const selectOption = createElement('li', {}, { margin: 0 }, dropdown);
+        const selectOptionBtn = createElement(
+            'button',
+            { className: 'highcharts-dashboards-select-option-button' },
+            { height: '40px', width: '100%' },
+            selectOption
+        );
+        if (option.iconURL) {
             createElement(
                 'img',
                 {
-                    src: 'https://code.highcharts.com/gfx/stock-icons/series-candlestick.svg'
+                    src: option.iconURL
                 },
                 { width: '24px', height: '24px' },
                 selectOptionBtn
             );
-            const optionValue = options.items[i] || '';
-            createElement(
-                'span',
-                { textContent: optionValue },
-                {},
-                selectOptionBtn
-            );
-
-            selectOptionBtn.addEventListener('click', function (): void {
-                dropdown.style.display = 'none';
-                placeholder.textContent = optionValue;
-            });
         }
+        createElement(
+            'span',
+            { textContent: option.name || '' },
+            {},
+            selectOptionBtn
+        );
 
-        return customSelect;
+        selectOptionBtn.addEventListener('click', function (): void {
+            dropdown.style.display = 'none';
+            placeholder.textContent = option.name || '';
+        });
     }
 
     public static renderToggle(
@@ -400,7 +420,13 @@ export interface SelectFormField {
     name: string;
     title: string;
     value: string;
-    items: Array<string>;
+    items: Array<SelectFormFieldItem>;
+}
+
+export interface SelectFormFieldItem {
+    name: 'string';
+    iconURL: 'string';
+
 }
 
 export default EditRenderer;

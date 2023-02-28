@@ -89,6 +89,7 @@ class Sidebar {
         icon: ''
     }];
 
+    public static seriesIconURLPrefix = 'https://code.highcharts.com/gfx/dashboard-icons/series-types/icon-';
     public static components: Array<Sidebar.AddComponentDetails> = [
         {
             text: 'layout',
@@ -854,11 +855,35 @@ class Sidebar {
 
                     if (key === 'chartType') {
                         const chartTypesEnum = [
-                            'column',
-                            'line',
-                            'scatter',
-                            'spline',
-                            'pie'
+                            {
+                                name: 'column',
+                                iconURL:
+                                    Sidebar.seriesIconURLPrefix +
+                                    'column.svg'
+                            },
+                            {
+                                name: 'line',
+                                iconURL:
+                                    Sidebar.seriesIconURLPrefix +
+                                    'line.svg'
+                            },
+                            {
+                                name: 'scatter',
+                                iconURL:
+                                    Sidebar.seriesIconURLPrefix +
+                                    'scatter.svg'
+                            },
+                            {
+                                name: 'spline',
+                                iconURL:
+                                    Sidebar.seriesIconURLPrefix +
+                                    'spline.svg'
+                            },
+                            {
+                                name: 'pie',
+                                iconURL:
+                                    Sidebar.seriesIconURLPrefix + 'pie.svg'
+                            }
                         ];
 
                         // eslint-disable-next-line
@@ -871,8 +896,7 @@ class Sidebar {
                             );
 
                         if (
-                            chartType &&
-                            chartTypesEnum.indexOf(chartType) !== -1
+                            chartType
                         ) {
                             chartTypes = {
                                 items: chartTypesEnum,
