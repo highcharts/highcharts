@@ -6,7 +6,7 @@ There are multiple different ways how you can import this package.
 Among the most popular are:
 * Using npm
 Run the following command in your terminal:
-```bash
+``` Shell
     npm install <PACKAGE-NAME>
 ```
 Then import the package in your project:
@@ -14,9 +14,9 @@ Then import the package in your project:
     import Dashboards from '<PACKAGE-NAME>';
 ```
 * Importing as a script
-```html
+``` HTML
     <script src="https://code.highcharts.com/dashboards.js"></script>
- ```
+```
 
 To fully utilize the Dashboards potential, there might be a need to load additional modules.  
 In the [installation documentation](https://highcharts.com/docs/dashboards/installation), you can find more information on how to do that and what are the other ways of importing the Dashboards.
@@ -26,7 +26,7 @@ Each dashboard is built with different components. You can add the most basic `H
 To create a chart you can add `HighchartsComponent`. If you would like to show your data in a tabular way use the `DataGridComponent`. Or use the `KPIComponent` to highlight some individual numbers/indications.
 
 To properly show the component you have to declare the `id` of a cell where it should be placed and the `type` of that component.
-An example of how the component might look like:
+An example of how the component might look like this:
 ``` JS
     {
         type: 'Highcharts',
@@ -75,12 +75,12 @@ Find more information in the [Edit Mode documentation](https://highcharts.com/do
 ## Your first dashboard
 To create your first dashboard you have to import the Dashboards package and create a new dashboard.  
 You also need a placeholder for that dashboard. In this example we will use a div with the id `container`.
-```html
+``` HTML
     <script src="https://code.highcharts.com/dashboards.js"></script>
 
     <div id="container"></div>
 ```
-Than the dashboard can be created:
+Then the dashboard can be created as follows:
 ``` JS
     Dashboards.board('container', {
         gui: {
