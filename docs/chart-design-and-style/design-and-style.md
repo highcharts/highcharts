@@ -146,7 +146,7 @@ Many layout elements including series types in Highcharts have shadow options. G
         offsetY: 0
     }
 
-See [live demo of using shadow options](https://jsfiddle.net/highcharts/jYLXN/).
+See [live demo of using shadow options](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-shadow).
 
 Styling axes
 ------------

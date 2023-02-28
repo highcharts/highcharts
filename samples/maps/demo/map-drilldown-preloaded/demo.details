@@ -1,0 +1,11 @@
+---
+name: Map drilldown with preloaded data
+authors:
+  - Hubert Kozik
+requiresManualTesting: true
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Dynamic
+...

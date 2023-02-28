@@ -32,7 +32,6 @@ const {
 } = U;
 import '../../Maps/MapSymbols.js';
 
-
 declare module './ChartLike'{
     interface ChartLike {
         mapView?: MapView;

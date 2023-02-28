@@ -33,7 +33,7 @@ const iceberg = {
             duration: 3000,
             easing: 'easeOutQuint'
         },
-        styledMode: (true),
+        styledMode: true,
         margin: 0,
         spacing: 0,
         events: {
@@ -384,7 +384,7 @@ const iceberg = {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
                         <span>
-                        Pinnacle icebergs</span> - a 
+                        Pinnacle icebergs</span> - a
                         large central spire or pyramid.</p>`;
                 }
             },
@@ -443,7 +443,7 @@ const iceberg = {
                         formatter: function () {
                             const htmlString =
                                     `<div class="berg-label">
-                                        <p class="label-title" 
+                                        <p class="label-title"
                                         style="font-weight:700;">Pinnacle</p>
                                         <p  class="label-percent">33%</p>
                                     </div>`;
@@ -475,7 +475,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                                <span>Tabular icebergs</span> - 
+                                <span>Tabular icebergs</span> -
                                 horizontal and flat-topped.</p>`;
 
                 }
@@ -530,7 +530,7 @@ const iceberg = {
                         formatter: function () {
                             const htmlString =
                                     `<div class="berg-label">
-                                        <p class="label-title" 
+                                        <p class="label-title"
                                         style="font-weight:700;">Tabular</p>
                                         <p  class="label-percent">23%</p>
                                     </div>`;
@@ -562,7 +562,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                        <span>Dry Dock icebergs</span> - eroded into a 
+                        <span>Dry Dock icebergs</span> - eroded into a
                         U shape.</p>`;
                 }
             },
@@ -625,7 +625,7 @@ const iceberg = {
                         formatter: function () {
                             const htmlString =
                                     `<div class="berg-label">
-                                        <p class="label-title" 
+                                        <p class="label-title"
                                         style="font-weight:700;">Dry Dock</p>
                                         <p  class="label-percent">19%</p>
                                     </div>`;
@@ -661,7 +661,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                                    <span>Dome icebergs</span> - large, 
+                                    <span>Dome icebergs</span> - large,
                                     smooth, rounded tops.</p>`;
                 }
             },
@@ -722,7 +722,7 @@ const iceberg = {
                     formatter: function () {
                         const htmlString =
                                 `<div class="berg-label">
-                                    <p class="label-title" 
+                                    <p class="label-title"
                                     style="font-weight:700;">Dome</p>
                                     <p  class="label-percent">15%</p>
                                 </div>`;
@@ -757,7 +757,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                                <span>Wedge icebergs</span> - tabular 
+                                <span>Wedge icebergs</span> - tabular
                                 icebergs that have
                                 tilted.</p>`;
 
@@ -808,7 +808,7 @@ const iceberg = {
                     formatter: function () {
                         const htmlString =
                                 `<div class="berg-label">
-                                    <p class="label-title" 
+                                    <p class="label-title"
                                     style="font-weight:700;">Wedge</p>
                                     <p  class="label-percent">10%</p>
                                 </div>`;
@@ -911,7 +911,7 @@ const charts = {
             duration: 3000,
             easing: 'easeOutQuint'
         },
-        styledMode: (true),
+        styledMode: true,
         margin: 0,
         spacing: 0,
         accessibility: {
