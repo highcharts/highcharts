@@ -423,8 +423,7 @@ jobs:
           git fetch origin << parameters.reference-branch >> &&
           git checkout << parameters.reference-branch >>  &&
           npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
-      - run: npm i --no-save @highcharts/highcharts-utils cross-env
-      - run: npm i --no-save cypress-visual-regression
+      - run: npm i --no-save @highcharts/highcharts-utils cross-env cypress-visual-regression
       - run:
           name: Run utils in background
           command: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
@@ -434,7 +433,7 @@ jobs:
           command: npx cypress run --env type=base --config specPattern="**/Dashboards/**/*.cy.js"
       - run: git checkout ${CIRCLE_BRANCH}
       - run: npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
-      - run: npm i --no-save cypress-visual-regression
+      - run: npm i --no-save @highcharts/highcharts-utils cross-env cypress-visual-regression
       - run: 
           name: Run cypress visual tests as reference # only dashboards for now
           command: npx cypress run --env type=actual --config specPattern="**/Dashboards/**/*.cy.js"
