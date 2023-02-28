@@ -25,6 +25,7 @@ import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type Projection from '../../Maps/Projection';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 
 import ColorMapComposition from '../ColorMapComposition.js';
 import MapUtilities from '../../Maps/MapUtilities.js';
@@ -226,7 +227,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      *
      * @function Highcharts.Point#zoomTo
      */
-    public zoomTo(): void {
+    public zoomTo(animOptions?: (boolean|Partial<AnimationOptions>)): void {
         const point = this as (MapPoint&MapPoint.CacheObject),
             chart = point.series.chart,
             mapView = chart.mapView;
@@ -268,7 +269,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
             mapView.fitToBounds(bounds, void 0, false);
 
             point.series.isDirty = true;
-            chart.redraw();
+            chart.redraw(animOptions);
         }
     }
 

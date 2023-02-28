@@ -1,5 +1,5 @@
 
-import GoogleSheetsStore from '/base/js/Data/Stores/GoogleSheetsStore.js'
+import GoogleSheetsStore from '/base/code/es-modules/Data/Stores/GoogleSheetsStore.js'
 import { registerStoreEvents } from './utils.js'
 const { test, only } = QUnit;
 
@@ -11,7 +11,7 @@ test('GoogleDataStore', function (assert) {
         googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
     });
 
-    const doneLoading = assert.async();
+    const done = assert.async(2); // event + promise
 
     registerStoreEvents(datastore, registeredEvents, assert);
 
@@ -32,7 +32,8 @@ test('GoogleDataStore', function (assert) {
 
         assert.notOk(
             columnNames.includes('null'),
-            'Columns where the first value is of type `null`, should be assigned an unique name'
+            'Columns where the first value is of type `null`, ' +
+            'should be assigned an unique name'
         );
 
         e.table.renameColumn(columnNames[0], 'null');
@@ -42,13 +43,18 @@ test('GoogleDataStore', function (assert) {
             'A string value of `null` is ok'
         );
 
-        doneLoading();
+        done();
     });
 
-    datastore.load();
-
-    window.setTimeout(() => doneLoading(), 5000);
-})
+    datastore
+        .load()
+        .catch((error) => assert.strictEqual(
+            error,
+            null,
+            'Test should not fail.'
+        ))
+        .then(() => done())
+});
 
 test('GoogleDataStore, bad spreadsheetkey', function (assert) {
     const registeredEvents = [];
@@ -58,21 +64,26 @@ test('GoogleDataStore, bad spreadsheetkey', function (assert) {
         googleSpreadsheetKey: 'thisisnotaworkingspreadsheet'
     });
 
-    const hasErrored = assert.async();
+    const done = assert.async(2); // event + promise
 
     registerStoreEvents(datastore, registeredEvents, assert);
 
-    datastore.on('loadError', (e) => {
+    datastore.on('loadError', (error) => {
         assert.deepEqual(
             registeredEvents,
             ['load', 'loadError'],
             'Errors after firing load event'
         );
 
-        hasErrored();
+        done();
     });
 
-    datastore.load()
-
-    window.setTimeout(() => assert.done(), 5000);
-})
+    datastore
+        .load()
+        .catch((error) => assert.strictEqual(
+            error.message,
+            'Requests from referer http://localhost:9876/ are blocked.',
+            'Test should fail.'
+        ))
+        .then(() => done());
+});

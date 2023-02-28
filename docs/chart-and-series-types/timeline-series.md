@@ -89,4 +89,4 @@ Customize a timeline chart with options that are standard to most Highcharts cha
 
 The demo below illustrates styling of different elements in the timeline series chart.
 
-<iframe width="100%" height="470" style="null" src=https://jsfiddle.net/gvaartjes/7htbp82f/embedded/result allow="fullscreen"></iframe>
+<iframe width="100%" height="470" style="null" src=https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/blog/timeline/embedded/result allow="fullscreen"></iframe>
