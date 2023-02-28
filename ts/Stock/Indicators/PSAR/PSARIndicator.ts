@@ -32,8 +32,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
-    merge,
-    extend
+    merge
 } = U;
 
 /* *
@@ -404,10 +403,6 @@ interface PSARIndicator {
     pointClass: typeof PSARPoint;
     nameComponents: Array<string>;
 }
-
-extend(PSARIndicator.prototype, {
-    nameComponents: void 0
-});
 
 /* *
  *
