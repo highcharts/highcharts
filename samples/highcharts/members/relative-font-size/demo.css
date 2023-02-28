@@ -1,5 +1,3 @@
-@import "https://code.highcharts.com/css/highcharts.css";
-
 #main {
     width: 600px;
     margin: 0 auto;
@@ -26,8 +24,6 @@ svg {
     font-size: 1.2rem;
 }
 
-.btn-group #font-current {
-    display: inline-block;
+.btn-group #font-100 {
     width: 5rem;
-    cursor: inherit;
 }

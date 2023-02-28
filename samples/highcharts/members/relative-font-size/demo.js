@@ -1,9 +1,4 @@
 const chart = Highcharts.chart('container', {
-    chart: {
-        style: {
-            fontSize: '100%'
-        }
-    },
     title: {
         align: 'left',
         text: 'Variable font size'
@@ -49,16 +44,22 @@ const fontSizes = [
 let fontSizeIndex = 3;
 document.querySelectorAll('.font-btn').forEach(btn => {
     btn.addEventListener('click', () =>  {
+        const font100 = document.getElementById('font-100');
         if (btn.id === 'font-smaller') {
             fontSizeIndex--;
-        } else {
+        } else if (btn.id === 'font-larger') {
             fontSizeIndex++;
+        } else {
+            fontSizeIndex = 3;
         }
+
         fontSizeIndex = Math.min(
             fontSizes.length - 1, Math.max(0, fontSizeIndex)
         );
         const fontSize = fontSizes[fontSizeIndex];
-        document.getElementById('font-current').innerText = fontSize;
+        font100.innerText = fontSize;
+        font100.disabled = fontSizeIndex === 3;
+
         chart.update({
             chart: {
                 style: {
