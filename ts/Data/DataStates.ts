@@ -210,7 +210,9 @@ class DataStates {
                     cursors = stateMap[cursor.state] = [];
                 }
 
-                cursors.push(cursor);
+                if (DataStates.getIndex(cursor, cursors) === -1) {
+                    cursors.push(cursor);
+                }
             }
 
             const e: DataStates.Event = {
@@ -256,10 +258,10 @@ class DataStates {
      * @function #remitCursor
      *
      * @param {string} tableId
-     * The ID of the related cursor table.
+     * ID of the related cursor table.
      *
      * @param {Data.DataStates.Cursor} cursor
-     * The copy or reference of the cursor.
+     * Copy or reference of the cursor.
      *
      * @return {Data.DataStates}
      * Returns the DataStates instance for a call chain.
@@ -349,20 +351,15 @@ namespace DataStates {
     export interface CursorPosition {
         type: 'position';
         column?: string;
-        columns?: undefined;
-        firstRow?: undefined;
-        lastRow?: undefined;
         row?: number;
         state: State;
     }
 
     export interface CursorRange {
         type: 'range';
-        column?: undefined;
         columns?: Array<string>;
         firstRow: number;
         lastRow: number;
-        row?: undefined;
         state: State;
     }
 
