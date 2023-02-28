@@ -32,7 +32,7 @@ The following is an example of how the tree is built in Highcharts:
 
 ### Algorithms
 
-Algorithms decide the positoning of the points. Currently there is one algorithm available, which is the [Walker](http://dirk.jivas.de/papers/buchheim02improving.pdf) algorithm for calculating the nodes position in the tree graph.
+Algorithms decide the positoning of the points. Currently there is one algorithm available, which is the [Walker](https://link.springer.com/chapter/10.1007/3-540-36151-0_32) algorithm for calculating the nodes position in the tree graph.
 
 API options
 -----------
