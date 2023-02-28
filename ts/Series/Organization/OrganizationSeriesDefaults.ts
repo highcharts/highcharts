@@ -454,10 +454,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
 
 /**
  * Options for a _link_ label text which should follow link
- * connection. Border and background are disabled for a label
- * that follows a path.
- *
- * **Note:** Only SVG-based renderer supports this option.
+ * connection.
  *
  * @sample highcharts/series-organization/link-labels
  *         Organization chart with link labels
