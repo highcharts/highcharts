@@ -141,7 +141,8 @@ class MenuItem {
                     id: options.id,
                     name: options.id,
                     title: options.text || '',
-                    value: options.value || ''
+                    value: options.value || '',
+                    onchange: options.events && options.events.change
                 }
             );
         } else if (options.type === 'input') {
@@ -150,9 +151,10 @@ class MenuItem {
                 {
                     id: options.id,
                     name: options.id,
-                    callback: void 0,
+                    callback,
                     title: options.text,
-                    value: options.value || ''
+                    value: options.value || '',
+                    onchange: options.events && options.events.change
                 }
             );
         } else if (options.type === 'text') {
@@ -169,7 +171,8 @@ class MenuItem {
                     name: options.id,
                     title: options.text || '',
                     items: options.items as SelectFormFieldItem[] || [],
-                    value: options.value || ''
+                    value: options.value || '',
+                    onchange: options.events && options.events.change
                 }
             );
         }
