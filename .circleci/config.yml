@@ -243,9 +243,6 @@ jobs:
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/screenshots
           destination: cypress-chrome
-      - store_artifacts:
-          path: /home/circleci/repo/highcharts/cypress/snapshots
-          destination: cypress-chrome
 #      - run:
 #          command: |
 #            rm -rf /home/circleci/repo/highcharts/cypress/videos
@@ -443,7 +440,6 @@ jobs:
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/screenshots
           destination: cypress-chrome
-      - <<: *persist_workspace
 
   nightly_visual_diff:
     <<: *defaults
@@ -643,7 +639,7 @@ workflows:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-staging
       - test_cypress:
-          requires: [lint, visual_comparison_with_dashboards]
+          requires: [lint]
       - test_timezones:
           requires: [lint]
           filters:
