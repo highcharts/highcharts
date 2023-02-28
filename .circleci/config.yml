@@ -595,7 +595,7 @@ workflows:
 #          browsers: "Win.IE8"
       - test_browsers:
           name: "test-Mac.Safari"
-          requires: ["test-Win.IE8", "generate_ts_declarations"]
+          requires: ["generate_ts_declarations"]
           browsers: "Mac.Safari"
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
@@ -687,7 +687,7 @@ workflows:
 #          browsers: "Win.IE8"
 #          notify_on_failure: true
       - build_dist:
-          requires: [checkout_and_install, "test-Win.IE8"]
+          requires: [checkout_and_install]
           context: highcharts-staging
       - deploy_code:
           requires: [build_dist]
