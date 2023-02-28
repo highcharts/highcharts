@@ -106,8 +106,6 @@ declare module '../../Series/SeriesOptions' {
  *
  * */
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
 /**
  * The ColorAxis object for inclusion in gradient legends.
  *
