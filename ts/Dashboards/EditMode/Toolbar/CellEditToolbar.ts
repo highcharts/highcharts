@@ -22,6 +22,7 @@ import Menu from '../Menu/Menu.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
+import Popup from '../../../Extensions/Annotations/Popup/Popup.js';
 
 const {
     merge,
@@ -70,7 +71,21 @@ class CellEditToolbar extends EditToolbar {
             icon: EditGlobals.iconsURL + 'settings.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
-                    (this.menu.parent as CellEditToolbar).onCellOptions();
+                    // (this.menu.parent as CellEditToolbar).onCellOptions();
+
+                    const board = this.menu.parent.editMode.board,
+                        component = board.mountedComponents[0],
+                        chart = board.mountedComponents[0].component.chart;
+
+                    const popup = new Popup(this.container, '', void 0);
+                    popup.showPopup();
+                    popup.showForm(
+                        'indicators',
+                        chart,
+                        component.chartOptions,
+                        (): void => {
+                        }
+                    );
                 }
             }
         },
@@ -189,7 +204,7 @@ class CellEditToolbar extends EditToolbar {
         const toolbar = this;
 
         if (toolbar.editMode.sidebar) {
-            toolbar.editMode.sidebar.show(toolbar.cell);
+            //  toolbar.editMode.sidebar.show(toolbar.cell);
             // toolbar.editMode.sidebar.updateTitle('CELL OPTIONS');
 
             if (this.cell) {

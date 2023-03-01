@@ -467,8 +467,8 @@ function addIndicatorList(
             rhsColWrapper.parentNode.children[0],
             lang.noFilterMatch || ''
         );
-        (rhsColWrapper.parentNode.children[1] as HTMLDOMElement)
-            .style.display = 'none';
+        // (rhsColWrapper.parentNode.children[1] as HTMLDOMElement)
+        //     .style.display = 'none';
     }
 }
 
