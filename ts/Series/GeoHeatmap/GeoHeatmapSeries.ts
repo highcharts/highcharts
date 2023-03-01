@@ -92,11 +92,11 @@ class GeoHeatmapSeries extends MapSeries {
              * `.highcharts-point` class.
              *
              * @type      {number|null}
-             * @default   1
+             * @default   0
              * @product   highmaps
              * @apioption plotOptions.geoheatmap.borderWidth
              */
-            borderWidth: 1,
+            borderWidth: 0,
 
             /**
              * The column size - how many longitude units each column in the

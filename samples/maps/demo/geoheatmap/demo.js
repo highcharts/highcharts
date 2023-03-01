@@ -61,13 +61,9 @@
             },
 
             subtitle: {
-                text: 'Data source: <a href="https://neo.gsfc.nasa.gov/view.php?datasetId=MOD15A2_M_LAI">NEO Nasa Earth Observations</a>',
+                text: 'Data source: <a style="color: #666" href="https://neo.gsfc.nasa.gov/view.php?datasetId=MOD15A2_M_LAI">NEO Nasa Earth Observations</a>',
                 y: 34,
                 align: 'left'
-            },
-
-            legend: {
-                enabled: false
             },
 
             mapNavigation: {
@@ -89,11 +85,12 @@
             colorAxis: {
                 min: 0,
                 max: 7,
+                tickInterval: 7,
                 stops: [
-                    [0, 'rgba(188,198,209,0.8)'],
-                    [0.05, 'rgba(186,178,61, 0.8)'],
-                    [0.1, 'rgba(77,223,115, 0.8)'],
-                    [1, 'rgba(4,61,56, 0.8)']
+                    [0, 'rgba(188,198,209,0.7)'],
+                    [0.05, 'rgba(186,178,61, 0.7)'],
+                    [0.1, 'rgba(77,223,115, 0.7)'],
+                    [1, 'rgba(4,61,56, 0.7)']
                 ]
             },
 
@@ -125,7 +122,10 @@
                 colsize: 1,
                 rowsize: 1,
                 data,
-                type: 'geoheatmap'
+                type: 'geoheatmap',
+                tooltip: {
+                    pointFormat: 'Lat: {point.lat}, Lon: {point.lon}, Value: {point.value} ㎡/㎡<br/>'
+                }
             }]
         });
 

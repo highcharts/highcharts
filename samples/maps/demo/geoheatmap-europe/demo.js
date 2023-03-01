@@ -38,6 +38,7 @@
             opacity: 0.7,
             colsize: 5,
             rowsize: 5,
+            borderWidth: 1,
             type: 'geoheatmap',
             data: [{
                 lon: 10,

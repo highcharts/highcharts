@@ -74,6 +74,7 @@
             }, {
                 name: 'GeoHeatMap',
                 type: 'geoheatmap',
+                borderWidth: 1,
                 colsize: 10,
                 rowsize: 10,
                 data: data

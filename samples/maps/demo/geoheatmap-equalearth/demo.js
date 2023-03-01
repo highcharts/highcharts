@@ -22,13 +22,9 @@
             },
 
             subtitle: {
-                text: 'Data source: <a style="color: grey" href="https://neo.gsfc.nasa.gov/view.php?datasetId=MYDAL2_M_AER_RA&date=2016-09-01">NEO Nasa Earth Observations</a>',
+                text: 'Data source: <a style="color: #666" href="https://neo.gsfc.nasa.gov/view.php?datasetId=MYDAL2_M_AER_RA&date=2016-09-01">NEO Nasa Earth Observations</a>',
                 y: 34,
                 align: 'left'
-            },
-
-            legend: {
-                enabled: false
             },
 
             mapNavigation: {
@@ -46,6 +42,8 @@
             },
 
             colorAxis: {
+                min: 0,
+                max: 100,
                 stops: [
                     [0.1, 'rgba(26,152,800,0.9)'],
                     [0.2, 'rgba(140,206,103, 0.9)'],
@@ -69,7 +67,10 @@
                 colsize: 1,
                 rowsize: 1,
                 data,
-                type: 'geoheatmap'
+                type: 'geoheatmap',
+                tooltip: {
+                    pointFormat: 'Lat: {point.lat}, Lon: {point.lon}, Value: {point.value} %<br/>'
+                }
             }]
         });
     });
