@@ -342,6 +342,13 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
  * */
 
 namespace DataGridComponent {
+
+    /* *
+    *
+    *  Declarations
+    *
+    * */
+
     export type ComponentType = DataGridComponent;
 
     export type ChartComponentEvents = JSONEvent | Component.EventTypes;

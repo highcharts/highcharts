@@ -587,6 +587,12 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
 namespace HighchartsComponent {
 
+    /* *
+    *
+    *  Declarations
+    *
+    * */
+
     export type ComponentType = HighchartsComponent;
 
     export type ConstructorType = (

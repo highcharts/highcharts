@@ -398,7 +398,20 @@ class KPIComponent extends Component {
     }
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace KPIComponent {
+
+    /* *
+    *
+    *  Declarations
+    *
+    * */
+
     export type ComponentType = KPIComponent;
 
     export interface ClassJSON extends Component.JSON {

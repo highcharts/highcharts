@@ -981,7 +981,14 @@ namespace Component {
     * */
 
     /**
+     * Adds component to the registry.
      *
+     * @param {T} componentClass
+     * Component class.
+     *
+     * @return {boolean}
+     * Returns the true when component was found and added properly to the
+     * registry, otherwise it is false.
      */
     export function addComponent<T extends Class<Component>>(
         componentClass: T
@@ -1001,14 +1008,20 @@ namespace Component {
     }
 
     /**
+     * Extract all components names from the registry.
      *
+     * @return {Array<string>}
+     * Returns the array of components names.
      */
     export function getAllComponentNames(): Array<string> {
         return Object.keys(Component.registry);
     }
 
     /**
+     * Extract all components from the registry.
      *
+     * @return {Record<string, Class<Component>>}
+     * Returns the array of components.
      */
     export function getAllComponents(): Record<string, Class<Component>> {
         return merge(Component.registry);
@@ -1017,8 +1030,8 @@ namespace Component {
     /**
      * Extracts the name from a given component class.
      *
-     * @param {DataStore} component
-     * Component class to extract the name from.
+     * @param {NewableFunction | ComponentType} component
+     * Component type or callback.
      *
      * @return {string}
      * Component name, if the extraction was successful, otherwise an empty
@@ -1035,12 +1048,11 @@ namespace Component {
 
     /**
      * Adds a component instance to the registry
-     * @param {Component} component
+     * @param {ComponentType} component
      * The component to add
      */
     export function addInstance(component: ComponentType): void {
         Component.instanceRegistry[component.id] = component;
-
     }
 
     /**
@@ -1072,7 +1084,13 @@ namespace Component {
     }
 
     /**
+     * Gets component by key from the registry.
      *
+     * @param {string} key
+     * Key of component that exists in registry
+     *
+     * @return {Record<string, Class<Component>>}
+     * Returns the component.
      */
     export function getComponent<T extends Class<Component>>(
         key: string
@@ -1081,12 +1099,32 @@ namespace Component {
     }
 
     /**
+     * Gets instance of component from registry.
      *
+     * @param {string} id
+     * Component's id that exists in registry
+     *
+     * @return {ComponentType | undefined}
+     * Returns the component type or undefined.
      */
     export function getInstanceById(id: string): ComponentType | undefined {
         return instanceRegistry[id];
     }
     /**
+     * Sends a message from the given sender to the target,
+     * with an optional callback
+     *
+     * @param {ComponentType | ComponentGroup} sender
+     * The sender of the message. Can be a Component or a ComponentGroup
+     *
+     * @param {Component.MessageEvent['message']} message
+     * The message. It can be a string, or a an object containing a
+     * `callback` function
+     *
+     * @param {Component.MessageTarget} targetObj
+     * An object containing the `type` of target,
+     * which can be `group`, `componentID`, or `componentType`
+     * as well as the id of the recipient
      *
      */
     export function relayMessage(

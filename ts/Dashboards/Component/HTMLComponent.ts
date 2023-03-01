@@ -273,10 +273,17 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
+
 namespace HTMLComponent {
+
+    /* *
+    *
+    *  Declarations
+    *
+    * */
 
     export type ComponentType = HTMLComponent;
     export interface HTMLComponentOptions extends Component.ComponentOptions, EditableOptions {
