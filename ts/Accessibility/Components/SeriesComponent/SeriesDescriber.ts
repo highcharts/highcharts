@@ -414,8 +414,8 @@ function getPointValue(
 ): string {
     const series = point.series,
         a11yPointOpts = series.chart.options.accessibility.point || {},
-        seriesA11yPointOpts = series.chart.options.accessibility &&
-            series.chart.options.accessibility.point || {},
+        seriesA11yPointOpts = series.options.accessibility &&
+            series.options.accessibility.point || {},
         tooltipOptions = series.tooltipOptions || {},
         valuePrefix = seriesA11yPointOpts.valuePrefix ||
             a11yPointOpts.valuePrefix ||
@@ -739,7 +739,8 @@ const SeriesDescriber = {
     defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter,
     describeSeries,
-    getPointXDescription
+    getPointXDescription,
+    pointNumberToString
 };
 
 export default SeriesDescriber;

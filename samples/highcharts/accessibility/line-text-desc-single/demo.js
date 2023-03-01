@@ -1,6 +1,6 @@
 const chart = Highcharts.chart('container', {
     title: {
-        text: 'Crypto coin prices in USD'
+        text: 'Bitcoin (BTC) Price in USD'
     },
     subtitle: {
         text: 'Source: Yahoo Finance'
@@ -8,6 +8,9 @@ const chart = Highcharts.chart('container', {
     accessibility: {
         screenReaderSection: {
             axisRangeDateFormat: '%B %Y'
+        },
+        point: {
+            dateFormat: '%b %e, %Y'
         }
     },
     data: {
@@ -30,6 +33,9 @@ const chart = Highcharts.chart('container', {
             description: 'Time'
         },
         type: 'datetime'
+    },
+    tooltip: {
+        valuePrefix: '$'
     }
 });
 

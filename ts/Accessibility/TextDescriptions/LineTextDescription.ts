@@ -20,11 +20,12 @@ import type Point from '../../Core/Series/Point';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import U from '../../Core/Utilities.js';
 const {
-    defined,
-    pick
+    defined
 } = U;
 import CU from '../Utils/ChartUtilities.js';
 const {
+    getAxisDescription,
+    getAxisRangeDescription,
     getChartTitle
 } = CU;
 import HU from '../Utils/HTMLUtilities.js';
@@ -38,13 +39,38 @@ const {
 } = SL;
 import SD from '../Components/SeriesComponent/SeriesDescriber.js';
 const {
-    getPointXDescription
+    getPointXDescription,
+    pointNumberToString
 } = SD;
 
 
 // Is a series a line series?
 const isLineSeries = (s: Series): boolean =>
     ['line', 'spline', 'area', 'areaspline'].indexOf(s.type) > -1;
+
+// Get Y value as string
+const yFormat = (point: Point): string => {
+    const numFormatted = defined(point.y) && pointNumberToString(
+        point as Accessibility.PointComposition, point.y
+    ) || 'unknown value';
+
+    const series = point.series as Accessibility.SeriesComposition,
+        chartOpts = series.chart.options,
+        a11yPointOpts = chartOpts.accessibility.point || {},
+        seriesA11yPointOpts = series.options.accessibility &&
+            series.options.accessibility.point || {},
+        tooltipOptions = series.tooltipOptions || {},
+        valuePrefix = seriesA11yPointOpts.valuePrefix ||
+            a11yPointOpts.valuePrefix ||
+            tooltipOptions.valuePrefix ||
+            '',
+        valueSuffix = seriesA11yPointOpts.valueSuffix ||
+            a11yPointOpts.valueSuffix ||
+            tooltipOptions.valueSuffix ||
+            '';
+
+    return `${valuePrefix}${numFormatted}${valueSuffix}`;
+};
 
 
 /**
@@ -72,16 +98,28 @@ function getTypeAndSeriesDesc(chart: Accessibility.ChartComposition): string {
     const lineSeries = chart.series.filter(isLineSeries),
         names = lineSeries.map((s): string => s.name),
         numLines = lineSeries.length,
-        comboChart = chart.series.length > numLines;
+        comboChart = chart.series.length > numLines,
+        singleAxis = chart.yAxis.length + chart.xAxis.length < 3,
+        xAxis = chart.xAxis[0];
 
     if (numLines < 1) {
         return '';
     }
 
+    const numDataPoints = lineSeries.reduce((acc, cur): number =>
+        acc + cur.points.length, 0);
     let desc = `${comboChart ? 'Combination' : 'Line'} chart with ${numLines} ${
         comboChart ? 'line series' :
-            numLines > 1 ? 'lines' : `line with ${lineSeries[0].points.length} data points`
-    }, showing `;
+            numLines > 1 ? 'lines' : 'line'
+    } with ${numDataPoints} data points${numLines > 1 ? ' in total' : ''}`;
+
+    if (singleAxis) {
+        const yAxisName = getAxisDescription(chart.yAxis[0]),
+            xAxisName = getAxisDescription(xAxis);
+        desc += `. The chart ${numLines > 1 ? 'compares' : 'shows'} ${yAxisName} ${xAxis.dateTime ? 'over' : 'for'} ${xAxisName} for `;
+    } else {
+        desc += ', showing ';
+    }
 
     if (numLines > 0) {
         desc += names[0];
@@ -93,8 +131,13 @@ function getTypeAndSeriesDesc(chart: Accessibility.ChartComposition): string {
     } else if (numLines > 3) {
         desc += `, ${names[1]}, ${names[2]}, and more`;
     }
+    desc += '.';
 
-    return desc + '.';
+    if (singleAxis) {
+        desc += ` ${getAxisRangeDescription(xAxis)}`;
+    }
+
+    return desc;
 }
 
 
@@ -103,8 +146,11 @@ function getTypeAndSeriesDesc(chart: Accessibility.ChartComposition): string {
  * @private
  */
 function getOverallTrend(simplifiedSeries: Point[][]): string {
-    let maxIx = -1,
-        maxTrend = -Infinity;
+    let maxTrendIx = -1,
+        maxTrend = -Infinity,
+        maxEndvalIx = -1,
+        maxEndval = -Infinity;
+
     // Get increase/decrease in % from first point to last for each series
     const trend = simplifiedSeries.map((points, ix): number|null => {
         const first = points[0].y,
@@ -115,7 +161,11 @@ function getOverallTrend(simplifiedSeries: Point[][]): string {
         const trend = (last - first) / first * 100;
         if (trend > maxTrend) {
             maxTrend = trend;
-            maxIx = ix;
+            maxTrendIx = ix;
+        }
+        if (last > maxEndval) {
+            maxEndval = last;
+            maxEndvalIx = ix;
         }
         return trend;
     });
@@ -129,17 +179,21 @@ function getOverallTrend(simplifiedSeries: Point[][]): string {
         if (trend[0] === null) {
             return '';
         }
+        const line = simplifiedSeries[0],
+            name = line[0].series.name,
+            firstPoint = yFormat(line[0]),
+            lastPoint = yFormat(line[line.length - 1]);
         if (trend[0] === 0) {
-            return 'The chart ends at the same value as it started on.';
+            return `${name} starts at ${firstPoint}, and ends at the same value.`;
         }
         const up = trend[0] > 0,
             pct = Math.round(trend[0]),
             slightThreshold = 2;
-        return `The chart ends ${
+        return `${name} starts at ${firstPoint}, and ${
+            up ? 'increases' : 'decreases'
+        } ${
             pct < slightThreshold ? 'slightly ' : ''
-        }${
-            up ? 'higher' : 'lower'
-        }, at around ${pct + 100}% of where it started.`;
+        } by ${Math.abs(pct)}% overall, ending at ${lastPoint}.`;
     }
 
     // Multiple series
@@ -149,16 +203,27 @@ function getOverallTrend(simplifiedSeries: Point[][]): string {
     if ((higher < 1 || lower < 1) && higher + lower > 1) {
         desc += `All lines end ${lower < 1 ? 'higher' : 'lower'} than they started. `;
     }
-    if (maxIx > -1) {
-        const highestPct = trend[maxIx],
-            highestSeries = simplifiedSeries[maxIx][0].series.name;
+    if (maxTrendIx > -1) {
+        const highestPct = trend[maxTrendIx],
+            steepestLine = simplifiedSeries[maxTrendIx],
+            first = yFormat(steepestLine[0]),
+            last = yFormat(steepestLine[steepestLine.length - 1]);
         if (highestPct !== null) {
-            desc += `${highestSeries} had the ${
+            desc += `${steepestLine[0].series.name} had the ${
                 highestPct > 0 ? 'highest increase' : 'smallest drop'
-            }, ending at around ${
-                Math.round(highestPct + 100)
-            }% of where it started.`;
+            } of ${Math.abs(Math.round(highestPct))}%, starting at ${first}, and ending at ${last}.`;
         }
+    }
+    if (maxEndvalIx > -1) {
+        const isSameAsHighestTrend = maxEndvalIx === maxTrendIx,
+            highestLine = simplifiedSeries[maxEndvalIx];
+        desc += ` ${highestLine[0].series.name}${
+            isSameAsHighestTrend ? ' also' : ''
+        } ended the highest overall`;
+        if (!isSameAsHighestTrend) {
+            desc += `, at ${yFormat(highestLine[highestLine.length - 1])}`;
+        }
+        desc += '.';
     }
     return desc;
 }
@@ -177,7 +242,7 @@ function getMinMaxValueSingle(line: Point[], min: boolean): string {
     const points = line.filter(
         (p): boolean => defined(p.y) && p.y.toFixed(10) === val.toFixed(10)
     );
-    let desc = `${val}, at `;
+    let desc = `${yFormat(points[0])}, at `;
     if (points.length > 1) {
         desc += `${points.length} points, including `;
     }
@@ -195,10 +260,19 @@ function getMinMaxValueSingle(line: Point[], min: boolean): string {
 function getMinMaxMultiple(
     simplifiedPoints: Point[][], min: boolean
 ): string {
+    const val = (series: Series): number => (min ?
+        series.dataMin || Infinity :
+        series.dataMax || -Infinity
+    );
     return `${min ? 'Minimum' : 'Maximum'} values are:<ul>${
-        simplifiedPoints.map((p): string =>
-            `<li>${p[0].series.name}: ${getMinMaxValueSingle(p, min)}.</li>`
-        ).join(' ')
+        simplifiedPoints.slice()
+            .sort((a, b): number => (min ?
+                val(a[0].series) - val(b[0].series) :
+                val(b[0].series) - val(a[0].series)
+            ))
+            .map((p): string =>
+                `<li>${p[0].series.name}: ${getMinMaxValueSingle(p, min)}.</li>`
+            ).join(' ')
     }</ul>`;
 }
 
@@ -207,7 +281,9 @@ function getMinMaxMultiple(
  * Describe the trend of a line.
  * @private
  */
-function describeTrend(simplifiedPoints: Point[], short: boolean): string {
+function describeTrend(
+    simplifiedPoints: Point[], short: boolean, allPoints?: Point[][]
+): string {
     const bridges = ['From there, it', 'It then', 'Then, it', 'Next, it'],
         len = simplifiedPoints.length,
         firstPoint = simplifiedPoints[0],
@@ -215,8 +291,7 @@ function describeTrend(simplifiedPoints: Point[], short: boolean): string {
         name = firstPoint.series.name,
         x = (i: number): string => getPointXDescription(
             simplifiedPoints[i] as Accessibility.PointComposition),
-        y = (i: number): string =>
-            '' + pick(simplifiedPoints[i].y, 'unknown value');
+        y = (i: number): string => yFormat(simplifiedPoints[i]);
     let desc = `${name} starts at ${y(0)}, at ${x(0)}`,
         prevY = firstPoint.y,
         dTrend = 0;
@@ -249,39 +324,66 @@ function describeTrend(simplifiedPoints: Point[], short: boolean): string {
         if (ratio > 0.95 && ratio < 1.05) {
             desc += riseAmount > 0 ? 'fluctuates' : 'stays flat';
         } else {
-            const verb = ratio > 1 ? 'rises' : 'drops';
-            desc += ratioLimit(1.5) ? `has dips and rises, but overall ${verb}` :
+            const [verb, nonverb] = ratio > 1 ?
+                ['rises', 'drops'] : ['drops', 'rises'];
+            desc += ratioLimit(1.5) ? `${verb} and ${nonverb}, but overall ${verb}` :
                 ratioLimit(3) ? `overall ${verb}` :
                     ratioLimit(10) ? `mostly ${verb}` : verb;
         }
-        return `${desc}. It ends at ${y(len - 1)} at ${x(len - 1)}.`;
-    }
+        desc += `. It ends at ${y(len - 1)} at ${x(len - 1)}`;
 
-    // Not short, describe each movement
-    for (let i = 1; i < len; ++i) {
-        const currentY = simplifiedPoints[i].y;
-        if (!defined(currentY)) {
-            continue;
+    } else {
+
+        // Not short, describe each movement
+        for (let i = 1; i < len; ++i) {
+            const currentY = simplifiedPoints[i].y;
+            if (!defined(currentY)) {
+                continue;
+            }
+            const final = i === len - 1,
+                bridge = final ?
+                    'Finally, it' :
+                    bridges[(i - 1) % bridges.length];
+            dTrend = currentY - (prevY as number);
+            desc += `. ${bridge} ${
+                dTrend === 0 ? 'stays flat at' :
+                    dTrend > 0 ? 'rises to' : 'drops to'
+            } ${y(i)} ${final ? 'at' : 'around'} ${x(i)}`;
+            prevY = currentY;
         }
-        const final = i === len - 1,
-            bridge = final ?
-                'Finally, it' :
-                bridges[(i - 1) % bridges.length];
-        dTrend = currentY - (prevY as number);
-        desc += `. ${bridge} ${
-            dTrend === 0 ? 'stays flat at' :
-                dTrend > 0 ? 'rises to' : 'drops to'
-        } ${y(i)} ${final ? 'at' : 'around'} ${x(i)}`;
-        prevY = currentY;
+
+        const overallTrend = defined(firstPoint.y) && defined(lastPoint.y) ?
+            lastPoint.y - firstPoint.y : null;
+        if (overallTrend !== null) {
+            desc += `, which is ${
+                overallTrend === 0 ? 'at the value' :
+                    overallTrend > 0 ? 'higher than' : 'lower than'
+            } where it started`;
+        }
     }
 
-    const overallTrend = defined(firstPoint.y) && defined(lastPoint.y) ?
-        lastPoint.y - firstPoint.y : null;
-    if (overallTrend !== null) {
-        desc += `, which is ${
-            overallTrend === 0 ? 'at the value' :
-                overallTrend > 0 ? 'higher than' : 'lower than'
-        } where it started`;
+    // Overall lower or higher?
+    if (allPoints && allPoints.length > 1) {
+        let i = simplifiedPoints.length,
+            isHighest = true,
+            isLowest = true;
+        while (i-- && (isHighest || isLowest)) {
+            const thisY = simplifiedPoints[i].y;
+            if (!defined(thisY)) {
+                continue;
+            }
+            let j = allPoints.length;
+            while (j-- && (isHighest || isLowest)) {
+                const y = allPoints[j][i].y;
+                if (allPoints[j] !== simplifiedPoints && defined(y)) {
+                    isHighest = isHighest && thisY > y;
+                    isLowest = isLowest && thisY < y;
+                }
+            }
+        }
+        if (isHighest || isLowest) {
+            desc += `. ${name} trends overall ${isHighest ? 'higher' : 'lower'} than the other lines`;
+        }
     }
 
     return `${desc}.`;
@@ -308,7 +410,7 @@ function getMinMaxSingle(line: Point[]): string {
 function getMultilineTrends(simplifiedPoints: Point[][]): string {
     return `Overall trends for each line:<ul>${
         simplifiedPoints.map((p): string =>
-            `<li>${describeTrend(p, true)}</li>`
+            `<li>${describeTrend(p, true, simplifiedPoints)}</li>`
         ).join(' ')
     }</ul>`;
 }
@@ -346,17 +448,20 @@ function addLineChartTextDescription(
     add(getTypeAndSeriesDesc(chart), 'p');
     add(getOverallTrend(simplifiedSeries7p), 'p');
 
-    add('Axes', h2);
-    const axesDesc = infoRegions && infoRegions.getAxesDescription();
-    add(axesDesc && axesDesc.xAxis, 'p');
-    add(axesDesc && axesDesc.yAxis, 'p');
+    if (chart.xAxis.length + chart.yAxis.length > 2) {
+        add('Axes', h2);
+        const axesDesc = infoRegions && infoRegions.getAxesDescription();
+        add(axesDesc && axesDesc.xAxis, 'p');
+        add(axesDesc && axesDesc.yAxis, 'p');
+    }
 
     if (numLineSeries < 40 && numLineSeries) {
-        add('Trends', h2);
         if (numLineSeries === 1) {
+            add('Trend', h2);
             add(describeTrend(simplifiedSeries7p[0], false), 'p');
             add(getMinMaxSingle(preprocessedSeries[0]), 'p');
         } else {
+            add('Trends', h2);
             add(getMultilineTrends(simplifiedSeries7p), 'p');
         }
 
