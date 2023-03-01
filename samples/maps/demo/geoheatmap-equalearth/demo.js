@@ -4,7 +4,7 @@
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/geoheatmap-aerosol-dataset.json', function (data) {
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@af1d7a1727/samples/data/geoheatmap-aerosol-dataset.json', function (data) {
         Highcharts.mapChart('container', {
 
             chart: {
