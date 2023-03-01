@@ -608,14 +608,36 @@ namespace HighchartsComponent {
     }>;
 
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
+        /**
+         * 
+         */
         allowStoreUpdate?: boolean,
+        /**
+         * The string that declares contructor that is called for creating
+         * a chart.
+         *
+         * Example: `chart`, `stockChart`, `mapChart` or `ganttChart`.
+         *
+         */
         chartConstructor: ConstructorType;
     }
 
     export interface EditableOptions extends Component.EditableOptions {
+        /**
+         * A full set of chart options used by the chart
+         */
         chartOptions?: Options;
+        /**
+         * The name of class that is applied to the chart's container
+         */
         chartClassName?: string;
+        /**
+         * The id that is applied to the chart's container
+         */
         chartID?: string;
+        /**
+         * Names / aliases that should be mapped to xAxis values
+         */
         tableAxisMap?: Record<string, string | null>;
     }
 
