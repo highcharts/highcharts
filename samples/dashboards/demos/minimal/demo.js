@@ -8,7 +8,7 @@ const csvData = document.getElementById('csv').innerText,
 
 store.load();
 
-const board = Dashboards.board('container', {
+Dashboards.board('container', {
     store: store,
     editMode: {
         enabled: true,
@@ -115,6 +115,3 @@ const board = Dashboards.board('container', {
             }
         }]
 });
-
-board.editMode.activateEditMode();
-board.editMode.sidebar.show(board.mountedComponents[0].cell);
