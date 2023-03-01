@@ -1,17 +1,59 @@
 (async () => {
-    const topology = await fetch(
-            'https://code.highcharts.com/mapdata/custom/world.topo.json'
-        ).then(response => response.json()),
-        colors = Highcharts.getOptions().colors;
 
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@5c536debb0/samples/data/geoheatmap-cities-dataset.json', function (data) {
-        Highcharts.mapChart('container', {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
+
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/geoheatmap-leaf-dataset.json', function (data) {
+
+        const getGraticule = () => {
+            const data = [];
+
+            // Meridians
+            for (let x = -180; x <= 180; x += 15) {
+                data.push({
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: x % 90 === 0 ? [
+                            [x, -90],
+                            [x, 0],
+                            [x, 90]
+                        ] : [
+                            [x, -80],
+                            [x, 80]
+                        ]
+                    }
+                });
+            }
+
+            // Latitudes
+            for (let y = -90; y <= 90; y += 10) {
+                const coordinates = [];
+                for (let x = -180; x <= 180; x += 5) {
+                    coordinates.push([x, y]);
+                }
+                data.push({
+                    geometry: {
+                        type: 'LineString',
+                        coordinates
+                    },
+                    lineWidth: y === 0 ? 2 : undefined
+                });
+            }
+
+            return data;
+        };
+
+
+        const chart = Highcharts.mapChart('container', {
+
             chart: {
-                map: topology
+                map: topology,
+                animation: false
             },
 
             title: {
-                text: 'GeoHeatMap Series Demo',
+                text: 'GeoHeatmap Leaf Area Index In February 2017',
                 align: 'left',
                 style: {
                     textOutline: '2px white'
@@ -19,17 +61,18 @@
             },
 
             subtitle: {
-                text: 'Density of Cities in the World by Latitude and Longitude<br> Data source: <a href="https://github.com/lutangar/cities.json">https://github.com/lutangar/cities.json</a>',
+                text: 'Data source: <a href="https://neo.gsfc.nasa.gov/view.php?datasetId=MOD15A2_M_LAI">NEO Nasa Earth Observations</a>',
                 y: 34,
                 align: 'left'
             },
 
             legend: {
-                enabled: true
+                enabled: false
             },
 
             mapNavigation: {
                 enabled: true,
+                enableDoubleClickZoomTo: true,
                 buttonOptions: {
                     verticalAlign: 'bottom'
                 }
@@ -44,40 +87,88 @@
             },
 
             colorAxis: {
-                dataClasses: [{
-                    to: 100,
-                    color: 'rgba(51,132,51,0.3)'
-                }, {
-                    from: 100,
-                    to: 1e3,
-                    color: 'rgba(173,255,91,0.3)'
-                }, {
-                    from: 1e3,
-                    to: 5e3,
-                    color: 'rgba(255,173,51,0.3)'
-                }, {
-                    from: 5e3,
-                    color: 'rgba(214,51,51,0.3)'
-                }]
+                min: 0,
+                max: 7,
+                stops: [
+                    [0, 'rgba(188,198,209,0.8)'],
+                    [0.05, 'rgba(186,178,61, 0.8)'],
+                    [0.1, 'rgba(77,223,115, 0.8)'],
+                    [1, 'rgba(4,61,56, 0.8)']
+                ]
             },
 
             series: [{
-                name: 'Othographic projection',
+                name: 'Graticule',
+                id: 'graticule',
+                type: 'mapline',
+                data: getGraticule(),
+                nullColor: 'rgba(0, 0, 0, 0.05)',
+                accessibility: {
+                    enabled: false
+                },
+                enableMouseTracking: false,
                 states: {
                     inactive: {
                         enabled: false
                     }
-                },
-                accessibility: {
-                    exposeAsGroupOnly: true
+                }
+            }, {
+                name: 'Orthographic',
+                nullColor: '#C8C8C833',
+                states: {
+                    inactive: {
+                        enabled: false
+                    }
                 }
             }, {
                 name: 'GeoHeatMap',
-                type: 'geoheatmap',
-                colsize: 10,
-                rowsize: 10,
-                data: data
+                colsize: 1,
+                rowsize: 1,
+                data,
+                type: 'geoheatmap'
             }]
         });
+
+        const renderSea = () => {
+            let verb = 'animate';
+            if (!chart.sea) {
+                chart.sea = chart.renderer
+                    .circle()
+                    .attr({
+                        fill: {
+                            radialGradient: {
+                                cx: 0.4,
+                                cy: 0.4,
+                                r: 1
+                            },
+                            stops: [
+                                [0, 'white'],
+                                [1, 'lightblue']
+                            ]
+                        },
+                        zIndex: -1
+                    })
+                    .add(chart.get('graticule').group);
+                verb = 'attr';
+            }
+
+            const bounds = chart.get('graticule').bounds,
+                p1 = chart.mapView.projectedUnitsToPixels({
+                    x: bounds.x1,
+                    y: bounds.y1
+                }),
+                p2 = chart.mapView.projectedUnitsToPixels({
+                    x: bounds.x2,
+                    y: bounds.y2
+                });
+            chart.sea[verb]({
+                cx: (p1.x + p2.x) / 2,
+                cy: (p1.y + p2.y) / 2,
+                r: Math.min(p2.x - p1.x, p1.y - p2.y) / 2
+            });
+        };
+        renderSea();
+        Highcharts.addEvent(chart, 'redraw', renderSea);
     });
+
 })();

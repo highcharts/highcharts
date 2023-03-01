@@ -1,7 +1,7 @@
 ---
-name: GeoHeatmap Leaf Area Index In February 2017
+name: GeoHeatmap Earthquakes in 2023 
 authors:
-  - Magdalena Gut, Piotr Madej
+  - Piotr Madej, Magdalena Gut
 js_wrap: b
 tags:
   - Highcharts Maps demo
