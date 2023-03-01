@@ -1,0 +1,18 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "categorizeByGroup": false,
+    "basePath": "../../../ts/",
+    "disableSources": true,
+    "entryPoints": [
+        "../../../ts/Dashboards/Board.ts",
+        "../../../ts/Data/DataTable.ts",
+        "../../../ts/Extensions/DataGridPlugin.ts",
+        "../../../ts/Extensions/HighchartsPlugin.ts"
+    ],
+    "entryPointStrategy": "expand",
+    "excludeInternal": true,
+    "hideGenerator": true,
+    "name": "Highcharts Dashboards",
+    "readme": "../../../docs/dashboards/your-first-dashboard.md",
+    "out": "../../../build/api/dashboards/typedoc/"
+}

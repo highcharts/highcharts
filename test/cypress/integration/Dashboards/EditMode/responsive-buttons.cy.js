@@ -6,7 +6,7 @@ describe('Responsive buttons.', () => {
 
     it('Dashboard should be removed without errors', () => {
         cy.toggleEditMode();
-        cy.get('.hd-edit-button').contains('small').click();
+        cy.get('.highcharts-dashboards-edit-button').contains('small').click();
 
         // Check after setting the size to small
         cy.get('#dashboard-col-0').invoke('width').should('be.lessThan', 300);

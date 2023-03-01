@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/dashboards/gui.css";
+@import url("https://code.highcharts.com/css/dashboards/gui.css");
 
 img {
     display: block;
@@ -6,40 +6,40 @@ img {
     height: calc(100% - 1em);
 }
 
-.hd-component-kpi {
+.highcharts-dashboards-component-kpi {
     box-shadow: 0 5px 20px 3px rgb(0 0 0 / 10%);
     margin: 0.5em;
 }
 
-.hd-component-kpi h1 {
+.highcharts-dashboards-component-kpi h1 {
     font-weight: 400;
 }
 
-.hd-component-kpi-content {
+.highcharts-dashboards-component-kpi-content {
     display: flex;
     flex-direction: column;
 }
 
-.hd-component-title {
+.highcharts-dashboards-component-title {
     margin-bottom: 0;
 }
 
-.hd-component-kpi-value-wrap {
+.highcharts-dashboards-component-kpi-value-wrap {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-.hd-component-kpi-value {
+.highcharts-dashboards-component-kpi-value {
     font-weight: 700;
 }
 
-.hd-component-kpi-subtitle {
+.highcharts-dashboards-component-kpi-subtitle {
     margin-top: 0.25em;
 }
 
-.hd-component-kpi-chart-container {
+.highcharts-dashboards-component-kpi-chart-container {
     flex: 1;
     margin: 0;
 }
