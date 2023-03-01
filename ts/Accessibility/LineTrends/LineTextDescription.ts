@@ -136,12 +136,10 @@ function getTypeAndSeriesDesc(chart: Accessibility.ChartComposition): string {
         return '';
     }
 
-    const numDataPoints = lineSeries.reduce((acc, cur): number =>
-        acc + cur.points.length, 0);
     let desc = `${comboChart ? 'Combination' : 'Line'} chart with ${numLines} ${
         comboChart ? 'line series' :
             numLines > 1 ? 'lines' : 'line'
-    } with ${numDataPoints} data points${numLines > 1 ? ' in total' : ''}`;
+    }`;
 
     if (singleAxis) {
         const yAxisName = getAxisDescription(chart.yAxis[0]),
@@ -168,7 +166,9 @@ function getTypeAndSeriesDesc(chart: Accessibility.ChartComposition): string {
     desc += '.';
 
     if (singleAxis) {
-        desc += ` ${getAxisRangeDescription(xAxis)}`;
+        const numTotalDataPoints = chart.series.reduce((acc, cur): number =>
+            acc + cur.points.length, 0);
+        desc += ` ${getAxisRangeDescription(xAxis)} The chart has ${numTotalDataPoints} data points in total.`;
     }
 
     return desc;
@@ -227,7 +227,7 @@ function getOverallTrend(simplifiedSeries: Point[][]): string {
             up ? 'increases' : 'decreases'
         } ${
             pct < slightThreshold ? 'slightly ' : ''
-        } by ${Math.abs(pct)}% overall, ending at ${lastPoint}.`;
+        } overall, ending at ${lastPoint}.`;
     }
 
     // Multiple series
@@ -243,9 +243,9 @@ function getOverallTrend(simplifiedSeries: Point[][]): string {
             first = yFormat(steepestLine[0]),
             last = yFormat(steepestLine[steepestLine.length - 1]);
         if (highestPct !== null) {
-            desc += `${steepestLine[0].series.name} had the ${
-                highestPct > 0 ? 'highest increase' : 'smallest drop'
-            } of ${Math.abs(Math.round(highestPct))}%, starting at ${first}, and ending at ${last}.`;
+            desc += `Overall, ${steepestLine[0].series.name} had the most significant ${
+                highestPct > 0 ? 'increase' : 'decrease'
+            } compared to where it started, starting at ${first}, and ending at ${last}.`;
         }
     }
     if (maxEndvalIx > -1) {
@@ -318,8 +318,7 @@ function getMinMaxMultiple(
 function describeTrend(
     simplifiedPoints: Point[], short: boolean, allPoints?: Point[][]
 ): string {
-    const bridges = ['From there, it', 'It then', 'Then, it', 'Next, it'],
-        len = simplifiedPoints.length,
+    const len = simplifiedPoints.length,
         firstPoint = simplifiedPoints[0],
         lastPoint = simplifiedPoints[len - 1],
         name = firstPoint.series.name,
@@ -327,8 +326,7 @@ function describeTrend(
             simplifiedPoints[i] as Accessibility.PointComposition),
         y = (i: number): string => yFormat(simplifiedPoints[i]);
     let desc = `${name} starts at ${y(0)}, at ${x(0)}`,
-        prevY = firstPoint.y,
-        dTrend = 0;
+        prevY = firstPoint.y;
 
     if (!defined(prevY)) {
         return 'Unknown trend.';
@@ -356,7 +354,7 @@ function describeTrend(
             ratioLimit = (n: number): boolean =>
                 (ratio > 1 ? ratio < ratio * n : ratio > ratio / n);
         if (ratio > 0.95 && ratio < 1.05) {
-            desc += riseAmount > 0 ? 'fluctuates' : 'stays flat';
+            desc += riseAmount > 0 ? 'rises and drops' : 'stays flat';
         } else {
             const [verb, nonverb] = ratio > 1 ?
                 ['rises', 'drops'] : ['drops', 'rises'];
@@ -366,24 +364,65 @@ function describeTrend(
         }
         desc += `. It ends at ${y(len - 1)} at ${x(len - 1)}`;
 
+        // Overall lower or higher?
+        if (allPoints && allPoints.length > 1) {
+            let i = simplifiedPoints.length,
+                isHighest = 2,
+                isLowest = 2;
+            while (i-- && (isHighest || isLowest)) {
+                const thisY = simplifiedPoints[i].y;
+                if (!defined(thisY)) {
+                    continue;
+                }
+                let j = allPoints.length;
+                while (j-- && (isHighest || isLowest)) {
+                    const y = getYAverageAtX(
+                        allPoints[j], simplifiedPoints[i].x
+                    );
+                    if (allPoints[j] !== simplifiedPoints && defined(y)) {
+                        isHighest -= thisY > y ? 0 : 1;
+                        isLowest -= thisY < y ? 0 : 1;
+                    }
+                }
+            }
+            if (isHighest > 0 || isLowest > 0) {
+                desc += `. ${name} trends overall ${isHighest > 0 ? 'higher' : 'lower'} than the other lines`;
+            }
+        }
+        desc += '.';
+
     } else {
 
-        // Not short, describe each movement
+        // Not short, describe each movement, and put in ordered list
+        desc = `<ol><li>${desc}`;
+        let prevPlotY,
+            prevPlotX;
         for (let i = 1; i < len; ++i) {
-            const currentY = simplifiedPoints[i].y;
+            const currentY = simplifiedPoints[i].y,
+                currentPlotY = simplifiedPoints[i].plotY,
+                currentPlotX = simplifiedPoints[i].plotX;
             if (!defined(currentY)) {
                 continue;
             }
             const final = i === len - 1,
-                bridge = final ?
-                    'Finally, it' :
-                    bridges[(i - 1) % bridges.length];
-            dTrend = currentY - (prevY as number);
-            desc += `. ${bridge} ${
-                dTrend === 0 ? 'stays flat at' :
-                    dTrend > 0 ? 'rises to' : 'drops to'
+                dY = currentY - (prevY as number);
+            let adverb = '';
+            if (
+                defined(currentPlotX) && defined(currentPlotY) &&
+                defined(prevPlotX) && defined(prevPlotY)
+            ) {
+                const slope = Math.abs((currentPlotY - prevPlotY) /
+                    (currentPlotX - prevPlotX));
+                adverb = slope > 1 ? 'sharply ' :
+                    slope < 0.2 ? 'gradually ' : '';
+            }
+            desc += `.</li><li>${
+                dY === 0 ? 'Stays flat at' :
+                    `${dY > 0 ? 'Rises' : 'Drops'} ${adverb}to`
             } ${y(i)} ${final ? 'at' : 'around'} ${x(i)}`;
             prevY = currentY;
+            prevPlotX = currentPlotX;
+            prevPlotY = currentPlotY;
         }
 
         const overallTrend = defined(firstPoint.y) && defined(lastPoint.y) ?
@@ -394,33 +433,10 @@ function describeTrend(
                     overallTrend > 0 ? 'higher than' : 'lower than'
             } where it started`;
         }
+        desc += '.</li></ol>';
     }
 
-    // Overall lower or higher?
-    if (allPoints && allPoints.length > 1) {
-        let i = simplifiedPoints.length,
-            isHighest = true,
-            isLowest = true;
-        while (i-- && (isHighest || isLowest)) {
-            const thisY = simplifiedPoints[i].y;
-            if (!defined(thisY)) {
-                continue;
-            }
-            let j = allPoints.length;
-            while (j-- && (isHighest || isLowest)) {
-                const y = getYAverageAtX(allPoints[j], simplifiedPoints[i].x);
-                if (allPoints[j] !== simplifiedPoints && defined(y)) {
-                    isHighest = isHighest && thisY > y;
-                    isLowest = isLowest && thisY < y;
-                }
-            }
-        }
-        if (isHighest || isLowest) {
-            desc += `. ${name} trends overall ${isHighest ? 'higher' : 'lower'} than the other lines`;
-        }
-    }
-
-    return `${desc}.`;
+    return `${desc}`;
 }
 
 
@@ -491,7 +507,7 @@ function addLineChartTextDescription(
 
     if (numLineSeries < 40 && numLineSeries) {
         if (numLineSeries === 1) {
-            add('Trend', h2);
+            add('Major points of change', h2);
             add(describeTrend(simplifiedSeries7p[0], false), 'p');
             add(getMinMaxSingle(preprocessedSeries[0]), 'p');
         } else {

@@ -133,7 +133,8 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
     fieldsetLegend.innerText = 'Chart detail level';
     addRadio('Full detail', (): void => setDetailLevel(chart, 'full'));
     addRadio('Medium detail', (): void => setDetailLevel(chart, 'medium'));
-    addRadio('Low detail', (): void => setDetailLevel(chart, 'low'));
+    addRadio('Major points of change only',
+        (): void => setDetailLevel(chart, 'low'));
 
     viewTableButton.textContent = 'Show data table';
     viewTableButton.setAttribute('aria-expanded', false);

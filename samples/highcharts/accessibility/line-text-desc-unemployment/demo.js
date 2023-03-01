@@ -9,8 +9,7 @@ const chart = Highcharts.chart('container', {
     },
     chart: {
         type: 'spline',
-        marginTop: 70,
-        marginBottom: 45
+        marginTop: 70
     },
     accessibility: {
         screenReaderSection: {
@@ -59,14 +58,11 @@ const chart = Highcharts.chart('container', {
         type: 'datetime'
     },
     tooltip: {
-        valueSuffix: '%'
+        valueSuffix: '%',
+        stickOnContact: true
     },
     legend: {
-        verticalAlign: 'top',
-        align: 'right',
-        floating: true,
-        x: -45,
-        y: -1
+        enabled: false
     }
 });
 

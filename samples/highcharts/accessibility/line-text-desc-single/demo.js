@@ -55,7 +55,8 @@ const chart = Highcharts.chart('container', {
         type: 'datetime'
     },
     tooltip: {
-        valuePrefix: '$'
+        valuePrefix: '$',
+        stickOnContact: true
     }
 });
 
