@@ -12,4 +12,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/DragPanes.js';
+import Highcharts from '../../Core/Globals.js';
+import DragPanes from '../../Extensions/DragPanes/DragPanes.js';
+const G: AnyRecord = Highcharts;
+DragPanes.compose(G.Axis);
