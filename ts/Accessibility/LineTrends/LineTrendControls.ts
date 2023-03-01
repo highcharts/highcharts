@@ -78,7 +78,9 @@ function initSonificationKeyboardNav(
                     (chart.sonification.timeline as any)._navigating = true;
                 }
                 chart.sonification.playAdjacent(false, afterNavigate);
-                delete (chart.sonification.timeline as any)._navigating;
+                if (chart.sonification.timeline) {
+                    delete (chart.sonification.timeline as any)._navigating;
+                }
                 e.preventDefault();
                 break;
             case 'ArrowDown':
@@ -87,7 +89,9 @@ function initSonificationKeyboardNav(
                     (chart.sonification.timeline as any)._navigating = true;
                 }
                 chart.sonification.playAdjacent(true, afterNavigate);
-                delete (chart.sonification.timeline as any)._navigating;
+                if (chart.sonification.timeline) {
+                    delete (chart.sonification.timeline as any)._navigating;
+                }
                 e.preventDefault();
                 break;
             case ' ':
