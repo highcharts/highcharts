@@ -66,7 +66,9 @@ class GeoHeatmapSeries extends MapSeries {
      * represented as colors.
      *
      * @sample maps/demo/geoheatmap/
-     *         GeoHeatmap chart
+     *         GeoHeatmap Chart on the Orthographic Projection
+     * @sample maps/demo/geoheatmap-equalearth/
+     *         GeoHeatmap Chart on the Equal Earth Projection
      *
      * @extends      plotOptions.map
      * @since        next
@@ -264,7 +266,9 @@ export default GeoHeatmapSeries;
  *  ```
  *
  * @sample maps/demo/geoheatmap/
- *         GeoHeatmap chart
+ *         GeoHeatmap Chart on the Orthographic Projection
+ * @sample maps/demo/geoheatmap-equalearth/
+ *         GeoHeatmap Chart on the Equal Earth Projection
  *
  * @type      {Array<Array<number>|*>}
  * @extends   series.map.data
