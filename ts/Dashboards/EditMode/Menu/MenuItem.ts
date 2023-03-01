@@ -108,20 +108,28 @@ class MenuItem {
             };
 
         let element;
+        const setInAccordeon = options.setInAccordeon;
+        const parent = setInAccordeon ?
+            (EditRenderer.renderOuterAccordeon(
+                item.container,
+                options.text || ''
+            ) as any).content :
+            item.container;
+        const title = !setInAccordeon ? options.text : '';
 
         if (options.type === 'toggle') {
             element = EditRenderer.renderToggle(
-                item.container,
+                parent,
                 {
                     id: options.id,
                     name: options.id,
-                    title: options.text || '',
+                    title: title || '',
                     callback: callback
                 }
             );
         } else if (options.type === 'icon' && options.icon) {
             element = EditRenderer.renderIcon(
-                item.container,
+                parent,
                 options.icon,
                 callback
             );
@@ -136,40 +144,40 @@ class MenuItem {
             }
         } else if (options.type === 'textarea') {
             element = EditRenderer.renderTextarea(
-                item.container,
+                parent,
                 {
                     id: options.id,
                     name: options.id,
-                    title: options.text || '',
+                    title: title || '',
                     value: options.value || '',
                     onchange: options.events && options.events.change
                 }
             );
         } else if (options.type === 'input') {
             element = EditRenderer.renderInput(
-                item.container,
+                parent,
                 {
                     id: options.id,
                     name: options.id,
                     callback,
-                    title: options.text,
+                    title: title,
                     value: options.value || '',
                     onchange: options.events && options.events.change
                 }
             );
         } else if (options.type === 'text') {
             element = EditRenderer.renderText(
-                item.container,
-                options.text || '',
+                parent,
+                title || '',
                 callback
             );
         } else if (options.type === 'select') {
             element = EditRenderer.renderSelect(
-                item.container,
+                parent,
                 {
                     id: options.id,
                     name: options.id,
-                    title: options.text || '',
+                    title: title || '',
                     items: options.items as SelectFormFieldItem[] || [],
                     value: options.value || '',
                     onchange: options.events && options.events.change
@@ -214,6 +222,7 @@ class MenuItem {
 
 namespace MenuItem {
     export interface Options {
+        setInAccordeon?: boolean;
         id: string;
         type?: 'addComponent'|'addLayout'|'horizontalSeparator'|'icon'|'input'|
         'toggle'|'text'|'textarea'|'verticalSeparator'|'select';

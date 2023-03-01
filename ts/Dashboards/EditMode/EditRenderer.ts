@@ -54,6 +54,76 @@ function renderContextButton(
     return ctxBtnElement;
 }
 
+function renderOuterAccordeon(
+    parentElement: HTMLDOMElement,
+    title: string
+): { outerElement: HTMLDOMElement; content: HTMLDOMElement } | undefined {
+    if (!parentElement) {
+        return;
+    }
+
+    const accordeon = createElement(
+        'div',
+        { className: 'highcharts-dashboards-outer-accordeon' },
+        {},
+        parentElement
+    );
+    const header = createElement(
+        'div',
+        {
+            className: 'highcharts-dashboards-outer-accordeon-header'
+        },
+        {},
+        accordeon
+    );
+
+    const headerBtn = createElement(
+        'button',
+        { className: 'highcharts-dashboards-outer-accordeon-header-btn' },
+        {
+            border: 'none',
+            font: 'inherit',
+            color: 'inherit',
+            background: 'none',
+            margin: 0,
+            width: '100%',
+            display: 'flex'
+        },
+        header
+    );
+    const titleElement = createElement(
+        'span',
+        { textContent: title },
+        {},
+        headerBtn
+    );
+
+    const headerIcon = createElement(
+        'img',
+        {
+            className: 'highcharts-dashboards-outer-accordeon-header-icon',
+            src: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a38dcf9/gfx/dashboard-icons/drowdown-pointer.svg'
+        },
+        {},
+        headerBtn
+    );
+
+    const content = createElement(
+        'div',
+        { className: 'highcharts-dashboards-outer-accordeon-content' },
+        { display: 'none' },
+        accordeon
+    );
+
+    headerBtn.addEventListener('click', function (): void {
+        const display = content.style.display;
+        content.style.display = display === 'none' ? 'block' : 'none';
+        headerIcon.style.transform =
+            display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
+    });
+    return { outerElement: accordeon, content: content };
+}
+
 function renderSelect(
     parentElement: HTMLDOMElement,
     options: SelectFormField
@@ -62,12 +132,6 @@ function renderSelect(
         return;
     }
 
-    if (options.title) {
-        renderText(
-            parentElement,
-            options.title
-        );
-    }
     const customSelect = createElement('div', {
         className: 'highcharts-dashboards-dropdown'
     },
@@ -117,9 +181,9 @@ function renderSelect(
         'img',
         {
             className: 'highcharts-dashboards-drowdown-pointer',
-            src: 'https://code.highcharts.com/gfx/dashboard-icons/drowdown-pointer.svg'
+            src: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a38dcf9/gfx/dashboard-icons/drowdown-pointer.svg'
         },
-        { height: '100%' },
+        {},
         btn
     );
 
@@ -149,6 +213,7 @@ function renderSelect(
     }
     return customSelect;
 }
+
 
 function renderSelectElement(
     option: SelectFormFieldItem,
@@ -401,6 +466,7 @@ const EditRenderer = {
     renderSelect,
     renderToggle,
     renderText,
+    renderOuterAccordeon,
     renderIcon,
     renderContextButton,
     renderInput,
