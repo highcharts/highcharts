@@ -68,6 +68,7 @@ const {
  *  Declarations
  *
  * */
+
 declare module '../Chart/ChartLike' {
     interface ChartLike {
         legend: Legend;
@@ -221,8 +222,6 @@ class Legend {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Initialize the legend.
@@ -1574,7 +1573,6 @@ class Legend {
         }
     }
 
-
     /**
      * @private
      * @function Highcharts.Legend#setItemEvents
@@ -1732,7 +1730,6 @@ class Legend {
             );
         });
     }
-
 }
 
 /* *
