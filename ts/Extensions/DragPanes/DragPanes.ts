@@ -20,14 +20,13 @@
  *
  * */
 
-import type AxisResizerOptions from './DragPanes/AxisResizerOptions';
+import type Axis from '../../Core/Axis/Axis';
+import type AxisResizerOptions from './AxisResizerOptions';
 
-import Axis from '../Core/Axis/Axis.js';
-import AxisDefaults from '../Core/Axis/AxisDefaults.js';
-import AxisResizer from './DragPanes/AxisResizer.js';
-import H from '../Core/Globals.js';
-import Pointer from '../Core/Pointer.js';
-import U from '../Core/Utilities.js';
+import AxisResizer from './AxisResizer.js';
+import H from '../../Core/Globals.js';
+import Pointer from '../../Core/Pointer.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     merge,
@@ -40,30 +39,64 @@ const {
  *
  * */
 
-declare module '../Core/Axis/AxisLike' {
+declare module '../../Core/Axis/AxisLike' {
     interface AxisLike {
         resizer?: AxisResizer;
     }
 }
 
-declare module '../Core/Axis/AxisOptions' {
+declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions extends AxisResizerOptions {
         // nothing more to add
     }
 }
 
-declare module '../Core/Chart/ChartLike' {
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         activeResizer?: boolean;
     }
 }
 
-// Keep resizer reference on axis update
-Axis.keepProps.push('resizer');
+/* *
+ *
+ *  Constants
+ *
+ * */
 
-/* eslint-disable no-invalid-this */
-// Add new AxisResizer, update or remove it
-addEvent(Axis, 'afterRender', function (): void {
+const composedMembers: Array<unknown> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * @private
+ */
+function compose(
+    AxisClass: typeof Axis
+): void {
+    if (composedMembers.indexOf(AxisClass) === -1) {
+        composedMembers.push(AxisClass);
+
+        merge(true, AxisClass.defaultOptions, AxisResizer.resizerOptions);
+
+        // Keep resizer reference on axis update
+        AxisClass.keepProps.push('resizer');
+
+        addEvent(AxisClass, 'afterRender', onAxisAfterRender);
+        addEvent(AxisClass, 'destroy', onAxisDestroy);
+    }
+}
+
+/**
+ * Add new AxisResizer, update or remove it
+ * @private
+ */
+function onAxisAfterRender(
+    this: Axis
+): void {
     let axis = this,
         resizer = axis.resizer,
         resizerOptions = axis.options.resize,
@@ -92,14 +125,26 @@ addEvent(Axis, 'afterRender', function (): void {
             // Resizer not present and disabled, so do nothing
         }
     }
-});
+}
 
-// Clear resizer on axis remove.
-addEvent(Axis, 'destroy', function (e: Event): void {
+/**
+ * Clear resizer on axis remove.
+ * @private
+ */
+function onAxisDestroy(
+    this: Axis,
+    e: Event
+): void {
     if (!(e as any).keepEvents && this.resizer) {
         this.resizer.destroy();
     }
-});
+}
+
+/* *
+ *
+ *  To-do
+ *
+ * */
 
 // Prevent any hover effects while dragging a control line of AxisResizer.
 wrap(Pointer.prototype, 'runPointActions', function (
@@ -122,7 +167,16 @@ wrap(Pointer.prototype, 'drag', function (
     }
 });
 
-merge(true, AxisDefaults.defaultYAxisOptions, AxisResizer.resizerOptions);
-
 (H as any).AxisResizer = AxisResizer as any;
-export default AxisResizer;
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const DragPanes = {
+    compose
+};
+
+export default DragPanes;
