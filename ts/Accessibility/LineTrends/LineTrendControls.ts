@@ -25,6 +25,11 @@ import SL from './SimplifyLine.js';
 const {
     simplifyLine
 } = SL;
+import SD from '../Components/SeriesComponent/SeriesDescriber.js';
+const {
+    getPointXDescription,
+    pointNumberToString
+} = SD;
 
 // Announce message to screen readers
 const announce = (
@@ -37,6 +42,73 @@ const announce = (
 type SimplifiedChartSeries = Accessibility.SeriesComposition & {
     _isSimplifiedSeries?: boolean;
 };
+
+
+/**
+ * Set up keyboard nav for chart sonification on a div with role="application".
+ * @private
+ */
+function initSonificationKeyboardNav(
+    chart: Chart, keysource: HTMLElement, liveRegion: HTMLElement
+): void {
+    const afterNavigate = (
+        t: unknown, pointsPlayed: Accessibility.PointComposition[]
+    ): void => {
+        if (!pointsPlayed.length) {
+            return;
+        }
+        liveRegion.textContent = pointsPlayed.reduce((acc, cur): string => {
+            const val = `${
+                pointNumberToString(cur, cur.y ?? void 0) || ''
+            } ${cur.series.name}`;
+            return acc ? acc + ', ' + val : val;
+        }, '') + `. ${pointsPlayed.length > 1 ? 'X is ' : ''}${getPointXDescription(pointsPlayed[0])}`;
+    };
+
+    keysource.setAttribute('tabindex', 0);
+    keysource.addEventListener('keydown', (e): void => {
+        const timeline = chart.sonification && chart.sonification.timeline;
+        if (!chart.sonification) {
+            return;
+        }
+        switch (e.key) {
+            case 'ArrowUp':
+            case 'ArrowLeft':
+                if (chart.sonification.timeline) {
+                    (chart.sonification.timeline as any)._navigating = true;
+                }
+                chart.sonification.playAdjacent(false, afterNavigate);
+                delete (chart.sonification.timeline as any)._navigating;
+                e.preventDefault();
+                break;
+            case 'ArrowDown':
+            case 'ArrowRight':
+                if (chart.sonification.timeline) {
+                    (chart.sonification.timeline as any)._navigating = true;
+                }
+                chart.sonification.playAdjacent(true, afterNavigate);
+                delete (chart.sonification.timeline as any)._navigating;
+                e.preventDefault();
+                break;
+            case ' ':
+                if (window.speechSynthesis) {
+                    window.speechSynthesis.cancel();
+                }
+                if (timeline && chart.sonification.isPlaying()) {
+                    timeline.pause();
+                } else if (timeline && timeline.isPaused) {
+                    timeline.resume();
+                } else {
+                    chart.sonify();
+                }
+                e.preventDefault();
+                break;
+            case 'Escape':
+                chart.sonification.cancel();
+                break;
+        }
+    });
+}
 
 /**
  * Set the detail level of the chart
@@ -77,17 +149,8 @@ function setDetailLevel(
 
     const numPoints = chart.series.reduce((acc, cur): number =>
             acc + (cur.visible ? cur.points.length : 0), 0),
-        msg = `Set detail to ${detail}. Chart now has ${numPoints} data points in total.`;
+        msg = `Set smoothing to ${detail}. Chart now has ${numPoints} data points in total.`;
     announce(chart, msg);
-}
-
-
-/**
- * Start sonification mode
- * @private
- */
-function startSonification(chart: Chart): void {
-    chart.sonify();
 }
 
 
@@ -102,6 +165,7 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
         el = document.createElement('div'),
         contentEl = document.createElement('div'),
         heading = document.createElement('h' + (rootHLevel + 1)),
+        explanatoryP = document.createElement('p'),
         detailFieldset = document.createElement('fieldset'),
         fieldsetLegend = document.createElement('legend'),
         viewTableButton = document.createElement('button'),
@@ -109,7 +173,9 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
 
     el.className = 'highcharts-trend-controls';
     contentEl.className = 'highcharts-trend-controls-content';
-    heading.textContent = 'Chart Controls';
+    heading.textContent = 'Controls for interactive chart';
+    explanatoryP.textContent = 'Set detail level for the interactive chart ' +
+        'below, play the chart as sound, or view it as a data table.';
     detailFieldset.appendChild(fieldsetLegend);
 
     let count = 0;
@@ -130,10 +196,10 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
         detailFieldset.appendChild(labelEl);
     };
 
-    fieldsetLegend.innerText = 'Chart detail level';
+    fieldsetLegend.innerText = 'Apply chart smoothing';
     addRadio('Full detail', (): void => setDetailLevel(chart, 'full'));
     addRadio('Medium detail', (): void => setDetailLevel(chart, 'medium'));
-    addRadio('Major points of change only',
+    addRadio('Overall shape only',
         (): void => setDetailLevel(chart, 'low'));
 
     viewTableButton.textContent = 'Show data table';
@@ -151,12 +217,42 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
     };
 
     el.appendChild(heading);
+    el.appendChild(explanatoryP);
     contentEl.appendChild(detailFieldset);
 
     if ((chart as any).sonify) {
+        const sonificationDialog = document.createElement('dialog'),
+            closeDialog = document.createElement('button'),
+            application = document.createElement('div');
+
+        closeDialog.textContent = 'Close';
+        closeDialog.onclick = (): void => sonificationDialog.close();
+        sonificationDialog.appendChild(closeDialog);
+
+        application.textContent = 'Press Spacebar to play and pause, and use ' +
+            'arrow keys to move around the chart. Press ESC to end.';
+        application.setAttribute('role', 'application');
+        application.setAttribute('aria-label', 'Audio chart');
+        application.autofocus = true;
+        sonificationDialog.appendChild(application);
+
+        const liveRegion = document.createElement('div');
+        liveRegion.setAttribute('aria-live', 'assertive');
+        liveRegion.style.opacity = '0';
+        liveRegion.style.position = 'absolute';
+        liveRegion.style.width = '1px';
+        liveRegion.style.height = '1px';
+
         playAsSoundButton.textContent = 'Play chart as sound';
-        playAsSoundButton.onclick = (): void => startSonification(chart);
+        playAsSoundButton.onclick = (): void => {
+            sonificationDialog.showModal();
+            setTimeout((): unknown =>
+                (liveRegion.textContent = application.textContent), 1000);
+        };
+        initSonificationKeyboardNav(chart, application, liveRegion);
+        sonificationDialog.appendChild(liveRegion);
         contentEl.appendChild(playAsSoundButton);
+        contentEl.appendChild(sonificationDialog);
     }
 
     contentEl.appendChild(viewTableButton);

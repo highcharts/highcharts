@@ -166,9 +166,9 @@ function getTypeAndSeriesDesc(chart: Accessibility.ChartComposition): string {
     desc += '.';
 
     if (singleAxis) {
-        const numTotalDataPoints = chart.series.reduce((acc, cur): number =>
+        const numTotalDataPoints = lineSeries.reduce((acc, cur): number =>
             acc + cur.points.length, 0);
-        desc += ` ${getAxisRangeDescription(xAxis)} The chart has ${numTotalDataPoints} data points in total.`;
+        desc += ` ${getAxisRangeDescription(xAxis)} The chart has ${numTotalDataPoints} data points in total across all lines.`;
     }
 
     return desc;
@@ -259,6 +259,35 @@ function getOverallTrend(simplifiedSeries: Point[][]): string {
         }
         desc += '.';
     }
+
+    // Overall lower or higher?
+    simplifiedSeries.forEach((simplifiedPoints): void => {
+        let i = simplifiedPoints.length,
+            isHighest = 2,
+            isLowest = 2;
+
+        while (i-- && (isHighest || isLowest)) {
+            const thisY = simplifiedPoints[i].y;
+            if (!defined(thisY)) {
+                continue;
+            }
+            let j = simplifiedSeries.length;
+            while (j-- && (isHighest || isLowest)) {
+                const y = getYAverageAtX(
+                    simplifiedSeries[j], simplifiedPoints[i].x
+                );
+                if (simplifiedSeries[j] !== simplifiedPoints && defined(y)) {
+                    isHighest -= thisY > y ? 0 : 1;
+                    isLowest -= thisY < y ? 0 : 1;
+                }
+            }
+        }
+        if (isHighest > 0 || isLowest > 0) {
+            const name = simplifiedPoints[0].series.name;
+            desc += ` ${name} trends overall ${isHighest > 0 ? 'higher' : 'lower'} than the other lines.`;
+        }
+    });
+
     return desc;
 }
 
@@ -292,13 +321,15 @@ function getMinMaxValueSingle(line: Point[], min: boolean): string {
  * @private
  */
 function getMinMaxMultiple(
-    simplifiedPoints: Point[][], min: boolean
+    simplifiedPoints: Point[][], min: boolean, headingLevel: number
 ): string {
     const val = (series: Series): number => (min ?
         series.dataMin || Infinity :
         series.dataMax || -Infinity
     );
-    return `${min ? 'Minimum' : 'Maximum'} values are:<ul>${
+    return `<h${headingLevel}>${
+        min ? 'Minimum' : 'Maximum'
+    } values are:</h${headingLevel}><ul>${
         simplifiedPoints.slice()
             .sort((a, b): number => (min ?
                 val(a[0].series) - val(b[0].series) :
@@ -362,34 +393,7 @@ function describeTrend(
                 ratioLimit(3) ? `overall ${verb}` :
                     ratioLimit(10) ? `mostly ${verb}` : verb;
         }
-        desc += `. It ends at ${y(len - 1)} at ${x(len - 1)}`;
-
-        // Overall lower or higher?
-        if (allPoints && allPoints.length > 1) {
-            let i = simplifiedPoints.length,
-                isHighest = 2,
-                isLowest = 2;
-            while (i-- && (isHighest || isLowest)) {
-                const thisY = simplifiedPoints[i].y;
-                if (!defined(thisY)) {
-                    continue;
-                }
-                let j = allPoints.length;
-                while (j-- && (isHighest || isLowest)) {
-                    const y = getYAverageAtX(
-                        allPoints[j], simplifiedPoints[i].x
-                    );
-                    if (allPoints[j] !== simplifiedPoints && defined(y)) {
-                        isHighest -= thisY > y ? 0 : 1;
-                        isLowest -= thisY < y ? 0 : 1;
-                    }
-                }
-            }
-            if (isHighest > 0 || isLowest > 0) {
-                desc += `. ${name} trends overall ${isHighest > 0 ? 'higher' : 'lower'} than the other lines`;
-            }
-        }
-        desc += '.';
+        desc += `. It ends at ${y(len - 1)} at ${x(len - 1)}.`;
 
     } else {
 
@@ -518,8 +522,12 @@ function addLineChartTextDescription(
         // Separate min/max section for multiline
         if (numLineSeries > 1) {
             add('Min and max', h2);
-            add(getMinMaxMultiple(preprocessedSeries, true), 'p');
-            add(getMinMaxMultiple(preprocessedSeries, false), 'p');
+            add(getMinMaxMultiple(
+                preprocessedSeries, true, rootHLevel + 2
+            ), 'p');
+            add(getMinMaxMultiple(
+                preprocessedSeries, false, rootHLevel + 2
+            ), 'p');
         }
     }
 
