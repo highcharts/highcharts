@@ -30,7 +30,7 @@ series: [{
 
 Heat maps borrow a central concept from Highcharts Maps, the color axis. See the docs article on [color axis](https://highcharts.com/docs/maps/color-axis/) for details.
 
-<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/geoheatmap-europe" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/geoheatmap-equalearth" allow="fullscreen"></iframe>
 
 ### Resources
 
