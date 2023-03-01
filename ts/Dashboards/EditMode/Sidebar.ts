@@ -1011,7 +1011,10 @@ class Sidebar {
         const mountedComponent = (this.context as Cell).mountedComponent;
         const savedSettings = this.updatedSettings;
 
-        for (const key in savedSettings) {
+        const keys = Object.keys(savedSettings);
+
+        for (let i = 0, iEnd = keys.length, key; i < iEnd; ++i) {
+            key = keys[i];
             if (key === 'chartType') {
                 continue;
             }
