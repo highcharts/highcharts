@@ -98,7 +98,7 @@ class Sidebar {
     ];
 
     public static seriesIconURLPrefix =
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a38dcf9/gfx/dashboard-icons/series-types/icon-';
+        Globals.iconsURLPrefix + 'series-types/icon-';
     public static components: Array<Sidebar.AddComponentDetails> = [
         {
             text: 'layout',

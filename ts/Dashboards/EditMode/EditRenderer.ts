@@ -19,6 +19,7 @@ import EditGlobals from './EditGlobals.js';
 import U from '../../Core/Utilities.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import Globals from '../Globals.js';
 
 const {
     createElement
@@ -102,7 +103,7 @@ function renderOuterAccordeon(
         'img',
         {
             className: 'highcharts-dashboards-outer-accordeon-header-icon',
-            src: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a38dcf9/gfx/dashboard-icons/drowdown-pointer.svg'
+            src: Globals.iconsURLPrefix + 'drowdown-pointer.svg'
         },
         {},
         headerBtn
@@ -160,8 +161,9 @@ function renderSelect(
         ) || {}
     ).iconURL;
 
+    let headerIcon;
     if (iconURL) {
-        createElement(
+        headerIcon = createElement(
             'img',
             {
                 src: iconURL,
@@ -181,7 +183,7 @@ function renderSelect(
         'img',
         {
             className: 'highcharts-dashboards-drowdown-pointer',
-            src: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a38dcf9/gfx/dashboard-icons/drowdown-pointer.svg'
+            src: Globals.iconsURLPrefix + 'drowdown-pointer.svg'
         },
         {},
         btn
@@ -207,6 +209,7 @@ function renderSelect(
             dropdown,
             placeholder,
             options.id,
+            headerIcon,
             options.onchange
 
         );
@@ -220,6 +223,7 @@ function renderSelectElement(
     dropdown: HTMLElement,
     placeholder: HTMLElement,
     id: string,
+    headerIcon?: HTMLDOMElement,
     callback?: Function
 ): void {
     const selectOption = createElement('li', {}, { margin: 0 }, dropdown);
@@ -229,8 +233,9 @@ function renderSelectElement(
         { height: '40px', width: '100%' },
         selectOption
     );
+    let icon: HTMLDOMElement;
     if (option.iconURL) {
-        createElement(
+        icon = createElement(
             'img',
             {
                 src: option.iconURL
@@ -249,6 +254,11 @@ function renderSelectElement(
     selectOptionBtn.addEventListener('click', function (): void {
         dropdown.style.display = 'none';
         placeholder.textContent = option.name || '';
+
+        if (headerIcon && option.iconURL) {
+            (headerIcon as HTMLImageElement).src = option.iconURL;
+        }
+
         if (callback) {
             return callback(id, option.name);
         }
