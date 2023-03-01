@@ -68,36 +68,6 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class AxisResizer {
-            public constructor(axis: Axis);
-            public axis: Axis;
-            public controlLine: SVGElement;
-            public eventsToUnbind?: Array<Function>;
-            public grabbed?: boolean;
-            public hasDragged?: boolean;
-            public lastPos: number;
-            public mouseDownHandler?: Function;
-            public mouseMoveHandler?: Function;
-            public mouseUpHandler?: Function;
-            public options: AxisResizeOptions;
-            public addMouseEvents(): void;
-            public destroy(): void;
-            public init(axis: Axis, update?: boolean): void;
-            public onMouseDown(e: PointerEvent): void;
-            public onMouseMove(e: PointerEvent): void;
-            public onMouseUp(e: PointerEvent): void;
-            public render(): void;
-            public updateAxes(chartY: number): void;
-        }
-    }
-}
-
 /* *
  *
  *  Class
@@ -594,5 +564,5 @@ wrap(Pointer.prototype, 'drag', function (
 
 merge(true, AxisDefaults.defaultYAxisOptions, AxisResizer.resizerOptions);
 
-H.AxisResizer = AxisResizer as any;
-export default H.AxisResizer;
+(H as any).AxisResizer = AxisResizer as any;
+export default AxisResizer;
