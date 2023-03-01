@@ -13,6 +13,8 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
+import AxisResizer from '../../Extensions/DragPanes/AxisResizer.js';
 import DragPanes from '../../Extensions/DragPanes/DragPanes.js';
 const G: AnyRecord = Highcharts;
-DragPanes.compose(G.Axis);
+G.AxisResizer = AxisResizer;
+DragPanes.compose(G.Axis, G.Pointer);
