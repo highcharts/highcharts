@@ -113,19 +113,31 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public options: Component.ComponentOptions;
     public type: string;
     public id: string;
+    // An array of options marked as editable by the UI.
     public editableOptions: EditableOptions;
+    // Registry of callbacks registered on the component. Used in the Highcharts
+    // component to keep track of chart events.
     public callbackRegistry = new CallbackRegistry();
+    // The interval for redrawing the component on data changes.
     private tableEventTimeout?: number;
+    // Event listeners tied to the current DataTable. Used for redrawing the
+    // component on data changes.
     private tableEvents: Function[] = [];
+    // Event listeners tied to the parent cell. Used for redrawing/resizing the
+    // component on interactions.
     private cellListeners: Function[] = [];
     protected hasLoaded: boolean;
     protected shouldRedraw: boolean;
 
     protected syncHandlers: Sync.OptionsRecord;
 
+    // DataModifier that is applied on top of modifiers set on the DataStore.
     public presentationModifier?: DataModifier;
+    // The table being presented, either a result of the above or a way to
+    // modify the table via events.
     public presentationTable?: DataTable;
 
+    // The active group of the component. Used for sync.
     public activeGroup: ComponentGroup | undefined = void 0;
 
     public abstract sync: Sync;
@@ -689,8 +701,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * @return {this}
-     * The component for chaining
+     * Renders the component.
+     * @todo make this call load on initial render
+     * @return {this} Component
      */
     public render(): this {
         if (this.shouldRedraw || !this.hasLoaded) {
@@ -706,9 +719,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * @todo redraw should (usually) call render
-     * @return {this}
-     * The component for chaining
+     * Redraws the component.
+     * @return {this} Component
      */
     public redraw(): this {
         // Do a redraw
