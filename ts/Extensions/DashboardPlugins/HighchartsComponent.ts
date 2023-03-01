@@ -609,7 +609,7 @@ namespace HighchartsComponent {
 
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
         /**
-         * 
+         * Declares update of the store, when edit chart.
          */
         allowStoreUpdate?: boolean,
         /**
