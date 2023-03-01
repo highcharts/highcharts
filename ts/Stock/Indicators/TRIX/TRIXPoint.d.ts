@@ -12,8 +12,8 @@
  *
  * */
 
-import type TRIXIndicator from './TRIXIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
+import type TRIXIndicator from './TRIXIndicator';
 
 /* *
  *
