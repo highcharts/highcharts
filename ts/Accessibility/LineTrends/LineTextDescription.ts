@@ -72,6 +72,36 @@ const yFormat = (point: Point): string => {
     return `${valuePrefix}${numFormatted}${valueSuffix}`;
 };
 
+// Get the average Y value at X from a line.
+const getYAverageAtX = (line: Point[], x: number): number|null => {
+    let prev = -1,
+        next = -1,
+        i = line.length;
+    while (i--) {
+        const lineX = line[i].x,
+            lineY = line[i].y;
+        if (defined(lineY)) {
+            next = prev;
+            prev = i;
+            if (lineX === x) {
+                return lineY;
+            }
+            if (lineX < x) {
+                break;
+            }
+        }
+    }
+    if (prev < 0) {
+        return line[0].y ?? null;
+    }
+    if (next < 0) {
+        return line[prev].y as number;
+    }
+    return (
+        (line[prev].y as number) + (line[next].y as number)
+    ) / 2;
+};
+
 
 /**
  * Get chart title + subtitle description
@@ -116,12 +146,16 @@ function getTypeAndSeriesDesc(chart: Accessibility.ChartComposition): string {
     if (singleAxis) {
         const yAxisName = getAxisDescription(chart.yAxis[0]),
             xAxisName = getAxisDescription(xAxis);
-        desc += `. The chart ${numLines > 1 ? 'compares' : 'shows'} ${yAxisName} ${xAxis.dateTime ? 'over' : 'for'} ${xAxisName} for `;
+        if (numLines > 1) {
+            desc += `. The chart compares ${yAxisName} ${xAxis.dateTime ? 'over' : 'for'} ${xAxisName} for `;
+        } else {
+            desc += `. The chart shows ${yAxisName} ${xAxis.dateTime ? 'over' : 'for'} ${xAxisName}`;
+        }
     } else {
         desc += ', showing ';
     }
 
-    if (numLines > 0) {
+    if (numLines > 1) {
         desc += names[0];
     }
     if (numLines === 2) {
@@ -374,7 +408,7 @@ function describeTrend(
             }
             let j = allPoints.length;
             while (j-- && (isHighest || isLowest)) {
-                const y = allPoints[j][i].y;
+                const y = getYAverageAtX(allPoints[j], simplifiedPoints[i].x);
                 if (allPoints[j] !== simplifiedPoints && defined(y)) {
                     isHighest = isHighest && thisY > y;
                     isLowest = isLowest && thisY < y;

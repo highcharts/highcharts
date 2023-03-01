@@ -1,12 +1,16 @@
 const chart = Highcharts.chart('container', {
     title: {
-        text: 'Price of one Bitcoin in USD'
+        text: 'Unemployment rate last 20 years',
+        align: 'left'
     },
     subtitle: {
-        text: 'Daily prices, source: Yahoo Finance'
+        text: 'Shown in % of labor force',
+        align: 'left'
     },
     chart: {
-        type: 'spline'
+        type: 'spline',
+        marginTop: 70,
+        marginBottom: 45
     },
     accessibility: {
         screenReaderSection: {
@@ -18,35 +22,35 @@ const chart = Highcharts.chart('container', {
         }
     },
     sonification: {
-        duration: 6000
+        duration: 18000
     },
     exporting: {
         enabled: false
     },
     plotOptions: {
         series: {
+            label: {
+                connectorAllowed: true
+            },
             marker: {
                 enabled: false
             }
         }
     },
-    legend: {
-        enabled: false
-    },
     data: {
-        csv: document.getElementById('data').textContent
+        csv: document.getElementById('csv').textContent
     },
     yAxis: {
         title: {
             text: null
         },
         accessibility: {
-            description: 'Price in USD'
+            description: 'Percent unemployment of labor force'
         },
         labels: {
-            format: '${value:,.0f}'
+            format: '{value:,.0f}%'
         },
-        max: 80000
+        max: 15
     },
     xAxis: {
         accessibility: {
@@ -55,7 +59,14 @@ const chart = Highcharts.chart('container', {
         type: 'datetime'
     },
     tooltip: {
-        valuePrefix: '$'
+        valueSuffix: '%'
+    },
+    legend: {
+        verticalAlign: 'top',
+        align: 'right',
+        floating: true,
+        x: -45,
+        y: -1
     }
 });
 
