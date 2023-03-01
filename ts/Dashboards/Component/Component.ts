@@ -925,10 +925,25 @@ namespace Component {
     export type StoreTypes = DataStore;
 
     export interface EditableOptions {
+        /**
+         * Store allows you to load data via URL or from a local source.
+         */
         store?: StoreTypes;
+        /**
+         * Sets an ID for the component's `div`
+         */
         id?: string;
+        /**
+         * Additional CSS styles to apply inline to the component `div`
+         */
         style?: CSSObject;
+        /**
+         * The component's title, which will render at the top
+         */
         title: TextOptionsType;
+        /**
+         * The component's caption, which will render at the bottom
+         */
         caption: TextOptionsType;
     }
 

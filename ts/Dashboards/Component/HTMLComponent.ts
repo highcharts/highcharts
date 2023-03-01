@@ -291,6 +291,9 @@ namespace HTMLComponent {
     }
 
     export interface EditableOptions extends Component.EditableOptions {
+        /**
+         * Enables auto-scaling of the elements inside the component.
+         */
         scaleElements: boolean;
     }
 
