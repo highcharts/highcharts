@@ -430,13 +430,38 @@ namespace KPIComponent {
         valueFormat?: string;
     }
     export interface ComponentOptions extends Component.ComponentOptions {
+        /**
+         * A full set of chart options applied into KPI chart that is displayed
+         * below the value.
+         */
         chartOptions?: Options;
         style?: CSSObject;
+        /**
+         * The threshold declares the value when color is applied
+         * (according to the `thresholdColors`).
+         */
         threshold?: number|Array<number>;
+        /**
+         * Array of two colors strings that are applied when threshold is
+         * achieved.
+         */
         thresholdColors?: Array<string>;
+        /**
+         * The value that is displayed in KPI component.
+         */
         value?: number|string;
+        /**
+         * The KPI's component subtitle. This can be used both to display
+         * a subtitle below the main title.
+         */
         subtitle?: string|SubtitleOptions;
+        /**
+         * A format string for the value text.
+         */
         valueFormat?: string;
+        /**
+         * Callback function to format the text of the value from scratch.
+         */
         valueFormatter?: ValueFormatterCallbackFunction;
     }
 
