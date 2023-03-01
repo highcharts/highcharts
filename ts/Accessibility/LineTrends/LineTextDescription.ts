@@ -425,7 +425,7 @@ function addLineChartTextDescription(
 ): void {
     let html = '';
     const rootHLevel = parseInt(
-            getHeadingTagNameForElement(chart.container)[1] || '1', 10
+            getHeadingTagNameForElement(chart.renderTo)[1] || '1', 10
         ),
         h2 = 'h' + (rootHLevel + 1),
         infoRegions = chart.accessibility &&

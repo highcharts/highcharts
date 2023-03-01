@@ -7,10 +7,24 @@ const chart = Highcharts.chart('container', {
     },
     accessibility: {
         screenReaderSection: {
-            axisRangeDateFormat: '%B %Y'
+            axisRangeDateFormat: '%B %Y',
+            beforeChartFormat: ''
         },
         point: {
             dateFormat: '%b %e, %Y'
+        }
+    },
+    sonification: {
+        duration: 6000
+    },
+    exporting: {
+        enabled: false
+    },
+    plotOptions: {
+        series: {
+            marker: {
+                enabled: false
+            }
         }
     },
     data: {
@@ -40,3 +54,4 @@ const chart = Highcharts.chart('container', {
 });
 
 chart.accessibility.addLineChartTextDescription();
+chart.accessibility.addLineTrendControls();

@@ -62,8 +62,9 @@ import highContrastTheme from './HighContrastTheme.js';
 import defaultOptionsA11Y from './Options/A11yDefaults.js';
 import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
-import addLineChartTextDescription from './TextDescriptions/LineTextDescription.js';
-import SL from './TextDescriptions/SimplifyLine.js';
+import addLineChartTextDescription from './LineTrends/LineTextDescription.js';
+import addLineTrendControls from './LineTrends/LineTrendControls.js';
+import SL from './LineTrends/SimplifyLine.js';
 const {
     simplifyLine
 } = SL;
@@ -340,6 +341,15 @@ class Accessibility {
      */
     public addLineChartTextDescription(): void {
         return addLineChartTextDescription(this.chart);
+    }
+
+
+    /**
+     * Add an line trend controls before a line chart.
+     * @private
+     */
+    public addLineTrendControls(): void {
+        return addLineTrendControls(this.chart);
     }
 }
 

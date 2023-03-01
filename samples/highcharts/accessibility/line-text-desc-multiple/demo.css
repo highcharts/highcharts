@@ -2,17 +2,50 @@
     height: 500px;
 }
 
-#csv {
+#csv,
+.highcharts-description {
     display: none;
 }
 
 .highcharts-line-description {
-    margin: 30px 0;
+    margin: 30px 0 0;
     border-left: 6px solid #8daeb9;
     margin-left: 6px;
-    padding: 35px;
+    padding: 35px 35px 15px 35px;
     background-color: #ecf4f5;
-    border-radius: 0 30px 30px 0;
+    border-radius: 0 30px 0 0;
+}
+
+.highcharts-trend-controls {
+    margin: 0 0 30px 6px;
+    background-color: #ecf4f5;
+    border-left: 6px solid #8daeb9;
+    padding: 0 35px 35px 35px;
+}
+
+.highcharts-trend-controls-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.highcharts-trend-controls h3 {
+    margin-top: 0;
+}
+
+.highcharts-trend-controls label {
+    margin: 20px 15px 10px 10px;
+}
+
+.highcharts-trend-controls button {
+    background-color: #e9eff0;
+    border: 1px solid #8daeb9;
+    text-decoration: none;
+    cursor: pointer;
+    margin: 10px 0;
+    padding: 10px 20px;
+    appearance: none;
+    font-size: 1rem;
 }
 
 .highcharts-figure,
