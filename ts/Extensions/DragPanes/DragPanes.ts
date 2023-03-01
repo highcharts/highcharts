@@ -22,10 +22,10 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type AxisResizerOptions from './AxisResizerOptions';
+import type Pointer from '../../Core/Pointer';
 
 import AxisResizer from './AxisResizer.js';
 import H from '../../Core/Globals.js';
-import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -75,7 +75,8 @@ const composedMembers: Array<unknown> = [];
  * @private
  */
 function compose(
-    AxisClass: typeof Axis
+    AxisClass: typeof Axis,
+    PointerClass: typeof Pointer
 ): void {
     if (composedMembers.indexOf(AxisClass) === -1) {
         composedMembers.push(AxisClass);
@@ -87,6 +88,20 @@ function compose(
 
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
         addEvent(AxisClass, 'destroy', onAxisDestroy);
+    }
+    if (composedMembers.indexOf(PointerClass) === -1) {
+        composedMembers.push(PointerClass);
+
+        wrap(
+            PointerClass.prototype,
+            'runPointActions',
+            wrapPointerRunPointActions
+        );
+        wrap(
+            PointerClass.prototype,
+            'drag',
+            wrapPointerDrag
+        );
     }
 }
 
@@ -140,34 +155,32 @@ function onAxisDestroy(
     }
 }
 
-/* *
- *
- *  To-do
- *
- * */
-
-// Prevent any hover effects while dragging a control line of AxisResizer.
-wrap(Pointer.prototype, 'runPointActions', function (
+/**
+ * Prevent default drag action detection while dragging a control line of
+ * AxisResizer. (#7563)
+ * @private
+ */
+function wrapPointerDrag(
     this: Pointer,
     proceed: Function
 ): void {
     if (!this.chart.activeResizer) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
-});
+}
 
-// Prevent default drag action detection while dragging a control line of
-// AxisResizer. (#7563)
-wrap(Pointer.prototype, 'drag', function (
+/**
+ * Prevent any hover effects while dragging a control line of AxisResizer.
+ * @private
+ */
+function wrapPointerRunPointActions(
     this: Pointer,
     proceed: Function
 ): void {
     if (!this.chart.activeResizer) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
-});
-
-(H as any).AxisResizer = AxisResizer as any;
+}
 
 /* *
  *
