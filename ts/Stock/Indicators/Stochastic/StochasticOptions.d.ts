@@ -37,7 +37,12 @@ export interface StochasticOptions extends SMAOptions, MultipleLinesComposition.
 
 export interface StochasticParamsOptions extends SMAParamsOptions {
     periods?: Array<number>;
-    // for inheritance
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default StochasticOptions;
