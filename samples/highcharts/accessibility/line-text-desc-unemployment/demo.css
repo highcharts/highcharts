@@ -48,6 +48,10 @@
     font-size: 1rem;
 }
 
+.highcharts-sonification-dialog button {
+    margin-right: 15px;
+}
+
 .highcharts-figure,
 .highcharts-data-table table {
     min-width: 360px;

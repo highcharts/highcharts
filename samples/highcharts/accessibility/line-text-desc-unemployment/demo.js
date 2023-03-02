@@ -19,7 +19,7 @@ const chart = Highcharts.chart('container', {
         align: 'left'
     },
     subtitle: {
-        text: 'Shown in % of labor force',
+        text: 'Shown in percent of labor force',
         align: 'left'
     },
     chart: {
@@ -33,6 +33,9 @@ const chart = Highcharts.chart('container', {
         },
         point: {
             dateFormat: '%b %e, %Y'
+        },
+        series: {
+            pointDescriptionEnabledThreshold: false
         }
     },
     sonification: {

@@ -168,7 +168,7 @@ function getTypeAndSeriesDesc(chart: Accessibility.ChartComposition): string {
     if (singleAxis) {
         const numTotalDataPoints = lineSeries.reduce((acc, cur): number =>
             acc + cur.points.length, 0);
-        desc += ` ${getAxisRangeDescription(xAxis)} The chart has ${numTotalDataPoints} data points in total across all lines.`;
+        desc += ` ${getAxisRangeDescription(xAxis)} The chart has ${numTotalDataPoints} data points in total${numLines > 1 ? ' across all lines' : ''}.`;
     }
 
     return desc;
@@ -305,12 +305,13 @@ function getMinMaxValueSingle(line: Point[], min: boolean): string {
     const points = line.filter(
         (p): boolean => defined(p.y) && p.y.toFixed(10) === val.toFixed(10)
     );
-    let desc = `${yFormat(points[0])}, at `;
-    if (points.length > 1) {
-        desc += `${points.length} points, including `;
-    }
     if (points.length > 0) {
-        return `${desc}${getPointXDescription(points[0] as Accessibility.PointComposition)}`;
+        return `${yFormat(points[0])}, at ${points.length} point${points.length > 1 ? 's' : ''}:${
+            points.reduce((acc, cur, ix): string =>
+                `${acc}${ix > 0 ? ',' : ''} ${
+                    getPointXDescription(cur as Accessibility.PointComposition)
+                }`, '')
+        }`;
     }
     return 'unknown value';
 }
@@ -398,7 +399,7 @@ function describeTrend(
     } else {
 
         // Not short, describe each movement, and put in ordered list
-        desc = `<ol><li>${desc}`;
+        desc = `<ul><li>${desc}`;
         let prevPlotY,
             prevPlotX;
         for (let i = 1; i < len; ++i) {
@@ -420,10 +421,10 @@ function describeTrend(
                 adverb = slope > 1 ? 'sharply ' :
                     slope < 0.2 ? 'gradually ' : '';
             }
-            desc += `.</li><li>${
-                dY === 0 ? 'Stays flat at' :
-                    `${dY > 0 ? 'Rises' : 'Drops'} ${adverb}to`
-            } ${y(i)} ${final ? 'at' : 'around'} ${x(i)}`;
+            desc += `.</li><li>Then ${final ? 'finally ' : ''}${
+                dY === 0 ? 'stays flat at' :
+                    `${dY > 0 ? 'rises' : 'drops'} ${adverb}to`
+            } ${y(i)} at ${x(i)}`;
             prevY = currentY;
             prevPlotX = currentPlotX;
             prevPlotY = currentPlotY;
@@ -437,7 +438,7 @@ function describeTrend(
                     overallTrend > 0 ? 'higher than' : 'lower than'
             } where it started`;
         }
-        desc += '.</li></ol>';
+        desc += '.</li></ul>';
     }
 
     return `${desc}`;

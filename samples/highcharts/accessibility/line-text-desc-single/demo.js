@@ -6,7 +6,7 @@ let prevYear,
 
 const chart = Highcharts.chart('container', {
     title: {
-        text: 'Price of one Bitcoin in USD'
+        text: 'Price of one Bitcoin in US dollars'
     },
     subtitle: {
         text: 'Daily prices, source: Yahoo Finance'
@@ -21,6 +21,9 @@ const chart = Highcharts.chart('container', {
         },
         point: {
             dateFormat: '%b %e, %Y'
+        },
+        series: {
+            pointDescriptionEnabledThreshold: false
         }
     },
     sonification: {
@@ -88,7 +91,7 @@ const chart = Highcharts.chart('container', {
             text: null
         },
         accessibility: {
-            description: 'Price in USD'
+            description: 'Price in dollar'
         },
         labels: {
             format: '${value:,.0f}'

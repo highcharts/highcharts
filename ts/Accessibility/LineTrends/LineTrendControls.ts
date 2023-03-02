@@ -25,11 +25,7 @@ import SL from './SimplifyLine.js';
 const {
     simplifyLine
 } = SL;
-import SD from '../Components/SeriesComponent/SeriesDescriber.js';
-const {
-    getPointXDescription,
-    pointNumberToString
-} = SD;
+
 
 // Announce message to screen readers
 const announce = (
@@ -45,32 +41,58 @@ type SimplifiedChartSeries = Accessibility.SeriesComposition & {
 
 
 /**
+ * Play or pause chart.
+ * @private
+ */
+function chartPlayPause(chart: Chart): void {
+    const timeline = chart.sonification && chart.sonification.timeline;
+    if (!chart.sonification) {
+        return;
+    }
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    if (timeline && chart.sonification.isPlaying()) {
+        timeline.pause();
+    } else if (timeline && timeline.isPaused) {
+        timeline.resume();
+    } else {
+        chart.sonify();
+    }
+}
+
+
+/**
  * Set up keyboard nav for chart sonification on a div with role="application".
  * @private
  */
 function initSonificationKeyboardNav(
     chart: Chart, keysource: HTMLElement, liveRegion: HTMLElement
 ): void {
+    let announceTimeout: number;
     const afterNavigate = (
         t: unknown, pointsPlayed: Accessibility.PointComposition[]
     ): void => {
         if (!pointsPlayed.length) {
             return;
         }
-        liveRegion.textContent = pointsPlayed.reduce((acc, cur): string => {
-            const val = `${
-                pointNumberToString(cur, cur.y ?? void 0) || ''
-            } ${cur.series.name}`;
-            return acc ? acc + ', ' + val : val;
-        }, '') + `. ${pointsPlayed.length > 1 ? 'X is ' : ''}${getPointXDescription(pointsPlayed[0])}`;
+        announceTimeout = setTimeout((): unknown => (
+            liveRegion.textContent = pointsPlayed.reduce((acc, cur): string => {
+                const el = cur.graphic && cur.graphic.element,
+                    label = el && el.getAttribute('aria-label');
+                if (!label) {
+                    return acc;
+                }
+                return acc ? ` ${label}` : label;
+            }, '')), 200);
     };
 
-    keysource.setAttribute('tabindex', 0);
     keysource.addEventListener('keydown', (e): void => {
-        const timeline = chart.sonification && chart.sonification.timeline;
         if (!chart.sonification) {
             return;
         }
+        liveRegion.textContent = '';
+        clearTimeout(announceTimeout);
         switch (e.key) {
             case 'ArrowUp':
             case 'ArrowLeft':
@@ -95,16 +117,7 @@ function initSonificationKeyboardNav(
                 e.preventDefault();
                 break;
             case ' ':
-                if (window.speechSynthesis) {
-                    window.speechSynthesis.cancel();
-                }
-                if (timeline && chart.sonification.isPlaying()) {
-                    timeline.pause();
-                } else if (timeline && timeline.isPaused) {
-                    timeline.resume();
-                } else {
-                    chart.sonify();
-                }
+                chartPlayPause(chart);
                 e.preventDefault();
                 break;
             case 'Escape':
@@ -227,16 +240,24 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
     if ((chart as any).sonify) {
         const sonificationDialog = document.createElement('dialog'),
             closeDialog = document.createElement('button'),
+            sonifyButton = document.createElement('button'),
             application = document.createElement('div');
+
+        sonificationDialog.className = 'highcharts-sonification-dialog';
 
         closeDialog.textContent = 'Close';
         closeDialog.onclick = (): void => sonificationDialog.close();
         sonificationDialog.appendChild(closeDialog);
 
+        sonifyButton.textContent = 'Play';
+        sonifyButton.onclick = (): void => chartPlayPause(chart);
+        sonificationDialog.appendChild(sonifyButton);
+
         application.textContent = 'Press Spacebar to play and pause, and use ' +
             'arrow keys to move around the chart. Press ESC to end.';
         application.setAttribute('role', 'application');
-        application.setAttribute('aria-label', 'Audio chart');
+        application.setAttribute('tabindex', 0);
+        application.setAttribute('aria-label', 'Audio Chart');
         application.autofocus = true;
         sonificationDialog.appendChild(application);
 
@@ -250,10 +271,11 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
         playAsSoundButton.textContent = 'Play chart as sound';
         playAsSoundButton.onclick = (): void => {
             sonificationDialog.showModal();
+            setTimeout((): unknown => application.focus(), 200);
             setTimeout((): unknown =>
                 (liveRegion.textContent = application.textContent), 1000);
         };
-        initSonificationKeyboardNav(chart, application, liveRegion);
+        initSonificationKeyboardNav(chart, sonificationDialog, liveRegion);
         sonificationDialog.appendChild(liveRegion);
         contentEl.appendChild(playAsSoundButton);
         contentEl.appendChild(sonificationDialog);
