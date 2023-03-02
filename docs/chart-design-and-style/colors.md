@@ -33,7 +33,7 @@ The color is given as an object literal containing two properties:
 *   **linearGradient** holds another object literal that defines the start position (x1, y1) and the end position (x2, y2) relative to the shape, where 0 is top/left and 1 is bottom/right.
 *   **stops** is an array of tuples. The first item in each tuple is the position in the gradient, where 0 is the start of the gradient and 1 is the end of the gradient. Multiple stops can be applied. The second item is the color for each stop. This color can also be given in the rgba format.
 
-In modern SVG enabled browsers the linear gradients can be applied to both fills (backgrounds) and strokes (lines).
+The linear gradients can be applied to both fills (backgrounds) and strokes (lines).
 
 Note that linear gradients can be differently defined (as an array or an object). Also, start/end positions might be calculated differently depending on the `gradientUnits` property (this property can only be set in linear gradient declared as object).
 

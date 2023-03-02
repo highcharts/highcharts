@@ -70,7 +70,6 @@ When working with series with a high number of data points, there are a few thin
 1.  First of all, consider using the [Boost module](https://www.highcharts.com/blog/tutorials/highcharts-high-performance-boost-module/).
 2.  Otherwise, for line plots, it is recommended that you disable point markers, as these will add a performance overhead. See [https://highcharts.com/demo/line-time-series](https://highcharts.com/demo/line-time-series).
 3.  Disabling shadows increases performance, as three shadow elements are created for each shape that includes a shadow.
-4.  For large column series, it is recommended that you disable the initial animation, [plotOptions.column.animation](https://api.highcharts.com/highcharts#plotOptions.column.animation)
 
 * * *
 
