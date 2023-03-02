@@ -52,10 +52,9 @@ const {
  * */
 
 /**
- * Creates a dashboard with components like charts, tables, and HTML.
- *
- * @class
+ * @class Represents a dashboard.
  * @name Board
+ *
  */
 class Board implements Serializable<Board, Board.JSON> {
 
@@ -65,8 +64,14 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      * */
 
+    /**
+     * Creates a dashboard with components like charts, tables, and HTML.
+     *
+     * @param renderTo The DOM element to render to, or its id.
+     * @param options The options for the dashboard.
+     */
     public constructor(
-        renderTo: (string|globalThis.HTMLElement),
+        renderTo: (string|HTMLElement),
         options: Board.Options
     ) {
         this.options = merge(Board.defaultOptions, options);
@@ -128,22 +133,97 @@ class Board implements Serializable<Board, Board.JSON> {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Factory function for creating a new dashboard.
+     *
+     * @param renderTo The DOM element to render to, or its id.
+     * @param options The options for the dashboard.
+     */
+    public static board(
+        renderTo: (string|globalThis.HTMLElement),
+        options: Board.Options
+    ): Board {
+        return new Board(renderTo, options);
+    }
+
+    /* *
+     *
      *  Properties
      *
      * */
 
+    /**
+     * The accessibility module for the dashboard.
+     * @internal
+     * */
     public a11y: DashboardsAccessibility;
-    public boardWrapper: globalThis.HTMLElement = void 0 as any;
-    public container: globalThis.HTMLElement = void 0 as any;
+
+    /**
+     * The container referenced by the renderTo option when creating the
+     * dashboard.
+     * */
+    public boardWrapper: HTMLElement = void 0 as any;
+
+    /**
+     * The main container for the dashboard.
+     * */
+    public container: HTMLElement = void 0 as any;
+
+    /**
+     * The edit mode instance. Used to handle editing the dashboard.
+     * */
     public editMode?: EditMode;
+
+    /**
+     * The fullscreen instance. Controls the fullscreen mode.
+     * */
     public fullscreen?: Fullscreen;
+
+    /**
+     * Flag to determine if the GUI is enabled.
+     * @internal
+     * */
     public guiEnabled: (boolean|undefined);
+
+    /**
+     * The unique id of the dashboard, it is generated automatically.
+     * */
     public id: string;
+
+    /**
+     * Index of the board in the global boards array. Allows to access the
+     * specific when having multiple dashboards.
+     * */
     public index: number;
+
+    /**
+     * An array of layouts.
+     * */
     public layouts: Array<Layout>;
+
+    /**
+     * The wrapper for the layouts.
+     * @internal
+     * */
     public layoutsWrapper: globalThis.HTMLElement;
+
+    /**
+     * An array of mounted components.
+     * */
     public mountedComponents: Array<Bindings.MountedComponentsOptions>;
+
+    /**
+     * The options for the dashboard.
+     * */
     public options: Board.Options;
+
+    /**
+     * The data states instance. Used to handle data.
+     * */
     public states: DataStates;
 
     /* *
@@ -152,6 +232,10 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      * */
 
+    /**
+     * Initializes the events.
+     * @internal
+     */
     private initEvents(): void {
         const board = this;
 
@@ -162,14 +246,11 @@ class Board implements Serializable<Board, Board.JSON> {
 
     /**
      * Initialize the container for the dashboard.
+     * @internal
      *
-     * @param {string|Highcharts.HTMLDOMElement} [renderTo]
-     * The DOM element to render to, or its id.
-     *
+     * @param renderTo The DOM element to render to, or its id.
      */
-    public initContainer(
-        renderTo: (string|globalThis.HTMLElement)
-    ): void {
+    private initContainer(renderTo: (string|HTMLElement)): void {
         const board = this;
 
         if (typeof renderTo === 'string') {
@@ -197,25 +278,12 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     /**
-     * Factory function for creating a new dashboard.
+     * Creates a new layouts and adds it to the dashboard based on the options.
+     * @internal
      *
-     * @param  {(string|globalThis.HTMLElement)} [renderTo]
-     * The DOM element to render to, or its id.
-     *
-     * @param  {Board.Options} options
-     * The options for the dashboard.
-     *
-     * @return {Board}
-     * The new dashboard.
+     * @param guiOptions THE GUI options for the layout.
      */
-    public static board(
-        renderTo: (string|globalThis.HTMLElement),
-        options: Board.Options
-    ): Board {
-        return new Board(renderTo, options);
-    }
-
-    public setLayouts(guiOptions: Board.GUIOptions): void {
+    private setLayouts(guiOptions: Board.GUIOptions): void {
         const board = this,
             layoutsOptions = guiOptions.layouts;
 
@@ -229,7 +297,13 @@ class Board implements Serializable<Board, Board.JSON> {
         }
     }
 
-    public setLayoutsFromJSON(json: Array<Layout.JSON>): void {
+    /**
+     * Set the layouts from JSON.
+     * @internal
+     *
+     * @param json An array of layout JSON objects.
+     */
+    private setLayoutsFromJSON(json: Array<Layout.JSON>): void {
         const board = this;
 
         let layout;
@@ -243,16 +317,46 @@ class Board implements Serializable<Board, Board.JSON> {
         }
     }
 
-    public addLayoutFromJSON(json: Layout.JSON): Layout|undefined {
-        return Layout.fromJSON(json, this);
-    }
-
-    public setComponents(
+    /**
+     * Set the components from options.
+     * @internal
+     *
+     * @param components An array of component options.
+     */
+    private setComponents(
         components: Array<Bindings.ComponentOptions>
     ): void {
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             Bindings.addComponent(components[i]);
         }
+    }
+
+    /**
+     * Returns the current size of the layout container based on the selected
+     * responsive breakpoints.
+     * @internal
+     *
+     * @returns string Return current size of the layout container in px.
+     */
+    public getLayoutContainerSize(): string {
+        const board = this,
+            respoOptions = board.options.respoBreakpoints,
+            cntWidth = (board.layoutsWrapper || {}).clientWidth;
+
+        let size = Globals.respoBreakpoints.large;
+
+        if (respoOptions) {
+            if (cntWidth <= respoOptions.small) {
+                size = Globals.respoBreakpoints.small;
+            } else if (
+                cntWidth > respoOptions.small &&
+                cntWidth <= respoOptions.medium
+            ) {
+                size = Globals.respoBreakpoints.medium;
+            }
+        }
+
+        return size;
     }
 
     /**
@@ -282,7 +386,7 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     /**
-     * Export layouts from the local storage
+     * Export layouts to the local storage.
      */
     public exportLocal(): void {
         localStorage.setItem(
@@ -292,31 +396,20 @@ class Board implements Serializable<Board, Board.JSON> {
         );
     }
 
+    /**
+     * Import the dashboard's layouts from the local storage.
+     *
+     * @param id The id of the layout to import.
+     * @returns Returns the imported layout.
+     */
     public importLayoutLocal(id: string): Layout|undefined {
         return Layout.importLocal(id, this);
     }
 
-    public getLayoutContainerSize(): string {
-        const board = this,
-            respoOptions = board.options.respoBreakpoints,
-            cntWidth = (board.layoutsWrapper || {}).clientWidth;
-
-        let size = Globals.respoBreakpoints.large;
-
-        if (respoOptions) {
-            if (cntWidth <= respoOptions.small) {
-                size = Globals.respoBreakpoints.small;
-            } else if (
-                cntWidth > respoOptions.small &&
-                cntWidth <= respoOptions.medium
-            ) {
-                size = Globals.respoBreakpoints.medium;
-            }
-        }
-
-        return size;
-    }
-
+    /**
+     * Reflow the dashboard. Hide the toolbars and context pointer. Reflow the
+     * layouts and its cells.
+     */
     public reflow(): void {
         const board = this,
             cntSize = board.getLayoutContainerSize();
@@ -345,11 +438,9 @@ class Board implements Serializable<Board, Board.JSON> {
     /**
      * Converts the given JSON to a class instance.
      *
-     * @param {Serializable.JSON} json
-     * JSON to deserialize as a class instance or object.
+     * @param json JSON to deserialize as a class instance or object.
      *
-     * @return {DataTable}
-     * Returns the class instance or object, or throws an exception.
+     * @return Returns the class instance or object.
      */
     public fromJSON(
         json: Board.JSON
@@ -372,8 +463,7 @@ class Board implements Serializable<Board, Board.JSON> {
     /**
      * Converts the class instance to a class JSON.
      *
-     * @return {Board.JSON}
-     * Class JSON of this Dashboard instance.
+     * @return Class JSON of this Dashboard instance.
      */
     public toJSON(): Board.JSON {
         const board = this,
