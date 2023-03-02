@@ -418,7 +418,7 @@ class MapView {
             const mapFromArray = maps[map];
 
             if (mapFromArray && mapFromArray.type === 'Topology') {
-              return topo2geo(mapFromArray);
+                return topo2geo(mapFromArray);
             }
 
             return mapFromArray;
