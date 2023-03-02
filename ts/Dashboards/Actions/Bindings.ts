@@ -30,6 +30,7 @@ import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridCompone
 import Globals from '../Globals.js';
 import DataTable from '../../Data/DataTable';
 import U from '../../Core/Utilities.js';
+import Board from '../Board';
 const {
     fireEvent,
     addEvent,
@@ -70,6 +71,9 @@ class Bindings {
         cell = cell || Bindings.getCell(options.cell);
         let component: Component | undefined;
 
+
+        console.log({options})
+
         // add elements to containers
         if (componentContainer) {
             const ComponentClass = Component.getComponent(options.type);
@@ -78,6 +82,7 @@ class Bindings {
                 component = new HTMLComponent(merge(
                     options,
                     {
+                        board: cell?.row.layout.board,
                         parentElement: componentContainer
                     })
                 );
@@ -85,6 +90,8 @@ class Bindings {
                 component = new ComponentClass(merge(
                     options,
                     {
+                        board: cell?.row.layout.board,
+                        parentCell: cell,
                         parentElement: componentContainer
                     })
                 );
@@ -234,6 +241,7 @@ namespace Bindings {
     }
 
     export interface ComponentOptions {
+        // board?: Board;
         cell: string;
         type: string;
         chartOptions?: any;

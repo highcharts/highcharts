@@ -40,11 +40,11 @@ export default class SyncHandler {
     }
 
     public id: string;
-    public presentationStateTrigger: SharedState.eventTypes;
+    public presentationStateTrigger?: SharedState.eventTypes;
     public func: Function;
     public callback?: Function;
 
-    constructor(id: string, trigger: SharedState.eventTypes, func: Function) {
+    constructor(id: string, trigger: SharedState.eventTypes | undefined, func: Function) {
         this.id = id;
         this.presentationStateTrigger = trigger;
         this.func = func;
@@ -55,7 +55,7 @@ export default class SyncHandler {
     public create(component: ComponentTypes): void {
         const { activeGroup } = component;
         const { func } = this;
-        if (activeGroup) {
+        if (activeGroup && this.presentationStateTrigger) {
             this.callback = activeGroup
                 .getSharedState()
                 .on(
@@ -70,6 +70,11 @@ export default class SyncHandler {
                     }
                 );
         }
+    }
+
+    public register(component: ComponentTypes): void {
+        const { func } = this;
+        func.call(component);
     }
 
     public remove(): void {

@@ -56,6 +56,7 @@ import ComponentGroup from './ComponentGroup.js';
 import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
+import Board from '../Board.js';
 
 abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
 
@@ -105,6 +106,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public parentElement: HTMLElement;
     public parentCell?: Cell;
     public connector?: Component.ConnectorTypes; // the attached connector
+    public board?: Board;
     protected dimensions: { width: number | null; height: number | null };
     public element: HTMLElement;
     public titleElement?: HTMLElement;
@@ -183,6 +185,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
         this.type = this.options.type;
         this.connector = this.options.connector;
+        this.board = this.options.board;
         this.hasLoaded = false;
         this.shouldRedraw = true;
         this.editableOptions =
@@ -195,6 +198,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             width: null,
             height: null
         };
+
 
         this.syncHandlers = this.handleSyncOptions();
         this.element = createElement('div', {
@@ -416,6 +420,29 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         if (this.activeGroup) {
             this.activeGroup.addComponents([this.id]);
         }
+    }
+
+    public getBoard(): Board | undefined{
+
+        if(this.parentCell?.row.layout){
+            return this.parentCell.row.layout.board;
+        }
+
+        const {boards} = Dashboards;
+        let foundBoard = undefined;
+
+        console.log()
+
+        boards.forEach(board =>{
+            board?.mountedComponents.forEach(componentOptions => {
+                if(componentOptions.component?.id === this.id){
+                    foundBoard = board;
+                }
+            })
+
+        });
+
+        return foundBoard;
     }
 
 
@@ -905,6 +932,7 @@ namespace Component {
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions extends EditableOptions {
+        board?: Board;
         parentCell?: Cell;
         parentElement: HTMLElement | string;
         className?: string;

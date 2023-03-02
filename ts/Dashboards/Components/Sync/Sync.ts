@@ -129,7 +129,14 @@ class Sync {
                     const handler = new SyncHandler(...handlerConfig);
                     if (!this.isRegisteredHandler(handler.id)) {
                         this.registerSyncHandler(handler);
-                        handler.create(component);
+
+                        if(handlerConfig[1]){
+                            handler.create(component);
+                        } else {
+                            console.log({handler})
+                            handler.register(component);
+                        }
+
                     }
                 }
 

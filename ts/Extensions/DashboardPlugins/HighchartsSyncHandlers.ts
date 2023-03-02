@@ -107,54 +107,46 @@ const configs: {
             'tooltipEmitter',
             function (this: ComponentTypes): Function | void {
                 if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
-                    const { chart, id } = this;
-                    const groups = ComponentGroup.getGroupsFromComponent(this.id);
+                    const { chart, board } = this;
 
-                    if (chart) {
-                        const setHoverPointWithDetail = (
-                            hoverPoint?: SharedState.PresentationHoverPointType
-                        ): void => {
-                            groups.forEach((group): void => {
-                                requestAnimationFrame((): void => {
-                                    group.getSharedState().setHoverPoint(hoverPoint, {
-                                        sender: id
-                                    });
-                                });
-                            });
-                        };
+                    const table = this.connector?.table;
 
-                        const callbacks = [
-                            // Listen for the tooltip changes
-                            addEvent(chart.tooltip, 'refresh', (): void => {
-                                const isSamePoint = (
-                                    pointA?: SharedState.PresentationHoverPointType,
-                                    pointB?: SharedState.PresentationHoverPointType
-                                ): boolean => {
-                                    if (!pointA || !pointB) {
-                                        return false;
+                    if(board && table){
+                        const {dataCursor} = board;
+
+                        this.options.chartOptions = {
+                            ...this.options.chartOptions,
+                            plotOptions:  {
+                                series: {
+                                    point: {
+                                        events: {
+                                            // emit table dataCursor
+                                            mouseOver: function () {
+                                                console.log('mousing')
+                                                dataCursor.emitCursor(table, {
+                                                    type: 'position',
+                                                    row: (this as any).x,
+                                                    state: 'point.mouseOver'
+                                                });
+                                            },
+                                            mouseOut: function () {
+                                                dataCursor.emitCursor(table, {
+                                                    type: 'position',
+                                                    row: (this as any).x,
+                                                    state: 'point.mouseOut'
+                                                });
+                                            }
+                                        }
                                     }
-
-                                    return pointA.x === pointB.x && pointA.y === pointB.y;
-                                };
-                                groups.forEach((group): void => {
-                                    if (!isSamePoint(group.getSharedState().getHoverPoint(), chart.hoverPoint)) {
-                                        setHoverPointWithDetail(chart.hoverPoint);
-                                    }
-                                });
-                            }),
-
-                            // Listen to the pointer to get when the hoverpoint is undefined
-                            addEvent(chart.pointer, 'afterGetHoverData', (): void => {
-                                if (chart.hoverPoint === null) {
-                                    setHoverPointWithDetail();
                                 }
-                            }),
 
-                            // TODO: check if sticky is set, etc.
-                            addEvent(chart.renderTo, 'mouseleave', (): void => {
-                                setHoverPointWithDetail();
-                            })
-                        ];
+                            } 
+                        } as any;
+
+
+
+
+                        const callbacks = [ ()=>{}];
 
                         // Return a function that calls the callbacks
                         return function (): void {
@@ -324,29 +316,31 @@ const configs: {
         ],
         tooltipHandler: [
             'tooltipHandler',
-            'afterHoverPointChange',
-            function (this: HighchartsComponent, e: SharedState.PointHoverEvent): void {
-                const { chart } = this;
-                const { hoverPoint, hoverRow } = e;
-
-                if (chart && chart.tooltip) {
-                    if (hoverPoint === void 0 && !chart.hoverPoint) {
-                        chart.tooltip.hide();
-                    }
-                    if (hoverPoint) {
-                        const match = findMatchingPoint(chart, hoverPoint);
-                        if (match) {
-                            chart.tooltip.refresh(match);
-                        }
-                    }
-
-                    if (hoverRow && hoverRow.dataset.rowXIndex) {
-                        chart.series[0].points.forEach((point): void => {
-                            if (String(point.x) === hoverRow.dataset.rowXIndex) {
-                                chart.tooltip && chart.tooltip.refresh(point);
+            undefined,//'afterHoverPointChange',
+            function (this: HighchartsComponent): void {
+                const { chart, board } = this;
+                const table = this.connector?.table;
+                if(board && table){
+                    const {dataCursor}  =board;
+                   dataCursor.addListener(table.id, 'point.mouseOver',  (e) => {
+                        const { chart } = this;
+                        if(chart && chart.series.length){
+                            const [series] = chart.series;
+                            console.log({series})
+                            if(e.cursor.type === 'position' && 'row' in e.cursor){
+                                const [point] = series.data.filter(point => point.x === (e.cursor as any).row);
+                                console.log({point})
+                        
+                                if (point) {
+                                    chart.tooltip?.refresh(point);
+                                }
                             }
-                        });
-                    }
+                        }
+                    });
+
+                    // dataCursor.addListener(table.id, 'point.mouseOut', function () {
+                    //     chart.tooltip?.hide();
+                    // });
                 }
             }
         ],
