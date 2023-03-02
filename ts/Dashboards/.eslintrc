@@ -1,0 +1,10 @@
+{
+    "extends": "../.eslintrc",
+    "rules": {
+      "jsdoc/require-description": 0,
+      "jsdoc/require-jsdoc": 0,
+      "jsdoc/require-param": 0,
+      "jsdoc/require-param-description": 0,
+      "jsdoc/require-param-type": 0
+    }
+}
