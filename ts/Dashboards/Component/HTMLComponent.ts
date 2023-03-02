@@ -287,16 +287,30 @@ namespace HTMLComponent {
 
     export type ComponentType = HTMLComponent;
     export interface HTMLComponentOptions extends Component.ComponentOptions, EditableOptions {
+        /**
+         * Array of HTML elements, declared as string or node.
+         *
+         * ```
+         * Example:
+         *
+         * elements: [{
+         *   tagName: 'img',
+         *   attributes: {
+         *       src: 'http://path.to.image'
+         *   }
+         * }]
+         * ```
+         */
         elements?: (AST.Node | string)[];
     }
-
+    /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
         /**
          * Enables auto-scaling of the elements inside the component.
          */
         scaleElements: boolean;
     }
-
+    /** @internal */
     export interface HTMLComponentJSONOptions extends Component.ComponentOptionsJSON {
         elements: Array<JSON.Object>;
         scaleElements: boolean;
@@ -308,6 +322,7 @@ namespace HTMLComponent {
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: HTMLComponent.ClassJSON;
     }>;
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
         elements?: string[];
         events?: string[];

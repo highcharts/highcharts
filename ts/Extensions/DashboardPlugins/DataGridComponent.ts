@@ -373,7 +373,7 @@ namespace DataGridComponent {
         dataGridID?: string;
         onUpdate: typeof DataGridComponent.onUpdate
     }
-
+    /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
         /**
          * The set of options like `dataGridClassName` and `dataGridID`
@@ -392,12 +392,13 @@ namespace DataGridComponent {
          */
         tableAxisMap?: Record<string, string | null>;
     }
-
+    /** @internal */
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
         dataGridOptions?: string;
         chartClassName?: string;
         chartID?: string;
     }
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
         options: ComponentJSONOptions;
     }

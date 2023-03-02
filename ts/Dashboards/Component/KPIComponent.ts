@@ -413,12 +413,12 @@ namespace KPIComponent {
     * */
 
     export type ComponentType = KPIComponent;
-
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
         options: ComponentJSONOptions;
 
     }
-
+    /** @internal */
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
         title?: string;
         chartOptions?: string;
@@ -464,13 +464,13 @@ namespace KPIComponent {
          */
         valueFormatter?: ValueFormatterCallbackFunction;
     }
-
+    /** @internal */
     export interface SubtitleOptions extends TextOptions {
         type?: SubtitleType;
     }
 
     export type SubtitleType = 'text' | 'diff' | 'diffpercent';
-
+    /** @internal */
     export interface ValueFormatterCallbackFunction {
         (
             this: KPIComponent,

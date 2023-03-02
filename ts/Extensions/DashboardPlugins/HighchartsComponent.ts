@@ -621,7 +621,7 @@ namespace HighchartsComponent {
          */
         chartConstructor: ConstructorType;
     }
-
+    /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
         /**
          * A full set of chart options used by the chart
@@ -640,15 +640,14 @@ namespace HighchartsComponent {
          */
         tableAxisMap?: Record<string, string | null>;
     }
-
+    /** @internal */
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
         chartOptions?: string;
         chartClassName?: string;
         chartID?: string;
         chartConstructor: ConstructorType;
     }
-
-
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
         options: ComponentJSONOptions;
     }

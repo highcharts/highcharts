@@ -840,7 +840,7 @@ namespace Component {
     *  Declarations
     *
     * */
-
+    /** @internal */
     export interface JSON extends Serializable.JSON<string> {
         // store?: DataStore.ClassJSON;
         options: ComponentOptionsJSON;
@@ -899,20 +899,52 @@ namespace Component {
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions extends EditableOptions {
+        /**
+         * Instance of cell, where component is attached
+         */
         parentCell?: Cell;
+        /**
+         * The HTML element or id of HTML element that is used for appending
+         * a component
+         */
         parentElement: HTMLElement | string;
+        /**
+         * The name of class that is applied to the component's container
+         */
         className?: string;
+        /**
+         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`
+         */
         type: string;
         // allow overwriting gui elements
+        /** @internal */
         navigationBindings?: NavigationBindingsOptionsObject[];
+        /**
+         * Events attached to the component : `mount`, `unmount`
+         */
         events?: Record<string, Function>;
+        /** @internal */
         editableOptions: Array<string>;
+        /** @internal */
         editableOptionsBindings: EditableOptions.OptionsBindings;
+        /** @internal */
         presentationModifier?: DataModifier;
+        /**
+         * Defines which elements should be synced.
+         *
+         * ```
+         * Example:
+         * {
+         *     tooltip: true
+         * }
+         * ```
+         *
+         */
         sync: SyncOptions;
     }
 
     // JSON compatible options for export
+    /** @internal */
     export interface ComponentOptionsJSON extends JSON.Object {
         // store?: DataStore.ClassJSON; // store id
         parentElement: string; // ID?
@@ -923,7 +955,7 @@ namespace Component {
     }
 
     export type StoreTypes = DataStore;
-
+    /** @internal */
     export interface EditableOptions {
         /**
          * Store allows you to load data via URL or from a local source.
@@ -948,7 +980,7 @@ namespace Component {
     }
 
     export type TextOptionsType = string | false | TextOptions | undefined;
-
+    /** @internal */
     export interface MessageTarget {
         type: 'group' | 'componentType' | 'componentID';
         target: (
