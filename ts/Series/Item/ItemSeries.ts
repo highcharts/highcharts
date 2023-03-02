@@ -311,7 +311,8 @@ class ItemSeries extends PieSeries {
                         x: x,
                         y: y,
                         width: width,
-                        height: height
+                        height: height,
+                        fill: point.color
                     };
                     if (typeof r !== 'undefined') {
                         attr.r = r;
