@@ -100,7 +100,7 @@ class TEMAIndicator extends EMAIndicator {
         i?: number,
         xVal?: Array<number>
     ): [number, number] {
-        return EMAIndicator.prototype.calculateEma(
+        return super.calculateEma(
             xVal || [],
             yVal,
             typeof i === 'undefined' ? 1 : i,
@@ -172,12 +172,11 @@ class TEMAIndicator extends EMAIndicator {
         }
 
         // Accumulate first N-points
-        accumulatePeriodPoints =
-            EMAIndicator.prototype.accumulatePeriodPoints(
-                period,
-                index,
-                yVal
-            );
+        accumulatePeriodPoints = super.accumulatePeriodPoints(
+            period,
+            index,
+            yVal
+        );
 
         // first point
         sma = accumulatePeriodPoints / period;
