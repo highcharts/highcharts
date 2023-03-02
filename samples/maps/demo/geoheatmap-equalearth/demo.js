@@ -9,8 +9,7 @@
 
             chart: {
                 map: topology,
-                backgroundColor: '#000',
-                animation: false
+                backgroundColor: '#000'
             },
 
             title: {

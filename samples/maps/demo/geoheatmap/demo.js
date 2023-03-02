@@ -48,8 +48,7 @@
         const chart = Highcharts.mapChart('container', {
 
             chart: {
-                map: topology,
-                animation: false
+                map: topology
             },
 
             title: {
