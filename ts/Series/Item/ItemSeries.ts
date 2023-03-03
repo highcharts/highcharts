@@ -312,7 +312,7 @@ class ItemSeries extends PieSeries {
                         y: y,
                         width: width,
                         height: height,
-                        fill: point.color
+                        fill: point.color // Circles color update (#17257)
                     };
                     if (typeof r !== 'undefined') {
                         attr.r = r;
