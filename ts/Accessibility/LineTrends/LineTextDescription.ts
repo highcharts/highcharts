@@ -305,13 +305,17 @@ function getMinMaxValueSingle(line: Point[], min: boolean): string {
     const points = line.filter(
         (p): boolean => defined(p.y) && p.y.toFixed(10) === val.toFixed(10)
     );
-    if (points.length > 0) {
-        return `${yFormat(points[0])}, at ${points.length} point${points.length > 1 ? 's' : ''}:${
-            points.reduce((acc, cur, ix): string =>
-                `${acc}${ix > 0 ? ',' : ''} ${
+    if (points.length > 1) {
+        return `${yFormat(points[0])}, happens at:<ul>${
+            points.reduce((acc, cur): string =>
+                `${acc}<li>${
                     getPointXDescription(cur as Accessibility.PointComposition)
-                }`, '')
-        }`;
+                }</li>`, '')
+        }</ul>`;
+    }
+    if (points.length > 0) {
+        return `${yFormat(points[0])}, at ${
+            getPointXDescription(points[0] as Accessibility.PointComposition)}`;
     }
     return 'unknown value';
 }
@@ -337,7 +341,7 @@ function getMinMaxMultiple(
                 val(b[0].series) - val(a[0].series)
             ))
             .map((p): string =>
-                `<li>${p[0].series.name}: ${getMinMaxValueSingle(p, min)}.</li>`
+                `<li>${p[0].series.name}: ${getMinMaxValueSingle(p, min)}</li>`
             ).join(' ')
     }</ul>`;
 }

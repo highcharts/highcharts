@@ -99,7 +99,8 @@ function initSonificationKeyboardNav(
                 if (chart.sonification.timeline) {
                     (chart.sonification.timeline as any)._navigating = true;
                 }
-                chart.sonification.playAdjacent(false, afterNavigate);
+                chart.sonification.playAdjacent(false, afterNavigate,
+                    (e): boolean => !!e.relatedPoint);
                 if (chart.sonification.timeline) {
                     delete (chart.sonification.timeline as any)._navigating;
                 }
@@ -110,7 +111,8 @@ function initSonificationKeyboardNav(
                 if (chart.sonification.timeline) {
                     (chart.sonification.timeline as any)._navigating = true;
                 }
-                chart.sonification.playAdjacent(true, afterNavigate);
+                chart.sonification.playAdjacent(true, afterNavigate,
+                    (e): boolean => !!e.relatedPoint);
                 if (chart.sonification.timeline) {
                     delete (chart.sonification.timeline as any)._navigating;
                 }
@@ -246,7 +248,12 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
         sonificationDialog.className = 'highcharts-sonification-dialog';
 
         closeDialog.textContent = 'Close';
-        closeDialog.onclick = (): void => sonificationDialog.close();
+        closeDialog.onclick = (): void => {
+            sonificationDialog.close();
+            if (chart.sonification) {
+                chart.sonification.cancel();
+            }
+        };
         sonificationDialog.appendChild(closeDialog);
 
         sonifyButton.textContent = 'Play';
