@@ -39,10 +39,10 @@ const {
 
 class Sidebar {
     /* *
-     *
-     *  Static Properties
-     *
-     * */
+    *
+    *  Static Properties
+    *
+    * */
     protected static readonly defaultOptions: Sidebar.Options = {
         enabled: true,
         className: 'test',
@@ -50,52 +50,44 @@ class Sidebar {
         closeIcon: EditGlobals.iconsURL + '/close.svg'
     };
 
-    public static tabs: Array<Sidebar.TabOptions> = [
-        {
-            // {
-            //     type: 'design',
-            //     icon: '',
-            //     items: {
-            //         cell: ['cellWidth']
-            //     }
-            // },
-            type: 'component',
-            icon: '',
-            items: {
-                cell: ['componentSettings']
-            }
-        },
-        {
-            type: 'data',
-            icon: '',
-            items: {
-                cell: ['']
-            }
+    public static tabs: Array<Sidebar.TabOptions> = [{
+    // {
+    //     type: 'design',
+    //     icon: '',
+    //     items: {
+    //         cell: ['cellWidth']
+    //     }
+    // },
+        type: 'component',
+        icon: '',
+        items: {
+            cell: ['componentSettings']
         }
-    ];
+    }, {
+        type: 'data',
+        icon: '',
+        items: {
+            cell: ['']
+        }
+    }];
 
-    public static predefinedWidth: Array<Sidebar.PredefinedWidth> = [
-        {
-            name: 'auto',
-            value: 'auto',
-            icon: ''
-        },
-        {
-            name: '1/1',
-            value: '100',
-            icon: ''
-        },
-        {
-            name: '1/3',
-            value: '33.333',
-            icon: ''
-        },
-        {
-            name: '1/6',
-            value: '16.666',
-            icon: ''
-        }
-    ];
+    public static predefinedWidth: Array<Sidebar.PredefinedWidth> = [{
+        name: 'auto',
+        value: 'auto',
+        icon: ''
+    }, {
+        name: '1/1',
+        value: '100',
+        icon: ''
+    }, {
+        name: '1/3',
+        value: '33.333',
+        icon: ''
+    }, {
+        name: '1/6',
+        value: '16.666',
+        icon: ''
+    }];
 
     public static seriesIconURLPrefix =
         Globals.iconsURLPrefix + 'series-types/icon-';
@@ -104,16 +96,18 @@ class Sidebar {
             text: 'layout',
             onDrop: function (
                 sidebar: Sidebar,
-                dropContext: Cell | Row
-            ): Cell | void {
+                dropContext: Cell|Row
+            ): Cell|void {
+
                 if (!dropContext) {
                     return;
                 }
 
-                const row =
+                const row = (
                         dropContext.getType() === 'cell' ?
                             (dropContext as Cell).row :
-                            (dropContext as Row),
+                            (dropContext as Row)
+                    ),
                     board = row.layout.board,
                     newLayoutName = GUIElement.createElementId('layout'),
                     cellName = GUIElement.createElementId('cell'),
@@ -121,15 +115,11 @@ class Sidebar {
                         id: newLayoutName,
                         copyId: '',
                         parentContainerId: board.container.id,
-                        rows: [
-                            {
-                                cells: [
-                                    {
-                                        id: cellName
-                                    }
-                                ]
-                            }
-                        ],
+                        rows: [{
+                            cells: [{
+                                id: cellName
+                            }]
+                        }],
                         style: {}
                     });
 
@@ -149,13 +139,13 @@ class Sidebar {
                         }
                     ]
                 });
+
             }
-        },
-        {
+        }, {
             text: 'chart',
             onDrop: function (
                 sidebar: Sidebar,
-                dropContext: Cell | Row
+                dropContext: Cell|Row
             ): Cell | void {
                 if (sidebar && dropContext) {
                     return sidebar.onDropNewComponent(dropContext, {
@@ -176,74 +166,67 @@ class Sidebar {
                     });
                 }
             }
-        },
-        {
+        }, {
             text: 'HTML',
-            onDrop: function (
-                sidebar: Sidebar,
-                dropContext: Cell | Row
-            ): void | Cell {
-                if (sidebar && dropContext) {
-                    return sidebar.onDropNewComponent(dropContext, {
-                        cell: '',
-                        type: 'html',
-                        elements: [
-                            {
+            onDrop:
+                function (sidebar: Sidebar, dropContext: Cell|Row): void|Cell {
+                    if (sidebar && dropContext) {
+                        return sidebar.onDropNewComponent(dropContext, {
+                            cell: '',
+                            type: 'html',
+                            elements: [{
                                 tagName: 'img',
                                 attributes: {
                                     /* eslint-disable max-len */
-                                    src:
-                                        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAABIFBMVEX//' +
-                                        '/93dY2j7Llkmp+AhegwQ2uf67ZblZqBhOtlnKBjm5yAheql8Lt2c4wtPmh1b4t6f+d3dIhxb4h5fufw9Pj3/' +
-                                        'fllmaF8iN53jNBYk5rz9P1nmKbP3OR5i9Vtk7jY9+G38Mitxc/O9dru+/Kr7r/F89Lk+et/g988Unc1SHBAW' +
-                                        'XuYur5woqfS4eLZ3vO3y9fW1/jl7PGanu1+qLFwkb+rru+/wfObucSLj+puk7hzj8fv7/xqlbCjp+61uPHH1' +
-                                        '9/IyvWGrLfn6PuGmqZ6ebig4biOraZ+gdJ6e6+Uvqx/hpab0LJ8f8Z5eaNmeqJejZpeYoFOcIpZgZRUeJNRW' +
-                                        'n2vysyd17WJoaGCjpqgnrS1tceFr7ONjKXOztuVwq6wsMM1MXwqAAAGOElEQVR4nO2aeVcURxTF6WWmG2djF' +
-                                        'yEJIw4oigZxCVFURInGJSiuaEy+/7dIVVd1d1V19TLhzOlHn/v7f87pe97td+9rmJoCAAAAAAAAAAAAAAAA' +
-                                        'AAAAAAAAAAAAAAAAAAAAAAAAVLhV9wNMnIu/1v0EE2ZnfvV23c8wWXbD/Tt1P8NEOZwJ7waX636KSXJvJly+' +
-                                        'cKnBPl0JO52LF7w7C3U/yMS4P+P7/pIX/Fb3g0yMvY7vh6ued+mnup9kQuzMsxGGv1/wvKWG+nS3wxU+YAqD' +
-                                        'p3U/y0Q45CP0Oz8zhd6lJ3U/zSR4NBMpvDjNFHpLDYyMhx1uUsYqVxg0sNpEUcFfxP1oiEHzKrgvRxje5S8' +
-                                        'ik9g0nx7M+1LhslDoNc2nu3KEPu9tYojNqja35FvIJUqFXtCoavOokygMV6XCRlWbh+kI/fCXZIgN8uljVeG' +
-                                        'DWKEXNKbaLPipSWVva5hPD5QRsmWaCGxOBd9TRhj3NimRXrXZWFsc+zc785pA2dukT8lVm7W2O1y7Mt5vHuk' +
-                                        'jjHsb0Wqz6Lrtdnu4PobIwxlfV7isKqT3dXHYdscU+dhQmPQ2Abmvi5tcoRA5qiRyxddN6vtXl1SF3tLEn3k' +
-                                        '8Ft0UJnJjs+wHB/OGQKW30aw2G213LJF75giV3iZ9SqyCb2oKI5HuxmZuhuzMmALV3kaz2ozcDAUid8OMQrW' +
-                                        '3kfTphjnEWOTQ0gbMqIgUXvUMiH1dzNi0SOQ9i0Ktt5H0qcWmqci2VnlWOpk94xu9TUCrgq/nDTGZZBKU960' +
-                                        'j1HubeBVJVfArhQpdtQ1koyJSuJxRSKzaDMskRipH65s781aFRm8TkKrgaxUUcpHdZ89f+LY3sZMVSCsyrlQ' +
-                                        'S6LpHg9nZwfMXnY6pMswsU49YtaliU9ft/jFwHGd2tvfSnGT0d9IMlCKjmk1HjoRNkokMU5WZ3kbOp4vl8tg' +
-                                        'I/xw4TirSefniamxX66qhVW2q2LT7queoMLu+feNHItXvbUR9mtvcFIGvB06G2dm3b6JJ2lYNra+LFUb4xaK' +
-                                        'Qi3SYyHDfalNK1cZ+YKgCjwY9q0Ixyb+OlzLdNPIpmWpTalMRFbm86197f+xZRNKpNgUHRsSolztCzqDf6ve' +
-                                        '33rNJGirpfF0sPjD0qLDQa3H6bJInTKSqkswf+MsOjFeFI3ScrVZLitwyRJLxaaFNrVGh8bGVwEReV0SSqTa' +
-                                        'FNu1+LRmh866l0u+3UpFU/sBfZFMWFSUCDYWxyONIJJVqU9DcSqKCMzAVSpEfmEgqPi04MI6cMpOmqyajkok' +
-                                        'k8gf+/AOjLCoirtkVigz5QMOn+TatMEJ1mWameHKjbm2CvOZWHhWczKqR+ljRmZ6mMcLcA6M8KjhzOeNjmRF' +
-                                        '8qltZjP3A6H6uMkLZ23R9fHwsELfrFpZgt2neYWiyZci79kEeVMHNuoWlWJvbUfFVkfBR03f9xItr2/e6ZSn' +
-                                        'YmluFtBekq0ZsF3LHBcfa3MquiphBYs8T9UoMiCSFJGvT7j8VRyiWab/1/li/Dz0qSSHI2rRaVHB6W/w2ND/' +
-                                        'X0EkKQcamFaNCKLx+Mm1+xCCUFBKzuXW/VBthb25w+jQjj1ZSCMwDo1pU9OacbytTN4PspzZKSSFY1BVWioq' +
-                                        '5ub9/8HViUUgqKSSGTauM71TKWMgKpJUUAs2mpVHBxvctTYPtjERaSSHQ7+DiqJjrnf5Qf3vDsCm1pJAoB0b' +
-                                        'hYcjs+a/xln0yFJJLCoFyYBREBd8umZ8aq4ZeUkiUqMgZIQ8/25K8rSuklxSSxKY5UaFvFw0t8Wn9z5BKYtO' +
-                                        'RXd9p1p4x36knhUQeGJZviJbtoqGuGjJfnyzEB4Z5GMbdJZ8nqUKiSSEQB4YRFT0WfqUvlrJqiCaFJLJp91l' +
-                                        'Ps2fedlFZSD9dUE0KAW9u3c/pVWENPytxbwvIJoWAHxhJVJRtF424t1G8KTTYgTGqul005DKlnBSCtXYUFXy' +
-                                        '7jPf3W9nbKCeFYJFHRcXtorEQkE8KyfD1oKi75LNNPykEm1+rbxeN7/STQvJ/XyS2auivmTPBehv5pDgbN4P' +
-                                        'zsGbOwsI5SIozsk3jH0smSMM9CgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADg3PAfRD' +
-                                        'WjQM3VeT0AAAAASUVORK5CYII='
+                                    src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAABIFBMVEX//' +
+                                    '/93dY2j7Llkmp+AhegwQ2uf67ZblZqBhOtlnKBjm5yAheql8Lt2c4wtPmh1b4t6f+d3dIhxb4h5fufw9Pj3/' +
+                                    'fllmaF8iN53jNBYk5rz9P1nmKbP3OR5i9Vtk7jY9+G38Mitxc/O9dru+/Kr7r/F89Lk+et/g988Unc1SHBAW' +
+                                    'XuYur5woqfS4eLZ3vO3y9fW1/jl7PGanu1+qLFwkb+rru+/wfObucSLj+puk7hzj8fv7/xqlbCjp+61uPHH1' +
+                                    '9/IyvWGrLfn6PuGmqZ6ebig4biOraZ+gdJ6e6+Uvqx/hpab0LJ8f8Z5eaNmeqJejZpeYoFOcIpZgZRUeJNRW' +
+                                    'n2vysyd17WJoaGCjpqgnrS1tceFr7ONjKXOztuVwq6wsMM1MXwqAAAGOElEQVR4nO2aeVcURxTF6WWmG2djF' +
+                                    'yEJIw4oigZxCVFURInGJSiuaEy+/7dIVVd1d1V19TLhzOlHn/v7f87pe97td+9rmJoCAAAAAAAAAAAAAAAA' +
+                                    'AAAAAAAAAAAAAAAAAAAAAAAAVLhV9wNMnIu/1v0EE2ZnfvV23c8wWXbD/Tt1P8NEOZwJ7waX636KSXJvJly+' +
+                                    'cKnBPl0JO52LF7w7C3U/yMS4P+P7/pIX/Fb3g0yMvY7vh6ued+mnup9kQuzMsxGGv1/wvKWG+nS3wxU+YAqD' +
+                                    'p3U/y0Q45CP0Oz8zhd6lJ3U/zSR4NBMpvDjNFHpLDYyMhx1uUsYqVxg0sNpEUcFfxP1oiEHzKrgvRxje5S8' +
+                                    'ik9g0nx7M+1LhslDoNc2nu3KEPu9tYojNqja35FvIJUqFXtCoavOokygMV6XCRlWbh+kI/fCXZIgN8uljVeG' +
+                                    'DWKEXNKbaLPipSWVva5hPD5QRsmWaCGxOBd9TRhj3NimRXrXZWFsc+zc785pA2dukT8lVm7W2O1y7Mt5vHuk' +
+                                    'jjHsb0Wqz6Lrtdnu4PobIwxlfV7isKqT3dXHYdscU+dhQmPQ2Abmvi5tcoRA5qiRyxddN6vtXl1SF3tLEn3k' +
+                                    '8Ft0UJnJjs+wHB/OGQKW30aw2G213LJF75giV3iZ9SqyCb2oKI5HuxmZuhuzMmALV3kaz2ozcDAUid8OMQrW' +
+                                    '3kfTphjnEWOTQ0gbMqIgUXvUMiH1dzNi0SOQ9i0Ktt5H0qcWmqci2VnlWOpk94xu9TUCrgq/nDTGZZBKU960' +
+                                    'j1HubeBVJVfArhQpdtQ1koyJSuJxRSKzaDMskRipH65s781aFRm8TkKrgaxUUcpHdZ89f+LY3sZMVSCsyrlQ' +
+                                    'S6LpHg9nZwfMXnY6pMswsU49YtaliU9ft/jFwHGd2tvfSnGT0d9IMlCKjmk1HjoRNkokMU5WZ3kbOp4vl8tg' +
+                                    'I/xw4TirSefniamxX66qhVW2q2LT7queoMLu+feNHItXvbUR9mtvcFIGvB06G2dm3b6JJ2lYNra+LFUb4xaK' +
+                                    'Qi3SYyHDfalNK1cZ+YKgCjwY9q0Ixyb+OlzLdNPIpmWpTalMRFbm86197f+xZRNKpNgUHRsSolztCzqDf6ve' +
+                                    '33rNJGirpfF0sPjD0qLDQa3H6bJInTKSqkswf+MsOjFeFI3ScrVZLitwyRJLxaaFNrVGh8bGVwEReV0SSqTa' +
+                                    'FNu1+LRmh866l0u+3UpFU/sBfZFMWFSUCDYWxyONIJJVqU9DcSqKCMzAVSpEfmEgqPi04MI6cMpOmqyajkok' +
+                                    'k8gf+/AOjLCoirtkVigz5QMOn+TatMEJ1mWameHKjbm2CvOZWHhWczKqR+ljRmZ6mMcLcA6M8KjhzOeNjmRF' +
+                                    '8qltZjP3A6H6uMkLZ23R9fHwsELfrFpZgt2neYWiyZci79kEeVMHNuoWlWJvbUfFVkfBR03f9xItr2/e6ZSn' +
+                                    'YmluFtBekq0ZsF3LHBcfa3MquiphBYs8T9UoMiCSFJGvT7j8VRyiWab/1/li/Dz0qSSHI2rRaVHB6W/w2ND/' +
+                                    'X0EkKQcamFaNCKLx+Mm1+xCCUFBKzuXW/VBthb25w+jQjj1ZSCMwDo1pU9OacbytTN4PspzZKSSFY1BVWioq' +
+                                    '5ub9/8HViUUgqKSSGTauM71TKWMgKpJUUAs2mpVHBxvctTYPtjERaSSHQ7+DiqJjrnf5Qf3vDsCm1pJAoB0b' +
+                                    'hYcjs+a/xln0yFJJLCoFyYBREBd8umZ8aq4ZeUkiUqMgZIQ8/25K8rSuklxSSxKY5UaFvFw0t8Wn9z5BKYtO' +
+                                    'RXd9p1p4x36knhUQeGJZviJbtoqGuGjJfnyzEB4Z5GMbdJZ8nqUKiSSEQB4YRFT0WfqUvlrJqiCaFJLJp91l' +
+                                    'Ps2fedlFZSD9dUE0KAW9u3c/pVWENPytxbwvIJoWAHxhJVJRtF424t1G8KTTYgTGqul005DKlnBSCtXYUFXy' +
+                                    '7jPf3W9nbKCeFYJFHRcXtorEQkE8KyfD1oKi75LNNPykEm1+rbxeN7/STQvJ/XyS2auivmTPBehv5pDgbN4P' +
+                                    'zsGbOwsI5SIozsk3jH0smSMM9CgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADg3PAfRD' +
+                                    'WjQM3VeT0AAAAASUVORK5CYII='
                                     /* eslint-enable max-len */
                                 }
-                            }
-                        ]
-                    });
+                            }]
+                        });
+                    }
                 }
-            }
-        },
-        {
+        }, {
             text: 'datagrid',
             onDrop: function (
                 sidebar: Sidebar,
                 dropContext: Cell | Row
-            ): Cell | void {
+            ): Cell|void {
                 const headers = ['Apples', 'Pears', 'Plums'];
                 const columns = ((): Record<string, Array<string>> => {
                     const makeRandomRows = (): Array<string> =>
-                        new Array(40).map((): string =>
-                            (10 * Math.random()).toFixed(2)
+                        new Array(40).map(
+                            (): string => (10 * Math.random()).toFixed(2)
                         );
                     const cols: Record<string, Array<string>> = {};
                     for (let i = 0; i < headers.length; ++i) {
@@ -263,15 +246,13 @@ class Sidebar {
         }
     ];
 
-    public static tabsGeneralOptions: Array<Sidebar.TabOptions> = [
-        {
-            type: 'components',
-            icon: '',
-            items: {
-                cell: ['addComponent']
-            }
+    public static tabsGeneralOptions: Array<Sidebar.TabOptions> = [{
+        type: 'components',
+        icon: '',
+        items: {
+            cell: ['addComponent']
         }
-    ];
+    }];
 
     public static items = merge(Menu.items, {
         componentSettings: {
@@ -280,9 +261,8 @@ class Sidebar {
             text: 'Settings',
             events: {
                 update: function (): void {
-                    (
-                        (this as MenuItem).menu.parent as Sidebar
-                    ).getComponentEditableOptions();
+                    ((this as MenuItem).menu.parent as Sidebar)
+                        .getComponentEditableOptions();
                 }
             }
         },
@@ -307,8 +287,7 @@ class Sidebar {
                     const item = this,
                         cell = this.menu.parent.context;
 
-                    if (
-                        cell &&
+                    if (cell &&
                         cell.getType() === Globals.guiElementType.cell &&
                         cell.container &&
                         item.innerElement &&
@@ -316,8 +295,8 @@ class Sidebar {
                         (item.innerElement as any).value !==
                             cell.container.offsetWidth
                     ) {
-                        const sidebar = (this as MenuItem).menu
-                            .parent as Sidebar;
+                        const sidebar =
+                            ((this as MenuItem).menu.parent as Sidebar);
 
                         (item.innerElement as any).value =
                             sidebar.getCellWidth(cell);
@@ -398,11 +377,13 @@ class Sidebar {
     public updatedSettings: any = {};
 
     /* *
-     *
-     *  Constructor
-     *
-     * */
-    constructor(editMode: EditMode) {
+    *
+    *  Constructor
+    *
+    * */
+    constructor(
+        editMode: EditMode
+    ) {
         this.tabs = {};
         this.isVisible = false;
         this.options = merge(
@@ -415,16 +396,21 @@ class Sidebar {
 
         this.renderCloseButton();
         this.renderTitle();
-        this.initTabs(Sidebar.tabs, true);
-        this.initTabs(Sidebar.tabsGeneralOptions);
+        this.initTabs(
+            Sidebar.tabs,
+            true
+        );
+        this.initTabs(
+            Sidebar.tabsGeneralOptions
+        );
         this.initEvents();
     }
 
     /* *
-     *
-     *  Properties
-     *
-     * */
+    *
+    *  Properties
+    *
+    * */
     public container: HTMLDOMElement;
     public options?: Sidebar.Options;
     public isVisible: boolean;
@@ -432,26 +418,23 @@ class Sidebar {
     public title?: HTMLDOMElement;
     public tabs: Record<string, Sidebar.Tab>;
     public activeTab?: Sidebar.Tab;
-    public context?: Cell | Row;
+    public context?: Cell|Row;
     public rowCellTab?: HTMLDOMElement;
     public generalOptionsTab?: HTMLDOMElement;
 
     /* *
-     *
-     *  Functions
-     *
-     * */
+    *
+    *  Functions
+    *
+    * */
 
     private renderContainer(): HTMLDOMElement {
         const sidebar = this;
 
         return createElement(
-            'div',
-            {
-                className:
-                    EditGlobals.classNames.editSidebar +
-                    ' ' +
-                    ((sidebar.options || {}).className || '')
+            'div', {
+                className: EditGlobals.classNames.editSidebar +
+                    ' ' + ((sidebar.options || {}).className || '')
             },
             {},
             sidebar.editMode.board.container
@@ -462,13 +445,10 @@ class Sidebar {
         const sidebar = this;
 
         sidebar.title = createElement(
-            'div',
-            {
+            'div', {
                 className: EditGlobals.classNames.editSidebarTitle,
                 textContent: 'SETTINGS'
-            },
-            {},
-            sidebar.container
+            }, {}, sidebar.container
         );
     }
 
@@ -480,12 +460,9 @@ class Sidebar {
 
         // create the whole tab (including menu) container
         const tabContainer = createElement(
-            'div',
-            {
+            'div', {
                 className: EditGlobals.classNames.editSidebarTabContainer
-            },
-            {},
-            sidebar.container
+            }, {}, sidebar.container
         );
 
         if (isRowCell) {
@@ -496,12 +473,9 @@ class Sidebar {
 
         // create tab menu container
         const container = createElement(
-            'div',
-            {
+            'div', {
                 className: EditGlobals.classNames.editSidebarTabsContainer
-            },
-            {},
-            tabContainer
+            }, {}, tabContainer
         );
 
         let tabElement;
@@ -517,25 +491,19 @@ class Sidebar {
             const isComponentSettings = contentItems[0] === 'componentSettings';
 
             tabElement = createElement(
-                'div',
-                {
+                'div', {
                     className: EditGlobals.classNames.editSidebarTab,
                     textContent: tabs[i].type,
                     onclick: function (): void {
                         sidebar.onTabClick(sidebar.tabs[tabs[i].type]);
                     }
-                },
-                {},
-                container
+                }, {}, container
             );
 
             contentContainer = createElement(
-                'div',
-                {
+                'div', {
                     className: EditGlobals.classNames.editSidebarTabContent
-                },
-                {},
-                tabContainer
+                }, {}, tabContainer
             );
 
             content = new Menu(
@@ -555,63 +523,72 @@ class Sidebar {
 
             if (isRowCell) {
                 buttonsContainer = createElement(
-                    'div',
-                    {
-                        className:
+                    'div', {
+                        className: (
                             EditGlobals.classNames.editSidebarTabBtnWrapper
-                    },
-                    {},
-                    contentContainer
+                        )
+                    }, {}, contentContainer
                 );
 
-                saveBtn = EditRenderer.renderButton(buttonsContainer, {
-                    value: 'Apply',
-                    className: EditGlobals.classNames.editSidebarTabBtn,
-                    callback: (): void => {
-                        // temp switch
-                        if (isComponentSettings) {
-                            sidebar.updateComponent();
-                        }
+                saveBtn = EditRenderer.renderButton(
+                    buttonsContainer,
+                    {
+                        value: 'Apply',
+                        className: EditGlobals.classNames.editSidebarTabBtn,
+                        callback: (): void => {
+                            // temp switch
+                            if (isComponentSettings) {
+                                sidebar.updateComponent();
+                            }
 
-                        // @ToDo - only for testing should be refactored
-                        // probably the whole save button
-                        if (
-                            sidebar.context &&
-                            sidebar.activeTab &&
-                            sidebar.activeTab.content.activeItems &&
-                            sidebar.activeTab.content.activeItems[0] &&
-                            sidebar.activeTab.content.activeItems[0]
-                                .innerElement
-                        ) {
-                            let value = (
-                                sidebar.activeTab.content.activeItems[0]
-                                    .innerElement as any
-                            ).value;
-
+                            // @ToDo - only for testing should be refactored
+                            // probably the whole save button
                             if (
-                                sidebar.context.getType() ===
-                                Globals.guiElementType.cell
+                                sidebar.context &&
+                                sidebar.activeTab &&
+                                sidebar.activeTab.content.activeItems &&
+                                sidebar.activeTab.content.activeItems[0] &&
+                                sidebar.activeTab.content.activeItems[0]
+                                    .innerElement
                             ) {
-                                const ctxCell = sidebar.context as Cell;
+                                let value = (
+                                    sidebar.activeTab.content.activeItems[0]
+                                        .innerElement as any
+                                ).value;
 
-                                value = value === 'auto' ? value : value + '%';
-                                ctxCell.setSize(value);
-                                ctxCell.updateSize(
-                                    value,
-                                    sidebar.editMode.rwdMode
-                                );
+                                if (
+                                    sidebar.context.getType() ===
+                                    Globals.guiElementType.cell
+                                ) {
+                                    const ctxCell = sidebar.context as Cell;
+
+                                    value = (
+                                        value === 'auto' ?
+                                            value :
+                                            value + '%'
+                                    );
+                                    ctxCell.setSize(value);
+                                    ctxCell.updateSize(
+                                        value,
+                                        sidebar.editMode.rwdMode
+                                    );
+                                }
                             }
                         }
                     }
-                });
+                );
 
-                cancelBtn = EditRenderer.renderButton(buttonsContainer, {
-                    value: 'Cancel',
-                    className: EditGlobals.classNames.editSidebarTabBtn,
-                    callback: (): void => {
-                        sidebar.hide();
+
+                cancelBtn = EditRenderer.renderButton(
+                    buttonsContainer,
+                    {
+                        value: 'Cancel',
+                        className: EditGlobals.classNames.editSidebarTabBtn,
+                        callback: (): void => {
+                            sidebar.hide();
+                        }
                     }
-                });
+                );
             }
 
             sidebar.tabs[tabs[i].type] = {
@@ -646,7 +623,9 @@ class Sidebar {
         });
     }
 
-    public updateTitle(text: string): void {
+    public updateTitle(
+        text: string
+    ): void {
         const sidebar = this;
 
         if (sidebar.title) {
@@ -654,7 +633,9 @@ class Sidebar {
         }
     }
 
-    public onTabClick(tab: Sidebar.Tab): void {
+    public onTabClick(
+        tab: Sidebar.Tab
+    ): void {
         const sidebar = this;
 
         if (sidebar.activeTab) {
@@ -671,7 +652,9 @@ class Sidebar {
             sidebar.activeTab.contentContainer.style.display = 'none';
         }
 
-        tab.element.classList.add(EditGlobals.classNames.editSidebarTabActive);
+        tab.element.classList.add(
+            EditGlobals.classNames.editSidebarTabActive
+        );
 
         tab.contentContainer.style.display = 'block';
 
@@ -681,7 +664,9 @@ class Sidebar {
         tab.content.updateActiveItems();
     }
 
-    public show(context?: Cell | Row): void {
+    public show(
+        context?: Cell|Row
+    ): void {
         const sidebar = this,
             editMode = sidebar.editMode;
 
@@ -721,12 +706,11 @@ class Sidebar {
             }
 
             // run showing animation by adding css class
-            setTimeout((): void => {
+            setTimeout(():void => {
                 sidebar.container.classList.add(
                     EditGlobals.classNames[
                         isRightSidebar ?
-                            'editSidebarRightShow' :
-                            'editSidebarShow'
+                            'editSidebarRightShow' : 'editSidebarShow'
                     ]
                 );
             }, 0);
@@ -750,32 +734,30 @@ class Sidebar {
     }
 
     public detectRightSidebar(): boolean {
+
         const editMode = this.editMode;
         const sidebar = editMode.sidebar;
         const layoutWrapper = editMode.board.layoutsWrapper;
 
         if (sidebar) {
-            return (
-                GUIElement.getOffsets(sidebar.context as Cell, layoutWrapper)
-                    .left <
-                layoutWrapper.offsetWidth / 2 - 10
-            ); // 10 = snap
+            return GUIElement.getOffsets(
+                sidebar.context as Cell,
+                layoutWrapper
+            ).left < ((layoutWrapper.offsetWidth / 2) - 10); // 10 = snap
         }
 
         return false;
     }
 
-    public update(context: Cell | Row | undefined): void {
+    public update(
+        context: Cell|Row|undefined
+    ): void {
         this.context = context;
 
         // activate first tab.
-        this.onTabClick(
-            this.tabs[
-                context ?
-                    Sidebar.tabs[0].type :
-                    Sidebar.tabsGeneralOptions[0].type
-            ]
-        );
+        this.onTabClick(this.tabs[
+            context ? Sidebar.tabs[0].type : Sidebar.tabsGeneralOptions[0].type
+        ]);
     }
 
     public hide(
@@ -788,15 +770,12 @@ class Sidebar {
         sidebar.context = void 0;
 
         // Styles.
-        sidebar.container.classList.remove(
-            EditGlobals.classNames.editSidebarShow
-        );
-        sidebar.container.classList.remove(
-            EditGlobals.classNames.editSidebarRight
-        );
-        sidebar.container.classList.remove(
-            EditGlobals.classNames.editSidebarRightShow
-        );
+        sidebar.container.classList
+            .remove(EditGlobals.classNames.editSidebarShow);
+        sidebar.container.classList
+            .remove(EditGlobals.classNames.editSidebarRight);
+        sidebar.container.classList
+            .remove(EditGlobals.classNames.editSidebarRightShow);
         editMode.board.container.style.paddingLeft = '';
 
         // Remove edit overlay if active.
@@ -826,23 +805,29 @@ class Sidebar {
         sidebar.isVisible = false;
     }
 
+
     public renderCloseButton(): void {
         const sidebar = this;
         const closeIcon = sidebar.options && sidebar.options.closeIcon;
 
-        sidebar.closeButton = EditRenderer.renderButton(sidebar.container, {
-            className:
-                EditGlobals.classNames.sidebarNavButton +
-                ' ' +
-                EditGlobals.classNames.sidebarCloseButton,
-            callback: (): void => {
-                sidebar.hide();
-            },
-            icon: closeIcon
-        });
+        sidebar.closeButton = EditRenderer.renderButton(
+            sidebar.container,
+            {
+                className: (
+                    EditGlobals.classNames.sidebarNavButton + ' ' +
+                    EditGlobals.classNames.sidebarCloseButton
+                ),
+                callback: (): void => {
+                    sidebar.hide();
+                },
+                icon: closeIcon
+            }
+        );
     }
 
-    public afterCSSAnimate(callback: Function): void {
+    public afterCSSAnimate(
+        callback: Function
+    ): void {
         const sidebar = this;
 
         addEvent(sidebar.container, 'transitionend', callback);
@@ -853,21 +838,17 @@ class Sidebar {
     public getComponentEditableOptions(): void {
         const sidebar = this;
         const lang = this.editMode.lang;
-        const cell = sidebar.context as Cell;
+        const cell = (sidebar.context as Cell);
         const currentComponent = cell && cell.mountedComponent;
-        const componentSettings =
-            currentComponent &&
+        const componentSettings = currentComponent &&
             currentComponent.editableOptions.getEditableOptions();
 
         if (componentSettings) {
             const menuItems = {};
             const items: Array<string> = [];
             const activeTab = sidebar.activeTab;
-            const activeTabContainer =
-                activeTab &&
-                activeTab.content &&
-                activeTab &&
-                activeTab.content.container;
+            const activeTabContainer = activeTab && activeTab.content &&
+                activeTab && activeTab.content.container;
             let type;
             let chartTypes = {};
 
@@ -876,44 +857,35 @@ class Sidebar {
                     type = componentSettings[key].type;
 
                     if (key === 'chartType') {
-                        const chartTypesEnum = [
-                            {
-                                name: 'column',
-                                iconURL:
-                                    Sidebar.seriesIconURLPrefix + 'column.svg'
-                            },
-                            {
-                                name: 'line',
-                                iconURL:
-                                    Sidebar.seriesIconURLPrefix + 'line.svg'
-                            },
-                            {
-                                name: 'scatter',
-                                iconURL:
-                                    Sidebar.seriesIconURLPrefix + 'scatter.svg'
-                            },
-                            {
-                                name: 'spline',
-                                iconURL:
-                                    Sidebar.seriesIconURLPrefix + 'spline.svg'
-                            },
-                            {
-                                name: 'pie',
-                                iconURL: Sidebar.seriesIconURLPrefix + 'pie.svg'
-                            }
-                        ];
+                        const chartTypesEnum = [{
+                            name: 'column',
+                            iconURL:
+                                Sidebar.seriesIconURLPrefix + 'column.svg'
+                        }, {
+                            name: 'line',
+                            iconURL:
+                                Sidebar.seriesIconURLPrefix + 'line.svg'
+                        }, {
+                            name: 'scatter',
+                            iconURL:
+                                Sidebar.seriesIconURLPrefix + 'scatter.svg'
+                        }, {
+                            name: 'pie',
+                            iconURL: Sidebar.seriesIconURLPrefix + 'pie.svg'
+                        }];
 
                         // eslint-disable-next-line
-                        const chartOpts = (
-                            currentComponent as HighchartsComponent
-                        ).options.chartOptions;
+                        const chartOpts = (currentComponent as HighchartsComponent).options.chartOptions;
 
-                        const chartType =
-                            chartOpts &&
-                            ((chartOpts.chart && chartOpts.chart.type) ||
-                                (chartOpts.series && chartOpts.series[0].type));
+                        const chartType = chartOpts &&
+                            (
+                                (chartOpts.chart && chartOpts.chart.type) ||
+                                (chartOpts.series && chartOpts.series[0].type)
+                            );
 
-                        if (chartType) {
+                        if (
+                            chartType
+                        ) {
                             chartTypes = {
                                 items: chartTypesEnum,
                                 value: chartType
@@ -928,8 +900,8 @@ class Sidebar {
                         type: type === 'text' ? 'input' : type,
                         text: (lang as any)[key] || key,
                         isActive: true,
-                        value: componentSettings[key].value,
                         collapsable: true,
+                        value: componentSettings[key].value,
                         events: {
                             change: (id: string, value: string): void => {
                                 sidebar.updatedSettings[id] = value;
@@ -938,7 +910,9 @@ class Sidebar {
                         ...chartTypes
                     };
 
-                    items.push(key);
+                    items.push(
+                        key
+                    );
                 }
             }
 
@@ -957,7 +931,10 @@ class Sidebar {
                 sidebar
             );
 
-            sidebar.componentEditableOptions.initItems(menuItems, true);
+            sidebar.componentEditableOptions.initItems(
+                menuItems,
+                true
+            );
 
             sidebar.componentEditableOptions.currentElementId = cell.id;
         }
@@ -986,7 +963,12 @@ class Sidebar {
         }
 
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            gridElement = createElement('div', {}, {}, tabContainer);
+            gridElement = createElement(
+                'div',
+                {},
+                {},
+                tabContainer
+            );
 
             // Drag drop new component.
             (gridElement.onmousedown as any) = (e: PointerEvent): void => {
@@ -995,11 +977,9 @@ class Sidebar {
                     sidebar.editMode.dragDrop.onDragStart(
                         e,
                         void 0,
-                        (dropContext: Cell | Row): void => {
-                            const newCell = components[i].onDrop(
-                                sidebar,
-                                dropContext
-                            );
+                        (dropContext: Cell|Row): void => {
+                            const newCell =
+                                components[i].onDrop(sidebar, dropContext);
 
                             if (newCell) {
                                 sidebar.editMode.setEditCellContext(newCell);
@@ -1015,6 +995,7 @@ class Sidebar {
         if (this.activeTab) {
             this.activeTab.listComponent = true;
         }
+
     }
 
     public getLayoutOptions(): void {
@@ -1037,7 +1018,9 @@ class Sidebar {
             }
 
             try {
-                updatedSettings[key] = JSON.parse(savedSettings[key]);
+                updatedSettings[key] = JSON.parse(
+                    savedSettings[key]
+                );
             } catch (e) {
                 updatedSettings[key] = savedSettings[key];
             }
@@ -1057,17 +1040,18 @@ class Sidebar {
     }
 
     public onDropNewComponent(
-        dropContext: Cell | Row,
+        dropContext: Cell|Row,
         componentOptions: Bindings.ComponentOptions
     ): Cell | void {
         const sidebar = this,
             dragDrop = sidebar.editMode.dragDrop;
 
         if (dragDrop) {
-            const row =
+            const row = (
                     dropContext.getType() === 'cell' ?
                         (dropContext as Cell).row :
-                        (dropContext as Row),
+                        (dropContext as Row)
+                ),
                 newCell = row.addCell({
                     id: GUIElement.createElementId('col')
                 });
@@ -1083,11 +1067,13 @@ class Sidebar {
     }
 
     // Get width from options or calculate it.
-    private getCellWidth(cell: Cell): number | string {
+    private getCellWidth(
+        cell: Cell
+    ): number | string {
         const sidebar = this,
             currentRwdMode = sidebar.editMode.rwdMode,
             cellRwd = (cell.options.responsive || {})[currentRwdMode],
-            definedWidth = (cellRwd && cellRwd.width) || cell.options.width;
+            definedWidth = cellRwd && cellRwd.width || cell.options.width;
 
         if (definedWidth && definedWidth !== 'auto') {
             const percentageValue = GUIElement.getPercentageWidth(definedWidth);
@@ -1117,8 +1103,7 @@ class Sidebar {
         }
 
         const gridWrapper = createElement(
-            'div',
-            {
+            'div', {
                 className: EditGlobals.classNames.editGridItems
             },
             {},
@@ -1127,8 +1112,7 @@ class Sidebar {
 
         for (let i = 0, iEnd = predefinedWidth.length; i < iEnd; ++i) {
             const predefinedBtnWidth = createElement(
-                'div',
-                {
+                'div', {
                     textContent: predefinedWidth[i].name,
                     onclick: function (): void {
                         if (item) {
