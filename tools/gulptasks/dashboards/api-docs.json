@@ -7,6 +7,7 @@
         "../../../ts/Dashboards/Board.ts",
         "../../../ts/Data/DataTable.ts",
         "../../../ts/DataGrid/DataGrid.ts",
+        "../../../ts/DataGrid/DataGridOptions.d.ts",
         "../../../ts/Extensions/DataGridPlugin.ts",
         "../../../ts/Extensions/HighchartsPlugin.ts"
     ],
@@ -15,5 +16,6 @@
     "hideGenerator": true,
     "name": "Highcharts Dashboards",
     "readme": "../../../docs/dashboards/your-first-dashboard.md",
-    "out": "../../../build/api/dashboards/typedoc/"
+    "out": "../../../build/api/dashboards/typedoc/",
+    "visibilityFilters": {}
 }
