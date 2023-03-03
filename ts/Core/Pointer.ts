@@ -71,6 +71,7 @@ declare module './Chart/ChartLike'{
         mouseDownX?: number;
         mouseDownY?: number;
         mouseIsDown?: (boolean|string);
+        pointer: Pointer;
     }
 }
 
@@ -79,8 +80,6 @@ declare module './Chart/ChartLike'{
  *  Class
  *
  * */
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
  * The mouse and touch tracker object. Each {@link Chart} item has one
@@ -492,18 +491,18 @@ class Pointer {
                 height
             } = this.getSelectionBox(this.selectionMarker);
 
-            let selectionData = {
-                    originalEvent: e, // #4890
-                    xAxis: [],
-                    yAxis: [],
-                    x,
-                    y,
-                    width,
-                    height
-                },
-                // Start by false runZoom, unless when we have a mapView, in
-                // which case the zoom will be handled in the selection event.
-                runZoom = Boolean(chart.mapView);
+            const selectionData = {
+                originalEvent: e, // #4890
+                xAxis: [],
+                yAxis: [],
+                x,
+                y,
+                width,
+                height
+            };
+            // Start by false runZoom, unless when we have a mapView, in
+            // which case the zoom will be handled in the selection event.
+            let runZoom = Boolean(chart.mapView);
 
             // a selection has been made
             if (this.hasDragged || hasPinched) {
@@ -2147,6 +2146,13 @@ class Pointer {
  * */
 
 namespace Pointer {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface ChartPositionObject {
         left: number;
         scaleX: number;
@@ -2188,6 +2194,42 @@ namespace Pointer {
         xAxis: Array<SelectDataObject>;
         yAxis: Array<SelectDataObject>;
     }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(ChartClass: typeof Chart): void {
+        if (composedMembers.indexOf(ChartClass) === -1) {
+            composedMembers.push(ChartClass);
+            addEvent(ChartClass, 'beforeRender', function (): void {
+                /**
+                 * The Pointer that keeps track of mouse and touch
+                 * interaction.
+                 *
+                 * @memberof Highcharts.Chart
+                 * @name pointer
+                 * @type {Highcharts.Pointer}
+                 * @instance
+                 */
+                this.pointer = new Pointer(this, this.options);
+            });
+        }
+    }
+
 }
 
 /* *
