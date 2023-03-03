@@ -37,7 +37,6 @@ const {
     noop
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
-import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
 import BBoxObject from './Renderer/BBoxObject';
@@ -72,7 +71,6 @@ declare module './Chart/ChartLike'{
         mouseDownX?: number;
         mouseDownY?: number;
         mouseIsDown?: (boolean|string);
-        tooltip?: Tooltip;
     }
 }
 
@@ -1015,17 +1013,9 @@ class Pointer {
         this.pinchDown = [];
         this.lastValidTouch = {};
 
-        if (Tooltip) {
-            /**
-             * Tooltip object for points of series.
-             *
-             * @name Highcharts.Chart#tooltip
-             * @type {Highcharts.Tooltip}
-             */
-            chart.tooltip = new Tooltip(chart, options.tooltip as any);
-        }
-
         this.setDOMEvents();
+
+        fireEvent(this, 'afterInit');
     }
 
     /**

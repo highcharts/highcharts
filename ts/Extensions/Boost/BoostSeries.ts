@@ -1053,7 +1053,7 @@ function seriesRenderCanvas(this: Series): void {
                 isYInside = (y || 0) >= yMin && y <= yMax;
             }
 
-            if (y !== null && x >= xMin && x <= xMax && isYInside) {
+            if (x >= xMin && x <= xMax && isYInside) {
 
                 clientX = xAxis.toPixels(x, true);
 
