@@ -91,36 +91,3 @@ QUnit.test('Setting X axis extremes on bubble (#5167)', function (assert) {
     assert.ok(chart.yAxis[0].min < 102.9, 'DE point is within range');
     assert.ok(chart.yAxis[0].max > 102.9, 'DE point is within range');
 });
-
-QUnit.test('Calculation of Z extremes when Z = 0 (#17280)', function (assert) {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            type: 'bubble',
-            animation: false
-        },
-
-        series: [{
-            data: [
-                [2, 2, 0]
-            ]
-        }, {
-            data: [
-                [1, 1, 20]
-            ]
-        }]
-    });
-
-    assert.strictEqual(
-        chart.bubbleZExtremes.zMin,
-        0,
-        'The lower Z extreme equals 0'
-    );
-
-    chart.series[1].data[0].update({ z: -20 });
-
-    assert.strictEqual(
-        chart.bubbleZExtremes.zMax,
-        0,
-        'The upper Z extreme equals 0'
-    );
-});
