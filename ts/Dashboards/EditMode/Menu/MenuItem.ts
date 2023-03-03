@@ -108,14 +108,14 @@ class MenuItem {
             };
 
         let element;
-        const setInAccordeon = options.setInAccordeon;
-        const parent = setInAccordeon ?
-            (EditRenderer.renderOuterAccordeon(
+        const collapsable = options.collapsable;
+        const parent = collapsable ?
+            (EditRenderer.renderCollapse(
                 item.container,
                 options.text || ''
             ) as any).content :
             item.container;
-        const title = !setInAccordeon ? options.text : '';
+        const title = !collapsable ? options.text : '';
 
         if (options.type === 'toggle') {
             element = EditRenderer.renderToggle(
@@ -222,7 +222,7 @@ class MenuItem {
 
 namespace MenuItem {
     export interface Options {
-        setInAccordeon?: boolean;
+        collapsable?: boolean;
         id: string;
         type?: 'addComponent'|'addLayout'|'horizontalSeparator'|'icon'|'input'|
         'toggle'|'text'|'textarea'|'verticalSeparator'|'select';

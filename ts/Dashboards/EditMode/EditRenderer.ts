@@ -55,7 +55,7 @@ function renderContextButton(
     return ctxBtnElement;
 }
 
-function renderOuterAccordeon(
+function renderCollapse(
     parentElement: HTMLDOMElement,
     title: string
 ): { outerElement: HTMLDOMElement; content: HTMLDOMElement } | undefined {
@@ -476,7 +476,7 @@ const EditRenderer = {
     renderSelect,
     renderToggle,
     renderText,
-    renderOuterAccordeon,
+    renderCollapse: renderCollapse,
     renderIcon,
     renderContextButton,
     renderInput,

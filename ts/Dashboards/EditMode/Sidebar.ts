@@ -929,7 +929,7 @@ class Sidebar {
                         text: (lang as any)[key] || key,
                         isActive: true,
                         value: componentSettings[key].value,
-                        setInAccordeon: true,
+                        collapsable: true,
                         events: {
                             change: (id: string, value: string): void => {
                                 sidebar.updatedSettings[id] = value;
