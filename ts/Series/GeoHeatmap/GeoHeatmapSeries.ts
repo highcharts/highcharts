@@ -93,6 +93,9 @@ class GeoHeatmapSeries extends MapSeries {
              * In styled mode, the border stroke width is given in the
              * `.highcharts-point` class.
              *
+             * @sample maps/demo/geoheatmap-orthographic/
+             *         borderWidth set to 1 to create a grid
+             *
              * @type      {number|null}
              * @default   0
              * @product   highmaps
