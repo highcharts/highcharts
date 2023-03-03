@@ -65,7 +65,8 @@ class Board implements Serializable<Board, Board.JSON> {
      * */
 
     /**
-     * Creates a dashboard with components like charts, tables, and HTML.
+     * Creates a dashboard with components like charts, tables, and HTML
+     * elements.
      *
      * @param renderTo The DOM element to render to, or its id.
      * @param options The options for the dashboard.
@@ -163,13 +164,15 @@ class Board implements Serializable<Board, Board.JSON> {
     public a11y: DashboardsAccessibility;
 
     /**
-     * The container referenced by the renderTo option when creating the
+     * The container referenced by the `renderTo` option when creating the
      * dashboard.
+     * @internal
      * */
     public boardWrapper: HTMLElement = void 0 as any;
 
     /**
-     * The main container for the dashboard.
+     * The main container for the dashboard. Created inside the element
+     * specified by user when creating the dashboard.
      * */
     public container: HTMLElement = void 0 as any;
 
@@ -196,12 +199,12 @@ class Board implements Serializable<Board, Board.JSON> {
 
     /**
      * Index of the board in the global boards array. Allows to access the
-     * specific when having multiple dashboards.
+     * specific one when having multiple dashboards.
      * */
     public index: number;
 
     /**
-     * An array of layouts.
+     * An array of generated layouts.
      * */
     public layouts: Array<Layout>;
 
@@ -212,7 +215,7 @@ class Board implements Serializable<Board, Board.JSON> {
     public layoutsWrapper: globalThis.HTMLElement;
 
     /**
-     * An array of mounted components.
+     * An array of mounted components on the dashboard.
      * */
     public mountedComponents: Array<Bindings.MountedComponentsOptions>;
 
@@ -336,7 +339,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * responsive breakpoints.
      * @internal
      *
-     * @returns string Return current size of the layout container in px.
+     * @returns Return current size of the layout container in px.
      */
     public getLayoutContainerSize(): string {
         const board = this,
@@ -544,7 +547,8 @@ namespace Board {
          **/
         containerId: string;
         /**
-         * An array of serialized layouts to add to the board.
+         * An array of serialized layouts options and their elements to add to
+         * the board.
          **/
         layouts: Array<Layout.JSON>;
         /**
@@ -589,7 +593,7 @@ namespace Board {
          **/
         layoutOptions: Partial<Layout.Options>;
         /**
-         * A list of layouts to add to the board.
+         * A list of layouts and their elements options to add to the board.
          **/
         layouts: Array<Layout.Options>;
     }
@@ -613,6 +617,7 @@ namespace Board {
 
     /**
      * Global dashboard settings.
+     * @internal
      *
      */
     export const defaultOptions: Board.Options = {
