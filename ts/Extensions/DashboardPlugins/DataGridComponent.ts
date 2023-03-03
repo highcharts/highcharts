@@ -364,11 +364,11 @@ namespace DataGridComponent {
         extends Component.ComponentOptions,
         EditableOptions {
         /**
-         * The name of class that is applied to the data grid container
+         * The name of class that is applied to the data grid container.
          */
         dataGridClassName?: string;
         /**
-         * The name of id that is applied to the data grid container
+         * The name of id that is applied to the data grid container.
          */
         dataGridID?: string;
         onUpdate: typeof DataGridComponent.onUpdate
@@ -376,19 +376,19 @@ namespace DataGridComponent {
     /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
         /**
-         * The set of options like `dataGridClassName` and `dataGridID`
+         * The set of options like `dataGridClassName` and `dataGridID`.
          */
         dataGridOptions?: DataGridOptions;
         /**
-         * The name of class that is applied to the chart's container
+         * The name of class that is applied to the chart's container.
          */
         chartClassName?: string;
         /**
-         * The id that is applied to the chart's container
+         * The id that is applied to the chart's container.
          */
         chartID?: string;
         /**
-         * Names / aliases that should be mapped to xAxis values
+         * Names / aliases that should be mapped to xAxis values.
          */
         tableAxisMap?: Record<string, string | null>;
     }

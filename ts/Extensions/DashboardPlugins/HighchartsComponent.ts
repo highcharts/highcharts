@@ -301,7 +301,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     }
 
     /**
-     * Internal method for handling option updates
+     * Internal method for handling option updates.
      */
     private setOptions(): void {
         if (this.options.chartClassName) {
@@ -333,12 +333,12 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         table.setCell(columnName, rowNumber, valueToSet);
     }
     /**
-     * Handles updating via options
+     * Handles updating via options.
      * @param {Partial<Component.ComponentOptions>} options
-     * The options to apply
+     * The options to apply.
      *
      * @param {boolean} redraw
-     * The flag triggers the main redraw operation
+     * The flag triggers the main redraw operation.
      */
     private updateComponentOptions(
         options: Partial<HighchartsComponent.ComponentOptions>,
@@ -495,7 +495,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     }
 
     /**
-     * Registers events from the chart options to the callback register
+     * Registers events from the chart options to the callback register.
      */
     private registerChartEvents(): void {
         if (this.chart && this.chart.options) {
@@ -624,19 +624,19 @@ namespace HighchartsComponent {
     /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
         /**
-         * A full set of chart options used by the chart
+         * A full set of chart options used by the chart.
          */
         chartOptions?: Options;
         /**
-         * The name of class that is applied to the chart's container
+         * The name of class that is applied to the chart's container.
          */
         chartClassName?: string;
         /**
-         * The id that is applied to the chart's container
+         * The id that is applied to the chart's container.
          */
         chartID?: string;
         /**
-         * Names / aliases that should be mapped to xAxis values
+         * Names / aliases that should be mapped to xAxis values.
          */
         tableAxisMap?: Record<string, string | null>;
     }

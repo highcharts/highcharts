@@ -289,7 +289,6 @@ namespace HTMLComponent {
     export interface HTMLComponentOptions extends Component.ComponentOptions, EditableOptions {
         /**
          * Array of HTML elements, declared as string or node.
-         *
          * ```
          * Example:
          *

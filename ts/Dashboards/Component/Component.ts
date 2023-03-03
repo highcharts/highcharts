@@ -900,27 +900,27 @@ namespace Component {
 
     export interface ComponentOptions extends EditableOptions {
         /**
-         * Instance of cell, where component is attached
+         * Instance of cell, where component is attached.
          */
         parentCell?: Cell;
         /**
          * The HTML element or id of HTML element that is used for appending
-         * a component
+         * a component.
          */
         parentElement: HTMLElement | string;
         /**
-         * The name of class that is applied to the component's container
+         * The name of class that is applied to the component's container.
          */
         className?: string;
         /**
-         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`
+         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
          */
         type: string;
         // allow overwriting gui elements
         /** @internal */
         navigationBindings?: NavigationBindingsOptionsObject[];
         /**
-         * Events attached to the component : `mount`, `unmount`
+         * Events attached to the component : `mount`, `unmount`.
          */
         events?: Record<string, Function>;
         /** @internal */
@@ -931,7 +931,6 @@ namespace Component {
         presentationModifier?: DataModifier;
         /**
          * Defines which elements should be synced.
-         *
          * ```
          * Example:
          * {
@@ -962,19 +961,19 @@ namespace Component {
          */
         store?: StoreTypes;
         /**
-         * Sets an ID for the component's `div`
+         * Sets an ID for the component's `div`.
          */
         id?: string;
         /**
-         * Additional CSS styles to apply inline to the component `div`
+         * Additional CSS styles to apply inline to the component `div`.
          */
         style?: CSSObject;
         /**
-         * The component's title, which will render at the top
+         * The component's title, which will render at the top.
          */
         title: TextOptionsType;
         /**
-         * The component's caption, which will render at the bottom
+         * The component's caption, which will render at the bottom.
          */
         caption: TextOptionsType;
     }
@@ -1094,36 +1093,36 @@ namespace Component {
     }
 
     /**
-     * Adds a component instance to the registry
+     * Adds a component instance to the registry.
      * @param {ComponentType} component
-     * The component to add
+     * The component to add.
      */
     export function addInstance(component: ComponentType): void {
         Component.instanceRegistry[component.id] = component;
     }
 
     /**
-     * Removes a component instance from the registry
+     * Removes a component instance from the registry.
      * @param {Component} component
-     * The component to remove
+     * The component to remove.
      */
     export function removeInstance(component: Component<any>): void {
         delete Component.instanceRegistry[component.id];
     }
 
     /**
-     * Retrieves the IDs of the registered component instances
+     * Retrieves the IDs of the registered component instances.
      * @return {string[]}
-     * Array of component IDs
+     * Array of component IDs.
      */
     export function getAllInstanceIDs(): string[] {
         return Object.keys(instanceRegistry);
     }
 
     /**
-     * Retrieves all registered component instances
+     * Retrieves all registered component instances.
      * @return {ComponentType[]}
-     * Array of components
+     * Array of components.
      */
     export function getAllInstances(): Component<any>[] {
         const ids = getAllInstanceIDs();
@@ -1134,7 +1133,7 @@ namespace Component {
      * Gets component by key from the registry.
      *
      * @param {string} key
-     * Key of component that exists in registry
+     * Key of component that exists in registry.
      *
      * @return {Record<string, Class<Component>>}
      * Returns the component.
@@ -1149,7 +1148,7 @@ namespace Component {
      * Gets instance of component from registry.
      *
      * @param {string} id
-     * Component's id that exists in registry
+     * Component's id that exists in registry.
      *
      * @return {ComponentType | undefined}
      * Returns the component type or undefined.
@@ -1159,19 +1158,19 @@ namespace Component {
     }
     /**
      * Sends a message from the given sender to the target,
-     * with an optional callback
+     * with an optional callback.
      *
      * @param {ComponentType | ComponentGroup} sender
-     * The sender of the message. Can be a Component or a ComponentGroup
+     * The sender of the message. Can be a Component or a ComponentGroup.
      *
      * @param {Component.MessageEvent['message']} message
      * The message. It can be a string, or a an object containing a
-     * `callback` function
+     * `callback` function.
      *
      * @param {Component.MessageTarget} targetObj
      * An object containing the `type` of target,
      * which can be `group`, `componentID`, or `componentType`
-     * as well as the id of the recipient
+     * as well as the id of the recipient.
      *
      */
     export function relayMessage(
