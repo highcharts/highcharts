@@ -69,7 +69,7 @@ namespace Globals {
         layout: 'layout'
     };
 
-    export const respoBreakpoints: Record<string, string> = {
+    export const responsiveBreakpoints: Record<string, string> = {
         small: 'small',
         medium: 'medium',
         large: 'large'

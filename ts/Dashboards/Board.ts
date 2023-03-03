@@ -340,19 +340,19 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     public getLayoutContainerSize(): string {
         const board = this,
-            respoOptions = board.options.respoBreakpoints,
+            respoOptions = board.options.responsiveBreakpoints,
             cntWidth = (board.layoutsWrapper || {}).clientWidth;
 
-        let size = Globals.respoBreakpoints.large;
+        let size = Globals.responsiveBreakpoints.large;
 
         if (respoOptions) {
             if (cntWidth <= respoOptions.small) {
-                size = Globals.respoBreakpoints.small;
+                size = Globals.responsiveBreakpoints.small;
             } else if (
                 cntWidth > respoOptions.small &&
                 cntWidth <= respoOptions.medium
             ) {
-                size = Globals.respoBreakpoints.medium;
+                size = Globals.responsiveBreakpoints.medium;
             }
         }
 
@@ -451,7 +451,7 @@ class Board implements Serializable<Board, Board.JSON> {
                 {
                     layoutsJSON: options.layouts,
                     componentOptions: options.componentOptions,
-                    respoBreakpoints: options.respoBreakpoints
+                    responsiveBreakpoints: options.responsiveBreakpoints
                 }
             );
 
@@ -481,7 +481,7 @@ class Board implements Serializable<Board, Board.JSON> {
                 guiEnabled: board.guiEnabled,
                 layouts: layouts,
                 componentOptions: board.options.componentOptions,
-                respoBreakpoints: board.options.respoBreakpoints
+                responsiveBreakpoints: board.options.responsiveBreakpoints
             },
             states: DataStatesHelper.toJSON(board.states)
         };
@@ -503,37 +503,105 @@ namespace Board {
      *
      * */
 
+    /**
+     * Options to configure the board.
+     **/
     export interface Options {
+        /**
+         * Options for the GUI. Allows to define graphical elements and its
+         * layout.
+         **/
         gui?: GUIOptions;
+        /**
+         * Options for the edit mode. Can be used to enable the edit mode and
+         * define al things related to it like the context menu.
+         **/
         editMode?: EditMode.Options;
+        /**
+         * List of components to add to the board.
+         **/
         components?: Array<Bindings.ComponentOptions>;
+        /**
+         * General options for the components.
+         **/
         componentOptions?: Partial<Bindings.ComponentOptions>;
+        /**
+         * A list of serialized layouts to add to the board.
+         **/
         layoutsJSON?: Array<Layout.JSON>;
-        respoBreakpoints?: RespoBreakpoints;
+        /**
+         * Responsive breakpoints for the board- small, medium and large.
+         **/
+        responsiveBreakpoints?: ResponsiveBreakpoints;
     }
 
+    /**
+     * Serialized options to configure the board.
+     **/
     export interface OptionsJSON extends JSON.Object {
+        /**
+         * Id of the container to which the board is added.
+         **/
         containerId: string;
+        /**
+         * An array of serialized layouts to add to the board.
+         **/
         layouts: Array<Layout.JSON>;
+        /**
+         * Whether the GUI is enabled or not.
+         **/
         guiEnabled?: boolean;
+        /**
+         * General options for the components.
+         **/
         componentOptions?: Partial<Bindings.ComponentOptions>;
-        respoBreakpoints?: RespoBreakpoints;
+        /**
+         * Responsive breakpoints for the board- small, medium and large.
+         **/
+        responsiveBreakpoints?: ResponsiveBreakpoints;
     }
 
-    export interface RespoBreakpoints extends JSON.Object {
+    /**
+     * Responsive breakpoints for the board- small, medium and large.
+     **/
+    export interface ResponsiveBreakpoints extends JSON.Object {
+        /**
+         * Value in px to test the dashboard is in small mode.
+         **/
         small: number;
+        /**
+         * Value in px to test the dashboard is in medium mode.
+         **/
         medium: number;
+        /**
+         * Value in px to test the dashboard is in large mode.
+         **/
         large: number;
     }
 
     export interface GUIOptions {
+        /**
+         * Whether the GUI is enabled or not.
+         **/
         enabled: boolean;
+        /**
+         * Options for the layouts.
+         **/
         layoutOptions: Partial<Layout.Options>;
+        /**
+         * A list of layouts to add to the board.
+         **/
         layouts: Array<Layout.Options>;
     }
 
     export interface JSON extends Serializable.JSON<'Board'> {
+        /**
+         * Serialized options to configure the board.
+         **/
         options: OptionsJSON;
+        /**
+         * Serialized states of the board.
+         **/
         states: DataStatesHelper.JSON;
     }
 
@@ -544,13 +612,8 @@ namespace Board {
      * */
 
     /**
-     * Global Dashboard settings.
+     * Global dashboard settings.
      *
-     * @name Board.defaultOptions
-     * @type {Board.Options}
-     *//**
-     * @product dashboard
-     * @optionparent
      */
     export const defaultOptions: Board.Options = {
         gui: {
@@ -565,7 +628,7 @@ namespace Board {
             isResizable: true
         },
         components: [],
-        respoBreakpoints: {
+        responsiveBreakpoints: {
             small: 576,
             medium: 992,
             large: 1200
@@ -582,8 +645,7 @@ namespace Board {
     /**
      * Import layouts from the local storage.
      *
-     * @return {Board|undefined}
-     * Returns the Dashboard instance or undefined.
+     * @return Returns the Dashboard instance or undefined.
      */
     export function importLocal(): (Board|undefined) {
         const dashboardJSON = localStorage.getItem(
