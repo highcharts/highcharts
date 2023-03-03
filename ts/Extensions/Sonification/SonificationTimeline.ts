@@ -329,13 +329,15 @@ class SonificationTimeline {
     playAdjacent(
         next: boolean,
         onEnd?: Function,
-        onBoundaryHit?: Function
+        onBoundaryHit?: Function,
+        eventFilter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>
     ): void {
         const fromTime = this.isPaused ? this.resumeFromTime : -1,
             closestTime = this.channels.reduce(
                 (time, channel): number => {
                     // Adapted binary search since events are sorted by time
-                    const events = channel.events;
+                    const events = eventFilter ?
+                        channel.events.filter(eventFilter) : channel.events;
                     let s = 0,
                         e = events.length,
                         lastValidTime = time;
@@ -371,10 +373,13 @@ class SonificationTimeline {
             }
             return;
         }
-        this.play((e): boolean => (next ?
-            e.time > fromTime && e.time <= closestTime + margin :
-            e.time < fromTime && e.time >= closestTime - margin
-        ), false, false, onEnd);
+        this.play((e, ix, arr): boolean => {
+            const withinTime = next ?
+                e.time > fromTime && e.time <= closestTime + margin :
+                e.time < fromTime && e.time >= closestTime - margin;
+            return eventFilter ? withinTime && eventFilter(e, ix, arr) :
+                withinTime;
+        }, false, false, onEnd);
         this.playingChannels = this.playingChannels || this.channels;
         this.isPaused = true;
         this.isPlaying = false;

@@ -238,8 +238,14 @@ class Sonification {
 
 
     // Play points/events adjacent to current timeline cursor location
-    playAdjacent(next: boolean, onEnd?: Function): void {
-        if (!this.ready(this.playAdjacent.bind(this, next, onEnd))) {
+    playAdjacent(
+        next: boolean,
+        onEnd?: Function,
+        eventFilter?: ArrayFilterCallbackFunction<globalThis.Sonification.TimelineEvent>
+    ): void {
+        if (!this.ready(
+            this.playAdjacent.bind(this, next, onEnd, eventFilter)
+        )) {
             return;
         }
         if (this.timeline) {
@@ -259,7 +265,7 @@ class Sonification {
                 if (this.boundaryInstrument) {
                     this.boundaryInstrument.playFreqAtTime(0, 1, 300);
                 }
-            }));
+            }), eventFilter);
         }
     }
 
