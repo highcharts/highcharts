@@ -13,6 +13,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
@@ -21,6 +23,7 @@
 
 import type DataEvent from '../Data/DataEvent';
 import type DataGridOptions from './DataGridOptions';
+
 import DataTable from '../Data/DataTable.js';
 import DataGridUtils from './DataGridUtils.js';
 const {
@@ -28,7 +31,7 @@ const {
     emptyHTMLElement,
     makeDiv
 } = DataGridUtils;
-import defaultOptions from './DataGridDefaults.js';
+import DataGridDefaults from './DataGridDefaults.js';
 import H from '../Core/Globals.js';
 const {
     doc
@@ -49,6 +52,9 @@ const {
  *
  * */
 
+/**
+ * Creates a grid structure with scrollable data cells.
+ */
 class DataGrid {
 
     /* *
@@ -57,7 +63,10 @@ class DataGrid {
      *
      * */
 
-    public static readonly defaultOptions = defaultOptions;
+    /**
+     * Default options for all DataGrid instances.
+     */
+    public static readonly defaultOptions = DataGridDefaults;
 
     /* *
      *
@@ -65,28 +74,58 @@ class DataGrid {
      *
      * */
 
+    /**
+     * Container to create the grid structure into.
+     */
     public container: HTMLElement;
-    public options: DataGridOptions;
-    public dataTable: DataTable;
-    public hoveredRow?: HTMLElement;
-    public rowElements: Array<HTMLElement>;
 
+    /**
+     * Options used to create the grid structure.
+     */
+    public options: DataGridOptions;
+
+    /**
+     * Table used to create the grid structure.
+     */
+    public dataTable: DataTable;
+
+    /** @internal */
+    public hoveredRow?: HTMLElement;
+    /** @internal */
+    public rowElements: Array<HTMLElement>;
+    /** @internal */
     private gridContainer: HTMLElement;
+    /** @internal */
     private outerContainer: HTMLElement;
+    /** @internal */
     private scrollContainer: HTMLElement;
+    /** @internal */
     private innerContainer: HTMLElement;
+    /** @internal */
     private headerContainer?: HTMLElement;
+    /** @internal */
     private cellInputEl?: HTMLInputElement;
+    /** @internal */
     private columnHeadersContainer?: HTMLElement;
+    /** @internal */
     private columnDragHandlesContainer?: HTMLElement;
+    /** @internal */
     private columnResizeCrosshair?: HTMLElement;
+    /** @internal */
     private draggedResizeHandle: null | HTMLElement;
+    /** @internal */
     private draggedColumnRightIx: null | number;
+    /** @internal */
     private dragResizeStart?: number;
+    /** @internal */
     private prevTop = -1;
+    /** @internal */
     private scrollEndRowCount = 0;
+    /** @internal */
     private scrollEndTop = 0;
+    /** @internal */
     private bottom = false;
+    /** @internal */
     private columnNames: Array<string>;
 
 
@@ -96,6 +135,15 @@ class DataGrid {
      *
      * */
 
+    /**
+     * Creates an instance of DataGrid.
+     *
+     * @param container
+     * Container to create the grid structure into.
+     *
+     * @param options
+     * Options to create the grid structure.
+     */
     constructor(container: (string | HTMLElement), options: DeepPartial<DataGridOptions>) {
         // Initialize containers
         if (typeof container === 'string') {
@@ -130,6 +178,7 @@ class DataGrid {
     }
 
 
+    /** @internal */
     public getRowCount(): number {
         return this.dataTable.getRowCount();
     }
@@ -138,8 +187,8 @@ class DataGrid {
     /**
      * Update the data grid with new options.
      *
-     * @param {DataGridOptions} options
-     *        An object with new options.
+     * @param options
+     * An object with new options.
      */
     public update(options: DeepPartial<DataGridOptions>): void {
         this.options = merge(this.options, options);
@@ -152,10 +201,12 @@ class DataGrid {
     /**
      * Resize a column.
      *
-     * @param {number} width
+     * @internal
+     *
+     * @param width
      *        New column width.
      *
-     * @param {string|number|undefined} columnNameOrIndex
+     * @param columnNameOrIndex
      *        Name or index of the column to resize, omit to resize all
      *        columns.
      *
@@ -213,9 +264,10 @@ class DataGrid {
     /**
      * Emits an event on this data grid to all registered callbacks of the
      * given event.
-     * @private
      *
-     * @param {DataGrid.Event} e
+     * @internal
+     *
+     * @param e
      * Event object with event information.
      */
     public emit<E extends DataEvent>(e: E): void {
@@ -224,8 +276,11 @@ class DataGrid {
 
     /**
      * Add class to given element to toggle highlight.
-     * @param  {HTMLElement} row Row to highlight.
-     * @return {void}
+     *
+     * @internal
+     *
+     * @param row
+     * Row to highlight.
      */
     public toggleRowHighlight(row?: HTMLElement): void {
         if (this.hoveredRow && this.hoveredRow.classList.contains('hovered')) {
@@ -238,15 +293,15 @@ class DataGrid {
     /**
      * Registers a callback for a specific event.
      *
-     * @function Highcharts.DataGrid#on
+     * @internal
      *
-     * @param {string} type
+     * @param type
      * Event type as a string.
      *
-     * @param {Highcharts.EventCallbackFunction<Highcharts.DataGrid>} callback
+     * @param callback
      * Function to register for an event callback.
      *
-     * @return {Function}
+     * @return
      * Function to unregister callback from the event.
      */
     public on<E extends DataEvent>(
@@ -258,7 +313,11 @@ class DataGrid {
 
     /**
      * Scroll to a given row.
-     * @param  {number} row Row number
+     *
+     * @internal
+     *
+     * @param row
+     * Row number
      */
     public scrollToRow(row: number): void {
         this.outerContainer.scrollTop = row * this.options.cellHeight;
@@ -267,6 +326,7 @@ class DataGrid {
     // ---------------- Private methods
 
 
+    /** @internal */
     private isColumnEditable(columnName: string): boolean {
         const columnOptions = this.options.columns[columnName] || {};
         return pick(
@@ -279,9 +339,7 @@ class DataGrid {
     /**
      * Get a reference to the underlying DataTable from options, or create one
      * if needed.
-     *
-     * @return {Highcharts.DataTable}
-     * Table reference
+     * @internal
      */
     private initDataTable(): DataTable {
         if (this.options.dataTable) {
@@ -294,6 +352,7 @@ class DataGrid {
     /**
      * Render the data grid. To be called on first render, as well as when
      * options change, or the underlying data changes.
+     * @internal
      */
     private render(): void {
         const { options } = this;
@@ -323,6 +382,7 @@ class DataGrid {
 
     /**
      * Add internal event listeners to the grid.
+     * @internal
      */
     private addEvents(): void {
         this.outerContainer.addEventListener('scroll', (e): void => {
@@ -337,6 +397,7 @@ class DataGrid {
     }
 
 
+    /** @internal */
     private updateVisibleCells = (): void => {
         let scrollTop = this.outerContainer.scrollTop;
         if (H.isSafari) {
@@ -401,7 +462,7 @@ class DataGrid {
 
     /**
      * Handle user scrolling the grid
-     * @param {Event} e Event object
+     * @internal
      */
     private onScroll(e: Event): void {
         e.preventDefault();
@@ -411,8 +472,14 @@ class DataGrid {
 
     /**
      * Handle the user starting interaction with a cell.
-     * @param {HTMLElement} cellEl The clicked cell.
-     * @param {string} columnName The column the clicked cell belongs to.
+     *
+     * @internal
+     *
+     * @param cellEl
+     * The clicked cell.
+     *
+     * @param columnName
+     * The column the clicked cell belongs to.
      */
     private onCellClick(cellEl: HTMLElement, columnName: string): void {
         if (this.isColumnEditable(columnName)) {
@@ -441,7 +508,7 @@ class DataGrid {
 
     /**
      * Handle the user clicking somewhere outside the grid.
-     * @param {MouseEvent} e Event object.
+     * @internal
      */
     private onDocumentClick(e: MouseEvent): void {
         if (this.cellInputEl && e.target) {
@@ -455,8 +522,7 @@ class DataGrid {
 
     /**
      * Handle hovering over rows- highlight proper row if needed.
-     * @param  {MouseEvent} e Mouse event object.
-     * @return {void}
+     * @internal
      */
     private handleMouseOver(e: MouseEvent): void {
         const target = e.target as HTMLElement;
@@ -474,6 +540,7 @@ class DataGrid {
 
     /**
      * Remove the <input> overlay and update the cell value
+     * @internal
      */
     private removeCellInputElement(): void {
         const cellInputEl = this.cellInputEl;
@@ -489,12 +556,14 @@ class DataGrid {
     }
 
 
+    /** @internal */
     private updateInnerContainerWidth(): void {
         const newWidth = this.scrollContainer.offsetWidth;
         this.innerContainer.style.width = newWidth + 'px';
     }
 
 
+    /** @internal */
     private updateScrollingLength(): void {
         const columnsInPresentationOrder = this.columnNames;
         let i = this.dataTable.getRowCount() - 1;
@@ -541,6 +610,7 @@ class DataGrid {
     }
 
 
+    /** @internal */
     private getNumRowsToDraw(): number {
         return Math.min(
             this.getRowCount(),
@@ -552,9 +622,15 @@ class DataGrid {
 
 
     /**
-     * Render a data cell.
-     * @param {HTMLElement} parentRow The parent row to add the cell to.
-     * @param {string} columnName The column the cell belongs to.
+     * Renders a data cell.
+     *
+     * @internal
+     *
+     * @param parentRow
+     * The parent row to add the cell to.
+     *
+     * @param columnName
+     * The column the cell belongs to.
      */
     private renderCell(parentRow: HTMLElement, columnName: string): void {
         let className = 'hc-dg-cell';
@@ -574,7 +650,8 @@ class DataGrid {
 
 
     /**
-     * Render a row of data.
+     * Renders a row of data.
+     * @internal
      */
     private renderRow(): void {
         const rowEl = makeDiv('hc-dg-row');
@@ -590,8 +667,14 @@ class DataGrid {
 
     /**
      * Render a column header for a column.
-     * @param {HTMLElement} parentEl The parent element of the column header.
-     * @param {string} columnName The name of the column.
+     *
+     * @internal
+     *
+     * @param parentEl
+     * The parent element of the column header.
+     *
+     * @param columnName
+     * The name of the column.
      */
     private renderColumnHeader(
         parentEl: HTMLElement,
@@ -612,7 +695,8 @@ class DataGrid {
 
 
     /**
-     * Render the column headers of the table
+     * Render the column headers of the table.
+     * @internal
      */
     private renderColumnHeaders(): void {
         const columnNames = this.dataTable.getColumnNames();
@@ -635,7 +719,8 @@ class DataGrid {
 
 
     /**
-     * Render initial rows before the user starts scrolling
+     * Render initial rows before the user starts scrolling.
+     * @internal
      */
     private renderInitialRows(): void {
         this.rowElements = [];
@@ -648,6 +733,7 @@ class DataGrid {
 
     /**
      * Render the drag handles for resizing columns.
+     * @internal
      */
     private renderColumnDragHandles(): void {
         if (!this.columnHeadersContainer) {
@@ -703,8 +789,12 @@ class DataGrid {
 
 
     /**
-     * Render the crosshair shown when resizing columns.
-     * @param {HTMLElement} container The container to place the crosshair in.
+     * Renders the crosshair shown when resizing columns.
+     *
+     * @internal
+     *
+     * @param container
+     * The container to place the crosshair in.
      */
     private renderColumnResizeCrosshair(container: HTMLElement): void {
         const el = this.columnResizeCrosshair = (
@@ -721,10 +811,18 @@ class DataGrid {
 
 
     /**
-     * On column resize handle click
-     * @param {HTMLElement} handle The drag handle being clicked
-     * @param {number} colRightIx The column ix to the right of the resize handle
-     * @param {MouseEvent} e The mousedown event
+     * On column resize handle click.
+     *
+     * @internal
+     *
+     * @param handle
+     * The drag handle being clicked.
+     *
+     * @param colRightIx
+     * The column ix to the right of the resize handle.
+     *
+     * @param e
+     * The mousedown event.
      */
     private onHandleMouseDown(
         handle: HTMLElement,
@@ -752,7 +850,7 @@ class DataGrid {
 
     /**
      * Update as we drag column resizer
-     * @param {MouseEvent} e The mousemove event
+     * @internal
      */
     private updateColumnResizeDrag(e: MouseEvent): void {
         const handle = this.draggedResizeHandle;
@@ -779,8 +877,7 @@ class DataGrid {
 
     /**
      * Stop resizing a column
-     * @param {HTMLElement} handle The handle being dragged
-     * @param {MouseEvent} e The mouse up event
+     * @internal
      */
     private stopColumnResize(handle: HTMLElement, e: MouseEvent): void {
         const crosshair = this.columnResizeCrosshair;
@@ -822,8 +919,7 @@ class DataGrid {
 
     /**
      * Update the size of datagrid container
-     * @param {number | string | null} width new width
-     * @param {number | string | null} height new height
+     * @internal
      */
     public setSize(
         width?: number | string | null,
@@ -842,24 +938,46 @@ class DataGrid {
     }
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+/** @internal */
 namespace DataGrid {
 
+    /** @internal */
     export type Event = (
         ColumnResizeEvent |
         CellClickEvent
     );
 
+    /** @internal */
     export interface ColumnResizeEvent extends DataEvent {
+        /** @internal */
         readonly type: 'afterResizeColumn';
+        /** @internal */
         readonly width: number;
+        /** @internal */
         readonly index?: number;
+        /** @internal */
         readonly name?: string;
     }
 
+    /** @internal */
     export interface CellClickEvent {
+        /** @internal */
         readonly type: 'cellClick';
+        /** @internal */
         readonly input: HTMLElement;
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default DataGrid;

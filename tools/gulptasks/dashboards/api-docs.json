@@ -6,6 +6,7 @@
     "entryPoints": [
         "../../../ts/Dashboards/Board.ts",
         "../../../ts/Data/DataTable.ts",
+        "../../../ts/DataGrid/DataGrid.ts",
         "../../../ts/Extensions/DataGridPlugin.ts",
         "../../../ts/Extensions/HighchartsPlugin.ts"
     ],
