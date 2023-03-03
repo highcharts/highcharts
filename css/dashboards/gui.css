@@ -732,95 +732,6 @@ h1 {
     display: block;
 }
 
-/* outer Accordeon */
-
-.highcharts-dashboards-outer-accordeon-header > button.highcharts-dashboards-outer-accordeon-header-btn {
-    justify-content: space-between;
-}
-
-div.highcharts-dashboards-outer-accordeon {
-    padding: 0;
-    background: #e7e7ec;
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 8px 0;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 14px;
-    color: #20202c;
-    line-height: 16px;
-}
-
-button.highcharts-dashboards-outer-accordeon-header-btn {
-    padding: 10px 16px;
-    cursor: pointer;
-    align-items: center;
-}
-
-div.highcharts-dashboards-outer-accordeon-content {
-    padding: 16px;
-}
-
-/* End of outer accordeon */
-
-/* Dropdown */
-ul.highcharts-dashboards-droptown-content {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    background: #ffffff;
-    box-sizing: border-box;
-    padding: 16px 8px;
-    margin-top: 4px;
-    border: 1px solid #838394;
-    box-shadow: 0 10px 24px rgba(34, 34, 34, 0.1);
-    list-style-type: none;
-}
-
-ul > .highcharts-dashboards-dropdown {
-    position: relative;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #2f2b38;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 16px;
-    width: 100%;
-}
-
-.highcharts-dashboards-dropdown > button.highcharts-dashboards-dropdown-button {
-    width: 100%;
-    color: #2f2b38;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
-    padding: 6px 8px;
-    margin: 2px;
-    gap: 2px;
-    background: #ffffff;
-    border: 1px solid #838394;
-    border-radius: 2px;
-    flex: none;
-    order: 0;
-    align-self: stretch;
-    flex-grow: 0;
-}
-
-button.highcharts-dashboards-select-option-button {
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: center;
-    margin: 0;
-    background: #ffffff;
-    color: #2f2b38;
-}
-
-button.highcharts-dashboards-select-option-button:hover {
-    background-color: #f2f2f2;
-}
-
-/* End of Dropdown */
 .hd-edit-grid-items div {
     width: calc(50% - 20px);
     clear: both;
@@ -959,3 +870,92 @@ button.highcharts-dashboards-select-option-button:hover {
 .hd-row .hd-cell:focus {
     outline: 5px auto -webkit-focus-ring-color;
 }
+
+/* outer Accordeon */
+.highcharts-dashboards-outer-accordeon-header > button.highcharts-dashboards-outer-accordeon-header-btn {
+    justify-content: space-between;
+}
+
+div.highcharts-dashboards-outer-accordeon {
+    padding: 0;
+    background: #e7e7ec;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 8px 0;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    color: #20202c;
+    line-height: 16px;
+}
+
+button.highcharts-dashboards-outer-accordeon-header-btn {
+    padding: 10px 16px;
+    cursor: pointer;
+    align-items: center;
+}
+
+div.highcharts-dashboards-outer-accordeon-content {
+    padding: 16px;
+}
+
+/* End of outer accordeon */
+
+/* Dropdown */
+ul.highcharts-dashboards-droptown-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #ffffff;
+    box-sizing: border-box;
+    padding: 16px 8px;
+    margin-top: 4px;
+    border: 1px solid #838394;
+    box-shadow: 0 10px 24px rgba(34, 34, 34, 0.1);
+    list-style-type: none;
+}
+
+ul > .highcharts-dashboards-dropdown {
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #2f2b38;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16px;
+    width: 100%;
+}
+
+.highcharts-dashboards-dropdown > button.highcharts-dashboards-dropdown-button {
+    width: 100%;
+    color: #2f2b38;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 8px;
+    margin: 2px;
+    gap: 2px;
+    background: #ffffff;
+    border: 1px solid #838394;
+    border-radius: 2px;
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+}
+
+button.highcharts-dashboards-select-option-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    margin: 0;
+    background: #ffffff;
+    color: #2f2b38;
+}
+
+button.highcharts-dashboards-select-option-button:hover {
+    background-color: #f2f2f2;
+}
+
+/* End of Dropdown */
