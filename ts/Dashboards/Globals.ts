@@ -64,7 +64,7 @@ namespace Globals {
     };
 
     export const iconsURLPrefix =
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a38dcf9/gfx/dashboard-icons/';
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@d3590f4/gfx/dashboard-icons/';
 
     export const guiElementType: Record<string, GUIElement.GUIElementType> = {
         row: 'row',
