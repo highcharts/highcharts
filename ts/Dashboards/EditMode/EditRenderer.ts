@@ -103,7 +103,7 @@ function renderCollapse(
         'img',
         {
             className: 'highcharts-dashboards-outer-accordeon-header-icon',
-            src: Globals.iconsURLPrefix + 'drowdown-pointer.svg'
+            src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
         headerBtn
@@ -182,8 +182,8 @@ function renderSelect(
     createElement(
         'img',
         {
-            className: 'highcharts-dashboards-drowdown-pointer',
-            src: Globals.iconsURLPrefix + 'drowdown-pointer.svg'
+            className: 'highcharts-dashboards-dropdown-pointer',
+            src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
         btn
