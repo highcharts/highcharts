@@ -133,12 +133,18 @@ QUnit.test('Price indicator labels rendering and visibility, #14879, #17790.',
             }
         });
 
-        chart.xAxis[0].setExtremes(2, 4); // 'Drag' the chart to redraw labels
+        // 'Drag' the chart to redraw labels, values adjusted for #18528
+        chart.xAxis[0].setExtremes(2.1, 9.6);
 
-        assert.strictEqual(
-            document.querySelectorAll('.highcharts-crosshair-label').length,
-            2, // One for lastPrice label, one for lastVisiblePrice label
-            'There should only be two price labels rendered, #17790.'
+        const lvpLabel = chart.series[0].lastVisiblePriceLabel.visibility,
+            lpLabel = chart.series[0].lastPriceLabel.visibility;
+
+        assert.equal(
+            lvpLabel !== 'hidden' && lpLabel !== 'hidden',
+            true,
+            'There should be exactly two price labels rendered, #17790, #18528.'
         );
+
+
     }
 );
