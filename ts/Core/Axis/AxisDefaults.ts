@@ -951,7 +951,7 @@ namespace AxisDefaults {
              *
              * @type      {boolean}
              * @since     4.1.10
-             * @product   highcharts gantt
+             * @product   highcharts highstock gantt
              * @apioption xAxis.labels.reserveSpace
              */
             reserveSpace: void 0,
@@ -2542,8 +2542,6 @@ namespace AxisDefaults {
              * Angular gauges and solid gauges defaults to `"center"`.
              * Solid gauges with two labels have additional option `"auto"`
              * for automatic horizontal and vertical alignment.
-             *
-             * @see [yAxis.labels.distance](#yAxis.labels.distance)
              *
              * @sample {highcharts} highcharts/yaxis/labels-align-left/
              *         Left
