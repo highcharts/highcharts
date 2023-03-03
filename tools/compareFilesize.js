@@ -2,7 +2,7 @@
 const { compile } = require('./compile.js');
 const { sync: gzipSize } = require('gzip-size');
 const { getFile, writeFilePromise: writeFile } =
-    require('highcharts-assembler/src/utilities.js');
+    require('@highcharts/highcharts-assembler/src/utilities.js');
 const { join, resolve } = require('path');
 
 // TODO: write JSDoc
