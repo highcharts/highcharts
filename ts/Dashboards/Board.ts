@@ -340,17 +340,17 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     public getLayoutContainerSize(): string {
         const board = this,
-            respoOptions = board.options.responsiveBreakpoints,
+            responsiveOptions = board.options.responsiveBreakpoints,
             cntWidth = (board.layoutsWrapper || {}).clientWidth;
 
         let size = Globals.responsiveBreakpoints.large;
 
-        if (respoOptions) {
-            if (cntWidth <= respoOptions.small) {
+        if (responsiveOptions) {
+            if (cntWidth <= responsiveOptions.small) {
                 size = Globals.responsiveBreakpoints.small;
             } else if (
-                cntWidth > respoOptions.small &&
-                cntWidth <= respoOptions.medium
+                cntWidth > responsiveOptions.small &&
+                cntWidth <= responsiveOptions.medium
             ) {
                 size = Globals.responsiveBreakpoints.medium;
             }
