@@ -148,7 +148,7 @@ const ChartDefaults: ChartOptions = {
      *         With a longer duration
      *
      * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
-     * @default   undefined
+     * @default   true
      * @apioption chart.animation
      */
 
@@ -235,6 +235,8 @@ const ChartDefaults: ChartOptions = {
      *
      * @sample {highcharts} highcharts/chart/events-load/
      *         Alert on chart load
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      * @sample {highstock} stock/chart/events-load/
      *         Alert on chart load
      * @sample {highmaps} maps/chart/events-load/
@@ -253,6 +255,8 @@ const ChartDefaults: ChartOptions = {
      *
      * @sample {highcharts} highcharts/chart/events-redraw/
      *         Alert on chart redraw
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      * @sample {highstock} stock/chart/events-redraw/
      *         Alert on chart redraw when adding a series or moving the
      *         zoomed range
@@ -268,6 +272,9 @@ const ChartDefaults: ChartOptions = {
     /**
      * Fires after initial load of the chart (directly after the `load`
      * event), and after each redraw (directly after the `redraw` event).
+     *
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      *
      * @type      {Highcharts.ChartRenderCallbackFunction}
      * @since     5.0.7
@@ -466,7 +473,7 @@ const ChartDefaults: ChartOptions = {
          * @type       {string}
          * @validvalue ["x", "y", "xy"]
          * @default    {highcharts|highstock} x
-         * @default    {highmaps} xy
+         * @product    highcharts highstock gantt
          */
         type: 'x'
     },
@@ -520,7 +527,7 @@ const ChartDefaults: ChartOptions = {
     /**
      * In styled mode, this sets how many colors the class names
      * should rotate between. With ten colors, series (or points) are
-     * given class names like `highcharts-color-0`, `highcharts-color-0`
+     * given class names like `highcharts-color-0`, `highcharts-color-1`
      * [...] `highcharts-color-9`. The equivalent in non-styled mode
      * is to set colors using the [colors](#colors) setting.
      *
@@ -766,11 +773,9 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/reflow-false/
      *         False
      *
-     * @type      {boolean}
-     * @default   true
      * @since     2.1
-     * @apioption chart.reflow
      */
+    reflow: true,
 
     /**
      * The HTML element where the chart will be rendered. If it is a string,
@@ -919,6 +924,8 @@ const ChartDefaults: ChartOptions = {
      * Additional CSS styles to apply inline to the container `div`. Note
      * that since the default font styles are applied in the renderer, it
      * is ignorant of the individual chart options and must be set globally.
+     * Also note that changing the font size in the `chart.style` options only
+     * applies to those elements that do not have a specific `fontSize` setting.
      *
      * @see    In styled mode, general chart styles can be set with the
      *         `.highcharts-root` class.
@@ -1278,8 +1285,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @see In styled mode, a plot background image can be set with the
      *      `.highcharts-plot-background` class and a [custom pattern](
-     *      https://www.highcharts.com/docs/chart-design-and-style/
-     *      gradients-shadows-and-patterns).
+     *      https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
      *
      * @sample {highcharts} highcharts/chart/plotbackgroundimage/
      *         Skies

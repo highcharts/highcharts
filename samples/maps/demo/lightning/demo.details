@@ -1,0 +1,11 @@
+---
+name: Lightning Map
+authors:
+  - Torstein Hønsi
+js_wrap: b
+new_until: 2023-03-01
+tags:
+  - Highcharts Maps demo
+categories:
+  - General
+...

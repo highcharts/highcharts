@@ -1,4 +1,4 @@
-//console.clear();
+// console.clear();
 $(function () {
     var data = [
         [1393635600000, 134.0, 134.0],

@@ -1417,7 +1417,9 @@ namespace OrdinalAxis {
                         series.points &&
                         defined(series.points[0]) &&
                         defined(series.points[0].plotX) &&
-                        series.points[0].plotX < firstPointX
+                        series.points[0].plotX < firstPointX &&
+                        // #17128
+                        series.points[0].plotX >= pick(axis.min, -Infinity)
                     ) {
                         firstPointX = series.points[0].plotX;
                     }

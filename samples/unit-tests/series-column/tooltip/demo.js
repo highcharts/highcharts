@@ -44,7 +44,7 @@ QUnit.test(
             chart.plotLeft + point.plotX,
             chart.plotTop + chart.plotHeight - 15
         );
-        /*chart.pointer.onContainerMouseMove({
+        /* chart.pointer.onContainerMouseMove({
         pageX: x,
         pageY: y, // from the top
         target: point.graphic.element

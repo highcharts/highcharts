@@ -750,13 +750,10 @@ class Tick {
     public moveLabel(str: string, labelOptions: AxisLabelOptions): void {
         const tick = this,
             label = tick.label,
-            axis = tick.axis,
-            reversed = axis.reversed;
+            axis = tick.axis;
 
         let moved = false,
-            labelPos,
-            xPos,
-            yPos;
+            labelPos;
 
         if (label && label.textStr === str) {
             tick.movedLabel = label;
@@ -783,13 +780,9 @@ class Tick {
         // Create new label if the actual one is moved
         if (!moved && (tick.labelPos || label)) {
             labelPos = tick.labelPos || (label as any).xy;
-            xPos = axis.horiz ?
-                (reversed ? 0 : axis.width + axis.left) : labelPos.x;
-            yPos = axis.horiz ?
-                labelPos.y : (reversed ? (axis.width + axis.left) : 0);
 
             tick.movedLabel = tick.createLabel(
-                { x: xPos, y: yPos },
+                labelPos,
                 str,
                 labelOptions
             );
@@ -916,7 +909,8 @@ class Tick {
                     value: pos + tickmarkOffset,
                     lineWidth: gridLine.strokeWidth() * reverseCrisp,
                     force: 'pass',
-                    old: old
+                    old: old,
+                    acrossPanes: false // #18025
                 }
             );
 
@@ -1103,23 +1097,13 @@ class Tick {
     public replaceMovedLabel(): void {
         const tick = this,
             label = tick.label,
-            axis = tick.axis,
-            reversed = axis.reversed;
-
-        let x,
-            y;
+            axis = tick.axis;
 
         // Animate and destroy
         if (label && !tick.isNew) {
-            x = axis.horiz ? (
-                reversed ? axis.left : axis.width + axis.left
-            ) : label.xy.x;
-            y = axis.horiz ?
-                label.xy.y :
-                (reversed ? axis.width + axis.top : axis.top);
 
             label.animate(
-                { x: x, y: y, opacity: 0 },
+                { opacity: 0 },
                 void 0,
                 label.destroy
             );

@@ -263,7 +263,7 @@ QUnit.test('Null points should not have data labels(#4641)', function (assert) {
                     data: [
                         {
                             name: 'Microsoft Internet Explorer',
-                            //y: 56.33,
+                            // y: 56.33,
                             y: null
                         },
                         {
@@ -422,7 +422,7 @@ QUnit.test('Pie labels outside plot (#3163)', function (assert) {
         labelYPos = [];
 
     for (var i = 0; i < seriesData.length; i++) {
-        labelYPos.push(seriesData[i].labelPosition.final.y);
+        labelYPos.push(seriesData[i].labelPosition.computed.y);
     }
 
     function isLabelInsidePlot() {

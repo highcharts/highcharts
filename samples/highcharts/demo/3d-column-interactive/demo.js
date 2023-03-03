@@ -25,12 +25,14 @@ const chart = new Highcharts.Chart({
         pointFormat: 'Cars sold: {point.y}'
     },
     title: {
-        text: 'Sold passenger cars in Norway by brand, January 2021'
+        text: 'Sold passenger cars in Norway by brand, January 2021',
+        align: 'left'
     },
     subtitle: {
         text: 'Source: ' +
             '<a href="https://ofv.no/registreringsstatistikk"' +
-            'target="_blank">OFV</a>'
+            'target="_blank">OFV</a>',
+        align: 'left'
     },
     legend: {
         enabled: false

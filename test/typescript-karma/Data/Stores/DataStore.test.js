@@ -1,13 +1,13 @@
 
-import DataStore from '/base/js/Data/Stores/DataStore.js';
-import '/base/js/Data/Stores/CSVStore.js';
-import '/base/js/Data/Stores/GoogleSheetsStore.js';
-import '/base/js/Data/Stores/HTMLTableStore.js';
+import DataStore from '/base/code/es-modules/Data/Stores/DataStore.js';
+import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
+import '/base/code/es-modules/Data/Stores/GoogleSheetsStore.js';
+import '/base/code/es-modules/Data/Stores/HTMLTableStore.js';
 
 const { test, only } = QUnit;
 
 test('DataStore metadata', function (assert) {
-    const datastore = new DataStore();
+    const datastore = new CSVStore(undefined, {});
 
     datastore.describeColumns({
         'column1': {

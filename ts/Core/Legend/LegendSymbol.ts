@@ -21,9 +21,11 @@ import type LegendItem from './LegendItem';
 import type Point from '../Series/Point';
 import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type SymbolOptions from '../Renderer/SVG/SymbolOptions';
 
 import U from '../Utilities.js';
 const {
+    extend,
     merge,
     pick
 } = U;
@@ -100,26 +102,44 @@ namespace LegendSymbol {
 
         let attr: SVGAttributes = {},
             legendSymbol,
-            markerOptions = options.marker;
+            markerOptions = options.marker,
+            lineSizer = 0;
 
         // Draw the line
         if (!this.chart.styledMode) {
             attr = {
-                'stroke-width': options.lineWidth || 0
+                'stroke-width': Math.min(options.lineWidth || 0, 24)
             };
+
             if (options.dashStyle) {
                 attr.dashstyle = options.dashStyle;
+            } else if (options.linecap !== 'square') {
+                attr['stroke-linecap'] = 'round';
             }
         }
 
         legendItem.line = renderer
-            .path([
-                ['M', 0, verticalCenter],
-                ['L', symbolWidth, verticalCenter]
-            ])
+            .path()
             .addClass('highcharts-graph')
             .attr(attr)
             .add(legendItemGroup);
+
+        if (attr['stroke-linecap']) {
+            lineSizer = Math.min(
+                legendItem.line.strokeWidth(),
+                symbolWidth
+            ) / 2;
+        }
+
+        if (symbolWidth) {
+            legendItem.line
+                .attr({
+                    d: [
+                        ['M', lineSizer, verticalCenter],
+                        ['L', symbolWidth - lineSizer, verticalCenter]
+                    ]
+                });
+        }
 
         // Draw the marker
         if (markerOptions && markerOptions.enabled !== false && symbolWidth) {
@@ -146,7 +166,7 @@ namespace LegendSymbol {
                     verticalCenter - radius,
                     2 * radius,
                     2 * radius,
-                    markerOptions
+                    extend<SymbolOptions>({ context: 'legend' }, markerOptions)
                 )
                 .addClass('highcharts-point')
                 .add(legendItemGroup);

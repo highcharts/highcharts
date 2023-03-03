@@ -22,6 +22,7 @@ Gulp.registry(new GulpForwardReference());
         gulpTask => require('./tools/gulptasks/' + gulpTask)
     );
 }([
+    'api-upload',
     'default',
     'dist',
     'dist-clean',
@@ -60,6 +61,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-code',
     'scripts-compile',
     'scripts-css',
+    'scripts-es5',
     'scripts-js',
     'scripts-messages',
     'scripts-ts',

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2022 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
 import DataModifier from './DataModifier.js';
@@ -56,7 +56,7 @@ class GroupModifier extends DataModifier {
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -100,7 +100,7 @@ class GroupModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -108,7 +108,7 @@ class GroupModifier extends DataModifier {
      */
     public modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifier = this;
 
@@ -182,7 +182,7 @@ class GroupModifier extends DataModifier {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
@@ -191,6 +191,12 @@ class GroupModifier extends DataModifier {
  * conversion.
  */
 namespace GroupModifier {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Options to configure the modifier.
@@ -214,7 +220,7 @@ namespace GroupModifier {
 
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
@@ -228,7 +234,7 @@ declare module './ModifierType' {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

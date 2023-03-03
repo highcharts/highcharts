@@ -132,7 +132,7 @@ QUnit.test('Crosshair with snap false (#5066)', function (assert) {
     chart.renderTo.style.position = 'static';
 });
 QUnit.test(
-    "Update crosshair's stroke-width after resize.(#4737)",
+    'Update crosshair\'s stroke-width after resize.(#4737)',
     function (assert) {
         var chart = $('#container')
                 .highcharts({

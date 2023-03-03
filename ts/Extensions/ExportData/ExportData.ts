@@ -1236,7 +1236,6 @@ function onChartAfterViewData(
 ): void {
     const chart = this,
         dataTableDiv = chart.dataTableDiv,
-        row = document.querySelectorAll('thead')[0].querySelectorAll('tr')[0],
         getCellValue = (tr: HTMLDOMElement, index: number): string|null =>
             tr.children[index].textContent,
         comparer = (index: number, ascending: boolean) =>
@@ -1254,42 +1253,51 @@ function onChartAfterViewData(
             };
 
 
-    if (dataTableDiv) {
-        row.childNodes.forEach((th: any): void => {
-            const table = th.closest('table');
+    if (
+        dataTableDiv &&
+        chart.options.exporting &&
+        chart.options.exporting.allowTableSorting
+    ) {
+        const row = dataTableDiv.querySelector('thead tr');
+        if (row) {
+            row.childNodes.forEach((th: any): void => {
+                const table = th.closest('table');
 
-            th.addEventListener('click', function (): void {
-                const rows = [...dataTableDiv.querySelectorAll(
-                        'tr:not(thead tr)'
-                    ) as unknown as Array<HTMLElement>],
-                    headers = [...th.parentNode.children];
+                th.addEventListener('click', function (): void {
+                    const rows = [...dataTableDiv.querySelectorAll(
+                            'tr:not(thead tr)'
+                        ) as unknown as Array<HTMLElement>],
+                        headers = [...th.parentNode.children];
 
-                rows.sort(
-                    comparer(
-                        headers.indexOf(th),
-                        chart.ascendingOrderInTable =
-                            !chart.ascendingOrderInTable
-                    )
-                ).forEach((tr: HTMLDOMElement): void => {
-                    table.appendChild(tr);
-                });
+                    rows.sort(
+                        comparer(
+                            headers.indexOf(th),
+                            chart.ascendingOrderInTable =
+                                !chart.ascendingOrderInTable
+                        )
+                    ).forEach((tr: HTMLDOMElement): void => {
+                        table.appendChild(tr);
+                    });
 
-                headers.forEach((th): void => {
-                    ['highcharts-sort-ascending', 'highcharts-sort-descending']
-                        .forEach((className): void => {
+                    headers.forEach((th): void => {
+                        [
+                            'highcharts-sort-ascending',
+                            'highcharts-sort-descending'
+                        ].forEach((className): void => {
                             if (th.classList.contains(className)) {
                                 th.classList.remove(className);
                             }
                         });
-                });
+                    });
 
-                th.classList.add(
-                    chart.ascendingOrderInTable ?
-                        'highcharts-sort-ascending' :
-                        'highcharts-sort-descending'
-                );
+                    th.classList.add(
+                        chart.ascendingOrderInTable ?
+                            'highcharts-sort-ascending' :
+                            'highcharts-sort-descending'
+                    );
+                });
             });
-        });
+        }
     }
 }
 

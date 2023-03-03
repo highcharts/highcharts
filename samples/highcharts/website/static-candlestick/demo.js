@@ -19,8 +19,8 @@ Math.easeOutBounce = pos => {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const big = window.matchMedia("(min-width: 500px)").matches;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const big = window.matchMedia('(min-width: 500px)').matches;
 
 
 const updateStyle = function (selector, property, value, duration) {
@@ -39,7 +39,7 @@ const candlestick = function () {
     // create the chart
         Highcharts.stockChart('hero', {
             chart: {
-                styledMode: (true),
+                styledMode: true,
                 margin: [0, 0, 0, 0],
                 height: 430,
                 animation: {
@@ -212,5 +212,5 @@ const candlestick = function () {
 };
 
 
-///initial run
+// /initial run
 candlestick('static');

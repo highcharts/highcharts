@@ -1,5 +1,5 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import RangeModifier from '/base/js/Data/Modifiers/RangeModifier.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
+import RangeModifier from '/base/code/es-modules/Data/Modifiers/RangeModifier.js';
 
 QUnit.test('RangeModifier.modify', function (assert) {
 

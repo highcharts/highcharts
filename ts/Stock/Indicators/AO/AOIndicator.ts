@@ -137,14 +137,14 @@ class AOIndicator extends SMAIndicator {
      * */
 
     public drawGraph(this: AOIndicator): void {
-        let indicator = this,
+        const indicator = this,
             options = indicator.options,
             points = indicator.points,
             userColor = indicator.userOptions.color,
             positiveColor = options.greaterBarColor,
             negativeColor = options.lowerBarColor,
-            firstPoint = points[0],
-            i;
+            firstPoint = points[0];
+        let i;
 
         if (!userColor && firstPoint) {
             firstPoint.color = positiveColor;
@@ -166,7 +166,7 @@ class AOIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let shortPeriod = 5,
+        const shortPeriod = 5,
             longPeriod = 34,
             xVal: Array<number> = series.xData || [],
             yVal: Array<number|null|undefined> =
@@ -176,17 +176,17 @@ class AOIndicator extends SMAIndicator {
             xData: Array<number> = [],
             yData: Array<number> = [],
             high = 1,
-            low = 2,
-            shortSum = 0,
-            longSum = 0,
-            shortSMA: number, // Shorter Period SMA
+            low = 2;
+        let shortSMA: number, // Shorter Period SMA
             longSMA: number, // Longer Period SMA
             awesome: number,
             shortLastIndex: number,
             longLastIndex: number,
             price: number,
             i: number,
-            j: number;
+            j: number,
+            longSum = 0,
+            shortSum = 0;
 
         if (
             xVal.length <= longPeriod ||

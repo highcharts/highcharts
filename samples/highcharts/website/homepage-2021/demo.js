@@ -2,7 +2,7 @@ Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
-const big = window.matchMedia("(min-width: 500px)").matches;
+const big = window.matchMedia('(min-width: 500px)').matches;
 
 const updateStyle = function (selector, property, value, duration) {
     [].forEach.call(
@@ -19,7 +19,7 @@ const candlestick = function () {
     // create the chart
         Highcharts.stockChart('hero', {
             chart: {
-                styledMode: (true),
+                styledMode: true,
                 margin: [0, 0, 0, 0],
                 height: 430,
                 animation: {

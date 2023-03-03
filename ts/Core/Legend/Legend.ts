@@ -40,9 +40,7 @@ import F from '../FormatUtilities.js';
 const { format } = F;
 import H from '../Globals.js';
 const {
-    isFirefox,
-    marginNames,
-    win
+    marginNames
 } = H;
 import Point from '../Series/Point.js';
 import R from '../Renderer/RendererUtilities.js';
@@ -61,8 +59,7 @@ const {
     pick,
     relativeLength,
     stableSort,
-    syncTimeout,
-    wrap
+    syncTimeout
 } = U;
 
 /* *
@@ -207,8 +204,6 @@ class Legend {
 
     public totalItemWidth: number = 0;
 
-    public unchartrender?: Function;
-
     public up?: SVGElement;
 
     public upTracker?: SVGElement;
@@ -258,18 +253,18 @@ class Legend {
                 this.legend.positionCheckboxes();
             });
 
-            if (this.proximate) {
-                this.unchartrender = addEvent(
-                    this.chart,
-                    'render',
-                    function (): void {
-                        this.legend.proximatePositions();
-                        this.legend.positionItems();
+            // On Legend.init and Legend.update, make sure that proximate layout
+            // events are either added or removed (#18362).
+            addEvent(
+                this.chart,
+                'render',
+                (): void => {
+                    if (this.proximate) {
+                        this.proximatePositions();
+                        this.positionItems();
                     }
-                );
-            } else if (this.unchartrender) {
-                this.unchartrender();
-            }
+                }
+            );
         }
     }
 
@@ -308,6 +303,7 @@ class Legend {
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
         // #12705: baseline has to be reset on every update
         this.baseline = void 0;
+
     }
 
     /**
@@ -739,7 +735,7 @@ class Legend {
                 label.attr('y', legend.baseline);
 
                 legend.symbolHeight =
-                    options.symbolHeight || legend.fontMetrics.f;
+                    pick(options.symbolHeight, legend.fontMetrics.f);
 
                 if (options.squareSymbol) {
                     legend.symbolWidth = pick(
@@ -1054,7 +1050,7 @@ class Legend {
 
         for (const box of distribute(boxes, chart.plotHeight)) {
             legendItem = box.item.legendItem || {};
-            if (box.pos) {
+            if (isNumber(box.pos)) {
                 legendItem.y = chart.plotTop - chart.spacing[0] + box.pos;
             }
         }

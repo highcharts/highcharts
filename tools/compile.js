@@ -10,7 +10,7 @@ const statSync = require('fs').statSync;
 const {
     getFile,
     writeFile
-} = require('highcharts-assembler/src/utilities.js');
+} = require('@highcharts/highcharts-assembler/src/utilities.js');
 const colors = require('colors');
 
 const compileSingleFile = (path, sourceFolder, createSourceMap) => {

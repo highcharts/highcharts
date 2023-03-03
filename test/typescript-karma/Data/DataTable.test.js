@@ -1,5 +1,5 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import SortModifier from '/base/js/Data/Modifiers/SortModifier.js';
+import DataTable from '/base/code/es-modules/Data/DataTable.js';
+import SortModifier from '/base/code/es-modules/Data/Modifiers/SortModifier.js';
 
 QUnit.test('DataTable Clone', function (assert) {
     const table = new DataTable({}, 'table');
@@ -164,7 +164,7 @@ QUnit.test('DataTable Column Aliases', function (assert) {
         'Table should return cell values of deleted column.'
     );
 
-    assert.ok(
+    assert.strictEqual(
         typeof table.getColumn('population'),
         'undefined',
         'Table should have removed column "population".'
@@ -557,6 +557,29 @@ QUnit.test('DataTable.getColumnAsNumbers', function (assert) {
     assert.ok(
         isNaN(table.getColumnAsNumbers('test7', true)[0]),
         'Table should return column "test7" after conversion. (#2)'
+    );
+
+});
+
+QUnit.test('DataTable.getRows', function (assert) {
+    const table = new DataTable({ 'a': [ 0 ] });
+
+    const rowObject = table
+        .getRowObject(undefined, ['Non-Existing Column']);
+
+    assert.deepEqual(
+        Object.keys(rowObject),
+        ['Non-Existing Column'],
+        'Table should return row with non-existing column.'
+    );
+
+    const cellArray = table
+        .getRow(undefined, ['Non-Existing Column']);
+
+    assert.deepEqual(
+        cellArray,
+        [ undefined ],
+        'Table should return row with non-existing column.'
     );
 
 });

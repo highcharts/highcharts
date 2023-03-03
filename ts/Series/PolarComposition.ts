@@ -35,7 +35,6 @@ import type {
     GetSelectionMarkerAttrsEvent,
     PointerEvent
 } from '../Core/PointerEvent';
-import type Series from '../Core/Series/Series';
 import type SplineSeries from './Spline/SplineSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -47,6 +46,7 @@ import type Tick from '../Core/Axis/Tick';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../Core/Globals.js';
+import Series from '../Core/Series/Series.js';
 import Pane from '../Extensions/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
 import U from '../Core/Utilities.js';
@@ -55,6 +55,7 @@ const {
     defined,
     find,
     isNumber,
+    merge,
     pick,
     splat,
     uniqueKey,
@@ -663,6 +664,7 @@ function onSeriesAfterTranslate(
 
     if (this.chart.polar && this.xAxis) {
         const series = this as PolarSeriesComposition,
+            { xAxis, yAxis } = series,
             chart = series.chart;
 
         // Prepare k-d-tree handling. It searches by angle (clientX) in
@@ -835,7 +837,7 @@ function wrapColumnSeriesAlignDataLabel(
     point: (ColumnPoint|PolarPoint),
     dataLabel: SVGLabel,
     options: DataLabelOptions,
-    alignTo: Partial<BBoxObject>,
+    alignTo: BBoxObject,
     isNew?: boolean
 ): void {
     const chart = this.chart,
@@ -876,15 +878,15 @@ function wrapColumnSeriesAlignDataLabel(
                         (point as ColumnPoint).pointWidth / 2
                     );
 
-                alignTo = {
+                alignTo = merge(alignTo, {
                     x: labelPos.x - chart.plotLeft,
                     y: labelPos.y - chart.plotTop
-                };
+                });
             } else if (point.tooltipPos) {
-                alignTo = {
+                alignTo = merge(alignTo, {
                     x: point.tooltipPos[0],
                     y: point.tooltipPos[1]
-                };
+                });
             }
 
             options.align = pick(options.align, 'center');
@@ -892,16 +894,9 @@ function wrapColumnSeriesAlignDataLabel(
                 pick(options.verticalAlign, 'middle');
         }
 
-        Object
-            .getPrototypeOf(Object.getPrototypeOf(this))
-            .alignDataLabel.call(
-                this,
-                point,
-                dataLabel,
-                options,
-                alignTo,
-                isNew
-            );
+        Series.prototype.alignDataLabel.call(
+            this, point, dataLabel, options, alignTo, isNew
+        );
 
         // Hide label of a point (only inverted) that is outside the
         // visible y range

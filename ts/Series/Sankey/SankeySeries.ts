@@ -46,7 +46,6 @@ import TU from '../TreeUtilities.js';
 const { getLevelOptions } = TU;
 import U from '../../Core/Utilities.js';
 const {
-    defined,
     extend,
     isObject,
     merge,
@@ -323,6 +322,10 @@ class SankeySeries extends ColumnSeries {
             fill: Color.parse(color).setOpacity(values.linkOpacity).get()
         };
 
+    }
+    public drawTracker(): void {
+        ColumnSeries.prototype.drawTracker.call(this, this.points);
+        ColumnSeries.prototype.drawTracker.call(this, this.nodes);
     }
 
     public drawPoints(): void {

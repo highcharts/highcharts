@@ -695,11 +695,7 @@ class Axis {
             axis.dataMin = axis.dataMax = axis.threshold = null as any;
             axis.softThreshold = !axis.isXAxis;
 
-            if (axis.stacking) {
-                axis.stacking.buildStacks();
-            }
-
-            // loop through this axis' series
+            // Loop through this axis' series
             axis.series.forEach(function (series): void {
 
                 if (
@@ -723,10 +719,10 @@ class Axis {
 
                     // Get dataMin and dataMax for X axes
                     if (axis.isXAxis) {
-                        xData = series.xData as any;
-                        if (xData.length) {
+                        xData = series.xData;
+                        if (xData && xData.length) {
                             xData = axis.logarithmic ?
-                                xData.filter(axis.validatePositiveValue) :
+                                xData.filter((x): boolean => x > 0) :
                                 xData;
 
                             xExtremes = series.getXExtremes(xData);
@@ -977,7 +973,7 @@ class Axis {
          * @private
          */
         function between(x: number, a: number, b: number): number {
-            if (force !== 'pass' && x < a || x > b) {
+            if (force !== 'pass' && (x < a || x > b)) {
                 if (force) {
                     x = clamp(x, a, b);
                 } else {
@@ -987,42 +983,43 @@ class Axis {
             return x;
         }
 
-        const evt: Event = {
+        const evt: Partial<Axis.PlotLinePathOptions> = {
             value: value,
             lineWidth: lineWidth,
             old: old,
             force: force,
             acrossPanes: options.acrossPanes,
             translatedValue: translatedValue
-        } as any;
-        fireEvent(this, 'getPlotLinePath', evt, function (e: Event): void {
+        };
+        fireEvent(this, 'getPlotLinePath', evt, function (
+            e:(Axis.PlotLinePathOptions)
+        ): void {
 
             translatedValue = pick(
                 translatedValue,
-                axis.translate(value as any, void 0, void 0, old)
+                axis.translate(value as number, void 0, void 0, old)
             );
             // Keep the translated value within sane bounds, and avoid Infinity
             // to fail the isNumber test (#7709).
-            translatedValue = clamp(translatedValue as any, -1e5, 1e5);
+            translatedValue = clamp(translatedValue, -1e5, 1e5);
 
 
             x1 = x2 = Math.round(translatedValue + transB);
-            y1 = y2 = Math.round((cHeight as any) - translatedValue - transB);
+            y1 = y2 = Math.round(cHeight - translatedValue - transB);
             if (!isNumber(translatedValue)) { // no min or max
                 skip = true;
                 force = false; // #7175, don't force it when path is invalid
             } else if (axis.horiz) {
-                y1 = axisTop as any;
-                y2 = (cHeight as any) - (axis.bottom as any);
-                x1 = x2 = between(
-                    x1, axisLeft as any, (axisLeft as any) + axis.width
-                );
+                y1 = axisTop;
+                y2 = cHeight - axis.bottom;
+
+                x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
+
             } else {
-                x1 = axisLeft as any;
-                x2 = (cWidth as any) - (axis.right as any);
-                y1 = y2 = between(
-                    y1, axisTop as any, (axisTop as any) + axis.height
-                );
+                x1 = axisLeft;
+                x2 = cWidth - axis.right;
+
+                y1 = y2 = between(y1, axisTop, axisTop + axis.height);
             }
             (e as any).path = skip && !force ?
                 null :
@@ -1957,7 +1954,7 @@ class Axis {
         this.minorTickInterval =
             minorTickIntervalOption === 'auto' &&
             this.tickInterval ?
-                this.tickInterval / 5 :
+                this.tickInterval / options.minorTicksPerMajor :
                 (minorTickIntervalOption as any);
 
         // When there is only one point, or all points have the same value on
@@ -2543,6 +2540,7 @@ class Axis {
 
             if (axis.stacking) {
                 axis.stacking.resetStacks();
+                axis.stacking.buildStacks();
             }
 
             axis.forceRedraw = false;
@@ -4282,19 +4280,6 @@ class Axis {
             panningOptions.enabled && // #14624
             /y/.test(panningOptions.type)
         );
-    }
-
-    /**
-    * Check whether the given value is a positive valid axis value.
-    *
-    * @private
-    * @function Highcharts.Axis#validatePositiveValue
-    *
-    * @param {unknown} value
-    * The axis value
-    */
-    public validatePositiveValue(value: unknown): boolean {
-        return isNumber(value) && value > 0;
     }
 
     /**

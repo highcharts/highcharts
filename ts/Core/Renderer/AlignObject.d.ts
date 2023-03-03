@@ -25,6 +25,7 @@ export interface AlignObject {
     x?: number;
     y?: number;
     width?: number;
+    height?: number;
 }
 
 /* *
