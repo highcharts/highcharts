@@ -52,8 +52,7 @@ const {
  * */
 
 /**
- * @class Represents a dashboard.
- * @name Board
+ * Class that represents a dashboard.
  *
  */
 class Board implements Serializable<Board, Board.JSON> {
@@ -68,8 +67,11 @@ class Board implements Serializable<Board, Board.JSON> {
      * Creates a dashboard with components like charts, tables, and HTML
      * elements.
      *
-     * @param renderTo The DOM element to render to, or its id.
-     * @param options The options for the dashboard.
+     * @param renderTo
+     * The DOM element to render to, or its id.
+     *
+     * @param options
+     * The options for the dashboard.
      */
     public constructor(
         renderTo: (string|HTMLElement),
@@ -141,8 +143,11 @@ class Board implements Serializable<Board, Board.JSON> {
     /**
      * Factory function for creating a new dashboard.
      *
-     * @param renderTo The DOM element to render to, or its id.
-     * @param options The options for the dashboard.
+     * @param renderTo
+     * The DOM element to render to, or its id.
+     *
+     * @param options
+     * The options for the dashboard.
      */
     public static board(
         renderTo: (string|globalThis.HTMLElement),
@@ -225,7 +230,7 @@ class Board implements Serializable<Board, Board.JSON> {
     public options: Board.Options;
 
     /**
-     * The data states instance. Used to handle data.
+     * The data states instance used to handle data.
      * */
     public states: DataStates;
 
@@ -251,7 +256,8 @@ class Board implements Serializable<Board, Board.JSON> {
      * Initialize the container for the dashboard.
      * @internal
      *
-     * @param renderTo The DOM element to render to, or its id.
+     * @param renderTo
+     * The DOM element to render to, or its id.
      */
     private initContainer(renderTo: (string|HTMLElement)): void {
         const board = this;
@@ -284,7 +290,9 @@ class Board implements Serializable<Board, Board.JSON> {
      * Creates a new layouts and adds it to the dashboard based on the options.
      * @internal
      *
-     * @param guiOptions THE GUI options for the layout.
+     * @param guiOptions
+     * The GUI options for the layout.
+     *
      */
     private setLayouts(guiOptions: Board.GUIOptions): void {
         const board = this,
@@ -304,7 +312,9 @@ class Board implements Serializable<Board, Board.JSON> {
      * Set the layouts from JSON.
      * @internal
      *
-     * @param json An array of layout JSON objects.
+     * @param json
+     * An array of layout JSON objects.
+     *
      */
     private setLayoutsFromJSON(json: Array<Layout.JSON>): void {
         const board = this;
@@ -324,7 +334,9 @@ class Board implements Serializable<Board, Board.JSON> {
      * Set the components from options.
      * @internal
      *
-     * @param components An array of component options.
+     * @param components
+     * An array of component options.
+     *
      */
     private setComponents(
         components: Array<Bindings.ComponentOptions>
@@ -402,7 +414,9 @@ class Board implements Serializable<Board, Board.JSON> {
     /**
      * Import the dashboard's layouts from the local storage.
      *
-     * @param id The id of the layout to import.
+     * @param id
+     * The id of the layout to import.
+     *
      * @returns Returns the imported layout.
      */
     public importLayoutLocal(id: string): Layout|undefined {
@@ -441,9 +455,10 @@ class Board implements Serializable<Board, Board.JSON> {
     /**
      * Converts the given JSON to a class instance.
      *
-     * @param json JSON to deserialize as a class instance or object.
+     * @param json
+     * JSON to deserialize as a class instance or object.
      *
-     * @return Returns the class instance or object.
+     * @returns Returns the class instance or object.
      */
     public fromJSON(
         json: Board.JSON
@@ -466,7 +481,7 @@ class Board implements Serializable<Board, Board.JSON> {
     /**
      * Converts the class instance to a class JSON.
      *
-     * @return Class JSON of this Dashboard instance.
+     * @returns Class JSON of this Dashboard instance.
      */
     public toJSON(): Board.JSON {
         const board = this,
@@ -650,7 +665,7 @@ namespace Board {
     /**
      * Import layouts from the local storage.
      *
-     * @return Returns the Dashboard instance or undefined.
+     * @returns Returns the Dashboard instance or undefined.
      */
     export function importLocal(): (Board|undefined) {
         const dashboardJSON = localStorage.getItem(
