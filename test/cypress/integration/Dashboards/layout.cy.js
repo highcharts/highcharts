@@ -4,7 +4,7 @@ describe('Components in layout', () => {
     })
 
     it('should resize properly ', () => {
-        cy.get('.hd-component .chart-container').each((element, i) => {
+        cy.get('.highcharts-dashboards-component .chart-container').each((element, i) => {
             assert.strictEqual(element.width(), element.parent().width());
         });
 
@@ -12,7 +12,7 @@ describe('Components in layout', () => {
         cy.viewport('ipad-mini');
 
         // Sizes should be updated to fit the parent
-        cy.get('.hd-component .chart-container').each((element, i) => {
+        cy.get('.highcharts-dashboards-component .chart-container').each((element, i) => {
             assert.strictEqual(element.width(), element.parent().width());
         });
     });

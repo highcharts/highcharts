@@ -29,6 +29,7 @@ import type JSON from '../Core/JSON';
 import Bindings from './Actions/Bindings.js';
 import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
 import DataStates from '../Data/DataStates.js';
+import DataStatesHelper from './SerializeHelper/DataStatesHelper.js';
 import EditMode from './EditMode/EditMode.js';
 import Fullscreen from './EditMode/Fullscreen.js';
 import Globals from './Globals.js';
@@ -353,18 +354,20 @@ class Board implements Serializable<Board, Board.JSON> {
     public fromJSON(
         json: Board.JSON
     ): Board {
-        const options = json.options;
+        const options = json.options,
+            board = new Board(
+                options.containerId,
+                {
+                    layoutsJSON: options.layouts,
+                    componentOptions: options.componentOptions,
+                    respoBreakpoints: options.respoBreakpoints
+                }
+            );
 
-        return new Board(
-            options.containerId,
-            {
-                layoutsJSON: options.layouts,
-                componentOptions: options.componentOptions,
-                respoBreakpoints: options.respoBreakpoints
-            }
-        );
+        board.states = DataStatesHelper.fromJSON(json.states);
+
+        return board;
     }
-
 
     /**
      * Converts the class instance to a class JSON.
@@ -389,7 +392,8 @@ class Board implements Serializable<Board, Board.JSON> {
                 layouts: layouts,
                 componentOptions: board.options.componentOptions,
                 respoBreakpoints: board.options.respoBreakpoints
-            }
+            },
+            states: DataStatesHelper.toJSON(board.states)
         };
     }
 
@@ -440,6 +444,7 @@ namespace Board {
 
     export interface JSON extends Serializable.JSON<'Board'> {
         options: OptionsJSON;
+        states: DataStatesHelper.JSON;
     }
 
     /* *

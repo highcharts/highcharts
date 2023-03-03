@@ -9,8 +9,8 @@ describe('Editable component options', () => {
 
         const newChartID= 'myNewChart';
 
-        cy.get('.hd-component').first().click();
-        cy.get('.hd-edit-toolbar-cell > .hd-edit-toolbar-item:nth-child(2)').click();
+        cy.get('.highcharts-dashboards-component').first().click();
+        cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
         cy.get('#chartID').as('chartIDfield')
 
         cy.get('@chartIDfield').invoke('val').then(exisitingVal =>{

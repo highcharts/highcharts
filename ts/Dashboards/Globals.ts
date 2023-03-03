@@ -51,7 +51,7 @@ namespace Globals {
      * Prefix of a GUIElement HTML class name.
      *
      */
-    export const classNamePrefix = 'hd-';
+    export const classNamePrefix = 'highcharts-dashboards-';
 
     export const classNames = {
         layout: classNamePrefix + 'layout',
@@ -60,7 +60,7 @@ namespace Globals {
         cellActive: classNamePrefix + 'cell-state-active',
         row: classNamePrefix + 'row',
         layoutsWrapper: classNamePrefix + 'layouts-wrapper',
-        boardContainer: classNamePrefix + 'dashboards-wrapper'
+        boardContainer: classNamePrefix + 'wrapper'
     };
 
     export const iconsURLPrefix =

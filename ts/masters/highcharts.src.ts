@@ -146,5 +146,6 @@ PieDataLabel.compose(PieSeries);
 PlotLineOrBand.compose(Axis);
 Responsive.compose(Chart);
 StackingAxis.compose(Axis, Chart, Series);
+Tooltip.compose(Pointer);
 // Default Export
 export default G;

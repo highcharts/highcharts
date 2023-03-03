@@ -43,10 +43,12 @@ class DataStates {
      *
      * */
 
-    public constructor() {
+    public constructor(
+        stateMap: DataStates.StateMap = {}
+    ) {
         this.emittingRegister = [];
         this.listenerMap = {};
-        this.stateMap = {};
+        this.stateMap = stateMap;
     }
 
     /* *
