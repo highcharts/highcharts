@@ -19,6 +19,7 @@ import EditGlobals from './EditGlobals.js';
 import U from '../../Core/Utilities.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import Globals from '../Globals.js';
 
 const {
     createElement
@@ -96,8 +97,10 @@ function renderSelect(
         ) || {}
     ).iconURL;
 
+    let headerIcon;
+
     if (iconURL) {
-        createElement(
+        headerIcon = createElement(
             'img',
             {
                 src: iconURL,
@@ -116,10 +119,10 @@ function renderSelect(
     createElement(
         'img',
         {
-            className: 'highcharts-dashboards-drowdown-pointer',
-            src: 'https://code.highcharts.com/gfx/dashboard-icons/drowdown-pointer.svg'
+            className: 'highcharts-dashboards-dropdown-pointer',
+            src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
-        { height: '100%' },
+        {},
         btn
     );
 
@@ -143,6 +146,7 @@ function renderSelect(
             dropdown,
             placeholder,
             options.id,
+            headerIcon,
             options.onchange
 
         );
@@ -155,6 +159,7 @@ function renderSelectElement(
     dropdown: HTMLElement,
     placeholder: HTMLElement,
     id: string,
+    headerIcon?: HTMLElement,
     callback?: Function
 ): void {
     const selectOption = createElement('li', {}, { margin: 0 }, dropdown);
@@ -164,8 +169,10 @@ function renderSelectElement(
         { height: '40px', width: '100%' },
         selectOption
     );
+
+    let icon: HTMLElement|undefined;
     if (option.iconURL) {
-        createElement(
+        icon = createElement(
             'img',
             {
                 src: option.iconURL
@@ -184,6 +191,11 @@ function renderSelectElement(
     selectOptionBtn.addEventListener('click', function (): void {
         dropdown.style.display = 'none';
         placeholder.textContent = option.name || '';
+
+        if (headerIcon && option.iconURL) {
+            (headerIcon as HTMLImageElement).src = option.iconURL;
+        }
+
         if (callback) {
             return callback(id, option.name);
         }

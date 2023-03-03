@@ -63,6 +63,9 @@ namespace Globals {
         boardContainer: classNamePrefix + 'dashboards-wrapper'
     };
 
+    export const iconsURLPrefix =
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@d3590f4/gfx/dashboard-icons/';
+
     export const guiElementType: Record<string, GUIElement.GUIElementType> = {
         row: 'row',
         cell: 'cell',

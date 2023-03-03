@@ -89,7 +89,8 @@ class Sidebar {
         icon: ''
     }];
 
-    public static seriesIconURLPrefix = 'https://code.highcharts.com/gfx/dashboard-icons/series-types/icon-';
+    public static seriesIconURLPrefix =
+        Globals.iconsURLPrefix + 'series-types/icon-';
     public static components: Array<Sidebar.AddComponentDetails> = [
         {
             text: 'layout',
@@ -868,10 +869,6 @@ class Sidebar {
                             name: 'scatter',
                             iconURL:
                                 Sidebar.seriesIconURLPrefix + 'scatter.svg'
-                        }, {
-                            name: 'spline',
-                            iconURL:
-                                Sidebar.seriesIconURLPrefix + 'spline.svg'
                         }, {
                             name: 'pie',
                             iconURL: Sidebar.seriesIconURLPrefix + 'pie.svg'
