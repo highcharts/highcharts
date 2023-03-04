@@ -20,7 +20,8 @@ const chart = Highcharts.chart('container', {
             beforeChartFormat: ''
         },
         point: {
-            dateFormat: '%b %e, %Y'
+            dateFormat: '%b %e, %Y',
+            valueDescriptionFormat: '{value}{separator}{xDescription}'
         },
         series: {
             pointDescriptionEnabledThreshold: false
