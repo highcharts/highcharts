@@ -133,6 +133,8 @@ class SonificationTimeline {
     ): void {
         if (this.isPlaying) {
             this.cancel();
+        } else {
+            this.clearScheduledCallbacks();
         }
         this.playTimestamp = Date.now();
         this.resumeFromTime = 0;
@@ -180,8 +182,8 @@ class SonificationTimeline {
                 const e = channel.events[i],
                     keysSig = getEventKeysSignature(e);
 
-                // Optimize by skipping extremely close events
-                // (<2ms apart by default)
+                // Optimize by skipping extremely close events (<2ms apart by
+                // default), as long as they don't introduce new event options
                 if (
                     keysSig === lastEventKeys &&
                     e.time - lastEventTime < skipThreshold
@@ -284,6 +286,7 @@ class SonificationTimeline {
             },
             maxTime + 250
         ));
+        this.resumeFromTime = filterPersists ? maxTime : this.getLength();
     }
 
 
@@ -291,7 +294,7 @@ class SonificationTimeline {
     pause(): number {
         this.isPaused = true;
         this.cancel();
-        this.resumeFromTime = Date.now() - this.playTimestamp;
+        this.resumeFromTime = Date.now() - this.playTimestamp - 10;
         return this.resumeFromTime;
     }
 
@@ -317,10 +320,10 @@ class SonificationTimeline {
     resume(): void {
         if (this.playingChannels) {
             const resumeFrom = this.resumeFromTime - 50;
-            this.play((e): boolean => e.time > resumeFrom, false);
+            this.play((e): boolean => e.time > resumeFrom, false, false);
             this.playTimestamp -= resumeFrom;
         } else {
-            this.play();
+            this.play(void 0, false, false);
         }
     }
 
@@ -332,7 +335,11 @@ class SonificationTimeline {
         onBoundaryHit?: Function,
         eventFilter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>
     ): void {
-        const fromTime = this.isPaused ? this.resumeFromTime : -1,
+        if (this.isPlaying) {
+            this.pause();
+        }
+
+        const fromTime = this.resumeFromTime,
             closestTime = this.channels.reduce(
                 (time, channel): number => {
                     // Adapted binary search since events are sorted by time
@@ -466,17 +473,17 @@ class SonificationTimeline {
     cancel(): void {
         this.fireStopEvent();
         this.isPlaying = false;
-        this.scheduledCallbacks.forEach(clearTimeout);
         this.channels.forEach((c): void => c.cancel());
         if (this.playingChannels && this.playingChannels !== this.channels) {
             this.playingChannels.forEach((c): void => c.cancel());
         }
+        this.clearScheduledCallbacks();
+        this.resumeFromTime = 0;
     }
 
 
     destroy(): void {
-        this.fireStopEvent();
-        this.scheduledCallbacks.forEach(clearTimeout);
+        this.cancel();
         if (this.playingChannels && this.playingChannels !== this.channels) {
             this.playingChannels.forEach((c): void => c.destroy());
         }
@@ -526,6 +533,12 @@ class SonificationTimeline {
         if (onStop) {
             onStop({ timeline: this });
         }
+    }
+
+
+    private clearScheduledCallbacks(): void {
+        this.scheduledCallbacks.forEach(clearTimeout);
+        this.scheduledCallbacks = [];
     }
 
 }

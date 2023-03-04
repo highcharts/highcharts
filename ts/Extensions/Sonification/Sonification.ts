@@ -188,20 +188,22 @@ class Sonification {
     }
 
 
-    sonifyChart(onEnd?: Function): void {
-        if (!this.ready(this.sonifyChart.bind(this, onEnd))) {
+    sonifyChart(resetAfter?: boolean, onEnd?: Function): void {
+        if (!this.ready(this.sonifyChart.bind(this, resetAfter, onEnd))) {
             return;
         }
 
         if (this.timeline) {
             this.timeline.reset();
-            this.timeline.play(void 0, void 0, void 0, onEnd);
+            this.timeline.play(void 0, void 0, resetAfter, onEnd);
         }
     }
 
 
-    sonifySeries(series: Series, onEnd?: Function): void {
-        if (!this.ready(this.sonifySeries.bind(this, series, onEnd))) {
+    sonifySeries(series: Series, resetAfter?: boolean, onEnd?: Function): void {
+        if (!this.ready(this.sonifySeries.bind(
+            this, series, resetAfter, onEnd
+        ))) {
             return;
         }
 
@@ -209,7 +211,7 @@ class Sonification {
             this.timeline.reset();
             this.timeline.play((e): boolean =>
                 !!e.relatedPoint && e.relatedPoint.series === series,
-            void 0, void 0, onEnd);
+            void 0, resetAfter, onEnd);
         }
     }
 
@@ -430,7 +432,7 @@ namespace Sonification {
                 updateSonificationEnabled,
                 sonify: function (onEnd?: Function): void {
                     if (this.sonification) {
-                        this.sonification.sonifyChart(onEnd);
+                        this.sonification.sonifyChart(false, onEnd);
                     }
                 }
             });
@@ -444,7 +446,7 @@ namespace Sonification {
             composedClasses.push(SeriesClass);
             SeriesClass.prototype.sonify = function (onEnd?: Function): void {
                 if (this.chart.sonification) {
-                    this.chart.sonification.sonifySeries(this, onEnd);
+                    this.chart.sonification.sonifySeries(this, false, onEnd);
                 }
             };
         }
