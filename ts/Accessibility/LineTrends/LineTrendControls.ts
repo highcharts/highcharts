@@ -73,12 +73,19 @@ function chartPlayPause(chart: Chart): void {
 function initSonificationKeyboardNav(
     chart: Chart, keysource: HTMLElement, liveRegion: HTMLElement
 ): void {
-    let announceTimeout: number;
+    let announceTimeout: number,
+        lastPlayedSeries: Accessibility.SeriesComposition;
     const afterNavigate = (
         t: unknown, pointsPlayed: Accessibility.PointComposition[]
     ): void => {
         if (!pointsPlayed.length) {
             return;
+        }
+        const playedSeries = pointsPlayed[0].series,
+            newSeries = playedSeries !== lastPlayedSeries;
+        if (newSeries) {
+            lastPlayedSeries = playedSeries;
+            liveRegion.textContent = playedSeries.name;
         }
         announceTimeout = setTimeout((): unknown => (
             liveRegion.textContent = pointsPlayed.reduce((acc, cur): string => {
@@ -88,7 +95,7 @@ function initSonificationKeyboardNav(
                     return acc;
                 }
                 return acc ? ` ${label}` : label;
-            }, '')), 200);
+            }, '')), newSeries ? 1500 : 300);
     };
 
     keysource.addEventListener('keydown', (e): void => {
