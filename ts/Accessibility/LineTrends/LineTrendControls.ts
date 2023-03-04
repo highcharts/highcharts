@@ -39,6 +39,10 @@ type SimplifiedChartSeries = Accessibility.SeriesComposition & {
     _isSimplifiedSeries?: boolean;
 };
 
+type SimplifiedChart = Accessibility.ChartComposition & {
+    _resetTrendDetail?: Function;
+};
+
 
 /**
  * Play or pause chart.
@@ -134,16 +138,10 @@ function initSonificationKeyboardNav(
  * @private
  */
 function setDetailLevel(
-    chart: Accessibility.ChartComposition, detail: 'full'|'medium'|'low'
+    chart: SimplifiedChart, detail: 'full'|'medium'|'low'
 ): void {
-    let i = chart.series.length;
-    while (i--) {
-        const s = chart.series[i] as SimplifiedChartSeries;
-        if (s._isSimplifiedSeries) {
-            s.remove();
-        } else {
-            s.setVisible(true, false);
-        }
+    if (chart._resetTrendDetail) {
+        chart._resetTrendDetail();
     }
 
     if (detail !== 'full') {
@@ -198,7 +196,9 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
     detailFieldset.appendChild(fieldsetLegend);
 
     let count = 0;
-    const addRadio = (label: string, onClick: EventListener): void => {
+    const addRadio = (
+        label: string, onClick: EventListener
+    ): HTMLInputElement => {
         const id = `highcharts-trend-ctrl-input-${count++}`,
             inputEl = document.createElement('input'),
             labelEl = document.createElement('label');
@@ -213,13 +213,31 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
         labelEl.setAttribute('for', id);
         detailFieldset.appendChild(inputEl);
         detailFieldset.appendChild(labelEl);
+        return inputEl;
     };
 
     fieldsetLegend.innerText = 'Apply chart smoothing';
-    addRadio('Full detail', (): void => setDetailLevel(chart, 'full'));
+    const fullDetail = addRadio('Full detail',
+        (): void => setDetailLevel(chart, 'full'));
     addRadio('Medium detail', (): void => setDetailLevel(chart, 'medium'));
     addRadio('Overall shape only',
         (): void => setDetailLevel(chart, 'low'));
+
+    (chart as SimplifiedChart)._resetTrendDetail = (check?: boolean): void => {
+        let i = chart.series.length;
+        while (i--) {
+            const s = chart.series[i] as SimplifiedChartSeries;
+            if (s._isSimplifiedSeries) {
+                s.remove();
+            } else {
+                s.setVisible(true, false);
+            }
+        }
+        if (check && !fullDetail.checked) {
+            fullDetail.checked = true;
+            announce(chart, 'Showing full detail');
+        }
+    };
 
     viewTableButton.textContent = 'Show data table';
     viewTableButton.setAttribute('aria-expanded', false);

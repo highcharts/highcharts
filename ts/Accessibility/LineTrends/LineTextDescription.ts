@@ -20,7 +20,8 @@ import type Point from '../../Core/Series/Point';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import U from '../../Core/Utilities.js';
 const {
-    defined
+    defined,
+    uniqueKey
 } = U;
 import CU from '../Utils/ChartUtilities.js';
 const {
@@ -165,13 +166,27 @@ function getTypeAndSeriesDesc(chart: Accessibility.ChartComposition): string {
     }
     desc += '.';
 
-    if (singleAxis) {
-        const numTotalDataPoints = lineSeries.reduce((acc, cur): number =>
-            acc + cur.points.length, 0);
-        desc += ` ${getAxisRangeDescription(xAxis)} The chart has ${numTotalDataPoints} data points in total${numLines > 1 ? ' across all lines' : ''}.`;
-    }
-
     return desc;
+}
+
+
+/**
+ * Describe axis range and num points for a single axis chart.
+ * If the chart has multiple axes, return empty string.
+ * @private
+ */
+function getSingleAxisDescription(
+    chart: Accessibility.ChartComposition
+): string {
+    const lineSeries = chart.series.filter(isLineSeries),
+        numTotalDataPoints = lineSeries.reduce((acc, cur): number =>
+            acc + cur.points.length, 0),
+        xAxis = lineSeries[0] && lineSeries[0].xAxis;
+    return xAxis && chart.xAxis.length + chart.yAxis.length < 3 ?
+        `${getAxisRangeDescription(xAxis)} The chart has ${
+            numTotalDataPoints
+        } data points in total${lineSeries.length > 1 ? ' across all lines' : ''}.` :
+        '';
 }
 
 
@@ -357,12 +372,12 @@ function describeTrend(
     const len = simplifiedPoints.length,
         firstPoint = simplifiedPoints[0],
         lastPoint = simplifiedPoints[len - 1],
-        name = firstPoint.series.name,
+        name = firstPoint && firstPoint.series.name,
         x = (i: number): string => getPointXDescription(
             simplifiedPoints[i] as Accessibility.PointComposition),
         y = (i: number): string => yFormat(simplifiedPoints[i]);
     let desc = `${name} starts at ${y(0)}, at ${x(0)}`,
-        prevY = firstPoint.y;
+        prevY = firstPoint && firstPoint.y;
 
     if (!defined(prevY)) {
         return 'Unknown trend.';
@@ -389,7 +404,7 @@ function describeTrend(
         const ratio = dropAmount === 0 ? Infinity : riseAmount / dropAmount,
             ratioLimit = (n: number): boolean =>
                 (ratio > 1 ? ratio < ratio * n : ratio > ratio / n);
-        if (ratio > 0.95 && ratio < 1.05) {
+        if (riseAmount - dropAmount === 0 || ratio > 0.95 && ratio < 1.05) {
             desc += riseAmount > 0 ? 'rises and drops' : 'stays flat';
         } else {
             const [verb, nonverb] = ratio > 1 ?
@@ -476,6 +491,88 @@ function getMultilineTrends(simplifiedPoints: Point[][]): string {
 
 
 /**
+ * Inject the range selector for the trend description.
+ * @private
+ */
+function addTrendRangeSelector(
+    chart: Accessibility.ChartComposition,
+    containerId: string,
+    onRangeUpdate: Function
+): void {
+    const container = document.getElementById(containerId),
+        startEl = document.createElement('input'),
+        endEl = document.createElement('input'),
+        startLabel = document.createElement('label'),
+        endLabel = document.createElement('label'),
+        explanation = document.createElement('p'),
+        resetButton = document.createElement('button'),
+        xAxis = chart.xAxis[0],
+        xMin = xAxis.dataMin,
+        xMax = xAxis.dataMax,
+        day = 1000 * 60 * 60 * 24;
+
+    if (!container || !defined(xMin) || !defined(xMax)) {
+        return;
+    }
+
+    if (xAxis.dateTime) {
+        const xRange = xMax - xMin;
+        if (xRange > day * 3) {
+            startEl.type = endEl.type = 'date';
+            startEl.value = startEl.min = endEl.min = new Date(xMin)
+                .toISOString().split('T')[0];
+            endEl.value = startEl.max = endEl.max = new Date(xMax)
+                .toISOString().split('T')[0];
+        } else if (xRange > day) {
+            startEl.type = endEl.type = 'datetime-local';
+            startEl.value = startEl.min = endEl.min = new Date(xMin)
+                .toISOString().split('Z')[0];
+            endEl.value = startEl.max = endEl.max = new Date(xMax)
+                .toISOString().split('Z')[0];
+        } else {
+            startEl.type = endEl.type = 'time';
+            startEl.step = endEl.step = '1'; // seconds
+            startEl.value = startEl.min = endEl.min = new Date(xMin)
+                .toISOString().substring(11, 19);
+            endEl.value = startEl.max = endEl.max = new Date(xMax)
+                .toISOString().substring(11, 19);
+        }
+    } else {
+        startEl.value = startEl.min = endEl.min = '' + xMin;
+        endEl.value = startEl.max = endEl.max = '' + xMax;
+    }
+
+    const updateChartRange = (): void => {
+        xAxis.setExtremes(
+            startEl.valueAsNumber,
+            endEl.valueAsNumber
+        );
+        onRangeUpdate();
+    };
+
+    resetButton.onclick = (): void => {
+        startEl.value = startEl.min;
+        endEl.value = endEl.max;
+        updateChartRange();
+    };
+
+    startEl.onchange = endEl.onchange = updateChartRange;
+
+    explanation.textContent = 'Select range to inspect for the details.' +
+        ' This also sets the range for the interactive chart.';
+    startLabel.textContent = 'Start';
+    endLabel.textContent = 'End';
+    resetButton.textContent = 'Reset';
+    startLabel.appendChild(startEl);
+    endLabel.appendChild(endEl);
+    container.appendChild(explanation);
+    container.appendChild(startLabel);
+    container.appendChild(endLabel);
+    container.appendChild(resetButton);
+}
+
+
+/**
  * Build and add a text description for a line chart.
  * @private
  */
@@ -487,6 +584,7 @@ function addLineChartTextDescription(
             getHeadingTagNameForElement(chart.renderTo)[1] || '1', 10
         ),
         h2 = 'h' + (rootHLevel + 1),
+        h3 = 'h' + (rootHLevel + 2),
         infoRegions = chart.accessibility &&
             chart.accessibility.components.infoRegions,
         add = (content?: string, wrapTag?: string): string => (
@@ -499,47 +597,87 @@ function addLineChartTextDescription(
     const preprocessedSeries = chart.series.filter(isLineSeries)
             .map((s): Point[] => preprocessSimplify(s.points)),
         simplifiedSeries7p = preprocessedSeries
-            .map((ps): Point[] => simplifyLine(ps, 7)),
-        numLineSeries = preprocessedSeries.length;
+            .map((ps): Point[] => simplifyLine(ps, 7));
 
     add(getTitleAndSubtitle(chart, rootHLevel));
     add(infoRegions && infoRegions.getLongdescText(), 'p');
     add(getTypeAndSeriesDesc(chart), 'p');
+    add(getSingleAxisDescription(chart), 'p');
     add(getOverallTrend(simplifiedSeries7p), 'p');
 
-    if (chart.xAxis.length + chart.yAxis.length > 2) {
-        add('Axes', h2);
-        const axesDesc = infoRegions && infoRegions.getAxesDescription();
-        add(axesDesc && axesDesc.xAxis, 'p');
-        add(axesDesc && axesDesc.yAxis, 'p');
-    }
+    add('Details', h2);
 
-    if (numLineSeries < 40 && numLineSeries) {
-        if (numLineSeries === 1) {
-            add('Major points of change', h2);
-            add(describeTrend(simplifiedSeries7p[0], false), 'p');
-            add(getMinMaxSingle(preprocessedSeries[0]), 'p');
-        } else {
-            add('Trends', h2);
-            add(getMultilineTrends(simplifiedSeries7p), 'p');
-        }
-
-        // Separate min/max section for multiline
-        if (numLineSeries > 1) {
-            add('Min and max', h2);
-            add(getMinMaxMultiple(
-                preprocessedSeries, true, rootHLevel + 2
-            ), 'p');
-            add(getMinMaxMultiple(
-                preprocessedSeries, false, rootHLevel + 2
-            ), 'p');
-        }
-    }
+    // Placeholders for range selector & details for trend
+    const rangeSelectorId = uniqueKey(),
+        detailsId = uniqueKey();
+    html += `<div id="${rangeSelectorId}" class="highcharts-trend-range-container"></div>` +
+        `<div id="${detailsId}" class="highcharts-trend-detail-container"></div>`;
 
     const el = document.createElement('div');
     el.className = 'highcharts-line-description';
     chart.renderTo.parentNode.insertBefore(el, chart.renderTo);
     AST.setElementHTML(el, html);
+
+    const updateDetails = (): void => {
+        const detailsEl = document.getElementById(detailsId);
+        if (!detailsEl) {
+            return;
+        }
+        html = '';
+
+        // Reset series detail
+        if ((chart as unknown as Record<string, Function|undefined>)._resetTrendDetail) {
+            (chart as unknown as Record<string, Function>)._resetTrendDetail(true);
+            chart.redraw();
+        }
+
+        if (chart.xAxis.length + chart.yAxis.length > 2) {
+            add('Axes', h3);
+            const axesDesc = infoRegions && infoRegions.getAxesDescription();
+            add(axesDesc && axesDesc.xAxis, 'p');
+            add(axesDesc && axesDesc.yAxis, 'p');
+        }
+
+        const preprocessedSeries = chart.series.filter(isLineSeries)
+                .map((s): Point[] => preprocessSimplify(
+                    s.points.filter((p): boolean => !!p.isInside)
+                )),
+            numLineSeries = preprocessedSeries.length;
+
+        if (numLineSeries < 40 && numLineSeries) {
+            const simplifiedSeries7p = preprocessedSeries
+                .map((ps): Point[] => simplifyLine(ps, 7));
+
+            if (numLineSeries === 1) {
+                add('Major points of change', h3);
+                add(describeTrend(simplifiedSeries7p[0], false), 'p');
+                add(getMinMaxSingle(preprocessedSeries[0]), 'p');
+            } else {
+                add('Trends', h3);
+                add(getMultilineTrends(simplifiedSeries7p), 'p');
+            }
+
+            // Separate min/max section for multiline
+            if (numLineSeries > 1) {
+                add('Min and max', h3);
+                add(getMinMaxMultiple(
+                    preprocessedSeries, true, rootHLevel + 3
+                ), 'p');
+                add(getMinMaxMultiple(
+                    preprocessedSeries, false, rootHLevel + 3
+                ), 'p');
+            }
+        }
+
+        AST.setElementHTML(detailsEl, html);
+
+        setTimeout((): void => chart.accessibility &&
+            chart.accessibility.components.infoRegions
+                .announcer.announce('Range updated'), 1000);
+    };
+
+    addTrendRangeSelector(chart, rangeSelectorId, updateDetails);
+    updateDetails();
 }
 
 

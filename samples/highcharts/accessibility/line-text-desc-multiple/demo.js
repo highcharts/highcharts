@@ -39,8 +39,7 @@ const chart = Highcharts.chart('container', {
         },
         labels: {
             format: '${value}'
-        },
-        max: 80000
+        }
     },
     xAxis: {
         accessibility: {

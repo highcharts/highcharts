@@ -37,7 +37,9 @@
     margin: 20px 15px 10px 10px;
 }
 
-.highcharts-trend-controls button {
+.highcharts-trend-controls button,
+.highcharts-trend-range-container button,
+.highcharts-sonification-dialog button {
     background-color: #e9eff0;
     border: 1px solid #8daeb9;
     text-decoration: none;
@@ -50,6 +52,16 @@
 
 .highcharts-sonification-dialog button {
     margin-right: 15px;
+}
+
+.highcharts-trend-range-container input {
+    margin: 5px 20px 0 10px;
+}
+
+.highcharts-trend-range-container button {
+    margin: 0;
+    padding: 3px 10px;
+    font-size: 0.9rem;
 }
 
 .highcharts-figure,

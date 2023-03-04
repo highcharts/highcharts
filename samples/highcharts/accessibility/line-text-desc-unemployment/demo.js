@@ -128,8 +128,7 @@ const chart = Highcharts.chart('container', {
         },
         labels: {
             format: '{value:,.0f}%'
-        },
-        max: 15
+        }
     },
     xAxis: {
         accessibility: {
