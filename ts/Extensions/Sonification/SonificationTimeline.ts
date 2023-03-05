@@ -22,6 +22,7 @@ import DU from '../DownloadURL.js';
 const { downloadURL } = DU;
 import U from '../../Core/Utilities.js';
 const {
+    defined,
     find,
     merge
 } = U;
@@ -394,6 +395,63 @@ class SonificationTimeline {
     }
 
 
+    // Play event with related point, where the value of a prop on the
+    // related point is closest to a target value.
+    // Note: not very efficient.
+    playClosestToPropValue(
+        prop: keyof Point,
+        targetVal: number,
+        onEnd?: Function,
+        onBoundaryHit?: Function,
+        eventFilter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>
+    ): void {
+        const filter = (
+            e: Sonification.TimelineEvent,
+            ix: number,
+            arr: Sonification.TimelineEvent[]
+        ): boolean => !!(eventFilter ?
+            eventFilter(e, ix, arr) && e.relatedPoint :
+            e.relatedPoint);
+
+        let closestValDiff: number = Infinity,
+            closestEvent: Sonification.TimelineEvent|null = null;
+        (this.playingChannels || this.channels).forEach((channel): void => {
+            const events = channel.events;
+            let i = events.length;
+            while (i--) {
+                if (!filter(events[i], i, events)) {
+                    continue;
+                }
+                const val = (
+                        events[i].relatedPoint as Point
+                    )[prop] as typeof closestValDiff,
+                    diff = defined(val) && Math.abs(targetVal - val);
+
+                if (diff !== false && diff < closestValDiff) {
+                    closestValDiff = diff;
+                    closestEvent = events[i];
+                }
+            }
+        });
+
+        if (closestEvent) {
+            this.play((e): boolean => !!(closestEvent &&
+                e.time < closestEvent.time + 1 &&
+                e.time > closestEvent.time - 1 &&
+                e.relatedPoint === closestEvent.relatedPoint
+            ), false, false, onEnd);
+            this.playingChannels = this.playingChannels || this.channels;
+            this.isPaused = true;
+            this.isPlaying = false;
+            this.resumeFromTime = (
+                closestEvent as Sonification.TimelineEvent
+            ).time;
+        } else if (onBoundaryHit) {
+            onBoundaryHit({ timeline: this });
+        }
+    }
+
+
     // Get timeline events that are related to a certain point.
     // Note: Point grouping may cause some points not to have a
     //  related point in the timeline.
@@ -458,6 +516,47 @@ class SonificationTimeline {
             this.isPlaying = false;
             this.resumeFromTime = toTime;
         }
+    }
+
+
+    // Get last played / current point
+    getCurrentPoint(
+        filter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>
+    ): Point|null {
+        const curTime = this.resumeFromTime,
+            channels = this.playingChannels || this.channels;
+        let closestDiff = Infinity,
+            closestPoint = null;
+        channels.forEach((c): void => {
+            const events = c.events.filter((e, ix, arr): boolean => !!(
+                e.relatedPoint && e.time <= curTime &&
+                (!filter || filter(e, ix, arr))));
+
+            let s = 0,
+                e = events.length;
+            while (s < e) {
+                const mid = (s + e) >> 1,
+                    t = events[mid].time,
+                    cmp = t - curTime;
+                if (cmp > 0) { // ahead
+                    e = mid;
+                } else if (cmp < 0) { // behind
+                    s = mid + 1;
+                } else { // === from time
+                    e = s = mid;
+                }
+            }
+
+            const event = events[Math.min(s, events.length - 1)],
+                closestTime = event && event.time,
+                diff = Math.abs(closestTime - curTime);
+            if (defined(closestTime) && diff < closestDiff) {
+                closestDiff = diff;
+                closestPoint = event.relatedPoint;
+            }
+        });
+
+        return closestPoint;
     }
 
 
