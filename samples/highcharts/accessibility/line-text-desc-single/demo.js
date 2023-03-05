@@ -78,7 +78,8 @@ const chart = Highcharts.chart('container', {
         series: {
             marker: {
                 enabled: false
-            }
+            },
+            cropThreshold: 10
         }
     },
     legend: {

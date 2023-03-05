@@ -50,6 +50,10 @@
     font-size: 1rem;
 }
 
+.highcharts-sonification-dialog {
+    max-width: 900px;
+}
+
 .highcharts-sonification-dialog button {
     margin-right: 15px;
 }

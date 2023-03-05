@@ -50,7 +50,10 @@ const isLineSeries = (s: Series): boolean =>
     ['line', 'spline', 'area', 'areaspline'].indexOf(s.type) > -1;
 
 // Get Y value as string
-const yFormat = (point: Point): string => {
+const yFormat = (point?: Point): string => {
+    if (!point) {
+        return 'unknown value';
+    }
     const numFormatted = defined(point.y) && pointNumberToString(
         point as Accessibility.PointComposition, point.y
     ) || 'unknown value';
@@ -312,8 +315,8 @@ function getOverallTrend(simplifiedSeries: Point[][]): string {
  * @private
  */
 function getMinMaxValueSingle(line: Point[], min: boolean): string {
-    const series = line[0].series,
-        val = min ? series.dataMin : series.dataMax;
+    const series = line[0] && line[0].series,
+        val = series && (min ? series.dataMin : series.dataMax);
     if (!defined(val)) {
         return 'unknown value';
     }
@@ -341,23 +344,29 @@ function getMinMaxValueSingle(line: Point[], min: boolean): string {
  * @private
  */
 function getMinMaxMultiple(
-    simplifiedPoints: Point[][], min: boolean, headingLevel: number
+    series: Series[],
+    simplifiedPoints: Point[][],
+    min: boolean,
+    headingLevel: number
 ): string {
-    const val = (series: Series): number => (min ?
-        series.dataMin || Infinity :
-        series.dataMax || -Infinity
+    const val = (series?: Series): number => (min ?
+        series && series.dataMin || Infinity :
+        series && series.dataMax || -Infinity
     );
     return `<h${headingLevel}>${
         min ? 'Minimum' : 'Maximum'
     } values are:</h${headingLevel}><ul>${
         simplifiedPoints.slice()
             .sort((a, b): number => (min ?
-                val(a[0].series) - val(b[0].series) :
-                val(b[0].series) - val(a[0].series)
+                val(a[0] && a[0].series) - val(b[0] && b[0].series) :
+                val(b[0] && b[0].series) - val(a[0] && a[0].series)
             ))
-            .map((p): string =>
-                `<li>${p[0].series.name}: ${getMinMaxValueSingle(p, min)}</li>`
-            ).join(' ')
+            .map((s, ix): string => {
+                if (s[0]) {
+                    return `<li>${s[0].series.name}: ${getMinMaxValueSingle(s, min)}</li>`;
+                }
+                return `<li>${series[ix].name}: No data</li>`;
+            }).join(' ')
     }</ul>`;
 }
 
@@ -367,20 +376,27 @@ function getMinMaxMultiple(
  * @private
  */
 function describeTrend(
-    simplifiedPoints: Point[], short: boolean, allPoints?: Point[][]
+    series: Accessibility.SeriesComposition,
+    simplifiedPoints: Point[],
+    short: boolean
 ): string {
     const len = simplifiedPoints.length,
         firstPoint = simplifiedPoints[0],
-        lastPoint = simplifiedPoints[len - 1],
-        name = firstPoint && firstPoint.series.name,
+        name = series.name;
+
+    if (!firstPoint) {
+        return `${name} has no data in this period.`;
+    }
+
+    const lastPoint = simplifiedPoints[len - 1],
         x = (i: number): string => getPointXDescription(
             simplifiedPoints[i] as Accessibility.PointComposition),
         y = (i: number): string => yFormat(simplifiedPoints[i]);
     let desc = `${name} starts at ${y(0)}, at ${x(0)}`,
-        prevY = firstPoint && firstPoint.y;
+        prevY = firstPoint.y;
 
     if (!defined(prevY)) {
-        return 'Unknown trend.';
+        return `${name}: Unknown trend.`;
     }
 
     // Shortened trend description
@@ -481,10 +497,12 @@ function getMinMaxSingle(line: Point[]): string {
  * Get trend description for multiple lines.
  * @private
  */
-function getMultilineTrends(simplifiedPoints: Point[][]): string {
+function getMultilineTrends(
+    chart: Accessibility.ChartComposition, simplifiedPoints: Point[][]
+): string {
     return `Overall trends for each line:<ul>${
-        simplifiedPoints.map((p): string =>
-            `<li>${describeTrend(p, true, simplifiedPoints)}</li>`
+        simplifiedPoints.map((p, ix): string =>
+            `<li>${describeTrend(chart.series[ix], p, true)}</li>`
         ).join(' ')
     }</ul>`;
 }
@@ -638,11 +656,12 @@ function addLineChartTextDescription(
             add(axesDesc && axesDesc.yAxis, 'p');
         }
 
-        const preprocessedSeries = chart.series.filter(isLineSeries)
-                .map((s): Point[] => preprocessSimplify(
+        const lineSeries = chart.series.filter(isLineSeries),
+            preprocessedSeries = lineSeries.map(
+                (s): Point[] => preprocessSimplify(
                     s.points.filter((p): boolean => !!p.isInside)
                 )),
-            numLineSeries = preprocessedSeries.length;
+            numLineSeries = lineSeries.length;
 
         if (numLineSeries < 40 && numLineSeries) {
             const simplifiedSeries7p = preprocessedSeries
@@ -650,21 +669,23 @@ function addLineChartTextDescription(
 
             if (numLineSeries === 1) {
                 add('Major points of change', h3);
-                add(describeTrend(simplifiedSeries7p[0], false), 'p');
+                add(describeTrend(
+                    lineSeries[0], simplifiedSeries7p[0], false
+                ), 'p');
                 add(getMinMaxSingle(preprocessedSeries[0]), 'p');
             } else {
                 add('Trends', h3);
-                add(getMultilineTrends(simplifiedSeries7p), 'p');
+                add(getMultilineTrends(chart, simplifiedSeries7p), 'p');
             }
 
             // Separate min/max section for multiline
             if (numLineSeries > 1) {
                 add('Min and max', h3);
                 add(getMinMaxMultiple(
-                    preprocessedSeries, true, rootHLevel + 3
+                    lineSeries, preprocessedSeries, true, rootHLevel + 3
                 ), 'p');
                 add(getMinMaxMultiple(
-                    preprocessedSeries, false, rootHLevel + 3
+                    lineSeries, preprocessedSeries, false, rootHLevel + 3
                 ), 'p');
             }
         }

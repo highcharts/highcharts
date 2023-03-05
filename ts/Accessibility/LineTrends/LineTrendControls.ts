@@ -71,21 +71,24 @@ function chartPlayPause(chart: Chart): void {
  * @private
  */
 function initSonificationKeyboardNav(
-    chart: Chart, keysource: HTMLElement, liveRegion: HTMLElement
+    chart: Accessibility.ChartComposition,
+    keysource: HTMLElement,
+    liveRegion: HTMLElement
 ): void {
     let announceTimeout: number,
-        lastPlayedSeries: Accessibility.SeriesComposition;
+        lastPlayedSeries: Accessibility.SeriesComposition,
+        lastPlayedPoint: Accessibility.PointComposition;
     const afterNavigate = (
         t: unknown, pointsPlayed: Accessibility.PointComposition[]
     ): void => {
         if (!pointsPlayed.length) {
             return;
         }
-        const playedSeries = pointsPlayed[0].series,
-            newSeries = playedSeries !== lastPlayedSeries;
+        lastPlayedPoint = pointsPlayed[0];
+        const newSeries = lastPlayedPoint.series !== lastPlayedSeries;
         if (newSeries) {
-            lastPlayedSeries = playedSeries;
-            liveRegion.textContent = playedSeries.name;
+            lastPlayedSeries = lastPlayedPoint.series;
+            liveRegion.textContent = lastPlayedPoint.series.name;
         }
         announceTimeout = setTimeout((): unknown => (
             liveRegion.textContent = pointsPlayed.reduce((acc, cur): string => {
@@ -104,39 +107,62 @@ function initSonificationKeyboardNav(
         }
         liveRegion.textContent = '';
         clearTimeout(announceTimeout);
-        switch (e.key) {
-            case 'ArrowUp':
-            case 'ArrowLeft':
-                if (chart.sonification.timeline) {
-                    (chart.sonification.timeline as any)._navigating = true;
+
+        const playAdjacent = (
+                next: boolean,
+                filter: ArrayFilterCallbackFunction<Sonification.TimelineEvent>
+            ): void => {
+                if (chart.sonification) {
+                    if (chart.sonification.timeline) {
+                        (chart.sonification.timeline as any)._navigating = true;
+                    }
+                    chart.sonification.playAdjacent(
+                        next, afterNavigate, filter
+                    );
+                    if (chart.sonification.timeline) {
+                        delete (chart.sonification.timeline as any)._navigating;
+                    }
                 }
-                chart.sonification.playAdjacent(false, afterNavigate,
-                    (e): boolean => !!e.relatedPoint);
-                if (chart.sonification.timeline) {
-                    delete (chart.sonification.timeline as any)._navigating;
+            },
+            playClosestProp = (
+                prop: keyof Point,
+                targetVal: number,
+                filter: ArrayFilterCallbackFunction<Sonification.TimelineEvent>
+            ): void => {
+                const timeline = chart.sonification &&
+                    chart.sonification.timeline;
+                if (timeline) {
+                    (timeline as any)._navigating = true;
+                    timeline.playClosestToPropValue(
+                        prop, targetVal, afterNavigate,
+                        (): void => announce(chart, 'No more series'), filter
+                    );
+                    delete (timeline as any)._navigating;
                 }
-                e.preventDefault();
-                break;
-            case 'ArrowDown':
-            case 'ArrowRight':
-                if (chart.sonification.timeline) {
-                    (chart.sonification.timeline as any)._navigating = true;
-                }
-                chart.sonification.playAdjacent(true, afterNavigate,
-                    (e): boolean => !!e.relatedPoint);
-                if (chart.sonification.timeline) {
-                    delete (chart.sonification.timeline as any)._navigating;
-                }
-                e.preventDefault();
-                break;
-            case ' ':
-                chartPlayPause(chart);
-                e.preventDefault();
-                break;
-            case 'Escape':
-                chart.sonification.cancel();
-                break;
+            };
+
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            playAdjacent(false, (e): boolean => !!e.relatedPoint);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            playAdjacent(true, (e): boolean => !!e.relatedPoint);
+        } else if (e.key === 'PageDown' || e.key === 'PageUp') {
+            const timeline = chart.sonification && chart.sonification.timeline,
+                curPoint = timeline && timeline.getCurrentPoint();
+            if (curPoint) {
+                const newSeries = chart.series[curPoint.series.index +
+                    (e.key === 'PageDown' ? -1 : 1)];
+                playClosestProp('x', curPoint.x, (e): boolean =>
+                    !!(e.relatedPoint && e.relatedPoint.series === newSeries));
+            }
+        } else if (e.key === ' ') {
+            chartPlayPause(chart);
+        } else if (e.key === 'Escape') {
+            chart.sonification.cancel();
+            return;
+        } else {
+            return;
         }
+        e.preventDefault();
     });
 }
 
@@ -286,7 +312,8 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
         sonificationDialog.appendChild(sonifyButton);
 
         application.textContent = 'Press Spacebar to play and pause, and use ' +
-            'arrow keys to move around the chart. Press ESC to end.';
+            'arrow keys to move around points in a line. Use Page Up/Page ' +
+            'Down to move between series. Press ESC to end.';
         application.setAttribute('role', 'application');
         application.setAttribute('tabindex', 0);
         application.setAttribute('aria-label', 'Audio Chart');
@@ -299,6 +326,8 @@ function addLineTrendControls(chart: Accessibility.ChartComposition): void {
         liveRegion.style.position = 'absolute';
         liveRegion.style.width = '1px';
         liveRegion.style.height = '1px';
+        liveRegion.style.whiteSpace = 'nowrap';
+        liveRegion.style.overflow = 'hidden';
 
         playAsSoundButton.textContent = 'Play chart as sound';
         playAsSoundButton.onclick = (): void => {

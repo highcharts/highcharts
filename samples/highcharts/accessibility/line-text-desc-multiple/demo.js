@@ -26,7 +26,8 @@ const chart = Highcharts.chart('container', {
             marker: {
                 enabled: false
             }
-        }
+        },
+        cropThreshold: 10
     },
     data: {
         csv: document.getElementById('csv').textContent

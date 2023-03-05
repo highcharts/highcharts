@@ -1,7 +1,6 @@
 const day = 1000 * 60 * 60 * 24;
 let prevYear,
-    yearCount = -1,
-    seriesSonified = 0;
+    yearCount = -1;
 
 const say = function (msg) {
     const speaker = new Highcharts.sonification
@@ -51,16 +50,16 @@ const chart = Highcharts.chart('container', {
             onPlay: function (timeline) {
                 // eslint-disable-next-line no-underscore-dangle
                 if (!timeline._navigating) {
-                    say(timeline.chart.series[0].name);
+                    const curPoint = timeline.getCurrentPoint();
+                    if (curPoint) {
+                        say(curPoint.series.name);
+                    }
                 }
             },
             onSeriesEnd: function (series) {
-                ++seriesSonified;
-                if (seriesSonified > 2) {
-                    seriesSonified = 0;
-                } else {
-                    const nextSeries = series.chart.series[seriesSonified];
-                    say(nextSeries.name);
+                const newSeries = series.chart.series[series.index + 1];
+                if (newSeries) {
+                    say(newSeries.name);
                 }
             }
         },
@@ -114,7 +113,8 @@ const chart = Highcharts.chart('container', {
             },
             marker: {
                 enabled: false
-            }
+            },
+            cropThreshold: 10
         }
     },
     data: {
