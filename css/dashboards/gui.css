@@ -46,6 +46,10 @@
     /* Sidebar */
     --highcharts-dashboards-sidebar-button-color: #2196f3;
     --highcharts-dashboards-sidebar-button-contrast-color: #0d47a1;
+
+    /* Dropdown */
+    --highcharts-dashboards-dropdown-box-shadow-color: rgba(34, 34, 34, 0.1);
+    --highcharts-dashboards-dropdown-border-color: #838394;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -818,23 +822,23 @@
 }
 
 /* Dropdown */
-ul.highcharts-dashboards-droptown-content {
+ul.highcharts-dashboards-dropdown-content {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    background: #ffffff;
+    background: var(--highcharts-dashboards-main-background-color);
     box-sizing: border-box;
     padding: 16px 8px;
     margin-top: 4px;
-    border: 1px solid #838394;
-    box-shadow: 0 10px 24px rgba(34, 34, 34, 0.1);
+    border: 1px solid var(--highcharts-dashboards-dropdown-border-color);
+    box-shadow: 0 10px 24px var(--highcharts-dashboards-dropdown-box-shadow-color);
     list-style-type: none;
 }
 
 ul > .highcharts-dashboards-dropdown {
     position: relative;
     font-family: Arial, Helvetica, sans-serif;
-    color: #2f2b38;
+    color: var(--highcharts-dashboards-main-font-color);
     font-weight: 700;
     font-size: 14px;
     line-height: 16px;
@@ -843,7 +847,7 @@ ul > .highcharts-dashboards-dropdown {
 
 .highcharts-dashboards-dropdown > button.highcharts-dashboards-dropdown-button {
     width: 100%;
-    color: #2f2b38;
+    color: var(--highcharts-dashboards-main-font-color);
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
@@ -852,8 +856,8 @@ ul > .highcharts-dashboards-dropdown {
     padding: 6px 8px;
     margin: 2px;
     gap: 2px;
-    background: #ffffff;
-    border: 1px solid #838394;
+    background: var(--highcharts-dashboards-main-background-color);
+    border: 1px solid var(--highcharts-dashboards-dropdown-border-color);
     border-radius: 2px;
     flex: none;
     order: 0;
@@ -867,8 +871,8 @@ button.highcharts-dashboards-select-option-button {
     justify-content: start;
     align-items: center;
     margin: 0;
-    background: #ffffff;
-    color: #2f2b38;
+    background: var(--highcharts-dashboards-main-background-color);
+    color: var(--highcharts-dashboards-main-font-color);
 }
 
 button.highcharts-dashboards-select-option-button:hover {

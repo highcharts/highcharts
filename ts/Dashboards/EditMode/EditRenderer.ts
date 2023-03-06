@@ -128,7 +128,7 @@ function renderSelect(
 
     let dropdown = createElement(
         'ul',
-        { className: 'highcharts-dashboards-droptown-content' },
+        { className: 'highcharts-dashboards-dropdown-content' },
         {
             display: 'none',
             padding: '16px 8px'
