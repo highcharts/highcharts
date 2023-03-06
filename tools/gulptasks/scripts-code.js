@@ -12,6 +12,33 @@ const gulp = require('gulp');
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+/**
+ * Adds possibility to `npm i ../highcharts/code` to test local.
+ *
+ * **Note:** At first you have to generate the code folder in the
+ * Highcharts repository, use `npx gulp --dts`.
+ */
+const developerPackageJson = `{
+    "private": true,
+    "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
+    "bugs": "https://github.com/highcharts/highcharts/issues",
+    "description": "Use \`npm i ../highcharts/code\` to test local. Remember to run \`npx gulp scripts\` and \`npx gulp jsdoc-dts\` to generate the code folder.",
+    "homepage": "http://www.highcharts.com",
+    "license": "https://www.highcharts.com/license",
+    "main": "highcharts.src.js",
+    "module": "es-modules/masters/highcharts.src.js",
+    "name": "highcharts",
+    "repository": "https://github.com/highcharts/highcharts.git",
+    "types": "highcharts.src.d.ts",
+    "version": "10.0.0+local"
+}\n`;
+
+/* *
+ *
  *  Functions
  *
  * */
@@ -72,11 +99,14 @@ function processVariables(content) {
  * */
 
 /**
+ * Improves transpiled JS files in the code folder.
+ *
  * @return {Promise<void>}
  * Promise to keep
  */
 function scriptsCode() {
 
+    const codeTool = require('../code');
     const fs = require('fs');
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
@@ -102,9 +132,15 @@ function scriptsCode() {
 
                     fs.writeFileSync(
                         filePath,
-                        processVariables(fs.readFileSync(filePath).toString())
+                        codeTool.processSrcJSFile(
+                            processVariables(
+                                fs.readFileSync(filePath).toString()
+                            )
+                        )
                     );
                 });
+
+            fs.writeFileSync('code/package.json', developerPackageJson);
 
             logLib.success('Processed code sources');
 

@@ -1,5 +1,5 @@
 ---
- name: The Netherlands, admin2 - Highmaps
- description: Highmaps demo
+ name: The Netherlands, admin2 - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

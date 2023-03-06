@@ -44,7 +44,7 @@ QUnit.test(
             }
         });
 
-        Highcharts.each(chart1.axes, function (axis) {
+        chart1.axes.forEach(axis => {
             if (axis.isXAxis) {
                 assert.strictEqual(
                     typeof axis.userMin,
@@ -53,7 +53,7 @@ QUnit.test(
                 );
             }
         });
-        Highcharts.each(chart2.axes, function (axis) {
+        chart2.axes.forEach(axis => {
             if (axis.isXAxis) {
                 assert.strictEqual(
                     typeof axis.userMin,
@@ -86,7 +86,7 @@ QUnit.test(
         });
 
         // Test after interaction
-        Highcharts.each(chart1.axes, function (axis) {
+        chart1.axes.forEach(axis => {
             if (axis.isXAxis) {
                 assert.strictEqual(
                     typeof axis.userMin,
@@ -95,7 +95,7 @@ QUnit.test(
                 );
             }
         });
-        Highcharts.each(chart2.axes, function (axis) {
+        chart2.axes.forEach(axis => {
             if (axis.isXAxis) {
                 assert.strictEqual(
                     typeof axis.userMin,

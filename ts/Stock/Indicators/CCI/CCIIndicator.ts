@@ -23,17 +23,20 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
     merge
 } = U;
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // Utils:
 /**
  * @private
@@ -48,8 +51,8 @@ function sumArray(array: Array<number>): number {
  * @private
  */
 function meanDeviation(arr: Array<number>, sma: number): number {
-    let len = arr.length,
-        sum = 0,
+    const len = arr.length;
+    let sum = 0,
         i: number;
 
     for (i = 0; i < len; i++) {
@@ -59,11 +62,9 @@ function meanDeviation(arr: Array<number>, sma: number): number {
     return sum;
 }
 
-/* eslint-enable valid-jsdoc */
-
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -77,6 +78,13 @@ function meanDeviation(arr: Array<number>, sma: number): number {
  * @augments Highcharts.Series
  */
 class CCIIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Commodity Channel Index (CCI). This series requires `linkedTo` option to
      * be set.
@@ -120,19 +128,19 @@ class CCIIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: CCIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             TP: Array<number> = [],
-            periodTP: Array<number> = [],
-            range = 1,
             CCI: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            CCIPoint: number,
+            yData: Array<number> = [];
+        let CCIPoint: number,
             p: Array<number>,
+            periodTP: Array<number> = [],
             len: number,
+            range = 1,
             smaTP: number,
             TPtemp: number,
             meanDev: number,
@@ -210,6 +218,12 @@ SeriesRegistry.registerSeriesType('cci', CCIIndicator);
  * */
 
 export default CCIIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `CCI` series. If the [type](#series.cci.type) option is not

@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AOOptions from './AOOptions';
 import type AOPoint from './AOPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
@@ -15,15 +21,15 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 
 import H from '../../../Core/Globals.js';
 const { noop } = H;
+import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator,
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+    column: {
+        prototype: columnProto
+    },
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import { Palette } from '../../../Core/Color/Palettes.js';
 const {
     extend,
     merge,
@@ -46,8 +52,14 @@ const {
  *
  * @augments Highcharts.Series
  */
-
 class AOIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Awesome Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`
@@ -108,31 +120,31 @@ class AOIndicator extends SMAIndicator {
         }
     } as AOOptions);
 
-    /**
+    /* *
      *
-     * Properties
+     *  Properties
      *
-     */
+     * */
 
     public data: Array<AOPoint> = void 0 as any;
     public options: AOOptions = void 0 as any;
     public points: Array<AOPoint> = void 0 as any;
 
-    /**
+    /* *
      *
-     * Functions
+     *  Functions
      *
-     */
+     * */
 
     public drawGraph(this: AOIndicator): void {
-        let indicator = this,
+        const indicator = this,
             options = indicator.options,
             points = indicator.points,
             userColor = indicator.userOptions.color,
             positiveColor = options.greaterBarColor,
             negativeColor = options.lowerBarColor,
-            firstPoint = points[0],
-            i;
+            firstPoint = points[0];
+        let i;
 
         if (!userColor && firstPoint) {
             firstPoint.color = positiveColor;
@@ -154,7 +166,7 @@ class AOIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let shortPeriod = 5,
+        const shortPeriod = 5,
             longPeriod = 34,
             xVal: Array<number> = series.xData || [],
             yVal: Array<number|null|undefined> =
@@ -164,17 +176,17 @@ class AOIndicator extends SMAIndicator {
             xData: Array<number> = [],
             yData: Array<number> = [],
             high = 1,
-            low = 2,
-            shortSum = 0,
-            longSum = 0,
-            shortSMA: number, // Shorter Period SMA
+            low = 2;
+        let shortSMA: number, // Shorter Period SMA
             longSMA: number, // Longer Period SMA
             awesome: number,
             shortLastIndex: number,
             longLastIndex: number,
             price: number,
             i: number,
-            j: number;
+            j: number,
+            longSum = 0,
+            shortSum = 0;
 
         if (
             xVal.length <= longPeriod ||
@@ -234,14 +246,20 @@ class AOIndicator extends SMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface AOIndicator {
     nameBase: string;
     nameComponents: Array<string>;
     pointClass: typeof AOPoint;
-    crispCol: typeof ColumnSeries.prototype['crispCol'];
-    drawPoints: typeof ColumnSeries.prototype['drawPoints'];
-    getColumnMetrics: typeof ColumnSeries.prototype['getColumnMetrics'];
-    translate: typeof ColumnSeries.prototype['translate'];
+    crispCol: typeof columnProto.crispCol;
+    drawPoints: typeof columnProto.drawPoints;
+    getColumnMetrics: typeof columnProto.getColumnMetrics;
+    translate: typeof columnProto.translate;
 }
 
 extend(AOIndicator.prototype, {
@@ -250,10 +268,10 @@ extend(AOIndicator.prototype, {
 
     // Columns support:
     markerAttribs: noop as any,
-    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
-    crispCol: ColumnSeries.prototype.crispCol,
-    translate: ColumnSeries.prototype.translate,
-    drawPoints: ColumnSeries.prototype.drawPoints
+    getColumnMetrics: columnProto.getColumnMetrics,
+    crispCol: columnProto.crispCol,
+    translate: columnProto.translate,
+    drawPoints: columnProto.drawPoints
 });
 
 /* *
@@ -278,6 +296,12 @@ SeriesRegistry.registerSeriesType('ao', AOIndicator);
 
 export default AOIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * An `AO` series. If the [type](#series.ao.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
@@ -292,4 +316,5 @@ export default AOIndicator;
  * @requires  stock/indicators/ao
  * @apioption series.ao
  */
+
 ''; // for including the above in the doclets

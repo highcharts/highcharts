@@ -426,8 +426,10 @@ namespace ColumnDataLabel {
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
-                (labelPosition as any).final.x = x;
-                (labelPosition as any).final.y = y;
+                if (labelPosition) {
+                    labelPosition.computed.x = x;
+                    labelPosition.computed.y = y;
+                }
 
                 // Detect overflowing data labels
                 if (pick((options as any).crop, true)) {
@@ -653,9 +655,12 @@ namespace ColumnDataLabel {
             if (newSize < center[2]) {
                 center[2] = newSize;
                 center[3] = Math.min( // #3632
-                    relativeLength(options.innerSize || 0, newSize),
-                    newSize
-                );
+                    options.thickness ?
+                        Math.max(0, newSize - options.thickness * 2) :
+                        Math.max(
+                            0, relativeLength(options.innerSize || 0, newSize)
+                        ), newSize
+                ); // #6647
                 this.translate(center);
 
                 if (this.drawDataLabels) {

@@ -8,13 +8,15 @@ The MapBubble series is a combination of the standard bubble chart and map, wher
 Setting the Map Bubble Series
 -----------------------------
 In the above example, our mapbubble data is based on regions, so we need to load and add a base map first:
-```html
-<script src="https://code.highcharts.com/mapdata/custom/world.js"></script>
+```js
+const topology = await fetch(
+    'https://code.highcharts.com/mapdata/custom/world.topo.json'
+).then(response => response.json());
 ```
 
 ```js
 chart: {
-    map: 'custom/world'
+    map: topology
 }
 ```
 

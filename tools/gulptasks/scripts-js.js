@@ -34,6 +34,7 @@ function scriptsJS() {
 
     const argv = require('yargs').argv;
     const buildTool = require('../build');
+    const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
 
@@ -54,7 +55,19 @@ function scriptsJS() {
         processLib.isRunning('scripts-js', true);
 
         BuildScripts
+            // assemble JS files
             .fnFirstBuild()
+            // deleting invalid masters DTS
+            .then(() => fsLib.getFilePaths('js/masters/', true).forEach(
+                path => path.endsWith('.d.ts') && fsLib.deleteFile(path)
+            ))
+            // copy valid native DTS
+            .then(() => fsLib.copyAllFiles(
+                'js/',
+                'code/es-modules/',
+                true,
+                sourcePath => sourcePath.endsWith('.d.ts')
+            ))
             .then(() => logLib.success('Created code'))
             .then(function (output) {
                 processLib.isRunning('scripts-js', false);
@@ -67,4 +80,4 @@ function scriptsJS() {
     });
 }
 
-gulp.task('scripts-js', gulp.series(scriptsJS, 'scripts-code'));
+gulp.task('scripts-js', scriptsJS);

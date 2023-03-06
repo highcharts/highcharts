@@ -6,8 +6,7 @@ The `map` series is the basic series type in Highcharts Maps. It creates a [chor
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/all-maps" allow="fullscreen"></iframe>
 
 Initialize the constructor
-------------
-
+--------------------------
 
 When setting the `mapChart` constructor, the default series `type` is `map`.
 If the `type` option is not specified, it is inherited from `chart.type`.

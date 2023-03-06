@@ -1,5 +1,5 @@
 ---
- name: Provence-Alpes-Côte-d'Azur - Highmaps
- description: Highmaps demo
+ name: Provence-Alpes-Côte-d'Azur - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

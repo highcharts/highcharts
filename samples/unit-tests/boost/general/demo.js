@@ -20,7 +20,7 @@ QUnit.test('Clipping rectangle after set extremes (#6895)', function (assert) {
     chart.yAxis[0].setExtremes(1, 2);
 
     assert.strictEqual(
-        chart.series[0].boostClipRect.attr('height'),
+        chart.series[0].boost.clipRect.attr('height'),
         chart.plotHeight,
         'Correct height of the clipping box.'
     );
@@ -86,9 +86,9 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         assert.strictEqual(chart.series.length, 2, 'Successfully initiated');
 
         assert.strictEqual(
-            chart.series[0].renderTarget,
+            chart.series[0].boost.target,
             undefined,
-            'No individual renderTarget'
+            'No individual boost.target'
         );
 
         chart.series[1].remove();
@@ -99,9 +99,9 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         });
 
         assert.strictEqual(
-            typeof chart.series[0].renderTarget,
+            typeof chart.series[0].boost.target,
             'object',
-            'Only one series, it should now have a renderTarget'
+            'Only one series, it should now have a boost.target'
         );
 
         chart.addSeries({
@@ -110,13 +110,14 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 
         assert.strictEqual(chart.series.length, 2, 'Successfully updated');
         assert.notOk(
-            chart.series[0].renderTarget,
-            'No individual renderTarget after the second series is added'
+            chart.series[0].boost &&
+            chart.series[0].boost.target,
+            'No individual boost.target after the second series is added'
         );
     }
 );
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
-    'Combination with non-boostable series types (#7634)',
+    'Combination with non-boostable series types and null values (#7634)',
     function (assert) {
         var chart = Highcharts.chart('container', {
             boost: {
@@ -157,6 +158,16 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.series[2].points.length,
             5,
             '5 points should be generated for flags series'
+        );
+
+        chart.addSeries({
+            data: [null, 9, 4, null]
+        });
+
+        assert.strictEqual(
+            chart.series[3].points.length,
+            4,
+            'array length should include values with null'
         );
     }
 );
@@ -279,12 +290,12 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         });
 
         assert.strictEqual(
-            chart.boostClipRect.attr('height'),
+            chart.boost.clipRect.attr('height'),
             chart.plotHeight,
             'Height of the plot area and clip-path should be the same.'
         );
         assert.strictEqual(
-            chart.boostClipRect.attr('width'),
+            chart.boost.clipRect.attr('width'),
             chart.plotWidth,
             'Width of the plot area and clip-path should be the same.'
         );
@@ -313,7 +324,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             ]
         });
         assert.strictEqual(
-            chart.boostClipRect.attr('height'),
+            chart.boost.clipRect.attr('height'),
             chart.yAxis[0].height,
             `After setting the axis position manually, the boost clip-path
             shouldn\'t be bigger than the axis size.`

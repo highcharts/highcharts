@@ -1,4 +1,11 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+#container {
+    height: 400px;
+    min-width: 310px;
+    max-width: 600px;
+    margin: 0 auto;
+}
 
 .highcharts-plot-border {
     stroke-width: 1px;

@@ -71,9 +71,7 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
         updatedPointsColor = [];
 
     function toFastAOWithRound(arr) {
-        return Highcharts.map(arr, function (point) {
-            return parseFloat(point.toFixed(4));
-        });
+        return arr.map(point => parseFloat(point.toFixed(4)));
     }
 
     assert.strictEqual(

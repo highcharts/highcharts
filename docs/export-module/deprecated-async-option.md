@@ -1,15 +1,15 @@
-Deprecating the export server async option
+Deprecated the export server async option
 ------------------------------------------
 
-Version 2.2 of the Highcharts Node.js Export Server, due December 1st 2021, will deprecate the `async` option. The reasons for that is that it makes the application dependent on saving state, and complicates load balancing. Furthermore it is no longer needed in browsers because we can render the returned image directly as a base64 encoded `src`.
+Version 2.2 of the Highcharts Node.js Export Server deprecated the `async` option. The reasons for that is that it made the application dependent on saving state, and complicated load balancing. Furthermore it is no longer needed in browsers because we can render the returned image directly as a base64 encoded `src`.
 
 Here's how to migrate from the `async` option.
 
 ### Browser
 
-In the browser, the config can be posted and the returned data be rendered using the FormData, fetch and FileReader API's. See the [example on jsFiddle](https://jsfiddle.net/highcharts/mt2s95Ln/) for how to set this up with an async-await based syntax.
+In the browser, the config can be posted and the returned data be rendered using the FormData, fetch and FileReader API's. See the [example on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/export-data/export-from-config/) for how to set this up with an async-await based syntax.
 
-If legacy browsers are a requirement, see also the [old jQuery based demo](https://jsfiddle.net/highcharts/edyucqkw/). Note that this approach uses the export server's `b64` option to do the base64 encoding on the server side.
+If legacy browsers are a requirement, see also the [old jQuery based demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/export-data/export-post-request/). Note that this approach uses the export server's `b64` option to do the base64 encoding on the server side.
 
 ### Node.js
 

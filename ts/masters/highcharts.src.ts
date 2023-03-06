@@ -9,7 +9,7 @@
 'use strict';
 import Highcharts from '../Core/Globals.js';
 import Utilities from '../Core/Utilities.js';
-import DefaultOptions from '../Core/DefaultOptions.js';
+import Defaults from '../Core/Defaults.js';
 import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
 import AST from '../Core/Renderer/HTML/AST.js';
@@ -31,7 +31,8 @@ import MSPointer from '../Core/MSPointer.js';
 import Legend from '../Core/Legend/Legend.js';
 import Chart from '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
-import '../Extensions/Stacking.js';
+import StackingAxis from '../Core/Axis/Stacking/StackingAxis.js';
+import StackItem from '../Core/Axis/Stacking/StackItem.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 import '../Series/Line/LineSeries.js';
@@ -66,8 +67,8 @@ G.Fx = Fx;
 G.Legend = Legend;
 G.PlotLineOrBand = PlotLineOrBand;
 G.Point = Point;
-G.Pointer = (MSPointer.isRequired() ? MSPointer : Pointer);
 G.Series = Series;
+G.StackItem = StackItem;
 G.SVGElement = SVGElement;
 G.SVGRenderer = SVGRenderer;
 G.Tick = Tick;
@@ -79,11 +80,18 @@ G.color = Color.parse;
 // Compositions
 HTMLRenderer.compose(SVGRenderer);
 HTMLElement.compose(SVGElement);
+if (MSPointer.isRequired()) {
+    G.Pointer = MSPointer;
+    MSPointer.compose(Chart);
+} else {
+    G.Pointer = Pointer;
+    Pointer.compose(Chart);
+}
 // DefaultOptions
-G.defaultOptions = DefaultOptions.defaultOptions;
-G.getOptions = DefaultOptions.getOptions;
-G.time = DefaultOptions.defaultTime;
-G.setOptions = DefaultOptions.setOptions;
+G.defaultOptions = Defaults.defaultOptions;
+G.getOptions = Defaults.getOptions;
+G.time = Defaults.defaultTime;
+G.setOptions = Defaults.setOptions;
 // Format Utilities
 G.dateFormat = FormatUtilities.dateFormat;
 G.format = FormatUtilities.format;
@@ -143,5 +151,7 @@ LogarithmicAxis.compose(Axis);
 PieDataLabel.compose(PieSeries);
 PlotLineOrBand.compose(Axis);
 Responsive.compose(Chart);
+StackingAxis.compose(Axis, Chart, Series);
+Tooltip.compose(Pointer);
 // Default Export
 export default G;

@@ -95,6 +95,7 @@ export interface ChartOptions {
     borderWidth?: number;
     className?: string;
     colorCount?: number;
+    allowMutatingData?: boolean;
     events?: ChartEventsOptions;
     height?: (null|number|string);
     ignoreHiddenSeries?: boolean;
@@ -115,7 +116,6 @@ export interface ChartOptions {
     plotBorderColor?: ColorType;
     plotBorderWidth?: number;
     plotShadow?: (boolean|Partial<ShadowOptionsObject>);
-    polar?: boolean;
     reflow?: boolean;
     renderTo?: (string|HTMLDOMElement);
     resetZoomButton?: ChartResetZoomButtonOptions;
@@ -132,6 +132,7 @@ export interface ChartOptions {
     type?: string;
     width?: (null|number);
     zoomBySingleTouch?: boolean;
+    zooming: Partial<ChartZoomingOptions>;
     zoomType?: ('x'|'xy'|'y');
 }
 
@@ -170,6 +171,14 @@ export interface ChartSelectionCallbackFunction {
 export interface ChartSelectionContextObject {
     xAxis: Array<ChartSelectionAxisContextObject>;
     yAxis: Array<ChartSelectionAxisContextObject>;
+}
+
+export interface ChartZoomingOptions {
+    key?: string;
+    pinchType?: string;
+    resetButton?: ChartResetZoomButtonOptions;
+    singleTouch: boolean;
+    type?: ('x'|'xy'|'y');
 }
 
 /* *

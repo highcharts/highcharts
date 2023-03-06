@@ -1,4 +1,9 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+#container {
+    height: 400px;
+    min-width: 600px;
+}
 
 .highcharts-hollowcandlestick-series .highcharts-point-down {
     fill: #ff5e00;

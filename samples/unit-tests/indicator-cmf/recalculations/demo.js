@@ -84,9 +84,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     function round(array) {
-        return Highcharts.map(array, function (value) {
-            return value === null ? null : Number(value.toFixed(3));
-        });
+        return array.map(value =>
+            (value === null ? null : Number(value.toFixed(3)))
+        );
     }
 
     var expectedData = [
@@ -151,5 +151,23 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.ok(
         chart.series.indexOf(indicator) === -1,
         'Indicator is removed after series remove.'
+    );
+
+    while (chart.series.length) {
+        chart.series[0].remove(false);
+    }
+    chart.addSeries({
+        id: 'main',
+        data: []
+    }, false);
+    chart.addSeries({
+        type: 'cmf',
+        linkedTo: 'main'
+    });
+
+    assert.ok(
+        true,
+        `No errors when adding indicator linkedTo a series with empty dataset
+        (#18176, #18177).`
     );
 });

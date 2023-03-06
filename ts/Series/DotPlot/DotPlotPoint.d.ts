@@ -26,7 +26,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
  *
  * */
 declare class DotPlotPoint extends ColumnPoint {
-    public graphics?: Record<string, SVGElement>;
     public options: DotPlotPointOptions;
     public pointAttr?: SVGAttributes;
     public series: DotPlotSeries;

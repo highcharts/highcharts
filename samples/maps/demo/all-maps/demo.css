@@ -43,6 +43,10 @@
     padding-left: 40px;
 }
 
+#chkDataLabels {
+    display: inline;
+}
+
 .selector {
     height: 40px;
     max-width: 400px;

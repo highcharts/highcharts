@@ -1,5 +1,5 @@
 ---
- name: Saskatchewan - Highmaps
- description: Highmaps demo
+ name: Saskatchewan - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

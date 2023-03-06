@@ -1,5 +1,5 @@
 ---
- name: Montana - Highmaps
- description: Highmaps demo
+ name: Montana - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

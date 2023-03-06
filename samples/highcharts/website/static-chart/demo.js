@@ -30,7 +30,7 @@ const iceberg = {
             duration: 3000,
             easing: 'easeOutQuint'
         },
-        styledMode: (true),
+        styledMode: true,
         margin: 0,
         spacing: 0,
         events: {
@@ -48,7 +48,7 @@ const iceberg = {
                 plotBackground.style.fill = '#f0f0f0';
                 title.style.opacity = 1;
 
-                //turn on tooltip
+                // turn on tooltip
                 chart.update({
                     tooltip: {
                         enabled: true
@@ -70,7 +70,7 @@ const iceberg = {
                     }
                 );
 
-                ///style the labels
+                // /style the labels
                 [].forEach.call(
                     document.querySelectorAll('#charts .berg-label'),
                     function (elem) {
@@ -78,7 +78,7 @@ const iceberg = {
                     }
                 );
 
-                ///attach individual 'berg' classes to each berg
+                // /attach individual 'berg' classes to each berg
                 [].forEach.call(
                     document.querySelectorAll('.berg-depth'),
                     function (b, i) {
@@ -86,7 +86,7 @@ const iceberg = {
                     }
                 );
 
-                ///icebergs' opacity
+                // /icebergs' opacity
                 [].forEach.call(
                     document.querySelectorAll('#charts .berg-depth'),
                     function (elem) {
@@ -102,8 +102,8 @@ const iceberg = {
                     }
                 );
 
-                ///for use in redraw function
-                //done = true;
+                // /for use in redraw function
+                // done = true;
 
             },
             redraw: function () {
@@ -135,9 +135,7 @@ const iceberg = {
         },
         landmarkVerbosity: 'disabled',
         series: {
-            descriptionFormatter: function (series) {
-                return series.options.accessibility.description;
-            }
+            descriptionFormat: '{authorDescription}'
         },
         keyboardNavigation: {
             focusBorder: {
@@ -157,7 +155,7 @@ const iceberg = {
         floating: true
     },
     xAxis: [
-        //0 -
+        // 0 -
         {
             min: 0,
             max: 20,
@@ -168,7 +166,7 @@ const iceberg = {
                 description: 'values from 0 to 20'
             }
         },
-        //1 -
+        // 1 -
         {
             min: 0,
             max: 20,
@@ -179,7 +177,7 @@ const iceberg = {
                 enabled: false
             }
         },
-        ///2 - for particle group 1
+        // /2 - for particle group 1
         {
             min: 0,
             max: 20,
@@ -189,7 +187,7 @@ const iceberg = {
                 enabled: false
             }
         },
-        ///3 - for particle group 2
+        // /3 - for particle group 2
         {
             min: 0,
             max: 20,
@@ -256,7 +254,7 @@ const iceberg = {
         useHTML: true,
         headerFormat: '',
         positioner: function () {
-            //return { x: 130, y: 365 };
+            // return { x: 130, y: 365 };
             return { x: 53, y: 1170 };
         }
     },
@@ -336,7 +334,7 @@ const iceberg = {
             visible: true
 
         },
-        //1 iceberg types
+        // 1 iceberg types
         {
             type: 'scatter',
             className: 'iceberg-typesX',
@@ -374,7 +372,7 @@ const iceberg = {
             zIndex: 150,
             visible: false
         },
-        ///2 berg 1 bottom
+        // /2 berg 1 bottom
         {
             type: 'line',
             name: 'Pinnacle Icebergs',
@@ -383,7 +381,7 @@ const iceberg = {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
                     <span>
-                    Pinnacle icebergs</span> - a 
+                    Pinnacle icebergs</span> - a
                     large central spire or pyramid.</p>`;
                 }
             },
@@ -414,7 +412,7 @@ const iceberg = {
                 }
             ]
         },
-        ///3 berg 1 top
+        // /3 berg 1 top
         {
             type: 'line',
             name: 'Pinnacle Icebergs',
@@ -442,7 +440,7 @@ const iceberg = {
                         formatter: function () {
                             const htmlString =
                                 `<div class="berg-label">
-                                    <p class="label-title" 
+                                    <p class="label-title"
                                     style="font-weight:700;">Pinnacle</p>
                                     <p  class="label-percent">33%</p>
                                 </div>`;
@@ -456,7 +454,7 @@ const iceberg = {
                 }
             ]
         },
-        //4 berg-2 bottom
+        // 4 berg-2 bottom
         {
             type: 'line',
             accessibility: {
@@ -474,7 +472,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                            <span>Tabular icebergs</span> - 
+                            <span>Tabular icebergs</span> -
                             horizontal and flat-topped.</p>`;
 
                 }
@@ -501,7 +499,7 @@ const iceberg = {
                 }
             ]
         },
-        ///5 berg-2 top
+        // /5 berg-2 top
         {
             type: 'line',
             name: 'Tabular Icebergs',
@@ -529,7 +527,7 @@ const iceberg = {
                         formatter: function () {
                             const htmlString =
                                 `<div class="berg-label">
-                                    <p class="label-title" 
+                                    <p class="label-title"
                                     style="font-weight:700;">Tabular</p>
                                     <p  class="label-percent">23%</p>
                                 </div>`;
@@ -547,7 +545,7 @@ const iceberg = {
                 }
             ]
         },
-        //6 - berg 3 bottom
+        // 6 - berg 3 bottom
         {
             type: 'line',
             name: 'Dry Dock Icebergs',
@@ -561,7 +559,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                    <span>Dry Dock icebergs</span> - eroded into a 
+                    <span>Dry Dock icebergs</span> - eroded into a
                     U shape.</p>`;
                 }
             },
@@ -596,7 +594,7 @@ const iceberg = {
                 }
             ]
         },
-        //7 - berg 3 top
+        // 7 - berg 3 top
         {
             type: 'line',
             name: 'Dry Dock Icebergs',
@@ -624,7 +622,7 @@ const iceberg = {
                         formatter: function () {
                             const htmlString =
                                 `<div class="berg-label">
-                                    <p class="label-title" 
+                                    <p class="label-title"
                                     style="font-weight:700;">Dry Dock</p>
                                     <p  class="label-percent">19%</p>
                                 </div>`;
@@ -646,7 +644,7 @@ const iceberg = {
                 }
             ]
         },
-        //8 berg 4 bottom
+        // 8 berg 4 bottom
         {
             type: 'line',
             name: 'Dome Icebergs',
@@ -660,7 +658,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                                <span>Dome icebergs</span> - large, 
+                                <span>Dome icebergs</span> - large,
                                 smooth, rounded tops.</p>`;
                 }
             },
@@ -694,7 +692,7 @@ const iceberg = {
             }
             ]
         },
-        //9 berg 4 top
+        // 9 berg 4 top
         {
             type: 'line',
             name: 'Dome Icebergs',
@@ -721,7 +719,7 @@ const iceberg = {
                     formatter: function () {
                         const htmlString =
                             `<div class="berg-label">
-                                <p class="label-title" 
+                                <p class="label-title"
                                 style="font-weight:700;">Dome</p>
                                 <p  class="label-percent">15%</p>
                             </div>`;
@@ -743,7 +741,7 @@ const iceberg = {
             }
             ]
         },
-        { //10 berg 5 bottom
+        { // 10 berg 5 bottom
             type: 'line',
             name: 'Wedge Icebergs',
             className: 'berg-depth',
@@ -756,7 +754,7 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                            <span>Wedge icebergs</span> - tabular 
+                            <span>Wedge icebergs</span> - tabular
                             icebergs that have
                             tilted.</p>`;
 
@@ -781,7 +779,7 @@ const iceberg = {
                 accessibility: { enabled: false }
             }]
         },
-        { //11 berg 5 top
+        { // 11 berg 5 top
             type: 'line',
             name: 'Wedge Icebergs',
             className: 'berg-depth',
@@ -807,7 +805,7 @@ const iceberg = {
                     formatter: function () {
                         const htmlString =
                             `<div class="berg-label">
-                                <p class="label-title" 
+                                <p class="label-title"
                                 style="font-weight:700;">Wedge</p>
                                 <p  class="label-percent">10%</p>
                             </div>`;
@@ -829,7 +827,7 @@ const iceberg = {
             chartOptions: {
                 tooltip: {
                     positioner: function () {
-                        //return { x: 130, y: 365 };
+                        // return { x: 130, y: 365 };
                         return { x: 50, y: 165 };
                     }
                 },
@@ -842,7 +840,7 @@ const iceberg = {
         {
             condition: {
                 minWidth: 251,
-                maxWidth: 300 ///up to 300
+                maxWidth: 300 // /up to 300
             },
             chartOptions: {
                 tooltip: {
@@ -864,7 +862,7 @@ const iceberg = {
             chartOptions: {
                 tooltip: {
                     positioner: function () {
-                        //return { x: 130, y: 365 };
+                        // return { x: 130, y: 365 };
                         return { x: 70, y: 265 };
                     }
                 },

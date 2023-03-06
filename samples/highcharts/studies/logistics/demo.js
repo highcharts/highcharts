@@ -25,7 +25,7 @@
          * draw - Handles the drawing of a point.
          * TODO: add type checking.
          *
-         * @param  {object} params Parameters.
+         * @param  {Object} params Parameters.
          * @return {undefined} Returns undefined.
          */
         var draw = function draw(params) {
@@ -34,7 +34,7 @@
                 animate = params.animate,
                 attr = params.attr,
                 onComplete = params.onComplete,
-                css = params.css,
+                css = params.css || {},
                 group = params.group,
                 renderer = params.renderer,
                 shape = params.shapeArgs,
@@ -63,14 +63,12 @@
 
     var renderHeatIndicators = (function (Highcharts, draw) {
 
-        var each = Highcharts.each,
-            extend = Highcharts.extend,
+        var extend = Highcharts.extend,
             isFunction = function (x) {
                 return typeof x === 'function';
             },
             isNumber = Highcharts.isNumber,
             merge = Highcharts.merge,
-            reduce = Highcharts.reduce,
             objectEach = Highcharts.objectEach;
 
         var defaultOptions = {
@@ -215,7 +213,7 @@
                 totalIdle = firstPoint > min ? firstPoint - min : 0,
                 max = xAxis.max;
 
-            reduce(points, function (next, current) {
+            points.reduce((next, current) => {
                 var start = current.end,
                     end = next ? next.start : max,
                     idle = (start < end) ? end - start : 0,
@@ -235,7 +233,7 @@
             // as a dependency somehow.
             calculateSeriesIdleTime(series);
 
-            each(series.points, function (point) {
+            series.points.forEach(point => {
                 // Get existing indicator from point, or create a new one.
                 var heatIndicator = point.heatIndicator || new HeatIndicator({
                     group: series.group,
@@ -263,8 +261,7 @@
 
     var renderEPRIndicators = (function (Highcharts, draw) {
 
-        var each = Highcharts.each,
-            objectEach = Highcharts.objectEach,
+        var objectEach = Highcharts.objectEach,
             extend = Highcharts.extend,
             isNumber = Highcharts.isNumber,
             merge = Highcharts.merge;
@@ -374,7 +371,7 @@
         };
 
         var renderEPRIndicators = function (series) {
-            each(series.points, function (point) {
+            series.points.forEach(point => {
                 var options = point.options && point.options.indicator || {},
                     // point.options.indicator is copied to point.indicator, so
                     // we use point.indicatorObj instead.
@@ -735,13 +732,11 @@ var customResize = function (e, chart) {
  * Check if new points collide with existing ones
  */
 var newPointsColliding = function (newPoints, chart) {
-    var reduce = Highcharts.reduce,
-        keys = Highcharts.keys,
-        pick = Highcharts.pick,
+    var pick = Highcharts.pick,
         inArray = Highcharts.inArray,
         groupedPoints = chart.dragDropData && chart.dragDropData.groupedPoints,
         y,
-        minX = reduce(keys(newPoints), function (acc, id) {
+        minX = Object.keys(newPoints).reduce((acc, id) => {
             y = pick(newPoints[id].newValues.y, newPoints[id].point.y);
             return Math.min(
                 acc, pick(
@@ -749,7 +744,7 @@ var newPointsColliding = function (newPoints, chart) {
                 )
             );
         }, Infinity),
-        maxX = reduce(keys(newPoints), function (acc, id) {
+        maxX = Object.keys(newPoints).reduce(function (acc, id) {
             return Math.max(
                 acc, pick(newPoints[id].newValues.end, newPoints[id].point.end)
             );

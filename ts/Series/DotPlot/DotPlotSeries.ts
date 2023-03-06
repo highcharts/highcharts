@@ -36,7 +36,6 @@ import U from '../../Core/Utilities.js';
 const {
     extend,
     merge,
-    objectEach,
     pick
 } = U;
 
@@ -105,8 +104,7 @@ class DotPlotSeries extends ColumnSeries {
         this.points.forEach(function (point: DotPlotPoint): void {
             let yPos: number,
                 attr: SVGAttributes,
-                graphics: Record<string, SVGElement>,
-                itemY: (number|undefined),
+                graphics: Array<SVGElement|undefined>,
                 pointAttr,
                 pointMarkerOptions = point.marker || {},
                 symbol = (
@@ -123,7 +121,7 @@ class DotPlotSeries extends ColumnSeries {
                 x: number,
                 y: number;
 
-            point.graphics = graphics = point.graphics || {};
+            point.graphics = graphics = point.graphics || [];
             pointAttr = point.pointAttr ?
                 (
                     (point.pointAttr as any)[
@@ -145,13 +143,13 @@ class DotPlotSeries extends ColumnSeries {
                     point.graphic = renderer.g('point').add(series.group);
                 }
 
-                itemY = point.y;
                 yTop = pick(point.stackY, point.y as any);
                 size = Math.min(
                     point.pointWidth,
                     series.yAxis.transA - itemPaddingTranslated
                 );
-                for (yPos = yTop; yPos > yTop - (point.y as any); yPos--) {
+                let i = Math.floor(yTop);
+                for (yPos = yTop; yPos > yTop - (point.y as any); yPos--, i--) {
 
                     x = point.barX + (
                         isSquare ?
@@ -173,24 +171,27 @@ class DotPlotSeries extends ColumnSeries {
                         r: radius
                     };
 
-                    if (graphics[itemY as any]) {
-                        graphics[itemY as any].animate(attr);
+                    let graphic = graphics[i];
+
+                    if (graphic) {
+                        graphic.animate(attr);
                     } else {
-                        graphics[itemY as any] = renderer.symbol(symbol)
+                        graphic = renderer.symbol(symbol)
                             .attr(extend(attr, pointAttr))
                             .add(point.graphic);
                     }
-                    graphics[itemY as any].isActive = true;
-                    (itemY as any)--;
+                    graphic.isActive = true;
+                    graphics[i] = graphic;
                 }
             }
-            objectEach(graphics, function (
-                graphic: SVGElement,
-                key: string
-            ): void {
+            graphics.forEach((graphic, i): void => {
+                if (!graphic) {
+                    return;
+                }
+
                 if (!graphic.isActive) {
                     graphic.destroy();
-                    delete graphic[key];
+                    graphics.splice(i, 1);
                 } else {
                     graphic.isActive = false;
                 }

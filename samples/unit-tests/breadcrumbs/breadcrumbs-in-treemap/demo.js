@@ -1,5 +1,10 @@
 QUnit.test('Breadcrumbs button', function (assert) {
     const chart =  Highcharts.chart('container', {
+        navigation: {
+            breadcrumbs: {
+                buttonSpacing: 20
+            }
+        },
         series: [{
             breadcrumbs: {
                 showFullPath: false
@@ -74,6 +79,12 @@ QUnit.test('Breadcrumbs button', function (assert) {
     assert.ok(
         chart.drillUpButton.element,
         'Initially, the breadcrumbs should be disabled and the single drillUp button should exist.'
+    );
+
+    assert.strictEqual(
+        chart.breadcrumbs.options.buttonSpacing,
+        20,
+        'Options from navigation should take effect'
     );
 
     chart.series[0].update({

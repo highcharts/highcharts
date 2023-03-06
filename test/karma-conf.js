@@ -38,16 +38,7 @@ function getProperties() {
                 }
             });
         }
-
-        if (!properties['browserstack.username']) {
-            throw new Error();
-        }
-    } catch (e) {
-        throw new Error(
-            'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
-            'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
-        );
-    }
+    } catch (e) {}
     return properties;
 }
 
@@ -59,10 +50,18 @@ function getProperties() {
 function getHTML(path) {
     let html = fs.readFileSync(`samples/${path}/demo.html`, 'utf8');
 
-    html = html.replace(
-        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-        ''
-    );
+    html = html
+        .replace(
+            /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+            ''
+        )
+        // Google fonts mess up the calculation of bounding boxes because they
+        // load async, so sometimes they're loaded prior to screenshot,
+        // sometimes not
+        .replace(
+            /<link[a-z"=:\.\/ ]+(fonts.googleapis.com|fonts.gstatic.com)[^>]+>/gi,
+            ''
+        );
 
     return html + '\n';
 }
@@ -201,7 +200,9 @@ module.exports = function (config) {
     // Browsers
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
-        ['ChromeHeadless'];
+        // Use karma.defaultbrowser=FirefoxHeadless to bypass WebGL problems in
+        // Chrome 109
+        [getProperties()['karma.defaultbrowser'] || 'ChromeHeadless'];
     if (argv.oldie) {
         browsers = ['Win.IE8'];
     } else if (argv.browsers === 'all') {
@@ -209,7 +210,7 @@ module.exports = function (config) {
     }
 
     const browserCount = argv.browsercount || (Math.max(1, os.cpus().length - 2));
-    if (!argv.browsers && browserCount && !isNaN(browserCount)  && browserCount > 1) {
+    if (!argv.browsers && browserCount && !isNaN(browserCount) && browserCount > 1) {
         // Sharding / splitting tests across multiple browser instances
         frameworks = [...frameworks, 'sharding'];
         // create a duplicate of the added browsers ${numberOfInstances} times.
@@ -219,7 +220,7 @@ module.exports = function (config) {
             }
             return browserInstances;
         }, [])
-        : new Array(browserCount).fill('ChromeHeadless');
+        : new Array(browserCount).fill(browsers[0]);
     } else {
         if (argv.splitbrowsers) {
             browsers = argv.splitbrowsers.split(',');
@@ -250,6 +251,7 @@ module.exports = function (config) {
             f.indexOf('vendor/jquery') !== 0 &&
             f.indexOf('vendor/moment') !== 0 &&
             f.indexOf('vendor/proj4') !== 0 &&
+            f.indexOf('vendor/rgbcolor') !== 0 &&
             f.indexOf('node_modules/lolex') !== 0 &&
             f.indexOf('topojson-client') === -1 &&
 
@@ -265,7 +267,24 @@ module.exports = function (config) {
     let options = {
         basePath: '../', // Root relative to this file
         frameworks: frameworks,
-        files: files.concat([
+        files: [
+            // Essentials
+            'test/call-analyzer.js',
+            'test/test-controller.js',
+            'test/test-touch.js',
+            'test/test-utilities.js',
+            'test/json-sources.js',
+
+            // Highcharts
+            ...files,
+
+            // Set up
+            'test/karma-setup.js',
+
+            // Tests
+            ...tests,
+
+            // Samples
             {
                 pattern: 'test/*.png', // testimage.png
                 watched: false,
@@ -278,7 +297,8 @@ module.exports = function (config) {
                 included: false,
                 served: true
             },
-            // Test templates
+
+            // Templates
             'test/test-template.js',
             {
                 pattern: 'test/templates/**/*.js',
@@ -288,20 +308,10 @@ module.exports = function (config) {
                 served: true,
                 nocache: false
             },
-
-            // Set up
-            'test/call-analyzer.js',
-            'test/test-controller.js',
-            'test/test-utilities.js',
-            'test/json-sources.js',
-            'test/karma-setup.js'
-        ], tests),
+        ],
 
         // These ones fail
         exclude: argv.oldie ? [] : [
-            // The configuration currently loads classic mode only. Styled mode
-            // needs to be a separate instance.
-            'samples/unit-tests/series-pie/styled-mode/demo.js',
             // Themes alter the whole default options structure. Set up a
             // separate test suite? Or perhaps somehow decouple the options so
             // they are not mutated for later tests?
@@ -311,6 +321,9 @@ module.exports = function (config) {
 
             // Custom data source
             'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
+            'samples/highcharts/blog/gdp-growth-annual/demo.js',
+            'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.js',
+            'samples/highcharts/blog//gdp-growth-multiple-request/demo.js',
 
             // Error #13, renders to other divs than #container. Sets global
             // options.
@@ -333,6 +346,8 @@ module.exports = function (config) {
             // Maps
             'samples/maps/demo/map-pies/demo.js', // advanced data
             'samples/maps/demo/us-counties/demo.js', // advanced data
+            'samples/maps/plotoptions/series-animation-true/demo.js', // animation
+            'samples/highcharts/blog/map-europe-electricity-price/demo.js', // strange fails, remove this later
 
             // Unknown error
             'samples/highcharts/boost/scatter-smaller/demo.js',
@@ -556,8 +571,16 @@ module.exports = function (config) {
         options.browserDisconnectTimeout = 30000; // default 2000
     }
 
-    if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
+    if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
         let properties = getProperties();
+
+        if (!properties['browserstack.username']) {
+            throw new Error(
+                'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
+                'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
+            );
+        }
+
         const randomString = Math.random().toString(36).substring(7);
 
         options.browserStack = {
@@ -633,16 +656,25 @@ module.exports = function (config) {
     config.set(options);
 };
 
-function createVisualTestTemplate(argv, path, js, assertion) {
+function createVisualTestTemplate(argv, samplePath, js, assertion) {
     let scriptBody = resolveJSON(js);
 
     // Don't do intervals (typically for gauge samples, add point etc)
     scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
 
     // Force enableSimulation: false
-    scriptBody = scriptBody.replace('enableSimulation: true','enableSimulation: false');
+    scriptBody = scriptBody.replace(
+        'enableSimulation: true',
+        'enableSimulation: false'
+    );
 
-    let html = getHTML(path);
+    // Disable explicit animation
+    scriptBody = scriptBody.replace(
+        /(\s?)animation: /,
+        '$1_animation: '
+    );
+
+    let html = getHTML(samplePath);
     let resets = [];
 
     // Reset global options, but only if necessary
@@ -658,9 +690,76 @@ function createVisualTestTemplate(argv, path, js, assertion) {
         resets.push('callbacks');
     }
 
+    // Include demo.css and its imports (highcharcts.css or theme) to be
+    // inserted into the SVG in karma-setup.js:getSVG
+    /*
+    let css = fs.readFileSync(
+        path.join(__dirname, `../samples/${samplePath}/demo.css`),
+        'utf8'
+    );
+
+    if (css) {
+        const regex = /@import ("|')([a-zA-Z:\/\.\-\?\+]+)("|');/g,
+            regexDeep = /@import ("|')([a-zA-Z:\/\.\-\?\+]+)("|');/g;
+
+        let match;
+        while (match = regex.exec(css)) {
+            let url = match[2],
+                importedCSS = '';
+
+            if (url.indexOf('https://code.highcharts.com/css/') === 0) {
+                url = url.replace(
+                    'https://code.highcharts.com/css/',
+                    '../code/css/'
+                );
+                importedCSS = fs.readFileSync(
+                    path.join(__dirname, url),
+                    'utf8'
+                );
+                // Strip deep imports like fonts inside themes
+                importedCSS = importedCSS.replace(regexDeep, '');
+            }
+            // If our own, inserts the content of the CSS, otherwise removes the
+            // @import statement
+            css = css.replace(match[0], importedCSS);
+        }
+
+        html += `<style id="demo.css">${css}</style>`;
+
+    }
+    */
+
+    // Include highcharts.css, to be inserted into the SVG in
+    // karma-setup.js:getSVG
+    if (scriptBody.indexOf('styledMode: true') !== -1) {
+        const highchartsCSS = fs.readFileSync(
+            path.join(__dirname, '../code/css/highcharts.css'),
+            'utf8'
+        );
+        html += `<style id="highcharts.css">${highchartsCSS}</style>`;
+
+        let demoCSS = fs.readFileSync(
+            path.join(__dirname, `../samples/${samplePath}/demo.css`),
+            'utf8'
+        );
+
+        if (demoCSS) {
+            demoCSS = demoCSS
+                // Remove all imported CSS because fonts make it unstable, and
+                // to avoid loading over network. We have highcharts.css
+                // already. Reconsider this if we want better visual tests for
+                // themes. An attempt was made in the commented code above, but
+                // abandoned cause time was running.
+                .replace(/@import [^;]+;/, '');
+
+            html += `<style id="demo.css">${demoCSS}</style>`;
+        }
+
+    }
+
     resets = JSON.stringify(resets);
     return `
-        QUnit.test('${path}', function (assert) {
+        QUnit.test('${samplePath}', function (assert) {
             // Apply demo.html
             document.getElementById('demo-html').innerHTML = \`${html}\`;
 

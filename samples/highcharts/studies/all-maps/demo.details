@@ -1,7 +1,0 @@
----
-name: Overview
-authors:
-  - Torstein Hønsi
-js_wrap: b
-requiresManualTesting: true
-...

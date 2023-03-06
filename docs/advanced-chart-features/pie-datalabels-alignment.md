@@ -20,7 +20,7 @@ Specific description of new options
 Alignment method for data labels. Possible values are:
 
 *   `connectors`: each label touches the nearest vertical edge of the plot area.
-*   `toPlotEdges`: the ends of the connectors have the same x position and the widest label of each half (left & right) touches the nearest vertical edge of the plot area.
+*   `plotEdges`: the ends of the connectors have the same x position and the widest label of each half (left & right) touches the nearest vertical edge of the plot area.
 
 **Demo with connectors**
 
@@ -54,7 +54,7 @@ Specifies the method that is used to generate the connector path. Highcharts pro
     }
 
 
-<iframe width="100%" height="550" style="null" src=https://jsfiddle.net/mushigh/r0qsw9mh/3/embedded/result/ allow="fullscreen"></iframe>
+<iframe width="100%" height="550" style="null" src=https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/coloraxis/coloraxis-with-pie/embedded/result/ allow="fullscreen"></iframe>
 
 **straight:**
 

@@ -381,7 +381,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
         function changeStackingType() {
             var oldTranslateX, oldTranslateY, newTranslateX, newTranslateY;
 
-            Highcharts.each(chart.series, function (series) {
+            chart.series.forEach(series => {
                 oldTranslateX = series.data[0].dataLabel.translateX;
                 oldTranslateY = series.data[0].dataLabel.translateY;
 

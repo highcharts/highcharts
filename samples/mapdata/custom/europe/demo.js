@@ -1,95 +1,62 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['dk', 0],
-    ['fo', 1],
-    ['hr', 2],
-    ['nl', 3],
-    ['ee', 4],
-    ['bg', 5],
-    ['es', 6],
-    ['it', 7],
-    ['sm', 8],
-    ['va', 9],
-    ['tr', 10],
-    ['mt', 11],
-    ['fr', 12],
-    ['no', 13],
-    ['de', 14],
-    ['ie', 15],
-    ['ua', 16],
-    ['fi', 17],
-    ['se', 18],
-    ['ru', 19],
-    ['gb', 20],
-    ['cy', 21],
-    ['pt', 22],
-    ['gr', 23],
-    ['lt', 24],
-    ['si', 25],
-    ['ba', 26],
-    ['mc', 27],
-    ['al', 28],
-    ['cnm', 29],
-    ['nc', 30],
-    ['rs', 31],
-    ['ro', 32],
-    ['me', 33],
-    ['li', 34],
-    ['at', 35],
-    ['sk', 36],
-    ['hu', 37],
-    ['ad', 38],
-    ['lu', 39],
-    ['ch', 40],
-    ['be', 41],
-    ['kv', 42],
-    ['pl', 43],
-    ['mk', 44],
-    ['lv', 45],
-    ['by', 46],
-    ['is', 47],
-    ['md', 48],
-    ['cz', 49]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'custom/europe'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/europe.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['dk', 10], ['fo', 11], ['hr', 12], ['nl', 13], ['ee', 14], ['bg', 15],
+        ['es', 16], ['it', 17], ['sm', 18], ['va', 19], ['tr', 20], ['mt', 21],
+        ['fr', 22], ['no', 23], ['de', 24], ['ie', 25], ['ua', 26], ['fi', 27],
+        ['se', 28], ['ru', 29], ['gb', 30], ['cy', 31], ['pt', 32], ['gr', 33],
+        ['lt', 34], ['si', 35], ['ba', 36], ['mc', 37], ['al', 38], ['cnm', 39],
+        ['nc', 40], ['rs', 41], ['ro', 42], ['me', 43], ['li', 44], ['at', 45],
+        ['sk', 46], ['hu', 47], ['ad', 48], ['lu', 49], ['ch', 50], ['be', 51],
+        ['kv', 52], ['pl', 53], ['mk', 54], ['lv', 55], ['by', 56], ['is', 57],
+        ['md', 58], ['cz', 59]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/europe.js">Europe</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/europe.topo.json">Europe</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

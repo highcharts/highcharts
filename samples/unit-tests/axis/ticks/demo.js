@@ -89,7 +89,7 @@ QUnit.test(
                 series: [
                     {
                         type: 'column',
-                        //pointRange: 1,
+                        // pointRange: 1,
                         data: [
                             [7, 7],
                             [10, 8]
@@ -511,11 +511,11 @@ QUnit.test('The tickPositions option', function (assert) {
     chart.xAxis[0].update({
         tickPositions: undefined
     });
-    
+
     assert.deepEqual(
         chart.xAxis[0].tickPositions,
         [8, 9, 10, 11, 12, 13, 14],
-        'After setting tickPostions to undefined they should be' + 
+        'After setting tickPostions to undefined they should be' +
             'cleared. (#10525)'
     );
 });

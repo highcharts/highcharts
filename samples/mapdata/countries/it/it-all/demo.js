@@ -1,155 +1,81 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['it-na', 0],
-    ['it-tp', 1],
-    ['it-pa', 2],
-    ['it-me', 3],
-    ['it-ag', 4],
-    ['it-nu', 5],
-    ['it-og', 6],
-    ['it-ms', 7],
-    ['it-mt', 8],
-    ['it-bn', 9],
-    ['it-cl', 10],
-    ['it-an', 11],
-    ['it-pg', 12],
-    ['it-ci', 13],
-    ['it-ss', 14],
-    ['it-ot', 15],
-    ['it-gr', 16],
-    ['it-li', 17],
-    ['it-ar', 18],
-    ['it-fe', 19],
-    ['it-ra', 20],
-    ['it-fi', 21],
-    ['it-fc', 22],
-    ['it-rn', 23],
-    ['it-ge', 24],
-    ['it-sv', 25],
-    ['it-vs', 26],
-    ['it-ve', 27],
-    ['it-ca', 28],
-    ['it-pi', 29],
-    ['it-re', 30],
-    ['it-lu', 31],
-    ['it-bo', 32],
-    ['it-pt', 33],
-    ['it-pz', 34],
-    ['it-cz', 35],
-    ['it-rc', 36],
-    ['it-ce', 37],
-    ['it-lt', 38],
-    ['it-av', 39],
-    ['it-is', 40],
-    ['it-ba', 41],
-    ['it-br', 42],
-    ['it-le', 43],
-    ['it-ta', 44],
-    ['it-ct', 45],
-    ['it-rg', 46],
-    ['it-pe', 47],
-    ['it-ri', 48],
-    ['it-te', 49],
-    ['it-fr', 50],
-    ['it-aq', 51],
-    ['it-rm', 52],
-    ['it-ch', 53],
-    ['it-vt', 54],
-    ['it-pu', 55],
-    ['it-mc', 56],
-    ['it-fm', 57],
-    ['it-ap', 58],
-    ['it-si', 59],
-    ['it-tr', 60],
-    ['it-to', 61],
-    ['it-bi', 62],
-    ['it-no', 63],
-    ['it-vc', 64],
-    ['it-ao', 65],
-    ['it-vb', 66],
-    ['it-al', 67],
-    ['it-mn', 68],
-    ['it-pc', 69],
-    ['it-lo', 70],
-    ['it-pv', 71],
-    ['it-cr', 72],
-    ['it-mi', 73],
-    ['it-va', 74],
-    ['it-so', 75],
-    ['it-co', 76],
-    ['it-lc', 77],
-    ['it-bg', 78],
-    ['it-mb', 79],
-    ['it-ud', 80],
-    ['it-go', 81],
-    ['it-ts', 82],
-    ['it-ro', 83],
-    ['it-pd', 84],
-    ['it-vr', 85],
-    ['it-tn', 86],
-    ['it-bl', 87],
-    ['it-mo', 88],
-    ['it-sp', 89],
-    ['it-pr', 90],
-    ['it-fg', 91],
-    ['it-im', 92],
-    ['it-or', 93],
-    ['it-cs', 94],
-    ['it-vv', 95],
-    ['it-sa', 96],
-    ['it-bt', 97],
-    ['it-sr', 98],
-    ['it-en', 99],
-    ['it-cn', 100],
-    ['it-bz', 101],
-    ['it-po', 102],
-    ['it-kr', 103],
-    ['it-cb', 104],
-    ['it-at', 105],
-    ['it-bs', 106],
-    ['it-pn', 107],
-    ['it-vi', 108],
-    ['it-tv', 109]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/it/it-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/it/it-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['it-na', 10], ['it-tp', 11], ['it-pa', 12], ['it-me', 13],
+        ['it-ag', 14], ['it-nu', 15], ['it-og', 16], ['it-ms', 17],
+        ['it-mt', 18], ['it-bn', 19], ['it-cl', 20], ['it-an', 21],
+        ['it-pg', 22], ['it-ci', 23], ['it-ss', 24], ['it-ot', 25],
+        ['it-gr', 26], ['it-li', 27], ['it-ar', 28], ['it-fe', 29],
+        ['it-ra', 30], ['it-fi', 31], ['it-fc', 32], ['it-rn', 33],
+        ['it-ge', 34], ['it-sv', 35], ['it-vs', 36], ['it-ve', 37],
+        ['it-ca', 38], ['it-pi', 39], ['it-re', 40], ['it-lu', 41],
+        ['it-bo', 42], ['it-pt', 43], ['it-pz', 44], ['it-cz', 45],
+        ['it-rc', 46], ['it-ce', 47], ['it-lt', 48], ['it-av', 49],
+        ['it-is', 50], ['it-ba', 51], ['it-br', 52], ['it-le', 53],
+        ['it-ta', 54], ['it-ct', 55], ['it-rg', 56], ['it-pe', 57],
+        ['it-ri', 58], ['it-te', 59], ['it-fr', 60], ['it-aq', 61],
+        ['it-rm', 62], ['it-ch', 63], ['it-vt', 64], ['it-pu', 65],
+        ['it-mc', 66], ['it-fm', 67], ['it-ap', 68], ['it-si', 69],
+        ['it-tr', 70], ['it-to', 71], ['it-bi', 72], ['it-no', 73],
+        ['it-vc', 74], ['it-ao', 75], ['it-vb', 76], ['it-al', 77],
+        ['it-mn', 78], ['it-pc', 79], ['it-lo', 80], ['it-pv', 81],
+        ['it-cr', 82], ['it-mi', 83], ['it-va', 84], ['it-so', 85],
+        ['it-co', 86], ['it-lc', 87], ['it-bg', 88], ['it-mb', 89],
+        ['it-ud', 90], ['it-go', 91], ['it-ts', 92], ['it-ro', 93],
+        ['it-pd', 94], ['it-vr', 95], ['it-tn', 96], ['it-bl', 97],
+        ['it-mo', 98], ['it-sp', 99], ['it-pr', 100], ['it-fg', 101],
+        ['it-im', 102], ['it-or', 103], ['it-cs', 104], ['it-vv', 105],
+        ['it-sa', 106], ['it-bt', 107], ['it-sr', 108], ['it-en', 109],
+        ['it-cn', 110], ['it-bz', 111], ['it-po', 112], ['it-kr', 113],
+        ['it-cb', 114], ['it-at', 115], ['it-bs', 116], ['it-pn', 117],
+        ['it-vi', 118], ['it-tv', 119]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/it/it-all.js">Italy</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/it/it-all.topo.json">Italy</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

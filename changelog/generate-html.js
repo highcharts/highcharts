@@ -142,7 +142,8 @@ function generateHTML() {
                 return (
                     `<h3 class="release-header">
                         <a id="${id}"></a>
-                        <a href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
+                        <span>${changelog.header.productName} v${version} ${changelog.header.date}</span>
+                        <a class="release-header-hashtag" href="#${id}">#</a>
                         <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>
                     </h3>
                     ${marked.parser(changelog.features)}`
@@ -260,7 +261,8 @@ function generateHTML() {
 
                 if (content.indexOf('[Edit]') !== -1) {
                     throw new Error(
-                        'Review links found inside the markdown. Generate again without --review.'
+                        'Review links found inside the markdown. Generate again without --review.\n' +
+                        path.join(__dirname, product.name, file)
                     );
                 }
 

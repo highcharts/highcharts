@@ -1,3 +1,8 @@
+#container {
+    height: 400px;
+    min-width: 600px;
+}
+
 .info {
     font: 0.7em sans-serif;
     padding: 0.5em;

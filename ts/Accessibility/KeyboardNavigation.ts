@@ -40,7 +40,7 @@ const {
 
 import EventProvider from './Utils/EventProvider.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
-const { getElement } = HTMLUtilities;
+const { getElement, simulatedEventTarget } = HTMLUtilities;
 
 /* *
  *
@@ -87,12 +87,11 @@ class KeyboardNavigation {
     public components: Accessibility.ComponentsObject = void 0 as any;
     public currentModuleIx: number = NaN;
     public eventProvider: EventProvider = void 0 as any;
-    public exitAnchor: DOMElementType = void 0 as any;
+    public exitAnchor?: DOMElementType = void 0 as any;
     public exiting?: boolean;
     public isClickingChart?: boolean;
     public keyboardReset?: boolean;
     public modules: Array<KeyboardNavigationHandler> = [];
-    public pointerIsOverChart?: boolean;
     public tabindexContainer: HTMLDOMElement = void 0 as any;
     public tabbingInBackwards?: boolean;
 
@@ -133,7 +132,8 @@ class KeyboardNavigation {
             (e: FocusEvent): void => this.onFocus(e));
 
         ['mouseup', 'touchend'].forEach((eventName): Function =>
-            ep.addEvent(doc, eventName, (): void => this.onMouseUp())
+            ep.addEvent(doc, eventName,
+                (e): void => this.onMouseUp(e as MouseEvent))
         );
 
         ['mousedown', 'touchstart'].forEach((eventName): Function =>
@@ -141,14 +141,6 @@ class KeyboardNavigation {
                 this.isClickingChart = true;
             })
         );
-
-        ep.addEvent(chart.renderTo, 'mouseover', (): void => {
-            this.pointerIsOverChart = true;
-        });
-
-        ep.addEvent(chart.renderTo, 'mouseout', (): void => {
-            this.pointerIsOverChart = false;
-        });
     }
 
 
@@ -253,7 +245,7 @@ class KeyboardNavigation {
         // Set focus to chart or exit anchor depending on direction
         this.exiting = true;
         if (direction > 0) {
-            this.exitAnchor.focus();
+            this.exitAnchor && this.exitAnchor.focus();
         } else {
             this.tabindexContainer.focus();
         }
@@ -298,13 +290,19 @@ class KeyboardNavigation {
      * indicator.
      * @private
      */
-    private onMouseUp(): void {
+    private onMouseUp(e: MouseEvent): void {
         delete this.isClickingChart;
 
-        if (!this.keyboardReset) {
+        if (
+            !this.keyboardReset &&
+            e.relatedTarget !== simulatedEventTarget
+        ) {
             const chart = this.chart;
 
-            if (!this.pointerIsOverChart) {
+            if (
+                !e.target ||
+                !chart.container.contains(e.target as HTMLElement)
+            ) {
                 const curMod = this.modules &&
                         this.modules[this.currentModuleIx || 0];
                 if (curMod && curMod.terminate) {
@@ -315,6 +313,7 @@ class KeyboardNavigation {
 
             if (chart.focusElement) {
                 chart.focusElement.removeFocusBorder();
+                delete chart.focusElement;
             }
 
             this.keyboardReset = true;
@@ -463,6 +462,10 @@ class KeyboardNavigation {
                     comingInBackwards = !(
                         focusComesFromChart || keyboardNavigation.exiting
                     );
+
+                if (chart.focusElement) {
+                    delete chart.focusElement;
+                }
 
                 if (comingInBackwards) {
                     // Focus the container instead

@@ -1,60 +1,57 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['bw-6964', 0],
-    ['bw-6963', 1],
-    ['bw-6967', 2],
-    ['bw-6966', 3],
-    ['bw-kg', 4],
-    ['bw-se', 5],
-    ['bw-ne', 6],
-    ['bw-6962', 7],
-    ['bw-gh', 8],
-    ['bw-nw', 9],
-    ['bw-ce', 10],
-    ['bw-kl', 11],
-    ['bw-kw', 12],
-    ['bw-6965', 13],
-    ['bw-so', 14]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/bw/bw-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/bw/bw-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['bw-6964', 10], ['bw-6963', 11], ['bw-6967', 12], ['bw-6966', 13],
+        ['bw-kg', 14], ['bw-se', 15], ['bw-ne', 16], ['bw-6962', 17],
+        ['bw-gh', 18], ['bw-nw', 19], ['bw-ce', 20], ['bw-kl', 21],
+        ['bw-kw', 22], ['bw-6965', 23], ['bw-so', 24]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bw/bw-all.js">Botswana</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bw/bw-all.topo.json">Botswana</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

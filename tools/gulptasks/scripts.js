@@ -30,6 +30,8 @@ const TS_DIRECTORY = 'ts';
  * */
 
 /**
+ * Saves run.
+ *
  * @return {void}
  */
 function saveRun() {
@@ -125,6 +127,8 @@ function shouldRun() {
  * */
 
 /**
+ * The "gulp scripts" task.
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
@@ -161,7 +165,9 @@ function task() {
             gulp.series(
                 'scripts-ts',
                 'scripts-css',
-                'scripts-js'
+                'scripts-js',
+                'scripts-code',
+                'scripts-es5'
             )(
                 function (error) {
 

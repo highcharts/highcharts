@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     DEMAOptions,
     DEMAParamsOptions
@@ -18,16 +24,20 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     isArray,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The DEMA series Type
@@ -39,6 +49,13 @@ const {
  * @augments Highcharts.Series
  */
 class DEMAIndicator extends EMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Double exponential moving average (DEMA) indicator. This series requires
      * `linkedTo` option to be set and should be loaded after the
@@ -60,10 +77,22 @@ class DEMAIndicator extends EMAIndicator {
      */
     public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public EMApercent: number = void 0 as any;
     public data: Array<DEMAPoint> = void 0 as any;
     public options: DEMAOptions = void 0 as any;
     public points: Array<DEMAPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public getEMA(
         yVal: (Array<number>|Array<Array<number>>),
@@ -74,7 +103,7 @@ class DEMAIndicator extends EMAIndicator {
         xVal?: Array<number>
     ): [number, number] {
 
-        return EMAIndicator.prototype.calculateEma(
+        return super.calculateEma(
             xVal || [],
             yVal,
             typeof i === 'undefined' ? 1 : i,
@@ -89,17 +118,16 @@ class DEMAIndicator extends EMAIndicator {
         series: TLinkedSeries,
         params: DEMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
+            EMAvalues: Array<number> = [],
             doubledPeriod: number = 2 * period,
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
-            index = -1,
-            accumulatePeriodPoints = 0,
-            SMA = 0,
             DEMA: Array<Array<number>> = [],
             xDataDema: Array<number> = [],
-            yDataDema: Array<number> = [],
+            yDataDema: Array<number> = [];
+        let accumulatePeriodPoints = 0,
             EMA = 0,
             // EMA(EMA)
             EMAlevel2: number,
@@ -107,9 +135,10 @@ class DEMAIndicator extends EMAIndicator {
             prevEMA: (number|undefined),
             prevEMAlevel2: (number|undefined),
             // EMA values array
-            EMAvalues: Array<number> = [],
             i: number,
-            DEMAPoint: [number, number];
+            index = -1,
+            DEMAPoint: [number, number],
+            SMA = 0;
 
         this.EMApercent = (2 / (period + 1));
 
@@ -125,7 +154,7 @@ class DEMAIndicator extends EMAIndicator {
 
         // Accumulate first N-points
         accumulatePeriodPoints =
-            EMAIndicator.prototype.accumulatePeriodPoints(
+            super.accumulatePeriodPoints(
                 period,
                 index,
                 yVal
@@ -213,6 +242,12 @@ SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
  * */
 
 export default DEMAIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `DEMA` series. If the [type](#series.dema.type) option is not

@@ -19,7 +19,7 @@ Math.easeOutBounce = pos => {
 };
 
 
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let mapLoaded = false;
 
 
@@ -132,25 +132,25 @@ const maps = {
                     });
                 };
 
-                ///if reduced motion, show the envelope right away
+                // /if reduced motion, show the envelope right away
                 if (reduced) {
                     updateData();
                 }
 
                 setTimeout(function () {
-                    ///if not reduced motion, build the envelope
+                    // /if not reduced motion, build the envelope
                     if (!reduced) {
                         growEnvelope();
                     }
-                    ///grow the map marker
+                    // /grow the map marker
                     mapPointPoint.classList.add('grow');
                     mapPointTop.classList.add('grow');
                     mapPointCenter.classList.add('grow');
                 }, 1000);
 
                 setTimeout(function () {
-                    ///animation is don
-                    ///hide everything
+                    // /animation is don
+                    // /hide everything
                     finalHide();
                 }, 4000);
 
@@ -165,21 +165,21 @@ const maps = {
         text: ''
     },
     xAxis: [
-        //0 - bottom, top map area
+        // 0 - bottom, top map area
         {
             min: 0,
             max: 20,
             gridLineColor: 'transparent',
             tickInterval: 1
         },
-        //1 - left map area
+        // 1 - left map area
         {
             min: 0,
             max: 20,
             gridLineColor: 'transparent',
             tickInterval: 1
         },
-        ///2 - right map area
+        // /2 - right map area
         {
             min: 0,
             max: 20,
@@ -188,7 +188,7 @@ const maps = {
             reversed: true
         },
 
-        ///3 - for particle group 2
+        // /3 - for particle group 2
         {
             min: 0,
             max: 20,
@@ -196,7 +196,7 @@ const maps = {
             tickInterval: 1
         }],
     yAxis: [
-        //0
+        // 0
         {
             min: -2,
             max: 18,
@@ -206,7 +206,7 @@ const maps = {
             startOnTick: false,
             endOnTick: false
         },
-        ///1 - for the top map area
+        // /1 - for the top map area
         {
             min: -2,
             max: 18,
@@ -253,7 +253,7 @@ const maps = {
 
     },
     series: [
-        //0 - bottom line
+        // 0 - bottom line
         {
             type: 'line',
             className: 'transparent',
@@ -264,7 +264,7 @@ const maps = {
             zIndex: 10
 
         },
-        //1 - line
+        // 1 - line
         {
             type: 'line',
             lineWidth: 1,
@@ -275,7 +275,7 @@ const maps = {
             ],
             zIndex: 10
         },
-        //2 - line
+        // 2 - line
         {
             type: 'line',
             lineWidth: 1,
@@ -286,7 +286,7 @@ const maps = {
             ],
             zIndex: 10
         },
-        //3 - line
+        // 3 - line
         {
             type: 'line',
             className: 'green',
@@ -298,7 +298,7 @@ const maps = {
             zIndex: 10
 
         },
-        //4 - line
+        // 4 - line
         {
             type: 'line',
             className: 'green',
@@ -310,7 +310,7 @@ const maps = {
             zIndex: 10
 
         },
-        //5 - line
+        // 5 - line
         {
             type: 'line',
             className: 'green',
@@ -321,7 +321,7 @@ const maps = {
             ],
             zIndex: 10
         },
-        //6 - line
+        // 6 - line
         {
             type: 'line',
             className: 'green',
@@ -333,7 +333,7 @@ const maps = {
             zIndex: 10
 
         },
-        //7 - line
+        // 7 - line
         {
             type: 'line',
             className: 'green',
@@ -344,7 +344,7 @@ const maps = {
             ],
             zIndex: 10
         },
-        //8 - line
+        // 8 - line
         {
             type: 'line',
             className: 'green',
@@ -459,7 +459,7 @@ const maps = {
             data: [
                 {
                     x: 10,
-                    y: 8.4, //11,
+                    y: 8.4, // 11,
                     marker: {
                         enabled: true,
                         symbol: 'circle',
@@ -516,7 +516,7 @@ const maps = {
             yAxis: 1,
             visible: true
         },
-        //17 - particles
+        // 17 - particles
         {
             type: 'scatter',
             name: 'particles',
@@ -590,7 +590,7 @@ const finalMap = function () {
             // Initialize the chart
             Highcharts.mapChart('maps', {
                 chart: {
-                    styledMode: (true),
+                    styledMode: true,
                     animation: {
 
                         duration: 1000
@@ -729,7 +729,7 @@ const finalMap = function () {
         });
 };
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
     Highcharts.mapChart('maps', maps);
     let dtime = 5000;
 

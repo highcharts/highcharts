@@ -1,7 +1,7 @@
 Map point series
 ================
 
-A `mappoint` series is a special form of `scatter` series where points are laid out on top of a map using lon and lat coordinates.
+A `mappoint` series is a special form of `scatter` series where points are laid out on top of a map using `lon` and `lat` coordinates.
 
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/mappoint-latlon" allow="fullscreen"></iframe>
 

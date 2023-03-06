@@ -85,11 +85,12 @@ class DumbbellPoint extends AreaRangePoint {
 
         if (!point.state) {
             verb = 'animate';
-            if (point.lowerGraphic && !chart.styledMode) {
-                point.lowerGraphic.attr({
+            const [lowerGraphic, upperGraphic] = point.graphics || [];
+            if (lowerGraphic && !chart.styledMode) {
+                lowerGraphic.attr({
                     fill: lowerGraphicColor
                 });
-                if (point.upperGraphic) {
+                if (upperGraphic) {
                     origProps = {
                         y: point.y,
                         zone: point.zone
@@ -103,7 +104,7 @@ class DumbbellPoint extends AreaRangePoint {
                         point.zone ? point.zone.color : void 0,
                         point.color
                     );
-                    point.upperGraphic.attr({
+                    upperGraphic.attr({
                         fill: upperGraphicColor
                     });
                     extend(point, origProps);

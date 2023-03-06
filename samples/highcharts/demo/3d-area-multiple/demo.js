@@ -9,7 +9,22 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: "Visual comparison of Mountains Panorama"
+        text: 'Visual comparison of Mountains Panorama'
+    },
+    accessibility: {
+        description: 'The chart is showing the shapes of three mountain ranges as three area line series laid out in 3D behind each other.',
+        keyboardNavigation: {
+            seriesNavigation: {
+                mode: 'serialize'
+            }
+        }
+    },
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionPlural: 'The chart has 3 unlabelled X axes, one for each series.'
+            }
+        }
     },
     yAxis: {
         title: {
@@ -45,7 +60,7 @@ Highcharts.chart('container', {
         valueSuffix: ' MAMSL'
     },
     series: [{
-        name: "Tatra Mountains visible from Rusinowa polana",
+        name: 'Tatra Mountains visible from Rusinowa polana',
         lineColor: 'rgb(180,90,50)',
         color: 'rgb(200,110,50)',
         fillColor: 'rgb(200,110,50)',
@@ -89,7 +104,7 @@ Highcharts.chart('container', {
         lineColor: 'rgb(120,160,180)',
         color: 'rgb(140,180,200)',
         fillColor: 'rgb(140,180,200)',
-        name: "Dachstein panorama seen from Krippenstein",
+        name: 'Dachstein panorama seen from Krippenstein',
         data: [
             ['Kufstein', 2049],
             ['Hohe Wildstelle', 2746],
@@ -119,7 +134,7 @@ Highcharts.chart('container', {
         lineColor: 'rgb(200, 190, 140)',
         color: 'rgb(200, 190, 140)',
         fillColor: 'rgb(230, 220, 180)',
-        name: "Panorama from Col Des Mines",
+        name: 'Panorama from Col Des Mines',
         data: [
             ['Combin de la Tsessette', 4141],
             ['Grand Combin de Grafeneire', 4314],
@@ -139,24 +154,24 @@ Highcharts.chart('container', {
             ['Mont Dolent', 3820],
             ['Aiguille de Triolet', 3870],
             ['Le Tour Noir', 3836],
-            ["Aiguille de l'A Neuve", 3753],
-            ["Aiguille d'Argentière", 3900],
-            ["Aiguille du Chardonnet", 3824],
-            ["Aiguille du Tour", 3540],
-            ["Aiguille du Pissoir", 3440],
-            ["Le Catogne", 2598],
-            ["Pointe de Prosom", 2762],
-            ["Pointe Ronde", 2700],
-            ["Mont Buet", 3096],
-            ["Le Cheval Blanc", 2831],
-            ["Pointe de la Finive", 2838],
-            ["Pic de Tenneverge", 2985],
-            ["Pointe d'Aboillon", 2819],
-            ["Tour Sallière", 3220],
-            ["Le Dôme", 3138],
-            ["Haute Cime", 3257],
-            ["Pierre Avoi", 2473],
-            ["Cime de l'Est", 3178]
+            ['Aiguille de l\'A Neuve', 3753],
+            ['Aiguille d\'Argentière', 3900],
+            ['Aiguille du Chardonnet', 3824],
+            ['Aiguille du Tour', 3540],
+            ['Aiguille du Pissoir', 3440],
+            ['Le Catogne', 2598],
+            ['Pointe de Prosom', 2762],
+            ['Pointe Ronde', 2700],
+            ['Mont Buet', 3096],
+            ['Le Cheval Blanc', 2831],
+            ['Pointe de la Finive', 2838],
+            ['Pic de Tenneverge', 2985],
+            ['Pointe d\'Aboillon', 2819],
+            ['Tour Sallière', 3220],
+            ['Le Dôme', 3138],
+            ['Haute Cime', 3257],
+            ['Pierre Avoi', 2473],
+            ['Cime de l\'Est', 3178]
         ]
     }]
 });

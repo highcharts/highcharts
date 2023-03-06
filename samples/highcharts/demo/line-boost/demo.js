@@ -51,6 +51,12 @@ Highcharts.chart('container', {
         text: 'Using the Boost module'
     },
 
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{chartSubtitle}</div><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+        }
+    },
+
     tooltip: {
         valueDecimals: 2
     },

@@ -1,5 +1,5 @@
 ---
- name: French Southern and Antarctic Lands - Highmaps
- description: Highmaps demo
+ name: French Southern and Antarctic Lands - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

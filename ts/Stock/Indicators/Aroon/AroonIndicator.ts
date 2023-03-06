@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     AroonOptions,
     AroonParamsOptions
@@ -19,10 +25,8 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -30,7 +34,12 @@ const {
     pick
 } = U;
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 // Utils
 
 // Index of element with extreme value from array (min or max)
@@ -55,8 +64,6 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
     return valueIndex;
 }
 
-/* eslint-enable valid-jsdoc */
-
 /* *
  *
  *  Class
@@ -72,8 +79,14 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
  *
  * @augments Highcharts.Series
  */
-
 class AroonIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Aroon. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -139,6 +152,7 @@ class AroonIndicator extends SMAIndicator {
      *  Properties
      *
      * */
+
     public data: Array<AroonPoint> = void 0 as any;
 
     public options: AroonOptions = void 0 as any;
@@ -150,11 +164,12 @@ class AroonIndicator extends SMAIndicator {
      *  Functions
      *
      * */
+
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: AroonParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        let period = (params.period as any),
+        const period = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen = yVal ? yVal.length : 0,
@@ -162,14 +177,14 @@ class AroonIndicator extends SMAIndicator {
             AR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<Array<number>> = [],
-            slicedY: Array<Array<number>>,
             low = 2,
-            high = 1,
-            aroonUp: number,
+            high = 1;
+        let aroonUp: number,
             aroonDown: number,
             xLow: number,
             xHigh: number,
-            i: number;
+            i: number,
+            slicedY: Array<Array<number>>;
 
         // For a N-period, we start from N-1 point, to calculate Nth point
         // That is why we later need to comprehend slice() elements list
@@ -206,18 +221,17 @@ class AroonIndicator extends SMAIndicator {
 }
 
 /* *
-*
-*   Class Prototype
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
-interface AroonIndicator extends MultipleLinesComposition.Composition {
-    pointArrayMap: Array<string>;
-    pointValKey: string;
-    nameComponents: Array<string>;
+interface AroonIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
+    nameComponents: Array<string>;
+    pointArrayMap: Array<keyof AroonPoint>;
+    pointValKey: string;
     pointClass: typeof AroonPoint;
-    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(AroonIndicator.prototype, {
     areaLinesNames: [],
@@ -233,6 +247,7 @@ MultipleLinesComposition.compose(AroonIndicator);
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroon: typeof AroonIndicator;
@@ -248,6 +263,12 @@ SeriesRegistry.registerSeriesType('aroon', AroonIndicator);
  * */
 
 export default AroonIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Aroon indicator. If the [type](#series.aroon.type) option is not

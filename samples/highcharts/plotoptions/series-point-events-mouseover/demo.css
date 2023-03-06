@@ -1,3 +1,8 @@
+#container {
+    height: 300px;
+    min-width: 300px;
+}
+
 #reporting {
     position: absolute;
     top: 55px;

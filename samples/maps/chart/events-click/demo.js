@@ -11,14 +11,8 @@
         // `this` is either Series or Chart
         const chart = this.chart || this;
 
-        // Get position in pre-projected units
-        const pos = chart.mapView.pixelsToProjectedUnits({
-            x: Math.round(e.chartX - chart.plotLeft),
-            y: Math.round(e.chartY - chart.plotTop)
-        });
+        const p = { lon: e.lon, lat: e.lat };
 
-        // Convert to latLon
-        const p = chart.fromPointToLatLon(pos);
         p.name = '[N' + p.lat.toFixed(2) + ', E' + p.lon.toFixed(2) + ']';
 
         // Add point

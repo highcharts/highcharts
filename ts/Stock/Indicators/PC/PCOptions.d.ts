@@ -23,7 +23,7 @@ import type {
 *  Declarations
 *
 * */
-export interface PCOptions extends SMAOptions, MultipleLinesComposition.Options {
+export interface PCOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     params?: PCParamsOptions;
     bottomLine: Record<string, CSSObject>;
     topLine: Record<string, CSSObject>;

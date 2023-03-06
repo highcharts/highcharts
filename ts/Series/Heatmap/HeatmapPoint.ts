@@ -16,7 +16,7 @@
  *
  * */
 
-import type ColorMapMixin from '../ColorMapMixin';
+import type ColorMapComposition from '../ColorMapComposition';
 import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -80,16 +80,17 @@ class HeatmapPoint extends ScatterPoint {
         options: HeatmapPointOptions,
         x?: number
     ): HeatmapPoint {
-        const point: HeatmapPoint = super.applyOptions.call(
-            this,
-            options,
-            x
-        ) as any;
+        // #17970, if point is null remove its color, because it may be updated
+        if (this.isNull || this.value === null) {
+            delete this.color;
+        }
 
-        point.formatPrefix = point.isNull || point.value === null ?
+        super.applyOptions(options, x);
+
+        this.formatPrefix = this.isNull || this.value === null ?
             'null' : 'point';
 
-        return point;
+        return this;
     }
 
     public getCellAttributes(): HeatmapPoint.CellAttributes {
@@ -107,45 +108,45 @@ class HeatmapPoint extends ScatterPoint {
             ),
             cellAttr: HeatmapPoint.CellAttributes = {
                 x1: clamp(Math.round(xAxis.len -
-                    (xAxis.translate(
+                    xAxis.translate(
                         point.x - xPad,
                         false,
                         true,
                         false,
                         true,
                         -pointPlacement
-                    ) || 0)
+                    )
                 ), -xAxis.len, 2 * xAxis.len),
 
                 x2: clamp(Math.round(xAxis.len -
-                    (xAxis.translate(
+                    xAxis.translate(
                         point.x + xPad,
                         false,
                         true,
                         false,
                         true,
                         -pointPlacement
-                    ) || 0)
+                    )
                 ), -xAxis.len, 2 * xAxis.len),
 
                 y1: clamp(Math.round(
-                    (yAxis.translate(
+                    yAxis.translate(
                         point.y - yPad,
                         false,
                         true,
                         false,
                         true
-                    ) || 0)
+                    )
                 ), -yAxis.len, 2 * yAxis.len),
 
                 y2: clamp(Math.round(
-                    (yAxis.translate(
+                    yAxis.translate(
                         point.y + yPad,
                         false,
                         true,
                         false,
                         true
-                    ) || 0)
+                    )
                 ), -yAxis.len, 2 * yAxis.len)
             };
 
@@ -181,7 +182,10 @@ class HeatmapPoint extends ScatterPoint {
 
             // Handle pointPadding
             if (pointPadding) {
-                if (direction === 'y') {
+                if (
+                    (direction === 'x' && xAxis.reversed) ||
+                    (direction === 'y' && !yAxis.reversed)
+                ) {
                     start = end;
                     end = direction + '1';
                 }
@@ -200,20 +204,14 @@ class HeatmapPoint extends ScatterPoint {
         if (!size) {
             return [];
         }
-        const rect = this.shapeArgs;
+        const { x = 0, y = 0, width = 0, height = 0 } = this.shapeArgs || {};
 
         return [
-            'M',
-            (rect as any).x - size,
-            (rect as any).y - size,
-            'L',
-            (rect as any).x - size,
-            (rect as any).y + (rect as any).height + size,
-            (rect as any).x + (rect as any).width + size,
-            (rect as any).y + (rect as any).height + size,
-            (rect as any).x + (rect as any).width + size,
-            (rect as any).y - size,
-            'Z'
+            ['M', x - size, y - size],
+            ['L', x - size, y + height + size],
+            ['L', x + width + size, y + height + size],
+            ['L', x + width + size, y - size],
+            ['Z']
         ];
     }
 
@@ -240,9 +238,8 @@ class HeatmapPoint extends ScatterPoint {
  *
  * */
 
-interface HeatmapPoint {
-    dataLabelOnNull: ColorMapMixin.ColorMapPoint['dataLabelOnNull'];
-    moveToTopOnHover: ColorMapMixin.ColorMapPoint['moveToTopOnHover'];
+interface HeatmapPoint extends ColorMapComposition.PointComposition {
+    // nothing to add
 }
 extend(HeatmapPoint.prototype, {
     dataLabelOnNull: true,

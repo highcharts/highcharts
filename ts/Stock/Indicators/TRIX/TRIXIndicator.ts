@@ -8,23 +8,29 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
-import type {
-    TRIXOptions
-} from './TRIXOptions';
+import type { TRIXOptions } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        tema: TEMAIndicator
-    }
-} = SeriesRegistry;
+const { tema: TEMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The TRIX series type.
@@ -36,6 +42,13 @@ const {
  * @augments Highcharts.Series
  */
 class TRIXIndicator extends TEMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Triple exponential average (TRIX) oscillator. This series requires
      * `linkedTo` option to be set.
@@ -57,9 +70,21 @@ class TRIXIndicator extends TEMAIndicator {
      */
     public static defaultOptions: TRIXOptions = merge(TEMAIndicator.defaultOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<TRIXPoint> = void 0 as any;
     public options: TRIXOptions = void 0 as any;
     public points: Array<TRIXPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     // TRIX is calculated using TEMA so we just extend getTemaPoint method.
     public getTemaPoint(
@@ -77,11 +102,24 @@ class TRIXIndicator extends TEMAIndicator {
             ];
         }
     }
+
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface TRIXIndicator {
     pointClass: typeof TRIXPoint;
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -98,6 +136,12 @@ SeriesRegistry.registerSeriesType('trix', TRIXIndicator);
  * */
 
 export default TRIXIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `TRIX` series. If the [type](#series.trix.type) option is not specified, it

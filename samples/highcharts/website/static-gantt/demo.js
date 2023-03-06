@@ -22,7 +22,7 @@ Math.easeOutBounce = pos => {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
-const big = window.matchMedia("(min-width: 500px)").matches;
+const big = window.matchMedia('(min-width: 500px)').matches;
 
 let chart;
 
@@ -118,7 +118,7 @@ const ganttChart = function () {
 
                 }
             },
-            styledMode: (true)
+            styledMode: true
         },
         lang: {
             accessibility: {
@@ -134,7 +134,7 @@ const ganttChart = function () {
                 enabled: true
             },
             screenReaderSection: {
-                beforeChartFormat: "<h1>{chartTitle}</h1><p>{typeDescription}</p><p>{chartSubtitle}</p><p>Interactive Gantt diagram showing tasks and milestones across three departments, Tech, Marketing, and Sales.</p>"
+                beforeChartFormat: '<h1>{chartTitle}</h1><p>{typeDescription}</p><p>{chartSubtitle}</p><p>Interactive Gantt diagram showing tasks and milestones across three departments, Tech, Marketing, and Sales.</p>'
             },
             point: {
                 descriptionFormatter: function (point) {
@@ -467,7 +467,7 @@ const ganttChart = function () {
         addTaskDialog.classList.add('show');
 
         // Show dialog by removing "hidden" class
-        //addTaskDialog.className = 'overlay';
+        // addTaskDialog.className = 'overlay';
         isAddingTask = true;
 
         addTaskDialog.focus();

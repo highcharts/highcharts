@@ -1,11 +1,12 @@
 (async () => {
 
-    const norway = await fetch(
-        'https://code.highcharts.com/mapdata/countries/no/no-all.topo.json'
+
+    const ca = await fetch(
+        'https://code.highcharts.com/mapdata/countries/ca/ca-all.topo.json'
     ).then(response => response.json());
 
-    const sweden = await fetch(
-        'https://code.highcharts.com/mapdata/countries/se/se-all.topo.json'
+    const us = await fetch(
+        'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
     ).then(response => response.json());
 
 
@@ -13,6 +14,10 @@
     Highcharts.mapChart('container', {
         title: {
             text: 'Multiple map sources'
+        },
+
+        subtitle: {
+            text: 'Canada and US maps combined'
         },
 
         mapNavigation: {
@@ -25,8 +30,8 @@
         mapView: {
             projection: {
                 name: 'LambertConformalConic',
-                rotation: [-16],
-                parallels: [60, 70]
+                rotation: [90],
+                parallels: [30, 40]
             }
         },
 
@@ -38,10 +43,10 @@
 
         series: [{
             data: [],
-            mapData: norway
+            mapData: ca
         }, {
             data: [],
-            mapData: sweden
+            mapData: us
         }]
     });
 })();

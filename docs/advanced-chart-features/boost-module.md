@@ -1,7 +1,7 @@
 Boost module
 ============
 
-The Boost module is a stripped down renderer and a set of data handling modifications for Highcharts. It bypasses some of the standard Highcahrts features, applies some trade-offs and focuses on handling and rendering as many data points as possible as quickly as possible. It renders the data using WebGL on a canvas inside the chart's SVG structure.
+The Boost module is a stripped down renderer and a set of data handling modifications for Highcharts. It bypasses some of the standard Highcharts features, applies some trade-offs and focuses on handling and rendering as many data points as possible as quickly as possible. It renders the data using WebGL on a canvas inside the chart's SVG structure.
 
 This document will guide you through your first steps with the Highcharts boost module.
 
@@ -43,6 +43,8 @@ Configuration Data Options
 ---------------------
 
 In boost mode, [turbo mode](https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold) is always turned on. That means all data points should be configured as an array of numbers (e.g. `[1, 2, 3]`) or a two dimensional array of numbers (e.g. `[ [1, 2], [2, 3], [3, 4] ]`).
+
+Note that when `dataGrouping` is enabled (default in `stockChart`), boost mode will not kick in.
 
 Series boosting versus chart boosting
 -------------------------------------

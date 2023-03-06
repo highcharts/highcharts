@@ -1,5 +1,5 @@
 ---
- name: Jamaica - Highmaps
- description: Highmaps demo
+ name: Jamaica - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

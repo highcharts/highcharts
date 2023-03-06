@@ -1,5 +1,5 @@
 ---
- name: Georgia - Highmaps
- description: Highmaps demo
+ name: Georgia - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

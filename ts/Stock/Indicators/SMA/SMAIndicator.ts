@@ -14,10 +14,9 @@
  *
  * */
 
-import type AxisType from '../../../Core/Axis/AxisType';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type SeriesType from '../../../Core/Series/SeriesType';
+import type LineSeriesType from '../../../Series/Line/LineSeries';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -27,10 +26,8 @@ import type SMAPoint from './SMAPoint';
 import Chart from '../../../Core/Chart/Chart.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        line: LineSeries
-    }
-} = SeriesRegistry;
+    line: LineSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -42,22 +39,21 @@ const {
     splat
 } = U;
 
-import './SMAComposition.js';
-
 /* *
  *
  *  Declarations
  *
  * */
-interface CalculateOnObject {
-    chart: string;
-    xAxis?: string;
-}
 
 declare module '../../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         useOhlcData?: boolean;
     }
+}
+
+interface CalculateOnObject {
+    chart: string;
+    xAxis?: string;
 }
 
 /* *
@@ -108,6 +104,7 @@ class SMAIndicator extends LineSeries {
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
      */
+
     public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
         /**
          * The name of the series as shown in the legend, tooltip etc. If not
@@ -170,7 +167,7 @@ class SMAIndicator extends LineSeries {
 
     public dataEventsToUnbind: Array<Function> = void 0 as any;
 
-    public linkedParent: typeof LineSeries.prototype = void 0 as any;
+    public linkedParent: LineSeriesType = void 0 as any;
 
     public nameBase?: string;
 
@@ -183,8 +180,6 @@ class SMAIndicator extends LineSeries {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -202,8 +197,8 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public getName(): string {
-        let name = this.name,
-            params: Array<string> = [];
+        const params: Array<string> = [];
+        let name = this.name;
 
         if (!name) {
 
@@ -227,22 +222,22 @@ class SMAIndicator extends LineSeries {
     /**
      * @private
      */
-    public getValues<TLinkedSeries extends typeof LineSeries.prototype>(
+    public getValues<TLinkedSeries extends LineSeriesType>(
         series: TLinkedSeries,
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = params.period as any,
+        const period: number = params.period as any,
             xVal: Array<number> = series.xData as any,
             yVal: Array<(number|Array<(number|null)>|null)> = series.yData as any,
             yValLen = yVal.length,
-            range = 0,
-            sum = 0,
             SMA: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
+            yData: Array<number> = [];
+        let i: (number|undefined),
             index = -1,
-            i: (number|undefined),
-            SMAPoint: (Array<number>|undefined);
+            range = 0,
+            SMAPoint: (Array<number>|undefined),
+            sum = 0;
 
         if (xVal.length < period) {
             return;
@@ -376,17 +371,16 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public recalculateValues(): void {
-        let indicator = this,
+        const croppedDataValues = [],
+            indicator = this,
             oldData = indicator.points || [],
             oldDataLength = (indicator.xData || []).length,
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
                 values: [],
                 xData: [],
                 yData: []
-            },
-            processedData: IndicatorValuesObject<typeof LineSeries.prototype>,
-            croppedDataValues = [],
-            overwriteData = true,
+            };
+        let overwriteData = true,
             oldFirstPointIndex,
             oldLastPointIndex,
             croppedData,
@@ -399,7 +393,9 @@ class SMAIndicator extends LineSeries {
         // we will try to access Series object without any properties
         // (except for prototyped ones). This is what happens
         // for example when using Axis.setDataGrouping(). See #16670
-        processedData = indicator.linkedParent.options ?
+        const processedData: IndicatorValuesObject<typeof LineSeries.prototype> = indicator.linkedParent.options &&
+            indicator.linkedParent.yData && // #18176, #18177 indicators should
+            indicator.linkedParent.yData.length ? // work with empty dataset
             (
                 indicator.getValues(
                     indicator.linkedParent,
@@ -479,12 +475,13 @@ class SMAIndicator extends LineSeries {
         // Removal of processedXData property is required because on
         // first translate processedXData array is empty
         if (indicator.calculateOn.xAxis && indicator.processedXData) {
-            delete indicator.processedXData;
+            delete (indicator as Partial<typeof indicator>).processedXData;
 
             indicator.isDirty = true;
             indicator.redraw();
         }
-        indicator.isDirtyData = false;
+
+        indicator.isDirtyData = !!indicator.linkedSeries;
     }
 
     /**
@@ -510,9 +507,6 @@ class SMAIndicator extends LineSeries {
 
         return;
     }
-
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -578,4 +572,4 @@ export default SMAIndicator;
  * @apioption series.sma
  */
 
-''; // adds doclet above to the transpiled file
+(''); // adds doclet above to the transpiled file

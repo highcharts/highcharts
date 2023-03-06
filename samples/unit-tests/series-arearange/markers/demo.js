@@ -35,13 +35,13 @@ QUnit.test('Markers for arearange.', function (assert) {
         return d;
     }
 
-    Highcharts.each(chart.series[0].points, function (point) {
+    chart.series[0].points.forEach(point => {
         assert.ok(
-            point.lowerGraphic !== undefined,
+            point.graphics[0] !== undefined,
             'Bottom marker for point: x=' + point.x + ' exists.'
         );
         assert.ok(
-            point.upperGraphic !== undefined,
+            point.graphics[1] !== undefined,
             'Top marker for point: x=' + point.x + ' exists.'
         );
     });
@@ -72,6 +72,49 @@ QUnit.test('Markers for arearange.', function (assert) {
         1, // Marker in the legend
         'No artifacts after zoom in boost mode (#7557)'
     );
+
+    chart.update({
+        chart: {
+            zooming: {
+                type: 'x'
+            }
+        },
+        series: [{
+            marker: {
+                enabled: undefined
+            },
+            boostThreshold: 1000
+        }]
+    });
+
+    const xAxis = chart.xAxis[0];
+
+    xAxis.setExtremes(0, 5);
+    xAxis.setExtremes();
+
+    assert.notOk(
+        !!xAxis.series[0].points[0].graphics[0],
+        `Bottom point's graphic shouldn't exist when chart is zoomed out,
+        #18080.`
+    );
+    assert.notOk(
+        !!xAxis.series[0].points[0].graphics[1],
+        `Top point's graphic shouldn't exist when chart is zoomed out,
+        #18080.`
+    );
+
+    xAxis.setExtremes(0, 5);
+
+    assert.ok(
+        xAxis.series[0].points[0].graphics[0].element,
+        'Bottom point\'s graphic should exist when chart is zoomed, #18080.'
+    );
+
+    assert.ok(
+        xAxis.series[0].points[0].graphics[1].element,
+        'Top point\'s graphic should exist when chart is zoomed, #18080.'
+    );
+
 });
 
 QUnit.test('Zones', function (assert) {
@@ -110,7 +153,7 @@ QUnit.test('Zones', function (assert) {
 
     assert.deepEqual(
         chart.series[0].points.map(function (p) {
-            return [p.upperGraphic.attr('fill'), p.lowerGraphic.attr('fill')];
+            return [p.graphics[1].attr('fill'), p.graphics[0].attr('fill')];
         }),
         [
             ['red', 'red'],

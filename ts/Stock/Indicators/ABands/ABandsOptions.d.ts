@@ -25,7 +25,7 @@ import type {
  *
  * */
 
-export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.Options {
+export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     bottomLine?: Record<string, CSSObject>;
     lineWidth?: number;
     params?: ABandsParamsOptions;
@@ -35,5 +35,11 @@ export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.Opti
 export interface ABandsParamsOptions extends SMAParamsOptions {
     factor?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ABandsOptions;

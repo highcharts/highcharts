@@ -21,6 +21,7 @@ import type {
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
+import type StackItem from './Stacking/StackItem';
 
 import { Palette } from '../Color/Palettes.js';
 
@@ -231,7 +232,7 @@ namespace AxisDefaults {
          * @sample {highcharts} highcharts/xaxis/crosshair-both/
          *         Crosshair on both axes
          * @sample {highstock} stock/xaxis/crosshairs-xy/
-         *         Crosshair on both axes
+         *         Crosshair on both axes, with y axis label
          * @sample {highmaps} highcharts/xaxis/crosshair-both/
          *         Crosshair on both axes
          *
@@ -950,7 +951,7 @@ namespace AxisDefaults {
              *
              * @type      {boolean}
              * @since     4.1.10
-             * @product   highcharts gantt
+             * @product   highcharts highstock gantt
              * @apioption xAxis.labels.reserveSpace
              */
             reserveSpace: void 0,
@@ -1253,29 +1254,41 @@ namespace AxisDefaults {
         minorTickPosition: 'outside',
 
         /**
-         * Enable or disable minor ticks. Unless
-         * [minorTickInterval](#xAxis.minorTickInterval) is set, the tick
-         * interval is calculated as a fifth of the `tickInterval`.
+         * Enable or disable minor ticks. The interval between the minor ticks
+         * can be controlled either by the
+         * [minorTicksPerMajor](#xAxis.minorTicksPerMajor) setting, or as an
+         * absolute [minorTickInterval](#xAxis.minorTickInterval) value.
          *
          * On a logarithmic axis, minor ticks are laid out based on a best
-         * guess, attempting to enter approximately 5 minor ticks between
-         * each major tick.
+         * guess, attempting to enter an approximate number of minor ticks
+         * between each major tick based on
+         * [minorTicksPerMajor](#xAxis.minorTicksPerMajor).
          *
-         * Prior to v6.0.0, ticks were unabled in auto layout by setting
+         * Prior to v6.0.0, ticks were enabled in auto layout by setting
          * `minorTickInterval` to `"auto"`.
          *
-         * @productdesc {highcharts}
-         * On axes using [categories](#xAxis.categories), minor ticks are not
-         * supported.
+         * @productdesc {highcharts} On axes using
+         * [categories](#xAxis.categories), minor ticks are not supported.
          *
-         * @sample {highcharts} highcharts/yaxis/minorticks-true/
-         *         Enabled on linear Y axis
+         * @sample {highcharts} highcharts/yaxis/minorticks-true/ Enabled on
+         *         linear Y axis
          *
          * @type      {boolean}
          * @default   false
          * @since     6.0.0
          * @apioption xAxis.minorTicks
          */
+
+        /**
+         * The number of minor ticks per major tick. Works for `linear`,
+         * `logarithmic` and `datetime` axes.
+         *
+         * @sample {highcharts} highcharts/yaxis/minortickspermajor/
+         *         2 minor ticks per major tick on Y axis
+         *
+         * @type {number}
+         */
+        minorTicksPerMajor: 5,
 
         /**
          * The pixel width of the minor tick mark.
@@ -1541,7 +1554,9 @@ namespace AxisDefaults {
          * @sample {highstock} stock/xaxis/showfirstlabel/
          *         Labels below plot lines on Y axis
          *
-         * @product   highcharts highstock gantt
+         * @type    {boolean}
+         * @default undefined
+         * @product highcharts highstock gantt
          */
         showLastLabel: true,
 
@@ -2035,6 +2050,9 @@ namespace AxisDefaults {
          * ]]
          * ```
          *
+         * @sample {highcharts} highcharts/xaxis/units/
+         *         Axis units demonstrated
+         *
          * @type      {Array<Array<string,(Array<number>|null)>>}
          * @product   highcharts highstock gantt
          * @apioption xAxis.units
@@ -2353,11 +2371,11 @@ namespace AxisDefaults {
          * [data classes](https://api.highcharts.com/highmaps#colorAxis.dataClasses)
          * from the Highmaps color axis.
          *
+         * @sample {highcharts} highcharts/demo/gauge-solid/
+         *         Gauge with stops
+         *
          * @see [minColor](#yAxis.minColor)
          * @see [maxColor](#yAxis.maxColor)
-         *
-         * @sample {highcharts} highcharts/demo/gauge-solid/
-         *         True by default
          *
          * @type      {Array<Array<number,Highcharts.ColorType>>}
          * @since     4.0
@@ -2466,6 +2484,18 @@ namespace AxisDefaults {
          */
         tickPixelInterval: 72,
 
+        /**
+         * Whether to show the last tick label.
+         *
+         * @productdesc {highcharts|gantt}
+         * Defaults to `true` on cartesian charts, and `false` on polar charts.
+         *
+         * @productdesc {highstock}
+         * Defaults to `true` for categorized yAxis and `false` for other types
+         * of yAxis.
+         *
+         * @default undefined
+         */
         showLastLabel: true,
 
         /**
@@ -2513,16 +2543,13 @@ namespace AxisDefaults {
              * Solid gauges with two labels have additional option `"auto"`
              * for automatic horizontal and vertical alignment.
              *
-             * @see [yAxis.labels.distance](#yAxis.labels.distance)
-             *
              * @sample {highcharts} highcharts/yaxis/labels-align-left/
              *         Left
              * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
              *         Solid gauge labels auto aligned
              *
              * @type       {Highcharts.AlignValue}
-             * @default    {highcharts|highmaps} right
-             * @default    {highstock} left
+             * @default    {highstock} right
              * @apioption  yAxis.labels.align
              */
 
@@ -3043,10 +3070,10 @@ namespace AxisDefaults {
              * @since   2.1.5
              * @product highcharts
              */
-            formatter: function (this: Highcharts.StackItemObject): string {
+            formatter: function (this: StackItem): string {
                 const { numberFormatter } = this.axis.chart;
                 /* eslint-enable valid-jsdoc */
-                return numberFormatter(this.total, -1);
+                return numberFormatter(this.total || 0, -1);
             },
 
             /**

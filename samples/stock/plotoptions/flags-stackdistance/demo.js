@@ -1,5 +1,9 @@
 Highcharts.stockChart('container', {
 
+    xAxis: {
+        max: Date.UTC(2015, 9, 10)
+    },
+
     rangeSelector: {
         selected: 1
     },
@@ -11,37 +15,28 @@ Highcharts.stockChart('container', {
     }, {
         type: 'flags',
         data: [{
-            x: Date.UTC(2015, 6, 25),
-            title: 'H',
+            x: Date.UTC(2015, 7, 25),
+            title: 'E',
             text: 'Euro Contained by Channel Resistance'
         }, {
-            x: Date.UTC(2015, 6, 28),
-            title: 'G',
+            x: Date.UTC(2015, 7, 25),
+            title: 'D',
             text: 'EURUSD: Bulls Clear Path to 1.50 Figure'
         }, {
-            x: Date.UTC(2015, 7, 4),
-            title: 'F',
+            x: Date.UTC(2015, 7, 25),
+            title: 'C',
             text: 'EURUSD: Rate Decision to End Standstill'
         }, {
-            x: Date.UTC(2015, 7, 5),
-            title: 'E',
+            x: Date.UTC(2015, 7, 25),
+            title: 'B',
             text: 'EURUSD: Enter Short on Channel Break'
         }, {
-            x: Date.UTC(2015, 7, 6),
-            title: 'D',
+            x: Date.UTC(2015, 7, 25),
+            title: 'A',
             text: 'Forex: U.S. Non-Farm Payrolls Expand 244K, U.S. Dollar Rally Cut Short By Risk Appetite'
-        }, {
-            x: Date.UTC(2015, 7, 6),
-            title: 'C',
-            text: 'US Dollar: Is This the Long-Awaited Recovery or a Temporary Bounce?'
-        }, {
-            x: Date.UTC(2015, 7, 9),
-            title: 'B',
-            text: 'EURUSD: Bearish Trend Change on Tap?'
         }],
         onSeries: 'dataseries',
         shape: 'circlepin',
-        stackDistance: 20,
-        width: 16
+        stackDistance: 30
     }]
 });

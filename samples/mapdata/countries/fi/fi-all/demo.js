@@ -1,63 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['fi-3280', 0],
-    ['fi-3272', 1],
-    ['fi-3275', 2],
-    ['fi-3281', 3],
-    ['fi-3279', 4],
-    ['fi-3276', 5],
-    ['fi-3287', 6],
-    ['fi-3286', 7],
-    ['fi-3290', 8],
-    ['fi-3291', 9],
-    ['fi-3292', 10],
-    ['fi-3293', 11],
-    ['fi-3294', 12],
-    ['fi-3295', 13],
-    ['fi-3296', 14],
-    ['fi-3288', 15],
-    ['fi-3285', 16],
-    ['fi-3289', 17]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/fi/fi-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/fi/fi-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['fi-3280', 10], ['fi-3272', 11], ['fi-3275', 12], ['fi-3281', 13],
+        ['fi-3279', 14], ['fi-3276', 15], ['fi-3287', 16], ['fi-3286', 17],
+        ['fi-3290', 18], ['fi-3291', 19], ['fi-3292', 20], ['fi-3293', 21],
+        ['fi-3294', 22], ['fi-3295', 23], ['fi-3296', 24], ['fi-3288', 25],
+        ['fi-3285', 26], ['fi-3289', 27]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fi/fi-all.js">Finland</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fi/fi-all.topo.json">Finland</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

@@ -41,9 +41,8 @@ const {
     splat
 } = U;
 
-import TreeGridAxis from '../../Core/Axis/TreeGridAxis.js';
+import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
 TreeGridAxis.compose(Axis, Chart, Series, Tick);
-import '../../Extensions/CurrentDateIndication.js';
 import '../../Extensions/StaticScale.js';
 import '../../Gantt/Pathfinder.js';
 

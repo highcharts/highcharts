@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -20,19 +26,20 @@ import type ROCPoint from './ROCPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-
 const {
     isArray,
     merge,
     extend
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 // Utils:
 function populateAverage(
@@ -68,8 +75,6 @@ function populateAverage(
     return [xVal[i], rocY];
 }
 
-/* eslint-enable require-jsdoc */
-
 /* *
  *
  *  Class
@@ -86,6 +91,13 @@ function populateAverage(
  * @augments Highcharts.Series
  */
 class ROCIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Rate of change indicator (ROC). The indicator value for each point
      * is defined as:
@@ -120,6 +132,7 @@ class ROCIndicator extends SMAIndicator {
      *  Properties
      *
      * */
+
     public data: Array<ROCPoint> = void 0 as any;
 
     public options: ROCOptions = void 0 as any;
@@ -131,18 +144,19 @@ class ROCIndicator extends SMAIndicator {
      *  Functions
      *
      * */
+
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ROCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             ROC: Array<Array<(number|null)>> = [],
             xData: Array<number> = [],
-            yData: Array<(number|null)> = [],
-            i: number,
+            yData: Array<(number|null)> = [];
+        let i: number,
             index = -1,
             ROCPoint: [number, (number|null)];
 
@@ -179,6 +193,7 @@ class ROCIndicator extends SMAIndicator {
  *  Class Prototype
  *
  * */
+
 interface ROCIndicator {
     nameBase: string;
     pointClass: typeof ROCPoint;
@@ -193,6 +208,7 @@ extend(ROCIndicator.prototype, {
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         roc: typeof ROCIndicator;
@@ -208,6 +224,12 @@ SeriesRegistry.registerSeriesType('roc', ROCIndicator);
  * */
 
 export default ROCIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `ROC` series. If the [type](#series.wma.type) option is not

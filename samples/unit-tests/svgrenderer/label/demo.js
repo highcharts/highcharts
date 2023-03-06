@@ -22,7 +22,7 @@ QUnit.test('Reset visibility on HTML label (#3909)', function (assert) {
         'Visibility is hidden'
     );
 
-    label.show(true);
+    label.show();
     assert.strictEqual(
         label.div.style.visibility,
         'inherit',
@@ -36,7 +36,7 @@ QUnit.test('Reset visibility on HTML label (#3909)', function (assert) {
         'Visibility is hidden'
     );
 
-    label.show();
+    label.show(false);
     assert.strictEqual(
         label.div.style.visibility,
         'visible',
@@ -532,7 +532,7 @@ QUnit.test('Change of label alignment after add (#4652)', function (assert) {
     var lbl = ren
         .label('Hello World', 100, 100)
         .attr({
-            //align: 'right',
+            // align: 'right',
             fill: 'silver'
         })
         .add();

@@ -25,6 +25,7 @@ import type {
 import type EventCallback from './EventCallback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type Time from './Time';
 
 import H from './Globals.js';
 const {
@@ -411,7 +412,7 @@ function isDOMElement(obj: unknown): obj is HTMLDOMElement {
  * @return {boolean}
  *         True if the argument is a class.
  */
-function isClass(obj: (object|undefined)): obj is Utilities.Class<any> {
+function isClass<T>(obj: (object|undefined)): obj is Class<T> {
     const c: (Function|undefined) = obj && obj.constructor;
 
     return !!(
@@ -504,7 +505,7 @@ function attr(
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} elem
  *        The DOM element to receive the attribute(s).
  *
- * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [prop]
+ * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [keyOrAttribs]
  *        The property or an object of key-value pairs.
  *
  * @param {number|string} [value]
@@ -515,36 +516,45 @@ function attr(
  */
 function attr(
     elem: DOMElementType,
-    prop: (string|HTMLAttributes|SVGAttributes),
+    keyOrAttribs: (string|HTMLAttributes|SVGAttributes),
     value?: (number|string)
 ): (string|null|undefined) {
-    let ret;
 
-    // if the prop is a string
-    if (isString(prop)) {
-        // set the value
+    const isGetter = isString(keyOrAttribs) && !defined(value);
+
+    let ret: string|null|undefined;
+
+    const attrSingle = (
+        value: number|string|boolean|undefined,
+        key: string
+    ): void => {
+
+        // Set the value
         if (defined(value)) {
-            elem.setAttribute(prop, value as string);
+            elem.setAttribute(key, value);
 
-        // get the value
-        } else if (elem && elem.getAttribute) {
-            ret = elem.getAttribute(prop);
+        // Get the value
+        } else if (isGetter) {
+            ret = elem.getAttribute(key);
 
             // IE7 and below cannot get class through getAttribute (#7850)
-            if (!ret && prop === 'class') {
-                ret = elem.getAttribute(prop + 'Name');
+            if (!ret && key === 'class') {
+                ret = elem.getAttribute(key + 'Name');
             }
-        }
 
-    // else if prop is defined, it is a hash of key/value pairs
+        // Remove the value
+        } else {
+            elem.removeAttribute(key);
+        }
+    };
+
+    // If keyOrAttribs is a string
+    if (isString(keyOrAttribs)) {
+        attrSingle(value, keyOrAttribs);
+
+    // Else if keyOrAttribs is defined, it is a hash of key/value pairs
     } else {
-        objectEach(prop, function (val, key): void {
-            if (defined(val)) {
-                elem.setAttribute(key, val as any);
-            } else {
-                elem.removeAttribute(key);
-            }
-        });
+        objectEach(keyOrAttribs, attrSingle);
     }
     return ret;
 }
@@ -602,12 +612,10 @@ function syncTimeout(
  *
  * @function Highcharts.clearTimeout
  *
- * @param {number} id
- *        Id of a timeout.
- *
- * @return {void}
+ * @param {number|undefined} id
+ * Id of a timeout.
  */
-function internalClearTimeout(id: number): void {
+function internalClearTimeout(id: (number|undefined)): void {
     if (defined(id)) {
         clearTimeout(id);
     }
@@ -703,9 +711,8 @@ function css(
     styles: CSSObject
 ): void {
     if (H.isMS && !H.svg) { // #2686
-        if (styles && typeof styles.opacity !== 'undefined') {
-            styles.filter =
-                'alpha(opacity=' + (styles.opacity as any * 100) + ')';
+        if (styles && defined(styles.opacity)) {
+            styles.filter = `alpha(opacity=${styles.opacity * 100})`;
         }
     }
     extend(el.style, styles as any);
@@ -775,10 +782,10 @@ function createElement(
  *         A new prototype.
  */
 function extendClass <T, TReturn = T>(
-    parent: Utilities.Class<T>,
+    parent: Class<T>,
     members: any
-): Utilities.Class<TReturn> {
-    const obj: Utilities.Class<TReturn> = (function (): void {}) as any;
+): Class<TReturn> {
+    const obj: Class<TReturn> = (function (): void {}) as any;
 
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
@@ -857,26 +864,28 @@ function relativeLength(
  *        arguments as the original function, except that the original function
  *        is unshifted and passed as the first argument.
  */
-function wrap(
-    obj: any,
-    method: string,
-    func: Utilities.WrapProceedFunction
+function wrap<T, K extends FunctionNamesOf<T>>(
+    obj: T,
+    method: K,
+    func: Utilities.WrapProceedFunction<T[K]&ArrowFunction>
 ): void {
-    const proceed = obj[method];
+    const proceed = obj[method] as T[K]&ArrowFunction;
 
-    obj[method] = function (): any {
-        const args = Array.prototype.slice.call(arguments),
-            outerArgs = arguments,
-            ctx = this;
+    obj[method] = function (this: T): ReturnType<typeof func> {
+        const outerArgs = arguments,
+            scope = this;
 
-        ctx.proceed = function (): void {
-            proceed.apply(ctx, arguments.length ? arguments : outerArgs);
-        };
-        args.unshift(proceed);
-        const ret = func.apply(this, args);
-        ctx.proceed = null;
-        return ret;
-    };
+        return func.apply(this, [
+            function (): ReturnType<typeof proceed> {
+                return proceed.apply(
+                    scope,
+                    arguments.length ? arguments : outerArgs
+                );
+            }
+        ].concat(
+            [].slice.call(arguments)
+        ) as Parameters<typeof func>);
+    } as T[K];
 }
 
 /**
@@ -925,7 +934,7 @@ function getMagnitude(num: number): number {
  */
 function normalizeTickInterval(
     interval: number,
-    multiples?: Array<any>,
+    multiples?: Array<number>,
     magnitude?: number,
     allowDecimals?: boolean,
     hasTickAmount?: boolean
@@ -934,8 +943,8 @@ function normalizeTickInterval(
         retInterval = interval;
 
     // round to a tenfold of 1, 2, 2.5 or 5
-    magnitude = pick(magnitude, 1);
-    const normalized = interval / (magnitude as any);
+    magnitude = pick(magnitude, getMagnitude(interval));
+    const normalized = interval / magnitude;
 
     // multiples for a linear scale
     if (!multiples) {
@@ -954,8 +963,8 @@ function normalizeTickInterval(
                 multiples = multiples.filter(function (num: number): boolean {
                     return num % 1 === 0;
                 });
-            } else if ((magnitude as any) <= 0.1) {
-                multiples = [1 / (magnitude as any)];
+            } else if (magnitude <= 0.1) {
+                multiples = [1 / magnitude];
             }
         }
     }
@@ -967,7 +976,7 @@ function normalizeTickInterval(
         if (
             (
                 hasTickAmount &&
-                retInterval * (magnitude as any) >= interval
+                retInterval * magnitude >= interval
             ) ||
             (
                 !hasTickAmount &&
@@ -1155,7 +1164,7 @@ function correctFloat(num: number, prec?: number): number {
  * @ignore
  */
 
-const timeUnits: Record<string, number> = {
+const timeUnits: Record<Time.TimeUnit, number> = {
     millisecond: 1,
     second: 1000,
     minute: 60000,
@@ -1319,7 +1328,7 @@ function getStyle(
     }
 
     // Otherwise, get the computed style
-    const css = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
+    const css = win.getComputedStyle(el, void 0); // eslint-disable-line no-undefined
     if (css) {
         style = css.getPropertyValue(prop);
         if (pick(toInt, prop !== 'opacity')) {
@@ -1454,8 +1463,6 @@ function offset(el: Element): Utilities.OffsetObject {
  *
  * @param {T} [ctx]
  *        The context.
- *
- * @return {void}
  */
 function objectEach<TObject, TContext>(
     obj: TObject,
@@ -1603,7 +1610,7 @@ objectEach({
  *         A callback function to remove the added event.
  */
 function addEvent<T>(
-    el: (Utilities.Class<T>|T),
+    el: (Class<T>|T),
     type: string,
     fn: (EventCallback<T>|Function),
     options: Utilities.EventOptions = {}
@@ -1692,7 +1699,7 @@ function addEvent<T>(
  * @return {void}
  */
 function removeEvent<T>(
-    el: (Utilities.Class<T>|T),
+    el: (Class<T>|T),
     type?: string,
     fn?: (EventCallback<T>|Function)
 ): void {
@@ -2018,9 +2025,6 @@ if ((win as any).jQuery) {
 
 namespace Utilities {
     export type RelativeSize = (number|string);
-    export interface Class<T = any> extends Function {
-        new(...args: Array<any>): T;
-    }
     export interface ErrorMessageEventObject {
         chart?: Chart;
         code: number;
@@ -2055,8 +2059,8 @@ namespace Utilities {
         top: number;
         width: number;
     }
-    export interface WrapProceedFunction {
-        (...args: Array<any>): any;
+    export interface WrapProceedFunction<T extends ArrowFunction> {
+        (proceed: (T&ArrowFunction), ...args: Array<any>): ReturnType<T>;
     }
 }
 

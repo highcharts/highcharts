@@ -1,67 +1,59 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['mn-da', 0],
-    ['mn-ub', 1],
-    ['mn-hg', 2],
-    ['mn-uv', 3],
-    ['mn-dg', 4],
-    ['mn-og', 5],
-    ['mn-hn', 6],
-    ['mn-bh', 7],
-    ['mn-ar', 8],
-    ['mn-dz', 9],
-    ['mn-ga', 10],
-    ['mn-hd', 11],
-    ['mn-bo', 12],
-    ['mn-bu', 13],
-    ['mn-er', 14],
-    ['mn-sl', 15],
-    ['mn-oh', 16],
-    ['mn-du', 17],
-    ['mn-to', 18],
-    ['mn-gs', 19],
-    ['mn-dd', 20],
-    ['mn-sb', 21]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/mn/mn-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/mn/mn-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['mn-da', 10], ['mn-ub', 11], ['mn-hg', 12], ['mn-uv', 13],
+        ['mn-dg', 14], ['mn-og', 15], ['mn-hn', 16], ['mn-bh', 17],
+        ['mn-ar', 18], ['mn-dz', 19], ['mn-ga', 20], ['mn-hd', 21],
+        ['mn-bo', 22], ['mn-bu', 23], ['mn-er', 24], ['mn-sl', 25],
+        ['mn-oh', 26], ['mn-du', 27], ['mn-to', 28], ['mn-gs', 29],
+        ['mn-dd', 30], ['mn-sb', 31]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mn/mn-all.js">Mongolia</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mn/mn-all.topo.json">Mongolia</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

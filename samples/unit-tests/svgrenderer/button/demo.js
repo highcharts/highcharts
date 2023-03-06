@@ -74,4 +74,31 @@ QUnit.test('General button() tests', function (assert) {
         'blue',
         'Button function should not mutate its options (#13798).'
     );
+
+    const chart = Highcharts.chart('container', {});
+    const controller = new TestController(chart);
+    let clickedHTMLButton = false;
+    chart.renderer.button(
+        'Klikk',
+        100,
+        100,
+        function () {
+            clickedHTMLButton = true;
+        },
+        {},
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true
+    ).add();
+
+    controller.click(120, 110);
+
+    assert.ok(
+        clickedHTMLButton,
+        'The useHTML button should respond to click'
+    );
+
+
 });

@@ -1,12 +1,16 @@
 /* eslint-env node, es6 */
 /* eslint no-console:0, no-path-concat:0, no-nested-ternary:0, valid-jsdoc:0 */
 /* eslint-disable func-style */
+
+// NOPE, YOU CANNOT FIX IT! The JS compiler is gone and only the Java version
+// is left. NOPE, closure-gun is a Java wrapper. (-_-) Keep the old version.
 const ClosureCompiler = require('google-closure-compiler').jsCompiler;
+
 const statSync = require('fs').statSync;
 const {
     getFile,
     writeFile
-} = require('highcharts-assembler/src/utilities.js');
+} = require('@highcharts/highcharts-assembler/src/utilities.js');
 const colors = require('colors');
 
 const compileSingleFile = (path, sourceFolder, createSourceMap) => {

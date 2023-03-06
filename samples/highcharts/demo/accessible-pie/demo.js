@@ -20,18 +20,24 @@ var chart = Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Primary desktop/laptop screen readers'
+        text: 'Primary desktop/laptop screen readers',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Source: WebAIM. Click on point to visit official website'
+        text: 'Source: WebAIM. Click on point to visit official website',
+        align: 'left'
     },
 
     colors: patterns,
 
     tooltip: {
         valueSuffix: '%',
-        borderColor: '#8ae'
+        borderColor: '#8ae',
+        shape: 'rect',
+        backgroundColor: 'rgba(255, 255, 255, 0.94)',
+        followPointer: false,
+        stickOnContact: true
     },
 
     plotOptions: {

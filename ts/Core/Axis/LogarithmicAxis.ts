@@ -279,11 +279,7 @@ namespace LogarithmicAxis {
                         tickPixelIntervalOption / (totalPixelLength || 1)
                 );
 
-                interval = normalizeTickInterval(
-                    interval,
-                    void 0,
-                    getMagnitude(interval)
-                );
+                interval = normalizeTickInterval(interval);
 
                 positions = axis.getLinearTickPositions(
                     interval,

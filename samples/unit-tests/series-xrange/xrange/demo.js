@@ -402,51 +402,48 @@ QUnit.test('X-range data labels', function (assert) {
         }
     });
 
-    var y = chart.series[0].points[0].dataLabel.attr('y');
+    var visible = 'inherit';
+    var hidden = 'hidden';
 
-    assert.strictEqual(
+    assert.deepEqual(
         chart.series[0].points
             .map(function (p) {
-                return p.dataLabel.attr('y');
-            })
-            .join(','),
-        [y, y, y, y].join(','),
+                return p.dataLabel.attr('visibility');
+            }),
+        [visible, visible, visible, visible],
         'Initial labels'
     );
 
     chart.xAxis[0].setExtremes(3.2, 3.5);
 
-    assert.strictEqual(
+    assert.deepEqual(
         chart.series[0].points
             .map(function (p) {
-                return p.dataLabel.attr('y');
-            })
-            .join(','),
-        [-9999, y, -9999, -9999].join(','),
+                return p.dataLabel.attr('visibility');
+            }),
+        [hidden, visible, hidden, hidden],
         'Shown and hidden labels'
     );
 
     chart.xAxis[0].setExtremes();
 
-    assert.strictEqual(
+    assert.deepEqual(
         chart.series[0].points
             .map(function (p) {
-                return p.dataLabel.attr('y');
-            })
-            .join(','),
-        [y, y, y, y].join(','),
+                return p.dataLabel.attr('visibility');
+            }),
+        [visible, visible, visible, visible],
         'Reverted labels'
     );
 
     chart.xAxis[0].setExtremes(0, 0.5);
 
-    assert.strictEqual(
+    assert.deepEqual(
         chart.series[0].points
             .map(function (p) {
-                return p.dataLabel.attr('y');
-            })
-            .join(','),
-        [y, -9999, -9999, -9999].join(','),
+                return p.dataLabel.attr('visibility');
+            }),
+        [visible, hidden, hidden, hidden],
         'Shown and hidden labels'
     );
 
@@ -461,9 +458,9 @@ QUnit.test('X-range data labels', function (assert) {
 
     assert.deepEqual(
         chart.series[0].points.map(function (p) {
-            return p.dataLabel.attr('y') === -9999 ? 'hidden' : 'visible';
+            return p.dataLabel.attr('visibility');
         }),
-        ['hidden', 'hidden', 'hidden', 'hidden', 'visible'],
+        [hidden, hidden, hidden, hidden, visible],
         'Shown and hidden labels'
     );
 });
@@ -639,7 +636,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     var pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -659,7 +656,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -679,7 +676,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -702,7 +699,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.left + labelBox.width / 2,
         pointGraphicBox.left + pointGraphicBox.width / 2,
@@ -728,7 +725,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,
@@ -748,7 +745,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,
@@ -771,7 +768,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,
@@ -794,7 +791,7 @@ QUnit.test('XRange series and tooltip position', assert => {
     pointGraphicBox = chart.series[0].points[0].graphic.element
         .getBoundingClientRect();
 
-    //Precision up to 2 pixels
+    // Precision up to 2 pixels
     assert.close(
         labelBox.top + labelBox.height / 2,
         pointGraphicBox.top + pointGraphicBox.height / 2,

@@ -224,6 +224,8 @@ function isProductMaster(filePath) {
  * */
 
 /**
+ * Builds files of `/ts` folder into `/js` folder.
+ *
  * @return {Promise}
  * Promise to keep.
  */
@@ -231,15 +233,28 @@ function scriptsTS() {
     const fsLib = require('./lib/fs'),
         processLib = require('./lib/process');
 
-    return Promise
-        .resolve(processLib.isRunning('scripts-ts', true))
-        .then(() => fsLib.deleteDirectory('code/es-modules', true))
-        .then(() => processLib.exec(`npx tsc --project "${SOURCE_FOLDER}"`))
-        .then(() => processLib.isRunning('scripts-ts', false))
-        .catch(error => {
-            processLib.isRunning('scripts-ts', false);
-            throw error;
-        });
+    return new Promise((resolve, reject) => {
+
+        processLib.isRunning('scripts-ts', true);
+
+        Promise
+            .resolve()
+            .then(() => fsLib.deleteDirectory('js', true))
+            .then(() => fsLib.copyAllFiles('ts', 'js', true, (
+                function (sourcePath) {
+                    return sourcePath.endsWith('.d.ts');
+                }
+            )))
+            .then(() => processLib.exec('npx tsc --build ts'))
+            .then(function (output) {
+                processLib.isRunning('scripts-ts', false);
+                resolve(output);
+            })
+            .catch(function (error) {
+                processLib.isRunning('scripts-ts', false);
+                reject(error);
+            });
+    });
 }
 
 /**

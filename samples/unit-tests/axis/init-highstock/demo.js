@@ -1,5 +1,5 @@
 QUnit.test('Init chart with different defined type.', function (assert) {
-    Highcharts.each([[], {}, undefined, null], function (definedType) {
+    [[], {}, undefined, null].forEach(definedType => {
         Highcharts.stockChart('container', {
             xAxis: definedType,
             yAxis: definedType,

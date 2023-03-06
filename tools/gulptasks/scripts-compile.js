@@ -4,7 +4,7 @@
 
 const gulp = require('gulp');
 const {
-    Worker, isMainThread, parentPort, workerData
+    Worker, parentPort, workerData
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
 } = require('worker_threads');
 const os = require('os');
@@ -45,7 +45,17 @@ async function task() {
 
     const threads = [];
 
-    if (isMainThread) {
+    if (workerData) {
+        const compileTool = require('../compile');
+
+        threads.push(
+            compileTool.compile(workerData.files, (SOURCE_DIRECTORY + '/'))
+        );
+
+        parentPort.postMessage({ done: true });
+
+        logLib.success(`Compilation of batch #${workerData.batchNum} complete`);
+    } else {
         logLib.warn('Warning: This task may take a few minutes.');
 
         const files = (
@@ -67,10 +77,14 @@ async function task() {
 
         logLib.message(`Splitting files to compile in ${batches.length} batches.`);
         logLib.message('Compiling', SOURCE_DIRECTORY + '...');
+
         batches.forEach((batch, index) => {
             threads.push(new Promise((resolve, reject) => {
 
-                const worker = new Worker(__filename, { workerData: { files: batch, batchNum: (index + 1) } });
+                const worker = new Worker(
+                    __filename,
+                    { workerData: { files: batch, batchNum: (index + 1) } }
+                );
                 worker.on('message', resolve);
                 worker.on('error', reject);
                 worker.on('exit', code => {
@@ -81,21 +95,13 @@ async function task() {
 
             }));
         });
-    } else {
-        const compileTool = require('../compile');
-        threads.push(
-            compileTool
-                .compile(workerData.files, (SOURCE_DIRECTORY + '/'))
-                .then(() => parentPort.postMessage({ done: true }))
-                .then(logLib.success(`Compilation of batch #${workerData.batchNum} complete`))
-        );
     }
+
     return Promise.all(threads);
 }
 
-if (isMainThread) {
-    // only trigger gulp task from main thread
-    gulp.task('scripts-compile', task);
-} else {
+gulp.task('scripts-compile', task);
+
+if (workerData) {
     task();
 }

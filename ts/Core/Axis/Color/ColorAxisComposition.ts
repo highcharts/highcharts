@@ -178,7 +178,12 @@ namespace ColorAxisComposition {
                 }
             );
 
-            addEvent(SeriesClass, 'afterTranslate', onSeriesAfterTranslate);
+            addEvent(
+                SeriesClass,
+                'afterTranslate',
+                onSeriesAfterTranslate,
+                { order: 1 }
+            );
             addEvent(SeriesClass, 'bindAxes', onSeriesBindAxes);
         }
     }
@@ -278,7 +283,7 @@ namespace ColorAxisComposition {
         }
     ): void {
         if (e.visible && e.item.legendColor) {
-            (e.item.legendSymbol as any).attr({
+            (e.item.legendItem as any).symbol.attr({
                 fill: e.item.legendColor
             });
         }
@@ -381,7 +386,11 @@ namespace ColorAxisComposition {
             if (color && point.color !== color) {
                 point.color = color;
 
-                if (series.options.legendType === 'point' && point.legendItem) {
+                if (
+                    series.options.legendType === 'point' &&
+                    point.legendItem &&
+                    point.legendItem.label
+                ) {
                     series.chart.legend.colorizeItem(point, point.visible);
                 }
             }

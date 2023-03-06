@@ -20,12 +20,12 @@ import type {
 } from '../SMA/SMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
-export interface AroonOptions extends SMAOptions, MultipleLinesComposition.Options {
+export interface AroonOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     aroonDown?: Record<string, CSSObject>;
     marker?: PointMarkerOptions;
     params?: AroonParamsOptions;
@@ -34,5 +34,11 @@ export interface AroonOptions extends SMAOptions, MultipleLinesComposition.Optio
 export interface AroonParamsOptions extends SMAParamsOptions {
     period?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default AroonOptions;

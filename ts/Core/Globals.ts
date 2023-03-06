@@ -28,15 +28,19 @@ declare global {
 
     type AnyRecord = Record<string, any>;
 
-    type DeepPartial<T> = {
-        [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
-    };
+    type ArrowFunction = (...args: any) => any;
 
-    type DeepRecord<K extends keyof any, T> = {
-        [P in K]: (T|DeepRecord<K, T>);
+    type DeepPartial<T> = {
+        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
     };
 
     type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
+
+    type FunctionNamesOf<T> = keyof FunctionsOf<T>;
+
+    type FunctionsOf<T> = {
+        [K in keyof T as T[K] extends Function ? K : never]: T[K];
+    };
 
     interface CallableFunction {
         apply<TScope, TArguments extends Array<unknown>, TReturn>(
@@ -44,6 +48,10 @@ declare global {
             thisArg: TScope,
             args?: (TArguments|IArguments)
         ): TReturn;
+    }
+
+    interface Class<T = any> extends Function {
+        new(...args: Array<any>): T;
     }
 
     interface Element {
@@ -94,6 +102,17 @@ declare global {
         changedTouches: Array<Touch>;
     }
 
+    namespace Intl {
+
+        interface DateTimeFormat {
+            formatRange(
+                startDate: Date,
+                endDate: Date
+            ): string;
+        }
+
+    }
+
 }
 
 /* *
@@ -104,6 +123,7 @@ declare global {
 
 /**
  * Shared Highcharts properties.
+ * @private
  */
 namespace Globals {
 

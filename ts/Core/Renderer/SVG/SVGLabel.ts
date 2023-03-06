@@ -73,7 +73,7 @@ class SVGLabel extends SVGElement {
     public static textProps: Array<keyof CSSObject> = [
         'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
         'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
-        'textOutline', 'textOverflow', 'width'
+        'textOutline', 'textOverflow', 'whiteSpace', 'width'
     ];
 
     /* *
@@ -224,16 +224,10 @@ class SVGLabel extends SVGElement {
             });
             this.text.css(textStyles);
 
-            const isWidth = 'width' in textStyles,
-                isFontStyle = (
-                    'fontSize' in textStyles ||
-                    'fontWeight' in textStyles
-                );
-
-            // Update existing text, box (#9400, #12163)
-            if (isFontStyle) {
+            // Update existing text, box (#9400, #12163, #18212)
+            if ('fontSize' in textStyles || 'fontWeight' in textStyles) {
                 this.updateTextPadding();
-            } else if (isWidth) {
+            } else if ('width' in textStyles || 'textOverflow' in textStyles) {
                 this.updateBoxSize();
             }
 
@@ -308,14 +302,13 @@ class SVGLabel extends SVGElement {
      * box and add it before the text in the DOM.
      */
     public onAdd(): void {
-        const str = this.textStr;
         this.text.add(this);
         this.attr({
             // Alignment is available now  (#3295, 0 not rendered if given
             // as a value)
-            text: (defined(str) ? str : ''),
-            x: this.x,
-            y: this.y
+            text: pick(this.textStr, ''),
+            x: this.x || 0,
+            y: this.y || 0
         });
 
         if (this.box && defined(this.anchorX)) {
@@ -395,7 +388,8 @@ class SVGLabel extends SVGElement {
      * the new bounding box and reflect it in the border box.
      */
     private updateBoxSize(): void {
-        const style = this.text.element.style,
+        const text = this.text,
+            style = text.element.style,
             attribs: SVGAttributes = {},
             padding = this.padding,
             // #12165 error when width is null (auto)
@@ -406,8 +400,8 @@ class SVGLabel extends SVGElement {
                     !isNumber(this.widthSetting) ||
                     !isNumber(this.heightSetting) ||
                     this.textAlign
-                ) && defined(this.text.textStr)) ?
-                    this.text.getBBox() :
+                ) && defined(text.textStr)) ?
+                    text.getBBox() :
                     SVGLabel.emptyBBox
             );
 
@@ -418,7 +412,7 @@ class SVGLabel extends SVGElement {
 
         const metrics = this.renderer.fontMetrics(
             style && style.fontSize,
-            this.text
+            text
         );
 
         // Update the label-scoped y offset. Math.min because of inline
@@ -436,7 +430,7 @@ class SVGLabel extends SVGElement {
             this.baselineOffset += (this.heightSetting - metrics.h) / 2;
         }
 
-        if (this.needsBox) {
+        if (this.needsBox && !text.textPath) {
 
             // Create the border box if it is not already present
             if (!this.box) {
@@ -480,41 +474,43 @@ class SVGLabel extends SVGElement {
      */
     public updateTextPadding(): void {
         const text = this.text;
+        if (!text.textPath) {
 
-        this.updateBoxSize();
+            this.updateBoxSize();
 
-        // Determine y based on the baseline
-        const textY = this.baseline ? 0 : this.baselineOffset;
+            // Determine y based on the baseline
+            const textY = this.baseline ? 0 : this.baselineOffset;
 
-        let textX = pick(this.paddingLeft, this.padding);
+            let textX = pick(this.paddingLeft, this.padding);
 
-        // compensate for alignment
-        if (
-            defined(this.widthSetting) &&
-            this.bBox &&
-            (this.textAlign === 'center' || this.textAlign === 'right')
-        ) {
-            textX += { center: 0.5, right: 1 }[
-                this.textAlign as ('center'|'right')
-            ] * (this.widthSetting - this.bBox.width);
-        }
-
-        // update if anything changed
-        if (textX !== text.x || textY !== text.y) {
-            text.attr('x', textX);
-            // #8159 - prevent misplaced data labels in treemap
-            // (useHTML: true)
-            if (text.hasBoxWidthChanged) {
-                this.bBox = text.getBBox(true);
+            // compensate for alignment
+            if (
+                defined(this.widthSetting) &&
+                this.bBox &&
+                (this.textAlign === 'center' || this.textAlign === 'right')
+            ) {
+                textX += { center: 0.5, right: 1 }[
+                    this.textAlign as ('center'|'right')
+                ] * (this.widthSetting - this.bBox.width);
             }
-            if (typeof textY !== 'undefined') {
-                text.attr('y', textY);
-            }
-        }
 
-        // record current values
-        text.x = textX;
-        text.y = textY;
+            // update if anything changed
+            if (textX !== text.x || textY !== text.y) {
+                text.attr('x', textX);
+                // #8159 - prevent misplaced data labels in treemap
+                // (useHTML: true)
+                if (text.hasBoxWidthChanged) {
+                    this.bBox = text.getBBox(true);
+                }
+                if (typeof textY !== 'undefined') {
+                    text.attr('y', textY);
+                }
+            }
+
+            // record current values
+            text.x = textX;
+            text.y = textY;
+        }
     }
 
     public widthSetter(value: (number|string)): void {

@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -19,11 +25,7 @@ import type {
 import type ZigzagPoint from './ZigzagPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -32,7 +34,7 @@ const {
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -47,6 +49,13 @@ const {
  */
 
 class ZigzagIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Zig Zag indicator.
      *
@@ -105,16 +114,18 @@ class ZigzagIndicator extends SMAIndicator {
     public data: Array<ZigzagPoint> = void 0 as any;
     public points: Array<ZigzagPoint> = void 0 as any;
     public options: ZigzagOptions = void 0 as any;
+
     /* *
      *
      *  Functions
      *
      * */
+
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ZigzagParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let lowIndex: number = params.lowIndex as any,
+        const lowIndex: number = params.lowIndex as any,
             highIndex: number = params.highIndex as any,
             deviation = (params.deviation as any) / 100,
             deviations = {
@@ -126,14 +137,12 @@ class ZigzagIndicator extends SMAIndicator {
             yValLen = yVal ? yVal.length : 0,
             zigzag: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            i: number,
+            yData: Array<number> = [];
+
+        let i: number,
             j: (number|undefined),
             zigzagPoint: (Array<number>|undefined),
-            firstZigzagLow: number,
-            firstZigzagHigh: number,
             directionUp: (boolean|undefined),
-            zigzagLen: (number|undefined),
             exitLoop = false,
             yIndex: (boolean|number) = false;
 
@@ -152,8 +161,8 @@ class ZigzagIndicator extends SMAIndicator {
         }
 
         // Set first zigzag point candidate
-        firstZigzagLow = yVal[0][lowIndex];
-        firstZigzagHigh = yVal[0][highIndex];
+        const firstZigzagLow = yVal[0][lowIndex],
+            firstZigzagHigh = yVal[0][highIndex];
 
         // Search for a second zigzag point candidate,
         // this will also set first zigzag point
@@ -232,7 +241,7 @@ class ZigzagIndicator extends SMAIndicator {
             }
         }
 
-        zigzagLen = zigzag.length;
+        const zigzagLen = zigzag.length;
 
         // no zigzag for last point
         if (
@@ -283,7 +292,6 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-
 SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
 
 /* *
@@ -294,6 +302,11 @@ SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
 
 export default ZigzagIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Zig Zag` series. If the [type](#series.zigzag.type) option is not
