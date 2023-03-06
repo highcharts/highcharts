@@ -86,6 +86,8 @@ function arc(
             ]
         );
 
+        (arc[1] as any).params = { start, end, x, y };
+
         if (defined(innerRadius)) {
             arc.push(
                 open ?
@@ -110,6 +112,12 @@ function arc(
                     y + innerRadius * sinStart
                 ]
             );
+            ((arc as any).at(-1) as any).params = {
+                start: end,
+                end: start,
+                x,
+                y
+            };
         }
         if (!open) {
             arc.push(['Z']);

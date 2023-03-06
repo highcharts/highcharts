@@ -77,6 +77,111 @@ const optionsToObject = (
     return merge(defaultOptions, options);
 };
 
+/*
+ * @todo
+ * - Automate lineIsOutsideCircle
+ * - Refactor and reuse circle handling
+ * - Proper typing of SVGPathElement
+ */
+const applyBorderRadius = (
+    path: SVGPath,
+    i: number,
+    r: number,
+    lineIsOutsideCircle?: boolean
+): void => {
+    const a = path[i];
+
+    let b = path[i + 1];
+    if (b[0] === 'Z') {
+        b = path[0];
+    }
+
+    // Straight line to arc
+    if ((a[0] === 'M' || a[0] === 'L') && b[0] === 'A') {
+        const bigR = b[1],
+            { start, end, x, y } = (b as any).params;
+
+        /*
+        const lineIsOutsideCircle = Math.sqrt(
+            (x - a[1]) ** 2 + (y - a[2]) ** 2
+        ) > bigR;
+        */
+
+        const relativeR = lineIsOutsideCircle ? (bigR + r) : (bigR - r);
+
+        const angleOfBorderRadius = Math.asin(r / relativeR);
+        const distanceBigCenterToStartArc = (
+            Math.cos(angleOfBorderRadius) *
+            relativeR
+        );
+
+        // First move to the start position along the perimeter. But we want to
+        // start one borderRadius closer to the center.
+        a[1] = x + distanceBigCenterToStartArc * Math.cos(start);
+        a[2] = y + distanceBigCenterToStartArc * Math.sin(start);
+
+        // Now draw an arc towards the point where the small circle touches the
+        // great circle.
+        const startBigArc = start + (
+            lineIsOutsideCircle ? -angleOfBorderRadius : angleOfBorderRadius
+        );
+        path.splice(i + 1, 0, [
+            'A',
+            r,
+            r,
+            0, // slanting,
+            0, // long arc
+            1, // clockwise
+            x + bigR * Math.cos(startBigArc),
+            y + bigR * Math.sin(startBigArc)
+        ]);
+
+    // Arc to straight line
+    } else if (a[0] === 'A' && (b[0] === 'M' || b[0] === 'L')) {
+        const bigR = a[1],
+            { start, end, x, y } = (a as any).params;
+
+        /*
+        const lineIsOutsideCircle = Math.sqrt(
+            (x - b[1]) ** 2 + (y - b[2]) ** 2
+        ) > bigR;
+        */
+
+        const relativeR = lineIsOutsideCircle ? (bigR + r) : (bigR - r);
+
+        const angleOfBorderRadius = Math.asin(r / relativeR);
+        const distanceBigCenterToStartArc = (
+            Math.cos(angleOfBorderRadius) *
+            relativeR
+        );
+        const endBigArc = end - (
+            lineIsOutsideCircle ? -angleOfBorderRadius : angleOfBorderRadius
+        );
+
+        // Long or short arc must be reconsidered
+        // because we have modified the start and end points
+        a[4] = end - start < Math.PI ? 0 : 1;
+
+        // End the big arc a bit earlier
+        a[6] = x + bigR * Math.cos(endBigArc);
+        a[7] = y + bigR * Math.sin(endBigArc);
+
+        // Draw a small arc towards a point on the end angle, but one
+        // borderRadius closer to the center relative to the perimeter.
+        path.splice(i + 1, 0, [
+            'A',
+            r,
+            r,
+            0,
+            0,
+            1,
+            x + distanceBigCenterToStartArc * Math.cos(end),
+            y + distanceBigCenterToStartArc * Math.sin(end)
+        ]);
+
+    }
+};
+
 // Check if the module has already been imported
 if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
 
@@ -106,120 +211,12 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                 // For smaller pie slices, cap to the largest small circle that
                 // can be fitted within the sector
                 (r * Math.sin(alpha / 2)) / (1 + Math.sin(alpha / 2))
-            ), 0),
-            // The angle that the radius of the small arc takes up in the big
-            // arc
-            angleOfBorderRadiusOuter = Math.asin(
-                borderRadius / (r - borderRadius)
-            ),
-            angleOfBorderRadiusInner = Math.asin(
-                borderRadius / (innerR + borderRadius)
-            ),
-            // The distance from the center of the big arc to the starting point
-            // of the small arc
-            distanceBigCenterToStartArcOuter = (
-                Math.cos(angleOfBorderRadiusOuter) *
-                (r - borderRadius)
-            ),
-            distanceBigCenterToStartArcInner = (
-                Math.cos(angleOfBorderRadiusInner) *
-                (innerR + borderRadius)
-            );
+            ), 0);
 
-        // First move to the start position along the perimeter. But we want to
-        // start one borderRadius closer to the center.
-        if (path[0] && path[0][0] === 'M') {
-            path[0][1] = x + distanceBigCenterToStartArcOuter * Math.cos(start);
-            path[0][2] = y + distanceBigCenterToStartArcOuter * Math.sin(start);
-        }
-
-        // Now draw an arc towards the point where the small circle touches the
-        // great circle.
-        const startOuter = start + angleOfBorderRadiusOuter;
-        path.splice(1, 0, [
-            'A',
-            borderRadius,
-            borderRadius,
-            0, // slanting,
-            0, // long arc
-            1, // clockwise
-            x + r * Math.cos(startOuter),
-            y + r * Math.sin(startOuter)
-        ]);
-
-        // The main outer arc should stop where the next small circle touches
-        // the great circle.
-        const endOuter = end - angleOfBorderRadiusOuter;
-        if (path[2] && path[2][0] === 'A') {
-            // Long or short arc must be reconsidered because we have modified
-            // the start and end points
-            path[2][4] = pick(
-                options.longArc, endOuter - startOuter < Math.PI
-            ) ? 0 : 1;
-
-            path[2][6] = x + r * Math.cos(endOuter);
-            path[2][7] = y + r * Math.sin(endOuter);
-
-        }
-
-        // Draw an arc towards a point on the end angle, but one borderRadius
-        // closer to the center relative to the perimeter.
-        path.splice(3, 0, [
-            'A',
-            borderRadius,
-            borderRadius,
-            0,
-            0,
-            1,
-            x + distanceBigCenterToStartArcOuter * Math.cos(end),
-            y + distanceBigCenterToStartArcOuter * Math.sin(end)
-        ]);
-
-        if (path[4] && path[4][0] === 'L') {
-            path[4][1] = x + distanceBigCenterToStartArcInner * Math.cos(end);
-            path[4][2] = y + distanceBigCenterToStartArcInner * Math.sin(end);
-        }
-
-        // Now draw an arc towards the point where the small circle touches the
-        // inner great circle.
-        const endInner = end - angleOfBorderRadiusInner;
-        path.splice(5, 0, [
-            'A',
-            borderRadius,
-            borderRadius,
-            0, // slanting,
-            0, // long arc
-            1, // clockwise
-            x + innerR * Math.cos(endInner),
-            y + innerR * Math.sin(endInner)
-        ]);
-
-        // The inner arc should stop where the next small circle touches the
-        // inner great circle.
-        const startInner = start + angleOfBorderRadiusInner;
-        if (path[6] && path[6][0] === 'A') {
-            // Long or short arc must be reconsidered because we have modified
-            // the start and end points
-            path[6][4] = pick(
-                options.longArc, endInner - startInner < Math.PI
-            ) ? 0 : 1;
-
-            path[6][6] = x + innerR * Math.cos(startInner);
-            path[6][7] = y + innerR * Math.sin(startInner);
-        }
-
-        // Draw an arc towards a point on the start angle, but one borderRadius
-        // closer to the center relative to the perimeter.
-        path.splice(7, 0, [
-            'A',
-            borderRadius,
-            borderRadius,
-            0,
-            0,
-            1,
-            x + distanceBigCenterToStartArcInner * Math.cos(start),
-            y + distanceBigCenterToStartArcInner * Math.sin(start)
-        ]);
+        applyBorderRadius(path, 0, borderRadius);
+        applyBorderRadius(path, 2, borderRadius);
+        applyBorderRadius(path, 4, borderRadius, true);
+        applyBorderRadius(path, 6, borderRadius, true);
 
         return path;
     };
