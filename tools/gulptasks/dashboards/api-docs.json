@@ -8,9 +8,11 @@
         "../../../ts/Data/DataTable.ts",
         "../../../ts/DataGrid/DataGrid.ts",
         "../../../ts/DataGrid/DataGridOptions.d.ts",
-        "../../../ts/Extensions/DataGridPlugin.ts",
-        "../../../ts/Extensions/HighchartsPlugin.ts"
+        "../../../ts/Extensions/DashboardPlugins/DataGridComponent.ts",
+        "../../../ts/Extensions/DashboardPlugins/HighchartsComponent.ts",
+        "../../../ts/Extensions/DashboardPlugins/NavigatorComponent.ts"
     ],
+    "customCss": "api-docs/typedoc/assets/custom.css",
     "entryPointStrategy": "expand",
     "excludeInternal": true,
     "hideGenerator": true,
