@@ -23,9 +23,7 @@ import type AnnotationOptions from '../AnnotationOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
-import AST from '../../../Core/Renderer/HTML/AST.js';
-import D from '../../../Core/Defaults.js';
-const { getOptions } = D;
+import BasePopup from './BasePopup.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
 import PopupAnnotations from './PopupAnnotations.js';
@@ -36,7 +34,6 @@ const {
     addEvent,
     createElement,
     extend,
-    fireEvent,
     pick
 } = U;
 
@@ -146,7 +143,7 @@ function getFields(
  *
  * */
 
-class Popup {
+class Popup extends BasePopup {
 
     /* *
      *
@@ -159,39 +156,7 @@ class Popup {
         iconsURL: string,
         chart?: Chart
     ) {
-        this.chart = chart;
-        this.iconsURL = iconsURL;
-        this.lang = (getOptions().lang.navigation as any).popup;
-
-        // create popup div
-        this.container = createElement(
-            'div',
-            {
-                className: 'highcharts-popup highcharts-no-tooltip'
-            },
-            void 0,
-            parentDiv
-        );
-
-        addEvent(this.container, 'mousedown', (): void => {
-            const activeAnnotation = chart &&
-                chart.navigationBindings &&
-                chart.navigationBindings.activeAnnotation;
-
-            if (activeAnnotation) {
-                activeAnnotation.cancelClick = true;
-
-                const unbind = addEvent(H.doc, 'click', (): void => {
-                    setTimeout((): void => {
-                        activeAnnotation.cancelClick = false;
-                    }, 0);
-                    unbind();
-                });
-            }
-        });
-
-        // add close button
-        this.addCloseBtn();
+        super(parentDiv, iconsURL, chart);
     }
 
     /* *
@@ -201,10 +166,7 @@ class Popup {
      * */
 
     public chart?: Chart;
-    public container: HTMLDOMElement;
     public formType?: string;
-    public iconsURL: string;
-    public lang: Record<string, string>;
 
     /* *
      *
@@ -213,67 +175,6 @@ class Popup {
      * */
 
     /**
-     * Initialize the popup. Create base div and add close button.
-     * @private
-     * @param {Highcharts.HTMLDOMElement} parentDiv
-     * Container where popup should be placed
-     * @param {string} iconsURL
-     * Icon URL
-     */
-    public init(
-        parentDiv: HTMLDOMElement,
-        iconsURL: string,
-        chart?: Chart
-    ): void {
-        Popup.call(this, parentDiv, iconsURL, chart);
-    }
-
-    /**
-     * Create HTML element and attach click event (close popup).
-     * @private
-     */
-    public addCloseBtn(): void {
-        const iconsURL = this.iconsURL;
-
-        // create close popup btn
-        const closeBtn = createElement(
-            'div',
-            {
-                className: 'highcharts-popup-close'
-            },
-            void 0,
-            this.container
-        );
-
-        closeBtn.style['background-image' as any] = 'url(' +
-                (
-                    iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
-                        iconsURL : iconsURL + 'close.svg'
-                ) + ')';
-
-        ['click', 'touchstart'].forEach((eventName: string): void => {
-            addEvent(closeBtn, eventName, (): void => {
-                if (this.chart) {
-                    const navigationBindings = this.chart.navigationBindings;
-
-                    fireEvent(navigationBindings, 'closePopup');
-
-                    if (
-                        navigationBindings &&
-                        navigationBindings.selectedButtonElement
-                    ) {
-                        fireEvent(
-                            navigationBindings,
-                            'deselectButton',
-                            { button: navigationBindings.selectedButtonElement }
-                        );
-                    }
-                } else {
-                    this.closePopup();
-                }
-            });
-        });
-    }
 
     /**
      * Create input with label.
@@ -381,44 +282,6 @@ class Popup {
         }
 
         return button;
-    }
-
-    /**
-     * Reset content of the current popup and show.
-     * @private
-     */
-    public showPopup(): void {
-
-        const popupDiv = this.container,
-            toolbarClass = 'highcharts-annotation-toolbar',
-            popupCloseBtn = popupDiv
-                .querySelectorAll('.highcharts-popup-close')[0];
-
-        this.formType = void 0;
-
-        // reset content
-        popupDiv.innerHTML = AST.emptyHTML;
-
-        // reset toolbar styles if exists
-        if (popupDiv.className.indexOf(toolbarClass) >= 0) {
-            popupDiv.classList.remove(toolbarClass);
-
-            // reset toolbar inline styles
-            popupDiv.removeAttribute('style');
-        }
-
-        // add close button
-        popupDiv.appendChild(popupCloseBtn);
-        popupDiv.style.display = 'block';
-        popupDiv.style.height = '';
-    }
-
-    /**
-     * Hide popup.
-     * @private
-     */
-    public closePopup(): void {
-        this.container.style.display = 'none';
     }
 
     /**
