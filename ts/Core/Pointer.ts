@@ -2201,6 +2201,8 @@ namespace Pointer {
      *
      * */
 
+    const composedEvents: Array<Function> = [];
+
     const composedMembers: Array<unknown> = [];
 
     /* *
@@ -2215,19 +2217,36 @@ namespace Pointer {
     export function compose(ChartClass: typeof Chart): void {
         if (composedMembers.indexOf(ChartClass) === -1) {
             composedMembers.push(ChartClass);
-            addEvent(ChartClass, 'beforeRender', function (): void {
-                /**
-                 * The Pointer that keeps track of mouse and touch
-                 * interaction.
-                 *
-                 * @memberof Highcharts.Chart
-                 * @name pointer
-                 * @type {Highcharts.Pointer}
-                 * @instance
-                 */
-                this.pointer = new Pointer(this, this.options);
-            });
+
+            composedEvents.push(addEvent(
+                ChartClass,
+                'beforeRender',
+                function (): void {
+                    /**
+                     * The Pointer that keeps track of mouse and touch
+                     * interaction.
+                     *
+                     * @memberof Highcharts.Chart
+                     * @name pointer
+                     * @type {Highcharts.Pointer}
+                     * @instance
+                     */
+                    this.pointer = new Pointer(this, this.options);
+                }
+            ));
         }
+    }
+
+    /**
+     * @private
+     */
+    export function dissolve(): void {
+
+        for (let i = 0, iEnd = composedEvents.length; i < iEnd; ++i) {
+            composedEvents[i]();
+        }
+
+        composedEvents.length = 0;
     }
 
 }

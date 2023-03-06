@@ -16,7 +16,7 @@
         "module": "es6",
         "moduleResolution": "node",
         "outDir": "../js",
-        "rootDir": ".",
+        "rootDir": "./",
         "target": "es5",
         "lib": [
             "DOM",
@@ -28,6 +28,10 @@
             "trusted-types"
         ]
     },
+    "exclude": [
+        "./Core/MSPointer.ts",
+        "./masters-es5/"
+    ],
     "include": [
         "**/*.ts"
     ]
