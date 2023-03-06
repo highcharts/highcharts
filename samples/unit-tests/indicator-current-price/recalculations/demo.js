@@ -151,20 +151,13 @@ QUnit.test('Price indicator labels rendering and visibility, #14879, #17790.',
             'Both of the labels should always be visible, #18528.'
         );
 
-        const getLastInsidePoint = function (points) {
-            let lastPoint;
-            for (let i = points.length - 1; i >= 0; i--) {
-                if (points[i].isInside) {
-                    lastPoint = points[i];
-                    break;
-                }
-            }
-
-            return lastPoint;
-        };
+        const points = chart.series[0].points,
+            pLength = points.length,
+            lastPoint = points[pLength - 1].isInside ?
+                points[pLength - 1] : points[pLength - 2];
 
         assert.strictEqual(
-            getLastInsidePoint(chart.series[0].points).y,
+            lastPoint.y,
             +lvpLabel.text.element.textContent,
             `Last visible price label value should be equal to last inside point
             value, #18528.`
