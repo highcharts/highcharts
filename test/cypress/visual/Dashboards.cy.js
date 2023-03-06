@@ -23,3 +23,24 @@ describe('Dashboards climate demo visual tests', () => {
 
     })
 });
+
+describe('Test the rest',  ()=>{
+    const DEMOS_TO_VISUALLY_TEST = [
+        '/dashboards/demos/minimal'
+    ]
+
+    for(const demo of DEMOS_TO_VISUALLY_TEST){
+        it('visually comparison after load ' + demo, ()=>{
+            cy.visit(demo);
+            cy.wait(1500); // TODO: should have a 'animationSettled' command
+            cy.board();
+
+            cy.get('#demo-content')
+                .compareSnapshot(
+                    demo.replace('/', '')
+                    .replace(/\//g, '-') + '-loaded', 
+                    0.1
+                );
+        })
+    }
+})
