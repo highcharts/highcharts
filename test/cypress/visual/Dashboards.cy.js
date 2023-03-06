@@ -16,7 +16,7 @@ describe('Dashboards climate demo visual tests', () => {
 
     it('edit mode', ()=>{
         cy.toggleEditMode()
-        cy.get('.hd-component').first().click()
+        cy.get('.highcharts-dashboards-component').first().click()
         cy.wait(500)
         cy.get('#demo-content')
             .compareSnapshot('dashboard-climate-edit-mode', 0.1);
