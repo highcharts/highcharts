@@ -972,6 +972,7 @@ const ChartDefaults: ChartOptions = {
      * @since      2.1.0
      * @apioption  chart.type
      */
+    type: 'line',
 
     /**
      * Decides in what dimensions the user can zoom by dragging the mouse.

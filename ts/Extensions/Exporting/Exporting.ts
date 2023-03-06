@@ -1054,8 +1054,7 @@ namespace Exporting {
                 exportingOptions.filename.replace(/\//g, '-') :
                 this.getFilename(),
             type: exportingOptions.type,
-            // IE8 fails to post undefined correctly, so use 0
-            width: exportingOptions.width || 0,
+            width: exportingOptions.width,
             scale: exportingOptions.scale,
             svg: svg
         }, exportingOptions.formAttributes as any);
@@ -1717,7 +1716,7 @@ namespace Exporting {
 
     /**
      * Exporting module only. A collection of fixes on the produced SVG to
-     * account for expando properties, browser bugs, VML problems and other.
+     * account for expando properties, browser bugs.
      * Returns a cleaned SVG.
      *
      * @private
@@ -1779,11 +1778,6 @@ namespace Exporting {
             // Replace HTML entities, issue #347
             .replace(/&nbsp;/g, '\u00A0') // no-break space
             .replace(/&shy;/g, '\u00AD'); // soft hyphen
-
-        // Further sanitize for oldIE
-        if (this.ieSanitizeSVG) {
-            svg = this.ieSanitizeSVG(svg);
-        }
 
         return svg;
     }

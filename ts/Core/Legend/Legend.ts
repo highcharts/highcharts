@@ -381,8 +381,7 @@ class Legend {
 
             if (label) {
                 label.css({
-                    fill: textColor,
-                    color: textColor // #1553, oldIE
+                    fill: textColor
                 });
             }
 

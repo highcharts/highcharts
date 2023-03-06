@@ -30,8 +30,6 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
-import H from '../../Core/Globals.js';
-const { svg } = H;
 import Series from '../../Core/Series/Series.js';
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
@@ -288,54 +286,54 @@ wrap(columnProto, 'animate', function (
             series = this,
             reversed = this.yAxis.reversed;
 
-        if (svg) { // VML is too slow anyway
-            if (init) {
-                series.data.forEach(function (point): void {
-                    if (point.y !== null) {
-                        point.height = (point.shapeArgs as any).height;
-                        point.shapey = (point.shapeArgs as any).y; // #2968
-                        (point.shapeArgs as any).height = 1;
-                        if (!reversed) {
-                            if (point.stackY) {
-                                (point.shapeArgs as any).y =
-                                    (point.plotY as any) +
-                                    yAxis.translate(point.stackY);
-                            } else {
-                                (point.shapeArgs as any).y =
-                                    (point.plotY as any) +
-                                    (
-                                        point.negative ?
-                                            -(point.height as any) :
-                                            (point.height as any)
-                                    );
-                            }
+
+        if (init) {
+            series.data.forEach(function (point): void {
+                if (point.y !== null) {
+                    point.height = (point.shapeArgs as any).height;
+                    point.shapey = (point.shapeArgs as any).y; // #2968
+                    (point.shapeArgs as any).height = 1;
+                    if (!reversed) {
+                        if (point.stackY) {
+                            (point.shapeArgs as any).y =
+                                (point.plotY as any) +
+                                yAxis.translate(point.stackY);
+                        } else {
+                            (point.shapeArgs as any).y =
+                                (point.plotY as any) +
+                                (
+                                    point.negative ?
+                                        -(point.height as any) :
+                                        (point.height as any)
+                                );
                         }
                     }
-                });
+                }
+            });
 
-            } else { // run the animation
-                series.data.forEach(function (point): void {
-                    if (point.y !== null) {
-                        (point.shapeArgs as any).height = point.height;
-                        (point.shapeArgs as any).y = point.shapey; // #2968
-                        // null value do not have a graphic
-                        if (point.graphic) {
-                            point.graphic[
-                                point.outside3dPlot ?
-                                    'attr' :
-                                    'animate'
-                            ](
-                                point.shapeArgs as any,
-                                series.options.animation
-                            );
-                        }
+        } else { // run the animation
+            series.data.forEach(function (point): void {
+                if (point.y !== null) {
+                    (point.shapeArgs as any).height = point.height;
+                    (point.shapeArgs as any).y = point.shapey; // #2968
+                    // null value do not have a graphic
+                    if (point.graphic) {
+                        point.graphic[
+                            point.outside3dPlot ?
+                                'attr' :
+                                'animate'
+                        ](
+                            point.shapeArgs as any,
+                            series.options.animation
+                        );
                     }
-                });
+                }
+            });
 
-                // redraw datalabels to the correct position
-                this.drawDataLabels();
-            }
+            // redraw datalabels to the correct position
+            this.drawDataLabels();
         }
+
     }
 });
 

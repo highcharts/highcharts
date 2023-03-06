@@ -192,7 +192,7 @@ class ColorAxis extends Axis implements AxisLike {
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
     public legendColor?: GradientColor;
     public legendItem?: LegendItemObject;
-    public name: string = ''; // Prevents 'undefined' in legend in IE8
+    public name?: string;
     public options: ColorAxis.Options = void 0 as any;
     public stops: GradientColor['stops'] = void 0 as any;
     public visible: boolean = true;

@@ -169,8 +169,7 @@ class HTMLElement extends SVGElement {
     }
 
     /**
-     * Apply CSS to HTML elements. This is used in text within SVG rendering and
-     * by the VML renderer
+     * Apply CSS to HTML elements. This is used in text within SVG rendering.
      * @private
      */
     public htmlCss(styles: CSSObject): HTMLElement {
@@ -212,7 +211,7 @@ class HTMLElement extends SVGElement {
     }
 
     /**
-     * VML and useHTML method for calculating the bounding box based on offsets.
+     * useHTML method for calculating the bounding box based on offsets.
      */
     public htmlGetBBox(): BBoxObject {
         const wrapper = this,
@@ -227,8 +226,6 @@ class HTMLElement extends SVGElement {
     }
 
     /**
-     * VML override private method to update elements based on internal
-     * properties based on SVG transform.
      * @private
      */
     public htmlUpdateTransform(): void {
@@ -280,13 +277,6 @@ class HTMLElement extends SVGElement {
                     marginLeft: translateX + 1 as any,
                     marginTop: translateY + 1 as any
                 });
-            });
-        }
-
-        // apply inversion
-        if (wrapper.inverted) { // wrapper is a group
-            [].forEach.call(elem.childNodes, function (child: ChildNode): void {
-                renderer.invertChild(child as any, elem);
             });
         }
 
