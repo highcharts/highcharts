@@ -315,7 +315,7 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
      */
     public toJSON(): SharedComponentState.JSON {
         const json: SharedComponentState.JSON = {
-            $class: 'Dashboard.SharedComponentState'
+            $class: 'Dashboards.SharedComponentState'
         };
 
         if (this.columnOrder) {
@@ -441,7 +441,7 @@ namespace SharedComponentState {
     /**
      * Describes the class JSON of a presentation state.
      */
-    export interface JSON extends Serializable.JSON<'Dashboard.SharedComponentState'> {
+    export interface JSON extends Serializable.JSON<'Dashboards.SharedComponentState'> {
         columnOrder?: Array<string>;
         visibilityMap?: ColumnVisibilityType;
         hoverpoint?: { x: number; y: number; id: string };
@@ -457,7 +457,7 @@ namespace SharedComponentState {
  * */
 
 Serializable.registerClassPrototype(
-    'Dashboard.SharedComponentState',
+    'Dashboards.SharedComponentState',
     SharedComponentState.prototype
 );
 

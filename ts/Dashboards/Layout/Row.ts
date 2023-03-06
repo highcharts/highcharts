@@ -322,7 +322,7 @@ class Row extends GUIElement {
         }
 
         return {
-            $class: 'Dashboard.Layout.Row',
+            $class: 'Dashboards.Layout.Row',
             options: {
                 containerId: (row.container as HTMLElement).id,
                 parentContainerId: layoutContainerId,
@@ -528,7 +528,7 @@ class Row extends GUIElement {
 
 namespace Row {
 
-    export interface JSON extends Serializable.JSON<'Dashboard.Layout.Row'> {
+    export interface JSON extends Serializable.JSON<'Dashboards.Layout.Row'> {
         options: OptionsJSON;
     }
 
