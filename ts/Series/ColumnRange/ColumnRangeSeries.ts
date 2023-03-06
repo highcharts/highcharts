@@ -213,6 +213,10 @@ class ColumnRangeSeries extends AreaRangeSeries {
                     shapeArgs.height = height;
                     shapeArgs.y = y;
                     const { x = 0, width = 0 } = shapeArgs;
+                    // #17912, aligning column range points
+                    // merge if shapeArgs contains more properties e.g. for 3d
+                    point.shapeArgs = merge(point.shapeArgs,
+                        this.crispCol(x, y, width, height));
 
                     point.tooltipPos = chart.inverted ?
                         [

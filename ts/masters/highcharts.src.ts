@@ -67,7 +67,6 @@ G.Fx = Fx;
 G.Legend = Legend;
 G.PlotLineOrBand = PlotLineOrBand;
 G.Point = Point;
-G.Pointer = (MSPointer.isRequired() ? MSPointer : Pointer);
 G.Series = Series;
 G.StackItem = StackItem;
 G.SVGElement = SVGElement;
@@ -81,6 +80,13 @@ G.color = Color.parse;
 // Compositions
 HTMLRenderer.compose(SVGRenderer);
 HTMLElement.compose(SVGElement);
+if (MSPointer.isRequired()) {
+    G.Pointer = MSPointer;
+    MSPointer.compose(Chart);
+} else {
+    G.Pointer = Pointer;
+    Pointer.compose(Chart);
+}
 // DefaultOptions
 G.defaultOptions = Defaults.defaultOptions;
 G.getOptions = Defaults.getOptions;
@@ -146,5 +152,6 @@ PieDataLabel.compose(PieSeries);
 PlotLineOrBand.compose(Axis);
 Responsive.compose(Chart);
 StackingAxis.compose(Axis, Chart, Series);
+Tooltip.compose(Pointer);
 // Default Export
 export default G;

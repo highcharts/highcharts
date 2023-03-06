@@ -26,13 +26,15 @@
 
 import type JSON from '../Core/JSON';
 
-import DashboardAccessibility from './Accessibility/DashboardsAccessibility.js';
 import Bindings from './Actions/Bindings.js';
-import Globals from './Globals.js';
+import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
+import DataCursor from '../Data/DataCursor.js';
+import DataCursorHelper from './SerializeHelper/DataCursorHelper.js';
 import EditMode from './EditMode/EditMode.js';
+import Fullscreen from './EditMode/Fullscreen.js';
+import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
-import Fullscreen from './EditMode/Fullscreen.js';
 import U from '../Core/Utilities.js';
 const {
     merge,
@@ -111,6 +113,9 @@ class Board implements Serializable<Board, Board.JSON> {
         // Init events.
         this.initEvents();
 
+        // Add table cursors support.
+        this.cursor = new DataCursor();
+
         // Add fullscreen support.
         this.fullscreen = new Fullscreen(this);
 
@@ -118,7 +123,7 @@ class Board implements Serializable<Board, Board.JSON> {
         Globals.boards.push(this);
 
         // a11y module
-        this.a11y = new DashboardAccessibility(this);
+        this.a11y = new DashboardsAccessibility(this);
     }
 
     /* *
@@ -127,8 +132,10 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      * */
 
-    public container: globalThis.HTMLElement = void 0 as any;
+    public a11y: DashboardsAccessibility;
     public boardWrapper: globalThis.HTMLElement = void 0 as any;
+    public container: globalThis.HTMLElement = void 0 as any;
+    public cursor: DataCursor;
     public editMode?: EditMode;
     public fullscreen?: Fullscreen;
     public guiEnabled: (boolean|undefined);
@@ -138,7 +145,6 @@ class Board implements Serializable<Board, Board.JSON> {
     public layoutsWrapper: globalThis.HTMLElement;
     public mountedComponents: Array<Bindings.MountedComponentsOptions>;
     public options: Board.Options;
-    public a11y: DashboardAccessibility;
 
     /* *
      *
@@ -348,18 +354,20 @@ class Board implements Serializable<Board, Board.JSON> {
     public fromJSON(
         json: Board.JSON
     ): Board {
-        const options = json.options;
+        const options = json.options,
+            board = new Board(
+                options.containerId,
+                {
+                    layoutsJSON: options.layouts,
+                    componentOptions: options.componentOptions,
+                    respoBreakpoints: options.respoBreakpoints
+                }
+            );
 
-        return new Board(
-            options.containerId,
-            {
-                layoutsJSON: options.layouts,
-                componentOptions: options.componentOptions,
-                respoBreakpoints: options.respoBreakpoints
-            }
-        );
+        board.cursor = DataCursorHelper.fromJSON(json.cursor);
+
+        return board;
     }
-
 
     /**
      * Converts the class instance to a class JSON.
@@ -378,6 +386,7 @@ class Board implements Serializable<Board, Board.JSON> {
 
         return {
             $class: 'Board',
+            cursor: DataCursorHelper.toJSON(board.cursor),
             options: {
                 containerId: board.container.id,
                 guiEnabled: board.guiEnabled,
@@ -435,6 +444,7 @@ namespace Board {
 
     export interface JSON extends Serializable.JSON<'Board'> {
         options: OptionsJSON;
+        cursor: DataCursorHelper.JSON;
     }
 
     /* *

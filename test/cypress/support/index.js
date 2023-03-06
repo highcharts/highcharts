@@ -37,7 +37,7 @@ Cypress.Commands.add('board', () =>
 );
 
 Cypress.Commands.add('hideSidebar', () =>
-    cy.get('.hd-edit-sidebar-button-nav.hd-edit-close-btn').click()
+    cy.get('.highcharts-dashboards-edit-sidebar-button-nav.highcharts-dashboards-edit-close-btn').click()
 );
 
 Cypress.Commands.add('chart', () =>
@@ -115,6 +115,6 @@ Cypress.Commands.add('selectRange', (range) =>
 );
 
 Cypress.Commands.add('toggleEditMode', ()=>{
-    cy.get('.hd-edit-context-menu-btn').click();
-    cy.get('.hd-edit-toggle-slider').first().click();
+    cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
+    cy.get('.highcharts-dashboards-edit-toggle-slider').first().click();
 });

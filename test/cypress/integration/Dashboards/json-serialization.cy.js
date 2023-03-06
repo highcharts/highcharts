@@ -1,7 +1,7 @@
 
 function clickElementInContextMenu(elemName) {
-    cy.get('.hd-edit-context-menu-btn').click();
-    cy.get('div.hd-edit-context-menu-item').contains(elemName).click();
+    cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
+    cy.get('div.highcharts-dashboards-edit-context-menu-item').contains(elemName).click();
 }
 describe('JSON serialization test', () => {
     beforeEach(() => {

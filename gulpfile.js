@@ -22,6 +22,8 @@ Gulp.registry(new GulpForwardReference());
         gulpTask => require('./tools/gulptasks/' + gulpTask)
     );
 }([
+    'api-upload',
+    'dashboards/api-docs',
     'default',
     'dist',
     'dist-clean',

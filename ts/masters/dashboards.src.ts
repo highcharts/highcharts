@@ -18,7 +18,9 @@
 
 import CSVStore from '../Data/Stores/CSVStore.js';
 import Board from '../Dashboards/Board.js';
-import DataOnDemand from '../Data/DataOnDemand.js';
+import Component from '../Dashboards/Component/Component.js';
+import DataPool from '../Data/DataPool.js';
+import DataCursor from '../Data/DataCursor.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';
 import GoogleSheetsStore from '../Data/Stores/GoogleSheetsStore.js';
@@ -54,8 +56,10 @@ const D = {
     ...Utilities,
     Board,
     board: Board.board,
+    Component,
     CSVStore,
-    DataOnDemand,
+    DataCursor,
+    DataPool,
     DataTable,
     GoogleSheetsStore,
     GroupModifier,

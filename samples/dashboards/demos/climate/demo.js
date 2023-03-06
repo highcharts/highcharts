@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
-const dataPool = new Dashboards.DataOnDemand();
+const dataPool = new Dashboards.DataPool();
 const dataScopes = {
     FD: 'Days with Frost',
     ID: 'Days with Ice',
