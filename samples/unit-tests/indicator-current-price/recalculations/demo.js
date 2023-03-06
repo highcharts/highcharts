@@ -136,15 +136,38 @@ QUnit.test('Price indicator labels rendering and visibility, #14879, #17790.',
         // 'Drag' the chart to redraw labels, values adjusted for #18528
         chart.xAxis[0].setExtremes(2.1, 9.6);
 
-        const lvpLabel = chart.series[0].lastVisiblePriceLabel.visibility,
-            lpLabel = chart.series[0].lastPriceLabel.visibility;
-
-        assert.equal(
-            lvpLabel !== 'hidden' && lpLabel !== 'hidden',
-            true,
-            'There should be exactly two price labels rendered, #17790, #18528.'
+        assert.strictEqual(
+            document.querySelectorAll('.highcharts-crosshair-label').length,
+            2, // One for lastPrice label, one for lastVisiblePrice label
+            'There should only be two price labels rendered, #17790.'
         );
 
+        const lvpLabel = chart.series[0].lastVisiblePriceLabel,
+            lpLabel = chart.series[0].lastPriceLabel;
 
+        assert.strictEqual(
+            lvpLabel.visibility !== 'hidden' && lpLabel.visibility !== 'hidden',
+            true,
+            'Both of the labels should always be visible, #18528.'
+        );
+
+        const getLastInsidePoint = function (points) {
+            let lastPoint;
+            for (let i = points.length - 1; i >= 0; i--) {
+                if (points[i].isInside) {
+                    lastPoint = points[i];
+                    break;
+                }
+            }
+
+            return lastPoint;
+        };
+
+        assert.strictEqual(
+            getLastInsidePoint(chart.series[0].points).y,
+            +lvpLabel.text.element.textContent,
+            `Last visible price label value should be equal to last inside point
+            value, #18528.`
+        );
     }
 );
