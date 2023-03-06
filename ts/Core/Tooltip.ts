@@ -16,9 +16,10 @@
  *
  * */
 
-import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
+import type Defaults from './Defaults';
 import type Point from './Series/Point';
+import type Pointer from './Pointer';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
 import type RectangleObject from './Renderer/RectangleObject';
@@ -59,6 +60,12 @@ const {
  *
  * */
 
+declare module './Chart/ChartLike' {
+    interface ChartLike {
+        tooltip?: Tooltip;
+    }
+}
+
 declare module './Series/PointLike' {
     interface PointLike {
         isHeader?: boolean;
@@ -76,12 +83,6 @@ declare module './Series/SeriesLike' {
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
         tooltip?: DeepPartial<TooltipOptions>;
-    }
-}
-
-declare module '../Core/TooltipOptions'{
-    interface TooltipOptions {
-        distance?: number;
     }
 }
 
@@ -840,6 +841,8 @@ class Tooltip {
     }
 
     /**
+     * Initialize tooltip.
+     *
      * @private
      * @function Highcharts.Tooltip#init
      *
@@ -849,7 +852,10 @@ class Tooltip {
      * @param {Highcharts.TooltipOptions} options
      *        Tooltip options.
      */
-    public init(chart: Chart, options: TooltipOptions): void {
+    public init(
+        chart: Chart,
+        options: TooltipOptions
+    ): void {
 
         /**
          * Chart of the tooltip.
@@ -1850,16 +1856,25 @@ class Tooltip {
  * */
 
 namespace Tooltip {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface FormatterCallbackFunction {
         (
             this: FormatterContextObject,
             tooltip: Tooltip
         ): (false|string|Array<string>);
     }
+
     export interface FormatterContextObject extends Point.PointLabelObject {
         points?: Array<FormatterContextObject>;
 
     }
+
     export interface PositionerCallbackFunction {
         (
             this: Tooltip,
@@ -1868,12 +1883,53 @@ namespace Tooltip {
             point: (Point|PositionerPointObject)
         ): PositionObject;
     }
+
     export interface PositionerPointObject {
         isHeader: true;
         plotX: number;
         plotY: number;
     }
+
     export type ShapeValue = ('callout'|'circle'|'square'|'rect');
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(
+        PointerClass: typeof Pointer
+    ): void {
+        if (composedMembers.indexOf(PointerClass) === -1) {
+            composedMembers.push(PointerClass);
+            addEvent(PointerClass, 'afterInit', function (): void {
+                const chart = this.chart;
+
+                if (chart.options.tooltip) {
+                    /**
+                     * Tooltip object for points of series.
+                     *
+                     * @name Highcharts.Chart#tooltip
+                     * @type {Highcharts.Tooltip}
+                     */
+                    chart.tooltip = new Tooltip(chart, chart.options.tooltip);
+                }
+            });
+        }
+    }
+
 }
 
 /* *

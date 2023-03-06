@@ -59,8 +59,7 @@ const {
     pick,
     relativeLength,
     stableSort,
-    syncTimeout,
-    wrap
+    syncTimeout
 } = U;
 
 /* *
@@ -740,7 +739,7 @@ class Legend {
                 label.attr('y', legend.baseline);
 
                 legend.symbolHeight =
-                    options.symbolHeight || legend.fontMetrics.f;
+                    pick(options.symbolHeight, legend.fontMetrics.f);
 
                 if (options.squareSymbol) {
                     legend.symbolWidth = pick(
