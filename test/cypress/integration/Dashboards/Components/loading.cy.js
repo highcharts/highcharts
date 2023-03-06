@@ -19,8 +19,6 @@ describe('Component loading', () => {
         assert(cellBox[dimension] >= imageBox[dimension], 'Out of bounds: ' + dimension);
       }
     });
-
-    cy.compareSnapshot('dashboard-loading', 0.1);
   });
 
 

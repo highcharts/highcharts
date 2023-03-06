@@ -84,6 +84,7 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/upload-api',
     'unsorted/upload-files',
     'update-pr-testresults',
+    'update-pr-testresults-cypress',
     'pr-size-table'
 ]));
 
