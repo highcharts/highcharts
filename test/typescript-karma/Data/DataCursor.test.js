@@ -1,16 +1,16 @@
-import DataStates from '/base/code/es-modules/Data/DataStates.js';
+import DataCursor from '/base/code/es-modules/Data/DataCursor.js';
 import DataTable from '/base/code/es-modules/Data/DataTable.js';
 
-QUnit.test('DataStates.emitCursor', function (assert) {
+QUnit.test('DataCursor.emitCursor', function (assert) {
     const done = assert.async(2),
         event = new Event('event'),
-        states = new DataStates(),
+        cursor = new DataCursor(),
         table = new DataTable({
             a: [0, 1, 2],
             b: [10, 11, 12]
         });
 
-    states
+    cursor
         .addListener(table.id, 'test2', function (e) {
             const expectedCursor = {
                 type: 'range',
@@ -21,8 +21,8 @@ QUnit.test('DataStates.emitCursor', function (assert) {
 
             assert.strictEqual(
                 this,
-                states,
-                'Listener scope should be a DataStates instance by default.'
+                cursor,
+                'Listener scope should be a DataCursor instance by default.'
             );
 
             assert.deepEqual(
@@ -30,7 +30,6 @@ QUnit.test('DataStates.emitCursor', function (assert) {
                 {
                     cursor: expectedCursor,
                     cursors: [],
-                    states,
                     table
                 },
                 'Emitted event should have expected structure.'
@@ -48,8 +47,8 @@ QUnit.test('DataStates.emitCursor', function (assert) {
 
             assert.strictEqual(
                 this,
-                states,
-                'Listener scope should be a DataStates instance by default.'
+                cursor,
+                'Listener scope should be a DataCursor instance by default.'
             );
 
             assert.deepEqual(
@@ -58,7 +57,6 @@ QUnit.test('DataStates.emitCursor', function (assert) {
                     cursor: expectedCursor,
                     cursors: [expectedCursor],
                     event,
-                    states,
                     table
                 },
                 'Lasting event should have expected structure.'
@@ -67,7 +65,7 @@ QUnit.test('DataStates.emitCursor', function (assert) {
             done();
         });
 
-    states
+    cursor
         .emitCursor(table, {
             type: 'position',
             column: 'a',
@@ -88,10 +86,10 @@ QUnit.test('DataStates.emitCursor', function (assert) {
         }, event, true);
 });
 
-QUnit.test('DataStates.isEqual', function (assert) {
+QUnit.test('DataCursor.isEqual', function (assert) {
     // position
     assert.ok(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'position',
             state: 'test1'
         }, {
@@ -101,7 +99,7 @@ QUnit.test('DataStates.isEqual', function (assert) {
         'Cursors should be equal.'
     );
     assert.notOk(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'position',
             state: 'test2a'
         }, {
@@ -111,7 +109,7 @@ QUnit.test('DataStates.isEqual', function (assert) {
         'Cursors should not be equal.'
     );
     assert.ok(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'position',
             column: 'a',
             state: 'test3'
@@ -123,7 +121,7 @@ QUnit.test('DataStates.isEqual', function (assert) {
         'Cursors should be equal.'
     );
     assert.notOk(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'position',
             column: 'a',
             state: 'test4'
@@ -135,7 +133,7 @@ QUnit.test('DataStates.isEqual', function (assert) {
         'Cursors should not be equal.'
     );
     assert.notOk(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'position',
             column: 'a',
             row: 0,
@@ -148,7 +146,7 @@ QUnit.test('DataStates.isEqual', function (assert) {
         'Cursors should not be equal.'
     );
     assert.ok(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'position',
             column: 'a',
             row: 0,
@@ -162,7 +160,7 @@ QUnit.test('DataStates.isEqual', function (assert) {
         'Cursors should be equal.'
     );
     assert.notOk(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'position',
             column: 'a',
             row: 0,
@@ -177,7 +175,7 @@ QUnit.test('DataStates.isEqual', function (assert) {
     );
     // mixed
     assert.notOk(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'position',
             column: 'a',
             row: 0,
@@ -193,7 +191,7 @@ QUnit.test('DataStates.isEqual', function (assert) {
     );
     // range
     assert.ok(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'range',
             firstRow: 0,
             lastRow: 1,
@@ -208,7 +206,7 @@ QUnit.test('DataStates.isEqual', function (assert) {
         'Cursors should be equal.'
     );
     assert.notOk(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'range',
             firstRow: 0,
             lastRow: 1,
@@ -222,7 +220,7 @@ QUnit.test('DataStates.isEqual', function (assert) {
         'Cursors should not be equal.'
     );
     assert.ok(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'range',
             columns: [],
             firstRow: 0,
@@ -238,7 +236,7 @@ QUnit.test('DataStates.isEqual', function (assert) {
         'Cursors should be equal.'
     );
     assert.notOk(
-        DataStates.isEqual({
+        DataCursor.isEqual({
             type: 'range',
             columns: ['a'],
             firstRow: 0,
@@ -254,8 +252,8 @@ QUnit.test('DataStates.isEqual', function (assert) {
         'Cursors should not be equal.'
     );
 });
-QUnit.test('DataStates.isInRange', function (assert) {
-    const cursorRange /*: DataStates.CursorRange*/ = {
+QUnit.test('DataCursor.isInRange', function (assert) {
+    const cursorRange /*: DataCursor.CursorRange*/ = {
         type: 'range',
         columns: ['a', 'b', 'c'],
         firstRow: 0,
@@ -264,7 +262,7 @@ QUnit.test('DataStates.isInRange', function (assert) {
     };
 
     assert.ok(
-        DataStates.isInRange({
+        DataCursor.isInRange({
             type: 'position',
             column: 'a',
             state: 'test1'
@@ -272,7 +270,7 @@ QUnit.test('DataStates.isInRange', function (assert) {
         'Cursor should be in range.'
     );
     assert.notOk(
-        DataStates.isInRange({
+        DataCursor.isInRange({
             type: 'position',
             column: 'z',
             state: 'test2'
@@ -280,7 +278,7 @@ QUnit.test('DataStates.isInRange', function (assert) {
         'Cursor should not be in range.'
     );
     assert.ok(
-        DataStates.isInRange({
+        DataCursor.isInRange({
             type: 'position',
             column: 'b',
             row: 2,
@@ -289,7 +287,7 @@ QUnit.test('DataStates.isInRange', function (assert) {
         'Cursor should be in range.'
     );
     assert.notOk(
-        DataStates.isInRange({
+        DataCursor.isInRange({
             type: 'position',
             column: 'b',
             row: 20,
@@ -298,7 +296,7 @@ QUnit.test('DataStates.isInRange', function (assert) {
         'Cursor should not be in range.'
     );
     assert.notOk(
-        DataStates.isInRange({
+        DataCursor.isInRange({
             type: 'position',
             column: 'z',
             row: 2,
@@ -308,9 +306,9 @@ QUnit.test('DataStates.isInRange', function (assert) {
     );
 });
 
-QUnit.test('DataStates.toRange', function (assert) {
+QUnit.test('DataCursor.toRange', function (assert) {
     assert.deepEqual(
-        DataStates.toRange({
+        DataCursor.toRange({
             type: 'position',
             column: 'a',
             state: 'test1'
@@ -325,7 +323,7 @@ QUnit.test('DataStates.toRange', function (assert) {
         'Cursor range should have expected structure.'
     );
     assert.deepEqual(
-        DataStates.toRange({
+        DataCursor.toRange({
             type: 'position',
             column: 'b',
             row: 343,
@@ -341,7 +339,7 @@ QUnit.test('DataStates.toRange', function (assert) {
         'Cursor range should have expected structure.'
     );
     assert.deepEqual(
-        DataStates.toRange({
+        DataCursor.toRange({
             type: 'position',
             row: 729,
             state: 'test2'

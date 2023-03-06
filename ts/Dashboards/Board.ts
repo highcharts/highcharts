@@ -28,8 +28,8 @@ import type JSON from '../Core/JSON';
 
 import Bindings from './Actions/Bindings.js';
 import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
-import DataStates from '../Data/DataStates.js';
-import DataStatesHelper from './SerializeHelper/DataStatesHelper.js';
+import DataCursor from '../Data/DataCursor.js';
+import DataCursorHelper from './SerializeHelper/DataCursorHelper.js';
 import EditMode from './EditMode/EditMode.js';
 import Fullscreen from './EditMode/Fullscreen.js';
 import Globals from './Globals.js';
@@ -114,7 +114,7 @@ class Board implements Serializable<Board, Board.JSON> {
         this.initEvents();
 
         // Add table cursors support.
-        this.states = new DataStates();
+        this.cursor = new DataCursor();
 
         // Add fullscreen support.
         this.fullscreen = new Fullscreen(this);
@@ -135,6 +135,7 @@ class Board implements Serializable<Board, Board.JSON> {
     public a11y: DashboardsAccessibility;
     public boardWrapper: globalThis.HTMLElement = void 0 as any;
     public container: globalThis.HTMLElement = void 0 as any;
+    public cursor: DataCursor;
     public editMode?: EditMode;
     public fullscreen?: Fullscreen;
     public guiEnabled: (boolean|undefined);
@@ -144,7 +145,6 @@ class Board implements Serializable<Board, Board.JSON> {
     public layoutsWrapper: globalThis.HTMLElement;
     public mountedComponents: Array<Bindings.MountedComponentsOptions>;
     public options: Board.Options;
-    public states: DataStates;
 
     /* *
      *
@@ -364,7 +364,7 @@ class Board implements Serializable<Board, Board.JSON> {
                 }
             );
 
-        board.states = DataStatesHelper.fromJSON(json.states);
+        board.cursor = DataCursorHelper.fromJSON(json.cursor);
 
         return board;
     }
@@ -386,14 +386,14 @@ class Board implements Serializable<Board, Board.JSON> {
 
         return {
             $class: 'Board',
+            cursor: DataCursorHelper.toJSON(board.cursor),
             options: {
                 containerId: board.container.id,
                 guiEnabled: board.guiEnabled,
                 layouts: layouts,
                 componentOptions: board.options.componentOptions,
                 respoBreakpoints: board.options.respoBreakpoints
-            },
-            states: DataStatesHelper.toJSON(board.states)
+            }
         };
     }
 
@@ -444,7 +444,7 @@ namespace Board {
 
     export interface JSON extends Serializable.JSON<'Board'> {
         options: OptionsJSON;
-        states: DataStatesHelper.JSON;
+        cursor: DataCursorHelper.JSON;
     }
 
     /* *
