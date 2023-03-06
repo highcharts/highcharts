@@ -85,11 +85,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
-            /**
-             * Whether to allow the component to edit the store to which it is
-             * attached.
-             * @default true
-             */
             allowStoreUpdate: true,
             chartClassName: 'chart-container',
             chartID: 'chart-' + uniqueKey(),
@@ -609,11 +604,12 @@ namespace HighchartsComponent {
 
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
         /**
-         * Declares update of the store, when edit chart.
+         * Whether to allow the component to edit the store to which it is
+         * attached.
          */
         allowStoreUpdate?: boolean,
         /**
-         * The string that declares contructor that is called for creating
+         * The string that declares constructor that is called for creating
          * a chart.
          *
          * Example: `chart`, `stockChart`, `mapChart` or `ganttChart`.

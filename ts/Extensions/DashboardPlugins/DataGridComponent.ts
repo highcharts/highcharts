@@ -380,14 +380,6 @@ namespace DataGridComponent {
          */
         dataGridOptions?: DataGridOptions;
         /**
-         * The name of class that is applied to the chart's container.
-         */
-        chartClassName?: string;
-        /**
-         * The id that is applied to the chart's container.
-         */
-        chartID?: string;
-        /**
          * Names / aliases that should be mapped to xAxis values.
          */
         tableAxisMap?: Record<string, string | null>;
