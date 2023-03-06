@@ -13,6 +13,7 @@
  *  - Sophie Bremer
  *
  * */
+import type MenuItem from './Menu/MenuItem.js';
 
 import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
@@ -328,20 +329,28 @@ function renderText(
 
 function renderIcon(
     parentElement: HTMLDOMElement,
-    icon: string,
-    callback?: Function
+    options: IconFormField
 ): HTMLDOMElement|undefined {
-    let iconElem;
+    const { icon, callback } = options;
 
-    if (parentElement) {
-        iconElem = createElement(
-            'div', {
-                onclick: callback
-            }, {},
-            parentElement
-        );
+    if (!parentElement) {
+        return;
+    }
 
-        (iconElem.style as any)['background-image'] = 'url(' + icon + ')';
+    const iconElem = createElement(
+        'div', {
+            onclick: callback
+        }, {},
+        parentElement
+    );
+
+    (iconElem.style as any)['background-image'] = 'url(' + icon + ')';
+
+    const mousedown = options.mousedown;
+    if (mousedown) {
+        iconElem.onmousedown = function (): void {
+            mousedown.apply(options.menuItem, arguments);
+        };
     }
 
     return iconElem;
@@ -470,19 +479,34 @@ function renderButton(
 
     return button;
 }
+function getRendererFunction(type: RendererElement): Function|undefined {
+    return {
+        select: renderSelect,
+        toggle: renderToggle,
+        text: renderText,
+        collapse: renderCollapse,
+        icon: renderIcon,
+        contextButton: renderContextButton,
+        input: renderInput,
+        textarea: renderTextarea,
+        checkbox: renderCheckbox,
+        button: renderButton
+    }[type];
+}
 
 
 const EditRenderer = {
     renderSelect,
     renderToggle,
     renderText,
-    renderCollapse: renderCollapse,
+    renderCollapse,
     renderIcon,
     renderContextButton,
     renderInput,
     renderTextarea,
     renderCheckbox,
-    renderButton
+    renderButton,
+    getRendererFunction
 };
 
 export default EditRenderer;
@@ -496,7 +520,14 @@ export interface ButtonOptions {
     style?: CSSObject;
 }
 
+export interface IconFormField {
+    icon: string;
+    mousedown?: Function;
+    menuItem?: MenuItem;
+    callback?: Function;
+}
 export interface FormField {
+    icon?: string;
     id: string;
     name: string;
     callback?: Function;
@@ -505,11 +536,7 @@ export interface FormField {
     value?: string;
 }
 
-export interface SelectFormField {
-    callback?: Function;
-    onchange?: Function;
-    id: string;
-    name: string;
+export interface SelectFormField extends FormField {
     title: string;
     value: string;
     items: Array<SelectFormFieldItem>;
@@ -518,5 +545,16 @@ export interface SelectFormField {
 export interface SelectFormFieldItem {
     name: 'string';
     iconURL: 'string';
-
 }
+
+export type RendererElement =
+    | 'select'
+    | 'toggle'
+    | 'text'
+    | 'collapse'
+    | 'icon'
+    | 'contextButton'
+    | 'input'
+    | 'textarea'
+    | 'checkbox'
+    | 'button';

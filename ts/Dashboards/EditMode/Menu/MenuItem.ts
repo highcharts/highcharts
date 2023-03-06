@@ -15,12 +15,13 @@
  * */
 
 import type CSSJSONObject from '../../CSSJSONObject';
+import type { RendererElement, SelectFormFieldItem } from '../EditRenderer.js';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
 import U from '../../../Core/Utilities.js';
 import Menu from './Menu.js';
-import EditRenderer, { SelectFormFieldItem } from '../EditRenderer.js';
+import EditRenderer from '../EditRenderer.js';
 
 const {
     createElement,
@@ -107,85 +108,41 @@ class MenuItem {
                 }
             };
 
-        let element;
-        const collapsable = options.collapsable;
-        const parent = collapsable ?
-            (EditRenderer.renderCollapse(
+        const collapsable = options.collapsable,
+            parent = collapsable ?
+                (EditRenderer.renderCollapse(
+                    item.container,
+                    options.text || ''
+                ) as any).content :
                 item.container,
-                options.text || ''
-            ) as any).content :
-            item.container;
-        const title = !collapsable ? options.text : '';
-
-        if (options.type === 'toggle') {
-            element = EditRenderer.renderToggle(
-                parent,
-                {
-                    id: options.id,
-                    name: options.id,
-                    title: title || '',
-                    callback: callback
-                }
-            );
-        } else if (options.type === 'icon' && options.icon) {
-            element = EditRenderer.renderIcon(
-                parent,
-                options.icon,
-                callback
+            renderItem = EditRenderer.getRendererFunction(
+                options.type as RendererElement
             );
 
-            // Temp.
-            if (element && options.events && options.events.onmousedown) {
-                element.onmousedown = function (): void {
-                    if (options.events && options.events.onmousedown) {
-                        options.events.onmousedown.apply(item, arguments);
-                    }
-                };
-            }
-        } else if (options.type === 'textarea') {
-            element = EditRenderer.renderTextarea(
-                parent,
-                {
-                    id: options.id,
-                    name: options.id,
-                    title: title || '',
-                    value: options.value || '',
-                    onchange: options.events && options.events.change
-                }
-            );
-        } else if (options.type === 'input') {
-            element = EditRenderer.renderInput(
-                parent,
-                {
-                    id: options.id,
-                    name: options.id,
-                    callback,
-                    title: title,
-                    value: options.value || '',
-                    onchange: options.events && options.events.change
-                }
-            );
-        } else if (options.type === 'text') {
-            element = EditRenderer.renderText(
-                parent,
-                title || '',
-                callback
-            );
-        } else if (options.type === 'select') {
-            element = EditRenderer.renderSelect(
-                parent,
-                {
-                    id: options.id,
-                    name: options.id,
-                    title: title || '',
-                    items: options.items as SelectFormFieldItem[] || [],
-                    value: options.value || '',
-                    onchange: options.events && options.events.change
-                }
-            );
+        if (!renderItem) {
+            return;
         }
 
-        return element;
+        return renderItem(parent, this.getElementOptions(options, callback));
+    }
+
+    private getElementOptions(
+        options: MenuItem.Options,
+        callback?: () => void
+    ): any {
+
+        return {
+            id: options.id,
+            name: options.id,
+            title: options.collapsable ? '' : options.text || '',
+            callback,
+            item: this,
+            icon: options.icon,
+            mousedown: options.events && options.events.onmousedown,
+            value: options.value || '',
+            onchange: options.events && options.events.change,
+            items: options.items
+        };
     }
 
     public update(): void {

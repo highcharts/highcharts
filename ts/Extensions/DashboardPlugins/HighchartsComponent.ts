@@ -102,6 +102,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 [
                     'chartOptions',
                     'chartType',
+                    'chartConfig',
                     'chartClassName',
                     'chartID'
                 ]
@@ -111,10 +112,12 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 {
                     skipRedraw: [
                         'chartOptions',
+                        'chartConfig',
                         'chartType'
                     ],
                     keyMap: {
                         chartOptions: 'textarea',
+                        chartConfig: 'nested',
                         chartType: 'select'
                     }
                 }

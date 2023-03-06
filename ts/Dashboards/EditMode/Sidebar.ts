@@ -381,9 +381,7 @@ class Sidebar {
     *  Constructor
     *
     * */
-    constructor(
-        editMode: EditMode
-    ) {
+    constructor(editMode: EditMode) {
         this.tabs = {};
         this.isVisible = false;
         this.options = merge(
@@ -883,9 +881,7 @@ class Sidebar {
                                 (chartOpts.series && chartOpts.series[0].type)
                             );
 
-                        if (
-                            chartType
-                        ) {
+                        if (chartType) {
                             chartTypes = {
                                 items: chartTypesEnum,
                                 value: chartType
