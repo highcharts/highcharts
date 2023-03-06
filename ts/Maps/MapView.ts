@@ -415,13 +415,11 @@ class MapView {
 
     public getGeoMap(map?: MapDataType): GeoJSON|undefined {
         if (isString(map)) {
-            const mapFromArray = maps[map];
-
-            if (mapFromArray && mapFromArray.type === 'Topology') {
-                return topo2geo(mapFromArray);
+            if (maps[map] && maps[map].type === 'Topology') {
+                return topo2geo(maps[map]);
             }
 
-            return mapFromArray;
+            return maps[map];
         }
         if (isObject(map, true)) {
             if (map.type === 'FeatureCollection') {
