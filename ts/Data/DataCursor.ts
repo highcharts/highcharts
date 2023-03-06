@@ -43,10 +43,12 @@ class DataCursor {
      *
      * */
 
-    public constructor() {
+    public constructor(
+        stateMap: DataCursor.StateMap = {}
+    ) {
         this.emittingRegister = [];
         this.listenerMap = {};
-        this.stateMap = {};
+        this.stateMap = stateMap;
     }
 
     /* *
