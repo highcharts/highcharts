@@ -1783,11 +1783,8 @@ namespace Legend {
     export function compose(ChartClass: typeof Chart): void {
         if (composedMembers.indexOf(ChartClass) === -1) {
             composedMembers.push(ChartClass);
-            addEvent(ChartClass, 'rendering', function (): void {
+            addEvent(ChartClass, 'beforeRendering', function (): void {
                 const chart = this;
-                // Title
-                chart.setTitle();
-
                 /**
                  * The overview of the chart's series.
                  *
@@ -1795,7 +1792,6 @@ namespace Legend {
                  * @type {Highcharts.Legend}
                  */
                 chart.legend = new Legend(chart, chart.options.legend as any);
-
             });
         }
     }
