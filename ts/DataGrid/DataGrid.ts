@@ -2,7 +2,7 @@
  *
  *  Data Grid class
  *
- *  (c) 2020-2021 Highsoft AS
+ *  (c) 2020-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -10,6 +10,8 @@
  *
  *  Authors:
  *  - Øystein Moseng
+ *  - Ken-Håvard Lieng
+ *  - Sebastian Bochan
  *
  * */
 
@@ -127,7 +129,6 @@ class DataGrid {
     private bottom = false;
     /** @internal */
     private columnNames: Array<string>;
-
 
     /* *
      *
@@ -520,6 +521,7 @@ class DataGrid {
         }
     }
 
+
     /**
      * Handle hovering over rows- highlight proper row if needed.
      * @internal
@@ -537,6 +539,7 @@ class DataGrid {
             this.hoveredRow = void 0;
         }
     }
+
 
     /**
      * Remove the <input> overlay and update the cell value

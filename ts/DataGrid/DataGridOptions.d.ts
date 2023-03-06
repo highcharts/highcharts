@@ -2,7 +2,7 @@
  *
  *  Data Grid options
  *
- *  (c) 2020-2021 Highsoft AS
+ *  (c) 2020-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -10,6 +10,12 @@
  *
  *  Authors:
  *  - Øystein Moseng
+ *
+ * */
+
+/* *
+ *
+ *  Imports
  *
  * */
 
