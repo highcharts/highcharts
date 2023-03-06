@@ -21,6 +21,7 @@
 
 import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
+import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 
 import Component from '../../Dashboards/Component/Component.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
@@ -36,20 +37,24 @@ const { createElement, merge, uniqueKey } = U;
  * */
 
 /**
- * DataGrid component for the Highcharts Dashboards.
- * @private
- * @class
- * @name Highcharts.DashboardComponent
+ * DataGrid component for Highcharts Dashboards.
+ * @internal
  */
 class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents> {
+
     /* *
      *
      *  Static properties
      *
      * */
 
+    /** @internal */
     public static syncHandlers = DataGridSyncHandlers;
+
+    /** @internal */
     public static DataGridConstructor?: typeof DataGrid;
+
+    /** @internal */
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -59,7 +64,8 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
             editableOptions: [],
             syncHandlers: DataGridSyncHandlers,
             onUpdate: DataGridComponent.onUpdate
-        });
+        }
+    );
 
     /* *
      *
@@ -67,6 +73,19 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
+    /**
+     * Default update function, if data grid has changed. This functionality can
+     * be replaced with the {@link DataGridComponent.DataGridOptions#onUpdate}
+     * option.
+     *
+     * @internal
+     *
+     * @param e
+     * Related keyboard event of the change.
+     *
+     * @param store
+     * Relate store of the change.
+     */
     public static onUpdate(
         e: KeyboardEvent,
         store: Component.StoreTypes
@@ -114,6 +133,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
     }
 
+    /** @internal */
     public static fromJSON(
         json: DataGridComponent.ClassJSON
     ): DataGridComponent {
@@ -141,10 +161,15 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
+    /** @internal */
     public dataGrid?: DataGrid;
+    /** @internal */
     public dataGridContainer: HTMLElement;
+    /** @internal */
     public dataGridOptions: Partial<Options>;
+    /** @internal */
     public options: DataGridComponent.DataGridOptions;
+    /** @internal */
     public sync: Component['sync'];
 
     /* *
@@ -153,6 +178,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
+    /** @internal */
     constructor(options: Partial<DataGridComponent.DataGridOptions>) {
         options = merge(DataGridComponent.defaultOptions, options);
 
@@ -237,6 +263,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
+    /** @internal */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -249,6 +276,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         return this;
     }
 
+    /** @internal */
     public render(): this {
         this.emit({ type: 'beforeRender' });
         super.render();
@@ -263,11 +291,13 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         return this;
     }
 
+    /** @internal */
     public redraw(): this {
         super.redraw();
         return this.render();
     }
 
+    /** @internal */
     public resize(
         width?: number | string | null,
         height?: number | string | null
@@ -278,6 +308,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
     }
 
+    /** @internal */
     public update(options: Partial<DataGridComponent.DataGridOptions>): this {
         super.update(options);
         if (this.dataGrid) {
@@ -287,6 +318,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         return this;
     }
 
+    /** @internal */
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
             this.dataGrid = new DataGridComponent.DataGridConstructor(
@@ -302,6 +334,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         throw new Error('DataGrid not connected.');
     }
 
+    /** @internal */
     private setupStoreUpdate(): void {
         const { store, dataGrid } = this;
 
@@ -318,6 +351,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
     }
 
+    /** @internal */
     public toJSON(): DataGridComponent.ClassJSON {
         const dataGridOptions = JSON.stringify(this.options.dataGridOptions);
         const base = super.toJSON();
@@ -333,6 +367,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         this.emit({ type: 'toJSON', json });
         return json;
     }
+
 }
 
 /* *
@@ -342,10 +377,20 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
  * */
 
 namespace DataGridComponent {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    /** @internal */
     export type ComponentType = DataGridComponent;
 
+    /** @internal */
     export type ChartComponentEvents = JSONEvent | Component.EventTypes;
 
+    /** @internal */
     export type JSONEvent = Component.Event<
     'toJSON' | 'fromJSON',
     {
@@ -353,27 +398,68 @@ namespace DataGridComponent {
     }
     >;
 
+    /**
+     * Options to control the DataGrid component.
+     */
     export interface DataGridOptions
         extends Component.ComponentOptions,
         EditableOptions {
+
+        /**
+         * The style class to add to the rendered data grid container.
+         */
         dataGridClassName?: string;
+
+        /**
+         * The identifier for the rendered data grid container.
+         */
         dataGridID?: string;
+
+        /**
+         * Callback to use when a change in the data grid occures.
+         */
         onUpdate: typeof DataGridComponent.onUpdate
     }
 
+    /**
+     * Options to control the DataGrid component. These options can be changed
+     * in edit mode of a dashboard.
+     */
     export interface EditableOptions extends Component.EditableOptions {
-        dataGridOptions?: DataGridOptions;
+
+        /**
+         * Generic options to adjust behavor and styling of the rendered data
+         * grid.
+         */
+        dataGridOptions?: BaseDataGridOptions;
+
+        /** @internal */
         chartClassName?: string;
+
+        /** @internal */
         chartID?: string;
+
+        /** @internal */
         tableAxisMap?: Record<string, string | null>;
     }
 
-    export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
+    /** @internal */
+    export interface ComponentJSONOptions
+        extends Component.ComponentOptionsJSON {
+
+        /** @internal */
         dataGridOptions?: string;
+
+        /** @internal */
         chartClassName?: string;
+
+        /** @internal */
         chartID?: string;
     }
+
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
+        /** @internal */
         options: ComponentJSONOptions;
     }
 }
