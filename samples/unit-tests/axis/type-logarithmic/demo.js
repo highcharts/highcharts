@@ -97,14 +97,26 @@ QUnit.test(
     }
 );
 
-QUnit.test('Minor ticks should not affect extremes (#6330)', function (assert) {
+QUnit.test('General', function (assert) {
     var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
         yAxis: {
             type: 'logarithmic',
             minorTickInterval: 'auto'
         },
 
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+
         series: [
+            {
+                data: [1, 0, 0]
+            },
             {
                 data: [3, 12, 3]
             }
@@ -114,7 +126,13 @@ QUnit.test('Minor ticks should not affect extremes (#6330)', function (assert) {
     var extremes = chart.yAxis[0].getExtremes();
     assert.ok(
         extremes.max > extremes.dataMax,
-        'Y axis max is bigger than data'
+        'Minor ticks should not affect extremes (#6330)'
+    );
+
+    assert.deepEqual(
+        chart.series[0].points.map(p => Boolean(p.graphic)),
+        [true, true, true],
+        'Points with y=0 in a stack should be valid and rendered (#18422)'
     );
 });
 
@@ -379,31 +397,38 @@ QUnit.test('Negative values on the log axes.', function (assert) {
     );
 
     assert.deepEqual(
-        chart.series[0].points.map(point => point.isNull),
+        chart.series[0].points.map(point => point.plotY === void 0),
         [true, true, true, true, false],
         'Points with negative value should be discarded when both axes ' +
             'are logarithmic.  '
     );
 
     assert.deepEqual(
-        chart.series[1].points.map(point => point.isNull),
+        chart.series[1].points.map(point => point.plotY === void 0),
         [true, true, true, false, false],
         'Points with negative xValues should be discarded when xAxis ' +
             'is logarithmic.'
     );
 
     assert.deepEqual(
-        chart.series[2].points.map(point => point.isNull),
+        chart.series[2].points.map(point => point.plotY === void 0),
         [true, false, true, true, false],
         'Points with negative yValues should be discarded when yAxis ' +
             'is logarithmic.'
     );
 
     assert.strictEqual(
-        chart.series[3].points.filter(point => point.isNull).length,
+        chart.series[3].points.filter(point => point.plotY === void 0).length,
         0,
         'Points with negative value should not be discarded when both ' +
             'axes are linear.'
+    );
+
+    chart.series[2].points[0].update(1);
+    assert.deepEqual(
+        chart.series[2].points.map(point => point.plotY === void 0),
+        [false, false, true, true, false],
+        'Updated point to positive value should be valid'
     );
 
     assert.ok(true, 'Should not throw error.');

@@ -20,7 +20,8 @@ QUnit.module('Color axis for series types', function () {
                     'treegraph',
                     'arcdiagram',
                     'venn',
-                    'wordcloud'
+                    'wordcloud',
+                    'flowmap'
                 ].includes(type)
             ) {
                 QUnit.test('Color axis for ' + type, function (assert) {

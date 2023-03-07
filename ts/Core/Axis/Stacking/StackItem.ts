@@ -40,8 +40,9 @@ const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
 const {
     destroyObjectProperties,
-    pick,
-    isNumber
+    fireEvent,
+    isNumber,
+    pick
 } = U;
 
 /* *
@@ -131,6 +132,8 @@ class StackItem {
     public points: Record<string, Array<number>>;
     public rightCliff: number;
     public rotation?: number;
+    public shadow?: SVGElement;
+    public shadowGroup?: SVGElement;
     public stack?: StackOverflowValue;
     public textAlign: AlignValue;
     public total: number | null;
@@ -199,6 +202,7 @@ class StackItem {
 
         // Rank it higher than data labels (#8742)
         this.label.labelrank = chart.plotSizeY;
+        fireEvent(this, 'afterRender');
     }
 
     /**
@@ -208,7 +212,7 @@ class StackItem {
      */
     public setOffset(
         xOffset: number,
-        xWidth: number,
+        width: number,
         boxBottom?: number,
         boxTop?: number,
         defaultX?: number,
@@ -218,7 +222,7 @@ class StackItem {
             chart = axis.chart,
             stackBox = this.getStackBox({
                 xOffset,
-                width: xWidth,
+                width,
                 boxBottom,
                 boxTop,
                 defaultX,
@@ -296,6 +300,8 @@ class StackItem {
             }
             label[visible ? 'show' : 'hide']();
         }
+
+        fireEvent(this, 'afterSetOffset', { xOffset, width });
     }
 
     /**
@@ -349,7 +355,15 @@ class StackItem {
             y = axis.toPixels(totalStackValue),
             xAxis = stackBoxProps.xAxis || chart.xAxis[0],
             x = pick(defaultX, xAxis.toPixels(this.x)) + xOffset,
-            yZero = axis.toPixels(boxBottom ? boxBottom : 0),
+            yZero = axis.toPixels(
+                boxBottom ||
+                (
+                    isNumber(axis.min) &&
+                    axis.logarithmic &&
+                    axis.logarithmic.lin2log(axis.min)
+                ) ||
+                0
+            ),
             height = Math.abs(y - yZero),
             inverted = chart.inverted,
             neg = stackItem.isNegative;

@@ -18,7 +18,9 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type {
+    BreadcrumbOptions
+} from '../../Extensions/Breadcrumbs/BreadcrumbsOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition';
 import type ColorType from '../../Core/Color/ColorType';
@@ -54,7 +56,7 @@ import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
 import TU from '../TreeUtilities.js';
-import Breadcrumbs from '../../Extensions/Breadcrumbs.js';
+import Breadcrumbs from '../../Extensions/Breadcrumbs/Breadcrumbs.js';
 const {
     getColor,
     getLevelOptions,
@@ -446,6 +448,9 @@ class TreemapSeries extends ScatterSeries {
          *
          * @sample highcharts/demo/sunburst/
          *         Sunburst with color variation
+         *
+         * @sample highcharts/series-treegraph/color-variation
+         *         Treegraph nodes with color variation
          *
          * @since     6.0.0
          * @product   highcharts
@@ -925,7 +930,7 @@ class TreemapSeries extends ScatterSeries {
     public createList(e: any): any {
         const chart = this.chart,
             breadcrumbs = chart.breadcrumbs,
-            list: Array<Breadcrumbs.BreadcrumbOptions> = [];
+            list: Array<BreadcrumbOptions> = [];
 
         if (breadcrumbs) {
 

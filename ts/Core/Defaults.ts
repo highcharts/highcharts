@@ -1901,7 +1901,6 @@ const defaultOptions: Options = {
         }
     },
 
-
     /**
      * Options for the tooltip that appears when the user hovers over a
      * series or point.
@@ -1968,6 +1967,9 @@ const defaultOptions: Options = {
          *
          * For touch moves to behave the same way, [followTouchMove](
          * #tooltip.followTouchMove) must be `true` also.
+         *
+         * @sample highcharts/tooltip/followpointer/
+         *         Tooltip follow pointer comparison
          *
          * @type      {boolean}
          * @default   {highcharts} false
@@ -2148,6 +2150,8 @@ const defaultOptions: Options = {
          * to the axis. This is recommended over [shared](#tooltip.shared)
          * tooltips for charts with multiple line series, generally making them
          * easier to read. This option takes precedence over `tooltip.shared`.
+         *
+         * Not supported for [polar](#chart.polar) and [inverted](#chart.inverted) charts.
          *
          * @productdesc {highstock} In Highcharts Stock, tooltips are split
          * by default since v6.0.0. Stock charts typically contain
@@ -2366,14 +2370,14 @@ const defaultOptions: Options = {
          * The number of milliseconds to wait until the tooltip is hidden when
          * mouse out from a point or chart.
          *
-         * @since     3.0
+         * @since 3.0
          */
         hideDelay: 500,
 
         /**
          * Padding inside the tooltip, in pixels.
          *
-         * @since      5.0.0
+         * @since 5.0.0
          */
         padding: 8,
 
@@ -2389,8 +2393,8 @@ const defaultOptions: Options = {
          * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
          * [series.marker.symbol](plotOptions.line.marker.symbol).
          *
-         * @type      {Highcharts.TooltipShapeValue}
-         * @since     4.0
+         * @type  {Highcharts.TooltipShapeValue}
+         * @since 4.0
          */
         shape: 'callout',
 
@@ -2414,8 +2418,8 @@ const defaultOptions: Options = {
          * @sample {highcharts} highcharts/tooltip/shared-true-mixed-types/
          *         True with mixed series types
          *
-         * @since     2.1
-         * @product   highcharts highstock
+         * @since   2.1
+         * @product highcharts highstock
          */
         shared: false,
 
@@ -2457,8 +2461,8 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/tooltip/format/
          *         Format demo
          *
-         * @type       {string}
-         * @apioption  tooltip.headerFormat
+         * @type      {string}
+         * @apioption tooltip.headerFormat
          */
         headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 
@@ -2569,7 +2573,7 @@ const defaultOptions: Options = {
          * @sample highcharts/tooltip/stickoncontact/
          *         Tooltip sticks on pointer contact
          *
-         * @since     8.0.1
+         * @since 8.0.1
          */
         stickOnContact: false,
 
@@ -2592,9 +2596,7 @@ const defaultOptions: Options = {
             /** @internal */
             cursor: 'default',
             /** @internal */
-            fontSize: '12px',
-            /** @internal */
-            whiteSpace: 'nowrap'
+            fontSize: '12px'
         },
 
         /**
@@ -2610,11 +2612,10 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/tooltip/usehtml/
          *         Pure HTML tooltip
          *
-         * @since     2.2
+         * @since 2.2
          */
         useHTML: false
     },
-
 
     /**
      * Highchart by default puts a credits label in the lower right corner
