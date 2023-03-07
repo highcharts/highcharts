@@ -147,7 +147,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      */
     public store?: Component.StoreTypes; // the attached store
     /**
-     * Size of the component (width and height)
+     * Size of the component (width and height).
      */
     protected dimensions: { width: number | null; height: number | null };
     /**
@@ -240,14 +240,14 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public abstract sync: Sync;
 
     /**
-     * Timeouts for calls to `Component.resizeTo()`
+     * Timeouts for calls to `Component.resizeTo()`.
      *
      * @internal
      */
     protected resizeTimeouts: number[] = [];
 
     /**
-     * Timeouts for resizing the content. I.e. `chart.setSize()`
+     * Timeouts for resizing the content. I.e. `chart.setSize()`.
      *
      * @internal
      */
@@ -259,6 +259,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      *
      * */
 
+    /**
+     * Creates a component in the cell.
+     * 
+     * @param options 
+     */
     constructor(options: Partial<Component.ComponentOptions>) {
         this.options = merge(Component.defaultOptions, options);
         this.id = this.options.id && this.options.id.length ?
@@ -324,7 +329,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
     * Handles the sync options. Applies the given defaults if no
-    * specific callback given
+    * specific callback given.
+    * 
+    * @param defaultHandlers
+    * @returns
     */
     protected handleSyncOptions(
         defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
@@ -352,7 +360,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             );
     }
 
-    // Setup listeners on cell/other things up the chain
+    /**
+     * Setup listeners on cell/other things up the chain
+     */
     private attachCellListeneres(): void {
         // remove old listeners
         while (this.cellListeners.length) {
@@ -391,7 +401,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
     }
 
-    // Set a parent cell
+    /**
+     * Set a parent cell.
+     * @param cell
+     * @param resize
+     */
     public setCell(cell: Cell, resize = false): void {
         this.parentCell = cell;
         if (cell.container) {
@@ -403,6 +417,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
     }
 
+    /**
+     * Adds event listeners to data table.
+     * @param table 
+     * @internal
+     */
     private setupTableListeners(table: DataTable): void {
         [
             'afterSetRows',
@@ -438,6 +457,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
     }
 
+    /**
+     * Remove event listeners in data table.
+     * @internal
+     */
     private clearTableListeners(): void {
         if (this.tableEvents.length) {
             this.tableEvents.forEach(
@@ -460,6 +483,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
     }
 
+    /**
+     * Attaches data store to the component.
+     * @param store 
+     * @returns 
+     */
     public setStore(store: Component.StoreTypes | undefined): this {
         // Clean up old event listeners
         while (this.tableEvents.length) {
@@ -510,6 +538,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         return this;
     }
 
+    /**
+     * @internal
+     */
     setActiveGroup(group: ComponentGroup | string | null): void {
         if (typeof group === 'string') {
             group = ComponentGroup.getComponentGroup(group) || null;
@@ -525,7 +556,12 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
     }
 
-
+    /**
+     * Gets height of the component's content.
+     * 
+     * @returns 
+     * @internal
+     */
     private getContentHeight(): number {
         const parentHeight =
             this.dimensions.height || Number(getStyle(this.element, 'height'));
@@ -598,6 +634,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         // }
     }
 
+    /**
+     * Adjusts size of component to parent's cell size when animation is done.
+     * @param element
+     */
     public resizeTo(element: HTMLElement): void {
         while (this.resizeTimeouts.length) {
             const timeout = this.resizeTimeouts.pop();
@@ -620,9 +660,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * Handles updating via options
+     * Handles updating via options.
      * @param newOptions
-     * The options to apply
+     * The options to apply.
      *
      * @param redraw
      * Set to true if the update should redraw the component.
@@ -699,6 +739,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         return this;
     }
 
+    /**
+     * Adds title at the top of component's container.
+     * @param titleOptions 
+     * @returns 
+     */
     public setTitle(titleOptions: Component.TextOptionsType): void {
         const previousTitle = this.titleElement;
 
@@ -725,6 +770,12 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
     }
 
+    /**
+     * Adds caption at the bottom of component's container.
+     * 
+     * @param captionOptions 
+     * @returns 
+     */
     public setCaption(captionOptions: Component.TextOptionsType): void {
         const previousCaption = this.captionElement;
         if (
@@ -752,10 +803,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
-     * Handles setting things up on initial render
+     * Handles setting things up on initial render.
      *
-     * @return {this}
-     * The component for chaining
+     * @returns
+     * The component for chaining.
      */
     public load(): this {
 
@@ -816,7 +867,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * Renders the component.
      * @todo make this call load on initial render
-     * @return {this} Component
+     * @returns Component
      */
     public render(): this {
         if (this.shouldRedraw || !this.hasLoaded) {
@@ -833,7 +884,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Redraws the component.
-     * @return {this} Component
+     * @returns Component
      */
     public redraw(): this {
         // Do a redraw
@@ -849,8 +900,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     /**
+     * Destroys the component.
+     * 
      * @todo Should perhaps also remove the component from the registry
-     * or set an `isactive` flag to false
+     * or set an `isactive` flag to false.
      */
     public destroy(): void {
         while (this.element.firstChild) {
@@ -863,6 +916,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         Component.removeInstance(this);
     }
 
+    /** @internal */
     public on<TEvent extends Component.EventTypes>(
         type: TEvent['type'],
         callback: (this: this, e: TEvent) => void
@@ -870,6 +924,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         return addEvent(this, type, callback);
     }
 
+    /** @internal */
     public emit<TEvent extends Component.EventTypes>(
         e: TEvent
     ): void {
@@ -879,6 +934,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         fireEvent(this, e.type, e);
     }
 
+    /** @internal */
     public postMessage(
         message: Component.MessageType,
         target: Component.MessageTarget = {
@@ -893,6 +949,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
     }
 
+    /** @internal */
     public onMessage(message: Component.MessageType): void {
         if (message && typeof message === 'string') {
             // do something
