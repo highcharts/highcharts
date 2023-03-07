@@ -815,8 +815,11 @@ function processVennData(
                 return validSets.indexOf(set) === -1;
             })
         ) {
-            mapOfIdToRelation[(relation.sets as any).sort().join()] =
-                relation as any;
+            mapOfIdToRelation[
+                (relation.sets as any)
+                    .sort()
+                    .join('SPLIT//COMBINATIONS')
+            ] = relation as any;
         }
         return mapOfIdToRelation;
     }, {});
@@ -830,13 +833,13 @@ function processVennData(
         const remaining = arr.slice(i + 1);
 
         remaining.forEach(function (set2: string): void {
-            combinations.push(set + ',' + set2);
+            combinations.push(set + 'SPLIT//COMBINATIONS' + set2);
         });
         return combinations;
     }, []).forEach(function (combination: string): void {
         if (!mapOfIdToRelation[combination]) {
             const obj: Highcharts.VennRelationObject = {
-                sets: combination.split(','),
+                sets: combination.split('SPLIT//COMBINATIONS'),
                 value: 0
             } as any;
 
