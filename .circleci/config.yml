@@ -184,28 +184,6 @@ jobs:
             - slack/status:
                 fail_only: true
 
-  test_es5:
-    <<: *defaults
-    description: Run es5 tests at BrowserStack
-    parameters:
-      browsers:
-        description: "Which browser to test?"
-        type: string
-        default: "Win.IE11"
-      notify_on_failure:
-        type: boolean
-        default: false
-    steps:
-      - << : *load_workspace
-      - run:
-          command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf-es5.js --single-run --splitbrowsers << parameters.browsers >> --oldie --browsercount 1"
-          no_output_timeout: 20m
-      - when:
-          condition: << parameters.notify_on_failure >>
-          steps:
-            - slack/status:
-                fail_only: true
-
   test_timezones:
     <<: *defaults
     description: Run tests with different browser configs at BrowserStack
@@ -599,8 +577,6 @@ workflows:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-staging
       - test_cypress:
-          requires: [lint]
-      - test_es5:
           requires: [lint]
       - test_timezones:
           requires: [lint]
