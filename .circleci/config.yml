@@ -427,7 +427,7 @@ jobs:
           background: true
       - run: 
           name: Run cypress visual tests as base
-          command: npx cypress run --env type=base --config specPattern="**/visual/*.cy.js"
+          command: npx cypress run --env type=base --config specPattern="**/visual/*.cy.js" --browser chrome
       - run:
           command: git checkout ${CIRCLE_BRANCH}
           when: always # always go back
@@ -435,7 +435,7 @@ jobs:
       - run: npm i --no-save @highcharts/highcharts-utils cross-env cypress-visual-regression
       - run: 
           name: Run cypress visual tests as reference # only dashboards for now
-          command: npx cypress run --env type=actual --config specPattern="**/visual/*.cy.js"
+          command: npx cypress run --env type=actual --config specPattern="**/visual/*.cy.js" --browser chrome
       - store_artifacts:
           path: /home/circleci/repo/highcharts/cypress/snapshots
           destination: cypress-chrome
