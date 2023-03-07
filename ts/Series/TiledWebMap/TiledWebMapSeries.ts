@@ -21,6 +21,9 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProvidersRegistry.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import Chart from '../../Core/Chart/Chart.js';
+import type {
+    AnimationStepCallbackFunction
+} from '../../Core/Animation/AnimationOptions';
 
 const {
     seriesTypes: {
@@ -49,6 +52,14 @@ interface TileItem extends SVGElement {
     posY?: number,
     originalURL?: string,
     isActive?: boolean
+}
+
+interface TilesItem {
+    tiles: Record<string, TileItem>,
+    isActive: boolean,
+    howManyTiles: number,
+    actualTilesCount: number,
+    loaded: boolean
 }
 
 /**
@@ -104,11 +115,11 @@ class TiledWebMapSeries extends MapSeries {
      * */
 
     public options: TiledWebMapSeriesOptions = void 0 as any;
-    tiles: Record<string, TileItem> = {};
-    tilesOffsetX: number = 0;
-    tilesOffsetY: number = 0;
+    tiles: Record<string, TilesItem> | undefined;
     minZoom: number | undefined;
     maxZoom: number | undefined;
+    redrawTiles: boolean = false;
+    isAnimating: boolean = false;
 
     /**
      *
@@ -196,11 +207,73 @@ class TiledWebMapSeries extends MapSeries {
                 tiles,
                 transformGroups
             } = this,
+            series = this,
             options = this.options,
             provider = options.provider,
             { zoom } = mapView,
+            lambda = pick(
+                (
+                    mapView.projection.options.rotation &&
+                    mapView.projection.options.rotation[0]
+                ), 0
+            ),
             worldSize = 400.979322,
-            tileSize = 256;
+            tileSize = 256,
+            duration = 200,
+            animateTiles = (duration: number): void => {
+                Object.keys(tiles).forEach((zoomKey): void => {
+                    if (
+                        (
+                            parseFloat(zoomKey) === (mapView.zoom < 0 ? 0 :
+                                Math.floor(mapView.zoom))
+                        ) ||
+                        (
+                            series.minZoom &&
+                            (mapView.zoom < 0 ? 0 :
+                                Math.floor(mapView.zoom)) < series.minZoom &&
+                            parseFloat(zoomKey) === series.minZoom
+                        ) ||
+                        (
+                            series.maxZoom &&
+                            (mapView.zoom < 0 ? 0 :
+                                Math.floor(mapView.zoom)) > series.maxZoom &&
+                            parseFloat(zoomKey) === series.maxZoom
+                        )
+                    ) {
+                        Object.keys(tiles[zoomKey].tiles)
+                            .forEach((key, i): void => {
+                                tiles[zoomKey].tiles[key].animate({
+                                    opacity: 1
+                                }, {
+                                    duration: duration
+                                }, function (): void {
+                                    if (i === Object.keys(tiles[zoomKey].tiles)
+                                        .length - 1) {
+                                        tiles[zoomKey].isActive = true;
+                                    }
+                                });
+                            });
+                    } else {
+                        Object.keys(tiles[zoomKey].tiles)
+                            .forEach((key, i): void => {
+                                tiles[zoomKey].tiles[key].animate({
+                                    opacity: 0
+                                }, {
+                                    duration: duration,
+                                    defer: duration / 2
+                                }, function (): void {
+                                    tiles[zoomKey].tiles[key].destroy();
+                                    delete tiles[zoomKey].tiles[key];
+                                    if (i === Object.keys(tiles[zoomKey].tiles)
+                                        .length - 1) {
+                                        tiles[zoomKey].isActive = false;
+                                        tiles[zoomKey].loaded = false;
+                                    }
+                                });
+                            });
+                    }
+                });
+            };
         let zoomFloor = zoom < 0 ? 0 : Math.floor(zoom),
             maxTile = Math.pow(2, zoomFloor),
             scale = ((tileSize / worldSize) * Math.pow(2, zoom)) /
@@ -314,13 +387,13 @@ class TiledWebMapSeries extends MapSeries {
             }
 
             // if zoom is smaller/higher than supported by provider
-            if (this.minZoom && zoomFloor < this.minZoom) {
+            if (defined(this.minZoom) && zoomFloor < this.minZoom) {
                 zoomFloor = this.minZoom;
                 maxTile = Math.pow(2, zoomFloor);
                 scale = ((tileSize / worldSize) * Math.pow(2, zoom)) /
                     ((tileSize / worldSize) * Math.pow(2, zoomFloor));
                 scaledTileSize = scale * 256;
-            } else if (this.maxZoom && zoomFloor > this.maxZoom) {
+            } else if (defined(this.maxZoom) && zoomFloor > this.maxZoom) {
                 zoomFloor = this.maxZoom;
                 maxTile = Math.pow(2, zoomFloor);
                 scale = ((tileSize / worldSize) * Math.pow(2, zoom)) /
@@ -351,7 +424,7 @@ class TiledWebMapSeries extends MapSeries {
                 const addTile = (
                     x: number,
                     y: number,
-                    zoom: number,
+                    givenZoom: number,
                     translateX: number,
                     translateY: number
                 ): void => {
@@ -360,42 +433,82 @@ class TiledWebMapSeries extends MapSeries {
                         tileX = modX < 0 ? modX + maxTile : modX,
                         tileY = modY < 0 ? modY + maxTile : modY;
 
-                    if (!tiles[`${zoom},${x},${y}`]) {
+                    if (!tiles[`${givenZoom}`].tiles[`${x},${y}`]) {
                         if (provider.url) {
                             const url = replaceVariables(
                                 provider.url,
                                 tileX,
                                 tileY,
-                                zoom
+                                givenZoom
                             );
 
-                            tiles[`${zoom},${x},${y}`] = chart.renderer.image(
-                                url,
-                                (x * scaledTileSize) - translateX,
-                                (y * scaledTileSize) - translateY,
-                                scaledTileSize,
-                                scaledTileSize
-                            )
-                                .attr({
-                                    zIndex: 2
-                                })
-                                .add(transformGroups[zoomFloor]);
+                            tiles[givenZoom].loaded = false;
+                            tiles[`${givenZoom}`].tiles[`${x},${y}`] =
+                                chart.renderer.image(
+                                    url,
+                                    (x * scaledTileSize) - translateX,
+                                    (y * scaledTileSize) - translateY,
+                                    scaledTileSize,
+                                    scaledTileSize
+                                )
+                                    .attr({
+                                        zIndex: 2,
+                                        opacity: 0
+                                    })
+                                    .on('load', function (
+                                        this: SVGElement
+                                    ): void {
+                                        if (provider.onload) {
+                                            provider.onload.apply(this);
+                                        }
+                                        if (
+                                            (
+                                                givenZoom ===
+                                                    (
+                                                        mapView.zoom < 0 ? 0 :
+                                                            Math.floor(
+                                                                mapView.zoom)
+                                                    )
+                                            ) ||
+                                            givenZoom === series.minZoom
+                                        ) {
+                                            tiles[`${givenZoom}`]
+                                                .actualTilesCount++;
 
-                            tiles[`${zoom},${x},${y}`].posX = x;
-                            tiles[`${zoom},${x},${y}`].posY = y;
-                            tiles[`${zoom},${x},${y}`].originalURL = url;
+                                            // if last tile
+                                            if (
+                                                tiles[`${givenZoom}`]
+                                                    .howManyTiles ===
+                                                tiles[`${givenZoom}`]
+                                                    .actualTilesCount
+                                            ) {
+                                                tiles[givenZoom].loaded = true;
+
+                                                // fade-in new tiles if there is
+                                                // no other animation
+                                                if (!series.isAnimating) {
+                                                    series.redrawTiles = false;
+                                                    animateTiles(duration);
+                                                } else {
+                                                    series.redrawTiles = true;
+                                                }
+                                                tiles[`${givenZoom}`]
+                                                    .actualTilesCount = 0;
+                                            }
+                                        }
+                                    })
+                                    .add(transformGroups[givenZoom]);
+
+                            tiles[`${givenZoom}`].tiles[`${x},${y}`].posX = x;
+                            tiles[`${givenZoom}`].tiles[`${x},${y}`].posY = y;
+                            tiles[`${givenZoom}`].tiles[`${x},${y}`]
+                                .originalURL = url;
                         }
                     }
-                    tiles[`${zoom},${x},${y}`].isActive = true;
                 };
 
                 // calculate topLeft and bottomRight corners without normalize
-                const lambda = pick(
-                        (
-                            mapView.projection.options.rotation &&
-                            mapView.projection.options.rotation[0]
-                        ), 0),
-                    topLeftUnits = mapView.pixelsToProjectedUnits({
+                const topLeftUnits = mapView.pixelsToProjectedUnits({
                         x: 0,
                         y: 0
                     }),
@@ -428,7 +541,6 @@ class TiledWebMapSeries extends MapSeries {
                 const startPos = this.lonLatToTile(topLeft, zoomFloor),
                     endPos = this.lonLatToTile(bottomRight, zoomFloor);
 
-
                 // calculate group translations based on first loaded tile
                 const firstTileLonLat = this.tileToLonLat(
                         startPos.x,
@@ -444,8 +556,20 @@ class TiledWebMapSeries extends MapSeries {
                     }),
                     translateX = (startPos.x * scaledTileSize - firstTilePx.x),
                     translateY = (startPos.y * scaledTileSize - firstTilePx.y);
-                this.tilesOffsetX = translateX;
-                this.tilesOffsetY = translateY;
+
+                if (!tiles[`${zoomFloor}`]) {
+                    tiles[`${zoomFloor}`] = {
+                        tiles: {},
+                        isActive: false,
+                        howManyTiles: 0,
+                        actualTilesCount: 0,
+                        loaded: false
+                    };
+                }
+
+                tiles[`${zoomFloor}`].howManyTiles =
+                    (endPos.x - startPos.x + 1) * (endPos.y - startPos.y + 1);
+                tiles[`${zoomFloor}`].actualTilesCount = 0;
 
                 for (let x = startPos.x; x <= endPos.x; x++) {
                     for (let y = startPos.y; y <= endPos.y; y++) {
@@ -454,27 +578,134 @@ class TiledWebMapSeries extends MapSeries {
                 }
             }
 
-            const {
-                tilesOffsetX,
-                tilesOffsetY
-            } = this;
-            // Destroy old and unused
-            Object.keys(tiles).forEach((key): void => {
-                if (tiles[key].isActive) {
-                    tiles[key].isActive = false;
-                    const { posX, posY } = tiles[key];
-                    if (defined(posX) && defined(posY)) {
-                        tiles[key].attr({
-                            x: (posX * scaledTileSize) - tilesOffsetX,
-                            y: (posY * scaledTileSize) - tilesOffsetY,
-                            width: scaledTileSize,
-                            height: scaledTileSize
-                        });
+            Object.keys(tiles).forEach((zoomKey): void => {
+                Object.keys(tiles[zoomKey].tiles).forEach((key): void => {
+                    if (mapView.projection && mapView.projection.def) {
+                        // calculate group translations based on first loaded
+                        // tile
+                        const scale = ((tileSize / worldSize) *
+                                Math.pow(2, zoom)) / ((tileSize / worldSize) *
+                                Math.pow(2, parseFloat(zoomKey))),
+                            scaledTileSize = scale * 256,
+                            firstTile = tiles[zoomKey].tiles[Object.keys(
+                                tiles[zoomKey].tiles)[0]],
+                            { posX, posY } = tiles[zoomKey].tiles[key];
+
+                        if (
+                            defined(posX) &&
+                            defined(posY) &&
+                            defined(firstTile.posX) &&
+                            defined(firstTile.posY)
+                        ) {
+                            const firstTileLonLat = this.tileToLonLat(
+                                    firstTile.posX,
+                                    firstTile.posY,
+                                    parseFloat(zoomKey)
+                                ),
+                                units = mapView.projection.def.forward([
+                                    firstTileLonLat.lon + lambda,
+                                    firstTileLonLat.lat
+                                ]),
+                                firstTilePx = mapView.projectedUnitsToPixels({
+                                    x: units[0], y: units[1]
+                                }),
+                                tilesOffsetX =
+                                    (firstTile.posX * scaledTileSize) -
+                                        firstTilePx.x,
+                                tilesOffsetY =
+                                    (firstTile.posY * scaledTileSize) -
+                                        firstTilePx.y;
+
+                            if (
+                                chart.renderer.globalAnimation &&
+                                chart.hasRendered
+                            ) {
+                                const startX = Number(
+                                        tiles[zoomKey].tiles[key].attr('x')
+                                    ),
+                                    startY = Number(
+                                        tiles[zoomKey].tiles[key].attr('y')
+                                    ),
+                                    startWidth = Number(
+                                        tiles[zoomKey].tiles[key].attr('width')
+                                    ),
+                                    startHeight = Number(
+                                        tiles[zoomKey].tiles[key].attr('height')
+                                    );
+
+
+                                const step: AnimationStepCallbackFunction = (
+                                    now,
+                                    fx
+                                ): void => {
+                                    tiles[zoomKey].tiles[key].attr({
+                                        x: (
+                                            startX + (((posX * scaledTileSize) -
+                                                tilesOffsetX - startX) * fx.pos)
+                                        ),
+                                        y: (
+                                            startY + (((posY * scaledTileSize) -
+                                                tilesOffsetY - startY) * fx.pos)
+                                        ),
+                                        width: (
+                                            startWidth + ((scaledTileSize -
+                                                startWidth) * fx.pos)
+                                        ),
+                                        height: (
+                                            startHeight + ((scaledTileSize -
+                                                startHeight) * fx.pos)
+                                        )
+                                    });
+
+                                };
+                                series.isAnimating = true;
+                                tiles[zoomKey].tiles[key]
+                                    .attr({ animator: 0 })
+                                    .animate({ animator: 1 }, { step },
+                                        function (): void {
+                                            series.isAnimating = false;
+                                            // if animate ended after loading
+                                            // the tiles
+                                            if (series.redrawTiles) {
+                                                series.redrawTiles = false;
+                                                animateTiles(duration);
+                                            }
+                                        }
+                                    );
+
+                            // When dragging or first rendering,
+                            // animation is off
+                            } else {
+                                // animate tiles if something broke
+                                if (
+                                    series.redrawTiles ||
+                                    parseFloat(zoomKey) !== zoomFloor ||
+                                    (
+                                        (
+                                            tiles[zoomKey].isActive ||
+                                            parseFloat(zoomKey) === zoomFloor
+                                        ) &&
+                                        Object.keys(tiles[zoomKey].tiles)
+                                            .map((key): TileItem =>
+                                                tiles[zoomKey].tiles[key])
+                                            .some((tile): boolean =>
+                                                tile.opacity === 0)
+                                    )
+                                ) {
+                                    series.redrawTiles = false;
+                                    animateTiles(duration);
+                                }
+
+                                tiles[zoomKey].tiles[key].attr({
+                                    x: (posX * scaledTileSize) - tilesOffsetX,
+                                    y: (posY * scaledTileSize) - tilesOffsetY,
+                                    width: scaledTileSize,
+                                    height: scaledTileSize
+                                });
+                            }
+                        }
                     }
-                } else {
-                    tiles[key].destroy();
-                    delete tiles[key];
-                }
+                });
             });
         } else {
             error(

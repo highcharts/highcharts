@@ -74,19 +74,6 @@ Highcharts.mapChart('container', {
             theme: 'Female'
         }
     }, {
-        type: 'mappoint',
-        data: [{
-            name: 'a',
-            value: 2,
-            lon: -220,
-            lat: 85
-        }, {
-            name: 'b',
-            value: 2,
-            lon: 220,
-            lat: -85
-        }]
-    }, {
         type: 'map',
         color: 'transparent',
         borderWidth: 0,
@@ -162,24 +149,3 @@ Highcharts.mapChart('container', {
         }]
     }]
 });
-
-// document.getElementById('container').addEventListener('mousemove', e => {
-//     if (!chart.lbl) {
-//         chart.lbl = chart.renderer.text('', 0, 0)
-//             .attr({
-//                 zIndex: 5
-//             })
-//             .css({
-//                 color: '#505050'
-//             })
-//             .add();
-//     }
-
-//     e = chart.pointer.normalize(e);
-
-//     chart.lbl.attr({
-//         x: e.chartX + 5,
-//         y: e.chartY - 22,
-//         text: 'Lat: ' + e.lat.toFixed(2) + '<br>Lon: ' + e.lon.toFixed(2)
-//     });
-// });
