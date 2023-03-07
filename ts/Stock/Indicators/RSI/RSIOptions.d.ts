@@ -32,4 +32,10 @@ export interface RSIParamsOptions extends SMAParamsOptions {
     decimals?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default RSIOptions;
