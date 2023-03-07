@@ -206,7 +206,7 @@ class Board implements Serializable<Board, Board.JSON> {
     /**
      * The unique id of the dashboard, it is generated automatically.
      * */
-    public id: string;
+    public readonly id: string;
 
     /**
      * Index of the board in the global boards array. Allows to access the
