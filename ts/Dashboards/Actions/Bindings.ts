@@ -30,7 +30,6 @@ import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridCompone
 import Globals from '../Globals.js';
 import DataTable from '../../Data/DataTable';
 import U from '../../Core/Utilities.js';
-import Board from '../Board';
 const {
     fireEvent,
     addEvent,
@@ -239,7 +238,6 @@ namespace Bindings {
     }
 
     export interface ComponentOptions {
-        // board?: Board;
         cell: string;
         type: string;
         chartOptions?: any;

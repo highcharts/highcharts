@@ -16,6 +16,7 @@
 
 'use strict';
 
+import type Board from '../Board.js';
 import type Cell from '../Layout/Cell.js';
 import type ComponentType from './ComponentType';
 import type JSON from '../../Core/JSON';
@@ -56,7 +57,6 @@ import ComponentGroup from './ComponentGroup.js';
 import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
-import Board from '../Board.js';
 
 abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
 
