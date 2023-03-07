@@ -21,35 +21,12 @@
 import type Chart from '../../../Core/Chart/Chart';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
-import D from '../../../Core/Defaults.js';
-const { getOptions } = D;
-import H from '../../../Core/Globals.js';
-const { doc } = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
     createElement,
     fireEvent
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-
-export interface PopupFieldsObject {
-    actionType: string;
-    fields: PopupFieldsTree;
-    linkedTo?: string;
-    seriesId?: string;
-    type?: string;
-}
-
-export interface PopupFieldsTree {
-    [key: string]: (string | PopupFieldsTree);
-}
 
 /* *
  *
@@ -67,12 +44,9 @@ class BasePopup {
 
     public constructor(
         parentDiv: HTMLElement,
-        iconsURL: string,
-        chart?: Chart
+        iconsURL: string
     ) {
-        this.chart = chart;
         this.iconsURL = iconsURL;
-        this.lang = (getOptions().lang.navigation as any).popup;
 
         // Create popup div.
         this.container = createElement(
@@ -83,23 +57,6 @@ class BasePopup {
             void 0,
             parentDiv
         );
-
-        addEvent(this.container, 'mousedown', (): void => {
-            const activeAnnotation = chart &&
-                chart.navigationBindings &&
-                chart.navigationBindings.activeAnnotation;
-
-            if (activeAnnotation) {
-                activeAnnotation.cancelClick = true;
-
-                const unbind = addEvent(doc, 'click', (): void => {
-                    setTimeout((): void => {
-                        activeAnnotation.cancelClick = false;
-                    }, 0);
-                    unbind();
-                });
-            }
-        });
 
         this.addCloseBtn();
     }
@@ -114,7 +71,6 @@ class BasePopup {
     public container: HTMLElement;
     public formType?: string;
     public iconsURL: string;
-    public lang: Record<string, string>;
 
     /* *
      *

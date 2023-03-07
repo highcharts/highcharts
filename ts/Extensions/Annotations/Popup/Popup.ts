@@ -26,6 +26,8 @@ import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 import BasePopup from './BasePopup.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
+import D from '../../../Core/Defaults.js';
+const { getOptions } = D;
 import PopupAnnotations from './PopupAnnotations.js';
 import PopupIndicators from './PopupIndicators.js';
 import PopupTabs from './PopupTabs.js';
@@ -156,7 +158,27 @@ class Popup extends BasePopup {
         iconsURL: string,
         chart?: Chart
     ) {
-        super(parentDiv, iconsURL, chart);
+        super(parentDiv, iconsURL);
+
+        this.chart = chart;
+        this.lang = (getOptions().lang.navigation as any).popup;
+
+        addEvent(this.container, 'mousedown', (): void => {
+            const activeAnnotation = chart &&
+                chart.navigationBindings &&
+                chart.navigationBindings.activeAnnotation;
+
+            if (activeAnnotation) {
+                activeAnnotation.cancelClick = true;
+
+                const unbind = addEvent(doc, 'click', (): void => {
+                    setTimeout((): void => {
+                        activeAnnotation.cancelClick = false;
+                    }, 0);
+                    unbind();
+                });
+            }
+        });
     }
 
     /* *
@@ -167,6 +189,7 @@ class Popup extends BasePopup {
 
     public chart?: Chart;
     public formType?: string;
+    public lang: Record<string, string>;
 
     /* *
      *
