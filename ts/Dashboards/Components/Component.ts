@@ -82,6 +82,15 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      *
      * */
 
+    /**
+     *
+     * Creates HTML text element like header or title
+     *
+     * @param tagName
+     * @param elementName
+     * @param textOptions
+     * @returns
+     */
     public static createTextElement(
         tagName: string,
         elementName: string,
@@ -261,8 +270,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Creates a component in the cell.
-     * 
-     * @param options 
+     *
+     * @param options
      */
     constructor(options: Partial<Component.ComponentOptions>) {
         this.options = merge(Component.defaultOptions, options);
@@ -330,7 +339,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
     * Handles the sync options. Applies the given defaults if no
     * specific callback given.
-    * 
+    *
     * @param defaultHandlers
     * @returns
     */
@@ -419,7 +428,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Adds event listeners to data table.
-     * @param table 
+     * @param table
      * @internal
      */
     private setupTableListeners(table: DataTable): void {
@@ -485,8 +494,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Attaches data store to the component.
-     * @param store 
-     * @returns 
+     * @param store
+     * @returns
      */
     public setStore(store: Component.StoreTypes | undefined): this {
         // Clean up old event listeners
@@ -538,9 +547,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         return this;
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     setActiveGroup(group: ComponentGroup | string | null): void {
         if (typeof group === 'string') {
             group = ComponentGroup.getComponentGroup(group) || null;
@@ -558,8 +565,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Gets height of the component's content.
-     * 
-     * @returns 
+     *
+     * @returns
      * @internal
      */
     private getContentHeight(): number {
@@ -741,8 +748,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Adds title at the top of component's container.
-     * @param titleOptions 
-     * @returns 
+     * @param titleOptions
+     * @returns
      */
     public setTitle(titleOptions: Component.TextOptionsType): void {
         const previousTitle = this.titleElement;
@@ -772,9 +779,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Adds caption at the bottom of component's container.
-     * 
-     * @param captionOptions 
-     * @returns 
+     *
+     * @param captionOptions
+     * @returns
      */
     public setCaption(captionOptions: Component.TextOptionsType): void {
         const previousCaption = this.captionElement;
@@ -901,7 +908,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Destroys the component.
-     * 
+     *
      * @todo Should perhaps also remove the component from the registry
      * or set an `isactive` flag to false.
      */
