@@ -47,6 +47,9 @@ declare global {
 }
 
 
+/**
+ *
+ */
 function getAxisMinMaxMap(chart: Chart): Array<{
     coll: string;
     extremes: { min: number | undefined; max: number | undefined };
@@ -108,49 +111,61 @@ const configs: {
             function (this: ComponentTypes): Function | void {
                 if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const { chart, board } = this;
+                    const table = this.connector && this.connector.table;
 
-                    const table = this.connector?.table;
+                    if (board && table) {
+                        const { dataCursor: cursor } = board;
 
-                    if(board && table){
-                        const {dataCursor} = board;
+                        this.on('afterRender', (e): void => {
+                            const component = e.target;
 
-                        this.options.chartOptions = {
-                            ...this.options.chartOptions,
-                            plotOptions:  {
-                                series: {
-                                    point: {
-                                        events: {
-                                            // emit table dataCursor
-                                            mouseOver: function () {
-                                                console.log('mousing')
-                                                dataCursor.emitCursor(table, {
-                                                    type: 'position',
-                                                    row: (this as any).x,
-                                                    state: 'point.mouseOver'
-                                                });
-                                            },
-                                            mouseOut: function () {
-                                                dataCursor.emitCursor(table, {
-                                                    type: 'position',
-                                                    row: (this as any).x,
-                                                    state: 'point.mouseOut'
-                                                });
+                            if (component && 'chart' in component) {
+                                if (chart && chart.series) {
+                                    chart.series.forEach((series): void => {
+                                        series.update({
+                                            point: {
+                                                events: {
+                                                    // emit table cursor
+                                                    mouseOver: function (): void {
+                                                        cursor.emitCursor(table, {
+                                                            type: 'position',
+                                                            row: this.x,
+                                                            state: 'point.mouseOver'
+                                                        });
+                                                    },
+                                                    mouseOut: function (): void {
+                                                        cursor.emitCursor(table, {
+                                                            type: 'position',
+                                                            row: this.x,
+                                                            state: 'point.mouseOut'
+                                                        });
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    });
+
+                                }
+                            }
+
+                        });
+
+
+                        // Return function that handles cleanup
+                        return function (): void {
+                            if (chart && chart.series) {
+                                chart.series.forEach((series): void => {
+                                    series.update({
+                                        point: {
+                                            events: {
+                                                mouseOver: void 0,
+                                                mouseOut: void 0
                                             }
                                         }
-                                    }
-                                }
+                                    });
+                                });
 
-                            } 
-                        } as any;
-
-
-
-
-                        const callbacks = [ ()=>{}];
-
-                        // Return a function that calls the callbacks
-                        return function (): void {
-                            callbacks.forEach((callback): void => callback());
+                            }
                         };
                     }
                 }
@@ -316,31 +331,26 @@ const configs: {
         ],
         tooltipHandler: [
             'tooltipHandler',
-            undefined,//'afterHoverPointChange',
+            void 0, // 'afterHoverPointChange',
             function (this: HighchartsComponent): void {
                 const { chart, board } = this;
-                const table = this.connector?.table;
-                if(board && table){
-                    const {dataCursor}  =board;
-                   dataCursor.addListener(table.id, 'point.mouseOver',  (e) => {
-                        const { chart } = this;
-                        if(chart && chart.series.length){
-                            const [series] = chart.series;
-                            console.log({series})
-                            if(e.cursor.type === 'position' && 'row' in e.cursor){
-                                const [point] = series.data.filter(point => point.x === (e.cursor as any).row);
-                                console.log({point})
-                        
-                                if (point) {
-                                    chart.tooltip?.refresh(point);
+                const table = this.connector && this.connector.table;
+                if (board && table) {
+                    const { dataCursor: cursor } = board;
+                    if (cursor) {
+                        cursor.addListener(table.id, 'point.mouseOver', (e): void => {
+                            if (chart && chart.series.length) {
+                                const [series] = chart.series;
+                                if (e.cursor.type === 'position' && 'row' in e.cursor) {
+                                    const [point] = series.data.filter((point): boolean => point.x === (e.cursor as any).row);
+
+                                    if (point) {
+                                        chart.tooltip && chart.tooltip.refresh(point);
+                                    }
                                 }
                             }
-                        }
-                    });
-
-                    // dataCursor.addListener(table.id, 'point.mouseOut', function () {
-                    //     chart.tooltip?.hide();
-                    // });
+                        });
+                    }
                 }
             }
         ],

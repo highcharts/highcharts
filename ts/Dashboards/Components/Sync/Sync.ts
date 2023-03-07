@@ -130,10 +130,11 @@ class Sync {
                     if (!this.isRegisteredHandler(handler.id)) {
                         this.registerSyncHandler(handler);
 
-                        if(handlerConfig[1]){
+                        // TODO: workaround for now
+                        // we should only use register in the future
+                        if (handlerConfig[1] !== void 0) {
                             handler.create(component);
                         } else {
-                            console.log({handler})
                             handler.register(component);
                         }
 

@@ -422,30 +422,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
     }
 
-    public getBoard(): Board | undefined{
-
-        if(this.parentCell?.row.layout){
-            return this.parentCell.row.layout.board;
-        }
-
-        const {boards} = Dashboards;
-        let foundBoard = undefined;
-
-        console.log()
-
-        boards.forEach(board =>{
-            board?.mountedComponents.forEach(componentOptions => {
-                if(componentOptions.component?.id === this.id){
-                    foundBoard = board;
-                }
-            })
-
-        });
-
-        return foundBoard;
-    }
-
-
     private getContentHeight(): number {
         const parentHeight =
             this.dimensions.height || Number(getStyle(this.element, 'height'));

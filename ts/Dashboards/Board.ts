@@ -108,6 +108,8 @@ class Board implements Serializable<Board, Board.JSON> {
             this.setLayoutsFromJSON(options.layoutsJSON);
         }
 
+        // Add table cursors support.
+        this.dataCursor = new DataCursor();
         // Init components from options.
         if (options.components) {
             this.setComponents(options.components);
@@ -115,9 +117,6 @@ class Board implements Serializable<Board, Board.JSON> {
 
         // Init events.
         this.initEvents();
-
-        // Add table cursors support.
-        this.dataCursor = new DataCursor();
 
         // Add fullscreen support.
         this.fullscreen = new Fullscreen(this);

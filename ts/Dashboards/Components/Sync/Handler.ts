@@ -44,7 +44,11 @@ export default class SyncHandler {
     public func: Function;
     public callback?: Function;
 
-    constructor(id: string, trigger: SharedState.eventTypes | undefined, func: Function) {
+    constructor(
+        id: string,
+        trigger: SharedState.eventTypes | undefined,
+        func: Function
+    ) {
         this.id = id;
         this.presentationStateTrigger = trigger;
         this.func = func;
@@ -74,7 +78,7 @@ export default class SyncHandler {
 
     public register(component: ComponentTypes): void {
         const { func } = this;
-        func.call(component);
+        this.callback = func.call(component);
     }
 
     public remove(): void {
