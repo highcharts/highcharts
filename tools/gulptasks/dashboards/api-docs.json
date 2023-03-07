@@ -6,9 +6,9 @@
     "entryPoints": [
         "../../../ts/Dashboards/Board.ts",
         "../../../ts/Data/DataTable.ts",
-        "../../../ts/Dashboards/Component/Component.ts",
-        "../../../ts/Dashboards/Component/HTMLComponent.ts",
-        "../../../ts/Dashboards/Component/KPIComponent.ts",
+        "../../../ts/Dashboards/Components/Component.ts",
+        "../../../ts/Dashboards/Components/HTMLComponent.ts",
+        "../../../ts/Dashboards/Components/KPIComponent.ts",
         "../../../ts/Extensions/DashboardPlugins/HighchartsComponent.ts",
         "../../../ts/Extensions/DashboardPlugins/DataGridComponent.ts",
         "../../../ts/Extensions/DataGridPlugin.ts",
