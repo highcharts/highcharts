@@ -396,7 +396,7 @@ jobs:
       reference-branch:
         description: "The reference branch"
         type: string
-        default: "dashboards/main"
+        default: "db/visual-tests-cypress"
     steps:
       - <<: *add_gh_keys
       - <<: *add_to_ssh_config

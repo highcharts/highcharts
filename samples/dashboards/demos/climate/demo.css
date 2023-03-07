@@ -6,6 +6,11 @@
  *
  * */
 
+* {
+    background-color: black;
+    border: 20px solid black;
+}
+
 .highcharts-dashboards-wrapper {
     --button-filter: none;
     --color-background: none;
