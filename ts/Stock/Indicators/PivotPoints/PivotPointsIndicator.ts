@@ -128,7 +128,7 @@ class PivotPointsIndicator extends SMAIndicator {
     public translate(this: PivotPointsIndicator): void {
         const indicator = this;
 
-        SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
+        super.translate.apply(indicator);
 
         indicator.points.forEach(
             function (
@@ -197,11 +197,9 @@ class PivotPointsIndicator extends SMAIndicator {
             }
             endPoint = point.plotX;
         }
-        allPivotPoints.forEach(function (
-            pivotPoints: Array<LinePoint>
-        ): void {
+        allPivotPoints.forEach((pivotPoints): void => {
             path = path.concat(
-                SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(
+                super.getGraphPath.call(
                     indicator,
                     pivotPoints
                 )
@@ -227,7 +225,7 @@ class PivotPointsIndicator extends SMAIndicator {
             // Add one more item, which will just store dataLabels from
             // previous iteration
             pointMapping.concat([false]).forEach(
-                function (position: (string|boolean), k: number): void {
+                (position: (string|boolean), k: number): void => {
                     i = pointsLength;
                     while (i--) {
                         point = indicator.points[i];
@@ -265,7 +263,7 @@ class PivotPointsIndicator extends SMAIndicator {
                                     null;
                         }
                     }
-                    SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels
+                    super.drawDataLabels
                         .call(indicator);
                 }
             );
