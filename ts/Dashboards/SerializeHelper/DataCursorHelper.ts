@@ -22,7 +22,7 @@
 import type CoreJSON from '../../Core/JSON';
 import type Serializable from '../Serializable';
 
-import DataStates from '../../Data/DataStates.js';
+import DataCursor from '../../Data/DataCursor.js';
 
 /* *
  *
@@ -33,16 +33,16 @@ import DataStates from '../../Data/DataStates.js';
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {DataStatesHelper.JSON} json
+ * @param {DataCursorHelper.JSON} json
  * JSON to deserialize as a class instance or object.
  *
- * @return {DataStates}
+ * @return {DataCursor}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: DataStatesHelper.JSON
-): DataStates {
-    return new DataStates(json.stateMap);
+    json: DataCursorHelper.JSON
+): DataCursor {
+    return new DataCursor(json.stateMap);
 }
 
 /**
@@ -57,8 +57,8 @@ function fromJSON(
  */
 function jsonSupportFor(
     obj: AnyRecord
-): obj is DataStates {
-    return obj instanceof DataStates;
+): obj is DataCursor {
+    return obj instanceof DataCursor;
 }
 
 /**
@@ -71,17 +71,17 @@ function jsonSupportFor(
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
-    obj: DataStates
-): DataStatesHelper.JSON {
+    obj: DataCursor
+): DataCursorHelper.JSON {
     const stateMap = obj.stateMap,
-        stateMapJSON: DataStatesHelper.StateMapJSON = {},
+        stateMapJSON: DataCursorHelper.StateMapJSON = {},
         tableIds = Object.keys(obj.stateMap);
 
-    let cursors: Array<DataStates.Cursor>,
-        cursorsJSON: CoreJSON.Array<DataStatesHelper.CursorJSON>,
-        tableId: DataStates.TableId,
-        state: DataStates.State,
-        states: Array<DataStates.State>;
+    let cursors: Array<DataCursor.Type>,
+        cursorsJSON: CoreJSON.Array<DataCursorHelper.TypeJSON>,
+        tableId: DataCursor.TableId,
+        state: DataCursor.State,
+        states: Array<DataCursor.State>;
 
     for (let i = 0, iEnd = tableIds.length; i < iEnd; ++i) {
         tableId = tableIds[i];
@@ -102,7 +102,7 @@ function toJSON(
     }
 
     return {
-        $class: 'Data.DataStates',
+        $class: 'Data.DataCursor',
         stateMap: stateMapJSON
     };
 }
@@ -113,7 +113,7 @@ function toJSON(
  *
  * */
 
-namespace DataStatesHelper {
+namespace DataCursorHelper {
 
     /* *
      *
@@ -121,31 +121,31 @@ namespace DataStatesHelper {
      *
      * */
 
-    export type CursorJSON = (
-        | CursorPositionJSON
-        | CursorRangeJSON
+    export type TypeJSON = (
+        | PositionJSON
+        | RangeJSON
     );
 
-    export interface CursorPositionJSON extends CoreJSON.Object {
+    export interface PositionJSON extends CoreJSON.Object {
         column?: string;
         row?: number;
-        state: DataStates.State;
+        state: DataCursor.State;
         type: 'position';
     }
 
-    export interface CursorRangeJSON extends CoreJSON.Object {
+    export interface RangeJSON extends CoreJSON.Object {
         columns?: Array<string>;
         firstRow: number;
         lastRow: number;
-        state: DataStates.State;
+        state: DataCursor.State;
         type: 'range';
     }
 
-    export interface JSON extends Serializable.JSON<'Data.DataStates'> {
+    export interface JSON extends Serializable.JSON<'Data.DataCursor'> {
         stateMap: StateMapJSON;
     }
 
-    export type StateMapJSON = CoreJSON.Object<CoreJSON.Object<CoreJSON.Array<CursorJSON>>>;
+    export type StateMapJSON = CoreJSON.Object<CoreJSON.Object<CoreJSON.Array<TypeJSON>>>;
 
 }
 
@@ -156,11 +156,11 @@ namespace DataStatesHelper {
  * */
 
 
-const DataStatesHelper: Serializable.Helper<DataStates, DataStatesHelper.JSON> = {
-    $class: 'Data.DataStates',
+const DataCursorHelper: Serializable.Helper<DataCursor, DataCursorHelper.JSON> = {
+    $class: 'Data.DataCursor',
     fromJSON,
     jsonSupportFor,
     toJSON
 };
 
-export default DataStatesHelper;
+export default DataCursorHelper;

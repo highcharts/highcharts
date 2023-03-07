@@ -33,9 +33,9 @@ import type DataTable from './DataTable';
  * columns, or rows.
  *
  * @class
- * @name Data.DataStates
+ * @name Data.DataCursor
  */
-class DataStates {
+class DataCursor {
 
     /* *
      *
@@ -44,7 +44,7 @@ class DataStates {
      * */
 
     public constructor(
-        stateMap: DataStates.StateMap = {}
+        stateMap: DataCursor.StateMap = {}
     ) {
         this.emittingRegister = [];
         this.listenerMap = {};
@@ -65,12 +65,12 @@ class DataStates {
     /**
      * Contains listeners of states on tables.
      */
-    public readonly listenerMap: DataStates.ListenerMap;
+    public readonly listenerMap: DataCursor.ListenerMap;
 
     /**
      * Contains lasting states that are kept over multiple changes.
      */
-    public readonly stateMap: DataStates.StateMap;
+    public readonly stateMap: DataCursor.StateMap;
 
     /* *
      *
@@ -83,11 +83,8 @@ class DataStates {
      *
      * @example
      * ```TypeScript
-     * dataStates.addListener(myTable.id, 'hover', (e: DataStates.Event) => {
-     *     if (
-     *         e.cursor.tableScope === 'modified' &&
-     *         e.cursor.type === 'position'
-     *     ) {
+     * dataCursor.addListener(myTable.id, 'hover', (e: DataCursor.Event) => {
+     *     if (e.cursor.type === 'position') {
      *         console.log(`Hover over row #${e.cursor.row}.`);
      *     }
      * });
@@ -95,22 +92,22 @@ class DataStates {
      *
      * @function #addListener
      *
-     * @param {Data.DataStates.TableId} tableId
+     * @param {Data.DataCursor.TableId} tableId
      * The ID of the table to listen to.
      *
-     * @param {Data.DataStates.State} state
+     * @param {Data.DataCursor.State} state
      * The state on the table to listen to.
      *
-     * @param {Data.DataStates.Listener} listener
+     * @param {Data.DataCursor.Listener} listener
      * The listener to register.
      *
-     * @return {Data.DataStates}
-     * Returns the DataStates instance for a call chain.
+     * @return {Data.DataCursor}
+     * Returns the DataCursor instance for a call chain.
      */
     public addListener(
-        tableId: DataStates.TableId,
-        state: DataStates.State,
-        listener: DataStates.Listener
+        tableId: DataCursor.TableId,
+        state: DataCursor.State,
+        listener: DataCursor.Listener
     ): this {
         const listenerMap = this.listenerMap[tableId] = (
             this.listenerMap[tableId] ||
@@ -130,7 +127,7 @@ class DataStates {
      * @private
      */
     private buildEmittingTag(
-        e: DataStates.Event
+        e: DataCursor.Event
     ): string {
         return (
             e.cursor.type === 'position' ?
@@ -158,12 +155,11 @@ class DataStates {
      *
      * @example
      * ```TypeScript
-     * dataStates.emit(myTable, {
+     * dataCursor.emit(myTable, {
      *     type: 'position',
      *     column: 'city',
      *     row: 4,
      *     state: 'hover',
-     *     tableScope: 'modified'
      * });
      * ```
      *
@@ -172,7 +168,7 @@ class DataStates {
      * @param {Data.DataTable} table
      * The related table of the cursor.
      *
-     * @param {Data.DataStates.Cursor} cursor
+     * @param {Data.DataCursor.Type} cursor
      * The state cursor to emit.
      *
      * @param {Event} [event]
@@ -180,14 +176,14 @@ class DataStates {
      *
      * @param {boolean} [lasting]
      * Whether this state cursor should be kept until it is cleared with
-     * {@link DataStates#remitCursor}.
+     * {@link DataCursor#remitCursor}.
      *
-     * @return {Data.DataStates}
-     * Returns the DataStates instance for a call chain.
+     * @return {Data.DataCursor}
+     * Returns the DataCursor instance for a call chain.
      */
     public emitCursor(
         table: DataTable,
-        cursor: DataStates.Cursor,
+        cursor: DataCursor.Type,
         event?: Event,
         lasting?: boolean
     ): this {
@@ -212,15 +208,14 @@ class DataStates {
                     cursors = stateMap[cursor.state] = [];
                 }
 
-                if (DataStates.getIndex(cursor, cursors) === -1) {
+                if (DataCursor.getIndex(cursor, cursors) === -1) {
                     cursors.push(cursor);
                 }
             }
 
-            const e: DataStates.Event = {
+            const e: DataCursor.Event = {
                 cursor,
                 cursors: cursors || [],
-                states: this,
                 table
             };
 
@@ -262,15 +257,15 @@ class DataStates {
      * @param {string} tableId
      * ID of the related cursor table.
      *
-     * @param {Data.DataStates.Cursor} cursor
+     * @param {Data.DataCursor.Type} cursor
      * Copy or reference of the cursor.
      *
-     * @return {Data.DataStates}
-     * Returns the DataStates instance for a call chain.
+     * @return {Data.DataCursor}
+     * Returns the DataCursor instance for a call chain.
      */
     public remitCursor(
         tableId: string,
-        cursor: DataStates.Cursor
+        cursor: DataCursor.Type
     ): this {
         const cursors = (
             this.stateMap[tableId] &&
@@ -278,7 +273,7 @@ class DataStates {
         );
 
         if (cursors) {
-            const index = DataStates.getIndex(cursor, cursors);
+            const index = DataCursor.getIndex(cursor, cursors);
 
             if (index >= 0) {
                 cursors.splice(index, 1);
@@ -293,22 +288,22 @@ class DataStates {
      *
      * @function #addListener
      *
-     * @param {Data.DataStates.TableId} tableId
+     * @param {Data.DataCursor.TableId} tableId
      * The ID of the table the listener is connected to.
      *
-     * @param {Data.DataStates.State} state
+     * @param {Data.DataCursor.State} state
      * The state on the table the listener is listening to.
      *
-     * @param {Data.DataStates.Listener} listener
+     * @param {Data.DataCursor.Listener} listener
      * The listener to deregister.
      *
-     * @return {Data.DataStates}
-     * Returns the DataStates instance for a call chain.
+     * @return {Data.DataCursor}
+     * Returns the DataCursor instance for a call chain.
      */
     public removeListener(
-        tableId: DataStates.TableId,
-        state: DataStates.State,
-        listener: DataStates.Listener
+        tableId: DataCursor.TableId,
+        state: DataCursor.State,
+        listener: DataCursor.Listener
     ): this {
         const listeners = (
             this.listenerMap[tableId] &&
@@ -335,9 +330,9 @@ class DataStates {
  * */
 
 /**
- * @class Data.DataStates
+ * @class Data.DataCursor
  */
-namespace DataStates {
+namespace DataCursor {
 
     /* *
      *
@@ -345,19 +340,19 @@ namespace DataStates {
      *
      * */
 
-    export type Cursor = (
-        | CursorPosition
-        | CursorRange
+    export type Type = (
+        | Position
+        | Range
     );
 
-    export interface CursorPosition {
+    export interface Position {
         type: 'position';
         column?: string;
         row?: number;
         state: State;
     }
 
-    export interface CursorRange {
+    export interface Range {
         type: 'range';
         columns?: Array<string>;
         firstRow: number;
@@ -367,19 +362,18 @@ namespace DataStates {
 
     export interface Event {
         event?: globalThis.Event;
-        cursor: Cursor;
-        cursors: Array<Cursor>;
-        states: DataStates;
+        cursor: Type;
+        cursors: Array<Type>;
         table: DataTable;
     }
 
-    export type Listener = (this: DataStates, e: Event) => void;
+    export type Listener = (this: DataCursor, e: Event) => void;
 
     export type ListenerMap = Record<TableId, Record<State, Array<Listener>>>;
 
     export type State = string;
 
-    export type StateMap = Record<TableId, Record<State, Array<Cursor>>>;
+    export type StateMap = Record<TableId, Record<State, Array<Type>>>;
 
     export type TableId = string;
 
@@ -396,8 +390,8 @@ namespace DataStates {
      * @private
      */
     export function getIndex(
-        needle: DataStates.Cursor,
-        cursors: Array<DataStates.Cursor>
+        needle: DataCursor.Type,
+        cursors: Array<DataCursor.Type>
     ): number {
 
         if (needle.type === 'position') {
@@ -439,8 +433,8 @@ namespace DataStates {
      * @private
      */
     export function isEqual(
-        cursorA: Cursor,
-        cursorB: Cursor
+        cursorA: Type,
+        cursorB: Type
     ): boolean {
         if (cursorA.type === 'position' && cursorB.type === 'position') {
             return (
@@ -467,8 +461,8 @@ namespace DataStates {
      * @private
      */
     export function isInRange(
-        needle: Cursor,
-        range: Cursor
+        needle: Type,
+        range: Type
     ): boolean {
 
         if (range.type === 'position') {
@@ -499,15 +493,15 @@ namespace DataStates {
      * @private
      */
     export function toPositions(
-        cursor: Cursor
-    ): Array<CursorPosition> {
+        cursor: Type
+    ): Array<Position> {
 
         if (cursor.type === 'position') {
             return [cursor];
         }
 
         const columns = (cursor.columns || []);
-        const positions: Array<CursorPosition> = [];
+        const positions: Array<Position> = [];
         const state = cursor.state;
 
         for (
@@ -548,15 +542,15 @@ namespace DataStates {
      * @private
      */
     export function toRange(
-        cursor: Cursor,
-        defaultRange?: CursorRange
-    ): CursorRange {
+        cursor: Type,
+        defaultRange?: Range
+    ): Range {
 
         if (cursor.type === 'range') {
             return cursor;
         }
 
-        const range: CursorRange = {
+        const range: Range = {
             type: 'range',
             firstRow: (
                 cursor.row ??
@@ -586,7 +580,7 @@ namespace DataStates {
  *
  * */
 
-export default DataStates;
+export default DataCursor;
 
 /* *
  *
@@ -596,60 +590,60 @@ export default DataStates;
 
 /**
  * @typedef {
- *     Data.DataState.CursorPosition|
- *     Data.DataState.CursorRange
- * } Data.DataState.Cursor
+ *     Data.DataCursor.Position|
+ *     Data.DataCursor.Range
+ * } Data.DataCursor.Type
  */
 
 /**
- * @interface Data.DataState.CursorPosition
+ * @interface Data.DataCursor.Position
  */
 /**
- * @name Data.DataState.CursorPosition#type
+ * @name Data.DataCursor.Position#type
  * @type {'position'}
  */
 /**
- * @name Data.DataState.CursorPosition#column
+ * @name Data.DataCursor.Position#column
  * @type {string|undefined}
  */
 /**
- * @name Data.DataState.CursorPosition#row
+ * @name Data.DataCursor.Position#row
  * @type {number|undefined}
  */
 /**
- * @name Data.DataState.CursorPosition#state
+ * @name Data.DataCursor.Position#state
  * @type {string}
  */
 /**
- * @name Data.DataState.CursorPosition#tableScope
+ * @name Data.DataCursor.Position#tableScope
  * @type {'original'|'modified'}
  */
 
 /**
- * @interface Data.DataState.CursorRange
+ * @interface Data.DataCursor.Range
  */
 /**
- * @name Data.DataState.CursorRange#type
+ * @name Data.DataCursor.Range#type
  * @type {'range'}
  */
 /**
- * @name Data.DataState.CursorRange#columns
+ * @name Data.DataCursor.Range#columns
  * @type {Array<string>|undefined}
  */
 /**
- * @name Data.DataState.CursorRange#firstRow
+ * @name Data.DataCursor.Range#firstRow
  * @type {number}
  */
 /**
- * @name Data.DataState.CursorRange#lastRow
+ * @name Data.DataCursor.Range#lastRow
  * @type {number}
  */
 /**
- * @name Data.DataState.CursorRange#state
+ * @name Data.DataCursor.Range#state
  * @type {string}
  */
 /**
- * @name Data.DataState.CursorRange#tableScope
+ * @name Data.DataCursor.Range#tableScope
  * @type {'original'|'modified'}
  */
 

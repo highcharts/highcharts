@@ -1,6 +1,6 @@
-const DataStates = Dashboards.DataStates;
+const DataCursor = Dashboards.DataCursor;
 const DataTable = Dashboards.DataTable;
-const states = new DataStates();
+const cursor = new DataCursor();
 const vegeTable = buildVegeTable();
 
 // Create Dashboards.Board
@@ -25,21 +25,21 @@ Dashboards.board('container', {
         {
             cell: 'highcharts-dashboards-cell-a0',
             type: 'Highcharts',
-            chartOptions: buildChartOptions('bar', vegeTable, states)
+            chartOptions: buildChartOptions('bar', vegeTable, cursor)
         }, {
             cell: 'highcharts-dashboards-cell-b0',
             type: 'Highcharts',
-            chartOptions: buildChartOptions('line', vegeTable, states)
+            chartOptions: buildChartOptions('line', vegeTable, cursor)
         }, {
             cell: 'highcharts-dashboards-cell-a1',
             type: 'Highcharts',
-            chartOptions: buildChartOptions('pie', vegeTable, states)
+            chartOptions: buildChartOptions('pie', vegeTable, cursor)
         }
     ]
 });
 
 // Build chart options for each HighchartsComponent
-function buildChartOptions(type, table, states) {
+function buildChartOptions(type, table, cursor) {
     return {
         chart: {
             events: {
@@ -47,15 +47,15 @@ function buildChartOptions(type, table, states) {
                     const chart = this;
                     const series = chart.series[0];
 
-                    // react to table states
-                    states.addListener(table.id, 'point.mouseOver', function (e) {
+                    // react to table cursor
+                    cursor.addListener(table.id, 'point.mouseOver', function (e) {
                         const point = series.data[e.cursor.row];
 
                         if (chart.hoverPoint !== point) {
                             chart.tooltip.refresh(point);
                         }
                     });
-                    states.addListener(table.id, 'point.mouseOut', function () {
+                    cursor.addListener(table.id, 'point.mouseOut', function () {
                         chart.tooltip.hide();
                     });
                 }
@@ -70,16 +70,16 @@ function buildChartOptions(type, table, states) {
             data: table.getRowObjects(0, void 0, ['name', 'y']),
             point: {
                 events: {
-                    // emit table states
+                    // emit table cursor
                     mouseOver: function () {
-                        states.emitCursor(table, {
+                        cursor.emitCursor(table, {
                             type: 'position',
                             row: this.x,
                             state: 'point.mouseOver'
                         });
                     },
                     mouseOut: function () {
-                        states.emitCursor(table, {
+                        cursor.emitCursor(table, {
                             type: 'position',
                             row: this.x,
                             state: 'point.mouseOut'
