@@ -15,7 +15,7 @@
         "strict": true,
         "module": "es6",
         "moduleResolution": "node",
-        "outDir": "../js",
+        "outDir": "../js/",
         "rootDir": "./",
         "target": "es5",
         "lib": [
@@ -29,10 +29,9 @@
         ]
     },
     "exclude": [
-        "./Core/MSPointer.ts",
         "./masters-es5/"
     ],
     "include": [
-        "**/*.ts"
+        "./**/*.ts"
     ]
 }
