@@ -77,17 +77,10 @@ const optionsToObject = (
     return merge(defaultOptions, options);
 };
 
-/*
- * @todo
- * - Automate lineIsOutsideCircle
- * - Refactor and reuse circle handling
- * - Proper typing of SVGPathElement
- */
 const applyBorderRadius = (
     path: SVGPath,
     i: number,
-    r: number,
-    lineIsOutsideCircle?: boolean
+    r: number
 ): void => {
     const a = path[i];
 
@@ -96,94 +89,88 @@ const applyBorderRadius = (
         b = path[0];
     }
 
-    // Straight line to arc
-    if ((a[0] === 'M' || a[0] === 'L') && b[0] === 'A' && b.params) {
-        const bigR = b[1],
-            { start, cx, cy } = b.params;
+    let line: SVGPath.LineTo|SVGPath.MoveTo|undefined,
+        arc: SVGPath.Arc|undefined,
+        fromLineToArc: boolean|undefined;
 
-        // Use the previous ending point to determine if the incoming line is
-        // inside or outside the arc
-        let prev = path[i - 1];
-        if (!prev && path[path.length - 1][0] === 'Z') {
-            prev = path[path.length - 2];
+    // From straight line to arc
+    if ((a[0] === 'M' || a[0] === 'L') && b[0] === 'A') {
+        line = a;
+        arc = b;
+        fromLineToArc = true;
+
+    // From arc to straight line
+    } else if (a[0] === 'A' && (b[0] === 'M' || b[0] === 'L')) {
+        line = b;
+        arc = a;
+    }
+
+    if (line && arc && arc.params) {
+        const bigR = arc[1],
+            // In our use cases, outer pie slice arcs are clockwise and inner
+            // arcs (donut/sunburst etc) are anti-clockwise
+            clockwise = arc[5],
+            { start, end, cx, cy } = arc.params;
+
+        // Some geometric constants
+        const relativeR = clockwise ? (bigR - r) : (bigR + r),
+            // The angle, on the big arc, that the border radius arc takes up
+            angleOfBorderRadius = Math.asin(r / relativeR),
+            angleOffset = clockwise ?
+                angleOfBorderRadius :
+                -angleOfBorderRadius,
+            // The distance along the radius of the big arc to the starting
+            // point of the small border radius arc
+            distanceBigCenterToStartArc = (
+                Math.cos(angleOfBorderRadius) *
+                relativeR
+            ),
+            newStartArc = start + angleOffset,
+            newEndArc = end - angleOffset;
+
+        // From line to arc
+        if (fromLineToArc) {
+            // First move to the start position at the radial line. We want to
+            // start one borderRadius closer to the center.
+            line[1] = cx + distanceBigCenterToStartArc * Math.cos(start);
+            line[2] = cy + distanceBigCenterToStartArc * Math.sin(start);
+
+            // Now draw an arc towards the point where the small circle touches
+            // the great circle.
+            path.splice(i + 1, 0, [
+                'A',
+                r,
+                r,
+                0, // slanting,
+                0, // long arc
+                1, // clockwise
+                cx + bigR * Math.cos(newStartArc),
+                cy + bigR * Math.sin(newStartArc)
+            ]);
+
+        // From arc to line
+        } else {
+            // Long or short arc must be reconsidered because we have modified
+            // the start and end points
+            arc[4] = newEndArc - start < Math.PI ? 0 : 1;
+
+            // End the big arc a bit earlier
+            arc[6] = cx + bigR * Math.cos(newEndArc);
+            arc[7] = cy + bigR * Math.sin(newEndArc);
+
+            // Draw a small arc towards a point on the end angle, but one
+            // borderRadius closer to the center relative to the perimeter.
+            path.splice(i + 1, 0, [
+                'A',
+                r,
+                r,
+                0,
+                0,
+                1,
+                cx + distanceBigCenterToStartArc * Math.cos(end),
+                cy + distanceBigCenterToStartArc * Math.sin(end)
+            ]);
         }
-        if (prev[0] === 'L' || prev[0] === 'A') {
-            lineIsOutsideCircle = Math.sqrt(
-                (cx - (prev[prev.length - 2] as number)) ** 2 +
-                (cy - (prev[prev.length - 1] as number)) ** 2
-            ) > bigR;
-        }
-
-
-        const relativeR = lineIsOutsideCircle ? (bigR + r) : (bigR - r);
-
-        const angleOfBorderRadius = Math.asin(r / relativeR);
-        const distanceBigCenterToStartArc = (
-            Math.cos(angleOfBorderRadius) *
-            relativeR
-        );
-
-        // First move to the start position along the perimeter. But we want to
-        // start one borderRadius closer to the center.
-        a[1] = cx + distanceBigCenterToStartArc * Math.cos(start);
-        a[2] = cy + distanceBigCenterToStartArc * Math.sin(start);
-
-        // Now draw an arc towards the point where the small circle touches the
-        // great circle.
-        const startBigArc = start + (
-            lineIsOutsideCircle ? -angleOfBorderRadius : angleOfBorderRadius
-        );
-        path.splice(i + 1, 0, [
-            'A',
-            r,
-            r,
-            0, // slanting,
-            0, // long arc
-            1, // clockwise
-            cx + bigR * Math.cos(startBigArc),
-            cy + bigR * Math.sin(startBigArc)
-        ]);
-
-    // Arc to straight line
-    } else if (a[0] === 'A' && a.params && (b[0] === 'M' || b[0] === 'L')) {
-        const bigR = a[1],
-            { start, end, cx, cy } = a.params;
-
-        const lineIsOutsideCircle = Math.sqrt(
-            (cx - b[1]) ** 2 + (cy - b[2]) ** 2
-        ) > bigR;
-
-        const relativeR = lineIsOutsideCircle ? (bigR + r) : (bigR - r);
-
-        const angleOfBorderRadius = Math.asin(r / relativeR);
-        const distanceBigCenterToStartArc = (
-            Math.cos(angleOfBorderRadius) *
-            relativeR
-        );
-        const endBigArc = end - (
-            lineIsOutsideCircle ? -angleOfBorderRadius : angleOfBorderRadius
-        );
-
-        // Long or short arc must be reconsidered
-        // because we have modified the start and end points
-        a[4] = end - start < Math.PI ? 0 : 1;
-
-        // End the big arc a bit earlier
-        a[6] = cx + bigR * Math.cos(endBigArc);
-        a[7] = cy + bigR * Math.sin(endBigArc);
-
-        // Draw a small arc towards a point on the end angle, but one
-        // borderRadius closer to the center relative to the perimeter.
-        path.splice(i + 1, 0, [
-            'A',
-            r,
-            r,
-            0,
-            0,
-            1,
-            cx + distanceBigCenterToStartArc * Math.cos(end),
-            cy + distanceBigCenterToStartArc * Math.sin(end)
-        ]);
 
     }
 };
