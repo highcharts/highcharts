@@ -16,6 +16,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Cell from '../Layout/Cell.js';
 import type ComponentType from './ComponentType';
 import type JSON from '../../Core/JSON';
@@ -57,7 +63,24 @@ import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/**
+ *
+ * Abstract Class of component.
+ *
+ */
 abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
     public static createTextElement(
         tagName: string,
@@ -80,7 +103,16 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
     }
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public static Sync = Sync;
+    /**
+     * Default options of the component.
+     */
     public static defaultOptions: Component.ComponentOptions = {
         className: `${classNamePrefix}component`,
         parentElement: document.body,
@@ -101,56 +133,131 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         ],
         editableOptionsBindings: EditableOptions.defaultBindings
     };
-
+    /**
+     * The HTML element or id of HTML element that is used for appending
+     * a component.
+     */
     public parentElement: HTMLElement;
+    /**
+     * Instance of cell, where component is attached.
+     */
     public parentCell?: Cell;
+    /**
+     * Store allows you to load data via URL or from a local source.
+     */
     public store?: Component.StoreTypes; // the attached store
+    /**
+     * Size of the component (width and height)
+     */
     protected dimensions: { width: number | null; height: number | null };
+    /**
+     * The HTML element where the component is.
+     */
     public element: HTMLElement;
+    /**
+     * The HTML element where the title is.
+     */
     public titleElement?: HTMLElement;
+    /**
+     * The HTML element where the caption is.
+     */
     public captionElement?: HTMLElement;
+    /**
+     * The HTML element where the component's content is.
+     */
     public contentElement: HTMLElement;
+    /**
+     * The options for the component.
+     * */
     public options: Component.ComponentOptions;
+    /**
+     * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
+     */
     public type: string;
+    /**
+     * Sets an ID for the component's `div`.
+     */
     public id: string;
-    // An array of options marked as editable by the UI.
+    /**
+     * An array of options marked as editable by the UI.
+     */
     public editableOptions: EditableOptions;
-    // Registry of callbacks registered on the component. Used in the Highcharts
-    // component to keep track of chart events.
+    /**
+     * Registry of callbacks registered on the component. Used in the Highcharts
+     * component to keep track of chart events.
+     *
+     * @internal
+     */
     public callbackRegistry = new CallbackRegistry();
-    // The interval for redrawing the component on data changes.
+    /**
+     * The interval for redrawing the component on data changes.
+     * @internal
+     */
     private tableEventTimeout?: number;
-    // Event listeners tied to the current DataTable. Used for redrawing the
-    // component on data changes.
+    /**
+     * Event listeners tied to the current DataTable. Used for redrawing the
+     * component on data changes.
+     *
+     * @internal
+     */
     private tableEvents: Function[] = [];
-    // Event listeners tied to the parent cell. Used for redrawing/resizing the
-    // component on interactions.
+    /**
+     * Event listeners tied to the parent cell. Used for redrawing/resizing the
+     * component on interactions.
+     *
+     * @internal
+     */
     private cellListeners: Function[] = [];
-    protected hasLoaded: boolean;
-    protected shouldRedraw: boolean;
 
+    /**
+     * @internal
+     */
+    protected hasLoaded: boolean;
+    /**
+     * @internal
+     */
+    protected shouldRedraw: boolean;
+    /**
+     * @internal
+     */
     protected syncHandlers: Sync.OptionsRecord;
 
-    // DataModifier that is applied on top of modifiers set on the DataStore.
+    /**
+     * DataModifier that is applied on top of modifiers set on the DataStore.
+     */
     public presentationModifier?: DataModifier;
-    // The table being presented, either a result of the above or a way to
-    // modify the table via events.
+    /**
+     * The table being presented, either a result of the above or a way to
+     * modify the table via events.
+     */
     public presentationTable?: DataTable;
 
-    // The active group of the component. Used for sync.
+    /**
+     * The active group of the component. Used for sync.
+     */
     public activeGroup: ComponentGroup | undefined = void 0;
 
     public abstract sync: Sync;
 
     /**
      * Timeouts for calls to `Component.resizeTo()`
+     *
+     * @internal
      */
     protected resizeTimeouts: number[] = [];
 
     /**
      * Timeouts for resizing the content. I.e. `chart.setSize()`
+     *
+     * @internal
      */
     protected innerResizeTimeouts: number[] = [];
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     constructor(options: Partial<Component.ComponentOptions>) {
         this.options = merge(Component.defaultOptions, options);
@@ -208,6 +315,12 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }, void 0, true);
 
     }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
     * Handles the sync options. Applies the given defaults if no
@@ -429,11 +542,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Resize the component
-     * @param {number|string|null} [width]
+     * @param width
      * The width to set the component to.
      * Can be pixels, a percentage string or null.
      * Null will unset the style
-     * @param {number|string|null} [height]
+     * @param height
      * The height to set the component to.
      * Can be pixels, a percentage string or null.
      * Null will unset the style.
@@ -508,14 +621,14 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Handles updating via options
-     * @param {Partial<Component.ComponentOptions>} newOptions
+     * @param newOptions
      * The options to apply
      *
-     * @param {boolean} redraw
+     * @param redraw
      * Set to true if the update should redraw the component.
      * If `false` the component will be redrawn only if options are changed.
      *
-     * @return {this}
+     * @returns
      * The component for chaining
      */
     public update(
