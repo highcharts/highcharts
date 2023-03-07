@@ -18,10 +18,10 @@ import type {
 } from '../SMA/SMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface TrendLineParamsOptions extends SMAParamsOptions {
     // for inheritance
@@ -32,9 +32,9 @@ export interface TrendLineOptions extends SMAOptions {
 }
 
 /* *
-*
-*  Default Export
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default TrendLineOptions;
