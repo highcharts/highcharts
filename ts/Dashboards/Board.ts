@@ -212,7 +212,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * Index of the board in the global boards array. Allows to access the
      * specific one when having multiple dashboards.
      * */
-    public index: number;
+    public readonly index: number;
 
     /**
      * An array of generated layouts.
