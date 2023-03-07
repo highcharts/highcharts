@@ -14,6 +14,14 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Options from '../../Core/Options';
 import type TextOptions from './TextOptions';
@@ -36,9 +44,67 @@ const {
     merge
 } = U;
 
-class KPIComponent extends Component {
-    public static charter?: typeof G;
+/* *
+ *
+ *  Class
+ *
+ * */
 
+/**
+ *
+ * Class that represents a KPI component.
+ *
+ */
+class KPIComponent extends Component {
+
+    /* *
+     *
+     *  Static functions
+     *
+     * */
+
+    /**
+     * Creates components from JSON.
+     *
+     * @param json
+     * @returns
+     */
+    public static fromJSON(json: KPIComponent.ClassJSON): KPIComponent {
+        const options = json.options;
+        const chartOptions =
+            options.chartOptions && JSON.parse(options.chartOptions);
+        const subtitle = JSON.parse(options.subtitle || '{}');
+        const title = options.title && JSON.parse(options.title);
+        const style = JSON.parse(options.style || '{}');
+        const thresholdColors = options.thresholdColors;
+        const value = options.value;
+        const threshold = options.threshold;
+        const valueFormat = options.valueFormat;
+
+        return new KPIComponent(
+            merge(options, {
+                chartOptions,
+                title,
+                subtitle,
+                style,
+                thresholdColors,
+                value,
+                threshold,
+                valueFormat
+            })
+        );
+    }
+
+    /* *
+     *
+     *  Static properties
+     *
+     * */
+
+    public static charter?: typeof G;
+    /**
+     * Default options of the KPI component.
+     */
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -54,6 +120,15 @@ class KPIComponent extends Component {
         }
     );
 
+    /* *
+     *
+     *  Static functions
+     *
+     * */
+
+    /**
+     * Default options of the KPI component.
+     */
     public static defaultChartOptions: DeepPartial<Options> = {
         chart: {
             type: 'spline',
@@ -89,17 +164,55 @@ class KPIComponent extends Component {
         }
     };
 
-    public options: KPIComponent.ComponentOptions;
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
+    /**
+     * KPI component's options.
+     */
+    public options: KPIComponent.ComponentOptions;
+    /**
+     * HTML element value's wrapper.
+     */
     public valueWrap: HTMLElement;
+    /**
+     * HTML element where the value is created.
+     */
     public value: HTMLElement;
+    /**
+     * The HTML element where the subtitle is created.
+     */
     public subtitle: HTMLElement;
+    /**
+     * HTML element where the chart is created.
+     */
     public chartContainer: HTMLElement;
+    /**
+     * Reference to the chart.
+     */
     public chart?: Chart;
+    /**
+     * Reference to sync component that allows to sync.
+     */
     public sync: Component['sync'];
 
+    /**
+     * Previous value of KPI.
+     */
     private prevValue?: number;
+    /**
+     * Flag used in resize method to avoid multi redraws.
+     */
     private updatingSize?: boolean;
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     constructor(options: Partial<KPIComponent.ComponentOptions>) {
         options = merge(
@@ -129,6 +242,12 @@ class KPIComponent extends Component {
             className: `${Component.defaultOptions.className}-kpi-chart-container`
         });
     }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public load(): this {
         super.load();
@@ -349,6 +468,13 @@ class KPIComponent extends Component {
         }
         return '';
     }
+
+    /**
+     * Converts the class instance to a class JSON.
+     *
+     * @returns
+     * Class JSON of this Component instance.
+     */
     public toJSON(): KPIComponent.ClassJSON {
         const base = super.toJSON();
         const json = {
@@ -369,32 +495,6 @@ class KPIComponent extends Component {
         this.emit({ type: 'toJSON', json: base });
 
         return json;
-    }
-
-    public static fromJSON(json: KPIComponent.ClassJSON): KPIComponent {
-        const options = json.options;
-        const chartOptions =
-            options.chartOptions && JSON.parse(options.chartOptions);
-        const subtitle = JSON.parse(options.subtitle || '{}');
-        const title = options.title && JSON.parse(options.title);
-        const style = JSON.parse(options.style || '{}');
-        const thresholdColors = options.thresholdColors;
-        const value = options.value;
-        const threshold = options.threshold;
-        const valueFormat = options.valueFormat;
-
-        return new KPIComponent(
-            merge(options, {
-                chartOptions,
-                title,
-                subtitle,
-                style,
-                thresholdColors,
-                value,
-                threshold,
-                valueFormat
-            })
-        );
     }
 }
 

@@ -46,6 +46,18 @@ AST.allowedAttributes = [
     ...AST.allowedAttributes,
     'for', 'value', 'checked', 'src', 'name', 'selected'];
 AST.allowedReferences = [...AST.allowedReferences, 'data:image/'];
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/**
+ *
+ * Class that represents a HTML component.
+ *
+ */
 class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
     /* *
@@ -53,6 +65,10 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      *  Static properties
      *
      * */
+
+    /**
+     * Default options of the HTML component.
+     */
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -72,6 +88,12 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      *
      * */
 
+    /**
+     * Creates components from JSON.
+     *
+     * @param json
+     * @returns
+     */
     public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
         const options = json.options;
         const elements = (
@@ -106,14 +128,26 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      * */
 
     private innerElements: HTMLElement[];
+    /**
+     * Array of HTML elements, declared as string or node.
+     */
     private elements: AST.Node[];
+    /**
+     * Enables auto-scaling of the elements inside the component.
+     */
     private scaleElements: boolean;
+    /**
+     * HTML component's options.
+     */
     public options: HTMLComponent.HTMLComponentOptions;
+    /**
+     * Reference to sync component that allows to sync.
+     */
     public sync: Component['sync'];
 
     /* *
      *
-     *  Class constructor
+     *  Constructor
      *
      * */
 
@@ -147,7 +181,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
     /* *
      *
-     *  Class methods
+     *  Functions
      *
      * */
     public load(): this {
@@ -174,8 +208,9 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         return this;
     }
 
-    // WIP handle scaling inner elements
-    // Could probably also implement responsive config
+    /**
+     * Handle scaling inner elements.
+     */
     public autoScale(): void {
         this.element.style.display = 'flex';
         this.element.style.flexDirection = 'column';
@@ -196,8 +231,9 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         }
     }
 
-    // WIP basic font size scaling
-    // Should also take height into account
+    /**
+     * Basic font size scaling
+     */
     public scaleText(): void {
         this.contentElement.childNodes.forEach((element): void => {
             if (element instanceof HTMLElement) {
@@ -208,6 +244,10 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         });
     }
 
+    /**
+     * 
+     * @returns
+     */
     public render(): this {
         this.emit({ type: 'beforeRender' });
         super.render(); // Fires the render event and calls load
@@ -215,6 +255,10 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         return this;
     }
 
+    /**
+     * 
+     * @returns
+     */
     public redraw(): this {
         super.redraw();
         this.constructTree();
@@ -223,6 +267,12 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         return this;
     }
 
+    /**
+     * 
+     * @param width
+     * @param height
+     * @returns
+     */
     public resize(
         width?: number | string | null,
         height?: number | string | null
@@ -234,14 +284,23 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         return this;
     }
 
+    /**
+     * 
+     * @param options
+     * @returns
+     */
     public update(options: Partial<HTMLComponent.HTMLComponentOptions>): this {
         super.update(options);
         this.emit({ type: 'afterUpdate' });
         return this;
     }
 
-    // Could probably use the serialize function moved on
-    // the exportdata branch
+    /**
+     * Could probably use the serialize function moved on
+     * the exportdata branch
+     *
+     * @internal
+     */
     private constructTree(): void {
         // Remove old tree if redrawing
         while (this.contentElement.firstChild) {
@@ -252,6 +311,12 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         parser.addToDOM(this.contentElement);
     }
 
+    /**
+     * Converts the class instance to a class JSON.
+     *
+     * @returns
+     * Class JSON of this Component instance.
+     */
     public toJSON(): HTMLComponent.ClassJSON {
         const elements = (this.options.elements || [])
             .map((el): string => JSON.stringify(el));

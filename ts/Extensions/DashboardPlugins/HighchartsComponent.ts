@@ -65,10 +65,9 @@ declare module '../../Core/GlobalsLike' {
  * */
 
 /**
- * Highcharts component for the Highcharts Dashboards.
- * @private
- * @class
- * @name Highcharts.DashboardComponent
+ *
+ * Class that represents a Highcharts component.
+ *
  */
 class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEvents> {
 
@@ -82,6 +81,9 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     public static syncHandlers = HighchartsSyncHandlers;
 
+    /**
+     * Default options of the Highcharts component.
+     */
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -119,6 +121,11 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         }
     );
 
+    /* *
+     *
+     *  Static functions
+     *
+     * */
 
     public static fromJSON(
         json: HighchartsComponent.ClassJSON
@@ -155,12 +162,32 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * */
 
+    /**
+     * Set of chart's options.
+     */
     public chartOptions: Partial<Options>;
+    /**
+     * Reference to the chart.
+     */
     public chart: Chart | undefined;
+    /**
+     * HTML element where the chart is created.
+     */
     public chartContainer: HTMLElement;
+    /**
+     * Highcharts component's options.
+     */
     public options: HighchartsComponent.ComponentOptions;
+    /**
+     * Type of constructor used for creating proper chart like: chart, stock,
+     * gantt or map.
+     */
     public chartConstructor: HighchartsComponent.ConstructorType;
+    /**
+     * Reference to sync component that allows to sync i.e tooltips.
+     */
     public sync: Component['sync'];
+
     /* *
      *
      *  Constructor
@@ -216,10 +243,14 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     /* *
      *
-     *  Class methods
+     *  Functions
      *
      * */
 
+    /**
+     * 
+     * @returns 
+     */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -232,6 +263,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         return this;
     }
 
+    /**
+     * 
+     * @returns 
+     */
     public render(): this {
         const hcComponent = this;
 
@@ -255,6 +290,12 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         return this;
     }
 
+    /**
+     * 
+     * @param width 
+     * @param height 
+     * @returns 
+     */
     public resize(
         width?: number | string | null,
         height?: number | string | null
@@ -281,6 +322,9 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         return this;
     }
 
+    /**
+     * 
+     */
     private setupStoreUpdate(): void {
         const { store, chart } = this;
 
@@ -297,6 +341,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     /**
      * Internal method for handling option updates.
+     *
+     * @internal
      */
     private setOptions(): void {
         if (this.options.chartClassName) {
@@ -312,8 +358,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     /**
      * Update the store, when the point is being dragged.
-     * @param  {Point} point Dragged point.
-     * @param  {Component.StoreTypes} store Store to update.
+     * @param point Dragged point.
+     * @param store Store to update.
      */
     private onChartUpdate(
         point: Point,
@@ -329,10 +375,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     }
     /**
      * Handles updating via options.
-     * @param {Partial<Component.ComponentOptions>} options
+     * @param options
      * The options to apply.
      *
-     * @param {boolean} redraw
+     * @param redraw
      * The flag triggers the main redraw operation.
      */
     private updateComponentOptions(
@@ -461,14 +507,12 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         }
     }
 
-
     private initChart(): Chart {
         if (this.chart) {
             this.chart.destroy();
         }
         return this.constructChart();
     }
-
 
     private constructChart(): Chart {
         const charter = (HighchartsComponent.charter || G);
@@ -548,7 +592,12 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             });
         }
     }
-
+    /**
+     * Converts the class instance to a class JSON.
+     *
+     * @returns
+     * Class JSON of this Component instance.
+     */
     public toJSON(): HighchartsComponent.ClassJSON {
         const chartOptions = JSON.stringify(this.options.chartOptions),
             chartConstructor = this.options.chartConstructor;
