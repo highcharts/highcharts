@@ -18,14 +18,11 @@
  *
  * */
 
-import type Chart from '../../../Core/Chart/Chart';
-
-import AST from '../../../Core/Renderer/HTML/AST.js';
-import U from '../../../Core/Utilities.js';
+import AST from '../Core/Renderer/HTML/AST.js';
+import U from '../Core/Utilities.js';
 const {
     addEvent,
-    createElement,
-    fireEvent
+    createElement
 } = U;
 
 /* *
@@ -58,7 +55,7 @@ class BasePopup {
             parentDiv
         );
 
-        this.addCloseBtn();
+        this.closeButton = this.addCloseButton();
     }
 
     /* *
@@ -67,8 +64,8 @@ class BasePopup {
      *
      * */
 
-    public chart?: Chart;
     public container: HTMLElement;
+    public closeButton: HTMLElement;
     public formType?: string;
     public iconsURL: string;
 
@@ -81,11 +78,12 @@ class BasePopup {
     /**
      * Create HTML element and attach click event to close popup.
      */
-    private addCloseBtn(): void {
-        const iconsURL = this.iconsURL;
+    private addCloseButton(): HTMLElement {
+        const popup = this,
+            iconsURL = this.iconsURL;
 
         // Create close popup button.
-        const closeBtn = createElement(
+        const closeButton = createElement(
             'div',
             {
                 className: 'highcharts-popup-close'
@@ -94,34 +92,29 @@ class BasePopup {
             this.container
         );
 
-        closeBtn.style['background-image' as any] = 'url(' +
+        closeButton.style['background-image' as any] = 'url(' +
                 (
                     iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
                         iconsURL : iconsURL + 'close.svg'
                 ) + ')';
 
         ['click', 'touchstart'].forEach((eventName: string): void => {
-            addEvent(closeBtn, eventName, (): void => {
-                if (this.chart) {
-                    const navigationBindings = this.chart.navigationBindings;
-
-                    fireEvent(navigationBindings, 'closePopup');
-
-                    if (
-                        navigationBindings &&
-                        navigationBindings.selectedButtonElement
-                    ) {
-                        fireEvent(
-                            navigationBindings,
-                            'deselectButton',
-                            { button: navigationBindings.selectedButtonElement }
-                        );
-                    }
-                } else {
-                    this.closePopup();
-                }
-            });
+            addEvent(
+                closeButton,
+                eventName,
+                popup.closeButtonEvents.bind(popup)
+            );
         });
+
+        return closeButton;
+    }
+
+    /**
+     * Close button events.
+     * @return {void}
+     */
+    public closeButtonEvents(): void {
+        this.closePopup();
     }
 
     /**
@@ -130,8 +123,7 @@ class BasePopup {
     public showPopup(): void {
         const popupDiv = this.container,
             toolbarClass = 'highcharts-annotation-toolbar',
-            popupCloseBtn = popupDiv
-                .querySelectorAll('.highcharts-popup-close')[0];
+            popupCloseButton = this.closeButton;
 
         this.formType = void 0;
 
@@ -147,7 +139,7 @@ class BasePopup {
         }
 
         // Add close button.
-        popupDiv.appendChild(popupCloseBtn);
+        popupDiv.appendChild(popupCloseButton);
         popupDiv.style.display = 'block';
         popupDiv.style.height = '';
     }

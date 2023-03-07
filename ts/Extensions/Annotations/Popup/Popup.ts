@@ -23,7 +23,7 @@ import type AnnotationOptions from '../AnnotationOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
-import BasePopup from './BasePopup.js';
+import BasePopup from '../../BasePopup.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
 import D from '../../../Core/Defaults.js';
@@ -36,6 +36,7 @@ const {
     addEvent,
     createElement,
     extend,
+    fireEvent,
     pick
 } = U;
 
@@ -264,6 +265,27 @@ class Popup extends BasePopup {
         input.setAttribute('highcharts-data-name', option);
 
         return input;
+    }
+
+    public closeButtonEvents(): void {
+        if (this.chart) {
+            const navigationBindings = this.chart.navigationBindings;
+
+            fireEvent(navigationBindings, 'closePopup');
+
+            if (
+                navigationBindings &&
+                navigationBindings.selectedButtonElement
+            ) {
+                fireEvent(
+                    navigationBindings,
+                    'deselectButton',
+                    { button: navigationBindings.selectedButtonElement }
+                );
+            }
+        } else {
+            super.closeButtonEvents();
+        }
     }
 
     /**
