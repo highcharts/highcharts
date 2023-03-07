@@ -23,7 +23,7 @@ import type PluginHandler from '../../Dashboards/PluginHandler';
 import type G from '../../Core/Globals';
 
 import HighchartsComponent from './HighchartsComponent.js';
-import KPIComponent from '../../Dashboards/Component/KPIComponent.js';
+import KPIComponent from '../../Dashboards/Components/KPIComponent.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 
 /* *

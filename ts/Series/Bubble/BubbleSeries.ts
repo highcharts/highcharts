@@ -594,8 +594,16 @@ class BubbleSeries extends ScatterSeries {
                     ).getZExtremes();
 
                     if (zExtremes) {
-                        zMin = Math.min(zMin || zExtremes.zMin, zExtremes.zMin);
-                        zMax = Math.max(zMax || zExtremes.zMax, zExtremes.zMax);
+                        // Changed '||' to 'pick' because min or max can be 0.
+                        // #17280
+                        zMin = Math.min(
+                            pick(zMin, zExtremes.zMin),
+                            zExtremes.zMin
+                        );
+                        zMax = Math.max(
+                            pick(zMax, zExtremes.zMax),
+                            zExtremes.zMax
+                        );
                         valid = true;
                     }
                 }

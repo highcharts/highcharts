@@ -1,7 +1,7 @@
-import DataStates from '/base/code/es-modules/Data/DataStates.js';
-import DataStatesHelper from '/base/code/es-modules/Dashboards/SerializeHelper/DataStatesHelper.js';
+import DataCursor from '/base/code/es-modules/Data/DataCursor.js';
+import DataCursorHelper from '/base/code/es-modules/Dashboards/SerializeHelper/DataCursorHelper.js';
 
-QUnit.test('DataStatesHelper.toJSON', function (assert) {
+QUnit.test('DataCursorHelper.toJSON', function (assert) {
 
     const stateMap = {
             'table-1': {
@@ -21,28 +21,28 @@ QUnit.test('DataStatesHelper.toJSON', function (assert) {
                 }]
             }
         },
-        states = new DataStates(stateMap);
+        states = new DataCursor(stateMap);
 
     assert.deepEqual(
-        DataStatesHelper.toJSON(states),
+        DataCursorHelper.toJSON(states),
         {
-            $class: 'Data.DataStates',
+            $class: 'Data.DataCursor',
             stateMap
         },
-        'DataStates.JSON should have expected structure.'
+        'DataCursor.JSON should have expected structure.'
     );
 
     assert.deepEqual(
-        DataStatesHelper.toJSON(
-            DataStatesHelper.fromJSON(
-                DataStatesHelper.toJSON(states)
+        DataCursorHelper.toJSON(
+            DataCursorHelper.fromJSON(
+                DataCursorHelper.toJSON(states)
             )
         ),
         {
-            $class: 'Data.DataStates',
+            $class: 'Data.DataCursor',
             stateMap
         },
-        'DataStates.JSON should keep a consisten structure.'
+        'DataCursor.JSON should keep a consisten structure.'
     );
 
 });

@@ -20,12 +20,12 @@
  * */
 
 import type {
-    DataOnDemandOptions,
-    DataOnDemandStoreOptions
-} from './DataOnDemandOptions.js';
+    DataPoolOptions,
+    DataPoolStoreOptions
+} from './DataPoolOptions.js';
 import type DataTable from './DataTable.js';
 
-import DataOnDemandDefaults from './DataOnDemandDefaults.js';
+import DataPoolDefaults from './DataPoolDefaults.js';
 import DataStore from './Stores/DataStore.js';
 
 /* *
@@ -39,12 +39,12 @@ import DataStore from './Stores/DataStore.js';
  *
  * @private
  * @class
- * @name Highcharts.DataOnDemand
+ * @name Data.DataPool
  *
- * @param {Highcharts.DataOnDemandOptions} options
+ * @param {Data.DataPoolOptions} options
  * Pool options with all stores.
  */
-class DataOnDemand {
+class DataPool {
 
     /* *
      *
@@ -53,7 +53,7 @@ class DataOnDemand {
      * */
 
     public constructor(
-        options: (DataOnDemandOptions|undefined) = DataOnDemandDefaults
+        options: (DataPoolOptions|undefined) = DataPoolDefaults
     ) {
         options.stores = (options.stores || []);
 
@@ -70,10 +70,10 @@ class DataOnDemand {
     /**
      * Pool options with all stores.
      *
-     * @name Highcharts.DataOnDemand#options
-     * @type {Highcharts.DataOnDemandOptions}
+     * @name Data.DataPool#options
+     * @type {Data.DataPoolOptions}
      */
-    public readonly options: DataOnDemandOptions;
+    public readonly options: DataPoolOptions;
 
     /**
      * Internal dictionary with the stores and their names.
@@ -92,12 +92,12 @@ class DataOnDemand {
     /**
      * Loads the store.
      *
-     * @function Highcharts.DataOnDemand#getStore
+     * @function Data.DataPool#getStore
      *
      * @param {string} name
      * Name of the store.
      *
-     * @return {Promise<Highcharts.DataStore>}
+     * @return {Promise<Data.DataStore>}
      * Returns the store.
      */
     public getStore(
@@ -127,12 +127,12 @@ class DataOnDemand {
      * @param {string} name
      * Name of the store.
      *
-     * @return {DataOnDemandStoreOptions|undefined}
+     * @return {DataPoolStoreOptions|undefined}
      * Returns the options of the store, or `undefined` if not found.
      */
     protected getStoreOptions(
         name: string
-    ): (DataOnDemandStoreOptions|undefined) {
+    ): (DataPoolStoreOptions|undefined) {
         const stores = this.options.stores;
 
         for (let i = 0, iEnd = stores.length; i < iEnd; ++i) {
@@ -145,12 +145,12 @@ class DataOnDemand {
     /**
      * Loads the store table.
      *
-     * @function Highcharts.DataOnDemand#getStoreTable
+     * @function Data.DataPool#getStoreTable
      *
      * @param {string} name
      * Name of the store.
      *
-     * @return {Promise<Highcharts.DataTable>}
+     * @return {Promise<Data.DataTable>}
      * Returns the store table.
      */
     public getStoreTable(
@@ -166,14 +166,14 @@ class DataOnDemand {
      *
      * @private
      *
-     * @param {Highcharts.DataOnDemandStoreOptions} storeOptions
+     * @param {Data.DataPoolStoreOptions} storeOptions
      * Options of store.
      *
-     * @return {Promise<Highcharts.DataStore>}
+     * @return {Promise<Data.DataStore>}
      * Returns the store.
      */
     protected loadStore(
-        storeOptions: DataOnDemandStoreOptions
+        storeOptions: DataPoolStoreOptions
     ): Promise<DataStore> {
         return new Promise((resolve, reject): void => {
             const StoreClass: (Class|undefined) =
@@ -196,11 +196,11 @@ class DataOnDemand {
     /**
      * Sets store options with a specific name.
      *
-     * @param {Highcharts.DataOnDemandStoreOptions} storeOptions
+     * @param {Data.DataPoolStoreOptions} storeOptions
      * Store options to set.
      */
     public setStoreOptions(
-        storeOptions: DataOnDemandStoreOptions
+        storeOptions: DataPoolStoreOptions
     ): void {
         const stores = this.options.stores;
 
@@ -222,4 +222,4 @@ class DataOnDemand {
  *
  * */
 
-export default DataOnDemand;
+export default DataPool;
