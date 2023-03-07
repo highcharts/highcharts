@@ -31,7 +31,7 @@ const {
  *
  * */
 
-class BasePopup {
+abstract class BasePopup {
 
     /* *
      *
@@ -45,15 +45,7 @@ class BasePopup {
     ) {
         this.iconsURL = iconsURL;
 
-        // Create popup div.
-        this.container = createElement(
-            'div',
-            {
-                className: 'highcharts-popup highcharts-no-tooltip'
-            },
-            void 0,
-            parentDiv
-        );
+        this.container = this.createPopupContainer(parentDiv);
 
         this.closeButton = this.addCloseButton();
     }
@@ -76,7 +68,34 @@ class BasePopup {
      * */
 
     /**
+     * Create popup div container.
+     *
+     * @param {HTMLElement} parentDiv
+     * Parent div to attach popup.
+     *
+     * @param  {string} className
+     * Class name of the popup.
+     *
+     * @return {HTMLElement}
+     * Popup div.
+     */
+    private createPopupContainer(
+        parentDiv: HTMLElement,
+        className: string = 'highcharts-popup highcharts-no-tooltip'
+    ): HTMLElement {
+        return createElement(
+            'div',
+            { className },
+            void 0,
+            parentDiv
+        );
+    }
+
+    /**
      * Create HTML element and attach click event to close popup.
+     *
+     * @return {HTMLElement}
+     * Close button.
      */
     private addCloseButton(): HTMLElement {
         const popup = this,
