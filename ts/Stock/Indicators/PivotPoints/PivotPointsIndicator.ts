@@ -159,16 +159,16 @@ class PivotPointsIndicator extends SMAIndicator {
     }
 
     public getGraphPath(this: PivotPointsIndicator, points: Array<LinePoint>): SVGPath {
-        let indicator = this,
-            pointsLength: number = points.length,
+        const indicator = this,
             allPivotPoints: Array<Array<LinePoint>> = (
                 [[], [], [], [], [], [], [], [], []]
             ),
+            pointArrayMapLength: number = indicator.pointArrayMap.length;
+        let endPoint: (number|undefined) = indicator.plotEndPoint,
             path: SVGPath = [],
-            endPoint: (number|undefined) = indicator.plotEndPoint,
-            pointArrayMapLength: number = indicator.pointArrayMap.length,
             position: string,
             point: LinePoint,
+            pointsLength: number = points.length,
             i: number;
 
         while (pointsLength--) {
@@ -213,9 +213,9 @@ class PivotPointsIndicator extends SMAIndicator {
 
     // TODO: Rewrite this logic to use multiple datalabels
     public drawDataLabels(this: PivotPointsIndicator): void {
-        let indicator = this,
-            pointMapping: Array<(string|boolean)> = indicator.pointArrayMap,
-            currentLabel: (SVGElement|null),
+        const indicator = this,
+            pointMapping: Array<(string|boolean)> = indicator.pointArrayMap;
+        let currentLabel: (SVGElement|null),
             pointsLength: number,
             point: PivotPointsPoint,
             i: number;
@@ -277,7 +277,7 @@ class PivotPointsIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: PivotPointsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
@@ -286,9 +286,9 @@ class PivotPointsIndicator extends SMAIndicator {
             ],
             // 0- from, 1- to, 2- R1, 3- R2, 4- pivot, 5- S1 etc.
             PP: Array<Array<number>> = [],
-            endTimestamp: (number|undefined),
             xData: Array<number> = [],
-            yData: Array<Array<number>> = [],
+            yData: Array<Array<number>> = [];
+        let endTimestamp: (number|undefined),
             slicedXLen: (number|undefined),
             slicedX: (Array<number>|undefined),
             slicedY: Array<Array<number>>,
@@ -345,16 +345,15 @@ class PivotPointsIndicator extends SMAIndicator {
     public getPivotAndHLC(
         values: Array<Array<number>>
     ): [number, number, number, number] {
+        const close: number = values[values.length - 1][3];
         let high = -Infinity,
-            low = Infinity,
-            close: number = values[values.length - 1][3],
-            pivot: number;
+            low = Infinity;
 
         values.forEach(function (p: Array<number>): void {
             high = Math.max(high, p[1]);
             low = Math.min(low, p[2]);
         });
-        pivot = (high + low + close) / 3;
+        const pivot: number = (high + low + close) / 3;
 
         return [pivot, high, low, close];
     }
