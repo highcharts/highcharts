@@ -55,7 +55,7 @@ const {
  * */
 
 /**
- * Creates a grid structure with scrollable data cells.
+ * Creates a scrollable grid structure with editable data cells.
  */
 class DataGrid {
 
@@ -84,51 +84,128 @@ class DataGrid {
     /**
      * Options used to create the grid structure.
      */
-    public options: DataGridOptions;
+    public options: Required<DataGridOptions>;
 
     /**
      * Table used to create the grid structure.
      */
     public dataTable: DataTable;
 
-    /** @internal */
+    /**
+     * The last hovered row.
+     * @internal
+     */
     public hoveredRow?: HTMLElement;
-    /** @internal */
+
+    /**
+     * The rendered grid rows.
+     * @internal
+     */
     public rowElements: Array<HTMLElement>;
-    /** @internal */
+
+    /**
+     * The rendered grid.
+     * @internal
+     */
     private gridContainer: HTMLElement;
-    /** @internal */
+
+    /**
+     * The outer container inside the grid, which defines the visible view.
+     * @internal
+     */
     private outerContainer: HTMLElement;
-    /** @internal */
+
+    /**
+     * The oversized scroll container to provide a scrollbar.
+     * @internal
+     */
     private scrollContainer: HTMLElement;
-    /** @internal */
+
+    /**
+     * The inner container with columns, rows, and cells.
+     * @internal
+     */
     private innerContainer: HTMLElement;
-    /** @internal */
+
+    /**
+     * The container with the optional header above the grid.
+     * @internal
+     */
     private headerContainer?: HTMLElement;
-    /** @internal */
+
+    /**
+     * The input element of a cell after mouse focus.
+     * @internal
+     */
     private cellInputEl?: HTMLInputElement;
-    /** @internal */
+
+    /**
+     * The container for the column headers.
+     * @internal
+     */
     private columnHeadersContainer?: HTMLElement;
-    /** @internal */
-    private columnDragHandlesContainer?: HTMLElement;
-    /** @internal */
-    private columnResizeCrosshair?: HTMLElement;
-    /** @internal */
-    private draggedResizeHandle: null | HTMLElement;
-    /** @internal */
-    private draggedColumnRightIx: null | number;
-    /** @internal */
-    private dragResizeStart?: number;
-    /** @internal */
-    private prevTop = -1;
-    /** @internal */
-    private scrollEndRowCount = 0;
-    /** @internal */
-    private scrollEndTop = 0;
-    /** @internal */
-    private bottom = false;
-    /** @internal */
+
+    /**
+     * The column names in a sorted array as rendered (or changed).
+     * @internal
+     */
     private columnNames: Array<string>;
+
+    /**
+     * The dragging placeholder.
+     * @internal
+     */
+    private columnDragHandlesContainer?: HTMLElement;
+
+    /**
+     * The dragging indicator.
+     * @internal
+     */
+    private columnResizeCrosshair?: HTMLElement;
+
+    /**
+     * The element when dragging.
+     * @internal
+     */
+    private draggedResizeHandle: null | HTMLElement;
+
+    /**
+     * The index of the dragged column.
+     * @internal
+     */
+    private draggedColumnRightIx: null | number;
+
+    /**
+     * The X position in pixels when starting to drag a column.
+     * @internal
+     */
+    private dragResizeStart?: number;
+
+    /**
+     * The amount of rows before align end of scrolling.
+     * @internal
+     */
+    private prevTop = -1;
+
+    /**
+     * The amount of rows to align for end of scrolling.
+     * @internal
+     */
+    private scrollEndRowCount = 0;
+
+    /**
+     * Contains the top align offset, when reaching the end of scrolling.
+     * @internal
+     */
+    private scrollEndTop = 0;
+
+    /**
+     * Flag to indicate the end of scrolling. Used to align the last cell with
+     * the container bottom.
+     * @internal
+     */
+    private bottom = false;
+
 
     /* *
      *
@@ -140,7 +217,7 @@ class DataGrid {
      * Creates an instance of DataGrid.
      *
      * @param container
-     * Container to create the grid structure into.
+     * Element or element ID to create the grid structure into.
      *
      * @param options
      * Options to create the grid structure.
@@ -177,13 +254,6 @@ class DataGrid {
         this.draggedColumnRightIx = null;
         this.render();
     }
-
-
-    /** @internal */
-    public getRowCount(): number {
-        return this.dataTable.getRowCount();
-    }
-
 
     /**
      * Update the data grid with new options.
@@ -326,8 +396,17 @@ class DataGrid {
 
     // ---------------- Private methods
 
-
-    /** @internal */
+    /**
+     * Determs whether a column is editable or not.
+     *
+     * @internal
+     *
+     * @param columnName
+     * Name of the column to test.
+     *
+     * @return
+     * Returns true when the column is editable, or false.
+     */
     private isColumnEditable(columnName: string): boolean {
         const columnOptions = this.options.columns[columnName] || {};
         return pick(
@@ -340,7 +419,11 @@ class DataGrid {
     /**
      * Get a reference to the underlying DataTable from options, or create one
      * if needed.
+     *
      * @internal
+     *
+     * @return
+     * DataTable for the DataGrid instance.
      */
     private initDataTable(): DataTable {
         if (this.options.dataTable) {
@@ -398,8 +481,13 @@ class DataGrid {
     }
 
 
-    /** @internal */
-    private updateVisibleCells = (): void => {
+    /**
+     * Changes the content of the rendered cells. This is used to simulate
+     * scrolling.
+     *
+     * @internal
+     */
+    private updateVisibleCells(): void {
         let scrollTop = this.outerContainer.scrollTop;
         if (H.isSafari) {
             scrollTop = clamp(
@@ -419,7 +507,7 @@ class DataGrid {
         this.prevTop = i;
 
         const columnsInPresentationOrder = this.columnNames;
-        const rowCount = this.getRowCount();
+        const rowCount = this.dataTable.getRowCount();
 
         for (let j = 0; j < this.rowElements.length && i < rowCount; j++, i++) {
             const rowElement = this.rowElements[j];
@@ -458,12 +546,16 @@ class DataGrid {
             this.bottom = false;
             this.innerContainer.scrollTop = 0;
         }
-    };
+    }
 
 
     /**
      * Handle user scrolling the grid
+     *
      * @internal
+     *
+     * @param e
+     * Related scroll event.
      */
     private onScroll(e: Event): void {
         e.preventDefault();
@@ -509,7 +601,11 @@ class DataGrid {
 
     /**
      * Handle the user clicking somewhere outside the grid.
+     *
      * @internal
+     *
+     * @param e
+     * Related mouse event.
      */
     private onDocumentClick(e: MouseEvent): void {
         if (this.cellInputEl && e.target) {
@@ -524,7 +620,11 @@ class DataGrid {
 
     /**
      * Handle hovering over rows- highlight proper row if needed.
+     *
      * @internal
+     *
+     * @param e
+     * Related mouse event.
      */
     private handleMouseOver(e: MouseEvent): void {
         const target = e.target as HTMLElement;
@@ -559,14 +659,20 @@ class DataGrid {
     }
 
 
-    /** @internal */
+    /**
+     * Inherits the inner width from the scroll container.
+     * @internal
+     */
     private updateInnerContainerWidth(): void {
         const newWidth = this.scrollContainer.offsetWidth;
         this.innerContainer.style.width = newWidth + 'px';
     }
 
 
-    /** @internal */
+    /**
+     * Updates the scroll container to reflect the data size.
+     * @internal
+     */
     private updateScrollingLength(): void {
         const columnsInPresentationOrder = this.columnNames;
         let i = this.dataTable.getRowCount() - 1;
@@ -608,15 +714,23 @@ class DataGrid {
         this.scrollEndTop = height - outerHeight;
 
         const scrollHeight =
-            (this.getRowCount() + extraRows) * this.options.cellHeight;
+            (this.dataTable.getRowCount() + extraRows) *
+            this.options.cellHeight;
         this.scrollContainer.style.height = scrollHeight + 'px';
     }
 
 
-    /** @internal */
+    /**
+     * Calculates the number of rows to render pending of cell sizes.
+     *
+     * @internal
+     *
+     * @return
+     * The number rows to render.
+     */
     private getNumRowsToDraw(): number {
         return Math.min(
-            this.getRowCount(),
+            this.dataTable.getRowCount(),
             Math.ceil(
                 this.outerContainer.offsetHeight / this.options.cellHeight
             )
@@ -635,7 +749,10 @@ class DataGrid {
      * @param columnName
      * The column the cell belongs to.
      */
-    private renderCell(parentRow: HTMLElement, columnName: string): void {
+    private renderCell(
+        parentRow: HTMLElement,
+        columnName: string
+    ): void {
         let className = 'hc-dg-cell';
 
         if (!this.isColumnEditable(columnName)) {
@@ -879,8 +996,15 @@ class DataGrid {
 
 
     /**
-     * Stop resizing a column
+     * Stop resizing a column.
+     *
      * @internal
+     *
+     * @param handle
+     * The related resize handle.
+     *
+     * @param e
+     * The related mouse event.
      */
     private stopColumnResize(handle: HTMLElement, e: MouseEvent): void {
         const crosshair = this.columnResizeCrosshair;
@@ -921,8 +1045,15 @@ class DataGrid {
     }
 
     /**
-     * Update the size of datagrid container
+     * Update the size of grid container.
+     *
      * @internal
+     *
+     * @param width
+     * The new width in pixel, or `null` / `undefined` for no change.
+     *
+     * @param height
+     * The new height in pixel, or `null` / `undefined` for no change.
      */
     public setSize(
         width?: number | string | null,
@@ -950,31 +1081,64 @@ class DataGrid {
 /** @internal */
 namespace DataGrid {
 
-    /** @internal */
+    /**
+     * Possible events fired by DataGrid.
+     * @internal
+     */
     export type Event = (
         ColumnResizeEvent |
         CellClickEvent
     );
 
-    /** @internal */
+    /**
+     * Event when a column has been resized.
+     * @internal
+     */
     export interface ColumnResizeEvent extends DataEvent {
-        /** @internal */
+
+        /**
+         * Type of the event.
+         * @internal
+         */
         readonly type: 'afterResizeColumn';
-        /** @internal */
+
+        /**
+         * New (or old) width of the column.
+         * @internal
+         */
         readonly width: number;
-        /** @internal */
+
+        /**
+         * New (or old) index of the column.
+         * @internal */
         readonly index?: number;
-        /** @internal */
+
+        /**
+         * Name of the column.
+         * @internal
+         */
         readonly name?: string;
     }
 
-    /** @internal */
+    /**
+     * Event when a cell has mouse focus.
+     * @internal
+     */
     export interface CellClickEvent {
-        /** @internal */
+
+        /**
+         * Type of the event.
+         * @internal
+         */
         readonly type: 'cellClick';
-        /** @internal */
+
+        /**
+         * HTML element with focus.
+         * @internal
+         */
         readonly input: HTMLElement;
     }
+
 }
 
 /* *

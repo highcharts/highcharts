@@ -30,7 +30,7 @@ import type DataGridOptions from './DataGridOptions';
  * */
 
 /** @internal */
-const DataGridDefaults: DataGridOptions = {
+const DataGridDefaults = {
     /** @internal */
     cellHeight: 25,
     /** @internal */
@@ -44,7 +44,7 @@ const DataGridDefaults: DataGridOptions = {
     editable: true,
     /** @internal */
     resizableColumns: true
-};
+} as Required<DataGridOptions>;
 
 /* *
  *

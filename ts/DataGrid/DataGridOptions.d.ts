@@ -38,18 +38,18 @@ export interface DataGridOptions {
      *
      * @default 25
      */
-    cellHeight: number;
+    cellHeight?: number;
 
     /**
      * Contains options for column headers.
      */
-    columnHeaders: ColumnHeaderOptions;
+    columnHeaders?: ColumnHeaderOptions;
 
     /**
      * Contains column-specific options. The key is the column name and the
      * value is the object with the column-specific options.
      */
-    columns: Record<string, ColumnOptions>;
+    columns?: Record<string, ColumnOptions>;
 
     /**
      * Table data to display in the grid structure.
@@ -62,14 +62,14 @@ export interface DataGridOptions {
      *
      * @default true
      */
-    editable: boolean;
+    editable?: boolean;
 
     /**
      * Switch to make the column sizes editable ('true') or fixed ('false').
      *
      * @default true
      */
-    resizableColumns: boolean;
+    resizableColumns?: boolean;
 }
 
 /**
@@ -82,7 +82,7 @@ export interface ColumnHeaderOptions {
      *
      * @default true
      */
-    enabled: boolean;
+    enabled?: boolean;
 }
 
 /**
