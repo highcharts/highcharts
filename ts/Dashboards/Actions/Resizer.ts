@@ -519,7 +519,7 @@ class Resizer {
         const options = this.options;
 
         return {
-            $class: 'Dashboard.Action.Resizer',
+            $class: 'Dashboards.Action.Resizer',
             options: {
                 enabled: options.enabled,
                 styles: {
@@ -575,7 +575,7 @@ namespace Resizer {
         hcEvents: Record<string, Array<Function>>;
     }
 
-    export interface JSON extends Serializable.JSON<'Dashboard.Action.Resizer'> {
+    export interface JSON extends Serializable.JSON<'Dashboards.Action.Resizer'> {
         options: JSONOptions;
     }
 
