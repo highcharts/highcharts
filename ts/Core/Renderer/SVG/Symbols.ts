@@ -36,8 +36,8 @@ const {
 /* eslint-disable require-jsdoc, valid-jsdoc */
 
 function arc(
-    x: number,
-    y: number,
+    cx: number,
+    cy: number,
     w: number,
     h: number,
     options?: SymbolOptions
@@ -68,56 +68,58 @@ function arc(
                 end - start - Math.PI < proximity ? 0 : 1
             );
 
+        let arcSegment: SVGPath.Arc = [
+            'A', // arcTo
+            rx, // x radius
+            ry, // y radius
+            0, // slanting
+            longArc, // long or short arc
+            pick(options.clockwise, 1), // clockwise
+            cx + rx * cosEnd,
+            cy + ry * sinEnd
+        ];
+        arcSegment.params = { start, end, cx, cy }; // Memo for border radius
         arc.push(
             [
                 'M',
-                x + rx * cosStart,
-                y + ry * sinStart
+                cx + rx * cosStart,
+                cy + ry * sinStart
             ],
-            [
-                'A', // arcTo
-                rx, // x radius
-                ry, // y radius
-                0, // slanting
-                longArc, // long or short arc
-                pick(options.clockwise, 1), // clockwise
-                x + rx * cosEnd,
-                y + ry * sinEnd
-            ]
+            arcSegment
         );
 
-        (arc[1] as any).params = { start, end, x, y };
-
         if (defined(innerRadius)) {
+            arcSegment = [
+                'A', // arcTo
+                innerRadius, // x radius
+                innerRadius, // y radius
+                0, // slanting
+                longArc, // long or short arc
+                // Clockwise - opposite to the outer arc clockwise
+                defined(options.clockwise) ? 1 - options.clockwise : 0,
+                cx + innerRadius * cosStart,
+                cy + innerRadius * sinStart
+            ];
+            // Memo for border radius
+            arcSegment.params = {
+                start: end,
+                end: start,
+                cx,
+                cy
+            };
             arc.push(
                 open ?
                     [
                         'M',
-                        x + innerRadius * cosEnd,
-                        y + innerRadius * sinEnd
+                        cx + innerRadius * cosEnd,
+                        cy + innerRadius * sinEnd
                     ] : [
                         'L',
-                        x + innerRadius * cosEnd,
-                        y + innerRadius * sinEnd
+                        cx + innerRadius * cosEnd,
+                        cy + innerRadius * sinEnd
                     ],
-                [
-                    'A', // arcTo
-                    innerRadius, // x radius
-                    innerRadius, // y radius
-                    0, // slanting
-                    longArc, // long or short arc
-                    // Clockwise - opposite to the outer arc clockwise
-                    defined(options.clockwise) ? 1 - options.clockwise : 0,
-                    x + innerRadius * cosStart,
-                    y + innerRadius * sinStart
-                ]
+                arcSegment
             );
-            ((arc as any).at(-1) as any).params = {
-                start: end,
-                end: start,
-                x,
-                y
-            };
         }
         if (!open) {
             arc.push(['Z']);
