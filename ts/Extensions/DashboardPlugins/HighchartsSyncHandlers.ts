@@ -116,38 +116,34 @@ const configs: {
                     if (board && table) {
                         const { dataCursor: cursor } = board;
 
-                        this.on('afterRender', (e): void => {
-                            const component = e.target;
-
-                            if (component && 'chart' in component) {
-                                if (chart && chart.series) {
-                                    chart.series.forEach((series): void => {
-                                        series.update({
-                                            point: {
-                                                events: {
-                                                    // emit table cursor
-                                                    mouseOver: function (): void {
-                                                        cursor.emitCursor(table, {
-                                                            type: 'position',
-                                                            row: this.x,
-                                                            state: 'point.mouseOver'
-                                                        });
-                                                    },
-                                                    mouseOut: function (): void {
-                                                        cursor.emitCursor(table, {
-                                                            type: 'position',
-                                                            row: this.x,
-                                                            state: 'point.mouseOut'
-                                                        });
-                                                    }
+                        this.on('afterRender', (): void => {
+                            if (chart && chart.series) {
+                                chart.series.forEach((series): void => {
+                                    series.update({
+                                        point: {
+                                            events: {
+                                                // emit table cursor
+                                                mouseOver: function (): void {
+                                                    cursor.emitCursor(table, {
+                                                        type: 'position',
+                                                        row: this.x,
+                                                        column: '' + series.index,
+                                                        state: 'point.mouseOver'
+                                                    });
+                                                },
+                                                mouseOut: function (): void {
+                                                    cursor.emitCursor(table, {
+                                                        type: 'position',
+                                                        row: this.x,
+                                                        column: '' + series.index,
+                                                        state: 'point.mouseOut'
+                                                    });
                                                 }
                                             }
-                                        });
+                                        }
                                     });
-
-                                }
+                                });
                             }
-
                         });
 
 
@@ -340,14 +336,24 @@ const configs: {
                     if (cursor) {
                         cursor.addListener(table.id, 'point.mouseOver', (e): void => {
                             if (chart && chart.series.length) {
-                                const [series] = chart.series;
                                 if (e.cursor.type === 'position' && 'row' in e.cursor) {
-                                    const [point] = series.data.filter((point): boolean => point.x === (e.cursor as any).row);
+                                    const cursor = e.cursor as any; // TODO: needs a type;
+                                    const series = chart.series[cursor.column || 0];
 
-                                    if (point) {
-                                        chart.tooltip && chart.tooltip.refresh(point);
+                                    if (series) {
+                                        const point = series.data[cursor.row];
+
+                                        if (point) {
+                                            chart.tooltip && chart.tooltip.refresh(point);
+                                        }
                                     }
                                 }
+                            }
+                        });
+
+                        cursor.addListener(table.id, 'point.mouseOut', (): void => {
+                            if (chart && chart.series.length) {
+                                chart.tooltip && chart.tooltip.hide();
                             }
                         });
                     }

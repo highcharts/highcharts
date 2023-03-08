@@ -21,10 +21,8 @@
  *
  * */
 
-import type SharedState from '../../Dashboards/Components/SharedComponentState';
 import type Sync from '../../Dashboards/Components/Sync/Sync';
 
-import ComponentGroup from '../../Dashboards/Components/ComponentGroup.js';
 import ComponentTypes from '../../Dashboards/Components/ComponentType';
 import DataGridComponent from './DataGridComponent.js';
 import U from '../../Core/Utilities.js';
@@ -54,25 +52,26 @@ const configs: {
             'tooltipEmitter',
             function (this: ComponentTypes): Function | void {
                 if (this instanceof (DataGridComponent || window.DataGridComponent)) {
-                    const { dataGrid, id } = this;
-                    const groups = ComponentGroup.getGroupsFromComponent(this.id);
+                    const { dataGrid, store, board } = this;
 
-                    if (dataGrid) {
-                        const setHoverPointWithDetail = (hoverRow: any): void => {
-                            groups.forEach((group): void => {
-                                requestAnimationFrame((): void => {
-                                    group.getSharedState().setHoverPoint(hoverRow, {
-                                        isDataGrid: true,
-                                        sender: id
-                                    });
-                                });
-                            });
-                        };
+                    if (dataGrid && store && board) {
+                        const { cursor } = board;
 
                         const callbacks = [
+                            // TODO: should this event return cell data instead of row data?
                             addEvent(dataGrid.container, 'dataGridHover', (e: any): void => {
                                 const row = e.row;
-                                setHoverPointWithDetail(row);
+                                cursor.emitCursor(store.table, {
+                                    type: 'position',
+                                    row: row.dataset.rowIndex,
+                                    state: 'point.mouseOver'
+                                });
+                            }),
+                            addEvent(dataGrid.container, 'mouseout', (): void => {
+                                cursor.emitCursor(store.table, {
+                                    type: 'position',
+                                    state: 'point.mouseOut'
+                                });
                             })
                         ];
 
@@ -88,24 +87,36 @@ const configs: {
     handlers: {
         tooltipHandler: [
             'tooltipHandler',
-            'afterHoverPointChange',
-            function (this: DataGridComponent, e: SharedState.PointHoverEvent): void {
-                const { dataGrid } = this;
-                if (dataGrid) {
-                    if (e.hoverPoint) {
-                        const point = e.hoverPoint;
-                        let highlightedDataRow;
+            void 0, // 'afterHoverPointChange',
+            function (this: DataGridComponent): void {
+                const { board } = this;
+                const table = this.store && this.store.table;
+                if (board && table) {
+                    const { cursor } = board;
+                    if (cursor) {
+                        cursor.addListener(table.id, 'point.mouseOver', (e): void => {
 
-                        for (let i = 0, iEnd = dataGrid.rowElements.length; i < iEnd; ++i) {
-                            if (dataGrid.rowElements[i].dataset.rowXIndex === String(point.x || 0)) {
-                                highlightedDataRow = dataGrid.rowElements[i];
+                            const cursor = e.cursor as any;
+                            const { row } = cursor;
+
+                            const { dataGrid } = this;
+                            if (dataGrid) {
+                                const highlightedDataRow = dataGrid.rowElements[row];
+                                if (highlightedDataRow) {
+                                    dataGrid.toggleRowHighlight(highlightedDataRow);
+                                    dataGrid.hoveredRow = highlightedDataRow;
+                                }
                             }
-                        }
 
-                        if (highlightedDataRow) {
-                            dataGrid.toggleRowHighlight(highlightedDataRow);
-                            dataGrid.hoveredRow = highlightedDataRow;
-                        }
+                        });
+
+                        cursor.addListener(table.id, 'point.mouseOut', (): void => {
+                            const { dataGrid } = this;
+                            if (dataGrid) {
+                                dataGrid.toggleRowHighlight(void 0);
+                            }
+
+                        });
                     }
                 }
             }
