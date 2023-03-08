@@ -28,6 +28,7 @@ import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    pushUnique,
     wrap
 } = U;
 
@@ -76,16 +77,12 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (composedMembers.indexOf(AxisClass) === -1) {
-        composedMembers.push(AxisClass);
-
+    if (pushUnique(composedMembers, AxisClass)) {
         addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
     }
 
-    if (composedMembers.indexOf(TickClass) === -1) {
-        composedMembers.push(TickClass);
-
+    if (pushUnique(composedMembers, TickClass)) {
         addEvent(TickClass, 'afterGetPosition', onTickAfterGetPosition);
 
         const tickProto = TickClass.prototype;

@@ -25,11 +25,11 @@ import type AxisResizerOptions from './AxisResizerOptions';
 import type Pointer from '../../Core/Pointer';
 
 import AxisResizer from './AxisResizer.js';
-import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     merge,
+    pushUnique,
     wrap
 } = U;
 
@@ -78,9 +78,8 @@ function compose(
     AxisClass: typeof Axis,
     PointerClass: typeof Pointer
 ): void {
-    if (composedMembers.indexOf(AxisClass) === -1) {
-        composedMembers.push(AxisClass);
 
+    if (pushUnique(composedMembers, AxisClass)) {
         merge(true, AxisClass.defaultOptions, AxisResizer.resizerOptions);
 
         // Keep resizer reference on axis update
@@ -89,9 +88,8 @@ function compose(
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
         addEvent(AxisClass, 'destroy', onAxisDestroy);
     }
-    if (composedMembers.indexOf(PointerClass) === -1) {
-        composedMembers.push(PointerClass);
 
+    if (pushUnique(composedMembers, PointerClass)) {
         wrap(
             PointerClass.prototype,
             'runPointActions',
@@ -103,6 +101,7 @@ function compose(
             wrapPointerDrag
         );
     }
+
 }
 
 /**
