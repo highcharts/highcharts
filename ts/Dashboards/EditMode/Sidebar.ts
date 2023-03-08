@@ -849,6 +849,7 @@ class Sidebar {
                 activeTab && activeTab.content.container;
             let type;
             let chartTypes = {};
+            let chartConfigOptions = {};
 
             for (const key in componentSettings) {
                 if (componentSettings[key]) {
@@ -889,6 +890,37 @@ class Sidebar {
                         } else {
                             continue;
                         }
+                    } else if (key === 'chartConfig') {
+                        chartConfigOptions = {
+                            nestedOptions: {
+                                title: {
+                                    enabled: { type: 'input' },
+                                    text: { type: 'input' },
+                                    size: { type: 'input' },
+                                    font: { type: 'input' }
+                                },
+                                yAxis: {
+                                    enabled: { type: 'input' },
+                                    labels: { type: 'input' },
+                                    title: { type: 'input' },
+                                    text: { type: 'input' }
+                                },
+                                legend: {
+                                    enabled: { type: 'input' },
+                                    title: { type: 'input' }
+                                },
+                                dataLabels: {
+                                    size: { type: 'input' },
+                                    font: { type: 'input' }
+                                },
+                                xAxis: {
+                                    enabled: { type: 'input' },
+                                    labels: { type: 'input' },
+                                    title: { type: 'input' },
+                                    text: { type: 'input' }
+                                }
+                            }
+                        };
                     }
 
                     (menuItems as any)[key] = {
@@ -903,7 +935,8 @@ class Sidebar {
                                 sidebar.updatedSettings[id] = value;
                             }
                         },
-                        ...chartTypes
+                        ...chartTypes,
+                        ...chartConfigOptions
                     };
 
                     items.push(

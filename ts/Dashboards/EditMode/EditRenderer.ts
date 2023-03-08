@@ -123,6 +123,7 @@ function renderCollapse(
         headerIcon.style.transform =
             display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
     });
+
     return { outerElement: accordeon, content: content };
 }
 
@@ -327,6 +328,119 @@ function renderText(
     return textElem;
 }
 
+function renderNested(
+    parentElement: HTMLDOMElement,
+    options: any
+): HTMLDOMElement|undefined {
+
+    if (!parentElement) {
+        return;
+    }
+    const keys = Object.keys(options.nestedOptions);
+    for (let i = 0, iEnd = keys.length; i < iEnd; ++i) {
+        const name = keys[i];
+        const nestedOptions = options.nestedOptions[name];
+
+
+        const nested = createElement(
+            'div',
+            {
+                className: 'highcharts-dashboards-nested'
+            },
+            {},
+            parentElement
+        );
+
+        const header = createElement(
+            'div',
+            {
+                className: 'highcharts-dashboards-nested-header'
+            },
+            {},
+            nested
+        );
+        const headerBtn = createElement(
+            'button',
+            { className: 'highcharts-dashboards-nested-header-btn' },
+            {
+                border: 'none',
+                font: 'inherit',
+                color: 'inherit',
+                background: 'none',
+                margin: 0,
+                width: '100%',
+                display: 'flex'
+            },
+            header
+        );
+
+        const headerIcon = createElement(
+            'img',
+            {
+                className: 'highcharts-dashboards-nested-header-icon',
+                src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
+            },
+            {},
+            headerBtn
+        );
+
+
+        createElement(
+            'span',
+            { textContent: name },
+            {},
+            headerBtn
+        );
+
+        const switchElement = createElement(
+            'img',
+            {
+                className: 'highcharts-dashboards-nested-switch',
+                src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
+            },
+            {},
+            header
+        );
+
+        const content = createElement(
+            'div',
+            {
+                className: 'highcharts-dashboards-nested-content'
+            },
+            { display: 'none' },
+            nested
+        );
+
+        headerBtn.addEventListener('click', function (): void {
+            const display = content.style.display;
+            content.style.display = display === 'none' ? 'block' : 'none';
+            headerIcon.style.transform =
+                display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
+        });
+        const nestedKeys = Object.keys(nestedOptions);
+
+        for (let j = 0, jEnd = nestedKeys.length; j < jEnd; ++j) {
+            const nestedKey = nestedKeys[j];
+            const nestedOption = nestedOptions[nestedKey];
+            const rendererFunction = getRendererFunction(nestedOption.type);
+            if (!rendererFunction) {
+                continue;
+            }
+
+            const element = rendererFunction(
+                content,
+                {
+                    title: nestedKey,
+                    value: '',
+                    name: nestedKey,
+                    id: nestedKey
+                }
+            );
+        }
+    }
+    return;
+}
+
 function renderIcon(
     parentElement: HTMLDOMElement,
     options: IconFormField
@@ -490,6 +604,7 @@ function getRendererFunction(type: RendererElement): Function|undefined {
         input: renderInput,
         textarea: renderTextarea,
         checkbox: renderCheckbox,
+        nested: renderNested,
         button: renderButton
     }[type];
 }
@@ -506,6 +621,7 @@ const EditRenderer = {
     renderTextarea,
     renderCheckbox,
     renderButton,
+    renderNested,
     getRendererFunction
 };
 
@@ -545,6 +661,13 @@ export interface SelectFormField extends FormField {
 export interface SelectFormFieldItem {
     name: 'string';
     iconURL: 'string';
+}
+
+export interface NestedFormField {
+    nestedOptions: Record<string, NestedOptions>;
+}
+export interface NestedOptions {
+
 }
 
 export type RendererElement =

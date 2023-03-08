@@ -137,6 +137,7 @@ class MenuItem {
             title: options.collapsable ? '' : options.text || '',
             callback,
             item: this,
+            nestedOptions: options.nestedOptions,
             icon: options.icon,
             mousedown: options.events && options.events.onmousedown,
             value: options.value || '',
@@ -179,6 +180,7 @@ class MenuItem {
 
 namespace MenuItem {
     export interface Options {
+        nestedOptions?: Record<string, Options>;
         collapsable?: boolean;
         id: string;
         type?: 'addComponent'|'addLayout'|'horizontalSeparator'|'icon'|'input'|
