@@ -25,7 +25,10 @@ import type RFLayout from './Networkgraph/ReingoldFruchtermanLayout';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
 import U from '../Core/Utilities.js';
-const { addEvent } = U;
+const {
+    addEvent,
+    pushUnique
+} = U;
 
 /* *
  *
@@ -76,7 +79,7 @@ export type GraphLayoutType = RFLayout;
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 const integrations: Record<string, GraphIntegrationObject> = {};
 
@@ -95,9 +98,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (composedClasses.indexOf(ChartClass)) {
-        composedClasses.push(ChartClass);
-
+    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterPrint', onChartAfterPrint);
         addEvent(ChartClass, 'beforePrint', onChartBeforePrint);
         addEvent(ChartClass, 'predraw', onChartPredraw);

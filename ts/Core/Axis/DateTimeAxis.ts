@@ -26,6 +26,7 @@ const {
     addEvent,
     getMagnitude,
     normalizeTickInterval,
+    pushUnique,
     timeUnits
 } = U;
 
@@ -95,7 +96,7 @@ namespace DateTimeAxis{
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -111,9 +112,7 @@ namespace DateTimeAxis{
         AxisClass: T
     ): (typeof Composition&T) {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (pushUnique(composedMembers, AxisClass)) {
             AxisClass.keepProps.push('dateTime');
 
             const axisProto = AxisClass.prototype as DateTimeAxis.Composition;

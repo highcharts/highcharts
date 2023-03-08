@@ -26,7 +26,10 @@ import type ProxyElement from '../ProxyElement';
 
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
-const { attr } = U;
+const {
+    attr,
+    pushUnique
+} = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -491,7 +494,7 @@ namespace MenuComponent {
      * */
 
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
 
     /* *
@@ -510,9 +513,7 @@ namespace MenuComponent {
         ChartClass: typeof Chart
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = Chart.prototype as ChartComposition;
 
             chartProto.hideExportMenu = chartHideExportMenu;
@@ -520,6 +521,7 @@ namespace MenuComponent {
             chartProto.highlightLastExportItem = chartHighlightLastExportItem;
             chartProto.showExportMenu = chartShowExportMenu;
         }
+
     }
 
     /**

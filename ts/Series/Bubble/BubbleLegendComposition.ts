@@ -32,6 +32,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     objectEach,
+    pushUnique,
     wrap
 } = U;
 
@@ -41,7 +42,7 @@ const {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -149,9 +150,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (pushUnique(composedMembers, ChartClass)) {
         setOptions({
             // Set default bubble legend options
             legend: {
@@ -162,15 +161,11 @@ function compose(
         wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
     }
 
-    if (composedClasses.indexOf(LegendClass) === -1) {
-        composedClasses.push(LegendClass);
-
+    if (pushUnique(composedMembers, LegendClass)) {
         addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
     }
 
-    if (composedClasses.indexOf(SeriesClass) === -1) {
-        composedClasses.push(SeriesClass);
-
+    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
     }
 

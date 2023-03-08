@@ -19,7 +19,6 @@
  * */
 
 import type AccessibilityComponent from './AccessibilityComponent';
-import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type Legend from '../Core/Legend/Legend';
 import type { Options } from '../Core/Options';
@@ -38,7 +37,8 @@ const {
     addEvent,
     extend,
     fireEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 import HU from './Utils/HTMLUtilities.js';
 const {
@@ -375,7 +375,7 @@ namespace Accessibility {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     export const i18nFormat = A11yI18n.i18nFormat;
 
@@ -507,12 +507,11 @@ namespace Accessibility {
             RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
         }
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
+
             addEvent(
                 ChartClass as typeof ChartComposition,
                 'destroy',
@@ -554,9 +553,7 @@ namespace Accessibility {
             });
         }
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
+        if (pushUnique(composedMembers, PointClass)) {
             addEvent(
                 PointClass as typeof PointComposition,
                 'update',
@@ -564,9 +561,7 @@ namespace Accessibility {
             );
         }
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (pushUnique(composedMembers, SeriesClass)) {
             // Mark dirty for update
             ['update', 'updatedData', 'remove'].forEach((event): void => {
                 addEvent(
@@ -580,6 +575,7 @@ namespace Accessibility {
                 );
             });
         }
+
     }
 
     /**

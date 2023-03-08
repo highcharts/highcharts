@@ -32,7 +32,8 @@ import U from '../../Core/Utilities.js';
 const {
     defined,
     error,
-    merge
+    merge,
+    pushUnique
 } = U;
 
 /* *
@@ -69,7 +70,7 @@ namespace MultipleLinesComposition {
     *
     * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /**
      * Additional lines DOCS names. Elements of linesApiNames array should
@@ -133,9 +134,7 @@ namespace MultipleLinesComposition {
         IndicatorClass: T
     ): (T&typeof IndicatorComposition) {
 
-        if (composedClasses.indexOf(IndicatorClass) === -1) {
-            composedClasses.push(IndicatorClass);
-
+        if (pushUnique(composedMembers, IndicatorClass)) {
             const proto = IndicatorClass.prototype as IndicatorComposition;
 
             proto.linesApiNames = (

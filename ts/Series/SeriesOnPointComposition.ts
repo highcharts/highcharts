@@ -32,7 +32,8 @@ const {
     addEvent,
     defined,
     find,
-    isNumber
+    isNumber,
+    pushUnique
 } = U;
 
 /* *
@@ -95,7 +96,7 @@ namespace SeriesOnPointComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -138,9 +139,7 @@ namespace SeriesOnPointComposition {
         // - sunburst
         pie.prototype.onPointSupported = true;
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (pushUnique(composedMembers, SeriesClass)) {
             addEvent(Series, 'afterInit', seriesAfterInit);
             addEvent(Series, 'afterRender', seriesAfterRender);
             addEvent(Series, 'afterGetCenter', seriesGetCenter);
@@ -149,9 +148,7 @@ namespace SeriesOnPointComposition {
             addEvent(Series, 'translate', seriesTranslate);
         }
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRender', chartGetZData);
             addEvent(ChartClass, 'beforeRedraw', chartGetZData);
         }

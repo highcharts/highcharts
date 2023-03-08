@@ -29,7 +29,8 @@ import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
-    defined
+    defined,
+    pushUnique
 } = U;
 
 import Announcer from '../../Utils/Announcer.js';
@@ -420,7 +421,7 @@ namespace NewDataAnnouncer {
      *
      * */
 
-    export const composedClasses: Array<Function> = [];
+    export const composedMembers: Array<unknown> = [];
 
 
     /* *
@@ -436,9 +437,7 @@ namespace NewDataAnnouncer {
         SeriesClass: typeof Series
     ): void {
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (pushUnique(composedMembers, SeriesClass)) {
             addEvent(
                 SeriesClass as typeof Accessibility.SeriesComposition,
                 'addPoint',
@@ -450,6 +449,7 @@ namespace NewDataAnnouncer {
                 seriesOnUpdatedData
             );
         }
+
     }
 
 

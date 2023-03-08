@@ -38,7 +38,8 @@ const {
     isArray,
     isNumber,
     isString,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -140,7 +141,7 @@ namespace DataModifyComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -170,9 +171,8 @@ namespace DataModifyComposition {
         AxisClass: typeof Axis,
         PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
 
+        if (pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.setCompare = seriesSetCompare;
@@ -183,9 +183,7 @@ namespace DataModifyComposition {
             addEvent(SeriesClass, 'afterProcessData', afterProcessData);
         }
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (pushUnique(composedMembers, AxisClass)) {
             const axisProto = AxisClass.prototype as AxisComposition;
 
             axisProto.setCompare = axisSetCompare;
@@ -193,9 +191,7 @@ namespace DataModifyComposition {
             axisProto.setCumulative = axisSetCumulative;
         }
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
+        if (pushUnique(composedMembers, PointClass)) {
             const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.tooltipFormatter = tooltipFormatter;

@@ -26,7 +26,10 @@ import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import U from '../Core/Utilities.js';
-const { addEvent } = U;
+const {
+    addEvent,
+    pushUnique
+} = U;
 
 /* *
  *
@@ -84,7 +87,7 @@ export interface DragNodesSeriesOptions extends SeriesOptions {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -99,9 +102,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'load', onChartLoad);
     }
 

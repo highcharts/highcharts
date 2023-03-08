@@ -28,7 +28,8 @@ import U from '../../Core/Utilities.js';
 const {
     error,
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 import SU from './SonificationUtilities.js';
 
@@ -51,7 +52,7 @@ declare module '../../Core/Series/PointLike' {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 // Defaults for the instrument options
 // NOTE: Also change defaults in Highcharts.PointInstrumentOptionsObject if
@@ -151,15 +152,14 @@ namespace PointSonify {
         PointClass: T
     ): (typeof Composition&T) {
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
+        if (pushUnique(composedMembers, PointClass)) {
             const pointProto = PointClass.prototype as Composition;
 
             pointProto.sonify = pointSonify;
             pointProto.cancelSonify = pointCancelSonify;
 
         }
+
         return PointClass as (typeof Composition&T);
     }
 

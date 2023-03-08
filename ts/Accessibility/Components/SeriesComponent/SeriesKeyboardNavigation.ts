@@ -33,7 +33,8 @@ const { doc } = H;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
-    fireEvent
+    fireEvent,
+    pushUnique
 } = U;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
@@ -682,8 +683,7 @@ namespace SeriesKeyboardNavigation {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
-
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -901,9 +901,7 @@ namespace SeriesKeyboardNavigation {
         SeriesClass: typeof Series
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightAdjacentPoint = chartHighlightAdjacentPoint;
@@ -913,17 +911,13 @@ namespace SeriesKeyboardNavigation {
             chartProto.highlightAdjacentSeries = chartHighlightAdjacentSeries;
         }
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
+        if (pushUnique(composedMembers, PointClass)) {
             const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.highlight = pointHighlight;
         }
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             /**
@@ -950,8 +944,8 @@ namespace SeriesKeyboardNavigation {
             seriesProto.highlightNextValidPoint = (
                 seriesHighlightNextValidPoint
             );
-
         }
+
     }
 
 

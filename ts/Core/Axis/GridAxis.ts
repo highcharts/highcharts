@@ -49,6 +49,7 @@ const {
     isNumber,
     merge,
     pick,
+    pushUnique,
     timeUnits,
     wrap
 } = U;
@@ -145,7 +146,7 @@ enum GridAxisSide {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -209,10 +210,9 @@ function compose<T extends typeof Axis>(
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
 
-    if (composedClasses.indexOf(AxisClass) === -1) {
-        composedClasses.push(AxisClass);
-
+    if (pushUnique(composedMembers, AxisClass)) {
         AxisClass.keepProps.push('grid');
+
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;
 
         wrap(AxisClass.prototype, 'unsquish', wrapUnsquish);
@@ -240,11 +240,11 @@ function compose<T extends typeof Axis>(
         addEvent(AxisClass, 'destroy', onDestroy);
     }
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
+    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
     }
 
-    if (composedClasses.indexOf(TickClass) === -1) {
+    if (pushUnique(composedMembers, TickClass)) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',

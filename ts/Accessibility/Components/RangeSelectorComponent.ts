@@ -37,7 +37,8 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    attr
+    attr,
+    pushUnique
 } = U;
 
 
@@ -625,7 +626,7 @@ namespace RangeSelectorComponent {
      * */
 
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
 
     /* *
@@ -692,24 +693,23 @@ namespace RangeSelectorComponent {
         ChartClass: typeof Chart,
         RangeSelectorClass: typeof RangeSelector
     ): void {
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
 
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightRangeSelectorButton = (
                 chartHighlightRangeSelectorButton
             );
         }
-        if (composedClasses.indexOf(RangeSelectorClass) === -1) {
-            composedClasses.push(RangeSelectorClass);
 
+        if (pushUnique(composedMembers, RangeSelectorClass)) {
             addEvent(
                 RangeSelector,
                 'afterBtnClick',
                 rangeSelectorAfterBtnClick
             );
         }
+
     }
 
 

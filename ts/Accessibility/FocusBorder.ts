@@ -31,7 +31,8 @@ import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -103,7 +104,7 @@ namespace FocusBorderComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     // Attributes that trigger a focus border update
     const svgElementBorderUpdateTriggers = [
@@ -126,18 +127,14 @@ namespace FocusBorderComposition {
         SVGElementClass: typeof SVGElement
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.renderFocusBorder = chartRenderFocusBorder;
             chartProto.setFocusToElement = chartSetFocusToElement;
         }
 
-        if (composedClasses.indexOf(SVGElementClass) === -1) {
-            composedClasses.push(SVGElementClass);
-
+        if (pushUnique(composedMembers, SVGElementClass)) {
             const svgElementProto = (
                 SVGElementClass.prototype as SVGElementCompositon
             );

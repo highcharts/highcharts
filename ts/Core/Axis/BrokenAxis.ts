@@ -36,7 +36,8 @@ const {
     fireEvent,
     isArray,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -122,7 +123,7 @@ namespace BrokenAxis {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -141,9 +142,7 @@ namespace BrokenAxis {
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (pushUnique(composedMembers, AxisClass)) {
             AxisClass.keepProps.push('brokenAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);
@@ -156,9 +155,7 @@ namespace BrokenAxis {
             addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
         }
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.drawBreaks = seriesDrawBreaks;
