@@ -194,6 +194,11 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * */
 
+    /**
+     * Creates a Highcharts component in the cell.
+     *
+     * @param options
+     */
     constructor(options: Partial<HighchartsComponent.ComponentOptions>) {
         options = merge(
             HighchartsComponent.defaultOptions,
@@ -247,10 +252,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * */
 
-    /**
-     * 
-     * @returns 
-     */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -263,10 +264,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         return this;
     }
 
-    /**
-     * 
-     * @returns 
-     */
     public render(): this {
         const hcComponent = this;
 
@@ -290,12 +287,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         return this;
     }
 
-    /**
-     * 
-     * @param width 
-     * @param height 
-     * @returns 
-     */
     public resize(
         width?: number | string | null,
         height?: number | string | null
@@ -323,8 +314,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     }
 
     /**
-     * 
-     */
+     * Adds call update value in store, when chart's point is updated.
+     *
+     * @internal
+     * */
     private setupStoreUpdate(): void {
         const { store, chart } = this;
 
@@ -388,6 +381,14 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         super.update(options, redraw);
     }
 
+    /**
+     * Handles updating via options.
+     * @param options
+     * The options to apply.
+     *
+     * @returns
+     * The component for chaining
+     */
     public update(
         options: Partial<HighchartsComponent.ComponentOptions>
     ): this {
@@ -401,6 +402,11 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         return this;
     }
 
+    /**
+     * Updates chart's series when the data table is changed.
+     *
+     * @internal
+     */
     private updateSeries(): void {
         // Heuristically create series from the store dataTable
         if (this.chart && this.store) {
@@ -507,6 +513,14 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         }
     }
 
+    /**
+     * Destroy chart and create a new one.
+     *
+     * @returns chart
+     *
+     * @internal
+     *
+     */
     private initChart(): Chart {
         if (this.chart) {
             this.chart.destroy();
@@ -514,6 +528,14 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         return this.constructChart();
     }
 
+    /**
+     * Creates chart
+     *
+     * @returns
+     *
+     * @internal
+     *
+     */
     private constructChart(): Chart {
         const charter = (HighchartsComponent.charter || G);
 
