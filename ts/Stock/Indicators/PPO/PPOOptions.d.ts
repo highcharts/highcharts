@@ -18,10 +18,10 @@ import type {
 } from '../EMA/EMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface PPOOptions extends EMAOptions {
     params?: PPOParamsOptions;
@@ -31,9 +31,9 @@ export interface PPOParamsOptions extends EMAParamsOptions {
     periods?: Array<number>;
 }
 /* *
-*
-*  Default Export
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default PPOOptions;

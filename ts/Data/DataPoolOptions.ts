@@ -19,7 +19,6 @@
  *
  * */
 
-import type JSON from '../Core/JSON.js';
 import type {
     StoreType,
     StoreTypeRegistry
@@ -31,11 +30,11 @@ import type {
  *
  * */
 
-export interface DataOnDemandOptions extends JSON.Object {
-    stores: Array<DataOnDemandStoreOptions>;
+export interface DataPoolOptions {
+    stores: Array<DataPoolStoreOptions>;
 }
 
-export interface DataOnDemandStoreOptions extends JSON.Object {
+export interface DataPoolStoreOptions {
     name: string;
     storeOptions: StoreType['prototype']['options'];
     storeType: keyof StoreTypeRegistry;
@@ -47,4 +46,4 @@ export interface DataOnDemandStoreOptions extends JSON.Object {
  *
  * */
 
-export default DataOnDemandOptions;
+export default DataPoolOptions;
