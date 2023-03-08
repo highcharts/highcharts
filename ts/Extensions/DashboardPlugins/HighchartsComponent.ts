@@ -516,7 +516,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     /**
      * Destroy chart and create a new one.
      *
-     * @returns chart
+     * @returns
+     * The chart
      *
      * @internal
      *
@@ -532,6 +533,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      * Creates chart
      *
      * @returns
+     * The chart
      *
      * @internal
      *
