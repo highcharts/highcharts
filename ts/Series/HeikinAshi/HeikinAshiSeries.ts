@@ -29,7 +29,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 
 /* *
@@ -149,15 +150,11 @@ class HeikinAshiSeries extends CandlestickSeries {
     ): void {
         CandlestickSeries.compose(SeriesClass);
 
-        if (composedMembers.indexOf(AxisClass) === -1) {
-            composedMembers.push(AxisClass);
-
+        if (pushUnique(composedMembers, AxisClass)) {
             addEvent(AxisClass, 'postProcessData', onAxisPostProcessData);
         }
 
-        if (composedMembers.indexOf(HeikinAshiSeries) === -1) {
-            composedMembers.push(HeikinAshiSeries);
-
+        if (pushUnique(composedMembers, HeikinAshiSeries)) {
             addEvent(
                 HeikinAshiSeries,
                 'afterTranslate',
@@ -169,6 +166,7 @@ class HeikinAshiSeries extends CandlestickSeries {
                 onHeikinAshiSeriesUpdatedData
             );
         }
+
     }
 
     /* *

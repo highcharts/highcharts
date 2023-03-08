@@ -472,7 +472,7 @@ function erase(arr: Array<unknown>, item: unknown): void {
  * The item to add.
  *
  * @return {boolean}
- * Returns true, if the item was not present and had be added.
+ * Returns true, if the item was not present and has been added.
  */
 function pushUnique(
     array: Array<unknown>,

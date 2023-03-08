@@ -50,7 +50,8 @@ const {
     extend,
     isNumber,
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -466,9 +467,7 @@ function compose(
 ): void {
     const PointClass = SeriesClass.prototype.pointClass;
 
-    if (composedMembers.indexOf(PointClass) === -1) {
-        composedMembers.push(PointClass);
-
+    if (pushUnique(composedMembers, PointClass)) {
         // Override point prototype to throw a warning when trying to update
         // grouped points.
         addEvent(PointClass, 'update', function (): (boolean|undefined) {
@@ -479,9 +478,7 @@ function compose(
         });
     }
 
-    if (composedMembers.indexOf(SeriesClass) === -1) {
-        composedMembers.push(SeriesClass);
-
+    if (pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterSetOptions', onAfterSetOptions);
         addEvent(SeriesClass, 'destroy', destroyGroupedData);
 

@@ -36,7 +36,8 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    merge
+    merge,
+    pushUnique
 } = U;
 
 /* *
@@ -136,9 +137,7 @@ class OHLCSeries extends HLCSeries {
         ..._args: Array<never>
     ): void {
 
-        if (composedMembers.indexOf(SeriesClass) === -1) {
-            composedMembers.push(SeriesClass);
-
+        if (pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'afterSetOptions', onSeriesAfterSetOptions);
             addEvent(SeriesClass, 'init', onSeriesInit);
         }

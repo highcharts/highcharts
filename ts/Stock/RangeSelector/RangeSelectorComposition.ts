@@ -36,7 +36,8 @@ const {
     find,
     isNumber,
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -153,15 +154,11 @@ function compose(
 
     RangeSelectorConstructor = RangeSelectorClass;
 
-    if (composedMembers.indexOf(AxisClass) === -1) {
-        composedMembers.push(AxisClass);
-
+    if (pushUnique(composedMembers, AxisClass)) {
         AxisClass.prototype.minFromRange = axisMinFromRange;
     }
 
-    if (composedMembers.indexOf(ChartClass) === -1) {
-        composedMembers.push(ChartClass);
-
+    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
         addEvent(ChartClass, 'destroy', onChartDestroy);
@@ -174,7 +171,7 @@ function compose(
         chartProto.callbacks.push(onChartCallback);
     }
 
-    if (composedMembers.indexOf(setOptions) === -1) {
+    if (pushUnique(composedMembers, setOptions)) {
         extend(
             defaultOptions,
             { rangeSelector: RangeSelectorDefaults.rangeSelector }

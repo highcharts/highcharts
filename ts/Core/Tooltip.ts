@@ -41,7 +41,6 @@ const {
     addEvent,
     clamp,
     css,
-    defined,
     discardElement,
     extend,
     fireEvent,
@@ -50,6 +49,7 @@ const {
     isString,
     merge,
     pick,
+    pushUnique,
     splat,
     syncTimeout
 } = U;
@@ -1912,8 +1912,8 @@ namespace Tooltip {
     export function compose(
         PointerClass: typeof Pointer
     ): void {
-        if (composedMembers.indexOf(PointerClass) === -1) {
-            composedMembers.push(PointerClass);
+
+        if (pushUnique(composedMembers, PointerClass)) {
             addEvent(PointerClass, 'afterInit', function (): void {
                 const chart = this.chart;
 
@@ -1928,6 +1928,7 @@ namespace Tooltip {
                 }
             });
         }
+
     }
 
 }
