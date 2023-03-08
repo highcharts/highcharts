@@ -191,7 +191,7 @@ jobs:
       browsers:
         description: "Which browser to test?"
         type: string
-        default: "Win.IE11"
+        default: "Win.IE"
       notify_on_failure:
         type: boolean
         default: false
@@ -601,7 +601,7 @@ workflows:
       - test_cypress:
           requires: [lint]
       - test_es5:
-          requires: [lint]
+          requires: [generate_ts_declarations]
       - test_timezones:
           requires: [lint]
           filters:
@@ -619,7 +619,7 @@ workflows:
 #          browsers: "Win.IE8"
       - test_browsers:
           name: "test-Mac.Safari"
-          requires: ["generate_ts_declarations"]
+          requires: ["test_es5"]
           browsers: "Mac.Safari"
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
