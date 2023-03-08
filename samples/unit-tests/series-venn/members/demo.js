@@ -417,6 +417,10 @@ QUnit.test('processVennData', function (assert) {
         {
             sets: ['B', 'A'],
             value: 2
+        },
+        {
+            sets: ['D,E'],
+            value: 2
         }
     ];
     assert.deepEqual(
@@ -433,9 +437,22 @@ QUnit.test('processVennData', function (assert) {
             {
                 sets: ['A', 'B'],
                 value: 2
+            },
+            {
+                sets: ['D,E'],
+                value: 2
+            },
+            {
+                sets: ['A', 'D,E'],
+                value: 0
+            },
+            {
+                sets: ['B', 'D,E'],
+                value: 0
             }
         ],
-        'should remove duplicate sets and just update existing values for the set.'
+        `should remove duplicate sets and just update existing values for the 
+        set; everything should work when commas inside strings.`
     );
 
     // add missing relations between sets as value = 0.
