@@ -38,7 +38,8 @@ const {
     correctFloat,
     defined,
     isNumber,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -97,7 +98,7 @@ export interface YAxisPositions {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -112,9 +113,7 @@ function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
 
-    if (composedClasses.indexOf(NavigationBindingsClass) === -1) {
-        composedClasses.push(NavigationBindingsClass);
-
+    if (pushUnique(composedMembers, NavigationBindingsClass)) {
         const navigationProto = NavigationBindingsClass.prototype;
 
         // Extends NavigationBindings to support indicators and resizers:
@@ -132,9 +131,7 @@ function compose(
         };
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (pushUnique(composedMembers, setOptions)) {
         setOptions(StockToolsDefaults);
         setOptions({
             navigation: {

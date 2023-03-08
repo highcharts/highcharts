@@ -35,7 +35,8 @@ import MenuComponent from './Components/MenuComponent.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent
+    fireEvent,
+    pushUnique
 } = U;
 
 import EventProvider from './Utils/EventProvider.js';
@@ -560,7 +561,7 @@ namespace KeyboardNavigation {
      *
      * */
 
-    const composedItems: Array<(Document|Function)> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -579,17 +580,13 @@ namespace KeyboardNavigation {
     ): (T&typeof ChartComposition) {
         MenuComponent.compose(ChartClass);
 
-        if (composedItems.indexOf(ChartClass) === -1) {
-            composedItems.push(ChartClass);
-
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.dismissPopupContent = chartDismissPopupContent;
         }
 
-        if (composedItems.indexOf(doc) === -1) {
-            composedItems.push(doc);
-
+        if (pushUnique(composedMembers, doc)) {
             addEvent(doc, 'keydown', documentOnKeydown);
         }
 

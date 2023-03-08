@@ -29,7 +29,8 @@ const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -46,7 +47,7 @@ namespace ColumnDataLabel {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -159,9 +160,7 @@ namespace ColumnDataLabel {
 
         DataLabel.compose(Series);
 
-        if (composedClasses.indexOf(ColumnSeriesClass) === -1) {
-            composedClasses.push(ColumnSeriesClass);
-
+        if (pushUnique(composedMembers, ColumnSeriesClass)) {
             ColumnSeriesClass.prototype.alignDataLabel = alignDataLabel;
         }
 

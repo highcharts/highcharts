@@ -51,6 +51,7 @@ const {
     isString,
     merge,
     pick,
+    pushUnique,
     wrap
 } = U;
 
@@ -138,7 +139,7 @@ interface TreeGridObject {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -847,9 +848,7 @@ class TreeGridAxisAdditions {
         TickClass: typeof Tick
     ): (T&typeof TreeGridAxisComposition) {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (pushUnique(composedMembers, AxisClass)) {
             if (AxisClass.keepProps.indexOf('treeGrid') === -1) {
                 AxisClass.keepProps.push('treeGrid');
             }
@@ -867,9 +866,7 @@ class TreeGridAxisAdditions {
 
         }
 
-        if (composedClasses.indexOf(TickClass) === -1) {
-            composedClasses.push(TickClass);
-
+        if (pushUnique(composedMembers, TickClass)) {
             if (!TickConstructor) {
                 TickConstructor = TickClass;
             }

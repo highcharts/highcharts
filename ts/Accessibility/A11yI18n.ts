@@ -28,7 +28,8 @@ const { format } = F;
 import U from '../Core/Utilities.js';
 const {
     getNestedProperty,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -83,7 +84,7 @@ namespace A11yI18nComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -99,9 +100,8 @@ namespace A11yI18nComposition {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (T&ChartComposition) {
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
 
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.langFormat = langFormat;

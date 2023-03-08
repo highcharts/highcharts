@@ -48,7 +48,7 @@ const {
 
 const chartDestroyEvents: Array<[Chart, Array<Function>]> = [];
 
-const composedMembers: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *

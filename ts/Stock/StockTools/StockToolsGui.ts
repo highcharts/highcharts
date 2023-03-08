@@ -37,7 +37,8 @@ const {
     addEvent,
     getStyle,
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -69,7 +70,7 @@ declare module '../../Core/Options'{
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -108,9 +109,7 @@ function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRedraw);
@@ -122,9 +121,7 @@ function compose(
         ChartClass.prototype.setStockTools = chartSetStockTools;
     }
 
-    if (composedClasses.indexOf(NavigationBindingsClass) === -1) {
-        composedClasses.push(NavigationBindingsClass);
-
+    if (pushUnique(composedMembers, NavigationBindingsClass)) {
         addEvent(
             NavigationBindingsClass,
             'deselectButton',
@@ -137,9 +134,7 @@ function compose(
         );
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (pushUnique(composedMembers, setOptions)) {
         setOptions(StockToolsDefaults);
     }
 }

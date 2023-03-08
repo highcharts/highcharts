@@ -26,6 +26,7 @@ const { prototype: seriesProto } = Series;
 import U from '../Core/Utilities.js';
 const {
     defined,
+    pushUnique,
     stableSort
 } = U;
 
@@ -63,7 +64,7 @@ namespace OnSeriesComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -80,9 +81,7 @@ namespace OnSeriesComposition {
         SeriesClass: T
     ): (T&SeriesComposition) {
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.getPlotBox = getPlotBox;

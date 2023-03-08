@@ -29,7 +29,8 @@ const {
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    defined
+    defined,
+    pushUnique
 } = U;
 
 /* *
@@ -92,7 +93,7 @@ namespace ColorMapComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     export const pointMembers = {
         dataLabelOnNull: true,
@@ -124,9 +125,7 @@ namespace ColorMapComposition {
     ): (T&typeof SeriesComposition) {
         const PointClass = SeriesClass.prototype.pointClass;
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
+        if (pushUnique(composedMembers, PointClass)) {
             addEvent(PointClass, 'afterSetState', onPointAfterSetState);
         }
 

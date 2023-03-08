@@ -26,6 +26,7 @@ const {
     addEvent,
     merge,
     pick,
+    pushUnique,
     splat
 } = U;
 
@@ -63,7 +64,7 @@ declare module '../Options' {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -123,9 +124,7 @@ class ZAxis extends Axis implements AxisLike {
         ChartClass: typeof Chart
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
             const chartProto = ChartClass.prototype;
@@ -134,6 +133,7 @@ class ZAxis extends Axis implements AxisLike {
             chartProto.collectionsWithInit.zAxis = [chartProto.addZAxis];
             chartProto.collectionsWithUpdate.push('zAxis');
         }
+
     }
 
     /* *

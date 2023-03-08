@@ -28,7 +28,8 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     find,
-    isNumber
+    isNumber,
+    pushUnique
 } = U;
 
 /* *
@@ -55,7 +56,7 @@ declare module '../../Core/Chart/ChartOptions'{
  *
  * */
 
-const composedClasses: Array<(Function|GlobalsLike)> = [];
+const composedMembers: Array<unknown> = [];
 
 const defaultOptions = {
     /**
@@ -89,21 +90,15 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
     }
 
-    if (composedClasses.indexOf(H) === -1) {
-        composedClasses.push(H);
-
+    if (pushUnique(composedMembers, H)) {
         addEvent(H, 'displayError', onHighchartsDisplayError);
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (pushUnique(composedMembers, setOptions)) {
         setOptions(defaultOptions);
     }
 

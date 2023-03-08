@@ -38,7 +38,8 @@ const {
     isArray,
     isNumber,
     objectEach,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -691,7 +692,7 @@ namespace StackingAxis {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -709,24 +710,18 @@ namespace StackingAxis {
         SeriesClass: typeof Series
     ): void {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (pushUnique(composedMembers, AxisClass)) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
         }
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.getStacks = chartGetStacks;
         }
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.getStackIndicator = seriesGetStackIndicator;
@@ -735,6 +730,7 @@ namespace StackingAxis {
             seriesProto.setGroupedPoints = seriesSetGroupedPoints;
             seriesProto.setStackedPoints = seriesSetStackedPoints;
         }
+
     }
 
 }

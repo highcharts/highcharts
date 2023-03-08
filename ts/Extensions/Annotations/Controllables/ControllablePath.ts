@@ -31,6 +31,7 @@ const {
     defined,
     extend,
     merge,
+    pushUnique,
     uniqueKey
 } = U;
 
@@ -68,7 +69,7 @@ interface MarkerSetterFunction {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 const markerEndSetter = createMarkerSetter('marker-end');
 
@@ -213,19 +214,16 @@ class ControllablePath extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         }
 
-        if (composedClasses.indexOf(SVGRendererClass) === -1) {
-            composedClasses.push(SVGRendererClass);
-
+        if (pushUnique(composedMembers, SVGRendererClass)) {
             const svgRendererProto = SVGRendererClass.prototype;
 
             svgRendererProto.addMarker = svgRendererAddMarker;
         }
+
     }
 
     /* *

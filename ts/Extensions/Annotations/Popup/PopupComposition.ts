@@ -31,6 +31,7 @@ import Popup from './Popup.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
+    pushUnique,
     wrap
 } = U;
 
@@ -53,7 +54,7 @@ interface PopupConfigObject {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -69,10 +70,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (composedClasses.indexOf(NagivationBindingsClass) === -1) {
-        composedClasses.push(NagivationBindingsClass);
-
-
+    if (pushUnique(composedMembers, NagivationBindingsClass)) {
         addEvent(
             NagivationBindingsClass,
             'closePopup',
@@ -85,15 +83,14 @@ function compose(
         );
     }
 
-    if (composedClasses.indexOf(PointerClass) === -1) {
-        composedClasses.push(PointerClass);
-
+    if (pushUnique(composedMembers, PointerClass)) {
         wrap(
             PointerClass.prototype,
             'onContainerMouseDown',
             wrapPointerOnContainerMouserDown
         );
     }
+
 }
 
 /**

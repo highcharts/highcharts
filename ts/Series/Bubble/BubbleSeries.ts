@@ -50,7 +50,8 @@ const {
     extend,
     isNumber,
     merge,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -90,7 +91,7 @@ type BubbleZExtremes = { zMin: number; zMax: number };
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -481,9 +482,7 @@ class BubbleSeries extends ScatterSeries {
     ): void {
         BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (pushUnique(composedMembers, AxisClass)) {
             AxisClass.prototype.beforePadding = axisBeforePadding;
         }
 

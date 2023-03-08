@@ -34,6 +34,7 @@ const {
     find,
     fireEvent,
     pick,
+    pushUnique,
     wrap
 } = U;
 
@@ -65,7 +66,7 @@ declare class AnnotationChart extends Chart {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -399,9 +400,7 @@ namespace AnnotationChart {
         PointerClass: typeof Pointer
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterInit', onChartAfterInit);
 
             const chartProto = ChartClass.prototype as AnnotationChart;
@@ -429,9 +428,7 @@ namespace AnnotationChart {
             };
         }
 
-        if (composedClasses.indexOf(PointerClass) === -1) {
-            composedClasses.push(PointerClass);
-
+        if (pushUnique(composedMembers, PointerClass)) {
             const pointerProto = PointerClass.prototype;
 
             wrap(
@@ -440,6 +437,7 @@ namespace AnnotationChart {
                 wrapPointerOnContainerMouseDown
             );
         }
+
     }
 
 }

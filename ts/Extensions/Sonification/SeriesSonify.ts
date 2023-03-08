@@ -46,7 +46,8 @@ const {
     isArray,
     merge,
     objectEach,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -117,15 +118,13 @@ namespace SeriesSonify {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -134,9 +133,7 @@ namespace SeriesSonify {
         SeriesClass: T
     ): (T&typeof Composition) {
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             extend(seriesProto, {

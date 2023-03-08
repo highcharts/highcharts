@@ -21,7 +21,8 @@ import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    defined
+    defined,
+    pushUnique
 } = U;
 
 /* *
@@ -79,7 +80,7 @@ namespace DerivedComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     export const hasDerivedData = true;
 
@@ -107,9 +108,7 @@ namespace DerivedComposition {
         SeriesClass: T
     ): (T&typeof SeriesComposition) {
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.addBaseSeriesEvents = addBaseSeriesEvents;

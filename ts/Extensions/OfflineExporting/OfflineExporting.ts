@@ -51,7 +51,7 @@ const {
     error,
     extend,
     fireEvent,
-    pick,
+    pushUnique,
     merge
 } = U;
 
@@ -104,7 +104,7 @@ declare module '../../Core/Chart/ChartLike' {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -166,9 +166,7 @@ namespace OfflineExporting {
         ChartClass: T
     ): (typeof Composition&T) {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as Composition;
 
             chartProto.getSVGForLocalExport = getSVGForLocalExport;

@@ -29,7 +29,8 @@ import type SeriesOptions from '../../../Core/Series/SeriesOptions';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
-    merge
+    merge,
+    pushUnique
 } = U;
 
 /* *
@@ -64,7 +65,7 @@ namespace ForcedMarkersComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
 
     /* *
@@ -83,9 +84,7 @@ namespace ForcedMarkersComposition {
         SeriesClass: T
     ): void {
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (pushUnique(composedMembers, SeriesClass)) {
             addEvent(
                 SeriesClass as typeof SeriesComposition,
                 'afterSetOptions',
