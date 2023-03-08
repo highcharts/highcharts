@@ -1783,15 +1783,17 @@ namespace Legend {
     export function compose(ChartClass: typeof Chart): void {
         if (composedMembers.indexOf(ChartClass) === -1) {
             composedMembers.push(ChartClass);
-            addEvent(ChartClass, 'beforeRendering', function (): void {
-                const chart = this;
+            addEvent(ChartClass, 'beforeMargins', function (): void {
                 /**
-                 * The overview of the chart's series.
+                 * The legend contains an interactive overview over chart items,
+                 * usually individual series or points depending on the series
+                 * type. The color axis and bubble legend are also rendered in
+                 * the chart legend.
                  *
                  * @name Highcharts.Chart#legend
                  * @type {Highcharts.Legend}
                  */
-                chart.legend = new Legend(chart, chart.options.legend as any);
+                this.legend = new Legend(this, this.options.legend);
             });
         }
     }

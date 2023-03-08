@@ -2401,7 +2401,6 @@ class Chart {
             axes = chart.axes,
             colorAxis = chart.colorAxis,
             renderer = chart.renderer,
-            options = chart.options,
             renderAxes = function (axes: Array<Axis>): void {
                 axes.forEach(function (axis): void {
                     if (axis.visible) {
@@ -2415,7 +2414,9 @@ class Chart {
         // Title
         chart.setTitle();
 
-        fireEvent(chart, 'beforeRendering');
+        // Fire an event before the margins are computed. This is where the
+        // legend is assigned.
+        fireEvent(chart, 'beforeMargins');
 
         // Get stacks
         if (chart.getStacks) {
