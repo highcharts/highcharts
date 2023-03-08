@@ -212,240 +212,66 @@ function onChartLoad() {
     }
 }
 
-// Get the turnover. Read the table from the HTML, sort by the joined/left
-// events and keep track of the number of employees.
-function getTurnover() {
-    let employees = 0;
-    return [].reduce
-        .call(
-            document.getElementById('turnover').querySelectorAll('tr'),
-            (turnover, tr) => {
-                const dateJoined = Date.parse(tr.children[1].textContent);
-                if (!isNaN(dateJoined)) {
-                    turnover.push({
-                        x: dateJoined,
-                        name: `${tr.children[0].textContent} joined`,
-                        accumulate: 1,
-                        image: tr.children[3].textContent || null
-                    });
-                }
-
-                const dateLeft = Date.parse(tr.children[2].textContent);
-                if (!isNaN(dateLeft)) {
-                    turnover.push({
-                        x: dateLeft,
-                        name: `${tr.children[0].textContent} left`,
-                        accumulate: -1,
-                        image: tr.children[3].textContent || null
-                    });
-                }
-
-                return turnover;
-            },
-            []
-        )
-        .sort((a, b) => a.x - b.x)
-        .map(event =>
-            Object.assign(event, {
-                y: (employees += event.accumulate)
-            })
-        );
-}
-
-const moreEmployees = [
-    {
-        x: Date.UTC(2019, 8, 30),
-        y: 31,
-        name: '2 Employees left',
-        accumulate: -2,
-        image: null
-    },
-    {
-        x: Date.UTC(2020, 0, 11),
-        y: 29,
-        name: '1 Employee left',
-        accumulate: -1,
-        image: null
-    },
-    {
-        x: Date.UTC(2020, 1, 21),
-        y: 28,
-        name: '1 Employee left',
-        accumulate: -1,
-        image: null
-    },
-    {
-        x: Date.UTC(2020, 5, 11),
-        y: 27,
-        name: '1 Employees left',
-        accumulate: -1,
-        image: null
-    },
-    {
-        x: Date.UTC(2020, 6, 31),
-        y: 26,
-        name: '1 Employee left',
-        accumulate: -1,
-        image: null
-    },
-    {
-        x: Date.UTC(2020, 8, 21),
-        y: 28,
-        name: '2 Employees joined',
-        accumulate: 2,
-        image: null
-    },
-    {
-        x: Date.UTC(2020, 9, 31),
-        y: 29,
-        name: '1 Employees joined',
-        accumulate: 1,
-        image: null
-    },
-    {
-        x: Date.UTC(2020, 10, 11),
-        y: 30,
-        name: '1 Employees joined',
-        accumulate: 1,
-        image: null
-    },
-    {
-        x: Date.UTC(2021, 0, 1),
-        y: 34,
-        name: '4 Employees joined',
-        accumulate: 4,
-        image: null
-    },
-    {
-        x: Date.UTC(2021, 1, 11),
-        y: 35,
-        name: '1 Employee joined',
-        accumulate: 1,
-        image: null
-    },
-    {
-        x: Date.UTC(2021, 2, 30),
-        y: 34,
-        name: '1 Employee left',
-        accumulate: -1,
-        image: null
-    },
-    {
-        x: Date.UTC(2021, 4, 30),
-        y: 35,
-        name: '1 Employee joined',
-        accumulate: 1,
-        image: null
-    },
-    {
-        x: Date.UTC(2021, 5, 3),
-        y: 37,
-        name: '2 Employees joined',
-        accumulate: -2,
-        image: null
-    },
-    {
-        x: Date.UTC(2021, 6, 30),
-        y: 36,
-        name: '1 Employee left',
-        accumulate: -1,
-        image: null
-    },
-    {
-        x: Date.UTC(2021, 7, 10),
-        y: 39,
-        name: '3 Employees joined',
-        accumulate: 3,
-        image: null
-    },
-    {
-        x: Date.UTC(2021, 8, 30),
-        y: 38,
-        name: '1 Employee left',
-        accumulate: -1,
-        image: null
-    },
-    {
-        x: Date.UTC(2021, 9, 13),
-        y: 39,
-        name: '1 Employee joined',
-        accumulate: 1,
-        image: null
-    },
-    {
-        x: Date.UTC(2022, 0, 30),
-        y: 31,
-        name: '8 Employees left',
-        accumulate: -8,
-        image: null
-    },
-    {
-        x: Date.UTC(2022, 1, 10),
-        y: 32,
-        name: '1 Employee joined',
-        accumulate: 1,
-        image: null
-    },
-    {
-        x: Date.UTC(2022, 2, 30),
-        y: 33,
-        name: '1 Employee joined',
-        accumulate: 1,
-        image: null
-    },
-    {
-        x: Date.UTC(2022, 3, 3),
-        y: 34,
-        name: '1 Employee joined',
-        accumulate: 1,
-        image: null
-    },
-    {
-        x: Date.UTC(2022, 5, 30),
-        y: 35,
-        name: '1 Employee joined',
-        accumulate: 1,
-        image: null
-    },
-    {
-        x: Date.UTC(2022, 6, 10),
-        y: 34,
-        name: '1 Employee left',
-        accumulate: -1,
-        image: null
-    },
-    {
-        x: Date.UTC(2022, 8, 30),
-        y: 33,
-        name: '1 Employee left',
-        accumulate: -1,
-        image: null
-    },
-    {
-        x: Date.UTC(2022, 9, 3),
-        y: 32,
-        name: '1 Employee left',
-        accumulate: -1,
-        image: null
-    },
-    {
-        x: Date.UTC(2022, 10, 30),
-        y: 33,
-        name: '1 Employee joined',
-        accumulate: 1,
-        image: null
-    },
-    {
-        x: Date.UTC(2022, 11, 10),
-        y: 34,
-        name: '1 Employee joined',
-        accumulate: 1,
-        image: null
-    }
+const employees = [
+    { x: Date.UTC(2009, 10, 1), y: 1 },
+    { x: Date.UTC(2010, 10, 20), y: 2 },
+    { x: Date.UTC(2011, 3, 1), y: 3 },
+    { x: Date.UTC(2011, 7, 1), y: 4 },
+    { x: Date.UTC(2011, 7, 5), y: 5 },
+    { x: Date.UTC(2012, 5, 1), y: 6 },
+    { x: Date.UTC(2012, 8, 10), y: 5 },
+    { x: Date.UTC(2012, 8, 15), y: 6 },
+    { x: Date.UTC(2013, 7, 1), y: 7 },
+    { x: Date.UTC(2013, 7, 20), y: 8 },
+    { x: Date.UTC(2013, 9, 1), y: 9 },
+    { x: Date.UTC(2014, 7, 8), y: 10 },
+    { x: Date.UTC(2014, 10, 1), y: 11 },
+    { x: Date.UTC(2015, 1, 1), y: 12 },
+    { x: Date.UTC(2015, 4, 1), y: 13 },
+    { x: Date.UTC(2015, 7, 1), y: 15 },
+    { x: Date.UTC(2016, 0, 1), y: 16 },
+    { x: Date.UTC(2016, 1, 1), y: 18 },
+    { x: Date.UTC(2016, 4, 1), y: 17 },
+    { x: Date.UTC(2016, 6, 1), y: 16 },
+    { x: Date.UTC(2016, 7, 1), y: 19 },
+    { x: Date.UTC(2016, 8, 1), y: 20 },
+    { x: Date.UTC(2017, 0, 1), y: 21 },
+    { x: Date.UTC(2017, 2, 1), y: 20 },
+    { x: Date.UTC(2017, 7, 1), y: 19 },
+    { x: Date.UTC(2017, 8, 1), y: 21 },
+    { x: Date.UTC(2017, 10, 1), y: 20 },
+    { x: Date.UTC(2018, 0, 1), y: 23 },
+    { x: Date.UTC(2018, 7, 1), y: 26 },
+    { x: Date.UTC(2019, 1, 1), y: 27 },
+    { x: Date.UTC(2019, 2, 1), y: 28 },
+    { x: Date.UTC(2019, 5, 1), y: 29 },
+    { x: Date.UTC(2019, 7, 1), y: 31 },
+    { x: Date.UTC(2020, 0, 1), y: 29 },
+    { x: Date.UTC(2020, 1, 1), y: 28 },
+    { x: Date.UTC(2020, 5, 1), y: 27 },
+    { x: Date.UTC(2020, 6, 1), y: 26 },
+    { x: Date.UTC(2020, 8, 1), y: 28 },
+    { x: Date.UTC(2020, 9, 1), y: 29 },
+    { x: Date.UTC(2020, 10, 1), y: 30 },
+    { x: Date.UTC(2021, 0, 1), y: 31 },
+    { x: Date.UTC(2021, 1, 1), y: 32 },
+    { x: Date.UTC(2021, 2, 1), y: 33 },
+    { x: Date.UTC(2021, 3, 1), y: 34 },
+    { x: Date.UTC(2021, 5, 1), y: 33 },
+    { x: Date.UTC(2021, 6, 1), y: 34 },
+    { x: Date.UTC(2021, 8, 1), y: 33 },
+    { x: Date.UTC(2021, 9, 1), y: 32 },
+    { x: Date.UTC(2021, 10, 1), y: 33 },
+    { x: Date.UTC(2021, 11, 1), y: 34 },
+    { x: Date.UTC(2022, 1, 1), y: 35 },
+    { x: Date.UTC(2022, 2, 1), y: 34 },
+    { x: Date.UTC(2022, 4, 1), y: 36 },
+    { x: Date.UTC(2022, 5, 1), y: 37 },
+    { x: Date.UTC(2022, 6, 1), y: 36 },
+    { x: Date.UTC(2022, 7, 1), y: 39 },
+    { x: Date.UTC(2022, 8, 1), y: 38 },
+    { x: Date.UTC(2022, 10, 1), y: 39 }
 ];
-
-const imgPath =
-    'https://cdn.rawgit.com/highcharts/highcharts/0b81a74ecd2fbd2e9b24489bf476f8baecc218e1/samples/graphics/homepage/';
 
 const options = {
     chart: {
@@ -470,7 +296,7 @@ const options = {
                 to: Date.UTC(2010, 11, 1),
                 className: 'time-1',
                 label: {
-                    text: '<em>Offices:</em><br> Torstein\'s basement',
+                    text: '<em>Offices:</em><br> Torstein´s basement',
                     style: {
                         color: '#46465c'
                     },
@@ -829,7 +655,7 @@ const options = {
                 pointFormat: '{point.name}<br><b>{point.y}</b>',
                 valueSuffix: ' employees'
             },
-            data: getTurnover().concat(moreEmployees)
+            data: employees
         }
     ]
 };
