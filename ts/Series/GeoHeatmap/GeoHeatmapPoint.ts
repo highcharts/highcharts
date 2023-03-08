@@ -72,12 +72,11 @@ class GeoHeatmapPoint extends MapPoint {
         const point = super.applyOptions.call(
                 this, options, x
             ) as GeoHeatmapPoint,
-            lat = point.options.lat,
-            lon = point.options.lon;
+            { lat, lon } = point.options;
+
 
         if (isNumber(lon) && isNumber(lat)) {
-            const colsize = this.series.options.colsize || 1,
-                rowsize = this.series.options.rowsize || 1,
+            const { colsize = 1, rowsize = 1 } = this.series.options,
                 x1 = lon - colsize / 2,
                 y1 = lat - rowsize / 2;
 
