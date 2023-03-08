@@ -648,11 +648,13 @@ class TiledWebMapSeries extends MapSeries {
                                                 tilesOffsetY - startY) * fx.pos)
                                         ),
                                         width: (
-                                            startWidth + ((scaledTileSize -
+                                            startWidth + ((
+                                                Math.ceil(scaledTileSize) + 1 -
                                                 startWidth) * fx.pos)
                                         ),
                                         height: (
-                                            startHeight + ((scaledTileSize -
+                                            startHeight + ((
+                                                Math.ceil(scaledTileSize) + 1 -
                                                 startHeight) * fx.pos)
                                         )
                                     });
@@ -699,8 +701,8 @@ class TiledWebMapSeries extends MapSeries {
                                 tiles[zoomKey].tiles[key].attr({
                                     x: (posX * scaledTileSize) - tilesOffsetX,
                                     y: (posY * scaledTileSize) - tilesOffsetY,
-                                    width: scaledTileSize,
-                                    height: scaledTileSize
+                                    width: Math.ceil(scaledTileSize) + 1,
+                                    height: Math.ceil(scaledTileSize) + 1
                                 });
                             }
                         }
