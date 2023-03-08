@@ -127,7 +127,7 @@ const configs: {
                                                     cursor.emitCursor(table, {
                                                         type: 'position',
                                                         row: this.x,
-                                                        column: '' + series.index,
+                                                        column: series.name,
                                                         state: 'point.mouseOver'
                                                     });
                                                 },
@@ -135,7 +135,7 @@ const configs: {
                                                     cursor.emitCursor(table, {
                                                         type: 'position',
                                                         row: this.x,
-                                                        column: '' + series.index,
+                                                        column: series.name,
                                                         state: 'point.mouseOut'
                                                     });
                                                 }
@@ -336,12 +336,14 @@ const configs: {
                     if (cursor) {
                         cursor.addListener(table.id, 'point.mouseOver', (e): void => {
                             if (chart && chart.series.length) {
-                                if (e.cursor.type === 'position' && 'row' in e.cursor) {
-                                    const cursor = e.cursor as any; // TODO: needs a type;
-                                    const series = chart.series[cursor.column || 0];
+                                const cursor = e.cursor;
+                                if (cursor.type === 'position') {
+                                    const [series] = chart.series.length > 1 && cursor.column ?
+                                        chart.series.filter((series): boolean => series.name === cursor.column) :
+                                        chart.series;
 
-                                    if (series) {
-                                        const point = series.data[cursor.row];
+                                    if (series && series.visible && cursor.row !== void 0) {
+                                        const point = findMatchingPoint(chart, { series, x: cursor.row });
 
                                         if (point) {
                                             chart.tooltip && chart.tooltip.refresh(point);

@@ -61,9 +61,10 @@ const configs: {
                             // TODO: should this event return cell data instead of row data?
                             addEvent(dataGrid.container, 'dataGridHover', (e: any): void => {
                                 const row = e.row;
+
                                 cursor.emitCursor(store.table, {
                                     type: 'position',
-                                    row: row.dataset.rowIndex,
+                                    row: parseInt(row.dataset.rowXIndex, 10),
                                     state: 'point.mouseOver'
                                 });
                             }),
@@ -95,16 +96,19 @@ const configs: {
                     const { cursor } = board;
                     if (cursor) {
                         cursor.addListener(table.id, 'point.mouseOver', (e): void => {
+                            const cursor = e.cursor;
+                            if (cursor.type === 'position') {
+                                const { row } = cursor;
+                                const { dataGrid } = this;
 
-                            const cursor = e.cursor as any;
-                            const { row } = cursor;
+                                if (row && dataGrid) {
+                                    const highlightedDataRow = dataGrid.container
+                                        .querySelector<HTMLElement>(`.hc-dg-row[data-row-x-index="${row}"]`);
 
-                            const { dataGrid } = this;
-                            if (dataGrid) {
-                                const highlightedDataRow = dataGrid.rowElements[row];
-                                if (highlightedDataRow) {
-                                    dataGrid.toggleRowHighlight(highlightedDataRow);
-                                    dataGrid.hoveredRow = highlightedDataRow;
+                                    if (highlightedDataRow) {
+                                        dataGrid.toggleRowHighlight(highlightedDataRow);
+                                        dataGrid.hoveredRow = highlightedDataRow;
+                                    }
                                 }
                             }
 
