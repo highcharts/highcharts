@@ -1,0 +1,6 @@
+---
+ name: Highchart Simple example World Bank API
+ authors:
+   - Thomas Roca
+ js_wrap: b
+...

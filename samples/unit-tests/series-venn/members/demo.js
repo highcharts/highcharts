@@ -1,5 +1,5 @@
 QUnit.test('addOverlapToRelations', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennPrototype = Highcharts.Series.types.venn.prototype,
         addOverlapToSets = vennPrototype.utils.addOverlapToSets,
         data,
         set;
@@ -80,7 +80,7 @@ QUnit.test('addOverlapToRelations', function (assert) {
 });
 
 QUnit.test('getLabelWidth', assert => {
-    const { getLabelWidth } = Highcharts.seriesTypes.venn.prototype.utils;
+    const { getLabelWidth } = Highcharts.Series.types.venn.prototype.utils;
 
     // Start with an internal circle, and no external circles.
     const internal = [{ x: 0, y: 0, r: 100 }];
@@ -120,7 +120,7 @@ QUnit.test('getLabelWidth', assert => {
 });
 
 QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
-    var { prototype: vennPrototype } = Highcharts.seriesTypes.venn,
+    var { prototype: vennPrototype } = Highcharts.Series.types.venn,
         { getDistanceBetweenCirclesByOverlap } = vennPrototype.utils;
 
     assert.strictEqual(
@@ -165,7 +165,7 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
  * of any unexpected changes.
  */
 QUnit.test('layoutGreedyVenn', assert => {
-    const { prototype: vennPrototype } = Highcharts.seriesTypes.venn;
+    const { prototype: vennPrototype } = Highcharts.Series.types.venn;
     const { layoutGreedyVenn } = vennPrototype.utils;
 
     // Data from #9844
@@ -263,7 +263,7 @@ QUnit.test('layoutGreedyVenn', assert => {
 });
 
 QUnit.test('loss', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennPrototype = Highcharts.Series.types.venn.prototype,
         loss = vennPrototype.utils.loss,
         map = {
             A: { x: 0, y: 0, r: 3 },
@@ -325,7 +325,7 @@ QUnit.test('loss', function (assert) {
 });
 
 QUnit.test('processVennData', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennPrototype = Highcharts.Series.types.venn.prototype,
         processVennData = vennPrototype.utils.processVennData,
         data;
 
@@ -521,7 +521,7 @@ QUnit.test('processVennData', function (assert) {
 });
 
 QUnit.test('sortByTotalOverlap', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennPrototype = Highcharts.Series.types.venn.prototype,
         sortByTotalOverlap = vennPrototype.utils.sortByTotalOverlap;
 
     assert.deepEqual(
@@ -544,11 +544,10 @@ QUnit.test('sortByTotalOverlap', function (assert) {
 });
 
 QUnit.module('nelder-mead', () => {
-    const vennUtils = Highcharts.seriesTypes.venn.prototype.utils;
-    const NelderMeadModule = vennUtils.nelderMead;
+    const vennUtils = Highcharts.Series.types.venn.prototype.utils;
 
     QUnit.test('getCentroid', assert => {
-        const { getCentroid } = NelderMeadModule;
+        const { getCentroid } = vennUtils;
         assert.deepEqual(
             getCentroid([
                 [184.16021264966827, 99.75],
@@ -561,8 +560,7 @@ QUnit.module('nelder-mead', () => {
     });
 
     QUnit.test('nelderMead', assert => {
-        const { nelderMead } = NelderMeadModule;
-        const { getMarginFromCircles } = vennUtils;
+        const { getMarginFromCircles, nelderMead } = vennUtils;
         const internal = [{ r: 160, x: 184.16021264966827, y: 175 }];
         const external = [{ r: 160, x: 415.8397873503318, y: 175 }];
         const fn = ([x, y]) =>
@@ -576,7 +574,7 @@ QUnit.module('nelder-mead', () => {
 });
 
 QUnit.module('geometry', () => {
-    const { geometry } = Highcharts.seriesTypes.venn.prototype.utils;
+    const { geometry } = Highcharts.Series.types.venn.prototype.utils;
 
     QUnit.test('getCenterOfPoints', function (assert) {
         const { getCenterOfPoints } = geometry;
@@ -611,7 +609,7 @@ QUnit.module('geometry', () => {
 });
 
 QUnit.module('geometry-circles', () => {
-    const { geometryCircles } = Highcharts.seriesTypes.venn.prototype.utils;
+    const { geometryCircles } = Highcharts.Series.types.venn.prototype.utils;
 
     QUnit.test('getAreaOfCircle', assert => {
         const { getAreaOfCircle } = geometryCircles;

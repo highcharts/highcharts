@@ -1,143 +1,158 @@
-/*
-TODO:
-- Check data labels after drilling. Label rank? New positions?
-*/
+const drilldown = async function (e) {
+    if (!e.seriesOptions) {
+        const chart = this,
+            mapKey = `countries/us/${e.point.drilldown}-all`;
 
-let data = Highcharts.geojson(Highcharts.maps['countries/us/us-all']);
-const separators = Highcharts.geojson(Highcharts.maps['countries/us/us-all'], 'mapline');
-
-// Set drilldown pointers
-data.forEach((d, i) => {
-    d.drilldown = d.properties['hc-key'];
-    d.value = i; // Non-random bogus data
-});
-
-function getScript(url, cb) {
-    const script = document.createElement('script');
-    script.src = url;
-    script.onload = cb;
-    document.head.appendChild(script);
-}
-
-// Instantiate the map
-Highcharts.mapChart('container', {
-    chart: {
-        events: {
-            drilldown: function (e) {
-                if (!e.seriesOptions) {
-                    const chart = this,
-                        mapKey = 'countries/us/' + e.point.drilldown + '-all';
-
-                    // Handle error, the timeout is cleared on success
-                    let fail = setTimeout(() => {
-                        if (!Highcharts.maps[mapKey]) {
-                            chart.showLoading('<i class="icon-frown"></i> Failed loading ' + e.point.name);
-                            fail = setTimeout(() => {
-                                chart.hideLoading();
-                            }, 1000);
-                        }
-                    }, 3000);
-
-                    // Show the spinner
-                    chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i>'); // Font Awesome spinner
-
-                    // Load the drilldown map
-                    getScript('https://code.highcharts.com/mapdata/' + mapKey + '.js', () => {
-                        data = Highcharts.geojson(Highcharts.maps[mapKey]);
-
-                        // Set a non-random bogus value
-                        data.forEach((d, i) => {
-                            d.value = i;
-                        });
-
-                        // Hide loading and add series
-                        chart.hideLoading();
-                        clearTimeout(fail);
-                        chart.addSeriesAsDrilldown(e.point, {
-                            name: e.point.name,
-                            data: data,
-                            dataLabels: {
-                                enabled: true,
-                                format: '{point.name}'
-                            }
-                        });
-                    });
-                }
-
-                this.setTitle(null, { text: e.point.name });
-            },
-            drillup: function () {
-                this.setTitle(null, { text: '' });
+        // Handle error, the timeout is cleared on success
+        let fail = setTimeout(() => {
+            if (!Highcharts.maps[mapKey]) {
+                chart.showLoading(`
+                    <i class="icon-frown"></i>
+                    Failed loading ${e.point.name}
+                `);
+                fail = setTimeout(() => {
+                    chart.hideLoading();
+                }, 1000);
             }
-        }
-    },
+        }, 3000);
 
-    title: {
-        text: 'Highcharts Map Drilldown'
-    },
+        // Show the Font Awesome spinner
+        chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i>');
 
-    subtitle: {
-        text: '',
-        floating: true,
-        align: 'right',
-        y: 50,
-        style: {
-            fontSize: '16px'
-        }
-    },
+        // Load the drilldown map
+        const topology = await fetch(
+            `https://code.highcharts.com/mapdata/${mapKey}.topo.json`
+        ).then(response => response.json());
 
-    colorAxis: {
-        min: 0,
-        minColor: '#E6E7E8',
-        maxColor: '#005645'
-    },
+        const data = Highcharts.geojson(topology);
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        // Set a non-random bogus value
+        data.forEach((d, i) => {
+            d.value = i;
+        });
 
-    plotOptions: {
-        map: {
-            states: {
-                hover: {
-                    color: '#EEDD66'
-                }
+        // Apply the recommended map view if any
+        chart.mapView.update(
+            Highcharts.merge(
+                {
+                    insets: undefined,
+                    padding: 0
+                },
+                topology.objects.default['hc-recommended-mapview']
+            )
+        );
+
+        // Hide loading and add series
+        chart.hideLoading();
+        clearTimeout(fail);
+        chart.addSeriesAsDrilldown(e.point, {
+            name: e.point.name,
+            data,
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
             }
-        }
-    },
-
-    series: [{
-        data: data,
-        name: 'USA',
-        dataLabels: {
-            enabled: true,
-            format: '{point.properties.postal-code}'
-        }
-    }, {
-        type: 'mapline',
-        data: separators,
-        color: 'silver',
-        enableMouseTracking: false,
-        animation: {
-            duration: 500
-        }
-    }],
-
-    drilldown: {
-        activeDataLabelStyle: {
-            color: '#FFFFFF',
-            textDecoration: 'none',
-            textOutline: '1px #000000'
-        },
-        drillUpButton: {
-            relativeTo: 'spacingBox',
-            position: {
-                x: 0,
-                y: 60
-            }
-        }
+        });
     }
-});
+};
+
+// On drill up, reset to the top-level map view
+const afterDrillUp = function (e) {
+    if (e.seriesOptions.custom && e.seriesOptions.custom.mapView) {
+        e.target.mapView.update(
+            Highcharts.merge(
+                { insets: undefined },
+                e.seriesOptions.custom.mapView
+            ),
+            false
+        );
+    }
+};
+
+(async () => {
+
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
+    ).then(response => response.json());
+
+    const data = Highcharts.geojson(topology);
+
+    const mapView = topology.objects.default['hc-recommended-mapview'];
+
+    // Set drilldown pointers
+    data.forEach((d, i) => {
+        d.drilldown = d.properties['hc-key'];
+        d.value = i; // Non-random bogus data
+    });
+
+    // Instantiate the map
+    Highcharts.mapChart('container', {
+        chart: {
+            events: {
+                drilldown,
+                afterDrillUp
+            }
+        },
+
+        title: {
+            text: 'Highcharts Map Drilldown'
+        },
+
+        colorAxis: {
+            min: 0,
+            minColor: '#E6E7E8',
+            maxColor: '#005645'
+        },
+
+        mapView,
+
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
+
+        plotOptions: {
+            map: {
+                states: {
+                    hover: {
+                        color: '#EEDD66'
+                    }
+                }
+            }
+        },
+
+        series: [{
+            data,
+            name: 'USA',
+            dataLabels: {
+                enabled: true,
+                format: '{point.properties.postal-code}'
+            },
+            custom: {
+                mapView
+            }
+        }],
+
+        drilldown: {
+            activeDataLabelStyle: {
+                color: '#FFFFFF',
+                textDecoration: 'none',
+                textOutline: '1px #000000'
+            },
+            breadcrumbs: {
+                floating: true,
+                relativeTo: 'spacingBox'
+            },
+            drillUpButton: {
+                relativeTo: 'spacingBox',
+                position: {
+                    x: 0,
+                    y: 60
+                }
+            }
+        }
+    });
+
+})();

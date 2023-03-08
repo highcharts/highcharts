@@ -6,11 +6,23 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnnotationChart from '../AnnotationChart';
 import type {
     AnnotationOptions,
-    AnnotationLabelOptions
+    AnnotationTypeOptions
 } from '../AnnotationOptions';
+import type { AnnotationPointType } from '../AnnotationSeries';
+import type Controllable from '../Controllables/Controllable';
+import type {
+    ControllableLabelOptions,
+    ControllableShapeOptions
+} from '../Controllables/ControllableOptions';
 import type MockPointOptions from '../MockPointOptions';
 
 import Annotation from '../Annotation.js';
@@ -21,7 +33,11 @@ const {
     pick
 } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class VerticalLine extends Annotation {
 
@@ -32,7 +48,7 @@ class VerticalLine extends Annotation {
      * */
 
     public static connectorFirstPoint(
-        target: Highcharts.AnnotationControllable
+        target: Controllable
     ): MockPointOptions {
         const annotation = target.annotation as VerticalLine,
             chart = annotation.chart,
@@ -52,17 +68,18 @@ class VerticalLine extends Annotation {
     }
 
     public static connectorSecondPoint(
-        target: Highcharts.AnnotationControllable
+        target: Controllable
     ): MockPointOptions {
-        let annotation = target.annotation as VerticalLine,
+        const annotation = target.annotation as VerticalLine,
             chart = annotation.chart,
             inverted = chart.inverted,
             typeOptions = annotation.options.typeOptions,
             point = annotation.points[0],
             left = pick(point.series.yAxis && point.series.yAxis.left, 0),
             top = pick(point.series.yAxis && point.series.yAxis.top, 0),
-            yOffset = typeOptions.yOffset,
             y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
+
+        let yOffset = typeOptions.yOffset;
 
         if (typeOptions.label.offset < 0) {
             yOffset *= -1;
@@ -74,19 +91,6 @@ class VerticalLine extends Annotation {
             y: y + yOffset +
                 (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
         };
-    }
-
-    /* *
-     *
-     *  Constructors
-     *
-     * */
-
-    public constructor(
-        chart: AnnotationChart,
-        userOptions: VerticalLine.Options
-    ) {
-        super(chart, userOptions);
     }
 
     /* *
@@ -109,16 +113,17 @@ class VerticalLine extends Annotation {
                         VerticalLine.connectorSecondPoint
                     ]
                 }),
-                false as any
+                0
             );
 
         typeOptions.connector = connector.options;
     }
 
     public addLabels(): void {
-        let typeOptions = this.options.typeOptions,
-            labelOptions = typeOptions.label,
-            x = 0,
+        const typeOptions = this.options.typeOptions,
+            labelOptions = typeOptions.label;
+
+        let x = 0,
             y = labelOptions.offset,
             verticalAlign = (labelOptions.offset as any) < 0 ? 'bottom' : 'top',
             align = 'center';
@@ -143,6 +148,12 @@ class VerticalLine extends Annotation {
     }
 
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface VerticalLine {
     defaultOptions: Annotation['defaultOptions'];
@@ -176,7 +187,9 @@ VerticalLine.prototype.defaultOptions = merge(
              */
             label: {
                 offset: -40,
-                point: function (target: Highcharts.AnnotationControllable): Highcharts.AnnotationPointType {
+                point: function (
+                    target: Controllable
+                ): AnnotationPointType {
                     return target.annotation.points[0];
                 } as any,
                 allowOverlap: true,
@@ -202,15 +215,21 @@ VerticalLine.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace VerticalLine {
     export interface Options extends AnnotationOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeLabelOptions extends AnnotationLabelOptions {
+    export interface TypeLabelOptions extends ControllableLabelOptions {
         offset: number;
     }
-    export interface TypeOptions extends Annotation.TypeOptions {
-        connector: Annotation.ShapeOptions;
+    export interface TypeOptions extends AnnotationTypeOptions {
+        connector: Partial<ControllableShapeOptions>;
         label: TypeLabelOptions;
         yOffset: number;
     }
@@ -221,16 +240,19 @@ namespace VerticalLine {
  *  Registry
  *
  * */
-Annotation.types.verticalLine = VerticalLine;
+
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         verticalLine: typeof VerticalLine;
     }
 }
 
+Annotation.types.verticalLine = VerticalLine;
+
 /* *
  *
  *  Default Export
  *
  * */
+
 export default VerticalLine;

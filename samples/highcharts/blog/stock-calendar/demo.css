@@ -1,4 +1,4 @@
-@import 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css';
+@import "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css";
 
 .wrapper {
     max-width: 800px;
@@ -50,7 +50,7 @@
     font-size: 1.2em;
 }
 
-@media(max-width: 768px) {
+@media (max-width: 768px) {
     .custom-tooltip {
         width: 100%;
         text-align: center;

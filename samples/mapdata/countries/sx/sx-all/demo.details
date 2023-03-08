@@ -1,5 +1,5 @@
 ---
- name: Somaliland - Highmaps
- description: Highmaps demo
+ name: Somaliland - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -3,6 +3,7 @@ QUnit.test('Overlapping dataLabels should be hidden', function (assert) {
             plotOptions: {
                 series: {
                     dataLabels: {
+                        crop: false,
                         enabled: true,
                         rotation: 270
                     }
@@ -100,7 +101,7 @@ QUnit.test(
             ]
         });
 
-        Highcharts.fireEvent(chart.legend.allItems[1].legendGroup.element, 'click');
+        Highcharts.fireEvent(chart.legend.allItems[1].legendItem.group.element, 'click');
         chart.xAxis[0].setExtremes(0.5);
 
         assert.strictEqual(

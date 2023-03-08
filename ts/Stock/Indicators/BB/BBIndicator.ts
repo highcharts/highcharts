@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     BBOptions,
     BBParamsOptions
@@ -15,13 +21,12 @@ import type {
 import type BBPoint from './BBPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -29,7 +34,11 @@ const {
     merge
 } = U;
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 // Utils:
 /**
@@ -41,11 +50,11 @@ function getStandardDeviation(
     isOHLC: boolean,
     mean: number
 ): number {
-    let variance = 0,
-        arrLen = arr.length,
+    const arrLen = arr.length;
+    let i = 0,
         std = 0,
-        i = 0,
-        value: number;
+        value: number,
+        variance = 0;
 
     for (; i < arrLen; i++) {
         value = ((isOHLC ? arr[i][index] : arr[i]) as any) - mean;
@@ -57,7 +66,11 @@ function getStandardDeviation(
     return std;
 }
 
-/* eslint-enable valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Bollinger Bands series type.
@@ -68,7 +81,14 @@ function getStandardDeviation(
  *
  * @augments Highcharts.Series
  */
-class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
+class BBIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -84,6 +104,21 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
      * @optionparent plotOptions.bb
      */
     public static defaultOptions: BBOptions = merge(SMAIndicator.defaultOptions, {
+
+        /**
+         * Option for fill color between lines in Bollinger Bands Indicator.
+         *
+         * @sample {highstock} stock/indicators/indicator-area-fill
+         *      Background fill between lines.
+         *
+         * @type      {Highcharts.ColorType}
+         * @since     9.3.2
+         * @apioption plotOptions.bb.fillColor
+         */
+
+        /**
+         * Parameters used in calculation of the regression points.
+         */
         params: {
             period: 20,
             /**
@@ -97,7 +132,7 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
          */
         bottomLine: {
             /**
-             * Styles for a bottom line.
+             * Styles for the bottom line.
              */
             styles: {
                 /**
@@ -119,9 +154,18 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
          * @extends plotOptions.bb.bottomLine
          */
         topLine: {
+            /**
+             * Styles for the top line.
+             */
             styles: {
+                /**
+                 * Pixel width of the line.
+                 */
                 lineWidth: 1,
                 /**
+                 * Color of the line. If not set, it's inherited from
+                 * [plotOptions.bb.color](#plotOptions.bb.color).
+                 *
                  * @type {Highcharts.ColorString}
                  */
                 lineColor: void 0
@@ -136,19 +180,25 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
         dataGrouping: {
             approximation: 'averages'
         }
-    } as BBOptions)
+    } as BBOptions);
 
     /* *
-    *
-    *  Prototype Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<BBPoint> = void 0 as any;
 
     public options: BBOptions = void 0 as any;
 
     public points: Array<BBPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public init(this: BBIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -172,24 +222,23 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
         series: TLinkedSeries,
         params: BBParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             standardDeviation: number = (params.standardDeviation as any),
+            xData: Array<number> = [],
+            yData: Array<Array<number>> = [],
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-middle line, 2-top line, 3-bottom line
-            BB: Array<Array<number>> = [],
+            BB: Array<Array<number>> = [];
             // middle line, top line and bottom line
-            ML: number,
+        let ML: number,
             TL: number,
             BL: number,
             date: number,
-            xData: Array<number> = [],
-            yData: Array<Array<number>> = [],
             slicedX: (Array<number>|undefined),
             slicedY: Array<Array<number>>,
             stdDev: number,
-            isOHLC: boolean,
             point: (
                 IndicatorValuesObject<TLinkedSeries>|
                 undefined
@@ -200,7 +249,7 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
             return;
         }
 
-        isOHLC = isArray(yVal[0]);
+        const isOHLC = isArray(yVal[0]);
 
         for (i = period; i <= yValLen; i++) {
             slicedX = xVal.slice(i - period, i);
@@ -239,27 +288,27 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
     }
 }
 
-interface BBIndicator {
-    pointArrayMap: Array<string>;
-    pointValKey: string;
-    nameComponents: Array<string>;
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface BBIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
+    nameComponents: Array<string>;
+    pointArrayMap: Array<keyof BBPoint>;
     pointClass: typeof BBPoint;
+    pointValKey: string;
 }
 extend(BBIndicator.prototype, {
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
-    nameComponents: ['period', 'standardDeviation'],
+    areaLinesNames: ['top', 'bottom'],
     linesApiNames: ['topLine', 'bottomLine'],
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    nameComponents: ['period', 'standardDeviation'],
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle'
 });
+MultipleLinesComposition.compose(BBIndicator);
 
 /* *
  *
@@ -281,6 +330,12 @@ SeriesRegistry.registerSeriesType('bb', BBIndicator);
  * */
 
 export default BBIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A bollinger bands indicator. If the [type](#series.bb.type) option is not

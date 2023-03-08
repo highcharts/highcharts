@@ -23,7 +23,7 @@ QUnit.test(
                         'Noncommunicable diseases': '487.2',
                         'Communicable & other Group I': '59.2'
                     },
-                    "Democratic People's Republic of Korea": {
+                    'Democratic People\'s Republic of Korea': {
                         Injuries: '91.9',
                         'Noncommunicable diseases': '751.4',
                         'Communicable & other Group I': '117.3'
@@ -457,7 +457,7 @@ QUnit.test(
                         Injuries: '53.8',
                         'Communicable & other Group I': '97.8'
                     },
-                    "C\u00f4te d'Ivoire": {
+                    'C\u00f4te d\'Ivoire': {
                         'Noncommunicable diseases': '794.0',
                         Injuries: '124.0',
                         'Communicable & other Group I': '861.3'
@@ -823,7 +823,7 @@ QUnit.test(
                         Injuries: '59.0',
                         'Noncommunicable diseases': '435.4'
                     },
-                    "Lao People's Democratic Republic": {
+                    'Lao People\'s Democratic Republic': {
                         'Communicable & other Group I': '328.7',
                         Injuries: '75.2',
                         'Noncommunicable diseases': '680.0'
@@ -977,8 +977,8 @@ QUnit.test(
             }
         });
         assert.strictEqual(
-            point.dataLabel.y,
-            -9999,
+            point.dataLabel.attr('visibility'),
+            'hidden',
             'Eastern Mediterranean is hidden'
         );
     }
@@ -987,9 +987,8 @@ QUnit.test(
 // Highcharts 4.1.1, Issue 3844
 // treemap - colorByPoint is not working
 QUnit.test(
-    'Treemap: useHTML causes that data label is misplaced (#8159)',
-    function (assert) {
-        var chart = Highcharts.chart('container', {
+    'Treemap: useHTML causes that data label is misplaced (#8159)', assert => {
+        const chart = Highcharts.chart('container', {
                 chart: {
                     width: 400,
                     height: 200
@@ -1011,7 +1010,8 @@ QUnit.test(
                                 colorValue: 1
                             },
                             {
-                                name: 'Bbbbbbbbbbbbb bbbbbbbbbbbbb',
+                                name: `Bbbbbbbbbbbbb bbbbbbbbbbbbb Bbbbbbbbbbbbb
+                                    bbbbbbbbbbbbb Bbbbbbbbbbbbb bbbbbbbbbbbbb`,
                                 value: 6,
                                 colorValue: 2
                             },
@@ -1025,26 +1025,37 @@ QUnit.test(
                 ]
             }),
             series = chart.series[0],
-            point1dataLabel = series.points[1].dataLabel,
-            point2dataLabel = series.points[2].dataLabel;
+            point1Box = series.points[1].graphic.getBBox(),
+            point1DL = series.points[1].dataLabel,
+            point1DLabsBox = point1DL.absoluteBox,
+            point2DL = series.points[2].dataLabel;
 
         assert.notStrictEqual(
-            point2dataLabel.visibility,
+            point2DL.visibility,
             'hidden',
-            "The second point's data label shouldn't overlap (and hide) the third point's datalabel."
+            `The second point's data label shouldn't overlap (and hide) the
+                third point's datalabel.`
         );
 
         assert.strictEqual(
-            point1dataLabel.getBBox(true).height >
-                point1dataLabel.text.getBBox(true).height,
+            point1DL.getBBox(true).height >
+                point1DL.text.getBBox(true).height,
             true,
             'Data label text (second point) should fit in its box.'
+        );
+
+        assert.close(
+            point1DLabsBox.y + (point1DLabsBox.height / 2),
+            point1Box.y + (point1Box.height / 2) + chart.plotTop,
+            1,
+            `Long data labels with useHTML: true should be middle-aligned
+                (#18212).`
         );
     }
 );
 
 QUnit.test(
-    "Treemap: data label exceeds point's boundaries (#8160)",
+    'Treemap: data label exceeds point\'s boundaries (#8160)',
     function (assert) {
         var chart = Highcharts.chart('container', {
                 chart: {
@@ -1117,7 +1128,7 @@ QUnit.test(
         assert.strictEqual(
             isLabelsWidthCorrect,
             true,
-            "Data label(s) text shouldn't be wider than its box (useHTML: false)."
+            'Data label(s) text shouldn\'t be wider than its box (useHTML: false).'
         );
 
         series.update({
@@ -1127,6 +1138,12 @@ QUnit.test(
         });
         isLabelsWidthCorrect = true;
         points = series.points; // update the reference
+
+        assert.strictEqual(
+            points[0].dataLabel.text.element.nodeName.toLowerCase(),
+            'span',
+            'Data labels should change to HTML'
+        );
 
         for (i = 0; i < points.length; i++) {
             dataLabel = points[i].dataLabel;
@@ -1140,7 +1157,20 @@ QUnit.test(
         assert.strictEqual(
             isLabelsWidthCorrect,
             true,
-            "Data label(s) text shouldn't be wider than its box (useHTML: true)."
+            'Data label(s) text shouldn\'t be wider than its box (useHTML: true).'
         );
+
+        series.update({
+            dataLabels: {
+                useHTML: false
+            }
+        });
+
+        assert.strictEqual(
+            points[0].dataLabel.text.element.nodeName.toLowerCase(),
+            'text',
+            'Data labels should change to SVG'
+        );
+
     }
 );

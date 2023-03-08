@@ -16,14 +16,12 @@
  *
  * */
 
-import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
-import type ColorType from './Color/ColorType';
 import type Point from './Series/Point';
+import type Pointer from './Pointer/Pointer';
 import type PointerEvent from './Pointer/PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
 import type RectangleObject from './Renderer/RectangleObject';
-import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGRenderer from './Renderer/SVG/SVGRenderer';
@@ -33,7 +31,7 @@ import F from './FormatUtilities.js';
 const { format } = F;
 import H from './Globals.js';
 const { doc } = H;
-import palette from './Color/Palette.js';
+import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
@@ -42,7 +40,6 @@ const {
     addEvent,
     clamp,
     css,
-    defined,
     discardElement,
     extend,
     fireEvent,
@@ -60,6 +57,12 @@ const {
  *  Declarations
  *
  * */
+
+declare module './Chart/ChartLike' {
+    interface ChartLike {
+        tooltip?: Tooltip;
+    }
+}
 
 declare module './Series/PointLike' {
     interface PointLike {
@@ -81,17 +84,13 @@ declare module './Series/SeriesOptions' {
     }
 }
 
-declare module '../Core/TooltipOptions'{
-    interface TooltipOptions {
-        distance?: number;
-    }
-}
-
 interface BoxObject extends R.BoxObject {
     anchorX: number;
     anchorY: number;
     boxWidth: number;
+    isHeader?: boolean;
     point: Point;
+    pos?: number;
     tt: SVGElement;
     x: number;
 }
@@ -137,6 +136,7 @@ class Tooltip {
      *  Properties
      *
      * */
+    public allowShared: boolean = true;
 
     public chart: Chart;
 
@@ -149,8 +149,6 @@ class Tooltip {
     public followPointer?: boolean;
 
     public hideTimer?: number;
-
-    public inContact?: boolean;
 
     public isHidden: boolean = true;
 
@@ -245,8 +243,6 @@ class Tooltip {
      *
      * @private
      * @function Highcharts.Tooltip#bodyFormatter
-     * @param {Array<(Highcharts.Point|Highcharts.Series)>} items
-     * @return {Array<string>}
      */
     public bodyFormatter(items: Array<Point>): Array<string> {
         return items.map(function (item): string {
@@ -274,7 +270,7 @@ class Tooltip {
      * @function Highcharts.Tooltip#cleanSplit
      *
      * @param {boolean} [force]
-     *        Force destroy all tooltips.
+     * Force destroy all tooltips.
      */
     public cleanSplit(force?: boolean): void {
         this.chart.series.forEach(function (series): void {
@@ -298,7 +294,9 @@ class Tooltip {
      *
      * @param {Highcharts.Tooltip} tooltip
      *
-     * @return {Array<string>}
+     * @return {string|Array<string>}
+     * Returns a string (single tooltip and shared)
+     * or an array of strings (split tooltip)
      */
     public defaultFormatter(
         this: Tooltip.FormatterContextObject,
@@ -330,12 +328,12 @@ class Tooltip {
             this.label = this.label.destroy();
         }
         if (this.split && this.tt) {
-            (this.cleanSplit as any)(this.chart, true);
+            this.cleanSplit(true);
             this.tt = this.tt.destroy();
         }
         if (this.renderer) {
             this.renderer = this.renderer.destroy() as any;
-            discardElement(this.container as any);
+            discardElement(this.container);
         }
         U.clearTimeout(this.hideTimer as any);
         U.clearTimeout(this.tooltipTimeout as any);
@@ -347,12 +345,6 @@ class Tooltip {
      *
      * @private
      * @function Highcharts.Tooltip#getAnchor
-     *
-     * @param {Highcharts.Point|Array<Highcharts.Point>} points
-     *
-     * @param {Highcharts.PointerEventObject} [mouseEvent]
-     *
-     * @return {Array<number>}
      */
     public getAnchor(
         points: (Point|Array<Point>),
@@ -363,13 +355,19 @@ class Tooltip {
             inverted = chart.inverted,
             plotTop = chart.plotTop,
             plotLeft = chart.plotLeft;
-        let ret: number[],
-            yAxis: (Axis|undefined),
-            xAxis: (Axis|undefined),
-            plotX = 0,
-            plotY = 0;
+        let ret: number[];
 
         points = splat(points);
+
+        // If reversedStacks are false the tooltip position should be taken from
+        // the last point (#17948)
+        if (
+            points[0].series &&
+            points[0].series.yAxis &&
+            !points[0].series.yAxis.options.reversedStacks
+        ) {
+            points = points.slice().reverse();
+        }
 
         // When tooltip follows mouse, relate the position to the mouse
         if (this.followPointer && mouseEvent) {
@@ -388,95 +386,99 @@ class Tooltip {
 
         // Calculate the average position and adjust for axis positions
         } else {
+            let chartX = 0,
+                chartY = 0;
             points.forEach(function (point): void {
-                yAxis = point.series.yAxis;
-                xAxis = point.series.xAxis;
-                plotX += point.plotX || 0;
-                plotY += (
-                    point.plotLow ?
-                        (point.plotLow + (point.plotHigh || 0)) / 2 :
-                        (point.plotY || 0)
-                );
-
-                // Adjust position for positioned axes (top/left settings)
-                if (xAxis && yAxis) {
-                    if (!inverted) { // #1151
-                        plotX += xAxis.pos - plotLeft;
-                        plotY += yAxis.pos - plotTop;
-                    } else { // #14771
-                        plotX += plotTop + chart.plotHeight - xAxis.len - xAxis.pos;
-                        plotY += plotLeft + chart.plotWidth - yAxis.len - yAxis.pos;
-                    }
+                const pos = point.pos(true);
+                if (pos) {
+                    chartX += pos[0];
+                    chartY += pos[1];
                 }
             });
 
-            plotX /= points.length;
-            plotY /= points.length;
-
-            // Use the average position for multiple points
-            ret = [
-                inverted ? chart.plotWidth - plotY : plotX,
-                inverted ? chart.plotHeight - plotX : plotY
-            ];
+            chartX /= points.length;
+            chartY /= points.length;
 
             // When shared, place the tooltip next to the mouse (#424)
             if (this.shared && points.length > 1 && mouseEvent) {
                 if (inverted) {
-                    ret[0] = mouseEvent.chartX - plotLeft;
+                    chartX = mouseEvent.chartX;
                 } else {
-                    ret[1] = mouseEvent.chartY - plotTop;
+                    chartY = mouseEvent.chartY;
                 }
             }
+
+            // Use the average position for multiple points
+            ret = [chartX - plotLeft, chartY - plotTop];
+
         }
         return ret.map(Math.round);
 
     }
 
     /**
+     * Get the CSS class names for the tooltip's label. Styles the label
+     * by `colorIndex` or user-defined CSS.
+     *
+     * @function Highcharts.Tooltip#getClassName
+     *
+     * @return {string}
+     *         The class names.
+     */
+    public getClassName(
+        point: Point,
+        isSplit?: boolean,
+        isHeader?: boolean
+    ): string {
+        const options = this.options,
+            series = point.series,
+            seriesOptions = series.options;
+
+        return [
+            options.className,
+            'highcharts-label',
+            isHeader && 'highcharts-tooltip-header',
+            isSplit ? 'highcharts-tooltip-box' : 'highcharts-tooltip',
+            !isHeader && 'highcharts-color-' + pick(
+                point.colorIndex, series.colorIndex
+            ),
+            (seriesOptions && seriesOptions.className)
+        ].filter(isString).join(' ');
+    }
+
+
+    /**
      * Creates the Tooltip label element if it does not exist, then returns it.
      *
      * @function Highcharts.Tooltip#getLabel
+     *
      * @return {Highcharts.SVGElement}
+     * Tooltip label
      */
-    public getLabel(): SVGElement {
-
+    public getLabel(): SVGElement { // getLabel
         const tooltip = this,
             styledMode = this.chart.styledMode,
             options = this.options,
-            className = (
-                'tooltip' + (
-                    defined(options.className) ?
-                        ' ' + options.className :
-                        ''
-                )
-            ),
+            doSplit = this.split && this.allowShared,
             pointerEvents = (
                 options.style.pointerEvents ||
-                (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
-            ),
-            onMouseEnter = function (): void {
-                tooltip.inContact = true;
-            },
-            onMouseLeave = function (e: MouseEvent): void {
-                const series = tooltip.chart.hoverSeries;
+                (
+                    this.shouldStickOnContact() ? 'auto' : 'none'
+                )
+            );
 
-                // #14143, #13310: tooltip.options.useHTML
-                tooltip.inContact = tooltip.shouldStickOnContact() &&
-                    tooltip.chart.pointer.inClass(
-                        e.relatedTarget as any,
-                        'highcharts-tooltip'
-                    );
-
-                if (
-                    !tooltip.inContact &&
-                    series &&
-                    series.onMouseOut
-                ) {
-                    series.onMouseOut();
-                }
-            };
         let container: globalThis.HTMLElement,
             renderer: SVGRenderer = this.chart.renderer;
+
+        // If changing from a split tooltip to a non-split tooltip, we must
+        // destroy it in order to get the SVG right. #13868.
+        if (tooltip.label) {
+            const wasSplit = !tooltip.label.hasClass('highcharts-label');
+
+            if ((doSplit && !wasSplit) || (!doSplit && wasSplit)) {
+                tooltip.destroy();
+            }
+        }
 
         if (!this.label) {
 
@@ -505,9 +507,6 @@ class Tooltip {
                     )
                 });
 
-                addEvent(container, 'mouseenter', onMouseEnter);
-                addEvent(container, 'mouseleave', onMouseLeave);
-
                 H.doc.body.appendChild(container);
 
                 /**
@@ -531,8 +530,8 @@ class Tooltip {
 
 
             // Create the label
-            if (this.split) {
-                this.label = renderer.g(className);
+            if (doSplit) {
+                this.label = renderer.g('tooltip');
             } else {
                 this.label = renderer
                     .label(
@@ -544,7 +543,7 @@ class Tooltip {
                         void 0,
                         options.useHTML,
                         void 0,
-                        className
+                        'tooltip'
                     )
                     .attr({
                         padding: options.padding,
@@ -592,31 +591,35 @@ class Tooltip {
             }
 
             this.label
-                .on('mouseenter', onMouseEnter)
-                .on('mouseleave', onMouseLeave)
                 .attr({ zIndex: 8 })
                 .add();
         }
-
         return this.label;
     }
 
     /**
-     * Place the tooltip in a chart without spilling over
-     * and not covering the point it self.
+     * Place the tooltip in a chart without spilling over and not covering the
+     * point itself.
      *
-     * @private
      * @function Highcharts.Tooltip#getPosition
      *
      * @param {number} boxWidth
+     *        Width of the tooltip box.
      *
      * @param {number} boxHeight
+     *        Height of the tooltip box.
      *
      * @param {Highcharts.Point} point
+     *        Tooltip related point.
      *
      * @return {Highcharts.PositionObject}
+     *         Recommended position of the tooltip.
      */
-    public getPosition(boxWidth: number, boxHeight: number, point: Point): PositionObject {
+    public getPosition(
+        boxWidth: number,
+        boxHeight: number,
+        point: Point
+    ): PositionObject {
 
         const chart = this.chart,
             distance = this.distance,
@@ -675,10 +678,22 @@ class Tooltip {
         let first = buildDimensionArray('y'),
             second = buildDimensionArray('x'),
             swapped: (boolean|undefined);
+
+        // Handle negative points or reversed axis (#13780)
+        let flipped = !!point.negative;
+        if (
+            !chart.polar &&
+            chart.hoverSeries &&
+            chart.hoverSeries.yAxis &&
+            chart.hoverSeries.yAxis.reversed
+        ) {
+            flipped = !flipped;
+        }
         // The far side is right or bottom
-        const preferFarSide = !this.followPointer && pick(
+        const preferFarSide = !this.followPointer &&
+            pick(
                 point.ttBelow,
-                !chart.inverted === !!point.negative
+                !chart.inverted === flipped
             ), // #4984
 
             /*
@@ -824,6 +839,8 @@ class Tooltip {
     }
 
     /**
+     * Initialize tooltip.
+     *
      * @private
      * @function Highcharts.Tooltip#init
      *
@@ -833,7 +850,10 @@ class Tooltip {
      * @param {Highcharts.TooltipOptions} options
      *        Tooltip options.
      */
-    public init(chart: Chart, options: TooltipOptions): void {
+    public init(
+        chart: Chart,
+        options: TooltipOptions
+    ): void {
 
         /**
          * Chart of the tooltip.
@@ -923,15 +943,16 @@ class Tooltip {
         );
     }
 
-    public shouldStickOnContact(): boolean {
-        return !!(!this.followPointer && this.options.stickOnContact);
-    }
-
-    /**
-     * Returns true, if the pointer is in contact with the tooltip tracker.
-     */
-    public isStickyOnContact(): boolean {
-        return !!(this.shouldStickOnContact() && this.inContact);
+    public shouldStickOnContact(pointerEvent?: PointerEvent): boolean {
+        return !!(
+            !this.followPointer &&
+            this.options.stickOnContact &&
+            (
+                !pointerEvent || this.chart.pointer.inClass(
+                    pointerEvent.target as any, 'highcharts-tooltip'
+                )
+            )
+        );
     }
 
     /**
@@ -1011,36 +1032,40 @@ class Tooltip {
         const tooltip = this,
             chart = this.chart,
             options = tooltip.options,
+            pointer = chart.pointer,
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
-            pointConfig = [] as Array<Point.PointLabelObject>,
+            pointConfig = [] as Array<Tooltip.FormatterContextObject>,
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             styledMode = chart.styledMode;
         let textConfig = {} as Tooltip.FormatterContextObject;
 
-        if (!options.enabled) {
+        if (!options.enabled || !point.series) { // #16820
             return;
         }
 
-        U.clearTimeout(this.hideTimer as any);
+        U.clearTimeout(this.hideTimer);
+
+        // A switch saying if this specific tooltip configuration allows shared
+        // or split modes
+        tooltip.allowShared = !(
+            !isArray(pointOrPoints) &&
+            pointOrPoints.series &&
+            pointOrPoints.series.noSharedTooltip
+        );
 
         // get the reference point coordinates (pie charts use tooltipPos)
-        tooltip.followPointer = !tooltip.split && point.series.tooltipOptions.followPointer;
+        tooltip.followPointer = (
+            !tooltip.split && point.series.tooltipOptions.followPointer
+        );
         const anchor = tooltip.getAnchor(pointOrPoints, mouseEvent),
             x = anchor[0],
             y = anchor[1];
 
         // shared tooltip, array is sent over
-        if (
-            shared &&
-            !(
-                !isArray(pointOrPoints) &&
-                pointOrPoints.series &&
-                pointOrPoints.series.noSharedTooltip
-            )
-        ) {
-            chart.pointer.applyInactiveState(points);
+        if (shared && tooltip.allowShared) {
+            pointer.applyInactiveState(points);
 
             // Now set hover state for the choosen ones:
             points.forEach(function (item: Point): void {
@@ -1052,14 +1077,17 @@ class Tooltip {
                 x: point.category,
                 y: point.y
             } as any;
-            textConfig.points = pointConfig as any;
+            textConfig.points = pointConfig;
 
         // single point tooltip
         } else {
-            textConfig = point.getLabelConfig() as any;
+            textConfig = point.getLabelConfig();
         }
         this.len = pointConfig.length; // #6128
-        const text: (boolean|string) = (formatter as any).call(textConfig, tooltip);
+        const text = formatter.call(
+            textConfig,
+            tooltip
+        );
 
         // register the current series
         const currentSeries = point.series;
@@ -1070,13 +1098,13 @@ class Tooltip {
             this.hide();
         } else {
             // update text
-            if (tooltip.split) {
-                this.renderSplit(text as any, points);
+            if (tooltip.split && tooltip.allowShared) { // #13868
+                this.renderSplit(text, points);
             } else {
                 let checkX = x;
                 let checkY = y;
 
-                if (mouseEvent && chart.pointer.isDirectTouch) {
+                if (mouseEvent && pointer.isDirectTouch) {
                     checkX = mouseEvent.chartX - chart.plotLeft;
                     checkY = mouseEvent.chartY - chart.plotTop;
                 }
@@ -1085,7 +1113,10 @@ class Tooltip {
                 if (
                     chart.polar ||
                     currentSeries.options.clip === false ||
-                    currentSeries.shouldShowTooltip(checkX, checkY)
+                    points.some((p): boolean => // #16004
+                        pointer.isDirectTouch || // ##17929
+                            p.series.shouldShowTooltip(checkX, checkY)
+                    )
                 ) {
                     const label = tooltip.getLabel();
 
@@ -1093,7 +1124,7 @@ class Tooltip {
                     // (#6659)
                     if (!options.style.width || styledMode) {
                         label.css({
-                            width: this.chart.spacingBox.width + 'px'
+                            width: chart.spacingBox.width + 'px'
                         });
                     }
 
@@ -1104,14 +1135,7 @@ class Tooltip {
                     });
 
                     // Set the stroke color of the box to reflect the point
-                    label.removeClass(/highcharts-color-[\d]+/g)
-                        .addClass(
-                            'highcharts-color-' +
-                            pick(
-                                point.colorIndex,
-                                currentSeries.colorIndex
-                            )
-                        );
+                    label.addClass(tooltip.getClassName(point), true);
 
                     if (!styledMode) {
                         label.attr({
@@ -1119,7 +1143,7 @@ class Tooltip {
                                 options.borderColor ||
                                 point.color ||
                                 currentSeries.color ||
-                                palette.neutralColor60
+                                Palette.neutralColor60
                             )
                         });
                     }
@@ -1188,9 +1212,12 @@ class Tooltip {
         } = tooltip;
 
         // The area which the tooltip should be limited to. Limit to scrollable
-        // plot area if enabled, otherwise limit to the chart container.
-        // If outside is true it should be the whole viewport
-        const bounds = tooltip.outside && typeof scrollablePixelsX !== 'number' ?
+        // plot area if enabled, otherwise limit to the chart container. If
+        // outside is true it should be the whole viewport
+        const bounds = (
+            tooltip.outside &&
+            typeof scrollablePixelsX !== 'number'
+        ) ?
             doc.documentElement.getBoundingClientRect() : {
                 left: scrollLeft,
                 right: scrollLeft + chartWidth,
@@ -1212,7 +1239,7 @@ class Tooltip {
          *
          * @private
          * @param {Highcharts.Point} point The point related to the tooltip
-         * @return {object} Returns an object with anchorX and anchorY
+         * @return {Object} Returns an object with anchorX and anchorY
          */
         function getAnchor(
             point: Point & { isHeader?: boolean }
@@ -1229,7 +1256,11 @@ class Tooltip {
             } else {
                 const { xAxis, yAxis } = series;
                 // Set anchorX to plotX. Limit to within xAxis.
-                anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
+                anchorX = xAxis.pos + clamp(
+                    plotX,
+                    -distance,
+                    xAxis.len + distance
+                );
 
                 // Set anchorY, limit to the scrollable plot area
                 if (series.shouldShowTooltip(0, yAxis.pos - plotTop + plotY, {
@@ -1318,9 +1349,7 @@ class Tooltip {
         ): SVGElement {
             let tt = partialTooltip;
             const { isHeader, series } = point;
-            const colorClass = 'highcharts-color-' + pick(
-                point.colorIndex, series.colorIndex, 'none'
-            );
+
             if (!tt) {
 
                 const attribs: SVGAttributes = {
@@ -1332,7 +1361,6 @@ class Tooltip {
                     attribs.fill = options.backgroundColor;
                     attribs['stroke-width'] = options.borderWidth;
                 }
-
                 tt = ren
                     .label(
                         '',
@@ -1344,9 +1372,7 @@ class Tooltip {
                         options.useHTML
                     )
                     .addClass(
-                        (isHeader ? 'highcharts-tooltip-header ' : '') +
-                        'highcharts-tooltip-box ' +
-                        colorClass
+                        tooltip.getClassName(point, true, isHeader)
                     )
                     .attr(attribs)
                     .add(tooltipLabel);
@@ -1364,7 +1390,7 @@ class Tooltip {
                             options.borderColor ||
                             point.color ||
                             series.color ||
-                            palette.neutralColor80
+                            Palette.neutralColor80
                         )
                     });
             }
@@ -1454,14 +1480,17 @@ class Tooltip {
             return boxes;
         }, []);
 
-        // Realign the tooltips towards the right if there is not enough
-        // space to the left and there is space to to the right
+        // Realign the tooltips towards the right if there is not enough space
+        // to the left and there is space to to the right
         if (!positioner && boxes.some((box): boolean => {
             // Always realign if the beginning of a label is outside bounds
             const { outside } = tooltip;
             const boxStart = (outside ? chartLeft : 0) + box.anchorX;
 
-            if (boxStart < bounds.left && boxStart + box.boxWidth < bounds.right) {
+            if (
+                boxStart < bounds.left &&
+                boxStart + box.boxWidth < bounds.right
+            ) {
                 return true;
             }
 
@@ -1495,19 +1524,23 @@ class Tooltip {
         };
 
         // Get the extremes from series tooltips
-        boxes.forEach(function (box: AnyRecord): void {
+        boxes.forEach(function (box: BoxObject): void {
             const { x, boxWidth, isHeader } = box;
             if (!isHeader) {
                 if (tooltip.outside && chartLeft + x < boxExtremes.left) {
                     boxExtremes.left = chartLeft + x;
                 }
-                if (!isHeader && tooltip.outside && boxExtremes.left + boxWidth > boxExtremes.right) {
+                if (
+                    !isHeader &&
+                    tooltip.outside &&
+                    boxExtremes.left + boxWidth > boxExtremes.right
+                ) {
                     boxExtremes.right = chartLeft + x;
                 }
             }
         });
 
-        boxes.forEach(function (box: AnyRecord): void {
+        boxes.forEach(function (box: BoxObject): void {
             const {
                 x,
                 anchorX,
@@ -1517,7 +1550,7 @@ class Tooltip {
                     isHeader
                 }
             } = box;
-            const attributes = {
+            const attributes: SVGAttributes = {
                 visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
                 x,
                 /* NOTE: y should equal pos to be consistent with !split
@@ -1525,7 +1558,7 @@ class Tooltip {
                  * to avoid breaking change. Remove distributionBoxTop to make
                  * it consistent.
                  */
-                y: pos + distributionBoxTop,
+                y: (pos || 0) + distributionBoxTop,
                 anchorX,
                 anchorY
             };
@@ -1540,7 +1573,9 @@ class Tooltip {
                         attributes.anchorX = anchorX + offset;
                     }
                     if (isHeader) {
-                        attributes.x = (boxExtremes.right - boxExtremes.left) / 2;
+                        attributes.x = (
+                            boxExtremes.right - boxExtremes.left
+                        ) / 2;
                         attributes.anchorX = anchorX + offset;
                     }
                 }
@@ -1585,10 +1620,7 @@ class Tooltip {
     private drawTracker(): void {
         const tooltip = this;
 
-        if (
-            tooltip.followPointer ||
-            !tooltip.options.stickOnContact
-        ) {
+        if (!this.shouldStickOnContact()) {
             if (tooltip.tracker) {
                 tooltip.tracker.destroy();
             }
@@ -1623,12 +1655,17 @@ class Tooltip {
         box.y = Math.min(0, anchorPos[1]);
         box.width = (
             anchorPos[0] < 0 ?
-                Math.max(Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])) :
+                Math.max(
+                    Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])
+                ) :
                 Math.max(Math.abs(anchorPos[0]), labelBBox.width)
         );
         box.height = (
             anchorPos[1] < 0 ?
-                Math.max(Math.abs(anchorPos[1]), (labelBBox.height - Math.abs(anchorPos[1]))) :
+                Math.max(
+                    Math.abs(anchorPos[1]),
+                    (labelBBox.height - Math.abs(anchorPos[1]))
+                ) :
                 Math.max(Math.abs(anchorPos[1]), labelBBox.height)
         );
 
@@ -1659,7 +1696,9 @@ class Tooltip {
             )
             .replace(
                 /style="color:{(point|series)\.color}"/g,
-                'class="highcharts-color-{$1.colorIndex}"'
+                'class="highcharts-color-{$1.colorIndex} ' +
+                '{series.options.className} ' +
+                '{point.options.className}"'
             );
     }
 
@@ -1669,11 +1708,11 @@ class Tooltip {
      *
      * @private
      * @function Highcharts.Tooltip#tooltipFooterHeaderFormatter
-     * @param {Highcharts.PointLabelObject} labelConfig
-     * @param {boolean} [isFooter]
-     * @return {string}
      */
-    public tooltipFooterHeaderFormatter(labelConfig: Point.PointLabelObject, isFooter?: boolean): string {
+    public tooltipFooterHeaderFormatter(
+        labelConfig: Point.PointLabelObject,
+        isFooter?: boolean
+    ): string {
         const series = labelConfig.series,
             tooltipOptions = series.tooltipOptions,
             xAxis = series.xAxis,
@@ -1750,25 +1789,35 @@ class Tooltip {
      * @param {Highcharts.Point} point
      */
     public updatePosition(point: Point): void {
-        const chart = this.chart,
-            options = this.options,
+        const {
+                chart,
+                distance,
+                options
+            } = this,
             pointer = chart.pointer,
             label = this.getLabel(),
             // Needed for outside: true (#11688)
-            chartPosition = pointer.getChartPosition(),
+            { left, top, scaleX, scaleY } = pointer.getChartPosition(),
             pos = (options.positioner || this.getPosition).call(
                 this,
                 label.width,
                 label.height,
                 point
             );
-        let anchorX = (point.plotX as any) + chart.plotLeft,
-            anchorY = (point.plotY as any) + chart.plotTop,
+        let anchorX = (point.plotX || 0) + chart.plotLeft,
+            anchorY = (point.plotY || 0) + chart.plotTop,
             pad;
 
         // Set the renderer size dynamically to prevent document size to change
         if (this.outside) {
-            pad = options.borderWidth + 2 * this.distance;
+            // Corrects positions, occurs with tooltip positioner (#16944)
+            if (options.positioner) {
+                pos.x += left - distance;
+                pos.y += top - distance;
+            }
+
+            pad = options.borderWidth + 2 * distance;
+
             (this.renderer as any).setSize(
                 label.width + pad,
                 label.height + pad,
@@ -1777,20 +1826,15 @@ class Tooltip {
 
             // Anchor and tooltip container need scaling if chart container has
             // scale transform/css zoom. #11329.
-            if (chartPosition.scaleX !== 1 || chartPosition.scaleY !== 1) {
+            if (scaleX !== 1 || scaleY !== 1) {
                 css(this.container, {
-                    transform: `scale(${
-                        chartPosition.scaleX
-                    }, ${
-                        chartPosition.scaleY
-                    })`
+                    transform: `scale(${scaleX}, ${scaleY})`
                 });
-                anchorX *= chartPosition.scaleX;
-                anchorY *= chartPosition.scaleY;
+                anchorX *= scaleX;
+                anchorY *= scaleY;
             }
-
-            anchorX += chartPosition.left - pos.x;
-            anchorY += chartPosition.top - pos.y;
+            anchorX += left - pos.x;
+            anchorY += top - pos.y;
         }
 
         // do the move
@@ -1810,24 +1854,25 @@ class Tooltip {
  * */
 
 namespace Tooltip {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface FormatterCallbackFunction {
         (
             this: FormatterContextObject,
             tooltip: Tooltip
         ): (false|string|Array<string>);
     }
-    export interface FormatterContextObject {
-        color: ColorType;
-        colorIndex?: number;
-        key: number;
-        percentage?: number;
-        point: Point;
+
+    export interface FormatterContextObject extends Point.PointLabelObject {
         points?: Array<FormatterContextObject>;
-        series: Series;
-        total?: number;
-        x: number;
-        y: number;
+
     }
+
     export interface PositionerCallbackFunction {
         (
             this: Tooltip,
@@ -1836,12 +1881,53 @@ namespace Tooltip {
             point: (Point|PositionerPointObject)
         ): PositionObject;
     }
+
     export interface PositionerPointObject {
         isHeader: true;
         plotX: number;
         plotY: number;
     }
+
     export type ShapeValue = ('callout'|'circle'|'square'|'rect');
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(
+        PointerClass: typeof Pointer
+    ): void {
+        if (composedMembers.indexOf(PointerClass) === -1) {
+            composedMembers.push(PointerClass);
+            addEvent(PointerClass, 'afterInit', function (): void {
+                const chart = this.chart;
+
+                if (chart.options.tooltip) {
+                    /**
+                     * Tooltip object for points of series.
+                     *
+                     * @name Highcharts.Chart#tooltip
+                     * @type {Highcharts.Tooltip}
+                     */
+                    chart.tooltip = new Tooltip(chart, chart.options.tooltip);
+                }
+            });
+        }
+    }
+
 }
 
 /* *
@@ -1869,47 +1955,24 @@ export default Tooltip;
  * @callback Highcharts.TooltipFormatterCallbackFunction
  *
  * @param {Highcharts.TooltipFormatterContextObject} this
- *        Context to format
+ * Context to format
  *
  * @param {Highcharts.Tooltip} tooltip
- *        The tooltip instance
+ * The tooltip instance
  *
  * @return {false|string|Array<(string|null|undefined)>|null|undefined}
- *         Formatted text or false
+ * Formatted text or false
  */
 
 /**
+ * Configuration for the tooltip formatters.
+ *
  * @interface Highcharts.TooltipFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  *//**
- * @name Highcharts.TooltipFormatterContextObject#color
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#colorIndex
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#key
- * @type {number}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#percentage
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#point
- * @type {Highcharts.Point}
- *//**
+ * Array of points in shared tooltips.
  * @name Highcharts.TooltipFormatterContextObject#points
  * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#series
- * @type {Highcharts.Series}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#total
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#x
- * @type {number}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#y
- * @type {number}
  */
 
 /**

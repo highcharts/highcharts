@@ -1,5 +1,5 @@
 ---
- name: Libya - Highmaps
- description: Highmaps demo
+ name: Libya - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

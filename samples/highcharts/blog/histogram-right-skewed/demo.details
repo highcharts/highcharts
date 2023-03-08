@@ -1,0 +1,6 @@
+---
+ name: Histogram of "Fisher's Iris Data", Petal Width data.
+ authors:
+    - Mustapha Mekhatria
+ js_wrap: b
+...

@@ -18,15 +18,12 @@ import type IKHPoint from './IKHPoint';
 import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 import type { SMAParamsOptions, SMAOptions } from '../SMA/SMAOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
-*
-* Declarations
-*
-* */
-
-/* eslint-disable @typescript-eslint/interface-name-prefix */
+ *
+ * Declarations
+ *
+ * */
 
 export interface IKHDrawSenkouSpanObject {
     indicator: IKHIndicator;
@@ -52,7 +49,6 @@ export interface IKHGapSizeOptions {
     gapSize?: IKHOptions['gapSize'];
 }
 
-
 export interface IKHParamsOptions extends SMAParamsOptions {
     periodTenkan?: number;
     periodSenkouSpanB?: number;
@@ -69,4 +65,3 @@ export interface IKHOptions extends SMAOptions {
     senkouSpanB?: Record<string, CSSObject>;
     tenkanLine?: Record<string, CSSObject>;
 }
-/* eslint-enable @typescript-eslint/interface-name-prefix */

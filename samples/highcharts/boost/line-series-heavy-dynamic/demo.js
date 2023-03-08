@@ -17,6 +17,9 @@ function getSeries(n, s) {
     for (; i < s; i++) {
         r.push({
             data: getData(n),
+            dataGrouping: {
+                enabled: false
+            },
             animation: false,
             lineWidth: 2,
             boostThreshold: 1,
@@ -54,9 +57,9 @@ chart =  Highcharts.stockChart('container', {
 
     navigator: {
         xAxis: {
-            ordinal: false//,
+            ordinal: false// ,
             // min: n / 2
-            //max: 10
+            // max: 10
         },
         yAxis: {
             // min: 0,
@@ -78,8 +81,8 @@ chart =  Highcharts.stockChart('container', {
     },
 
     yAxis: {
-        //min: 0,
-        //max: 8
+        // min: 0,
+        // max: 8
     },
 
     subtitle: {
@@ -103,8 +106,8 @@ function addPoint() {
         var x = n,
             y = 2 * Math.sin(x / 100) + Math.random();
 
-        //Yeah...
-        if (se.options.className === "highcharts-navigator-series") {
+        // Yeah...
+        if (se.options.className === 'highcharts-navigator-series') {
             return;
         }
 
@@ -119,7 +122,7 @@ function addPoint() {
 }
 
 setInterval(addPoint, 1000);
-//console.log(chart);
+// console.log(chart);
 
 document.getElementById('profile-add').onclick = function () {
     console.profile('addPoint');

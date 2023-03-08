@@ -1,81 +1,62 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['in-5390', 0],
-    ['in-py', 1],
-    ['in-ld', 2],
-    ['in-an', 3],
-    ['in-wb', 4],
-    ['in-or', 5],
-    ['in-br', 6],
-    ['in-sk', 7],
-    ['in-ct', 8],
-    ['in-tn', 9],
-    ['in-mp', 10],
-    ['in-2984', 11],
-    ['in-ga', 12],
-    ['in-nl', 13],
-    ['in-mn', 14],
-    ['in-ar', 15],
-    ['in-mz', 16],
-    ['in-tr', 17],
-    ['in-3464', 18],
-    ['in-dl', 19],
-    ['in-hr', 20],
-    ['in-ch', 21],
-    ['in-hp', 22],
-    ['in-jk', 23],
-    ['in-kl', 24],
-    ['in-ka', 25],
-    ['in-dn', 26],
-    ['in-mh', 27],
-    ['in-as', 28],
-    ['in-ap', 29],
-    ['in-ml', 30],
-    ['in-pb', 31],
-    ['in-rj', 32],
-    ['in-up', 33],
-    ['in-ut', 34],
-    ['in-jh', 35]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/in/custom/in-all-andaman-and-nicobar'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/in/custom/in-all-andaman-and-nicobar.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['in-5390', 10], ['in-py', 11], ['in-ld', 12], ['in-an', 13],
+        ['in-wb', 14], ['in-or', 15], ['in-br', 16], ['in-sk', 17],
+        ['in-ct', 18], ['in-tn', 19], ['in-mp', 20], ['in-2984', 21],
+        ['in-ga', 22], ['in-nl', 23], ['in-mn', 24], ['in-ar', 25],
+        ['in-mz', 26], ['in-tr', 27], ['in-3464', 28], ['in-dl', 29],
+        ['in-hr', 30], ['in-ch', 31], ['in-hp', 32], ['in-jk', 33],
+        ['in-kl', 34], ['in-ka', 35], ['in-dn', 36], ['in-mh', 37],
+        ['in-as', 38], ['in-ap', 39], ['in-ml', 40], ['in-pb', 41],
+        ['in-rj', 42], ['in-up', 43], ['in-ut', 44], ['in-jh', 45]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/in/custom/in-all-andaman-and-nicobar.js">India with Andaman and Nicobar</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/in/custom/in-all-andaman-and-nicobar.topo.json">India with Andaman and Nicobar</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

@@ -35,11 +35,11 @@ QUnit.test('No data module with boost', function (assert) {
         ]
     });
 
-    assert.strictEqual(chart.isBoosting, true, 'The chart should be boosting');
+    assert.strictEqual(chart.boosted, true, 'The chart should be boosting');
 
     assert.strictEqual(
         chart.noDataLabel,
-        undefined,
+        void 0,
         'No-data should be invisible (#9758)'
     );
 });

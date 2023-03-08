@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from '../../../Core/Chart/Chart';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -22,11 +28,7 @@ import type {
 import type VWAPPoint from './VWAPPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     error,
@@ -36,7 +38,7 @@ const {
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -49,8 +51,14 @@ const {
  *
  * @augments Highcharts.Series
  */
-
 class VWAPIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Volume Weighted Average Price indicator.
      *
@@ -102,14 +110,15 @@ class VWAPIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: VWAPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let indicator = this,
+        const indicator = this,
             chart: Chart = series.chart,
             xValues: Array<number> = (series.xData as any),
             yValues: (
                 Array<number>|Array<[number, number, number, number]>
             ) = (series.yData as any),
-            period: number = (params.period as any),
-            isOHLC = true,
+            period: number = (params.period as any);
+
+        let isOHLC = true,
             volumeSeries: TLinkedSeries;
 
         // Checks if volume series exists
@@ -143,15 +152,27 @@ class VWAPIndicator extends SMAIndicator {
     /**
      * Main algorithm used to calculate Volume Weighted Average Price (VWAP)
      * values
+     *
      * @private
-     * @param {boolean} isOHLC - says if data has OHLC format
-     * @param {Array<number>} xValues - array of timestamps
-     * @param {Array<number|Array<number,number,number,number>>} yValues -
-     * array of yValues, can be an array of a four arrays (OHLC) or array of
+     *
+     * @param {boolean} isOHLC
+     * Says if data has OHLC format
+     *
+     * @param {Array<number>} xValues
+     * Array of timestamps
+     *
+     * @param {Array<number|Array<number,number,number,number>>} yValues
+     * Array of yValues, can be an array of a four arrays (OHLC) or array of
      * values (line)
-     * @param {Array<*>} volumeSeries - volume series
-     * @param {number} period - number of points to be calculated
-     * @return {object} - Object contains computed VWAP
+     *
+     * @param {Array<*>} volumeSeries
+     * Volume series
+     *
+     * @param {number} period
+     * Number of points to be calculated
+     *
+     * @return {Object}
+     * Object contains computed VWAP
      **/
     public calculateVWAPValues<TLinkedSeries extends LineSeries>(
         isOHLC: boolean,
@@ -160,15 +181,16 @@ class VWAPIndicator extends SMAIndicator {
         volumeSeries: TLinkedSeries,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
-        let volumeValues: Array<number> = (volumeSeries.yData as any),
+        const volumeValues: Array<number> = (volumeSeries.yData as any),
             volumeLength: number = (volumeSeries.xData as any).length,
             pointsLength: number = xValues.length,
             cumulativePrice: Array<number> = [],
             cumulativeVolume: Array<number> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            VWAP: Array<Array<number>> = [],
-            commonLength: number,
+            VWAP: Array<Array<number>> = [];
+
+        let commonLength: number,
             typicalPrice: number,
             cPrice: number,
             cVolume: number,
@@ -217,11 +239,12 @@ class VWAPIndicator extends SMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+
 }
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -250,6 +273,12 @@ SeriesRegistry.registerSeriesType('vwap', VWAPIndicator);
  * */
 
 export default VWAPIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Volume Weighted Average Price (VWAP)` series. If the

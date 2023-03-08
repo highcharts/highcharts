@@ -3,7 +3,6 @@
  */
 
 const gulp = require('gulp');
-const path = require('path');
 
 /* *
  *
@@ -11,18 +10,10 @@ const path = require('path');
  *
  * */
 
-const INTERNAL_TARGET = path.join('build', 'api-internals');
+const TREE_TARGET = 'tree-next.json';
 
-const INTERNAL_THEME = path.join(
-    'node_modules', 'highcharts-documentation-generators', 'typedoc',
-    'theme-internals'
-);
-
-const NEXT_TARGET = path.join('build', 'api-next');
-
-const NEXT_THEME = path.join(
-    'node_modules', 'highcharts-documentation-generators', 'typedoc',
-    'theme-next'
+const TEMPLATE_SOURCE = (
+    'node_modules/@highcharts/highcharts-documentation-generators/templates'
 );
 
 /* *
@@ -32,44 +23,64 @@ const NEXT_THEME = path.join(
  * */
 
 /**
- * @return {Promise<undefined>}
+ * TSDoc-next task
+ * @return {Promise<void>}
  *         Promise to keep
  */
 function task() {
 
-    const argv = require('yargs').argv;
-    const processLib = require('./lib/process');
+    const args = require('yargs').argv;
+    const fs = require('fs');
+    const generators = require(
+        '@highcharts/highcharts-documentation-generators'
+    );
+    const logLib = require('./lib/log');
 
-    const target = argv.next ? NEXT_TARGET : INTERNAL_TARGET;
-    const theme = argv.next ? NEXT_THEME : INTERNAL_THEME;
+    if (args.old) {
+        const generator = generators.TypeScript4;
 
-    const command = (
-        'cd ts && npx typedoc' +
-        ` --json "${path.join('..', target, 'tree.json')}"` +
-        ` --out "${path.join('..', target)}"` +
-        ` --theme "${path.join('..', theme)}"`
+        return Promise
+            .resolve()
+            .then(() => generator.ProjectDoc.load('ts'))
+            .then(project => fs.promises.writeFile(
+                TREE_TARGET,
+                generator.JSON.stringify(project.toJSON())
+            ))
+            .then(logLib.success)
+            .catch(logLib.failure);
+    }
+
+    const generator = generators.Generator;
+    const parser = generators.Parser;
+    const source = (
+        fs.existsSync('code/es-modules/') ?
+            'code/es-modules/' :
+            'ts/'
     );
 
-    return processLib
-        .exec(command)
-        .then(() => processLib.openAppFor(
-            path.join((argv.next ? NEXT_TARGET : INTERNAL_TARGET), 'index.html')
-        ));
+    if (source === 'ts/') {
+        logLib.warn('ES modules not found, using ./ts/ folder.');
+    }
 
-    /*
-    const generators = require('highcharts-documentation-generators');
-    const log = require('./lib/log');
+    return parser.Project
+        .load('ts', args)
+        .then(project => {
+            fs.promises.writeFile(
+                TREE_TARGET,
+                parser.JSON.stringify(project.toJSON())
+            );
+        })
+        .then(() => generator.Template.loadFolder(TEMPLATE_SOURCE))
+        .then(() => generator.Project.load(TREE_TARGET))
+        .then(project => {
+            generator.Template.types.classes.write(
+                'build/classes.html',
+                project.ast
+            );
+        })
+        .then(logLib.success)
+        .catch(error => logLib.failure(error, error.stack));
 
-    return new Promise(resolve => {
-
-        log.message('Generating', TARGET_DIRECTORY + '...');
-
-        generators.TypeDoc
-            .task(SOURCE_CONFIG, TARGET_DIRECTORY, TARGET_JSON)
-            .then(() => log.success('Created', TARGET_DIRECTORY))
-            .then(resolve);
-    });
-    */
 }
 
-gulp.task('tsdoc', gulp.series('clean-api', task));
+gulp.task('tsdoc', task);

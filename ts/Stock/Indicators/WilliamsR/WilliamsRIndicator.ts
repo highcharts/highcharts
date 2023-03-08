@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -16,22 +22,21 @@ import type {
 } from './WilliamsROptions';
 import type WilliamsRPoint from './WilliamsRPoint';
 
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
-const {
-    getArrayExtremes
-} = ReduceArrayMixin;
+import AU from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
     isArray,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Williams %R series type.
@@ -43,6 +48,13 @@ const {
  * @augments Highcharts.Series
  */
 class WilliamsRIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Williams %R. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -72,28 +84,41 @@ class WilliamsRIndicator extends SMAIndicator {
              */
             period: 14
         }
-    } as WilliamsROptions)
+    } as WilliamsROptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<WilliamsRPoint> = void 0 as any;
     public options: WilliamsROptions = void 0 as any;
     public points: Array<WilliamsRPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public getValues <TLinkedSeries extends LineSeries>(
         this: WilliamsRIndicator,
         series: TLinkedSeries,
         params: WilliamsRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = params.period as any,
+        const period: number = params.period as any,
             xVal: Array<number> = series.xData as any,
             yVal: Array<Array<number>> = series.yData as any,
             yValLen = yVal ? yVal.length : 0,
             WR = [], // 0- date, 1- Williams %R
             xData = [],
             yData = [],
-            slicedY: Array<Array<number>>,
             close = 3,
             low = 2,
-            high = 1,
+            high = 1;
+
+        let slicedY: Array<Array<number>>,
             extremes: Array<number>,
             R: number,
             HH: number, // Highest high value in period
@@ -115,7 +140,7 @@ class WilliamsRIndicator extends SMAIndicator {
         // with (+1)
         for (i = period - 1; i < yValLen; i++) {
             slicedY = yVal.slice(i - period + 1, i + 1);
-            extremes = getArrayExtremes(slicedY, low as any, high as any);
+            extremes = AU.getArrayExtremes(slicedY, low as any, high as any);
 
             LL = extremes[0];
             HH = extremes[1];
@@ -136,7 +161,14 @@ class WilliamsRIndicator extends SMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface WilliamsRIndicator {
     nameBase: string;
@@ -145,6 +177,12 @@ interface WilliamsRIndicator {
 extend(WilliamsRIndicator.prototype, {
     nameBase: 'Williams %R'
 });
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -161,6 +199,12 @@ SeriesRegistry.registerSeriesType('williamsr', WilliamsRIndicator);
  * */
 
 export default WilliamsRIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Williams %R Oscillator` series. If the [type](#series.williamsr.type)

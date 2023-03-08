@@ -17,6 +17,7 @@
  * */
 
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type NodesComposition from '../NodesComposition';
 
 /* *
  *
@@ -24,12 +25,14 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  *
  * */
 
-export interface SankeyPointOptions extends ColumnPointOptions, Highcharts.NodesPointOptions {
+export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition.PointCompositionOptions {
     column?: number;
     from?: string;
     height?: number;
     level?: number;
     offset?: (number|string);
+    offsetHorizontal?: (number|string);
+    offsetVertical?: (number|string);
     to?: string;
     width?: number;
 }

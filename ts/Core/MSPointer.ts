@@ -33,6 +33,7 @@ const {
     addEvent,
     css,
     objectEach,
+    pick,
     removeEvent
 } = U;
 
@@ -223,13 +224,52 @@ class MSPointer extends Pointer {
 
     // Add IE specific touch events to chart
     public setDOMEvents(): void {
-
+        const tooltip = this.chart.tooltip;
         super.setDOMEvents();
 
-        if (this.hasZoom || this.followTouchMove) {
+        if (
+            this.hasZoom ||
+            pick((tooltip && tooltip.options.followTouchMove), true)
+        ) {
             this.batchMSEvents(addEvent);
         }
     }
+}
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace MSPointer {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(ChartClass: typeof Chart): void {
+        if (composedMembers.indexOf(ChartClass) === -1) {
+            composedMembers.push(ChartClass);
+            addEvent(ChartClass, 'beforeRender', function (): void {
+                this.pointer = new MSPointer(this, this.options);
+            });
+        }
+    }
+
 }
 
 /* *

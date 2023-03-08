@@ -28,16 +28,14 @@ import Axis from '../Axis/Axis.js';
 import Chart from './Chart.js';
 import Color from '../Color/Color.js';
 const { parse: color } = Color;
+import D from '../Defaults.js';
+const { defaultOptions: genericDefaultOptions } = D;
 import Fx from '../Animation/Fx.js';
-import Math3D from '../../Extensions/Math3D.js';
+import Math3D from '../Math3D.js';
 const {
     perspective,
     shapeArea3D
 } = Math3D;
-import D from '../DefaultOptions.js';
-const {
-    defaultOptions: genericDefaultOptions
-} = D;
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
@@ -540,12 +538,22 @@ namespace Chart3D {
             } else {
                 ret.axes = {
                     y: {
-                        'left': { x: xm, z: zm, xDir: { x: 1, y: 0, z: 0 } } as any,
-                        'right': { x: xp, z: zm, xDir: { x: 0, y: 0, z: 1 } } as any
+                        'left': {
+                            x: xm, z: zm, xDir: { x: 1, y: 0, z: 0 }
+                        } as any,
+                        'right': {
+                            x: xp, z: zm, xDir: { x: 0, y: 0, z: 1 }
+                        } as any
                     },
                     x: {
-                        'top': { y: ym, z: zm, xDir: { x: 1, y: 0, z: 0 } } as any,
-                        'bottom': { y: yp, z: zm, xDir: { x: 1, y: 0, z: 0 } } as any
+                        'top': {
+                            y: ym, z: zm, xDir: { x: 1, y: 0, z: 0 }
+                        } as any,
+                        'bottom': {
+                            y: yp,
+                            z: zm,
+                            xDir: { x: 1, y: 0, z: 0 }
+                        } as any
                     },
                     z: {
                         'top': {
@@ -573,7 +581,7 @@ namespace Chart3D {
          * Calculate scale of the 3D view. That is required to fit chart's 3D
          * projection into the actual plotting area. Reported as #4933.
          *
-         * @notice
+         * **Note:**
          * This function should ideally take the plot values instead of a chart
          * object, but since the chart object is needed for perspective it is
          * not practical. Possible to make both getScale and perspective more
@@ -652,7 +660,9 @@ namespace Chart3D {
             if (plotLeft > bbox3d.minX) {
                 scale = Math.min(
                     scale,
-                    1 - Math.abs((plotLeft + originX) / (bbox3d.minX + originX)) % 1
+                    1 - Math.abs(
+                        (plotLeft + originX) / (bbox3d.minX + originX)
+                    ) % 1
                 );
             }
 
@@ -718,7 +728,7 @@ namespace Chart3D {
             options3d: {
 
                 /**
-                 * Wether to render the chart using the 3D functionality.
+                 * Whether to render the chart using the 3D functionality.
                  *
                  * @since   4.0
                  * @product highcharts
@@ -899,7 +909,10 @@ namespace Chart3D {
     /**
      * @private
      */
-    export function compose(ChartClass: typeof Chart, FxClass: typeof Fx): void {
+    export function compose(
+        ChartClass: typeof Chart,
+        FxClass: typeof Fx
+    ): void {
 
         const chartProto = ChartClass.prototype;
         const fxProto = FxClass.prototype;
@@ -932,12 +945,17 @@ namespace Chart3D {
                 this.pos < 1 &&
                 (isArray(this.start) || isArray(this.end))
             ) {
-                const start: Array<number> = (this.start as any) || [1, 0, 0, 1, 0, 0],
+                const start: Array<number> = (
+                        (this.start as any) ||
+                        [1, 0, 0, 1, 0, 0]
+                    ),
                     end: Array<number> = (this.end as any) || [1, 0, 0, 1, 0, 0];
 
                 interpolated = [];
                 for (let i = 0; i < 6; i++) {
-                    interpolated.push(this.pos * end[i] + (1 - this.pos) * start[i]);
+                    interpolated.push(
+                        this.pos * end[i] + (1 - this.pos) * start[i]
+                    );
                 }
             } else {
                 interpolated = this.end;
@@ -963,8 +981,8 @@ namespace Chart3D {
         addEvent(ChartClass, 'beforeRender', onBeforeRender);
 
         wrap(chartProto, 'isInsidePlot', wrapIsInsidePlot);
-        wrap(ChartClass, 'renderSeries', wrapRenderSeries);
-        wrap(ChartClass, 'setClassName', wrapSetClassName);
+        wrap(chartProto, 'renderSeries', wrapRenderSeries);
+        wrap(chartProto, 'setClassName', wrapSetClassName);
     }
 
     /**
@@ -1813,19 +1831,7 @@ namespace Chart3D {
      */
     function onAfterGetContainer(this: Chart): void {
         if (this.styledMode) {
-            this.renderer.definition({
-                tagName: 'style',
-                textContent:
-                    '.highcharts-3d-top{' +
-                        'filter: url(#highcharts-brighter)' +
-                    '}\n' +
-                    '.highcharts-3d-side{' +
-                        'filter: url(#highcharts-darker)' +
-                    '}\n'
-            });
-
-            // Add add definitions used by brighter and darker faces of the
-            // cuboids.
+            // Add definitions used by brighter and darker faces of the cuboids.
             [{
                 name: 'darker',
                 slope: 0.6
@@ -1902,8 +1908,10 @@ namespace Chart3D {
 
             // Add a 0-360 normalisation for alfa and beta angles in 3d graph
             if (options3d) {
-                options3d.alpha = options3d.alpha % 360 + (options3d.alpha >= 0 ? 0 : 360);
-                options3d.beta = options3d.beta % 360 + (options3d.beta >= 0 ? 0 : 360);
+                options3d.alpha = options3d.alpha % 360 +
+                    (options3d.alpha >= 0 ? 0 : 360);
+                options3d.beta = options3d.beta % 360 +
+                    (options3d.beta >= 0 ? 0 : 360);
             }
 
             const inverted = chart.inverted,
@@ -1916,8 +1924,12 @@ namespace Chart3D {
 
             clipBox[x] = -(margin[3] || 0);
             clipBox[y] = -(margin[0] || 0);
-            clipBox[w] = chart.chartWidth + (margin[3] || 0) + (margin[1] || 0);
-            clipBox[h] = chart.chartHeight + (margin[0] || 0) + (margin[2] || 0);
+            clipBox[w] = (
+                chart.chartWidth + (margin[3] || 0) + (margin[1] || 0)
+            );
+            clipBox[h] = (
+                chart.chartHeight + (margin[0] || 0) + (margin[2] || 0)
+            );
 
             // Set scale, used later in perspective method():
             // getScale uses perspective, so scale3d has to be reset.

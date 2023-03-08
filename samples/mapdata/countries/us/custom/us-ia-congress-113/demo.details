@@ -1,5 +1,5 @@
 ---
- name: Iowa congressional districts - Highmaps
- description: Highmaps demo
+ name: Iowa congressional districts - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -23,7 +23,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import Axis from '../../Core/Axis/Axis.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import VMLAxis3D from './VMLAxis3D.js';
 
@@ -60,7 +60,10 @@ class VMLRenderer3D {
      *
      * */
 
-    public static compose(vmlClass: typeof Highcharts.VMLRenderer, svgClass: typeof SVGRenderer): void {
+    public static compose(
+        vmlClass: typeof Highcharts.VMLRenderer,
+        svgClass: typeof SVGRenderer
+    ): void {
         const svgProto = svgClass.prototype;
         const vmlProto = vmlClass.prototype;
 

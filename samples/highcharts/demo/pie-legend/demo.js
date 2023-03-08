@@ -1,3 +1,4 @@
+// Data retrieved from https://netmarketshare.com/
 // Build the chart
 Highcharts.chart('container', {
     chart: {
@@ -7,7 +8,8 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares in January, 2018'
+        text: 'Browser market shares in March, 2022',
+        align: 'left'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -32,24 +34,24 @@ Highcharts.chart('container', {
         colorByPoint: true,
         data: [{
             name: 'Chrome',
-            y: 61.41,
+            y: 74.77,
             sliced: true,
             selected: true
-        }, {
-            name: 'Internet Explorer',
-            y: 11.84
-        }, {
-            name: 'Firefox',
-            y: 10.85
-        }, {
+        },  {
             name: 'Edge',
-            y: 4.67
+            y: 12.82
+        },  {
+            name: 'Firefox',
+            y: 4.63
         }, {
             name: 'Safari',
-            y: 4.18
+            y: 2.44
+        }, {
+            name: 'Internet Explorer',
+            y: 2.02
         }, {
             name: 'Other',
-            y: 7.05
+            y: 3.28
         }]
     }]
 });

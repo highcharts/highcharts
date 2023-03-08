@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -16,20 +22,22 @@ import type {
 } from './StochasticOptions';
 import type StochasticPoint from './StochasticPoint';
 
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import AU from '../ArrayUtilities.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
     isArray,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Stochastic series type.
@@ -40,7 +48,14 @@ const {
  *
  * @augments Highcharts.Series
  */
-class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLinesMixin {
+class StochasticIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -105,14 +120,26 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
         dataGrouping: {
             approximation: 'averages'
         }
-    } as StochasticOptions)
+    } as StochasticOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<StochasticPoint> = void 0 as any;
     public options: StochasticOptions = void 0 as any;
     public points: Array<StochasticPoint> = void 0 as any;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     public init(): void {
-        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
+        super.init.apply(this, arguments);
 
         // Set default color for lines:
         this.options = merge({
@@ -128,7 +155,7 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
         series: TLinkedSeries,
         params: StochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let periodK: number = (params.periods as any)[0],
+        const periodK: number = (params.periods as any)[0],
             periodD: number = (params.periods as any)[1],
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
@@ -137,19 +164,17 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
             SO: Array<Array<(number|null)>> = [],
             xData: Array<number> = [],
             yData: Array<Array<(number|null)>> = [],
-            slicedY: Array<Array<number>>,
             close = 3,
             low = 2,
-            high = 1,
+            high = 1;
+
+        let slicedY: Array<Array<number>>,
             CL: number,
             HL: number,
             LL: number,
             K: number,
             D: number|null = null,
-            points: (
-                IndicatorValuesObject<LineSeries>|
-                undefined
-            ),
+            points: (IndicatorValuesObject<LineSeries>|undefined),
             extremes: [number, number],
             i: number;
 
@@ -163,6 +188,10 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
             return;
         }
 
+        // If the value of initial points is constant, wait until it changes
+        // to calculate correct Stochastic values
+        let constantValues = true,
+            j = 0;
         // For a N-period, we start from N-1 point, to calculate Nth point
         // That is why we later need to comprehend slice() elements list
         // with (+1)
@@ -170,28 +199,51 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
             slicedY = yVal.slice(i - periodK + 1, i + 1);
 
             // Calculate %K
-            extremes = ReduceArrayMixin.getArrayExtremes(slicedY, low as any, high as any);
+            extremes = AU.getArrayExtremes(slicedY, low as any, high as any);
             LL = extremes[0]; // Lowest low in %K periods
             CL = yVal[i][close] - LL;
             HL = extremes[1] - LL;
             K = CL / HL * 100;
 
-            xData.push(xVal[i]);
-            yData.push([K, null]);
+            if (isNaN(K) && constantValues) {
+                j++;
+                continue;
+            } else if (constantValues && !isNaN(K)) {
+                constantValues = false;
+            }
+
+            const length = xData.push(xVal[i]);
+
+            // If N-period previous values are constant which results in NaN %K,
+            // we need to use previous %K value if it is a number,
+            // otherwise we should use null
+            if (isNaN(K)) {
+                yData.push([
+                    yData[length - 2] &&
+                        typeof yData[length - 2][0] === 'number' ?
+                        yData[length - 2][0] : null,
+                    null
+                ]);
+            } else {
+                yData.push([K, null]);
+            }
 
             // Calculate smoothed %D, which is SMA of %K
-            if (i >= (periodK - 1) + (periodD - 1)) {
-                points = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, ({
-                    xData: xData.slice(-periodD),
-                    yData: yData.slice(-periodD)
-                } as any), {
-                    period: periodD
-                });
+            if (i >= j + (periodK - 1) + (periodD - 1)) {
+                points = super.getValues(
+                    ({
+                        xData: xData.slice(-periodD),
+                        yData: yData.slice(-periodD)
+                    } as any),
+                    {
+                        period: periodD
+                    }
+                );
                 D = (points as any).yData[0];
             }
 
             SO.push([xVal[i], K, D]);
-            yData[yData.length - 1][1] = D;
+            yData[length - 1][1] = D;
         }
 
         return {
@@ -200,42 +252,48 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+
 }
 
-interface StochasticIndicator {
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface StochasticIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;
     nameComponents: Array<string>;
     parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof StochasticPoint>;
     pointClass: typeof StochasticPoint;
     pointValKey: string;
-
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    translate: typeof MultipleLinesMixin.translate;
-    toYData: typeof MultipleLinesMixin.toYData;
 }
+
 extend(StochasticIndicator.prototype, {
+    areaLinesNames: [],
     nameComponents: ['periods'],
     nameBase: 'Stochastic',
     pointArrayMap: ['y', 'smoothed'],
     parallelArrays: ['x', 'y', 'smoothed'],
     pointValKey: 'y',
-    linesApiNames: ['smoothedLine'],
-
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    translate: MultipleLinesMixin.translate,
-    toYData: MultipleLinesMixin.toYData
+    linesApiNames: ['smoothedLine']
 });
+
+MultipleLinesComposition.compose(StochasticIndicator);
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         stochastic: typeof StochasticIndicator;
     }
 }
-
 SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
 
 /* *
@@ -245,6 +303,12 @@ SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
  * */
 
 export default StochasticIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Stochastic indicator. If the [type](#series.stochastic.type) option is not

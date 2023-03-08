@@ -7,7 +7,10 @@
 
     if (!SVGElement.prototype.removeClass) {
         SVGElement.prototype.removeClass = function (className) {
-            this.element.setAttribute('class', this.element.getAttribute('class').replace(className, ''));
+            this.element.setAttribute(
+                'class',
+                this.element.getAttribute('class').replace(className, '')
+            );
             return this;
         };
     }
@@ -15,7 +18,11 @@
     Chart.prototype.presentNext = function presentNext() {
         var point;
         for (var sI = 0; sI < this.series.length && !point; sI++) {
-            for (var pI = 0; pI < this.series[sI].points.length && !point; pI++) {
+            for (
+                var pI = 0;
+                pI < this.series[sI].points.length && !point;
+                pI++
+            ) {
                 if (this.series[sI].points[pI].inPuzzle) {
                     point = this.series[sI].points[pI];
                 }
@@ -199,26 +206,25 @@
 
 }(Highcharts));
 
-// Initiate the chart
 var n,
     mapData,
     data = [],
     maps = Highcharts.maps;
 
 for (n in maps) {
-    if (maps.hasOwnProperty(n)) {
+    if (Object.hasOwnProperty.call(maps, n)) {
         mapData = maps[n];
         break;
     }
 }
-Highcharts.each(mapData.features, function (feature) {
+mapData.forEach(feature => {
     data.push({
         'hc-key': feature.properties['hc-key'],
         value: 1
     });
 });
 
-
+// Initialize the chart
 Highcharts.mapChart('container', {
 
     title: {

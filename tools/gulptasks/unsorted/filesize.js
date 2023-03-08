@@ -1,4 +1,8 @@
 /* eslint func-style: 0, no-console: 0 */
+const { randomUUID } = require('crypto');
+const processLib = require('../lib/process');
+const logLib = require('../lib/log');
+
 const gulp = require('gulp');
 /**
  * Executes a single terminal command and returns when finished.
@@ -21,7 +25,7 @@ const commandLine = command => new Promise((resolve, reject) => {
     });
     cli.stdout.on('data', data => console.log(data.toString()));
 });
-const filesize = () => {
+const filesize = async () => {
     const {
         getBuildScripts
     } = require('../../build.js');
@@ -31,7 +35,7 @@ const filesize = () => {
     } = require('../../compile.js');
     const {
         getFile
-    } = require('highcharts-assembler/src/utilities.js');
+    } = require('@highcharts/highcharts-assembler/src/utilities.js');
     const {
         argv
     } = require('yargs');
@@ -62,7 +66,7 @@ const filesize = () => {
         console.log([
             '',
             colors.cyan(name),
-            printRow(colsizes, ['', 'gzipped', 'compiled', 'size']),
+            printRow(colsizes, ['', 'gzipped', 'compiled', 'source']),
             printRow(colsizes, ['New:', current.gzip, current.compiled, current.size]),
             printRow(colsizes, ['HEAD:', head.gzip, head.compiled, head.size]),
             printRow(colsizes, ['Diff:', diff(current.gzip, head.gzip) + 'B', diff(current.compiled, head.compiled) + 'B', diff(current.size, head.size) + 'B']),
@@ -70,9 +74,10 @@ const filesize = () => {
         ].join('\n'));
     };
 
-    const runFileSize = (obj, key) => getBuildScripts({ files }).fnFirstBuild()
-        .then(() => compile(files, sourceFolder))
-        .then(() => files.reduce(
+    const runFileSize = async (obj, key) => {
+        await getBuildScripts({ files }).fnFirstBuild();
+        await compile(files, sourceFolder);
+        files.reduce(
             (o, n) => {
                 const filename = n.replace('.src.js', '.js');
                 const compiled = getFile(sourceFolder + filename);
@@ -87,20 +92,47 @@ const filesize = () => {
                 };
                 return o;
             }, obj
-        ));
+        );
+    };
 
-    return runFileSize({}, 'new')
-        .then(obj => commandLine('git stash')
-            .then(() => obj)) // Pass obj to next function
-        .then(obj => runFileSize(obj, 'head'))
-        .then(obj => commandLine('git stash apply && git stash drop')
-            .then(() => obj)) // Pass obj to next function
-        .then(obj => {
-            const keys = Object.keys(obj);
-            keys.forEach(key => {
-                const values = obj[key];
-                report(key, values.new, values.head);
-            });
-        });
+    const stashName = `filesize-stash-${randomUUID()}`;
+    const results = {};
+
+    /**
+     * Runs typescript compilation if scripts-watch is not running
+     * @return {Promise<void | string>} Promise
+     */
+    async function compileTypescript() {
+        if (!processLib.isRunning('scripts-watch')) {
+            return commandLine('npx gulp scripts-ts');
+        }
+
+        return logLib.warn('Scripts-watch is running, skipping TS compilation');
+    }
+
+    await compileTypescript();
+    await runFileSize(results, 'new');
+    await commandLine(`git add . && git stash push -m '${stashName}'`);
+    await compileTypescript();
+    await runFileSize(results, 'head');
+
+    // use grep to get just the first result
+    const list = await commandLine(`git stash list | grep -m1 ${stashName}`);
+
+    if (list.length) {
+        const stashRegex = new RegExp(`^stash\@\{(.*)\}:.+?${stashName}`);
+        const match = list.match(stashRegex);
+        if (!match.length) {
+            throw new Error('could not find filesize stash, aborting');
+        }
+        const stashIndex = match[1];
+        await commandLine(`git stash pop stash@{${stashIndex}}`);
+    }
+
+    const keys = Object.keys(results);
+    keys.forEach(key => {
+        const values = results[key];
+        report(key, values.new, values.head);
+    });
 };
 gulp.task('filesize', filesize);

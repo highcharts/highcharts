@@ -57,7 +57,7 @@ class CylinderPoint extends ColumnPoint {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

@@ -19,21 +19,19 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 
-import H from '../../Core/Globals.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
-const {
-    doc
-} = H;
 import DOMElementProvider from './DOMElementProvider.js';
-import HTMLUtilities from './HTMLUtilities.js';
+import H from '../../Core/Globals.js';
+const { doc } = H;
+import HU from './HTMLUtilities.js';
 const {
-    setElAttrs,
+    addClass,
     visuallyHideElement
-} = HTMLUtilities;
+} = HU;
+import U from '../../Core/Utilities.js';
+const { attr } = U;
 
 /* *
  *
@@ -65,7 +63,7 @@ class Announcer {
      *
      * */
 
-    private domElementProvider: Highcharts.DOMElementProvider;
+    private domElementProvider: DOMElementProvider;
     private announceRegion: HTMLDOMElement;
     private clearAnnouncementRegionTimer?: number;
 
@@ -102,21 +100,28 @@ class Announcer {
             clearTimeout(this.clearAnnouncementRegionTimer);
         }
         this.clearAnnouncementRegionTimer = setTimeout((): void => {
-            this.announceRegion.innerHTML = '';
+            this.announceRegion.innerHTML = AST.emptyHTML;
             delete this.clearAnnouncementRegionTimer;
         }, 1000);
     }
 
     private addAnnounceRegion(type: Announcer.Type): HTMLDOMElement {
-        const chartContainer = this.chart.announcerContainer || this.createAnnouncerContainer(),
+        const chartContainer = (
+                this.chart.announcerContainer || this.createAnnouncerContainer()
+            ),
             div = this.domElementProvider.createElement('div');
 
-        setElAttrs(div, {
+        attr(div, {
             'aria-hidden': false,
             'aria-live': type
         });
 
-        visuallyHideElement(div);
+        if (this.chart.styledMode) {
+            addClass(div, 'highcharts-visually-hidden');
+        } else {
+            visuallyHideElement(div);
+        }
+
         chartContainer.appendChild(div);
         return div;
     }
@@ -125,11 +130,11 @@ class Announcer {
         const chart = this.chart,
             container = doc.createElement('div');
 
-        setElAttrs(container, {
+        attr(container, {
             'aria-hidden': false,
-            style: 'position:relative',
             'class': 'highcharts-announcer-container'
         });
+        container.style.position = 'relative';
 
         chart.renderTo.insertBefore(container, chart.renderTo.firstChild);
         chart.announcerContainer = container;

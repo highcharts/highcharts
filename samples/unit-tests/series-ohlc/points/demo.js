@@ -13,8 +13,8 @@ QUnit.test('directTouch', function (assert) {
                 }
             ]
         }).series[0].points,
-        path1 = points[0].graphic.attr('d').split(' ').map(parseFloat),
-        path2 = points[1].graphic.attr('d').split(' ').map(parseFloat);
+        path2 = points[0].graphic.attr('d').split(' ').map(parseFloat),
+        path1 = points[1].graphic.attr('d').split(' ').map(parseFloat);
 
     assert.strictEqual(
         path1[2] <= path1[8] + halfWidth,

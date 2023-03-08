@@ -311,8 +311,8 @@ QUnit.test(
         chart.series[1].points[0].onMouseOver();
 
         assert.strictEqual(
-            chart.series[1].tt.text.element.tagName,
-            'text',
+            chart.tooltip.label.element.tagName,
+            'g',
             'We have a flag tooltip'
         );
     }
@@ -340,7 +340,7 @@ QUnit.test(
         chart.series[0].points[0].onMouseOver();
 
         assert.strictEqual(
-            chart.series[0].tt.box.stroke,
+            chart.series[0].tt.box.attr('stroke'),
             firstPointColor,
             'Label stroke should be the same as the first point color.'
         );
@@ -348,7 +348,7 @@ QUnit.test(
         chart.series[0].points[1].onMouseOver();
 
         assert.strictEqual(
-            chart.series[0].tt.box.stroke,
+            chart.series[0].tt.box.attr('stroke'),
             secondPointColor,
             'Label stroke should be the same as the second point color.'
         );

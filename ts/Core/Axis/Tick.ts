@@ -29,6 +29,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+import type Time from '../Time.js';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
 
 import F from '../FormatUtilities.js';
@@ -86,7 +87,7 @@ declare module './AxisOptions' {
  * @param {boolean} [noLabel=false]
  * Whether to disable the label or not. Defaults to false.
  *
- * @param {object} [parameters]
+ * @param {Object} [parameters]
  * Optional parameters for the tick.
  */
 class Tick {
@@ -249,7 +250,8 @@ class Tick {
             } else if (isNumber(value)) { // #1441
                 dateTimeLabelFormat = axis.dateTime.getXDateFormat(
                     value,
-                    (options.dateTimeLabelFormats || {}) as any
+                    options.dateTimeLabelFormats ||
+                        {} as Time.DateTimeLabelFormatsOption
                 );
             }
         }
@@ -274,11 +276,11 @@ class Tick {
         const ctx: AxisLabelFormatterContextObject = {
             axis,
             chart,
-            dateTimeLabelFormat: dateTimeLabelFormat as any,
+            dateTimeLabelFormat: dateTimeLabelFormat,
             isFirst,
             isLast,
             pos,
-            tick: tick as any,
+            tick: tick,
             tickPositionInfo,
             value
         };
@@ -291,12 +293,14 @@ class Tick {
         // defaultFormatter and append the result to the context as `text`.
         // Handy for adding prefix or suffix while keeping default number
         // formatting.
-        const labelFormatter = (ctx: AxisLabelFormatterContextObject): string => {
+        const labelFormatter = (
+            ctx: AxisLabelFormatterContextObject
+        ): string => {
             if (labelOptions.formatter) {
                 return labelOptions.formatter.call(ctx, ctx);
             }
             if (labelOptions.format) {
-                ctx.text = axis.defaultLabelFormatter.call(ctx);
+                ctx.text = axis.defaultLabelFormatter.call(ctx, ctx);
                 return F.format(labelOptions.format, ctx, chart);
             }
             return axis.defaultLabelFormatter.call(ctx, ctx);
@@ -304,7 +308,7 @@ class Tick {
         const str = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
-        const list = dateTimeLabelFormats && dateTimeLabelFormats.list as any;
+        const list = dateTimeLabelFormats && dateTimeLabelFormats.list;
         if (list) {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
@@ -438,7 +442,7 @@ class Tick {
      * @return {Highcharts.PositionObject}
      * The tick position.
      *
-     * @fires Highcharts.Tick#event:afterGetPosition
+     * @emits Highcharts.Tick#event:afterGetPosition
      */
     public getPosition(
         horiz: boolean|undefined,
@@ -452,9 +456,9 @@ class Tick {
             pos = {
                 x: horiz ?
                     correctFloat(
-                        (axis.translate(
-                            tickPos + tickmarkOffset, null, null, old
-                        ) as any) +
+                        axis.translate(
+                            tickPos + tickmarkOffset, void 0, void 0, old
+                        ) +
                         axis.transB
                     ) :
                     (
@@ -483,9 +487,9 @@ class Tick {
                     ) :
                     correctFloat(
                         (cHeight as any) -
-                        (axis.translate(
-                            tickPos + tickmarkOffset, null, null, old
-                        ) as any) -
+                        axis.translate(
+                            tickPos + tickmarkOffset, void 0, void 0, old
+                        ) -
                         axis.transB
                     )
             };
@@ -501,9 +505,7 @@ class Tick {
 
     /**
      * Get the x, y position of the tick label
-     *
      * @private
-     * @return {Highcharts.PositionObject}
      */
     public getLabelPosition(
         x: number,
@@ -535,19 +537,23 @@ class Tick {
             ),
             pos = {} as PositionObject;
 
-        let yOffset = labelOptions.y,
+        let yOffset: number,
             line: number;
 
-        if (!defined(yOffset)) {
-            if (axis.side === 0) {
-                yOffset = label.rotation ? -8 : -label.getBBox().height;
-            } else if (axis.side === 2) {
-                yOffset = rotCorr.y + 8;
-            } else {
-                // #3140, #3140
-                yOffset = Math.cos((label.rotation as any) * deg2rad) *
-                    (rotCorr.y - label.getBBox(false, 0).height / 2);
-            }
+        if (axis.side === 0) {
+            yOffset = label.rotation ? -8 : -label.getBBox().height;
+        } else if (axis.side === 2) {
+            yOffset = rotCorr.y + 8;
+        } else {
+            // #3140, #3140
+            yOffset = Math.cos((label.rotation as any) * deg2rad) *
+                (rotCorr.y - label.getBBox(false, 0).height / 2);
+        }
+
+        if (defined(labelOptions.y)) {
+            yOffset = axis.side === 0 && axis.horiz ?
+                labelOptions.y + yOffset :
+                labelOptions.y;
         }
 
         x = x +
@@ -744,13 +750,10 @@ class Tick {
     public moveLabel(str: string, labelOptions: AxisLabelOptions): void {
         const tick = this,
             label = tick.label,
-            axis = tick.axis,
-            reversed = axis.reversed;
+            axis = tick.axis;
 
         let moved = false,
-            labelPos,
-            xPos,
-            yPos;
+            labelPos;
 
         if (label && label.textStr === str) {
             tick.movedLabel = label;
@@ -777,13 +780,9 @@ class Tick {
         // Create new label if the actual one is moved
         if (!moved && (tick.labelPos || label)) {
             labelPos = tick.labelPos || (label as any).xy;
-            xPos = axis.horiz ?
-                (reversed ? 0 : axis.width + axis.left) : labelPos.x;
-            yPos = axis.horiz ?
-                labelPos.y : (reversed ? (axis.width + axis.left) : 0);
 
             tick.movedLabel = tick.createLabel(
-                { x: xPos, y: yPos },
+                labelPos,
                 str,
                 labelOptions
             );
@@ -910,7 +909,8 @@ class Tick {
                     value: pos + tickmarkOffset,
                     lineWidth: gridLine.strokeWidth() * reverseCrisp,
                     force: 'pass',
-                    old: old
+                    old: old,
+                    acrossPanes: false // #18025
                 }
             );
 
@@ -1078,10 +1078,10 @@ class Tick {
             // Set the new position, and show or hide
             if (show && isNumber(xy.y)) {
                 xy.opacity = opacity;
-                label[tick.isNewLabel ? 'attr' : 'animate'](xy);
+                label[tick.isNewLabel ? 'attr' : 'animate'](xy).show(true);
                 tick.isNewLabel = false;
             } else {
-                label.attr('y', -9999 as any); // #1338
+                label.hide(); // #1338, #15863
                 tick.isNewLabel = true;
             }
         }
@@ -1097,23 +1097,13 @@ class Tick {
     public replaceMovedLabel(): void {
         const tick = this,
             label = tick.label,
-            axis = tick.axis,
-            reversed = axis.reversed;
-
-        let x,
-            y;
+            axis = tick.axis;
 
         // Animate and destroy
         if (label && !tick.isNew) {
-            x = axis.horiz ? (
-                reversed ? axis.left : axis.width + axis.left
-            ) : label.xy.x;
-            y = axis.horiz ?
-                label.xy.y :
-                (reversed ? axis.width + axis.top : axis.top);
 
             label.animate(
-                { x: x, y: y, opacity: 0 },
+                { opacity: 0 },
                 void 0,
                 label.destroy
             );

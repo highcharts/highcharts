@@ -1,1 +1,1 @@
-Click "Add Circle" then add an annotation on the chart. Expected is a circle annotation on the chart. Then click on annotation - custom popup should show up with a possibility to update an annotation.
+Click "Add Circle" then click the chart to add an annotation. Expected is a circle annotation on the chart. Then click on annotation - custom popup should show up with a possibility to update an annotation.

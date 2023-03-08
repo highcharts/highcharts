@@ -245,7 +245,8 @@ Highcharts.chart('container', {
         text: 'Highcharts export server overview',
         style: {
             color: 'black'
-        }
+        },
+        align: 'left'
     },
     accessibility: {
         typeDescription: 'Flowchart'

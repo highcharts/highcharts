@@ -14,6 +14,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     CMFOptions,
     CMFParamsOptions
@@ -21,16 +27,21 @@ import type {
 import type CMFPoint from './CMFPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The CMF series type.
@@ -42,6 +53,13 @@ const {
  * @augments Highcharts.Series
  */
 class CMFIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Chaikin Money Flow indicator (cmf).
      *
@@ -75,6 +93,7 @@ class CMFIndicator extends SMAIndicator {
      *  Properties
      *
      * */
+
     public data: Array<CMFPoint> = void 0 as any;
     public options: CMFOptions = void 0 as any;
     public points: Array<CMFPoint> = void 0 as any;
@@ -82,6 +101,12 @@ class CMFIndicator extends SMAIndicator {
     public linkedParent: LineSeries = void 0 as any;
     public yData: Array<Array<number>> = void 0 as any;
     public nameBase: string = 'Chaikin Money Flow';
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Checks if the series and volumeSeries are accessible, number of
@@ -156,12 +181,21 @@ class CMFIndicator extends SMAIndicator {
 
     /**
      * @private
-     * @param {Array<number>} xData - x timestamp values
-     * @param {Array<number>} seriesYData - yData of basic series
-     * @param {Array<number>} volumeSeriesYData - yData of volume series
-     * @param {number} period - indicator's param
-     * @return {Highcharts.IndicatorNullableValuesObject} object containing computed money
-     * flow data
+     *
+     * @param {Array<number>} xData
+     * x timestamp values
+     *
+     * @param {Array<number>} seriesYData
+     * yData of basic series
+     *
+     * @param {Array<number>} volumeSeriesYData
+     * yData of volume series
+     *
+     * @param {number} period
+     * indicator's param
+     *
+     * @return {Highcharts.IndicatorNullableValuesObject}
+     * object containing computed money flow data
      */
     public getMoneyFlow<TLinkedSeries extends LineSeries>(
         xData: Array<number>,
@@ -169,25 +203,32 @@ class CMFIndicator extends SMAIndicator {
         volumeSeriesYData: Array<number>,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
-        let len: number = (seriesYData as any).length,
+        const len: number = (seriesYData as any).length,
             moneyFlowVolume: Array<(number|null)> = [],
-            sumVolume = 0,
-            sumMoneyFlowVolume = 0,
             moneyFlowXData: Array<number> = [],
             moneyFlowYData: Array<(number|null)> = [],
-            values: Array<Array<(number|null)>> = [],
-            i: number,
+            values: Array<Array<(number|null)>> = [];
+        let i: number,
             point: [number, (number|null)],
-            nullIndex = -1;
+            nullIndex = -1,
+            sumVolume = 0,
+            sumMoneyFlowVolume = 0;
 
         /**
          * Calculates money flow volume, changes i, nullIndex vars from
          * upper scope!
+         *
          * @private
-         * @param {Array<number>} ohlc - OHLC point
-         * @param {number} volume - Volume point's y value
-         * @return {number|null} - volume * moneyFlowMultiplier
-         **/
+         *
+         * @param {Array<number>} ohlc
+         * OHLC point
+         *
+         * @param {number} volume
+         * Volume point's y value
+         *
+         * @return {number|null}
+         * Volume * moneyFlowMultiplier
+         */
         function getMoneyFlowVolume(
             ohlc: Array<number>,
             volume: number
@@ -206,11 +247,15 @@ class CMFIndicator extends SMAIndicator {
 
             /**
              * @private
-             * @param {number} h - High value
-             * @param {number} l - Low value
-             * @param {number} c - Close value
-             * @return {number} calculated multiplier for the point
-             **/
+             * @param {number} h
+             * High value
+             * @param {number} l
+             * Low value
+             * @param {number} c
+             * Close value
+             * @return {number}
+             * Calculated multiplier for the point
+             */
             function getMoneyFlowMultiplier(
                 h: number,
                 l: number,
@@ -277,7 +322,7 @@ class CMFIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -306,6 +351,12 @@ SeriesRegistry.registerSeriesType('cmf', CMFIndicator);
  * */
 
 export default CMFIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `CMF` series. If the [type](#series.cmf.type) option is not

@@ -51,7 +51,7 @@ QUnit.test('Updating 3D columns with z stacking #4743', function (assert) {
     point0Z = point0.shapeArgs.z;
     point1Z = point1.shapeArgs.z;
 
-    Highcharts.each(chart.series, function (s) {
+    chart.series.forEach(s => {
         s.update(
             {
                 showInLegend: false
@@ -61,7 +61,7 @@ QUnit.test('Updating 3D columns with z stacking #4743', function (assert) {
     });
     chart.redraw();
 
-    Highcharts.each(chart.series, function (s) {
+    chart.series.forEach(s => {
         s.update(
             {
                 showInLegend: true

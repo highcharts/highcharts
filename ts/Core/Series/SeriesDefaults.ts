@@ -17,9 +17,13 @@
  * */
 
 import type Point from './Point';
-import type SeriesOptions from './SeriesOptions';
+import type Series from './Series';
+import type {
+    PlotOptionsOf,
+    SeriesOptions
+} from './SeriesOptions';
 
-import Palette from '../Color/Palette.js';
+import { Palette } from '../Color/Palettes.js';
 
 /* *
  *
@@ -32,7 +36,7 @@ import Palette from '../Color/Palette.js';
  *
  * @optionparent plotOptions.series
  */
-const seriesDefaults: SeriesOptions = {
+const seriesDefaults: PlotOptionsOf<Series> = {
     // base series options
 
     /**
@@ -64,11 +68,16 @@ const seriesDefaults: SeriesOptions = {
     lineWidth: 2,
 
     /**
-     * For some series, there is a limit that shuts down initial animation
+     * For some series, there is a limit that shuts down animation
      * by default when the total number of points in the chart is too high.
      * For example, for a column chart and its derivatives, animation does
      * not run if there is more than 250 points totally. To disable this
-     * cap, set `animationLimit` to `Infinity`.
+     * cap, set `animationLimit` to `Infinity`. This option works if animation
+     * is fired on individual points, not on a group of points like e.g. during
+     * the initial animation.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-animationlimit/
+     *         Animation limit on updating individual points
      *
      * @type      {number}
      * @apioption plotOptions.series.animationLimit
@@ -149,11 +158,12 @@ const seriesDefaults: SeriesOptions = {
      *
      * - `defer`: The animation delay time in milliseconds.
      *
-     * - `duration`: The duration of the animation in milliseconds.
+     * - `duration`: The duration of the animation in milliseconds. (Defaults to
+     *   `1000`)
      *
      * - `easing`: Can be a string reference to an easing function set on
      *   the `Math` object or a function. See the _Custom easing function_
-     *   demo below.
+     *   demo below. (Defaults to `easeInOutSine`)
      *
      * Due to poor performance, animation is disabled in old IE browsers
      * for several chart types.
@@ -173,7 +183,7 @@ const seriesDefaults: SeriesOptions = {
      * @sample {highmaps} maps/plotoptions/mapbubble-animation-false/
      *         Disabled on mapbubble series
      *
-     * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
+     * @type    {boolean|Highcharts.AnimationOptionsObject}
      * @default {highcharts} true
      * @default {highstock} true
      * @default {highmaps} false
@@ -181,21 +191,17 @@ const seriesDefaults: SeriesOptions = {
      * @private
      */
     animation: {
-        /** @internal */
+        /** @ignore-option */
         duration: 1000
     },
 
     /**
-     * @default   0
-     * @type      {number}
-     * @since     8.2.0
-     * @apioption plotOptions.series.animation.defer
-     */
-
-    /**
      * An additional class name to apply to the series' graphical elements.
      * This option does not replace default class names of the graphical
-     * element.
+     * element. Changes to the series' color will also be reflected in a
+     * chart's legend and tooltip.
+     *
+     * @sample {highcharts} highcharts/css/point-series-classname
      *
      * @type      {string}
      * @since     5.0.0
@@ -253,9 +259,11 @@ const seriesDefaults: SeriesOptions = {
      */
 
     /**
-     * Styled mode only. A specific color index to use for the series, so
-     * its graphic representations are given the class name
-     * `highcharts-color-{n}`.
+     * Styled mode only. A specific color index to use for the series, so its
+     * graphic representations are given the class name `highcharts-color-{n}`.
+     *
+     * @sample    {highcharts} highcharts/css/colorindex/
+     *            Series and point color index
      *
      * @type      {number}
      * @since     5.0.0
@@ -450,6 +458,9 @@ const seriesDefaults: SeriesOptions = {
 
     /**
      * The line cap used for line ends and line joins on the graph.
+     *
+     * @sample highcharts/series-line/linecap/
+     *         Line cap comparison
      *
      * @type       {Highcharts.SeriesLinecapValue}
      * @default    round
@@ -974,16 +985,19 @@ const seriesDefaults: SeriesOptions = {
      */
 
     /**
-     * Options for the point markers of line-like series. Properties like
-     * `fillColor`, `lineColor` and `lineWidth` define the visual appearance
-     * of the markers. Other series types, like column series, don't have
-     * markers, but have visual options on the series level instead.
+     * Options for the point markers of line and scatter-like series. Properties
+     * like `fillColor`, `lineColor` and `lineWidth` define the visual
+     * appearance of the markers. The `symbol` option defines the shape. Other
+     * series types, like column series, don't have markers, but have visual
+     * options on the series level instead.
      *
-     * In styled mode, the markers can be styled with the
-     * `.highcharts-point`, `.highcharts-point-hover` and
-     * `.highcharts-point-select` class names.
+     * In styled mode, the markers can be styled with the `.highcharts-point`,
+     * `.highcharts-point-hover` and `.highcharts-point-select` class names.
      *
      * @declare Highcharts.PointMarkerOptionsObject
+     *
+     * @sample {highmaps} maps/demo/mappoint-mapmarker
+     *         Using the mapmarker symbol for points
      *
      * @private
      */
@@ -1097,6 +1111,8 @@ const seriesDefaults: SeriesOptions = {
          *         Predefined, graphic and custom markers
          * @sample {highstock} highcharts/plotoptions/series-marker-symbol/
          *         Predefined, graphic and custom markers
+         * @sample {highmaps} maps/demo/mappoint-mapmarker
+         *         Using the mapmarker symbol for points
          *
          * @type      {string}
          * @apioption plotOptions.series.marker.symbol
@@ -1350,6 +1366,9 @@ const seriesDefaults: SeriesOptions = {
          * parameter, `event`, is passed to the function, containing common
          * event information.
          *
+         * Returning `false` cancels the default behavior, which is to show a
+         * tooltip for the point.
+         *
          * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/
          *         Show values in the chart's corner on mouse over
          *
@@ -1444,7 +1463,11 @@ const seriesDefaults: SeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-multiple
      *         Multiple data labels on a bar series
      * @sample {highcharts} highcharts/css/series-datalabels
-     *         Style mode example
+     *         Styled mode example
+     * @sample {highmaps} maps/demo/color-axis
+     *         Choropleth map with data labels
+     * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
+     *         Using data labels as map markers
      *
      * @type    {*|Array<*>}
      * @product highcharts highstock highmaps gantt
@@ -1453,13 +1476,14 @@ const seriesDefaults: SeriesOptions = {
      */
     dataLabels: {
         /**
-         * Enable or disable the initial animation when a series is
-         * displayed for the `dataLabels`. The animation can also be set as
-         * a configuration object. Please note that this option only
-         * applies to the initial animation.
-         * For other animations, see [chart.animation](#chart.animation)
-         * and the animation parameter under the API methods.
-         * The following properties are supported:
+         * Enable or disable the initial animation when a series is displayed
+         * for the `dataLabels`. The animation can also be set as a
+         * configuration object. Please note that this option only applies to
+         * the initial animation.
+         *
+         * For other animations, see [chart.animation](#chart.animation) and the
+         * animation parameter under the API methods. The following properties
+         * are supported:
          *
          * - `defer`: The animation delay time in milliseconds.
          *
@@ -1472,9 +1496,9 @@ const seriesDefaults: SeriesOptions = {
          */
         animation: {},
         /**
-         * The animation delay time in milliseconds.
-         * Set to `0` renders dataLabel immediately.
-         * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
+         * The animation delay time in milliseconds. Set to `0` to render the
+         * data labels immediately. As `undefined` inherits defer time from the
+         * [series.animation.defer](#plotOptions.series.animation.defer).
          *
          * @type      {number}
          * @since     8.2.0
@@ -1482,17 +1506,19 @@ const seriesDefaults: SeriesOptions = {
          */
 
         /**
-         * The alignment of the data label compared to the point. If
-         * `right`, the right side of the label should be touching the
-         * point. For points with an extent, like columns, the alignments
-         * also dictates how to align it inside the box, as given with the
-         * [inside](#plotOptions.column.dataLabels.inside)
-         * option. Can be one of `left`, `center` or `right`.
+         * The alignment of the data label compared to the point. If `right`,
+         * the right side of the label should be touching the point. For points
+         * with an extent, like columns, the alignments also dictates how to
+         * align it inside the box, as given with the
+         * [inside](#plotOptions.column.dataLabels.inside) option. Can be one of
+         * `left`, `center` or `right`.
          *
-         * @sample {highcharts} highcharts/plotoptions/series-datalabels-align-left/
-         *         Left aligned
-         * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
-         *         Data labels inside the bar
+         * @sample {highcharts}
+         *         highcharts/plotoptions/series-datalabels-align-left/ Left
+         *         aligned
+         * @sample {highcharts}
+         *         highcharts/plotoptions/bar-datalabels-align-inside-bar/ Data
+         *         labels inside the bar
          *
          * @type {Highcharts.AlignValue|null}
          */
@@ -1514,12 +1540,15 @@ const seriesDefaults: SeriesOptions = {
          */
 
         /**
-         * The background color or gradient for the data label.
+         * The background color or gradient for the data label. Setting it to
+         * `auto` will use the point's color.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
+         * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
+         *         Data labels as map markers
          *
          * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     2.2.1
@@ -1527,7 +1556,8 @@ const seriesDefaults: SeriesOptions = {
          */
 
         /**
-         * The border color for the data label. Defaults to `undefined`.
+         * The border color for the data label. Setting it to `auto` will use
+         * the point's color. Defaults to `undefined`.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
@@ -1562,6 +1592,7 @@ const seriesDefaults: SeriesOptions = {
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.borderWidth
          */
+        borderWidth: 0,
 
         /**
          * A class name for the data label. Particularly in styled mode,
@@ -1581,6 +1612,9 @@ const seriesDefaults: SeriesOptions = {
          */
 
         /**
+         * This options is deprecated.
+         * Use [style.color](#plotOptions.series.dataLabels.style) instead.
+         *
          * The text color for the data labels. Defaults to `undefined`. For
          * certain series types, like column or map, the data labels can be
          * drawn inside the points. In this case the data label will be
@@ -1594,8 +1628,11 @@ const seriesDefaults: SeriesOptions = {
          * @sample {highmaps} maps/demo/color-axis/
          *         White data labels
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @apioption plotOptions.series.dataLabels.color
+         * @see [style.color](#plotOptions.series.dataLabels.style)
+         *
+         * @type       {Highcharts.ColorType}
+         * @deprecated 10.3
+         * @apioption  plotOptions.series.dataLabels.color
          */
 
         /**
@@ -1709,9 +1746,9 @@ const seriesDefaults: SeriesOptions = {
 
         // eslint-disable-next-line valid-jsdoc
         /**
-         * Callback JavaScript function to format the data label. Note that
-         * if a `format` is defined, the format takes precedence and the
-         * formatter is ignored.
+         * Callback JavaScript function to format the data label. Note that if a
+         * `format` is defined, the format takes precedence and the formatter is
+         * ignored.
          *
          * @sample {highmaps} maps/plotoptions/series-datalabels-format/
          *         Formatted value
@@ -1720,7 +1757,8 @@ const seriesDefaults: SeriesOptions = {
          */
         formatter: function (this: Point.PointLabelObject): string {
             const { numberFormatter } = this.series.chart;
-            return typeof this.y !== 'number' ? '' : numberFormatter(this.y, -1);
+            return typeof this.y !== 'number' ?
+                '' : numberFormatter(this.y, -1);
         },
 
         /**
@@ -1736,10 +1774,12 @@ const seriesDefaults: SeriesOptions = {
         /**
          * Format for points with the value of null. Works analogously to
          * [format](#plotOptions.series.dataLabels.format). `nullFormat` can
-         * be applied only to series which support displaying null points.
+         * be applied only to series which support displaying null points
+         * i.e `heatmap` or `tilemap`. Does not work with series that don't
+         * display null points, like `line`, `column`, `bar` or `pie`.
          *
-         * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
-         *         Format data label and tooltip for null point.
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
+         *         Format data label for null points in heat map
          *
          * @type      {boolean|string}
          * @since     7.1.0
@@ -1750,11 +1790,13 @@ const seriesDefaults: SeriesOptions = {
          * Callback JavaScript function that defines formatting for points
          * with the value of null. Works analogously to
          * [formatter](#plotOptions.series.dataLabels.formatter).
-         * `nullPointFormatter` can be applied only to series which support
-         * displaying null points.
+         * `nullFormatter` can be applied only to series which support
+         * displaying null points i.e `heatmap` or `tilemap`. Does not work
+         * with series that don't display null points, like `line`, `column`,
+         * `bar` or `pie`.
          *
-         * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
-         *         Format data label and tooltip for null point.
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
+         *         Format data label for null points in heat map
          *
          * @type      {Highcharts.DataLabelsFormatterCallbackFunction}
          * @since     7.1.0
@@ -1947,13 +1989,13 @@ const seriesDefaults: SeriesOptions = {
         x: 0,
 
         /**
-         * The Z index of the data labels. The default Z index puts it above
-         * the series. Use a Z index of 2 to display it behind the series.
+         * The z index of the data labels. Use a `zIndex` of 6 to display it above
+         * the series, or use a `zIndex` of 2 to display it behind the series.
          *
          * @type      {number}
          * @default   6
          * @since     2.3.5
-         * @apioption plotOptions.series.dataLabels.z
+         * @apioption plotOptions.series.dataLabels.zIndex
          */
 
         /**
@@ -2126,7 +2168,7 @@ const seriesDefaults: SeriesOptions = {
              * @deprecated
              *
              * @extends   plotOptions.series.marker
-             * @excluding states
+             * @excluding states, symbol
              * @product   highcharts highstock
              */
             marker: {
@@ -2426,6 +2468,8 @@ const seriesDefaults: SeriesOptions = {
      *
      * @sample highcharts/coloraxis/custom-color-key/
      *         Custom color key
+     * @sample highcharts/coloraxis/color-key-with-stops/
+     *         Custom colorKey with color axis stops
      * @sample highcharts/coloraxis/changed-default-color-key/
      *         Changed default color key
      *

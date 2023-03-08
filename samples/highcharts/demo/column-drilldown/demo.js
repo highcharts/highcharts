@@ -1,12 +1,16 @@
+// Data retrieved from https://gs.statcounter.com/browser-market-share#monthly-202201-202201-bar
+
 // Create the chart
 Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
     title: {
-        text: 'Browser market shares. January, 2018'
+        align: 'left',
+        text: 'Browser market shares. January, 2022'
     },
     subtitle: {
+        align: 'left',
         text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
     },
     accessibility: {
@@ -43,261 +47,266 @@ Highcharts.chart('container', {
 
     series: [
         {
-            name: "Browsers",
+            name: 'Browsers',
             colorByPoint: true,
             data: [
                 {
-                    name: "Chrome",
-                    y: 62.74,
-                    drilldown: "Chrome"
+                    name: 'Chrome',
+                    y: 63.06,
+                    drilldown: 'Chrome'
                 },
                 {
-                    name: "Firefox",
-                    y: 10.57,
-                    drilldown: "Firefox"
+                    name: 'Safari',
+                    y: 19.84,
+                    drilldown: 'Safari'
                 },
                 {
-                    name: "Internet Explorer",
-                    y: 7.23,
-                    drilldown: "Internet Explorer"
+                    name: 'Firefox',
+                    y: 4.18,
+                    drilldown: 'Firefox'
                 },
                 {
-                    name: "Safari",
-                    y: 5.58,
-                    drilldown: "Safari"
+                    name: 'Edge',
+                    y: 4.12,
+                    drilldown: 'Edge'
                 },
                 {
-                    name: "Edge",
-                    y: 4.02,
-                    drilldown: "Edge"
+                    name: 'Opera',
+                    y: 2.33,
+                    drilldown: 'Opera'
                 },
                 {
-                    name: "Opera",
-                    y: 1.92,
-                    drilldown: "Opera"
+                    name: 'Internet Explorer',
+                    y: 0.45,
+                    drilldown: 'Internet Explorer'
                 },
                 {
-                    name: "Other",
-                    y: 7.62,
+                    name: 'Other',
+                    y: 1.582,
                     drilldown: null
                 }
             ]
         }
     ],
     drilldown: {
+        breadcrumbs: {
+            position: {
+                align: 'right'
+            }
+        },
         series: [
             {
-                name: "Chrome",
-                id: "Chrome",
+                name: 'Chrome',
+                id: 'Chrome',
                 data: [
                     [
-                        "v65.0",
+                        'v65.0',
                         0.1
                     ],
                     [
-                        "v64.0",
+                        'v64.0',
                         1.3
                     ],
                     [
-                        "v63.0",
+                        'v63.0',
                         53.02
                     ],
                     [
-                        "v62.0",
+                        'v62.0',
                         1.4
                     ],
                     [
-                        "v61.0",
+                        'v61.0',
                         0.88
                     ],
                     [
-                        "v60.0",
+                        'v60.0',
                         0.56
                     ],
                     [
-                        "v59.0",
+                        'v59.0',
                         0.45
                     ],
                     [
-                        "v58.0",
+                        'v58.0',
                         0.49
                     ],
                     [
-                        "v57.0",
+                        'v57.0',
                         0.32
                     ],
                     [
-                        "v56.0",
+                        'v56.0',
                         0.29
                     ],
                     [
-                        "v55.0",
+                        'v55.0',
                         0.79
                     ],
                     [
-                        "v54.0",
+                        'v54.0',
                         0.18
                     ],
                     [
-                        "v51.0",
+                        'v51.0',
                         0.13
                     ],
                     [
-                        "v49.0",
+                        'v49.0',
                         2.16
                     ],
                     [
-                        "v48.0",
+                        'v48.0',
                         0.13
                     ],
                     [
-                        "v47.0",
+                        'v47.0',
                         0.11
                     ],
                     [
-                        "v43.0",
+                        'v43.0',
                         0.17
                     ],
                     [
-                        "v29.0",
+                        'v29.0',
                         0.26
                     ]
                 ]
             },
             {
-                name: "Firefox",
-                id: "Firefox",
+                name: 'Firefox',
+                id: 'Firefox',
                 data: [
                     [
-                        "v58.0",
+                        'v58.0',
                         1.02
                     ],
                     [
-                        "v57.0",
+                        'v57.0',
                         7.36
                     ],
                     [
-                        "v56.0",
+                        'v56.0',
                         0.35
                     ],
                     [
-                        "v55.0",
+                        'v55.0',
                         0.11
                     ],
                     [
-                        "v54.0",
+                        'v54.0',
                         0.1
                     ],
                     [
-                        "v52.0",
+                        'v52.0',
                         0.95
                     ],
                     [
-                        "v51.0",
+                        'v51.0',
                         0.15
                     ],
                     [
-                        "v50.0",
+                        'v50.0',
                         0.1
                     ],
                     [
-                        "v48.0",
+                        'v48.0',
                         0.31
                     ],
                     [
-                        "v47.0",
+                        'v47.0',
                         0.12
                     ]
                 ]
             },
             {
-                name: "Internet Explorer",
-                id: "Internet Explorer",
+                name: 'Internet Explorer',
+                id: 'Internet Explorer',
                 data: [
                     [
-                        "v11.0",
+                        'v11.0',
                         6.2
                     ],
                     [
-                        "v10.0",
+                        'v10.0',
                         0.29
                     ],
                     [
-                        "v9.0",
+                        'v9.0',
                         0.27
                     ],
                     [
-                        "v8.0",
+                        'v8.0',
                         0.47
                     ]
                 ]
             },
             {
-                name: "Safari",
-                id: "Safari",
+                name: 'Safari',
+                id: 'Safari',
                 data: [
                     [
-                        "v11.0",
+                        'v11.0',
                         3.39
                     ],
                     [
-                        "v10.1",
+                        'v10.1',
                         0.96
                     ],
                     [
-                        "v10.0",
+                        'v10.0',
                         0.36
                     ],
                     [
-                        "v9.1",
+                        'v9.1',
                         0.54
                     ],
                     [
-                        "v9.0",
+                        'v9.0',
                         0.13
                     ],
                     [
-                        "v5.1",
+                        'v5.1',
                         0.2
                     ]
                 ]
             },
             {
-                name: "Edge",
-                id: "Edge",
+                name: 'Edge',
+                id: 'Edge',
                 data: [
                     [
-                        "v16",
+                        'v16',
                         2.6
                     ],
                     [
-                        "v15",
+                        'v15',
                         0.92
                     ],
                     [
-                        "v14",
+                        'v14',
                         0.4
                     ],
                     [
-                        "v13",
+                        'v13',
                         0.1
                     ]
                 ]
             },
             {
-                name: "Opera",
-                id: "Opera",
+                name: 'Opera',
+                id: 'Opera',
                 data: [
                     [
-                        "v50.0",
+                        'v50.0',
                         0.96
                     ],
                     [
-                        "v49.0",
+                        'v49.0',
                         0.82
                     ],
                     [
-                        "v12.1",
+                        'v12.1',
                         0.14
                     ]
                 ]

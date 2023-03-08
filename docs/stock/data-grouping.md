@@ -18,7 +18,7 @@ Data grouping is a Highcharts Stock feature and is enabled by default. To see da
 
 ### The x-value for a grouped point
 
- <iframe width="320" height="800" src="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/plotoptions/series-datagrouping-first-anchor" allow="fullscreen"></iframe>
+ <iframe width="320" height="800" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-first-anchor" allow="fullscreen"></iframe>
 
 Grouped points can be positioned inside the group using [anchor](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.anchor) property which might take values: 
 

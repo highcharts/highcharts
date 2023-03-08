@@ -1,4 +1,3 @@
-
 .f32 .flag {
     display: inline-block;
     height: 32px;
@@ -8,8 +7,8 @@
     background: url(flags32.png) no-repeat;
 }
 
-legend{
-	font-family: "Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;
+legend {
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
 }
 
 .flags {

@@ -30,7 +30,7 @@ import type Tick from './Tick';
 import type { YAxisOptions } from './AxisOptions';
 
 import AxisDefaults from './AxisDefaults.js';
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
 const { noop } = H;
@@ -124,6 +124,8 @@ namespace RadialAxis {
         max: number;
         min: number;
         minPointOffset: number;
+        normalizedEndAngleRad: number;
+        normalizedStartAngleRad: number;
         offset: number;
         options: Options;
         pane: Pane;
@@ -402,8 +404,6 @@ namespace RadialAxis {
      * anti-collision.
      *
      * @private
-     *
-     * @return {Highcharts.ChartLabelCollectorFunction}
      */
     function createLabelCollector(
         this: AxisComposition
@@ -501,17 +501,12 @@ namespace RadialAxis {
      * getPlotLinePath method.
      *
      * @private
-     *
      * @param {number} _lineWidth
      * Line width is not used.
-     *
      * @param {number} [radius]
      * Radius of radial path.
-     *
      * @param {number} [innerRadius]
      * Inner radius of radial path.
-     *
-     * @return {Highcharts.RadialAxisPath}
      */
     function getLinePath(
         this: AxisComposition,
@@ -559,7 +554,11 @@ namespace RadialAxis {
         } else {
             end = this.postTranslate(this.angleRad, r);
             path = [
-                ['M', this.center[0] + chart.plotLeft, this.center[1] + chart.plotTop],
+                [
+                    'M',
+                    this.center[0] + chart.plotLeft,
+                    this.center[1] + chart.plotTop
+                ],
                 ['L', end.x, end.y]
             ];
         }
@@ -587,17 +586,6 @@ namespace RadialAxis {
      * Find the path for plot bands along the radial axis.
      *
      * @private
-     *
-     * @param {number} from
-     * From value.
-     *
-     * @param {number} to
-     * To value.
-     *
-     * @param {Highcharts.AxisPlotBandsOptions} options
-     * Band options.
-     *
-     * @return {Highcharts.RadialAxisPath}
      */
     function getPlotBandPath(
         this: AxisComposition,
@@ -607,7 +595,9 @@ namespace RadialAxis {
     ): Path {
 
         const chart = this.chart,
-            radiusToPixels = (radius: number|string|undefined): (number|undefined) => {
+            radiusToPixels = (
+                radius: number|string|undefined
+            ): (number|undefined) => {
                 if (typeof radius === 'string') {
                     let r = parseInt(radius, 10);
                     if (percentRegex.test(radius)) {
@@ -869,21 +859,17 @@ namespace RadialAxis {
      * distance from center.
      *
      * @private
-     *
      * @param {number} value
      * Point value.
-     *
      * @param {number} [length]
      * Distance from center.
-     *
-     * @return {Highcharts.PositionObject}
      */
     function getPosition(
         this: AxisComposition,
         value: number,
         length?: number
     ): PositionObject {
-        const translatedVal = this.translate(value) as any;
+        const translatedVal = this.translate(value);
 
         return this.postTranslate(
             this.isCircular ? translatedVal : this.angleRad, // #2848
@@ -892,7 +878,8 @@ namespace RadialAxis {
             // fall out of the visible range near the center of a pane
             pick(this.isCircular ?
                 length :
-                (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2) - this.offset
+                (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2
+            ) - this.offset
         );
     }
 
@@ -980,21 +967,41 @@ namespace RadialAxis {
             paneOptions = pane && pane.options;
 
         if (!isHidden && pane && (chart.angular || chart.polar)) {
-
-            // Start and end angle options are given in degrees relative to
-            // top, while internal computations are in radians relative to
-            // right (like SVG).
+            const fullCircle = Math.PI * 2,
+                // Start and end angle options are given in degrees relative to
+                // top, while internal computations are in radians relative to
+                // right (like SVG).
+                start = (pick(paneOptions.startAngle, 0) - 90) * Math.PI / 180,
+                end = (pick(
+                    paneOptions.endAngle,
+                    pick(paneOptions.startAngle, 0) + 360
+                ) - 90) * Math.PI / 180;
 
             // Y axis in polar charts
             this.angleRad = (options.angle || 0) * Math.PI / 180;
             // Gauges
-            this.startAngleRad =
-                ((paneOptions.startAngle as any) - 90) * Math.PI / 180;
-            this.endAngleRad = (pick(
-                paneOptions.endAngle, (paneOptions.startAngle as any) + 360
-            ) - 90) * Math.PI / 180; // Gauges
+            this.startAngleRad = start;
+            this.endAngleRad = end;
             this.offset = options.offset || 0;
 
+            // Normalize Start and End to <0, 2*PI> range
+            // (in degrees: <0,360>)
+            let normalizedStart = (start % fullCircle + fullCircle) %
+                    fullCircle,
+                normalizedEnd = (end % fullCircle + fullCircle) % fullCircle;
+
+            // Move normalized angles to <-PI, PI> range (<-180, 180>)
+            // to match values returned by Math.atan2()
+            if (normalizedStart > Math.PI) {
+                normalizedStart -= fullCircle;
+            }
+
+            if (normalizedEnd > Math.PI) {
+                normalizedEnd -= fullCircle;
+            }
+
+            this.normalizedStartAngleRad = normalizedStart;
+            this.normalizedEndAngleRad = normalizedEnd;
         }
     }
 
@@ -1092,7 +1099,8 @@ namespace RadialAxis {
 
             // Apply the stack labels for yAxis in case of inverted chart
             if (inverted && coll === 'yAxis') {
-                this.defaultPolarOptions.stackLabels = AxisDefaults.defaultYAxisOptions.stackLabels;
+                this.defaultPolarOptions.stackLabels = AxisDefaults
+                    .defaultYAxisOptions.stackLabels;
                 this.defaultPolarOptions.reversedStacks = true;
             }
         }
@@ -1100,7 +1108,6 @@ namespace RadialAxis {
         // Disable certain features on angular and polar axes
         if (angular || polar) {
             this.isRadial = true;
-            (chartOptions.chart as any).zoomType = null as any;
 
             if (!this.labelCollector) {
                 this.labelCollector = this.createLabelCollector();
@@ -1153,7 +1160,7 @@ namespace RadialAxis {
             labelOptions = axis.options.labels as any,
             angle = (
                 (
-                    (axis.translate(this.pos) as any) + axis.startAngleRad +
+                    axis.translate(this.pos) + axis.startAngleRad +
                     Math.PI / 2
                 ) / Math.PI * 180
             ) % 360,
@@ -1322,14 +1329,10 @@ namespace RadialAxis {
      * to final chart coordinates.
      *
      * @private
-     *
      * @param {number} angle
      * Translation angle.
-     *
      * @param {number} radius
      * Translation radius.
-     *
-     * @return {Highcharts.PositionObject}
      */
     function postTranslate(
         this: AxisComposition,

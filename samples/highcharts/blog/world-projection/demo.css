@@ -1,0 +1,22 @@
+#container {
+    height: 500px;
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.buttons {
+    text-align: center;
+}
+
+.buttons button {
+    border: none;
+    background: none;
+    font-weight: bold;
+    color: silver;
+    font-size: 1.2rem;
+}
+
+.buttons button.active {
+    color: black;
+}

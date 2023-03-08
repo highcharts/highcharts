@@ -1,5 +1,5 @@
 ---
- name: Belarus - Highmaps
- description: Highmaps demo
+ name: Belarus - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

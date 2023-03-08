@@ -16,7 +16,6 @@
  *
  * */
 
-import type CSSObject from '../CSSObject';
 import type HTMLElement from './HTMLElement';
 import type { HTMLDOMElement } from '../DOMElementType';
 
@@ -100,18 +99,18 @@ class HTMLRenderer extends SVGRenderer {
      * @function Highcharts.SVGRenderer#html
      *
      * @param {string} str
-     *        The text of (subset) HTML to draw.
+     * The text of (subset) HTML to draw.
      *
      * @param {number} x
-     *        The x position of the text's lower left corner.
+     * The x position of the text's lower left corner.
      *
      * @param {number} y
-     *        The y position of the text's lower left corner.
+     * The y position of the text's lower left corner.
      *
      * @return {Highcharts.HTMLDOMElement}
+     * HTML element.
      */
     public html(
-        this: HTMLRenderer,
         str: string,
         x: number,
         y: number
@@ -219,7 +218,9 @@ class HTMLRenderer extends SVGRenderer {
 
         // This is specific for HTML within SVG
         if (isSVG) {
-            wrapper.add = function (svgGroupWrapper?: HTMLElement): HTMLElement {
+            wrapper.add = function (
+                svgGroupWrapper?: HTMLElement
+            ): HTMLElement {
                 const container = renderer.box.parentNode,
                     parents = [] as Array<HTMLElement>;
 
@@ -257,8 +258,7 @@ class HTMLRenderer extends SVGRenderer {
                              * @private
                              * @param {*} value
                              * @param {string} key
-                             * @return {void}
-                             */
+                                                     */
                             function translateSetter(
                                 value: any,
                                 key: string
@@ -289,8 +289,10 @@ class HTMLRenderer extends SVGRenderer {
                                     display: parentGroup.display,
                                     opacity: parentGroup.opacity, // #5075
                                     cursor: parentGroupStyles.cursor, // #6794
-                                    pointerEvents:
-                                        parentGroupStyles.pointerEvents, // #5595
+                                    pointerEvents: (
+                                        // #5595
+                                        parentGroupStyles.pointerEvents
+                                    ),
                                     visibility: parentGroup.visibility
 
                                 // the top group is appended to container

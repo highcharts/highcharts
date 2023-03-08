@@ -1,17 +1,21 @@
 #result {
-    text-align: right;
+    text-align: left;
     color: gray;
     min-height: 2em;
 }
+
 #table-sparkline {
     margin: 0 auto;
     border-collapse: collapse;
 }
+
 th {
     font-weight: bold;
     text-align: left;
 }
-td, th {
+
+td,
+th {
     padding: 5px;
     border-bottom: 1px solid silver;
     height: 20px;
@@ -21,7 +25,8 @@ thead th {
     border-top: 2px solid gray;
     border-bottom: 2px solid gray;
 }
-.highcharts-tooltip>span {
+
+.highcharts-tooltip > span {
     background: white;
     border: 1px solid silver;
     border-radius: 3px;

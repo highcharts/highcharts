@@ -1,154 +1,87 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['fr-bre-mb', 0],
-    ['fr-pdl-vd', 1],
-    ['fr-occ-ad', 2],
-    ['fr-pac-vc', 3],
-    ['fr-ges-hm', 4],
-    ['fr-ges-mr', 5],
-    ['fr-hdf-no', 6],
-    ['fr-occ-hp', 7],
-    ['fr-cvl-in', 8],
-    ['fr-naq-vn', 9],
-    ['fr-naq-dd', 10],
-    ['fr-naq-cm', 11],
-    ['fr-pac-am', 12],
-    ['fr-pac-vr', 13],
-    ['fr-pac-ap', 14],
-    ['fr-ara-ai', 15],
-    ['fr-hdf-as', 16],
-    ['fr-pac-bd', 17],
-    ['fr-occ-av', 18],
-    ['fr-occ-ga', 19],
-    ['fr-ges-ab', 20],
-    ['fr-bfc-co', 21],
-    ['fr-bfc-sl', 22],
-    ['fr-cvl-ch', 23],
-    ['fr-naq-cr', 24],
-    ['fr-pdl-ml', 25],
-    ['fr-naq-ds', 26],
-    ['fr-naq-ct', 27],
-    ['fr-ara-dm', 28],
-    ['fr-ara-ah', 29],
-    ['fr-nor-eu', 30],
-    ['fr-idf-es', 31],
-    ['fr-cvl-el', 32],
-    ['fr-occ-hg', 33],
-    ['fr-idf-hd', 34],
-    ['fr-naq-hv', 35],
-    ['fr-pdl-st', 36],
-    ['fr-cvl-il', 37],
-    ['fr-ara-is', 38],
-    ['fr-bfc-ju', 39],
-    ['fr-bfc-hn', 40],
-    ['fr-ara-lr', 41],
-    ['fr-occ-tg', 42],
-    ['fr-occ-lo', 43],
-    ['fr-naq-lg', 44],
-    ['fr-occ-lz', 45],
-    ['fr-bre-iv', 46],
-    ['fr-ges-mm', 47],
-    ['fr-ges-ms', 48],
-    ['fr-bfc-ni', 49],
-    ['fr-naq-cz', 50],
-    ['fr-ara-pd', 51],
-    ['fr-occ-ge', 52],
-    ['fr-naq-pa', 53],
-    ['fr-ara-sv', 54],
-    ['fr-idf-se', 55],
-    ['fr-idf-vp', 56],
-    ['fr-idf-ss', 57],
-    ['fr-idf-vm', 58],
-    ['fr-hdf-so', 59],
-    ['fr-bfc-tb', 60],
-    ['fr-bfc-db', 61],
-    ['fr-idf-vo', 62],
-    ['fr-ges-vg', 63],
-    ['fr-idf-yv', 64],
-    ['fr-cvl-lc', 65],
-    ['fr-cor-cs', 66],
-    ['fr-bre-fi', 67],
-    ['fr-cor-hc', 68],
-    ['fr-nor-mh', 69],
-    ['fr-ges-an', 70],
-    ['fr-occ-ag', 71],
-    ['fr-ges-br', 72],
-    ['fr-nor-cv', 73],
-    ['fr-ara-cl', 74],
-    ['fr-bre-ca', 75],
-    ['fr-naq-gi', 76],
-    ['fr-ges-hr', 77],
-    ['fr-ara-hs', 78],
-    ['fr-occ-he', 79],
-    ['fr-naq-ld', 80],
-    ['fr-pdl-la', 81],
-    ['fr-ges-mo', 82],
-    ['fr-nor-or', 83],
-    ['fr-hdf-pc', 84],
-    ['fr-occ-po', 85],
-    ['fr-pdl-my', 86],
-    ['fr-nor-sm', 87],
-    ['fr-bfc-yo', 88],
-    ['fr-ara-al', 89],
-    ['fr-ara-hl', 90],
-    ['fr-pac-ha', 91],
-    ['fr-cvl-lt', 92],
-    ['fr-hdf-oi', 93],
-    ['fr-ara-rh', 94],
-    ['fr-occ-ta', 95],
-    ['fr-lre-re', 97],
-    ['fr-may-yt', 98],
-    ['fr-gf-gf', 99],
-    ['fr-mq-mq', 100],
-    ['fr-gua-gp', 101]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/fr/fr-all-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/fr/fr-all-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['fr-bre-mb', 10], ['fr-pdl-vd', 11], ['fr-occ-ad', 12],
+        ['fr-pac-vc', 13], ['fr-ges-hm', 14], ['fr-ges-mr', 15],
+        ['fr-hdf-no', 16], ['fr-occ-hp', 17], ['fr-cvl-in', 18],
+        ['fr-naq-vn', 19], ['fr-naq-dd', 20], ['fr-naq-cm', 21],
+        ['fr-pac-am', 22], ['fr-pac-vr', 23], ['fr-pac-ap', 24],
+        ['fr-ara-ai', 25], ['fr-hdf-as', 26], ['fr-pac-bd', 27],
+        ['fr-occ-av', 28], ['fr-occ-ga', 29], ['fr-ges-ab', 30],
+        ['fr-bfc-co', 31], ['fr-bfc-sl', 32], ['fr-cvl-ch', 33],
+        ['fr-naq-cr', 34], ['fr-pdl-ml', 35], ['fr-naq-ds', 36],
+        ['fr-naq-ct', 37], ['fr-ara-dm', 38], ['fr-ara-ah', 39],
+        ['fr-nor-eu', 40], ['fr-idf-es', 41], ['fr-cvl-el', 42],
+        ['fr-occ-hg', 43], ['fr-idf-hd', 44], ['fr-naq-hv', 45],
+        ['fr-pdl-st', 46], ['fr-cvl-il', 47], ['fr-ara-is', 48],
+        ['fr-bfc-ju', 49], ['fr-bfc-hn', 50], ['fr-ara-lr', 51],
+        ['fr-occ-tg', 52], ['fr-occ-lo', 53], ['fr-naq-lg', 54],
+        ['fr-occ-lz', 55], ['fr-bre-iv', 56], ['fr-ges-mm', 57],
+        ['fr-ges-ms', 58], ['fr-bfc-ni', 59], ['fr-naq-cz', 60],
+        ['fr-ara-pd', 61], ['fr-occ-ge', 62], ['fr-naq-pa', 63],
+        ['fr-ara-sv', 64], ['fr-idf-se', 65], ['fr-idf-vp', 66],
+        ['fr-idf-ss', 67], ['fr-idf-vm', 68], ['fr-hdf-so', 69],
+        ['fr-bfc-tb', 70], ['fr-bfc-db', 71], ['fr-idf-vo', 72],
+        ['fr-ges-vg', 73], ['fr-idf-yv', 74], ['fr-cvl-lc', 75],
+        ['fr-cor-cs', 76], ['fr-bre-fi', 77], ['fr-cor-hc', 78],
+        ['fr-nor-mh', 79], ['fr-ges-an', 80], ['fr-occ-ag', 81],
+        ['fr-ges-br', 82], ['fr-nor-cv', 83], ['fr-ara-cl', 84],
+        ['fr-bre-ca', 85], ['fr-naq-gi', 86], ['fr-ges-hr', 87],
+        ['fr-ara-hs', 88], ['fr-occ-he', 89], ['fr-naq-ld', 90],
+        ['fr-pdl-la', 91], ['fr-ges-mo', 92], ['fr-nor-or', 93],
+        ['fr-hdf-pc', 94], ['fr-occ-po', 95], ['fr-pdl-my', 96],
+        ['fr-nor-sm', 97], ['fr-bfc-yo', 98], ['fr-ara-al', 99],
+        ['fr-ara-hl', 100], ['fr-pac-ha', 101], ['fr-cvl-lt', 102],
+        ['fr-hdf-oi', 103], ['fr-ara-rh', 104], ['fr-occ-ta', 105], [null, 106],
+        ['fr-lre-re', 107], ['fr-may-yt', 108], ['fr-gf-gf', 109],
+        ['fr-mq-mq', 110], ['fr-gua-gp', 111]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-all-all.js">France, admin2</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-all-all.topo.json">France, admin2</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }, {
-        name: 'Separators',
-        type: 'mapline',
-        data: Highcharts.geojson(Highcharts.maps['countries/fr/fr-all-all'], 'mapline'),
-        color: 'silver',
-        nullColor: 'silver',
-        showInLegend: false,
-        enableMouseTracking: false
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

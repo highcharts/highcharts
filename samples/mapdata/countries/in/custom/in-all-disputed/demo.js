@@ -1,81 +1,65 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['madhya pradesh', 0],
-    ['uttar pradesh', 1],
-    ['karnataka', 2],
-    ['nagaland', 3],
-    ['bihar', 4],
-    ['lakshadweep', 5],
-    ['andaman and nicobar', 6],
-    ['assam', 7],
-    ['west bengal', 8],
-    ['puducherry', 9],
-    ['daman and diu', 10],
-    ['gujarat', 11],
-    ['rajasthan', 12],
-    ['dadara and nagar havelli', 13],
-    ['chhattisgarh', 14],
-    ['tamil nadu', 15],
-    ['chandigarh', 16],
-    ['punjab', 17],
-    ['haryana', 18],
-    ['andhra pradesh', 19],
-    ['maharashtra', 20],
-    ['himachal pradesh', 21],
-    ['meghalaya', 22],
-    ['kerala', 23],
-    ['telangana', 24],
-    ['mizoram', 25],
-    ['tripura', 26],
-    ['manipur', 27],
-    ['arunanchal pradesh', 28],
-    ['jharkhand', 29],
-    ['goa', 30],
-    ['nct of delhi', 31],
-    ['odisha', 32],
-    ['jammu and kashmir', 33],
-    ['sikkim', 34],
-    ['uttarakhand', 35]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/in/custom/in-all-disputed'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/in/custom/in-all-disputed.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['madhya pradesh', 10], ['uttar pradesh', 11], ['karnataka', 12],
+        ['nagaland', 13], ['bihar', 14], ['lakshadweep', 15],
+        ['andaman and nicobar', 16], ['assam', 17], ['west bengal', 18],
+        ['puducherry', 19], ['daman and diu', 20], ['gujarat', 21],
+        ['rajasthan', 22], ['dadara and nagar havelli', 23],
+        ['chhattisgarh', 24], ['tamil nadu', 25], ['chandigarh', 26],
+        ['punjab', 27], ['haryana', 28], ['andhra pradesh', 29],
+        ['maharashtra', 30], ['himachal pradesh', 31], ['meghalaya', 32],
+        ['kerala', 33], ['telangana', 34], ['mizoram', 35], ['tripura', 36],
+        ['manipur', 37], ['arunanchal pradesh', 38], ['jharkhand', 39],
+        ['goa', 40], ['nct of delhi', 41], ['odisha', 42],
+        ['jammu and kashmir', 43], ['sikkim', 44], ['uttarakhand', 45]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/in/custom/in-all-disputed.js">India with disputed territories</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/in/custom/in-all-disputed.topo.json">India with disputed territories</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

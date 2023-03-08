@@ -12,11 +12,13 @@
  *
  * */
 
+import type DataGroupingOptions from
+    '../../../Extensions/DataGrouping/DataGroupingOptions';
+import type DataLabelOptions from '../../../Core/Series/DataLabelOptions';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from '../SMA/SMAOptions';
-import type DataLabelOptions from '../../../Core/Series/DataLabelOptions';
 import type VBPIndicator from './VBPIndicator';
 
 /* *
@@ -28,7 +30,7 @@ import type VBPIndicator from './VBPIndicator';
 export interface VBPOptions extends SMAOptions {
     animationLimit?: number;
     crisp?: boolean;
-    dataGrouping?: Highcharts.DataGroupingOptionsObject;
+    dataGrouping?: DataGroupingOptions;
     dataLabels?: DataLabelOptions;
     enableMouseTracking?: boolean;
     params?: VBPParamsOptions;
@@ -40,8 +42,13 @@ export interface VBPOptions extends SMAOptions {
 
 export interface VBPParamsOptions extends SMAParamsOptions {
     ranges?: number;
-    volumeSeriesID?: string;
-    // for inheritance
+    volumeSeriesID: string;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default VBPOptions;

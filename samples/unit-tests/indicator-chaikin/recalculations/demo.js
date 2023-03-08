@@ -67,10 +67,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         volumeSeries = chart.series[1],
         chaikinSeries = chart.series[2];
 
-    function toFastChaikinWithRound(arr) {
-        return Highcharts.map(arr, function (point) {
-            return parseFloat(point.toFixed(4));
-        });
+
+    function toChaikinWithRound(arr) {
+        return arr.map(point => parseFloat(point.toFixed(4)));
     }
 
     assert.strictEqual(
@@ -151,7 +150,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        toFastChaikinWithRound(chaikinSeries.yData),
+        toChaikinWithRound(chaikinSeries.yData),
         [
             -14939.5329,
             -12021.9458,
@@ -178,7 +177,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     volumeSeries.points[volumeSeries.points.length - 1].remove();
 
     assert.deepEqual(
-        toFastChaikinWithRound(chaikinSeries.yData),
+        toChaikinWithRound(chaikinSeries.yData),
         [
             -14939.5329,
             -12021.9458,

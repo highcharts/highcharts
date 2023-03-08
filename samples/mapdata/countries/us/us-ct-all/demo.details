@@ -1,5 +1,5 @@
 ---
- name: Connecticut - Highmaps
- description: Highmaps demo
+ name: Connecticut - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

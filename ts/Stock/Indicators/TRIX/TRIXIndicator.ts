@@ -8,24 +8,29 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
-import type {
-    TRIXOptions
-} from './TRIXOptions';
+import type { TRIXOptions } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
 
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        tema: TEMAIndicator
-    }
-} = SeriesRegistry;
+const { tema: TEMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The TRIX series type.
@@ -37,15 +42,19 @@ const {
  * @augments Highcharts.Series
  */
 class TRIXIndicator extends TEMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Triple exponential average (TRIX) oscillator. This series requires
      * `linkedTo` option to be set.
      *
-     * Requires https://code.highcharts.com/stock/indicators/ema.js
-     * and https://code.highcharts.com/stock/indicators/tema.js.
-     *
      * @sample {highstock} stock/indicators/trix
-     *         TRIX indicator
+     * TRIX indicator
      *
      * @extends      plotOptions.tema
      * @since        7.0.0
@@ -54,28 +63,28 @@ class TRIXIndicator extends TEMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/tema
+     * @requires     stock/indicators/trix
      * @optionparent plotOptions.trix
      */
-    public static defaultOptions: TRIXOptions = merge(TEMAIndicator.defaultOptions)
+    public static defaultOptions: TRIXOptions = merge(TEMAIndicator.defaultOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<TRIXPoint> = void 0 as any;
     public options: TRIXOptions = void 0 as any;
     public points: Array<TRIXPoint> = void 0 as any;
 
-    public init(this: TRIXIndicator): void {
-        const args = arguments,
-            ctx = this;
-
-        RequiredIndicatorMixin.isParentLoaded(
-            (SeriesRegistry.seriesTypes.tema as any),
-            'tema',
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     // TRIX is calculated using TEMA so we just extend getTemaPoint method.
     public getTemaPoint(
@@ -93,11 +102,24 @@ class TRIXIndicator extends TEMAIndicator {
             ];
         }
     }
+
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface TRIXIndicator {
     pointClass: typeof TRIXPoint;
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -115,6 +137,12 @@ SeriesRegistry.registerSeriesType('trix', TRIXIndicator);
 
 export default TRIXIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A `TRIX` series. If the [type](#series.trix.type) option is not specified, it
  * is inherited from [chart.type](#chart.type).
@@ -125,6 +153,8 @@ export default TRIXIndicator;
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/tema
  * @apioption series.trix
  */
 

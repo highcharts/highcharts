@@ -1,4 +1,6 @@
 QUnit.test('Animation of stroke-width (#4721)', function (assert) {
+
+    var clock = TestUtilities.lolexInstall();
     var renderer = new Highcharts.Renderer(
             document.getElementById('container'),
             400,
@@ -39,6 +41,7 @@ QUnit.test('Animation of stroke-width (#4721)', function (assert) {
         );
         done();
     }, 150);
+    TestUtilities.lolexRunAndUninstall(clock);
 });
 
 QUnit.test('Animation x-y', function (assert) {
@@ -618,7 +621,7 @@ QUnit.test(
             }, 250);
 
             setTimeout(function () {
-                //controller.triggerEvent('mouseover', 450, 250);
+                // controller.triggerEvent('mouseover', 450, 250);
                 chart.series[0].points[0].setState('');
             }, 750);
 
@@ -773,6 +776,23 @@ QUnit.test('Complete callback', function (assert) {
                 }
             );
         }, 150);
+
+        let completeCalled = false;
+
+        circle.animate(
+            { opacity: 0 },
+            {
+                duration: 0,
+                complete: () => {
+                    completeCalled = true;
+                }
+            }
+        );
+
+        assert.ok(
+            completeCalled,
+            '#16045: complete callback in options should be called when duration=0'
+        );
 
         // Run and reset animation
         TestUtilities.lolexRunAndUninstall(clock);

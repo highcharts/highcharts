@@ -1,0 +1,6 @@
+---
+ name: Map grid chart (small multiple)
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

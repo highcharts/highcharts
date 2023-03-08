@@ -1,0 +1,6 @@
+---
+ name: Highcharts Fibonacci Time Zones Annotation demo
+ authors:
+   - Rafal Sebestjanski
+ js_wrap: b
+...

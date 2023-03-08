@@ -5,11 +5,13 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts item chart'
+        text: 'Distribution of seats'
     },
 
     subtitle: {
-        text: 'Parliament visualization'
+        text: 'Bundestag election 2021. Source: ' +
+            '<a href="https://www.bundeswahlleiter.de/en/bundeswahlleiter.html"' +
+            'target="_blank">Bundeswahlleiter</a> '
     },
 
     legend: {
@@ -20,17 +22,21 @@ Highcharts.chart('container', {
         name: 'Representatives',
         keys: ['name', 'y', 'color', 'label'],
         data: [
-            ['The Left', 69, '#BE3075', 'DIE LINKE'],
-            ['Social Democratic Party', 153, '#EB001F', 'SPD'],
-            ['Alliance 90/The Greens', 67, '#64A12D', 'GRÜNE'],
-            ['Free Democratic Party', 80, '#FFED00', 'FDP'],
-            ['Christian Democratic Union', 200, '#000000', 'CDU'],
-            ['Christian Social Union in Bavaria', 46, '#008AC5', 'CSU'],
-            ['Alternative for Germany', 94, '#009EE0', 'AfD']
+            ['The Left', 39, '#CC0099', 'DIE LINKE'],
+            ['Social Democratic Party', 206, '#EE0011', 'SPD'],
+            ['Alliance 90/The Greens', 118, '#448833', 'GRÜNE'],
+            ['Free Democratic Party', 92, '#FFCC00', 'FDP'],
+            ['Christian Democratic Union', 152, '#000000', 'CDU'],
+            ['Christian Social Union in Bavaria', 45, '#3366CC', 'CSU'],
+            ['Alternative for Germany', 83, '#3399FF', 'AfD'],
+            ['South Schleswig Voters\' Association', 1, '#000099', 'SSW']
         ],
         dataLabels: {
             enabled: true,
-            format: '{point.label}'
+            format: '{point.label}',
+            style: {
+                textOutline: '3px contrast'
+            }
         },
 
         // Circular options
@@ -38,5 +44,20 @@ Highcharts.chart('container', {
         size: '170%',
         startAngle: -100,
         endAngle: 100
-    }]
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 600
+            },
+            chartOptions: {
+                series: [{
+                    dataLabels: {
+                        distance: -30
+                    }
+                }]
+            }
+        }]
+    }
 });

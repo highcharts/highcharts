@@ -1,0 +1,41 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "noEmit": true,
+        "noEmitOnError": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strict": false,
+        "sourceMap": true,
+        "baseUrl": "../../",
+        "module": "ES6",
+        "moduleResolution": "classic",
+        "rootDir": "../../",
+        "target": "ES6",
+        "lib": [
+            "dom",
+            "es5"
+        ],
+        "paths": {
+            "/base/code/es-modules/*": [
+                "ts/*"
+            ],
+            "/base/*": [
+                "*"
+            ]
+        },
+        "types": [
+            // disable node types
+        ]
+    },
+    "files": [
+        "tsglobal.d.ts"
+    ],
+    "include": [
+        "ts/**/*.ts",
+        "**/*.test.js",
+    ]
+}

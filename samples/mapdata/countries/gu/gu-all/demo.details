@@ -1,5 +1,5 @@
 ---
- name: Guam - Highmaps
- description: Highmaps demo
+ name: Guam - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

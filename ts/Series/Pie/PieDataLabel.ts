@@ -25,7 +25,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import DataLabel from '../../Core/Series/DataLabel.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -371,29 +371,31 @@ namespace ColumnDataLabel {
                     );
                 } else {
                     switch ((options as any).alignTo) {
-                    case 'connectors':
-                        x = (dataLabelPositioners as any).alignToConnectors(
-                            points,
-                            i as any,
-                            plotWidth,
-                            plotLeft
-                        );
-                        break;
-                    case 'plotEdges':
-                        x = (dataLabelPositioners as any).alignToPlotEdges(
-                            dataLabel as any,
-                            i as any,
-                            plotWidth,
-                            plotLeft
-                        );
-                        break;
-                    default:
-                        x = (dataLabelPositioners as any).radialDistributionX(
-                            series,
-                            point,
-                            y,
-                            naturalY
-                        );
+                        case 'connectors':
+                            x = (dataLabelPositioners as any).alignToConnectors(
+                                points,
+                                i as any,
+                                plotWidth,
+                                plotLeft
+                            );
+                            break;
+                        case 'plotEdges':
+                            x = (dataLabelPositioners as any).alignToPlotEdges(
+                                dataLabel as any,
+                                i as any,
+                                plotWidth,
+                                plotLeft
+                            );
+                            break;
+                        default:
+                            x = (
+                                dataLabelPositioners as any
+                            ).radialDistributionX(
+                                series,
+                                point,
+                                y,
+                                naturalY
+                            );
                     }
                 }
 
@@ -424,8 +426,10 @@ namespace ColumnDataLabel {
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
-                (labelPosition as any).final.x = x;
-                (labelPosition as any).final.y = y;
+                if (labelPosition) {
+                    labelPosition.computed.x = x;
+                    labelPosition.computed.y = y;
+                }
 
                 // Detect overflowing data labels
                 if (pick((options as any).crop, true)) {
@@ -651,9 +655,12 @@ namespace ColumnDataLabel {
             if (newSize < center[2]) {
                 center[2] = newSize;
                 center[3] = Math.min( // #3632
-                    relativeLength(options.innerSize || 0, newSize),
-                    newSize
-                );
+                    options.thickness ?
+                        Math.max(0, newSize - options.thickness * 2) :
+                        Math.max(
+                            0, relativeLength(options.innerSize || 0, newSize)
+                        ), newSize
+                ); // #6647
                 this.translate(center);
 
                 if (this.drawDataLabels) {

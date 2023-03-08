@@ -1,96 +1,66 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['cn-3664', 0],
-    ['cn-fj', 1],
-    ['cn-gd', 2],
-    ['cn-sh', 3],
-    ['cn-zj', 4],
-    ['cn-3681', 5],
-    ['cn-3682', 6],
-    ['cn-6655', 7],
-    ['cn-6656', 8],
-    ['cn-6658', 9],
-    ['cn-6659', 10],
-    ['cn-6660', 11],
-    ['cn-6661', 12],
-    ['cn-6662', 13],
-    ['cn-6664', 14],
-    ['cn-6668', 15],
-    ['cn-nx', 16],
-    ['cn-sa', 17],
-    ['cn-cq', 18],
-    ['cn-ah', 19],
-    ['cn-hu', 20],
-    ['cn-6657', 21],
-    ['cn-6663', 22],
-    ['cn-6665', 23],
-    ['cn-6666', 24],
-    ['cn-6667', 25],
-    ['cn-6669', 26],
-    ['cn-6670', 27],
-    ['cn-6671', 28],
-    ['cn-xz', 29],
-    ['cn-yn', 30],
-    ['cn-bj', 31],
-    ['cn-hb', 32],
-    ['cn-sd', 33],
-    ['cn-tj', 34],
-    ['cn-gs', 35],
-    ['cn-jl', 36],
-    ['cn-xj', 37],
-    ['cn-sx', 38],
-    ['cn-nm', 39],
-    ['cn-hl', 40],
-    ['cn-gx', 41],
-    ['cn-ln', 42],
-    ['cn-ha', 43],
-    ['cn-js', 44],
-    ['cn-sc', 45],
-    ['cn-qh', 46],
-    ['cn-he', 47],
-    ['cn-gz', 48],
-    ['cn-hn', 49],
-    ['cn-jx', 50]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/cn/custom/cn-all-sar'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/cn/custom/cn-all-sar.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['cn-3664', 10], ['cn-fj', 11], ['cn-gd', 12], ['cn-sh', 13],
+        ['cn-zj', 14], ['cn-3681', 15], ['cn-3682', 16], ['cn-6655', 17],
+        ['cn-6656', 18], ['cn-6658', 19], ['cn-6659', 20], ['cn-6660', 21],
+        ['cn-6661', 22], ['cn-6662', 23], ['cn-6664', 24], ['cn-6668', 25],
+        ['cn-nx', 26], ['cn-sa', 27], ['cn-cq', 28], ['cn-ah', 29],
+        ['cn-hu', 30], ['cn-6657', 31], ['cn-6663', 32], ['cn-6665', 33],
+        ['cn-6666', 34], ['cn-6667', 35], ['cn-6669', 36], ['cn-6670', 37],
+        ['cn-6671', 38], ['cn-xz', 39], ['cn-yn', 40], ['cn-bj', 41],
+        ['cn-hb', 42], ['cn-sd', 43], ['cn-tj', 44], ['cn-gs', 45],
+        ['cn-jl', 46], ['cn-xj', 47], ['cn-sx', 48], ['cn-nm', 49],
+        ['cn-hl', 50], ['cn-gx', 51], ['cn-ln', 52], ['cn-ha', 53],
+        ['cn-js', 54], ['cn-sc', 55], ['cn-qh', 56], ['cn-he', 57],
+        ['cn-gz', 58], ['cn-hn', 59], ['cn-jx', 60]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cn/custom/cn-all-sar.js">China with Hong Kong and Macau</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cn/custom/cn-all-sar.topo.json">China with Hong Kong and Macau</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

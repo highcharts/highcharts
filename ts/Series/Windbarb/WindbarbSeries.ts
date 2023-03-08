@@ -18,11 +18,13 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import ApproximationRegistry from
+    '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import H from '../../Core/Globals.js';
-const { noop } = H;
-import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import OnSeriesComposition from '../OnSeriesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -176,8 +178,8 @@ class WindbarbSeries extends ColumnSeries {
      * @private
      */
     public static registerApproximation(): void {
-        if (H.approximations && !H.approximations.windbarb) {
-            H.approximations.windbarb = function (
+        if (!ApproximationRegistry.windbarb) {
+            ApproximationRegistry.windbarb = function (
                 values: Array<number>,
                 directions: Array<number>
             ): Array<number> {
@@ -197,7 +199,10 @@ class WindbarbSeries extends ColumnSeries {
 
                 return [
                     // Wind speed
-                    values.reduce(function (sum: number, value: number): number {
+                    values.reduce(function (
+                        sum: number,
+                        value: number
+                    ): number {
                         return sum + value;
                     }, 0) / values.length,
                     // Wind direction
@@ -328,28 +333,6 @@ class WindbarbSeries extends ColumnSeries {
         return path;
     }
 
-    public translate(): void {
-        const beaufortFloor = this.beaufortFloor,
-            beaufortName = this.beaufortName;
-
-        OnSeriesMixin.translate.call(this);
-
-        this.points.forEach(function (
-            point: WindbarbPoint
-        ): void {
-            let level = 0;
-
-            // Find the beaufort level (zero based)
-            for (; level < beaufortFloor.length; level++) {
-                if (beaufortFloor[level] > point.value) {
-                    break;
-                }
-            }
-            point.beaufortLevel = level - 1;
-            point.beaufort = beaufortName[level - 1];
-
-        });
-    }
     public drawPoints(): void {
         const chart = this.chart,
             yAxis = this.yAxis,
@@ -447,34 +430,55 @@ class WindbarbSeries extends ColumnSeries {
     }
 }
 
-interface WindbarbSeries {
+interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
     beaufortFloor: Array<number>;
     beaufortName: Array<string>;
-    getPlotBox: Highcharts.OnSeriesMixin['getPlotBox'];
-    onSeries: Highcharts.OnSeriesSeries['onSeries'];
+    group: typeof ColumnSeries.prototype.group;
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof WindbarbPoint;
+    remove: typeof ColumnSeries.prototype.remove;
+    drawTracker: typeof ColumnSeries.prototype.remove;
     windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
 
 }
 
+OnSeriesComposition.compose(WindbarbSeries);
 extend(WindbarbSeries.prototype, {
-    pointArrayMap: ['value', 'direction'],
-    parallelArrays: ['x', 'value', 'direction'],
+    beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
+        24.5, 28.5, 32.7], // @todo dictionary with names?
     beaufortName: ['Calm', 'Light air', 'Light breeze',
         'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
         'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
         'Violent storm', 'Hurricane'],
-    beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
-        24.5, 28.5, 32.7], // @todo dictionary with names?
+    invertible: false,
+    parallelArrays: ['x', 'value', 'direction'],
+    pointArrayMap: ['value', 'direction'],
+    pointClass: WindbarbPoint,
     trackerGroups: ['markerGroup'],
-    getPlotBox: OnSeriesMixin.getPlotBox,
-    // Don't invert the marker group (#4960)
-    invertGroups: noop
-});
+    translate: function (this: WindbarbSeries): void {
+        const beaufortFloor = this.beaufortFloor,
+            beaufortName = this.beaufortName;
 
-WindbarbSeries.prototype.pointClass = WindbarbPoint;
+        OnSeriesComposition.translate.call(this);
+
+        this.points.forEach(function (
+            point: WindbarbPoint
+        ): void {
+            let level = 0;
+
+            // Find the beaufort level (zero based)
+            for (; level < beaufortFloor.length; level++) {
+                if (beaufortFloor[level] > point.value) {
+                    break;
+                }
+            }
+            point.beaufortLevel = level - 1;
+            point.beaufort = beaufortName[level - 1];
+
+        });
+    }
+});
 
 /* *
  *

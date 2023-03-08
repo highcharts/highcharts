@@ -1,5 +1,5 @@
 QUnit.test('Waterfall point definitions(#4094)', function (assert) {
-    $('#container').highcharts({
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'waterfall'
         },
@@ -11,8 +11,8 @@ QUnit.test('Waterfall point definitions(#4094)', function (assert) {
         series: [
             {
                 data: [
-                    [Date.UTC(2015, 0, 1), 10],
-                    [Date.UTC(2015, 0, 2), 15],
+                    [Date.UTC(2015, 0, 1), 20],
+                    [Date.UTC(2015, 0, 2), -20],
                     [Date.UTC(2015, 0, 3), 5],
                     [Date.UTC(2015, 0, 4), 7]
                 ]
@@ -20,7 +20,21 @@ QUnit.test('Waterfall point definitions(#4094)', function (assert) {
         ]
     });
 
-    var chart = $('#container').highcharts();
-    assert.equal(chart.xAxis[0].dataMin, Date.UTC(2015, 0, 1), 'X Axis min');
-    assert.equal(chart.xAxis[0].dataMax, Date.UTC(2015, 0, 4), 'X Axis max');
+    assert.strictEqual(
+        chart.xAxis[0].dataMin,
+        Date.UTC(2015, 0, 1),
+        'X Axis min'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].dataMax,
+        Date.UTC(2015, 0, 4),
+        'X Axis max'
+    );
+
+    assert.strictEqual(
+        chart.series[0].data[1].isInside,
+        true,
+        'The point.isInside flag should be true (#16788).'
+    );
 });

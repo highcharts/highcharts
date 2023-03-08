@@ -6,6 +6,9 @@ QUnit.test('Wrong datalabel position (#3648)', function (assert) {
             type: 'column',
             inverted: true
         },
+        accessibility: {
+            enabled: false // A11y module adds DOM elements => different childNodes in container
+        },
         yAxis: [
             {
                 width: 200,
@@ -54,8 +57,8 @@ QUnit.test('Wrong datalabel position (#3648)', function (assert) {
         xPosForDataLabels.push(pointsFirstSeries[i].dataLabel.x);
     }
 
-    //Return false if a value of the first array is lower
-    //than the corresponding value of the second array
+    // Return false if a value of the first array is lower
+    // than the corresponding value of the second array
     function compareValuesOfTwoArrays(arr1, arr2) {
         for (var i = 0; i < arr1.length; i++) {
             if (arr1[i] < arr2[i]) {
@@ -126,7 +129,7 @@ QUnit.test('Wrong datalabel position (#3648)', function (assert) {
         plotLeft = chart.plotLeft,
         firstSeriesCenterX = firstSeries.plotX,
         firstSeriesColumnX = firstSeries.graphic.getBBox().height + plotLeft,
-        firstSeriesWidth = chart.series[0].clipBox.height,
+        firstSeriesWidth = chart.series[0].yAxis.len,
         seriesCenterY = chart.plotHeight / 2 + chart.plotTop,
         secondSeriesCenterX = secondSeries.plotX + firstSeriesWidth,
         secondSeriesColumnX =

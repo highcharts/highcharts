@@ -139,3 +139,43 @@ QUnit.test('PackedBubble layout simulation', function (assert) {
         'Bubbles should not get stuck during simulation (#14439).'
     );
 });
+
+QUnit.test('PackedBubble hover and dehover (#12537)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'packedbubble'
+        },
+        plotOptions: {
+            packedbubble: {
+                minSize: '20%',
+                maxSize: '100%',
+                zMin: 0,
+                zMax: 1000,
+                lineWidth: 10,
+                layoutAlgorithm: {
+                    splitSeries: true,
+                    enableSimulation: false
+                }
+            }
+        },
+        series: [{
+            value: 1
+
+        }, {
+            value: 2
+        }]
+    });
+
+    const bubbleOne = chart.series[0].parentNode,
+        bubbleTwo = chart.series[1].parentNode;
+
+    bubbleOne.onMouseOver();
+    bubbleTwo.onMouseOver();
+
+    const lineWidth = bubbleOne.graphic['stroke-width'];
+    assert.strictEqual(
+        lineWidth,
+        10,
+        'Linewidth should go back to 10 after de-hovering.'
+    );
+});

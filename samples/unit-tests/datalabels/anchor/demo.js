@@ -22,7 +22,7 @@ QUnit.test(
             ]
         });
 
-        Highcharts.each(chart.series[0].points, function (point) {
+        chart.series[0].points.forEach(point => {
             if (point.dataLabel) {
                 assert.close(
                     point.dataLabel.anchorY,
@@ -79,7 +79,7 @@ QUnit.test(
             ]
         });
 
-        Highcharts.each(chart.series[0].points, function (point) {
+        chart.series[0].points.forEach(point => {
             if (point.dataLabel) {
                 assert.close(
                     chart.yAxis[0].toPixels(point.x, true),

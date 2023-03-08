@@ -1,5 +1,5 @@
 ---
- name: Iran - Highmaps
- description: Highmaps demo
+ name: Iran - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,5 +1,5 @@
 ---
- name: Botswana - Highmaps
- description: Highmaps demo
+ name: Botswana - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

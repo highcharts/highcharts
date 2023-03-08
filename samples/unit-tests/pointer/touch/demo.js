@@ -166,6 +166,8 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
             target: points[0].graphic.element
         });
 
+        chart.pointer.res = false;
+
         chart.pointer.onContainerTouchMove({
             type: 'touchmove',
             touches: [
@@ -235,6 +237,31 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
         chart.tooltip.label.element.textContent.indexOf('Bananas'),
         -1,
         'The tooltip should show Bananas'
+    );
+    chart.update({
+        tooltip: {
+            followTouchMove: false
+        }
+    });
+    swipe();
+    assert.equal(
+        chart.tooltip.label.element.textContent.indexOf('Bananas'),
+        -1,
+        'The tooltip should not show Bananas after chart.update'
+    );
+    chart.update({
+        tooltip: {
+            followTouchMove: true
+        }
+    });
+    chart.tooltip.update({
+        followTouchMove: false
+    });
+    swipe();
+    assert.equal(
+        chart.tooltip.label.element.textContent.indexOf('Bananas'),
+        -1,
+        'The tooltip should not show Bananas after tooltip.update'
     );
 
     chart = Highcharts.chart('container', {

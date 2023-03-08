@@ -1,5 +1,5 @@
 ---
- name: Equatorial Guinea - Highmaps
- description: Highmaps demo
+ name: Equatorial Guinea - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

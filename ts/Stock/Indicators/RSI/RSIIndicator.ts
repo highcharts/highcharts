@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -18,23 +24,30 @@ import type RSIPoint from './RSIPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     isNumber,
     merge
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 // Utils:
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
-/* eslint-enable require-jsdoc */
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The RSI series type.
@@ -46,6 +59,13 @@ function toFixed(a: number, n: number): number {
  * @augments Highcharts.Series
  */
 class RSIIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Relative strength index (RSI) technical indicator. This series
      * requires the `linkedTo` option to be set and should be loaded after
@@ -120,7 +140,8 @@ class RSIIndicator extends SMAIndicator {
             // longer then 4 (HLC, range), this ensures that we are not trying
             // to reach the index out of bounds
             index = Math.min(index, yVal[0].length - 1);
-            values = (yVal as Array<Array<number>>).map((value: Array<number>): number => value[index]);
+            values = (yVal as Array<Array<number>>)
+                .map((value: Array<number>): number => value[index]);
         }
 
         // Calculate changes for first N points
@@ -193,7 +214,7 @@ class RSIIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -206,6 +227,7 @@ interface RSIIndicator {
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         rsi: typeof RSIIndicator;
@@ -221,6 +243,12 @@ SeriesRegistry.registerSeriesType('rsi', RSIIndicator);
  * */
 
 export default RSIIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `RSI` series. If the [type](#series.rsi.type) option is not

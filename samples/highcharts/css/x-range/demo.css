@@ -1,4 +1,4 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #container {
     min-width: 300px;
@@ -8,14 +8,16 @@
 }
 
 .highcharts-xrange-series .highcharts-point {
-	stroke-width: 1px;
-	stroke: gray;
+    stroke-width: 1px;
+    stroke: gray;
 }
+
 .highcharts-partfill-overlay {
-	fill: #010101;
-	fill-opacity: 0.3;
+    fill: #010101;
+    fill-opacity: 0.3;
 }
+
 .highcharts-data-label text {
-	fill: white;
-	text-shadow: 1px 1px black, -1px 1px black, -1px -1px black, 1px -1px black;
+    fill: white;
+    text-shadow: 1px 1px black, -1px 1px black, -1px -1px black, 1px -1px black;
 }

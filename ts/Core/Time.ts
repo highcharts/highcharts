@@ -118,7 +118,7 @@ const hasOldSafariBug =
  * @class
  * @name Highcharts.Time
  *
- * @param {Highcharts.TimeOptions} options
+ * @param {Highcharts.TimeOptions} [options]
  * Time options as defined in [chart.options.time](/highcharts/time).
  */
 class Time {
@@ -130,7 +130,7 @@ class Time {
      * */
 
     public constructor(
-        options: Time.TimeOptions
+        options?: Time.TimeOptions
     ) {
         /**
          * Get the time zone offset based on the current timezone information as
@@ -238,7 +238,10 @@ class Time {
             if (
                 unit === 'Milliseconds' ||
                 unit === 'Seconds' ||
-                (unit === 'Minutes' && this.getTimezoneOffset(date) % 3600000 === 0) // #13961
+                (
+                    unit === 'Minutes' &&
+                    this.getTimezoneOffset(date) % 3600000 === 0
+                ) // #13961
             ) {
                 return (date as any)['setUTC' + unit](value);
             }
@@ -261,7 +264,8 @@ class Time {
         // UTC time with no timezone handling
         if (
             this.useUTC ||
-            (hasNewSafariBug && unit === 'FullYear') // leap calculation in UTC only
+            // leap calculation in UTC only
+            (hasNewSafariBug && unit === 'FullYear')
         ) {
             return (date as any)['setUTC' + unit](value);
         }
@@ -278,21 +282,21 @@ class Time {
      * @private
      * @function Highcharts.Time#update
      *
-     * @param {Highcharts.TimeOptions} options
+     * @param {Highcharts.TimeOptions} [options]
      *
-     * @return {void}
      */
-    public update(options: Time.TimeOptions): void {
-        const useUTC = pick(options && options.useUTC, true) as boolean,
-            time = this;
+    public update(
+        options: Time.TimeOptions = {}
+    ): void {
+        const useUTC = pick(options.useUTC, true);
 
-        this.options = options = merge(true, this.options || {}, options);
+        this.options = options = merge(true, this.options, options);
 
         // Allow using a different Date class
         this.Date = options.Date || win.Date || Date;
 
         this.useUTC = useUTC;
-        this.timezoneOffset = (useUTC && options.timezoneOffset) as any;
+        this.timezoneOffset = (useUTC && options.timezoneOffset) || void 0;
 
         this.getTimezoneOffset = this.timezoneOffsetFunction();
 
@@ -393,11 +397,14 @@ class Time {
     public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
         const time = this,
             options = this.options,
+            getTimezoneOffset = options.getTimezoneOffset,
             moment = options.moment || (win as any).moment;
 
         if (!this.useUTC) {
             return function (timestamp: (number|Date)): number {
-                return new Date(timestamp.toString()).getTimezoneOffset() * 60000;
+                return new Date(
+                    timestamp.toString()
+                ).getTimezoneOffset() * 60000;
             };
         }
 
@@ -418,9 +425,9 @@ class Time {
         }
 
         // If not timezone is set, look for the getTimezoneOffset callback
-        if (this.useUTC && options.getTimezoneOffset) {
+        if (this.useUTC && getTimezoneOffset) {
             return function (timestamp: (number|Date)): number {
-                return (options.getTimezoneOffset as any)(timestamp.valueOf()) * 60000;
+                return getTimezoneOffset(timestamp.valueOf()) * 60000;
             };
         }
 
@@ -593,12 +600,14 @@ class Time {
      * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
      * an object.
      * @private
-     * @param {string|Array<T>|Highcharts.Dictionary<T>} f - General format description
-     * @return {Highcharts.Dictionary<T>} - The object definition
+     * @param {string|Array<T>|Highcharts.Dictionary<T>} f
+     * General format description
+     * @return {Highcharts.Dictionary<T>}
+     * The object definition
      */
-    public resolveDTLFormat<T>(
-        f: (string|Array<T>|Record<string, T>)
-    ): Record<string, T> {
+    public resolveDTLFormat(
+        f: Time.DateTimeLabelFormatOption
+    ): Time.DateTimeLabelFormatObject {
         if (!isObject(f, true)) { // check for string or array
             f = splat(f);
             return {
@@ -607,7 +616,7 @@ class Time {
                 to: f[2]
             };
         }
-        return f as any;
+        return f;
     }
 
     /**
@@ -629,6 +638,7 @@ class Time {
      * @param {number} [startOfWeek=1]
      *
      * @return {Highcharts.AxisTickPositionsArray}
+     * Time positions
      */
     public getTimeTicks(
         normalizedInterval: Time.TimeNormalizedObject,
@@ -880,7 +890,7 @@ class Time {
         range: number,
         timestamp: number,
         startOfWeek: number,
-        dateTimeLabelFormats: Record<string, string>
+        dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
     ): string|undefined {
         const dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', timestamp),
             blank = '01-01 00:00:00.000',
@@ -890,14 +900,13 @@ class Time {
                 minute: 9,
                 hour: 6,
                 day: 3
-            } as Record<string, number>;
+            } as Record<Time.TimeUnit, number>;
 
-        let format: string|undefined,
-            n,
-            lastN = 'millisecond'; // for sub-millisecond data, #4223
+        let n: Time.TimeUnit = 'millisecond',
+            // for sub-millisecond data, #4223
+            lastN: Time.TimeUnit = n;
 
         for (n in timeUnits) { // eslint-disable-line guard-for-in
-
             // If the range is exactly one week and we're looking at a
             // Sunday/Monday, go for the week format
             if (
@@ -931,11 +940,7 @@ class Time {
             }
         }
 
-        if (n) {
-            format = this.resolveDTLFormat(dateTimeLabelFormats[n]).main as any;
-        }
-
-        return format;
+        return this.resolveDTLFormat(dateTimeLabelFormats[n]).main;
     }
 }
 
@@ -946,6 +951,21 @@ class Time {
  * */
 
 namespace Time {
+    export interface DateTimeLabelFormatObject {
+        from?: string;
+        list?: string[];
+        main: string;
+        range?: boolean;
+        to?: string;
+    }
+    export type DateTimeLabelFormatOption = (
+        string|
+        Array<string>|
+        Time.DateTimeLabelFormatObject
+    );
+    export type DateTimeLabelFormatsOption = (
+        Record<TimeUnit, DateTimeLabelFormatOption>
+    );
     export interface TimeOptions {
         Date?: any;
         getTimezoneOffset?: Function;
@@ -959,8 +979,19 @@ namespace Time {
     }
     export interface TimeNormalizedObject {
         count: number;
+        unitName: TimeUnit;
         unitRange: number;
     }
+    export type TimeUnit = (
+        'millisecond'|
+        'second'|
+        'minute'|
+        'hour'|
+        'day'|
+        'week'|
+        'month'|
+        'year'
+    );
     export type TimeUnitValue = (
         'Date'|
         'Day'|
@@ -995,7 +1026,7 @@ export default Time;
  * The count.
  *
  * @name Highcharts.TimeNormalizedObject#count
- * @type {number}
+ * @type {number|undefined}
  *//**
  * The interval in axis values (ms).
  *
@@ -1047,8 +1078,8 @@ export default Time;
  * In case of loading the library from a `script` tag,
  * this option is not needed, it will be loaded from there by default.
  *
- * @type {function}
- * @since 8.2.0
+ * @type      {Function}
+ * @since     8.2.0
  * @apioption time.moment
  */
 

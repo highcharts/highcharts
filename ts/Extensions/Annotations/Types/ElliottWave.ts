@@ -6,42 +6,41 @@
 
 'use strict';
 
-import type AnnotationChart from '../AnnotationChart';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    ControllableLabelOptions
+} from '../Controllables/ControllableOptions';
 import type ColorType from '../../../Core/Color/ColorType';
-import type { AnnotationLabelOptions } from '../../../Extensions/Annotations/AnnotationOptions';
-import type MockPointOptions from '../MockPointOptions';
+
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
-declare module '../MockPointOptions' {
-    interface MockPointOptions {
-        label?: AnnotationLabelOptions;
-    }
-}
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class ElliottWave extends CrookedLine {
-    public constructor(chart: AnnotationChart, options: ElliottWave.Options) {
-        super(chart, options);
-    }
 
     /* *
      *
      * Functions
      *
      * */
+
     public addLabels(): void {
-        this.getPointsOptions().forEach(function (
-            this: ElliottWave,
-            point: MockPointOptions,
-            i: number
-        ): void {
-            const typeOptions = this.options.typeOptions as ElliottWave.TypeOptions,
+        this.getPointsOptions().forEach((point, i): void => {
+            const typeOptions = (
+                    this.options.typeOptions as ElliottWave.TypeOptions
+                ),
                 label = this.initLabel(merge(
                     point.label, {
                         text: typeOptions.labels[i],
@@ -52,9 +51,15 @@ class ElliottWave extends CrookedLine {
                 ), false as any);
 
             point.label = label.options;
-        }, this);
+        });
     }
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface ElliottWave {
     defaultOptions: CrookedLine['defaultOptions'];
@@ -81,7 +86,7 @@ ElliottWave.prototype.defaultOptions = merge(
              */
 
             /**
-             * @ignore-options
+             * @ignore-option
              */
             labels: ['(0)', '(A)', '(B)', '(C)', '(D)', '(E)'],
             line: {
@@ -102,8 +107,14 @@ ElliottWave.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace ElliottWave {
-    export interface LabelOptions extends AnnotationLabelOptions {
+    export interface LabelOptions extends ControllableLabelOptions {
         backgroundColor: ColorType;
         borderWidth: number;
         y: number;
@@ -122,16 +133,19 @@ namespace ElliottWave {
  *  Registry
  *
  * */
-Annotation.types.elliottWave = ElliottWave;
-declare module './AnnotationType'{
+
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         elliottWave: typeof ElliottWave;
     }
 }
+
+Annotation.types.elliottWave = ElliottWave;
 
 /* *
  *
  *  Default Export
  *
  * */
+
 export default ElliottWave;

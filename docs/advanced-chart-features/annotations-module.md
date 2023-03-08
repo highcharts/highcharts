@@ -23,8 +23,7 @@ A single annotation is composed of simple blocks such as labels and shapes. An a
         }]
 
 
-![bsFqB4efSMVCqMrAKXy_ZO5QHHBOf4ml8RVgrywyUldMb68b6e1kVMXGHKnWIoPyYLiEjgyJzQULx9pefJW5tRsHLO6KE3ODWyzxw9L1WGw5OxRtmldpVNiyNZ3XKzIaCqf-4nzu](https://lh3.googleusercontent.com/bsFqB4efSMVCqMrAKXy_ZO5QHHBOf4ml8RVgrywyUldMb68b6e1kVMXGHKnWIoPyYLiEjgyJzQULx9pefJW5tRsHLO6KE3ODWyzxw9L1WGw5OxRtmldpVNiyNZ3XKzIaCqf-4nzu)
-
+![annotations-simple-label.png](annotations-simple-label.png)
 The options may look overcomplicated but that structure allows to define complex annotations and serves as the basis for further extensions in the future.
 
 The point option
@@ -110,4 +109,4 @@ The path type allows to define points property that takes an array of points.
 Defining markers for the path
 -----------------------------
 
-It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](https://api.highcharts.com/highcharts/defs.markers).
+It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations/custom-markers).

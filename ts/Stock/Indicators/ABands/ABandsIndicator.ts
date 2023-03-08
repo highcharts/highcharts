@@ -21,13 +21,12 @@ import type {
 import type ABandsPoint from './ABandsPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -35,7 +34,12 @@ const {
     merge
 } = U;
 
-/* eslint-disable valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 /**
  * @private
  */
@@ -60,7 +64,11 @@ function getPointLB(low: number, base: number): number {
     return low * (correctFloat(1 - 2 * base));
 }
 
-/* eslint-enable valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The ABands series type
@@ -100,6 +108,17 @@ class ABandsIndicator extends SMAIndicator {
      * @optionparent plotOptions.abands
      */
     public static defaultOptions: ABandsOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * Option for fill color between lines in Accelleration bands Indicator.
+         *
+         * @sample {highstock} stock/indicators/indicator-area-fill
+         *      Background fill between lines.
+         *
+         * @type {Highcharts.Color}
+         * @since 9.3.2
+         * @apioption plotOptions.abands.fillColor
+         *
+         */
         params: {
             period: 20,
             /**
@@ -155,7 +174,7 @@ class ABandsIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ABandsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             factor: number = (params.factor as any),
             index: number = (params.index as any),
             xVal: Array<number> = (series.xData as any),
@@ -168,8 +187,12 @@ class ABandsIndicator extends SMAIndicator {
             // ABANDS array structure:
             // 0-date, 1-top line, 2-middle line, 3-bottom line
             ABANDS: Array<Array<(number|null|undefined)>> = [],
+            low = 2,
+            high = 1,
+            xData: Array<number> = [],
+            yData: Array<Array<number>> = [];
             // middle line, top line and bottom line
-            ML: number,
+        let ML: number,
             TL: number,
             BL: number,
             date: number,
@@ -177,10 +200,6 @@ class ABandsIndicator extends SMAIndicator {
             pointSMA: IndicatorValuesObject<TLinkedSeries>,
             ubSMA: IndicatorValuesObject<TLinkedSeries>,
             lbSMA: IndicatorValuesObject<TLinkedSeries>,
-            low = 2,
-            high = 1,
-            xData: Array<number> = [],
-            yData: Array<Array<number>> = [],
             slicedX: (Array<number>|undefined),
             slicedY: (Array<number|null|undefined>|undefined),
             i: (number|undefined);
@@ -246,34 +265,26 @@ class ABandsIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface ABandsIndicator {
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    linesApiNames: typeof MultipleLinesMixin.linesApiNames;
+interface ABandsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof ABandsPoint>;
     pointValKey: string;
     pointClass: typeof ABandsPoint;
-    toYData: typeof MultipleLinesMixin.toYData;
-    translate: typeof MultipleLinesMixin.translate;
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
 }
-
 extend(ABandsIndicator.prototype, {
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    areaLinesNames: ['top', 'bottom'],
     linesApiNames: ['topLine', 'bottomLine'],
     nameBase: 'Acceleration Bands',
     nameComponents: ['period', 'factor'],
     pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
-    toYData: MultipleLinesMixin.toYData,
-    translate: MultipleLinesMixin.translate
+    pointValKey: 'middle'
 });
+MultipleLinesComposition.compose(ABandsIndicator);
 
 /* *
  *

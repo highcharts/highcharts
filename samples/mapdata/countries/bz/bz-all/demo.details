@@ -1,5 +1,5 @@
 ---
- name: Belize - Highmaps
- description: Highmaps demo
+ name: Belize - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...
