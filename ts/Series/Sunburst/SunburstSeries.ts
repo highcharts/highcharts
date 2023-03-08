@@ -593,10 +593,10 @@ class SunburstSeries extends TreemapSeries {
         center: ['50%', '50%'],
 
         /**
-             * @product highcharts
-             *
-             * @private
-             */
+         * @product highcharts
+         *
+         * @private
+         */
         clip: false,
 
         colorByPoint: false,
