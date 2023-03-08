@@ -27,7 +27,8 @@ const {
     attr,
     createElement,
     extend,
-    pick
+    pick,
+    pushUnique
 } = U;
 
 /* *
@@ -45,6 +46,14 @@ declare module '../SVG/SVGRendererLike' {
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+const composedMembers: Array<unknown> = [];
+
+/* *
+ *
  *  Class
  *
  * */
@@ -53,14 +62,6 @@ declare module '../SVG/SVGRendererLike' {
 
 // Extend SvgRenderer for useHTML option.
 class HTMLRenderer extends SVGRenderer {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    private static readonly composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -73,9 +74,7 @@ class HTMLRenderer extends SVGRenderer {
         SVGRendererClass: T
     ): (T&typeof HTMLRenderer) {
 
-        if (HTMLRenderer.composedClasses.indexOf(SVGRendererClass) === -1) {
-            HTMLRenderer.composedClasses.push(SVGRendererClass);
-
+        if (pushUnique(composedMembers, SVGRendererClass)) {
             const htmlRendererProto = HTMLRenderer.prototype,
                 svgRendererProto = SVGRendererClass.prototype;
 
