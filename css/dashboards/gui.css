@@ -835,18 +835,17 @@ ul.highcharts-dashboards-dropdown-content {
     list-style-type: none;
 }
 
-ul > .highcharts-dashboards-dropdown {
+div.highcharts-dashboards-dropdown {
     position: relative;
-    font-family: Arial, Helvetica, sans-serif;
     color: var(--highcharts-dashboards-main-font-color);
     font-weight: 700;
     font-size: 14px;
+    display: flex;
+    flex-direction: column;
     line-height: 16px;
-    width: 100%;
 }
 
 .highcharts-dashboards-dropdown > button.highcharts-dashboards-dropdown-button {
-    width: 100%;
     color: var(--highcharts-dashboards-main-font-color);
     box-sizing: border-box;
     display: flex;
@@ -859,10 +858,6 @@ ul > .highcharts-dashboards-dropdown {
     background: var(--highcharts-dashboards-main-background-color);
     border: 1px solid var(--highcharts-dashboards-dropdown-border-color);
     border-radius: 2px;
-    flex: none;
-    order: 0;
-    align-self: stretch;
-    flex-grow: 0;
 }
 
 button.highcharts-dashboards-select-option-button {

@@ -79,7 +79,6 @@ function renderSelect(
         'button',
         { className: 'highcharts-dashboards-dropdown-button' },
         {
-            height: '52px',
             margin: 0
         },
         customSelect
@@ -87,7 +86,7 @@ function renderSelect(
     const btnContent = createElement(
         'div',
         {},
-        { display: 'flex', height: '100%', 'align-items': 'center' },
+        { display: 'flex', 'align-items': 'center' },
         btn
     );
     const iconURL = (
@@ -130,8 +129,7 @@ function renderSelect(
         'ul',
         { className: 'highcharts-dashboards-dropdown-content' },
         {
-            display: 'none',
-            padding: '16px 8px'
+            display: 'none'
         },
         customSelect
     );
