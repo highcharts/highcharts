@@ -35,7 +35,7 @@ const filesize = async () => {
     } = require('../../compile.js');
     const {
         getFile
-    } = require('highcharts-assembler/src/utilities.js');
+    } = require('@highcharts/highcharts-assembler/src/utilities.js');
     const {
         argv
     } = require('yargs');

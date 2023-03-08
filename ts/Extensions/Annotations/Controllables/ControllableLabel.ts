@@ -30,7 +30,6 @@ import Controllable from './Controllable.js';
 import F from '../../../Core/FormatUtilities.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
-import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -519,8 +518,11 @@ class ControllableLabel extends Controllable {
         if (item && showItem) {
             const { width = 0, height = 0 } = item;
 
-            if (itemOptions.distance) {
-                itemPosition = Tooltip.prototype.getPosition.call(
+            if (
+                itemOptions.distance &&
+                chart.tooltip
+            ) {
+                itemPosition = chart.tooltip.getPosition.call(
                     {
                         chart: chart,
                         distance: pick(itemOptions.distance, 16)

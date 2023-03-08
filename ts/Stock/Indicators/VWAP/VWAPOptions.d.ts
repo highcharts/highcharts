@@ -32,4 +32,10 @@ export interface VWAPParamsOptions extends SMAParamsOptions {
     volumeSeriesID?: string;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default VWAPOptions;
