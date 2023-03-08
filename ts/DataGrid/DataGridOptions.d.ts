@@ -28,7 +28,7 @@ import type DataTable from '../Data/DataTable';
  * */
 
 /**
- * Options to control the content and the user expierence of a grid structure.
+ * Options to control the content and the user experience of a grid structure.
  */
 export interface DataGridOptions {
 
