@@ -127,7 +127,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      *
      * */
 
-    private innerElements: HTMLElement[];
     /**
      * Array of HTML elements, declared as string or node.
      */
@@ -151,6 +150,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      *
      * */
 
+    /**
+     * Creates a HTML component in the cell.
+     *
+     * @param options
+     */
     constructor(options: Partial<HTMLComponent.HTMLComponentOptions>) {
         options = merge(
             HTMLComponent.defaultOptions,
@@ -161,7 +165,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         this.options = options as HTMLComponent.HTMLComponentOptions;
 
         this.type = 'HTML';
-        this.innerElements = [];
         this.elements = [];
         this.scaleElements = this.options.scaleElements;
         this.sync = new Component.Sync(
@@ -184,6 +187,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      *  Functions
      *
      * */
+
     public load(): this {
         this.emit({
             type: 'load'
@@ -221,7 +225,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
                 element.style.maxWidth = '100%';
                 element.style.maxHeight = '100%';
                 element.style.flexBasis = 'auto';
-                // or (100 / this.innerElements.length) + '%';
                 element.style.overflow = 'auto';
             }
         });
@@ -244,10 +247,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         });
     }
 
-    /**
-     * 
-     * @returns
-     */
     public render(): this {
         this.emit({ type: 'beforeRender' });
         super.render(); // Fires the render event and calls load
@@ -255,10 +254,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         return this;
     }
 
-    /**
-     * 
-     * @returns
-     */
     public redraw(): this {
         super.redraw();
         this.constructTree();
@@ -267,12 +262,6 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         return this;
     }
 
-    /**
-     * 
-     * @param width
-     * @param height
-     * @returns
-     */
     public resize(
         width?: number | string | null,
         height?: number | string | null
@@ -285,9 +274,12 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     }
 
     /**
-     * 
+     * Handles updating via options.
      * @param options
+     * The options to apply.
+     *
      * @returns
+     * The component for chaining
      */
     public update(options: Partial<HTMLComponent.HTMLComponentOptions>): this {
         super.update(options);
