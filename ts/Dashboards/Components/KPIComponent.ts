@@ -214,6 +214,11 @@ class KPIComponent extends Component {
      *
      * */
 
+    /**
+     * Creates a KPI component in the cell.
+     *
+     * @param options
+     */
     constructor(options: Partial<KPIComponent.ComponentOptions>) {
         options = merge(
             KPIComponent.defaultOptions,
@@ -287,6 +292,14 @@ class KPIComponent extends Component {
         return this;
     }
 
+    /**
+     * Calculates and applies font size for the title.
+     *
+     * @param width
+     * @param height
+     *
+     * @internal
+     */
     private updateTitleSize(width: number, height: number): void {
         if (this.titleElement) {
             this.titleElement.style.fontSize =
@@ -294,6 +307,14 @@ class KPIComponent extends Component {
         }
     }
 
+    /**
+     * Updates title / subtitle font size and component dimensions.
+     *
+     * @param width
+     * @param height
+     *
+     * @internal
+     */
     private updateSize(width: number, height: number): void {
         this.updateTitleSize(width, height);
         this.value.style.fontSize = 0.2 * Math.min(width, height) + 'px';
@@ -333,6 +354,14 @@ class KPIComponent extends Component {
         return this;
     }
 
+    /**
+     * Handles updating via options.
+     * @param options
+     * The options to apply.
+     *
+     * @returns
+     * The component for chaining
+     */
     public update(options: Partial<KPIComponent.ComponentOptions>): this {
         super.update(options);
         if (options.chartOptions && this.chart) {
@@ -342,6 +371,11 @@ class KPIComponent extends Component {
         return this.redraw();
     }
 
+    /**
+     * Handles updating elements via options
+     *
+     * @internal
+     */
     private updateElements(): void {
         const {
             style,
@@ -401,6 +435,13 @@ class KPIComponent extends Component {
         this.value.style.color = this.getValueColor();
     }
 
+    /**
+     * Gets KPI subtitle text.
+     *
+     * @returns
+     *
+     * @internal
+     */
     private getSubtitle(): string {
         const {
             subtitle,
@@ -438,12 +479,24 @@ class KPIComponent extends Component {
         return '';
     }
 
+    /**
+     * Gets CSS class name of the KPI subtitle.
+     *
+     * @returns
+     *
+     * @internal
+     */
     private getSubtitleClassName(): string {
         const { subtitle } = this.options;
         return `${Component.defaultOptions.className}-kpi-subtitle` +
             ((typeof subtitle === 'object' && subtitle.className) || '');
     }
 
+    /**
+     * Applies title's color according to the threshold.
+     *
+     * @internal
+     */
     private getValueColor(): string {
         const {
             threshold,
