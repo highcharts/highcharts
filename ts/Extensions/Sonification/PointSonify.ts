@@ -28,8 +28,7 @@ import U from '../../Core/Utilities.js';
 const {
     error,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 import SU from './SonificationUtilities.js';
 
@@ -152,7 +151,7 @@ namespace PointSonify {
         PointClass: T
     ): (typeof Composition&T) {
 
-        if (pushUnique(composedMembers, PointClass)) {
+        if (U.pushUnique(composedMembers, PointClass)) {
             const pointProto = PointClass.prototype as Composition;
 
             pointProto.sonify = pointSonify;

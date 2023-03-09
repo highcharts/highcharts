@@ -39,8 +39,7 @@ const {
     addEvent,
     extend,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -104,7 +103,7 @@ function compose(
     NavigatorAxisAdditions.compose(AxisClass);
     NavigatorConstructor = NavigatorClass;
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (U.pushUnique(composedMembers, ChartClass)) {
         const chartProto = ChartClass.prototype;
 
         chartProto.callbacks.push(onChartCallback);
@@ -117,15 +116,15 @@ function compose(
         addEvent(ChartClass, 'update', onChartUpdate);
     }
 
-    if (pushUnique(composedMembers, SeriesClass)) {
+    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
     }
 
-    if (pushUnique(composedMembers, getRendererType)) {
+    if (U.pushUnique(composedMembers, getRendererType)) {
         extend(getRendererType().prototype.symbols, NavigatorSymbols);
     }
 
-    if (pushUnique(composedMembers, setOptions)) {
+    if (U.pushUnique(composedMembers, setOptions)) {
         extend(defaultOptions, { navigator: NavigatorDefaults });
     }
 

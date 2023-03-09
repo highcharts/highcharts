@@ -39,8 +39,7 @@ const {
     isString,
     merge,
     objectEach,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -216,7 +215,7 @@ class Breadcrumbs {
         highchartsDefaultOptions: typeof D.defaultOptions
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(Chart, 'destroy', onChartDestroy);
             addEvent(Chart, 'afterShowResetZoom', onChartAfterShowResetZoom);
             addEvent(Chart, 'getMargins', onChartGetMargins);
@@ -224,7 +223,7 @@ class Breadcrumbs {
             addEvent(Chart, 'selection', onChartSelection);
         }
 
-        if (pushUnique(composedMembers, highchartsDefaultOptions)) {
+        if (U.pushUnique(composedMembers, highchartsDefaultOptions)) {
             // Add language support.
             extend(
                 highchartsDefaultOptions.lang,

@@ -55,8 +55,7 @@ const {
     isObject,
     merge,
     objectEach,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -430,7 +429,7 @@ class NavigationBindings {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composedMembers, AnnotationClass)) {
+        if (U.pushUnique(composedMembers, AnnotationClass)) {
             addEvent(AnnotationClass, 'remove', onAnnotationRemove);
 
             // Basic shapes:
@@ -444,13 +443,13 @@ class NavigationBindings {
             });
         }
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'destroy', onChartDestroy);
             addEvent(ChartClass, 'load', onChartLoad);
             addEvent(ChartClass, 'render', onChartRender);
         }
 
-        if (pushUnique(composedMembers, NavigationBindings)) {
+        if (U.pushUnique(composedMembers, NavigationBindings)) {
             addEvent(
                 NavigationBindings,
                 'closePopup',
@@ -463,7 +462,7 @@ class NavigationBindings {
             );
         }
 
-        if (pushUnique(composedMembers, setOptions)) {
+        if (U.pushUnique(composedMembers, setOptions)) {
             setOptions(NavigationBindingDefaults);
         }
 

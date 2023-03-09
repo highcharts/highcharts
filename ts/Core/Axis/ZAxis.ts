@@ -26,7 +26,6 @@ const {
     addEvent,
     merge,
     pick,
-    pushUnique,
     splat
 } = U;
 
@@ -124,7 +123,7 @@ class ZAxis extends Axis implements AxisLike {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
             const chartProto = ChartClass.prototype;

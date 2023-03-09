@@ -35,7 +35,6 @@ const {
     extend,
     merge,
     pick,
-    pushUnique,
     splat
 } = U;
 
@@ -131,7 +130,7 @@ namespace ColorAxisComposition {
             ColorAxisClass = ColorAxisType;
         }
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.collectionsWithUpdate.push('colorAxis');
@@ -144,14 +143,14 @@ namespace ColorAxisComposition {
             wrapChartCreateAxis(ChartClass);
         }
 
-        if (pushUnique(composedMembers, FxClass)) {
+        if (U.pushUnique(composedMembers, FxClass)) {
             const fxProto = FxClass.prototype;
 
             fxProto.fillSetter = wrapFxFillSetter;
             fxProto.strokeSetter = wrapFxStrokeSetter;
         }
 
-        if (pushUnique(composedMembers, LegendClass)) {
+        if (U.pushUnique(composedMembers, LegendClass)) {
             addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
             addEvent(
                 LegendClass,
@@ -161,7 +160,7 @@ namespace ColorAxisComposition {
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
         }
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             extend(
                 SeriesClass.prototype,
                 {

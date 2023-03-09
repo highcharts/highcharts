@@ -34,8 +34,7 @@ import initCanvasBoost from '../../Extensions/BoostCanvas.js';
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
-    error,
-    pushUnique
+    error
 } = U;
 
 /* *
@@ -79,7 +78,7 @@ function compose(
         }
     }
 
-    if (ColorClass && pushUnique(composedClasses, ColorClass)) {
+    if (ColorClass && U.pushUnique(composedClasses, ColorClass)) {
         ColorClass.names = {
             ...ColorClass.names,
             ...NamedColors.defaultHTMLColorMap

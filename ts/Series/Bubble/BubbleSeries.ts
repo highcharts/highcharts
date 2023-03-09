@@ -50,8 +50,7 @@ const {
     extend,
     isNumber,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -482,7 +481,7 @@ class BubbleSeries extends ScatterSeries {
     ): void {
         BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
 
-        if (pushUnique(composedMembers, AxisClass)) {
+        if (U.pushUnique(composedMembers, AxisClass)) {
             AxisClass.prototype.beforePadding = axisBeforePadding;
         }
 

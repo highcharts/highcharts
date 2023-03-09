@@ -29,8 +29,7 @@ const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -160,7 +159,7 @@ namespace ColumnDataLabel {
 
         DataLabel.compose(Series);
 
-        if (pushUnique(composedMembers, ColumnSeriesClass)) {
+        if (U.pushUnique(composedMembers, ColumnSeriesClass)) {
             ColumnSeriesClass.prototype.alignDataLabel = alignDataLabel;
         }
 

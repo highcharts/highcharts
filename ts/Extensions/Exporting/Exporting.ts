@@ -63,7 +63,6 @@ const {
     merge,
     objectEach,
     pick,
-    pushUnique,
     removeEvent,
     uniqueKey
 } = U;
@@ -647,7 +646,7 @@ namespace Exporting {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.afterPrint = afterPrint;
@@ -692,7 +691,7 @@ namespace Exporting {
             }
         }
 
-        if (pushUnique(composedMembers, setOptions)) {
+        if (U.pushUnique(composedMembers, setOptions)) {
             defaultOptions.exporting = merge(
                 ExportingDefaults.exporting,
                 defaultOptions.exporting

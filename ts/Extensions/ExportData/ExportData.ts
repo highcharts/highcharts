@@ -71,8 +71,7 @@ const {
     find,
     fireEvent,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -1087,7 +1086,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (U.pushUnique(composedMembers, ChartClass)) {
         // Add an event listener to handle the showTable option
         addEvent(ChartClass, 'afterViewData', onChartAfterViewData);
         addEvent(ChartClass, 'render', onChartRenderer);
@@ -1105,7 +1104,7 @@ function compose(
         chartProto.viewData = chartViewData;
     }
 
-    if (pushUnique(composedMembers, setOptions)) {
+    if (U.pushUnique(composedMembers, setOptions)) {
         const exportingOptions = getOptions().exporting;
 
         // Add "Download CSV" to the exporting menu.
@@ -1149,29 +1148,29 @@ function compose(
         setOptions(ExportDataDefaults);
     }
 
-    if (AreaRangeSeries && pushUnique(composedMembers, AreaRangeSeries)) {
+    if (AreaRangeSeries && U.pushUnique(composedMembers, AreaRangeSeries)) {
         AreaRangeSeries.prototype.keyToAxis = {
             low: 'y',
             high: 'y'
         };
     }
 
-    if (GanttSeries && pushUnique(composedMembers, GanttSeries)) {
+    if (GanttSeries && U.pushUnique(composedMembers, GanttSeries)) {
         GanttSeries.prototype.keyToAxis = {
             start: 'x',
             end: 'x'
         };
     }
 
-    if (MapSeries && pushUnique(composedMembers, MapSeries)) {
+    if (MapSeries && U.pushUnique(composedMembers, MapSeries)) {
         MapSeries.prototype.exportKey = 'name';
     }
 
-    if (MapBubbleSeries && pushUnique(composedMembers, MapBubbleSeries)) {
+    if (MapBubbleSeries && U.pushUnique(composedMembers, MapBubbleSeries)) {
         MapBubbleSeries.prototype.exportKey = 'name';
     }
 
-    if (TreemapSeries && pushUnique(composedMembers, TreemapSeries)) {
+    if (TreemapSeries && U.pushUnique(composedMembers, TreemapSeries)) {
         TreemapSeries.prototype.exportKey = 'name';
     }
 

@@ -51,7 +51,6 @@ const {
     error,
     extend,
     fireEvent,
-    pushUnique,
     merge
 } = U;
 
@@ -166,7 +165,7 @@ namespace OfflineExporting {
         ChartClass: T
     ): (typeof Composition&T) {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as Composition;
 
             chartProto.getSVGForLocalExport = getSVGForLocalExport;

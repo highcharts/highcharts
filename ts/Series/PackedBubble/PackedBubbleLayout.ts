@@ -27,8 +27,7 @@ import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -110,7 +109,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
         GraphLayout.integrations.packedbubble = PackedBubbleIntegration;
         GraphLayout.layouts.packedbubble = PackedBubbleLayout;
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
 
             const chartProto = ChartClass.prototype;

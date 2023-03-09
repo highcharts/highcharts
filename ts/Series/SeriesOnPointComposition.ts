@@ -32,8 +32,7 @@ const {
     addEvent,
     defined,
     find,
-    isNumber,
-    pushUnique
+    isNumber
 } = U;
 
 /* *
@@ -139,7 +138,7 @@ namespace SeriesOnPointComposition {
         // - sunburst
         pie.prototype.onPointSupported = true;
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(Series, 'afterInit', seriesAfterInit);
             addEvent(Series, 'afterRender', seriesAfterRender);
             addEvent(Series, 'afterGetCenter', seriesGetCenter);
@@ -148,7 +147,7 @@ namespace SeriesOnPointComposition {
             addEvent(Series, 'translate', seriesTranslate);
         }
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRender', chartGetZData);
             addEvent(ChartClass, 'beforeRedraw', chartGetZData);
         }

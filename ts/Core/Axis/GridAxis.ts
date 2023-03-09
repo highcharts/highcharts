@@ -49,7 +49,6 @@ const {
     isNumber,
     merge,
     pick,
-    pushUnique,
     timeUnits,
     wrap
 } = U;
@@ -210,7 +209,7 @@ function compose<T extends typeof Axis>(
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
 
-    if (pushUnique(composedMembers, AxisClass)) {
+    if (U.pushUnique(composedMembers, AxisClass)) {
         AxisClass.keepProps.push('grid');
 
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;
@@ -240,11 +239,11 @@ function compose<T extends typeof Axis>(
         addEvent(AxisClass, 'destroy', onDestroy);
     }
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (U.pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
     }
 
-    if (pushUnique(composedMembers, TickClass)) {
+    if (U.pushUnique(composedMembers, TickClass)) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',

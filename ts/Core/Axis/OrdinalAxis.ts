@@ -34,7 +34,6 @@ const {
     defined,
     error,
     pick,
-    pushUnique,
     timeUnits
 } = U;
 
@@ -155,7 +154,7 @@ namespace OrdinalAxis {
         ChartClass: typeof Chart
     ): (typeof Composition&T) {
 
-        if (pushUnique(composedMembers, AxisClass)) {
+        if (U.pushUnique(composedMembers, AxisClass)) {
             const axisProto = AxisClass.prototype as Composition;
 
             axisProto.getTimeTicks = getTimeTicks;
@@ -179,10 +178,10 @@ namespace OrdinalAxis {
             );
         }
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'pan', onChartPan);
         }
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
         }
 

@@ -46,8 +46,7 @@ const {
     isArray,
     merge,
     objectEach,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -133,7 +132,7 @@ namespace SeriesSonify {
         SeriesClass: T
     ): (T&typeof Composition) {
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             extend(seriesProto, {

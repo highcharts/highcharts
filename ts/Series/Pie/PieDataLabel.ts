@@ -37,7 +37,6 @@ const {
     defined,
     merge,
     pick,
-    pushUnique,
     relativeLength
 } = U;
 
@@ -146,7 +145,7 @@ namespace ColumnDataLabel {
 
         DataLabel.compose(Series);
 
-        if (pushUnique(composedMembers, PieSeriesClass)) {
+        if (U.pushUnique(composedMembers, PieSeriesClass)) {
             const pieProto = PieSeriesClass.prototype;
 
             pieProto.dataLabelPositioners = dataLabelPositioners;

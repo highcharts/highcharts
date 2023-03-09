@@ -34,7 +34,6 @@ const {
     find,
     fireEvent,
     pick,
-    pushUnique,
     wrap
 } = U;
 
@@ -400,7 +399,7 @@ namespace AnnotationChart {
         PointerClass: typeof Pointer
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterInit', onChartAfterInit);
 
             const chartProto = ChartClass.prototype as AnnotationChart;
@@ -428,7 +427,7 @@ namespace AnnotationChart {
             };
         }
 
-        if (pushUnique(composedMembers, PointerClass)) {
+        if (U.pushUnique(composedMembers, PointerClass)) {
             const pointerProto = PointerClass.prototype;
 
             wrap(

@@ -25,7 +25,6 @@ import U from '../Utilities.js';
 const {
     addEvent,
     extend,
-    pushUnique,
     wrap
 } = U;
 
@@ -50,7 +49,7 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (pushUnique(composedMembers, TickClass)) {
+    if (U.pushUnique(composedMembers, TickClass)) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',

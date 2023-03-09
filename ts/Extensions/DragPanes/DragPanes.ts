@@ -29,7 +29,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     merge,
-    pushUnique,
     wrap
 } = U;
 
@@ -79,7 +78,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (pushUnique(composedMembers, AxisClass)) {
+    if (U.pushUnique(composedMembers, AxisClass)) {
         merge(true, AxisClass.defaultOptions, AxisResizer.resizerOptions);
 
         // Keep resizer reference on axis update
@@ -89,7 +88,7 @@ function compose(
         addEvent(AxisClass, 'destroy', onAxisDestroy);
     }
 
-    if (pushUnique(composedMembers, PointerClass)) {
+    if (U.pushUnique(composedMembers, PointerClass)) {
         wrap(
             PointerClass.prototype,
             'runPointActions',

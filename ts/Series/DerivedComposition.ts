@@ -21,8 +21,7 @@ import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    defined,
-    pushUnique
+    defined
 } = U;
 
 /* *
@@ -108,7 +107,7 @@ namespace DerivedComposition {
         SeriesClass: T
     ): (T&typeof SeriesComposition) {
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.addBaseSeriesEvents = addBaseSeriesEvents;
