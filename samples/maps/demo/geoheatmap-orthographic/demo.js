@@ -21,7 +21,6 @@
 
         subtitle: {
             text: 'Density of Cities in the World by Latitude and Longitude<br> Data source: <a href="https://github.com/lutangar/cities.json">https://github.com/lutangar/cities.json</a>',
-            y: 34,
             align: 'left'
         },
 
