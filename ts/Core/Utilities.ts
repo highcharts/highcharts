@@ -478,11 +478,7 @@ function pushUnique(
     array: Array<unknown>,
     item: unknown
 ): boolean {
-    if (array.indexOf(item) === -1) {
-        array.push(item);
-        return true;
-    }
-    return false;
+    return array.indexOf(item) < 0 && !!array.push(item);
 }
 
 /**
