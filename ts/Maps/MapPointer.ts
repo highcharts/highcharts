@@ -44,6 +44,7 @@ declare global {
             onContainerMouseWheel(e: PointerEvent): void;
         }
         interface MapPointerChart extends Chart {
+            isAnimating: boolean;
             hoverPoint: MapPoint;
             mapZoom: MapNavigationChart['mapZoom'];
         }
@@ -57,11 +58,11 @@ let totalWheelDelta = 0;
 let totalWheelDeltaTimer: number;
 
 // Extend the Pointer
-extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
+extend<Pointer | Highcharts.MapPointer>(Pointer.prototype, {
 
     // Add lon and lat information to pointer events
     normalize: function <T extends PointerEvent> (
-        e: (T|MouseEvent|PointerEvent|TouchEvent),
+        e: (T | MouseEvent | PointerEvent | TouchEvent),
         chartPosition?: Pointer.ChartPositionObject
     ): T {
         const chart = this.chart;
@@ -123,6 +124,14 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
 
         e = this.normalize(e);
 
+        // Check if animation is already in progress
+        if (chart.isAnimating) {
+            return;
+        }
+
+        // Set a flag to indicate that animation is starting
+        chart.isAnimating = true;
+
         // Firefox uses e.deltaY or e.detail, WebKit and IE uses wheelDelta
         // try wheelDelta first #15656
         const delta = (defined(e.wheelDelta) && -(e.wheelDelta as any) / 120) ||
@@ -160,6 +169,12 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
                 Math.abs(delta) < 1 ? false : void 0
             );
         }
+
+        // Set a timeout to reset the animation flag after the animation
+        // finishes
+        setTimeout(function (): void {
+            chart.isAnimating = false;
+        }, 50);
     }
 });
 
