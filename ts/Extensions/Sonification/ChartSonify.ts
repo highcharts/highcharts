@@ -78,11 +78,17 @@ declare class Composition { // = interface SonifyableChart extends Chart {
 
 /* *
  *
- *  Functions
+ *  Constants
  *
  * */
 
-/* eslint-disable valid-jsdoc */
+const composedMembers: Array<unknown> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Utility function to normalize the ordering of timeline paths when sonifying
@@ -765,16 +771,13 @@ function resetCursorEnd(this: ChartSonify.SonifyableChart): void {
     }
 }
 
-const composedClasses: Array<Function> = [];
 /**
  * @private
  * @todo move to composition namespace with all functions
  */
 function compose<T extends typeof Chart>(ChartClass: typeof Chart): (T&typeof Composition) {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         const chartProto = ChartClass.prototype as ChartSonify.SonifyableChart;
 
         extend(chartProto, {

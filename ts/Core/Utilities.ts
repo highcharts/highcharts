@@ -463,6 +463,25 @@ function erase(arr: Array<unknown>, item: unknown): void {
 }
 
 /**
+ * Adds an item to an array, if it is not present in the array.
+ *
+ * @param {Array<unknown>} array
+ * The array to add the item to.
+ *
+ * @param {unknown} item
+ * The item to add.
+ *
+ * @return {boolean}
+ * Returns true, if the item was not present and has been added.
+ */
+function pushUnique(
+    array: Array<unknown>,
+    item: unknown
+): boolean {
+    return array.indexOf(item) < 0 && !!array.push(item);
+}
+
+/**
  * Check if an object is null or undefined.
  *
  * @function Highcharts.defined
@@ -2097,6 +2116,7 @@ const Utilities = {
     pad,
     pick,
     pInt,
+    pushUnique,
     relativeLength,
     removeEvent,
     splat,

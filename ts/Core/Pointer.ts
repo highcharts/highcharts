@@ -2200,8 +2200,8 @@ namespace Pointer {
      * @private
      */
     export function compose(ChartClass: typeof Chart): void {
-        if (composedMembers.indexOf(ChartClass) === -1) {
-            composedMembers.push(ChartClass);
+
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 /**
                  * The Pointer that keeps track of mouse and touch
@@ -2215,6 +2215,7 @@ namespace Pointer {
                 this.pointer = new Pointer(this, this.options);
             });
         }
+
     }
 
 }

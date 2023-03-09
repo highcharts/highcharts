@@ -92,6 +92,14 @@ declare module '../SVG/SVGElementLike' {
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+const composedMembers: Array<unknown> = [];
+
+/* *
+ *
  *  Class
  *
  * */
@@ -99,14 +107,6 @@ declare module '../SVG/SVGElementLike' {
 /* eslint-disable valid-jsdoc */
 
 class HTMLElement extends SVGElement {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    private static readonly composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -122,9 +122,7 @@ class HTMLElement extends SVGElement {
         SVGElementClass: T
     ): (T&typeof HTMLElement) {
 
-        if (HTMLElement.composedClasses.indexOf(SVGElementClass) === -1) {
-            HTMLElement.composedClasses.push(SVGElementClass);
-
+        if (U.pushUnique(composedMembers, SVGElementClass)) {
             const htmlElementProto = HTMLElement.prototype,
                 svgElementProto = SVGElementClass.prototype;
 

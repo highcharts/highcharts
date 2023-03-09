@@ -164,7 +164,7 @@ export declare class PolarSeriesComposition extends Series {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -1440,9 +1440,7 @@ class PolarAdditions {
     ): void {
         RadialAxis.compose(AxisClass, TickClass);
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterDrawChartBox', onChartAfterDrawChartBox);
             addEvent(ChartClass, 'getAxes', onChartGetAxes);
             addEvent(ChartClass, 'init', onChartAfterInit);
@@ -1452,9 +1450,7 @@ class PolarAdditions {
             wrap(chartProto, 'get', wrapChartGet);
         }
 
-        if (composedClasses.indexOf(PointerClass) === -1) {
-            composedClasses.push(PointerClass);
-
+        if (U.pushUnique(composedMembers, PointerClass)) {
             const pointerProto = PointerClass.prototype;
 
             wrap(pointerProto, 'getCoordinates', wrapPointerGetCoordinates);
@@ -1471,9 +1467,7 @@ class PolarAdditions {
             );
         }
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'afterInit', onSeriesAfterInit);
             addEvent(
                 SeriesClass,
@@ -1490,10 +1484,8 @@ class PolarAdditions {
 
         if (
             ColumnSeriesClass &&
-            composedClasses.indexOf(ColumnSeriesClass) === -1
+            U.pushUnique(composedMembers, ColumnSeriesClass)
         ) {
-            composedClasses.push(ColumnSeriesClass);
-
             const columnProto = ColumnSeriesClass.prototype;
 
             wrap(columnProto, 'alignDataLabel', wrapColumnSeriesAlignDataLabel);
@@ -1503,10 +1495,8 @@ class PolarAdditions {
 
         if (
             LineSeriesClass &&
-            composedClasses.indexOf(LineSeriesClass) === -1
+            U.pushUnique(composedMembers, LineSeriesClass)
         ) {
-            composedClasses.push(LineSeriesClass);
-
             const lineProto = LineSeriesClass.prototype;
 
             wrap(lineProto, 'getGraphPath', wrapLineSeriesGetGraphPath);
@@ -1514,20 +1504,16 @@ class PolarAdditions {
 
         if (
             SplineSeriesClass &&
-            composedClasses.indexOf(SplineSeriesClass) === -1
+            U.pushUnique(composedMembers, SplineSeriesClass)
         ) {
-            composedClasses.push(SplineSeriesClass);
-
             const splineProto = SplineSeriesClass.prototype;
 
             wrap(splineProto, 'getPointSpline', wrapSplineSeriesGetPointSpline);
 
             if (
                 AreaSplineRangeSeriesClass &&
-                composedClasses.indexOf(AreaSplineRangeSeriesClass) === -1
+                U.pushUnique(composedMembers, AreaSplineRangeSeriesClass)
             ) {
-                composedClasses.push(AreaSplineRangeSeriesClass);
-
                 const areaSplineRangeProto =
                     AreaSplineRangeSeriesClass.prototype;
 

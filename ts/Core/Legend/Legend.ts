@@ -1780,8 +1780,8 @@ namespace Legend {
      * @private
      */
     export function compose(ChartClass: typeof Chart): void {
-        if (composedMembers.indexOf(ChartClass) === -1) {
-            composedMembers.push(ChartClass);
+
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeMargins', function (): void {
                 /**
                  * The legend contains an interactive overview over chart items,
@@ -1795,7 +1795,9 @@ namespace Legend {
                 this.legend = new Legend(this, this.options.legend);
             });
         }
+
     }
+
 }
 
 /* *

@@ -255,7 +255,7 @@ namespace Exporting {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     // These CSS properties are not inlined. Remember camelCase.
     const inlineDenylist: Array<RegExp> = [
@@ -646,9 +646,7 @@ namespace Exporting {
         ExportingSymbols.compose(SVGRendererClass);
         Fullscreen.compose(ChartClass);
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.afterPrint = afterPrint;
@@ -693,9 +691,7 @@ namespace Exporting {
             }
         }
 
-        if (composedClasses.indexOf(setOptions) === -1) {
-            composedClasses.push(setOptions);
-
+        if (U.pushUnique(composedMembers, setOptions)) {
             defaultOptions.exporting = merge(
                 ExportingDefaults.exporting,
                 defaultOptions.exporting
@@ -714,6 +710,7 @@ namespace Exporting {
                 defaultOptions.navigation
             );
         }
+
     }
 
     /**
