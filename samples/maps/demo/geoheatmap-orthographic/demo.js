@@ -13,10 +13,7 @@
 
         title: {
             text: 'GeoHeatMap Series Demo',
-            align: 'left',
-            style: {
-                textOutline: '2px white'
-            }
+            align: 'left'
         },
 
         subtitle: {
