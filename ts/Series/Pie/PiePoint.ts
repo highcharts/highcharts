@@ -79,8 +79,6 @@ class PiePoint extends Point {
 
     public series: PieSeries = void 0 as any;
 
-    public shadowGroup?: SVGElement;
-
     public sliced?: boolean;
 
     public slicedTranslation?: PiePoint.TranslationAttributes;
@@ -216,7 +214,7 @@ class PiePoint extends Point {
             // Show and hide associated elements. This is performed
             // regardless of redraw or not, because chart.redraw only
             // handles full series.
-            ['graphic', 'dataLabel', 'connector', 'shadowGroup'].forEach(
+            ['graphic', 'dataLabel', 'connector'].forEach(
                 (key: string): void => {
                     if ((this as any)[key]) {
                         (this as any)[key][vis ? 'show' : 'hide'](vis);
@@ -285,10 +283,6 @@ class PiePoint extends Point {
 
         if (this.graphic) {
             this.graphic.animate(this.getTranslate());
-        }
-
-        if (this.shadowGroup) {
-            this.shadowGroup.animate(this.getTranslate());
         }
     }
 }

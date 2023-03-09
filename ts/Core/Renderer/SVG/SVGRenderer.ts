@@ -317,10 +317,6 @@ class SVGRenderer implements SVGRendererLike {
 
         renderer.setSize(width, height, false);
 
-        // Apply the default drop-shadow filter
-        this.shadowDefinition({});
-
-
         // Issue 110 workaround:
         // In Firefox, if a div is positioned by percentage, its pixel position
         // may land between pixels. The container itself doesn't display this,
