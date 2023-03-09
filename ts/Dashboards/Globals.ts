@@ -63,6 +63,7 @@ namespace Globals {
         boardContainer: classNamePrefix + 'wrapper'
     };
 
+    // TODO: change to the released url after release
     export const iconsURLPrefix =
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@d3590f4/gfx/dashboard-icons/';
 
