@@ -22,12 +22,15 @@ import SyncHandler from './Handler.js';
 namespace Sync {
     export type EventType = 'visibility' | 'selection' | 'tooltip' | 'panning';
 
-    export type EmitterConfig = [SyncEmitter['id'], SyncEmitter['func']];
+    export type EmitterConfig = [
+        SyncEmitter['id'],
+        SyncEmitter['func']
+    ] | SyncEmitter['func'];
     export type HandlerConfig = [
         SyncHandler['id'],
         SyncHandler['presentationStateTrigger'],
         SyncHandler['func']
-    ];
+    ] | SyncHandler['func'];
     export interface OptionsEntry {
         /**
          * Responsible for communicating to the component group that the action
@@ -126,6 +129,13 @@ class Sync {
                             Sync.defaultHandlers[id]
                                 .handler as Sync.HandlerConfig;
                     }
+
+                    // TODO: should rework the SyncHandler constructor when
+                    // all handlers are updated
+                    if (typeof handlerConfig === 'function') {
+                        handlerConfig = [id, void 0, handlerConfig];
+                    }
+
                     const handler = new SyncHandler(...handlerConfig);
                     if (!this.isRegisteredHandler(handler.id)) {
                         this.registerSyncHandler(handler);
@@ -147,6 +157,13 @@ class Sync {
                             Sync.defaultHandlers[id]
                                 .emitter as Sync.EmitterConfig;
                     }
+
+                    // TODO: should rework the SyncHandler constructor when
+                    // all handlers are updated
+                    if (typeof emitterConfig === 'function') {
+                        emitterConfig = [id, emitterConfig];
+                    }
+
                     const emitter = new SyncEmitter(...emitterConfig);
                     if (!this.isRegisteredEmitter(emitter.id)) {
                         this.registerSyncEmitter(emitter);
