@@ -1,4 +1,4 @@
-Highcharts JS is a JavaScript charting library based on SVG, with fallbacks to VML and canvas for old browsers.
+Highcharts JS is a JavaScript charting library based on SVG and some canvas/WebGL.
 
 * Official website: [www.highcharts.com](http://www.highcharts.com)
 * Download page: [www.highcharts.com/download](http://www.highcharts.com/download)
@@ -199,7 +199,7 @@ Highcharts files](https://www.highcharts.com/docs/getting-started/how-to-create-
 for the description.
 
 ## Build and debug
-If you want to do modifications to Highcharts or fix issues, you may build your own files. Highcharts uses Gulp as the build system. After `npm install` in the root folder, run `gulp`, which will set up a watch task for the JavaScript and SCSS files. Now any changes in the files of the `/js` or `/css` folders will result in new files being built and saved in the `code` folder. Other tasks are also available, like `gulp lint`.
+If you want to do modifications to Highcharts or fix issues, you may build your own files. Highcharts uses Gulp as the build system. After `npm install` in the root folder, run `gulp`, which will set up a watch task for the JavaScript and CSS files. Now any changes in the files of the `/js` or `/css` folders will result in new files being built and saved in the `code` folder. Other tasks are also available, like `gulp lint`.
 
 ```
 npm install

@@ -115,9 +115,7 @@ function compose(
 ): void {
     AxisConstructor = AxisClass;
 
-    if (composedMembers.indexOf(AxisClass) === -1) {
-        composedMembers.push(AxisClass);
-
+    if (U.pushUnique(composedMembers, AxisClass)) {
         addEvent(AxisClass, 'afterSetScale', onAfterSetScale);
         // When all series are processed, calculate the group pixel width and
         // then if this value is different than zero apply groupings.

@@ -39,7 +39,6 @@ import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
 import type { ChartPanningOptions } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
-import type Oldie from '../../Extensions/Oldie/Oldie';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type Series from '../Series/Series';
@@ -617,8 +616,7 @@ class Chart {
             optionsChart = chart.options.chart,
             type = (
                 options.type ||
-                optionsChart.type ||
-                optionsChart.defaultSeriesType
+                optionsChart.type
             ) as string,
             SeriesClass = seriesTypes[type];
 
@@ -1769,8 +1767,8 @@ class Chart {
 
         delete chart.pointer.chartPosition;
 
-        // Width and height checks for display:none. Target is doc in IE8 and
-        // Opera, win in Firefox, Chrome and IE9.
+        // Width and height checks for display:none. Target is doc in Opera
+        // and win in Firefox, Chrome and IE9.
         if (
             !hasUserSize &&
             !chart.isPrinting &&
@@ -2266,7 +2264,7 @@ class Chart {
 
             // The default series type's class
             klass = seriesTypes[
-                (optionsChart.type || optionsChart.defaultSeriesType) as any
+                optionsChart.type as any
             ];
 
             // Get the value from available chart-wide properties
@@ -2352,41 +2350,6 @@ class Chart {
             serie.translate();
             serie.render();
         });
-    }
-
-    /**
-     * Render labels for the chart.
-     *
-     * @private
-     * @function Highcharts.Chart#renderLabels
-     */
-    public renderLabels(): void {
-        const chart = this,
-            labels = chart.options.labels as Oldie.LabelsOptions;
-
-        if (labels.items) {
-            labels.items.forEach(function (
-                label: LabelsItemsOptions
-            ): void {
-                const style = extend(labels.style as any, label.style as any),
-                    x = pInt(style.left) + chart.plotLeft,
-                    y = pInt(style.top) + chart.plotTop + 12;
-
-                // delete to prevent rewriting in IE
-                delete style.left;
-                delete style.top;
-
-                chart.renderer.text(
-                    label.html as any,
-                    x,
-                    y
-                )
-                    .attr({ zIndex: 2 })
-                    .css(style)
-                    .add();
-
-            });
-        }
     }
 
     /**
@@ -2491,9 +2454,6 @@ class Chart {
                 .add();
         }
         chart.renderSeries();
-
-        // Labels
-        chart.renderLabels();
 
         // Credits
         chart.addCredits();
@@ -2666,11 +2626,6 @@ class Chart {
     public firstRender(): void {
         const chart = this,
             options = chart.options;
-
-        // Hook for oldIE to check whether the chart is ready to render
-        if (chart.isReadyToRender && !chart.isReadyToRender()) {
-            return;
-        }
 
         // Create the container
         chart.getContainer();

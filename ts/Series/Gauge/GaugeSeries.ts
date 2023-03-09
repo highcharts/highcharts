@@ -523,11 +523,6 @@ class GaugeSeries extends Series {
             } else {
                 point.graphic =
                     (renderer as any)[point.shapeType as any](shapeArgs)
-                        .attr({
-                            // required by VML when animation is false
-                            rotation: shapeArgs.rotation,
-                            zIndex: 1
-                        })
                         .addClass('highcharts-dial')
                         .add(series.group);
             }

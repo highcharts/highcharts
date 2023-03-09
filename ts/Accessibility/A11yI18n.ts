@@ -83,7 +83,7 @@ namespace A11yI18nComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -99,9 +99,8 @@ namespace A11yI18nComposition {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (T&ChartComposition) {
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
 
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.langFormat = langFormat;
@@ -409,8 +408,6 @@ namespace A11yI18nComposition {
     }
 
     /**
-     * String trim that works for IE6-8 as well.
-     *
      * @private
      * @function stringTrim
      *

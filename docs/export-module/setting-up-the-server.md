@@ -3,7 +3,7 @@ Setting up your own export server
 
 There may be cases where you don't want to use Highcharts' export server running at [export.highcharts.com](https://export.highcharts.com), for instance if you are running a secure website or if you don't want your data to be passed to the Highcharts CDN. 
 
-Before setting up your own server, consider using the [client side export module](https://highcharts.com/docs/export-module/client-side-export). In short, a dedicated server is only needed if you need to support IE8 and older, or if you are having problems with the features listed in the client side export browser support table.
+Before setting up your own server, consider using the [client side export module](https://highcharts.com/docs/export-module/client-side-export). In short, a dedicated server is only needed if you are having problems with the features listed in the client side export browser support table.
 
 Node export server
 ------------------

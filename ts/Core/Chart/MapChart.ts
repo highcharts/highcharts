@@ -127,21 +127,18 @@ namespace MapChart {
      * @function Highcharts.mapChart
      *
      * @param {string|Highcharts.HTMLDOMElement} [renderTo]
-     * The DOM element to render to, or its id.
+     *        The DOM element to render to, or its id.
      *
      * @param {Highcharts.Options} options
-     * The chart options structure as described in the
-     * [options reference](https://api.highcharts.com/highstock).
+     *        The chart options structure as described in the
+     *        [options reference](https://api.highcharts.com/highstock).
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
-     * A function to execute when the chart object is finished loading and
-     * rendering. In most cases the chart is built in one thread, but in
-     * Internet Explorer version 8 or less the chart is sometimes initialized
-     * before the document is ready, and in these cases the chart object will
-     * not be finished synchronously. As a consequence, code that relies on the
-     * newly built Chart object should always run in the callback. Defining a
-     * [chart.events.load](https://api.highcharts.com/highstock/chart.events.load)
-     * handler is equivalent.
+     *        A function to execute when the chart object is finished
+     *        rendering and all external image files (`chart.backgroundImage`,
+     *        `chart.plotBackgroundImage` etc) are loaded.  Defining a
+     *        [chart.events.load](https://api.highcharts.com/highstock/chart.events.load)
+     *        handler is equivalent.
      *
      * @return {Highcharts.MapChart}
      * The chart object.

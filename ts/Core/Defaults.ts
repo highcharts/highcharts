@@ -382,9 +382,7 @@ const defaultOptions: Options = {
      * @product   highcharts highstock
      * @apioption global.timezoneOffset
      */
-
     global: {},
-
 
     /**
      * Time options that can apply globally or to individual charts. These
@@ -925,67 +923,6 @@ const defaultOptions: Options = {
      * [the series array](#series).
      */
     plotOptions: {},
-
-    /**
-     * HTML labels that can be positioned anywhere in the chart area.
-     *
-     * This option is deprecated since v7.1.2. Instead, use
-     * [annotations](#annotations) that support labels.
-     *
-     * @deprecated
-     * @product   highcharts highstock
-     */
-    labels: {
-
-        /**
-         * An HTML label that can be positioned anywhere in the chart area.
-         *
-         * @deprecated
-         * @type      {Array<*>}
-         * @apioption labels.items
-         */
-
-        /**
-         * Inner HTML or text for the label.
-         *
-         * @deprecated
-         * @type      {string}
-         * @apioption labels.items.html
-         */
-
-        /**
-         * CSS styles for each label. To position the label, use left and top
-         * like this:
-         * ```js
-         * style: {
-         *     left: '100px',
-         *     top: '100px'
-         * }
-         * ```
-         *
-         * @deprecated
-         * @type      {Highcharts.CSSObject}
-         * @apioption labels.items.style
-         */
-
-        /**
-         * Shared CSS styles for all labels.
-         *
-         * @deprecated
-         * @type    {Highcharts.CSSObject}
-         * @default {"color": "#333333", "position": "absolute"}
-         */
-        style: {
-            /**
-             * @ignore-option
-             */
-            position: 'absolute',
-            /**
-             * @ignore-option
-             */
-            color: Palette.neutralColor80
-        }
-    },
 
     /**
      * The legend is a box containing a symbol and name for each series
@@ -2745,10 +2682,7 @@ const defaultOptions: Options = {
 /*= } =*/
 '';
 
-const defaultTime = new Time(merge(
-    defaultOptions.global,
-    defaultOptions.time
-));
+const defaultTime = new Time(defaultOptions.time);
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions

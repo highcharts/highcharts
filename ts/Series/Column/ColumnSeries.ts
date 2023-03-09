@@ -343,10 +343,6 @@ class ColumnSeries extends Series {
         let right,
             yCrisp = (borderWidth as any) % 2 ? 0.5 : 1;
 
-        if (chart.inverted && chart.renderer.isVML) {
-            yCrisp += 1;
-        }
-
         // Horizontal. We need to first compute the exact right edge, then
         // round it and compute the width from there.
         if (this.options.crisp) {
