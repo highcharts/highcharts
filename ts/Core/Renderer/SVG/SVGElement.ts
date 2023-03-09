@@ -66,6 +66,7 @@ const {
     fireEvent,
     isArray,
     isFunction,
+    isObject,
     isString,
     merge,
     objectEach,
@@ -1974,13 +1975,16 @@ class SVGElement implements SVGElementLike {
     public shadow(
         shadowOptions?: (boolean|Partial<ShadowOptionsObject>)
     ): this {
-        const id = shadowOptions && shadowOptions !== true ?
-            this.renderer.shadowDefinition(shadowOptions) :
-            'drop-shadow';
+        const { renderer } = this,
+            options = merge(this.parentGroup?.rotation === 90 ? {
+                offsetX: -1,
+                offsetY: -1
+            } : {}, isObject(shadowOptions) ? shadowOptions : {}),
+            id = renderer.shadowDefinition(options);
 
         return this.attr({
             filter: shadowOptions ?
-                `url(${this.renderer.url}#${id})` :
+                `url(${renderer.url}#${id})` :
                 'none'
         });
     }
