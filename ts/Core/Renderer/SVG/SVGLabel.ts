@@ -338,18 +338,6 @@ class SVGLabel extends SVGElement {
         this.boxAttr(key, value);
     }
 
-    public shadow(
-        b?: (boolean|Partial<ShadowOptionsObject>)
-    ): this {
-        if (b && !this.renderer.styledMode) {
-            this.updateBoxSize();
-            if (this.box) {
-                this.box.shadow(b);
-            }
-        }
-        return this;
-    }
-
     public strokeSetter(
         value: ColorType,
         key: string

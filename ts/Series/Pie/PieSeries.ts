@@ -107,8 +107,6 @@ class PieSeries extends Series {
 
     public points: Array<PiePoint> = void 0 as any;
 
-    public shadowGroup?: SVGElement;
-
     public startAngleRad?: number;
 
     public total?: number;
@@ -290,9 +288,7 @@ class PieSeries extends Series {
      */
     public redrawPoints(): void {
         const series = this,
-            chart = series.chart,
-            renderer = chart.renderer,
-            shadow = series.options.shadow;
+            chart = series.chart;
         let groupTranslation,
             graphic,
             pointAttr: SVGAttributes,
@@ -300,11 +296,10 @@ class PieSeries extends Series {
 
         this.drawEmpty();
 
-        if (shadow && !series.shadowGroup && !chart.styledMode) {
-            series.shadowGroup = renderer
-                .g('shadow')
-                .attr({ zIndex: -1 })
-                .add(series.group);
+        // Apply the drop-shadow to the group because otherwise each element
+        // would cast a shadow on others
+        if (series.group && !chart.styledMode) {
+            series.group.shadow(series.options.shadow);
         }
 
         // draw the slices
@@ -312,8 +307,6 @@ class PieSeries extends Series {
             const animateTo = {};
             graphic = point.graphic;
             if (!point.isNull && graphic) {
-                let shadowGroup: (SVGElement|undefined);
-
                 shapeArgs = point.shapeArgs;
 
 
@@ -322,18 +315,6 @@ class PieSeries extends Series {
                 groupTranslation = point.getTranslate();
 
                 if (!chart.styledMode) {
-                // Put the shadow behind all points
-                    shadowGroup = point.shadowGroup;
-
-                    if (shadow && !shadowGroup) {
-                        shadowGroup = point.shadowGroup = renderer
-                            .g('shadow')
-                            .add(series.shadowGroup);
-                    }
-
-                    if (shadowGroup) {
-                        shadowGroup.attr(groupTranslation);
-                    }
                     pointAttr = series.pointAttribs(
                         point,
                         (point.selected && 'select') as any
@@ -360,16 +341,16 @@ class PieSeries extends Series {
                     if (!chart.styledMode) {
                         graphic
                             .attr(pointAttr)
-                            .attr({ 'stroke-linejoin': 'round' })
-                            .shadow(shadow, shadowGroup);
+                            .attr({ 'stroke-linejoin': 'round' });
                     }
 
                     point.delayedRendering = false;
                 }
 
-                graphic.attr({
-                    visibility: point.visible ? 'inherit' : 'hidden'
-                });
+                graphic
+                    .attr({
+                        visibility: point.visible ? 'inherit' : 'hidden'
+                    });
 
                 graphic.addClass(point.getClassName(), true);
 

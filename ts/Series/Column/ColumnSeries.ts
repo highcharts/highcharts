@@ -809,9 +809,7 @@ class ColumnSeries extends Series {
                         (point.selected && 'select') as any
                     ))
                         .shadow(
-                            point.allowShadow !== false && options.shadow,
-                            null,
-                            options.stacking && !options.borderRadius
+                            point.allowShadow !== false && options.shadow
                         );
                 }
 

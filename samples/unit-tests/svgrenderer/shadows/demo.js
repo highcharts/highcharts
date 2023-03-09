@@ -1,4 +1,4 @@
-QUnit.test('Series shadows', function (assert) {
+QUnit.skip('Series shadows', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [
                 {

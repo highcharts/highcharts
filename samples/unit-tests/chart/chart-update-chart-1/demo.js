@@ -380,9 +380,15 @@ QUnit.test('Option chart shadows update', function (assert) {
         ]
     });
 
-    assert.ok(!chart.chartBackground.shadows, 'Chart shadow does not exist');
+    assert.ok(
+        chart.chartBackground.attr('filter').indexOf('drop-shadow') === -1,
+        'Chart shadow should not exist'
+    );
 
-    assert.ok(!chart.plotBackground.shadows, 'Plot shadow does not exist');
+    assert.ok(
+        chart.plotBackground.attr('filter').indexOf('drop-shadow') === -1,
+        'Plot shadow should not exist'
+    );
 
     chart.update({
         chart: {
@@ -391,9 +397,15 @@ QUnit.test('Option chart shadows update', function (assert) {
         }
     });
 
-    assert.ok(chart.chartBackground.shadows, 'Chart shadow exists');
+    assert.ok(
+        chart.chartBackground.attr('filter').indexOf('drop-shadow') !== -1,
+        'Chart shadow should exist'
+    );
 
-    assert.ok(chart.plotBackground.shadows, 'Plot shadow exists');
+    assert.ok(
+        chart.plotBackground.attr('filter').indexOf('drop-shadow') !== -1,
+        'Plot shadow should exist'
+    );
 
     chart.update({
         chart: {

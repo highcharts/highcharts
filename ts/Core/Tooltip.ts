@@ -185,60 +185,6 @@ class Tooltip {
      * */
 
     /**
-     * In styled mode, apply the default filter for the tooltip drop-shadow. It
-     * needs to have an id specific to the chart, otherwise there will be issues
-     * when one tooltip adopts the filter of a different chart, specifically one
-     * where the container is hidden.
-     *
-     * @private
-     * @function Highcharts.Tooltip#applyFilter
-     */
-    public applyFilter(): void {
-
-        const chart = this.chart;
-
-        chart.renderer.definition({
-            tagName: 'filter',
-            attributes: {
-                id: 'drop-shadow-' + chart.index,
-                opacity: 0.5
-            },
-            children: [{
-                tagName: 'feGaussianBlur',
-                attributes: {
-                    'in': 'SourceAlpha',
-                    stdDeviation: 1
-                }
-            }, {
-                tagName: 'feOffset',
-                attributes: {
-                    dx: 1,
-                    dy: 1
-                }
-            }, {
-                tagName: 'feComponentTransfer',
-                children: [{
-                    tagName: 'feFuncA',
-                    attributes: {
-                        type: 'linear',
-                        slope: 0.3
-                    }
-                }]
-            }, {
-                tagName: 'feMerge',
-                children: [{
-                    tagName: 'feMergeNode'
-                }, {
-                    tagName: 'feMergeNode',
-                    attributes: {
-                        'in': 'SourceGraphic'
-                    }
-                }]
-            }]
-        });
-    }
-
-    /**
      * Build the body (lines) of the tooltip by iterating over the items and
      * returning one entry for each item, abstracting this functionality allows
      * to easily overwrite and extend it.
@@ -550,7 +496,8 @@ class Tooltip {
                     .attr({
                         padding: options.padding,
                         r: options.borderRadius
-                    });
+                    })
+                    .shadow(options.shadow);
 
                 if (!styledMode) {
                     this.label
@@ -560,17 +507,8 @@ class Tooltip {
                         })
                         // #2301, #2657
                         .css(options.style)
-                        .css({ pointerEvents })
-                        .shadow(options.shadow);
+                        .css({ pointerEvents });
                 }
-            }
-
-            if (styledMode && options.shadow) {
-                // Apply the drop-shadow filter
-                this.applyFilter();
-                this.label.attr({
-                    filter: 'url(#drop-shadow-' + this.chart.index + ')'
-                });
             }
 
             // Split tooltip use updateTooltipContainer to position the tooltip

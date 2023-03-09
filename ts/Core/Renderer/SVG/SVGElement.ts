@@ -166,7 +166,6 @@ class SVGElement implements SVGElementLike {
     public rotationOriginY?: number;
     public scaleX?: number;
     public scaleY?: number;
-    public shadows?: Array<SVGDOMElement>;
     public stops?: Array<SVGElement>;
     public stroke?: ColorType;
     // @todo public 'stroke-width'?: number;
@@ -1247,10 +1246,6 @@ class SVGElement implements SVGElementLike {
         // remove element
         wrapper.safeRemoveChild(element);
 
-        if (!renderer.styledMode) {
-            wrapper.destroyShadows();
-        }
-
         // In case of useHTML, clean up empty containers emulating SVG groups
         // (#1960, #2393, #2697).
         while (
@@ -1285,22 +1280,6 @@ class SVGElement implements SVGElementLike {
         });
 
         return;
-    }
-
-    /**
-     * Destroy shadows on the element.
-     *
-     * @private
-     * @function Highcharts.SVGElement#destroyShadows
-     *
-     */
-    public destroyShadows(): void {
-        (this.shadows || []).forEach(function (
-            shadow: DOMElementType
-        ): void {
-            this.safeRemoveChild(shadow);
-        }, this);
-        this.shadows = void 0;
     }
 
     /**
@@ -1976,9 +1955,8 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * Add a shadow to the element. Must be called after the element is added to
-     * the DOM. In styled mode, this method is not used, instead use `defs` and
-     * filters.
+     * Add a shadow to the element. In styled mode, this method is not used,
+     * instead use `defs` and filters.
      *
      * @example
      * renderer.rect(10, 100, 100, 100)
@@ -1987,125 +1965,24 @@ class SVGElement implements SVGElementLike {
      *
      * @function Highcharts.SVGElement#shadow
      *
-     * @param {boolean|Highcharts.ShadowOptionsObject} [shadowOptions]
-     *        The shadow options. If `true`, the default options are applied. If
+     * @param {boolean|Highcharts.ShadowOptionsObject} [shadowOptions] The
+     *        shadow options. If `true`, the default options are applied. If
      *        `false`, the current shadow will be removed.
      *
-     * @param {Highcharts.SVGElement} [group]
-     *        The SVG group element where the shadows will be applied. The
-     *        default is to add it to the same parent as the current element.
-     *        Internally, this is ised for pie slices, where all the shadows are
-     *        added to an element behind all the slices.
-     *
-     * @param {boolean} [cutOff]
-     *        Used internally for column shadows.
-     *
-     * @return {Highcharts.SVGElement}
-     *         Returns the SVGElement for chaining.
+     * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     public shadow(
-        shadowOptions?: (boolean|Partial<ShadowOptionsObject>),
-        group?: SVGElement,
-        cutOff?: boolean
+        shadowOptions?: (boolean|Partial<ShadowOptionsObject>)
     ): this {
-        const shadows = [],
-            {
-                element,
-                oldShadowOptions,
-                parentGroup
-            } = this,
-            parentInverted = parentGroup && parentGroup.rotation === 90,
-            defaultShadowOptions: ShadowOptionsObject = {
-                color: Palette.neutralColor100,
-                offsetX: parentInverted ? -1 : 1,
-                offsetY: parentInverted ? -1 : 1,
-                opacity: 0.15,
-                width: 3
-            };
+        const id = shadowOptions && shadowOptions !== true ?
+            this.renderer.shadowDefinition(shadowOptions) :
+            'drop-shadow';
 
-        let i,
-            shadow: SVGDOMElement,
-            strokeWidth,
-            shadowElementOpacity,
-            update = false,
-            // compensate for inverted plot area
-            transform,
-            options: ShadowOptionsObject|undefined;
-
-        if (shadowOptions === true) {
-            options = defaultShadowOptions;
-        } else if (typeof shadowOptions === 'object') {
-            options = extend(defaultShadowOptions, shadowOptions);
-        }
-
-        // Update shadow when options change (#12091).
-        if (options) {
-            // Go over each key to look for change
-            if (options && oldShadowOptions) {
-                objectEach(options, (value, key): void => {
-                    if (value !== (oldShadowOptions as any)[key]) {
-                        update = true;
-                    }
-                });
-            }
-
-            if (update) {
-                this.destroyShadows();
-            }
-
-            this.oldShadowOptions = options;
-        }
-
-        if (!options) {
-            this.destroyShadows();
-
-        } else if (!this.shadows) {
-            shadowElementOpacity = options.opacity / options.width;
-            transform = parentInverted ?
-                `translate(${options.offsetY}, ${options.offsetX})` :
-                `translate(${options.offsetX}, ${options.offsetY})`;
-            for (i = 1; i <= options.width; i++) {
-                shadow = element.cloneNode(false) as any;
-                strokeWidth = (options.width * 2) + 1 - (2 * i);
-                attr(shadow, {
-                    stroke: (
-                        (shadowOptions as any).color ||
-                        Palette.neutralColor100
-                    ),
-                    'stroke-opacity': shadowElementOpacity * i,
-                    'stroke-width': strokeWidth,
-                    transform,
-                    fill: 'none'
-                });
-                shadow.setAttribute(
-                    'class',
-                    (shadow.getAttribute('class') || '') + ' highcharts-shadow'
-                );
-                if (cutOff) {
-                    attr(
-                        shadow,
-                        'height',
-                        Math.max(
-                            (attr(shadow, 'height') as any) - strokeWidth,
-                            0
-                        )
-                    );
-                    shadow.cutHeight = strokeWidth;
-                }
-
-                if (group) {
-                    group.element.appendChild(shadow);
-                } else if (element.parentNode) {
-                    element.parentNode.insertBefore(shadow, element);
-                }
-
-                shadows.push(shadow);
-            }
-
-            this.shadows = shadows;
-        }
-
-        return this;
+        return this.attr({
+            filter: shadowOptions ?
+                `url(${this.renderer.url}#${id})` :
+                'none'
+        });
     }
 
     /**
@@ -2326,45 +2203,6 @@ class SVGElement implements SVGElementLike {
         }) as any;
     }
 
-    /**
-     * Update the shadow elements with new attributes.
-     *
-     * @private
-     * @function Highcharts.SVGElement#updateShadows
-     *
-     * @param {string} key
-     * The attribute name.
-     *
-     * @param {number} value
-     * The value of the attribute.
-     *
-     * @param {Function} setter
-     * The setter function, inherited from the parent wrapper.
-     */
-    public updateShadows(
-        key: string,
-        value: number,
-        setter: Function
-    ): void {
-        const shadows = this.shadows;
-
-        if (shadows) {
-            let i = shadows.length;
-            while (i--) {
-                setter.call(
-                    shadows[i],
-                    key === 'height' ?
-                        Math.max(
-                            value - (shadows[i].cutHeight || 0),
-                            0
-                        ) :
-                        key === 'd' ? this.d : value,
-                    key,
-                    shadows[i]
-                );
-            }
-        }
-    }
 
     /**
      * Update the transform attribute based on internal properties. Deals with
