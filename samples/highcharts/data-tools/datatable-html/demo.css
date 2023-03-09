@@ -1,0 +1,33 @@
+form {
+    display: flex;
+    justify-content: stretch;
+}
+
+fieldset {
+    flex-grow: 1;
+    text-align: center;
+}
+
+input[type="text"] {
+    vertical-align: top;
+    width: 80%;
+}
+
+table {
+    min-width: 50%;
+}
+
+table td,
+table th {
+    line-height: 1.5em;
+    padding: 0.25em 0.5em;
+    vertical-align: top;
+}
+
+table thead th {
+    background-color: #ddd;
+}
+
+table tbody td {
+    background-color: #eee;
+}
