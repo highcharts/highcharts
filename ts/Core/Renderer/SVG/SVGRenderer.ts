@@ -318,7 +318,7 @@ class SVGRenderer implements SVGRendererLike {
         renderer.setSize(width, height, false);
 
         // Apply the default drop-shadow filter
-        this.shadowDefinition(true);
+        this.shadowDefinition({});
 
 
         // Issue 110 workaround:
@@ -599,9 +599,8 @@ class SVGRenderer implements SVGRendererLike {
      *        shadow options. If `true`, the default options are applied
      */
     public shadowDefinition(
-        shadowOptions: (boolean|Partial<ShadowOptionsObject>)
+        shadowOptions: Partial<ShadowOptionsObject>
     ): string {
-        shadowOptions = isObject(shadowOptions) ? shadowOptions : {};
         const
             id = [
                 'drop-shadow',
@@ -616,7 +615,7 @@ class SVGRenderer implements SVGRendererLike {
                 offsetY: 1,
                 opacity: 0.15,
                 width: 3
-            }, isObject(shadowOptions) ? shadowOptions : {});
+            }, shadowOptions);
 
         if (!this.defs.element.querySelector(`#${id}`)) {
             this.definition({
