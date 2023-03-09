@@ -101,27 +101,25 @@ QUnit.test('Crosshair on multiple axes (#4927)', function (assert) {
         }, {
             ...yAxisCrosshair,
             opposite: true
-        }]
+        }],
+        series: [
+            {
+                data: sampleData
+            },
+            {
+                yAxis: 1,
+                data: sampleData
+            },
+            {
+                yAxis: 2,
+                data: sampleData
+            },
+            {
+                yAxis: 3,
+                data: sampleData
+            }
+        ]
     }, true, true);
-
-
-    chart.series[0].update({
-        data: sampleData
-    });
-
-    chart.series[1].update({
-        data: sampleData
-    });
-
-    chart.addSeries({
-        yAxis: 2,
-        data: sampleData
-    });
-
-    chart.addSeries({
-        yAxis: 3,
-        data: sampleData
-    });
 
     chart.series[0].points[0].onMouseOver();
 
