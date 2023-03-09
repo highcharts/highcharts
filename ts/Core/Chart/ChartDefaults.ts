@@ -739,7 +739,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
      *
-     * @type      {boolean|Highcharts.CSSObject}
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @default   false
      * @apioption chart.plotShadow
      */
@@ -820,6 +820,20 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
+     * Whether to apply a drop shadow to the global series group. This causes
+     * all the series to have the same shadow. Contrary to the `series.shadow`
+     * option, this prevents items from casting shadows on each other, like for
+     * others series in a stack. The shadow can be an object configuration
+     * containing `color`, `offsetX`, `offsetY`, `opacity` and `width`.
+     *
+     * @sample highcharts/chart/seriesgroupshadow/ Shadow
+     *
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
+     * @default   false
+     * @apioption chart.shadow
+     */
+
+    /**
      * Whether to apply a drop shadow to the outer chart area. Requires
      * that backgroundColor be set. The shadow can be an object
      * configuration containing `color`, `offsetX`, `offsetY`, `opacity` and
@@ -832,7 +846,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/border/
      *         Chart border and shadow
      *
-     * @type      {boolean|Highcharts.CSSObject}
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @default   false
      * @apioption chart.shadow
      */
