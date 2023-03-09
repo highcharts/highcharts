@@ -33,7 +33,7 @@ QUnit.test(
             pointY = series.points[pointNumber].plotY + chart.plotTop;
             controller.mouseMove(pointX, pointY, undefined, true);
             textOfTooltip =
-                chart.tooltip.label.element.childNodes[4].childNodes[0]
+                chart.tooltip.label.element.childNodes[1].childNodes[0]
                     .childNodes[0].data;
             texts.push(textOfTooltip);
         }

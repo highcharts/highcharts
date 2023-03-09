@@ -29,6 +29,7 @@ import type {
 import type EventCallback from '../../../Core/EventCallback';
 import type FontMetricsObject from '../FontMetricsObject';
 import type PositionObject from '../PositionObject';
+import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRendererLike from './SVGRendererLike';
@@ -316,6 +317,9 @@ class SVGRenderer implements SVGRendererLike {
 
         renderer.setSize(width, height, false);
 
+        // Apply the default drop-shadow filter
+        this.shadowDefinition(true);
+
 
         // Issue 110 workaround:
         // In Firefox, if a div is positioned by percentage, its pixel position
@@ -583,6 +587,46 @@ class SVGRenderer implements SVGRendererLike {
                 (gradAttr.cy || 0) * radialReference[2],
             r: (gradAttr.r || 0) * radialReference[2]
         };
+    }
+
+    /**
+     * Create a drop shadow definition and return its id
+     *
+     * @private
+     * @function Highcharts.SVGRenderer#shadowDefinition
+     *
+     * @param {boolean|Highcharts.ShadowOptionsObject} [shadowOptions] The
+     *        shadow options. If `true`, the default options are applied
+     */
+    public shadowDefinition(
+        shadowOptions?: (boolean|Partial<ShadowOptionsObject>)
+    ): string {
+        const id = shadowOptions === true ? 'drop-shadow' : 'custom',
+            options: ShadowOptionsObject = merge({
+                color: '#000000',
+                offsetX: 1,
+                offsetY: 1,
+                opacity: 0.5,
+                width: 3
+            }, isObject(shadowOptions) ? shadowOptions : {});
+
+        this.definition({
+            tagName: 'filter',
+            attributes: {
+                id
+            },
+            children: [{
+                tagName: 'feDropShadow',
+                attributes: {
+                    dx: options.offsetX,
+                    dy: options.offsetY,
+                    'flood-color': options.color,
+                    'flood-opacity': options.opacity,
+                    stdDeviation: options.width / 2
+                }
+            }]
+        });
+        return id;
     }
 
     /**

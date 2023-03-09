@@ -59,6 +59,8 @@ export interface SVGAttributes {
     fill?: ColorType;
     'fill-opacity'?: number;
     filter?: string;
+    'flood-color'?: string;
+    'flood-opacity'?: number;
     gradientUnits?: 'userSpaceOnUse';
     height?: number;
     href?: string;
