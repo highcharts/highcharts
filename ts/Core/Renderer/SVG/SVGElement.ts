@@ -152,7 +152,6 @@ class SVGElement implements SVGElementLike {
     // @todo public height?: number;
     public inverted: undefined;
     public matrix?: Array<number>;
-    public oldShadowOptions?: ShadowOptionsObject;
     public onEvents: Record<string, Function> = {};
     public opacity = 1; // Default base for animation
     // @todo public options?: AnyRecord;
@@ -819,16 +818,6 @@ class SVGElement implements SVGElementLike {
                         (this as AnyRecord)._defaultSetter
                     );
                     setter.call(this, val, key, element);
-
-                    // Let the shadow follow the main element
-                    if (
-                        !this.styledMode &&
-                        this.shadows &&
-                        /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/
-                            .test(key)
-                    ) {
-                        this.updateShadows(key, val, setter);
-                    }
                 }
             }, this);
 
