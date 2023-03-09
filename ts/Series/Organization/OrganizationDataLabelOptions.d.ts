@@ -23,7 +23,6 @@ import type {
     SankeyDataLabelFormatterContext,
     SankeyDataLabelOptions
 } from '../Sankey/SankeyDataLabelOptions';
-import type DataLabelTextPathOptions from '../../Core/Series/DataLabelOptions';
 
 /* *
  *

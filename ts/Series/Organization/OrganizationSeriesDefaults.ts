@@ -274,8 +274,14 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
             fontSize: '13px'
         },
 
-        useHTML: true
+        useHTML: true,
 
+        linkTextPath: {
+            attributes: {
+                startOffset: '95%',
+                textAnchor: 'end'
+            }
+        }
     },
     /**
      * The indentation in pixels of hanging nodes, nodes which parent has
