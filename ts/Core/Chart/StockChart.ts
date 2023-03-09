@@ -761,11 +761,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         posx = snap ? (point.plotX || 0) + left : e.chartX;
         posy = top + (opposite ? 0 : this.height);
     } else {
-        if (opposite) {
-            posx = left + width + this.offset;
-        } else {
-            posx = left + this.offset;
-        }
+        posx = left + this.offset + (opposite ? width : 0);
         posy = snap ? (point.plotY || 0) + top : e.chartY;
     }
 
@@ -806,10 +802,8 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
     // now it is placed we can correct its position
     if (isNumber(crossLabel.x)) {
-        if (!horiz) {
-            if (!opposite) {
-                posx = crossLabel.x - (crossBox.width / 2);
-            }
+        if (!horiz && !opposite) {
+            posx = crossLabel.x - (crossBox.width / 2);
         }
     }
 
