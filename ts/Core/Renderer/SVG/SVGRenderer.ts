@@ -600,33 +600,46 @@ class SVGRenderer implements SVGRendererLike {
      *        shadow options. If `true`, the default options are applied
      */
     public shadowDefinition(
-        shadowOptions?: (boolean|Partial<ShadowOptionsObject>)
+        shadowOptions: (boolean|Partial<ShadowOptionsObject>)
     ): string {
-        const id = shadowOptions === true ? 'drop-shadow' : 'custom',
+        shadowOptions = isObject(shadowOptions) ? shadowOptions : {};
+        const
+            id = [
+                'drop-shadow',
+                ...Object.keys(shadowOptions)
+                    .map((key: string): number|string =>
+                        (shadowOptions as any)[key]
+                    )
+            ].join('-').replace(/[^a-z0-9\-]/g, ''),
             options: ShadowOptionsObject = merge({
                 color: '#000000',
                 offsetX: 1,
                 offsetY: 1,
-                opacity: 0.5,
+                opacity: 0.15,
                 width: 3
             }, isObject(shadowOptions) ? shadowOptions : {});
 
-        this.definition({
-            tagName: 'filter',
-            attributes: {
-                id
-            },
-            children: [{
-                tagName: 'feDropShadow',
+        if (!this.defs.element.querySelector(`#${id}`)) {
+            this.definition({
+                tagName: 'filter',
                 attributes: {
-                    dx: options.offsetX,
-                    dy: options.offsetY,
-                    'flood-color': options.color,
-                    'flood-opacity': options.opacity,
-                    stdDeviation: options.width / 2
-                }
-            }]
-        });
+                    id
+                },
+                children: [{
+                    tagName: 'feDropShadow',
+                    attributes: {
+                        dx: options.offsetX,
+                        dy: options.offsetY,
+                        'flood-color': options.color,
+                        // Tuned and modified to keep a preserve compatibility
+                        // with the old settings
+                        'flood-opacity': Math.min(options.opacity * 5, 1),
+                        stdDeviation: options.width / 2
+                    }
+                }]
+            });
+        }
+
         return id;
     }
 
