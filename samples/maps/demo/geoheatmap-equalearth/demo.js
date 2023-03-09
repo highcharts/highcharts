@@ -32,7 +32,6 @@
 
         mapNavigation: {
             enabled: true,
-            enableDoubleClickZoomTo: true,
             buttonOptions: {
                 verticalAlign: 'bottom'
             }
