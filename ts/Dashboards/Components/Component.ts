@@ -73,6 +73,8 @@ import Sync from './Sync/Sync.js';
  *
  * Abstract Class of component.
  *
+ * @internal
+ *
  */
 abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
 
@@ -87,9 +89,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * Creates HTML text element like header or title
      *
      * @param tagName
+     * HTML tag name used as wrapper of text like `h1`, `h2` or `p`.
      * @param elementName
+     * Name of element
      * @param textOptions
+     * The options for the component
      * @returns
+     * HTML object when title is created, otherwise undefined
      */
     public static createTextElement(
         tagName: string,
@@ -272,6 +278,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * Creates a component in the cell.
      *
      * @param options
+     * The options for the component.
      */
     constructor(options: Partial<Component.ComponentOptions>) {
         this.options = merge(Component.defaultOptions, options);
@@ -341,7 +348,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     * specific callback given.
     *
     * @param defaultHandlers
+    * Sync handlers on component.
+    *
     * @returns
+    * Sync component.
     */
     protected handleSyncOptions(
         defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
@@ -413,7 +423,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * Set a parent cell.
      * @param cell
+     * Instance of a cell.
      * @param resize
+     * Flag that allow to resize the component.
      */
     public setCell(cell: Cell, resize = false): void {
         this.parentCell = cell;
@@ -429,6 +441,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * Adds event listeners to data table.
      * @param table
+     * Data table that is source of data.
      * @internal
      */
     private setupTableListeners(table: DataTable): void {
@@ -495,7 +508,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * Attaches data store to the component.
      * @param store
+     * Store of data.
+     *
      * @returns
+     * Component which can be used in chaining.
      */
     public setStore(store: Component.StoreTypes | undefined): this {
         // Clean up old event listeners
@@ -567,6 +583,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * Gets height of the component's content.
      *
      * @returns
+     * Current height as number.
      * @internal
      */
     private getContentHeight(): number {
@@ -644,6 +661,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * Adjusts size of component to parent's cell size when animation is done.
      * @param element
+     * HTML element that is resized.
      */
     public resizeTo(element: HTMLElement): void {
         while (this.resizeTimeouts.length) {
@@ -676,7 +694,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * If `false` the component will be redrawn only if options are changed.
      *
      * @returns
-     * The component for chaining
+     * The component for chaining.
      */
     public update(
         newOptions: Partial<Component.ComponentOptions>,
@@ -749,7 +767,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * Adds title at the top of component's container.
      * @param titleOptions
-     * @returns
+     * The options for the title.
      */
     public setTitle(titleOptions: Component.TextOptionsType): void {
         const previousTitle = this.titleElement;
@@ -781,7 +799,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * Adds caption at the bottom of component's container.
      *
      * @param captionOptions
-     * @returns
+     * The options for the caption.
      */
     public setCaption(captionOptions: Component.TextOptionsType): void {
         const previousCaption = this.captionElement;
@@ -874,7 +892,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * Renders the component.
      * @todo make this call load on initial render
-     * @returns Component
+     * @returns
+     * The component for chaining.
      */
     public render(): this {
         if (this.shouldRedraw || !this.hasLoaded) {
@@ -891,7 +910,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Redraws the component.
-     * @returns Component
+     * @returns
+     * The component for chaining.
      */
     public redraw(): this {
         // Do a redraw

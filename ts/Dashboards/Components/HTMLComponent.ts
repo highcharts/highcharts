@@ -89,10 +89,13 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      * */
 
     /**
-     * Creates components from JSON.
+     * Creates component from JSON.
      *
      * @param json
+     * Set of component options, used for creating the HTML component.
+     *
      * @returns
+     * HTML component based on config from JSON.
      */
     public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
         const options = json.options;
@@ -154,6 +157,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      * Creates a HTML component in the cell.
      *
      * @param options
+     * The options for the component.
      */
     constructor(options: Partial<HTMLComponent.HTMLComponentOptions>) {
         options = merge(
@@ -279,7 +283,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      * The options to apply.
      *
      * @returns
-     * The component for chaining
+     * The component for chaining.
      */
     public update(options: Partial<HTMLComponent.HTMLComponentOptions>): this {
         super.update(options);

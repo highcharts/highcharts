@@ -127,6 +127,15 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * */
 
+    /**
+     * Creates component from JSON.
+     *
+     * @param json
+     * Set of component options, used for creating the Highcharts component.
+     *
+     * @returns
+     * Highcharts component based on config from JSON.
+     */
     public static fromJSON(
         json: HighchartsComponent.ClassJSON
     ): HighchartsComponent {
@@ -198,6 +207,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      * Creates a Highcharts component in the cell.
      *
      * @param options
+     * The options for the component.
      */
     constructor(options: Partial<HighchartsComponent.ComponentOptions>) {
         options = merge(
@@ -351,8 +361,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     /**
      * Update the store, when the point is being dragged.
-     * @param point Dragged point.
-     * @param store Store to update.
+     * @param point
+     * Dragged point.
+     * @param store
+     * Store to update.
      */
     private onChartUpdate(
         point: Point,
@@ -517,7 +529,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      * Destroy chart and create a new one.
      *
      * @returns
-     * The chart
+     * The chart.
      *
      * @internal
      *
@@ -530,10 +542,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     }
 
     /**
-     * Creates chart
+     * Creates chart.
      *
      * @returns
-     * The chart
+     * The chart.
      *
      * @internal
      *

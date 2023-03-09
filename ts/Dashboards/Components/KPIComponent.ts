@@ -64,10 +64,13 @@ class KPIComponent extends Component {
      * */
 
     /**
-     * Creates components from JSON.
+     * Creates component from JSON.
      *
      * @param json
+     * Set of component options, used for creating the KPI component.
+     *
      * @returns
+     * KPI component based on config from JSON.
      */
     public static fromJSON(json: KPIComponent.ClassJSON): KPIComponent {
         const options = json.options;
@@ -218,6 +221,7 @@ class KPIComponent extends Component {
      * Creates a KPI component in the cell.
      *
      * @param options
+     * The options for the component.
      */
     constructor(options: Partial<KPIComponent.ComponentOptions>) {
         options = merge(
@@ -296,7 +300,9 @@ class KPIComponent extends Component {
      * Calculates and applies font size for the title.
      *
      * @param width
+     * The width to calculate the title's font size.
      * @param height
+     * The height to calculate the title's font size.
      *
      * @internal
      */
@@ -311,7 +317,9 @@ class KPIComponent extends Component {
      * Updates title / subtitle font size and component dimensions.
      *
      * @param width
+     * The width to set the component to.
      * @param height
+     * The height to set the component to.
      *
      * @internal
      */
@@ -439,6 +447,7 @@ class KPIComponent extends Component {
      * Gets KPI subtitle text.
      *
      * @returns
+     * The subtitle's text.
      *
      * @internal
      */
@@ -483,6 +492,7 @@ class KPIComponent extends Component {
      * Gets CSS class name of the KPI subtitle.
      *
      * @returns
+     * The name of class.
      *
      * @internal
      */
@@ -494,6 +504,9 @@ class KPIComponent extends Component {
 
     /**
      * Applies title's color according to the threshold.
+     *
+     * @returns
+     * Hex of color.
      *
      * @internal
      */
