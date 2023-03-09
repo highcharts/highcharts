@@ -330,6 +330,7 @@ class MapView {
          * @type {number}
          */
         this.zoom = o.zoom || 0;
+        this.minZoom = o.minZoom;
 
         // Create the insets
         this.createInsets();

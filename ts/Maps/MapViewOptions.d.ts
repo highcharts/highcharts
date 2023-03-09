@@ -80,6 +80,7 @@ export interface MapViewOptions {
     projection?: ProjectionOptions;
     recommendedMapView?: DeepPartial<MapViewOptions>;
     zoom?: number;
+    minZoom?: number;
 }
 
 export default MapViewOptions;
