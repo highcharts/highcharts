@@ -36,8 +36,7 @@ const {
     extend,
     find,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -150,7 +149,7 @@ namespace NodesComposition {
         SeriesClass: T
     ): (T&typeof SeriesComposition) {
 
-        if (pushUnique(composedMembers, PointClass)) {
+        if (U.pushUnique(composedMembers, PointClass)) {
             const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.setNodeState = setNodeState;
@@ -158,7 +157,7 @@ namespace NodesComposition {
             pointProto.update = updateNode;
         }
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.destroy = destroy;

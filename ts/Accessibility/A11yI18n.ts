@@ -28,8 +28,7 @@ const { format } = F;
 import U from '../Core/Utilities.js';
 const {
     getNestedProperty,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -101,7 +100,7 @@ namespace A11yI18nComposition {
         ChartClass: T
     ): (T&ChartComposition) {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.langFormat = langFormat;

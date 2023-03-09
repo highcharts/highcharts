@@ -39,7 +39,6 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     merge,
-    pushUnique,
     wrap
 } = U;
 
@@ -158,11 +157,11 @@ function compose(
     PlotLineOrBandClass: typeof PlotLineOrBand
 ): void {
 
-    if (pushUnique(composedMembers, AxisClass)) {
+    if (U.pushUnique(composedMembers, AxisClass)) {
         addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
     }
 
-    if (pushUnique(composedMembers, PlotLineOrBandClass)) {
+    if (U.pushUnique(composedMembers, PlotLineOrBandClass)) {
         addEvent(PlotLineOrBandClass, 'render', onPlotLineOrBandRender);
 
         wrap(

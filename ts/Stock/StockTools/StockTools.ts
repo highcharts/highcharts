@@ -38,8 +38,7 @@ const {
     correctFloat,
     defined,
     isNumber,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -113,7 +112,7 @@ function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
 
-    if (pushUnique(composedMembers, NavigationBindingsClass)) {
+    if (U.pushUnique(composedMembers, NavigationBindingsClass)) {
         const navigationProto = NavigationBindingsClass.prototype;
 
         // Extends NavigationBindings to support indicators and resizers:
@@ -131,7 +130,7 @@ function compose(
         };
     }
 
-    if (pushUnique(composedMembers, setOptions)) {
+    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions(StockToolsDefaults);
         setOptions({
             navigation: {

@@ -57,7 +57,6 @@ const {
     isNumber,
     merge,
     pick,
-    pushUnique,
     splat,
     uniqueKey,
     wrap
@@ -1443,7 +1442,7 @@ class PolarAdditions {
     ): void {
         RadialAxis.compose(AxisClass, TickClass);
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterDrawChartBox', onChartAfterDrawChartBox);
             addEvent(ChartClass, 'getAxes', onChartGetAxes);
             addEvent(ChartClass, 'init', onChartAfterInit);
@@ -1453,7 +1452,7 @@ class PolarAdditions {
             wrap(chartProto, 'get', wrapChartGet);
         }
 
-        if (pushUnique(composedMembers, PointerClass)) {
+        if (U.pushUnique(composedMembers, PointerClass)) {
             const pointerProto = PointerClass.prototype;
 
             wrap(pointerProto, 'getCoordinates', wrapPointerGetCoordinates);
@@ -1470,7 +1469,7 @@ class PolarAdditions {
             );
         }
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'afterInit', onSeriesAfterInit);
             addEvent(
                 SeriesClass,
@@ -1487,7 +1486,7 @@ class PolarAdditions {
 
         if (
             ColumnSeriesClass &&
-            pushUnique(composedMembers, ColumnSeriesClass)
+            U.pushUnique(composedMembers, ColumnSeriesClass)
         ) {
             const columnProto = ColumnSeriesClass.prototype;
 
@@ -1498,7 +1497,7 @@ class PolarAdditions {
 
         if (
             LineSeriesClass &&
-            pushUnique(composedMembers, LineSeriesClass)
+            U.pushUnique(composedMembers, LineSeriesClass)
         ) {
             const lineProto = LineSeriesClass.prototype;
 
@@ -1507,7 +1506,7 @@ class PolarAdditions {
 
         if (
             SplineSeriesClass &&
-            pushUnique(composedMembers, SplineSeriesClass)
+            U.pushUnique(composedMembers, SplineSeriesClass)
         ) {
             const splineProto = SplineSeriesClass.prototype;
 
@@ -1515,7 +1514,7 @@ class PolarAdditions {
 
             if (
                 AreaSplineRangeSeriesClass &&
-                pushUnique(composedMembers, AreaSplineRangeSeriesClass)
+                U.pushUnique(composedMembers, AreaSplineRangeSeriesClass)
             ) {
                 const areaSplineRangeProto =
                     AreaSplineRangeSeriesClass.prototype;

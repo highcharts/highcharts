@@ -21,7 +21,6 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 import U from '../Core/Utilities.js';
-const { pushUnique } = U;
 
 /* *
  *
@@ -146,7 +145,7 @@ function arrowHalf(
  */
 function compose(SVGRendererClass: typeof SVGRenderer): void {
 
-    if (pushUnique(composedMembers, SVGRendererClass)) {
+    if (U.pushUnique(composedMembers, SVGRendererClass)) {
         const symbols = SVGRendererClass.prototype.symbols;
 
         symbols.arrow = arrow;

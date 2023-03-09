@@ -28,8 +28,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     find,
-    isNumber,
-    pushUnique
+    isNumber
 } = U;
 
 /* *
@@ -90,15 +89,15 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (U.pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
     }
 
-    if (pushUnique(composedMembers, H)) {
+    if (U.pushUnique(composedMembers, H)) {
         addEvent(H, 'displayError', onHighchartsDisplayError);
     }
 
-    if (pushUnique(composedMembers, setOptions)) {
+    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions(defaultOptions);
     }
 

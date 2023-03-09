@@ -43,7 +43,6 @@ const {
     merge,
     objectEach,
     pick,
-    pushUnique,
     splat
 } = U;
 
@@ -437,7 +436,7 @@ namespace DataLabel {
      */
     export function compose(SeriesClass: typeof Series): void {
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.alignDataLabel = alignDataLabel;

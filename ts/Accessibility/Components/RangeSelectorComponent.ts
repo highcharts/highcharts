@@ -37,8 +37,7 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    attr,
-    pushUnique
+    attr
 } = U;
 
 
@@ -694,7 +693,7 @@ namespace RangeSelectorComponent {
         RangeSelectorClass: typeof RangeSelector
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightRangeSelectorButton = (
@@ -702,7 +701,7 @@ namespace RangeSelectorComponent {
             );
         }
 
-        if (pushUnique(composedMembers, RangeSelectorClass)) {
+        if (U.pushUnique(composedMembers, RangeSelectorClass)) {
             addEvent(
                 RangeSelector,
                 'afterBtnClick',

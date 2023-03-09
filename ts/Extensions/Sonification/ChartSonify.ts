@@ -41,7 +41,6 @@ const {
     extend,
     merge,
     pick,
-    pushUnique,
     splat
 } = U;
 
@@ -778,7 +777,7 @@ function resetCursorEnd(this: ChartSonify.SonifyableChart): void {
  */
 function compose<T extends typeof Chart>(ChartClass: typeof Chart): (T&typeof Composition) {
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (U.pushUnique(composedMembers, ChartClass)) {
         const chartProto = ChartClass.prototype as ChartSonify.SonifyableChart;
 
         extend(chartProto, {

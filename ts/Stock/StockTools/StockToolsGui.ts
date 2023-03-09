@@ -37,8 +37,7 @@ const {
     addEvent,
     getStyle,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -109,7 +108,7 @@ function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (U.pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRedraw);
@@ -121,7 +120,7 @@ function compose(
         ChartClass.prototype.setStockTools = chartSetStockTools;
     }
 
-    if (pushUnique(composedMembers, NavigationBindingsClass)) {
+    if (U.pushUnique(composedMembers, NavigationBindingsClass)) {
         addEvent(
             NavigationBindingsClass,
             'deselectButton',
@@ -134,7 +133,7 @@ function compose(
         );
     }
 
-    if (pushUnique(composedMembers, setOptions)) {
+    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions(StockToolsDefaults);
     }
 }

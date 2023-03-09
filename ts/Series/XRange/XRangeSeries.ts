@@ -52,8 +52,7 @@ const {
     isNumber,
     isObject,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
@@ -137,7 +136,7 @@ class XRangeSeries extends ColumnSeries {
         AxisClass: typeof Axis
     ): void {
 
-        if (pushUnique(composedMembers, AxisClass)) {
+        if (U.pushUnique(composedMembers, AxisClass)) {
             addEvent(
                 AxisClass,
                 'afterGetSeriesExtremes',

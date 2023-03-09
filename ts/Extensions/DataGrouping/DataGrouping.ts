@@ -30,8 +30,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    isNumber,
-    pushUnique
+    isNumber
 } = U;
 
 /* *
@@ -61,7 +60,7 @@ function compose(
 
     if (
         TooltipClass &&
-        pushUnique(composedMembers, TooltipClass)
+        U.pushUnique(composedMembers, TooltipClass)
     ) {
         addEvent(TooltipClass, 'headerFormatter', onTooltipHeaderFormatter);
     }

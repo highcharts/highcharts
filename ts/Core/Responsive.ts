@@ -28,7 +28,6 @@ const {
     merge,
     objectEach,
     pick,
-    pushUnique,
     splat,
     uniqueKey
 } = U;
@@ -134,7 +133,7 @@ namespace Responsive {
         ChartClass: T
     ): (T&typeof Composition) {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             extend(ChartClass.prototype, Additions.prototype as Composition);
         }
 

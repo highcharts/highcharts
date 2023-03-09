@@ -31,7 +31,6 @@ import Popup from './Popup.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
-    pushUnique,
     wrap
 } = U;
 
@@ -70,7 +69,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (pushUnique(composedMembers, NagivationBindingsClass)) {
+    if (U.pushUnique(composedMembers, NagivationBindingsClass)) {
         addEvent(
             NagivationBindingsClass,
             'closePopup',
@@ -83,7 +82,7 @@ function compose(
         );
     }
 
-    if (pushUnique(composedMembers, PointerClass)) {
+    if (U.pushUnique(composedMembers, PointerClass)) {
         wrap(
             PointerClass.prototype,
             'onContainerMouseDown',

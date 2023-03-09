@@ -32,8 +32,7 @@ import BoostableMap from './BoostableMap.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -82,7 +81,7 @@ function compose<T extends typeof Chart>(
     wglMode?: boolean
 ): T {
 
-    if (wglMode && pushUnique(composedClasses, ChartClass)) {
+    if (wglMode && U.pushUnique(composedClasses, ChartClass)) {
         ChartClass.prototype.callbacks.push(onChartCallback);
     }
 

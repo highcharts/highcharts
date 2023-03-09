@@ -67,7 +67,6 @@ const {
     fireEvent,
     isNumber,
     pick,
-    pushUnique,
     syncTimeout
 } = U;
 
@@ -363,17 +362,17 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (U.pushUnique(composedMembers, ChartClass)) {
         // Leave both events, we handle animation differently (#9815)
         addEvent(Chart, 'load', onChartRedraw);
         addEvent(Chart, 'redraw', onChartRedraw);
     }
 
-    if (pushUnique(composedMembers, SVGRendererClass)) {
+    if (U.pushUnique(composedMembers, SVGRendererClass)) {
         SVGRendererClass.prototype.symbols.connector = symbolConnector;
     }
 
-    if (pushUnique(composedMembers, setOptions)) {
+    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions({ plotOptions: { series: { label: SeriesLabelDefaults } } });
     }
 

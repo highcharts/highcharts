@@ -37,8 +37,7 @@ const {
     addEvent,
     extend,
     fireEvent,
-    merge,
-    pushUnique
+    merge
 } = U;
 import HU from './Utils/HTMLUtilities.js';
 const {
@@ -507,7 +506,7 @@ namespace Accessibility {
             RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
         }
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
@@ -553,7 +552,7 @@ namespace Accessibility {
             });
         }
 
-        if (pushUnique(composedMembers, PointClass)) {
+        if (U.pushUnique(composedMembers, PointClass)) {
             addEvent(
                 PointClass as typeof PointComposition,
                 'update',
@@ -561,7 +560,7 @@ namespace Accessibility {
             );
         }
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             // Mark dirty for update
             ['update', 'updatedData', 'remove'].forEach((event): void => {
                 addEvent(

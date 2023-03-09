@@ -53,7 +53,6 @@ const {
     objectEach,
     offset,
     pick,
-    pushUnique,
     splat
 } = U;
 
@@ -2215,7 +2214,7 @@ namespace Pointer {
      */
     export function compose(ChartClass: typeof Chart): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 /**
                  * The Pointer that keeps track of mouse and touch

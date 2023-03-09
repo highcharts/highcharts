@@ -29,8 +29,7 @@ import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    pushUnique
+    fireEvent
 } = U;
 
 /* *
@@ -108,7 +107,7 @@ class Fullscreen {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             // Initialize fullscreen
             addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
         }

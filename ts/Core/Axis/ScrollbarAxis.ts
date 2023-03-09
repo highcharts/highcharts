@@ -24,8 +24,7 @@ import U from '../Utilities.js';
 const {
     addEvent,
     defined,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
@@ -86,7 +85,7 @@ class ScrollbarAxis {
      * Scrollbar class to use.
      */
     public static compose<T extends typeof Axis>(AxisClass: T, ScrollbarClass: typeof Scrollbar): (T&ScrollbarAxis) {
-        if (!pushUnique(composedMembers, AxisClass)) {
+        if (!U.pushUnique(composedMembers, AxisClass)) {
             return AxisClass as (T&ScrollbarAxis);
         }
 

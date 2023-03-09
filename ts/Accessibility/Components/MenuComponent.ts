@@ -27,8 +27,7 @@ import type ProxyElement from '../ProxyElement';
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
 const {
-    attr,
-    pushUnique
+    attr
 } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -513,7 +512,7 @@ namespace MenuComponent {
         ChartClass: typeof Chart
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = Chart.prototype as ChartComposition;
 
             chartProto.hideExportMenu = chartHideExportMenu;

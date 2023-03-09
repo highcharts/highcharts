@@ -29,8 +29,7 @@ import type SeriesOptions from '../../../Core/Series/SeriesOptions';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
-    merge,
-    pushUnique
+    merge
 } = U;
 
 /* *
@@ -84,7 +83,7 @@ namespace ForcedMarkersComposition {
         SeriesClass: T
     ): void {
 
-        if (pushUnique(composedMembers, SeriesClass)) {
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(
                 SeriesClass as typeof SeriesComposition,
                 'afterSetOptions',

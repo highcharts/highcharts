@@ -31,7 +31,6 @@ const {
     defined,
     extend,
     merge,
-    pushUnique,
     uniqueKey
 } = U;
 
@@ -214,11 +213,11 @@ class ControllablePath extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (pushUnique(composedMembers, ChartClass)) {
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         }
 
-        if (pushUnique(composedMembers, SVGRendererClass)) {
+        if (U.pushUnique(composedMembers, SVGRendererClass)) {
             const svgRendererProto = SVGRendererClass.prototype;
 
             svgRendererProto.addMarker = svgRendererAddMarker;
