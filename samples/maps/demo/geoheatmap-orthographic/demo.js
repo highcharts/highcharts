@@ -2,83 +2,83 @@
     const topology = await fetch(
             'https://code.highcharts.com/mapdata/custom/world.topo.json'
         ).then(response => response.json()),
-        colors = Highcharts.getOptions().colors;
 
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@5c536debb0/samples/data/geoheatmap-cities-dataset.json', function (data) {
-        Highcharts.mapChart('container', {
-            chart: {
-                map: topology
-            },
+        data = await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@5c536debb0/samples/data/geoheatmap-cities-dataset.json'
+        ).then(response => response.json());
 
-            title: {
-                text: 'GeoHeatMap Series Demo',
-                align: 'left',
-                style: {
-                    textOutline: '2px white'
-                }
-            },
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-            subtitle: {
-                text: 'Density of Cities in the World by Latitude and Longitude<br> Data source: <a href="https://github.com/lutangar/cities.json">https://github.com/lutangar/cities.json</a>',
-                y: 34,
-                align: 'left'
-            },
+        title: {
+            text: 'GeoHeatMap Series Demo',
+            align: 'left',
+            style: {
+                textOutline: '2px white'
+            }
+        },
 
-            legend: {
-                enabled: true
-            },
+        subtitle: {
+            text: 'Density of Cities in the World by Latitude and Longitude<br> Data source: <a href="https://github.com/lutangar/cities.json">https://github.com/lutangar/cities.json</a>',
+            y: 34,
+            align: 'left'
+        },
 
-            mapNavigation: {
-                enabled: true,
-                buttonOptions: {
-                    verticalAlign: 'bottom'
-                }
-            },
+        legend: {
+            enabled: true
+        },
 
-            mapView: {
-                maxZoom: 30,
-                projection: {
-                    name: 'Orthographic',
-                    rotation: [-20, -20]
-                }
-            },
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
 
-            colorAxis: {
-                dataClasses: [{
-                    to: 100,
-                    color: 'rgba(51,132,51,0.3)'
-                }, {
-                    from: 100,
-                    to: 1e3,
-                    color: 'rgba(173,255,91,0.3)'
-                }, {
-                    from: 1e3,
-                    to: 5e3,
-                    color: 'rgba(255,173,51,0.3)'
-                }, {
-                    from: 5e3,
-                    color: 'rgba(214,51,51,0.3)'
-                }]
-            },
+        mapView: {
+            maxZoom: 30,
+            projection: {
+                name: 'Orthographic',
+                rotation: [-20, -20]
+            }
+        },
 
-            series: [{
-                name: 'Othographic projection',
-                states: {
-                    inactive: {
-                        enabled: false
-                    }
-                },
-                accessibility: {
-                    exposeAsGroupOnly: true
-                }
+        colorAxis: {
+            dataClasses: [{
+                to: 100,
+                color: 'rgba(51,132,51,0.3)'
             }, {
-                name: 'GeoHeatMap',
-                type: 'geoheatmap',
-                borderWidth: 1,
-                colsize: 10,
-                rowsize: 10,
-                data: data
+                from: 100,
+                to: 1e3,
+                color: 'rgba(173,255,91,0.3)'
+            }, {
+                from: 1e3,
+                to: 5e3,
+                color: 'rgba(255,173,51,0.3)'
+            }, {
+                from: 5e3,
+                color: 'rgba(214,51,51,0.3)'
             }]
-        });
+        },
+
+        series: [{
+            name: 'Othographic projection',
+            states: {
+                inactive: {
+                    enabled: false
+                }
+            },
+            accessibility: {
+                exposeAsGroupOnly: true
+            }
+        }, {
+            name: 'GeoHeatMap',
+            type: 'geoheatmap',
+            borderWidth: 1,
+            colsize: 10,
+            rowsize: 10,
+            data: data
+        }]
     });
 })();
