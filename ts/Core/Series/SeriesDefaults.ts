@@ -710,6 +710,11 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * shadow can be an object configuration containing `color`, `offsetX`,
      * `offsetY`, `opacity` and `width`.
      *
+     * Note that in some cases, like stacked columns or other dense layouts, the
+     * series may cast shadows on each other. In that case, the
+     * `chart.seriesGroupShadow` allows applying a common drop shadow to the
+     * whole series group.
+     *
      * @sample {highcharts} highcharts/plotoptions/series-shadow/
      *         Shadow enabled
      *
