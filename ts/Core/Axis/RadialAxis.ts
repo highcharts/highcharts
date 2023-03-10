@@ -214,6 +214,7 @@ namespace RadialAxis {
     const defaultRadialGaugeOptions: DeepPartial<Options> = {
         labels: {
             align: 'center',
+            distance: -25,
             x: 0,
             y: void 0 // auto
         },

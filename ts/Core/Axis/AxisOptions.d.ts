@@ -109,7 +109,7 @@ export interface AxisLabelOptions {
     step: number;
     style: CSSObject;
     useHTML: boolean;
-    x: number;
+    x?: number;
     y?: number;
     zIndex: number;
 }
