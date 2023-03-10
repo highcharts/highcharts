@@ -1450,17 +1450,13 @@ class DataTable implements DataEvent.Emitter {
             modified: table.modified
         });
 
+        table.modified = table;
         table.modifier = modifier;
 
         if (modifier) {
             promise = modifier.modify(table);
         } else {
-            promise = Promise
-                .resolve(table)
-                .then((table): this => {
-                    table.modified = table;
-                    return table;
-                });
+            promise = Promise.resolve(table);
         }
 
         return promise
