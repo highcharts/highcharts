@@ -1052,7 +1052,7 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: Palette.neutralColor60,
+                color: Palette.neutralColor80,
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
@@ -2119,10 +2119,6 @@ namespace AxisDefaults {
          * In styled mode, the line stroke is given in the
          * `.highcharts-axis-line` or `.highcharts-xaxis-line` class.
          *
-         * @productdesc {highmaps}
-         * In Highmaps, the axis line is hidden by default, because the axis is
-         * not visible by default.
-         *
          * @sample {highcharts} highcharts/yaxis/linecolor/
          *         A red line on Y axis
          * @sample {highcharts|highstock} highcharts/css/axis/
@@ -2131,9 +2127,8 @@ namespace AxisDefaults {
          *         A red line on X axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #ccd6eb
          */
-        lineColor: Palette.highlightColor20,
+        lineColor: Palette.neutralColor80,
 
         /**
          * The width of the line marking the axis itself.
@@ -2232,9 +2227,8 @@ namespace AxisDefaults {
          *         Formatted ticks on X axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #ccd6eb
          */
-        tickColor: Palette.highlightColor20
+        tickColor: Palette.neutralColor80
 
         // tickWidth: 1
     };
@@ -2563,15 +2557,6 @@ namespace AxisDefaults {
              */
             x: -8
         },
-
-        /**
-         * @productdesc {highmaps}
-         * In Highmaps, the axis line is hidden by default, because the axis is
-         * not visible by default.
-         *
-         * @type      {Highcharts.ColorType}
-         * @apioption yAxis.lineColor
-         */
 
         /**
          * @sample {highcharts} highcharts/yaxis/max-200/

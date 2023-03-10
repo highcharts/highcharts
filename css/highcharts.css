@@ -32,10 +32,10 @@
     /* Strong text. */
     --highcharts-neutral-color-100: #000000;
 
-    /* Main text and some strokes. */
+    /* Main text, axis labels and some strokes. */
     --highcharts-neutral-color-80: #333333;
 
-    /* Axis labels, axis title, connector fallback. */
+    /* Axis title, connector fallback. */
     --highcharts-neutral-color-60: #666666;
 
     /* Credits text, export menu stroke. */
@@ -210,7 +210,7 @@
 /* Axes */
 .highcharts-axis-line {
     fill: none;
-    stroke: var(--highcharts-highlight-color-20);
+    stroke: var(--highcharts-neutral-color-80);
 }
 
 .highcharts-yaxis .highcharts-axis-line {
@@ -222,7 +222,7 @@
 }
 
 .highcharts-axis-labels {
-    fill: var(--highcharts-neutral-color-60);
+    fill: var(--highcharts-neutral-color-80);
     cursor: default;
     font-size: 0.9em;
 }
@@ -237,7 +237,7 @@
 }
 
 .highcharts-tick {
-    stroke: var(--highcharts-highlight-color-20);
+    stroke: var(--highcharts-neutral-color-80);
 }
 
 .highcharts-yaxis .highcharts-tick {
