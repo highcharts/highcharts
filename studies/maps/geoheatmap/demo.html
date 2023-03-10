@@ -1,4 +1,25 @@
-(async () => {
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/maps/modules/geoheatmap.js"></script>
+<script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
+
+<div id="container" style="height: 600px; min-width: 310px; max-width: 1200px; margin: 0 auto;"></div>
+
+<!-- <figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        This chart shows the Leaf Area Index In February 2017, plotted
+        by their latitude and longitude. It uses the Orthographic projection and
+        <code>geoheatmap</code> series type, which creates a grid of tiles that
+        correspond to the latitude and longitude of each data point.
+        The value of the geoheatmap is represented by the color of each tile.
+    </p>
+</figure> -->
+
+<script>
+
+    (async () => {
 
     // Load the base world map
     const topology = await fetch(
@@ -173,3 +194,4 @@
     Highcharts.addEvent(chart, 'redraw', renderSea);
 
 })();
+</script>
