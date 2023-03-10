@@ -357,6 +357,7 @@ namespace DataCursor {
         columns?: Array<string>;
         firstRow: number;
         lastRow: number;
+        ranges: Array<[number, number]>;
         state: State;
     }
 
@@ -493,47 +494,73 @@ namespace DataCursor {
      * @private
      */
     export function toPositions(
-        cursor: Type
+        cursors: (Type|Array<Type>)
     ): Array<Position> {
+        const positions: Array<Position> = [];
 
-        if (cursor.type === 'position') {
-            return [cursor];
+        if (!(cursors instanceof Array)) {
+            cursors = [cursors];
         }
 
-        const columns = (cursor.columns || []);
-        const positions: Array<Position> = [];
-        const state = cursor.state;
-
         for (
-            let row = cursor.firstRow,
-                rowEnd = cursor.lastRow;
-            row < rowEnd;
-            ++row
+            let cursorIndex = 0,
+                cursorEnd = cursors.length,
+                cursor: Type;
+            cursorIndex < cursorEnd;
+            ++cursorIndex
         ) {
+            cursor = cursors[cursorIndex];
 
-            if (!columns.length) {
-                positions.push({
-                    type: 'position',
-                    row,
-                    state
-                });
+            if (cursor.type === 'position') {
+                positions.push(cursor);
                 continue;
             }
 
+            const columns = (cursor.columns || []);
+            const columnsLength = columns.length;
+            const ranges = cursor.ranges;
+            const state = cursor.state;
+
             for (
-                let column = 0,
-                    columnEnd = columns.length;
-                column < columnEnd;
-                ++column
+                let rangeIndex = 0,
+                    rangeEnd = ranges.length;
+                rangeIndex < rangeEnd;
+                ++rangeIndex
             ) {
-                positions.push({
-                    type: 'position',
-                    column: columns[column],
-                    row,
-                    state
-                });
+                for (
+                    let row = ranges[rangeIndex][0],
+                        rowEnd = ranges[rangeIndex][1];
+                    row < rowEnd;
+                    ++row
+                ) {
+
+                    if (!columnsLength) {
+                        positions.push({
+                            type: 'position',
+                            row,
+                            state
+                        });
+                        continue;
+                    }
+
+                    for (
+                        let columnIndex = 0,
+                            columnEnd = columnsLength;
+                        columnIndex < columnEnd;
+                        ++columnIndex
+                    ) {
+                        positions.push({
+                            type: 'position',
+                            column: columns[columnIndex],
+                            row,
+                            state
+                        });
+                    }
+                }
             }
         }
+
+        // @todo sort positions
 
         return positions;
     }
@@ -542,34 +569,44 @@ namespace DataCursor {
      * @private
      */
     export function toRange(
-        cursor: Type,
+        cursors: (Type|Array<Type>),
         defaultRange?: Range
     ): Range {
+        const columns: Array<string> = [];
+        const positions = toPositions(cursors);
 
-        if (cursor.type === 'range') {
-            return cursor;
+        for (
+            let cursorIndex = 0,
+                cursorEnd = positions.length,
+                cursor: Position;
+            cursorIndex < cursorEnd;
+            ++cursorIndex
+        ) {
+            if (cursor.type === 'range') {
+                return cursor;
+            }
+
+            const range: Range = {
+                type: 'range',
+                firstRow: (
+                    cursor.row ??
+                    (defaultRange && defaultRange.firstRow) ??
+                    0
+                ),
+                lastRow: (
+                    cursor.row ??
+                    (defaultRange && defaultRange.lastRow) ??
+                    Number.MAX_VALUE
+                ),
+                state: cursor.state
+            };
+
+            if (typeof cursor.column !== 'undefined') {
+                range.columns = [cursor.column];
+            }
+
+            return range;
         }
-
-        const range: Range = {
-            type: 'range',
-            firstRow: (
-                cursor.row ??
-                (defaultRange && defaultRange.firstRow) ??
-                0
-            ),
-            lastRow: (
-                cursor.row ??
-                (defaultRange && defaultRange.lastRow) ??
-                Number.MAX_VALUE
-            ),
-            state: cursor.state
-        };
-
-        if (typeof cursor.column !== 'undefined') {
-            range.columns = [cursor.column];
-        }
-
-        return range;
     }
 
 }
