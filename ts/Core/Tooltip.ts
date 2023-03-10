@@ -496,8 +496,7 @@ class Tooltip {
                     .attr({
                         padding: options.padding,
                         r: options.borderRadius
-                    })
-                    .shadow(options.shadow);
+                    });
 
                 if (!styledMode) {
                     this.label
@@ -510,7 +509,6 @@ class Tooltip {
                         .css({ pointerEvents });
                 }
             }
-
             // Split tooltip use updateTooltipContainer to position the tooltip
             // container.
             if (tooltip.outside && !tooltip.split) {
@@ -532,6 +530,7 @@ class Tooltip {
 
             this.label
                 .attr({ zIndex: 8 })
+                .shadow(options.shadow)
                 .add();
         }
         return this.label;
@@ -1324,7 +1323,6 @@ class Tooltip {
             });
             if (!styledMode) {
                 tt.css(options.style)
-                    .shadow(options.shadow)
                     .attr({
                         stroke: (
                             options.borderColor ||
