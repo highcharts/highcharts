@@ -325,13 +325,15 @@ QUnit.test('loss', function (assert) {
 });
 
 QUnit.test('processVennData', function (assert) {
-    var vennPrototype = Highcharts.Series.types.venn.prototype,
+    var vennSeries = Highcharts.Series.types.venn,
+        vennPrototype = vennSeries.prototype,
         processVennData = vennPrototype.utils.processVennData,
+        defaultSplitter = vennSeries.splitter,
         data;
 
     // data is undefined.
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [],
         'should return empty array when data is not an array.'
     );
@@ -339,7 +341,7 @@ QUnit.test('processVennData', function (assert) {
     // values in data should be objects.
     data = [2];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [],
         'should ignore values in data that are not of type object.'
     );
@@ -360,7 +362,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['C'],
@@ -386,7 +388,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['B'],
@@ -424,7 +426,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['A'],
@@ -471,7 +473,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['A'],
@@ -513,7 +515,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['A'],
@@ -531,7 +533,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [],
         'should remove relations that has invalid values in sets.'
     );
