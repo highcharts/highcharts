@@ -25,7 +25,7 @@ import type ChartZoomingOptions from '../../Core/Chart/ChartOptions';
 
 declare module '../../Core/Chart/ChartOptions'{
     interface ChartZoomingOptions {
-        mouseWheelZoom?: MouseWheelZoomOptions;
+        mouseWheel?: MouseWheelZoomOptions;
     }
 }
 
