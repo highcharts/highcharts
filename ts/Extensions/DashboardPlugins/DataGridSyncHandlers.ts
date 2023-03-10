@@ -52,10 +52,10 @@ const configs: {
             'tooltipEmitter',
             function (this: ComponentTypes): Function | void {
                 if (this instanceof (DataGridComponent || window.DataGridComponent)) {
-                    const { dataGrid, store, board } = this;
+                    const { dataGrid, connector: store, board } = this;
 
                     if (dataGrid && store && board) {
-                        const { cursor } = board;
+                        const { dataCursor: cursor } = board;
 
                         const callbacks = [
                             // TODO: should this event return cell data instead of row data?
@@ -91,9 +91,9 @@ const configs: {
             void 0, // 'afterHoverPointChange',
             function (this: DataGridComponent): void {
                 const { board } = this;
-                const table = this.store && this.store.table;
+                const table = this.connector && this.connector.table;
                 if (board && table) {
-                    const { cursor } = board;
+                    const { dataCursor: cursor } = board;
                     if (cursor) {
                         cursor.addListener(table.id, 'point.mouseOver', (e): void => {
                             const cursor = e.cursor;

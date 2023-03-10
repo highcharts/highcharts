@@ -31,6 +31,7 @@ import ComponentTypes from '../../Dashboards/Components/ComponentType';
 import ComponentGroup from '../../Dashboards/Components/ComponentGroup.js';
 import HighchartsComponent from './HighchartsComponent.js';
 import U from '../../Core/Utilities.js';
+import Axis from '../../Core/Axis/Axis';
 const { addEvent } = U;
 
 
@@ -241,67 +242,31 @@ const configs: {
                 if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const {
                         chart,
-                        connector: store,
-                        id,
-                        options: {
-                            tableAxisMap
-                        }
+                        board,
+                        connector: store
                     } = this;
 
-                    const getX = (): string | undefined => {
-                        if (tableAxisMap) {
-                            const keys = Object.keys(tableAxisMap);
+                    if (store && chart && board) {
+                        this.on('afterRender', (): void => {
+                            const { dataCursor: cursor } = board;
+                            chart.axes.forEach((axis): void => {
+                                axis.update({
+                                    events: {
+                                        afterSetExtremes: (e): void => {
+                                            cursor.emitCursor(store.table, {
+                                                type: 'range',
+                                                state: `${(e.target as any).coll}.extremes`,
+                                                firstRow: e.min || e.dataMin,
+                                                lastRow: e.max || e.dataMax
+                                            },
+                                            e as any
+                                            );
+                                        }
+                                    }
 
-                            let i = 0;
-                            while (i < keys.length) {
-                                const key = keys[i];
-                                if (tableAxisMap[key] === 'x') {
-                                    return key;
-                                }
-
-                                i++;
-                            }
-                        }
-                    };
-
-                    if (store && chart) {
-                        return addEvent(chart, 'selection', (e): void => {
-                            const groups = ComponentGroup.getGroupsFromComponent(id);
-                            if ((e as any).resetSelection) {
-                                const selection: SharedState.SelectionObjectType = {};
-                                chart.axes.forEach((axis): void => {
-                                    selection[axis.coll] = {
-                                        columnName: axis.coll === 'xAxis' ? getX() : void 0
-                                    };
-                                });
-
-                                groups.forEach((group): void => {
-                                    group.getSharedState().setSelection(selection, true, {
-                                        sender: id
-                                    });
-                                });
-
-                                if (chart.resetZoomButton) {
-                                    chart.resetZoomButton = chart.resetZoomButton.destroy();
-                                }
-                                return;
-                            }
-
-                            // Smooth it out a bit
-                            requestAnimationFrame((): void => {
-                                const minMaxes = getAxisMinMaxMap(chart);
-                                minMaxes.forEach((minMax): void => {
-                                    const { coll, extremes } = minMax;
-                                    groups.forEach((group): void => {
-                                        group.getSharedState().setSelection(
-                                            { [coll]: { ...extremes, columnName: coll === 'xAxis' ? getX() : void 0 } },
-                                            false,
-                                            {
-                                                sender: id
-                                            }
-                                        );
-                                    });
-                                });
+                                },
+                                false
+                                );
                             });
                         });
                     }
@@ -359,43 +324,39 @@ const configs: {
                     }
                 }
             },
-        selectionHandler: [
-            'selectionHandler',
-            'afterSelectionChange',
-            function (this: HighchartsComponent, e: SharedState.SelectionEvent): void {
-                const { chart } = this;
-                if (chart) {
-                    // Reset the zoom if the source is the reset button
-                    if (e.reset) {
-                        chart.zoom({ resetSelection: true } as any); // Not allowed by TS, but works
-                        return;
-                    }
+        selectionHandler:
+            function (this: HighchartsComponent): void {
+                const { chart, board, connector: store } = this;
+                if (chart && board && store && store.table) {
+                    const { dataCursor: cursor } = board;
+                    // TODO: zAxis?
+                    // TODO: yAxis neeeds some restrictions
+                    ['xAxis', 'yAxis'].forEach((dimension): void => {
+                        // TODO: handle zoom button?
+                        cursor.addListener(store.table.id, `${dimension}.extremes`, (e): void => {
+                            const { cursor, event } = e;
 
-                    const { selection: selectionAxes } = e;
-                    if (selectionAxes) {
-                        Object.keys(selectionAxes).forEach((axisName: string): void => {
-                            const selectionAxis = selectionAxes[axisName];
-                            if (selectionAxis) {
-                                const { min, max } = selectionAxis;
-                                chart.axes.forEach((axis): void => {
-                                    if (axis.coll === axisName && axis.zoomEnabled) {
-                                        if (typeof min === 'number' && typeof max === 'number') {
-                                            axis.zoom(min, max);
-
-                                            if (!chart.resetZoomButton) {
-                                                chart.showResetZoom();
-                                            }
-                                        }
-                                    }
-                                });
+                            if (cursor.type === 'range') {
+                                const { firstRow: min, lastRow: max } = cursor;
+                                const eventTarget = event && event.target as unknown as Axis;
+                                if (eventTarget) {
+                                    chart.axes
+                                        .filter((axis): boolean =>
+                                            axis !== eventTarget &&
+                                            axis.coll === eventTarget.coll
+                                        )
+                                        .forEach((axis): void => {
+                                            axis.setExtremes(
+                                                min,
+                                                max
+                                            );
+                                        });
+                                }
                             }
-
-                            chart.redraw();
                         });
-                    }
+                    });
                 }
             }
-        ]
     }
 };
 
