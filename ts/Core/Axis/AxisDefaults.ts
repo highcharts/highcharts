@@ -821,7 +821,7 @@ namespace AxisDefaults {
              * @default   undefined
              * @product   highcharts gantt
              */
-            distance: void 0,
+            distance: 8,
 
             /**
              * Enable or disable the axis labels.
@@ -2503,18 +2503,17 @@ namespace AxisDefaults {
          */
         labels: {
             /**
-             * Angular gauges and solid gauges only.
              * The label's pixel distance from the perimeter of the plot area.
              *
-             * Since v7.1.2: If it's a percentage string, it is interpreted the
-             * same as [series.radius](#plotOptions.gauge.radius), so label can be
+             * Since v7.1.2: On polar charts, if it's a percentage string, it is
+             * interpreted the same as
+             * [series.radius](#plotOptions.gauge.radius), so label can be
              * aligned under the gauge's shape.
              *
              * @sample {highcharts} highcharts/yaxis/labels-distance/
-             *         Labels centered under the arc
+             *         Polar chart, labels centered under the arc
              *
              * @type      {number|string}
-             * @default   -25
              * @product   highcharts
              * @apioption yAxis.labels.distance
              */
