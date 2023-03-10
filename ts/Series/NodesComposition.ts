@@ -133,7 +133,7 @@ namespace NodesComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -149,9 +149,7 @@ namespace NodesComposition {
         SeriesClass: T
     ): (T&typeof SeriesComposition) {
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
+        if (U.pushUnique(composedMembers, PointClass)) {
             const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.setNodeState = setNodeState;
@@ -159,9 +157,7 @@ namespace NodesComposition {
             pointProto.update = updateNode;
         }
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.destroy = destroy;
