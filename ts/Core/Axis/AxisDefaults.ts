@@ -831,8 +831,6 @@ namespace AxisDefaults {
              * @sample {highstock} stock/xaxis/labels-enabled/
              *         X axis labels disabled
              *
-             * @default {highcharts|highstock|gantt} true
-             * @default {highmaps} false
              */
             enabled: true,
 
