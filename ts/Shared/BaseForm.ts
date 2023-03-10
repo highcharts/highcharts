@@ -58,7 +58,7 @@ abstract class BaseForm {
 
     public container: HTMLElement;
     public closeButton: HTMLElement;
-    public formType?: string;
+    public type?: string;
     public iconsURL: string;
 
     /* *
@@ -94,19 +94,22 @@ abstract class BaseForm {
     /**
      * Create HTML element and attach click event to close popup.
      *
+     * @param {string} className
+     * Class name of the close button.
+     *
      * @return {HTMLElement}
      * Close button.
      */
-    private addCloseButton(): HTMLElement {
+    private addCloseButton(
+        className: string = 'highcharts-popup-close'
+    ): HTMLElement {
         const popup = this,
             iconsURL = this.iconsURL;
 
         // Create close popup button.
         const closeButton = createElement(
             'div',
-            {
-                className: 'highcharts-popup-close'
-            },
+            { className },
             void 0,
             this.container
         );
@@ -138,13 +141,17 @@ abstract class BaseForm {
 
     /**
      * Reset content of the current popup and show.
+     *
+     * @param {string} toolbarClass
+     * Class name of the toolbar which styles should be reset.
      */
-    public showPopup(): void {
+    public showPopup(
+        toolbarClass: string = 'highcharts-annotation-toolbar'
+    ): void {
         const popupDiv = this.container,
-            toolbarClass = 'highcharts-annotation-toolbar',
             popupCloseButton = this.closeButton;
 
-        this.formType = void 0;
+        this.type = void 0;
 
         // Reset content.
         popupDiv.innerHTML = AST.emptyHTML;

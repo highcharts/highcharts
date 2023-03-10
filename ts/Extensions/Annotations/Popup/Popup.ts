@@ -189,7 +189,7 @@ class Popup extends BaseForm {
      * */
 
     public chart?: Chart;
-    public formType?: string;
+    public type?: string;
     public lang: Record<string, string>;
 
     /* *
@@ -369,7 +369,7 @@ class Popup extends BaseForm {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }
 
-        this.formType = type;
+        this.type = type;
 
         // Explicit height is needed to make inner elements scrollable
         this.container.style.height = this.container.offsetHeight + 'px';
