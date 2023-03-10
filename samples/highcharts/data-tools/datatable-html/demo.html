@@ -6,14 +6,23 @@
     <fieldset>
         <legend>Add Column</legend>
         <label for="add-column-input">Name:</label>
-        <input id="add-column-input" type="text"></input>
-        <button id="add-column-button" type="button">Add Column</label>
+        <input type="text" id="add-column-input" value="name" />
+        <button type="button" id="add-column-button">Add Column</label>
     </fieldset>
     <fieldset>
         <legend>Add Row</legend>
         <label for="add-row-input">Values:</label>
-        <input id="add-row-input" type="text" />
-        <button id="add-row-button" type="button">Add Row</label>
+        <input type="text" id="add-row-input" value="343, speed of sound" />
+        <button type="button" id="add-row-button">Add Row</label>
+    </fieldset>
+    <fieldset>
+        <legend>Modifier</legend>
+        <label for="set-modifier">Type:</label>
+        <select type="radio" id="set-modifier" name="modifier">
+            <option selected>off</option>
+            <option>Invert</option>
+            <option>Sort</option>
+        </select>
     </fieldset>
 </form>
 

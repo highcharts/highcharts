@@ -1,7 +1,6 @@
 const container = document.getElementById('container');
 const escapeStringForHTML = Highcharts.A11yHTMLUtilities.escapeStringForHTML;
-const table = new Highcharts.DataTable();
-
+const table = new Highcharts.DataTable({ y: [7, 42] });
 
 // Render Simple HTML Table
 
@@ -29,6 +28,7 @@ function renderTable(container, table) {
 
     container.innerHTML = html.join('\n');
 }
+renderTable(container, table);
 
 
 // Add Column
@@ -65,3 +65,25 @@ function addRow() {
 
 addRowButton.addEventListener('click', addRow);
 addRowInput.addEventListener('change', addRow);
+
+
+// Modifiers
+
+const setModifierSelect = document.getElementById('set-modifier');
+
+const DataModifierTypes = Highcharts.DataModifier.types;
+
+async function setModifier() {
+    const type = setModifierSelect.value;
+
+    if (type !== 'off') {
+        await table.setModifier(new DataModifierTypes[type]({}));
+    } else {
+        await table.setModifier();
+    }
+
+    // without modifier table.modified = table
+    renderTable(container, table.modified);
+}
+
+setModifierSelect.addEventListener('change', setModifier);

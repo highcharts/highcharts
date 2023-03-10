@@ -8,6 +8,11 @@ fieldset {
     text-align: center;
 }
 
+fieldset:last-child {
+    flex-grow: 0;
+    text-align: left;
+}
+
 input[type="text"] {
     vertical-align: top;
     width: 80%;
