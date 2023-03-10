@@ -318,8 +318,8 @@ QUnit.test('Series.update.', function (assert) {
         controller = new TestController(chart);
     assert.strictEqual(
         series.color,
-        '#7cb5ec',
-        'series.color should equal #7cb5ec before update.'
+        Highcharts.getOptions().colors[0],
+        'series.color should equal default `colors[0]` before update.'
     );
     series.update({
         color: '#ff0000'
