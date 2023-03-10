@@ -638,7 +638,10 @@ class WaterfallSeries extends ColumnSeries {
         this: WaterfallSeries
     ): SVGPath {
 
-        let data = this.data,
+        let data = this.data.filter((d): Boolean =>
+                // Skip points where Y is null (#18636)
+                d.y !== null
+            ),
             yAxis = this.yAxis,
             length = data.length,
             graphNormalizer =
