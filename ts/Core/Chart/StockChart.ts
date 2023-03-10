@@ -326,6 +326,7 @@ function getDefaultAxisOptions(
     if (type === 'yAxis') {
         return {
             labels: {
+                distance: 0,
                 y: -2
             },
             opposite: pick(options.opposite, true),
