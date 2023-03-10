@@ -46,6 +46,8 @@ import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
 import Axis from '../../Core/Axis/Axis';
+import ColorType from '../../Core/Color/ColorType';
+import { GradientColorStop } from '../../Core/Color/GradientColor';
 const {
     extend,
     fireEvent,
@@ -461,80 +463,102 @@ class HeatmapSeries extends ScatterSeries {
 
             if (!image) {
                 const
-                    ctx = heatmap.getContext(),
-                    canvas = heatmap.canvas,
                     colorAxis = (
                         chart.colorAxis &&
                         chart.colorAxis[0]
-                    );
+                    ),
+                    hasAlpha = colorAxis && colorAxis.stops.reduce(
+                        (found: boolean, stop): boolean => (
+                            (
+                                found === false &&
+                                stop.color &&
+                                stop.color.rgba[3] < 1.0
+                            ) ||
+                            found
+                        ),
+                        false
+                    ),
+                    ctx = heatmap.getContext({ alpha: hasAlpha });
 
-                if (canvas && ctx && colorAxis) {
+                if (ctx && colorAxis) {
                     const
-                        [colsize, rowsize] = inverted ? [
+                        { points, boost: seriesBoost, xAxis, yAxis } = heatmap,
+                        canvas = ctx.canvas,
+                        [canvasW, canvasH] = [
+                            canvas.width - 1,
+                            canvas.height - 1
+                        ],
+                        pointsLen = points.length,
+                        [
+                            { dataMin: xMin, dataMax: xMax },
+                            { dataMin: yMin, dataMax: yMax }
+                        ] = [xAxis, yAxis].map(
+                            (dim): {
+                                dataMin: number,
+                                dataMax: number
+                            } => (
+                                dim.getExtremes()
+                            )
+                        ),
+                        [colsize, rowsize, yIncr] = inverted ? [
                             heatmapOptions.rowsize || 1,
-                            heatmapOptions.colsize || 1
+                            heatmapOptions.colsize || 1,
+                            (y: number): number => y
                         ] : [
                             heatmapOptions.colsize || 1,
-                            heatmapOptions.rowsize || 1
+                            heatmapOptions.rowsize || 1,
+                            (y: number): number => yMax - y
                         ],
-                        xToRange = { toStart: 0, toEnd: canvas.width - 1 },
-                        yToRange = { toStart: 0, toEnd: canvas.height - 1 },
-                        xFromRange = heatmap.xAxis.getExtremes(),
-                        yFromRange = heatmap.yAxis.getExtremes(),
-                        scaleToRange = function (
+                        toPlotScale = function (
+                            min: number,
+                            max: number,
                             value: number,
-                            {
-                                dataMin: fromStart,
-                                dataMax: fromEnd
-                            }: Axis.ExtremesObject,
-                            { toStart, toEnd }: {
-                                toStart: number,
-                                toEnd: number
-                            }
+                            plotMax: number,
+                            plotMin = 0
                         ): number {
-
-                            // Precaution in case value is 0
-                            // or less than start of old range
                             const
-                                boundingFactor = Math.min(
-                                    fromEnd,
-                                    Math.max(fromStart, value)
-                                ) - fromStart,
-
                                 scale = (
-                                    (toEnd - toStart) /
-                                    (fromEnd - fromStart)
-                                ) + toStart;
-
-                            return ~~(boundingFactor * scale);
+                                    (plotMax - plotMin) /
+                                    (max - min)
+                                ) + plotMin;
+                            return ~~((value - min) * scale);
                         };
 
-                    if (!heatmap.boost && !chart.boost) {
+                    if (!seriesBoost && !chart.boost) {
                         heatmap.buildKDTree();
                         heatmap.directTouch = false;
                     }
 
-                    heatmap.points.forEach((p: HeatmapPoint): void => {
+                    let
+                        i = 0,
+                        p = points[0];
+
+                    for (
+                        i;
+                        i < pointsLen;
+                        i++, p = points[i]
+                    ) {
                         ctx.fillStyle = colorAxis.toColor(
                             p.value || 0, p
                         ) as string;
+
                         ctx.fillRect(
-                            scaleToRange(
+                            toPlotScale(
+                                xMin,
+                                xMax,
                                 p.x,
-                                xFromRange,
-                                xToRange
+                                canvasW
                             ),
-                            scaleToRange(
-                                inverted ?
-                                    p.y :
-                                    (yFromRange.dataMax as number) - p.y,
-                                yFromRange,
-                                yToRange
+                            toPlotScale(
+                                yMin,
+                                yMax,
+                                yIncr(p.y),
+                                canvasH
                             ),
                             colsize,
                             rowsize
                         );
-                    });
+                    }
 
                     heatmap.image = chart.renderer.image(
                         canvas.toDataURL(),
@@ -571,7 +595,9 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * @private
      */
-    public getContext(): CanvasRenderingContext2D | undefined {
+    public getContext(
+        options?: CanvasRenderingContext2DSettings
+    ): CanvasRenderingContext2D | undefined {
         const series = this,
             { canvas, context } = series;
         if (canvas && context) {
@@ -589,7 +615,7 @@ class HeatmapSeries extends ScatterSeries {
                 (series.options.rowsize || 1)
             ) + 1;
 
-            series.context = series.canvas.getContext('2d') || void 0;
+            series.context = series.canvas.getContext('2d', options) || void 0;
             return series.context;
         }
 
