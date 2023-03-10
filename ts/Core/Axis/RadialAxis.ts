@@ -194,7 +194,6 @@ namespace RadialAxis {
         gridLineWidth: 1, // spokes
         labels: {
             align: void 0, // auto
-            distance: 15,
             x: 0,
             y: void 0, // auto
             style: {

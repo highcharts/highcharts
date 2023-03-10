@@ -34,7 +34,6 @@ import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
 import Axis from './Axis.js';
-import AxisDefaults from './AxisDefaults.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 const { dateFormats } = H;
@@ -963,7 +962,6 @@ function onAfterTickSize(
     this: Axis,
     e: { tickSize?: [number, number] }
 ): void {
-    const defaultLeftAxisOptions = AxisDefaults.defaultLeftAxisOptions;
     const {
         horiz,
         maxLabelDimensions,
@@ -972,8 +970,7 @@ function onAfterTickSize(
         }
     } = this;
     if (gridOptions.enabled && maxLabelDimensions) {
-        const labelPadding =
-            (defaultLeftAxisOptions.labels as any).distance * 2;
+        const labelPadding = this.options.labels.distance * 2;
         const distance = horiz ?
             (
                 gridOptions.cellHeight ||

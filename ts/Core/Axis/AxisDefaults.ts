@@ -828,7 +828,7 @@ namespace AxisDefaults {
              * @type      {number}
              * @product   highcharts gantt
              */
-            distance: 8,
+            distance: 15,
 
             /**
              * Enable or disable the axis labels.
@@ -3103,9 +3103,6 @@ namespace AxisDefaults {
 
     // This variable extends the defaultOptions for left axes.
     export const defaultLeftAxisOptions: DeepPartial<AxisOptions> = {
-        labels: {
-            distance: 15
-        },
         title: {
             rotation: 270
         }
@@ -3113,9 +3110,6 @@ namespace AxisDefaults {
 
     // This variable extends the defaultOptions for right axes.
     export const defaultRightAxisOptions: DeepPartial<AxisOptions> = {
-        labels: {
-            distance: 15
-        },
         title: {
             rotation: 90
         }

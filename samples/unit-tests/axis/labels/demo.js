@@ -2155,12 +2155,12 @@ QUnit.test(
 
         assert.deepEqual(
             chart.xAxis[0].ticks[1].label.attr('y'),
-            // +3px because of a "bug" in default positioning
+            // -4px because of a "bug" in default positioning
             // If you read this comment and you are not sure if you can remove
             // this +3px, then yes, you can.
-            defaultY + 3,
-            `labels.y=0 for opposite xAxis should align label the same way as
-            labels.y=undefined (#12206)`
+            defaultY - 4,
+            'labels.y=0 for opposite xAxis should align label the same way ' +
+            'as labels.y=undefined (#12206)'
         );
     }
 );
