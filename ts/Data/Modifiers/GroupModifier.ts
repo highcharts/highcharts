@@ -224,10 +224,10 @@ namespace GroupModifier {
  *
  * */
 
-DataModifier.addModifier(GroupModifier);
+DataModifier.registerType(GroupModifier);
 
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Group: typeof GroupModifier;
     }
 }

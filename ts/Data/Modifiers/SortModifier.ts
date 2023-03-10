@@ -406,10 +406,10 @@ namespace SortModifier {
  *
  * */
 
-DataModifier.addModifier(SortModifier);
+DataModifier.registerType(SortModifier);
 
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Sort: typeof SortModifier;
     }
 }
