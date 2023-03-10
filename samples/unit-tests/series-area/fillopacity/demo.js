@@ -17,7 +17,7 @@ QUnit.test('Fill opacity zero (#4888)', function (assert) {
 
     assert.strictEqual(
         chart.series[0].area.element.getAttribute('fill').replace(/ /g, ''),
-        'rgba(76,175,254,0)',
+        'rgba(44,175,254,0)',
         'Fill opacity should be set'
     );
 });

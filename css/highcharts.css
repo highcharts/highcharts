@@ -9,7 +9,7 @@
 :root,
 .highcharts-light {
     /* Colors for data series and points */
-    --highcharts-color-0: #4caffe;
+    --highcharts-color-0: #2caffe;
     --highcharts-color-1: #544fc5;
     --highcharts-color-2: #00e272;
     --highcharts-color-3: #fe6a35;

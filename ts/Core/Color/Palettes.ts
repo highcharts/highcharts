@@ -14,11 +14,11 @@ export const enum Palette {
      */
     neutralColor100 = '#000000',
     /**
-     * Main text and some strokes.
+     * Main text, axis labels and some strokes.
      */
     neutralColor80 = '#333333',
     /**
-     * Axis labels, axis title, connector fallback.
+     * Axis title, connector fallback.
      */
     neutralColor60 = '#666666',
     /**
@@ -79,7 +79,7 @@ const SeriesPalettes = {
      * Colors for data series and points
      */
     colors: [
-        '#4caffe',
+        '#2caffe',
         '#544fc5',
         '#00e272',
         '#fe6a35',
