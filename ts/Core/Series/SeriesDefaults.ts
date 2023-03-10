@@ -1177,7 +1177,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  */
                 animation: {
                     /** @internal */
-                    duration: 50
+                    duration: 150
                 },
 
                 /**
@@ -2138,7 +2138,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @internal
                  */
-                duration: 50
+                duration: 150
             },
 
             /**
@@ -2291,7 +2291,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              */
             animation: {
                 /** @internal */
-                duration: 50
+                duration: 150
             },
             /**
              * Opacity of series elements (dataLabels, line, area).

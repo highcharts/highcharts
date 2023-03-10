@@ -610,7 +610,7 @@ class SVGRenderer implements SVGRendererLike {
                 offsetX: 1,
                 offsetY: 1,
                 opacity: 0.15,
-                width: 3
+                width: 5
             }, shadowOptions);
 
         if (!this.defs.element.querySelector(`#${id}`)) {

@@ -2238,7 +2238,7 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/tooltip/background-border/
          *         Background and border demo
          */
-        borderRadius: 3,
+        borderRadius: 5,
 
         /**
          * For series on datetime axes, the date format in the tooltip's
@@ -2462,9 +2462,7 @@ const defaultOptions: Options = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: color(Palette.neutralColor3)
-            // @todo: Disallow undefined as input for colors
-            .setOpacity(0.85).get() as any,
+        backgroundColor: Palette.backgroundColor,
 
         /**
          * The pixel width of the tooltip border.
@@ -2473,7 +2471,7 @@ const defaultOptions: Options = {
          * `.highcharts-tooltip-box` class.
          *
          * @sample {highcharts} highcharts/tooltip/bordercolor-default/
-         *         2px by default
+         *         2 pixels
          * @sample {highcharts} highcharts/tooltip/borderwidth/
          *         No border (shadow only)
          * @sample {highcharts} highcharts/css/tooltip-border-background/
@@ -2487,7 +2485,7 @@ const defaultOptions: Options = {
          * @sample {highmaps} highcharts/css/tooltip-border-background/
          *         Tooltip in styled mode
          */
-        borderWidth: 1,
+        borderWidth: 0,
 
         /**
          * Whether to apply a drop shadow to the tooltip.

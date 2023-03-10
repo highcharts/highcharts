@@ -2,6 +2,7 @@ Highcharts.chart('container', {
 
     tooltip: {
         // borderColor: null
+        borderWidth: 2
     },
 
     xAxis: {
