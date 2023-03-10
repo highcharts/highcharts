@@ -949,7 +949,7 @@ const ChartDefaults: ChartOptions = {
      *         Using a serif type font
      *
      * @type      {Highcharts.CSSObject}
-     * @default   {"fontFamily": "\"Lucida Grande\", \"Lucida Sans Unicode\", Verdana, Arial, Helvetica, sans-serif","fontSize":"12px"}
+     * @default   {"fontFamily": Helvetica, Arial, sans-serif","fontSize":"12px"}
      * @apioption chart.style
      */
 

@@ -477,8 +477,7 @@ class SVGRenderer implements SVGRendererLike {
     public getStyle(style: CSSObject): CSSObject {
         this.style = extend<CSSObject>({
 
-            fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
-                'Arial, Helvetica, sans-serif',
+            fontFamily: 'Helvetica, Arial, sans-serif',
             fontSize: '12px'
 
         }, style);

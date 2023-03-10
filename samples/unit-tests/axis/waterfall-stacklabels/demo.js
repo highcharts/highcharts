@@ -83,8 +83,8 @@ QUnit.test('#3165 - Stack labels in waterfall series', function (assert) {
         chart.container.querySelector('.highcharts-stack-labels text').getBBox()
             .y,
         0,
-        1.1,
-        'The y attribute is equal to 0.'
+        2,
+        'The y attribute should be close to 0'
     );
 
     assert.strictEqual(
