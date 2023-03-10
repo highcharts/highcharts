@@ -72,7 +72,7 @@ const fitToBox = function (
     // Fit zoomed window to view.
     // x and width
     if (inner.x + inner.width > outer.x + outer.width) {
-        if (inner.x > outer.x) {
+        if (inner.width > outer.width) {
             inner.width = outer.width;
             inner.x = outer.x;
         } else {
@@ -87,8 +87,8 @@ const fitToBox = function (
     }
 
     // y and height
-    if (inner.y + inner.width > outer.y + outer.height) {
-        if (inner.y > outer.y) {
+    if (inner.y + inner.height > outer.y + outer.height) {
+        if (inner.height > outer.height) {
             inner.height = outer.height;
             inner.y = outer.y;
         } else {
@@ -190,7 +190,7 @@ const zoomBy = function (
 function onAfterGetContainer(this: Chart): void {
     const chart = this,
         wheelZoomOptions =
-            optionsToObject(chart.options.chart.zooming.mouseWheelZoom);
+            optionsToObject(chart.options.chart.zooming.mouseWheel);
 
     if (wheelZoomOptions.enabled) {
 
@@ -266,20 +266,20 @@ export default MouseWheelZoomComposition;
  * Zooming with the mousewheel can be enabled by setting this option to `true`.
  * More detailed options can be assigned.
  *
- * @type      {boolean|*}
+ * @type      {boolean|object}
  * @since     next
  * @requires  modules/mouse-wheel-zoom
- * @apioption chart.zooming.mouseWheelZoom
+ * @apioption chart.zooming.mouseWheel
  */
 
 /**
  * Zooming with the mousewheel can be enabled by setting this option to `true`.
  *
  * @type      {boolean}
- * @default   {true}
+ * @default   true
  * @since     next
  * @requires  modules/mouse-wheel-zoom
- * @apioption chart.zooming.mouseWheelZoom.enabled
+ * @apioption chart.zooming.mouseWheel.enabled
  */
 
 /**
@@ -289,19 +289,22 @@ export default MouseWheelZoomComposition;
  * @default   1.1
  * @since     next
  * @requires  modules/mouse-wheel-zoom
- * @apioption chart.zooming.mouseWheelZoom.sensitivity
+ * @sample    {highcharts} highcharts/mouse-wheel-zoom/sensitivity
+ *            Change mousewheel zoom sensitivity
+ * @apioption chart.zooming.mouseWheel.sensitivity
  */
 
 /**
  * Decides in what dimensions the user can zoom scrolling the wheel.
  * Can be one of `x`, `y` or `xy`. If not specified here, it will inherit the
- * type from the parent `zooming` options.
+ * type from [chart.zooming.type](chart.zooming.type).
  *
  * @type      {string}
  * @default   x
+ * @validvalue ["x", "y", "xy"]
  * @since     next
  * @requires  modules/mouse-wheel-zoom
- * @apioption chart.zooming.mouseWheelZoom.type
+ * @apioption chart.zooming.mouseWheel.type
  */
 
 (''); // Keeps doclets above in JS file
