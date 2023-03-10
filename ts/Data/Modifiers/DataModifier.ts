@@ -312,6 +312,8 @@ abstract class DataModifier implements DataEvent.Emitter {
 /**
  * Additionally provided types for modifier events and options, and JSON
  * conversion.
+ *
+ * @private
  */
 namespace DataModifier {
 
@@ -413,6 +415,8 @@ namespace DataModifier {
      * `DataModifier.options` property and the `DataModifier.execute` method to
      * modify the table.
      *
+     * @private
+     *
      * @param {DataModifierType} DataModifierClass
      * Modifier class (aka class constructor) to register.
      *
@@ -440,7 +444,7 @@ namespace DataModifier {
     /**
      * Extracts the name from a given modifier class.
      *
-     * @internal
+     * @private
      *
      * @param {DataModifier} modifier
      * Modifier class to extract the name from.
