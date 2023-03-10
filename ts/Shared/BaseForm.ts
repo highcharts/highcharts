@@ -31,7 +31,7 @@ const {
  *
  * */
 
-abstract class BasePopup {
+abstract class BaseForm {
 
     /* *
      *
@@ -177,7 +177,7 @@ abstract class BasePopup {
  *
  * */
 
-interface BasePopup {
+interface BaseForm {
 }
 
 /* *
@@ -186,4 +186,4 @@ interface BasePopup {
  *
  * */
 
-export default BasePopup;
+export default BaseForm;

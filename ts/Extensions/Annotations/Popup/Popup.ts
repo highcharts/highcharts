@@ -23,7 +23,7 @@ import type AnnotationOptions from '../AnnotationOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
-import BasePopup from '../../BasePopup.js';
+import BaseForm from '../../../Shared/BaseForm.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
 import D from '../../../Core/Defaults.js';
@@ -146,7 +146,7 @@ function getFields(
  *
  * */
 
-class Popup extends BasePopup {
+class Popup extends BaseForm {
 
     /* *
      *
