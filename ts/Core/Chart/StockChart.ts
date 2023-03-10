@@ -326,7 +326,6 @@ function getDefaultAxisOptions(
     if (type === 'yAxis') {
         return {
             labels: {
-                distance: 0,
                 y: -2
             },
             opposite: pick(options.opposite, true),
@@ -413,21 +412,22 @@ addEvent(Series, 'setOptions', function (
     }
 });
 
-// Override the automatic label alignment so that the first Y axis' labels
-// are drawn on top of the grid line, and subsequent axes are drawn outside
+// Override the automatic label alignment so that the first Y axis' labels are
+// drawn on top of the grid line, and subsequent axes are drawn outside
 addEvent(Axis, 'autoLabelAlign', function (e: Event): void {
-    let chart = this.chart,
-        options = this.options,
+    const { chart, options } = this,
         panes = chart._labelPanes = chart._labelPanes || {},
-        key,
-        labelOptions = this.options.labels;
+        labelOptions = options.labels;
 
-    if (this.chart.options.isStock && this.coll === 'yAxis') {
-        key = options.top + ',' + options.height;
-        // do it only for the first Y axis of each pane
+    if (chart.options.isStock && this.coll === 'yAxis') {
+        const key = options.top + ',' + options.height;
+        // Do it only for the first Y axis of each pane
         if (!panes[key] && labelOptions.enabled) {
-            if (labelOptions.x === 15) { // default
-                labelOptions.x = 0;
+            if (
+                labelOptions.distance === 15 && // default
+                this.side === 1
+            ) {
+                labelOptions.distance = 0;
             }
             if (typeof labelOptions.align === 'undefined') {
                 labelOptions.align = 'right';
