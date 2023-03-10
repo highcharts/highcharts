@@ -548,6 +548,7 @@ class ColorAxis extends Axis implements AxisLike {
             legendItem = item.legendItem || {},
             padding = legend.padding,
             legendOptions = legend.options,
+            labelOptions = axis.options.labels,
             itemDistance = pick(legendOptions.itemDistance, 10),
             horiz = axis.horiz,
             width = pick(
@@ -586,7 +587,8 @@ class ColorAxis extends Axis implements AxisLike {
             (
                 horiz ?
                     itemDistance :
-                    (this.options.labels.x || 0) + this.maxLabelLength
+                    pick(labelOptions.x, labelOptions.distance) +
+                        this.maxLabelLength
             )
         );
         legendItem.labelHeight = height + padding + (horiz ? labelPadding : 0);
