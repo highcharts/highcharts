@@ -945,16 +945,19 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
-     * Additional CSS styles to apply inline to the container `div`. Note
-     * that since the default font styles are applied in the renderer, it
-     * is ignorant of the individual chart options and must be set globally.
-     * Also note that changing the font size in the `chart.style` options only
-     * applies to those elements that do not have a specific `fontSize` setting.
+     * Additional CSS styles to apply inline to the container `div` and the root
+     * SVG.
+     *
+     * Since v11, the root font size is 1rem by default, and all child element
+     * are given a relative `em` font size by default. This allows implementers
+     * to control all the chart's font sizes by only setting the root level.
      *
      * @see    In styled mode, general chart styles can be set with the
      *         `.highcharts-root` class.
      * @sample {highcharts} highcharts/chart/style-serif-font/
      *         Using a serif type font
+     * @sample {highcharts} highcharts/members/relative-font-sizes/
+     *         Relative font sizes
      * @sample {highcharts} highcharts/css/em/
      *         Styled mode with relative font sizes
      * @sample {highstock} stock/chart/style/
@@ -963,7 +966,7 @@ const ChartDefaults: ChartOptions = {
      *         Using a serif type font
      *
      * @type      {Highcharts.CSSObject}
-     * @default   {"fontFamily": Helvetica, Arial, sans-serif","fontSize":"12px"}
+     * @default   {"fontFamily": Helvetica, Arial, sans-serif","fontSize":"1rem"}
      * @apioption chart.style
      */
 

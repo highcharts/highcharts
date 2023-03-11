@@ -99,7 +99,7 @@ const MapNavigationDefaults: MapNavigationOptions = {
          */
         style: {
             /** @ignore */
-            fontSize: '15px',
+            fontSize: '0.9375em',
             /** @ignore */
             fontWeight: 'bold'
         },

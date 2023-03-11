@@ -1078,6 +1078,7 @@ class SVGElement implements SVGElementLike {
                 }
             });
         }
+
         if (hasNew) {
 
             // Merge the new styles with the old ones
@@ -1126,19 +1127,19 @@ class SVGElement implements SVGElementLike {
                 );
             }
             css(elem, stylesToApply);
+        }
 
-            if (this.added) {
+        if (this.added) {
 
-                // Rebuild text after added. Cache mechanisms in the buildText
-                // will prevent building if there are no significant changes.
-                if (this.element.nodeName === 'text') {
-                    this.renderer.buildText(this);
-                }
+            // Rebuild text after added. Cache mechanisms in the buildText will
+            // prevent building if there are no significant changes.
+            if (this.element.nodeName === 'text') {
+                this.renderer.buildText(this);
+            }
 
-                // Apply text outline after added
-                if (styles.textOutline) {
-                    this.applyTextOutline(styles.textOutline);
-                }
+            // Apply text outline after added
+            if (styles.textOutline) {
+                this.applyTextOutline(styles.textOutline);
             }
         }
 
@@ -1426,8 +1427,9 @@ class SVGElement implements SVGElementLike {
             // Properties that affect bounding box
             cacheKey += [
                 '',
-                rotation,
+                renderer.rootFontSize,
                 fontSize,
+                rotation,
                 wrapper.textWidth, // #7874, also useHTML
                 alignValue,
                 styles && styles.textOverflow, // #5968

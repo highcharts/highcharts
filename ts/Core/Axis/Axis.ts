@@ -2907,11 +2907,14 @@ class Axis {
      * @function Highcharts.Axis#labelMetrics
      */
     public labelMetrics(): FontMetricsObject {
-        const index = this.tickPositions && this.tickPositions[0] || 0;
+        const renderer = this.chart.renderer,
+            ticks = this.ticks,
+            tick = ticks[Object.keys(ticks)[0]] || {};
 
         return this.chart.renderer.fontMetrics(
-            this.options.labels.style.fontSize,
-            this.ticks[index] && this.ticks[index].label
+            tick.label ||
+            tick.movedLabel ||
+            renderer.box
         );
     }
 
@@ -2936,7 +2939,9 @@ class Axis {
                 tickInterval
             ),
             rotationOption = labelOptions.rotation,
-            labelMetrics = this.labelMetrics(),
+            // We don't know the actual rendered line height at this point, but
+            // it defaults to 0.75em
+            lineHeight = this.labelMetrics().h * 0.75,
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
@@ -2987,7 +2992,7 @@ class Axis {
                     ) { // #3891
 
                         step = getStep(
-                            Math.abs(labelMetrics.h / Math.sin(deg2rad * rot))
+                            Math.abs(lineHeight / Math.sin(deg2rad * rot))
                         );
 
                         score = step + Math.abs(rot / 360);
@@ -3002,7 +3007,7 @@ class Axis {
             }
 
         } else { // #4411
-            newTickInterval = getStep(labelMetrics.h);
+            newTickInterval = getStep(lineHeight);
         }
 
         this.autoRotation = autoRotation;
@@ -3670,7 +3675,7 @@ class Axis {
      * @return {Highcharts.PositionObject}
      * X and Y positions for the title.
      */
-    public getTitlePosition(): PositionObject {
+    public getTitlePosition(axisTitle: SVGElement): PositionObject {
         // compute anchor points for each of the title align options
         const horiz = this.horiz,
             axisLeft = this.left,
@@ -3682,11 +3687,7 @@ class Axis {
             offset = this.offset,
             xOption = axisTitleOptions.x,
             yOption = axisTitleOptions.y,
-            axisTitle = this.axisTitle,
-            fontMetrics = this.chart.renderer.fontMetrics(
-                axisTitleOptions.style.fontSize,
-                axisTitle
-            ),
+            fontMetrics = this.chart.renderer.fontMetrics(axisTitle),
             // The part of a multiline text that is below the baseline of the
             // first line. Subtract 1 to preserve pixel-perfectness from the
             // old behaviour (v5.0.12), where only one line was allowed.
@@ -3984,8 +3985,9 @@ class Axis {
         }
 
         if (axisTitle && showAxis) {
-            const titleXy = axis.getTitlePosition();
-            axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
+            axisTitle[axisTitle.isNew ? 'attr' : 'animate'](
+                axis.getTitlePosition(axisTitle)
+            );
             axisTitle.isNew = false;
         }
 

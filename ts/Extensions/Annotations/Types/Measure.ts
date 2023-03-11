@@ -995,7 +995,7 @@ Measure.prototype.defaultOptions = merge(
                  * @default {"color": "#666666", "fontSize": "11px"}
                  */
                 style: {
-                    fontSize: '11px',
+                    fontSize: '0.6875em',
                     color: '#666666'
                 },
                 /**

@@ -78,8 +78,8 @@ QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
             100
         )
         .css({
-            width: width + 'px',
-            color: '#003399'
+            fontSize: '12px',
+            width: width + 'px'
         })
         .add();
 
@@ -120,6 +120,7 @@ QUnit.test('Text word wrap with markup', function (assert) {
             40
         )
         .css({
+            fontSize: '12px',
             width: width + 'px'
         })
         .add();
@@ -679,7 +680,7 @@ QUnit.test('Text height', function (assert) {
         });
 
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
+            renderer.fontMetrics(label.element).f,
             parseInt(window.innerWidth / 50, 10),
             'Font size in vw'
         );
@@ -689,8 +690,8 @@ QUnit.test('Text height', function (assert) {
             fontSize: fontSize
         });
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
-            24,
+            renderer.fontMetrics(label.element).f,
+            32,
             'Font size in em'
         );
 
@@ -699,7 +700,7 @@ QUnit.test('Text height', function (assert) {
             fontSize: fontSize
         });
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
+            renderer.fontMetrics(label.element).f,
             32,
             'Font size in rem'
         );
@@ -709,9 +710,9 @@ QUnit.test('Text height', function (assert) {
             fontSize: fontSize
         });
         assert.strictEqual(
-            renderer.fontMetrics(fontSize, label.element).f,
-            24,
-            'Font size in %'
+            renderer.fontMetrics(label.element).f,
+            32,
+            'Font size in percent'
         );
 
         const textLabel = renderer.text('Firefox/IE clean', 10, 30).add();

@@ -23,7 +23,5 @@ const chart = Highcharts.chart('container', {
 document.getElementById('em').addEventListener('input', e =>  {
     chart.container.style.fontSize = e.target.value + 'em';
 
-    // Update layout based on new font and line sizes
-    chart.isDirtyLegend = true;
     chart.redraw(false);
 });

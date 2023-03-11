@@ -547,7 +547,9 @@ const rangeSelector: RangeSelectorOptions = {
         /** @ignore */
         color: Palette.highlightColor80,
         /** @ignore */
-        cursor: 'pointer'
+        cursor: 'pointer',
+        /** @ignore */
+        fontSize: '0.75em'
     },
 
     /**
@@ -563,7 +565,9 @@ const rangeSelector: RangeSelectorOptions = {
      */
     labelStyle: {
         /** @ignore */
-        color: Palette.neutralColor60
+        color: Palette.neutralColor60,
+        /** @ignore */
+        fontSize: '0.75em'
     }
 };
 

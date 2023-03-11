@@ -210,6 +210,7 @@ class SVGRenderer implements SVGRendererLike {
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
+    public rootFontSize: string|undefined;
     public style: CSSObject = void 0 as any;
     public styledMode?: boolean;
     public unSubPixelFix?: Function;
@@ -314,6 +315,7 @@ class SVGRenderer implements SVGRendererLike {
         renderer.cache = {}; // Cache for numerical bounding boxes
         renderer.cacheKeys = [];
         renderer.imgCount = 0;
+        renderer.rootFontSize = boxWrapper.getStyle('font-size');
 
         renderer.setSize(width, height, false);
 
@@ -478,7 +480,7 @@ class SVGRenderer implements SVGRendererLike {
         this.style = extend<CSSObject>({
 
             fontFamily: 'Helvetica, Arial, sans-serif',
-            fontSize: '12px'
+            fontSize: '1rem'
 
         }, style);
         return this.style;
@@ -755,6 +757,7 @@ class SVGRenderer implements SVGRendererLike {
         const normalStyle = merge({
             color: Palette.neutralColor80,
             cursor: 'pointer',
+            fontSize: '0.75em',
             fontWeight: 'normal'
         }, theme.style);
         delete theme.style;
@@ -1758,57 +1761,33 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @function Highcharts.SVGRenderer#fontMetrics
      *
-     * @param {number|string} [fontSize]
-     *        The current font size to inspect. If not given, the font size
-     *        will be found from the DOM element.
-     *
-     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement} [elem]
-     *        The element to inspect for a current font size.
+     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number} [element]
+     *        The element to inspect for a current font size. If a number is
+     *        given, it's used as a fall back for direct font size in pixels.
      *
      * @return {Highcharts.FontMetricsObject}
      *         The font metrics.
      */
     public fontMetrics(
-        fontSize?: (number|string),
-        elem?: (DOMElementType|SVGElement)
+        element: (DOMElementType|SVGElement)
     ): FontMetricsObject {
-        if (
-            (this.styledMode || !/px/.test(fontSize as any)) &&
-            (win.getComputedStyle) // old IE doesn't support it
-        ) {
-            fontSize = elem && SVGElement.prototype.getStyle.call(
-                elem,
-                'font-size'
-            );
-        } else {
-            fontSize = fontSize ||
-                // When the elem is a DOM element (#5932)
-                (elem && elem.style && elem.style.fontSize) ||
-                // Fall back on the renderer style default
-                (this.style && this.style.fontSize);
-        }
-
-        // Handle different units
-        if (/px/.test(fontSize as any)) {
-            fontSize = pInt(fontSize);
-        } else {
-            fontSize = 12;
-        }
+        const f = pInt(
+            SVGElement.prototype.getStyle.call(element, 'font-size') || 0
+        );
 
         // Empirical values found by comparing font size and bounding box
         // height. Applies to the default font family.
         // https://jsfiddle.net/highcharts/7xvn7/
-        const lineHeight = (
-                fontSize < 24 ?
-                    fontSize + 3 :
-                    Math.round(fontSize * 1.2)
-            ),
-            baseline = Math.round(lineHeight * 0.8);
+        const h = f < 24 ? f + 3 : Math.round(f * 1.2),
+            b = Math.round(h * 0.8);
 
         return {
-            h: lineHeight,
-            b: baseline,
-            f: fontSize
+            // Line height
+            h,
+            // Baseline
+            b,
+            // Font size
+            f
         };
     }
 

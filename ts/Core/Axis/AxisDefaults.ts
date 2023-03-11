@@ -1062,7 +1062,7 @@ namespace AxisDefaults {
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
-                fontSize: '11px'
+                fontSize: '0.6875em'
             }
         },
 
@@ -1963,7 +1963,9 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: Palette.neutralColor60
+                color: Palette.neutralColor60,
+                /** @internal */
+                fontSize: '0.75em'
             }
         },
 
@@ -3067,7 +3069,7 @@ namespace AxisDefaults {
                 /** @internal */
                 color: Palette.neutralColor100,
                 /** @internal */
-                fontSize: '11px',
+                fontSize: '0.6875em',
                 /** @internal */
                 fontWeight: 'bold',
                 /** @internal */

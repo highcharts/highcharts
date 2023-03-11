@@ -729,10 +729,7 @@ class Legend {
             // Get the baseline for the first item - the font size is equal for
             // all
             if (!legend.baseline) {
-                legend.fontMetrics = renderer.fontMetrics(
-                    chart.styledMode ? 12 : (itemStyle as any).fontSize,
-                    label
-                );
+                legend.fontMetrics = renderer.fontMetrics(label);
                 legend.baseline =
                     legend.fontMetrics.f + 3 + legend.itemMarginTop;
                 label.attr('y', legend.baseline);

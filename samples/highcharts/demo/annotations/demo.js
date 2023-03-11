@@ -2015,7 +2015,7 @@ Highcharts.chart('container', {
             justify: false,
             crop: true,
             style: {
-                fontSize: '0.8em',
+                fontSize: '10px',
                 textOutline: '1px white'
             }
         },

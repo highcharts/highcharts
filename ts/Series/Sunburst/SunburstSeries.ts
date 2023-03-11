@@ -213,9 +213,11 @@ function getDlOptions(
 
         if (
             rotationMode === 'perpendicular' &&
-            point.series.chart.renderer.fontMetrics(
-                (options.style as any).fontSize
-            ).h > (point.outerArcLength as any)
+            // 16 is the inferred line height. We don't know the real line
+            // yet because the label is not rendered. A better approach for this
+            // would be to hide the label from the `alignDataLabel` function
+            // when the actual line height is known.
+            point.outerArcLength as any < 16
         ) {
             (options.style as any).width = 1;
         }

@@ -1925,7 +1925,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
         style: {
             /** @internal */
-            fontSize: '11px',
+            fontSize: '0.6875em',
             /** @internal */
             fontWeight: 'bold',
             /** @internal */
