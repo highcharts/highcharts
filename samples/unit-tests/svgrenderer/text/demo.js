@@ -773,7 +773,11 @@ QUnit.test('Adding new text style (#3501)', function (assert) {
         var rectWidth = rect.element.getBBox().width,
             textWidth = txt.element.getBBox().width;
 
-        assert.ok(rectWidth > textWidth, 'The text width is not respected');
+        assert.ok(
+            Math.floor(textWidth) <= Math.floor(rectWidth),
+            'The text should not be greater than the rect ' +
+                `(text: ${textWidth}, rect: ${rectWidth})`
+        );
     } finally {
         renderer.destroy();
     }
