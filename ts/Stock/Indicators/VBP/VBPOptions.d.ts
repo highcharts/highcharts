@@ -43,7 +43,12 @@ export interface VBPOptions extends SMAOptions {
 export interface VBPParamsOptions extends SMAParamsOptions {
     ranges?: number;
     volumeSeriesID: string;
-    // for inheritance
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default VBPOptions;

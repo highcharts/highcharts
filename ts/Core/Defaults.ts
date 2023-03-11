@@ -382,9 +382,7 @@ const defaultOptions: Options = {
      * @product   highcharts highstock
      * @apioption global.timezoneOffset
      */
-
     global: {},
-
 
     /**
      * Time options that can apply globally or to individual charts. These
@@ -925,67 +923,6 @@ const defaultOptions: Options = {
      * [the series array](#series).
      */
     plotOptions: {},
-
-    /**
-     * HTML labels that can be positioned anywhere in the chart area.
-     *
-     * This option is deprecated since v7.1.2. Instead, use
-     * [annotations](#annotations) that support labels.
-     *
-     * @deprecated
-     * @product   highcharts highstock
-     */
-    labels: {
-
-        /**
-         * An HTML label that can be positioned anywhere in the chart area.
-         *
-         * @deprecated
-         * @type      {Array<*>}
-         * @apioption labels.items
-         */
-
-        /**
-         * Inner HTML or text for the label.
-         *
-         * @deprecated
-         * @type      {string}
-         * @apioption labels.items.html
-         */
-
-        /**
-         * CSS styles for each label. To position the label, use left and top
-         * like this:
-         * ```js
-         * style: {
-         *     left: '100px',
-         *     top: '100px'
-         * }
-         * ```
-         *
-         * @deprecated
-         * @type      {Highcharts.CSSObject}
-         * @apioption labels.items.style
-         */
-
-        /**
-         * Shared CSS styles for all labels.
-         *
-         * @deprecated
-         * @type    {Highcharts.CSSObject}
-         * @default {"color": "#333333", "position": "absolute"}
-         */
-        style: {
-            /**
-             * @ignore-option
-             */
-            position: 'absolute',
-            /**
-             * @ignore-option
-             */
-            color: Palette.neutralColor80
-        }
-    },
 
     /**
      * The legend is a box containing a symbol and name for each series
@@ -1908,7 +1845,6 @@ const defaultOptions: Options = {
         }
     },
 
-
     /**
      * Options for the tooltip that appears when the user hovers over a
      * series or point.
@@ -2309,7 +2245,7 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/tooltip/background-border/
          *         Background and border demo
          */
-        borderRadius: 3,
+        borderRadius: 5,
 
         /**
          * For series on datetime axes, the date format in the tooltip's
@@ -2378,14 +2314,14 @@ const defaultOptions: Options = {
          * The number of milliseconds to wait until the tooltip is hidden when
          * mouse out from a point or chart.
          *
-         * @since     3.0
+         * @since 3.0
          */
         hideDelay: 500,
 
         /**
          * Padding inside the tooltip, in pixels.
          *
-         * @since      5.0.0
+         * @since 5.0.0
          */
         padding: 8,
 
@@ -2401,8 +2337,8 @@ const defaultOptions: Options = {
          * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
          * [series.marker.symbol](plotOptions.line.marker.symbol).
          *
-         * @type      {Highcharts.TooltipShapeValue}
-         * @since     4.0
+         * @type  {Highcharts.TooltipShapeValue}
+         * @since 4.0
          */
         shape: 'callout',
 
@@ -2426,8 +2362,8 @@ const defaultOptions: Options = {
          * @sample {highcharts} highcharts/tooltip/shared-true-mixed-types/
          *         True with mixed series types
          *
-         * @since     2.1
-         * @product   highcharts highstock
+         * @since   2.1
+         * @product highcharts highstock
          */
         shared: false,
 
@@ -2469,8 +2405,8 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/tooltip/format/
          *         Format demo
          *
-         * @type       {string}
-         * @apioption  tooltip.headerFormat
+         * @type      {string}
+         * @apioption tooltip.headerFormat
          */
         headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 
@@ -2508,7 +2444,7 @@ const defaultOptions: Options = {
          * @since      2.2
          * @apioption  tooltip.pointFormat
          */
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+        pointFormat: '<span style="color:{point.color}">\u23FA</span> {series.name}: <b>{point.y}</b><br/>',
 
         /**
          * The background color or gradient for the tooltip.
@@ -2533,9 +2469,7 @@ const defaultOptions: Options = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: color(Palette.neutralColor3)
-            // @todo: Disallow undefined as input for colors
-            .setOpacity(0.85).get() as any,
+        backgroundColor: Palette.backgroundColor,
 
         /**
          * The pixel width of the tooltip border.
@@ -2544,7 +2478,7 @@ const defaultOptions: Options = {
          * `.highcharts-tooltip-box` class.
          *
          * @sample {highcharts} highcharts/tooltip/bordercolor-default/
-         *         2px by default
+         *         2 pixels
          * @sample {highcharts} highcharts/tooltip/borderwidth/
          *         No border (shadow only)
          * @sample {highcharts} highcharts/css/tooltip-border-background/
@@ -2558,7 +2492,7 @@ const defaultOptions: Options = {
          * @sample {highmaps} highcharts/css/tooltip-border-background/
          *         Tooltip in styled mode
          */
-        borderWidth: 1,
+        borderWidth: 0,
 
         /**
          * Whether to apply a drop shadow to the tooltip.
@@ -2581,7 +2515,7 @@ const defaultOptions: Options = {
          * @sample highcharts/tooltip/stickoncontact/
          *         Tooltip sticks on pointer contact
          *
-         * @since     8.0.1
+         * @since 8.0.1
          */
         stickOnContact: false,
 
@@ -2620,11 +2554,10 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/tooltip/usehtml/
          *         Pure HTML tooltip
          *
-         * @since     2.2
+         * @since 2.2
          */
         useHTML: false
     },
-
 
     /**
      * Highchart by default puts a credits label in the lower right corner
@@ -2754,10 +2687,7 @@ const defaultOptions: Options = {
 /*= } =*/
 '';
 
-const defaultTime = new Time(merge(
-    defaultOptions.global,
-    defaultOptions.time
-));
+const defaultTime = new Time(defaultOptions.time);
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions

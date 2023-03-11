@@ -415,6 +415,10 @@ class MapView {
 
     public getGeoMap(map?: MapDataType): GeoJSON|undefined {
         if (isString(map)) {
+            if (maps[map] && maps[map].type === 'Topology') {
+                return topo2geo(maps[map]);
+            }
+
             return maps[map];
         }
         if (isObject(map, true)) {

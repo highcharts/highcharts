@@ -147,12 +147,6 @@
         "../../code/modules/offline-exporting.d.ts",
         "../../code/modules/offline-exporting.src.d.ts",
 
-        "../../code/modules/oldie.d.ts",
-        "../../code/modules/oldie.src.d.ts",
-
-        "../../code/modules/oldie-polyfills.d.ts",
-        "../../code/modules/oldie-polyfills.src.d.ts",
-
         "../../code/modules/organization.d.ts",
         "../../code/modules/organization.src.d.ts",
 

@@ -58,6 +58,7 @@ const {
     defined,
     error,
     extend,
+    fireEvent,
     isNumber,
     isObject,
     isString,
@@ -592,6 +593,14 @@ class SunburstSeries extends TreemapSeries {
          * @private
          */
         center: ['50%', '50%'],
+
+        /**
+         * @product highcharts
+         *
+         * @private
+         */
+        clip: false,
+
         colorByPoint: false,
         /**
          * Disable inherited opacity from Treemap series.
@@ -1091,8 +1100,14 @@ class SunburstSeries extends TreemapSeries {
             nodeIds: Record<string, boolean> = {};
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
-        // Call prototype function
-        Series.prototype.translate.call(series);
+
+        if (!this.processedXData) { // hidden series
+            this.processData();
+        }
+        this.generatePoints();
+
+        fireEvent(this, 'afterTranslate');
+
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
 
@@ -1177,8 +1192,10 @@ interface SunburstSeries {
     NodeClass: typeof SunburstNode;
 }
 extend(SunburstSeries.prototype, {
+    axisTypes: [],
     drawDataLabels: noop, // drawDataLabels is called in drawPoints
     getCenter: getCenter,
+    isCartesian: false,
     // Mark that the sunburst is supported by the series on point feature.
     onPointSupported: true,
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,

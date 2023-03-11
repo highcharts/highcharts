@@ -8,16 +8,16 @@
 
 :root,
 .highcharts-light {
-    /* Colors for data series and points. */
-    --highcharts-color-0: #7cb5ec;
-    --highcharts-color-1: #434348;
-    --highcharts-color-2: #90ed7d;
-    --highcharts-color-3: #f7a35c;
-    --highcharts-color-4: #8085e9;
-    --highcharts-color-5: #f15c80;
-    --highcharts-color-6: #e4d354;
-    --highcharts-color-7: #2b908f;
-    --highcharts-color-8: #f45b5b;
+    /* Colors for data series and points */
+    --highcharts-color-0: #2caffe;
+    --highcharts-color-1: #544fc5;
+    --highcharts-color-2: #00e272;
+    --highcharts-color-3: #fe6a35;
+    --highcharts-color-4: #6b8abc;
+    --highcharts-color-5: #d568fb;
+    --highcharts-color-6: #2ee0ca;
+    --highcharts-color-7: #fa4b42;
+    --highcharts-color-8: #feb56a;
     --highcharts-color-9: #91e8e1;
 
     /* Chart background, point stroke for markers and columns etc */
@@ -32,10 +32,10 @@
     /* Strong text. */
     --highcharts-neutral-color-100: #000000;
 
-    /* Main text and some strokes. */
+    /* Main text, axis labels and some strokes. */
     --highcharts-neutral-color-80: #333333;
 
-    /* Axis labels, axis title, connector fallback. */
+    /* Axis title, connector fallback. */
     --highcharts-neutral-color-60: #666666;
 
     /* Credits text, export menu stroke. */
@@ -81,7 +81,7 @@
 @media (prefers-color-scheme: dark) {
     :root {
         /* UI colors */
-        --highcharts-background-color: #333333;
+        --highcharts-background-color: rgb(48, 48, 48);
 
         /*
             Neutral color variations
@@ -107,7 +107,7 @@
 
 .highcharts-dark {
     /* UI colors */
-    --highcharts-background-color: #333333;
+    --highcharts-background-color: rgb(48, 48, 48);
 
     /* Neutral color variations */
     --highcharts-neutral-color-100: rgb(255, 255, 255);
@@ -136,7 +136,7 @@
     line-height: normal;
     z-index: 0; /* #1072 */
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    font-family: "Lucida Grande", "Lucida Sans Unicode", arial, helvetica, sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
     font-size: 1rem;
     user-select: none;
     touch-action: manipulation;
@@ -211,7 +211,7 @@
 /* Axes */
 .highcharts-axis-line {
     fill: none;
-    stroke: var(--highcharts-highlight-color-20);
+    stroke: var(--highcharts-neutral-color-80);
 }
 
 .highcharts-yaxis .highcharts-axis-line {
@@ -224,7 +224,7 @@
 }
 
 .highcharts-axis-labels {
-    fill: var(--highcharts-neutral-color-60);
+    fill: var(--highcharts-neutral-color-80);
     cursor: default;
     font-size: 0.6875em;
 }
@@ -239,7 +239,7 @@
 }
 
 .highcharts-tick {
-    stroke: var(--highcharts-highlight-color-20);
+    stroke: var(--highcharts-neutral-color-80);
 }
 
 .highcharts-yaxis .highcharts-tick {
@@ -297,8 +297,8 @@
 }
 
 .highcharts-tooltip-box .highcharts-label-box {
-    fill: inherit;
-    fill-opacity: inherit;
+    fill: var(--highcharts-neutral-color-3);
+    fill-opacity: 0.85;
 }
 
 div.highcharts-tooltip {

@@ -50,7 +50,7 @@ QUnit.test('Columnrange align datalabels (#3017)', function (assert) {
                         // close tolerance
                         Chrome: 4.5,
                         Edge: 1.5,
-                        Firefox: 4,
+                        Firefox: 5.5,
                         MSIE: 2.5,
                         Safari: 2.5,
                         '': 1

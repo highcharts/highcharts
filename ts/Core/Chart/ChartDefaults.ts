@@ -466,6 +466,9 @@ const ChartDefaults: ChartOptions = {
          * Decides in what dimensions the user can pan the chart. Can be
          * one of `x`, `y`, or `xy`.
          *
+         * When this option is set to `y` or `xy`, [yAxis.startOnTick](#yAxis.startOnTick)
+         * and [yAxis.endOnTick](#yAxis.endOnTick) are overwritten to `false`.
+         *
          * @sample {highcharts} highcharts/chart/panning-type
          *         Zooming and xy panning
          *
@@ -736,7 +739,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
      *
-     * @type      {boolean|Highcharts.CSSObject}
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @default   false
      * @apioption chart.plotShadow
      */
@@ -817,6 +820,20 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
+     * Whether to apply a drop shadow to the global series group. This causes
+     * all the series to have the same shadow. Contrary to the `series.shadow`
+     * option, this prevents items from casting shadows on each other, like for
+     * others series in a stack. The shadow can be an object configuration
+     * containing `color`, `offsetX`, `offsetY`, `opacity` and `width`.
+     *
+     * @sample highcharts/chart/seriesgroupshadow/ Shadow
+     *
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
+     * @default   false
+     * @apioption chart.shadow
+     */
+
+    /**
      * Whether to apply a drop shadow to the outer chart area. Requires
      * that backgroundColor be set. The shadow can be an object
      * configuration containing `color`, `offsetX`, `offsetY`, `opacity` and
@@ -829,7 +846,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/border/
      *         Chart border and shadow
      *
-     * @type      {boolean|Highcharts.CSSObject}
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @default   false
      * @apioption chart.shadow
      */
@@ -949,7 +966,7 @@ const ChartDefaults: ChartOptions = {
      *         Using a serif type font
      *
      * @type      {Highcharts.CSSObject}
-     * @default   {"fontFamily": "\"Lucida Grande\", \"Lucida Sans Unicode\", Verdana, Arial, Helvetica, sans-serif","fontSize":"1rem"}
+     * @default   {"fontFamily": Helvetica, Arial, sans-serif","fontSize":"1rem"}
      * @apioption chart.style
      */
 
@@ -975,6 +992,7 @@ const ChartDefaults: ChartOptions = {
      * @since      2.1.0
      * @apioption  chart.type
      */
+    type: 'line',
 
     /**
      * Decides in what dimensions the user can zoom by dragging the mouse.

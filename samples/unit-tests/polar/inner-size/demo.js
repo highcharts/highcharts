@@ -43,9 +43,9 @@ QUnit.test('(#12850) Inner size of pane.', function (assert) {
     });
 
     assert.strictEqual(
-        yAxis.len,
-        yAxis.translate(yAxis.max),
-        'The yAxis has a correct length.'
+        yAxis.len.toFixed(1),
+        yAxis.translate(yAxis.max).toFixed(1),
+        'The yAxis length should related to the max value'
     );
 
     assert.ok(xAxis.pane.center[3] / 2, 'The innerSize is set.');

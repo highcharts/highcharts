@@ -21,9 +21,6 @@
 import type Axis from '../../Core/Axis/Axis';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type SeriesClass from '../../Core/Series/Series';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type {
     XRangePointOptions,
@@ -66,7 +63,7 @@ import XRangePoint from './XRangePoint.js';
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -139,9 +136,7 @@ class XRangeSeries extends ColumnSeries {
         AxisClass: typeof Axis
     ): void {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             addEvent(
                 AxisClass,
                 'afterGetSeriesExtremes',
@@ -553,7 +548,7 @@ class XRangeSeries extends ColumnSeries {
                         pointAttr,
                         animation
                     )
-                    .shadow(seriesOpts.shadow, null, cutOff);
+                    .shadow(seriesOpts.shadow);
 
                 if (partShapeArgs) {
                     // Ensure pfOptions is an object
@@ -579,7 +574,7 @@ class XRangeSeries extends ColumnSeries {
                             pointAttr,
                             animation
                         )
-                        .shadow(seriesOpts.shadow, null, cutOff);
+                        .shadow(seriesOpts.shadow);
                 }
             }
 

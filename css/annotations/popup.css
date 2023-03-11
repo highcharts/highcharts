@@ -31,7 +31,7 @@
 }
 
 .highcharts-popup {
-    font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
     background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-60);
     display: none;

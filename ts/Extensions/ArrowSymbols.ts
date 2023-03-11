@@ -20,6 +20,8 @@
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
+import U from '../Core/Utilities.js';
+
 /* *
  *
  *  Declarations
@@ -142,9 +144,10 @@ function arrowHalf(
  * @private
  */
 function compose(SVGRendererClass: typeof SVGRenderer): void {
-    if (composedMembers.indexOf(SVGRendererClass) === -1) {
-        composedMembers.push(SVGRendererClass);
+
+    if (U.pushUnique(composedMembers, SVGRendererClass)) {
         const symbols = SVGRendererClass.prototype.symbols;
+
         symbols.arrow = arrow;
         symbols['arrow-filled'] = triangleLeft;
         symbols['arrow-filled-half'] = triangleLeftHalf;
@@ -152,6 +155,7 @@ function compose(SVGRendererClass: typeof SVGRenderer): void {
         symbols['triangle-left'] = triangleLeft;
         symbols['triangle-left-half'] = triangleLeftHalf;
     }
+
 }
 
 /**

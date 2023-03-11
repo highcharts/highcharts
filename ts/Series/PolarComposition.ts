@@ -164,7 +164,7 @@ export declare class PolarSeriesComposition extends Series {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -1293,64 +1293,62 @@ function wrapSeriesAnimate(
                 H.seriesTypes.pie.prototype.animate.call(series, init);
             }
         } else {
-            // Enable animation on polar charts only in SVG. In VML, the scaling
-            // is different, plus animation would be so slow it would't matter.
-            if (chart.renderer.isSVG) {
-                animation = animObject(animation);
 
-                // A different animation needed for column like series
-                if (series.is('column')) {
-                    if (!init) {
-                        paneInnerR = center[3] / 2;
-                        series.points.forEach((point): void => {
-                            graphic = point.graphic;
-                            shapeArgs = point.shapeArgs;
-                            r = shapeArgs && shapeArgs.r;
-                            innerR = shapeArgs && shapeArgs.innerR;
+            animation = animObject(animation);
 
-                            if (graphic && shapeArgs) {
-                                // start values
-                                graphic.attr({
-                                    r: paneInnerR,
-                                    innerR: paneInnerR
-                                });
-                                // animate
-                                graphic.animate({
-                                    r: r,
-                                    innerR: innerR
-                                }, series.options.animation);
-                            }
-                        });
+            // A different animation needed for column like series
+            if (series.is('column')) {
+                if (!init) {
+                    paneInnerR = center[3] / 2;
+                    series.points.forEach((point): void => {
+                        graphic = point.graphic;
+                        shapeArgs = point.shapeArgs;
+                        r = shapeArgs && shapeArgs.r;
+                        innerR = shapeArgs && shapeArgs.innerR;
+
+                        if (graphic && shapeArgs) {
+                            // start values
+                            graphic.attr({
+                                r: paneInnerR,
+                                innerR: paneInnerR
+                            });
+                            // animate
+                            graphic.animate({
+                                r: r,
+                                innerR: innerR
+                            }, series.options.animation);
+                        }
+                    });
+                }
+            } else {
+                // Initialize the animation
+                if (init) {
+                    // Scale down the group and place it in the center
+                    attribs = {
+                        translateX: center[0] + plotLeft,
+                        translateY: center[1] + plotTop,
+                        scaleX: 0.001,
+                        scaleY: 0.001
+                    };
+                    group.attr(attribs);
+                    if (markerGroup) {
+                        markerGroup.attr(attribs);
                     }
+                    // Run the animation
                 } else {
-                    // Initialize the animation
-                    if (init) {
-                        // Scale down the group and place it in the center
-                        attribs = {
-                            translateX: center[0] + plotLeft,
-                            translateY: center[1] + plotTop,
-                            scaleX: 0.001,
-                            scaleY: 0.001
-                        };
-                        group.attr(attribs);
-                        if (markerGroup) {
-                            markerGroup.attr(attribs);
-                        }
-                        // Run the animation
-                    } else {
-                        attribs = {
-                            translateX: plotLeft,
-                            translateY: plotTop,
-                            scaleX: 1,
-                            scaleY: 1
-                        };
-                        group.animate(attribs, animation);
-                        if (markerGroup) {
-                            markerGroup.animate(attribs, animation);
-                        }
+                    attribs = {
+                        translateX: plotLeft,
+                        translateY: plotTop,
+                        scaleX: 1,
+                        scaleY: 1
+                    };
+                    group.animate(attribs, animation);
+                    if (markerGroup) {
+                        markerGroup.animate(attribs, animation);
                     }
                 }
             }
+
         }
 
     // For non-polar charts, revert to the basic animation
@@ -1442,9 +1440,7 @@ class PolarAdditions {
     ): void {
         RadialAxis.compose(AxisClass, TickClass);
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterDrawChartBox', onChartAfterDrawChartBox);
             addEvent(ChartClass, 'getAxes', onChartGetAxes);
             addEvent(ChartClass, 'init', onChartAfterInit);
@@ -1454,9 +1450,7 @@ class PolarAdditions {
             wrap(chartProto, 'get', wrapChartGet);
         }
 
-        if (composedClasses.indexOf(PointerClass) === -1) {
-            composedClasses.push(PointerClass);
-
+        if (U.pushUnique(composedMembers, PointerClass)) {
             const pointerProto = PointerClass.prototype;
 
             wrap(pointerProto, 'getCoordinates', wrapPointerGetCoordinates);
@@ -1473,9 +1467,7 @@ class PolarAdditions {
             );
         }
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'afterInit', onSeriesAfterInit);
             addEvent(
                 SeriesClass,
@@ -1492,10 +1484,8 @@ class PolarAdditions {
 
         if (
             ColumnSeriesClass &&
-            composedClasses.indexOf(ColumnSeriesClass) === -1
+            U.pushUnique(composedMembers, ColumnSeriesClass)
         ) {
-            composedClasses.push(ColumnSeriesClass);
-
             const columnProto = ColumnSeriesClass.prototype;
 
             wrap(columnProto, 'alignDataLabel', wrapColumnSeriesAlignDataLabel);
@@ -1505,10 +1495,8 @@ class PolarAdditions {
 
         if (
             LineSeriesClass &&
-            composedClasses.indexOf(LineSeriesClass) === -1
+            U.pushUnique(composedMembers, LineSeriesClass)
         ) {
-            composedClasses.push(LineSeriesClass);
-
             const lineProto = LineSeriesClass.prototype;
 
             wrap(lineProto, 'getGraphPath', wrapLineSeriesGetGraphPath);
@@ -1516,20 +1504,16 @@ class PolarAdditions {
 
         if (
             SplineSeriesClass &&
-            composedClasses.indexOf(SplineSeriesClass) === -1
+            U.pushUnique(composedMembers, SplineSeriesClass)
         ) {
-            composedClasses.push(SplineSeriesClass);
-
             const splineProto = SplineSeriesClass.prototype;
 
             wrap(splineProto, 'getPointSpline', wrapSplineSeriesGetPointSpline);
 
             if (
                 AreaSplineRangeSeriesClass &&
-                composedClasses.indexOf(AreaSplineRangeSeriesClass) === -1
+                U.pushUnique(composedMembers, AreaSplineRangeSeriesClass)
             ) {
-                composedClasses.push(AreaSplineRangeSeriesClass);
-
                 const areaSplineRangeProto =
                     AreaSplineRangeSeriesClass.prototype;
 

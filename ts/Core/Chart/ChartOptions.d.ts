@@ -95,6 +95,7 @@ export interface ChartOptions {
     borderWidth?: number;
     className?: string;
     colorCount?: number;
+    defaultSeriesType?: string;
     allowMutatingData?: boolean;
     events?: ChartEventsOptions;
     height?: (null|number|string);
@@ -121,6 +122,7 @@ export interface ChartOptions {
     resetZoomButton?: ChartResetZoomButtonOptions;
     shadow?: (boolean|Partial<ShadowOptionsObject>);
     selectionMarkerFill?: ColorType;
+    seriesGroupShadow?: (boolean|Partial<ShadowOptionsObject>);
     showAxes?: boolean;
     spacing?: Array<number>;
     spacingBottom?: number;

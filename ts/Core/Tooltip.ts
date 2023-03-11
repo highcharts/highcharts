@@ -16,9 +16,10 @@
  *
  * */
 
-import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
+import type Defaults from './Defaults';
 import type Point from './Series/Point';
+import type Pointer from './Pointer';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
 import type RectangleObject from './Renderer/RectangleObject';
@@ -40,7 +41,6 @@ const {
     addEvent,
     clamp,
     css,
-    defined,
     discardElement,
     extend,
     fireEvent,
@@ -59,6 +59,12 @@ const {
  *
  * */
 
+declare module './Chart/ChartLike' {
+    interface ChartLike {
+        tooltip?: Tooltip;
+    }
+}
+
 declare module './Series/PointLike' {
     interface PointLike {
         isHeader?: boolean;
@@ -76,12 +82,6 @@ declare module './Series/SeriesLike' {
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
         tooltip?: DeepPartial<TooltipOptions>;
-    }
-}
-
-declare module '../Core/TooltipOptions'{
-    interface TooltipOptions {
-        distance?: number;
     }
 }
 
@@ -182,60 +182,6 @@ class Tooltip {
      *  Functions
      *
      * */
-
-    /**
-     * In styled mode, apply the default filter for the tooltip drop-shadow. It
-     * needs to have an id specific to the chart, otherwise there will be issues
-     * when one tooltip adopts the filter of a different chart, specifically one
-     * where the container is hidden.
-     *
-     * @private
-     * @function Highcharts.Tooltip#applyFilter
-     */
-    public applyFilter(): void {
-
-        const chart = this.chart;
-
-        chart.renderer.definition({
-            tagName: 'filter',
-            attributes: {
-                id: 'drop-shadow-' + chart.index,
-                opacity: 0.5
-            },
-            children: [{
-                tagName: 'feGaussianBlur',
-                attributes: {
-                    'in': 'SourceAlpha',
-                    stdDeviation: 1
-                }
-            }, {
-                tagName: 'feOffset',
-                attributes: {
-                    dx: 1,
-                    dy: 1
-                }
-            }, {
-                tagName: 'feComponentTransfer',
-                children: [{
-                    tagName: 'feFuncA',
-                    attributes: {
-                        type: 'linear',
-                        slope: 0.3
-                    }
-                }]
-            }, {
-                tagName: 'feMerge',
-                children: [{
-                    tagName: 'feMergeNode'
-                }, {
-                    tagName: 'feMergeNode',
-                    attributes: {
-                        'in': 'SourceGraphic'
-                    }
-                }]
-            }]
-        });
-    }
 
     /**
      * Build the body (lines) of the tooltip by iterating over the items and
@@ -559,19 +505,9 @@ class Tooltip {
                         })
                         // #2301, #2657
                         .css(options.style)
-                        .css({ pointerEvents })
-                        .shadow(options.shadow);
+                        .css({ pointerEvents });
                 }
             }
-
-            if (styledMode && options.shadow) {
-                // Apply the drop-shadow filter
-                this.applyFilter();
-                this.label.attr({
-                    filter: 'url(#drop-shadow-' + this.chart.index + ')'
-                });
-            }
-
             // Split tooltip use updateTooltipContainer to position the tooltip
             // container.
             if (tooltip.outside && !tooltip.split) {
@@ -593,6 +529,7 @@ class Tooltip {
 
             this.label
                 .attr({ zIndex: 8 })
+                .shadow(options.shadow)
                 .add();
         }
         return this.label;
@@ -840,6 +777,8 @@ class Tooltip {
     }
 
     /**
+     * Initialize tooltip.
+     *
      * @private
      * @function Highcharts.Tooltip#init
      *
@@ -849,7 +788,10 @@ class Tooltip {
      * @param {Highcharts.TooltipOptions} options
      *        Tooltip options.
      */
-    public init(chart: Chart, options: TooltipOptions): void {
+    public init(
+        chart: Chart,
+        options: TooltipOptions
+    ): void {
 
         /**
          * Chart of the tooltip.
@@ -1380,7 +1322,6 @@ class Tooltip {
             });
             if (!styledMode) {
                 tt.css(options.style)
-                    .shadow(options.shadow)
                     .attr({
                         stroke: (
                             options.borderColor ||
@@ -1850,16 +1791,25 @@ class Tooltip {
  * */
 
 namespace Tooltip {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface FormatterCallbackFunction {
         (
             this: FormatterContextObject,
             tooltip: Tooltip
         ): (false|string|Array<string>);
     }
+
     export interface FormatterContextObject extends Point.PointLabelObject {
         points?: Array<FormatterContextObject>;
 
     }
+
     export interface PositionerCallbackFunction {
         (
             this: Tooltip,
@@ -1868,12 +1818,54 @@ namespace Tooltip {
             point: (Point|PositionerPointObject)
         ): PositionObject;
     }
+
     export interface PositionerPointObject {
         isHeader: true;
         plotX: number;
         plotY: number;
     }
+
     export type ShapeValue = ('callout'|'circle'|'square'|'rect');
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(
+        PointerClass: typeof Pointer
+    ): void {
+
+        if (U.pushUnique(composedMembers, PointerClass)) {
+            addEvent(PointerClass, 'afterInit', function (): void {
+                const chart = this.chart;
+
+                if (chart.options.tooltip) {
+                    /**
+                     * Tooltip object for points of series.
+                     *
+                     * @name Highcharts.Chart#tooltip
+                     * @type {Highcharts.Tooltip}
+                     */
+                    chart.tooltip = new Tooltip(chart, chart.options.tooltip);
+                }
+            });
+        }
+
+    }
+
 }
 
 /* *

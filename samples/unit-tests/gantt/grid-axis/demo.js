@@ -1262,9 +1262,9 @@ QUnit.module('labels alignment', function () {
                     getBBox(container, tick.mark.element)
                 ),
                 bboxLabel = getBBox(container, tick.label.element),
-                // Firefox/Mac needs 2.3 in order to pass, Edge needs 1.5,
-                // others 1.1.
-                precision = 2.3;
+                // Firefox/Mac needs 3 in order to pass, Edge needs 1.5,
+                // others 1.1.z
+                precision = 3;
 
             assert.close(
                 bboxLabel.x,

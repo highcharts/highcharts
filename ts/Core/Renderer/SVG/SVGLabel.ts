@@ -18,7 +18,6 @@ import type { AlignValue } from '../AlignObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
-import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
@@ -336,18 +335,6 @@ class SVGLabel extends SVGElement {
         key: string
     ): void {
         this.boxAttr(key, value);
-    }
-
-    public shadow(
-        b?: (boolean|Partial<ShadowOptionsObject>)
-    ): this {
-        if (b && !this.renderer.styledMode) {
-            this.updateBoxSize();
-            if (this.box) {
-                this.box.shadow(b);
-            }
-        }
-        return this;
     }
 
     public strokeSetter(

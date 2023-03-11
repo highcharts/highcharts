@@ -37,7 +37,6 @@ const {
     noop
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
-import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
 import BBoxObject from './Renderer/BBoxObject';
@@ -72,7 +71,7 @@ declare module './Chart/ChartLike'{
         mouseDownX?: number;
         mouseDownY?: number;
         mouseIsDown?: (boolean|string);
-        tooltip?: Tooltip;
+        pointer: Pointer;
     }
 }
 
@@ -81,8 +80,6 @@ declare module './Chart/ChartLike'{
  *  Class
  *
  * */
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
  * The mouse and touch tracker object. Each {@link Chart} item has one
@@ -494,18 +491,18 @@ class Pointer {
                 height
             } = this.getSelectionBox(this.selectionMarker);
 
-            let selectionData = {
-                    originalEvent: e, // #4890
-                    xAxis: [],
-                    yAxis: [],
-                    x,
-                    y,
-                    width,
-                    height
-                },
-                // Start by false runZoom, unless when we have a mapView, in
-                // which case the zoom will be handled in the selection event.
-                runZoom = Boolean(chart.mapView);
+            const selectionData = {
+                originalEvent: e, // #4890
+                xAxis: [],
+                yAxis: [],
+                x,
+                y,
+                width,
+                height
+            };
+            // Start by false runZoom, unless when we have a mapView, in
+            // which case the zoom will be handled in the selection event.
+            let runZoom = Boolean(chart.mapView);
 
             // a selection has been made
             if (this.hasDragged || hasPinched) {
@@ -928,7 +925,7 @@ class Pointer {
      */
     public onTrackerMouseOut(e: PointerEvent): void {
         const chart = this.chart;
-        const relatedTarget = e.relatedTarget || e.toElement;
+        const relatedTarget = e.relatedTarget;
         const series = chart.hoverSeries;
 
         this.isDirectTouch = false;
@@ -1015,17 +1012,9 @@ class Pointer {
         this.pinchDown = [];
         this.lastValidTouch = {};
 
-        if (Tooltip) {
-            /**
-             * Tooltip object for points of series.
-             *
-             * @name Highcharts.Chart#tooltip
-             * @type {Highcharts.Tooltip}
-             */
-            chart.tooltip = new Tooltip(chart, options.tooltip as any);
-        }
-
         this.setDOMEvents();
+
+        fireEvent(this, 'afterInit');
     }
 
     /**
@@ -1141,10 +1130,9 @@ class Pointer {
     public onContainerMouseDown(e: MouseEvent): void {
         const isPrimaryButton = ((e.buttons || e.button) & 1) === 1;
 
-        // Normalize before the 'if' for the legacy IE (#7850)
         e = this.normalize(e);
 
-        // #11635, Firefox does not reliable fire move event after click scroll
+        // #11635, Firefox does not reliably fire move event after click scroll
         if (
             H.isFirefox &&
             e.button !== 0
@@ -1152,7 +1140,7 @@ class Pointer {
             this.onContainerMouseMove(e);
         }
 
-        // #11635, limiting to primary button (incl. IE 8 support)
+        // #11635, limiting to primary button
         if (
             typeof e.button === 'undefined' ||
             isPrimaryButton
@@ -1183,10 +1171,7 @@ class Pointer {
         e = this.normalize(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target
-        if (
-            chart &&
-            (e.relatedTarget || (e as PointerEvent).toElement)
-        ) {
+        if (chart && e.relatedTarget) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;
@@ -1218,15 +1203,6 @@ class Pointer {
             pEvt = this.normalize(e);
 
         this.setHoverChartIndex();
-
-        // In IE8 we apparently need this returnValue set to false in order to
-        // avoid text being selected. But in Chrome, e.returnValue is prevented,
-        // plus we don't need to run e.preventDefault to prevent selected text
-        // in modern browsers. So we set it conditionally. Remove it when IE8 is
-        // no longer needed. #2251, #3224.
-        if (!pEvt.preventDefault) {
-            pEvt.returnValue = false;
-        }
 
         if (chart.mouseIsDown === 'mousedown' || this.touchSelect(pEvt)) {
             this.drag(pEvt);
@@ -2157,6 +2133,13 @@ class Pointer {
  * */
 
 namespace Pointer {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface ChartPositionObject {
         left: number;
         scaleX: number;
@@ -2198,6 +2181,43 @@ namespace Pointer {
         xAxis: Array<SelectDataObject>;
         yAxis: Array<SelectDataObject>;
     }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(ChartClass: typeof Chart): void {
+
+        if (U.pushUnique(composedMembers, ChartClass)) {
+            addEvent(ChartClass, 'beforeRender', function (): void {
+                /**
+                 * The Pointer that keeps track of mouse and touch
+                 * interaction.
+                 *
+                 * @memberof Highcharts.Chart
+                 * @name pointer
+                 * @type {Highcharts.Pointer}
+                 * @instance
+                 */
+                this.pointer = new Pointer(this, this.options);
+            });
+        }
+
+    }
+
 }
 
 /* *

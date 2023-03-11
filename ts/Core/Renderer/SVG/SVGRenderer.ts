@@ -29,6 +29,7 @@ import type {
 import type EventCallback from '../../../Core/EventCallback';
 import type FontMetricsObject from '../FontMetricsObject';
 import type PositionObject from '../PositionObject';
+import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRendererLike from './SVGRendererLike';
@@ -95,8 +96,7 @@ let hasInternalReferenceBug: (boolean|undefined);
  * Allows direct access to the Highcharts rendering layer in order to draw
  * primitive shapes like circles, rectangles, paths or text directly on a chart,
  * or independent from any chart. The SVGRenderer represents a wrapper object
- * for SVG in modern browsers. Through the VMLRenderer, part of the `oldie.js`
- * module, it also brings vector graphics to IE <= 8.
+ * for SVG in modern browsers.
  *
  * An existing chart's renderer can be accessed through {@link Chart.renderer}.
  * The renderer can also be used completely decoupled from a chart.
@@ -210,7 +210,6 @@ class SVGRenderer implements SVGRendererLike {
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
-    public isSVG: boolean = void 0 as any;
     public rootFontSize: string|undefined;
     public style: CSSObject = void 0 as any;
     public styledMode?: boolean;
@@ -295,9 +294,6 @@ class SVGRenderer implements SVGRendererLike {
             attr(element, 'xmlns', this.SVG_NS);
         }
 
-        // object properties
-        renderer.isSVG = true;
-
         this.box = element as any;
         this.boxWrapper = boxWrapper;
         renderer.alignedObjects = [];
@@ -322,7 +318,6 @@ class SVGRenderer implements SVGRendererLike {
         renderer.rootFontSize = boxWrapper.getStyle('font-size');
 
         renderer.setSize(width, height, false);
-
 
         // Issue 110 workaround:
         // In Firefox, if a div is positioned by percentage, its pixel position
@@ -484,8 +479,7 @@ class SVGRenderer implements SVGRendererLike {
     public getStyle(style: CSSObject): CSSObject {
         this.style = extend<CSSObject>({
 
-            fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
-                'Arial, Helvetica, sans-serif',
+            fontFamily: 'Helvetica, Arial, sans-serif',
             fontSize: '1rem'
 
         }, style);
@@ -538,11 +532,8 @@ class SVGRenderer implements SVGRendererLike {
         destroyObjectProperties(renderer.gradients || {});
         renderer.gradients = null as any;
 
-        // Defs are null in VMLRenderer
-        // Otherwise, destroy them here.
-        if (rendererDefs) {
-            renderer.defs = rendererDefs.destroy() as any;
-        }
+
+        renderer.defs = rendererDefs.destroy() as any;
 
         // Remove sub pixel fix handler (#982)
         if (renderer.unSubPixelFix) {
@@ -594,6 +585,58 @@ class SVGRenderer implements SVGRendererLike {
                 (gradAttr.cy || 0) * radialReference[2],
             r: (gradAttr.r || 0) * radialReference[2]
         };
+    }
+
+    /**
+     * Create a drop shadow definition and return its id
+     *
+     * @private
+     * @function Highcharts.SVGRenderer#shadowDefinition
+     *
+     * @param {boolean|Highcharts.ShadowOptionsObject} [shadowOptions] The
+     *        shadow options. If `true`, the default options are applied
+     */
+    public shadowDefinition(
+        shadowOptions: Partial<ShadowOptionsObject>
+    ): string {
+        const
+            id = [
+                'drop-shadow',
+                ...Object.keys(shadowOptions)
+                    .map((key: string): number|string =>
+                        (shadowOptions as any)[key]
+                    )
+            ].join('-').replace(/[^a-z0-9\-]/g, ''),
+            options: ShadowOptionsObject = merge({
+                color: '#000000',
+                offsetX: 1,
+                offsetY: 1,
+                opacity: 0.15,
+                width: 5
+            }, shadowOptions);
+
+        if (!this.defs.element.querySelector(`#${id}`)) {
+            this.definition({
+                tagName: 'filter',
+                attributes: {
+                    id
+                },
+                children: [{
+                    tagName: 'feDropShadow',
+                    attributes: {
+                        dx: options.offsetX,
+                        dy: options.offsetY,
+                        'flood-color': options.color,
+                        // Tuned and modified to keep a preserve compatibility
+                        // with the old settings
+                        'flood-opacity': Math.min(options.opacity * 5, 1),
+                        stdDeviation: options.width / 2
+                    }
+                }]
+            });
+        }
+
+        return id;
     }
 
     /**
@@ -2118,8 +2161,7 @@ interface SVGRenderer extends SVGRendererLike {
 extend(SVGRenderer.prototype, {
 
     /**
-     * A pointer to the renderer's associated Element class. The VMLRenderer
-     * will have a pointer to VMLElement here.
+     * A pointer to the renderer's associated Element class.
      *
      * @name Highcharts.SVGRenderer#Element
      * @type {Highcharts.SVGElement}

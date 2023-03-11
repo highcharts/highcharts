@@ -3489,6 +3489,7 @@ class Axis {
                         labelOffset
                     );
                 });
+
             }
 
             if (axis.staggerLines) {
@@ -3548,9 +3549,13 @@ class Axis {
                 horiz ?
                     pick(
                         labelOptions.y,
-                        axis.tickRotCorr.y + directionFactor * 8
+                        axis.tickRotCorr.y +
+                            directionFactor * labelOptions.distance
                     ) :
-                    labelOptions.x
+                    pick(
+                        labelOptions.x,
+                        directionFactor * labelOptions.distance
+                    )
             );
         }
 

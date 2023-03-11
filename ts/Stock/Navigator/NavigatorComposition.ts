@@ -75,7 +75,7 @@ declare module '../../Core/Series/SeriesLike' {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -100,13 +100,10 @@ function compose(
     NavigatorClass: typeof Navigator,
     SeriesClass: typeof Series
 ): void {
-
     NavigatorAxisAdditions.compose(AxisClass);
     NavigatorConstructor = NavigatorClass;
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         const chartProto = ChartClass.prototype;
 
         chartProto.callbacks.push(onChartCallback);
@@ -119,21 +116,15 @@ function compose(
         addEvent(ChartClass, 'update', onChartUpdate);
     }
 
-    if (composedClasses.indexOf(SeriesClass) === -1) {
-        composedClasses.push(SeriesClass);
-
+    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
     }
 
-    if (composedClasses.indexOf(getRendererType) === -1) {
-        composedClasses.push(getRendererType);
-
+    if (U.pushUnique(composedMembers, getRendererType)) {
         extend(getRendererType().prototype.symbols, NavigatorSymbols);
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (U.pushUnique(composedMembers, setOptions)) {
         extend(defaultOptions, { navigator: NavigatorDefaults });
     }
 

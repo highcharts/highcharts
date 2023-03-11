@@ -14,11 +14,11 @@ export const enum Palette {
      */
     neutralColor100 = '#000000',
     /**
-     * Main text and some strokes.
+     * Main text, axis labels and some strokes.
      */
     neutralColor80 = '#333333',
     /**
-     * Axis labels, axis title, connector fallback.
+     * Axis title, connector fallback.
      */
     neutralColor60 = '#666666',
     /**
@@ -62,11 +62,11 @@ export const enum Palette {
      */
     highlightColor10 = '#e6ebf5',
     /**
-     * Positive indicator color
+     * Indicators
      */
     positiveColor = '#06b535',
     /**
-     * Negative indicator color
+     * Indicators
      */
     negativeColor = '#f21313',
 }
@@ -76,18 +76,18 @@ export const enum Palette {
  */
 const SeriesPalettes = {
     /**
-     * Colors for data series and points.
+     * Colors for data series and points
      */
     colors: [
-        '#7cb5ec',
-        '#434348',
-        '#90ed7d',
-        '#f7a35c',
-        '#8085e9',
-        '#f15c80',
-        '#e4d354',
-        '#2b908f',
-        '#f45b5b',
+        '#2caffe',
+        '#544fc5',
+        '#00e272',
+        '#fe6a35',
+        '#6b8abc',
+        '#d568fb',
+        '#2ee0ca',
+        '#fa4b42',
+        '#feb56a',
         '#91e8e1'
     ] as Array<ColorString>,
 };
