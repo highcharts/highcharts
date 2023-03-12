@@ -161,8 +161,8 @@ QUnit.test('Option chart border and background update', function (assert) {
         'Chart border width is updated'
     );
     assert.strictEqual(
-        chart.chartBackground.element.getAttribute('rx'),
-        '10',
+        chart.chartBackground.r,
+        10,
         'Chart border radius is updated'
     );
 
@@ -183,8 +183,8 @@ QUnit.test('Option chart border and background update', function (assert) {
     );
 
     assert.strictEqual(
-        chart.chartBackground.element.getAttribute('rx'),
-        '0',
+        chart.chartBackground.r,
+        0,
         'Chart border radius is updated'
     );
 });
@@ -317,7 +317,7 @@ QUnit.test('Option chart.options3d update', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points[0].graphic.element.nodeName,
-        'rect',
+        'path',
         '2D column'
     );
 
@@ -348,8 +348,8 @@ QUnit.test('Option chart.options3d update', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].points[0].graphic.element.nodeName,
-        'rect',
+        chart.series[0].points[0].graphic.symbolName,
+        'roundedRect',
         'Back to 2D column'
     );
 });

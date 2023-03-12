@@ -313,6 +313,50 @@ if (window.QUnit) {
         });
     };
 
+    /*
+     * Less than comparison
+     *
+     * @param  {Float} number
+     * @param  {Float} expected
+     * @param  {String} message  Optional
+     */
+    QUnit.assert.lessThan = function (number, expected, message) {
+        var result = (
+            typeof number === 'number' &&
+            typeof expected === 'number' &&
+            number < expected
+        ) || false;
+
+        this.pushResult({
+            result: result,
+            actual: number,
+            expected: expected,
+            message: message
+        });
+    };
+
+    /*
+     * Greater than comparison
+     *
+     * @param  {Float} number
+     * @param  {Float} expected
+     * @param  {String} message  Optional
+     */
+    QUnit.assert.greaterThan = function (number, expected, message) {
+        var result = (
+            typeof number === 'number' &&
+            typeof expected === 'number' &&
+            number > expected
+        ) || false;
+
+        this.pushResult({
+            result: result,
+            actual: number,
+            expected: expected,
+            message: message
+        });
+    };
+
     QUnit.module('Highcharts', {
         beforeEach: function (test) {
             if (VERBOSE) {

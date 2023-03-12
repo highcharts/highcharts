@@ -1124,33 +1124,27 @@ class SVGRenderer implements SVGRendererLike {
         strokeWidth?: number
     ): SVGElement {
 
-        r = isObject(x) ? (x as any).r : r;
-
-        const wrapper = this.createElement('rect');
-
-        let attribs = (
-            isObject(x) ?
-                x as SVGAttributes :
-                typeof x === 'undefined' ?
-                    {} :
-                    {
-                        x: x,
-                        y: y,
-                        width: Math.max(width as any, 0),
-                        height: Math.max(height as any, 0)
-                    }
-        );
+        const attribs = (
+                isObject(x) ?
+                    x :
+                    typeof x === 'undefined' ?
+                        {} :
+                        {
+                            x,
+                            y,
+                            r,
+                            width: Math.max(width || 0, 0),
+                            height: Math.max(height || 0, 0)
+                        }
+            ),
+            wrapper = this.createElement('rect');
 
         if (!this.styledMode) {
             if (typeof strokeWidth !== 'undefined') {
                 attribs['stroke-width'] = strokeWidth;
-                attribs = wrapper.crisp(attribs as any);
+                extend(attribs, wrapper.crisp(attribs as any));
             }
             attribs.fill = 'none';
-        }
-
-        if (r) {
-            attribs.r = r;
         }
 
         wrapper.rSetter = function (
@@ -1169,6 +1163,22 @@ class SVGRenderer implements SVGRendererLike {
         };
 
         return wrapper.attr(attribs);
+    }
+
+    /**
+     * Draw and return a rectangle with advanced corner rounding options.
+     *
+     * @function Highcharts.SVGRenderer#roundedRect
+     *
+     * @param {SVGAttributes} attribs
+     *      Attributes
+     * @return {Highcharts.SVGElement}
+     * The generated wrapper element.
+     */
+    public roundedRect(
+        attribs?: SVGAttributes
+    ): SVGElement {
+        return this.symbol('roundedRect').attr(attribs);
     }
 
     /**

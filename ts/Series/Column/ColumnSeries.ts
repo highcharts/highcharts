@@ -619,18 +619,21 @@ class ColumnSeries extends Series {
                     barH
                 ];
 
-            // Register shape type and arguments to be used in drawPoints
-            // Allow shapeType defined on pointClass level
-            point.shapeType = series.pointClass.prototype.shapeType || 'rect';
-            point.shapeArgs = series.crispCol.apply(
-                series,
-                point.isNull ?
-                // #3169, drilldown from null must have a position to work
-                // from #6585, dataLabel should be placed on xAxis, not
-                // floating in the middle of the chart
-                    [barX, translatedThreshold as any, barW, 0] :
-                    [barX, barY, barW, barH]
-            );
+            // Register shape type and arguments to be used in drawPoints. Allow
+            // `shapeType` defined on `pointClass` level.
+            point.shapeType = series.pointClass.prototype.shapeType ||
+                'roundedRect';
+            point.shapeArgs = extend<SVGAttributes>(series.crispCol(
+                barX,
+                // #3169, drilldown from null must have a position to work from.
+                // #6585, dataLabel should be placed on xAxis, not floating in
+                // the middle of the chart.
+                point.isNull ? translatedThreshold : barY,
+                barW,
+                point.isNull ? 0 : barH
+            ), {
+                r: isNumber(options.borderRadius) ? options.borderRadius : 0
+            });
         });
 
         // Fire a specific event after column translate. We could instead apply
