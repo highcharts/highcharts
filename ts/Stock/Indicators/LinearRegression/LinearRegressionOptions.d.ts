@@ -16,7 +16,6 @@ import type {
     SMAOptions,
     SMAParamsOptions
 } from '../SMA/SMAOptions';
-import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
  *
@@ -36,5 +35,11 @@ export interface RegressionLineParametersObject {
     slope: number;
     intercept: number;
 }
+
+/* *
+ *
+ * Default Export
+ *
+ * */
 
 export default LinearRegressionOptions;

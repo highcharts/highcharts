@@ -54,7 +54,7 @@ namespace ColumnDataLabel {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     const dataLabelPositioners = {
 
@@ -145,9 +145,7 @@ namespace ColumnDataLabel {
 
         DataLabel.compose(Series);
 
-        if (composedClasses.indexOf(PieSeriesClass) === -1) {
-            composedClasses.push(PieSeriesClass);
-
+        if (U.pushUnique(composedMembers, PieSeriesClass)) {
             const pieProto = PieSeriesClass.prototype;
 
             pieProto.dataLabelPositioners = dataLabelPositioners;
@@ -426,8 +424,10 @@ namespace ColumnDataLabel {
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
-                (labelPosition as any).final.x = x;
-                (labelPosition as any).final.y = y;
+                if (labelPosition) {
+                    labelPosition.computed.x = x;
+                    labelPosition.computed.y = y;
+                }
 
                 // Detect overflowing data labels
                 if (pick((options as any).crop, true)) {

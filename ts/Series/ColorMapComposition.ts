@@ -52,6 +52,7 @@ declare module '../Core/Series/PointLike' {
 
 namespace ColorMapComposition {
 
+    // These properties can be set as both attributes and CSS properties
     interface ColorAttribsType {
         dashstyle?: DashStyleValue;
         fill?: ColorType;
@@ -91,7 +92,7 @@ namespace ColorMapComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     export const pointMembers = {
         dataLabelOnNull: true,
@@ -123,9 +124,7 @@ namespace ColorMapComposition {
     ): (T&typeof SeriesComposition) {
         const PointClass = SeriesClass.prototype.pointClass;
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
+        if (U.pushUnique(composedMembers, PointClass)) {
             addEvent(PointClass, 'afterSetState', onPointAfterSetState);
         }
 

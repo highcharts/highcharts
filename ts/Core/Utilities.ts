@@ -412,7 +412,7 @@ function isDOMElement(obj: unknown): obj is HTMLDOMElement {
  * @return {boolean}
  *         True if the argument is a class.
  */
-function isClass(obj: (object|undefined)): obj is Utilities.Class<any> {
+function isClass<T>(obj: (object|undefined)): obj is Class<T> {
     const c: (Function|undefined) = obj && obj.constructor;
 
     return !!(
@@ -460,6 +460,25 @@ function erase(arr: Array<unknown>, item: unknown): void {
             break;
         }
     }
+}
+
+/**
+ * Adds an item to an array, if it is not present in the array.
+ *
+ * @param {Array<unknown>} array
+ * The array to add the item to.
+ *
+ * @param {unknown} item
+ * The item to add.
+ *
+ * @return {boolean}
+ * Returns true, if the item was not present and has been added.
+ */
+function pushUnique(
+    array: Array<unknown>,
+    item: unknown
+): boolean {
+    return array.indexOf(item) < 0 && !!array.push(item);
 }
 
 /**
@@ -782,10 +801,10 @@ function createElement(
  *         A new prototype.
  */
 function extendClass <T, TReturn = T>(
-    parent: Utilities.Class<T>,
+    parent: Class<T>,
     members: any
-): Utilities.Class<TReturn> {
-    const obj: Utilities.Class<TReturn> = (function (): void {}) as any;
+): Class<TReturn> {
+    const obj: Class<TReturn> = (function (): void {}) as any;
 
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
@@ -1610,7 +1629,7 @@ objectEach({
  *         A callback function to remove the added event.
  */
 function addEvent<T>(
-    el: (Utilities.Class<T>|T),
+    el: (Class<T>|T),
     type: string,
     fn: (EventCallback<T>|Function),
     options: Utilities.EventOptions = {}
@@ -1699,7 +1718,7 @@ function addEvent<T>(
  * @return {void}
  */
 function removeEvent<T>(
-    el: (Utilities.Class<T>|T),
+    el: (Class<T>|T),
     type?: string,
     fn?: (EventCallback<T>|Function)
 ): void {
@@ -2025,9 +2044,6 @@ if ((win as any).jQuery) {
 
 namespace Utilities {
     export type RelativeSize = (number|string);
-    export interface Class<T = any> extends Function {
-        new(...args: Array<any>): T;
-    }
     export interface ErrorMessageEventObject {
         chart?: Chart;
         code: number;
@@ -2113,6 +2129,7 @@ const Utilities = {
     pad,
     pick,
     pInt,
+    pushUnique,
     relativeLength,
     removeEvent,
     splat,

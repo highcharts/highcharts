@@ -102,7 +102,7 @@ interface StackerFunction {
     ): void;
 }
 
-interface StackItemIndicatorObject {
+export interface StackItemIndicatorObject {
     index: number;
     key?: string;
     stackKey?: string;
@@ -192,9 +192,8 @@ function onAxisDestroy(this: Axis): void {
  * @private
  */
 function onAxisInit(this: Axis): void {
-    const axis = this;
-    if (!axis.stacking) {
-        axis.stacking = new AxisAdditions(axis as StackingAxis);
+    if (this.coll === 'yAxis' && !this.stacking) {
+        this.stacking = new AxisAdditions(this as StackingAxis);
     }
 }
 
@@ -571,46 +570,41 @@ class AxisAdditions {
         let actualSeries: Series,
             i: number;
 
-        if (!axis.isXAxis) {
-            stacking.usePercentage = false;
-            i = len;
-            while (i--) {
-                actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
-                actualSeries.setStackedPoints();
-                actualSeries.setGroupedPoints();
-            }
-
-            // Loop up again to compute percent and stream stack
-            for (i = 0; i < len; i++) {
-                axisSeries[i].modifyStacks();
-            }
-            fireEvent(axis, 'afterBuildStacks');
+        stacking.usePercentage = false;
+        i = len;
+        while (i--) {
+            actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
+            actualSeries.setStackedPoints();
+            actualSeries.setGroupedPoints();
         }
+
+        // Loop up again to compute percent and stream stack
+        for (i = 0; i < len; i++) {
+            axisSeries[i].modifyStacks();
+        }
+        fireEvent(axis, 'afterBuildStacks');
     }
 
     /**
      * @private
      */
     public cleanStacks(): void {
-        const stacking = this,
-            axis = stacking.axis;
+        const stacking = this;
 
         let stacks;
 
-        if (!axis.isXAxis) {
-            if (stacking.oldStacks) {
-                stacks = stacking.stacks = stacking.oldStacks;
-            }
-
-            // reset stacks
-            objectEach(stacks, function (
-                type: Record<string, StackItem>
-            ): void {
-                objectEach(type, function (stack: StackItem): void {
-                    stack.cumulative = stack.total;
-                });
-            });
+        if (stacking.oldStacks) {
+            stacks = stacking.stacks = stacking.oldStacks;
         }
+
+        // reset stacks
+        objectEach(stacks, function (
+            type: Record<string, StackItem>
+        ): void {
+            objectEach(type, function (stack: StackItem): void {
+                stack.cumulative = stack.total;
+            });
+        });
     }
 
     /**
@@ -618,32 +612,23 @@ class AxisAdditions {
      * @private
      */
     public resetStacks(): void {
-        const stacking = this,
-            {
-                axis,
-                stacks
-            } = stacking;
+        objectEach(this.stacks, (type): void => {
+            objectEach(type, (stack, x): void => {
+                // Clean up memory after point deletion (#1044, #4320)
+                if (
+                    isNumber(stack.touched) &&
+                    stack.touched < this.stacksTouched
+                ) {
+                    stack.destroy();
+                    delete type[x];
 
-        if (!axis.isXAxis) {
-
-            objectEach(stacks, (type): void => {
-                objectEach(type, (stack, x): void => {
-                    // Clean up memory after point deletion (#1044, #4320)
-                    if (
-                        isNumber(stack.touched) &&
-                        stack.touched < stacking.stacksTouched
-                    ) {
-                        stack.destroy();
-                        delete type[x];
-
-                    // Reset stacks
-                    } else {
-                        stack.total = null;
-                        stack.cumulative = null;
-                    }
-                });
+                // Reset stacks
+                } else {
+                    stack.total = null;
+                    stack.cumulative = null;
+                }
             });
-        }
+        });
     }
 
     /**
@@ -706,7 +691,7 @@ namespace StackingAxis {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -724,24 +709,18 @@ namespace StackingAxis {
         SeriesClass: typeof Series
     ): void {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'destroy', onAxisDestroy);
         }
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.getStacks = chartGetStacks;
         }
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.getStackIndicator = seriesGetStackIndicator;
@@ -750,6 +729,7 @@ namespace StackingAxis {
             seriesProto.setGroupedPoints = seriesSetGroupedPoints;
             seriesProto.setStackedPoints = seriesSetStackedPoints;
         }
+
     }
 
 }

@@ -683,7 +683,7 @@ class Axis {
      */
     public getSeriesExtremes(): void {
         const axis = this,
-            { chart, stacking } = axis;
+            chart = axis.chart;
 
         let xExtremes;
 
@@ -695,13 +695,7 @@ class Axis {
             axis.dataMin = axis.dataMax = axis.threshold = null as any;
             axis.softThreshold = !axis.isXAxis;
 
-            if (stacking) {
-                // #17314 clear stacks before new build
-                stacking.cleanStacks();
-                stacking.buildStacks();
-            }
-
-            // loop through this axis' series
+            // Loop through this axis' series
             axis.series.forEach(function (series): void {
 
                 if (
@@ -725,10 +719,10 @@ class Axis {
 
                     // Get dataMin and dataMax for X axes
                     if (axis.isXAxis) {
-                        xData = series.xData as any;
-                        if (xData.length) {
+                        xData = series.xData;
+                        if (xData && xData.length) {
                             xData = axis.logarithmic ?
-                                xData.filter(axis.validatePositiveValue) :
+                                xData.filter((x): boolean => x > 0) :
                                 xData;
 
                             xExtremes = series.getXExtremes(xData);
@@ -1960,7 +1954,7 @@ class Axis {
         this.minorTickInterval =
             minorTickIntervalOption === 'auto' &&
             this.tickInterval ?
-                this.tickInterval / 5 :
+                this.tickInterval / options.minorTicksPerMajor :
                 (minorTickIntervalOption as any);
 
         // When there is only one point, or all points have the same value on
@@ -2546,6 +2540,7 @@ class Axis {
 
             if (axis.stacking) {
                 axis.stacking.resetStacks();
+                axis.stacking.buildStacks();
             }
 
             axis.forceRedraw = false;
@@ -4285,19 +4280,6 @@ class Axis {
             panningOptions.enabled && // #14624
             /y/.test(panningOptions.type)
         );
-    }
-
-    /**
-    * Check whether the given value is a positive valid axis value.
-    *
-    * @private
-    * @function Highcharts.Axis#validatePositiveValue
-    *
-    * @param {unknown} value
-    * The axis value
-    */
-    public validatePositiveValue(value: unknown): boolean {
-        return isNumber(value) && value > 0;
     }
 
     /**

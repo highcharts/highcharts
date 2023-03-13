@@ -46,7 +46,7 @@ namespace ColumnDataLabel {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -159,9 +159,7 @@ namespace ColumnDataLabel {
 
         DataLabel.compose(Series);
 
-        if (composedClasses.indexOf(ColumnSeriesClass) === -1) {
-            composedClasses.push(ColumnSeriesClass);
-
+        if (U.pushUnique(composedMembers, ColumnSeriesClass)) {
             ColumnSeriesClass.prototype.alignDataLabel = alignDataLabel;
         }
 

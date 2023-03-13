@@ -62,6 +62,7 @@ module.exports = {
             'maps/map-series',
             'maps/mapline-series',
             'maps/mappoint-series',
+            'maps/flowmap-series',
             'maps/mapbubble-series',
             'maps/marker-clusters',
             'maps/tilemap-series'
@@ -114,7 +115,7 @@ module.exports = {
             'chart-and-series-types/stream-graph',
             'chart-and-series-types/sunburst-series',
             'chart-and-series-types/timeline-series',
-            // 'chart-and-series-types/treegraph-chart',
+            'chart-and-series-types/treegraph-chart',
             'chart-and-series-types/treemap',
             'chart-and-series-types/variable-radius-pie-chart',
             'chart-and-series-types/variwide-chart',

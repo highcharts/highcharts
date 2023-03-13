@@ -2192,7 +2192,7 @@ class Series {
             let pointStack,
                 stackValues: (Array<number>|undefined),
                 yValue = point.y,
-                yBottom = point.low;
+                lowValue = point.low;
             const stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(
                 series.negStacks &&
                 (yValue as any) <
@@ -2201,15 +2201,9 @@ class Series {
                     ''
             ) + series.stackKey];
 
-            if (
-                yAxis.positiveValuesOnly &&
-                !yAxis.validatePositiveValue(yValue) ||
-                xAxis.positiveValuesOnly &&
-                !xAxis.validatePositiveValue(xValue)
-            ) {
-                point.isNull = true;
-            }
-
+            plotX = xAxis.translate( // #3923
+                xValue, false, false, false, true, pointPlacement
+            );
             /**
              * The translated X value for the point in terms of pixels. Relative
              * to the X axis position if the series has one, otherwise relative
@@ -2218,121 +2212,112 @@ class Series {
              * @name Highcharts.Point#plotX
              * @type {number|undefined}
              */
-            point.plotX = plotX = correctFloat( // #5236
-                // Get the plotX translation
-                limitedRange((xAxis.translate as any)( // #3923
-                    xValue,
-                    0,
-                    0,
-                    0,
-                    1,
-                    pointPlacement,
-                    this.type === 'flags'
-                )) // #3923
-            );
+            point.plotX = isNumber(plotX) ? correctFloat( // #5236
+                limitedRange(plotX) // #3923
+            ) : void 0;
 
             // Calculate the bottom y value for stacked series
             if (stacking &&
                 series.visible &&
                 stack &&
-                stack[xValue as any]
+                stack[xValue]
             ) {
                 stackIndicator = series.getStackIndicator(
                     stackIndicator,
-                    xValue as any,
-                    series.index as any
+                    xValue,
+                    series.index
                 );
 
-                if (!point.isNull) {
-                    pointStack = stack[xValue as any];
-                    stackValues =
-                        pointStack.points[stackIndicator.key as any];
-                }
-            }
-
-            if (isArray(stackValues)) {
-                yBottom = stackValues[0];
-                yValue = stackValues[1];
-
-                if (yBottom === stackThreshold &&
-                    (stackIndicator as any).key ===
-                        (stack as any)[xValue as any].base
-                ) {
-                    yBottom = pick<number|undefined, number>(
-                        (isNumber(threshold) && threshold) as any,
-                        yAxis.min as any
-                    );
+                if (!point.isNull && stackIndicator.key) {
+                    pointStack = stack[xValue];
+                    stackValues = pointStack.points[stackIndicator.key];
                 }
 
-                // #1200, #1232
-                if (yAxis.positiveValuesOnly && yBottom <= 0) {
-                    yBottom = null as any;
+                if (pointStack && isArray(stackValues)) {
+                    lowValue = stackValues[0];
+                    yValue = stackValues[1];
+
+                    if (lowValue === stackThreshold &&
+                        stackIndicator.key === stack[xValue].base
+                    ) {
+                        lowValue = pick(
+                            isNumber(threshold) ? threshold : yAxis.min
+                        );
+                    }
+
+                    // #1200, #1232
+                    if (
+                        yAxis.positiveValuesOnly &&
+                        defined(lowValue) &&
+                        lowValue <= 0
+                    ) {
+                        lowValue = void 0;
+                    }
+
+                    point.total = point.stackTotal = pick(pointStack.total);
+                    point.percentage = defined(point.y) && pointStack.total ?
+                        (point.y / pointStack.total * 100) : void 0;
+                    point.stackY = yValue;
+
+                    // Place the stack label
+
+                    // in case of variwide series (where widths of points are
+                    // different in most cases), stack labels are positioned
+                    // wrongly, so the call of the setOffset is omited here and
+                    // labels are correctly positioned later, at the end of the
+                    // variwide's translate function (#10962)
+                    if (!(series as any).irregularWidths) {
+                        pointStack.setOffset(
+                            series.pointXOffset || 0,
+                            series.barW || 0,
+                            void 0,
+                            void 0,
+                            void 0,
+                            series.xAxis
+                        );
+                    }
+
                 }
-
-                point.total = point.stackTotal = (pointStack as any).total;
-                point.percentage =
-                    (pointStack as any).total &&
-                    ((point.y as any) / (pointStack as any).total * 100);
-                point.stackY = yValue;
-
-                // Place the stack label
-
-                // in case of variwide series (where widths of points are
-                // different in most cases), stack labels are positioned
-                // wrongly, so the call of the setOffset is omited here and
-                // labels are correctly positioned later, at the end of the
-                // variwide's translate function (#10962)
-                if (!(series as any).irregularWidths) {
-                    (pointStack as any).setOffset(
-                        series.pointXOffset || 0,
-                        series.barW || 0
-                    );
-                }
-
             }
 
             // Set translated yBottom or remove it
-            point.yBottom = defined(yBottom) ?
-                limitedRange(yAxis.translate(
-                    (yBottom as any), 0 as any, 1 as any, 0 as any, 1 as any
-                )) :
-                null as any;
+            point.yBottom = defined(lowValue) ?
+                limitedRange(
+                    yAxis.translate(lowValue, false, true, false, true)
+                ) :
+                void 0;
 
             // General hook, used for Highcharts Stock compare and cumulative
             if (series.dataModify) {
                 yValue = series.dataModify.modifyValue(yValue, i);
             }
 
-            // Set the the plotY value, reset it for redraws
-            // #3201
-            point.plotY = void 0;
-            if (isNumber(yValue)) {
-                const translated = yAxis.translate(
-                    yValue, false, true, false, true
-                );
-                if (typeof translated !== 'undefined') {
-                    /**
-                     * The translated Y value for the point in terms of pixels.
-                     * Relative to the Y axis position if the series has one,
-                     * otherwise relative to the plot area. Depending on the
-                     * series type this value might not be defined.
-                     * @name Highcharts.Point#plotY
-                     * @type {number|undefined}
-                     */
-                    point.plotY = limitedRange(translated);
-                }
+            // Set the the plotY value, reset it for redraws #3201, #18422
+            let plotY: number|undefined;
+            if (isNumber(yValue) && point.plotX !== void 0) {
+                plotY = yAxis.translate(yValue, false, true, false, true);
+                plotY = isNumber(plotY) ? limitedRange(plotY) : void 0;
             }
+            /**
+             * The translated Y value for the point in terms of pixels. Relative
+             * to the Y axis position if the series has one, otherwise relative
+             * to the plot area. Depending on the series type this value might
+             * not be defined.
+             * @name Highcharts.Point#plotY
+             * @type {number|undefined}
+             */
+            point.plotY = plotY;
 
             point.isInside = this.isPointInside(point);
 
             // Set client related positions for mouse tracking
             point.clientX = dynamicallyPlaced ?
                 correctFloat(xAxis.translate(
-                    xValue as any,
-                    0 as any,
-                    0 as any,
-                    0 as any,
-                    1 as any,
+                    xValue,
+                    false,
+                    false,
+                    false,
+                    true,
                     pointPlacement
                 )) :
                 plotX; // #1514, #5383, #5518
@@ -2402,15 +2387,22 @@ class Series {
         // #3916, #5029, #5085
         return (points || this.points || []).filter(
             function (point: Point): boolean {
-                if (insideOnly && !chart.isInsidePlot(
-                    point.plotX as any,
-                    point.plotY as any,
-                    { inverted: chart.inverted }
-                )) {
+                const { plotX, plotY } = point,
+                    // Undefined plotY is treated as null when negative values
+                    // in log axis (#18422)
+                    asNull = !allowNull && (point.isNull || !isNumber(plotY));
+                if (
+                    asNull || (
+                        insideOnly && !chart.isInsidePlot(
+                            plotX as any,
+                            plotY as any,
+                            { inverted: chart.inverted }
+                        )
+                    )
+                ) {
                     return false;
                 }
-                return point.visible !== false &&
-                    (allowNull || !point.isNull);
+                return point.visible !== false;
             }
         );
     }
@@ -2532,13 +2524,15 @@ class Series {
                 animationClipRect = chart.renderer.clipRect(clipBox);
                 chart.sharedClips[animationClipKey] = animationClipRect;
 
+                // The marker clip box. The number 99 is a safe margin to avoid
+                // markers being clipped during animation.
                 const markerClipBox = {
-                    // Include the width of the first marker
-                    x: inverted ? (chart.plotSizeX || 0) + 99 : -99,
-                    y: inverted ? -chart.plotLeft : -chart.plotTop,
-                    width: 99,
-                    height: inverted ? chart.chartWidth : chart.chartHeight
+                    x: inverted ? -99 : -99,
+                    y: inverted ? -99 : -99,
+                    width: inverted ? chart.plotWidth + 199 : 99,
+                    height: inverted ? 99 : chart.plotHeight + 199
                 };
+
                 markerAnimationClipRect = chart.renderer.clipRect(
                     markerClipBox
                 );
@@ -2576,12 +2570,13 @@ class Series {
                         step.apply(fx, arguments);
                     }
                     if (
+                        fx.prop === 'width' &&
                         markerAnimationClipRect &&
                         markerAnimationClipRect.element
                     ) {
                         markerAnimationClipRect.attr(
-                            fx.prop,
-                            fx.prop === 'width' ? val + 99 : val
+                            inverted ? 'height' : 'width',
+                            val + 99
                         );
                     }
                 };
@@ -2632,10 +2627,7 @@ class Series {
             styledMode = chart.styledMode,
             { colorAxis, options } = series,
             seriesMarkerOptions = options.marker,
-            markerGroup = (
-                (series as any)[series.specialGroup as any] ||
-                series.markerGroup
-            ),
+            markerGroup = series[series.specialGroup || 'markerGroup'],
             xAxis = series.xAxis,
             globallyEnabled = pick(
                 (seriesMarkerOptions as any).enabled,
@@ -2809,7 +2801,9 @@ class Series {
             symbol = (
                 pointMarkerOptions.symbol ||
                 (seriesMarkerOptions as any).symbol
-            );
+            ),
+            attribs: SVGAttributes = {};
+
         let seriesStateOptions: SeriesStateHoverOptions,
             pointStateOptions: PointStateHoverOptions,
             radius: number|undefined = pick(
@@ -2838,13 +2832,17 @@ class Series {
         if (point.hasImage) {
             radius = 0; // and subsequently width and height is not set
         }
-        const attribs: SVGAttributes = isNumber(radius) ? {
-            // Math.floor for #1843:
-            x: seriesOptions.crisp ?
-                Math.floor(point.plotX as any - radius) :
-                (point.plotX as any) - radius,
-            y: (point.plotY as any) - radius
-        } : {};
+
+        const pos = point.pos();
+        if (isNumber(radius) && pos) {
+            attribs.x = pos[0] - radius;
+            attribs.y = pos[1] - radius;
+
+            if (seriesOptions.crisp) {
+                // Math.floor for #1843:
+                attribs.x = Math.floor(attribs.x);
+            }
+        }
 
         if (radius) {
             attribs.width = attribs.height = 2 * radius;
@@ -3297,7 +3295,7 @@ class Series {
                 !chart.polar &&
                 horAxis &&
                 this.invertible !== false &&
-                (name === 'markers' || name === 'series')
+                name === 'series'
             );
 
         // Swap axes for inverted (#2339)

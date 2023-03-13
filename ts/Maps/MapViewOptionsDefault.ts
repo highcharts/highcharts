@@ -54,7 +54,7 @@ const defaultOptions: MapViewOptions = {
      * to avoid touching the edges of the chart.
      *
      * @type {object}
-     * @since next
+     * @since 10.3.3
      *
      * @sample maps/mapview/fittogeometry Fitting the view to geometries
      */

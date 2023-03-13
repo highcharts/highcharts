@@ -2145,7 +2145,7 @@ Chart.prototype.setGuideBoxState = function (
 
     return (guideBox as any)
         .attr({
-            className: stateOptions.className,
+            'class': stateOptions.className,
             stroke: stateOptions.lineColor,
             strokeWidth: stateOptions.lineWidth,
             fill: stateOptions.color,
@@ -2457,7 +2457,7 @@ Point.prototype.showDragHandles = function (): void {
     const point = this,
         series = point.series,
         chart = series.chart,
-        renderer = chart.renderer,
+        { inverted, renderer } = chart,
         options = merge(series.options.dragDrop, point.options.dragDrop);
 
     // Go through each updateProp and see if we are supposed to create a handle
@@ -2478,7 +2478,7 @@ Point.prototype.showDragHandles = function (): void {
                 stroke: handleOptions.lineColor
             },
             pathFormatter = handleOptions.pathFormatter || val.handleFormatter,
-            positioner = val.handlePositioner,
+            handlePositioner = val.handlePositioner,
             pos,
             handle,
             path,
@@ -2512,7 +2512,7 @@ Point.prototype.showDragHandles = function (): void {
             (chart.dragHandles as any).point = point.id;
 
             // Find position and path of handle
-            pos = positioner(point);
+            pos = handlePositioner(point);
             handleAttrs.d = path = pathFormatter(point);
             // Correct left edge value depending on the xAxis' type, #16596
             const minEdge = point.series.xAxis.categories ? -0.5 : 0;
@@ -2522,7 +2522,7 @@ Point.prototype.showDragHandles = function (): void {
 
             // If cursor is not set explicitly, use axis direction
             handleAttrs.cursor = handleOptions.cursor ||
-                ((val.axis === 'x') !== !!chart.inverted ?
+                ((val.axis === 'x') !== !!inverted ?
                     'ew-resize' : 'ns-resize');
 
             // Create and add the handle element if it doesn't exist
@@ -2534,7 +2534,16 @@ Point.prototype.showDragHandles = function (): void {
             }
 
             // Move and update handle
-            handle.translate(pos.x, pos.y).attr(handleAttrs);
+            handleAttrs.translateX = inverted ?
+                series.yAxis.len - pos.y :
+                pos.x;
+            handleAttrs.translateY = inverted ?
+                series.xAxis.len - pos.x :
+                pos.y;
+            if (inverted) {
+                handleAttrs.rotation = -90;
+            }
+            handle.attr(handleAttrs);
 
             // Add events
             addEvents(

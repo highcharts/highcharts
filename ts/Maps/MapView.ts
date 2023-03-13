@@ -117,18 +117,18 @@ const mergeCollections = <
  * The map view handles zooming and centering on the map, and various
  * client-side projection capabilities.
  *
- * On a chart instance, the map view is available as `chart.mapView`.
+ * On a chart instance of `MapChart`, the map view is available as `chart.mapView`.
  *
  * @class
  * @name Highcharts.MapView
  *
- * @param {Highcharts.Chart} chart
- *        The Chart instance
+ * @param {Highcharts.MapChart} chart
+ *        The MapChart instance
  * @param {Highcharts.MapViewOptions} options
  *        MapView options
  */
 class MapView {
-
+    public allowTransformAnimation: boolean = true;
     public center: LonLatArray;
     public fitToGeometryCache?: MapBounds;
     public geoMap?: GeoJSON;
@@ -415,6 +415,10 @@ class MapView {
 
     public getGeoMap(map?: MapDataType): GeoJSON|undefined {
         if (isString(map)) {
+            if (maps[map] && maps[map].type === 'Topology') {
+                return topo2geo(maps[map]);
+            }
+
             return maps[map];
         }
         if (isObject(map, true)) {
@@ -749,48 +753,56 @@ class MapView {
                 boundsCenterProjected = [
                     (bounds.x1 + bounds.x2) / 2,
                     (bounds.y1 + bounds.y2) / 2
-                ];
+                ],
+                isDrilling = this.chart.series.some(
+                    (series): boolean | undefined =>
+                        series.isDrilling);
 
+            if (!isDrilling) {
+                // Constrain to data bounds
 
-            // Constrain to data bounds
+                // Pixel coordinate system is reversed vs projected
+                const x1 = bottomLeft.x,
+                    y1 = topRight.y,
+                    x2 = topRight.x,
+                    y2 = bottomLeft.y;
 
-            // Pixel coordinate system is reversed vs projected
-            const x1 = bottomLeft.x,
-                y1 = topRight.y,
-                x2 = topRight.x,
-                y2 = bottomLeft.y;
+                // Map smaller than plot area, center it
+                if (x2 - x1 < width) {
+                    projectedCenter[0] = boundsCenterProjected[0];
 
-            // Map smaller than plot area, center it
-            if (x2 - x1 < width) {
-                projectedCenter[0] = boundsCenterProjected[0];
+                // Off west
+                } else if (x1 < x && x2 < x + width) {
+                    // Adjust eastwards
+                    projectedCenter[0] +=
+                        Math.max(x1 - x, x2 - width - x) / scale;
 
-            // Off west
-            } else if (x1 < x && x2 < x + width) {
-                // Adjust eastwards
-                projectedCenter[0] += Math.max(x1 - x, x2 - width - x) / scale;
+                // Off east
+                } else if (x2 > x + width && x1 > x) {
+                    // Adjust westwards
+                    projectedCenter[0] +=
+                        Math.min(x2 - width - x, x1 - x) / scale;
+                }
 
-            // Off east
-            } else if (x2 > x + width && x1 > x) {
-                // Adjust westwards
-                projectedCenter[0] += Math.min(x2 - width - x, x1 - x) / scale;
+                // Map smaller than plot area, center it
+                if (y2 - y1 < height) {
+                    projectedCenter[1] = boundsCenterProjected[1];
+
+                // Off north
+                } else if (y1 < y && y2 < y + height) {
+                    // Adjust southwards
+                    projectedCenter[1] -=
+                        Math.max(y1 - y, y2 - height - y) / scale;
+
+                // Off south
+                } else if (y2 > y + height && y1 > y) {
+                    // Adjust northwards
+                    projectedCenter[1] -=
+                        Math.min(y2 - height - y, y1 - y) / scale;
+                }
+
+                this.center = this.projection.inverse(projectedCenter);
             }
-
-            // Map smaller than plot area, center it
-            if (y2 - y1 < height) {
-                projectedCenter[1] = boundsCenterProjected[1];
-
-            // Off north
-            } else if (y1 < y && y2 < y + height) {
-                // Adjust southwards
-                projectedCenter[1] -= Math.max(y1 - y, y2 - height - y) / scale;
-
-            // Off south
-            } else if (y2 > y + height && y1 > y) {
-                // Adjust northwards
-                projectedCenter[1] -= Math.min(y2 - height - y, y1 - y) / scale;
-            }
-
-            this.center = this.projection.inverse(projectedCenter);
 
 
             this.insets.forEach((inset): void => {
@@ -1371,6 +1383,13 @@ class MapViewInset extends MapView {
 
 // Initialize the MapView after initialization, but before firstRender
 addEvent(MapChart, 'afterInit', function (): void {
+    /**
+     * The map view handles zooming and centering on the map, and various
+     * client-side projection capabilities.
+     *
+     * @name Highcharts.MapChart#mapView
+     * @type {Highcharts.MapView|undefined}
+     */
     this.mapView = new MapView(this, this.options.mapView);
 });
 

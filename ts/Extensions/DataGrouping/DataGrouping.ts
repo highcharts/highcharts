@@ -53,17 +53,20 @@ const composedMembers: Array<Function> = [];
 function compose(
     AxisClass: typeof Axis,
     SeriesClass: typeof Series,
-    TooltipClass: typeof Tooltip
+    TooltipClass?: typeof Tooltip
 ): void {
     DataGroupingAxisComposition.compose(AxisClass);
     DataGroupingSeriesComposition.compose(SeriesClass);
 
-    if (composedMembers.indexOf(TooltipClass) === -1) {
-        composedMembers.push(TooltipClass);
-
+    if (
+        TooltipClass &&
+        U.pushUnique(composedMembers, TooltipClass)
+    ) {
         addEvent(TooltipClass, 'headerFormatter', onTooltipHeaderFormatter);
     }
+
 }
+
 /**
  * Extend the original method, make the tooltip's header reflect the grouped
  * range.

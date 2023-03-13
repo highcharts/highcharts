@@ -40,9 +40,7 @@ import F from '../FormatUtilities.js';
 const { format } = F;
 import H from '../Globals.js';
 const {
-    isFirefox,
-    marginNames,
-    win
+    marginNames
 } = H;
 import Point from '../Series/Point.js';
 import R from '../Renderer/RendererUtilities.js';
@@ -61,8 +59,7 @@ const {
     pick,
     relativeLength,
     stableSort,
-    syncTimeout,
-    wrap
+    syncTimeout
 } = U;
 
 /* *
@@ -70,6 +67,12 @@ const {
  *  Declarations
  *
  * */
+
+declare module '../Chart/ChartLike' {
+    interface ChartLike {
+        legend: Legend;
+    }
+}
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
@@ -207,8 +210,6 @@ class Legend {
 
     public totalItemWidth: number = 0;
 
-    public unchartrender?: Function;
-
     public up?: SVGElement;
 
     public upTracker?: SVGElement;
@@ -220,8 +221,6 @@ class Legend {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Initialize the legend.
@@ -258,18 +257,18 @@ class Legend {
                 this.legend.positionCheckboxes();
             });
 
-            if (this.proximate) {
-                this.unchartrender = addEvent(
-                    this.chart,
-                    'render',
-                    function (): void {
-                        this.legend.proximatePositions();
-                        this.legend.positionItems();
+            // On Legend.init and Legend.update, make sure that proximate layout
+            // events are either added or removed (#18362).
+            addEvent(
+                this.chart,
+                'render',
+                (): void => {
+                    if (this.proximate) {
+                        this.proximatePositions();
+                        this.positionItems();
                     }
-                );
-            } else if (this.unchartrender) {
-                this.unchartrender();
-            }
+                }
+            );
         }
     }
 
@@ -308,6 +307,7 @@ class Legend {
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
         // #12705: baseline has to be reset on every update
         this.baseline = void 0;
+
     }
 
     /**
@@ -739,7 +739,7 @@ class Legend {
                 label.attr('y', legend.baseline);
 
                 legend.symbolHeight =
-                    options.symbolHeight || legend.fontMetrics.f;
+                    pick(options.symbolHeight, legend.fontMetrics.f);
 
                 if (options.squareSymbol) {
                     legend.symbolWidth = pick(
@@ -1572,7 +1572,6 @@ class Legend {
         }
     }
 
-
     /**
      * @private
      * @function Highcharts.Legend#setItemEvents
@@ -1730,7 +1729,6 @@ class Legend {
             );
         });
     }
-
 }
 
 /* *
@@ -1751,6 +1749,12 @@ interface Legend extends LegendLike {
 
 namespace Legend {
 
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface CheckBoxElement extends HTMLDOMElement {
         checked?: boolean;
         x: number;
@@ -1758,6 +1762,42 @@ namespace Legend {
     }
 
     export type Item = (BubbleLegendItem|Series|Point);
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(ChartClass: typeof Chart): void {
+
+        if (U.pushUnique(composedMembers, ChartClass)) {
+            addEvent(ChartClass, 'beforeMargins', function (): void {
+                /**
+                 * The legend contains an interactive overview over chart items,
+                 * usually individual series or points depending on the series
+                 * type. The color axis and bubble legend are also rendered in
+                 * the chart legend.
+                 *
+                 * @name Highcharts.Chart#legend
+                 * @type {Highcharts.Legend}
+                 */
+                this.legend = new Legend(this, this.options.legend);
+            });
+        }
+
+    }
 
 }
 

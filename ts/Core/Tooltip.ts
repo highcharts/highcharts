@@ -16,9 +16,10 @@
  *
  * */
 
-import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
+import type Defaults from './Defaults';
 import type Point from './Series/Point';
+import type Pointer from './Pointer';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
 import type RectangleObject from './Renderer/RectangleObject';
@@ -40,7 +41,6 @@ const {
     addEvent,
     clamp,
     css,
-    defined,
     discardElement,
     extend,
     fireEvent,
@@ -59,6 +59,12 @@ const {
  *
  * */
 
+declare module './Chart/ChartLike' {
+    interface ChartLike {
+        tooltip?: Tooltip;
+    }
+}
+
 declare module './Series/PointLike' {
     interface PointLike {
         isHeader?: boolean;
@@ -76,12 +82,6 @@ declare module './Series/SeriesLike' {
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
         tooltip?: DeepPartial<TooltipOptions>;
-    }
-}
-
-declare module '../Core/TooltipOptions'{
-    interface TooltipOptions {
-        distance?: number;
     }
 }
 
@@ -356,11 +356,7 @@ class Tooltip {
             inverted = chart.inverted,
             plotTop = chart.plotTop,
             plotLeft = chart.plotLeft;
-        let ret: number[],
-            yAxis: (Axis|undefined),
-            xAxis: (Axis|undefined),
-            plotX = 0,
-            plotY = 0;
+        let ret: number[];
 
         points = splat(points);
 
@@ -391,49 +387,31 @@ class Tooltip {
 
         // Calculate the average position and adjust for axis positions
         } else {
+            let chartX = 0,
+                chartY = 0;
             points.forEach(function (point): void {
-                yAxis = point.series.yAxis;
-                xAxis = point.series.xAxis;
-                plotX += point.plotX || 0;
-                plotY += (
-                    point.plotLow ?
-                        (point.plotLow + (point.plotHigh || 0)) / 2 :
-                        (point.plotY || 0)
-                );
-
-                // Adjust position for positioned axes (top/left settings)
-                if (xAxis && yAxis) {
-                    if (!inverted) { // #1151
-                        plotX += xAxis.pos - plotLeft;
-                        plotY += yAxis.pos - plotTop;
-                    } else { // #14771
-                        plotX += (
-                            plotTop + chart.plotHeight - xAxis.len - xAxis.pos
-                        );
-                        plotY += (
-                            plotLeft + chart.plotWidth - yAxis.len - yAxis.pos
-                        );
-                    }
+                const pos = point.pos(true);
+                if (pos) {
+                    chartX += pos[0];
+                    chartY += pos[1];
                 }
             });
 
-            plotX /= points.length;
-            plotY /= points.length;
-
-            // Use the average position for multiple points
-            ret = [
-                inverted ? chart.plotWidth - plotY : plotX,
-                inverted ? chart.plotHeight - plotX : plotY
-            ];
+            chartX /= points.length;
+            chartY /= points.length;
 
             // When shared, place the tooltip next to the mouse (#424)
             if (this.shared && points.length > 1 && mouseEvent) {
                 if (inverted) {
-                    ret[0] = mouseEvent.chartX - plotLeft;
+                    chartX = mouseEvent.chartX;
                 } else {
-                    ret[1] = mouseEvent.chartY - plotTop;
+                    chartY = mouseEvent.chartY;
                 }
             }
+
+            // Use the average position for multiple points
+            ret = [chartX - plotLeft, chartY - plotTop];
+
         }
         return ret.map(Math.round);
 
@@ -862,6 +840,8 @@ class Tooltip {
     }
 
     /**
+     * Initialize tooltip.
+     *
      * @private
      * @function Highcharts.Tooltip#init
      *
@@ -871,7 +851,10 @@ class Tooltip {
      * @param {Highcharts.TooltipOptions} options
      *        Tooltip options.
      */
-    public init(chart: Chart, options: TooltipOptions): void {
+    public init(
+        chart: Chart,
+        options: TooltipOptions
+    ): void {
 
         /**
          * Chart of the tooltip.
@@ -1872,16 +1855,25 @@ class Tooltip {
  * */
 
 namespace Tooltip {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface FormatterCallbackFunction {
         (
             this: FormatterContextObject,
             tooltip: Tooltip
         ): (false|string|Array<string>);
     }
+
     export interface FormatterContextObject extends Point.PointLabelObject {
         points?: Array<FormatterContextObject>;
 
     }
+
     export interface PositionerCallbackFunction {
         (
             this: Tooltip,
@@ -1890,12 +1882,54 @@ namespace Tooltip {
             point: (Point|PositionerPointObject)
         ): PositionObject;
     }
+
     export interface PositionerPointObject {
         isHeader: true;
         plotX: number;
         plotY: number;
     }
+
     export type ShapeValue = ('callout'|'circle'|'square'|'rect');
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(
+        PointerClass: typeof Pointer
+    ): void {
+
+        if (U.pushUnique(composedMembers, PointerClass)) {
+            addEvent(PointerClass, 'afterInit', function (): void {
+                const chart = this.chart;
+
+                if (chart.options.tooltip) {
+                    /**
+                     * Tooltip object for points of series.
+                     *
+                     * @name Highcharts.Chart#tooltip
+                     * @type {Highcharts.Tooltip}
+                     */
+                    chart.tooltip = new Tooltip(chart, chart.options.tooltip);
+                }
+            });
+        }
+
+    }
+
 }
 
 /* *

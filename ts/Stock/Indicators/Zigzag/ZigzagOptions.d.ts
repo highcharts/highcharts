@@ -34,4 +34,10 @@ export interface ZigzagParamsOptions extends SMAParamsOptions {
     deviation?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default ZigzagOptions;
