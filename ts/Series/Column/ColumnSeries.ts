@@ -45,7 +45,6 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
-    css,
     defined,
     extend,
     fireEvent,
@@ -53,7 +52,8 @@ const {
     isNumber,
     merge,
     pick,
-    objectEach
+    objectEach,
+    relativeLength
 } = U;
 
 /* *
@@ -530,7 +530,8 @@ class ColumnSeries extends Series {
                     point.plotY as any,
                     -safeDistance,
                     yAxis.len + safeDistance
-                );
+                ),
+                stackBox = point.stackBox;
             let up,
                 barY = Math.min(plotY, yBottom),
                 barH = Math.max(plotY, yBottom) - barY,
@@ -623,7 +624,7 @@ class ColumnSeries extends Series {
             // `shapeType` defined on `pointClass` level.
             point.shapeType = series.pointClass.prototype.shapeType ||
                 'roundedRect';
-            point.shapeArgs = extend<SVGAttributes>(series.crispCol(
+            point.shapeArgs = series.crispCol(
                 barX,
                 // #3169, drilldown from null must have a position to work from.
                 // #6585, dataLabel should be placed on xAxis, not floating in
@@ -631,9 +632,7 @@ class ColumnSeries extends Series {
                 point.isNull ? translatedThreshold : barY,
                 barW,
                 point.isNull ? 0 : barH
-            ), {
-                r: isNumber(options.borderRadius) ? options.borderRadius : 0
-            });
+            );
         });
 
         // Fire a specific event after column translate. We could instead apply

@@ -83,7 +83,6 @@ export interface SVGAttributes {
     r?: number;
     refX?: number;
     refY?: number;
-    rOffsets?: number[];
     rx?: number;
     ry?: number;
     role?: string;

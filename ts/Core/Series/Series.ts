@@ -2259,8 +2259,7 @@ class Series {
                     point.percentage = defined(point.y) && stackItem.total ?
                         (point.y / stackItem.total * 100) : void 0;
                     point.stackY = yValue;
-
-                    // Place the stack label
+                    point.stackBox = stackItem.box;
 
                     // in case of variwide series (where widths of points are
                     // different in most cases), stack labels are positioned

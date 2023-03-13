@@ -311,7 +311,8 @@ function roundedRect(
         ['L', x + r, y + h], // bottom side
         ['A', r, r, 0, 0, 1, x, y + h - r], // bottom-left corner
         ['L', x, y + r], // left side
-        ['A', r, r, 0, 0, 1, x + r, y] // top-left corner
+        ['A', r, r, 0, 0, 1, x + r, y],
+        ['Z'] // top-left corner
     ];
 }
 

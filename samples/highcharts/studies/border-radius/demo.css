@@ -15,6 +15,11 @@
     font-size: 12px;
 }
 
+#container-1,
+#container-2 {
+    height: 400px;
+}
+
 .range-container {
     position: relative;
     padding-top: 2em;

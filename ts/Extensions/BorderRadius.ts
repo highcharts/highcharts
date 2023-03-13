@@ -26,9 +26,9 @@ import U from '../Core/Utilities.js';
 
 const {
     addEvent,
+    extend,
     isObject,
     merge,
-    pick,
     relativeLength
 } = U;
 
@@ -38,14 +38,6 @@ export interface BorderRadiusOptions {
     where?: 'end'|'all';
 }
 
-/*
-interface CurvePoints {
-    start: [number, number];
-    end: [number, number];
-    cp1: [number, number];
-    cp2: [number, number];
-}
-*/
 /**
  * Internal types
  * @private
@@ -53,12 +45,18 @@ interface CurvePoints {
 declare module '../Core/Renderer/SVG/SVGAttributes' {
     interface SVGAttributes {
         borderRadius?: number|string;
+        /** The height of the border-radius box  */
+        brBoxHeight?: number;
+        /** The y position of the border-radius box  */
+        brBoxY?: number;
     }
 }
 
 declare module '../Core/Renderer/SVG/SymbolOptions' {
     interface SymbolOptions {
         borderRadius?: number|string;
+        brBoxHeight?: number;
+        brBoxY?: number;
     }
 }
 
@@ -178,7 +176,11 @@ const applyBorderRadius = (
 // Check if the module has already been imported
 if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
 
-    SVGElement.symbolCustomAttribs.push('borderRadius');
+    SVGElement.symbolCustomAttribs.push(
+        'borderRadius',
+        'brBoxHeight',
+        'brBoxY'
+    );
 
     // Extend arc with borderRadius
     const arc = SVGRenderer.prototype.symbols.arc;
@@ -216,6 +218,128 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
         return path;
     };
 
+    // Extend roundedRect with individual cutting through rOffset
+    const roundedRect = SVGRenderer.prototype.symbols.roundedRect;
+    SVGRenderer.prototype.symbols.roundedRect = function (
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+        options: SymbolOptions = {}
+    ): SVGPath {
+        const path = roundedRect(x, y, width, height, options),
+            { r = 0, brBoxHeight = height, brBoxY = y } = options,
+            brOffsetTop = y - brBoxY,
+            brOffsetBtm = (brBoxY + brBoxHeight) - (y + height),
+
+            // When the distance to the border-radius box is greater than the r
+            // itself, it means no border radius. The -0.1 accounts for float
+            // rounding errors.
+            rTop = (brOffsetTop - r) > -0.1 ? 0 : r,
+            rBtm = (brOffsetBtm - r) > -0.1 ? 0 : r,
+            cutTop = Math.max(rTop && brOffsetTop, 0),
+            cutBtm = Math.max(rBtm && brOffsetBtm, 0);
+
+        /*
+
+        The naming of control points:
+
+          / a -------- b \
+         /                \
+        h                  c
+        |                  |
+        |                  |
+        |                  |
+        g                  d
+         \                /
+          \ f -------- e /
+
+        */
+
+        const a: [number, number] = [x + rTop, y],
+            b: [number, number] = [x + width - rTop, y],
+            c: [number, number] = [x + width, y + rTop],
+            d: [number, number] = [
+                x + width, y + height - rBtm
+            ],
+            e: [number, number] = [
+                x + width - rBtm,
+                y + height
+            ],
+            f: [number, number] = [x + rBtm, y + height],
+            g: [number, number] = [x, y + height - rBtm],
+            h: [number, number] = [x, y + rTop];
+
+        const applyPythagoras = (
+            r: number,
+            altitude: number
+        ): number => Math.sqrt(
+            Math.pow(r, 2) - Math.pow(altitude, 2)
+        );
+
+        // Inside stacks, cut off part of the top
+        if (cutTop) {
+            const base = applyPythagoras(rTop, rTop - cutTop);
+            a[0] -= base;
+            b[0] += base;
+            c[1] = h[1] = y + rTop - cutTop;
+        }
+
+        // Column is lower than the radius. Cut off bottom inside the top
+        // radius.
+        if (height < rTop - cutTop) {
+            const base = applyPythagoras(rTop, rTop - cutTop - height);
+            c[0] = d[0] = x + width - rTop + base;
+            e[0] = Math.min(c[0], e[0]);
+            f[0] = Math.max(d[0], f[0]);
+            g[0] = h[0] = x + rTop - base;
+            c[1] = h[1] = y + height;
+        }
+
+        // Inside stacks, cut off part of the bottom
+        if (cutBtm) {
+            const base = applyPythagoras(rBtm, rBtm - cutBtm);
+            e[0] += base;
+            f[0] -= base;
+            d[1] = g[1] = y + height - rBtm + cutBtm;
+        }
+
+        // Cut off top inside the bottom radius
+        if (height < rBtm - cutBtm) {
+            const base = applyPythagoras(rBtm, rBtm - cutBtm - height);
+            c[0] = d[0] = x + width - rBtm + base;
+            b[0] = Math.min(c[0], b[0]);
+            a[0] = Math.max(d[0], a[0]);
+            g[0] = h[0] = x + rBtm - base;
+            d[1] = g[1] = y;
+        }
+
+        // Preserve the box for data labels
+        path.length = 0;
+        path.push(
+            ['M', ...a],
+            // top side
+            ['L', ...b],
+            // top right corner
+            ['A', rTop, rTop, 0, 0, 1, ...c],
+            // right side
+            ['L', ...d],
+            // bottom right corner
+            ['A', rBtm, rBtm, 0, 0, 1, ...e],
+            // bottom side
+            ['L', ...f],
+            // bottom left corner
+            ['A', rBtm, rBtm, 0, 0, 1, ...g],
+            // left side
+            ['L', ...h],
+            // top left corner
+            ['A', rTop, rTop, 0, 0, 1, ...a],
+            ['Z']
+        );
+
+        return path;
+    };
+
     addEvent(seriesTypes.pie, 'afterTranslate', function (): void {
         const borderRadius = optionsToObject(this.options.borderRadius);
 
@@ -245,16 +369,17 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                     reversed = yAxis.options.reversed;
 
                 for (const point of this.points) {
-                    if (point.shapeType === 'rect') {
+                    const shapeArgs = point.shapeArgs;
+                    if (point.shapeType === 'roundedRect' && shapeArgs) {
                         const {
                             width = 0,
                             height = 0,
                             x = 0,
                             y = 0
-                        } = point.shapeArgs || {};
+                        } = shapeArgs;
 
-                        let stackY = y,
-                            stackHeight = height;
+                        let brBoxY = y,
+                            brBoxHeight = height;
 
                         if (
                             borderRadius.scope === 'stack' &&
@@ -276,24 +401,25 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                                     0,
                                     Math.abs(stackEnd - stackThreshold)
                                 );
-                            stackY = box.y;
-                            stackHeight = box.height;
+                            brBoxY = box.y;
+                            brBoxHeight = box.height;
                         }
 
+                        const flip = (point.negative ? -1 : 1) *
+                            (reversed ? -1 : 1) === -1;
+
                         // Get the radius
-                        const r = Math.min(
+                        let r = Math.min(
                                 relativeLength(borderRadius.radius, width),
                                 width / 2
                             ) || 0,
-                            flip = (point.negative ? -1 : 1) *
-                                (reversed ? -1 : 1) === -1;
 
-                        // where = 'end'
-                        let rTop = flip ? 0 : r,
-                            rBtm = flip ? r : 0;
+                            // where = 'end'
+                            rTop = flip ? 0 : r,
+                            rBtm = flip ? r : 0,
 
-                        // Handle the where option
-                        let where = borderRadius.where;
+                            // Handle the where option
+                            where = borderRadius.where;
 
                         // Columnrange
                         if (
@@ -325,129 +451,30 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                         }
 
                         // Deep in stack, cancel rounding
-                        if (rTop && rTop < y - stackY) {
+                        if (rTop && rTop < y - brBoxY) {
                             rTop = 0;
                         }
                         if (
-                            rBtm && rBtm < (stackY + stackHeight) - (y + height)
+                            rBtm && rBtm < (brBoxY + brBoxHeight) - (y + height)
                         ) {
                             rBtm = 0;
                         }
 
                         // Radius exceeds the available height => decrease
                         // radius
-                        if (rTop > 0 && rBtm > 0 && rTop + rBtm > stackHeight) {
-                            rTop = rBtm = stackHeight / 2;
+                        if (rTop > 0 && rBtm > 0 && rTop + rBtm > brBoxHeight) {
+                            r = rTop = rBtm = brBoxHeight / 2;
                         }
 
-
-                        /*
-
-                        The naming of control points:
-
-                        / a -------- b \
-                        /                \
-                        h                  c
-                        |                  |
-                        |                  |
-                        |                  |
-                        g                  d
-                        \                /
-                        \ f -------- e /
-
-                        */
-
-                        const a: [number, number] = [x + rTop, y],
-                            b: [number, number] = [x + width - rTop, y],
-                            c: [number, number] = [x + width, y + rTop],
-                            d: [number, number] = [
-                                x + width, y + height - rBtm
-                            ],
-                            e: [number, number] = [
-                                x + width - rBtm,
-                                y + height
-                            ],
-                            f: [number, number] = [x + rBtm, y + height],
-                            g: [number, number] = [x, y + height - rBtm],
-                            h: [number, number] = [x, y + rTop];
-
-                        const applyPythagoras = (
-                            r: number,
-                            altitude: number
-                        ): number => Math.sqrt(
-                            Math.pow(r, 2) - Math.pow(altitude, 2)
-                        );
-
-                        // Inside stacks, cut off part of the top
-                        const cutTop = rTop && y - stackY;
-                        if (cutTop) {
-                            const base = applyPythagoras(rTop, rTop - cutTop);
-                            a[0] -= base;
-                            b[0] += base;
-                            c[1] = h[1] = y + rTop - cutTop;
+                        if (rTop === 0) {
+                            brBoxY -= r;
+                            brBoxHeight += r;
+                        }
+                        if (rBtm === 0) {
+                            brBoxHeight += r;
                         }
 
-                        // Column is lower than the radius. Cut off bottom
-                        // inside the top radius.
-                        if (height < rTop - cutTop) {
-                            const base = applyPythagoras(
-                                rTop, rTop - cutTop - height
-                            );
-                            c[0] = d[0] = x + width - rTop + base;
-                            e[0] = Math.min(c[0], e[0]);
-                            f[0] = Math.max(d[0], f[0]);
-                            g[0] = h[0] = x + rTop - base;
-                            c[1] = h[1] = y + height;
-                        }
-
-                        // Inside stacks, cut off part of the bottom
-                        const cutBtm = rBtm && (stackY + stackHeight) -
-                            (y + height);
-                        if (cutBtm) {
-                            const base = applyPythagoras(rBtm, rBtm - cutBtm);
-                            e[0] += base;
-                            f[0] -= base;
-                            d[1] = g[1] = y + height - rBtm + cutBtm;
-                        }
-
-                        // Cut off top inside the bottom radius
-                        if (height < rBtm - cutBtm) {
-                            const base = applyPythagoras(
-                                rBtm, rBtm - cutBtm - height
-                            );
-                            c[0] = d[0] = x + width - rBtm + base;
-                            b[0] = Math.min(c[0], b[0]);
-                            a[0] = Math.max(d[0], a[0]);
-                            g[0] = h[0] = x + rBtm - base;
-                            d[1] = g[1] = y;
-                        }
-
-                        // Preserve the box for data labels
-                        point.dlBox = { x, y, width, height };
-
-                        point.shapeType = 'path';
-                        point.shapeArgs = {
-                            d: [
-                                ['M', ...a],
-                                // top side
-                                ['L', ...b],
-                                // top right corner
-                                ['A', rTop, rTop, 0, 0, 1, ...c],
-                                // right side
-                                ['L', ...d],
-                                // bottom right corner
-                                ['A', rBtm, rBtm, 0, 0, 1, ...e],
-                                // bottom side
-                                ['L', ...f],
-                                // bottom left corner
-                                ['A', rBtm, rBtm, 0, 0, 1, ...g],
-                                // left side
-                                ['L', ...h],
-                                // top left corner
-                                ['A', rTop, rTop, 0, 0, 1, ...a],
-                                ['Z']
-                            ]
-                        };
+                        extend(shapeArgs, { brBoxHeight, brBoxY, r });
 
                     // Polar column and polar bar
                     } else if (point.shapeType === 'arc') {

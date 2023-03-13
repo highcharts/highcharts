@@ -122,6 +122,7 @@ class StackItem {
     public alignOptions: AlignOptions;
     public axis: StackingAxis;
     public base?: string;
+    public box?: BBoxObject;
     public cumulative: number | null;
     public hasValidPoints: boolean;
     public isNegative: boolean;
@@ -229,6 +230,8 @@ class StackItem {
                 xAxis
             }),
             { verticalAlign } = alignOptions;
+
+        this.box = stackBox;
 
         if (label && stackBox) {
             const labelBox = label.getBBox(),
