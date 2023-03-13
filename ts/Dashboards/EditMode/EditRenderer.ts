@@ -33,14 +33,17 @@ const {
 * */
 
 /**
- * Function to create a context button
+ * Function to create a context button.
  * @intenal
  *
  * @param parentElement
- * the element to which the new elemenet should be appended
- * @param editMode EditMode instance
+ * The element to which the new elemenet should be appended.
  *
- * @returns context button element
+ * @param editMode
+ * EditMode instance.
+ *
+ * @returns
+ * Context button element.
  */
 function renderContextButton(
     parentNode: HTMLDOMElement,
@@ -69,10 +72,14 @@ function renderContextButton(
 /**
  * Function to create select element.
  *
- * @param parentElement the element to which the new elemenet should be appended
- * @param options Select form field options
+ * @param parentElement
+ * The element to which the new elemenet should be appended.
  *
- * @returns Select element
+ * @param options
+ * Select form field options.
+ *
+ * @returns
+ * Select element
  */
 function renderSelect(
     parentElement: HTMLDOMElement,
@@ -229,10 +236,14 @@ function renderSelectElement(
 /**
  * Function to create toggle element.
  *
- * @param parentElement the element to which the new elemenet should be appended
- * @param options Form field options
+ * @param parentElement
+ * The element to which the new elemenet should be appended.
  *
- * @returns Toggle Element
+ * @param options
+ * Form field options
+ *
+ * @returns
+ * Toggle element
  */
 function renderToggle(
     parentElement: HTMLDOMElement,
@@ -277,9 +288,14 @@ function renderToggle(
 /**
  * Function to create text element.
  *
- * @param parentElement the element to which the new elemenet should be appended
- * @param text Text to be displayed
- * @param callback Callback function to be fired on the click
+ * @param parentElement
+ * The element to which the new elemenet should be appended
+ *
+ * @param text
+ * Text to be displayed
+ *
+ * @param callback
+ * Callback function to be fired on the click
  *
  * @returns text Element
  */
@@ -307,11 +323,17 @@ function renderText(
 /**
  * Function to create Icon element.
  *
- * @param parentElement the element to which the new elemenet should be appended
- * @param icon Icon URL
- * @param callback Callback function
+ * @param parentElement
+ * The element to which the new elemenet should be appended.
  *
- * @returns Icon Element
+ * @param icon
+ * Icon URL
+ *
+ * @param callback
+ * Callback function
+ *
+ * @returns
+ * Icon Element
  */
 function renderIcon(
     parentElement: HTMLDOMElement,
@@ -337,10 +359,14 @@ function renderIcon(
 /**
  * Function to create input element.
  *
- * @param parentElement the element to which the new elemenet should be appended
- * @param options Form field options
+ * @param parentElement
+ * the element to which the new elemenet should be appended
  *
- * @returns Input Element
+ * @param options
+ * Form field options
+ *
+ * @returns
+ * Input Element
  */
 function renderInput(
     parentElement: HTMLDOMElement,
@@ -385,10 +411,14 @@ function renderInput(
 /**
  * Function to create textarea element.
  *
- * @param parentElement the element to which the new elemenet should be appended
- * @param options Form field options
+ * @param parentElement
+ * The element to which the new elemenet should be appended
  *
- * @returns textarea Element
+ * @param options
+ * Form field options
+ *
+ * @returns
+ * textarea Element
  */
 function renderTextarea(
     parentElement: HTMLDOMElement,
@@ -449,10 +479,14 @@ function renderCheckbox(
 /**
  * Function to create button element.
  *
- * @param parentElement the element to which the new elemenet should be appended
- * @param options Button field options
+ * @param parentElement
+ * the element to which the new elemenet should be appended
  *
- * @returns Button Element
+ * @param options
+ * Button field options
+ *
+ * @returns
+ * Button Element
  */
 function renderButton(
     parentElement: HTMLDOMElement,
