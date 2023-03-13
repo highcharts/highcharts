@@ -869,35 +869,6 @@ h1 {
     outline: 5px auto -webkit-focus-ring-color;
 }
 
-/* outer Accordeon */
-.highcharts-dashboards-outer-accordeon-header > button.highcharts-dashboards-outer-accordeon-header-btn {
-    justify-content: space-between;
-}
-
-div.highcharts-dashboards-outer-accordeon {
-    padding: 0;
-    background: #e7e7ec;
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 8px 0;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 14px;
-    color: #20202c;
-    line-height: 16px;
-}
-
-button.highcharts-dashboards-outer-accordeon-header-btn {
-    padding: 10px 16px;
-    cursor: pointer;
-    align-items: center;
-}
-
-div.highcharts-dashboards-outer-accordeon-content {
-    padding: 16px;
-}
-
-/* End of outer accordeon */
-
 /* Dropdown */
 ul.highcharts-dashboards-droptown-content {
     display: flex;
@@ -989,3 +960,32 @@ button.highcharts-dashboards-select-option-button:hover {
 }
 
 /* end of nested options dropdown */
+
+/* outer Accordeon */
+.highcharts-dashboards-outer-accordeon-header > button.highcharts-dashboards-outer-accordeon-header-btn {
+    justify-content: space-between;
+}
+
+div.highcharts-dashboards-outer-accordeon {
+    padding: 0;
+    background: #e7e7ec;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 8px 0;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    color: #20202c;
+    line-height: 16px;
+}
+
+button.highcharts-dashboards-outer-accordeon-header-btn {
+    padding: 10px 16px;
+    cursor: pointer;
+    align-items: center;
+}
+
+div.highcharts-dashboards-outer-accordeon-content {
+    padding: 16px;
+}
+
+/* End of outer accordeon */
