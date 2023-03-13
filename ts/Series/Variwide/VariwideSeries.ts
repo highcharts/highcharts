@@ -284,7 +284,7 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
         // and extend Z units, without modifying the axis.
         } else {
             left = plotX;
-            right = xAxis.translate(x + z, false, false, false, true);
+            right = xAxis.translate(point.x + z, false, false, false, true);
         }
 
         if (this.crispOption) {
