@@ -65,7 +65,7 @@ class GeoHeatmapSeries extends MapSeries {
      * and longitude, and individual values contained in a matrix are
      * represented as colors.
      *
-     * @sample maps/demo/geoheatmap/
+     * @sample maps/demo/geoheatmap-europe/
      *         GeoHeatmap Chart on the Orthographic Projection
      * @sample maps/demo/geoheatmap-equalearth/
      *         GeoHeatmap Chart on the Equal Earth Projection
@@ -268,7 +268,7 @@ export default GeoHeatmapSeries;
  *     }]
  *  ```
  *
- * @sample maps/demo/geoheatmap/
+ * @sample maps/demo/geoheatmap-europe/
  *         GeoHeatmap Chart on the Orthographic Projection
  * @sample maps/demo/geoheatmap-equalearth/
  *         GeoHeatmap Chart on the Equal Earth Projection

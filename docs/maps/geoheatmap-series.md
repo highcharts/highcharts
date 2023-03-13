@@ -3,7 +3,7 @@ GeoHeatMap Series
 
 A GeoHeatMap series is a graphical representation of data on different map projections where the individual values contained in a matrix are represented as colors.
 
-<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/geoheatmap" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/geoheatmap-europe" allow="fullscreen"></iframe>
 
 GeoHeatMap similar to regular [HeatMap](https://www.highcharts.com/docs/chart-and-series-types/heatmap) is commonly used to visualize hot spots within data sets and to show patterns or correlations. In the GeoHeatmap, the matrix represents geographic coordinates. Due to their compact nature, they are often used with large sets of data.
 
