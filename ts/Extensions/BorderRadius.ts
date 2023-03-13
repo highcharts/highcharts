@@ -404,17 +404,13 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                             (reversed ? -1 : 1) === -1;
 
                         // Get the radius
-                        let r = Math.min(
-                                relativeLength(borderRadius.radius, width),
-                                width / 2
-                            ) || 0,
+                        const r = Math.min(
+                            relativeLength(borderRadius.radius, width),
+                            width / 2
+                        ) || 0;
 
-                            // where = 'end'
-                            rTop = flip ? 0 : r,
-                            rBtm = flip ? r : 0,
-
-                            // Handle the where option
-                            where = borderRadius.where;
+                        // Handle the where option
+                        let where = borderRadius.where;
 
                         // Waterfall, hanging columns should have rounding on
                         // all sides
@@ -433,32 +429,17 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                             where = 'end';
                         }
 
-                        if (where === 'all') {
-                            rTop = rBtm = r;
-                        }
-
-                        // Deep in stack, cancel rounding
-                        if (rTop && rTop < y - brBoxY) {
-                            rTop = 0;
-                        }
-                        if (
-                            rBtm && rBtm < (brBoxY + brBoxHeight) - (y + height)
-                        ) {
-                            rBtm = 0;
-                        }
-
-                        // Radius exceeds the available height => decrease
-                        // radius
-                        if (rTop > 0 && rBtm > 0 && rTop + rBtm > brBoxHeight) {
-                            r = rTop = rBtm = brBoxHeight / 2;
-                        }
-
-                        if (rTop === 0) {
-                            brBoxY -= r;
-                            brBoxHeight += r;
-                        }
-                        if (rBtm === 0) {
-                            brBoxHeight += r;
+                        // If the `where` option is 'end', cut off the
+                        // rectangles by making the border-radius box one r
+                        // greater, so that the imaginary radius falls outside
+                        // the rectangle.
+                        if (where === 'end') {
+                            if (flip) {
+                                brBoxY -= r;
+                                brBoxHeight += r;
+                            } else {
+                                brBoxHeight += r;
+                            }
                         }
 
                         extend(shapeArgs, { brBoxHeight, brBoxY, r });
