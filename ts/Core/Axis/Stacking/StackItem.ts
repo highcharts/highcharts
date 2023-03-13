@@ -42,6 +42,7 @@ const {
     destroyObjectProperties,
     fireEvent,
     isNumber,
+    merge,
     pick
 } = U;
 
@@ -232,6 +233,7 @@ class StackItem {
 
         if (label && stackBox) {
             const labelBox = label.getBBox(),
+                alignBox = merge(stackBox),
                 padding = label.padding;
             let isJustify = pick(options.overflow, 'justify') === 'justify',
                 visible;
@@ -250,10 +252,10 @@ class StackItem {
                 textAlign
             });
 
-            stackBox.x -= x;
-            stackBox.y -= y;
+            alignBox.x -= x;
+            alignBox.y -= y;
             // Align the label to the adjusted box.
-            label.align(alignOptions, false, stackBox);
+            label.align(alignOptions, false, alignBox);
             // Check if label is inside the plotArea #12294
             visible = chart.isInsidePlot(
                 label.alignAttr.x + alignOptions.x + x,
@@ -265,14 +267,14 @@ class StackItem {
             }
 
             if (isJustify) {
-                // Justify stackLabel into the stackBox
+                // Justify stackLabel into the alignBox
                 Series.prototype.justifyDataLabel.call(
                     axis,
                     label,
                     alignOptions,
                     label.alignAttr,
                     labelBox,
-                    stackBox
+                    alignBox
                 );
             }
 
