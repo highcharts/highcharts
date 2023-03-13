@@ -66,7 +66,9 @@ class GroupModifier extends DataModifier {
      * @param {GroupModifier.Options} [options]
      * Options to configure the group modifier.
      */
-    public constructor(options?: DeepPartial<GroupModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<GroupModifier.Options>
+    ) {
         super();
 
         this.options = merge(GroupModifier.defaultOptions, options);
