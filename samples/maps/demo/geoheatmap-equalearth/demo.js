@@ -14,7 +14,7 @@
 
         chart: {
             map: topology,
-            backgroundColor: '#000'
+            backgroundColor: '#222'
         },
 
         title: {
@@ -26,8 +26,11 @@
         },
 
         subtitle: {
-            text: 'Data source: <a style="color: #666" href="https://neo.gsfc.nasa.gov/view.php?datasetId=MYDAL2_M_AER_RA&date=2016-09-01">NEO Nasa Earth Observations</a>',
-            align: 'left'
+            text: 'Data source: <a style="color: #ddd" href="https://neo.gsfc.nasa.gov/view.php?datasetId=MYDAL2_M_AER_RA&date=2016-09-01">NEO Nasa Earth Observations</a>',
+            align: 'left',
+            style: {
+                color: '#ddd'
+            }
         },
 
         mapNavigation: {
@@ -53,12 +56,18 @@
                 [0.6, 'rgba(254,229,147,0.9)'],
                 [0.8, 'rgba(249,148,85,0.9'],
                 [1, 'rgba(215,48,39,0.9)']
-            ]
+            ],
+            labels: {
+                style: {
+                    color: '#ddd'
+                }
+            }
         },
 
         series: [{
             name: 'Equal Earth',
-            nullColor: 'transparent',
+            nullColor: '#383838',
+            borderColor: '#222',
             states: {
                 inactive: {
                     enabled: false

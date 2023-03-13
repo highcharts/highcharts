@@ -10,12 +10,14 @@
         },
 
         title: {
-            text: 'European Train Stations Near Airports'
+            text: 'European Train Stations Near Airports',
+            align: 'left'
         },
 
         subtitle: {
             text: 'Source: <a href="https://github.com/trainline-eu/stations">' +
-                'github.com/trainline-eu/stations</a>'
+                'github.com/trainline-eu/stations</a>',
+            align: 'left'
         },
 
         colorAxis: {

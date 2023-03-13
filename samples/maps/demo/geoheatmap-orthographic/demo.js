@@ -3,7 +3,8 @@
             'https://code.highcharts.com/mapdata/custom/world.topo.json'
         ).then(response => response.json()),
 
-        data = await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@5c536debb0/samples/data/geoheatmap-cities-dataset.json'
+        data = await fetch(
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@5c536debb0/samples/data/geoheatmap-cities-dataset.json'
         ).then(response => response.json());
 
     Highcharts.mapChart('container', {
@@ -17,7 +18,9 @@
         },
 
         subtitle: {
-            text: 'Density of Cities in the World by Latitude and Longitude<br> Data source: <a href="https://github.com/lutangar/cities.json">https://github.com/lutangar/cities.json</a>',
+            text: 'Density of Cities in the World by Latitude and Longitude' +
+                '<br>Data source: <a href="https://github.com/lutangar/cities.json">' +
+                'github.com/lutangar/cities.json</a>',
             align: 'left'
         },
 
