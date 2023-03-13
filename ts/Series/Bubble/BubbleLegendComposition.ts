@@ -41,7 +41,7 @@ const {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -149,9 +149,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         setOptions({
             // Set default bubble legend options
             legend: {
@@ -162,15 +160,11 @@ function compose(
         wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
     }
 
-    if (composedClasses.indexOf(LegendClass) === -1) {
-        composedClasses.push(LegendClass);
-
+    if (U.pushUnique(composedMembers, LegendClass)) {
         addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
     }
 
-    if (composedClasses.indexOf(SeriesClass) === -1) {
-        composedClasses.push(SeriesClass);
-
+    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
     }
 

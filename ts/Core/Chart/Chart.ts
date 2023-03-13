@@ -76,7 +76,6 @@ const {
     svg,
     win
 } = H;
-import Legend from '../Legend/Legend.js';
 import MSPointer from '../MSPointer.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
@@ -325,7 +324,6 @@ class Chart {
     public isDirtyLegend?: boolean;
     public isResizing: number = void 0 as any;
     public labelCollectors: Array<Chart.LabelCollectorFunction> = void 0 as any;
-    public legend: Legend = void 0 as any;
     public loadingDiv?: HTMLDOMElement;
     public loadingShown?: boolean;
     public loadingSpan?: HTMLDOMElement;
@@ -815,7 +813,8 @@ class Chart {
      * @function Highcharts.Chart#redraw
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
-     * If or how to apply animation to the redraw.
+     * If or how to apply animation to the redraw. When `undefined`, it applies
+     * the animation that is set in the `chart.animation` option.
      *
      * @emits Highcharts.Chart#event:afterSetExtremes
      * @emits Highcharts.Chart#event:beforeRedraw
@@ -1850,8 +1849,9 @@ class Chart {
      *        be `undefined` in order to preserve the current value, or `null`
      *        in order to adapt to the height of the containing element.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
-     *        Whether and how to apply animation.
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether and how to apply animation. When `undefined`, it applies
+     *        the animation that is set in the `chart.animation` option.
      *
      *
      * @emits Highcharts.Chart#event:endResize
@@ -2401,7 +2401,6 @@ class Chart {
             axes = chart.axes,
             colorAxis = chart.colorAxis,
             renderer = chart.renderer,
-            options = chart.options,
             renderAxes = function (axes: Array<Axis>): void {
                 axes.forEach(function (axis): void {
                     if (axis.visible) {
@@ -2415,13 +2414,9 @@ class Chart {
         // Title
         chart.setTitle();
 
-        /**
-         * The overview of the chart's series.
-         *
-         * @name Highcharts.Chart#legend
-         * @type {Highcharts.Legend}
-         */
-        chart.legend = new Legend(chart, options.legend as any);
+        // Fire an event before the margins are computed. This is where the
+        // legend is assigned.
+        fireEvent(chart, 'beforeMargins');
 
         // Get stacks
         if (chart.getStacks) {
@@ -2511,7 +2506,6 @@ class Chart {
 
         // Set flag
         chart.hasRendered = true;
-
     }
 
     /**
@@ -2708,23 +2702,6 @@ class Chart {
         // in Highcharts Stock.
         fireEvent(chart, 'beforeRender');
 
-        // depends on inverted and on margins being set
-        if (Pointer) {
-            if (MSPointer.isRequired()) {
-                chart.pointer = new MSPointer(chart, options);
-            } else {
-                /**
-                 * The Pointer that keeps track of mouse and touch interaction.
-                 *
-                 * @memberof Highcharts.Chart
-                 * @name pointer
-                 * @type {Highcharts.Pointer}
-                 * @instance
-                 */
-                chart.pointer = new Pointer(chart, options);
-            }
-        }
-
         chart.render();
         chart.pointer.getChartPosition(); // #14973
 
@@ -2830,7 +2807,8 @@ class Chart {
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
-     *        configuration.
+     *        configuration. When `undefined`, it applies the animation that is
+     *        set in the `chart.animation` option.
      *
      * @return {Highcharts.Series}
      *         The newly created series object.
@@ -2898,8 +2876,10 @@ class Chart {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
-     *        Whether and how to apply animation in the redraw.
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether and how to apply animation in the redraw. When
+     *        `undefined`, it applies the animation that is set in the
+     *        `chart.animation` option.
      *
      * @return {Highcharts.Axis}
      *         The newly generated Axis object.
@@ -2934,10 +2914,12 @@ class Chart {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
-     *        Whether and how to apply animation in the redraw.
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether and how to apply animation in the redraw. When
+     *        `undefined`, it applies the animation that is set in the
+     *        `chart.animation` option.
      *
-     * @return {Highcharts.ColorAxis}
+     * @return {Highcharts.Axis}
      *         The newly generated Axis object.
      */
     public addColorAxis(
@@ -2963,7 +2945,7 @@ class Chart {
      * @param {...Array<*>} arguments
      *        All arguments for the constructor.
      *
-     * @return {Highcharts.Axis | Highcharts.ColorAxis}
+     * @return {Highcharts.Axis}
      *         The newly generated Axis object.
      */
     public createAxis(
@@ -3152,9 +3134,10 @@ class Chart {
      *        series have id's, the new series options will be matched by id,
      *        and the remaining ones removed.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
-     *        configuration.
+     *        configuration. When `undefined`, it applies the animation that is
+     *        set in the `chart.animation` option.
      *
      * @emits Highcharts.Chart#event:update
      * @emits Highcharts.Chart#event:afterUpdate

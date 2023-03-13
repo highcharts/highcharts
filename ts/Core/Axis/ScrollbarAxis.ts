@@ -47,6 +47,14 @@ declare module './AxisType' {
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+const composedMembers: Array<unknown> = [];
+
+/* *
+ *
  *  Composition
  *
  * */
@@ -58,7 +66,12 @@ declare module './AxisType' {
  * @private
  */
 class ScrollbarAxis {
-    private static composed: Array<typeof Axis> = [];
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * Attaches to axis events to create scrollbars if enabled.
@@ -72,9 +85,7 @@ class ScrollbarAxis {
      * Scrollbar class to use.
      */
     public static compose<T extends typeof Axis>(AxisClass: T, ScrollbarClass: typeof Scrollbar): (T&ScrollbarAxis) {
-        if (ScrollbarAxis.composed.indexOf(AxisClass) === -1) {
-            ScrollbarAxis.composed.push(AxisClass);
-        } else {
+        if (!U.pushUnique(composedMembers, AxisClass)) {
             return AxisClass as (T&ScrollbarAxis);
         }
 

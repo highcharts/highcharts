@@ -18,9 +18,40 @@
  * */
 
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
-import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols } } = SVGRenderer;
+import U from '../Core/Utilities.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        /** @requires Extensions/ArrowSymbols */
+        arrow: typeof arrow;
+        /** @requires Extensions/ArrowSymbols */
+        'arrow-filled': typeof triangleLeft;
+        /** @requires Extensions/ArrowSymbols */
+        'arrow-filled-half': typeof triangleLeftHalf;
+        /** @requires Extensions/ArrowSymbols */
+        'arrow-half': typeof arrowHalf;
+        /** @requires Extensions/ArrowSymbols */
+        'triangle-left': typeof triangleLeft;
+        /** @requires Extensions/ArrowSymbols */
+        'triangle-left-half': typeof triangleLeftHalf;
+    }
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -110,6 +141,24 @@ function arrowHalf(
 }
 
 /**
+ * @private
+ */
+function compose(SVGRendererClass: typeof SVGRenderer): void {
+
+    if (U.pushUnique(composedMembers, SVGRendererClass)) {
+        const symbols = SVGRendererClass.prototype.symbols;
+
+        symbols.arrow = arrow;
+        symbols['arrow-filled'] = triangleLeft;
+        symbols['arrow-filled-half'] = triangleLeftHalf;
+        symbols['arrow-half'] = arrowHalf;
+        symbols['triangle-left'] = triangleLeft;
+        symbols['triangle-left-half'] = triangleLeftHalf;
+    }
+
+}
+
+/**
  * Creates a left-oriented triangle.
  * ```
  *             o
@@ -190,38 +239,12 @@ function triangleLeftHalf(
 
 /* *
  *
- *  Registry
- *
- * */
-
-declare module '../Core/Renderer/SVG/SymbolType' {
-    interface SymbolTypeRegistry {
-        /** @requires Extensions/ArrowSymbols */
-        arrow: typeof arrow;
-        /** @requires Extensions/ArrowSymbols */
-        'arrow-filled': typeof triangleLeft;
-        /** @requires Extensions/ArrowSymbols */
-        'arrow-filled-half': typeof triangleLeftHalf;
-        /** @requires Extensions/ArrowSymbols */
-        'arrow-half': typeof arrowHalf;
-        /** @requires Extensions/ArrowSymbols */
-        'triangle-left': typeof triangleLeft;
-        /** @requires Extensions/ArrowSymbols */
-        'triangle-left-half': typeof triangleLeftHalf;
-    }
-}
-
-symbols.arrow = arrow;
-symbols['arrow-filled'] = triangleLeft;
-symbols['arrow-filled-half'] = triangleLeftHalf;
-symbols['arrow-half'] = arrowHalf;
-symbols['triangle-left'] = triangleLeft;
-symbols['triangle-left-half'] = triangleLeftHalf;
-
-/* *
- *
  *  Default Export
  *
  * */
 
-export default symbols;
+const ArrowSymbols = {
+    compose
+};
+
+export default ArrowSymbols;

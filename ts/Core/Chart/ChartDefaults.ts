@@ -148,7 +148,7 @@ const ChartDefaults: ChartOptions = {
      *         With a longer duration
      *
      * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
-     * @default   undefined
+     * @default   true
      * @apioption chart.animation
      */
 
@@ -465,6 +465,9 @@ const ChartDefaults: ChartOptions = {
         /**
          * Decides in what dimensions the user can pan the chart. Can be
          * one of `x`, `y`, or `xy`.
+         *
+         * When this option is set to `y` or `xy`, [yAxis.startOnTick](#yAxis.startOnTick)
+         * and [yAxis.endOnTick](#yAxis.endOnTick) are overwritten to `false`.
          *
          * @sample {highcharts} highcharts/chart/panning-type
          *         Zooming and xy panning
