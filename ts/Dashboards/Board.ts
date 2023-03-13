@@ -602,6 +602,8 @@ namespace Board {
     export interface GUIOptions {
         /**
          * Whether the GUI is enabled or not.
+         *
+         * @default true
          **/
         enabled: boolean;
         /**

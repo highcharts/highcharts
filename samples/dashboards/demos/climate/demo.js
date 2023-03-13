@@ -607,7 +607,6 @@ async function setupDashboard() {
             }
         },
         gui: {
-            enabled: true,
             layouts: [{
                 id: 'layout-1', // mandatory
                 rows: [{
