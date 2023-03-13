@@ -218,7 +218,7 @@ class StackItem {
         boxTop?: number,
         defaultX?: number,
         xAxis?: Axis
-    ): BBoxObject {
+    ): void {
         const { alignOptions, axis, label, options, textAlign } = this,
             chart = axis.chart,
             stackBox = this.getStackBox({
@@ -233,7 +233,6 @@ class StackItem {
 
         if (label && stackBox) {
             const labelBox = label.getBBox(),
-                alignBox = merge(stackBox),
                 padding = label.padding;
             let isJustify = pick(options.overflow, 'justify') === 'justify',
                 visible;
@@ -252,10 +251,10 @@ class StackItem {
                 textAlign
             });
 
-            alignBox.x -= x;
-            alignBox.y -= y;
+            stackBox.x -= x;
+            stackBox.y -= y;
             // Align the label to the adjusted box.
-            label.align(alignOptions, false, alignBox);
+            label.align(alignOptions, false, stackBox);
             // Check if label is inside the plotArea #12294
             visible = chart.isInsidePlot(
                 label.alignAttr.x + alignOptions.x + x,
@@ -274,7 +273,7 @@ class StackItem {
                     alignOptions,
                     label.alignAttr,
                     labelBox,
-                    alignBox
+                    stackBox
                 );
             }
 
@@ -304,8 +303,6 @@ class StackItem {
         }
 
         fireEvent(this, 'afterSetOffset', { xOffset, width });
-
-        return stackBox;
     }
 
     /**

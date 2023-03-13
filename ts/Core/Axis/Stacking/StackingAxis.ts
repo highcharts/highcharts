@@ -15,7 +15,6 @@
  *  Imports
  *
  * */
-import type BBoxObject from '../../Renderer/BBoxObject';
 import type Chart from '../../Chart/Chart';
 import type Series from '../../Series/Series';
 import type { StackOverflowValue } from './StackingOptions';
@@ -63,7 +62,6 @@ declare module '../../Series/PointLike' {
     interface PointLike {
         leftCliff?: number;
         rightCliff?: number;
-        stackBox?: BBoxObject;
     }
 }
 

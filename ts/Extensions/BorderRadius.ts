@@ -365,19 +365,19 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                 this.options.borderRadius &&
                 !(this.chart.is3d && this.chart.is3d())
             ) {
-                const yAxis = this.yAxis,
+                const { options, yAxis } = this,
                     inverted = this.chart.inverted,
                     seriesDefault = defaultOptions.plotOptions
                         ?.[this.type]
                         ?.borderRadius,
                     borderRadius = optionsToObject(
-                        this.options.borderRadius,
+                        options.borderRadius,
                         isObject(seriesDefault) ? seriesDefault : {}
                     ),
                     reversed = yAxis.options.reversed;
 
                 for (const point of this.points) {
-                    const { shapeArgs, stackBox } = point;
+                    const { shapeArgs } = point;
                     if (point.shapeType === 'roundedRect' && shapeArgs) {
                         const {
                             width = 0,
@@ -388,14 +388,26 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                         let brBoxY = y,
                             brBoxHeight = height;
 
-                        // Get the stack box
-                        if (borderRadius.scope === 'stack' && stackBox) {
-                            const box = this.crispCol(
-                                stackBox.x,
-                                stackBox.y,
-                                stackBox.width,
-                                stackBox.height
-                            );
+                        if (
+                            borderRadius.scope === 'stack' &&
+                            point.stackTotal
+                        ) {
+                            const stackEnd = yAxis.translate(
+                                    point.stackTotal, false, true, false, true
+                                ),
+                                stackThreshold = yAxis.translate(
+                                    options.threshold || 0,
+                                    false,
+                                    true,
+                                    false,
+                                    true
+                                ),
+                                box = this.crispCol(
+                                    0,
+                                    Math.min(stackEnd, stackThreshold),
+                                    0,
+                                    Math.abs(stackEnd - stackThreshold)
+                                );
                             brBoxY = box.y;
                             brBoxHeight = box.height;
                         }
