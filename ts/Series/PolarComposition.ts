@@ -683,7 +683,7 @@ function onSeriesAfterTranslate(
         while (i--) {
             // Translate plotX, plotY from angle and radius to true plot
             // coordinates
-            if (!series.is('column')) {
+            if (!series.is('column') && !series.is('columnrange')) {
                 series.polar.toXY(points[i]);
             }
 
@@ -693,9 +693,9 @@ function onSeriesAfterTranslate(
                 !series.yAxis.reversed
             ) {
                 if (
-                    pick(points[i].y, Number.MIN_VALUE) < series.yAxis.min ||
-                    points[i].x < series.xAxis.min ||
-                    points[i].x > series.xAxis.max
+                    pick(points[i].y, Number.MIN_VALUE) < yAxis.min ||
+                    points[i].x < xAxis.min ||
+                    points[i].x > xAxis.max
                 ) {
                     // Destroy markers
                     points[i].isNull = true;
@@ -1471,6 +1471,12 @@ class PolarAdditions {
                 { order: 2 } // Run after translation of ||-coords
             );
 
+            addEvent(
+                SeriesClass as any,
+                'afterColumnTranslate',
+                onAfterColumnTranslate,
+                { order: 4 }
+            );
 
             const seriesProto = SeriesClass.prototype;
 
@@ -1482,13 +1488,6 @@ class PolarAdditions {
             U.pushUnique(composedMembers, ColumnSeriesClass)
         ) {
             const columnProto = ColumnSeriesClass.prototype;
-
-            addEvent(
-                ColumnSeriesClass as any,
-                'afterColumnTranslate',
-                onAfterColumnTranslate,
-                { order: 5 }
-            );
 
             wrap(columnProto, 'alignDataLabel', wrapColumnSeriesAlignDataLabel);
             wrap(columnProto, 'animate', wrapSeriesAnimate);
