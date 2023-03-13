@@ -54,6 +54,28 @@ const {
 /**
  * Class that represents a dashboard.
  *
+ * @example
+ * const dashboard = Dashboards.board('container', {
+ *      gui: {
+ *          layouts: [{
+ *              id: 'layout-1',
+ *              rows: [{
+ *                  cells: [{
+ *                      id: 'dashboard-col-0'
+ *                  }]
+ *              }]
+ *          }]
+ *      },
+ *      components: [{
+ *          cell: 'dashboard-col-0',
+ *          type: 'Highcharts',
+ *          chartOptions: {
+ *              series: [{
+ *                  data: [1, 2, 3, 4]
+ *              }]
+ *          }
+ *      }]
+ * });
  */
 class Board implements Serializable<Board, Board.JSON> {
 
