@@ -16,6 +16,8 @@ import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
+import D from '../Core/Defaults.js';
+const { defaultOptions } = D;
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -60,19 +62,20 @@ declare module '../Core/Renderer/SVG/SymbolOptions' {
     }
 }
 
-const defaultOptions: BorderRadiusOptions = {
+const defaultBorderRadiusOptions: BorderRadiusOptions = {
     radius: 0,
     scope: 'stack',
     where: void 0
 };
 
 const optionsToObject = (
-    options?: number|string|Partial<BorderRadiusOptions>
+    options?: number|string|Partial<BorderRadiusOptions>,
+    seriesBROptions?: Partial<BorderRadiusOptions>
 ): BorderRadiusOptions => {
     if (!isObject(options)) {
         options = { radius: options || 0 };
     }
-    return merge(defaultOptions, options);
+    return merge(defaultBorderRadiusOptions, seriesBROptions, options);
 };
 
 const applyBorderRadius = (
@@ -360,12 +363,17 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
         function (): void {
             if (
                 this.options.borderRadius &&
-                !this.is('xrange') &&
                 !(this.chart.is3d && this.chart.is3d())
             ) {
                 const yAxis = this.yAxis,
                     inverted = this.chart.inverted,
-                    borderRadius = optionsToObject(this.options.borderRadius),
+                    seriesDefault = defaultOptions.plotOptions
+                        ?.[this.type]
+                        ?.borderRadius,
+                    borderRadius = optionsToObject(
+                        this.options.borderRadius,
+                        isObject(seriesDefault) ? seriesDefault : {}
+                    ),
                     reversed = yAxis.options.reversed;
 
                 for (const point of this.points) {
@@ -374,7 +382,6 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                         const {
                             width = 0,
                             height = 0,
-                            x = 0,
                             y = 0
                         } = shapeArgs;
 
@@ -420,14 +427,6 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
 
                             // Handle the where option
                             where = borderRadius.where;
-
-                        // Columnrange
-                        if (
-                            !where && this.pointArrayMap?.join(',') ===
-                            'low,high'
-                        ) {
-                            where = 'all';
-                        }
 
                         // Waterfall, hanging columns should have rounding on
                         // all sides

@@ -66,7 +66,11 @@ const {
  * @requires     highcharts-more
  * @optionparent plotOptions.columnrange
  */
-const columnRangeOptions: ColumnRangeSeriesOptions = {
+const columnRangeOptions: DeepPartial<ColumnRangeSeriesOptions> = {
+
+    borderRadius: {
+        where: 'all'
+    },
 
     /**
      * Extended data labels for range series types. Range series data labels
