@@ -1,7 +1,5 @@
 /* *
  *
- *  Base popup.
- *
  *  (c) 2009 - 2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
