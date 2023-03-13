@@ -533,7 +533,7 @@ namespace Board {
         gui?: GUIOptions;
         /**
          * Options for the edit mode. Can be used to enable the edit mode and
-         * define al things related to it like the context menu.
+         * define all things related to it like the context menu.
          **/
         editMode?: EditMode.Options;
         /**
@@ -549,7 +549,7 @@ namespace Board {
          **/
         layoutsJSON?: Array<Layout.JSON>;
         /**
-         * Responsive breakpoints for the board- small, medium and large.
+         * Responsive breakpoints for the board - small, medium and large.
          **/
         responsiveBreakpoints?: ResponsiveBreakpoints;
     }
@@ -576,13 +576,13 @@ namespace Board {
          **/
         componentOptions?: Partial<Bindings.ComponentOptions>;
         /**
-         * Responsive breakpoints for the board- small, medium and large.
+         * Responsive breakpoints for the board - small, medium and large.
          **/
         responsiveBreakpoints?: ResponsiveBreakpoints;
     }
 
     /**
-     * Responsive breakpoints for the board- small, medium and large.
+     * Responsive breakpoints for the board - small, medium and large.
      **/
     export interface ResponsiveBreakpoints extends JSON.Object {
         /**
