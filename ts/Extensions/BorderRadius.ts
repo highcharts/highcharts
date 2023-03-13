@@ -111,7 +111,8 @@ const applyBorderRadius = (
             // In our use cases, outer pie slice arcs are clockwise and inner
             // arcs (donut/sunburst etc) are anti-clockwise
             clockwise = arc[5],
-            { start, end, cx, cy } = arc.params;
+            params = arc.params,
+            { start, end, cx, cy } = params;
 
         // Some geometric constants
         const relativeR = clockwise ? (bigR - r) : (bigR + r),
@@ -125,12 +126,14 @@ const applyBorderRadius = (
             distanceBigCenterToStartArc = (
                 Math.cos(angleOfBorderRadius) *
                 relativeR
-            ),
-            newStartArc = start + angleOffset,
-            newEndArc = end - angleOffset;
+            );
 
         // From line to arc
         if (fromLineToArc) {
+
+            // Update the cache
+            params.start = start + angleOffset;
+
             // First move to the start position at the radial line. We want to
             // start one borderRadius closer to the center.
             line[1] = cx + distanceBigCenterToStartArc * Math.cos(start);
@@ -145,19 +148,19 @@ const applyBorderRadius = (
                 0, // slanting,
                 0, // long arc
                 1, // clockwise
-                cx + bigR * Math.cos(newStartArc),
-                cy + bigR * Math.sin(newStartArc)
+                cx + bigR * Math.cos(params.start),
+                cy + bigR * Math.sin(params.start)
             ]);
 
         // From arc to line
         } else {
-            // Long or short arc must be reconsidered because we have modified
-            // the start and end points
-            arc[4] = newEndArc - start < Math.PI ? 0 : 1;
+
+            // Update the cache
+            params.end = end - angleOffset;
 
             // End the big arc a bit earlier
-            arc[6] = cx + bigR * Math.cos(newEndArc);
-            arc[7] = cy + bigR * Math.sin(newEndArc);
+            arc[6] = cx + bigR * Math.cos(params.end);
+            arc[7] = cy + bigR * Math.sin(params.end);
 
             // Draw a small arc towards a point on the end angle, but one
             // borderRadius closer to the center relative to the perimeter.
@@ -172,6 +175,10 @@ const applyBorderRadius = (
                 cy + distanceBigCenterToStartArc * Math.sin(end)
             ]);
         }
+
+        // Long or short arc must be reconsidered because we have modified the
+        // start and end points
+        arc[4] = Math.abs(params.end - params.start) < Math.PI ? 0 : 1;
 
     }
 };

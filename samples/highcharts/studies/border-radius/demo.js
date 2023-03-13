@@ -1,7 +1,7 @@
 //*
 Highcharts.chart('container-1', {
     chart: {
-        type: 'bar'
+        type: 'column'
     },
     xAxis: {
         categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
@@ -24,10 +24,6 @@ Highcharts.chart('container-1', {
         }
     },
     series: [{
-        data: [50],
-        name: 'Norway'
-    }],
-    _series: [{
         data: [50, -50, 500, -90],
         name: 'Norway'
     }, {
