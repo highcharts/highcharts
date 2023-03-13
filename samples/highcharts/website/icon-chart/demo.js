@@ -186,6 +186,9 @@ const chart = {
             }
         }
     },
+    title: {
+        text: ''
+    },
     credits: {
         enabled: false
     },
