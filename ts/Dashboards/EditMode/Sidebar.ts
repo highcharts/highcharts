@@ -374,6 +374,7 @@ class Sidebar {
         }
     };
 
+    // TODO: Improve this type.
     public updatedSettings: any = {};
 
     /* *
