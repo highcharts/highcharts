@@ -89,6 +89,8 @@ class Sidebar {
         icon: ''
     }];
 
+    public static seriesIconURLPrefix =
+        Globals.iconsURLPrefix + 'series-types/icon-';
     public static components: Array<Sidebar.AddComponentDetails> = [
         {
             text: 'layout',
@@ -371,6 +373,9 @@ class Sidebar {
             }
         }
     };
+
+    // TODO: Improve this type.
+    public updatedSettings: any = {};
 
     /* *
     *
@@ -853,13 +858,22 @@ class Sidebar {
                     type = componentSettings[key].type;
 
                     if (key === 'chartType') {
-                        const chartTypesEnum = [
-                            'column',
-                            'line',
-                            'scatter',
-                            'spline',
-                            'pie'
-                        ];
+                        const chartTypesEnum = [{
+                            name: 'column',
+                            iconURL:
+                                Sidebar.seriesIconURLPrefix + 'column.svg'
+                        }, {
+                            name: 'line',
+                            iconURL:
+                                Sidebar.seriesIconURLPrefix + 'line.svg'
+                        }, {
+                            name: 'scatter',
+                            iconURL:
+                                Sidebar.seriesIconURLPrefix + 'scatter.svg'
+                        }, {
+                            name: 'pie',
+                            iconURL: Sidebar.seriesIconURLPrefix + 'pie.svg'
+                        }];
 
                         // eslint-disable-next-line
                         const chartOpts = (currentComponent as HighchartsComponent).options.chartOptions;
@@ -871,8 +885,7 @@ class Sidebar {
                             );
 
                         if (
-                            chartType &&
-                            chartTypesEnum.indexOf(chartType) !== -1
+                            chartType
                         ) {
                             chartTypes = {
                                 items: chartTypesEnum,
@@ -889,6 +902,11 @@ class Sidebar {
                         text: (lang as any)[key] || key,
                         isActive: true,
                         value: componentSettings[key].value,
+                        events: {
+                            change: (id: string, value: string): void => {
+                                sidebar.updatedSettings[id] = value;
+                            }
+                        },
                         ...chartTypes
                     };
 
@@ -987,47 +1005,33 @@ class Sidebar {
     }
 
     public updateComponent(): void {
-        const activeTab = this.activeTab;
-        const formFields = activeTab &&
-            activeTab.contentContainer.querySelectorAll(
-                'input, textarea'
-            ) || [];
-        const chartType = activeTab &&
-            activeTab.contentContainer.querySelectorAll('#chartType');
-        const updatedSettings = {};
+        const updatedSettings: Record<string, any> = {};
         const mountedComponent = (this.context as Cell).mountedComponent;
-        let fieldId;
+        const savedSettings = this.updatedSettings;
 
-        for (let i = 0, iEnd = formFields.length; i < iEnd; ++i) {
-            fieldId = formFields[i].getAttribute('id');
+        const keys = Object.keys(savedSettings);
 
-            if (fieldId) {
-                try {
-                    (updatedSettings as any)[fieldId] = JSON.parse(
-                        (formFields[i] as HTMLTextAreaElement).value
-                    );
-
-                    if (
-                        fieldId === 'chartOptions' &&
-                        (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions && // eslint-disable-line
-                        chartType &&
-                        chartType[0]
-                    ) {
-                        (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions = // eslint-disable-line
-                            merge(
-                                (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions, // eslint-disable-line
-                                {
-                                    chart: {
-                                        type: (chartType[0] as any).value
-                                    }
-                                }
-                            );
-                    }
-                } catch {
-                    (updatedSettings as any)[fieldId] =
-                        (formFields[i] as (HTMLInputElement)).value;
-                }
+        for (let i = 0, iEnd = keys.length, key; i < iEnd; ++i) {
+            key = keys[i];
+            if (key === 'chartType') {
+                continue;
             }
+
+            try {
+                updatedSettings[key] = JSON.parse(
+                    savedSettings[key]
+                );
+            } catch (e) {
+                updatedSettings[key] = savedSettings[key];
+            }
+        }
+
+        if (savedSettings.chartType) {
+            updatedSettings.chartOptions = merge(updatedSettings.chartOptions, {
+                chart: {
+                    type: savedSettings.chartType
+                }
+            });
         }
 
         if (mountedComponent) {
@@ -1134,7 +1138,7 @@ class Sidebar {
 interface Sidebar {
     dragDropButton?: HTMLDOMElement;
     closeButton?: HTMLDOMElement;
-    componentEditableOptions?: any;
+    componentEditableOptions?: Menu;
 }
 namespace Sidebar {
     export interface Options {

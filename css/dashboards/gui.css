@@ -46,6 +46,10 @@
     /* Sidebar */
     --highcharts-dashboards-sidebar-button-color: #2196f3;
     --highcharts-dashboards-sidebar-button-contrast-color: #0d47a1;
+
+    /* Dropdown */
+    --highcharts-dashboards-dropdown-box-shadow-color: 34, 34, 34, 0.1;
+    --highcharts-dashboards-dropdown-border-color: #838394;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -816,3 +820,59 @@
 .highcharts-dashboards-row .highcharts-dashboards-cell:focus {
     outline: 5px auto -webkit-focus-ring-color;
 }
+
+/* Dropdown */
+ul.highcharts-dashboards-dropdown-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--highcharts-dashboards-main-background-color);
+    box-sizing: border-box;
+    padding: 16px 8px;
+    margin-top: 4px;
+    border: 1px solid var(--highcharts-dashboards-dropdown-border-color);
+    box-shadow: 0 10px 24px rgba(var(--highcharts-dashboards-dropdown-box-shadow-color));
+    list-style-type: none;
+}
+
+div.highcharts-dashboards-dropdown {
+    position: relative;
+    color: var(--highcharts-dashboards-main-font-color);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    line-height: 16px;
+}
+
+.highcharts-dashboards-dropdown > button.highcharts-dashboards-dropdown-button {
+    color: var(--highcharts-dashboards-main-font-color);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 8px;
+    margin: 2px;
+    gap: 2px;
+    background: var(--highcharts-dashboards-main-background-color);
+    border: 1px solid var(--highcharts-dashboards-dropdown-border-color);
+    border-radius: 2px;
+}
+
+button.highcharts-dashboards-select-option-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    cursor: pointer;
+    margin: 0;
+    background: var(--highcharts-dashboards-main-background-color);
+    color: var(--highcharts-dashboards-main-font-color);
+}
+
+button.highcharts-dashboards-select-option-button:hover {
+    background-color: var(--highcharts-dashboards-wrapper-background-color);
+}
+
+/* End of Dropdown */
