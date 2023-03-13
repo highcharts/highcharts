@@ -377,7 +377,7 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                     reversed = yAxis.options.reversed;
 
                 for (const point of this.points) {
-                    const shapeArgs = point.shapeArgs;
+                    const { shapeArgs, stackBox } = point;
                     if (point.shapeType === 'roundedRect' && shapeArgs) {
                         const {
                             width = 0,
@@ -388,26 +388,14 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                         let brBoxY = y,
                             brBoxHeight = height;
 
-                        if (
-                            borderRadius.scope === 'stack' &&
-                            point.stackTotal
-                        ) {
-                            const stackEnd = yAxis.translate(
-                                    point.stackTotal, false, true, false, true
-                                ),
-                                stackThreshold = yAxis.translate(
-                                    this.options.threshold || 0,
-                                    false,
-                                    true,
-                                    false,
-                                    true
-                                ),
-                                box = this.crispCol(
-                                    0,
-                                    Math.min(stackEnd, stackThreshold),
-                                    0,
-                                    Math.abs(stackEnd - stackThreshold)
-                                );
+                        // Get the stack box
+                        if (borderRadius.scope === 'stack' && stackBox) {
+                            const box = this.crispCol(
+                                stackBox.x,
+                                stackBox.y,
+                                stackBox.width,
+                                stackBox.height
+                            );
                             brBoxY = box.y;
                             brBoxHeight = box.height;
                         }

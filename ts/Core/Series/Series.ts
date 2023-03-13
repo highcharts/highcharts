@@ -2266,7 +2266,7 @@ class Series {
                     // labels are correctly positioned later, at the end of the
                     // variwide's translate function (#10962)
                     if (!(series as any).irregularWidths) {
-                        stackItem.setOffset(
+                        point.stackBox = stackItem.setOffset(
                             series.pointXOffset || 0,
                             series.barW || 0,
                             void 0,

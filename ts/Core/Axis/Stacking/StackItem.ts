@@ -217,7 +217,7 @@ class StackItem {
         boxTop?: number,
         defaultX?: number,
         xAxis?: Axis
-    ): void {
+    ): BBoxObject {
         const { alignOptions, axis, label, options, textAlign } = this,
             chart = axis.chart,
             stackBox = this.getStackBox({
@@ -302,6 +302,8 @@ class StackItem {
         }
 
         fireEvent(this, 'afterSetOffset', { xOffset, width });
+
+        return stackBox;
     }
 
     /**
