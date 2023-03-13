@@ -801,10 +801,8 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     crossBox = crossLabel.getBBox();
 
     // now it is placed we can correct its position
-    if (isNumber(crossLabel.x)) {
-        if (!horiz && !opposite) {
-            posx = crossLabel.x - (crossBox.width / 2);
-        }
+    if (isNumber(crossLabel.x) && !horiz && !opposite) {
+        posx = crossLabel.x - (crossBox.width / 2);
     }
 
     if (isNumber(crossLabel.y)) {
