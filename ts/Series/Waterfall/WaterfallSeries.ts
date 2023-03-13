@@ -639,8 +639,8 @@ class WaterfallSeries extends ColumnSeries {
     ): SVGPath {
 
         let data = this.data.filter((d): Boolean =>
-                // Skip points where Y is null (#18636)
-                d.y !== null
+                // Skip points where Y is not a number (#18636)
+                isNumber(d.y)
             ),
             yAxis = this.yAxis,
             length = data.length,
@@ -662,6 +662,14 @@ class WaterfallSeries extends ColumnSeries {
             i: (number|undefined);
 
         for (i = 1; i < length; i++) {
+
+            if (!( // Skip lines that would pass over the null point (#18636)
+                this.options.connectNulls ||
+                isNumber(this.data[data[i].index - 1].y)
+            )) {
+                continue;
+            }
+
             pointArgs = data[i].shapeArgs;
             prevPoint = data[i - 1];
             prevArgs = data[i - 1].shapeArgs;
