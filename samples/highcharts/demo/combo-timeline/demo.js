@@ -59,9 +59,14 @@ function onChartLoad() {
         })
         .add();
 
+    // Find timedifference in  year
+    var diff = (new Date().getTime() - new Date(2009, 10, 27).getTime()) / 1000;
+    diff /= 60 * 60 * 24;
+    var yearsSince = Math.abs(Math.round(diff / 365.25));
+
     // Big 5
     big5 = this.renderer
-        .text('5')
+        .text(yearsSince)
         .attr({
             zIndex: 6
         })
@@ -79,7 +84,7 @@ function onChartLoad() {
 
     // Draw the label
     label = this.renderer
-        .text('Highcharts Anniversary')
+        .text('years and counting')
         .attr({
             zIndex: 6
         })
@@ -165,7 +170,7 @@ function onChartLoad() {
 
     // 2009-2014
     years = this.renderer
-        .text('2009-2014')
+        .text('2009-' + new Date().getFullYear())
         .attr({
             zIndex: 6
         })
@@ -633,6 +638,21 @@ if (Highcharts.Series.types.flags) {
         },
         {
             type: 'flags',
+            name: 'Gantt',
+            color: '#333333',
+            shape: 'squarepin',
+            y: -55,
+            data: [
+                {
+                    x: Date.UTC(2018, 9, 17),
+                    text: 'Highcharts Gantt version 1.0 released',
+                    title: 'Gantt'
+                }
+            ],
+            showInLegend: false
+        },
+        {
+            type: 'flags',
             name: 'Highcharts',
             color: '#333333',
             shape: 'circlepin',
@@ -672,6 +692,36 @@ if (Highcharts.Series.types.flags) {
                     x: Date.UTC(2014, 3, 22),
                     text: '3D charts, heatmaps',
                     title: '4.0'
+                },
+                {
+                    x: Date.UTC(2016, 8, 29),
+                    text: 'Styled mode, responsive options, accessibility, chart.update',
+                    title: '5.0'
+                },
+                {
+                    x: Date.UTC(2017, 9, 4),
+                    text: 'Annotations, Boost, Series labels, new series types',
+                    title: '6.0'
+                },
+                {
+                    x: Date.UTC(2018, 11, 11),
+                    text: 'Sonification, TypeScript (beta), new series types',
+                    title: '7.0'
+                },
+                {
+                    x: Date.UTC(2019, 11, 10),
+                    text: 'Accessibility, data sorting, marker clusters',
+                    title: '8.0'
+                },
+                {
+                    x: Date.UTC(2021, 1, 2),
+                    text: 'Improved security, accessibility options, zoom by single touch',
+                    title: '9.0'
+                },
+                {
+                    x: Date.UTC(2022, 2, 7),
+                    text: 'Bread crumbs, improved Boost pixel ratio, threshold alignment in charts with multiple axes',
+                    title: '10.0'
                 }
             ],
             showInLegend: false
@@ -699,6 +749,16 @@ if (Highcharts.Series.types.flags) {
                 },
                 {
                     x: Date.UTC(2014, 4, 25),
+                    text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
+                    title: 'Award'
+                },
+                {
+                    x: Date.UTC(2018, 11, 13),
+                    text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
+                    title: 'Award'
+                },
+                {
+                    x: Date.UTC(2017, 9, 20),
                     text: 'Highsoft nominated Best Startup in Nordic Startup Awards',
                     title: 'Award'
                 }
