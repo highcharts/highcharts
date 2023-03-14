@@ -1,5 +1,5 @@
 ---
- name: Rounded Corners - Highcharts
+ name: Series border radius
  authors:
    - Torstein Hønsi
  js_wrap: b
