@@ -307,7 +307,7 @@ const options = {
                 to: Date.UTC(2010, 11, 1),
                 color: '#EFFFFF',
                 label: {
-                    text: '<em>Offices:</em><br> Torstein´s basement',
+                    text: '<em>Offices:</em><br>Torstein´s<br>basement',
                     style: {
                         color: '#999999'
                     },
@@ -343,7 +343,7 @@ const options = {
                 to: Date.UTC(2022, 11, 30),
                 color: '#dff9e7',
                 label: {
-                    text: 'Blix Hotel<br>Norway',
+                    text: '<em>Offices</em>:<br>Blix Hotel',
                     style: {
                         color: '#000'
                     },
