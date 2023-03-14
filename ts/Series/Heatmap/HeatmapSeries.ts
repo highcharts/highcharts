@@ -495,8 +495,8 @@ class HeatmapSeries extends ScatterSeries {
                         { width, height } = canvas,
                         pointsLen = points.length,
                         yIncr = inverted ?
-                            (y: number): number => yMax - y :
-                            (y: number): number => y,
+                            (y: number): number => y :
+                            (y: number): number => yMax - y,
                         toPlotScale = function (
                             min: number,
                             max: number,
@@ -510,61 +510,49 @@ class HeatmapSeries extends ScatterSeries {
                                 );
                             return ~~((value - min) * scale);
                         },
-                        getRGB = function (p: HeatmapPoint): {
-                            r: number,
-                            g: number,
-                            b: number
-                        } {
+                        getPixelData = function (p: HeatmapPoint) {
                             const
-                                color = colorAxis.toColor(
-                                    p.value || 0, p
-                                ) as string,
-                                rgb = color.split('(')[1]
+                                rgb = (colorAxis.toColor(
+                                        p.value || 0, p
+                                    ) as string)
+                                    .split('(')[1]
                                     .split(',')
-                                    .map((s): number => parseInt(s, 10));
-
-                            return {
-                                r: rgb[0],
-                                g: rgb[1],
-                                b: rgb[2]
-                            };
+                                    .map((s): number => parseInt(s, 10)),
+                                x = toPlotScale(
+                                    xMin,
+                                    xMax,
+                                    p.x,
+                                    width - 1
+                                ),
+                                y = toPlotScale(
+                                    yMin,
+                                    yMax,
+                                    yIncr(p.y),
+                                    height - 1
+                                );
+                                return {
+                                    r: rgb[0],
+                                    g: rgb[1],
+                                    b: rgb[2],
+                                    pixelIndex: y * (width * 4) + x * 4
+                                };
                         },
                         pixelData = ctx.createImageData(width, height);
-
-                    let
-                        i = 0,
-                        p = points[0];
 
                     if (!seriesBoost && !chart.boost) {
                         heatmap.buildKDTree();
                         heatmap.directTouch = false;
                     }
 
-                    for (
-                        i;
-                        i < pointsLen;
-                        i++, p = points[i]
-                    ) {
-                        const
-                            { r, g, b } = getRGB(p),
-                            x = toPlotScale(
-                                xMin,
-                                xMax,
-                                p.x,
-                                width - 1
-                            ),
-                            y = toPlotScale(
-                                yMin,
-                                yMax,
-                                yIncr(p.y),
-                                height - 1
-                            ),
-                            flatIndex = y * (width * 4) + x * 4;
+                    for (let i = 0; i < pointsLen; i++) {
+                        const { r, g, b, pixelIndex } = getPixelData(
+                            points[i]
+                        );
 
-                        pixelData.data[flatIndex + 0] = r;
-                        pixelData.data[flatIndex + 1] = g;
-                        pixelData.data[flatIndex + 2] = b;
-                        pixelData.data[flatIndex + 3] = 255;
+                        pixelData.data[pixelIndex + 0] = r;
+                        pixelData.data[pixelIndex + 1] = g;
+                        pixelData.data[pixelIndex + 2] = b;
+                        pixelData.data[pixelIndex + 3] = 255;
                     }
 
                     ctx.putImageData(pixelData, 0, 0);
