@@ -16,6 +16,8 @@
     --highcharts-dashboards-neutral-color-80: #333333;
     --highcharts-dashboards-neutral-color-50: #808080;
     --highcharts-dashboards-neutral-color-20: #cccccc;
+    --highcharts-dashboards-neutral-color-5: #f7f7f7;
+    --highcharts-dashboards-neutral-color-3: #f2f2f2;
     --highcharts-dashboards-neutral-color-0: #ffffff;
     --highcharts-dashboards-red-color: #e01d5a;
     --highcharts-dashboards-blue-border-color: 26, 54, 126;
@@ -874,7 +876,7 @@ button.highcharts-dashboards-select-option-button:hover {
 }
 
 button.highcharts-dashboards-select-option-button:hover {
-    background-color: #f2f2f2;
+    background-color: var(--highcharts-dashboards-neutral-color-3);
 }
 
 /* End of Dropdown */
@@ -904,7 +906,7 @@ div.highcharts-dashboards-nested-content {
     margin: 12px;
     padding: 4px;
     flex-direction: column;
-    background-color: #f7f7f7;
+    background-color: var(--highcharts-dashboards-neutral-color-5);
 }
 
 /* end of nested options dropdown */
@@ -916,13 +918,12 @@ div.highcharts-dashboards-nested-content {
 
 div.highcharts-dashboards-outer-accordeon {
     padding: 0;
-    background: #e7e7ec;
-    font-family: Arial, Helvetica, sans-serif;
+    background: var(--highcharts-dashboards-neutral-color-20);
     margin: 8px 0;
     font-style: normal;
     font-weight: 700;
     font-size: 14px;
-    color: #20202c;
+    color: var(--highcharts-dashboards-neutral-color-80);
     line-height: 16px;
 }
 
