@@ -510,11 +510,11 @@ class HeatmapSeries extends ScatterSeries {
                                 );
                             return ~~((value - min) * scale);
                         },
-                        getPixelData = function (p: HeatmapPoint) {
-                            const
-                                rgb = (colorAxis.toColor(
-                                        p.value || 0, p
-                                    ) as string)
+                        getPixelData = function (p: HeatmapPoint): {
+                            r: number, g: number, b: number, pixelIndex: number
+                        } {
+                            const rgb = (colorAxis.toColor(
+                                    p.value || 0, p) as string)
                                     .split('(')[1]
                                     .split(',')
                                     .map((s): number => parseInt(s, 10)),
@@ -530,12 +530,12 @@ class HeatmapSeries extends ScatterSeries {
                                     yIncr(p.y),
                                     height - 1
                                 );
-                                return {
-                                    r: rgb[0],
-                                    g: rgb[1],
-                                    b: rgb[2],
-                                    pixelIndex: y * (width * 4) + x * 4
-                                };
+                            return {
+                                r: rgb[0],
+                                g: rgb[1],
+                                b: rgb[2],
+                                pixelIndex: y * (width * 4) + x * 4
+                            };
                         },
                         pixelData = ctx.createImageData(width, height);
 
@@ -548,7 +548,6 @@ class HeatmapSeries extends ScatterSeries {
                         const { r, g, b, pixelIndex } = getPixelData(
                             points[i]
                         );
-
                         pixelData.data[pixelIndex + 0] = r;
                         pixelData.data[pixelIndex + 1] = g;
                         pixelData.data[pixelIndex + 2] = b;
