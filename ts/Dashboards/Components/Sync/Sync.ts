@@ -66,7 +66,9 @@ namespace Sync {
 class Sync {
 
     /**
-     * Default handlers for the sync class.
+     * Default handlers for the sync class. This property is extended by
+     * different Components, where default syncs are added. Allows overwrithing
+     * the configuration before creating the dashboard.
      */
     public static defaultHandlers: Record<string, Sync.OptionsEntry> = {};
 
@@ -136,7 +138,7 @@ class Sync {
     public syncConfig: Sync.OptionsRecord;
 
     /**
-     * If the component is currently syncing.
+     * Whether the component is currently syncing.
      */
     public isSyncing: boolean;
 
