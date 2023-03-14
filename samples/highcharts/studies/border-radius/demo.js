@@ -1,4 +1,3 @@
-//*
 Highcharts.chart('container-1', {
     chart: {
         type: 'column'
@@ -36,8 +35,71 @@ Highcharts.chart('container-1', {
     colors: ['#d7bfff', '#af80ff', '#5920b9', '#48208b']
 });
 
-// */
+Highcharts.chart('container-2', {
+    chart: {
+        type: 'pie'
+    },
+    xAxis: {
+        categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
+    },
+    accessibility: {
+        enabled: false
+    },
+    title: {
+        text: 'Pie with rounded corners'
+    },
+    plotOptions: {
+        series: {
+            borderRadius: `${document.getElementById('range').value}%`,
+            borderWidth: 2,
+            borderColor: 'white',
+            dataLabels: {
+                enabled: false
+            },
+            size: '80%',
+            innerSize: '50%'
+        }
+    },
+    series: [
+        {
+            data: [{
+                y: 1,
+                sliced: true
+            }, 3, 2, 4],
+            name: 'Norway'
+        }
+    ],
+    colors: ['#d7bfff', '#af80ff', '#5920b9', '#48208b']
+});
 
+// Common range input
+const label = document.querySelector('label[for="range"]');
+const updateLabel = input => {
+    label.innerText = `${input.value}%`;
+
+    const position = (input.value - input.min) / (input.max - input.min),
+        percent = Math.round(position * 100),
+        pxAdjust = Math.round(label.offsetWidth * position);
+    label.style.left = `calc(${percent}% - ${pxAdjust}px)`;
+};
+updateLabel(document.getElementById('range'));
+
+document.getElementById('range').addEventListener('input', e => {
+    updateLabel(e.target);
+
+    Highcharts.charts.forEach(chart => {
+        chart.update({
+            plotOptions: {
+                series: {
+                    borderRadius: `${e.target.value}%`
+                }
+            }
+        }, undefined, undefined, false);
+    });
+});
+
+
+// Buttons for the column chart
 document.querySelectorAll('button.corner-radius').forEach(btn => {
     btn.addEventListener(
         'click',
@@ -80,82 +142,3 @@ document.querySelectorAll('button.polar').forEach(btn => {
         }
     );
 });
-
-const label = document.querySelector('label[for="range"]');
-const updateLabel = input => {
-    label.innerText = `${input.value}%`;
-
-    const position = (input.value - input.min) / (input.max - input.min),
-        percent = Math.round(position * 100),
-        pxAdjust = Math.round(label.offsetWidth * position);
-    label.style.left = `calc(${percent}% - ${pxAdjust}px)`;
-};
-updateLabel(document.getElementById('range'));
-
-document.getElementById('range').addEventListener('input', e => {
-    updateLabel(e.target);
-
-    Highcharts.charts.forEach(chart => {
-        chart.update({
-            plotOptions: {
-                series: {
-                    borderRadius: `${e.target.value}%`
-                }
-            }
-        }, undefined, undefined, false);
-    });
-});
-
-//*
-Highcharts.chart('container-2', {
-    chart: {
-        type: 'pie',
-        height: 500
-    },
-    xAxis: {
-        categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
-    },
-    accessibility: {
-        enabled: false
-    },
-    title: {
-        text: 'Pie with rounded corners'
-    },
-    plotOptions: {
-        series: {
-            borderRadius: `${document.getElementById('range').value}%`,
-            borderWidth: 2,
-            borderColor: 'white',
-            dataLabels: {
-                enabled: false
-            },
-            size: '80%',
-            innerSize: '50%'
-        }
-    },
-    series: [
-        {
-            data: [{
-                y: 1,
-                sliced: true
-            }, 3, 2, 4],
-            name: 'Norway'
-        }
-    ],
-    colors: ['#d7bfff', '#af80ff', '#5920b9', '#48208b']
-});
-// */
-/*
-const renderer = new Highcharts.Renderer(
-    document.getElementById('container-1'),
-    400,
-    400
-);
-
-renderer.arc(200, 200, 200, 0, -Math.PI / 2, 0).attr({
-    fill: '#d7bfff',
-    stroke: 'black',
-    'stroke-width': 1,
-    borderRadius: 200
-}).add();
-*/
