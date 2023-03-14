@@ -14,6 +14,13 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ * Imports
+ *
+ * */
 import type ComponentTypes from '../ComponentType';
 
 import SyncEmitter from './Emitter.js';
@@ -58,33 +65,67 @@ namespace Sync {
  * */
 class Sync {
 
+    /**
+     * Default handlers for the sync class.
+     */
     public static defaultHandlers: Record<string, Sync.OptionsEntry> = {};
 
+    /**
+     * Add new emmiter to the registered emitters.
+     * @param emitter The emitter to register
+     */
     public registerSyncEmitter(emitter: SyncEmitter): void {
         const { id } = emitter;
         this.registeredSyncEmitters[id] = emitter;
     }
 
+    /**
+     * Method that checks if the emitter is registered.
+     *
+     * @param id
+     * The id of the emitter to check.
+     *
+     * @returns
+     * if the emitter is registered
+     */
     public isRegisteredEmitter(id: string): boolean {
         return Boolean(this.registeredSyncEmitters[id]);
     }
+    /**
+     * Register new handler to the registered handlers.
+     *
+     * @param handler
+     * The handler to register.
+     */
     public registerSyncHandler(handler: SyncHandler): void {
         const { id } = handler;
         this.registeredSyncHandlers[id] = handler;
     }
 
+    /**
+     * Method that checks if the handler is registered.
+     *
+     * @param handlerID
+     * The id of the handler to check.
+     *
+     * @returns
+     * if the handler is registered.
+     */
     public isRegisteredHandler(handlerID: string): boolean {
         return Boolean(this.registeredSyncHandlers[handlerID]);
     }
 
     /**
-     * Registry for the synchandlers used within the component
+     * Registry for the sync handlers used within the component.
      */
     private registeredSyncHandlers: Record<SyncHandler['id'], SyncHandler>;
+    /**
+     * Registry for the sync emitters used within the component.
+     */
     private registeredSyncEmitters: Record<SyncEmitter['id'], SyncEmitter>;
 
     /**
-     * The component
+     * The component to which the emitters and handlers are attached.
      */
     public component: ComponentTypes;
 
@@ -94,8 +135,20 @@ class Sync {
      */
     public syncConfig: Sync.OptionsRecord;
 
+    /**
+     * If the component is currently syncing.
+     */
     public isSyncing: boolean;
 
+    /**
+     * Creates an instance of the sync class.
+     *
+     * @param component
+     * The component to which the emitters and handlers are attached.
+     *
+     * @param syncHandlers
+     * The emitters and handlers to use for each event
+     */
     constructor(
         component: ComponentTypes,
         syncHandlers: Sync.OptionsRecord = Sync.defaultHandlers
@@ -150,6 +203,9 @@ class Sync {
         this.isSyncing = true;
     }
 
+    /**
+     * Removes the handlers and emitters from the component.
+     */
     public stop(): void {
         const {
             registeredSyncHandlers,
