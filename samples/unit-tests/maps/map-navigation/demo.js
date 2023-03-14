@@ -342,6 +342,8 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
     // Zoom needed to pan initially.
     chart.mapView.zoomBy(1);
 
+    const beforeZoom = chart.mapView.zoom;
+
     controller.pan([305, 50], [350, 150]);
 
     // eslint-disable-next-line
@@ -395,4 +397,9 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         'Point graphics on the near side should not be hidden'
     );
 
+    assert.strictEqual(
+        beforeZoom,
+        chart.mapView.zoom,
+        'Map shouldn\' be zoomed out after panning (#18542).'
+    );
 });

@@ -1239,7 +1239,11 @@ class MapSeries extends ScatterSeries {
             if (
                 mapView &&
                 !mapView.userOptions.center &&
-                !isNumber(mapView.userOptions.zoom)
+                !isNumber(mapView.userOptions.zoom) &&
+                Object.hasOwnProperty.call(
+                    this.userOptions,
+                    'allAreas'
+                )
             ) {
                 // Not only recalculate bounds but also fit view
                 mapView.fitToBounds(void 0, void 0, false); // #17012
