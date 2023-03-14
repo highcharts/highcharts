@@ -202,7 +202,7 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
         options: SymbolOptions = {}
     ): SVGPath {
         const path = arc(x, y, w, h, options),
-            { innerR = 0, r = 0, start = 0, end = 0 } = options;
+            { innerR = 0, r = w, start = 0, end = 0 } = options;
 
         if (options.open || !options.borderRadius) {
             return path;
