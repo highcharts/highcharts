@@ -209,20 +209,31 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
         }
 
         const alpha = end - start,
+            sinHalfAlpha = Math.sin(alpha / 2),
             borderRadius = Math.max(Math.min(
                 relativeLength(options.borderRadius || 0, r - innerR),
                 // Cap to half the sector radius
                 (r - innerR) / 2,
                 // For smaller pie slices, cap to the largest small circle that
                 // can be fitted within the sector
-                (r * Math.sin(alpha / 2)) / (1 + Math.sin(alpha / 2))
-            ), 0);
+                (r * sinHalfAlpha) / (1 + sinHalfAlpha)
+            ), 0),
+            // For the inner radius, we need an extra cap because the inner arc
+            // is shorter than the outer arc
+            innerBorderRadius = Math.min(
+                borderRadius,
+                2 * (alpha / Math.PI) * innerR
+            );
 
         // Apply turn-by-turn border radius. Start at the end since we're
         // splicing in arc segments.
         let i = path.length - 1;
         while (i--) {
-            applyBorderRadius(path, i, borderRadius);
+            applyBorderRadius(
+                path,
+                i,
+                i > 1 ? innerBorderRadius : borderRadius
+            );
         }
 
         return path;
