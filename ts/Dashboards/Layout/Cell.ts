@@ -17,7 +17,7 @@
 'use strict';
 
 import type CSSJSONObject from '../CSSJSONObject';
-import type Component from '../Component/Component.js';
+import type Component from '../Components/Component.js';
 import type JSON from '../../Core/JSON';
 import type LayoutType from './Layout';
 import type Row from './Row';
@@ -276,7 +276,7 @@ class Cell extends GUIElement {
             rowContainerId = (cell.row.container || {}).id || '';
 
         return {
-            $class: 'Dashboard.Layout.Cell',
+            $class: 'Dashboards.Layout.Cell',
             options: {
                 containerId: (cell.container as HTMLElement).id,
                 parentContainerId: rowContainerId,
@@ -507,7 +507,7 @@ namespace Cell {
         // visible: boolean;
     }
 
-    export interface JSON extends Serializable.JSON<'Dashboard.Layout.Cell'> {
+    export interface JSON extends Serializable.JSON<'Dashboards.Layout.Cell'> {
         options: OptionsJSON;
     }
 

@@ -115,6 +115,3 @@ const board = Dashboards.board('container', {
             }
         }]
 });
-
-board.editMode.activateEditMode();
-board.editMode.sidebar.show(board.mountedComponents[0].cell);

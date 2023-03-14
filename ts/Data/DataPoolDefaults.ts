@@ -19,7 +19,7 @@
  *
  * */
 
-import type DataOnDemandOptions from './DataOnDemandOptions.js';
+import type DataPoolOptions from './DataPoolOptions.js';
 
 /* *
  *
@@ -27,7 +27,7 @@ import type DataOnDemandOptions from './DataOnDemandOptions.js';
  *
  * */
 
-const DataOnDemandDefaults: DataOnDemandOptions = {
+const DataPoolDefaults: DataPoolOptions = {
     stores: []
 };
 
@@ -37,4 +37,4 @@ const DataOnDemandDefaults: DataOnDemandOptions = {
  *
  * */
 
-export default DataOnDemandDefaults;
+export default DataPoolDefaults;

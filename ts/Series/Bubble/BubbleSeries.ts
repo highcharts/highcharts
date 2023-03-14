@@ -90,7 +90,7 @@ type BubbleZExtremes = { zMin: number; zMax: number };
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -481,9 +481,7 @@ class BubbleSeries extends ScatterSeries {
     ): void {
         BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             AxisClass.prototype.beforePadding = axisBeforePadding;
         }
 
@@ -594,8 +592,16 @@ class BubbleSeries extends ScatterSeries {
                     ).getZExtremes();
 
                     if (zExtremes) {
-                        zMin = Math.min(zMin || zExtremes.zMin, zExtremes.zMin);
-                        zMax = Math.max(zMax || zExtremes.zMax, zExtremes.zMax);
+                        // Changed '||' to 'pick' because min or max can be 0.
+                        // #17280
+                        zMin = Math.min(
+                            pick(zMin, zExtremes.zMin),
+                            zExtremes.zMin
+                        );
+                        zMax = Math.max(
+                            pick(zMax, zExtremes.zMax),
+                            zExtremes.zMax
+                        );
                         valid = true;
                     }
                 }

@@ -32,6 +32,20 @@ const {
 *  Functions
 *
 * */
+
+/**
+ * Function to create a context button.
+ * @intenal
+ *
+ * @param parentElement
+ * The element to which the new elemenet should be appended.
+ *
+ * @param editMode
+ * EditMode instance.
+ *
+ * @returns
+ * Context button element.
+ */
 function renderContextButton(
     parentNode: HTMLDOMElement,
     editMode: EditMode
@@ -127,6 +141,18 @@ function renderCollapse(
     return { outerElement: accordeon, content: content };
 }
 
+/**
+ * Function to create select element.
+ *
+ * @param parentElement
+ * The element to which the new elemenet should be appended.
+ *
+ * @param options
+ * Select form field options.
+ *
+ * @returns
+ * Select element
+ */
 function renderSelect(
     parentElement: HTMLDOMElement,
     options: SelectFormField
@@ -135,17 +161,21 @@ function renderSelect(
         return;
     }
 
-    const customSelect = createElement('div', {
-        className: 'highcharts-dashboards-dropdown'
-    },
-    {},
-    parentElement);
+    const customSelect = createElement(
+        'div',
+        {
+            className: 'highcharts-dashboards-dropdown'
+        },
+        {},
+        parentElement
+    );
 
     const btn = createElement(
         'button',
-        { className: 'highcharts-dashboards-dropdown-button' },
         {
-            height: '52px',
+            className: 'highcharts-dashboards-dropdown-button'
+        },
+        {
             margin: 0
         },
         customSelect
@@ -153,17 +183,16 @@ function renderSelect(
     const btnContent = createElement(
         'div',
         {},
-        { display: 'flex', height: '100%', 'align-items': 'center' },
+        { display: 'flex', 'align-items': 'center' },
         btn
     );
     const iconURL = (
-        U.find(
-            options.items,
-            (item): boolean => item.name === options.value
-        ) || {}
+        U.find(options.items, (item): boolean => item.name === options.value) ||
+        {}
     ).iconURL;
 
     let headerIcon;
+
     if (iconURL) {
         headerIcon = createElement(
             'img',
@@ -177,7 +206,10 @@ function renderSelect(
     }
     const placeholder = createElement(
         'span',
-        { textContent: options.value, id: options.id },
+        {
+            textContent: options.value,
+            id: options.id
+        },
         {},
         btnContent
     );
@@ -193,10 +225,11 @@ function renderSelect(
 
     let dropdown = createElement(
         'ul',
-        { className: 'highcharts-dashboards-droptown-content' },
         {
-            display: 'none',
-            padding: '16px 8px'
+            className: 'highcharts-dashboards-dropdown-content'
+        },
+        {
+            display: 'none'
         },
         customSelect
     );
@@ -213,19 +246,20 @@ function renderSelect(
             options.id,
             headerIcon,
             options.onchange
-
         );
     }
     return customSelect;
 }
 
-
+/**
+ * @internal
+ */
 function renderSelectElement(
     option: SelectFormFieldItem,
     dropdown: HTMLElement,
     placeholder: HTMLElement,
     id: string,
-    headerIcon?: HTMLDOMElement,
+    headerIcon?: HTMLElement,
     callback?: Function
 ): void {
     const selectOption = createElement('li', {}, { margin: 0 }, dropdown);
@@ -235,7 +269,7 @@ function renderSelectElement(
         { height: '40px', width: '100%' },
         selectOption
     );
-    let icon: HTMLDOMElement;
+    let icon: HTMLElement|undefined;
     if (option.iconURL) {
         icon = createElement(
             'img',
@@ -267,6 +301,18 @@ function renderSelectElement(
     });
 }
 
+/**
+ * Function to create toggle element.
+ *
+ * @param parentElement
+ * The element to which the new elemenet should be appended.
+ *
+ * @param options
+ * Form field options
+ *
+ * @returns
+ * Toggle element
+ */
 function renderToggle(
     parentElement: HTMLDOMElement,
     options: FormField
@@ -307,6 +353,20 @@ function renderToggle(
     return toggle;
 }
 
+/**
+ * Function to create text element.
+ *
+ * @param parentElement
+ * The element to which the new elemenet should be appended
+ *
+ * @param text
+ * Text to be displayed
+ *
+ * @param callback
+ * Callback function to be fired on the click
+ *
+ * @returns text Element
+ */
 function renderText(
     parentElement: HTMLDOMElement,
     text: string,
@@ -413,7 +473,7 @@ function renderNested(
 
         headerBtn.addEventListener('click', function (): void {
             const display = content.style.display;
-            content.style.display = display === 'none' ? 'block' : 'none';
+            content.style.display = display === 'none' ? 'flex' : 'none';
             headerIcon.style.transform =
                 display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
         });
@@ -441,6 +501,21 @@ function renderNested(
     return;
 }
 
+/**
+ * Function to create Icon element.
+ *
+ * @param parentElement
+ * The element to which the new elemenet should be appended.
+ *
+ * @param icon
+ * Icon URL
+ *
+ * @param callback
+ * Callback function
+ *
+ * @returns
+ * Icon Element
+ */
 function renderIcon(
     parentElement: HTMLDOMElement,
     options: IconFormField
@@ -470,6 +545,18 @@ function renderIcon(
     return iconElem;
 }
 
+/**
+ * Function to create input element.
+ *
+ * @param parentElement
+ * the element to which the new elemenet should be appended
+ *
+ * @param options
+ * Form field options
+ *
+ * @returns
+ * Input Element
+ */
 function renderInput(
     parentElement: HTMLDOMElement,
     options: FormField
@@ -510,6 +597,18 @@ function renderInput(
     return input;
 }
 
+/**
+ * Function to create textarea element.
+ *
+ * @param parentElement
+ * The element to which the new elemenet should be appended
+ *
+ * @param options
+ * Form field options
+ *
+ * @returns
+ * textarea Element
+ */
 function renderTextarea(
     parentElement: HTMLDOMElement,
     options: FormField
@@ -566,6 +665,18 @@ function renderCheckbox(
     return input;
 }
 
+/**
+ * Function to create button element.
+ *
+ * @param parentElement
+ * the element to which the new elemenet should be appended
+ *
+ * @param options
+ * Button field options
+ *
+ * @returns
+ * Button Element
+ */
 function renderButton(
     parentElement: HTMLDOMElement,
     options: ButtonOptions

@@ -131,13 +131,15 @@ namespace LegendSymbol {
             ) / 2;
         }
 
-        legendItem.line
-            .attr({
-                d: [
-                    ['M', lineSizer, verticalCenter],
-                    ['L', symbolWidth - lineSizer, verticalCenter]
-                ]
-            });
+        if (symbolWidth) {
+            legendItem.line
+                .attr({
+                    d: [
+                        ['M', lineSizer, verticalCenter],
+                        ['L', symbolWidth - lineSizer, verticalCenter]
+                    ]
+                });
+        }
 
         // Draw the marker
         if (markerOptions && markerOptions.enabled !== false && symbolWidth) {

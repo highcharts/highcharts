@@ -32,8 +32,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
-    merge,
-    extend
+    merge
 } = U;
 
 /* *
@@ -248,6 +247,7 @@ class PSARIndicator extends SMAIndicator {
      * */
 
     public data: Array<PSARPoint> = void 0 as any;
+    public nameComponents: Array<string> = void 0 as any;
     public points: Array<PSARPoint> = void 0 as any;
     public options: PSAROptions = void 0 as any;
 
@@ -261,14 +261,8 @@ class PSARIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: PSARParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let xVal: Array<number> = (series.xData as any),
+        const xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
-            // Extreme point is the lowest low for falling and highest high
-            // for rising psar - and we are starting with falling
-            extremePoint: number = yVal[0][1],
-            accelerationFactor: number = (
-                params.initialAccelerationFactor as any
-            ),
             maxAccelerationFactor: number = (
                 params.maxAccelerationFactor as any
             ),
@@ -277,21 +271,27 @@ class PSARIndicator extends SMAIndicator {
             initialAccelerationFactor: number = (
                 params.initialAccelerationFactor as any
             ),
-            PSAR: number = yVal[0][2],
             decimals: number = (params.decimals as any),
             index: number = (params.index as any),
             PSARArr: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            previousDirection = 1,
+            yData: Array<number> = [];
+        let accelerationFactor: number = (
+                params.initialAccelerationFactor as any
+            ),
             direction: number,
+            // Extreme point is the lowest low for falling and highest high
+            // for rising psar - and we are starting with falling
+            extremePoint: number = yVal[0][1],
             EPMinusPSAR: number,
             accelerationFactorMultiply: number,
             newDirection: number,
+            previousDirection = 1,
             prevLow: number,
             prevPrevLow: number,
             prevHigh: number,
             prevPrevHigh: number,
+            PSAR: number = yVal[0][2],
             newExtremePoint: number,
             high: number,
             low: number,
@@ -404,10 +404,6 @@ interface PSARIndicator {
     pointClass: typeof PSARPoint;
     nameComponents: Array<string>;
 }
-
-extend(PSARIndicator.prototype, {
-    nameComponents: void 0
-});
 
 /* *
  *

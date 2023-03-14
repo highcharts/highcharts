@@ -80,7 +80,6 @@ class EditMode {
         this.board = board;
         this.lang = merge({}, EditGlobals.lang, this.options.lang);
 
-        // Init renderer.
         this.contextPointer = {
             isVisible: false,
             element: createElement(

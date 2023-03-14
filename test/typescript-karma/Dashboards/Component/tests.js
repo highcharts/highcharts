@@ -1,8 +1,8 @@
 //@ts-check
 import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
 import HighchartsComponent from '/base/code/es-modules/Extensions/DashboardPlugins/HighchartsComponent.js';
-import HTMLComponent from '/base/code/es-modules/Dashboards/Component/HTMLComponent.js';
-import Component from '/base/code/es-modules/Dashboards/Component/Component.js';
+import HTMLComponent from '/base/code/es-modules/Dashboards/Components/HTMLComponent.js';
+import Component from '/base/code/es-modules/Dashboards/Components/Component.js';
 import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
 
 HighchartsComponent.charter = Highcharts;
