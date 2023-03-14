@@ -1,4 +1,4 @@
-const container = document.getElementById('container');
+const container = document.querySelector('#container');
 const escapeStringForHTML = Highcharts.A11yHTMLUtilities.escapeStringForHTML;
 const table = new Highcharts.DataTable({ y: [7, 42] });
 
@@ -33,8 +33,8 @@ renderTable(container, table);
 
 // Add Column
 
-const addColumnButton = document.getElementById('add-column-button');
-const addColumnInput = document.getElementById('add-column-input');
+const addColumnButton = document.querySelector('#add-column-button');
+const addColumnInput = document.querySelector('#add-column-input');
 
 function addColumn() {
     // Set column name; second parameter can be an array of cell values.
@@ -46,13 +46,12 @@ function addColumn() {
 }
 
 addColumnButton.addEventListener('click', addColumn);
-addColumnInput.addEventListener('change', addColumn);
 
 
 // Add Row
 
-const addRowButton = document.getElementById('add-row-button');
-const addRowInput = document.getElementById('add-row-input');
+const addRowButton = document.querySelector('#add-row-button');
+const addRowInput = document.querySelector('#add-row-input');
 
 function addRow() {
     // Set row values from input string splitted by `,` and `;`.
@@ -64,12 +63,11 @@ function addRow() {
 }
 
 addRowButton.addEventListener('click', addRow);
-addRowInput.addEventListener('change', addRow);
 
 
 // Modifiers
 
-const setModifierSelect = document.getElementById('set-modifier');
+const setModifierSelect = document.querySelector('#set-modifier');
 
 const DataModifierTypes = Highcharts.DataModifier.types;
 
