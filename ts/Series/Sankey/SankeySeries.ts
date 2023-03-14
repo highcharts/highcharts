@@ -657,9 +657,10 @@ class SankeySeries extends ColumnSeries {
                 height = node.options.height || options.height || nodeHeight;
 
             const r = relativeLength((
-                typeof borderRadius === 'number' ||
-                typeof borderRadius === 'string'
-            ) ? borderRadius : 0, width);
+                typeof borderRadius === 'object' ?
+                    borderRadius.radius :
+                    borderRadius || 0
+            ), width);
 
             if (chart.inverted) {
                 x = nodeLeft - nodeWidth;

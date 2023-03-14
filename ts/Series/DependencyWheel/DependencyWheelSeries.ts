@@ -232,7 +232,10 @@ class DependencyWheelSeries extends SankeySeries {
             factor = 2 * Math.PI /
                 (this.chart.plotHeight + this.getNodePadding()),
             center = this.getCenter(),
-            startAngle = ((options.startAngle as any) - 90) * deg2rad;
+            startAngle = ((options.startAngle as any) - 90) * deg2rad,
+            brOption = options.borderRadius,
+            borderRadius = typeof brOption === 'object' ?
+                brOption.radius : brOption;
 
         SankeySeries.prototype.translate.call(this);
 
@@ -246,11 +249,7 @@ class DependencyWheelSeries extends SankeySeries {
                     innerR = r - (options.nodeWidth as any),
                     start = startAngle + factor * (shapeArgs.y || 0),
                     end = startAngle +
-                        factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0)),
-                    borderRadius = (
-                        typeof options.borderRadius === 'number' ||
-                        typeof options.borderRadius === 'string'
-                    ) ? options.borderRadius : 0;
+                        factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0));
 
                 // Middle angle
                 node.angle = start + (end - start) / 2;
