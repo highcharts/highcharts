@@ -80,7 +80,7 @@ Example of synchronized components
             selection: true
         },
         type: 'Highcharts',
-    columnKeyMap: {
+        columnKeyMap: {
             Food: 'x',
             'Vitamin A': 'y'
         },
