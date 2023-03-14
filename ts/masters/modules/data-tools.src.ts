@@ -3,7 +3,7 @@
  * @module highcharts/modules/data-tools
  * @requires highcharts
  *
- * Highcharts Data Tools
+ * Highcharts
  *
  * (c) 2010-2023 Highsoft AS
  *
