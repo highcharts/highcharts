@@ -2382,15 +2382,14 @@ class SVGElement implements SVGElementLike {
      */
     public updateTransform(): void {
         const {
-                element,
-                matrix,
-                scaleX,
-                scaleY
-            } = this,
-            // Protection against assigning NaNs to the variables (#18619)
-            rotation = this.rotation || 0,
-            translateX = this.translateX || 0,
-            translateY = this.translateY || 0;
+            element,
+            matrix,
+            rotation = 0,
+            scaleX,
+            scaleY,
+            translateX = 0,
+            translateY = 0
+        } = this;
 
         // Apply translate. Nearly all transformed elements have translation,
         // so instead of checking for translate = 0, do it always (#1767,
