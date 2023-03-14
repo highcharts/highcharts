@@ -246,7 +246,11 @@ class DependencyWheelSeries extends SankeySeries {
                     innerR = r - (options.nodeWidth as any),
                     start = startAngle + factor * (shapeArgs.y || 0),
                     end = startAngle +
-                        factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0));
+                        factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0)),
+                    borderRadius = (
+                        typeof options.borderRadius === 'number' ||
+                        typeof options.borderRadius === 'string'
+                    ) ? options.borderRadius : 0;
 
                 // Middle angle
                 node.angle = start + (end - start) / 2;
@@ -258,7 +262,8 @@ class DependencyWheelSeries extends SankeySeries {
                     r: r,
                     innerR: innerR,
                     start: start,
-                    end: end
+                    end: end,
+                    borderRadius
                 };
 
                 node.dlBox = {
