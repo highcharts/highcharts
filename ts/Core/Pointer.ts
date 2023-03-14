@@ -2188,6 +2188,8 @@ namespace Pointer {
      *
      * */
 
+    const composedEvents: Array<Function> = [];
+
     const composedMembers: Array<unknown> = [];
 
     /* *
@@ -2200,7 +2202,6 @@ namespace Pointer {
      * @private
      */
     export function compose(ChartClass: typeof Chart): void {
-
         if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 /**
@@ -2216,6 +2217,18 @@ namespace Pointer {
             });
         }
 
+    }
+
+    /**
+     * @private
+     */
+    export function dissolve(): void {
+
+        for (let i = 0, iEnd = composedEvents.length; i < iEnd; ++i) {
+            composedEvents[i]();
+        }
+
+        composedEvents.length = 0;
     }
 
 }

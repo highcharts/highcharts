@@ -15,8 +15,8 @@
         "strict": true,
         "module": "es6",
         "moduleResolution": "node",
-        "outDir": "../js",
-        "rootDir": ".",
+        "outDir": "../js/",
+        "rootDir": "./",
         "target": "es5",
         "lib": [
             "DOM",
@@ -28,7 +28,10 @@
             "trusted-types"
         ]
     },
+    "exclude": [
+        "./masters-es5/"
+    ],
     "include": [
-        "**/*.ts"
+        "./**/*.ts"
     ]
 }

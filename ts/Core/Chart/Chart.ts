@@ -75,7 +75,6 @@ const {
     svg,
     win
 } = H;
-import MSPointer from '../MSPointer.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
