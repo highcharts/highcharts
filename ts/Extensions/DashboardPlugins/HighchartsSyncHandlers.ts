@@ -241,18 +241,18 @@ const configs: {
                         store,
                         id,
                         options: {
-                            tableAxisMap
+                            columnKeyMap
                         }
                     } = this;
 
                     const getX = (): string | undefined => {
-                        if (tableAxisMap) {
-                            const keys = Object.keys(tableAxisMap);
+                        if (columnKeyMap) {
+                            const keys = Object.keys(columnKeyMap);
 
                             let i = 0;
                             while (i < keys.length) {
                                 const key = keys[i];
-                                if (tableAxisMap[key] === 'x') {
+                                if (columnKeyMap[key] === 'x') {
                                     return key;
                                 }
 

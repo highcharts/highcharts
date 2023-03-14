@@ -62,7 +62,7 @@ Example of synchronized components
         cell: 'dashboard-col-0',
         isResizable: true,
         type: 'Highcharts',
-        tableAxisMap: {
+        columnKeyMap: {
             Food: 'x',
             'Vitamin A': 'value'
         },
@@ -80,7 +80,7 @@ Example of synchronized components
             selection: true
         },
         type: 'Highcharts',
-        tableAxisMap: {
+    columnKeyMap: {
             Food: 'x',
             'Vitamin A': 'y'
         },

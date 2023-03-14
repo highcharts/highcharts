@@ -365,7 +365,7 @@ namespace DataGridComponent {
         dataGridOptions?: DataGridOptions;
         chartClassName?: string;
         chartID?: string;
-        tableAxisMap?: Record<string, string | null>;
+        columnKeyMap?: Record<string, string | null>;
     }
 
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {

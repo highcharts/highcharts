@@ -88,7 +88,7 @@ Dashboards.board('container', {
                 selection: true,
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Europe: null,
                 Africa: null,
@@ -113,7 +113,7 @@ Dashboards.board('container', {
                 selection: true,
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Global: null,
                 Europe: null,
@@ -135,7 +135,7 @@ Dashboards.board('container', {
                 selection: true,
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Global: null,
                 Europe: null,
@@ -157,7 +157,7 @@ Dashboards.board('container', {
                 selection: true,
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Global: null,
                 Africa: null,
