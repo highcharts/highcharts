@@ -13,15 +13,17 @@
         "noFallthroughCasesInSwitch": true,
         "noImplicitThis": true,
         "strict": true,
-        "module": "es6",
+        "module": "ES6",
         "moduleResolution": "node",
-        "outDir": "../js",
-        "rootDir": ".",
-        "target": "es5",
+        "outDir": "../js/",
+        "rootDir": "./",
+        "target": "ES5",
         "lib": [
             "DOM",
             "ES5",
-            "ES2015.Promise"
+            "ES2015.Core",
+            "ES2015.Promise",
+            "ES2016.Array.Include"
         ],
         "types": [
             "jquery",

@@ -79,16 +79,6 @@ declare global {
         easeInOutSine(pos: number): number;
     }
 
-    interface ObjectConstructor {
-        /**
-         * Sets the prototype of a specified object o to object proto or null.
-         * Returns the object o.
-         * @param o The object to change its prototype.
-         * @param proto The value of the new prototype or null.
-         */
-        setPrototypeOf?<T>(o: T, proto: object | null): T;
-    }
-
     interface SVGElement {
         /**
          * @private
