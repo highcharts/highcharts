@@ -39,12 +39,12 @@ declare global {
     namespace Highcharts {
         interface MapPointer extends Pointer {
             chart: MapPointerChart;
+            isAnimating: boolean;
             mapNavigation: MapNavigation;
             onContainerDblClick(e: PointerEvent): void;
             onContainerMouseWheel(e: PointerEvent): void;
         }
         interface MapPointerChart extends Chart {
-            isAnimating: boolean;
             hoverPoint: MapPoint;
             mapZoom: MapNavigationChart['mapZoom'];
         }
@@ -125,12 +125,12 @@ extend<Pointer | Highcharts.MapPointer>(Pointer.prototype, {
         e = this.normalize(e);
 
         // Check if animation is already in progress
-        if (chart.isAnimating) {
+        if (this.isAnimating) {
             return;
         }
 
         // Set a flag to indicate that animation is starting
-        chart.isAnimating = true;
+        this.isAnimating = true;
 
         // Firefox uses e.deltaY or e.detail, WebKit and IE uses wheelDelta
         // try wheelDelta first #15656
@@ -172,8 +172,8 @@ extend<Pointer | Highcharts.MapPointer>(Pointer.prototype, {
 
         // Set a timeout to reset the animation flag after the animation
         // finishes
-        setTimeout(function (): void {
-            chart.isAnimating = false;
+        setTimeout((): void => {
+            this.isAnimating = false;
         }, 50);
     }
 });
