@@ -6,9 +6,6 @@
  * License: www.highcharts.com/license
  */
 
-/* Popup */
-@import url("../annotations/popup.css");
-
 :root,
 .highcharts-dashboards-light {
     /* Base colors */
@@ -749,28 +746,59 @@
     opacity: 0.3;
 }
 
-.highcharts-popup {
+/* Confirmation popup */
+
+.highcharts-dashboards-edit-popup {
     min-height: 160px;
     width: 200px;
     left: calc(50% - 150px);
+    display: none;
+    background-color: var(--highcharts-dashboards-main-background-color);
+    color: var(--highcharts-neutral-color-60);
+    font-size: 0.876em;
+    max-height: 90%;
+    top: 5%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    min-width: 300px;
+    max-width: 600px;
+    position: absolute;
+    z-index: 100;
+    -webkit-box-shadow: 0 0 8px 0 rgba(61, 61, 61, 0.3);
+    -moz-box-shadow: 0 0 8px 0 rgba(61, 61, 61, 0.3);
+    box-shadow: 0 0 8px 0 rgba(61, 61, 61, 0.3);
 }
 
-.highcharts-popup .highcharts-dashboards-edit-popup-content {
+.highcharts-dashboards-edit-popup-close {
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: absolute;
+    padding: 10px;
+    top: 0%;
+    right: 0%;
+    color: var(--highcharts-neutral-color-80);
+}
+
+.highcharts-dashboards-edit-popup .highcharts-dashboards-edit-popup-content {
     padding-top: 60px;
     clear: both;
     text-align: center;
 }
 
-.highcharts-popup .highcharts-dashboards-edit-popup-content button {
+.highcharts-dashboards-edit-popup .highcharts-dashboards-edit-popup-content button {
     float: none;
 }
 
-.highcharts-popup .highcharts-dashboards-edit-popup-content.highcharts-dashboards-edit-label-text {
+.highcharts-dashboards-edit-popup .highcharts-dashboards-edit-popup-content.highcharts-dashboards-edit-label-text {
     width: 100%;
     padding: 10px 0;
 }
 
-.highcharts-popup .highcharts-dashboards-edit-popup-content button.highcharts-dashboards-edit-popup-confirm-btn {
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-popup .highcharts-dashboards-edit-popup-content button.highcharts-dashboards-edit-popup-confirm-btn {
     background-color: var(--highcharts-dashboards-red-color);
     color: var(--highcharts-dashboards-main-font-color);
 }

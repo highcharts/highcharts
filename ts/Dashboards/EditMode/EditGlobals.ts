@@ -73,8 +73,13 @@ const EditGlobals: EditGlobals = {
         editToolsBtn: PREFIX + 'tools-btn',
         editTools: PREFIX + 'tools',
         editGridItems: PREFIX + 'grid-items',
+
+        // Confirmation popup
+        confirmationPopup: PREFIX + 'popup',
         popupContentContainer: PREFIX + 'popup-content',
         popupConfirmBtn: PREFIX + 'popup-confirm-btn',
+        confirmationPopupCloseButton: PREFIX + 'popup-close',
+
         editOverlay: PREFIX + 'overlay',
         editOverlayActive: PREFIX + 'overlay-active',
         resizerMenuBtnActive: PREFIX + 'resizer-menu-btn-active',
