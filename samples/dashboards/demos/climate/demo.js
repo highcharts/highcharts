@@ -672,10 +672,10 @@ async function setupDataPool() {
 
     dataPool.setConnectorOptions({
         name: 'cities',
-        connectorOptions: {
+        type: 'CSVConnector',
+        options: {
             csvURL: 'https://www.highcharts.com/samples/data/climate-cities.csv'
-        },
-        connectorType: 'CSVConnector'
+        }
     });
 
     citiesTable = await dataPool.getConnectorTable('cities');
@@ -683,10 +683,10 @@ async function setupDataPool() {
     for (const row of citiesTable.getRowObjects()) {
         dataPool.setConnectorOptions({
             name: row.city,
-            connectorOptions: {
+            type: 'CSVConnector',
+            options: {
                 csvURL: row.csv
-            },
-            connectorType: 'CSVConnector'
+            }
         });
     }
 }
