@@ -4427,8 +4427,8 @@ namespace Axis {
         dataMin: number;
         max: number;
         min: number;
-        userMax: number;
-        userMin: number;
+        userMax: number | undefined;
+        userMin: number | undefined;
     }
     export interface PanningState {
         startMin: (number);
@@ -4683,12 +4683,12 @@ export default Axis;
  * The user defined maximum, either from the `max` option or from a zoom or
  * `setExtremes` action.
  * @name Highcharts.ExtremesObject#userMax
- * @type {number}
+ * @type {number|undefined}
  *//**
  * The user defined minimum, either from the `min` option or from a zoom or
  * `setExtremes` action.
  * @name Highcharts.ExtremesObject#userMin
- * @type {number}
+ * @type {number|undefined}
  */
 
 /**
