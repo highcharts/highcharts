@@ -36,7 +36,7 @@ async function setupDashboard() {
     citiesData = await buildCitiesData();
     buildSymbols();
 
-    const cityStore = await dataPool.getStore(cityScope);
+    const cityConnector = await dataPool.getConnector(cityScope);
     const map = await fetch(
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
@@ -88,7 +88,7 @@ async function setupDashboard() {
                     },
                     series: [{
                         name: cityScope,
-                        data: cityStore.table.getRows(
+                        data: cityConnector.table.getRows(
                             void 0,
                             void 0,
                             ['time', dataScope]
@@ -131,7 +131,7 @@ async function setupDashboard() {
                     events: {
                         afterSetExtremes: async function (e) {
                             const table =
-                                await dataPool.getStoreTable(cityScope);
+                                await dataPool.getConnectorTable(cityScope);
                             const data = await buildCityData(
                                 e.min || e.target.min,
                                 e.max || e.target.max
@@ -237,16 +237,16 @@ async function setupDashboard() {
                             }
 
                             cityScope = city;
-                            const store = await dataPool.getStore(city);
+                            const connector = await dataPool.getConnector(city);
 
                             syncRefreshCharts(
-                                store,
+                                connector,
                                 dataScope,
                                 city
                             );
 
                             // Update DataGrid
-                            cityGrid.dataTable = store.table;
+                            cityGrid.dataTable = connector.table;
                             cityGrid.update(); // force redraw
 
                             updateKPI(true);
@@ -312,7 +312,7 @@ async function setupDashboard() {
         }, {
             cell: 'city-chart',
             type: 'Highcharts',
-            store: cityStore,
+            connector: cityConnector,
             sync: {
                 tooltip: true
             },
@@ -392,7 +392,7 @@ async function setupDashboard() {
         }, {
             cell: 'selection-grid',
             type: 'DataGrid',
-            store: cityStore,
+            connector: cityConnector,
             sync: {
                 tooltip: true
             },
@@ -431,7 +431,7 @@ async function setupDashboard() {
                     dataScope = 'TN' + temperatureScale;
 
                     syncRefreshCharts(
-                        citiesData[cityScope].store,
+                        citiesData[cityScope].connector,
                         dataScope,
                         cityScope
                     );
@@ -457,7 +457,7 @@ async function setupDashboard() {
                     dataScope = 'TX' + temperatureScale;
 
                     syncRefreshCharts(
-                        citiesData[cityScope].store,
+                        citiesData[cityScope].connector,
                         dataScope,
                         cityScope
                     );
@@ -486,7 +486,7 @@ async function setupDashboard() {
                     dataScope = 'RR1';
 
                     syncRefreshCharts(
-                        citiesData[cityScope].store,
+                        citiesData[cityScope].connector,
                         dataScope,
                         cityScope
                     );
@@ -512,7 +512,7 @@ async function setupDashboard() {
                     dataScope = 'ID';
 
                     syncRefreshCharts(
-                        citiesData[cityScope].store,
+                        citiesData[cityScope].connector,
                         dataScope,
                         cityScope
                     );
@@ -538,7 +538,7 @@ async function setupDashboard() {
                     dataScope = 'FD';
 
                     syncRefreshCharts(
-                        citiesData[cityScope].store,
+                        citiesData[cityScope].connector,
                         dataScope,
                         cityScope
                     );
@@ -595,7 +595,7 @@ async function setupDashboard() {
 
                                 // Update the board.
                                 syncRefreshCharts(
-                                    citiesData[cityScope].store,
+                                    citiesData[cityScope].connector,
                                     dataScope,
                                     cityScope
                                 );
@@ -670,23 +670,23 @@ async function setupDashboard() {
 
 async function setupDataPool() {
 
-    dataPool.setStoreOptions({
+    dataPool.setConnectorOptions({
         name: 'cities',
-        storeOptions: {
+        connectorOptions: {
             csvURL: 'https://www.highcharts.com/samples/data/climate-cities.csv'
         },
-        storeType: 'CSVStore'
+        connectorType: 'CSVConnector'
     });
 
-    citiesTable = await dataPool.getStoreTable('cities');
+    citiesTable = await dataPool.getConnectorTable('cities');
 
     for (const row of citiesTable.getRowObjects()) {
-        dataPool.setStoreOptions({
+        dataPool.setConnectorOptions({
             name: row.city,
-            storeOptions: {
+            connectorOptions: {
                 csvURL: row.csv
             },
-            storeType: 'CSVStore'
+            connectorType: 'CSVConnector'
         });
     }
 }
@@ -707,16 +707,16 @@ async function setupCitiesData() {
         if (!data[city]) {
             promises.push(
                 dataPool
-                    .getStore(city)
-                    .then(store => {
-                        decorateCityTable(store.table);
+                    .getConnector(city)
+                    .then(connector => {
+                        decorateCityTable(connector.table);
                         data[city] = {
                             country: row[3],
                             elevation: row[4],
                             lat: row[0],
                             lon: row[1],
                             name: row[2],
-                            store
+                            connector
                         };
                     })
             );
@@ -751,9 +751,9 @@ async function buildCitiesData() {
         cities.getRowIndexBy('city', cityScope),
         ['lat', 'lon', 'city', 'country', 'elevation']
     );
-    const store = await dataPool.getStore(initialRow[2]);
+    const connector = await dataPool.getConnector(initialRow[2]);
 
-    await decorateCityTable(store.table);
+    await decorateCityTable(connector.table);
 
     data[cityScope] = {
         country: initialRow[3],
@@ -761,7 +761,7 @@ async function buildCitiesData() {
         lat: initialRow[0],
         lon: initialRow[1],
         name: initialRow[2],
-        store
+        connector
     };
 
     return data;
@@ -772,7 +772,7 @@ async function buildCitiesMap() {
         .keys(citiesData)
         .map(city => {
             const data = citiesData[city];
-            const table = data.store.table.modified;
+            const table = data.connector.table.modified;
             const y = table.getCellAsNumber(
                 dataScope,
                 table.getRowIndexBy('time', worldDate)
@@ -790,7 +790,7 @@ async function buildCitiesMap() {
 }
 
 async function buildCityData(minValue, maxValue) {
-    const table = await dataPool.getStoreTable(cityScope);
+    const table = await dataPool.getConnectorTable(cityScope);
 
     table.setModifier(new Dashboards.RangeModifier({
         ranges: [{
@@ -891,7 +891,7 @@ function buildKPIChartOptions(dataScope) {
         },
         series: [{
             data: [(() => {
-                const table = citiesData[cityScope].store.table.modified;
+                const table = citiesData[cityScope].connector.table.modified;
                 return table.getCellAsNumber(
                     dataScope,
                     table.getRowIndexBy('time', worldDate)
@@ -1039,7 +1039,7 @@ function tooltipFormatter(value, city) {
 
 function updateKPI(animation) {
     const data = citiesData[cityScope];
-    const table = data.store.table.modified;
+    const table = data.connector.table.modified;
 
     for (const [key, kpi] of Object.entries(kpis)) {
         if (key === 'data') {
@@ -1061,8 +1061,8 @@ function updateKPI(animation) {
     }
 }
 
-function syncRefreshCharts(store, dataScope, cityScope) {
-    const data = store.table.getRows(
+function syncRefreshCharts(connector, dataScope, cityScope) {
+    const data = connector.table.getRows(
         void 0, void 0,
         ['time', dataScope]
     );

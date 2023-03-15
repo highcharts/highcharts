@@ -1,4 +1,4 @@
-import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
+import CSVConnector from '../../../../code/es-modules/Data/Connectors/CSVConnector.js';
 import Board from '../../../../code/es-modules/Dashboards/Board';
 import PluginHandler from '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
@@ -7,8 +7,8 @@ import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPl
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-// A shared store
-const store = new CSVStore(undefined, {
+// A shared connector
+const connector = new CSVConnector(undefined, {
   csv: `$GME,$AMC,$NOK
  4,5,6
  1,5,2
@@ -16,7 +16,7 @@ const store = new CSVStore(undefined, {
   firstRowAsNames: true
 });
 
-store.load();
+connector.load();
 
 new Board('container', {
   gui: {
@@ -58,7 +58,7 @@ new Board('container', {
         type: 'column'
       }
     },
-    store,
+    connector,
     sync: {
       'visibility': true,
       'tooltip': true 
@@ -72,7 +72,7 @@ new Board('container', {
         animation: false
       }
     },
-    store,
+    connector,
     sync: {
       'visibility': true,
       'tooltip': {
