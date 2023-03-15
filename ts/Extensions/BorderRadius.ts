@@ -406,6 +406,12 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                         let brBoxY = y,
                             brBoxHeight = height;
 
+                        // It would be nice to refactor StackItem.getStackBox/
+                        // setOffset so that we could get a reliable box out of
+                        // it. Currently it is close if we remove the label
+                        // offset, but we still need to run crispCol and also
+                        // flip it if inverted, so atm it is simpler to do it
+                        // like the below.
                         if (
                             borderRadius.scope === 'stack' &&
                             point.stackTotal
