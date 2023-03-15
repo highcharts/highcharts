@@ -465,6 +465,8 @@ function erase(arr: Array<unknown>, item: unknown): void {
 /**
  * Adds an item to an array, if it is not present in the array.
  *
+ * @function Highcharts.pushUnique
+ *
  * @param {Array<unknown>} array
  * The array to add the item to.
  *

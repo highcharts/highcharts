@@ -131,6 +131,8 @@ class DataTable implements DataEvent.Emitter {
     /**
      * Constructs an instance of the DataTable class.
      *
+     * @private
+     *
      * @param {Highcharts.DataTableColumnCollection} [columns]
      * Collection of columns.
      *
