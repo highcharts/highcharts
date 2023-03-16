@@ -227,10 +227,12 @@ QUnit.test('Timeline: Styled mode #17614', function (assert) {
         );
     });
 
+    const graph = chart.container
+        .querySelector('.highcharts-timeline-series .highcharts-graph');
+
     setTimeout(() => {
         assert.strictEqual(
-            window.getComputedStyle(series.graph.element)
-                .getPropertyValue('stroke'),
+            window.getComputedStyle(graph).getPropertyValue('stroke'),
             'rgb(204, 204, 204)',
             'Timeline graph has proper stroke value'
         );
