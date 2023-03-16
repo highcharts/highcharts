@@ -400,6 +400,6 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
     assert.strictEqual(
         beforeZoom,
         chart.mapView.zoom,
-        'Map shouldn\' be zoomed out after panning (#18542).'
+        'Map shouldn\'t be zoomed out after panning (#18542).'
     );
 });
