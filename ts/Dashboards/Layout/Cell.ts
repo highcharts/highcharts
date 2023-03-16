@@ -530,12 +530,12 @@ namespace Cell {
         id: string;
         /**
          * Width of the cell. Can be a percentage value or a fraction.
-         * For example '50%' or '1/3'.
+         * For example `50%` or `1/3`.
          **/
         width?: string;
         /**
          * Height of the cell. Can be a percentage value or a fraction.
-         * For example '50%' or '1/3'.
+         * For example `50%` or `1/3`.
          **/
         height?: number;
         /**
