@@ -632,7 +632,13 @@ class Tooltip {
             outside = this.outside,
             outerWidth = outside ?
                 // substract distance to prevent scrollbars
-                doc.documentElement.clientWidth - 2 * distance :
+                Math.max(
+                    doc.body.scrollWidth,
+                    doc.documentElement.scrollWidth,
+                    doc.body.offsetWidth,
+                    doc.documentElement.offsetWidth,
+                    doc.documentElement.clientWidth
+                ) - 2 * distance :
                 chart.chartWidth,
             outerHeight = outside ?
                 Math.max(
