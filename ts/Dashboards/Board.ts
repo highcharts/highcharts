@@ -211,11 +211,13 @@ class Board implements Serializable<Board, Board.JSON> {
 
     /**
      * The edit mode instance. Used to handle editing the dashboard.
+     * @internal
      * */
     public editMode?: EditMode;
 
     /**
      * The fullscreen instance. Controls the fullscreen mode.
+     * @internal
      * */
     public fullscreen?: Fullscreen;
 
@@ -477,6 +479,7 @@ class Board implements Serializable<Board, Board.JSON> {
 
     /**
      * Converts the given JSON to a class instance.
+     * @internal
      *
      * @param json
      * JSON to deserialize as a class instance or object.
@@ -568,6 +571,7 @@ namespace Board {
         componentOptions?: Partial<Bindings.ComponentOptions>;
         /**
          * A list of serialized layouts to add to the board.
+         * @internal
          **/
         layoutsJSON?: Array<Layout.JSON>;
         /**
