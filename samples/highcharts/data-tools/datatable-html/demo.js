@@ -40,7 +40,7 @@ function addColumn() {
     // Set column name; second parameter can be an array of cell values.
     table.setColumn(addColumnInput.value);
     // Render changed table.
-    renderTable(container, table);
+    renderTable(container, table.modified);
     // Reset input field
     addColumnInput.value = '';
 }
@@ -55,9 +55,14 @@ const addRowInput = document.querySelector('#add-row-input');
 
 function addRow() {
     // Set row values from input string splitted by `,` and `;`.
-    table.setRow(addRowInput.value.split(/[,;]/g));
+    table.setRow(
+        addRowInput.value
+            .split(/[,;]/g)
+            // check for numbers in cell string and convert them
+            .map(cell => (/^[.\d\s]+$/.test(cell) ? parseFloat(cell) : cell))
+    );
     // Render changed table.
-    renderTable(container, table);
+    renderTable(container, table.modified);
     // Reset input field
     addRowInput.value = '';
 }
