@@ -1,7 +1,6 @@
 const sortModifier = new Highcharts.DataModifier.types.Sort();
 const rangeModifier = new Highcharts.DataModifier.types.Range();
 const invertModifier = new Highcharts.DataModifier.types.Invert();
-const groupModifier = new Highcharts.DataModifier.types.Group();
 const chainModifier = new Highcharts.DataModifier.types.Chain();
 
 const table = new Highcharts.DataTable({
@@ -16,7 +15,6 @@ modifyButton.addEventListener('click', () => {
     const sortModifierActivate = document.querySelector('#sortmodifier-activate');
     const rangeModifierActivate = document.querySelector('#rangemodifier-activate');
     const invertModifierActivate = document.querySelector('#invertmodifier-activate');
-    const groupModifierActivate = document.querySelector('#groupmodifier-activate');
 
     // reset chain
     chainModifier.clear();
@@ -50,23 +48,6 @@ modifyButton.addEventListener('click', () => {
     // add invert to chain
     if (invertModifierActivate.checked) {
         chainModifier.add(invertModifier);
-    }
-
-    // add group to chain
-    if (groupModifierActivate.checked) {
-        groupModifier.options.groupColumn = document
-            .querySelector('#groupmodifier-groupcolumn').value;
-        groupModifier.options.invalidValues = document
-            .querySelector('#groupmodifier-invalidvalues').value
-            .split(/[,;]/g)
-            .filter(v => !!v)
-            .map(v => (isNaN(parseInt(v, 10)) ? v.trim() : parseInt(v, 10)));
-        groupModifier.options.validValues = document
-            .querySelector('#groupmodifier-validvalues').value
-            .split(/[,;]/g)
-            .filter(v => !!v)
-            .map(v => (isNaN(parseInt(v, 10)) ? v.trim() : parseInt(v, 10)));
-        chainModifier.add(groupModifier);
     }
 
     // apply modifier changes

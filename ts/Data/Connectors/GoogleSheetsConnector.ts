@@ -25,7 +25,7 @@
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
-import DataStore from './DataStore.js';
+import DataConnector from './DataConnector.js';
 import DataTable from '../DataTable.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
 import U from '../../Core/Utilities.js';
@@ -55,6 +55,10 @@ interface GoogleError {
  *
  * */
 
+/**
+ * Tests JSON object for Google Error.
+ * @private
+ */
 function isGoogleError(
     json: AnyRecord
 ): json is GoogleError {
@@ -77,7 +81,7 @@ function isGoogleError(
  * @private
  * @todo implement save, requires oauth2
  */
-class GoogleSheetsStore extends DataStore {
+class GoogleSheetsConnector extends DataConnector {
 
     /* *
      *
@@ -85,7 +89,7 @@ class GoogleSheetsStore extends DataStore {
      *
      * */
 
-    protected static readonly defaultOptions: GoogleSheetsStore.Options = {
+    protected static readonly defaultOptions: GoogleSheetsConnector.Options = {
         googleAPIKey: '',
         googleSpreadsheetKey: '',
         worksheet: 1,
@@ -101,13 +105,13 @@ class GoogleSheetsStore extends DataStore {
      * */
 
     /**
-     * Constructs an instance of GoogleSheetsStore
+     * Constructs an instance of GoogleSheetsConnector
      *
      * @param {DataTable} table
-     * Optional table to create the store from.
+     * Optional table to create the connector from.
      *
-     * @param {CSVStore.OptionsType} options
-     * Options for the store and converter.
+     * @param {CSVConnector.OptionsType} options
+     * Options for the connector and converter.
      *
      * @param {DataConverter} converter
      * Optional converter to replace the default converter.
@@ -115,7 +119,7 @@ class GoogleSheetsStore extends DataStore {
     public constructor(
         table: DataTable,
         options: (
-            Partial<GoogleSheetsStore.Options>&
+            Partial<GoogleSheetsConnector.Options>&
             {
                 googleAPIKey: string;
                 googleSpreadsheetKey: string;
@@ -124,7 +128,7 @@ class GoogleSheetsStore extends DataStore {
         converter?: GoogleSheetsConverter
     ) {
         super(table);
-        this.options = merge(GoogleSheetsStore.defaultOptions, options);
+        this.options = merge(GoogleSheetsConnector.defaultOptions, options);
         this.converter = converter || new GoogleSheetsConverter({
             firstRowAsNames: this.options.firstRowAsNames
         });
@@ -136,7 +140,7 @@ class GoogleSheetsStore extends DataStore {
      *
      * */
 
-    public readonly options: GoogleSheetsStore.Options;
+    public readonly options: GoogleSheetsConnector.Options;
 
     /**
      * The attached converter, which can be replaced in the constructor
@@ -156,30 +160,30 @@ class GoogleSheetsStore extends DataStore {
      * Custom information for pending events.
      *
      * @return {Promise<this>}
-     * Same store instance with modified table.
+     * Same connector instance with modified table.
      */
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
-        const store = this,
+        const connector = this,
             {
                 dataRefreshRate,
                 enablePolling,
                 firstRowAsNames,
                 googleAPIKey,
                 googleSpreadsheetKey
-            } = store.options,
-            url = GoogleSheetsStore.buildFetchURL(
+            } = connector.options,
+            url = GoogleSheetsConnector.buildFetchURL(
                 googleAPIKey,
                 googleSpreadsheetKey,
-                store.options
+                connector.options
             );
 
         // If already loaded, clear the current table
-        store.table.deleteColumns();
+        connector.table.deleteColumns();
 
-        store.emit<GoogleSheetsStore.Event>({
+        connector.emit<GoogleSheetsConnector.Event>({
             type: 'load',
             detail: eventDetail,
-            table: store.table,
+            table: connector.table,
             url
         });
 
@@ -192,42 +196,42 @@ class GoogleSheetsStore extends DataStore {
                         throw new Error(json.error.message);
                     }
 
-                    store.converter.parse({
+                    connector.converter.parse({
                         firstRowAsNames,
                         json:
                             json as GoogleSheetsConverter.GoogleSpreadsheetJSON
                     });
 
-                    store.table.setColumns(
-                        store.converter.getTable().getColumns()
+                    connector.table.setColumns(
+                        connector.converter.getTable().getColumns()
                     );
 
-                    store.emit<GoogleSheetsStore.Event>({
+                    connector.emit<GoogleSheetsConnector.Event>({
                         type: 'afterLoad',
                         detail: eventDetail,
-                        table: store.table,
+                        table: connector.table,
                         url
                     });
 
                     // Polling
                     if (enablePolling) {
                         setTimeout(
-                            (): Promise<this> => store.load(),
+                            (): Promise<this> => connector.load(),
                             Math.max(dataRefreshRate || 0, 1) * 1000
                         );
                     }
                 })
             )['catch']((error): Promise<void> => {
-                store.emit<GoogleSheetsStore.Event>({
+                connector.emit<GoogleSheetsConnector.Event>({
                     type: 'loadError',
                     detail: eventDetail,
                     error,
-                    table: store.table
+                    table: connector.table
                 });
                 return Promise.reject(error);
             })
             .then((): this =>
-                store
+                connector
             );
     }
 
@@ -239,7 +243,7 @@ class GoogleSheetsStore extends DataStore {
  *
  * */
 
-namespace GoogleSheetsStore {
+namespace GoogleSheetsConnector {
 
     /* *
      *
@@ -249,13 +253,13 @@ namespace GoogleSheetsStore {
 
     export type Event = (ErrorEvent|LoadEvent);
 
-    export type ErrorEvent = DataStore.ErrorEvent;
+    export type ErrorEvent = DataConnector.ErrorEvent;
 
     export interface FetchURLOptions {
         onlyColumnNames?: boolean;
     }
 
-    export interface LoadEvent extends DataStore.LoadEvent {
+    export interface LoadEvent extends DataConnector.LoadEvent {
         readonly url: string;
     }
 
@@ -288,6 +292,7 @@ namespace GoogleSheetsStore {
      * */
 
     /**
+     * Creates GoogleSheets API v4 URL.
      * @private
      */
     export function buildFetchURL(
@@ -316,6 +321,7 @@ namespace GoogleSheetsStore {
     }
 
     /**
+     * Creates sheets range.
      * @private
      */
     export function buildQueryRange(
@@ -350,11 +356,11 @@ namespace GoogleSheetsStore {
  *
  * */
 
-DataStore.addStore(GoogleSheetsStore);
+DataConnector.addConnector(GoogleSheetsConnector);
 
-declare module './StoreType' {
-    interface StoreTypeRegistry {
-        Google: typeof GoogleSheetsStore;
+declare module './ConnectorType' {
+    interface ConnectorTypeRegistry {
+        Google: typeof GoogleSheetsConnector;
     }
 }
 
@@ -364,4 +370,4 @@ declare module './StoreType' {
  *
  * */
 
-export default GoogleSheetsStore;
+export default GoogleSheetsConnector;

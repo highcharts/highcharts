@@ -115,38 +115,6 @@
 <!-- /options -->
                     </div>
                 </dd>
-                <dt>GroupModifier</dt>
-                <dd>
-                    <p>Groups table rows into subtables depending on column values.</p>
-                    <p>
-                        <input type="checkbox" id="groupmodifier-activate" />
-                        <label for="groupmodifier-activate">activate</label>
-                    </p>
-                    <input type="checkbox" id="groupmodifier-options" hidden />
-                    <div>
-                        <h4><label for="groupmodifier-options">GroupModifier.options</label></h4>
-<!-- options -->
-<pre>new GroupModifier({
-    <span>/* Column to group by values. */</span>
-    <label for="groupmodifier-groupcolumn">groupColumn: </label><select id="groupmodifier-groupcolumn">
-        <option>name</option>
-        <option>x</option>
-        <option>y</option>
-    </select>
-
-    <span>/* Array of invalid group values. */</span>
-    <label for="groupmodifier-invalidvalues">invalidValues: </label>[
-        <input type="text" id="groupmodifier-invalidvalues" />
-    ]
-
-    <span>/* Array of valid group values. */</span>
-    <label for="groupmodifier-validvalues">validValues: </label>[
-        <input type="text" id="groupmodifier-validvalues" />
-    ]
-});</pre>
-<!-- /options -->
-                    </div>
-                </dd>
             </dl>
         </dd>
     </dl>

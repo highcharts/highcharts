@@ -1,6 +1,5 @@
 import DataTable from '/base/code/es-modules/Data/DataTable.js';
 import ChainModifier from '/base/code/es-modules/Data/Modifiers/ChainModifier.js';
-import GroupModifier from '/base/code/es-modules/Data/Modifiers/GroupModifier.js';
 import RangeModifier from '/base/code/es-modules/Data/Modifiers/RangeModifier.js';
 import SortModifier from '/base/code/es-modules/Data/Modifiers/SortModifier.js';
 
@@ -8,9 +7,6 @@ QUnit.test('ChainModifier.benchmark', function (assert) {
 
     const modifier = new ChainModifier(
             {},
-            new GroupModifier({
-                groupColumn: 'y'
-            }),
             new RangeModifier({
                 ranges: [{
                     column: 'value',
@@ -58,12 +54,9 @@ QUnit.test('ChainModifier.modify', function (assert) {
     const done = assert.async(),
         modifier = new ChainModifier(
             {},
-            new GroupModifier({
-                groupColumn: 'y'
-            }),
             new RangeModifier({
                 ranges: [{
-                    column: 'value',
+                    column: 'y',
                     minValue: 'A',
                     maxValue: 'b'
                 }]
@@ -80,17 +73,17 @@ QUnit.test('ChainModifier.modify', function (assert) {
 
             assert.equal(
                 table.modified.getRowCount(),
-                2,
-                'Modified table should contain two rows, one for each group.'
+                4,
+                'Modified table should contain four rows.'
             );
 
             assert.deepEqual(
-                table.modified.getColumn('table')[1].getColumns(),
+                table.modified.getColumns(),
                 {
-                    x: [3, 4],
-                    y: ['b', 'b']
+                    x: [1, 2, 3, 4],
+                    y: ['a', 'a', 'b', 'b']
                 },
-                'Modified table should have expected structure of two rows with sub tables.'
+                'Modified table should have expected structure of four rows.'
             );
 
         })

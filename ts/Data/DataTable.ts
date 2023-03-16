@@ -1107,7 +1107,7 @@ class DataTable implements DataEvent.Emitter {
      * @param {string} columnNameOrAlias
      * Column to search in.
      *
-     * @param {boolean|number|string|Highcharts.DataTable} cellValue
+     * @param {Highcharts.DataTableCellType} cellValue
      * Cell value to search for. `NaN` and `undefined` are not supported.
      *
      * @return {boolean}
@@ -1115,7 +1115,7 @@ class DataTable implements DataEvent.Emitter {
      */
     public hasRowWith(
         columnNameOrAlias: string,
-        cellValue: (boolean|number|string|DataTable)
+        cellValue: DataTable.CellType
     ): boolean {
         const table = this;
 
@@ -1637,7 +1637,7 @@ namespace DataTable {
     /**
      * Possible value types for a table cell.
      */
-    export type CellType = (DataTable|JSON.Primitive);
+    export type CellType = JSON.Primitive;
 
     /**
      * Event object for clone-related events.

@@ -1,21 +1,21 @@
 
-import GoogleSheetsStore from '/base/code/es-modules/Data/Stores/GoogleSheetsStore.js'
-import { registerStoreEvents } from './utils.js'
+import GoogleSheetsConnector from '/base/code/es-modules/Data/Connectors/GoogleSheetsConnector.js'
+import { registerConnectorEvents } from './utils.js'
 const { test, only } = QUnit;
 
-test('GoogleDataStore', function (assert) {
+test('GoogleDataConnector', function (assert) {
     const registeredEvents = [];
 
-    const datastore = new GoogleSheetsStore(undefined, {
+    const connector = new GoogleSheetsConnector(undefined, {
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
         googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
     });
 
     const done = assert.async(2); // event + promise
 
-    registerStoreEvents(datastore, registeredEvents, assert);
+    registerConnectorEvents(connector, registeredEvents, assert);
 
-    datastore.on('afterLoad', (e) => {
+    connector.on('afterLoad', (e) => {
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
@@ -25,7 +25,7 @@ test('GoogleDataStore', function (assert) {
         assert.deepEqual(
             e.table.getRow(1).map(cellValue => typeof cellValue),
             ['string', 'number', 'number', 'number'],
-            'The store table has the correct data types'
+            'The connector table has the correct data types'
         );
 
         const columnNames = e.table.getColumnNames();
@@ -46,7 +46,7 @@ test('GoogleDataStore', function (assert) {
         done();
     });
 
-    datastore
+    connector
         .load()
         .catch((error) => assert.strictEqual(
             error,
@@ -56,19 +56,19 @@ test('GoogleDataStore', function (assert) {
         .then(() => done())
 });
 
-test('GoogleDataStore, bad spreadsheetkey', function (assert) {
+test('GoogleDataConnector, bad spreadsheetkey', function (assert) {
     const registeredEvents = [];
 
-    const datastore = new GoogleSheetsStore(undefined, {
+    const connector = new GoogleSheetsConnector(undefined, {
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
         googleSpreadsheetKey: 'thisisnotaworkingspreadsheet'
     });
 
     const done = assert.async(2); // event + promise
 
-    registerStoreEvents(datastore, registeredEvents, assert);
+    registerConnectorEvents(connector, registeredEvents, assert);
 
-    datastore.on('loadError', (error) => {
+    connector.on('loadError', (error) => {
         assert.deepEqual(
             registeredEvents,
             ['load', 'loadError'],
@@ -78,7 +78,7 @@ test('GoogleDataStore, bad spreadsheetkey', function (assert) {
         done();
     });
 
-    datastore
+    connector
         .load()
         .catch((error) => assert.strictEqual(
             error.message,

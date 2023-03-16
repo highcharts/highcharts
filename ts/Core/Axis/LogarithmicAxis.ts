@@ -21,7 +21,6 @@ import type Axis from './Axis';
 import U from '../Utilities.js';
 const {
     addEvent,
-    getMagnitude,
     normalizeTickInterval,
     pick
 } = U;
@@ -71,7 +70,7 @@ namespace LogarithmicAxis {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -89,9 +88,7 @@ namespace LogarithmicAxis {
         AxisClass: T
     ): (T&typeof Composition) {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             AxisClass.keepProps.push('logarithmic');
 
             addEvent(AxisClass, 'init', onInit);
