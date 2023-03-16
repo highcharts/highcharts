@@ -56,7 +56,7 @@ abstract class DataModifier implements DataEvent.Emitter {
      * stringified class type.
      */
     private static readonly nameRegExp = (
-        /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/
+        /^(?:class|function)\s+(\w*?)(?:Data)?(?:Modifier)?\W/
     );
 
     /**

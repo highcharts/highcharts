@@ -494,8 +494,6 @@ class ColumnSeries extends Series {
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             threshold = options.threshold,
-            translatedThreshold = series.translatedThreshold =
-                yAxis.getThreshold(threshold as any),
             minPointLength = pick(options.minPointLength, 5),
             metrics = series.getColumnMetrics(),
             seriesPointWidth = metrics.width,
@@ -504,10 +502,12 @@ class ColumnSeries extends Series {
             dataMax = series.dataMax;
         // postprocessed for border width
         let seriesBarW = series.barW =
-            Math.max(seriesPointWidth, 1 + 2 * borderWidth);
+                Math.max(seriesPointWidth, 1 + 2 * borderWidth),
+            translatedThreshold = series.translatedThreshold =
+                yAxis.getThreshold(threshold as any);
 
         if (chart.inverted) {
-            (translatedThreshold as any) -= 0.5; // #3355
+            translatedThreshold -= 0.5; // #3355
         }
 
         // When the pointPadding is 0, we want the columns to be packed
