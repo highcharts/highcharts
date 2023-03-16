@@ -43,7 +43,7 @@ In the [component documentation](https://highcharts.com/docs/dashboards/types-of
 
 ## Working with Data
 
-You can import your data from multiple sources for example CSV and Google Spreadsheet. They are going to be handled by the Stores and distributed as DataTables.  
+You can import your data from multiple sources for example CSV and Google Spreadsheet. They are going to be handled by the Connectors and distributed as DataTables.  
 
 More about this concept in the [Data documentation](https://highcharts.com/docs/dashboards/data).
 
