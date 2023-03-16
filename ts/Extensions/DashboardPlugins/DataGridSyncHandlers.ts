@@ -124,12 +124,30 @@ const configs: {
                     }
                 }
             }
-        ]
+        ],
+        selectionHandler: function (this: DataGridComponent): void {
+            const { board } = this;
+            const table = this.connector && this.connector.table;
+            if (board && table) {
+
+                const { dataCursor: cursor } = board;
+                if (cursor) {
+                    cursor.addListener(table.id, 'xAxis.extremes.min', (e): void => {
+                        if (e.cursor.type === 'position' && this.dataGrid && e.cursor.row !== void 0) {
+                            const { row } = e.cursor;
+                            this.dataGrid.scrollToRow(row);
+                        }
+                    });
+                }
+            }
+
+        }
     }
 };
 
 const defaults: Sync.OptionsRecord = {
-    tooltip: { emitter: configs.emitters.tooltipEmitter, handler: configs.handlers.tooltipHandler }
+    tooltip: { emitter: configs.emitters.tooltipEmitter, handler: configs.handlers.tooltipHandler },
+    selection: { handler: configs.handlers.selectionHandler }
 };
 
 export default defaults;
