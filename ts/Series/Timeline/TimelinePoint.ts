@@ -112,6 +112,8 @@ class TimelinePoint extends Series.prototype.pointClass {
             d: point.getConnectorPath()
         });
 
+        connector.addClass(`highcharts-color-${point.colorIndex}`);
+
         if (!series.chart.styledMode) {
             connector.attr({
                 stroke: dlOptions.connectorColor || point.color,
