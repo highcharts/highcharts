@@ -1,5 +1,5 @@
-import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
-import { registerStoreEvents, testExportedDataTable } from './utils.js';
+import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
+import { registerConnectorEvents, testExportedDataTable } from './utils.js';
 
 const { test, only } = QUnit;
 
@@ -30,35 +30,35 @@ const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "9",       0.0017,   0.047,   0.079,2.01, 603
 "12",      0.0005,   0.014,   0.050,1.30,2025`;
 
-test('CSVStore from string', function (assert) {
-    const datastore = new CSVStore(undefined, { csv });
-    datastore.load();
+test('CSVConnector from string', function (assert) {
+    const connector = new CSVConnector(undefined, { csv });
+    connector.load();
 
     assert.strictEqual(
         // names are not loaded as data unless firstRowAsNames = false
-        datastore.table.getRowCount(), csv.split('\n').length - 1,
+        connector.table.getRowCount(), csv.split('\n').length - 1,
         'Datastore has correct amount of rows'
     );
     assert.strictEqual(
-        datastore.table.getColumnNames().length,
+        connector.table.getColumnNames().length,
         csv.split('\n')[0].split(',').length,
         'Datastore has correct amount of columns'
     );
 
-    // const dataStoreFromJSON = CSVStore.fromJSON(datastore.toJSON());
-    // dataStoreFromJSON.load();
+    // const dataConnectorFromJSON = CSVConnector.fromJSON(connector.toJSON());
+    // dataConnectorFromJSON.load();
 
-    // testExportedDataTable(datastore.table, dataStoreFromJSON.table, assert);
+    // testExportedDataTable(connector.table, dataConnectorFromJSON.table, assert);
 
-    const foundComment = datastore.table
+    const foundComment = connector.table
         .getRow(1)
         .some((col) => ('' + col).includes('#this is a comment'));
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
 });
 
-test('CSVStore from string, with decimalpoint option', function(assert){
+test('CSVConnector from string, with decimalpoint option', function(assert){
     const csv = 'Date;Value\n2016-01-01;1,100\n2016-01-02;2,000\n2016-01-03;3,000';
-    let store = new CSVStore(undefined, {
+    let store = new CSVConnector(undefined, {
         csv
     });
 
@@ -73,7 +73,7 @@ test('CSVStore from string, with decimalpoint option', function(assert){
         'The converter should be able to guess this decimalpoint'
     )
 
-    store = new CSVStore(undefined,
+    store = new CSVConnector(undefined,
         {
             csv,
             decimalPoint: '.'
@@ -87,11 +87,11 @@ test('CSVStore from string, with decimalpoint option', function(assert){
     );
 });
 
-test('CSVStore, negative values', function (assert) {
+test('CSVConnector, negative values', function (assert) {
     // If the final value is undefined it will be trimmed
     const array = [-3, -3.1, -.2, 2.1, undefined, 1];
 
-    let store = new CSVStore(undefined, {
+    let store = new CSVConnector(undefined, {
         csv: ['Values', ...array].join('\n')
     });
 
@@ -111,22 +111,22 @@ test('CSV with ""s', (assert) => {
 "s",5
 12,"5"
 `
-    const datastore = new CSVStore(undefined, { csv });
+    const connector = new CSVConnector(undefined, { csv });
 
-    datastore.load();
+    connector.load();
 
     assert.deepEqual(
-        datastore.table.getColumnNames(),
+        connector.table.getColumnNames(),
         ['test', 'test2'],
         'Headers should not contain ""s'
     )
 
-    datastore.describeColumn('test', {
+    connector.describeColumn('test', {
         dataType: 'string'
     })
 
     assert.strictEqual(
-        datastore.converter.export(datastore).split('\n')[1].split(',')[0],
+        connector.converter.export(connector).split('\n')[1].split(',')[0],
         '\"12\"',
         'The first value (12) should be quoted when exported to csv, if dataType is set to string'
     )
@@ -134,27 +134,27 @@ test('CSV with ""s', (assert) => {
     // Not quite here yet
 
     // assert.strictEqual(
-    //     datastore.save(),
+    //     connector.save(),
     //     csv,
     //     'Output should be same as input'
     // )
 });
-test('CSVStore from URL', function (assert) {
+test('CSVConnector from URL', function (assert) {
     const registeredEvents = [];
 
-    const datastore = new CSVStore(undefined, {
+    const connector = new CSVConnector(undefined, {
         csvURL: '/data/sine-data.csv',
         enablePolling: true
     });
 
-    registerStoreEvents(datastore, registeredEvents, assert)
+    registerConnectorEvents(connector, registeredEvents, assert)
 
     let pollNumber = 0;
     let states = [];
 
     const doneLoading = assert.async(3);
 
-    datastore.on('afterLoad', (e) => {
+    connector.on('afterLoad', (e) => {
         assert.ok(e.table.getRowCount() > 1, 'Datastore got rows')
 
         // Check that the store is updated
@@ -181,7 +181,7 @@ test('CSVStore from URL', function (assert) {
 
         // Stop polling
         if (pollNumber > 2) {
-            datastore.stopPolling();
+            connector.stopPolling();
         }
 
         function getExpectedEvents(){
@@ -201,37 +201,37 @@ test('CSVStore from URL', function (assert) {
         doneLoading();
     });
 
-    datastore.on('load', (e) => {
-        assert.deepEqual(e.table, datastore.table, 'DataTable from event is same as DataTable from datastore')
+    connector.on('load', (e) => {
+        assert.deepEqual(e.table, connector.table, 'DataTable from event is same as DataTable from connector')
     });
 
-    datastore.on('loadError', (e) => {
+    connector.on('loadError', (e) => {
         // In case of an error do a log and finish the test
         console.warn(e.error);
         doneLoading();
     });
 
     // Do the load
-    datastore.load();
+    connector.load();
 
 })
 
 // TODO: test amount of retries, event orders
-test('CSVStore error', function(assert){
-    const datastore = new CSVStore(undefined, {
+test('CSVConnector error', function(assert){
+    const connector = new CSVConnector(undefined, {
         csvURL: ''
     });
 
     const afterError = assert.async();
 
-    datastore.on('load', (e) =>{
+    connector.on('load', (e) =>{
         // console.log('Attempting to load');
     })
 
-    datastore.on('loadError', (e)=>{
+    connector.on('loadError', (e)=>{
         assert.ok(true);
         afterError();
     })
 
-    datastore.load();
+    connector.load();
 });

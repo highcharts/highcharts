@@ -23,7 +23,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type DataStore from '../Stores/DataStore';
+import type DataConnector from '../Connectors/DataConnector';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -101,19 +101,19 @@ class CSVConverter extends DataConverter {
      * */
 
     /**
-     * Creates a CSV string from the datatable on the store instance.
+     * Creates a CSV string from the datatable on the connector instance.
      *
-     * @param {DataStore} store
-     * Store instance to export from.
+     * @param {DataConnector} connector
+     * Connector instance to export from.
      *
      * @param {CSVConverter.Options} [options]
      * Options used for the export.
      *
      * @return {string}
-     * CSV string from the store table.
+     * CSV string from the connector table.
      */
     public export(
-        store: DataStore,
+        connector: DataConnector,
         options: CSVConverter.Options = this.options
     ): string {
         const { useLocalDecimalPoint, lineDelimiter } = options,
@@ -131,7 +131,8 @@ class CSVConverter extends DataConverter {
             itemDelimiter = decimalPoint === ',' ? ';' : ',';
         }
 
-        const columns = store.getSortedColumns(options.usePresentationOrder),
+        const columns =
+                connector.getSortedColumns(options.usePresentationOrder),
             columnNames = Object.keys(columns),
             csvRows: Array<string> = [],
             columnsCount = columnNames.length;
@@ -150,7 +151,7 @@ class CSVConverter extends DataConverter {
                 column = columns[columnName],
                 columnLength = column.length;
 
-            const columnMeta = store.whatIs(columnName);
+            const columnMeta = connector.whatIs(columnName);
             let columnDataType;
 
             if (columnMeta) {

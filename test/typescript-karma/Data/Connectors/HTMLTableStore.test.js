@@ -1,8 +1,8 @@
-import HTMLTableStore from '/base/code/es-modules/Data/Stores/HTMLTableStore.js'
+import HTMLTableConnector from '/base/code/es-modules/Data/Connectors/HTMLTableConnector.js'
 import HTMLTableConverter from '/base/code/es-modules/Data/Converters/HTMLTableConverter.js'
 import U from '/base/code/es-modules/Core/Utilities.js';
-import { registerStoreEvents, testExportedDataTable } from './utils.js'
-import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
+import { registerConnectorEvents, testExportedDataTable } from './utils.js'
+import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
 const { test, only } = QUnit;
 const { createElement } = U;
 
@@ -269,19 +269,19 @@ const tableHTML = `<table id="data">
 </tr>
 </table>`;
 
-test('HTMLTableStore from HTML element', function (assert) {
+test('HTMLTableConnector from HTML element', function (assert) {
     const registeredEvents = [];
 
     const tableElement = createElement('div');
     tableElement.innerHTML = tableHTML;
 
-    const datastore = new HTMLTableStore(undefined, { table: tableElement });
+    const connector = new HTMLTableConnector(undefined, { table: tableElement });
 
     const doneLoading = assert.async();
 
-    registerStoreEvents(datastore, registeredEvents, assert);
+    registerConnectorEvents(connector, registeredEvents, assert);
 
-    datastore.on('afterLoad', (e) => {
+    connector.on('afterLoad', (e) => {
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
@@ -290,18 +290,18 @@ test('HTMLTableStore from HTML element', function (assert) {
         assert.strictEqual(
             e.table.getRowCount(),
             tableElement.querySelectorAll('tr').length - 1,
-            'Datastore loaded from HTML element has same amount of rows minus the column names'
+            'Connector loaded from HTML element has same amount of rows minus the column names'
         )
 
-        // const datastoreFromJSON = HTMLTableStore.fromJSON(datastore.toJSON());
-        // datastoreFromJSON.load();
+        // const connectorFromJSON = HTMLTableConnector.fromJSON(connector.toJSON());
+        // connectorFromJSON.load();
 
-        // testExportedDataTable(e.table, datastoreFromJSON.table, assert);
+        // testExportedDataTable(e.table, connectorFromJSON.table, assert);
 
         doneLoading();
     });
 
-    datastore.load();
+    connector.load();
 });
 
 test('HTMLTableConverter', function (assert) {
@@ -330,14 +330,14 @@ test('Export as HTML', function (assert) {
 1,2,5,10,"Blue",22`;
 
     // Load the table from the CSV
-    const csvdatastore = new CSVStore(undefined, { csv: tableCSV });
-    csvdatastore.load();
+    const csvconnector = new CSVConnector(undefined, { csv: tableCSV });
+    csvconnector.load();
 
-    const htmlstore = new HTMLTableStore(csvdatastore.table),
-        htmlconverter = htmlstore.converter;
+    const htmlconnector = new HTMLTableConnector(csvconnector.table),
+        htmlconverter = htmlconnector.converter;
 
     // Export with default settings (multiline and rowspan should be enabled)
-    let htmlString = htmlconverter.export(htmlstore);
+    let htmlString = htmlconverter.export(htmlconnector);
     const HTMLElement = createElement('div');
     HTMLElement.innerHTML = htmlString;
 
@@ -360,7 +360,7 @@ test('Export as HTML', function (assert) {
     // );
 
     // Multilevel headers disabled
-    htmlString = htmlconverter.export(htmlstore, {
+    htmlString = htmlconverter.export(htmlconnector, {
         useMultiLevelHeaders: false
     });
     HTMLElement.innerHTML = htmlString;
@@ -382,7 +382,7 @@ test('Export as HTML', function (assert) {
     );
 
     // table caption
-    htmlString = htmlconverter.export(htmlstore, {
+    htmlString = htmlconverter.export(htmlconnector, {
         useMultiLevelHeaders: false,
         tableCaption: 'My Data Table'
     });
@@ -401,18 +401,18 @@ test('Export as HTML', function (assert) {
     );
 
     // Make sure the exported table is parseable, and returns the same result
-    const storeFromExportedHTML = new HTMLTableStore(undefined, { table: HTMLElement });
+    const connectorFromExportedHTML = new HTMLTableConnector(undefined, { table: HTMLElement });
     const doneLoading = assert.async();
 
-    storeFromExportedHTML.on('afterLoad', e => {
+    connectorFromExportedHTML.on('afterLoad', e => {
         assert.strictEqual(
-            htmlconverter.export(storeFromExportedHTML),
-            htmlconverter.export(htmlstore),
-            'Store from parsed table should produce same result as original store'
+            htmlconverter.export(connectorFromExportedHTML),
+            htmlconverter.export(htmlconnector),
+            'Connector from parsed table should produce same result as original connector'
         );
         doneLoading();
     });
-    storeFromExportedHTML.on('loadError', () => {
+    connectorFromExportedHTML.on('loadError', () => {
         assert.ok(
             false,
             'The load failed'
@@ -420,6 +420,6 @@ test('Export as HTML', function (assert) {
         doneLoading();
     });
 
-    storeFromExportedHTML.load();
+    connectorFromExportedHTML.load();
     assert.ok(true)
 })

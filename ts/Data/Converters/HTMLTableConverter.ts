@@ -23,7 +23,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type DataStore from '../Stores/DataStore';
+import type DataConnector from '../Connectors/DataConnector';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -144,26 +144,27 @@ class HTMLTableConverter extends DataConverter {
      * */
 
     /**
-     * Exports the datastore as an HTML string, using the options
+     * Exports the dataconnector as an HTML string, using the options
      * provided on import unless other options are provided.
      *
-     * @param {DataStore} store
-     * Store instance to export from.
+     * @param {DataConnector} connector
+     * Connector instance to export from.
      *
-     * @param {HTMLTableStore.ExportOptions} [options]
+     * @param {HTMLTableConnector.ExportOptions} [options]
      * Options that override default or existing export options.
      *
      * @return {string}
      * HTML from the current dataTable.
      */
     public export(
-        store: DataStore,
+        connector: DataConnector,
         options: HTMLTableConverter.Options = this.options
     ): string {
         const exportNames = (options.firstRowAsNames !== false),
             useMultiLevelHeaders = options.useMultiLevelHeaders;
 
-        const columns = store.getSortedColumns(options.usePresentationOrder),
+        const columns =
+                connector.getSortedColumns(options.usePresentationOrder),
             columnNames = Object.keys(columns),
             htmlRows: Array<string> = [],
             columnsCount = columnNames.length;
@@ -211,7 +212,7 @@ class HTMLTableConverter extends DataConverter {
                 }
 
                 // Alternative: Datatype from HTML attribute with
-                // store.whatIs(columnName)
+                // connector.whatIs(columnName)
                 if (
                     !(
                         typeof cellValue === 'string' ||
