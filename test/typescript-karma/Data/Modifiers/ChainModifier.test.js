@@ -70,8 +70,10 @@ QUnit.test('ChainModifier.modify', function (assert) {
             })
         ),
         table = new DataTable({
-            x: [1, 2, 3, 4, 5, 6],
-            y: ['a', 'a', 'b', 'b', 'c', 'c']
+            columns: {
+                x: [1, 2, 3, 4, 5, 6],
+                y: ['a', 'a', 'b', 'b', 'c', 'c']
+            }
         });
 
     modifier
@@ -107,7 +109,9 @@ QUnit.test('ChainModifier.modifyCell', function (assert) {
 
     const done = assert.async(),
         table = new DataTable({
-            x: [1, 2, 3, 4, 5, 6]
+            columns: {
+                x: [1, 2, 3, 4, 5, 6]
+            }
         });
 
     table
@@ -168,7 +172,9 @@ QUnit.test('ChainModifier.modifyColumns', function (assert) {
 
     const done = assert.async(),
         table = new DataTable({
-            x: [1, 2, 3, 4, 5, 6]
+            columns: {
+                x: [1, 2, 3, 4, 5, 6]
+            }
         });
 
     table
@@ -230,8 +236,10 @@ QUnit.test('ChainModifier.modifyRows', function (assert) {
 
     const done = assert.async(),
         table = new DataTable({
-            x: [6, 5, 4, 3, 2, 1],
-            ignoredColumn: ['a', 'b', 'c', 'd', 'e', 'f']
+            columns: {
+                x: [6, 5, 4, 3, 2, 1],
+                ignoredColumn: ['a', 'b', 'c', 'd', 'e', 'f']
+            }
         });
 
     table

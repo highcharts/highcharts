@@ -10,8 +10,10 @@ QUnit.test('GroupModifier.modify', function (assert) {
 
     modifier
         .modify(new DataTable({
-            x: [ 0, 0, 1, 1 ],
-            y: [ 'a', 'b', 'b', 'a']
+            columns: {
+                x: [ 0, 0, 1, 1 ],
+                y: [ 'a', 'b', 'b', 'a']
+            }
         }))
         .then((table) => {
 
@@ -55,8 +57,10 @@ QUnit.test('GroupModifier.modifyCell', function (assert) {
             groupColumn: 'y'
         }),
         table = new DataTable({
-            x: [ 0, 0, 1, 1 ],
-            y: [ 'a', 'b', 'b', 'a']
+            columns: {
+                x: [ 0, 0, 1, 1 ],
+                y: [ 'a', 'b', 'b', 'a']
+            }
         });
 
     table
@@ -99,8 +103,10 @@ QUnit.test('GroupModifier.modifyColumns', function (assert) {
             groupColumn: 'y'
         }),
         table = new DataTable({
-            x: [ 0, 0, 1, 1 ],
-            y: [ 'a', 'b', 'b', 'a']
+            columns: {
+                x: [ 0, 0, 1, 1 ],
+                y: [ 'a', 'b', 'b', 'a']
+            }
         });
 
     table
@@ -145,8 +151,10 @@ QUnit.test('GroupModifier.modifyRows', function (assert) {
             groupColumn: 'y'
         }),
         table = new DataTable({
-            x: [ 0, 0, 1, 1 ],
-            y: [ 'a', 'b', 'b', 'a']
+            columns: {
+                x: [ 0, 0, 1, 1 ],
+                y: [ 'a', 'b', 'b', 'a']
+            }
         });
 
     table
