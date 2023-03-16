@@ -16,7 +16,7 @@
 
 import U from '../../Core/Utilities.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import Popup from '../../Extensions/Annotations/Popup/Popup.js';
+import BaseForm from '../../Shared/BaseForm.js';
 import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
@@ -27,7 +27,7 @@ const {
     createElement
 } = U;
 
-class ConfirmationPopup extends Popup {
+class ConfirmationPopup extends BaseForm {
     /* *
     *
     *  Static Properties
@@ -40,15 +40,12 @@ class ConfirmationPopup extends Popup {
     *
     * */
     constructor(
+        parentDiv: HTMLElement,
+        iconsURL: string,
         editMode: EditMode,
-        parentNode: HTMLDOMElement,
         options: ConfirmationPopup.Options
     ) {
-        super(
-            parentNode,
-            options.close.icon,
-            void 0
-        );
+        super(parentDiv, iconsURL);
 
         this.editMode = editMode;
         this.options = options;
@@ -68,6 +65,19 @@ class ConfirmationPopup extends Popup {
     *  Functions
     *
     * */
+
+    protected createPopupContainer(
+        parentDiv: HTMLElement,
+        className: string = EditGlobals.classNames.confirmationPopup
+    ): HTMLElement {
+        return super.createPopupContainer(parentDiv, className);
+    }
+
+    protected addCloseButton(
+        className: string = EditGlobals.classNames.confirmationPopupCloseButton
+    ): HTMLElement {
+        return super.addCloseButton(className);
+    }
 
     public renderContent(
         options: ConfirmationPopup.ContentOptions

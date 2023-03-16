@@ -99,8 +99,9 @@ class EditMode {
         this.createTools();
 
         this.confirmationPopup = new ConfirmationPopup(
-            this,
             board.container,
+            EditGlobals.iconsURL,
+            this,
             this.options.confirmationPopup
         );
 
