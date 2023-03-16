@@ -32,6 +32,9 @@ import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Globals from '../Globals.js';
 
+/**
+ * @internal
+ **/
 class Layout extends GUIElement {
     /* *
     *
@@ -406,24 +409,62 @@ class Layout extends GUIElement {
 interface Layout {
     options: Layout.Options;
 }
-namespace Layout {
 
+
+namespace Layout {
+    /**
+     * @internal
+     **/
     export interface JSON extends Serializable.JSON<'Dashboard.Layout'> {
         options: OptionsJSON;
     }
 
+    /**
+     * Each layout's options.
+     **/
     export interface Options {
+        /**
+         * Unique id of the layout.
+         **/
         id?: string;
+        /**
+         * Id of the parent container.
+         * @internal
+         **/
         parentContainerId?: string;
+        /**
+         * @internal
+         **/
         copyId?: string;
+        /**
+         * The class name of the layout container.
+         **/
         layoutClassName?: string;
+        /**
+         * The class name of the row container.
+         **/
         rowClassName?: string;
+        /**
+         * The class name of the cell container.
+         **/
         cellClassName?: string;
+        /**
+         * An array of rows. Each row can contain an array of cells.
+         **/
         rows?: Array<Row.Options>;
+        /**
+         * CSS styles of the layout.
+         **/
         style?: CSSJSONObject;
+        /**
+         * @internal
+         **/
         rowsJSON?: Array<Row.JSON>;
     }
 
+    /**
+     * @internal
+     **/
     export interface OptionsJSON extends JSON.Object {
         containerId: string;
         parentContainerId: string;

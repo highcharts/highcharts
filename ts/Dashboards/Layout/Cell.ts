@@ -38,6 +38,10 @@ const {
     merge,
     fireEvent
 } = U;
+
+/**
+ * @internal
+ **/
 class Cell extends GUIElement {
     /* *
     *
@@ -501,27 +505,62 @@ class Cell extends GUIElement {
 }
 
 namespace Cell {
-
+    /**
+     * @internal
+     **/
     export interface CellResponsiveOptions {
         width: string;
         // visible: boolean;
     }
 
+    /**
+     * @internal
+     **/
     export interface JSON extends Serializable.JSON<'Dashboard.Layout.Cell'> {
         options: OptionsJSON;
     }
 
+    /**
+     * Options for each cell.
+     **/
     export interface Options {
+        /**
+         * Unique cell id.
+         **/
         id: string;
-        width?: string; // eg 50%, 1/2
+        /**
+         * With of the cell. Can be a percentage value or a fraction.
+         **/
+        width?: string;
+        /**
+         * Height of the cell. Can be a percentage value or a fraction.
+         **/
         height?: number;
+        /**
+         * CSS styles for cell container.
+         **/
         style?: CSSJSONObject;
+        /**
+         * Id of the container that holds the cell.
+         **/
         parentContainerId?: string;
+        /**
+         * @internal
+         **/
         mountedComponentJSON?: Component.JSON;
+        /**
+         * To create a nested layout, cell might contain an additional layouts.
+         **/
         layout?: LayoutType.Options;
+        /**
+         * Options for responsive design.
+         **/
         responsive?: Record<string, CellResponsiveOptions>;
     }
 
+    /**
+     * @internal
+     **/
     export interface OptionsJSON extends JSON.Object {
         containerId: string;
         parentContainerId: string;

@@ -582,6 +582,7 @@ namespace Board {
 
     /**
      * Serialized options to configure the board.
+     * @internal
      **/
     export interface OptionsJSON extends JSON.Object {
         /**
