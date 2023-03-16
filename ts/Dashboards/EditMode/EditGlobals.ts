@@ -75,10 +75,10 @@ const EditGlobals: EditGlobals = {
         editGridItems: PREFIX + 'grid-items',
 
         // Confirmation popup
-        confirmationPopup: PREFIX + 'popup',
-        popupContentContainer: PREFIX + 'popup-content',
-        popupConfirmBtn: PREFIX + 'popup-confirm-btn',
-        confirmationPopupCloseButton: PREFIX + 'popup-close',
+        confirmationPopup: PREFIX + 'confirmation-popup',
+        popupContentContainer: PREFIX + 'confirmation-popup-content',
+        popupConfirmBtn: PREFIX + 'confirmation-popup-confirm-btn',
+        confirmationPopupCloseButton: PREFIX + 'confirmation-popup-close',
 
         editOverlay: PREFIX + 'overlay',
         editOverlayActive: PREFIX + 'overlay-active',
