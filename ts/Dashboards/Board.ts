@@ -471,9 +471,6 @@ namespace Board {
             },
             layouts: []
         },
-        componentOptions: {
-            isResizable: true
-        },
         components: [],
         respoBreakpoints: {
             small: 576,

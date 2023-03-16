@@ -237,7 +237,6 @@ namespace Bindings {
         cell: string;
         type: string;
         chartOptions?: any;
-        isResizable?: boolean;
         elements?: any;
         dimensions?: { width: number; height: number };
         events?: any;

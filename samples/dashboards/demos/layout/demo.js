@@ -150,7 +150,6 @@ let board = new Dashboards.Board('container', {
     },
     components: [{
         cell: 'dashboard-col-0',
-        isResizable: true,
         type: 'Highcharts',
         chartOptions: {
             series: [{

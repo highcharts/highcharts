@@ -50,7 +50,6 @@ Dashboards.board('container', {
                 selection: true
             },
             cell: 'dashboard-col-0',
-            isResizable: true,
             type: 'Highcharts',
             tableAxisMap: {
                 Food: 'x',
