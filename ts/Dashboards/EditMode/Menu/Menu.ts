@@ -75,6 +75,7 @@ class Menu {
     public items: Record<string, MenuItem>;
     public activeItems: Array<MenuItem>;
     public parent: any;
+    public currentElementId?: string;
 
     /* *
     *

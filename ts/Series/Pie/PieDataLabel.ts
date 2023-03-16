@@ -54,7 +54,7 @@ namespace ColumnDataLabel {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     const dataLabelPositioners = {
 
@@ -145,9 +145,7 @@ namespace ColumnDataLabel {
 
         DataLabel.compose(Series);
 
-        if (composedClasses.indexOf(PieSeriesClass) === -1) {
-            composedClasses.push(PieSeriesClass);
-
+        if (U.pushUnique(composedMembers, PieSeriesClass)) {
             const pieProto = PieSeriesClass.prototype;
 
             pieProto.dataLabelPositioners = dataLabelPositioners;

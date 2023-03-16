@@ -18,7 +18,7 @@
 
 import CSVStore from '../Data/Stores/CSVStore.js';
 import Board from '../Dashboards/Board.js';
-import Component from '../Dashboards/Component/Component.js';
+import Component from '../Dashboards/Components/Component.js';
 import DataPool from '../Data/DataPool.js';
 import DataCursor from '../Data/DataCursor.js';
 import DataTable from '../Data/DataTable.js';
@@ -28,7 +28,7 @@ import GroupModifier from '../Data/Modifiers/GroupModifier.js';
 import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
 import RangeModifier from '../Data/Modifiers/RangeModifier.js';
-import Sync from '../Dashboards/Component/Sync/Sync.js';
+import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
 
 /* *

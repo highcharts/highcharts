@@ -24,11 +24,11 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type Point from '../../Core/Series/Point';
-import type SharedState from '../../Dashboards/Component/SharedComponentState';
-import type Sync from '../../Dashboards/Component/Sync/Sync';
+import type SharedState from '../../Dashboards/Components/SharedComponentState';
+import type Sync from '../../Dashboards/Components/Sync/Sync';
 
-import ComponentTypes from '../../Dashboards/Component/ComponentType';
-import ComponentGroup from '../../Dashboards/Component/ComponentGroup.js';
+import ComponentTypes from '../../Dashboards/Components/ComponentType';
+import ComponentGroup from '../../Dashboards/Components/ComponentGroup.js';
 import HighchartsComponent from './HighchartsComponent.js';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;

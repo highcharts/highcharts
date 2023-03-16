@@ -41,7 +41,6 @@ const {
     addEvent,
     clamp,
     css,
-    defined,
     discardElement,
     extend,
     fireEvent,
@@ -1912,8 +1911,8 @@ namespace Tooltip {
     export function compose(
         PointerClass: typeof Pointer
     ): void {
-        if (composedMembers.indexOf(PointerClass) === -1) {
-            composedMembers.push(PointerClass);
+
+        if (U.pushUnique(composedMembers, PointerClass)) {
             addEvent(PointerClass, 'afterInit', function (): void {
                 const chart = this.chart;
 
@@ -1928,6 +1927,7 @@ namespace Tooltip {
                 }
             });
         }
+
     }
 
 }
