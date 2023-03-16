@@ -24,12 +24,14 @@
  *
  * */
 
+import type DataPoolOptions from '../Data/DataPoolOptions';
 import type JSON from '../Core/JSON';
 
 import Bindings from './Actions/Bindings.js';
 import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
 import DataCursor from '../Data/DataCursor.js';
 import DataCursorHelper from './SerializeHelper/DataCursorHelper.js';
+import DataPool from '../Data/DataPool.js';
 import EditMode from './EditMode/EditMode.js';
 import Fullscreen from './EditMode/Fullscreen.js';
 import Globals from './Globals.js';
@@ -70,10 +72,11 @@ class Board implements Serializable<Board, Board.JSON> {
         options: Board.Options
     ) {
         this.options = merge(Board.defaultOptions, options);
-        this.layouts = [];
-        this.guiEnabled = (this.options.gui || {}).enabled;
-        this.mountedComponents = [];
+        this.dataPool = new DataPool(options.dataPool);
         this.id = uniqueKey();
+        this.guiEnabled = (this.options.gui || {}).enabled;
+        this.layouts = [];
+        this.mountedComponents = [];
 
         this.initContainer(renderTo);
 
@@ -114,7 +117,7 @@ class Board implements Serializable<Board, Board.JSON> {
         this.initEvents();
 
         // Add table cursors support.
-        this.cursor = new DataCursor();
+        this.dataCursor = new DataCursor();
 
         // Add fullscreen support.
         this.fullscreen = new Fullscreen(this);
@@ -135,7 +138,8 @@ class Board implements Serializable<Board, Board.JSON> {
     public a11y: DashboardsAccessibility;
     public boardWrapper: globalThis.HTMLElement = void 0 as any;
     public container: globalThis.HTMLElement = void 0 as any;
-    public cursor: DataCursor;
+    public dataCursor: DataCursor;
+    public dataPool: DataPool;
     public editMode?: EditMode;
     public fullscreen?: Fullscreen;
     public guiEnabled: (boolean|undefined);
@@ -358,13 +362,14 @@ class Board implements Serializable<Board, Board.JSON> {
             board = new Board(
                 options.containerId,
                 {
-                    layoutsJSON: options.layouts,
                     componentOptions: options.componentOptions,
+                    dataPool: options.dataPool,
+                    layoutsJSON: options.layouts,
                     respoBreakpoints: options.respoBreakpoints
                 }
             );
 
-        board.cursor = DataCursorHelper.fromJSON(json.cursor);
+        board.dataCursor = DataCursorHelper.fromJSON(json.dataCursor);
 
         return board;
     }
@@ -386,9 +391,10 @@ class Board implements Serializable<Board, Board.JSON> {
 
         return {
             $class: 'Board',
-            cursor: DataCursorHelper.toJSON(board.cursor),
+            dataCursor: DataCursorHelper.toJSON(board.dataCursor),
             options: {
                 containerId: board.container.id,
+                dataPool: board.options.dataPool as DataPoolOptions&JSON.Object,
                 guiEnabled: board.guiEnabled,
                 layouts: layouts,
                 componentOptions: board.options.componentOptions,
@@ -414,6 +420,7 @@ namespace Board {
      * */
 
     export interface Options {
+        dataPool?: DataPoolOptions;
         gui?: GUIOptions;
         editMode?: EditMode.Options;
         components?: Array<Bindings.ComponentOptions>;
@@ -424,6 +431,7 @@ namespace Board {
 
     export interface OptionsJSON extends JSON.Object {
         containerId: string;
+        dataPool?: DataPoolOptions&JSON.Object;
         layouts: Array<Layout.JSON>;
         guiEnabled?: boolean;
         componentOptions?: Partial<Bindings.ComponentOptions>;
@@ -444,7 +452,7 @@ namespace Board {
 
     export interface JSON extends Serializable.JSON<'Board'> {
         options: OptionsJSON;
-        cursor: DataCursorHelper.JSON;
+        dataCursor: DataCursorHelper.JSON;
     }
 
     /* *
