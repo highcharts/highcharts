@@ -1076,18 +1076,16 @@ function onAfterColumnTranslate(
                     (start < series.translatedThreshold ? start : end)) as any -
                         startAngleRad;
 
+            // Non-inverted polar columns
             } else {
                 start = barX + startAngleRad;
 
-                // Changed the way polar columns are drawn in order to make
-                // it more consistent with the drawing of inverted columns
-                // (they are using the same function now). Also, it was
-                // essential to make the animation work correctly (the
-                // scaling of the group) is replaced by animating each
-                // element separately.
+                const yBottom = point.yBottom || 0,
+                    plotY = point.plotY;
+
                 point.shapeArgs = series.polar.arc(
-                    (point.yBottom as any),
-                    point.plotY,
+                    Math.max(yBottom, plotY),
+                    Math.min(yBottom, plotY),
                     start,
                     start + point.pointWidth
                 );

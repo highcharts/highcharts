@@ -23,7 +23,7 @@ Highcharts.chart('container-1', {
         }
     },
     series: [{
-        data: [50, -50, 500, -90],
+        data: [50, 50, 500, 90],
         name: 'Norway'
     }, {
         data: [50, 250, 260, -50],
