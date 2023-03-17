@@ -1,5 +1,5 @@
-const container1 = document.getElementById('container1');
-const container2 = document.getElementById('container2');
+const container1 = document.querySelector('#container1');
+const container2 = document.querySelector('#container2');
 const sort = new Highcharts.DataModifier.types.Sort({
     direction: 'asc',
     orderByColumn: 'City'
@@ -32,7 +32,7 @@ function renderTable(container, table) {
     html.push('<tbody>');
     for (let j = 0, jEnd = table.getRowCount(), row; j < jEnd; ++j) {
         row = table.getRow(j);
-        // We use the Rank column to identify each row
+        // We use the values of the "Rank" column to identify each row
         html.push(`<tr data-rank="${row[0]}">`);
         for (let i = 0, iEnd = row.length; i < iEnd; ++i) {
             html.push(
@@ -58,8 +58,8 @@ renderTable(container2, tableModified);
 // Synchronize MouseOver
 
 const cursor = new Highcharts.DataCursor();
-const tbody1 = container1.getElementsByTagName('tbody')[0];
-const tbody2 = container2.getElementsByTagName('tbody')[0];
+const tbody1 = container1.querySelector('tbody');
+const tbody2 = container2.querySelector('tbody');
 
 function synchronizeMouseOver(e) {
     const td = e.target;
@@ -71,7 +71,7 @@ function synchronizeMouseOver(e) {
     // Both tables are based on the same data
     cursor.emitCursor(table, {
         column: td.dataset.column,
-        // We use the Rank column to identify the rows
+        // We use the values of the "Rank" column to identify the rows
         row: parseInt(td.parentNode.dataset.rank, 10),
         state: 'table.mouseover',
         type: 'position'
@@ -87,14 +87,14 @@ function synchronizeCursor(e) {
     const rank = `${cursor.row}`; // The cursor row contains the Rank value
     const tbody = this; // The function is binded to one of the HTML tables
 
-    for (const tr of tbody.getElementsByTagName('tr')) {
+    for (const tr of tbody.querySelectorAll('tr')) {
         // We search for the correct HTML row
         if (tr.dataset.rank === rank) {
             tr.classList.add('Focus');
         } else {
             tr.classList.remove('Focus');
         }
-        for (const td of tr.getElementsByTagName('td')) {
+        for (const td of tr.querySelectorAll('td')) {
             // We search for the correct HTML cell
             if (
                 tr.dataset.rank === rank &&
