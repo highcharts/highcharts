@@ -574,7 +574,7 @@ class Tooltip {
 
             // Split tooltip use updateTooltipContainer to position the tooltip
             // container.
-            if (tooltip.outside && !tooltip.split) {
+            if (tooltip.outside) {
                 const label = this.label;
                 const { xSetter, ySetter } = label;
                 label.xSetter = function (
