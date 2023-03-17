@@ -27,7 +27,7 @@ import type Point from '../../Core/Series/Point';
 import type SharedState from '../../Dashboards/Components/SharedComponentState';
 import type Sync from '../../Dashboards/Components/Sync/Sync';
 
-import ComponentTypes from '../../Dashboards/Components/ComponentType';
+import ComponentType from '../../Dashboards/Components/ComponentType';
 import ComponentGroup from '../../Dashboards/Components/ComponentGroup.js';
 import HighchartsComponent from './HighchartsComponent.js';
 import U from '../../Core/Utilities.js';
@@ -105,7 +105,7 @@ const configs: {
     emitters: {
         tooltipEmitter: [
             'tooltipEmitter',
-            function (this: ComponentTypes): Function | void {
+            function (this: ComponentType): Function | void {
                 if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const { chart, id } = this;
                     const groups = ComponentGroup.getGroupsFromComponent(this.id);
@@ -166,7 +166,7 @@ const configs: {
         ],
         seriesVisibilityEmitter: [
             'seriesVisibilityEmitter',
-            function (this: ComponentTypes): Function | void {
+            function (this: ComponentType): Function | void {
                 if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const component = this;
                     return addEvent(component.chart, 'redraw', function (): void {
@@ -197,7 +197,7 @@ const configs: {
         ],
         panEmitter: [
             'panEmitter',
-            function (this: ComponentTypes): Function | void {
+            function (this: ComponentType): Function | void {
                 if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const { store, chart, id } = this;
                     if (store && chart) {
@@ -234,7 +234,7 @@ const configs: {
         ],
         selectionEmitter: [
             'selectionEmitter',
-            function (this: ComponentTypes): Function | void {
+            function (this: ComponentType): Function | void {
                 if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const {
                         chart,

@@ -127,13 +127,12 @@ class EditableOptions {
 
         const record: EditableOptions.getOptionsType = {};
 
-        options.editableOptions
-            .forEach((optionName: string): void => {
-                const type = getType(optionName, options);
-                if (type) {
-                    record[optionName] = type;
-                }
-            });
+        (options.editableOptions || []).forEach((optionName: string): void => {
+            const type = getType(optionName, options);
+            if (type) {
+                record[optionName] = type;
+            }
+        });
 
         return record;
     }

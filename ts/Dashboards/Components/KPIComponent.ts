@@ -42,6 +42,7 @@ class KPIComponent extends Component {
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
+            type: 'KPI',
             className: [
                 Component.defaultOptions.className,
                 `${Component.defaultOptions.className}-kpi`
@@ -351,10 +352,12 @@ class KPIComponent extends Component {
     }
     public toJSON(): KPIComponent.ClassJSON {
         const base = super.toJSON();
-        const json = {
+        const json: KPIComponent.ClassJSON = {
             ...base,
+            type: 'KPI',
             options: {
                 ...base.options,
+                type: 'KPI',
                 value: this.options.value,
                 subtitle: JSON.stringify(this.options.subtitle),
                 title: JSON.stringify(this.options.title),
@@ -384,7 +387,7 @@ class KPIComponent extends Component {
         const valueFormat = options.valueFormat;
 
         return new KPIComponent(
-            merge(options, {
+            merge(options as any, {
                 chartOptions,
                 title,
                 subtitle,
@@ -403,7 +406,6 @@ namespace KPIComponent {
 
     export interface ClassJSON extends Component.JSON {
         options: ComponentJSONOptions;
-
     }
 
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
@@ -412,6 +414,7 @@ namespace KPIComponent {
         style?: string;
         threshold?: number|Array<number>;
         thresholdColors?: Array<string>;
+        type: 'KPI';
         value?: number|string;
         subtitle?: string;
         valueFormat?: string;
@@ -421,6 +424,7 @@ namespace KPIComponent {
         style?: CSSObject;
         threshold?: number|Array<number>;
         thresholdColors?: Array<string>;
+        type: 'KPI';
         value?: number|string;
         subtitle?: string|SubtitleOptions;
         valueFormat?: string;
@@ -440,5 +444,25 @@ namespace KPIComponent {
         ): string;
     }
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Dashboards/Components/ComponentType' {
+    interface ComponentTypeRegistry {
+        KPI: typeof KPIComponent;
+    }
+}
+
+Component.addComponent(KPIComponent);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default KPIComponent;

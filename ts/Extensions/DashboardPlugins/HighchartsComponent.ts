@@ -24,9 +24,9 @@
 
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type Chart from '../../Core/Chart/Chart';
+import type ChartOptions from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
-import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 
 import Component from '../../Dashboards/Components/Component.js';
@@ -36,6 +36,7 @@ import DataTable from '../../Data/DataTable.js';
 import G from '../../Core/Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../Core/Utilities.js';
+
 const {
     addEvent,
     createElement,
@@ -70,7 +71,7 @@ declare module '../../Core/GlobalsLike' {
  * @class
  * @name Highcharts.DashboardComponent
  */
-class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEvents> {
+class HighchartsComponent extends Component {
 
     /* *
      *
@@ -98,7 +99,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             },
             chartConstructor: '',
             editableOptions:
-            Component.defaultOptions.editableOptions.concat(
+            Component.defaultOptions.editableOptions?.concat(
                 [
                     'chartOptions',
                     'chartType',
@@ -133,8 +134,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         // const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
 
         const component = new HighchartsComponent(
-            merge(
-                options,
+            merge<HighchartsComponent.Options>(
+                options as any,
                 {
                     chartOptions,
                     // Highcharts, // TODO: Find a solution
@@ -160,10 +161,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * */
 
-    public chartOptions: Partial<Options>;
+    public chartOptions: Partial<ChartOptions>;
     public chart: Chart | undefined;
     public chartContainer: HTMLElement;
-    public options: HighchartsComponent.ComponentOptions;
+    public options: HighchartsComponent.Options;
     public chartConstructor: HighchartsComponent.ConstructorType;
     public sync: Component['sync'];
     /* *
@@ -172,13 +173,13 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * */
 
-    constructor(options: Partial<HighchartsComponent.ComponentOptions>) {
+    constructor(options: Partial<HighchartsComponent.Options>) {
         options = merge(
             HighchartsComponent.defaultOptions,
             options
         );
         super(options);
-        this.options = options as HighchartsComponent.ComponentOptions;
+        this.options = options as HighchartsComponent.Options;
 
         this.chartConstructor = this.options.chartConstructor;
         this.type = 'Highcharts';
@@ -198,7 +199,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         );
         this.chartOptions = (
             this.options.chartOptions ||
-            { chart: {} } as Partial<Options>
+            { chart: {} } as Partial<ChartOptions>
         );
 
         if (this.store) {
@@ -341,14 +342,14 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      * The flag triggers the main redraw operation
      */
     private updateComponentOptions(
-        options: Partial<HighchartsComponent.ComponentOptions>,
+        options: Partial<HighchartsComponent.Options>,
         redraw = true
     ): void {
         super.update(options, redraw);
     }
 
     public update(
-        options: Partial<HighchartsComponent.ComponentOptions>
+        options: Partial<HighchartsComponent.Options>
     ): this {
         this.updateComponentOptions(options, false);
         this.setOptions();
@@ -562,14 +563,16 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
         const base = super.toJSON();
 
-        const json = {
+        const json: HighchartsComponent.ClassJSON = {
             ...base,
+            type: 'Highcharts',
             options: {
                 ...base.options,
                 chartOptions,
                 chartConstructor,
                 // TODO: may need to handle callback functions
                 // Maybe have a sync.toJSON()
+                type: 'Highcharts',
                 sync: {}
             }
         };
@@ -601,34 +604,49 @@ namespace HighchartsComponent {
         json: ClassJSON;
     }>;
 
-    export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
+    export interface Options extends Component.ComponentOptions, EditableOptions {
         allowStoreUpdate?: boolean,
         chartConstructor: ConstructorType;
+        type: 'Highcharts';
     }
 
     export interface EditableOptions extends Component.EditableOptions {
-        chartOptions?: Options;
+        chartOptions?: Partial<ChartOptions>;
         chartClassName?: string;
         chartID?: string;
         tableAxisMap?: Record<string, string | null>;
     }
 
-    export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
+    export interface OptionsJSON extends Component.ComponentOptionsJSON {
         chartOptions?: string;
         chartClassName?: string;
         chartID?: string;
         chartConstructor: ConstructorType;
+        type: 'Highcharts'
     }
 
-
     export interface ClassJSON extends Component.JSON {
-        options: ComponentJSONOptions;
+        options: OptionsJSON;
     }
 }
 
 /* *
  *
- *  Default export
+ *  Registry
  *
  * */
+declare module '../../Dashboards/Components/ComponentType' {
+    interface ComponentTypeRegistry {
+        Highcharts: typeof HighchartsComponent;
+    }
+}
+
+Component.addComponent(HighchartsComponent);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default HighchartsComponent;

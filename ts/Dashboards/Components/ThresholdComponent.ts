@@ -49,7 +49,7 @@ class ThresholdComponent extends Component {
 
         this.options = options as ThresholdComponent.ComponentOptions;
 
-        this.type = 'threshold';
+        this.type = 'Threshold';
         this.sync = new Component.Sync(
             this,
             this.syncHandlers
@@ -174,6 +174,7 @@ namespace ThresholdComponent {
         component: ComponentConstructor;
         options?: AnyRecord;
         thresholds?: Array<ThresholdOptions>;
+        type: 'Threshold';
         value?: number;
         valueName?: string;
     }
@@ -250,5 +251,24 @@ namespace ThresholdComponent {
         return ret;
     }
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './ComponentType' {
+    interface ComponentTypeRegistry {
+        Threshold: typeof ThresholdComponent;
+    }
+}
+Component.addComponent(ThresholdComponent);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ThresholdComponent;

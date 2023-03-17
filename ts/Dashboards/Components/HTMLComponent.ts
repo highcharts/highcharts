@@ -34,6 +34,7 @@ import DataStore from '../../Data/Stores/DataStore.js';
 
 // TODO: This may affect the AST parsing in Highcharts
 // should look into adding these as options if possible
+// Needs to go in a composition in the Highcharts plugin
 AST.allowedTags = [
     ...AST.allowedTags,
     'option',
@@ -46,7 +47,14 @@ AST.allowedAttributes = [
     ...AST.allowedAttributes,
     'for', 'value', 'checked', 'src', 'name', 'selected'];
 AST.allowedReferences = [...AST.allowedReferences, 'data:image/'];
-class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class HTMLComponent extends Component {
 
     /* *
      *
@@ -56,10 +64,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
+            type: 'HTML',
             scaleElements: false,
             elements: [],
             editableOptions:
-                Component.defaultOptions.editableOptions.concat([
+                Component.defaultOptions.editableOptions?.concat([
                     'scaleElements'
                 ]
                 )
@@ -83,7 +92,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
         const component = new HTMLComponent(
             merge(
-                options,
+                options as any,
                 {
                     elements
                     // store: store instanceof DataStore ? store : void 0
@@ -129,7 +138,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         this.type = 'HTML';
         this.innerElements = [];
         this.elements = [];
-        this.scaleElements = this.options.scaleElements;
+        this.scaleElements = !!this.options.scaleElements;
         this.sync = new Component.Sync(
             this,
             this.syncHandlers
@@ -257,8 +266,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
             .map((el): string => JSON.stringify(el));
 
         const json = merge(
-            super.toJSON(),
-            { elements }
+            super.toJSON() as HTMLComponent.ClassJSON,
+            {
+                elements,
+                options: this.options
+            }
         );
 
         this.emit({
@@ -279,17 +291,19 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 namespace HTMLComponent {
 
     export type ComponentType = HTMLComponent;
+
     export interface HTMLComponentOptions extends Component.ComponentOptions, EditableOptions {
         elements?: (AST.Node | string)[];
+        type: 'HTML';
     }
 
     export interface EditableOptions extends Component.EditableOptions {
-        scaleElements: boolean;
+        scaleElements?: boolean;
     }
 
-    export interface HTMLComponentJSONOptions extends Component.ComponentOptionsJSON {
-        elements: Array<JSON.Object>;
-        scaleElements: boolean;
+    export interface HTMLComponentOptionsJSON extends Component.ComponentOptionsJSON {
+        scaleElements?: boolean;
+        type: 'HTML'
     }
 
     export type HTMLComponentEvents =
@@ -301,8 +315,16 @@ namespace HTMLComponent {
     export interface ClassJSON extends Component.JSON {
         elements?: string[];
         events?: string[];
+        options: HTMLComponentOptionsJSON;
     }
 }
+
+declare module './ComponentType' {
+    interface ComponentTypeRegistry {
+        HTML: typeof HTMLComponent;
+    }
+}
+Component.addComponent(HTMLComponent);
 
 /* *
  *

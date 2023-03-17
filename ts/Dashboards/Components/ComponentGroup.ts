@@ -14,11 +14,11 @@
  *
  * */
 
-import type ComponentTypes from './ComponentType.js';
+import type ComponentType from './ComponentType.js';
 
 import SharedState from './SharedComponentState.js';
 
-type componentID = ComponentTypes['id'];
+type componentID = ComponentType['id'];
 
 interface ComponentGroup {
     id: string;

@@ -14,12 +14,13 @@
  *
  * */
 
-import type ComponentTypes from '../Components/ComponentType';
+import type {
+    ComponentClassType,
+    ComponentType
+} from '../Components/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
-import type Serializable from '../Serializable';
 import type KPIComponent from '../Components/KPIComponent';
-import type DataStore from '../../Data/Stores/DataStore';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
 import type Row from '../Layout/Row';
@@ -28,8 +29,8 @@ import Component from '../Components/Component.js';
 import HTMLComponent from '../Components/HTMLComponent.js';
 import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
 import Globals from '../Globals.js';
-import DataTable from '../../Data/DataTable';
 import U from '../../Core/Utilities.js';
+
 const {
     fireEvent,
     addEvent,
@@ -60,103 +61,92 @@ class Bindings {
     }
 
     public static addComponent(
-        options: Bindings.ComponentOptions,
+        options: Partial<Component.ComponentOptions>,
         cell?: Cell
-    ): Component | undefined {
-        const componentContainer = document.getElementById(options.cell);
-        const optionsStates = options.states;
+    ):(Component|undefined) {
+        // TODO: Check if there are states in the options, and if so, add them
+        const optionsStates = (options as any).states;
         const optionsEvents = options.events;
 
-        cell = cell || Bindings.getCell(options.cell);
-        let component: Component | undefined;
+        cell = cell || Bindings.getCell(options.cell || '');
 
-        // add elements to containers
-        if (componentContainer) {
-            const ComponentClass = Component.getComponent(options.type);
-
-            if (options.type === 'html') {
-                component = new HTMLComponent(merge(
-                    options,
-                    {
-                        parentElement: componentContainer
-                    })
-                );
-            } else if (ComponentClass) {
-                component = new ComponentClass(merge(
-                    options,
-                    {
-                        parentElement: componentContainer
-                    })
-                );
-            } else {
-                return;
-            }
-
-            if (component) {
-                component.render();
-            }
-
-            // update cell size (when component is wider, cell should adjust)
-            // this.updateSize();
+        if (!cell || !cell.container || !options.type) {
+            return;
         }
+
+        const componentContainer = cell.container;
+
+        const ComponentClass =
+            Component.getComponent(options.type) as Class<Component>;
+
+        if (!ComponentClass) {
+            return;
+        }
+
+        let componentOptions = merge<Partial<ComponentType['options']>>(
+            options,
+            {
+                parentElement: componentContainer
+            }
+        );
+
+        const component = new ComponentClass(componentOptions);
+
+        component.render();
+        // update cell size (when component is wider, cell should adjust)
+        // this.updateSize();
 
         // add events
-        if (component) {
-            fireEvent(component, 'mount');
-        }
+        fireEvent(component, 'mount');
 
-        if (cell && component) {
-            component.setCell(cell);
-            cell.mountedComponent = component;
 
-            cell.row.layout.board.mountedComponents.push({
-                options: options,
-                component: component,
-                cell: cell
+        component.setCell(cell);
+        cell.mountedComponent = component;
+
+        cell.row.layout.board.mountedComponents.push({
+            options: options,
+            component: component,
+            cell: cell
+        });
+
+        // events
+        if (optionsEvents && optionsEvents.click) {
+            addEvent(componentContainer, 'click', ():void => {
+                optionsEvents.click();
+
+                if (
+                    cell &&
+                    component &&
+                    componentContainer &&
+                    optionsStates &&
+                    optionsStates.active
+                ) {
+                    cell.setActiveState();
+                }
             });
-
-            // events
-            if (optionsEvents && optionsEvents.click) {
-                addEvent(componentContainer, 'click', ():void => {
-                    optionsEvents.click();
-
-                    if (
-                        cell &&
-                        component &&
-                        componentContainer &&
-                        optionsStates &&
-                        optionsStates.active
-                    ) {
-                        cell.setActiveState();
-                    }
-                });
-            }
-
-            // states
-            if (
-                componentContainer &&
-                optionsStates &&
-                optionsStates.hover
-            ) {
-                componentContainer.classList.add(
-                    Globals.classNames.cellHover
-                );
-            }
         }
 
-        if (component) {
-            fireEvent(component, 'afterLoad');
+        // states
+        if (
+            optionsStates &&
+            optionsStates.hover
+        ) {
+            componentContainer.classList.add(
+                Globals.classNames.cellHover
+            );
         }
+
+        fireEvent(component, 'afterLoad');
 
         return component;
     }
 
     public static componentFromJSON(
-        json: HTMLComponent.ClassJSON|HighchartsComponent.ClassJSON,
+        json: Component.JSON,
         cellContainer: HTMLElement|undefined
     ): (Component|undefined) {
-        let component: (Component|undefined);
-        let componentClass;
+        let component: (ComponentType|undefined);
+        let componentClass: (ComponentClassType|undefined);
 
         switch (json.$class) {
             case 'HTML':
@@ -165,9 +155,10 @@ class Bindings {
                 );
                 break;
             case 'Highcharts':
-                componentClass = Component.getComponent(json.$class);
+                componentClass = Component.getComponent('Highcharts');
                 if (componentClass) {
-                    component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
+                    component = componentClass
+                        .fromJSON(json as HighchartsComponent.ClassJSON);
                 }
                 break;
             case 'DataGrid':
@@ -176,9 +167,10 @@ class Bindings {
                 );
                 break;
             case 'KPI':
-                componentClass = Component.getComponent(json.$class);
+                componentClass = Component.getComponent('KPI');
                 if (componentClass) {
-                    component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
+                    component = componentClass
+                        .fromJSON(json as KPIComponent.ClassJSON);
                 }
                 break;
             default:
@@ -229,20 +221,7 @@ class Bindings {
 }
 
 namespace Bindings {
-    export interface Options {
 
-    }
-
-    export interface ComponentOptions {
-        cell: string;
-        type: string;
-        chartOptions?: any;
-        isResizable?: boolean;
-        elements?: any;
-        dimensions?: { width: number; height: number };
-        events?: any;
-        states?: any;
-    }
     export interface MountedComponentsOptions {
         options: any;
         component?: Component;

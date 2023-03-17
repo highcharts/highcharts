@@ -44,7 +44,7 @@ const components = [{
     }
 }, {
     cell: 'dashboard-col-1',
-    type: 'html',
+    type: 'HTML',
     elements: [{
         tagName: 'img',
         attributes: {

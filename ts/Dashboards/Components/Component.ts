@@ -16,8 +16,17 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Cell from '../Layout/Cell.js';
-import type ComponentType from './ComponentType';
+import type {
+    ComponentType,
+    ComponentTypeRegistry
+} from './ComponentType';
 import type JSON from '../../Core/JSON';
 import type NavigationBindingsOptionsObject from
     '../../Extensions/Annotations/NavigationBindingsOptions';
@@ -57,7 +66,19 @@ import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
 
-abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
+/* *
+ *
+ *  Class
+ *
+ * */
+
+abstract class Component {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
     public static createTextElement(
         tagName: string,
@@ -81,11 +102,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     public static Sync = Sync;
-    public static defaultOptions: Component.ComponentOptions = {
+    public static defaultOptions: Partial<Component.ComponentOptions> = {
         className: `${classNamePrefix}component`,
         parentElement: document.body,
         parentCell: void 0,
-        type: '',
         id: '',
         title: false,
         caption: false,
@@ -102,6 +122,80 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         editableOptionsBindings: EditableOptions.defaultBindings
     };
 
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    constructor(options: Partial<Component.ComponentOptions>) {
+        this.options = merge(
+            Component.defaultOptions as Required<Component.ComponentOptions>,
+            options
+        );
+        this.id = this.options.id && this.options.id.length ?
+            this.options.id :
+            uniqueKey();
+
+        // Todo: we might want to handle this later
+        if (typeof this.options.parentElement === 'string') {
+            const el = document.getElementById(this.options.parentElement);
+            if (!el) {
+                throw new Error(
+                    'Could not find element with id: ' +
+                    this.options.parentElement
+                );
+            }
+            this.parentElement = el;
+
+        } else {
+            this.parentElement = (
+                this.options.parentElement as any ||
+                document.createElement('div')
+            );
+        }
+
+        if (this.options.parentCell) {
+            this.parentCell = this.options.parentCell;
+            if (this.parentCell.container) {
+                this.parentElement = this.parentCell.container;
+            }
+            this.attachCellListeneres();
+        }
+
+        this.store = this.options.store;
+        this.hasLoaded = false;
+        this.shouldRedraw = true;
+        this.editableOptions =
+            new EditableOptions(this, options.editableOptionsBindings);
+
+        this.presentationModifier = this.options.presentationModifier;
+
+        // Initial dimensions
+        this.dimensions = {
+            width: null,
+            height: null
+        };
+
+        this.syncHandlers = this.handleSyncOptions();
+        this.element = createElement('div', {
+            className: this.options.className
+        }, this.options.style);
+
+        this.contentElement = createElement('div', {
+            className: `${this.options.className}-content`
+        }, {
+            height: '100%'
+        }, void 0, true);
+
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public parentElement: HTMLElement;
     public parentCell?: Cell;
     public store?: Component.StoreTypes; // the attached store
@@ -111,7 +205,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public captionElement?: HTMLElement;
     public contentElement: HTMLElement;
     public options: Component.ComponentOptions;
-    public type: string;
     public id: string;
     // An array of options marked as editable by the UI.
     public editableOptions: EditableOptions;
@@ -152,62 +245,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      */
     protected innerResizeTimeouts: number[] = [];
 
-    constructor(options: Partial<Component.ComponentOptions>) {
-        this.options = merge(Component.defaultOptions, options);
-        this.id = this.options.id && this.options.id.length ?
-            this.options.id :
-            uniqueKey();
-
-        // Todo: we might want to handle this later
-        if (typeof this.options.parentElement === 'string') {
-            const el = document.getElementById(this.options.parentElement);
-            if (!el) {
-                throw new Error(
-                    'Could not find element with id: ' +
-                    this.options.parentElement
-                );
-            }
-            this.parentElement = el;
-
-        } else {
-            this.parentElement = this.options.parentElement;
-        }
-
-        if (this.options.parentCell) {
-            this.parentCell = this.options.parentCell;
-            if (this.parentCell.container) {
-                this.parentElement = this.parentCell.container;
-            }
-            this.attachCellListeneres();
-        }
-
-        this.type = this.options.type;
-        this.store = this.options.store;
-        this.hasLoaded = false;
-        this.shouldRedraw = true;
-        this.editableOptions =
-            new EditableOptions(this, options.editableOptionsBindings);
-
-        this.presentationModifier = this.options.presentationModifier;
-
-        // Initial dimensions
-        this.dimensions = {
-            width: null,
-            height: null
-        };
-
-        this.syncHandlers = this.handleSyncOptions();
-        this.element = createElement('div', {
-            className: this.options.className
-        }, this.options.style);
-
-        this.contentElement = createElement('div', {
-            className: `${this.options.className}-content`
-        }, {
-            height: '100%'
-        }, void 0, true);
-
-    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
     * Handles the sync options. Applies the given defaults if no
@@ -216,14 +258,16 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     protected handleSyncOptions(
         defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
     ): Component['syncHandlers'] {
-        return Object.keys(this.options.sync)
+        const sync = this.options.sync || {};
+
+        return Object.keys(sync)
             .reduce(
                 (
                     carry: Sync.OptionsRecord,
                     handlerName
                 ): Sync.OptionsRecord => {
                     if (handlerName) {
-                        const handler = this.options.sync[handlerName];
+                        const handler = sync[handlerName];
 
                         if (handler && typeof handler === 'object') {
                             carry[handlerName] = handler;
@@ -816,15 +860,27 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             $class: Component.getName(this.constructor),
             // store: this.store ? this.store.toJSON() : void 0,
             options: {
+                cell: this.options.cell,
                 parentElement: this.parentElement.id,
                 dimensions,
-                type: this.options.type,
-                id: this.options.id || this.id
+                id: this.id,
+                type: this.type
             }
         };
 
         return json;
     }
+
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface Component {
+    type: keyof ComponentTypeRegistry;
 }
 
 /* *
@@ -899,27 +955,34 @@ namespace Component {
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions extends EditableOptions {
-        parentCell?: Cell;
-        parentElement: HTMLElement | string;
+        [key: string]: unknown;
         className?: string;
-        type: string;
+        cell?: string;
         // allow overwriting gui elements
-        navigationBindings?: NavigationBindingsOptionsObject[];
+        editableOptions?: Array<string>;
+        editableOptionsBindings?: EditableOptions.OptionsBindings;
         events?: Record<string, Function>;
-        editableOptions: Array<string>;
-        editableOptionsBindings: EditableOptions.OptionsBindings;
+        id?: string;
+        navigationBindings?: NavigationBindingsOptionsObject[];
+        parentCell?: Cell;
         presentationModifier?: DataModifier;
-        sync: SyncOptions;
+        sync?: SyncOptions;
+        type: keyof ComponentTypeRegistry;
     }
 
     // JSON compatible options for export
     export interface ComponentOptionsJSON extends JSON.Object {
-        // store?: DataStore.ClassJSON; // store id
-        parentElement: string; // ID?
-        style?: {};
         className?: string;
-        type: string;
+        cell?: string;
+        editableOptions?: JSON.Array<string>;
+        editableOptionsBindings?: EditableOptions.OptionsBindings&JSON.Object;
         id: string;
+        parentCell?: Cell.JSON;
+        // store?: DataStore.ClassJSON; // store id
+        parentElement?: string; // ID?
+        style?: {};
+        sync?: SyncOptions&JSON.Object;
+        type: keyof ComponentTypeRegistry;
     }
 
     export type StoreTypes = DataStore;
@@ -972,7 +1035,7 @@ namespace Component {
      * @todo
      *
      */
-    export const registry: Record<string, Class<Component>> = {};
+    export const registry = {} as ComponentTypeRegistry;
 
     /* *
     *
@@ -981,12 +1044,13 @@ namespace Component {
     * */
 
     /**
-     *
+     * @todo rename to registerComponent
      */
-    export function addComponent<T extends Class<Component>>(
-        componentClass: T
+    export function addComponent<T extends keyof ComponentTypeRegistry>(
+        ComponentClass: ComponentTypeRegistry[T]
     ): boolean {
-        const name = Component.getName(componentClass);
+        const name =
+            Component.getName(ComponentClass) as T;
 
         if (
             typeof name === 'undefined' ||
@@ -995,7 +1059,7 @@ namespace Component {
             return false;
         }
 
-        registry[name] = componentClass;
+        registry[name] = ComponentClass;
 
         return true;
     }
@@ -1010,7 +1074,7 @@ namespace Component {
     /**
      *
      */
-    export function getAllComponents(): Record<string, Class<Component>> {
+    export function getAllComponents(): ComponentTypeRegistry {
         return merge(Component.registry);
     }
 
@@ -1048,7 +1112,7 @@ namespace Component {
      * @param {Component} component
      * The component to remove
      */
-    export function removeInstance(component: Component<any>): void {
+    export function removeInstance(component: Component): void {
         delete Component.instanceRegistry[component.id];
     }
 
@@ -1066,18 +1130,18 @@ namespace Component {
      * @return {ComponentType[]}
      * Array of components
      */
-    export function getAllInstances(): Component<any>[] {
+    export function getAllInstances(): Component[] {
         const ids = getAllInstanceIDs();
-        return ids.map((id): Component<any> => instanceRegistry[id]);
+        return ids.map((id): Component => instanceRegistry[id]);
     }
 
     /**
      *
      */
-    export function getComponent<T extends Class<Component>>(
-        key: string
-    ): (T | undefined) {
-        return registry[key] as T;
+    export function getComponent<T extends keyof ComponentTypeRegistry>(
+        key:T
+    ): (ComponentTypeRegistry[T]|undefined) {
+        return registry[key];
     }
 
     /**

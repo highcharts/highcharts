@@ -54,13 +54,7 @@ function connectHighcharts(
 function onRegister(
     e: PluginHandler.Event
 ): void {
-    const {
-        Component,
-        Sync
-    } = e;
-
-    Component.addComponent(HighchartsComponent);
-    Component.addComponent(KPIComponent);
+    const { Sync } = e;
 
     Sync.defaultHandlers = {
         ...Sync.defaultHandlers,
@@ -78,9 +72,7 @@ function onRegister(
 function onUnregister(
     e: PluginHandler.Event
 ): void {
-    const {
-        Sync
-    } = e;
+    const { Sync } = e;
 
     Object
         .keys(HighchartsSyncHandlers)

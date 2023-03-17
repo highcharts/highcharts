@@ -14,7 +14,7 @@
  *
  * */
 
-import type ComponentTypes from '../ComponentType';
+import type ComponentType from '../ComponentType';
 import type SharedState from '../SharedComponentState';
 
 /* *
@@ -52,7 +52,7 @@ export default class SyncHandler {
         SyncHandler.register(this);
     }
 
-    public create(component: ComponentTypes): void {
+    public create(component: ComponentType): void {
         const { activeGroup } = component;
         const { func } = this;
         if (activeGroup) {

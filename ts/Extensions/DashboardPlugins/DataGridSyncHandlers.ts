@@ -25,7 +25,7 @@ import type SharedState from '../../Dashboards/Components/SharedComponentState';
 import type Sync from '../../Dashboards/Components/Sync/Sync';
 
 import ComponentGroup from '../../Dashboards/Components/ComponentGroup.js';
-import ComponentTypes from '../../Dashboards/Components/ComponentType';
+import ComponentType from '../../Dashboards/Components/ComponentType';
 import DataGridComponent from './DataGridComponent.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -52,7 +52,7 @@ const configs: {
     emitters: {
         tooltipEmitter: [
             'tooltipEmitter',
-            function (this: ComponentTypes): Function | void {
+            function (this: ComponentType): Function | void {
                 if (this instanceof (DataGridComponent || window.DataGridComponent)) {
                     const { dataGrid, id } = this;
                     const groups = ComponentGroup.getGroupsFromComponent(this.id);

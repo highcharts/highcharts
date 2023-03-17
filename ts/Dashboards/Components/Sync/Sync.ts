@@ -14,7 +14,7 @@
  *
  * */
 
-import type ComponentTypes from '../ComponentType';
+import type ComponentType from '../ComponentType';
 
 import SyncEmitter from './Emitter.js';
 import SyncHandler from './Handler.js';
@@ -86,7 +86,7 @@ class Sync {
     /**
      * The component
      */
-    public component: ComponentTypes;
+    public component: ComponentType;
 
 
     /**
@@ -97,7 +97,7 @@ class Sync {
     public isSyncing: boolean;
 
     constructor(
-        component: ComponentTypes,
+        component: ComponentType,
         syncHandlers: Sync.OptionsRecord = Sync.defaultHandlers
     ) {
         this.component = component;

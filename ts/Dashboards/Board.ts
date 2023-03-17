@@ -24,6 +24,7 @@
  *
  * */
 
+import type Component from './Components/Component';
 import type JSON from '../Core/JSON';
 
 import Bindings from './Actions/Bindings.js';
@@ -36,6 +37,7 @@ import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
 import U from '../Core/Utilities.js';
+
 const {
     merge,
     addEvent,
@@ -248,7 +250,7 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     public setComponents(
-        components: Array<Bindings.ComponentOptions>
+        components: Array<Component.ComponentOptions>
     ): void {
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             Bindings.addComponent(components[i]);
@@ -359,7 +361,8 @@ class Board implements Serializable<Board, Board.JSON> {
                 options.containerId,
                 {
                     layoutsJSON: options.layouts,
-                    componentOptions: options.componentOptions,
+                    componentOptions: options.componentOptions as
+                        Partial<Component.ComponentOptions>,
                     respoBreakpoints: options.respoBreakpoints
                 }
             );
@@ -391,7 +394,8 @@ class Board implements Serializable<Board, Board.JSON> {
                 containerId: board.container.id,
                 guiEnabled: board.guiEnabled,
                 layouts: layouts,
-                componentOptions: board.options.componentOptions,
+                componentOptions: board.options.componentOptions as
+                    Partial<Component.ComponentOptionsJSON>,
                 respoBreakpoints: board.options.respoBreakpoints
             }
         };
@@ -414,19 +418,21 @@ namespace Board {
      * */
 
     export interface Options {
-        gui?: GUIOptions;
+        componentOptions?: Partial<Component.ComponentOptions>;
+        components?: Array<Component.ComponentOptions>;
         editMode?: EditMode.Options;
-        components?: Array<Bindings.ComponentOptions>;
-        componentOptions?: Partial<Bindings.ComponentOptions>;
+        gui?: GUIOptions;
         layoutsJSON?: Array<Layout.JSON>;
         respoBreakpoints?: RespoBreakpoints;
     }
 
     export interface OptionsJSON extends JSON.Object {
+        componentOptions?: Partial<Component.ComponentOptionsJSON>;
+        components?: Array<Component.ComponentOptionsJSON>;
         containerId: string;
+        editMode?: EditMode.Options&JSON.Object;
+        gui?: GUIOptions&JSON.Object;
         layouts: Array<Layout.JSON>;
-        guiEnabled?: boolean;
-        componentOptions?: Partial<Bindings.ComponentOptions>;
         respoBreakpoints?: RespoBreakpoints;
     }
 
@@ -472,7 +478,6 @@ namespace Board {
             layouts: []
         },
         componentOptions: {
-            isResizable: true
         },
         components: [],
         respoBreakpoints: {
