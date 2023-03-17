@@ -172,7 +172,7 @@ QUnit.test('Split tooltip with empty formats (#8105)', function (assert) {
 });
 
 QUnit.test('Split tooltip with useHTML and outside', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             width: 600
         },
@@ -206,6 +206,38 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
         chart.series[0].tt.text.element.tagName,
         'SPAN',
         '#7238: The label is a span'
+    );
+
+    chart.update({
+        tooltip: {
+            useHTML: false
+        }
+    }, false);
+
+    chart.series[0].update({
+        type: 'scatter'
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    const pointClient =
+        chart.series[0].points[0].graphic.element.getClientRects()[0],
+        tooltipClient = chart.tooltip.container.getClientRects()[0];
+
+    assert.close(
+        pointClient.x,
+        tooltipClient.x + ((tooltipClient.width - chart.tooltip.distance) / 2),
+        4,
+        `Tooltip with outside and split properties set to true should be
+        rendered properly (#17720).`
+    );
+
+    assert.close(
+        pointClient.y,
+        tooltipClient.y + tooltipClient.height - (chart.tooltip.distance / 2),
+        4,
+        `Tooltip with outside and split properties set to true should be
+        rendered properly (#17720).`
     );
 });
 
