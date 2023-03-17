@@ -24,7 +24,9 @@
 
 import type Axis from '../../Core/Axis/Axis.js';
 import type Chart from '../../Core/Chart/Chart';
+import type DataTable from '../../Data/DataTable';
 import type Point from '../../Core/Series/Point';
+import type RangeModifier from '../../Data/Modifiers/RangeModifier';
 import type SharedState from '../../Dashboards/Components/SharedComponentState';
 import type Sync from '../../Dashboards/Components/Sync/Sync';
 
@@ -70,6 +72,29 @@ function getAxisMinMaxMap(chart: Chart): Array<{
             };
         }
         );
+}
+
+/**
+ * Utility function that returns the first row index if the table has been modified by a range modifier
+ * @param {DataTable} table the table to get the offset from
+ */
+function getModifiedTableOffset(table: DataTable): number | undefined {
+    const modifier = table.getModifier();
+    if (modifier && modifier.options.modifier === 'Range') {
+        const { ranges } = (modifier as RangeModifier).options;
+
+        if (ranges) {
+            const minRange = ranges.reduce((minRange, currentRange): RangeModifier.RangeOptions => {
+                if (currentRange.minValue > minRange.minValue) {
+                    minRange = currentRange;
+                }
+                return minRange;
+
+            }, ranges[0]);
+
+            return table.getRowIndexBy(minRange.column, minRange.minValue);
+        }
+    }
 }
 
 /**
@@ -123,31 +148,30 @@ const configs: {
                                     // TODO: should ideally have a property on the series
                                     // or offset index somewhere
                                     // should try to match by values in table if indexes can't be used
-                                    if (table.getRowCount() === series.points.length) {
-                                        series.update({
-                                            point: {
-                                                events: {
-                                                    // emit table cursor
-                                                    mouseOver: function (): void {
-                                                        cursor.emitCursor(table, {
-                                                            type: 'position',
-                                                            row: this.index,
-                                                            column: series.name,
-                                                            state: 'point.mouseOver'
-                                                        });
-                                                    },
-                                                    mouseOut: function (): void {
-                                                        cursor.emitCursor(table, {
-                                                            type: 'position',
-                                                            row: this.index,
-                                                            column: series.name,
-                                                            state: 'point.mouseOut'
-                                                        });
-                                                    }
+                                    series.update({
+                                        point: {
+                                            events: {
+                                                // emit table cursor
+                                                mouseOver: function (): void {
+
+                                                    cursor.emitCursor(table, {
+                                                        type: 'position',
+                                                        row: getModifiedTableOffset(table) + this.index,
+                                                        column: series.name,
+                                                        state: 'point.mouseOver'
+                                                    });
+                                                },
+                                                mouseOut: function (): void {
+                                                    cursor.emitCursor(table, {
+                                                        type: 'position',
+                                                        row: getModifiedTableOffset(table) + this.index,
+                                                        column: series.name,
+                                                        state: 'point.mouseOut'
+                                                    });
                                                 }
                                             }
-                                        });
-                                    }
+                                        }
+                                    });
                                 });
                             }
                         });
