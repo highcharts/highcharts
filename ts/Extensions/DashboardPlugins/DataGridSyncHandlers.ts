@@ -64,7 +64,7 @@ const configs: {
 
                                 cursor.emitCursor(store.table, {
                                     type: 'position',
-                                    row: parseInt(row.dataset.rowXIndex, 10),
+                                    row: parseInt(row.dataset.rowIndex, 10),
                                     state: 'point.mouseOver'
                                 });
                             }),
@@ -103,7 +103,9 @@ const configs: {
 
                                 if (row && dataGrid) {
                                     const highlightedDataRow = dataGrid.container
-                                        .querySelector<HTMLElement>(`.hc-dg-row[data-row-x-index="${row}"]`);
+                                        .querySelector<HTMLElement>(`.hc-dg-row[data-row-index="${row}"]`);
+
+                                    // TODO: possibly try to fall back to find matching value from table
 
                                     if (highlightedDataRow) {
                                         dataGrid.toggleRowHighlight(highlightedDataRow);

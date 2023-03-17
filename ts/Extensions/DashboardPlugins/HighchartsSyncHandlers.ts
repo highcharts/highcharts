@@ -120,29 +120,34 @@ const configs: {
                         this.on('afterRender', (): void => {
                             if (chart && chart.series) {
                                 chart.series.forEach((series): void => {
-                                    series.update({
-                                        point: {
-                                            events: {
-                                                // emit table cursor
-                                                mouseOver: function (): void {
-                                                    cursor.emitCursor(table, {
-                                                        type: 'position',
-                                                        row: this.x,
-                                                        column: series.name,
-                                                        state: 'point.mouseOver'
-                                                    });
-                                                },
-                                                mouseOut: function (): void {
-                                                    cursor.emitCursor(table, {
-                                                        type: 'position',
-                                                        row: this.x,
-                                                        column: series.name,
-                                                        state: 'point.mouseOut'
-                                                    });
+                                    // TODO: should ideally have a property on the series
+                                    // or offset index somewhere
+                                    // should try to match by values in table if indexes can't be used
+                                    if (table.getRowCount() === series.points.length) {
+                                        series.update({
+                                            point: {
+                                                events: {
+                                                    // emit table cursor
+                                                    mouseOver: function (): void {
+                                                        cursor.emitCursor(table, {
+                                                            type: 'position',
+                                                            row: this.index,
+                                                            column: series.name,
+                                                            state: 'point.mouseOver'
+                                                        });
+                                                    },
+                                                    mouseOut: function (): void {
+                                                        cursor.emitCursor(table, {
+                                                            type: 'position',
+                                                            row: this.index,
+                                                            column: series.name,
+                                                            state: 'point.mouseOut'
+                                                        });
+                                                    }
                                                 }
                                             }
-                                        }
-                                    });
+                                        });
+                                    }
                                 });
                             }
                         });
@@ -369,7 +374,7 @@ const configs: {
                                         chart.series;
 
                                     if (series && series.visible && cursor.row !== void 0) {
-                                        const point = findMatchingPoint(chart, { series, x: cursor.row });
+                                        const point = series.points[cursor.row];
 
                                         if (point) {
                                             chart.tooltip && chart.tooltip.refresh(point);
