@@ -441,11 +441,13 @@ namespace Layout {
          **/
         layoutClassName?: string;
         /**
-         * The class name of the row container.
+         * The class name applied to each row that is in that exact layout.
+         * Note that the layout container is also treated as a row thus this
+         * class is also being applied to the layout container.
          **/
         rowClassName?: string;
         /**
-         * The class name of the cell container.
+         * The class name applied to each cell that is in that exact layout.
          **/
         cellClassName?: string;
         /**
