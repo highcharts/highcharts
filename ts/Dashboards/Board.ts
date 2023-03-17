@@ -24,12 +24,14 @@
  *
  * */
 
+import type DataPoolOptions from '../Data/DataPoolOptions';
 import type JSON from '../Core/JSON';
 
 import Bindings from './Actions/Bindings.js';
 import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
 import DataCursor from '../Data/DataCursor.js';
 import DataCursorHelper from './SerializeHelper/DataCursorHelper.js';
+import DataPool from '../Data/DataPool.js';
 import EditMode from './EditMode/EditMode.js';
 import Fullscreen from './EditMode/Fullscreen.js';
 import Globals from './Globals.js';
@@ -100,10 +102,11 @@ class Board implements Serializable<Board, Board.JSON> {
         options: Board.Options
     ) {
         this.options = merge(Board.defaultOptions, options);
-        this.layouts = [];
-        this.guiEnabled = (this.options.gui || {}).enabled;
-        this.mountedComponents = [];
+        this.dataPool = new DataPool(options.dataPool);
         this.id = uniqueKey();
+        this.guiEnabled = (this.options.gui || {}).enabled;
+        this.layouts = [];
+        this.mountedComponents = [];
 
         this.initContainer(renderTo);
 
@@ -144,7 +147,7 @@ class Board implements Serializable<Board, Board.JSON> {
         this.initEvents();
 
         // Add table cursors support.
-        this.cursor = new DataCursor();
+        this.dataCursor = new DataCursor();
 
         // Add fullscreen support.
         this.fullscreen = new Fullscreen(this);
@@ -207,7 +210,12 @@ class Board implements Serializable<Board, Board.JSON> {
      * The data cursor instance used for interacting with the data.
      * @internal
      * */
-    public cursor: DataCursor;
+    public dataCursor: DataCursor;
+
+    /**
+     * The data pool instance with all the connectors.
+     * */
+    public dataPool: DataPool;
 
     /**
      * The edit mode instance. Used to handle editing the dashboard.
@@ -493,13 +501,14 @@ class Board implements Serializable<Board, Board.JSON> {
             board = new Board(
                 options.containerId,
                 {
-                    layoutsJSON: options.layouts,
                     componentOptions: options.componentOptions,
-                    responsiveBreakpoints: options.responsiveBreakpoints
+                    responsiveBreakpoints: options.responsiveBreakpoints,
+                    dataPool: options.dataPool,
+                    layoutsJSON: options.layouts
                 }
             );
 
-        board.cursor = DataCursorHelper.fromJSON(json.cursor);
+        board.dataCursor = DataCursorHelper.fromJSON(json.dataCursor);
 
         return board;
     }
@@ -520,9 +529,10 @@ class Board implements Serializable<Board, Board.JSON> {
 
         return {
             $class: 'Board',
-            cursor: DataCursorHelper.toJSON(board.cursor),
+            dataCursor: DataCursorHelper.toJSON(board.dataCursor),
             options: {
                 containerId: board.container.id,
+                dataPool: board.options.dataPool as DataPoolOptions&JSON.Object,
                 guiEnabled: board.guiEnabled,
                 layouts: layouts,
                 componentOptions: board.options.componentOptions,
@@ -551,6 +561,10 @@ namespace Board {
      * Options to configure the board.
      **/
     export interface Options {
+        /**
+         * Data pool with all of the connectors.
+         **/
+        dataPool?: DataPoolOptions;
         /**
          * Options for the GUI. Allows to define graphical elements and its
          * layout.
@@ -589,6 +603,10 @@ namespace Board {
          * Id of the container to which the board is added.
          **/
         containerId: string;
+        /**
+         * Data pool with all of the connectors.
+         **/
+        dataPool?: DataPoolOptions&JSON.Object;
         /**
          * An array of serialized layouts options and their elements to add to
          * the board.
@@ -649,13 +667,13 @@ namespace Board {
     /** @internal */
     export interface JSON extends Serializable.JSON<'Board'> {
         /**
+         * Serialized data cursor of the board.
+         **/
+        dataCursor: DataCursorHelper.JSON;
+        /**
          * Serialized options to configure the board.
          **/
         options: OptionsJSON;
-        /**
-         * Serialized cursor of the board.
-         **/
-        cursor: DataCursorHelper.JSON;
     }
 
     /* *

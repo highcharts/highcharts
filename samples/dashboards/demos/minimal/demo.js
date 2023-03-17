@@ -1,15 +1,15 @@
-const { CSVStore } = Dashboards;
+const { CSVConnector } = Dashboards;
 
 const csvData = document.getElementById('csv').innerText,
-    store = new CSVStore(void 0, {
+    connector = new CSVConnector(void 0, {
         csv: csvData,
         firstRowAsNames: true
     });
 
-store.load();
+connector.load();
 
 Dashboards.board('container', {
-    store: store,
+    connector,
     editMode: {
         enabled: true,
         contextMenu: {
@@ -42,7 +42,7 @@ Dashboards.board('container', {
     },
     components: [
         {
-            store,
+            connector,
             sync: {
                 visibility: true,
                 tooltip: true,
@@ -62,7 +62,7 @@ Dashboards.board('container', {
             }
         }, {
             cell: 'dashboard-col-1',
-            store,
+            connector,
             sync: {
                 visibility: true,
                 tooltip: true,
@@ -84,7 +84,7 @@ Dashboards.board('container', {
             }
         }, {
             cell: 'dashboard-col-12',
-            store,
+            connector,
             sync: {
                 visibility: true,
                 tooltip: true,
@@ -107,7 +107,7 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-2',
             type: 'DataGrid',
-            store,
+            connector,
             editable: true,
             sync: {
                 tooltip: true

@@ -1,12 +1,12 @@
-const { CSVStore } = Dashboards;
+const { CSVConnector } = Dashboards;
 const csvData = document.getElementById('csv').innerText;
 
-const store = new CSVStore(void 0, {
+const connector = new CSVConnector(void 0, {
     csv: csvData,
     firstRowAsNames: true
 });
 
-store.load();
+connector.load();
 
 
 // Necessary to enable styled mode in order to properly style the
@@ -19,7 +19,7 @@ Highcharts.setOptions({
 
 
 Dashboards.board('container', {
-    store: store,
+    connector,
     gui: {
         layouts: [{
             id: 'layout-1',
@@ -35,7 +35,7 @@ Dashboards.board('container', {
     components: [
         {
             cell: 'dashboard-col-0',
-            store,
+            connector,
             type: 'Highcharts',
             sync: {
                 tooltip: true
@@ -64,7 +64,7 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-1',
             type: 'DataGrid',
-            store,
+            connector,
             editable: true,
             sync: {
                 tooltip: true

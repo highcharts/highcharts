@@ -19,11 +19,11 @@
  *
  * */
 
-import type DataStore from '../../Data/Stores/DataStore';
+import type DataConnector from '../../Data/Connectors/DataConnector';
 import type Serializable from '../Serializable';
 
 import DataTableHelper from './DataTableHelper.js';
-import CSVStore from '../../Data/Stores/CSVStore.js';
+import CSVConnector from '../../Data/Connectors/CSVConnector.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -36,21 +36,21 @@ const { merge } = U;
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {CSVStoreHelper.JSON} json
+ * @param {CSVConnectorHelper.JSON} json
  * JSON to deserialize as a class instance or object.
  *
- * @return {CSVStore}
+ * @return {CSVConnector}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: CSVStoreHelper.JSON
-): CSVStore {
+    json: CSVConnectorHelper.JSON
+): CSVConnector {
     const table = DataTableHelper.fromJSON(json.table),
-        store = new CSVStore(table, json.options);
+        connector = new CSVConnector(table, json.options);
 
-    merge(true, store.metadata, json.metadata);
+    merge(true, connector.metadata, json.metadata);
 
-    return store;
+    return connector;
 }
 
 /**
@@ -65,24 +65,24 @@ function fromJSON(
  */
 function jsonSupportFor(
     obj: AnyRecord
-): obj is CSVStore {
-    return obj instanceof CSVStore;
+): obj is CSVConnector {
+    return obj instanceof CSVConnector;
 }
 
 /**
  * Converts the given class instance to JSON.
  *
- * @param {CSVStore} obj
+ * @param {CSVConnector} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {CSVStoreHelper.JSON}
+ * @return {CSVConnectorHelper.JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
-    obj: CSVStore
-): CSVStoreHelper.JSON {
+    obj: CSVConnector
+): CSVConnectorHelper.JSON {
     return {
-        $class: 'Data.CSVStore',
+        $class: 'Data.CSVConnector',
         metadata: (obj.metadata),
         options: (obj.options),
         table: DataTableHelper.toJSON(obj.table)
@@ -95,7 +95,7 @@ function toJSON(
  *
  * */
 
-namespace CSVStoreHelper {
+namespace CSVConnectorHelper {
 
     /* *
      *
@@ -103,9 +103,9 @@ namespace CSVStoreHelper {
      *
      * */
 
-    export interface JSON extends Serializable.JSON<'Data.CSVStore'> {
-        metadata: DataStore.Metadata;
-        options: CSVStore.Options;
+    export interface JSON extends Serializable.JSON<'Data.CSVConnector'> {
+        metadata: DataConnector.Metadata;
+        options: CSVConnector.Options;
         table: DataTableHelper.JSON;
     }
 
@@ -117,11 +117,11 @@ namespace CSVStoreHelper {
  *
  * */
 
-const CSVStoreHelper: Serializable.Helper<CSVStore, CSVStoreHelper.JSON> = {
-    $class: 'Data.CSVStore',
+const CSVConnectorHelper: Serializable.Helper<CSVConnector, CSVConnectorHelper.JSON> = {
+    $class: 'Data.CSVConnector',
     fromJSON,
     jsonSupportFor,
     toJSON
 };
 
-export default CSVStoreHelper;
+export default CSVConnectorHelper;
