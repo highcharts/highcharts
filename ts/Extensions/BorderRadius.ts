@@ -34,11 +34,43 @@ const {
     relativeLength
 } = U;
 
-export interface BorderRadiusOptions {
+export interface BorderRadiusOptionsObject {
     radius: number|string;
     scope: 'point'|'stack';
     where?: 'end'|'all';
 }
+
+/**
+ * Detailed options for border radius
+ *
+ * @interface Highcharts.BorderRadiusOptionsObject
+ *//**
+ * The border radius. A number signifies pixels. A percentage string, like for
+ * example `50%`, signifies a relative size. For columns this is relative to the
+ * column width, for pies it is relative to the radius and the inner radius.
+ *
+ * @name Highcharts.BorderRadiusOptionsObject#radius
+ * @type {string|number}
+ *//**
+ * The scope of the rounding for column charts. In a stacked column chart, the
+ * value `point` means each single point will get rounded corners. The value
+ * `stack` means the rounding will apply to the full stack, so that only points
+ * close to the top or bottom will receive rounding.
+ *
+ * @name Highcharts.BorderRadiusOptionsObject#scope
+ * @validvalue ["point", "stack"]
+ * @type {string}
+ *//**
+ * For column charts, where in the point or stack to apply rounding. The `end`
+ * value means only those corners at the point value will be rounded, leaving
+ * the corners at the base or threshold unrounded. This is the most intuitive
+ * behaviour. The `all` value means also the base will be rounded.
+ *
+ * @name Highcharts.BorderRadiusOptionsObject#where
+ * @validvalue ["all", "end"]
+ * @type {string}
+ * @default end
+ */
 
 /**
  * Internal types
@@ -62,16 +94,16 @@ declare module '../Core/Renderer/SVG/SymbolOptions' {
     }
 }
 
-const defaultBorderRadiusOptions: BorderRadiusOptions = {
+const defaultBorderRadiusOptions: BorderRadiusOptionsObject = {
     radius: 0,
     scope: 'stack',
     where: void 0
 };
 
 const optionsToObject = (
-    options?: number|string|Partial<BorderRadiusOptions>,
-    seriesBROptions?: Partial<BorderRadiusOptions>
-): BorderRadiusOptions => {
+    options?: number|string|Partial<BorderRadiusOptionsObject>,
+    seriesBROptions?: Partial<BorderRadiusOptionsObject>
+): BorderRadiusOptionsObject => {
     if (!isObject(options)) {
         options = { radius: options || 0 };
     }
