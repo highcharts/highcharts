@@ -480,17 +480,6 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
 
                         extend(shapeArgs, { brBoxHeight, brBoxY, r });
 
-                    // Polar column and polar bar
-                    } else if (point.shapeType === 'arc') {
-                        const shapeArgs = point.shapeArgs;
-                        if (shapeArgs) {
-                            // The arc extension (above) takes over
-                            shapeArgs.borderRadius = relativeLength(
-                                borderRadius.radius,
-                                (shapeArgs.r || 0) -
-                                    ((inverted && shapeArgs.innerR) || 0)
-                            );
-                        }
                     }
                 }
             }

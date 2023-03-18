@@ -57,6 +57,7 @@ const {
     isNumber,
     merge,
     pick,
+    relativeLength,
     splat,
     uniqueKey,
     wrap
@@ -1052,19 +1053,25 @@ function onAfterColumnTranslate(
                     point.barX = barX += center[3] / 2;
                 }
 
-                // In case when radius, inner radius or both are
-                // negative, a point is rendered but partially or as
-                // a center point
+                // In case when radius, inner radius or both are negative, a
+                // point is rendered but partially or as a center point
                 innerR = Math.max(barX, 0);
                 r = Math.max(barX + point.pointWidth, 0);
 
+                // Handle border radius
+                const brOption = options.borderRadius,
+                    brValue = typeof brOption === 'object' ?
+                        brOption.radius : brOption,
+                    borderRadius = relativeLength(brValue || 0, r - innerR);
+
                 point.shapeArgs = {
-                    x: center && center[0],
-                    y: center && center[1],
+                    x: center[0],
+                    y: center[1],
                     r,
                     innerR,
                     start,
-                    end
+                    end,
+                    borderRadius
                 };
 
                 // Fade out the points if not inside the polar "plot area"
@@ -1089,6 +1096,16 @@ function onAfterColumnTranslate(
                     start,
                     start + point.pointWidth
                 );
+
+                // Disallow border radius on polar columns for now. It would
+                // take some refactoring to work with the `scope` and the
+                // `where` options. Those options would require that only
+                // individual corners be rounded, in practice individual calls
+                // to applyBorderRadius from the extended `arc` function. That
+                // would be a viable solution, though it would not be perfect
+                // until we implemented rounding that included the lower points
+                // in the stack, like we have for cartesian column.
+                point.shapeArgs.borderRadius = 0;
             }
 
             // Provided a correct coordinates for the tooltip
