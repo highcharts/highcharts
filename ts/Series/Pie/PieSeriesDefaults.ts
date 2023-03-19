@@ -51,6 +51,20 @@ import { Palette } from '../../Core/Color/Palettes.js';
 const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
 
     /**
+     * The corner radius of the border surrounding each slice. A number
+     * signifies pixels. A percentage string, like for example `50%`, signifies
+     * a size relative to the radius and the inner radius.
+     *
+     * @sample  highcharts/plotoptions/series-border-radius
+     *          Column and pie with rounded border
+     *
+     * @since   11.0.0
+     *
+     * @type    {number|string|Highcharts.BorderRadiusOptionsObject}
+     * @apioption plotOptions.pie.borderRadius
+     */
+
+    /**
      * @excluding legendItemClick
      * @apioption plotOptions.pie.events
      */

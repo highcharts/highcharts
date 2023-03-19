@@ -13,7 +13,7 @@ Histogram
 
 Column charts can be used to make histogram charts by setting the padding between points and groups to 0.
 
-    
+
     plotOptions: {
         column: {
             pointPadding: 0,
@@ -22,7 +22,7 @@ Column charts can be used to make histogram charts by setting the padding betwee
             shadow: false
         }
     }
-    
+
 
 Note that borderWidth and shadows are also turned off in the example so the columns do not overlap.
 
