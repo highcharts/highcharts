@@ -1473,15 +1473,12 @@ class Series {
                 }
             } else {
                 for (i = 0; i < dataLength; i++) {
-                    // stray commas in oldIE:
-                    if (typeof data[i] !== 'undefined') {
-                        pt = { series: series };
-                        series.pointClass.prototype.applyOptions.apply(
-                            pt,
-                            [data[i]]
-                        );
-                        series.updateParallelArrays(pt as any, i);
-                    }
+                    pt = { series: series };
+                    series.pointClass.prototype.applyOptions.apply(
+                        pt,
+                        [data[i]]
+                    );
+                    series.updateParallelArrays(pt as any, i);
                 }
             }
 
@@ -3145,30 +3142,6 @@ class Series {
                     }
                 }
 
-                // VML SUPPPORT
-                if (inverted && renderer.isVML) {
-                    if (axis.isXAxis) {
-                        clipAttr = {
-                            x: 0,
-                            y: reversed ? pxPosMin : pxPosMax,
-                            height: clipAttr.width,
-                            width: chart.chartWidth
-                        };
-                    } else {
-                        clipAttr = {
-                            x: (
-                                clipAttr.y -
-                                chart.plotLeft -
-                                chart.spacingBox.x
-                            ),
-                            y: 0,
-                            width: clipAttr.height,
-                            height: chart.chartHeight
-                        };
-                    }
-                }
-                // END OF VML SUPPORT
-
                 if (clips[i]) {
                     clips[i].animate(clipAttr);
                 } else {
@@ -3229,7 +3202,7 @@ class Series {
         const isNew = !group,
             attrs: SVGAttributes = {
                 visibility,
-                zIndex: zIndex || 0.1 // IE8 and pointer logic use this
+                zIndex: zIndex || 0.1 // Pointer logic uses this
             };
 
         // Avoid setting undefined opacity, or in styled mode
@@ -3363,9 +3336,8 @@ class Series {
             hasRendered = series.hasRendered,
             chartSeriesGroup = chart.seriesGroup,
             inverted = chart.inverted;
-        // Animation doesn't work in IE8 quirks when the group div is
-        // hidden, and looks bad in other oldIE
-        let animDuration = (!series.finishedAnimating && chart.renderer.isSVG) ?
+
+        let animDuration = (!series.finishedAnimating) ?
             animOptions.duration : 0;
 
         fireEvent(this, 'render');
@@ -3774,9 +3746,6 @@ class Series {
             /*
              * Empirical lowest possible opacities for TRACKER_FILL for an
              * element to stay invisible but clickable
-             * IE6: 0.002
-             * IE7: 0.002
-             * IE8: 0.002
              * IE9: 0.00000000001 (unlimited)
              * IE10: 0.0001 (exporting only)
              * FF: 0.00000000001 (unlimited)
