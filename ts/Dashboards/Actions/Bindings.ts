@@ -26,6 +26,7 @@ import type Layout from '../Layout/Layout';
 import type Row from '../Layout/Row';
 
 import Component from '../Components/Component.js';
+import ComponentRegistry from '../Components/ComponentRegistry.js';
 import HTMLComponent from '../Components/HTMLComponent.js';
 import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
 import Globals from '../Globals.js';
@@ -77,7 +78,7 @@ class Bindings {
         const componentContainer = cell.container;
 
         const ComponentClass =
-            Component.getComponent(options.type) as Class<Component>;
+            ComponentRegistry.getComponent(options.type) as Class<Component>;
 
         if (!ComponentClass) {
             return;
@@ -155,7 +156,7 @@ class Bindings {
                 );
                 break;
             case 'Highcharts':
-                componentClass = Component.getComponent('Highcharts');
+                componentClass = ComponentRegistry.getComponent('Highcharts');
                 if (componentClass) {
                     component = componentClass
                         .fromJSON(json as HighchartsComponent.ClassJSON);
@@ -167,7 +168,7 @@ class Bindings {
                 );
                 break;
             case 'KPI':
-                componentClass = Component.getComponent('KPI');
+                componentClass = ComponentRegistry.getComponent('KPI');
                 if (componentClass) {
                     component = componentClass
                         .fromJSON(json as KPIComponent.ClassJSON);

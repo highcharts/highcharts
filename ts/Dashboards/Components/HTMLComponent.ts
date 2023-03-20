@@ -30,6 +30,7 @@ const {
     merge
 } = U;
 import AST from '../../Core/Renderer/HTML/AST.js';
+import ComponentRegistry from './ComponentRegistry.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 
 // TODO: This may affect the AST parsing in Highcharts
@@ -324,7 +325,7 @@ declare module './ComponentType' {
         HTML: typeof HTMLComponent;
     }
 }
-Component.addComponent(HTMLComponent);
+ComponentRegistry.registerComponent(HTMLComponent);
 
 /* *
  *

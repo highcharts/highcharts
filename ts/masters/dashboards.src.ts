@@ -19,6 +19,7 @@
 import CSVStore from '../Data/Stores/CSVStore.js';
 import Board from '../Dashboards/Board.js';
 import Component from '../Dashboards/Components/Component.js';
+import ComponentRegistry from '../Dashboards/Components/ComponentRegistry.js';
 import DataPool from '../Data/DataPool.js';
 import DataCursor from '../Data/DataCursor.js';
 import DataTable from '../Data/DataTable.js';
@@ -57,6 +58,7 @@ const D = {
     Board,
     board: Board.board,
     Component,
+    ComponentRegistry,
     CSVStore,
     DataCursor,
     DataPool,

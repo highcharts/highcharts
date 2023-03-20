@@ -30,6 +30,7 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
 
 import Component from '../../Dashboards/Components/Component.js';
+import ComponentRegistry from '../../Dashboards/Components/ComponentRegistry.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataTable from '../../Data/DataTable.js';
@@ -641,7 +642,7 @@ declare module '../../Dashboards/Components/ComponentType' {
     }
 }
 
-Component.addComponent(HighchartsComponent);
+ComponentRegistry.registerComponent(HighchartsComponent);
 
 /* *
  *

@@ -50,9 +50,8 @@ function connectDataGrid(
 function onRegister(
     e: PluginHandler.Event
 ): void {
-    const { Component } = e;
-
-    Component.addComponent(DataGridComponent);
+    const { ComponentRegistry } = e;
+    ComponentRegistry.registerComponent(DataGridComponent);
 }
 
 

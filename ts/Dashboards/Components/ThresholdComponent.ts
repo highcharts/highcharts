@@ -17,6 +17,7 @@
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
+import ComponentRegistry from './ComponentRegistry.js';
 const {
     isArray,
     isNumber,
@@ -263,7 +264,7 @@ declare module './ComponentType' {
         Threshold: typeof ThresholdComponent;
     }
 }
-Component.addComponent(ThresholdComponent);
+ComponentRegistry.registerComponent(ThresholdComponent);
 
 /* *
  *

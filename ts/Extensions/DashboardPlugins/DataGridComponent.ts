@@ -27,6 +27,7 @@ import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
+import ComponentRegistry from '../../Dashboards/Components/ComponentRegistry.js';
 const { createElement, merge, uniqueKey } = U;
 
 /* *
@@ -391,7 +392,6 @@ declare module '../../Dashboards/Components/ComponentType' {
     }
 }
 
-Component.addComponent(DataGridComponent);
 
 /* *
  *

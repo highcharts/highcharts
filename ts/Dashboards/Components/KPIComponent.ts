@@ -17,9 +17,11 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Options from '../../Core/Options';
 import type TextOptions from './TextOptions';
+
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
+import ComponentRegistry from './ComponentRegistry.js';
 import F from '../../Core/FormatUtilities.js';
 const {
     format
@@ -457,7 +459,7 @@ declare module '../../Dashboards/Components/ComponentType' {
     }
 }
 
-Component.addComponent(KPIComponent);
+ComponentRegistry.registerComponent(KPIComponent);
 
 /* *
  *

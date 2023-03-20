@@ -37,10 +37,8 @@ import Bindings from '../Actions/Bindings.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import DataTable from '../../Data/DataTable.js';
-// import { ComponentTypeOptions } from '../Components/ComponentType';
 
 const {
-    merge,
     createElement,
     addEvent
 } = U;
@@ -261,7 +259,7 @@ class Sidebar {
         }
     }];
 
-    public static items = merge(Menu.items, {
+    public static items = U.merge(Menu.items, {
         componentSettings: {
             id: 'componentSettings',
             type: 'componentSettings',
@@ -394,7 +392,7 @@ class Sidebar {
     ) {
         this.tabs = {};
         this.isVisible = false;
-        this.options = merge(
+        this.options = U.merge(
             Sidebar.defaultOptions,
             (editMode.options.toolbars || {}).settings
         );
@@ -1034,11 +1032,14 @@ class Sidebar {
         }
 
         if (savedSettings.chartType) {
-            updatedSettings.chartOptions = merge(updatedSettings.chartOptions, {
-                chart: {
-                    type: savedSettings.chartType
+            updatedSettings.chartOptions = U.merge(
+                updatedSettings.chartOptions,
+                {
+                    chart: {
+                        type: savedSettings.chartType
+                    }
                 }
-            });
+            );
         }
 
         if (mountedComponent) {
@@ -1064,7 +1065,7 @@ class Sidebar {
                 });
 
             dragDrop.onCellDragEnd(newCell);
-            const options = merge(componentOptions, {
+            const options = U.merge(componentOptions, {
                 cell: newCell.id
             });
             Bindings.addComponent(options, newCell);

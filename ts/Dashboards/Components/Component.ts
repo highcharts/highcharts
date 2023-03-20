@@ -65,6 +65,7 @@ import ComponentGroup from './ComponentGroup.js';
 import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
+import ComponentRegistry from './ComponentRegistry.js';
 
 /* *
  *
@@ -857,7 +858,7 @@ abstract class Component {
         });
 
         const json: Component.JSON = {
-            $class: Component.getName(this.constructor),
+            $class: ComponentRegistry.getName(this.constructor),
             // store: this.store ? this.store.toJSON() : void 0,
             options: {
                 cell: this.options.cell,
@@ -1023,79 +1024,12 @@ namespace Component {
      */
     export const instanceRegistry: Record<string, ComponentType> = {};
 
-    /**
-     * Regular expression to extract the  name (group 1) from the
-     * stringified class type.
-     */
-    const nameRegExp = /^(?:class|function)\s(\w*?)(?:Component)?\W/;
-
-    /**
-     *
-     * Record of component classes
-     * @todo
-     *
-     */
-    export const registry = {} as ComponentTypeRegistry;
 
     /* *
     *
     *  Functions
     *
     * */
-
-    /**
-     * @todo rename to registerComponent
-     */
-    export function addComponent<T extends keyof ComponentTypeRegistry>(
-        ComponentClass: ComponentTypeRegistry[T]
-    ): boolean {
-        const name =
-            Component.getName(ComponentClass) as T;
-
-        if (
-            typeof name === 'undefined' ||
-            registry[name]
-        ) {
-            return false;
-        }
-
-        registry[name] = ComponentClass;
-
-        return true;
-    }
-
-    /**
-     *
-     */
-    export function getAllComponentNames(): Array<string> {
-        return Object.keys(Component.registry);
-    }
-
-    /**
-     *
-     */
-    export function getAllComponents(): ComponentTypeRegistry {
-        return merge(Component.registry);
-    }
-
-    /**
-     * Extracts the name from a given component class.
-     *
-     * @param {DataStore} component
-     * Component class to extract the name from.
-     *
-     * @return {string}
-     * Component name, if the extraction was successful, otherwise an empty
-     * string.
-     */
-    export function getName(
-        component: (NewableFunction | ComponentType)
-    ): string {
-        return (
-            component.toString().match(nameRegExp) ||
-            ['', '']
-        )[1];
-    }
 
     /**
      * Adds a component instance to the registry
@@ -1133,15 +1067,6 @@ namespace Component {
     export function getAllInstances(): Component[] {
         const ids = getAllInstanceIDs();
         return ids.map((id): Component => instanceRegistry[id]);
-    }
-
-    /**
-     *
-     */
-    export function getComponent<T extends keyof ComponentTypeRegistry>(
-        key:T
-    ): (ComponentTypeRegistry[T]|undefined) {
-        return registry[key];
     }
 
     /**
