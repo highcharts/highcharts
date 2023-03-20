@@ -31,6 +31,7 @@ const {
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
+    fireEvent,
     error,
     extend,
     isArray,
@@ -481,7 +482,10 @@ class SMAIndicator extends LineSeries {
             indicator.redraw();
         }
 
-        indicator.isDirtyData = !!indicator.linkedSeries;
+        indicator.isDirtyData = !!indicator.linkedSeries.length;
+        indicator.linkedSeries.forEach((): void => { // #18689
+            fireEvent(indicator, 'updatedData');
+        });
     }
 
     /**
