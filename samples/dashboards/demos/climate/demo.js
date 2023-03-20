@@ -316,7 +316,7 @@ async function setupDashboard() {
             sync: {
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 time: null,
                 FD: null,
                 ID: null,
@@ -607,7 +607,6 @@ async function setupDashboard() {
             }
         },
         gui: {
-            enabled: true,
             layouts: [{
                 id: 'layout-1', // mandatory
                 rows: [{
