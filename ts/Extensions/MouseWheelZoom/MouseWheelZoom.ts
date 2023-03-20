@@ -125,13 +125,17 @@ const zoomBy = function (
         defined(xAxis.dataMax) && defined(xAxis.dataMin) &&
         defined(yAxis.dataMax) && defined(yAxis.dataMin)) {
 
-        const xRange = xAxis.max - xAxis.min,
+        const fixToX = (mouseX ?
+                (xAxis.reversed ? ((xAxis.len - (mouseX - xAxis.pos)) /
+                    xAxis.len) :
+                    ((mouseX - xAxis.pos) / xAxis.len)) : 0.5
+            ),
+            xRange = xAxis.max - xAxis.min,
             centerX = pick(centerXArg, xAxis.min + xRange / 2),
             newXRange = xRange * howMuch,
             yRange = yAxis.max - yAxis.min,
             centerY = pick(centerYArg, yAxis.min + yRange / 2),
             newYRange = yRange * howMuch,
-            fixToX = mouseX ? ((mouseX - xAxis.pos) / xAxis.len) : 0.5,
             fixToY = mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5,
             newXMin = centerX - newXRange * fixToX,
             newYMin = centerY - newYRange * fixToY,
@@ -153,6 +157,7 @@ const zoomBy = function (
                 newExt.y <= yAxis.dataMin &&
                 newExt.height >= yAxis.dataMax - yAxis.dataMin
             );
+
         const type = pick(
                 options.type,
                 chart.options.chart.zooming.type,
