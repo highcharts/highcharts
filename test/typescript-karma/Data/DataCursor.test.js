@@ -6,8 +6,10 @@ QUnit.test('DataCursor.emitCursor', function (assert) {
         event = new Event('event'),
         cursor = new DataCursor(),
         table = new DataTable({
-            a: [0, 1, 2],
-            b: [10, 11, 12]
+            columns: {
+                a: [0, 1, 2],
+                b: [10, 11, 12]
+            }
         });
 
     cursor

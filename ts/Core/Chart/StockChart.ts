@@ -687,6 +687,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         opposite = this.opposite, // axis position
         left = this.left, // left position
         top = this.top, // top position
+        width = this.width,
         crossLabel = this.crossLabel, // the svgElement
         posx,
         posy,
@@ -760,7 +761,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         posx = snap ? (point.plotX || 0) + left : e.chartX;
         posy = top + (opposite ? 0 : this.height);
     } else {
-        posx = opposite ? this.width + left : 0;
+        posx = left + this.offset + (opposite ? width : 0);
         posy = snap ? (point.plotY || 0) + top : e.chartY;
     }
 
@@ -800,6 +801,10 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     crossBox = crossLabel.getBBox();
 
     // now it is placed we can correct its position
+    if (isNumber(crossLabel.x) && !horiz && !opposite) {
+        posx = crossLabel.x - (crossBox.width / 2);
+    }
+
     if (isNumber(crossLabel.y)) {
         if (horiz) {
             if ((tickInside && !opposite) || (!tickInside && opposite)) {

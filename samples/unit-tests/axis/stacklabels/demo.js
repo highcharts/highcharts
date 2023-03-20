@@ -904,6 +904,9 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
             data: [1, 2, 3, -1, -2, -3]
         }, {
             data: [1, 2, 3, -1, -2, -3]
+        }, {
+            data: [1, 2, 3, -1, -2, -3],
+            stack: 'b'
         }]
     });
 
@@ -978,5 +981,12 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
         alignOptions2.verticalAlign,
         'middle',
         'negative value inverted chart not reversed axis'
+    );
+
+    assert.close(
+        chart.yAxis[0].series[0].points[1].dataLabel.y,
+        chart.yAxis[0].stacking.stacks['column,,,'][1].label.y,
+        2,
+        'Stack label Y positions should be correct for inverted charts (#18617)'
     );
 });

@@ -5,13 +5,17 @@
  * */
 
 /**
- * Register store events, also optionally do a test on the event type
- * @param {DataStore} datastore
+ * Register connector events, also optionally do a test on the event type
+ * @param {DataConnector} dataConnector
  * @param {} assertObj QUnit assert
  */
-export function registerStoreEvents(datastore, eventArray, assertObj = {}) {
+export function registerConnectorEvents(
+    dataConnector,
+    eventArray,
+    assertObj = {}
+) {
     ['afterLoad', 'load', 'loadError'].forEach(eventType => {
-        datastore.on(eventType, (e) => {
+        dataConnector.on(eventType, (e) => {
             eventArray.push(e.type)
             if (Object.keys(assertObj).length) {
                 assertObj.strictEqual(
@@ -25,7 +29,7 @@ export function registerStoreEvents(datastore, eventArray, assertObj = {}) {
 }
 
 /**
- * Utility function for comparing an exported store with the original
+ * Utility function for comparing an exported connector with the original
  *
  * @todo deeper comparisons?
  *

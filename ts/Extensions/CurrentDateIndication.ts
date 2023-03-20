@@ -156,20 +156,21 @@ function compose(
     AxisClass: typeof Axis,
     PlotLineOrBandClass: typeof PlotLineOrBand
 ): void {
-    if (composedMembers.indexOf(AxisClass) === -1) {
-        composedMembers.push(AxisClass);
+
+    if (U.pushUnique(composedMembers, AxisClass)) {
         addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
     }
 
-    if (composedMembers.indexOf(PlotLineOrBandClass) === -1) {
-        composedMembers.push(PlotLineOrBandClass);
+    if (U.pushUnique(composedMembers, PlotLineOrBandClass)) {
         addEvent(PlotLineOrBandClass, 'render', onPlotLineOrBandRender);
+
         wrap(
             PlotLineOrBandClass.prototype,
             'getLabelText',
             wrapPlotLineOrBandGetLabelText
         );
     }
+
 }
 
 /**
