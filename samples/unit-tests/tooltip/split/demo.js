@@ -210,7 +210,8 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
 
     chart.update({
         tooltip: {
-            useHTML: false
+            useHTML: false,
+            distance: 0
         }
     }, false);
 
@@ -220,24 +221,25 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
 
     chart.tooltip.refresh(chart.series[0].points[0]);
 
-    const pointClient =
-        chart.series[0].points[0].graphic.element.getClientRects()[0],
-        tooltipClient = chart.tooltip.container.getClientRects()[0];
+    const point = chart.series[0].points[0],
+        pointBox = point.graphic.getBBox(),
+        tooltipClient = chart.tooltip.container.getBoundingClientRect();
 
     assert.close(
-        pointClient.x,
-        tooltipClient.x + ((tooltipClient.width - chart.tooltip.distance) / 2),
-        4,
+        chart.xAxis[0].toPixels(point.x),
+        tooltipClient.x + (tooltipClient.width / 2) - pointBox.width,
+        1,
         `Tooltip with outside and split properties set to true should be
-        rendered properly (#17720).`
+        rendered properly - x position (#17720).`
     );
 
     assert.close(
-        pointClient.y,
-        tooltipClient.y + tooltipClient.height - (chart.tooltip.distance / 2),
-        4,
+        chart.yAxis[0].toPixels(point.y),
+        tooltipClient.y + tooltipClient.height -
+            pointBox.height - (pointBox.height / 2),
+        1,
         `Tooltip with outside and split properties set to true should be
-        rendered properly (#17720).`
+        rendered properly - y position (#17720).`
     );
 });
 
