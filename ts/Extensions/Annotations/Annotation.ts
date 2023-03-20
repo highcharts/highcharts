@@ -55,16 +55,12 @@ import Pointer from '../../Core/Pointer.js';
 import PopupComposition from './Popup/PopupComposition.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     destroyObjectProperties,
     erase,
-    extend,
-    find,
     fireEvent,
     merge,
     pick,
-    splat,
-    wrap
+    splat
 } = U;
 
 /* *
