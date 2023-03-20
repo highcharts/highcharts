@@ -41,7 +41,8 @@ import CSVConnector from '../../Data/Connectors/CSVConnector.js';
 
 const {
     createElement,
-    addEvent
+    addEvent,
+    merge
 } = U;
 
 class Sidebar {
@@ -260,7 +261,7 @@ class Sidebar {
         }
     }];
 
-    public static items = U.merge(Menu.items, {
+    public static items = merge(Menu.items, {
         componentSettings: {
             id: 'componentSettings',
             type: 'componentSettings',
@@ -393,7 +394,7 @@ class Sidebar {
     ) {
         this.tabs = {};
         this.isVisible = false;
-        this.options = U.merge(
+        this.options = merge(
             Sidebar.defaultOptions,
             (editMode.options.toolbars || {}).settings
         );
@@ -1033,7 +1034,7 @@ class Sidebar {
         }
 
         if (savedSettings.chartType) {
-            updatedSettings.chartOptions = U.merge(
+            updatedSettings.chartOptions = merge(
                 updatedSettings.chartOptions,
                 {
                     chart: {
@@ -1066,7 +1067,7 @@ class Sidebar {
                 });
 
             dragDrop.onCellDragEnd(newCell);
-            const options = U.merge(componentOptions, {
+            const options = merge(componentOptions, {
                 cell: newCell.id
             });
             Bindings.addComponent(options, newCell);

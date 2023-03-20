@@ -264,7 +264,6 @@ declare module './ComponentType' {
         Threshold: typeof ThresholdComponent;
     }
 }
-ComponentRegistry.registerComponent(ThresholdComponent);
 
 /* *
  *

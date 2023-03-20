@@ -459,8 +459,6 @@ declare module '../../Dashboards/Components/ComponentType' {
     }
 }
 
-ComponentRegistry.registerComponent(KPIComponent);
-
 /* *
  *
  *  Default Export

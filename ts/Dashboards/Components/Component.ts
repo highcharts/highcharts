@@ -1039,7 +1039,6 @@ namespace Component {
     * */
 
     /**
-     * @param {DataConnector} component
      * Adds a component instance to the registry
      * @param {Component} component
      * The component to add

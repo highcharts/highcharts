@@ -642,8 +642,6 @@ declare module '../../Dashboards/Components/ComponentType' {
     }
 }
 
-ComponentRegistry.registerComponent(HighchartsComponent);
-
 /* *
  *
  *  Default Export
