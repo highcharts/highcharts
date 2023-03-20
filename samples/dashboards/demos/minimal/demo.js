@@ -51,7 +51,7 @@ Dashboards.board('container', {
             cell: 'dashboard-col-0',
             isResizable: true,
             type: 'Highcharts',
-            tableAxisMap: {
+            columnKeyMap: {
                 Food: 'x',
                 'Vitamin A': 'value'
             },
@@ -69,7 +69,7 @@ Dashboards.board('container', {
                 selection: true
             },
             type: 'Highcharts',
-            tableAxisMap: {
+            columnKeyMap: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -91,7 +91,7 @@ Dashboards.board('container', {
                 selection: true
             },
             type: 'Highcharts',
-            tableAxisMap: {
+            columnKeyMap: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },

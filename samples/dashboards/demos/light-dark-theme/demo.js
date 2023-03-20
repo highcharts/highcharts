@@ -40,7 +40,7 @@ Dashboards.board('container', {
             sync: {
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },

@@ -120,7 +120,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 }
             ),
             syncHandlers: HighchartsSyncHandlers,
-            tableAxisMap: {}
+            columnKeyMap: {}
         }
     );
 
@@ -371,7 +371,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             const { chart } = this;
 
             // Names/aliases that should be mapped to xAxis values
-            const tableAxisMap = this.options.tableAxisMap || {};
+            const columnKeyMap = this.options.columnKeyMap || {};
             const xKeyMap: Record<string, string> = {};
 
             if (this.presentationModifier) {
@@ -392,15 +392,15 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                             .getColumnVisibility(name) !== false :
                         true;
 
-                    if (!isVisible && !tableAxisMap[name]) {
+                    if (!isVisible && !columnKeyMap[name]) {
                         return false;
                     }
 
-                    if (tableAxisMap[name] === null) {
+                    if (columnKeyMap[name] === null) {
                         return false;
                     }
 
-                    if (tableAxisMap[name] === 'x') {
+                    if (columnKeyMap[name] === 'x') {
                         xKeyMap[name] = name;
                         return false;
                     }
@@ -610,7 +610,7 @@ namespace HighchartsComponent {
         chartOptions?: Options;
         chartClassName?: string;
         chartID?: string;
-        tableAxisMap?: Record<string, string | null>;
+        columnKeyMap?: Record<string, string | null>;
     }
 
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
