@@ -24,7 +24,6 @@
 
 import type Axis from '../../Core/Axis/Axis.js';
 import type Chart from '../../Core/Chart/Chart';
-import type DataTable from '../../Data/DataTable';
 import type Point from '../../Core/Series/Point';
 import type RangeModifier from '../../Data/Modifiers/RangeModifier';
 import type SharedState from '../../Dashboards/Components/SharedComponentState';
@@ -74,28 +73,6 @@ function getAxisMinMaxMap(chart: Chart): Array<{
         );
 }
 
-/**
- * Utility function that returns the first row index if the table has been modified by a range modifier
- * @param {DataTable} table the table to get the offset from
- */
-function getModifiedTableOffset(table: DataTable): number | undefined {
-    const modifier = table.getModifier();
-    if (modifier && modifier.options.modifier === 'Range') {
-        const { ranges } = (modifier as RangeModifier).options;
-
-        if (ranges) {
-            const minRange = ranges.reduce((minRange, currentRange): RangeModifier.RangeOptions => {
-                if (currentRange.minValue > minRange.minValue) {
-                    minRange = currentRange;
-                }
-                return minRange;
-
-            }, ranges[0]);
-
-            return table.getRowIndexBy(minRange.column, minRange.minValue);
-        }
-    }
-}
 
 /**
  * Finds a matching point in the chart
@@ -145,26 +122,33 @@ const configs: {
                         this.on('afterRender', (): void => {
                             if (chart && chart.series) {
                                 chart.series.forEach((series): void => {
-                                    // TODO: should ideally have a property on the series
-                                    // or offset index somewhere
-                                    // should try to match by values in table if indexes can't be used
                                     series.update({
                                         point: {
                                             events: {
                                                 // emit table cursor
                                                 mouseOver: function (): void {
 
+                                                    let offset = 0;
+                                                    const modifier = table.getModifier();
+                                                    if (modifier && 'getModifiedTableOffset' in modifier) {
+                                                        offset = (modifier as RangeModifier).getModifiedTableOffset(table);
+                                                    }
                                                     cursor.emitCursor(table, {
                                                         type: 'position',
-                                                        row: getModifiedTableOffset(table) + this.index,
+                                                        row: offset + this.index,
                                                         column: series.name,
                                                         state: 'point.mouseOver'
                                                     });
                                                 },
                                                 mouseOut: function (): void {
+                                                    let offset = 0;
+                                                    const modifier = table.getModifier();
+                                                    if (modifier && 'getModifiedTableOffset' in modifier) {
+                                                        offset = (modifier as RangeModifier).getModifiedTableOffset(table);
+                                                    }
                                                     cursor.emitCursor(table, {
                                                         type: 'position',
-                                                        row: getModifiedTableOffset(table) + this.index,
+                                                        row: offset + this.index,
                                                         column: series.name,
                                                         state: 'point.mouseOut'
                                                     });
@@ -396,6 +380,7 @@ const configs: {
                                     const [series] = chart.series.length > 1 && cursor.column ?
                                         chart.series.filter((series): boolean => series.name === cursor.column) :
                                         chart.series;
+
 
                                     if (series && series.visible && cursor.row !== void 0) {
                                         const point = series.points[cursor.row];
