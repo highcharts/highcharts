@@ -60,7 +60,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      *
      * @since   11.0.0
      *
-     * @type    {number|string|Highcharts.BorderRadiusOptionsObject}
+     * @type      {number|string|Highcharts.BorderRadiusOptionsObject}
      * @apioption plotOptions.pie.borderRadius
      */
 

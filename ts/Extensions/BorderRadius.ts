@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -24,8 +30,6 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
-
-
 const {
     addEvent,
     extend,
@@ -34,48 +38,18 @@ const {
     relativeLength
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 export interface BorderRadiusOptionsObject {
     radius: number|string;
     scope: 'point'|'stack';
     where?: 'end'|'all';
 }
 
-/**
- * Detailed options for border radius
- *
- * @interface Highcharts.BorderRadiusOptionsObject
- *//**
- * The border radius. A number signifies pixels. A percentage string, like for
- * example `50%`, signifies a relative size. For columns this is relative to the
- * column width, for pies it is relative to the radius and the inner radius.
- *
- * @name Highcharts.BorderRadiusOptionsObject#radius
- * @type {string|number}
- *//**
- * The scope of the rounding for column charts. In a stacked column chart, the
- * value `point` means each single point will get rounded corners. The value
- * `stack` means the rounding will apply to the full stack, so that only points
- * close to the top or bottom will receive rounding.
- *
- * @name Highcharts.BorderRadiusOptionsObject#scope
- * @validvalue ["point", "stack"]
- * @type {string}
- *//**
- * For column charts, where in the point or stack to apply rounding. The `end`
- * value means only those corners at the point value will be rounded, leaving
- * the corners at the base or threshold unrounded. This is the most intuitive
- * behaviour. The `all` value means also the base will be rounded.
- *
- * @name Highcharts.BorderRadiusOptionsObject#where
- * @validvalue ["all", "end"]
- * @type {string}
- * @default end
- */
-
-/**
- * Internal types
- * @private
- */
 declare module '../Core/Renderer/SVG/SVGAttributes' {
     interface SVGAttributes {
         borderRadius?: number|string;
@@ -93,6 +67,12 @@ declare module '../Core/Renderer/SVG/SymbolOptions' {
         brBoxY?: number;
     }
 }
+
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 const defaultBorderRadiusOptions: BorderRadiusOptionsObject = {
     radius: 0,
@@ -215,7 +195,14 @@ const applyBorderRadius = (
     }
 };
 
+/* *
+ *
+ *  Modifications
+ *
+ * */
+
 // Check if the module has already been imported
+// @todo implement as composition
 if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
 
     SVGElement.symbolCustomAttribs.push(
@@ -525,8 +512,54 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
     );
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 const BorderRadius = {
     optionsToObject
 };
 
 export default BorderRadius;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Detailed options for border radius
+ *
+ * @interface Highcharts.BorderRadiusOptionsObject
+ *//**
+ * The border radius. A number signifies pixels. A percentage string, like for
+ * example `50%`, signifies a relative size. For columns this is relative to the
+ * column width, for pies it is relative to the radius and the inner radius.
+ *
+ * @name Highcharts.BorderRadiusOptionsObject#radius
+ * @type {string|number}
+ *//**
+ * The scope of the rounding for column charts. In a stacked column chart, the
+ * value `point` means each single point will get rounded corners. The value
+ * `stack` means the rounding will apply to the full stack, so that only points
+ * close to the top or bottom will receive rounding.
+ *
+ * @name Highcharts.BorderRadiusOptionsObject#scope
+ * @validvalue ["point", "stack"]
+ * @type {string}
+ *//**
+ * For column charts, where in the point or stack to apply rounding. The `end`
+ * value means only those corners at the point value will be rounded, leaving
+ * the corners at the base or threshold unrounded. This is the most intuitive
+ * behaviour. The `all` value means also the base will be rounded.
+ *
+ * @name Highcharts.BorderRadiusOptionsObject#where
+ * @validvalue ["all", "end"]
+ * @type {string}
+ * @default end
+ */
+
+(''); // keeps doclets above in JS file

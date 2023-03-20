@@ -1162,7 +1162,7 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @function Highcharts.SVGRenderer#roundedRect
      *
-     * @param {SVGAttributes} attribs
+     * @param {Highcharts.SVGAttributes} attribs
      *      Attributes
      * @return {Highcharts.SVGElement}
      * The generated wrapper element.
