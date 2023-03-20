@@ -45,7 +45,7 @@ for (let i = 0; i < benchmarkSize; ++i) {
     data[i] = Math.random() * benchmarkSize;
 }
 
-const table = new DataTable({ y: [] });
+const table = new DataTable({ columns: { y: [] } });
 
 for (let i = 0; i < benchmarkSize; ++i) {
     table.setRow([Math.random() * benchmarkSize], i);
@@ -75,10 +75,12 @@ function addSeries(e) {
             type: e.target.innerText.toLowerCase()
         }),
         table = new DataTable({
-            y: [
-                2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41,
-                43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97
-            ]
+            columns: {
+                y: [
+                    2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41,
+                    43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97
+                ]
+            }
         });
 
     series.datas.setTable(table, true, true);

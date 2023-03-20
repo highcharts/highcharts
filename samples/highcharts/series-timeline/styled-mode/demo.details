@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Jakub Januchta
+ js_wrap: b
+...
