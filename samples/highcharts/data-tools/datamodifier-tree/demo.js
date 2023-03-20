@@ -4,9 +4,11 @@ const invertModifier = new Highcharts.DataModifier.types.Invert();
 const chainModifier = new Highcharts.DataModifier.types.Chain();
 
 const table = new Highcharts.DataTable({
-    name: ['Bakso', 'Dahipuri', 'Mochi', 'Imqaret', 'Mochi', 'Bakso', 'Empanada', 'Kebab', 'Rustico', 'Obatzda'],
-    x: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    y: [28, 30, 13, 9, 39, 2, 31, 11, 18, 15]
+    columns: {
+        name: ['Bakso', 'Dahipuri', 'Mochi', 'Imqaret', 'Mochi', 'Bakso', 'Empanada', 'Kebab', 'Rustico', 'Obatzda'],
+        x: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        y: [28, 30, 13, 9, 39, 2, 31, 11, 18, 15]
+    }
 });
 
 // connect to "Run Modifiers" button

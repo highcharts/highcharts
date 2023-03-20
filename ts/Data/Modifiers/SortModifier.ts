@@ -157,9 +157,10 @@ class SortModifier extends DataModifier {
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
+                        .modifyTable(new DataTable({
+                            columns: table
+                                .getColumns([orderByColumn, orderInColumn])
+                        }))
                         .modified
                         .getColumn(orderInColumn)
                 );
@@ -213,9 +214,10 @@ class SortModifier extends DataModifier {
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
+                        .modifyTable(new DataTable({
+                            columns: table
+                                .getColumns([orderByColumn, orderInColumn])
+                        }))
                         .modified
                         .getColumn(orderInColumn)
                 );
@@ -268,9 +270,10 @@ class SortModifier extends DataModifier {
             table.modified.setColumn(
                 orderInColumn,
                 modifier
-                    .modifyTable(new DataTable(
-                        table.getColumns([orderByColumn, orderInColumn])
-                    ))
+                    .modifyTable(new DataTable({
+                        columns: table
+                            .getColumns([orderByColumn, orderInColumn])
+                    }))
                     .modified
                     .getColumn(orderInColumn)
             );

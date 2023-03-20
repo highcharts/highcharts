@@ -1,6 +1,6 @@
 const container = document.getElementById('container');
 const escapeStringForHTML = Highcharts.A11yHTMLUtilities.escapeStringForHTML;
-const table = new Highcharts.DataTable({ y: [7, 42] });
+const table = new Highcharts.DataTable({ columns: { y: [7, 42] } });
 
 // Render Simple HTML Table
 
