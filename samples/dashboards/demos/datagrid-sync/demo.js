@@ -1,11 +1,11 @@
-const { CSVStore } = Dashboards;
+const { CSVConnector } = Dashboards;
 const csvData = document.getElementById('csv').innerText;
 
-const store = new CSVStore(void 0, {
+const connector = new CSVConnector(void 0, {
     csv: csvData,
     firstRowAsNames: true
 });
-store.load();
+connector.load();
 
 const chartOptions = {
     xAxis: {
@@ -29,7 +29,7 @@ const chartOptions = {
 };
 
 Dashboards.board('container', {
-    store: store,
+    connector,
     gui: {
         layouts: [{
             id: 'layout-1',
@@ -47,17 +47,17 @@ Dashboards.board('container', {
     components: [
         {
             cell: 'dashboard-col-0',
-            store,
+            connector,
             type: 'Highcharts',
             sync: {
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'allowStoreUpdate: true',
+                text: 'allowConnectorUpdate: true',
                 style: {
                     textAlign: 'center'
                 }
@@ -65,27 +65,27 @@ Dashboards.board('container', {
             chartOptions
         }, {
             cell: 'dashboard-col-1',
-            store,
+            connector,
             type: 'Highcharts',
             sync: {
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'allowStoreUpdate: false',
+                text: 'allowConnectorUpdate: false',
                 style: {
                     textAlign: 'center'
                 }
             },
-            allowStoreUpdate: false,
+            allowConnectorUpdate: false,
             chartOptions
         }, {
             cell: 'dashboard-col-2',
             type: 'DataGrid',
-            store,
+            connector,
             editable: true,
             sync: {
                 tooltip: true

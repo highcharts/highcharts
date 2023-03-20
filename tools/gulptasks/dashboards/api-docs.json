@@ -7,12 +7,17 @@
         "../../../ts/Dashboards/Board.ts",
         "../../../ts/Data/DataTable.ts",
         "../../../ts/Extensions/DataGridPlugin.ts",
-        "../../../ts/Extensions/HighchartsPlugin.ts"
+        "../../../ts/Extensions/HighchartsPlugin.ts",
+        "../../../ts/Dashboards/Layout/Layout.ts",
+        "../../../ts/Dashboards/Layout/Row.ts",
+        "../../../ts/Dashboards/Layout/Cell.ts",
     ],
+    "customCss": "api-docs/typedoc/assets/custom.css",
     "entryPointStrategy": "expand",
     "excludeInternal": true,
     "hideGenerator": true,
     "name": "Highcharts Dashboards",
     "readme": "../../../docs/dashboards/your-first-dashboard.md",
-    "out": "../../../build/api/dashboards/typedoc/"
+    "out": "../../../build/api/dashboards/typedoc/",
+    "visibilityFilters": {}
 }

@@ -23,7 +23,7 @@ import type NavigationBindingsOptionsObject from
     '../../Extensions/Annotations/NavigationBindingsOptions';
 import type Serializable from '../Serializable';
 
-import type DataStore from '../../Data/Stores/DataStore';
+import type DataConnector from '../../Data/Connectors/DataConnector';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
@@ -104,7 +104,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     public parentElement: HTMLElement;
     public parentCell?: Cell;
-    public store?: Component.StoreTypes; // the attached store
+    public connector?: Component.ConnectorTypes; // the attached connector
     protected dimensions: { width: number | null; height: number | null };
     public element: HTMLElement;
     public titleElement?: HTMLElement;
@@ -131,7 +131,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     protected syncHandlers: Sync.OptionsRecord;
 
-    // DataModifier that is applied on top of modifiers set on the DataStore.
+    // DataModifier that is applied on top of modifiers set on the DataConnector
     public presentationModifier?: DataModifier;
     // The table being presented, either a result of the above or a way to
     // modify the table via events.
@@ -182,7 +182,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
 
         this.type = this.options.type;
-        this.store = this.options.store;
+        this.connector = this.options.connector;
         this.hasLoaded = false;
         this.shouldRedraw = true;
         this.editableOptions =
@@ -291,32 +291,34 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     private setupTableListeners(table: DataTable): void {
-        [
-            'afterSetRows',
-            'afterDeleteRows',
-            'afterSetColumns',
-            'afterDeleteColumns',
-            'afterSetCell'
-        ].forEach((event: any): void => {
-            if (this.store && table) {
-                this.tableEvents.push((table)
-                    .on(event, (e: any): void => {
-                        clearInterval(this.tableEventTimeout);
-                        this.tableEventTimeout = setTimeout((): void => {
-                            this.emit({
-                                ...e,
-                                type: 'tableChanged'
-                            });
-                            this.tableEventTimeout = void 0;
-                        }, 0);
-                    }));
+        const connector = this.connector;
+
+        if (connector) {
+            if (table) {
+                [
+                    'afterSetRows',
+                    'afterDeleteRows',
+                    'afterSetColumns',
+                    'afterDeleteColumns',
+                    'afterSetCell'
+                ].forEach((event: any): void => {
+                    this.tableEvents.push((table)
+                        .on(event, (e: any): void => {
+                            clearInterval(this.tableEventTimeout);
+                            this.tableEventTimeout = setTimeout((): void => {
+                                this.emit({
+                                    ...e,
+                                    type: 'tableChanged'
+                                });
+                                this.tableEventTimeout = void 0;
+                            }, 0);
+                        }));
+                });
             }
-        });
 
 
-        if (this.store) {
             const component = this;
-            this.tableEvents.push(this.store.on('afterLoad', (): void => {
+            this.tableEvents.push(connector.on('afterLoad', (): void => {
                 this.emit({
                     target: component,
                     type: 'tableChanged'
@@ -326,14 +328,17 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     }
 
     private clearTableListeners(): void {
-        if (this.tableEvents.length) {
-            this.tableEvents.forEach(
+        const connector = this.connector,
+            tableEvents = this.tableEvents;
+
+        if (tableEvents.length) {
+            tableEvents.forEach(
                 (removeEventCallback): void => removeEventCallback()
             );
         }
 
-        if (this.store) {
-            this.tableEvents.push(this.store.table.on(
+        if (connector) {
+            tableEvents.push(connector.table.on(
                 'afterSetModifier',
                 (e): void => {
                     if (e.type === 'afterSetModifier') {
@@ -347,7 +352,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         }
     }
 
-    public setStore(store: Component.StoreTypes | undefined): this {
+    public setConnector(connector: Component.ConnectorTypes | undefined): this {
         // Clean up old event listeners
         while (this.tableEvents.length) {
             const eventCallback = this.tableEvents.pop();
@@ -356,18 +361,19 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             }
         }
 
-        this.store = store;
-        if (this.store) {
+        this.connector = connector;
+
+        if (connector) {
             // Set up event listeners
             this.clearTableListeners();
-            this.setupTableListeners(this.store.table);
+            this.setupTableListeners(connector.table);
 
             // re-setup if modifier changes
-            this.store.table.on(
+            connector.table.on(
                 'setModifier',
                 (): void => this.clearTableListeners()
             );
-            this.store.table.on(
+            connector.table.on(
                 'afterSetModifier',
                 (e: DataTable.SetModifierEvent): void => {
                     if (e.type === 'afterSetModifier' && e.modified) {
@@ -378,9 +384,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
 
             // Add the component to a group based on the
-            // store table id by default
+            // connector table id by default
             // TODO: make this configurable
-            const tableID = this.store.table.id;
+            const tableID = connector.table.id;
 
             if (!ComponentGroup.getComponentGroup(tableID)) {
                 ComponentGroup.addComponentGroup(new ComponentGroup(tableID));
@@ -393,7 +399,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             }
         }
 
-        fireEvent(this, 'storeAttached', { store });
+        fireEvent(this, 'connectorAttached', { connector });
         return this;
     }
 
@@ -646,9 +652,9 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      */
     public load(): this {
 
-        // Set up the store on inital load if it has not been done
-        if (!this.hasLoaded && this.store) {
-            this.setStore(this.store);
+        // Set up the connector on inital load if it has not been done
+        if (!this.hasLoaded && this.connector) {
+            this.setConnector(this.connector);
         }
 
         this.setTitle(this.options.title);
@@ -814,7 +820,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
         const json: Component.JSON = {
             $class: Component.getName(this.constructor),
-            // store: this.store ? this.store.toJSON() : void 0,
+            // connector: this.connector ? this.connector.toJSON() : void 0,
             options: {
                 parentElement: this.parentElement.id,
                 dimensions,
@@ -842,7 +848,7 @@ namespace Component {
     * */
 
     export interface JSON extends Serializable.JSON<string> {
-        // store?: DataStore.ClassJSON;
+        // connector?: DataConnector.ClassJSON;
         options: ComponentOptionsJSON;
     }
 
@@ -914,7 +920,7 @@ namespace Component {
 
     // JSON compatible options for export
     export interface ComponentOptionsJSON extends JSON.Object {
-        // store?: DataStore.ClassJSON; // store id
+        // connector?: DataConnector.ClassJSON; // connector id
         parentElement: string; // ID?
         style?: {};
         className?: string;
@@ -922,10 +928,10 @@ namespace Component {
         id: string;
     }
 
-    export type StoreTypes = DataStore;
+    export type ConnectorTypes = DataConnector;
 
     export interface EditableOptions {
-        store?: StoreTypes;
+        connector?: ConnectorTypes;
         id?: string;
         style?: CSSObject;
         title: TextOptionsType;
@@ -1017,7 +1023,7 @@ namespace Component {
     /**
      * Extracts the name from a given component class.
      *
-     * @param {DataStore} component
+     * @param {DataConnector} component
      * Component class to extract the name from.
      *
      * @return {string}

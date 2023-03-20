@@ -26,7 +26,7 @@ import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
 
 import DataTable from '../../Data/DataTable.js';
-import GoogleSheetsStore from '../../Data/Stores/GoogleSheetsStore.js'
+import GoogleSheetsConnector from '../../Data/Connectors/GoogleSheetsConnector.js'
 
 
 const {
@@ -1726,7 +1726,7 @@ console.log('asdasdas');
     public parseGoogleSpreadsheet(): boolean {
 console.log('aaaa');
         //const result = new DataTable();
-        //const store = new GoogleSheetsStore(result, this.options);
+        //const connector = new GoogleSheetsConnector(result, this.options);
 
         /*var data = this,
             options = this.options,

@@ -607,7 +607,7 @@ class EditMode {
     }
 
     private createRwdMenu(): void {
-        const rwdBreakingPoints = this.board.options.respoBreakpoints;
+        const rwdBreakingPoints = this.board.options.responsiveBreakpoints;
         const toolsContainer = this.tools.container;
         const options = this.options;
         const rwdIcons =
