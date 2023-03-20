@@ -37,6 +37,7 @@ import Bindings from '../Actions/Bindings.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import DataTable from '../../Data/DataTable.js';
+import CSVConnector from '../../Data/Connectors/CSVConnector.js';
 
 const {
     createElement,
@@ -244,7 +245,7 @@ class Sidebar {
                     return sidebar.onDropNewComponent(dropContext, {
                         cell: '',
                         type: 'DataGrid',
-                        store: new Dashboards.CSVStore(new DataTable(columns))
+                        connector: new CSVConnector(new DataTable(columns))
                     } as any); // necessary for now
                 }
             }

@@ -21,6 +21,7 @@ import type {
 import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type KPIComponent from '../Components/KPIComponent';
+import type DataConnector from '../../Data/Connectors/DataConnector';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
 import type Row from '../Layout/Row';

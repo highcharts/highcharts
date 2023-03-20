@@ -32,7 +32,7 @@ import type NavigationBindingsOptionsObject from
     '../../Extensions/Annotations/NavigationBindingsOptions';
 import type Serializable from '../Serializable';
 
-import type DataStore from '../../Data/Stores/DataStore';
+import type DataConnector from '../../Data/Connectors/DataConnector';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
@@ -164,7 +164,7 @@ abstract class Component {
             this.attachCellListeneres();
         }
 
-        this.store = this.options.store;
+        this.connector = this.options.connector;
         this.hasLoaded = false;
         this.shouldRedraw = true;
         this.editableOptions =
@@ -199,7 +199,7 @@ abstract class Component {
 
     public parentElement: HTMLElement;
     public parentCell?: Cell;
-    public store?: Component.StoreTypes; // the attached store
+    public connector?: Component.ConnectorTypes; // the attached store
     protected dimensions: { width: number | null; height: number | null };
     public element: HTMLElement;
     public titleElement?: HTMLElement;
@@ -336,32 +336,34 @@ abstract class Component {
     }
 
     private setupTableListeners(table: DataTable): void {
-        [
-            'afterSetRows',
-            'afterDeleteRows',
-            'afterSetColumns',
-            'afterDeleteColumns',
-            'afterSetCell'
-        ].forEach((event: any): void => {
-            if (this.store && table) {
-                this.tableEvents.push((table)
-                    .on(event, (e: any): void => {
-                        clearInterval(this.tableEventTimeout);
-                        this.tableEventTimeout = setTimeout((): void => {
-                            this.emit({
-                                ...e,
-                                type: 'tableChanged'
-                            });
-                            this.tableEventTimeout = void 0;
-                        }, 0);
-                    }));
+        const connector = this.connector;
+
+        if (connector) {
+            if (table) {
+                [
+                    'afterSetRows',
+                    'afterDeleteRows',
+                    'afterSetColumns',
+                    'afterDeleteColumns',
+                    'afterSetCell'
+                ].forEach((event: any): void => {
+                    this.tableEvents.push((table)
+                        .on(event, (e: any): void => {
+                            clearInterval(this.tableEventTimeout);
+                            this.tableEventTimeout = setTimeout((): void => {
+                                this.emit({
+                                    ...e,
+                                    type: 'tableChanged'
+                                });
+                                this.tableEventTimeout = void 0;
+                            }, 0);
+                        }));
+                });
             }
-        });
 
 
-        if (this.store) {
             const component = this;
-            this.tableEvents.push(this.store.on('afterLoad', (): void => {
+            this.tableEvents.push(connector.on('afterLoad', (): void => {
                 this.emit({
                     target: component,
                     type: 'tableChanged'
@@ -371,14 +373,17 @@ abstract class Component {
     }
 
     private clearTableListeners(): void {
-        if (this.tableEvents.length) {
-            this.tableEvents.forEach(
+        const connector = this.connector,
+            tableEvents = this.tableEvents;
+
+        if (tableEvents.length) {
+            tableEvents.forEach(
                 (removeEventCallback): void => removeEventCallback()
             );
         }
 
-        if (this.store) {
-            this.tableEvents.push(this.store.table.on(
+        if (connector) {
+            tableEvents.push(connector.table.on(
                 'afterSetModifier',
                 (e): void => {
                     if (e.type === 'afterSetModifier') {
@@ -392,7 +397,7 @@ abstract class Component {
         }
     }
 
-    public setStore(store: Component.StoreTypes | undefined): this {
+    public setConnector(connector: Component.ConnectorTypes | undefined): this {
         // Clean up old event listeners
         while (this.tableEvents.length) {
             const eventCallback = this.tableEvents.pop();
@@ -401,18 +406,19 @@ abstract class Component {
             }
         }
 
-        this.store = store;
-        if (this.store) {
+        this.connector = connector;
+
+        if (connector) {
             // Set up event listeners
             this.clearTableListeners();
-            this.setupTableListeners(this.store.table);
+            this.setupTableListeners(connector.table);
 
             // re-setup if modifier changes
-            this.store.table.on(
+            connector.table.on(
                 'setModifier',
                 (): void => this.clearTableListeners()
             );
-            this.store.table.on(
+            connector.table.on(
                 'afterSetModifier',
                 (e: DataTable.SetModifierEvent): void => {
                     if (e.type === 'afterSetModifier' && e.modified) {
@@ -423,9 +429,9 @@ abstract class Component {
 
 
             // Add the component to a group based on the
-            // store table id by default
+            // connector table id by default
             // TODO: make this configurable
-            const tableID = this.store.table.id;
+            const tableID = connector.table.id;
 
             if (!ComponentGroup.getComponentGroup(tableID)) {
                 ComponentGroup.addComponentGroup(new ComponentGroup(tableID));
@@ -438,7 +444,7 @@ abstract class Component {
             }
         }
 
-        fireEvent(this, 'storeAttached', { store });
+        fireEvent(this, 'connectorAttached', { connector });
         return this;
     }
 
@@ -691,9 +697,9 @@ abstract class Component {
      */
     public load(): this {
 
-        // Set up the store on inital load if it has not been done
-        if (!this.hasLoaded && this.store) {
-            this.setStore(this.store);
+        // Set up the connector on inital load if it has not been done
+        if (!this.hasLoaded && this.connector) {
+            this.setConnector(this.connector);
         }
 
         this.setTitle(this.options.title);
@@ -859,7 +865,7 @@ abstract class Component {
 
         const json: Component.JSON = {
             $class: ComponentRegistry.getName(this.constructor),
-            // store: this.store ? this.store.toJSON() : void 0,
+            // connector: this.connector ? this.connector.toJSON() : void 0,
             options: {
                 cell: this.options.cell,
                 parentElement: this.parentElement.id,
@@ -899,7 +905,7 @@ namespace Component {
     * */
 
     export interface JSON extends Serializable.JSON<string> {
-        // store?: DataStore.ClassJSON;
+        // connector?: DataConnector.ClassJSON;
         options: ComponentOptionsJSON;
     }
 
@@ -973,6 +979,7 @@ namespace Component {
 
     // JSON compatible options for export
     export interface ComponentOptionsJSON extends JSON.Object {
+        // connector?: DataConnector.ClassJSON; // connector id
         className?: string;
         cell?: string;
         editableOptions?: JSON.Array<string>;
@@ -986,10 +993,10 @@ namespace Component {
         type: keyof ComponentTypeRegistry;
     }
 
-    export type StoreTypes = DataStore;
+    export type ConnectorTypes = DataConnector;
 
     export interface EditableOptions {
-        store?: StoreTypes;
+        connector?: ConnectorTypes;
         id?: string;
         style?: CSSObject;
         title: TextOptionsType;
@@ -1032,6 +1039,7 @@ namespace Component {
     * */
 
     /**
+     * @param {DataConnector} component
      * Adds a component instance to the registry
      * @param {Component} component
      * The component to add

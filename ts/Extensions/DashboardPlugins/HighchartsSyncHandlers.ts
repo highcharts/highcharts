@@ -170,7 +170,7 @@ const configs: {
                 if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const component = this;
                     return addEvent(component.chart, 'redraw', function (): void {
-                        const { chart, store, id, activeGroup } = component;
+                        const { chart, connector: store, id, activeGroup } = component;
                         if (
                             store && // has a store
                             chart &&
@@ -199,7 +199,7 @@ const configs: {
             'panEmitter',
             function (this: ComponentType): Function | void {
                 if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
-                    const { store, chart, id } = this;
+                    const { connector: store, chart, id } = this;
                     if (store && chart) {
                         const ticks: number[] = [];
                         return addEvent(chart, 'pan', (): void => {
@@ -238,21 +238,21 @@ const configs: {
                 if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
                     const {
                         chart,
-                        store,
+                        connector: store,
                         id,
                         options: {
-                            tableAxisMap
+                            columnKeyMap
                         }
                     } = this;
 
                     const getX = (): string | undefined => {
-                        if (tableAxisMap) {
-                            const keys = Object.keys(tableAxisMap);
+                        if (columnKeyMap) {
+                            const keys = Object.keys(columnKeyMap);
 
                             let i = 0;
                             while (i < keys.length) {
                                 const key = keys[i];
-                                if (tableAxisMap[key] === 'x') {
+                                if (columnKeyMap[key] === 'x') {
                                     return key;
                                 }
 
@@ -311,7 +311,7 @@ const configs: {
             'seriesVisibilityHandler',
             'afterColumnVisibilityChange',
             function (this: HighchartsComponent, e: SharedState.ColumnVisibilityEvent): void {
-                const { chart, store } = this;
+                const { chart, connector: store } = this;
                 if (store && chart) {
                     chart.series.forEach((series): void => {
                         const seriesID = series.options.id;

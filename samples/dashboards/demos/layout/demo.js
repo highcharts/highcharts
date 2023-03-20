@@ -76,7 +76,6 @@ let board = new Dashboards.Board('container', {
         }
     },
     gui: {
-        enabled: true,
         layouts: [{
             id: 'layout-1',
             rowClassName: 'custom-row',
