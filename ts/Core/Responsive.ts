@@ -116,7 +116,7 @@ namespace Responsive {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -133,9 +133,7 @@ namespace Responsive {
         ChartClass: T
     ): (T&typeof Composition) {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             extend(ChartClass.prototype, Additions.prototype as Composition);
         }
 
