@@ -2,7 +2,6 @@
     --color-background: #fff;
     --color-comment: #080;
     --color-foreground: #000;
-    --color-inactive: #888;
     --color-property: #088;
     --color-tbody-background: #eee;
     --color-thead-background: #ddd;
@@ -30,8 +29,7 @@ select {
     vertical-align: bottom;
 }
 
-dd > input[type="checkbox"] + div > h4::before {
-    color: var(--color-inactive);
+dd > input[type="checkbox"] + div > h4 label::before {
     content: "▷ ";
 }
 
@@ -39,8 +37,7 @@ dd > input[type="checkbox"] + div > pre {
     display: none;
 }
 
-dd > input[type="checkbox"]:checked + div > h4::before {
-    color: var(--color-inactive);
+dd > input[type="checkbox"]:checked + div > h4 label::before {
     content: "▽ ";
 }
 
