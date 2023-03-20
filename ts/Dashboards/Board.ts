@@ -705,8 +705,6 @@ namespace Board {
             },
             layouts: []
         },
-        componentOptions: {
-        },
         components: [],
         responsiveBreakpoints: {
             small: 576,

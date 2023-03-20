@@ -30,7 +30,6 @@ const layouts = [{
 
 const components = [{
     cell: 'dashboard-col-0',
-    isResizable: true,
     type: 'chart',
     chartOptions: {
         type: 'pie',

@@ -457,7 +457,6 @@ const components = state => [
     },
     {
         cell: "columnchart",
-        isResizable: true,
         type: "Highcharts",
         connector,
         presentationModifier: new SortModifier({
@@ -499,7 +498,6 @@ const components = state => [
     },
     {
         cell: "piechart",
-        isResizable: true,
         type: "Highcharts",
         connector,
         presentationModifier: new GroupModifier({
@@ -534,7 +532,6 @@ const components = state => [
     },
     {
         cell: "totals",
-        isResizable: true,
         type: "Highcharts",
         connector,
         presentationModifier: new GroupModifier({
