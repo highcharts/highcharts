@@ -28,10 +28,10 @@ table tbody td {
     background-color: #eee;
 }
 
-tr.Focus td {
+tr.highlight td {
     background-color: #def;
 }
 
-tr td.Focus {
+tr td.highlight {
     background-color: #bdf;
 }

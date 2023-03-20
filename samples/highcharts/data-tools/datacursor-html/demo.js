@@ -90,9 +90,9 @@ function synchronizeCursor(e) {
     for (const tr of tbody.querySelectorAll('tr')) {
         // We search for the correct HTML row
         if (tr.dataset.rank === rank) {
-            tr.classList.add('Focus');
+            tr.classList.add('highlight');
         } else {
-            tr.classList.remove('Focus');
+            tr.classList.remove('highlight');
         }
         for (const td of tr.querySelectorAll('td')) {
             // We search for the correct HTML cell
@@ -100,9 +100,9 @@ function synchronizeCursor(e) {
                 tr.dataset.rank === rank &&
                 td.dataset.column === column
             ) {
-                td.classList.add('Focus');
+                td.classList.add('highlight');
             } else {
-                td.classList.remove('Focus');
+                td.classList.remove('highlight');
             }
         }
     }
