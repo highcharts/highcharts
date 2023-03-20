@@ -111,7 +111,7 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Heatmap displaying user activity on a website'
+        text: 'Interpolated heatmap image displaying user activity on a website'
     },
     yAxis: {
         title: {
