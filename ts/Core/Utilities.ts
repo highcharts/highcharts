@@ -790,6 +790,7 @@ function createElement(
 /**
  * Extend a prototyped class by new members.
  *
+ * @deprecated
  * @function Highcharts.extendClass<T>
  *
  * @param {Highcharts.Class<T>} parent
@@ -891,6 +892,10 @@ function wrap<T, K extends FunctionNamesOf<T>>(
     func: Utilities.WrapProceedFunction<T[K]&ArrowFunction>
 ): void {
     const proceed = obj[method] as T[K]&ArrowFunction;
+
+    if (typeof proceed !== 'function') {
+        throw new Error(`WrapError: ${method} is not a function`);
+    }
 
     obj[method] = function (this: T): ReturnType<typeof func> {
         const outerArgs = arguments,
