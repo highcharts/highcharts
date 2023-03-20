@@ -467,18 +467,7 @@ class HeatmapSeries extends ScatterSeries {
                         chart.colorAxis &&
                         chart.colorAxis[0]
                     ),
-                    hasAlpha = colorAxis && colorAxis.stops.reduce(
-                        (found: boolean, stop): boolean => (
-                            (
-                                !found &&
-                                stop.color &&
-                                stop.color.rgba[3] < 1.0
-                            ) ||
-                            found
-                        ),
-                        false
-                    ),
-                    ctx = heatmap.getContext({ alpha: hasAlpha }),
+                    ctx = heatmap.getContext({ alpha: false }),
                     canvas = heatmap.canvas;
 
                 if (canvas && ctx && colorAxis) {
