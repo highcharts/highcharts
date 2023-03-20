@@ -347,4 +347,14 @@ QUnit.test('Order of series and indicators, #15892.', function (assert) {
         `Indicator linked to another indicator should be recalculated after
         adding a point to the main series #17190.`
     );
+
+    chart.series[1].addPoint(5);
+    chart.series[1].addPoint(10);
+
+    assert.strictEqual(
+        chart.series[2].points.length,
+        6,
+        `After adding two points to the main series, indicator linked to another
+        indicator should also update its data #18689.`
+    );
 });
