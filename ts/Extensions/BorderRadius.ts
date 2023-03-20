@@ -471,12 +471,6 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                         const flip = (point.negative ? -1 : 1) *
                             (reversed ? -1 : 1) === -1;
 
-                        // Get the radius
-                        const r = Math.min(
-                            relativeLength(borderRadius.radius, width),
-                            width / 2
-                        ) || 0;
-
                         // Handle the where option
                         let where = borderRadius.where;
 
@@ -496,6 +490,14 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                         if (!where) {
                             where = 'end';
                         }
+
+                        // Get the radius
+                        const r = Math.min(
+                            relativeLength(borderRadius.radius, width),
+                            width / 2,
+                            // Cap to the height, but not if where is `end`
+                            where === 'all' ? height / 2 : Infinity
+                        ) || 0;
 
                         // If the `where` option is 'end', cut off the
                         // rectangles by making the border-radius box one r
