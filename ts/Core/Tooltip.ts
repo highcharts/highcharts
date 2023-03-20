@@ -628,23 +628,24 @@ class Tooltip {
             // Don't use h if chart isn't inverted (#7242) ???
             h = (chart.inverted && (point as any).h) || 0, // #4117 ???
             outside = this.outside,
+            { body, documentElement } = doc,
             outerWidth = outside ?
                 // substract distance to prevent scrollbars
                 Math.max(
-                    doc.body.scrollWidth,
-                    doc.documentElement.scrollWidth,
-                    doc.body.offsetWidth,
-                    doc.documentElement.offsetWidth,
-                    doc.documentElement.clientWidth
+                    body.scrollWidth,
+                    documentElement.scrollWidth,
+                    body.offsetWidth,
+                    documentElement.offsetWidth,
+                    documentElement.clientWidth
                 ) - 2 * distance :
                 chart.chartWidth,
             outerHeight = outside ?
                 Math.max(
-                    doc.body.scrollHeight,
-                    doc.documentElement.scrollHeight,
-                    doc.body.offsetHeight,
-                    doc.documentElement.offsetHeight,
-                    doc.documentElement.clientHeight
+                    body.scrollHeight,
+                    documentElement.scrollHeight,
+                    body.offsetHeight,
+                    documentElement.offsetHeight,
+                    documentElement.clientHeight
                 ) :
                 chart.chartHeight,
             chartPosition = chart.pointer.getChartPosition(),
