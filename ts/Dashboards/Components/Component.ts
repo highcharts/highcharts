@@ -907,6 +907,7 @@ namespace Component {
 
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
+    /** @internal */
     export interface ComponentOptions extends EditableOptions {
         board?: Board;
         parentCell?: Cell;
