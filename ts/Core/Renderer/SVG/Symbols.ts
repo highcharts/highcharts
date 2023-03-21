@@ -146,7 +146,7 @@ function callout(
         anchorX = options && options.anchorX,
         anchorY = options && options.anchorY || 0;
 
-    const path = roundedRectOld(x, y, w, h, { r });
+    const path = roundedRect(x, y, w, h, { r });
 
     if (!isNumber(anchorX)) {
         return path;
@@ -315,27 +315,6 @@ function roundedRect(
     ];
 }
 
-function roundedRectOld(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    options?: SymbolOptions
-): SVGPath {
-    const r = options?.r || 0;
-    return [
-        ['M', x + r, y],
-        ['L', x + w - r, y], // top side
-        ['C', x + w, y, x + w, y, x + w, y + r], // top-right corner
-        ['L', x + w, y + h - r], // right side
-        ['C', x + w, y + h, x + w, y + h, x + w - r, y + h], // bottom-rgt
-        ['L', x + r, y + h], // bottom side
-        ['C', x, y + h, x, y + h, x, y + h - r], // bottom-left corner
-        ['L', x, y + r], // left side
-        ['C', x, y, x, y, x + r, y] // top-left corner
-    ];
-}
-
 function triangle(
     x: number,
     y: number,
@@ -378,7 +357,6 @@ declare module './SymbolType' {
         diamond: typeof diamond;
         rect: typeof rect;
         roundedRect: typeof roundedRect;
-        roundedRectOld: typeof roundedRect;
         square: typeof rect;
         triangle: typeof triangle;
         'triangle-down': typeof triangleDown;
@@ -392,7 +370,6 @@ const Symbols: SymbolTypeRegistry = {
     diamond,
     rect,
     roundedRect,
-    roundedRectOld,
     square: rect,
     triangle,
     'triangle-down': triangleDown
