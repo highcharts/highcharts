@@ -466,13 +466,13 @@ namespace ChainModifier {
  *
  * */
 
-DataModifier.addModifier(ChainModifier);
-
 declare module './ModifierType' {
     interface ModifierTypeRegistry {
         Chain: typeof ChainModifier;
     }
 }
+
+DataModifier.registerModifier(ChainModifier);
 
 /* *
  *

@@ -405,6 +405,20 @@ namespace SortModifier {
 
 /* *
  *
+ *  Registry
+ *
+ * */
+
+declare module './ModifierType' {
+    interface ModifierTypeRegistry {
+        Sort: typeof SortModifier;
+    }
+}
+
+DataModifier.registerModifier(SortModifier);
+
+/* *
+ *
  *  Default Export
  *
  * */

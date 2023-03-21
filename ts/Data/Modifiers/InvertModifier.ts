@@ -400,13 +400,13 @@ namespace InvertModifier {
  *
  * */
 
-DataModifier.addModifier(InvertModifier);
-
 declare module './ModifierType' {
     interface ModifierTypeRegistry {
         Invert: typeof InvertModifier;
     }
 }
+
+DataModifier.registerModifier(InvertModifier);
 
 /* *
  *
