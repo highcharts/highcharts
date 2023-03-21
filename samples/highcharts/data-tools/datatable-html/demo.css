@@ -6,20 +6,26 @@ form {
 fieldset {
     flex-grow: 1;
     text-align: center;
+    border: 1px solid silver;
 }
 
 fieldset:last-child {
     flex-grow: 0;
-    text-align: left;
 }
 
 input[type="text"] {
     vertical-align: top;
-    width: 80%;
+    width: 50%;
 }
 
 table {
     min-width: 50%;
+}
+
+@media screen and (max-width: 800px) {
+    form {
+        flex-direction: column;
+    }
 }
 
 table td,
