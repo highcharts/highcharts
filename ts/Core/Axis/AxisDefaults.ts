@@ -1022,9 +1022,6 @@ namespace AxisDefaults {
              * The x position offset of all labels relative to the tick
              * positions on the axis. Overrides the `labels.distance` option.
              *
-             * @sample {highcharts} highcharts/xaxis/labels-x/
-             *         X axis labels placed on grid lines
-             *
              * @type      {number}
              * @apioption xAxis.labels.x
              */

@@ -531,7 +531,12 @@ export default BorderRadius;
  * */
 
 /**
- * Detailed options for border radius
+ * Detailed options for border radius.
+ *
+ * @sample  {highcharts} highcharts/plotoptions/column-borderradius/
+ *          Rounded columns
+ * @sample  highcharts/plotoptions/series-border-radius
+ *          Column and pie with rounded border
  *
  * @interface Highcharts.BorderRadiusOptionsObject
  *//**
