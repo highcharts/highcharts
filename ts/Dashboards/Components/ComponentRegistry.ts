@@ -1,13 +1,46 @@
+/* *
+ *
+ *  (c) 2009 - 2023 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+
 import type { ComponentType, ComponentTypeRegistry } from './ComponentType';
+
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
-class ComponentRegistry {
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace ComponentRegistry {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
     /**
      * Regular expression to extract the  name (group 1) from the
      * stringified class type.
      */
-    public nameRegExp = /^(?:class|function)\s(\w*?)(?:Component)?\W/;
+    const nameRegExp = /^(?:class|function)\s(\w*?)(?:Component)?\W/;
 
     /**
      *
@@ -15,30 +48,30 @@ class ComponentRegistry {
      * @todo
      *
      */
-    public registry = {} as ComponentTypeRegistry;
+    export const types = {} as ComponentTypeRegistry;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Method used to register new component classes.
      */
-    public registerComponent<T extends keyof ComponentTypeRegistry>(
+    export function registerComponent<T extends keyof ComponentTypeRegistry>(
         ComponentClass: ComponentTypeRegistry[T]
     ): boolean {
-        const name = this.getName(ComponentClass) as T;
+        const name = getName(ComponentClass) as T;
 
         if (
             typeof name === 'undefined' ||
-            this.registry[name]
+            types[name]
         ) {
             return false;
         }
 
-        this.registry[name] = ComponentClass;
+        types[name] = ComponentClass;
 
         return true;
     }
@@ -46,15 +79,15 @@ class ComponentRegistry {
     /**
      *
      */
-    public getAllComponentNames(): Array<string> {
-        return Object.keys(this.registry);
+    export function getAllComponentNames(): Array<string> {
+        return Object.keys(types);
     }
 
     /**
      *
      */
-    public getAllComponents(): ComponentTypeRegistry {
-        return merge(this.registry);
+    export function getAllComponents(): ComponentTypeRegistry {
+        return merge(types);
     }
 
     /**
@@ -67,20 +100,27 @@ class ComponentRegistry {
      * Component name, if the extraction was successful, otherwise an empty
      * string.
      */
-    public getName(
+    export function getName(
         component: (NewableFunction | ComponentType)
     ): string {
         return (
-            component.toString().match(this.nameRegExp) ||
+            component.toString().match(nameRegExp) ||
             ['', '']
         )[1];
     }
 
-    public getComponent<T extends keyof ComponentTypeRegistry>(
+    export function getComponent<T extends keyof ComponentTypeRegistry>(
         key:T
     ): (ComponentTypeRegistry[T]|undefined) {
-        return this.registry[key];
+        return types[key];
     }
+
 }
 
-export default new ComponentRegistry();
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default ComponentRegistry;

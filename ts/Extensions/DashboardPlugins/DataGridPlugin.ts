@@ -19,10 +19,22 @@
  *
  * */
 
+import type DataGrid from '../../DataGrid/DataGrid';
 import type PluginHandler from '../../Dashboards/PluginHandler';
 
 import DataGridComponent from './DataGridComponent.js';
-import DataGrid from '../../DataGrid/DataGrid';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Dashboards/Components/ComponentType' {
+    interface ComponentTypeRegistry {
+        DataGrid: typeof DataGridComponent;
+    }
+}
 
 /* *
  *

@@ -29,6 +29,7 @@ import type DataPoolOptions from '../Data/DataPoolOptions';
 import type JSON from '../Core/JSON';
 
 import Bindings from './Actions/Bindings.js';
+import ComponentRegistry from './Components/ComponentRegistry.js';
 import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
 import DataCursor from '../Data/DataCursor.js';
 import DataCursorHelper from './SerializeHelper/DataCursorHelper.js';
@@ -39,8 +40,6 @@ import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
 import U from '../Core/Utilities.js';
-import ComponentType from './Components/ComponentType';
-
 const {
     merge,
     addEvent,
@@ -713,6 +712,7 @@ namespace Board {
         }
     };
 
+    export const componentTypes = ComponentRegistry.types;
 
     /* *
      *

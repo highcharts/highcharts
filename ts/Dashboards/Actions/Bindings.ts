@@ -14,38 +14,56 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
-    ComponentClassType,
-    ComponentType
+    ComponentType,
+    ComponentTypeRegistry
 } from '../Components/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
-import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
-import type KPIComponent from '../Components/KPIComponent';
-import type DataConnector from '../../Data/Connectors/DataConnector';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
 import type Row from '../Layout/Row';
+import type Component from '../Components/Component.js';
 
-import Component from '../Components/Component.js';
 import ComponentRegistry from '../Components/ComponentRegistry.js';
-import HTMLComponent from '../Components/HTMLComponent.js';
-import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
-import Globals from '../Globals.js';
 import U from '../../Core/Utilities.js';
+const { merge, addEvent, fireEvent } = U;
+import Globals from '../Globals.js';
 
-const {
-    fireEvent,
-    addEvent,
-    merge
-} = U;
+/* *
+ *
+ *  Namespace
+ *
+ * */
 
-class Bindings {
+namespace Bindings {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface MountedComponentsOptions {
+        options: any;
+        component?: Component;
+        cell: Cell;
+    }
+
     /* *
      *
      *  Functions
      *
      * */
-    private static getGUIElement(idOrElement: string): GUIElement|undefined {
+
+    function getGUIElement(idOrElement: string): GUIElement|undefined {
         const container = typeof idOrElement === 'string' ?
             document.getElementById(idOrElement) : idOrElement;
 
@@ -62,7 +80,7 @@ class Bindings {
         return guiElement;
     }
 
-    public static addComponent(
+    export function addComponent(
         options: Partial<Component.ComponentOptions>,
         cell?: Cell
     ):(Component|undefined) {
@@ -133,9 +151,7 @@ class Bindings {
             optionsStates &&
             optionsStates.hover
         ) {
-            componentContainer.classList.add(
-                Globals.classNames.cellHover
-            );
+            componentContainer.classList.add(Globals.classNames.cellHover);
         }
 
         fireEvent(component, 'afterLoad');
@@ -143,56 +159,28 @@ class Bindings {
         return component;
     }
 
-    public static componentFromJSON(
+    export function componentFromJSON(
         json: Component.JSON,
         cellContainer: HTMLElement|undefined
     ): (Component|undefined) {
-        let component: (ComponentType|undefined);
-        let componentClass: (ComponentClassType|undefined);
+        let componentClass = ComponentRegistry.getComponent(
+            json.$class as keyof ComponentTypeRegistry
+        );
 
-        switch (json.$class) {
-            case 'HTML':
-                component = HTMLComponent.fromJSON(
-                    json as HTMLComponent.ClassJSON
-                );
-                break;
-            case 'Highcharts':
-                componentClass = ComponentRegistry.getComponent('Highcharts');
-                if (componentClass) {
-                    component = componentClass
-                        .fromJSON(json as HighchartsComponent.ClassJSON);
-                }
-                break;
-            case 'DataGrid':
-                component = DataGridComponent.fromJSON(
-                    json as DataGridComponent.ClassJSON
-                );
-                break;
-            case 'KPI':
-                componentClass = ComponentRegistry.getComponent('KPI');
-                if (componentClass) {
-                    component = componentClass
-                        .fromJSON(json as KPIComponent.ClassJSON);
-                }
-                break;
-            default:
-                return;
+        if (!componentClass) {
+            return;
         }
+        const component = componentClass.fromJSON(json as any);
 
         if (component) {
             component.render();
         }
 
-        // update cell size (when component is wider, cell should adjust)
-        // this.updateSize();
-
-        // TODO - events
-
         return component;
     }
 
-    public static getCell(idOrElement: string): Cell|undefined {
-        const cell = Bindings.getGUIElement(idOrElement);
+    export function getCell(idOrElement: string): Cell|undefined {
+        const cell = getGUIElement(idOrElement);
 
         if (!(cell && cell.getType() === 'cell')) {
             return;
@@ -201,8 +189,8 @@ class Bindings {
         return (cell as Cell);
     }
 
-    public static getRow(idOrElement: string): Row|undefined {
-        const row = Bindings.getGUIElement(idOrElement);
+    export function getRow(idOrElement: string): Row|undefined {
+        const row = getGUIElement(idOrElement);
 
         if (!(row && row.getType() === 'row')) {
             return;
@@ -211,8 +199,8 @@ class Bindings {
         return (row as Row);
     }
 
-    public static getLayout(idOrElement: string): Layout|undefined {
-        const layout = Bindings.getGUIElement(idOrElement);
+    export function getLayout(idOrElement: string): Layout|undefined {
+        const layout = getGUIElement(idOrElement);
 
         if (!(layout && layout.getType() === 'layout')) {
             return;
@@ -222,13 +210,10 @@ class Bindings {
     }
 }
 
-namespace Bindings {
-
-    export interface MountedComponentsOptions {
-        options: any;
-        component?: Component;
-        cell: Cell;
-    }
-}
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Bindings;

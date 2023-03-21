@@ -34,16 +34,9 @@ const {
 
 /* *
  *
- *  Declarations
+ *  Constants
  *
  * */
-
-declare global {
-    interface Window {
-        DataGridComponent?: typeof DataGridComponent;
-    }
-}
-
 
 const configs: {
     handlers: Record<string, Sync.HandlerConfig>;
@@ -53,8 +46,8 @@ const configs: {
         tooltipEmitter: [
             'tooltipEmitter',
             function (this: ComponentType): Function | void {
-                if (this instanceof (DataGridComponent || window.DataGridComponent)) {
-                    const { dataGrid, id } = this;
+                if (this.type === 'DataGrid') {
+                    const { dataGrid, id } = this as DataGridComponent;
                     const groups = ComponentGroup.getGroupsFromComponent(this.id);
 
                     if (dataGrid) {
@@ -116,5 +109,6 @@ const configs: {
 const defaults: Sync.OptionsRecord = {
     tooltip: { emitter: configs.emitters.tooltipEmitter, handler: configs.handlers.tooltipHandler }
 };
+
 
 export default defaults;

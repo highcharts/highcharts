@@ -14,23 +14,31 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type CSSObject from '../../Core/Renderer/CSSObject';
+
 import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
-import U from '../../Core/Utilities.js';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import Globals from '../Globals.js';
-
+import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import U from '../../Core/Utilities.js';
 const {
     createElement
 } = U;
 
 
 /* *
-*
-*  Functions
-*
-* */
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Function to create a context button.

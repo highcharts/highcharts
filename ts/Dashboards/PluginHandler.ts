@@ -110,8 +110,8 @@ namespace PluginHandler {
         }
 
         onRegister({
-            ComponentRegistry: ComponentRegistry,
             Board,
+            ComponentRegistry,
             Sync,
             revision
         });

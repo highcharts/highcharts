@@ -155,6 +155,13 @@ class ThresholdComponent extends Component {
         return this;
     }
 
+    public static fromJSON(
+        json: ThresholdComponent.ComponentOptions
+    ): ThresholdComponent {
+
+        const options = json;
+        return new ThresholdComponent(options);
+    }
     public redraw(): this {
         super.redraw();
         return this.render();

@@ -633,17 +633,6 @@ namespace HighchartsComponent {
 
 /* *
  *
- *  Registry
- *
- * */
-declare module '../../Dashboards/Components/ComponentType' {
-    interface ComponentTypeRegistry {
-        Highcharts: typeof HighchartsComponent;
-    }
-}
-
-/* *
- *
  *  Default Export
  *
  * */

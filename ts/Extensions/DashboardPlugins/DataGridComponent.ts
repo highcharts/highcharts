@@ -25,10 +25,9 @@ import type DataGrid from '../../DataGrid/DataGrid';
 import Component from '../../Dashboards/Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
-import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
-import ComponentRegistry from '../../Dashboards/Components/ComponentRegistry.js';
 const { createElement, merge, uniqueKey } = U;
+import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 
 /* *
  *
@@ -43,9 +42,10 @@ const { createElement, merge, uniqueKey } = U;
  * @name Highcharts.DashboardComponent
  */
 class DataGridComponent extends Component {
+
     /* *
      *
-     *  Static properties
+     *  Static Properties
      *
      * */
 
@@ -379,19 +379,6 @@ namespace DataGridComponent {
         options: ComponentJSONOptions;
     }
 }
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module '../../Dashboards/Components/ComponentType' {
-    interface ComponentTypeRegistry {
-        DataGrid: typeof DataGridComponent;
-    }
-}
-
 
 /* *
  *

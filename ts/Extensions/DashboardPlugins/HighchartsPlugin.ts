@@ -26,6 +26,19 @@ import HighchartsComponent from './HighchartsComponent.js';
 import KPIComponent from '../../Dashboards/Components/KPIComponent.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Dashboards/Components/ComponentType' {
+    interface ComponentTypeRegistry {
+        Highcharts: typeof HighchartsComponent;
+    }
+}
+
 /* *
  *
  *  Functions

@@ -36,16 +36,9 @@ const { addEvent } = U;
 
 /* *
  *
- *  Declarations
+ *  Constants
  *
  * */
-
-declare global {
-    interface Window {
-        HighchartsComponent?: typeof HighchartsComponent;
-    }
-}
-
 
 function getAxisMinMaxMap(chart: Chart): Array<{
     coll: string;
@@ -106,8 +99,8 @@ const configs: {
         tooltipEmitter: [
             'tooltipEmitter',
             function (this: ComponentType): Function | void {
-                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
-                    const { chart, id } = this;
+                if (this.type === 'Highcharts') {
+                    const { chart, id } = this as HighchartsComponent;
                     const groups = ComponentGroup.getGroupsFromComponent(this.id);
 
                     if (chart) {
@@ -167,8 +160,8 @@ const configs: {
         seriesVisibilityEmitter: [
             'seriesVisibilityEmitter',
             function (this: ComponentType): Function | void {
-                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
-                    const component = this;
+                if (this.type === 'Highcharts') {
+                    const component = this as HighchartsComponent;
                     return addEvent(component.chart, 'redraw', function (): void {
                         const { chart, connector: store, id, activeGroup } = component;
                         if (
@@ -198,8 +191,8 @@ const configs: {
         panEmitter: [
             'panEmitter',
             function (this: ComponentType): Function | void {
-                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
-                    const { connector: store, chart, id } = this;
+                if (this.type === 'Highcharts') {
+                    const { connector: store, chart, id } = this as HighchartsComponent;
                     if (store && chart) {
                         const ticks: number[] = [];
                         return addEvent(chart, 'pan', (): void => {
@@ -235,7 +228,7 @@ const configs: {
         selectionEmitter: [
             'selectionEmitter',
             function (this: ComponentType): Function | void {
-                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
+                if (this.type === 'Highcharts') {
                     const {
                         chart,
                         connector: store,
@@ -243,7 +236,7 @@ const configs: {
                         options: {
                             columnKeyMap
                         }
-                    } = this;
+                    } = this as HighchartsComponent;
 
                     const getX = (): string | undefined => {
                         if (columnKeyMap) {
