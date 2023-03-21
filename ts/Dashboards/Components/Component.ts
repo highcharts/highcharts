@@ -16,8 +16,8 @@
 
 'use strict';
 
-import type Board from '../Board.js';
-import type Cell from '../Layout/Cell.js';
+import type Board from '../Board';
+import type Cell from '../Layout/Cell';
 import type ComponentType from './ComponentType';
 import type JSON from '../../Core/JSON';
 import type NavigationBindingsOptionsObject from

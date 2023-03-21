@@ -58,7 +58,6 @@ const configs: {
                         const { dataCursor: cursor } = board;
 
                         const callbacks = [
-                            // TODO: should this event return cell data instead of row data?
                             addEvent(dataGrid.container, 'dataGridHover', (e: any): void => {
                                 const row = e.row;
                                 const cell = row.querySelector(`.hc-dg-cell[data-original-data="${row.dataset.rowXIndex}"]`);
@@ -106,8 +105,6 @@ const configs: {
                                 if (row && dataGrid) {
                                     const highlightedDataRow = dataGrid.container
                                         .querySelector<HTMLElement>(`.hc-dg-row[data-row-index="${row}"]`);
-
-                                    // TODO: possibly try to fall back to find matching value from table
 
                                     if (highlightedDataRow) {
                                         dataGrid.toggleRowHighlight(highlightedDataRow);
