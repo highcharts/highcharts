@@ -67,7 +67,7 @@ class Sync {
 
     /**
      * Default handlers for the sync class. This property is extended by
-     * different Components, where default syncs are added. Allows overwrithing
+     * different Components, where default syncs are added. Allows overwriting
      * the configuration before creating the dashboard.
      */
     public static defaultHandlers: Record<string, Sync.OptionsEntry> = {};
