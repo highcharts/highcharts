@@ -37,7 +37,6 @@ class EditContextMenu extends Menu {
         width: 150,
         className: EditGlobals.classNames.contextMenu,
         itemsClassName: EditGlobals.classNames.contextMenuItem,
-        icon: EditGlobals.iconsURL + 'menu.svg',
         items: ['editMode']
     };
 

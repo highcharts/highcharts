@@ -39,18 +39,6 @@ const {
 } = U;
 
 class Sidebar {
-    /* *
-    *
-    *  Static Properties
-    *
-    * */
-    protected static readonly defaultOptions: Sidebar.Options = {
-        enabled: true,
-        className: 'test',
-        dragIcon: EditGlobals.iconsURL + '/drag.svg',
-        closeIcon: EditGlobals.iconsURL + '/close.svg'
-    };
-
     public static tabs: Array<Sidebar.TabOptions> = [{
     // {
     //     type: 'design',
@@ -385,13 +373,18 @@ class Sidebar {
     constructor(
         editMode: EditMode
     ) {
+        this.editMode = editMode;
+
         this.tabs = {};
         this.isVisible = false;
         this.options = merge(
-            Sidebar.defaultOptions,
+            {
+                enabled: true,
+                className: 'test',
+                closeIcon: this.editMode.iconsURLPrefix + 'close.svg'
+            },
             (editMode.options.toolbars || {}).settings
         );
-        this.editMode = editMode;
 
         this.container = this.renderContainer();
 
@@ -1144,7 +1137,6 @@ namespace Sidebar {
     export interface Options {
         enabled: boolean;
         className: string;
-        dragIcon: string;
         closeIcon: string;
     }
 
