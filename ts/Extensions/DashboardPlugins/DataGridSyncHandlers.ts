@@ -61,17 +61,19 @@ const configs: {
                             // TODO: should this event return cell data instead of row data?
                             addEvent(dataGrid.container, 'dataGridHover', (e: any): void => {
                                 const row = e.row;
+                                const cell = row.querySelector(`.hc-dg-cell[data-original-data="${row.dataset.rowXIndex}"]`);
 
                                 cursor.emitCursor(store.table, {
                                     type: 'position',
                                     row: parseInt(row.dataset.rowIndex, 10),
-                                    state: 'point.mouseOver'
+                                    column: cell ? cell.dataset.columnName : void 0,
+                                    state: 'dataGrid.hoverRow'
                                 });
                             }),
                             addEvent(dataGrid.container, 'mouseout', (): void => {
                                 cursor.emitCursor(store.table, {
                                     type: 'position',
-                                    state: 'point.mouseOut'
+                                    state: 'dataGrid.hoverOut'
                                 });
                             })
                         ];

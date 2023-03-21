@@ -28,6 +28,7 @@ import type Point from '../../Core/Series/Point';
 import type RangeModifier from '../../Data/Modifiers/RangeModifier';
 import type SharedState from '../../Dashboards/Components/SharedComponentState';
 import type Sync from '../../Dashboards/Components/Sync/Sync';
+import type DataCursor from '../../Data/DataCursor';
 
 import ComponentTypes from '../../Dashboards/Components/ComponentType';
 import ComponentGroup from '../../Dashboards/Components/ComponentGroup.js';
@@ -372,32 +373,45 @@ const configs: {
                 const table = this.connector && this.connector.table;
                 if (board && table) {
                     const { dataCursor: cursor } = board;
-                    if (cursor) {
-                        cursor.addListener(table.id, 'point.mouseOver', (e): void => {
-                            if (chart && chart.series.length) {
-                                const cursor = e.cursor;
-                                if (cursor.type === 'position') {
-                                    const [series] = chart.series.length > 1 && cursor.column ?
-                                        chart.series.filter((series): boolean => series.name === cursor.column) :
-                                        chart.series;
+
+                    const handleCursor = (e: DataCursor.Event): void => {
+                        let offset = 0;
+                        const modifier = table.getModifier();
+                        if (modifier && 'getModifiedTableOffset' in modifier) {
+                            offset = (modifier as RangeModifier).getModifiedTableOffset(table);
+                        }
+
+                        if (chart && chart.series.length) {
+                            const cursor = e.cursor;
+                            if (cursor.type === 'position') {
+                                const [series] = chart.series.length > 1 && cursor.column ?
+                                    chart.series.filter((series): boolean => series.name === cursor.column) :
+                                    chart.series;
 
 
-                                    if (series && series.visible && cursor.row !== void 0) {
-                                        const point = series.points[cursor.row];
+                                if (series && series.visible && cursor.row !== void 0) {
+                                    const point = series.points[cursor.row - offset];
 
-                                        if (point) {
-                                            chart.tooltip && chart.tooltip.refresh(point);
-                                        }
+                                    if (point) {
+                                        chart.tooltip && chart.tooltip.refresh(point);
                                     }
                                 }
                             }
-                        });
+                        }
+                    };
 
-                        cursor.addListener(table.id, 'point.mouseOut', (): void => {
-                            if (chart && chart.series.length) {
-                                chart.tooltip && chart.tooltip.hide();
-                            }
-                        });
+                    const handleCursorOut = (): void => {
+                        if (chart && chart.series.length) {
+                            chart.tooltip && chart.tooltip.hide();
+                        }
+                    };
+
+                    if (cursor) {
+                        cursor.addListener(table.id, 'point.mouseOver', handleCursor);
+                        cursor.addListener(table.id, 'dataGrid.hoverRow', handleCursor);
+
+                        cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
+                        cursor.addListener(table.id, 'dataGrid.hoverOut', handleCursorOut);
                     }
                 }
             },
