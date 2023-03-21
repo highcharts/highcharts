@@ -543,14 +543,14 @@ namespace AxisDefaults {
              * @type {string|*}
              */
             day: {
-                main: '%e. %b'
+                main: '%e %b'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             week: {
-                main: '%e. %b'
+                main: '%e %b'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject

@@ -2790,7 +2790,7 @@ class Axis {
             dataMin: axis.dataMin as any,
             dataMax: axis.dataMax as any,
             userMin: axis.userMin,
-            userMax: axis.userMax,
+            userMax: axis.userMax
         };
     }
 

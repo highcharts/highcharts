@@ -18,10 +18,10 @@ QUnit.test(
         var controller = new TestController(chart),
             series = chart.series[0],
             expectedTexts = [
-                'Wednesday, Jan  1, 2014',
-                'Friday, Jan  3, 2014',
-                'Sunday, Jan  5, 2014',
-                'Tuesday, Jan  7, 2014'
+                'Wednesday,  1 Jan 2014',
+                'Friday,  3 Jan 2014',
+                'Sunday,  5 Jan 2014',
+                'Tuesday,  7 Jan 2014'
             ],
             texts = [],
             pointX = 0,

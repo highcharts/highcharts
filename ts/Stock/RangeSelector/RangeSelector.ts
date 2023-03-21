@@ -991,7 +991,7 @@ class RangeSelector {
         // we need to use setAttribute instead
         input.setAttribute(
             'type',
-            preferredInputType(options.inputDateFormat || '%b %e, %Y')
+            preferredInputType(options.inputDateFormat || '%e %b %Y')
         );
 
         if (!chart.styledMode) {
