@@ -373,7 +373,7 @@ namespace DataConnector {
      * Regular expression to extract the connector type (group 1) from the
      * stringified class constructor.
      */
-    const typeRegExp = /^function\s+(\w*?)(?:DataConnector)?\s*\(/u;
+    const typeRegExp = /^(?:class|function)\s+(\w*?)(?:Data)?(?:Connector)?\W/;
 
     /**
      * Registry as a record object with connector names and their class.
