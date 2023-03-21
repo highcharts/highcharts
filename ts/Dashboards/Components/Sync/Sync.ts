@@ -89,7 +89,7 @@ class Sync {
      * The id of the emitter to check.
      *
      * @returns
-     * if the emitter is registered
+     * Whether the emitter is registered.
      */
     public isRegisteredEmitter(id: string): boolean {
         return Boolean(this.registeredSyncEmitters[id]);
