@@ -1435,6 +1435,10 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
+            textDecoration: 'none',
+            /**
+             * @ignore
+             */
             textOverflow: 'ellipsis'
         },
 
@@ -1480,7 +1484,11 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            color: Palette.neutralColor20
+            color: Palette.neutralColor60,
+            /**
+             * @ignore
+             */
+            textDecoration: 'line-through'
         },
 
         /**
