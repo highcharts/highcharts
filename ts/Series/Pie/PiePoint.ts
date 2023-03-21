@@ -145,7 +145,8 @@ class PiePoint extends Point {
                 // through between the halo and the slice (#7495).
                     innerR: (shapeArgs as any).r - 1,
                     start: (shapeArgs as any).start,
-                    end: (shapeArgs as any).end
+                    end: (shapeArgs as any).end,
+                    borderRadius: (shapeArgs as any).borderRadius
                 }
             );
     }

@@ -91,7 +91,6 @@ export interface SVGAttributes {
     rotation?: number;
     rotationOriginX?: number;
     rotationOriginY?: number;
-    rounded?: boolean;
     scaleX?: number;
     scaleY?: number;
     slope?: number;

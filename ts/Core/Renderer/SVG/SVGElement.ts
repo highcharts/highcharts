@@ -134,6 +134,22 @@ class SVGElement implements SVGElementLike {
      *
      * */
 
+    // Custom attributes used for symbols, these should be filtered out when
+    // setting SVGElement attributes (#9375).
+    public static symbolCustomAttribs: Array<string> = [
+        'anchorX',
+        'anchorY',
+        'clockwise',
+        'end',
+        'height',
+        'innerR',
+        'r',
+        'start',
+        'width',
+        'x',
+        'y'
+    ];
+
     public added?: boolean;
     // @todo public alignAttr?: SVGAttributes;
     public alignByTranslate?: boolean;
@@ -172,21 +188,6 @@ class SVGElement implements SVGElementLike {
     public styledMode?: boolean;
     public styles?: CSSObject;
     public SVG_NS = SVG_NS;
-    // Custom attributes used for symbols, these should be filtered out when
-    // setting SVGElement attributes (#9375).
-    public symbolCustomAttribs: Array<string> = [
-        'x',
-        'y',
-        'width',
-        'height',
-        'r',
-        'start',
-        'end',
-        'innerR',
-        'anchorX',
-        'anchorY',
-        'rounded'
-    ];
     public symbolName?: string;
     public text?: SVGElement;
     public textStr?: string;
@@ -755,7 +756,7 @@ class SVGElement implements SVGElementLike {
         continueAnimation?: boolean
     ): (number|string|this) {
         const element = this.element,
-            symbolCustomAttribs = this.symbolCustomAttribs;
+            symbolCustomAttribs = SVGElement.symbolCustomAttribs;
 
         let key,
             hasSetSymbolSize: boolean,
@@ -2084,19 +2085,7 @@ class SVGElement implements SVGElementLike {
     public symbolAttr(hash: SVGAttributes): void {
         const wrapper = this as AnyRecord;
 
-        [
-            'x',
-            'y',
-            'r',
-            'start',
-            'end',
-            'width',
-            'height',
-            'innerR',
-            'anchorX',
-            'anchorY',
-            'clockwise'
-        ].forEach(function (key: string): void {
+        SVGElement.symbolCustomAttribs.forEach(function (key: string): void {
             wrapper[key] = pick((hash as any)[key], wrapper[key]);
         });
 

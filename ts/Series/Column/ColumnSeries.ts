@@ -45,7 +45,6 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
-    css,
     defined,
     extend,
     fireEvent,
@@ -53,7 +52,8 @@ const {
     isNumber,
     merge,
     pick,
-    objectEach
+    objectEach,
+    relativeLength
 } = U;
 
 /* *
@@ -526,7 +526,8 @@ class ColumnSeries extends Series {
                     point.plotY as any,
                     -safeDistance,
                     yAxis.len + safeDistance
-                );
+                ),
+                stackBox = point.stackBox;
             let up,
                 barY = Math.min(plotY, yBottom),
                 barH = Math.max(plotY, yBottom) - barY,
@@ -615,19 +616,26 @@ class ColumnSeries extends Series {
                     barH
                 ];
 
-            // Register shape type and arguments to be used in drawPoints
-            // Allow shapeType defined on pointClass level
-            point.shapeType = series.pointClass.prototype.shapeType || 'rect';
-            point.shapeArgs = series.crispCol.apply(
-                series,
-                point.isNull ?
-                // #3169, drilldown from null must have a position to work
-                // from #6585, dataLabel should be placed on xAxis, not
-                // floating in the middle of the chart
-                    [barX, translatedThreshold as any, barW, 0] :
-                    [barX, barY, barW, barH]
+            // Register shape type and arguments to be used in drawPoints. Allow
+            // `shapeType` defined on `pointClass` level.
+            point.shapeType = series.pointClass.prototype.shapeType ||
+                'roundedRect';
+            point.shapeArgs = series.crispCol(
+                barX,
+                // #3169, drilldown from null must have a position to work from.
+                // #6585, dataLabel should be placed on xAxis, not floating in
+                // the middle of the chart.
+                point.isNull ? translatedThreshold : barY,
+                barW,
+                point.isNull ? 0 : barH
             );
         });
+
+        // Fire a specific event after column translate. We could instead apply
+        // all the column logic in an `afterTranslate` event handler, but there
+        // are so many other series types that use the column translation, that
+        // it is more convenient to have a specific event for it.
+        fireEvent(this, 'afterColumnTranslate');
     }
 
     /**
@@ -793,13 +801,6 @@ class ColumnSeries extends Series {
                     graphic[verb](
                         merge(shapeArgs)
                     );
-                }
-
-                // Border radius is not stylable (#6900)
-                if (options.borderRadius) {
-                    (graphic as any)[verb]({
-                        r: options.borderRadius
-                    });
                 }
 
                 // Presentational

@@ -3,6 +3,14 @@ Highcharts.chart('container', {
         type: 'treemap',
         layoutAlgorithm: 'stripes',
         alternateStartingDirection: true,
+        borderColor: '#fff',
+        borderRadius: 6,
+        borderWidth: 2,
+        dataLabels: {
+            style: {
+                textOutline: 'none'
+            }
+        },
         levels: [{
             level: 1,
             layoutAlgorithm: 'sliceAndDice',

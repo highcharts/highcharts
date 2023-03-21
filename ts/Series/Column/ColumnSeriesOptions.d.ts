@@ -18,6 +18,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type ColumnSeries from './ColumnSeries';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
+import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -30,7 +31,7 @@ declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         borderColor?: ColorType;
         borderDashStyle?: DashStyleValue;
-        borderRadius?: number;
+        borderRadius?: number|string|BorderRadiusOptionsObject;
         borderWidth?: number;
         centerInCategory?: boolean;
         fillColor?: ColorType;

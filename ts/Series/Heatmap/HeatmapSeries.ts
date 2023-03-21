@@ -518,7 +518,7 @@ class HeatmapSeries extends ScatterSeries {
         // top left corner like other symbols are. This should be refactored,
         // then we could save ourselves some tests for .hasImage etc. And the
         // evaluation of borderRadius would be moved to `markerAttribs`.
-        if (options.marker) {
+        if (options.marker && isNumber(options.borderRadius)) {
             options.marker.r = options.borderRadius;
         }
     }
@@ -660,7 +660,8 @@ class HeatmapSeries extends ScatterSeries {
     public translate(): void {
         const series = this,
             options = series.options,
-            symbol = options.marker && options.marker.symbol || 'rect',
+            { borderRadius, marker } = options,
+            symbol = marker && marker.symbol || 'rect',
             shape = symbols[symbol] ? symbol : 'rect',
             hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
 
@@ -706,7 +707,7 @@ class HeatmapSeries extends ScatterSeries {
                         y,
                         width,
                         height,
-                        { r: options.borderRadius }
+                        { r: isNumber(borderRadius) ? borderRadius : 0 }
                     )
                 }
             );

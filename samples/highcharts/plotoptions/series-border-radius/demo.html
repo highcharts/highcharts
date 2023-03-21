@@ -1,0 +1,33 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+
+<div id="outer-container">
+
+    <div class="range-container">
+        <label for="range"></label>
+        <input id="range" type="range" min="0" max="50" value="10">
+    </div>
+
+    <span class="button-group">
+        <button class="corner-radius" data-value="50%">50% radius</button>
+        <button class="corner-radius" data-value="10px">10px radius</button>
+        <button class="corner-radius" data-value="0">No radius</button>
+    </span>
+
+    <div class="flex">
+        <div class="cell">
+            <div id="container-1" class="container"></div>
+
+            <span class="button-group">
+                <button class="inverted" data-value="false">Column</button>
+                <button class="inverted" data-value="true">Bar</button>
+                <button class="polar" data-value="false">Cartesian</button>
+                <button class="polar" data-value="true">Polar</button>
+            </span>
+        </div>
+        <div class="cell">
+            <div id="container-2"  class="container"></div>
+        </div>
+    </div>
+
+</div>

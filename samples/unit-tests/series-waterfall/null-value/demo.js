@@ -13,6 +13,12 @@ QUnit.test(
             startPoint = [splittedPath[4], splittedPath[5]],
             endPoint = [splittedPath[7], splittedPath[8]];
 
+        assert.strictEqual(
+            splittedPath.length,
+            24,
+            'The split path should stretch across all points'
+        );
+
         // Test: the eqality of path's x coordinate of points next to each other
         assert.strictEqual(
             startPoint[0],

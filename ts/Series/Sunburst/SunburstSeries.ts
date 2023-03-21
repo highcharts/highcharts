@@ -880,6 +880,13 @@ class SunburstSeries extends TreemapSeries {
                 onComplete,
                 visible = !!(node.visible && node.shapeArgs);
 
+            // Border radius requires the border-radius.js module. Adding it
+            // here because the SunburstSeries is a mess and I can't find the
+            // regular shapeArgs. Usually shapeArgs are created in the series'
+            // `translate` function and then passed directly on to the renderer
+            // in the `drawPoints` function.
+            shape.borderRadius = series.options.borderRadius;
+
             if (hasRendered && animation) {
                 animationInfo = getAnimation(shape, {
                     center: center,

@@ -97,7 +97,11 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
      */
 
     /**
-     * Whether to draw rounded edges on the gauge.
+     * Whether to draw rounded edges on the gauge. This options adds the radius
+     * of the rounding to the ends of the arc, so it extends past the actual
+     * values. When `borderRadius` is set, it takes precedence over `rounded`. A
+     * `borderRadius` of 50% behaves like `rounded`, except the shape is not
+     * extended past its value.
      *
      * @sample {highcharts} highcharts/demo/gauge-activity/
      *         Activity Gauge

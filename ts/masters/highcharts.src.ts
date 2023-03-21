@@ -27,7 +27,6 @@ import Tick from '../Core/Axis/Tick.js';
 import Tooltip from '../Core/Tooltip.js';
 import Point from '../Core/Series/Point.js';
 import Pointer from '../Core/Pointer.js';
-import MSPointer from '../Core/MSPointer.js';
 import Legend from '../Core/Legend/Legend.js';
 import Chart from '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
@@ -47,6 +46,7 @@ import PieSeries from '../Series/Pie/PieSeries.js';
 import PieDataLabel from '../Series/Pie/PieDataLabel.js';
 import DataLabel from '../Core/Series/DataLabel.js';
 import '../Extensions/OverlappingDataLabels.js';
+import '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
@@ -67,6 +67,7 @@ G.Fx = Fx;
 G.Legend = Legend;
 G.PlotLineOrBand = PlotLineOrBand;
 G.Point = Point;
+G.Pointer = Pointer;
 G.Series = Series;
 G.StackItem = StackItem;
 G.SVGElement = SVGElement;
@@ -80,14 +81,8 @@ G.color = Color.parse;
 // Compositions
 HTMLRenderer.compose(SVGRenderer);
 HTMLElement.compose(SVGElement);
+Pointer.compose(Chart);
 Legend.compose(Chart);
-if (MSPointer.isRequired()) {
-    G.Pointer = MSPointer;
-    MSPointer.compose(Chart);
-} else {
-    G.Pointer = Pointer;
-    Pointer.compose(Chart);
-}
 // DefaultOptions
 G.defaultOptions = Defaults.defaultOptions;
 G.getOptions = Defaults.getOptions;

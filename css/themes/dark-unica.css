@@ -1,6 +1,6 @@
 /* Global font */
-@import "https://fonts.googleapis.com/css?family=Unica+One";
-@import "../highcharts.css";
+@import url("https://fonts.googleapis.com/css?family=Unica+One");
+@import url("../highcharts.css");
 
 :root {
     /* Chart background, point stroke for markers and columns etc */

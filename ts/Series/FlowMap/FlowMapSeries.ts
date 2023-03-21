@@ -383,7 +383,11 @@ class FlowMapSeries extends MapLineSeries {
                         const start: SVGPath = [];
 
                         for (let i = 0; i < path.length; i++) {
-                            start.push([...path[i]]);
+                            // Added any when merging master into another branch
+                            // :((. The spread looks correct, but TS complains
+                            // about possible number in the first position,
+                            // which is the segment type.
+                            (start as any).push([...path[i]]);
                             for (let j = 1; j < path[i].length; j++) {
                                 start[i][j] = j % 2 ? x : y;
                             }
