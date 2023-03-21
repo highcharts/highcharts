@@ -46,7 +46,7 @@ export default class SyncHandler {
 
     constructor(
         id: string,
-        trigger: SharedState.eventTypes | undefined,
+        trigger?: SharedState.eventTypes,
         func: Function
     ) {
         this.id = id;
