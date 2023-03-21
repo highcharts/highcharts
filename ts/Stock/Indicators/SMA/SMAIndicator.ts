@@ -482,10 +482,8 @@ class SMAIndicator extends LineSeries {
             indicator.redraw();
         }
 
-        indicator.isDirtyData = !!indicator.linkedSeries.length;
-        indicator.linkedSeries.forEach((): void => { // #18689
-            fireEvent(indicator, 'updatedData');
-        });
+        indicator.isDirtyData = !!indicator.linkedSeries.length;// #18689
+        fireEvent(indicator, 'updatedData');
     }
 
     /**
