@@ -2261,17 +2261,17 @@ const defaultOptions: Options = {
          */
         dateTimeLabelFormats: {
             /** @internal */
-            millisecond: '%A, %b %e, %H:%M:%S.%L',
+            millisecond: '%A, %e %b, %H:%M:%S.%L',
             /** @internal */
-            second: '%A, %b %e, %H:%M:%S',
+            second: '%A, %e %b, %H:%M:%S',
             /** @internal */
-            minute: '%A, %b %e, %H:%M',
+            minute: '%A, %e %b, %H:%M',
             /** @internal */
-            hour: '%A, %b %e, %H:%M',
+            hour: '%A, %e %b, %H:%M',
             /** @internal */
-            day: '%A, %b %e, %Y',
+            day: '%A, %e %b %Y',
             /** @internal */
-            week: 'Week from %A, %b %e, %Y',
+            week: 'Week from %A, %e %b %Y',
             /** @internal */
             month: '%B %Y',
             /** @internal */
