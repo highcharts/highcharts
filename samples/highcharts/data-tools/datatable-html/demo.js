@@ -29,7 +29,11 @@ addRowButton.addEventListener('click', () => {
         addRowInput.value
             .split(/[,;]/g)
             // check for numbers in cell string and convert them
-            .map(cell => (/^[.\d\s]+$/.test(cell) ? parseFloat(cell) : cell))
+            .map(cell => (
+                /^[.\d\s]+$/.test(cell) && !isNaN(parseFloat(cell)) ?
+                    parseFloat(cell) :
+                    cell
+            ))
     );
     // Render changed table.
     renderTable(container, table.modified);
@@ -81,6 +85,6 @@ function renderTable(container, table) {
     html.push('</tbody>');
     html.push('</table>');
 
-    container.innerHTML = html.join('\n');
+    container.innerHTML = html.join('');
 }
 renderTable(container, table);
