@@ -131,7 +131,6 @@ class Sidebar {
                 Bindings.addComponent({
                     type: 'html',
                     cell: cellName,
-                    isResizable: true,
                     elements: [
                         {
                             tagName: 'div',

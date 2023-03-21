@@ -60,7 +60,6 @@ Example of synchronized components
             selection: true
         },
         cell: 'dashboard-col-0',
-        isResizable: true,
         type: 'Highcharts',
         columnKeyMap: {
             Food: 'x',

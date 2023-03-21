@@ -695,9 +695,6 @@ namespace Board {
             },
             layouts: []
         },
-        componentOptions: {
-            isResizable: true
-        },
         components: [],
         responsiveBreakpoints: {
             small: 576,
