@@ -3,3 +3,7 @@
     min-width: 300px;
     margin: 0 auto;
 }
+
+#data {
+    display: none;
+}

@@ -399,8 +399,9 @@ class HeatmapSeries extends ScatterSeries {
             }
 
         }
+
         /**
-         * Make the heatmap render its datapoints as a interpolated image.
+         * Make the heatmap render its data points as a interpolated image.
          *
          * @sample {highcharts} highcharts/series-heatmap/interpolation
          *   Interpolated heatmap image displaying user activity on a website
@@ -448,17 +449,15 @@ class HeatmapSeries extends ScatterSeries {
      */
     public drawPoints(): void {
         const
-            heatmap = this,
-            heatmapOptions = heatmap.options,
-            interpolation = heatmapOptions.interpolation,
+            series = this,
+            seriesOptions = series.options,
+            interpolation = seriesOptions.interpolation,
 
-            // In styled mode, use CSS, otherwise the fill used in the style
-            // sheet will take precedence over the fill attribute.
-            seriesMarkerOptions = heatmapOptions.marker || {};
+            seriesMarkerOptions = seriesOptions.marker || {};
 
         if (interpolation) {
             const
-                { image, chart } = heatmap,
+                { image, chart } = series,
                 { plotWidth, plotHeight, inverted } = chart,
                 dimsByInversion = inverted ? {
                     width: plotHeight,
@@ -477,12 +476,12 @@ class HeatmapSeries extends ScatterSeries {
                         chart.colorAxis &&
                         chart.colorAxis[0]
                     ),
-                    ctx = heatmap.getContext({ alpha: false }),
-                    canvas = heatmap.canvas;
+                    ctx = series.getContext({ alpha: false }),
+                    canvas = series.canvas;
 
                 if (canvas && ctx && colorAxis) {
                     const
-                        { boost: seriesBoost, points, xAxis, yAxis } = heatmap,
+                        { boost: seriesBoost, points, xAxis, yAxis } = series,
                         { dataMin: xMin, dataMax: xMax } = xAxis as {
                             dataMin: number,
                             dataMax: number
@@ -539,8 +538,8 @@ class HeatmapSeries extends ScatterSeries {
                         pixelData = ctx.createImageData(width, height);
 
                     if (!seriesBoost && !chart.boost) {
-                        heatmap.buildKDTree();
-                        heatmap.directTouch = false;
+                        series.buildKDTree();
+                        series.directTouch = false;
                     }
 
                     for (let i = 0; i < pointsLen; i++) {
@@ -555,13 +554,13 @@ class HeatmapSeries extends ScatterSeries {
 
                     ctx.putImageData(pixelData, 0, 0);
 
-                    heatmap.image = chart.renderer.image(
+                    series.image = chart.renderer.image(
                         canvas.toDataURL(),
                         0,
                         0
                     )
                         .attr(dimsByInversion)
-                        .add(heatmap.group);
+                        .add(series.group);
                 }
 
             } else if (!(
@@ -571,13 +570,16 @@ class HeatmapSeries extends ScatterSeries {
                 image.attr(dimsByInversion);
             }
 
-        } else if (seriesMarkerOptions.enabled || heatmap._hasPointMarkers) {
-            Series.prototype.drawPoints.call(heatmap);
-            heatmap.points.forEach((point): void => {
+
+        // In styled mode, use CSS, otherwise the fill used in the style
+        // sheet will take precedence over the fill attribute.
+        } else if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
+            Series.prototype.drawPoints.call(series);
+            series.points.forEach((point): void => {
                 if (point.graphic) {
                     (point.graphic as any)[
-                        heatmap.chart.styledMode ? 'css' : 'animate'
-                    ](heatmap.colorAttribs(point));
+                        series.chart.styledMode ? 'css' : 'animate'
+                    ](series.colorAttribs(point));
 
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
