@@ -38,7 +38,9 @@ const {
  * */
 
 /**
- * Class to manage columns and rows in a table structure.
+ * Class to manage columns and rows in a table structure. It provides methods
+ * to add, remove, and manipulate columns and rows, as well as to retrieve data
+ * from specific cells.
  *
  * @private
  * @class
@@ -56,7 +58,9 @@ class DataTable implements DataEvent.Emitter {
      * */
 
     /**
-     * Null state for a row record.
+     * Null state for a row record. In some cases, a row in a table may not
+     * contain any data or may be invalid. In these cases, a null state can be
+     * used to indicate that the row record is empty or invalid.
      *
      * @name Highcharts.DataTable.NULL
      * @type {Highcharts.DataTableRowObject}
@@ -75,7 +79,10 @@ class DataTable implements DataEvent.Emitter {
      * */
 
     /**
-     * Tests whether a row contains only null values.
+     * Tests whether a row contains only `null` values or is equal to
+     * DataTable.NULL. If all columns have `null` values, the function returns
+     * `true`. Otherwise, it returns `false` to indicate that the row contains
+     * at least one non-null value.
      *
      * @function Highcharts.DataTable.isNull
      *
@@ -138,7 +145,7 @@ class DataTable implements DataEvent.Emitter {
         this.aliasMap = {};
 
         /**
-         * Whether the ID was automatic generated or given.
+         * Whether the ID was automatic generated or given in the constructor.
          *
          * @name Highcharts.DataTable#autoId
          * @type {boolean}
@@ -147,7 +154,7 @@ class DataTable implements DataEvent.Emitter {
         this.columns = {};
 
         /**
-         * ID of the table.
+         * ID of the table for indentification purposes.
          *
          * @name Highcharts.DataTable#id
          * @type {string}
@@ -232,7 +239,9 @@ class DataTable implements DataEvent.Emitter {
      * */
 
     /**
-     * Returns a clone of this data table.
+     * Returns a clone of this table. The cloned table is completely independent
+     * of the original, and any changes made to the clone will not affect
+     * the original table.
      *
      * @function Highcharts.DataTable#clone
      *
@@ -282,7 +291,9 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
-     * Deletes a column alias and returns the original column name.
+     * Deletes a column alias and returns the original column name. If the alias
+     * is not found, the method returns `undefined`. Deleting an alias does not
+     * affect the data in the table, only the way columns are accessed.
      *
      * @function Highcharts.DataTable#deleteColumnAlias
      *
@@ -1302,7 +1313,9 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
-     * Defines an alias for a column.
+     * Defines an alias for a column. If a column name for one of the
+     * get-functions matches an column alias, the column name will be replaced
+     * with the original column name.
      *
      * @function Highcharts.DataTable#setColumnAlias
      *
@@ -1310,10 +1323,10 @@ class DataTable implements DataEvent.Emitter {
      * Column alias to create.
      *
      * @param {string} columnName
-     * Column name to create an alias for.
+     * Original column name to create an alias for.
      *
      * @return {boolean}
-     * True if successfully changed, false if reserved.
+     * `true` if successfully changed, `false` if reserved.
      */
     public setColumnAlias(
         columnAlias: string,

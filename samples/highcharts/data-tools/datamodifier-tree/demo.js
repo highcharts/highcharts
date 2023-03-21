@@ -11,9 +11,10 @@ const table = new Highcharts.DataTable({
     }
 });
 
-// connect to "Run Modifiers" button
-const modifyButton = document.querySelector('#modify');
-modifyButton.addEventListener('click', () => {
+
+// "Run Modifiers" Button
+
+document.querySelector('#modify').addEventListener('click', () => {
     const sortModifierActivate = document.querySelector('#sortmodifier-activate');
     const rangeModifierActivate = document.querySelector('#rangemodifier-activate');
     const invertModifierActivate = document.querySelector('#invertmodifier-activate');
