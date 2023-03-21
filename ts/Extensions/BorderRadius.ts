@@ -129,7 +129,7 @@ const applyBorderRadius = (
         // Some geometric constants
         const relativeR = clockwise ? (bigR - r) : (bigR + r),
             // The angle, on the big arc, that the border radius arc takes up
-            angleOfBorderRadius = Math.asin(r / relativeR),
+            angleOfBorderRadius = relativeR ? Math.asin(r / relativeR) : 0,
             angleOffset = clockwise ?
                 angleOfBorderRadius :
                 -angleOfBorderRadius,

@@ -57,7 +57,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      * @type    {number|string|Highcharts.BorderRadiusOptionsObject}
      * @product highcharts highstock gantt
      */
-    borderRadius: 0,
+    borderRadius: 3,
 
     /**
      * When using automatic point colors pulled from the global
