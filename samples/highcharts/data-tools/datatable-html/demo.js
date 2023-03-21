@@ -2,6 +2,7 @@ const container = document.querySelector('#container');
 const escapeStringForHTML = Highcharts.A11yHTMLUtilities.escapeStringForHTML;
 const table = new Highcharts.DataTable({ columns: { y: [7, 42] } });
 
+
 // Add Column
 
 const addColumnButton = document.querySelector('#add-column-button');
@@ -54,6 +55,7 @@ setModifierSelect.addEventListener('change', async () => {
     // without modifier table.modified = table
     renderTable(container, table.modified);
 });
+
 
 // Render Simple HTML Table
 

@@ -17,7 +17,6 @@ import DataModifier from '../../Data/Modifiers/DataModifier.js';
 import DataPool from '../../Data/DataPool.js';
 import DataTable from '../../Data/DataTable.js';
 import '../../Data/Modifiers/ChainModifier.js';
-import '../../Data/Modifiers/GroupModifier.js';
 import '../../Data/Modifiers/InvertModifier.js';
 import '../../Data/Modifiers/RangeModifier.js';
 import '../../Data/Modifiers/SortModifier.js';
