@@ -52,16 +52,16 @@ QUnit.test('ChainModifier.benchmark', function (assert) {
 QUnit.test('ChainModifier.modify', function (assert) {
 
     const done = assert.async(),
-        modifier = new ChainModifier(
-            {},
-            new RangeModifier({
+        modifier = new ChainModifier({
+            chain: [{
+                modifier: 'Range',
                 ranges: [{
                     column: 'y',
                     minValue: 'A',
                     maxValue: 'b'
                 }]
-            })
-        ),
+            }]
+        }),
         table = new DataTable({
             columns: {
                 x: [1, 2, 3, 4, 5, 6],
