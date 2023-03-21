@@ -1,6 +1,65 @@
-const container = document.getElementById('container');
+const container = document.querySelector('#container');
 const escapeStringForHTML = Highcharts.A11yHTMLUtilities.escapeStringForHTML;
-const table = new Highcharts.DataTable({ y: [7, 42] });
+const table = new Highcharts.DataTable({ columns: { y: [7, 42] } });
+
+
+// Add Column
+
+const addColumnButton = document.querySelector('#add-column-button');
+const addColumnInput = document.querySelector('#add-column-input');
+
+addColumnButton.addEventListener('click', () => {
+    // Set column name; second parameter can be an array of cell values.
+    table.setColumn(addColumnInput.value);
+    // Render changed table.
+    renderTable(container, table.modified);
+    // Reset input field
+    addColumnInput.value = '';
+});
+
+
+// Add Row
+
+const addRowButton = document.querySelector('#add-row-button');
+const addRowInput = document.querySelector('#add-row-input');
+
+addRowButton.addEventListener('click', () => {
+    // Set row values from input string splitted by `,` and `;`.
+    table.setRow(
+        addRowInput.value
+            .split(/[,;]/g)
+            // check for numbers in cell string and convert them
+            .map(cell => (
+                /^[.\d\s]+$/.test(cell) && !isNaN(parseFloat(cell)) ?
+                    parseFloat(cell) :
+                    cell
+            ))
+    );
+    // Render changed table.
+    renderTable(container, table.modified);
+    // Reset input field
+    addRowInput.value = '';
+});
+
+
+// Modifiers
+
+const setModifierSelect = document.querySelector('#set-modifier');
+const DataModifierTypes = Highcharts.DataModifier.types;
+
+setModifierSelect.addEventListener('change', async () => {
+    const type = setModifierSelect.value;
+
+    if (type !== 'off') {
+        await table.setModifier(new DataModifierTypes[type]({}));
+    } else {
+        await table.setModifier();
+    }
+
+    // without modifier table.modified = table
+    renderTable(container, table.modified);
+});
+
 
 // Render Simple HTML Table
 
@@ -26,64 +85,6 @@ function renderTable(container, table) {
     html.push('</tbody>');
     html.push('</table>');
 
-    container.innerHTML = html.join('\n');
+    container.innerHTML = html.join('');
 }
 renderTable(container, table);
-
-
-// Add Column
-
-const addColumnButton = document.getElementById('add-column-button');
-const addColumnInput = document.getElementById('add-column-input');
-
-function addColumn() {
-    // Set column name; second parameter can be an array of cell values.
-    table.setColumn(addColumnInput.value);
-    // Render changed table.
-    renderTable(container, table);
-    // Reset input field
-    addColumnInput.value = '';
-}
-
-addColumnButton.addEventListener('click', addColumn);
-addColumnInput.addEventListener('change', addColumn);
-
-
-// Add Row
-
-const addRowButton = document.getElementById('add-row-button');
-const addRowInput = document.getElementById('add-row-input');
-
-function addRow() {
-    // Set row values from input string splitted by `,` and `;`.
-    table.setRow(addRowInput.value.split(/[,;]/g));
-    // Render changed table.
-    renderTable(container, table);
-    // Reset input field
-    addRowInput.value = '';
-}
-
-addRowButton.addEventListener('click', addRow);
-addRowInput.addEventListener('change', addRow);
-
-
-// Modifiers
-
-const setModifierSelect = document.getElementById('set-modifier');
-
-const DataModifierTypes = Highcharts.DataModifier.types;
-
-async function setModifier() {
-    const type = setModifierSelect.value;
-
-    if (type !== 'off') {
-        await table.setModifier(new DataModifierTypes[type]({}));
-    } else {
-        await table.setModifier();
-    }
-
-    // without modifier table.modified = table
-    renderTable(container, table.modified);
-}
-
-setModifierSelect.addEventListener('change', setModifier);
