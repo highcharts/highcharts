@@ -49,7 +49,7 @@ class SortModifier extends DataModifier {
      * Default options to group table rows.
      */
     public static readonly defaultOptions: SortModifier.Options = {
-        modifier: 'Order',
+        modifier: 'Sort',
         direction: 'desc',
         orderByColumn: 'y'
     };

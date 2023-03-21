@@ -22,8 +22,10 @@
 
 import type DataEvent from '../DataEvent';
 import type DataTable from '../DataTable';
-import type JSON from '../../Core/JSON';
-import type ModifierType from './ModifierType';
+import type {
+    ModifierType,
+    ModifierTypeRegistry
+} from './ModifierType';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -377,11 +379,11 @@ namespace DataModifier {
     /**
      * Options to configure the modifier.
      */
-    export interface Options extends JSON.Object {
+    export interface Options {
         /**
          * Name of the related modifier for these options.
          */
-        modifier: string;
+        modifier: keyof ModifierTypeRegistry;
     }
 
     /* *
@@ -407,17 +409,41 @@ namespace DataModifier {
      *
      * */
 
+    export function getModifier<T extends keyof ModifierTypeRegistry>(
+        name: T
+    ): ModifierTypeRegistry[T];
+    export function getModifier(
+        name: string
+    ): (ModifierType|undefined);
     /**
-     * Extracts the name from a given modifier class.
+     * Returns a modifier class (aka class constructor) of the given modifier
+     * name.
+     *
+     * @param {string} name
+     * Registered class name of the class type.
+     *
+     * @return {DataModifier|undefined}
+     * Class type, if the class name was found, otherwise `undefined`.
+     */
+    export function getModifier(
+        name: string
+    ): (ModifierType|undefined) {
+        return types[name];
+    }
+
+    /**
+     * Extracts the type from a given modifier class.
      *
      * @param {DataModifier} modifier
-     * Modifier class to extract the name from.
+     * Modifier class to extract the type from.
      *
      * @return {string}
-     * Modifier name, if the extraction was successful, otherwise an empty
+     * Modifier type, if the extraction was successful, otherwise an empty
      * string.
      */
-    function getType(modifier: ModifierType): string {
+    function getType(
+        modifier: ModifierType
+    ): string {
         return (modifier.toString().match(typeRegExp) || ['', ''])[1];
     }
 
@@ -433,28 +459,18 @@ namespace DataModifier {
      * Returns true, if the registration was successful. False is returned, if
      * their is already a modifier registered with this name.
      */
-    export function registerModifier(modifier: ModifierType): boolean {
+    export function registerModifier(
+        modifier: ModifierType
+    ): boolean {
         const type = getType(modifier);
 
         return (
-            typeof type !== 'undefined' &&
+            !!type &&
             !types[type] &&
             !!(types[type] = modifier)
         );
     }
 
-}
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
-        '': typeof DataModifier;
-    }
 }
 
 /* *

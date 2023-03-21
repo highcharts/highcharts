@@ -50,7 +50,7 @@ class InvertModifier extends DataModifier {
      * Default options for the invert modifier.
      */
     public static readonly defaultOptions: InvertModifier.Options = {
-        modifier: 'InvertModifier'
+        modifier: 'Invert'
     };
 
     /* *
