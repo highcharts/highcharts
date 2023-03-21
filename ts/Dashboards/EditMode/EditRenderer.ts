@@ -96,15 +96,7 @@ function renderCollapse(
     const headerBtn = createElement(
         'button',
         { className: 'highcharts-dashboards-outer-accordeon-header-btn' },
-        {
-            border: 'none',
-            font: 'inherit',
-            color: 'inherit',
-            background: 'none',
-            margin: 0,
-            width: '100%',
-            display: 'flex'
-        },
+        {},
         header
     );
     const titleElement = createElement(

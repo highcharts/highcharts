@@ -35,7 +35,7 @@ class MenuItem {
     *
     * */
 
-    public static defaultOptions: MenuItem.Options = {
+    public static defaultOptions: Partial<MenuItem.Options> = {
         id: '',
         type: 'text'
     };
@@ -108,28 +108,38 @@ class MenuItem {
                 }
             };
 
-        const collapsable = options.collapsable,
-            parent = collapsable ?
-                (EditRenderer.renderCollapse(
-                    item.container,
-                    options.text || ''
-                ) as any).content :
+        const collapsable = options.collapsable;
+        let container;
+        if (collapsable) {
+            const collapsableElement = (EditRenderer.renderCollapse(
                 item.container,
-            renderItem = EditRenderer.getRendererFunction(
-                options.type as RendererElement
-            );
+                options.text || ''
+            ));
+
+            if (!collapsableElement) {
+                return;
+            }
+
+            container = collapsableElement.content;
+        } else {
+            container = item.container;
+        }
+
+        const renderItem = EditRenderer.getRendererFunction(
+            options.type as RendererElement
+        );
 
         if (!renderItem) {
             return;
         }
 
-        return renderItem(parent, this.getElementOptions(options, callback));
+        return renderItem(container, this.getElementOptions(options, callback));
     }
 
     private getElementOptions(
         options: MenuItem.Options,
         callback?: () => void
-    ): any {
+    ): MenuItem.Options {
 
         return {
             id: options.id,
@@ -181,16 +191,22 @@ class MenuItem {
 namespace MenuItem {
     export interface Options {
         nestedOptions?: Record<string, Options>;
+        callback?: () => void;
         collapsable?: boolean;
         id: string;
+        name?: string;
         type?: 'addComponent'|'addLayout'|'horizontalSeparator'|'icon'|'input'|
         'toggle'|'text'|'textarea'|'verticalSeparator'|'select';
         text?: string;
         className?: string;
         events?: Record<Event['type'], Function>;
+        mousedown?: Function;
+        onchange?: Function;
+        item?: MenuItem;
         style?: CSSJSONObject;
         icon?: string;
         isActive?: boolean;
+        title?: string;
         value?: string;
         items?: Array<string> | Array<SelectFormFieldItem>;
     }

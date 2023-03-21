@@ -353,7 +353,7 @@ class Sidebar {
         }
     });
 
-    public static itemsGeneralOptions: Record<string, MenuItem.Options> = {
+    public static itemsGeneralOptions: Record<string, Partial<MenuItem.Options>> = {
         addLayout: {
             id: 'addLayout',
             type: 'addLayout',

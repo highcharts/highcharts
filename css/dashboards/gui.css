@@ -912,7 +912,14 @@ div.highcharts-dashboards-nested-content {
 /* end of nested options dropdown */
 
 /* outer Accordeon */
-.highcharts-dashboards-outer-accordeon-header > button.highcharts-dashboards-outer-accordeon-header-btn {
+button.highcharts-dashboards-outer-accordeon-header-btn {
+    border: none;
+    font: inherit;
+    color: inherit;
+    background: none;
+    margin: 0;
+    width: 100%;
+    display: flex;
     justify-content: space-between;
 }
 
