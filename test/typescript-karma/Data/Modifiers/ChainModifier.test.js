@@ -108,9 +108,8 @@ QUnit.test('ChainModifier.modifyCell', function (assert) {
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
+        .setModifier(new ChainModifier(
+            {},
             new RangeModifier({
                 ranges: [{
                     column: 'x',
@@ -171,9 +170,8 @@ QUnit.test('ChainModifier.modifyColumns', function (assert) {
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
+        .setModifier(new ChainModifier(
+            {},
             new RangeModifier({
                 ranges: [{
                     column: 'x',
@@ -236,9 +234,8 @@ QUnit.test('ChainModifier.modifyRows', function (assert) {
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
+        .setModifier(new ChainModifier(
+            {},
             new RangeModifier({
                 ranges: [{
                     column: 'x',
