@@ -150,7 +150,7 @@ class Sync {
      * The component to which the emitters and handlers are attached.
      *
      * @param syncHandlers
-     * The emitters and handlers to use for each event
+     * The emitters and handlers to use for each event.
      */
     constructor(
         component: ComponentTypes,
