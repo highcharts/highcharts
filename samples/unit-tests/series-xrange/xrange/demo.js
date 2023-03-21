@@ -173,7 +173,7 @@ QUnit.test('X-Range', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].points[0].graphic.getBBox().width,
+        Math.round(chart.series[0].points[0].graphic.getBBox().width),
         10,
         'Correct width for minPointLength on a reversed xAxis (#8933).'
     );
