@@ -1087,12 +1087,9 @@ function onAfterColumnTranslate(
             } else {
                 start = barX + startAngleRad;
 
-                const yBottom = point.yBottom || 0,
-                    plotY = point.plotY;
-
                 point.shapeArgs = series.polar.arc(
-                    Math.max(yBottom, plotY),
-                    Math.min(yBottom, plotY),
+                    point.yBottom,
+                    point.plotY,
                     start,
                     start + point.pointWidth
                 );
@@ -1566,7 +1563,7 @@ class PolarAdditions {
      * */
 
     public arc(
-        low: number,
+        low: number | undefined,
         high: number,
         start: number,
         end: number
