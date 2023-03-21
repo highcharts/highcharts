@@ -112,7 +112,7 @@ class Sync {
      * The id of the handler to check.
      *
      * @returns
-     * if the handler is registered.
+     * Whether the handler is registered.
      */
     public isRegisteredHandler(handlerID: string): boolean {
         return Boolean(this.registeredSyncHandlers[handlerID]);
