@@ -394,7 +394,7 @@ namespace DataModifier {
      * Regular expression to extract the modifier name (group 1) from the
      * stringified class type.
      */
-    const typeRegExp = /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/;
+    const typeRegExp = /^(?:class|function)\s+(\w*?)(?:Data)?(?:Modifier)?\W/;
 
     /**
      * Registry as a record object with modifier names and their class.
