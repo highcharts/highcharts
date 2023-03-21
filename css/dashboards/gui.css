@@ -917,10 +917,17 @@ button.highcharts-dashboards-outer-accordeon-header-btn {
     font: inherit;
     color: inherit;
     background: none;
-    margin: 0;
     width: 100%;
+    margin: 0;
     display: flex;
     justify-content: space-between;
+    padding: 10px 16px;
+    cursor: pointer;
+    align-items: center;
+}
+
+button.highcharts-dashboards-outer-accordeon-header-btn:hover {
+    background-color: var(--highcharts-dashboards-neutral-color-50);
 }
 
 div.highcharts-dashboards-outer-accordeon {
@@ -932,12 +939,6 @@ div.highcharts-dashboards-outer-accordeon {
     font-size: 14px;
     color: var(--highcharts-dashboards-neutral-color-80);
     line-height: 16px;
-}
-
-button.highcharts-dashboards-outer-accordeon-header-btn {
-    padding: 10px 16px;
-    cursor: pointer;
-    align-items: center;
 }
 
 div.highcharts-dashboards-outer-accordeon-content {
