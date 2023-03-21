@@ -50,112 +50,6 @@ abstract class DataConnector implements DataEvent.Emitter {
 
     /* *
      *
-     *  Static Properties
-     *
-     * */
-
-    /**
-     * Registry as a record object with connector names and their class.
-     */
-    private static readonly registry = {} as Record<string, ConnectorType>;
-
-    /**
-     * Regular expression to extract the connector type (group 1) from the
-     * stringified class constructor.
-     */
-    private static readonly typeRegExp = (
-        /^function\s+(\w*?)(?:DataConnector)?\s*\(/u
-    );
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Adds a connector class to the registry. The connector has to provide the
-     * `DataConnector.options` property and the `DataConnector.load` method to
-     * modify the table.
-     *
-     * @param {DataConnector} dataConnector
-     * Connector class (aka class constructor) to register.
-     *
-     * @return {boolean}
-     * Returns true, if the registration was successful. False is returned, if
-     * their is already a connector registered with this class name.
-     */
-    public static addConnector(dataConnector: ConnectorType): boolean {
-        const type = DataConnector.getType(dataConnector),
-            registry = DataConnector.registry;
-
-        if (
-            typeof type === 'undefined' ||
-            registry[type]
-        ) {
-            return false;
-        }
-
-        registry[type] = dataConnector;
-
-        return true;
-    }
-
-    /**
-     * Returns all registered DataConnector types.
-     *
-     * @return {Array<string>}
-     * All registered connector types.
-     */
-    public static getAllConnectorTypes(): Array<string> {
-        return Object.keys(DataConnector.registry);
-    }
-
-    /**
-     * Returns a copy of the dataConnector registry as record object with
-     * DataConnector type and their class.
-     *
-     * @return {Highcharts.Dictionary<DataConnectorRegistryType>}
-     * Copy of the dataConnector registry.
-     */
-    public static getAllConnectors(): Record<string, ConnectorType> {
-        return merge(DataConnector.registry);
-    }
-
-    /**
-     * Extracts the type from a given DataConnector class.
-     *
-     * @param {DataConnector} connector
-     * DataConnector class to extract the type from.
-     *
-     * @return {string}
-     * DataConnector type, if the extraction was successful, otherwise an empty
-     * string.
-     */
-    private static getType(
-        connector: (NewableFunction|ConnectorType)
-    ): string {
-        return (
-            connector.toString().match(DataConnector.typeRegExp) ||
-            ['', '']
-        )[1];
-    }
-
-    /**
-     * Returns a DataConnector class (aka class constructor) of the given name.
-     *
-     * @param {string} type
-     * Registered class type.
-     *
-     * @return {DataConnectorRegistryType|undefined}
-     * Class, if the class name was found, otherwise `undefined`.
-     */
-    public static getConnector(type: string): (ConnectorType|undefined) {
-        return DataConnector.registry[type];
-    }
-
-    /* *
-     *
      *  Constructor
      *
      * */
@@ -467,6 +361,72 @@ namespace DataConnector {
      */
     export interface Metadata extends JSON.Object {
         columns: Record<string, MetaColumn>;
+    }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    /**
+     * Regular expression to extract the connector type (group 1) from the
+     * stringified class constructor.
+     */
+    const typeRegExp = /^function\s+(\w*?)(?:DataConnector)?\s*\(/u;
+
+    /**
+     * Registry as a record object with connector names and their class.
+     */
+    export const types = {} as Record<string, ConnectorType>;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Adds a connector class to the registry. The connector has to provide the
+     * `DataConnector.options` property and the `DataConnector.load` method to
+     * modify the table.
+     *
+     * @param {DataConnector} dataConnector
+     * Connector class (aka class constructor) to register.
+     *
+     * @return {boolean}
+     * Returns true, if the registration was successful. False is returned, if
+     * their is already a connector registered with this class name.
+     */
+    export function registerType(dataConnector: ConnectorType): boolean {
+        const type = getType(dataConnector);
+
+        if (
+            typeof type === 'undefined' ||
+            types[type]
+        ) {
+            return false;
+        }
+
+        types[type] = dataConnector;
+
+        return true;
+    }
+
+    /**
+     * Extracts the type from a given DataConnector class.
+     *
+     * @param {DataConnector} connector
+     * DataConnector class to extract the type from.
+     *
+     * @return {string}
+     * DataConnector type, if the extraction was successful, otherwise an empty
+     * string.
+     */
+    function getType(
+        connector: (NewableFunction|ConnectorType)
+    ): string {
+        return (connector.toString().match(typeRegExp) || ['', ''])[1];
     }
 
 }

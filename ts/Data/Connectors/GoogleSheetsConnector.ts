@@ -107,24 +107,18 @@ class GoogleSheetsConnector extends DataConnector {
     /**
      * Constructs an instance of GoogleSheetsConnector
      *
-     * @param {DataTable} table
+     * @param {DataTable} [table]
      * Optional table to create the connector from.
      *
-     * @param {CSVConnector.OptionsType} options
+     * @param {CSVConnector.OptionsType} [options]
      * Options for the connector and converter.
      *
      * @param {DataConverter} converter
      * Optional converter to replace the default converter.
      */
     public constructor(
-        table: DataTable,
-        options: (
-            Partial<GoogleSheetsConnector.Options>&
-            {
-                googleAPIKey: string;
-                googleSpreadsheetKey: string;
-            }
-        ),
+        table: DataTable = new DataTable(),
+        options: Partial<GoogleSheetsConnector.Options> = {},
         converter?: GoogleSheetsConverter
     ) {
         super(table);
@@ -356,13 +350,13 @@ namespace GoogleSheetsConnector {
  *
  * */
 
-DataConnector.addConnector(GoogleSheetsConnector);
-
 declare module './ConnectorType' {
     interface ConnectorTypeRegistry {
         Google: typeof GoogleSheetsConnector;
     }
 }
+
+DataConnector.registerType(GoogleSheetsConnector);
 
 /* *
  *

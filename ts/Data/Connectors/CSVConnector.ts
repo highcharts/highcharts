@@ -283,14 +283,13 @@ namespace CSVConnector {
  *
  * */
 
-DataConnector.addConnector(CSVConnector);
-
 declare module './ConnectorType' {
     interface ConnectorTypeRegistry {
         CSVConnector: typeof CSVConnector;
     }
 }
 
+DataConnector.registerType(CSVConnector);
 
 /* *
  *
