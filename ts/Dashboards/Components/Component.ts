@@ -907,8 +907,11 @@ namespace Component {
 
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
-    /** @internal */
     export interface ComponentOptions extends EditableOptions {
+        /**
+        * @internal
+        * The Board the component belongs to
+        * */
         board?: Board;
         parentCell?: Cell;
         parentElement: HTMLElement | string;
