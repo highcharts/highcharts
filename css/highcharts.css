@@ -58,20 +58,20 @@
     */
 
     /* Drilldown clickable labels, color axis max color. */
-    --highcharts-highlight-color-100: #003399;
+    --highcharts-highlight-color-100: #0022ff;
 
     /* Selection marker, menu hover, button hover, chart border, navigator
     series. */
-    --highcharts-highlight-color-80: #335cad;
+    --highcharts-highlight-color-80: #334eff;
 
     /* Navigator mask fill. */
-    --highcharts-highlight-color-60: #6685c2;
+    --highcharts-highlight-color-60: #667aff;
 
     /* Ticks and axis line. */
-    --highcharts-highlight-color-20: #ccd6eb;
+    --highcharts-highlight-color-20: #ccd3ff;
 
     /* Pressed button, color axis min color. */
-    --highcharts-highlight-color-10: #e6ebf5;
+    --highcharts-highlight-color-10: #e6e9ff;
 
     /* Indicators */
     --highcharts-positive-color: #06b535;

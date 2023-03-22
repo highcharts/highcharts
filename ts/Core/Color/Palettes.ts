@@ -44,23 +44,23 @@ export const enum Palette {
     /**
      * Drilldown clickable labels, color axis max color.
      */
-    highlightColor100 = '#003399',
+    highlightColor100 = '#0022ff',
     /**
      * Selection marker, menu hover, button hover, chart border, navigator series.
      */
-    highlightColor80 = '#335cad',
+    highlightColor80 = '#334eff',
     /**
      * Navigator mask fill.
      */
-    highlightColor60 = '#6685c2',
+    highlightColor60 = '#667aff',
     /**
      * Ticks and axis line.
      */
-    highlightColor20 = '#ccd6eb',
+    highlightColor20 = '#ccd3ff',
     /**
      * Pressed button, color axis min color.
      */
-    highlightColor10 = '#e6ebf5',
+    highlightColor10 = '#e6e9ff',
     /**
      * Indicators
      */
