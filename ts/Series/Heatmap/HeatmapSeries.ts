@@ -519,7 +519,9 @@ class HeatmapSeries extends ScatterSeries {
                                     .split(')')[0]
                                     .split('(')[1]
                                     .split(',')
-                                    .map((s): number => parseFloat(s)),
+                                    .map((s): number => (
+                                        parseFloat(s) ||
+                                        parseInt(s, 10))),
                                 x = toPlotScale(
                                     xMin,
                                     xMax,
@@ -536,7 +538,7 @@ class HeatmapSeries extends ScatterSeries {
                                 r: rgba[0],
                                 g: rgba[1],
                                 b: rgba[2],
-                                a: rgba[3] && rgba[3] || 255,
+                                a: rgba.length === 4 ? rgba[3] : 255,
                                 pixelIndex: y * (width * 4) + x * 4
                             };
                         },
@@ -551,6 +553,7 @@ class HeatmapSeries extends ScatterSeries {
                         const { r, g, b, a, pixelIndex } = getPixelData(
                             points[i]
                         );
+
                         pixelData.data[pixelIndex + 0] = r;
                         pixelData.data[pixelIndex + 1] = g;
                         pixelData.data[pixelIndex + 2] = b;
