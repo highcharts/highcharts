@@ -980,6 +980,7 @@ namespace Component {
     // JSON compatible options for export
     export interface ComponentOptionsJSON extends JSON.Object {
         // connector?: DataConnector.ClassJSON; // connector id
+        caption?: string;
         className?: string;
         cell?: string;
         editableOptions?: JSON.Array<string>;
@@ -990,6 +991,7 @@ namespace Component {
         parentElement?: string; // ID?
         style?: {};
         sync?: SyncOptions&JSON.Object;
+        title?: string;
         type: keyof ComponentTypeRegistry;
     }
 

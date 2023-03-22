@@ -262,7 +262,7 @@ class Board implements Serializable<Board, Board.JSON> {
     /**
      * An array of mounted components on the dashboard.
      * */
-    public mountedComponents: Array<Bindings.MountedComponentsOptions>;
+    public mountedComponents: Array<Bindings.MountedComponent>;
 
     /**
      * The options for the dashboard.

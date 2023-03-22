@@ -51,10 +51,10 @@ namespace Bindings {
      *
      * */
 
-    export interface MountedComponentsOptions {
-        options: any;
-        component?: Component;
+    export interface MountedComponent {
         cell: Cell;
+        component: Component;
+        options: Partial<Component.ComponentOptions>;
     }
 
     /* *
