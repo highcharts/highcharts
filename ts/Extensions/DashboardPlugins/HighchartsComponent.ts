@@ -30,8 +30,8 @@ import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 
 import Component from '../../Dashboards/Components/Component.js';
+import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
-import DataStore from '../../Data/Stores/DataStore.js';
 import DataTable from '../../Data/DataTable.js';
 import G from '../../Core/Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
@@ -89,7 +89,12 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
-            allowStoreUpdate: true,
+            /**
+             * Whether to allow the component to edit the store to which it is
+             * attached.
+             * @default true
+             */
+            allowConnectorUpdate: true,
             chartClassName: 'chart-container',
             chartID: 'chart-' + uniqueKey(),
             chartOptions: {
@@ -101,6 +106,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 [
                     'chartOptions',
                     'chartType',
+                    'chartConfig',
                     'chartClassName',
                     'chartID'
                 ]
@@ -110,16 +116,18 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 {
                     skipRedraw: [
                         'chartOptions',
+                        'chartConfig',
                         'chartType'
                     ],
                     keyMap: {
                         chartOptions: 'textarea',
+                        chartConfig: 'nested',
                         chartType: 'select'
                     }
                 }
             ),
             syncHandlers: HighchartsSyncHandlers,
-            tableAxisMap: {}
+            columnKeyMap: {}
         }
     );
 
@@ -153,7 +161,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 {
                     chartOptions,
                     // Highcharts, // TODO: Find a solution
-                    // store: store instanceof DataStore ? store : void 0,
+                    // store: store instanceof DataConnector ? store : void 0,
 
                     // Get from static registry:
                     syncHandlers: HighchartsComponent.syncHandlers
@@ -244,13 +252,13 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             { chart: {} } as Partial<Options>
         );
 
-        if (this.store) {
+        if (this.connector) {
             this.on('tableChanged', (): void => this.updateSeries());
 
             // reload the store when polling
-            this.store.on('afterLoad', (e: DataStore.Event): void => {
-                if (e.table && this.store) {
-                    this.store.table.setColumns(e.table.getColumns());
+            this.connector.on('afterLoad', (e: DataConnector.Event): void => {
+                if (e.table && this.connector) {
+                    this.connector.table.setColumns(e.table.getColumns());
                 }
             });
         }
@@ -290,7 +298,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         hcComponent.updateSeries();
         hcComponent.sync.start();
         hcComponent.emit({ type: 'afterRender' });
-        hcComponent.setupStoreUpdate();
+        hcComponent.setupConnectorUpdate();
 
         addEvent(hcComponent.chart, 'afterUpdate', function ():void {
             const options = this.options;
@@ -335,10 +343,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * @internal
      * */
-    private setupStoreUpdate(): void {
-        const { store, chart } = this;
+    private setupConnectorUpdate(): void {
+        const { connector: store, chart } = this;
 
-        if (store && chart && this.options.allowStoreUpdate) {
+        if (store && chart && this.options.allowConnectorUpdate) {
             chart.series.forEach((series): void => {
                 series.points.forEach((point): void => {
                     addEvent(point, 'drag', (): void => {
@@ -368,16 +376,21 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     /**
      * Update the store, when the point is being dragged.
+<<<<<<< HEAD
      * @param point
      * Dragged point.
      * @param store
      * Store to update.
      *
      * @internal
+=======
+     * @param  {Point} point Dragged point.
+     * @param  {Component.ConnectorTypes} store Connector to update.
+>>>>>>> dashboards/main
      */
     private onChartUpdate(
         point: Point,
-        store: Component.StoreTypes
+        store: Component.ConnectorTypes
     ): void {
         const table = store.table,
             columnName = point.series.name,
@@ -432,16 +445,16 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      */
     private updateSeries(): void {
         // Heuristically create series from the store dataTable
-        if (this.chart && this.store) {
+        if (this.chart && this.connector) {
             this.presentationTable = this.presentationModifier ?
-                this.store.table.modified.clone() :
-                this.store.table;
+                this.connector.table.modified.clone() :
+                this.connector.table;
 
-            const { id: storeTableID } = this.store.table;
+            const { id: storeTableID } = this.connector.table;
             const { chart } = this;
 
             // Names/aliases that should be mapped to xAxis values
-            const tableAxisMap = this.options.tableAxisMap || {};
+            const columnKeyMap = this.options.columnKeyMap || {};
             const xKeyMap: Record<string, string> = {};
 
             if (this.presentationModifier) {
@@ -462,15 +475,15 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                             .getColumnVisibility(name) !== false :
                         true;
 
-                    if (!isVisible && !tableAxisMap[name]) {
+                    if (!isVisible && !columnKeyMap[name]) {
                         return false;
                     }
 
-                    if (tableAxisMap[name] === null) {
+                    if (columnKeyMap[name] === null) {
                         return false;
                     }
 
-                    if (tableAxisMap[name] === 'x') {
+                    if (columnKeyMap[name] === 'x') {
                         xKeyMap[name] = name;
                         return false;
                     }
@@ -483,21 +496,21 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 let i = 0;
                 while (i < chart.series.length) {
                     const series = chart.series[i];
-                    const seriesFromStore = series.options.id === `${storeTableID}-series-${index}`;
+                    const seriesFromConnector = series.options.id === `${storeTableID}-series-${index}`;
                     const existingSeries =
                         seriesNames.indexOf(series.name) !== -1;
                     i++;
 
                     if (
                         existingSeries &&
-                        seriesFromStore
+                        seriesFromConnector
                     ) {
                         return series;
                     }
 
                     if (
                         !existingSeries &&
-                        seriesFromStore
+                        seriesFromConnector
                     ) {
                         series.destroy();
                     }
@@ -703,11 +716,12 @@ namespace HighchartsComponent {
     }>;
 
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
+
         /**
          * Whether to allow the component to edit the store to which it is
          * attached.
          */
-        allowStoreUpdate?: boolean,
+        allowConnectorUpdate?: boolean,
         /**
          * The string that declares constructor that is called for creating
          * a chart.
@@ -734,7 +748,7 @@ namespace HighchartsComponent {
         /**
          * Names / aliases that should be mapped to xAxis values.
          */
-        tableAxisMap?: Record<string, string | null>;
+        columnKeyMap?: Record<string, string | null>;
     }
     /** @internal */
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {

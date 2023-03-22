@@ -23,8 +23,8 @@ import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
 
 import Component from '../../Dashboards/Components/Component.js';
+import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
-import DataStore from '../../Data/Stores/DataStore.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 const { createElement, merge, uniqueKey } = U;
@@ -48,9 +48,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
-    /** @internal */
     public static syncHandlers = DataGridSyncHandlers;
-    /** @internal */
     public static DataGridConstructor?: typeof DataGrid;
     public static defaultOptions = merge(
         Component.defaultOptions,
@@ -69,10 +67,9 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
-    /** @internal */
     public static onUpdate(
         e: KeyboardEvent,
-        store: Component.StoreTypes
+        store: Component.ConnectorTypes
     ): void {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {
@@ -117,7 +114,6 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
     }
 
-    /** @internal */
     public static fromJSON(
         json: DataGridComponent.ClassJSON
     ): DataGridComponent {
@@ -145,13 +141,10 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
-    /** @internal */
     public dataGrid?: DataGrid;
     public dataGridContainer: HTMLElement;
     public dataGridOptions: Partial<Options>;
     public options: DataGridComponent.DataGridOptions;
-
-    /** @internal */
     public sync: Component['sync'];
 
     /* *
@@ -191,18 +184,18 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
 
         this.dataGridOptions = this.options.dataGridOptions || ({} as any);
 
-        if (this.store) {
+        if (this.connector) {
             // this.on('tableChanged', (): void => this.updateSeries());
 
             // Reload the store when polling.
-            this.store.on('afterLoad', (e: DataStore.Event): void => {
-                if (e.table && this.store) {
-                    this.store.table.setColumns(e.table.getColumns());
+            this.connector.on('afterLoad', (e: DataConnector.Event): void => {
+                if (e.table && this.connector) {
+                    this.connector.table.setColumns(e.table.getColumns());
                 }
             });
 
             // Update the DataGrid when store changed.
-            this.store.table.on('afterSetCell', (e: any): void => {
+            this.connector.table.on('afterSetCell', (e: any): void => {
                 const dataGrid = this.dataGrid;
                 let shouldUpdateTheGrid = true;
 
@@ -244,7 +237,6 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
-    /** @internal */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -266,7 +258,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         this.sync.start();
         this.emit({ type: 'afterRender' });
 
-        this.setupStoreUpdate();
+        this.setupConnectorUpdate();
 
         return this;
     }
@@ -295,14 +287,13 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         return this;
     }
 
-    /** @internal */
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
             this.dataGrid = new DataGridComponent.DataGridConstructor(
                 this.dataGridContainer,
                 {
                     ...this.options.dataGridOptions,
-                    dataTable: this.store && this.store.table.modified
+                    dataTable: this.connector && this.connector.table.modified
                 }
             );
             return this.dataGrid;
@@ -311,9 +302,8 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         throw new Error('DataGrid not connected.');
     }
 
-    /** @internal */
-    private setupStoreUpdate(): void {
-        const { store, dataGrid } = this;
+    private setupConnectorUpdate(): void {
+        const { connector: store, dataGrid } = this;
 
         if (store && dataGrid) {
             dataGrid.on<DataGrid.Event>('cellClick', (e): void => {
@@ -328,7 +318,6 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
     }
 
-    /** @internal */
     public toJSON(): DataGridComponent.ClassJSON {
         const dataGridOptions = JSON.stringify(this.options.dataGridOptions);
         const base = super.toJSON();
@@ -391,9 +380,17 @@ namespace DataGridComponent {
          */
         dataGridOptions?: DataGridOptions;
         /**
+         * The name of class that is applied to the chart's container.
+         */
+        chartClassName?: string;
+        /**
+         * The id that is applied to the chart's container.
+         */
+        chartID?: string;
+        /**
          * Names / aliases that should be mapped to xAxis values.
          */
-        tableAxisMap?: Record<string, string | null>;
+        columnKeyMap?: Record<string, string | null>;
     }
     /** @internal */
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {

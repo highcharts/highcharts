@@ -80,9 +80,6 @@ class EditMode {
         this.board = board;
         this.lang = merge({}, EditGlobals.lang, this.options.lang);
 
-        // Init renderer.
-        this.renderer = new EditRenderer(this);
-
         this.contextPointer = {
             isVisible: false,
             element: createElement(
@@ -102,8 +99,9 @@ class EditMode {
         this.createTools();
 
         this.confirmationPopup = new ConfirmationPopup(
-            this,
             board.container,
+            EditGlobals.iconsURL,
+            this,
             this.options.confirmationPopup
         );
 
@@ -127,7 +125,6 @@ class EditMode {
     public options: EditMode.Options;
     public board: Board;
     public lang: EditGlobals.LangOptions;
-    public renderer: EditRenderer;
     public cellToolbar?: CellEditToolbar;
     public rowToolbar?: RowEditToolbar;
     public sidebar?: Sidebar;
@@ -576,8 +573,9 @@ class EditMode {
             options.contextMenu &&
             options.contextMenu.enabled
         ) {
-            this.tools.contextButtonElement = this.renderer.renderContextButton(
-                this.tools.container
+            this.tools.contextButtonElement = EditRenderer.renderContextButton(
+                this.tools.container,
+                editMode
             );
         }
 
@@ -609,7 +607,7 @@ class EditMode {
     }
 
     private createRwdMenu(): void {
-        const rwdBreakingPoints = this.board.options.respoBreakpoints;
+        const rwdBreakingPoints = this.board.options.responsiveBreakpoints;
         const toolsContainer = this.tools.container;
         const options = this.options;
         const rwdIcons =

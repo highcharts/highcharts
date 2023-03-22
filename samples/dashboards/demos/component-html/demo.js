@@ -1,6 +1,5 @@
 Dashboards.board('container', {
     gui: {
-        enabled: true,
         layouts: [{
             rows: [{
                 cells: [{
