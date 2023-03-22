@@ -802,7 +802,7 @@ class Annotation extends EventEmitter implements Controllable {
             if (
                 navigation.activeAnnotation === this &&
                 navigation.popup &&
-                navigation.popup.formType === 'annotation-toolbar'
+                navigation.popup.type === 'annotation-toolbar'
             ) {
                 fireEvent(navigation, 'closePopup');
             }

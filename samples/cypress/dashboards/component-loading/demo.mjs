@@ -63,7 +63,6 @@ const board = new Board('container', {
         },
         {
             cell: 'dashboard-col-3',
-            isResizable: true,
             type: 'html',
             elements: [{
                 tagName: 'img',

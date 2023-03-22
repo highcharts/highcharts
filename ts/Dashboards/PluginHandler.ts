@@ -19,9 +19,9 @@
  *
  * */
 
-import Component from './Component/Component.js';
+import Component from './Components/Component.js';
 import Board from './Board.js';
-import Sync from './Component/Sync/Sync.js';
+import Sync from './Components/Sync/Sync.js';
 
 /* *
  *
@@ -77,7 +77,7 @@ namespace PluginHandler {
     /**
      * Adds a dashboard plugin.
      *
-     * @param {Dashboard.Plugin} plugin
+     * @param {Dashboards.Plugin} plugin
      * Dashboard plugin to register.
      *
      * @param {string} [key]

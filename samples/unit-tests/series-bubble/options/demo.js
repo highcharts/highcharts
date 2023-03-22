@@ -43,6 +43,22 @@ QUnit.test('Axis extremes', function (assert) {
         chart.xAxis[0].max > 3,
         'Axis max should be more than max data (#8902)'
     );
+
+    chart.series[0].data[0].update({ z: 0 });
+
+    assert.strictEqual(
+        chart.bubbleZExtremes.zMin,
+        0,
+        'zMin is calculated correctly when there is a point with Z = 0 (#17280)'
+    );
+
+    chart.series[1].data[0].update({ z: -3 });
+
+    assert.strictEqual(
+        chart.bubbleZExtremes.zMax,
+        0,
+        'zMax is calculated correctly when there is a point with Z = 0 (#17280)'
+    );
 });
 
 QUnit.test('Negative values', function (assert) {

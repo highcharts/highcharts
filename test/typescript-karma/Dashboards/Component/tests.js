@@ -1,9 +1,9 @@
 //@ts-check
 import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
 import HighchartsComponent from '/base/code/es-modules/Extensions/DashboardPlugins/HighchartsComponent.js';
-import HTMLComponent from '/base/code/es-modules/Dashboards/Component/HTMLComponent.js';
-import Component from '/base/code/es-modules/Dashboards/Component/Component.js';
-import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
+import HTMLComponent from '/base/code/es-modules/Dashboards/Components/HTMLComponent.js';
+import Component from '/base/code/es-modules/Dashboards/Components/Component.js';
+import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
 
 HighchartsComponent.charter = Highcharts;
 
@@ -18,7 +18,7 @@ const eventTypes = [
     'redraw',
     'afterRedraw',
     'tableChanged',
-    'storeAttached',
+    'connectorAttached',
     'update',
     'afterUpdate',
     'message'
@@ -47,12 +47,12 @@ function registerEvents(component) {
 
 test('HighchartsComponent options update', function (assert) {
     const parentElement = document.getElementById('container');
-    const store = new CSVStore(void 0, {
+    const connector = new CSVConnector(void 0, {
         csv: '1,2,3',
         firstRowAsNames: false
     });
 
-    store.load();
+    connector.load();
 
     const componentOptions = {
         parentElement: 'container',
@@ -127,12 +127,12 @@ test('HighchartsComponent options update', function (assert) {
 
 test('HighchartsComponent events', function (assert) {
     const parentElement = document.getElementById('container');
-    const store = new CSVStore(void 0, {
+    const connector = new CSVConnector(void 0, {
         csv: '1,2,3',
         firstRowAsNames: false
     });
 
-    store.load();
+    connector.load();
 
     const component = new HighchartsComponent({
         parentElement: 'container'
@@ -152,32 +152,32 @@ test('HighchartsComponent events', function (assert) {
 
     assert.deepEqual(registeredEvents, expectedEvents);
 
-    component.setStore(store)
-    expectedEvents.push('storeAttached');
+    component.setConnector(connector)
+    expectedEvents.push('connectorAttached');
     assert.deepEqual(
         registeredEvents,
         expectedEvents,
-        'Attaching a store should fire an evnet'
+        'Attaching a connector should fire an evnet'
     );
 
     emptyArray(registeredEvents);
     emptyArray(expectedEvents);
 
-    // With a store set in constructor
-    const componentWithStore = new HighchartsComponent({
+    // With a connector set in constructor
+    const componentWithConnector = new HighchartsComponent({
         parentElement,
-        store
+        connector
     });
-    registerEvents(componentWithStore);
+    registerEvents(componentWithConnector);
 
-    componentWithStore.load();
-    componentWithStore.render();
+    componentWithConnector.load();
+    componentWithConnector.render();
 
-    expectedEvents.push('load', 'storeAttached', 'afterLoad', 'beforeRender', 'afterRender');
+    expectedEvents.push('load', 'connectorAttached', 'afterLoad', 'beforeRender', 'afterRender');
     assert.deepEqual(
         registeredEvents,
         expectedEvents,
-        'If store is given in options, it will be attached during load'
+        'If connector is given in options, it will be attached during load'
     );
 
     emptyArray(registeredEvents);
@@ -186,8 +186,8 @@ test('HighchartsComponent events', function (assert) {
     // Table updates
     // This test doesn't work as there's a timeout going on
 
-    // store.table.getRow(0).insertCell('test', 0);
-    // store.table.insertRow(store.table.getRow(0))
+    // connector.table.getRow(0).insertCell('test', 0);
+    // connector.table.insertRow(connector.table.getRow(0))
     // expectedEvents.push('tableChanged', 'xxx');
     //
     // assert.deepEqual(
@@ -249,19 +249,19 @@ test('HighchartsComponent events', function (assert) {
     emptyArray(expectedEvents);
 
     Component.removeInstance(component);
-    Component.removeInstance(componentWithStore);
+    Component.removeInstance(componentWithConnector);
 
 });
 
 
 test('HTMLComponent events', function (assert) {
     const parentElement = document.createElement('div');
-    const store = new CSVStore(undefined, {
+    const connector = new CSVConnector(undefined, {
         csv: '1,2,3',
         firstRowAsNames: false
     });
 
-    store.load();
+    connector.load();
 
     const component = new HTMLComponent({
         parentElement
@@ -275,32 +275,32 @@ test('HTMLComponent events', function (assert) {
     const expectedEvents = ['load', 'afterLoad', 'beforeRender', 'afterRender']
     assert.deepEqual(registeredEvents, expectedEvents);
 
-    component.setStore(store);
-    expectedEvents.push('storeAttached');
+    component.setConnector(connector);
+    expectedEvents.push('connectorAttached');
     assert.deepEqual(
         registeredEvents,
         expectedEvents,
-        'Attaching a store should fire an event'
+        'Attaching a connector should fire an event'
     );
 
     emptyArray(registeredEvents);
     emptyArray(expectedEvents);
 
-    // With a store set in constructor
-    const componentWithStore = new HTMLComponent({
+    // With a connector set in constructor
+    const componentWithConnector = new HTMLComponent({
         parentElement,
-        store
+        connector: connector
     });
-    registerEvents(componentWithStore);
+    registerEvents(componentWithConnector);
 
-    componentWithStore.load();
-    componentWithStore.render();
+    componentWithConnector.load();
+    componentWithConnector.render();
 
-    expectedEvents.push('load', 'storeAttached', 'afterLoad', 'beforeRender', 'afterRender');
+    expectedEvents.push('load', 'connectorAttached', 'afterLoad', 'beforeRender', 'afterRender');
     assert.deepEqual(
         registeredEvents,
         expectedEvents,
-        'If store is given in options, it will be attached during load'
+        'If connector is given in options, it will be attached during load'
     );
 
     emptyArray(registeredEvents);
@@ -309,8 +309,8 @@ test('HTMLComponent events', function (assert) {
     // Table updates
     // This test doesn't work as there's a timeout going on
 
-    // store.table.getRow(0).insertCell('test', 0);
-    // store.table.insertRow(store.table.getRow(0))
+    // connector.table.getRow(0).insertCell('test', 0);
+    // connector.table.insertRow(connector.table.getRow(0))
     // expectedEvents.push('tableChanged', 'xxx');
     //
     // assert.deepEqual(
@@ -373,7 +373,7 @@ test('HTMLComponent events', function (assert) {
     emptyArray(expectedEvents);
 
     Component.removeInstance(component);
-    Component.removeInstance(componentWithStore);
+    Component.removeInstance(componentWithConnector);
 });
 
 test('component resizing', function(assert) {
@@ -381,7 +381,7 @@ test('component resizing', function(assert) {
     const parent = document.createElement('div');
     parent.id = 'test';
 
-    document.getElementById('container').appendChild(parent)
+    document.getElementById('container').appendChild(parent);
 
     const component = new HTMLComponent({
         parentElement: parent
@@ -500,7 +500,7 @@ test('HighchartsComponent resizing', function(assert) {
     const parent = document.createElement('div');
     parent.id = 'test';
     parent.style.width = '500px';
-    document.getElementById('container').appendChild(parent)
+    document.getElementById('container').appendChild(parent);
 
     const component = new HighchartsComponent({
         parentElement: parent,
@@ -548,9 +548,9 @@ test('toJSON', function(assert) {
     const container = document.createElement('div');
     container.id = 'container';
 
-    const store = new CSVStore();
+    const connector = new CSVConnector();
     const component = new HighchartsComponent({
-        store,
+        connector,
         parentElement: container,
         chartOptions: {
             chart: {},

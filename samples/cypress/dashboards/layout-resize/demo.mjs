@@ -179,7 +179,6 @@ let board = new Board('container', {
     },
     components: [{
         cell: 'dashboard-col-0',
-        isResizable: true,
         type: 'chart',
         chartOptions: {
             series: [{
