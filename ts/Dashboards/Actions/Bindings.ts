@@ -19,7 +19,7 @@ import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type Serializable from '../Serializable';
 import type KPIComponent from '../Components/KPIComponent';
-import type DataStore from '../../Data/Stores/DataStore';
+import type DataConnector from '../../Data/Connectors/DataConnector';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
 import type Row from '../Layout/Row';
@@ -237,7 +237,6 @@ namespace Bindings {
         cell: string;
         type: string;
         chartOptions?: any;
-        isResizable?: boolean;
         elements?: any;
         dimensions?: { width: number; height: number };
         events?: any;

@@ -21,6 +21,13 @@ QUnit.test('Item series dynamics', assert => {
     series.points[3].remove();
     assert.strictEqual(series.total, 11, 'Total should be modified');
     assert.strictEqual(series.points.length, 4, 'Point length modified');
+
+    series.points[0].update({ color: '#c76ab8' });
+    assert.strictEqual(
+        series.points[0].graphics[0].element.attributes.fill.value,
+        series.points[0].color,
+        'Circles color should update when the point updates (#17257)'
+    );
 });
 
 QUnit.test('Full circle- points should not overlap.', function (assert) {

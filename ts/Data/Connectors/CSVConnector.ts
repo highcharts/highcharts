@@ -26,7 +26,7 @@ import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
 import CSVConverter from '../Converters/CSVConverter.js';
-import DataStore from './DataStore.js';
+import DataConnector from './DataConnector.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -38,11 +38,11 @@ const { merge } = U;
  * */
 
 /**
- * Class that handles creating a datastore from CSV
+ * Class that handles creating a DataConnector from CSV
  *
  * @private
  */
-class CSVStore extends DataStore {
+class CSVConnector extends DataConnector {
 
     /* *
      *
@@ -50,7 +50,7 @@ class CSVStore extends DataStore {
      *
      * */
 
-    protected static readonly defaultOptions: CSVStore.Options = {
+    protected static readonly defaultOptions: CSVConnector.Options = {
         csv: '',
         csvURL: '',
         enablePolling: false,
@@ -64,26 +64,26 @@ class CSVStore extends DataStore {
      * */
 
     /**
-     * Constructs an instance of CSVDataStore.
+     * Constructs an instance of CSVConnector.
      *
      * @param {DataTable} table
-     * Optional table to create the store from.
+     * Optional table to create the connector from.
      *
-     * @param {CSVStore.OptionsType} options
-     * Options for the store and parser.
+     * @param {CSVConnector.OptionsType} options
+     * Options for the connector and parser.
      *
      * @param {DataConverter} converter
      * Optional converter to replace the default converter.
      */
     public constructor(
         table: DataTable = new DataTable(),
-        options: CSVStore.OptionsType = {},
+        options: CSVConnector.OptionsType = {},
         converter?: CSVConverter
     ) {
         super(table);
 
         this.options = merge(
-            CSVStore.defaultOptions,
+            CSVConnector.defaultOptions,
             options
         );
 
@@ -101,10 +101,10 @@ class CSVStore extends DataStore {
      * */
 
     /**
-     * Options related to the handling of the CSV datastore,
+     * Options related to the handling of the CSV DataConnector,
      * i.e. source, fetching, polling
      */
-    public readonly options: CSVStore.Options;
+    public readonly options: CSVConnector.Options;
 
     /**
      * The attached parser, which can be replaced in the constructor
@@ -128,27 +128,27 @@ class CSVStore extends DataStore {
      * */
 
     /**
-     * Initiates the loading of the CSV source to the store
+     * Initiates the loading of the CSV source to the connector
      *
      * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
-     * @emits CSVParser#load
-     * @emits CSVParser#afterLoad
+     * @emits CSVConnector#load
+     * @emits CSVConnector#afterLoad
      */
     public load(eventDetail?: DataEvent.Detail): Promise<this> {
-        const store = this,
-            converter = store.converter,
-            table = store.table,
+        const connector = this,
+            converter = connector.converter,
+            table = connector.table,
             {
                 csv,
                 csvURL
-            } = store.options;
+            } = connector.options;
 
         if (csv) {
             // If already loaded, clear the current rows
             table.deleteRows();
-            store.emit<CSVStore.Event>({
+            connector.emit<CSVConnector.Event>({
                 type: 'load',
                 csv,
                 detail: eventDetail,
@@ -156,7 +156,7 @@ class CSVStore extends DataStore {
             });
             converter.parse({ csv });
             table.setColumns(converter.getTable().getColumns());
-            store.emit<CSVStore.Event>({
+            connector.emit<CSVConnector.Event>({
                 type: 'afterLoad',
                 csv,
                 detail: eventDetail,
@@ -164,46 +164,46 @@ class CSVStore extends DataStore {
             });
         } else if (csvURL) {
             // Clear the table
-            store.table.deleteColumns();
+            connector.table.deleteColumns();
 
-            store.emit<CSVStore.Event>({
+            connector.emit<CSVConnector.Event>({
                 type: 'load',
                 detail: eventDetail,
-                table: store.table
+                table: connector.table
             });
 
             return fetch(csvURL || '')
                 .then((response): Promise<void> => response.text().then(
                     (csv): void => {
-                        store.converter.parse({ csv });
+                        connector.converter.parse({ csv });
 
                         // On inital fetch we need to set the columns
-                        store.table.setColumns(
-                            store.converter.getTable().getColumns()
+                        connector.table.setColumns(
+                            connector.converter.getTable().getColumns()
                         );
 
-                        store.emit<CSVStore.Event>({
+                        connector.emit<CSVConnector.Event>({
                             type: 'afterLoad',
                             csv,
                             detail: eventDetail,
-                            table: store.table
+                            table: connector.table
                         });
                     }
                 ))['catch']((error): Promise<void> => {
-                    store.emit<CSVStore.Event>({
+                    connector.emit<CSVConnector.Event>({
                         type: 'loadError',
                         detail: eventDetail,
                         error,
-                        table: store.table
+                        table: connector.table
                     });
 
                     return Promise.reject(error);
                 })
                 .then((): this =>
-                    store
+                    connector
                 );
         } else {
-            store.emit<CSVStore.Event>({
+            connector.emit<CSVConnector.Event>({
                 type: 'loadError',
                 detail: eventDetail,
                 error: 'Unable to load: no CSV string or URL was provided',
@@ -211,7 +211,7 @@ class CSVStore extends DataStore {
             });
         }
 
-        return Promise.resolve(store);
+        return Promise.resolve(connector);
     }
 
 }
@@ -223,9 +223,9 @@ class CSVStore extends DataStore {
  * */
 
 /**
- * Types for class-specific options and events
+ * Types for class-specific options and events.
  */
-namespace CSVStore {
+namespace CSVConnector {
 
     /* *
      *
@@ -234,15 +234,15 @@ namespace CSVStore {
      * */
 
     /**
-     * Event objects fired from CSVDataStore events
+     * Event objects fired from CSVConnector events.
      */
     export type Event = (ErrorEvent|LoadEvent);
 
     /**
-     * Options for the CSVDataStore class constructor
+     * Options for the CSVConnector class constructor.
      */
     export type OptionsType =
-        Partial<(CSVStore.Options&CSVConverter.OptionsType)>;
+        Partial<(CSVConnector.Options&CSVConverter.OptionsType)>;
 
     /**
      * @todo move this to the dataparser?
@@ -252,21 +252,21 @@ namespace CSVStore {
     }
 
     /**
-     * The event object that is provided on errors within CSVDataStore
+     * The event object that is provided on errors within CSVConnector.
      */
-    export interface ErrorEvent extends DataStore.ErrorEvent {
+    export interface ErrorEvent extends DataConnector.ErrorEvent {
         csv?: string;
     }
 
     /**
-     * The event object that is provided on load events within CSVDataStore
+     * The event object that is provided on load events within CSVConnector.
      */
-    export interface LoadEvent extends DataStore.LoadEvent {
+    export interface LoadEvent extends DataConnector.LoadEvent {
         csv?: string;
     }
 
     /**
-     * Internal options for CSVDataStore
+     * Internal options for CSVConnector.
      */
     export interface Options extends JSON.Object {
         csv: string;
@@ -283,11 +283,11 @@ namespace CSVStore {
  *
  * */
 
-DataStore.addStore(CSVStore);
+DataConnector.addConnector(CSVConnector);
 
-declare module './StoreType' {
-    interface StoreTypeRegistry {
-        CSVStore: typeof CSVStore;
+declare module './ConnectorType' {
+    interface ConnectorTypeRegistry {
+        CSVConnector: typeof CSVConnector;
     }
 }
 
@@ -298,4 +298,4 @@ declare module './StoreType' {
  *
  * */
 
-export default CSVStore;
+export default CSVConnector;

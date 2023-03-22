@@ -1,11 +1,11 @@
-import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
-import HTMLTableStore from '../../../../code/es-modules/Data/Stores/HTMLTableStore.js';
+import CSVConnector from '../../../../code/es-modules/Data/Connectors/CSVConnector.js';
+import HTMLTableConnector from '../../../../code/es-modules/Data/Connectors/HTMLTableConnector.js';
 import Board from '../../../../code/es-modules/Dashboards/Board.js';
 import RangeModifier from '../../../../code/es-modules/Data/Modifiers/RangeModifier.js';
 import ChainModifier from '../../../../code/es-modules/Data/Modifiers/ChainModifier.js';
 import GroupModifier from '../../../../code/es-modules/Data/Modifiers/GroupModifier.js';
 import SortModifier from '../../../../code/es-modules/Data/Modifiers/SortModifier.js';
-import DataStore from '../../../../code/es-modules/Data/Stores/DataStore.js';
+import DataConnector from '../../../../code/es-modules/Data/Connectors/DataConnector.js';
 import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
 import PluginHandler from '../../../../code/es-modules/Dashboard/PluginHandler.js';
@@ -180,14 +180,14 @@ function reduceTable(table, column) {
     return new DataTable(columns);
 }
 
-// Creates a HTMLTable store and returns the html with some modifications
+// Creates a HTMLTable connector and returns the html with some modifications
 function dumpHTMLTable(datatable) {
-    const tableStore = new HTMLTableStore(datatable.clone(), {});
-    tableStore.table.setColumn(
+    const tableConnector = new HTMLTableConnector(datatable.clone(), {});
+    tableConnector.table.setColumn(
         'Activity ID',
-        tableStore.table.getColumn('Activity ID').map(id => `<a href="https://www.strava.com/activities/${id}" target="_blank">${id}</a>`)
+        tableConnector.table.getColumn('Activity ID').map(id => `<a href="https://www.strava.com/activities/${id}" target="_blank">${id}</a>`)
     );
-    const html = tableStore.save({
+    const html = tableConnector.save({
         useMultiLevelHeaders: false
     });
     return html;
@@ -195,7 +195,7 @@ function dumpHTMLTable(datatable) {
 
 const csvData = document.querySelector('.hidden').innerText;
 
-const store = new CSVStore(undefined, {
+const connector = new CSVConnector(undefined, {
     csv: csvData
 });
 
@@ -220,12 +220,12 @@ function generateChecks() {
     ]);
 }
 
-// Is a function as we have to get state after loading the store
+// Is a function as we have to get state after loading the connector
 const components = state => [
     {
         cell: "datasource",
         type: "html",
-        store,
+        connector,
         title: "Datasource",
         scaleElements: false,
         elements: [
@@ -241,7 +241,7 @@ const components = state => [
                 attributes: {
                     id: 'dataurl',
                     type: "text",
-                    value: store.options.csvURL,
+                    value: connector.options.csvURL,
                     style: 'width: 100%;'
                 }
             }
@@ -249,9 +249,9 @@ const components = state => [
         events: {
             afterRender: () => {
                 document.querySelector('#dataurl').addEventListener('change', e => {
-                    if (e.target.value !== store.options.csvURL) {
-                        store.options.csvURL = e.target.value;
-                        store.load();
+                    if (e.target.value !== connector.options.csvURL) {
+                        connector.options.csvURL = e.target.value;
+                        connector.load();
                     }
                 });
             }
@@ -260,7 +260,7 @@ const components = state => [
     {
         cell: "selectors",
         type: "html",
-        store,
+        connector,
         title: "Filters",
         scaleElements: false,
         elements: [
@@ -285,7 +285,7 @@ const components = state => [
                     id: 'sortselect'
                 },
                 children: [
-                    ...store.table.getColumnNames()
+                    ...connector.table.getColumnNames()
                         .map(column => ({ tagName: 'option', textContent: column, value: column }))
                 ]
             },
@@ -328,7 +328,7 @@ const components = state => [
                             selected: state.rangeFilter.column
                         },
                         children: [
-                            ...store.table.getColumnNames()
+                            ...connector.table.getColumnNames()
                                 .map(column => (
                                     {
                                         tagName: 'option',
@@ -394,7 +394,7 @@ const components = state => [
                         maxValue: value
                     }));
 
-                    store.table.setModifier(
+                    connector.table.setModifier(
                         new ChainModifier({},
                             new RangeModifier({ ranges: [state.rangeFilter] }),
                             new RangeModifier({ ranges }),
@@ -457,15 +457,14 @@ const components = state => [
     },
     {
         cell: "columnchart",
-        isResizable: true,
         type: "Highcharts",
-        store,
+        connector,
         presentationModifier: new SortModifier({
             direction: 'asc',
             orderByColumn: 'Activity Date'
         }),
         showByDefault: true, // if false, only include columns in the map below?
-        tableAxisMap: {
+        columnKeyMap: {
             "Activity Date": "x",
             'Activity Type': null,
             'Activity ID': null,
@@ -486,11 +485,11 @@ const components = state => [
         },
         events: {
             afterPresentationModifier: function () {
-                if (this.store && this.options.showByDefault === false) {
+                if (this.connector && this.options.showByDefault === false) {
                     // Remove columns not in axis map
                     const [row] = this.presentationTable.getRowObjects(1, 1);
                     const removeColumns = Object.keys(row)
-                        .filter(key => !(key in this.options.tableAxisMap));
+                        .filter(key => !(key in this.options.columnKeyMap));
 
                     this.presentationTable.deleteColumns(removeColumns);
                 }
@@ -499,13 +498,12 @@ const components = state => [
     },
     {
         cell: "piechart",
-        isResizable: true,
         type: "Highcharts",
-        store,
+        connector,
         presentationModifier: new GroupModifier({
             groupColumn: 'Activity Type'
         }),
-        tableAxisMap: {
+        columnKeyMap: {
             Activity: 'x'
         },
         chartOptions: {
@@ -534,13 +532,12 @@ const components = state => [
     },
     {
         cell: "totals",
-        isResizable: true,
         type: "Highcharts",
-        store,
+        connector,
         presentationModifier: new GroupModifier({
             groupColumn: 'Activity Type'
         }),
-        tableAxisMap: {
+        columnKeyMap: {
             Activity: 'x'
         },
         chartOptions: {
@@ -576,7 +573,7 @@ const components = state => [
     {
         cell: "table",
         type: "html",
-        store,
+        connector,
         scaleElements: false,
         title: 'Activities',
         style: {
@@ -592,11 +589,11 @@ const components = state => [
         ],
         events: {
             mount: function () {
-                this.contentElement.innerHTML = dumpHTMLTable(this.store.table);
+                this.contentElement.innerHTML = dumpHTMLTable(this.connector.table);
                 this.on('tableChanged', () => {
                     setTimeout(() => {
                         this.contentElement.innerHTML =
-              dumpHTMLTable(this.store.table.modified);
+              dumpHTMLTable(this.connector.table.modified);
                     }, 0);
                 });
 
@@ -612,20 +609,20 @@ function initDashBoard() {
     });
 }
 
-store.on("afterLoad", function () {
+connector.on("afterLoad", function () {
     // Only keep numeric data, except for `Activity Type`
-    // Could potentially add `includeColumns` and `excludeColumns` options on the store
+    // Could potentially add `includeColumns` and `excludeColumns` options on the connector
     const [row] = this.table.getRowObjects(1, 1);
     const removeColumns = Object.keys(row)
         .filter(key => (key === 'Activity Type' ? false : typeof row[key] !== 'number'));
     this.table.deleteColumns(removeColumns);
 
     // use group modifier to get activity types
-    const groupStore = new DataStore(store.table.modified.clone());
-    groupStore.table.setModifier(new GroupModifier({
+    const groupConnector = new DataConnector(connector.table.modified.clone());
+    groupConnector.table.setModifier(new GroupModifier({
         groupColumn: 'Activity Type'
     }));
-    state.activityTypes = groupStore.table.modified.columns.value;
+    state.activityTypes = groupConnector.table.modified.columns.value;
 
 
     if (!state.dashboard) {
@@ -633,7 +630,7 @@ store.on("afterLoad", function () {
     }
 });
 
-store.load();
+connector.load();
 
 const editMode = {
     enabled: true,

@@ -76,7 +76,6 @@ let board = new Dashboards.Board('container', {
         }
     },
     gui: {
-        enabled: true,
         layouts: [{
             id: 'layout-1',
             rowClassName: 'custom-row',
@@ -150,7 +149,6 @@ let board = new Dashboards.Board('container', {
     },
     components: [{
         cell: 'dashboard-col-0',
-        isResizable: true,
         type: 'Highcharts',
         chartOptions: {
             series: [{

@@ -80,6 +80,7 @@ G.color = Color.parse;
 // Compositions
 HTMLRenderer.compose(SVGRenderer);
 HTMLElement.compose(SVGElement);
+Legend.compose(Chart);
 if (MSPointer.isRequired()) {
     G.Pointer = MSPointer;
     MSPointer.compose(Chart);

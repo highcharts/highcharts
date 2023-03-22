@@ -81,9 +81,7 @@ function compose<T extends typeof Chart>(
     wglMode?: boolean
 ): T {
 
-    if (wglMode && composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (wglMode && U.pushUnique(composedClasses, ChartClass)) {
         ChartClass.prototype.callbacks.push(onChartCallback);
     }
 

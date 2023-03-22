@@ -30,7 +30,7 @@ const {
     merge
 } = U;
 import AST from '../../Core/Renderer/HTML/AST.js';
-import DataStore from '../../Data/Stores/DataStore.js';
+import DataConnector from '../../Data/Connectors/DataConnector.js';
 
 // TODO: This may affect the AST parsing in Highcharts
 // should look into adding these as options if possible
@@ -106,14 +106,18 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
                 json.elements.map((el): AST.Node => JSON.parse(el)) :
                 []
         );
-        // const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
+        // const connector = (
+        //     json.connector ? DataJSON.fromJSON(json.connector) : void 0
+        // );
 
         const component = new HTMLComponent(
             merge(
                 options,
                 {
                     elements
-                    // store: store instanceof DataStore ? store : void 0
+                    // connector: (
+                    //   connector instanceof DataConnector ? connector : void 0
+                    // )
                 }
             )
         );
