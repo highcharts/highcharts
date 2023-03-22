@@ -1552,7 +1552,10 @@ const defaultOptions: Options = {
 
         /**
          * The border radius of the symbol for series types that use a rectangle
-         * in the legend. Defaults to half the `symbolHeight`.
+         * in the legend. Defaults to half the `symbolHeight`, effectively
+         * creating a circle.
+         *
+         * For color axis scales, it defaults to 3.
          *
          * @sample {highcharts} highcharts/legend/symbolradius/
          *         Round symbols
