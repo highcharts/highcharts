@@ -25,7 +25,7 @@
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
 
-import DataStore from './DataStore.js';
+import DataConnector from './DataConnector.js';
 import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
@@ -40,11 +40,11 @@ const { merge } = U;
  * */
 
 /**
- * Class that handles creating a datastore from an HTML table
+ * Class that handles creating a dataconnector from an HTML table.
  *
  * @private
  */
-class HTMLTableStore extends DataStore {
+class HTMLTableConnector extends DataConnector {
 
     /* *
      *
@@ -52,7 +52,7 @@ class HTMLTableStore extends DataStore {
      *
      * */
 
-    protected static readonly defaultOptions: HTMLTableStore.Options = {
+    protected static readonly defaultOptions: HTMLTableConnector.Options = {
         table: ''
     };
 
@@ -63,25 +63,25 @@ class HTMLTableStore extends DataStore {
      * */
 
     /**
-     * Constructs an instance of HTMLTableDataStore
+     * Constructs an instance of HTMLTableConnector.
      *
      * @param {DataTable} table
-     * Optional table to create the store from
+     * Optional table to create the connector from
      *
-     * @param {HTMLTableStore.OptionsType} options
-     * Options for the store and parser
+     * @param {HTMLTableConnector.OptionsType} options
+     * Options for the connector and parser
      *
      * @param {DataConverter} converter
      * Optional converter to replace the default converter
      */
     public constructor(
         table: DataTable = new DataTable(),
-        options: HTMLTableStore.OptionsType = {},
+        options: HTMLTableConnector.OptionsType = {},
         converter?: HTMLTableConverter
     ) {
         super(table);
 
-        this.options = merge(HTMLTableStore.defaultOptions, options);
+        this.options = merge(HTMLTableConnector.defaultOptions, options);
         this.converter = converter || new HTMLTableConverter(
             this.options,
             this.tableElement
@@ -95,11 +95,11 @@ class HTMLTableStore extends DataStore {
      * */
 
     /**
-     * Options for the HTMLTable datastore
+     * Options for the HTMLTable dataconnector
      * @todo this should not include parsing options
      */
     public readonly options: (
-        HTMLTableStore.Options&HTMLTableConverter.OptionsType
+        HTMLTableConnector.Options&HTMLTableConverter.OptionsType
     );
 
     /**
@@ -108,78 +108,78 @@ class HTMLTableStore extends DataStore {
     public readonly converter: HTMLTableConverter;
 
     /**
-     * The table element to create the store from. Is either supplied directly
-     * or is fetched by an ID.
+     * The table element to create the connector from. Is either supplied
+     * directly or is fetched by an ID.
      */
     public tableElement?: HTMLElement;
 
     public tableID?: string;
 
     /**
-     * Initiates creating the datastore from the HTML table
+     * Initiates creating the dataconnector from the HTML table
      *
      * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
-     * @emits HTMLTableDataStore#load
-     * @emits HTMLTableDataStore#afterLoad
-     * @emits HTMLTableDataStore#loadError
+     * @emits HTMLTableConnector#load
+     * @emits HTMLTableConnector#afterLoad
+     * @emits HTMLTableConnector#loadError
      */
     public load(
         eventDetail?: DataEvent.Detail
     ): Promise<this> {
-        const store = this;
+        const connector = this;
 
         // If already loaded, clear the current rows
-        store.table.deleteColumns();
+        connector.table.deleteColumns();
 
-        store.emit<HTMLTableStore.Event>({
+        connector.emit<HTMLTableConnector.Event>({
             type: 'load',
             detail: eventDetail,
-            table: store.table,
-            tableElement: store.tableElement
+            table: connector.table,
+            tableElement: connector.tableElement
         });
 
-        const { table: tableHTML } = store.options;
+        const { table: tableHTML } = connector.options;
 
         let tableElement: (HTMLElement|null);
 
         if (typeof tableHTML === 'string') {
-            store.tableID = tableHTML;
+            connector.tableID = tableHTML;
             tableElement = win.document.getElementById(tableHTML);
         } else {
             tableElement = tableHTML;
-            store.tableID = tableElement.id;
+            connector.tableID = tableElement.id;
         }
 
-        store.tableElement = tableElement || void 0;
+        connector.tableElement = tableElement || void 0;
 
-        if (!store.tableElement) {
+        if (!connector.tableElement) {
             const error =
                 'HTML table not provided, or element with ID not found';
 
-            store.emit<HTMLTableStore.Event>({
+            connector.emit<HTMLTableConnector.Event>({
                 type: 'loadError',
                 detail: eventDetail,
                 error,
-                table: store.table
+                table: connector.table
             });
 
             return Promise.reject(new Error(error));
         }
 
-        store.converter.parse(
-            merge({ tableHTML: store.tableElement }, store.options),
+        connector.converter.parse(
+            merge({ tableHTML: connector.tableElement }, connector.options),
             eventDetail
         );
 
-        store.table.setColumns(store.converter.getTable().getColumns());
+        connector.table.setColumns(connector.converter.getTable().getColumns());
 
-        store.emit<HTMLTableStore.Event>({
+        connector.emit<HTMLTableConnector.Event>({
             type: 'afterLoad',
             detail: eventDetail,
-            table: store.table,
-            tableElement: store.tableElement
+            table: connector.table,
+            tableElement: connector.tableElement
         });
 
         return Promise.resolve(this);
@@ -189,14 +189,14 @@ class HTMLTableStore extends DataStore {
 
 /* *
  *
- *  Clas Namespace
+ *  Class Namespace
  *
  * */
 
 /**
  * Types for class-specific options and events
  */
-namespace HTMLTableStore {
+namespace HTMLTableConnector {
 
     /* *
      *
@@ -205,17 +205,17 @@ namespace HTMLTableStore {
      * */
 
     /**
-     * Type for event object fired from HTMLTableDataStore
+     * Type for event object fired from HTMLTableConnector
      */
     export type Event = (ErrorEvent|LoadEvent);
 
     /**
-     * Provided event object on errors within HTMLTableDataStore
+     * Provided event object on errors within HTMLTableConnector
      */
-    export type ErrorEvent = DataStore.ErrorEvent;
+    export type ErrorEvent = DataConnector.ErrorEvent;
 
     /**
-     * Options for exporting the store as an HTML table
+     * Options for exporting the connector as an HTML table
      */
     export interface ExportOptions extends JSON.Object {
         decimalPoint?: string|null;
@@ -228,24 +228,24 @@ namespace HTMLTableStore {
     }
 
     /**
-     * Provided event object on load events within HTMLTableDataStore
+     * Provided event object on load events within HTMLTableConnector
      */
-    export interface LoadEvent extends DataStore.LoadEvent {
+    export interface LoadEvent extends DataConnector.LoadEvent {
         tableElement?: (HTMLElement|null);
     }
 
     /**
-     * Internal options for the HTMLTableDataStore class
+     * Internal options for the HTMLTableConnector class
      */
     export interface Options {
         table: (string|HTMLElement);
     }
 
     /**
-     * Options used in the constructor of HTMLTableDataStore
+     * Options used in the constructor of HTMLTableConnector
      */
     export type OptionsType =
-        Partial<(HTMLTableStore.Options&HTMLTableConverter.OptionsType)>;
+        Partial<(HTMLTableConnector.Options&HTMLTableConverter.OptionsType)>;
 
 }
 
@@ -255,11 +255,11 @@ namespace HTMLTableStore {
  *
  * */
 
-DataStore.addStore(HTMLTableStore);
+DataConnector.addConnector(HTMLTableConnector);
 
-declare module './StoreType' {
-    interface StoreTypeRegistry {
-        HTMLTable: typeof HTMLTableStore;
+declare module './ConnectorType' {
+    interface ConnectorTypeRegistry {
+        HTMLTable: typeof HTMLTableConnector;
     }
 }
 
@@ -269,4 +269,4 @@ declare module './StoreType' {
  *
  * */
 
-export default HTMLTableStore;
+export default HTMLTableConnector;

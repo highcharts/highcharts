@@ -155,9 +155,10 @@ class SortModifier extends DataModifier {
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
+                        .modifyTable(new DataTable({
+                            columns: table
+                                .getColumns([orderByColumn, orderInColumn])
+                        }))
                         .modified
                         .getColumn(orderInColumn)
                 );
@@ -211,9 +212,10 @@ class SortModifier extends DataModifier {
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
+                        .modifyTable(new DataTable({
+                            columns: table
+                                .getColumns([orderByColumn, orderInColumn])
+                        }))
                         .modified
                         .getColumn(orderInColumn)
                 );
@@ -266,9 +268,10 @@ class SortModifier extends DataModifier {
             table.modified.setColumn(
                 orderInColumn,
                 modifier
-                    .modifyTable(new DataTable(
-                        table.getColumns([orderByColumn, orderInColumn])
-                    ))
+                    .modifyTable(new DataTable({
+                        columns: table
+                            .getColumns([orderByColumn, orderInColumn])
+                    }))
                     .modified
                     .getColumn(orderInColumn)
             );
@@ -398,6 +401,20 @@ namespace SortModifier {
         row: DataTable.Row;
     }
 
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+DataModifier.registerType(SortModifier);
+
+declare module './DataModifierType' {
+    interface DataModifierTypes {
+        Sort: typeof SortModifier;
+    }
 }
 
 /* *

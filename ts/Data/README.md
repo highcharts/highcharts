@@ -7,13 +7,13 @@ synchronize data changes between different components and network nodes.
 
 Sub-folders:
 
+* Connectors - make data sources accessible via a managed table
+
 * Converters - create a table from an input format, and an output format from a
   table
 
 * Modifiers - modify table data into a second table, accessible via the
   `DataTable.modified` property.
-
-* Stores - make data sources accessible via a managed table
 
 
 
@@ -32,12 +32,12 @@ A table can be created with predefined columns and a manual ID to differentiate
 between table instances.
 
 ```TypeScript
-const table = new DataTable(
-    {
+const table = new DataTable({
+    columns: {
         year: [1984, 1990],
         title: ['Gremlins', 'Gremlins 2: The New Batch']
     },
-    'gremlins_movies'
+    id: 'gremlins_movies'
 );
 table.id === 'gremlins_movies';
 table.autoId === false;
@@ -162,14 +162,16 @@ const chart = new Highcharts.chart('container', {
 
 DataGrid shows and optionally modifies cell content in a table. DataGrid can
 also change the order of cells, but DataTable provides only limited information
-about the original order of a source. Therefor a DataStore might be needed in
-addition to retrieve the original order.
+about the original order of a source. Therefor a DataConnector might be needed
+in addition to retrieve the original order.
 
 ```TypeScript
 const dataGrid = new DataGrid('container', {
     dataTable: new DataTable({
-        Value: [ 12.34, 45.67, 78.90 ],
-        Currency: [ 'EUR', 'DKK', 'NOK' ]
+        columns: {
+            Value: [ 12.34, 45.67, 78.90 ],
+            Currency: [ 'EUR', 'DKK', 'NOK' ]
+        }
     }
 });
 ```
@@ -179,9 +181,11 @@ If a row reference is needed, this index column has to be part of the table.
 ```TypeScript
 const dataGrid = new DataGrid('container', {
     dataTable: new DataTable({
-        '': [1, 2, 3],
-        Value: [ 12.34, 45.67, 78.90 ],
-        Currency: [ 'EUR', 'DKK', 'NOK' ]
+        columns: {
+            '': [1, 2, 3],
+            Value: [ 12.34, 45.67, 78.90 ],
+            Currency: [ 'EUR', 'DKK', 'NOK' ]
+        }
     }
 });
 dataGrid.table.getRow(dataGrid.table.getRowIndexBy('', 2));
@@ -191,38 +195,39 @@ dataGrid.table.getRow(dataGrid.table.getRowIndexBy('', 2));
 
 ### DataTable in Dashboards
 
-Some components in Dashboard use DataTable or DataStore to show data. You can
-use a single table or store in multiple components and in that way synchronize
-data.
+Some components in Dashboard use DataTable or DataConnector to show data. You
+can use a single table or connector in multiple components and in that way
+synchronize data.
 
 
 
-DataStore - Loading And Saving Data
+DataConnector - Loading And Saving Data
 -----------------------------------
 
-Loading external data is usually done via a DataStore. A DataStore takes either
-an URL or a local source.
+Loading external data is usually done via a DataConnector. A DataConnector takes
+either an URL or a local source.
 
 
 
-### DataStore Registry
+### DataConnector Registry
 
-DataStore types can be directly loaded via import. In case of bundles stores can
-also accessed via registry, as the registry gets updated with each bundled type.
+DataConnector types can be directly loaded via import. In case of bundles
+connectors can also accessed via registry, as the registry gets updated with
+each bundled type.
 
 ```TypeScript
-import CSVStore from 'dashboards/Data/Stores/CSVStore';
+import CSVConnector from 'dashboards/Data/Connectors/CSVConnector';
 ```
 
 ```TypeScript
-const CSVStore = Dashboard.DataStore.registry.CSVStore;
+const CSVConnector = Dashboard.DataConnector.registry.CSVConnector;
 ```
 
 
 
 ### Data Converter
 
-Every store needs a specific converter to parse data from and to the source
+Every connector needs a specific converter to parse data from and to the source
 format. You can provide your own custom converter or keep the default one.
 
 ```TypeScript
@@ -230,71 +235,72 @@ const converter = new CSVConverter({
     decimalPoint: ',',
     itemDelimiter: ';',
 });
-const store = new CSVStore({
+const connector = new CSVConnector({
     csv: 'a;b\n1,2;3,4\n5,6;7,8'
 });
-await store.load();
-store.table.getRowCount() === 2;
+await connector.load();
+connector.table.getRowCount() === 2;
 ```
 
 
 
-### Creating A Store And Loading Data
+### Creating A Connector And Loading Data
 
-You can create a store without loading any data. In that case you just get
+You can create a connector without loading any data. In that case you just get
 an empty table, which you can fill up with data to save it later. Or you can
 provide a table with existing data.
 
 ```TypeScript
-const store = new CSVStore();
-store.table.getRowCount() === 0;
-const table = new DataTable({ column: [1, 2, 3] });
-const store2 = new CSVStore(table);
-store.table.getRowCount() === 3;
+const connector = new CSVConnector();
+connector.table.getRowCount() === 0;
+const table = new DataTable({ columns: { column: [1, 2, 3] } });
+const connector2 = new CSVConnector(table);
+connector.table.getRowCount() === 3;
 ```
 
-Depending on the store type you have to provide different mandatory options
+Depending on the connector type you have to provide different mandatory options
 to load data. Continue with our example we can provide an URL to a CSV and then
 wait for loading to fulfill.
 
 ```TypeScript
-const store = new CSVStore(void 0, {
+const connector = new CSVConnector(void 0, {
     csvURL: 'https://domain.example/source.csv'
 });
 try {
-    await store.load();
+    await connector.load();
 }
 catch (error) {
     console.error(error);
 }
-store.table.getRowCount() > 0;
+connector.table.getRowCount() > 0;
 ```
 
 
 
 ### Saving Data
 
-How to save a table depends on the store type and use case. In a strict
+How to save a table depends on the connector type and use case. In a strict
 server-less situation, instead of the save function you usually use the
 related converter.
 
 ```TypeScript
-const store = new CSVStore(void 0, {
+const connector = new CSVConnector(void 0, {
     csv: 'column\n1\n2\n3\n'
 });
-store.converter.export(store) === 'column\n1\n2\n3\n';
+connector.converter.export(connector) === 'column\n1\n2\n3\n';
 ```
 
-If your store is based on a external source in the internet or in the HTML, the
-save function can write data back. Please note that an error will be thrown, if
-this is not supported by the store type, or if permissions do now allow this.
+If your connector is based on a external source in the internet or in the HTML
+DOM, the save function can write data back. Please note that an error will be
+thrown, if this is not supported by the connector type, or if permissions do now
+allow this.
 
 ```TypeScript
-const store = new HTMLTableStore(void 0, {
+const connector = new HTMLTableConnector(void 0, {
     tableElement: document.getElementById('the_table')
 });
 try {
-    await store.save();
+    await connector.save();
 }
 catch (error) {
     console.error(error);
@@ -303,40 +309,40 @@ catch (error) {
 
 
 
-DataOnDemand
-------------
+DataPool
+--------
 
-With DataOnDemand one can "lazy" load stores besides the initial phase. After
-adding store name, store type and store options to DataOnDemand, one can request
-(later on) the store or table under their given name and the class will give a
-promise with the store or table as soon as it has been loaded.
+With DataPool one can "lazy" load connectors besides the initial phase. After
+adding connector name, connector type and connector options to DataPool, one can
+request (later on) the connector or table under their given name and the class
+will give a promise with the connector or table as soon as it has been loaded.
 
 ```TypeScript
-const onDemand = new DataOnDemand([{
+const onDemand = new DataPool([{
     name: 'My Google Spreadsheet',
-    storeType: 'GoogleSheetsStore',
-    storeOptions: {
+    connectorType: 'GoogleSheetsConnector',
+    connectorOptions: {
         googleAPIKey: 'XXXXX',
         googleSpreadsheetKey: 'XXXXX',
     }
 }]);
-onDemand.setStoreOptions({
+onDemand.setConnectorOptions({
     name: 'My CSV',
-    storeType: 'CSVStore',
-    storeOptions: {
+    connectorType: 'CSVConnector',
+    connectorOptions: {
         csvURL: 'https://domain.example/data.csv'
     }
 });
-const googleStore = await onDemand.getStore('My Google Spreadsheet');
-const csvTable = await onDemand.getStoreTable('My CSV');
+const googleConnector = await onDemand.getConnector('My Google Spreadsheet');
+const csvTable = await onDemand.getConnectorTable('My CSV');
 ```
 
-DataOnDemand is one of possible way to coordinate and share stores and their
-data between multiple modules. You can request the store multiple times, while
-the class will load each store only ones.
+DataPool is one of possible way to coordinate and share connectors and their
+data between multiple modules. You can request the connector multiple times,
+while the class will load each connector only ones.
 
 ```TypeScript
-const googleStore1 = await onDemand.getStore('My Google Spreadsheet');
-const googleStore2 = await onDemand.getStore('My Google Spreadsheet');
-const googleStore3 = await onDemand.getStore('My Google Spreadsheet');
+const googleConnector1 = await onDemand.getConnector('My Google Spreadsheet');
+const googleConnector2 = await onDemand.getConnector('My Google Spreadsheet');
+const googleConnector3 = await onDemand.getConnector('My Google Spreadsheet');
 ```

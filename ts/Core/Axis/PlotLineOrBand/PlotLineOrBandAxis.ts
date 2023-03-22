@@ -87,7 +87,7 @@ namespace PlotLineOrBandAxis {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -117,9 +117,7 @@ namespace PlotLineOrBandAxis {
             PlotLineOrBandClass = PlotLineOrBandType;
         }
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             extend(AxisClass.prototype, Additions.prototype as any);
         }
 
