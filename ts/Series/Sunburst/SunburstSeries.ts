@@ -841,7 +841,31 @@ class SunburstSeries extends TreemapSeries {
                 y: positions[1]
             },
             innerR = positions[3] / 2,
-            renderer = series.chart.renderer;
+            renderer = series.chart.renderer,
+            animateLabels: (Function|undefined),
+            animateLabelsCalled = false,
+            addedHack = false,
+            hackDataLabelAnimation = !!(
+                animation &&
+                hasRendered &&
+                idRoot !== idPreviousRoot &&
+                series.dataLabelsGroup
+            );
+
+        if (hackDataLabelAnimation) {
+            (series.dataLabelsGroup as any).attr({ opacity: 0 });
+            animateLabels = function (): void {
+                const s = series;
+
+                animateLabelsCalled = true;
+                if (s.dataLabelsGroup) {
+                    s.dataLabelsGroup.animate({
+                        opacity: 1,
+                        visibility: 'inherit'
+                    });
+                }
+            };
+        }
 
         points.forEach(function (point): void {
             let node = point.node,
@@ -892,6 +916,10 @@ class SunburstSeries extends TreemapSeries {
                 optionsPoint: point.options,
                 shapeArgs: shape
             });
+            if (!addedHack && visible) {
+                addedHack = true;
+                onComplete = animateLabels;
+            }
 
             point.draw({
                 animatableAttribs: animationInfo.to,
@@ -910,7 +938,23 @@ class SunburstSeries extends TreemapSeries {
             });
         });
 
-        Series.prototype.drawDataLabels.call(series);
+        // Draw data labels after points
+        // TODO draw labels one by one to avoid addtional looping
+        if (hackDataLabelAnimation && addedHack) {
+            series.hasRendered = false;
+            (series.options.dataLabels as any).defer = true;
+            Series.prototype.drawDataLabels.call(series);
+            series.hasRendered = true;
+            // If animateLabels is called before labels were hidden, then call
+            // it again.
+            if (animateLabelsCalled) {
+                (animateLabels as any)();
+            }
+        } else {
+            Series.prototype.drawDataLabels.call(series);
+        }
+
+        series.idPreviousRoot = idRoot;
     }
 
     /**
