@@ -197,6 +197,17 @@ class HeatmapSeries extends ScatterSeries {
          */
 
         /**
+         * Make the heatmap render its data points as an interpolated image.
+         *
+         * @sample highcharts/demo/heatmap-interpolation
+         *   Interpolated heatmap image displaying user activity on a website
+         * @sample highcharts/series-heatmap/interpolation
+         *   Interpolated heatmap toggle
+         *
+         */
+        interpolation: false,
+
+        /**
          * The color applied to null points. In styled mode, a general CSS class
          * is applied instead.
          *
@@ -399,18 +410,6 @@ class HeatmapSeries extends ScatterSeries {
             }
 
         }
-
-        /**
-         * Make the heatmap render its data points as an interpolated image.
-         *
-         * @sample {highcharts} maps/plotoptions/heatmap-interpolation
-         *   Interpolated heatmap image displaying user activity on a website
-         *
-         * @type      {boolean|undefined}
-         * @default   undefined
-         * @product   highcharts highmaps
-         * @apioption plotOptions.heatmap.interpolation
-         */
     } as HeatmapSeriesOptions);
 
     /* *

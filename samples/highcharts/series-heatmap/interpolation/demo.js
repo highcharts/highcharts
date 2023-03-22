@@ -27,6 +27,11 @@ const chart = Highcharts.chart('container', {
         max: 25
     },
 
+    tooltip: {
+        headerFormat: 'Temperature<br/>',
+        pointFormat: '{point.x:%e %b %Y}, {point.y}:00: <b>{point.value} ℃</b>'
+    },
+
     series: [{
         name: 'Temperature',
         colsize: 24 * 36e5, // one day
