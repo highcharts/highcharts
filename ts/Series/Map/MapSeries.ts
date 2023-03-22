@@ -1240,10 +1240,8 @@ class MapSeries extends ScatterSeries {
                 mapView &&
                 !mapView.userOptions.center &&
                 !isNumber(mapView.userOptions.zoom) &&
-                Object.hasOwnProperty.call(
-                    this.userOptions,
-                    'allAreas'
-                )
+                mapView.zoom === mapView.minZoom // #18542 don't zoom out if
+                // map is zoomed
             ) {
                 // Not only recalculate bounds but also fit view
                 mapView.fitToBounds(void 0, void 0, false); // #17012

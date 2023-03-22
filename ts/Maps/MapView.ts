@@ -938,7 +938,7 @@ class MapView {
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
-                    (this.minZoom || Infinity) < worldZoom * 1.1
+                    (this.minZoom || Infinity) < worldZoom * 1.3
                 ) {
 
                     // Empirical ratio where the globe rotates roughly the same
