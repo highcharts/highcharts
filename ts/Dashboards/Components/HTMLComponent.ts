@@ -96,6 +96,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      *
      * @returns
      * HTML component based on config from JSON.
+     *
+     * @internal
      */
     public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
         const options = json.options;
@@ -136,6 +138,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     private elements: AST.Node[];
     /**
      * Enables auto-scaling of the elements inside the component.
+     *
+     * @internal
      */
     private scaleElements: boolean;
     /**
@@ -144,6 +148,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     public options: HTMLComponent.HTMLComponentOptions;
     /**
      * Reference to sync component that allows to sync.
+     *
+     * @internal
      */
     public sync: Component['sync'];
 
@@ -192,6 +198,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      *
      * */
 
+    /** @internal */
     public load(): this {
         this.emit({
             type: 'load'
@@ -218,6 +225,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
     /**
      * Handle scaling inner elements.
+     *
+     * @internal
      */
     public autoScale(): void {
         this.element.style.display = 'flex';
@@ -240,6 +249,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
     /**
      * Basic font size scaling
+     *
+     * @internal
      */
     public scaleText(): void {
         this.contentElement.childNodes.forEach((element): void => {
@@ -312,6 +323,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      *
      * @returns
      * Class JSON of this Component instance.
+     *
+     * @internal
      */
     public toJSON(): HTMLComponent.ClassJSON {
         const elements = (this.options.elements || [])

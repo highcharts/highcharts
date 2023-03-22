@@ -96,6 +96,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * The options for the component
      * @returns
      * HTML object when title is created, otherwise undefined
+     *
+     * @internal
      */
     public static createTextElement(
         tagName: string,
@@ -124,6 +126,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      *
      * */
 
+    /** @internal */
     public static Sync = Sync;
     /**
      * Default options of the component.
@@ -151,10 +154,14 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * The HTML element or id of HTML element that is used for appending
      * a component.
+     *
+     * @internal
      */
     public parentElement: HTMLElement;
     /**
      * Instance of cell, where component is attached.
+     *
+     * @internal
      */
     public parentCell?: Cell;
     /**
@@ -167,6 +174,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     protected dimensions: { width: number | null; height: number | null };
     /**
      * The HTML element where the component is.
+     *
+     * @internal
      */
     public element: HTMLElement;
     /**
@@ -179,6 +188,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public captionElement?: HTMLElement;
     /**
      * The HTML element where the component's content is.
+     *
+     * @internal
      */
     public contentElement: HTMLElement;
     /**
@@ -195,6 +206,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public id: string;
     /**
      * An array of options marked as editable by the UI.
+     *
+     * @internal
      */
     public editableOptions: EditableOptions;
     /**
@@ -239,19 +252,26 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * DataModifier that is applied on top of modifiers set on the DataStore.
+     *
+     * @internal
      */
     public presentationModifier?: DataModifier;
     /**
      * The table being presented, either a result of the above or a way to
      * modify the table via events.
+     *
+     * @internal
      */
     public presentationTable?: DataTable;
 
     /**
      * The active group of the component. Used for sync.
+     *
+     * @internal
      */
     public activeGroup: ComponentGroup | undefined = void 0;
 
+    /** @internal */
     public abstract sync: Sync;
 
     /**
@@ -352,6 +372,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     *
     * @returns
     * Sync component.
+    *
+    * @internal
     */
     protected handleSyncOptions(
         defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
@@ -381,6 +403,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Setup listeners on cell/other things up the chain
+     *
+     * @internal
      */
     private attachCellListeneres(): void {
         // remove old listeners
@@ -426,6 +450,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * Instance of a cell.
      * @param resize
      * Flag that allow to resize the component.
+     *
+     * @internal
      */
     public setCell(cell: Cell, resize = false): void {
         this.parentCell = cell;
@@ -512,6 +538,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      *
      * @returns
      * Component which can be used in chaining.
+     *
+     * @internal
      */
     public setStore(store: Component.StoreTypes | undefined): this {
         // Clean up old event listeners
@@ -832,6 +860,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      *
      * @returns
      * The component for chaining.
+     *
+     * @internal
      */
     public load(): this {
 
@@ -891,11 +921,16 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Renders the component.
-     * @todo make this call load on initial render
+     *
      * @returns
      * The component for chaining.
+     *
+     * @internal
      */
     public render(): this {
+        /**
+         * TODO: make this call load on initial render
+         */
         if (this.shouldRedraw || !this.hasLoaded) {
             this.load();
             // Call resize to fit to the cell. Only for non HTML elements.
@@ -928,11 +963,13 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Destroys the component.
-     *
-     * @todo Should perhaps also remove the component from the registry
-     * or set an `isactive` flag to false.
      */
     public destroy(): void {
+        /**
+         * TODO: Should perhaps also remove the component from the registry
+         * or set an `isactive` flag to false.
+         */
+
         while (this.element.firstChild) {
             this.element.firstChild.remove();
         }
@@ -996,6 +1033,8 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      *
      * @returns
      * Class JSON of this Component instance.
+     *
+     * @internal
      */
     public toJSON(): Component.JSON {
         const dimensions: Record<'width' | 'height', number> = {

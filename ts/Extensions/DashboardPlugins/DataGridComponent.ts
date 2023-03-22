@@ -48,7 +48,9 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
+    /** @internal */
     public static syncHandlers = DataGridSyncHandlers;
+    /** @internal */
     public static DataGridConstructor?: typeof DataGrid;
     public static defaultOptions = merge(
         Component.defaultOptions,
@@ -67,6 +69,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
+    /** @internal */
     public static onUpdate(
         e: KeyboardEvent,
         store: Component.StoreTypes
@@ -114,6 +117,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
     }
 
+    /** @internal */
     public static fromJSON(
         json: DataGridComponent.ClassJSON
     ): DataGridComponent {
@@ -141,10 +145,13 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
+    /** @internal */
     public dataGrid?: DataGrid;
     public dataGridContainer: HTMLElement;
     public dataGridOptions: Partial<Options>;
     public options: DataGridComponent.DataGridOptions;
+
+    /** @internal */
     public sync: Component['sync'];
 
     /* *
@@ -237,6 +244,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
+    /** @internal */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -287,6 +295,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         return this;
     }
 
+    /** @internal */
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
             this.dataGrid = new DataGridComponent.DataGridConstructor(
@@ -302,6 +311,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         throw new Error('DataGrid not connected.');
     }
 
+    /** @internal */
     private setupStoreUpdate(): void {
         const { store, dataGrid } = this;
 
@@ -318,6 +328,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
     }
 
+    /** @internal */
     public toJSON(): DataGridComponent.ClassJSON {
         const dataGridOptions = JSON.stringify(this.options.dataGridOptions);
         const base = super.toJSON();

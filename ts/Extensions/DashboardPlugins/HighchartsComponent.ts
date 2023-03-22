@@ -77,8 +77,10 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * */
 
+    /** @internal */
     public static charter?: typeof G;
 
+    /** @internal */
     public static syncHandlers = HighchartsSyncHandlers;
 
     /**
@@ -135,6 +137,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * @returns
      * Highcharts component based on config from JSON.
+     *
+     * @internal
      */
     public static fromJSON(
         json: HighchartsComponent.ClassJSON
@@ -194,6 +198,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
     public chartConstructor: HighchartsComponent.ConstructorType;
     /**
      * Reference to sync component that allows to sync i.e tooltips.
+     *
+     * @internal
      */
     public sync: Component['sync'];
 
@@ -262,6 +268,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * */
 
+    /** @internal */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -365,6 +372,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      * Dragged point.
      * @param store
      * Store to update.
+     *
+     * @internal
      */
     private onChartUpdate(
         point: Point,
@@ -385,6 +394,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * @param redraw
      * The flag triggers the main redraw operation.
+     *
+     * @internal
      */
     private updateComponentOptions(
         options: Partial<HighchartsComponent.ComponentOptions>,
@@ -571,6 +582,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     /**
      * Registers events from the chart options to the callback register.
+     *
+     * @internal
      */
     private registerChartEvents(): void {
         if (this.chart && this.chart.options) {
@@ -633,6 +646,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      *
      * @returns
      * Class JSON of this Component instance.
+     *
+     * @internal
      */
     public toJSON(): HighchartsComponent.ClassJSON {
         const chartOptions = JSON.stringify(this.options.chartOptions),

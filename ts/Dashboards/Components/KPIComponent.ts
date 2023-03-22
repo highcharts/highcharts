@@ -71,6 +71,8 @@ class KPIComponent extends Component {
      *
      * @returns
      * KPI component based on config from JSON.
+     *
+     * @internal
      */
     public static fromJSON(json: KPIComponent.ClassJSON): KPIComponent {
         const options = json.options;
@@ -104,6 +106,7 @@ class KPIComponent extends Component {
      *
      * */
 
+    /** @internal */
     public static charter?: typeof G;
     /**
      * Default options of the KPI component.
@@ -179,10 +182,14 @@ class KPIComponent extends Component {
     public options: KPIComponent.ComponentOptions;
     /**
      * HTML element value's wrapper.
+     *
+     * @internal
      */
     public valueWrap: HTMLElement;
     /**
      * HTML element where the value is created.
+     *
+     * @internal
      */
     public value: HTMLElement;
     /**
@@ -192,22 +199,28 @@ class KPIComponent extends Component {
     /**
      * HTML element where the chart is created.
      */
-    public chartContainer: HTMLElement;
+    public chartContainer?: HTMLElement;
     /**
      * Reference to the chart.
      */
     public chart?: Chart;
     /**
      * Reference to sync component that allows to sync.
+     *
+     * @internal
      */
     public sync: Component['sync'];
 
     /**
      * Previous value of KPI.
+     *
+     * @internal
      */
     private prevValue?: number;
     /**
      * Flag used in resize method to avoid multi redraws.
+     *
+     * @internal
      */
     private updatingSize?: boolean;
 
@@ -247,9 +260,12 @@ class KPIComponent extends Component {
         this.subtitle = createElement('span', {
             className: this.getSubtitleClassName()
         });
-        this.chartContainer = createElement('figure', {
-            className: `${Component.defaultOptions.className}-kpi-chart-container`
-        });
+
+        if (this.options.chartOptions) {
+            this.chartContainer = createElement('figure', {
+                className: `${Component.defaultOptions.className}-kpi-chart-container`
+            });
+        }
     }
 
     /* *
@@ -258,6 +274,7 @@ class KPIComponent extends Component {
      *
      * */
 
+    /** @internal */
     public load(): this {
         super.load();
 
@@ -266,7 +283,9 @@ class KPIComponent extends Component {
         this.contentElement.appendChild(this.valueWrap);
         this.valueWrap.appendChild(this.value);
         this.valueWrap.appendChild(this.subtitle);
-        this.contentElement.appendChild(this.chartContainer);
+        if (this.chartContainer) {
+            this.contentElement.appendChild(this.chartContainer);
+        }
         this.parentElement.appendChild(this.element);
 
         this.updateElements();
@@ -339,7 +358,7 @@ class KPIComponent extends Component {
         super.render();
         const charter = (KPIComponent.charter || G);
 
-        if (this.options.chartOptions && !this.chart) {
+        if (this.options.chartOptions && !this.chart && this.chartContainer) {
             this.chart = charter.chart(this.chartContainer, merge(
                 KPIComponent.defaultChartOptions,
                 this.options.chartOptions
@@ -434,7 +453,10 @@ class KPIComponent extends Component {
             this.subtitle.className = this.getSubtitleClassName();
         }
 
-        this.chartContainer.style.flex = this.options.chartOptions ? '1' : '0';
+        if (this.chartContainer) {
+            this.chartContainer.style.flex =
+                this.options.chartOptions ? '1' : '0';
+        }
 
         if (this.chart) {
             this.chart.reflow();
@@ -540,6 +562,8 @@ class KPIComponent extends Component {
      *
      * @returns
      * Class JSON of this Component instance.
+     *
+     * @internal
      */
     public toJSON(): KPIComponent.ClassJSON {
         const base = super.toJSON();
