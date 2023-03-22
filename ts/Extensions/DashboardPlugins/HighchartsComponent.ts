@@ -90,7 +90,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
              * attached.
              * @default true
              */
-            allowConnectorUpdate: true,
+            allowStoreUpdate: true,
             chartClassName: 'chart-container',
             chartID: 'chart-' + uniqueKey(),
             chartOptions: {
@@ -612,12 +612,11 @@ namespace HighchartsComponent {
 
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
         /**
-         * Whether to allow the component to edit the store to which it is
-         * attached.
+         * Declares update of the store, when edit chart.
          */
         allowConnectorUpdate?: boolean,
         /**
-         * The string that declares constructor that is called for creating
+         * The string that declares contructor that is called for creating
          * a chart.
          *
          * Example: `chart`, `stockChart`, `mapChart` or `ganttChart`.

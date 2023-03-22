@@ -803,7 +803,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * Converts the class instance to a class JSON.
      *
-     * @returns
+     * @return {Component.JSON}
      * Class JSON of this Component instance.
      */
     public toJSON(): Component.JSON {
@@ -971,11 +971,11 @@ namespace Component {
         /**
          * The component's title, which will render at the top.
          */
-        title?: TextOptionsType;
+        title: TextOptionsType;
         /**
          * The component's caption, which will render at the bottom.
          */
-        caption?: TextOptionsType;
+        caption: TextOptionsType;
     }
 
     export type TextOptionsType = string | false | TextOptions | undefined;
@@ -1029,10 +1029,10 @@ namespace Component {
     /**
      * Adds component to the registry.
      *
-     * @param componentClass
+     * @param {T} componentClass
      * Component class.
      *
-     * @returns
+     * @return {boolean}
      * Returns the true when component was found and added properly to the
      * registry, otherwise it is false.
      */
@@ -1054,12 +1054,32 @@ namespace Component {
     }
 
     /**
+     * Extract all components names from the registry.
+     *
+     * @return {Array<string>}
+     * Returns the array of components names.
+     */
+    export function getAllComponentNames(): Array<string> {
+        return Object.keys(Component.registry);
+    }
+
+    /**
+     * Extract all components from the registry.
+     *
+     * @return {Record<string, Class<Component>>}
+     * Returns the array of components.
+     */
+    export function getAllComponents(): Record<string, Class<Component>> {
+        return merge(Component.registry);
+    }
+
+    /**
      * Extracts the name from a given component class.
      *
-     * @param {DataConnector} component
-     * Component class to extract the name from.
+     * @param {NewableFunction | ComponentType} component
+     * Component type or callback.
      *
-     * @returns
+     * @return {string}
      * Component name, if the extraction was successful, otherwise an empty
      * string.
      */
@@ -1074,7 +1094,7 @@ namespace Component {
 
     /**
      * Adds a component instance to the registry.
-     * @param component
+     * @param {ComponentType} component
      * The component to add.
      */
     export function addInstance(component: ComponentType): void {
@@ -1083,7 +1103,7 @@ namespace Component {
 
     /**
      * Removes a component instance from the registry.
-     * @param component
+     * @param {Component} component
      * The component to remove.
      */
     export function removeInstance(component: Component<any>): void {
@@ -1092,7 +1112,7 @@ namespace Component {
 
     /**
      * Retrieves the IDs of the registered component instances.
-     * @returns
+     * @return {string[]}
      * Array of component IDs.
      */
     export function getAllInstanceIDs(): string[] {
@@ -1101,7 +1121,7 @@ namespace Component {
 
     /**
      * Retrieves all registered component instances.
-     * @returns
+     * @return {ComponentType[]}
      * Array of components.
      */
     export function getAllInstances(): Component<any>[] {
@@ -1112,10 +1132,10 @@ namespace Component {
     /**
      * Gets component by key from the registry.
      *
-     * @param key
+     * @param {string} key
      * Key of component that exists in registry.
      *
-     * @returns
+     * @return {Record<string, Class<Component>>}
      * Returns the component.
      */
     export function getComponent<T extends Class<Component>>(
@@ -1127,10 +1147,10 @@ namespace Component {
     /**
      * Gets instance of component from registry.
      *
-     * @param id
+     * @param {string} id
      * Component's id that exists in registry.
      *
-     * @returns
+     * @return {ComponentType | undefined}
      * Returns the component type or undefined.
      */
     export function getInstanceById(id: string): ComponentType | undefined {
@@ -1140,14 +1160,14 @@ namespace Component {
      * Sends a message from the given sender to the target,
      * with an optional callback.
      *
-     * @param sender
+     * @param {ComponentType | ComponentGroup} sender
      * The sender of the message. Can be a Component or a ComponentGroup.
      *
-     * @param message
+     * @param {Component.MessageEvent['message']} message
      * The message. It can be a string, or a an object containing a
      * `callback` function.
      *
-     * @param targetObj
+     * @param {Component.MessageTarget} targetObj
      * An object containing the `type` of target,
      * which can be `group`, `componentID`, or `componentType`
      * as well as the id of the recipient.
