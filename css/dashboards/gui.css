@@ -830,8 +830,8 @@ ul.highcharts-dashboards-dropdown-content {
     box-sizing: border-box;
     padding: 16px 8px;
     margin-top: 4px;
-    border: 1px solid #838394;
-    box-shadow: 0 10px 24px rgba(34, 34, 34, 0.1);
+    border: 1px solid var(--highcharts-dashboards-dropdown-border-color);
+    box-shadow: 0 10px 24px rgba(var(--highcharts-dashboards-dropdown-box-shadow-color));
     list-style-type: none;
 }
 
