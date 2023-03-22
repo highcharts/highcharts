@@ -570,13 +570,14 @@ class HeatmapSeries extends ScatterSeries {
                 image.attr(dimsByInversion);
             }
 
-
-        // In styled mode, use CSS, otherwise the fill used in the style
-        // sheet will take precedence over the fill attribute.
         } else if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
             Series.prototype.drawPoints.call(series);
             series.points.forEach((point): void => {
                 if (point.graphic) {
+
+                    // In styled mode, use CSS, otherwise the fill used in
+                    // the style sheet will take precedence over
+                    // the fill attribute.
                     (point.graphic as any)[
                         series.chart.styledMode ? 'css' : 'animate'
                     ](series.colorAttribs(point));
