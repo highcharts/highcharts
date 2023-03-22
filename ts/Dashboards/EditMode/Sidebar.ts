@@ -353,7 +353,7 @@ class Sidebar {
         }
     });
 
-    public static itemsGeneralOptions: Record<string, MenuItem.Options> = {
+    public static itemsGeneralOptions: Record<string, Partial<MenuItem.Options>> = {
         addLayout: {
             id: 'addLayout',
             type: 'addLayout',
@@ -382,9 +382,7 @@ class Sidebar {
     *  Constructor
     *
     * */
-    constructor(
-        editMode: EditMode
-    ) {
+    constructor(editMode: EditMode) {
         this.tabs = {};
         this.isVisible = false;
         this.options = merge(
@@ -852,6 +850,7 @@ class Sidebar {
                 activeTab && activeTab.content.container;
             let type;
             let chartTypes = {};
+            let chartConfigOptions = {};
 
             for (const key in componentSettings) {
                 if (componentSettings[key]) {
@@ -884,9 +883,7 @@ class Sidebar {
                                 (chartOpts.series && chartOpts.series[0].type)
                             );
 
-                        if (
-                            chartType
-                        ) {
+                        if (chartType) {
                             chartTypes = {
                                 items: chartTypesEnum,
                                 value: chartType
@@ -894,6 +891,37 @@ class Sidebar {
                         } else {
                             continue;
                         }
+                    } else if (key === 'chartConfig') {
+                        chartConfigOptions = {
+                            nestedOptions: {
+                                title: {
+                                    enabled: { type: 'input' },
+                                    text: { type: 'input' },
+                                    size: { type: 'input' },
+                                    font: { type: 'input' }
+                                },
+                                yAxis: {
+                                    enabled: { type: 'input' },
+                                    labels: { type: 'input' },
+                                    title: { type: 'input' },
+                                    text: { type: 'input' }
+                                },
+                                legend: {
+                                    enabled: { type: 'input' },
+                                    title: { type: 'input' }
+                                },
+                                dataLabels: {
+                                    size: { type: 'input' },
+                                    font: { type: 'input' }
+                                },
+                                xAxis: {
+                                    enabled: { type: 'input' },
+                                    labels: { type: 'input' },
+                                    title: { type: 'input' },
+                                    text: { type: 'input' }
+                                }
+                            }
+                        };
                     }
 
                     (menuItems as any)[key] = {
@@ -901,13 +929,15 @@ class Sidebar {
                         type: type === 'text' ? 'input' : type,
                         text: (lang as any)[key] || key,
                         isActive: true,
+                        collapsable: true,
                         value: componentSettings[key].value,
                         events: {
                             change: (id: string, value: string): void => {
                                 sidebar.updatedSettings[id] = value;
                             }
                         },
-                        ...chartTypes
+                        ...chartTypes,
+                        ...chartConfigOptions
                     };
 
                     items.push(
