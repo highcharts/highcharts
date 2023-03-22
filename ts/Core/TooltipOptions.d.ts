@@ -45,7 +45,7 @@ export interface TooltipOptions {
     backgroundColor: ColorType;
     borderColor?: ColorType;
     borderRadius: number;
-    borderWidth: number;
+    borderWidth: number|undefined;
     className?: string;
     changeDecimals?: number;
     /** @deprecated */

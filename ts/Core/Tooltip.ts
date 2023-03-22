@@ -501,7 +501,7 @@ class Tooltip {
                     this.label
                         .attr({
                             fill: options.backgroundColor,
-                            'stroke-width': options.borderWidth
+                            'stroke-width': options.borderWidth || 0
                         })
                         // #2301, #2657
                         .css(options.style)
@@ -1297,7 +1297,7 @@ class Tooltip {
 
                 if (!styledMode) {
                     attribs.fill = options.backgroundColor;
-                    attribs['stroke-width'] = options.borderWidth;
+                    attribs['stroke-width'] = options.borderWidth ?? 1;
                 }
                 tt = ren
                     .label(
@@ -1753,7 +1753,7 @@ class Tooltip {
                 pos.y += top - distance;
             }
 
-            pad = options.borderWidth + 2 * distance;
+            pad = (options.borderWidth || 0) + 2 * distance;
 
             (this.renderer as any).setSize(
                 label.width + pad,

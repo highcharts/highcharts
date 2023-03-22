@@ -2239,13 +2239,13 @@ const defaultOptions: Options = {
          * The radius of the rounded border corners.
          *
          * @sample {highcharts} highcharts/tooltip/bordercolor-default/
-         *         5px by default
+         *         Default border radius
          * @sample {highcharts} highcharts/tooltip/borderradius-0/
          *         Square borders
          * @sample {highmaps} maps/tooltip/background-border/
          *         Background and border demo
          */
-        borderRadius: 5,
+        borderRadius: 3,
 
         /**
          * For series on datetime axes, the date format in the tooltip's
@@ -2472,7 +2472,8 @@ const defaultOptions: Options = {
         backgroundColor: Palette.backgroundColor,
 
         /**
-         * The pixel width of the tooltip border.
+         * The pixel width of the tooltip border. Defaults to 0 for single
+         * tooltips and 1 for split tooltips.
          *
          * In styled mode, the stroke width is set in the
          * `.highcharts-tooltip-box` class.
@@ -2492,7 +2493,7 @@ const defaultOptions: Options = {
          * @sample {highmaps} highcharts/css/tooltip-border-background/
          *         Tooltip in styled mode
          */
-        borderWidth: 0,
+        borderWidth: void 0,
 
         /**
          * Whether to apply a drop shadow to the tooltip.
