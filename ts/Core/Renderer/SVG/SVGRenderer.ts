@@ -757,7 +757,7 @@ class SVGRenderer implements SVGRendererLike {
         const normalStyle = merge({
             color: Palette.neutralColor80,
             cursor: 'pointer',
-            fontSize: '0.75em',
+            fontSize: '0.8em',
             fontWeight: 'normal'
         }, theme.style);
         delete theme.style;

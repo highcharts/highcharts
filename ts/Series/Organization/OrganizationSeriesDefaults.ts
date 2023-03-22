@@ -271,7 +271,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
             /** @internal */
             fontWeight: 'normal',
             /** @internal */
-            fontSize: '0.8125em'
+            fontSize: '0.9em'
         },
 
         useHTML: true,

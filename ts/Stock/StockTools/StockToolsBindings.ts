@@ -1197,7 +1197,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         labelOptions: {
                             style: {
                                 color: Palette.neutralColor60,
-                                fontSize: '0.6875em'
+                                fontSize: '0.7em'
                             }
                         },
                         shapeOptions: {
@@ -1307,7 +1307,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         labelOptions: {
                             style: {
                                 color: Palette.neutralColor60,
-                                fontSize: '0.6875em'
+                                fontSize: '0.7em'
                             }
                         },
                         shapeOptions: {

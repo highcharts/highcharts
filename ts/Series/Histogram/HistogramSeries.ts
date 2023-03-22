@@ -148,7 +148,7 @@ class HistogramSeries extends ColumnSeries {
         tooltip: {
             headerFormat: '',
             pointFormat: (
-                '<span style="font-size: 10px">{point.x} - {point.x2}' +
+                '<span style="font-size: 0.8em">{point.x} - {point.x2}' +
                 '</span><br/>' +
                 '<span style="color:{point.color}">\u25CF</span>' +
                 ' {series.name} <b>{point.y}</b><br/>'

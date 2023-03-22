@@ -1307,7 +1307,7 @@ const defaultOptions: Options = {
              * @apioption legend.navigation.style
              */
             style: {
-                fontSize: '0.75em'
+                fontSize: '0.8em'
             },
 
             /**
@@ -1431,11 +1431,7 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            fontSize: '0.75em',
-            /**
-             * @ignore
-             */
-            fontWeight: 'bold',
+            fontSize: '0.8em',
             /**
              * @ignore
              */
@@ -1735,7 +1731,7 @@ const defaultOptions: Options = {
                 /**
                  * @ignore
                  */
-                fontSize: '0.75em',
+                fontSize: '0.8em',
                 /**
                  * @ignore
                  */
@@ -2408,7 +2404,7 @@ const defaultOptions: Options = {
          * @type      {string}
          * @apioption tooltip.headerFormat
          */
-        headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+        headerFormat: '<span style="font-size: 0.8em">{point.key}</span><br/>',
 
         /**
          * The HTML of the null point's line in the tooltip. Works analogously
@@ -2539,7 +2535,7 @@ const defaultOptions: Options = {
             /** @internal */
             cursor: 'default',
             /** @internal */
-            fontSize: '0.75em'
+            fontSize: '0.8em'
         },
 
         /**
@@ -2658,7 +2654,7 @@ const defaultOptions: Options = {
             /** @internal */
             color: Palette.neutralColor40,
             /** @internal */
-            fontSize: '0.5625em'
+            fontSize: '0.6em'
         },
 
         /**

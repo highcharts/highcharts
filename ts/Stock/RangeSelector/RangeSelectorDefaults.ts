@@ -549,7 +549,7 @@ const rangeSelector: RangeSelectorOptions = {
         /** @ignore */
         cursor: 'pointer',
         /** @ignore */
-        fontSize: '0.75em'
+        fontSize: '0.8em'
     },
 
     /**
@@ -567,7 +567,7 @@ const rangeSelector: RangeSelectorOptions = {
         /** @ignore */
         color: Palette.neutralColor60,
         /** @ignore */
-        fontSize: '0.75em'
+        fontSize: '0.8em'
     }
 };
 

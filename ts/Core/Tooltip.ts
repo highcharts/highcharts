@@ -1628,7 +1628,7 @@ class Tooltip {
     public styledModeFormat(formatString: string): string {
         return formatString
             .replace(
-                'style="font-size: 10px"',
+                'style="font-size: 0.8em"',
                 'class="highcharts-header"'
             )
             .replace(

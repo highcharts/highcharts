@@ -72,7 +72,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
 
     tooltip: {
         headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<span style="font-size: 10px"> {point.key}</span><br/>',
+            '<span style="font-size: 0.8em"> {point.key}</span><br/>',
         pointFormat: '{point.description}'
     },
     states: {
@@ -181,7 +181,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
             /** @internal */
             fontWeight: 'normal',
             /** @internal */
-            fontSize: '0.75em'
+            fontSize: '0.8em'
         },
 
         /**

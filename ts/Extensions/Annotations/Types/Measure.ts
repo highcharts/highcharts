@@ -43,6 +43,7 @@ const {
     merge,
     pick
 } = U;
+import { Palette } from '../../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -995,8 +996,8 @@ Measure.prototype.defaultOptions = merge(
                  * @default {"color": "#666666", "fontSize": "11px"}
                  */
                 style: {
-                    fontSize: '0.6875em',
-                    color: '#666666'
+                    fontSize: '0.7em',
+                    color: Palette.neutralColor60
                 },
                 /**
                  * Formatter function for the label text.

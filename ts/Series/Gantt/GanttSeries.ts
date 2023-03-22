@@ -80,7 +80,7 @@ class GanttSeries extends XRangeSeries {
         },
         tooltip: {
             headerFormat:
-                '<span style="font-size: 10px">{series.name}</span><br/>',
+                '<span style="font-size: 0.8em">{series.name}</span><br/>',
             pointFormat: null as any,
             pointFormatter: function (this: GanttPoint): string {
                 let point = this,

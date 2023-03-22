@@ -1188,11 +1188,12 @@ class Chart {
         // Default style
         const style = name === 'title' ? {
             color: Palette.neutralColor80,
-            fontSize: this.options.isStock ? '1em' : '1.125em' // #2944
+            fontSize: this.options.isStock ? '1em' : '1.2em', // #2944
+            fontWeight: 'bold'
         } : {
             // Subtitle or caption
             color: Palette.neutralColor60,
-            fontSize: '0.75em'
+            fontSize: '0.8em'
         };
 
         // Merge default options with explicit options

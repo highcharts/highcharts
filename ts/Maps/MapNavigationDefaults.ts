@@ -95,11 +95,11 @@ const MapNavigationDefaults: MapNavigationOptions = {
          * Text styles for the map navigation buttons.
          *
          * @type    {Highcharts.CSSObject}
-         * @default {"fontSize": "15px", "fontWeight": "bold"}
+         * @default {"fontSize": "1em", "fontWeight": "bold"}
          */
         style: {
             /** @ignore */
-            fontSize: '0.9375em',
+            fontSize: '1em',
             /** @ignore */
             fontWeight: 'bold'
         },

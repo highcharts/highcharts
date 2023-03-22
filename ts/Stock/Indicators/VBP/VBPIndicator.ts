@@ -222,7 +222,7 @@ class VBPIndicator extends SMAIndicator {
             padding: 0,
             style: {
                 /** @internal */
-                fontSize: '0.4375em'
+                fontSize: '0.5em'
             },
             verticalAlign: 'top'
         }

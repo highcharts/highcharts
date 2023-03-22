@@ -314,7 +314,7 @@ const AnnotationDefaults: DeepPartial<AnnotationOptions> = {
          */
         style: {
             /** @ignore */
-            fontSize: '0.6875em',
+            fontSize: '0.7em',
             /** @ignore */
             fontWeight: 'normal',
             /** @ignore */
