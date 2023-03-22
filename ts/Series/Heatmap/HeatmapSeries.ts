@@ -475,7 +475,7 @@ class HeatmapSeries extends ScatterSeries {
                         chart.colorAxis &&
                         chart.colorAxis[0]
                     ),
-                    ctx = series.getContext({ alpha: false }),
+                    ctx = series.getContext(),
                     canvas = series.canvas;
 
                 if (canvas && ctx && colorAxis) {
@@ -508,13 +508,18 @@ class HeatmapSeries extends ScatterSeries {
                             return ~~((value - min) * scale);
                         },
                         getPixelData = function (p: HeatmapPoint): {
-                            r: number, g: number, b: number, pixelIndex: number
+                            r: number,
+                            g: number,
+                            b: number,
+                            a: number,
+                            pixelIndex: number
                         } {
-                            const rgb = (colorAxis.toColor(
+                            const rgba = (colorAxis.toColor(
                                     p.value || 0, p) as string)
+                                    .split(')')[0]
                                     .split('(')[1]
                                     .split(',')
-                                    .map((s): number => parseInt(s, 10)),
+                                    .map((s): number => parseFloat(s)),
                                 x = toPlotScale(
                                     xMin,
                                     xMax,
@@ -528,9 +533,10 @@ class HeatmapSeries extends ScatterSeries {
                                     height - 1
                                 );
                             return {
-                                r: rgb[0],
-                                g: rgb[1],
-                                b: rgb[2],
+                                r: rgba[0],
+                                g: rgba[1],
+                                b: rgba[2],
+                                a: rgba[3] && rgba[3] || 255,
                                 pixelIndex: y * (width * 4) + x * 4
                             };
                         },
@@ -542,13 +548,13 @@ class HeatmapSeries extends ScatterSeries {
                     }
 
                     for (let i = 0; i < pointsLen; i++) {
-                        const { r, g, b, pixelIndex } = getPixelData(
+                        const { r, g, b, a, pixelIndex } = getPixelData(
                             points[i]
                         );
                         pixelData.data[pixelIndex + 0] = r;
                         pixelData.data[pixelIndex + 1] = g;
                         pixelData.data[pixelIndex + 2] = b;
-                        pixelData.data[pixelIndex + 3] = 255;
+                        pixelData.data[pixelIndex + 3] = a;
                     }
 
                     ctx.putImageData(pixelData, 0, 0);
@@ -592,9 +598,7 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * @private
      */
-    public getContext(
-        settings?: CanvasRenderingContext2DSettings
-    ): CanvasRenderingContext2D | undefined {
+    public getContext(): CanvasRenderingContext2D | undefined {
         const series = this,
             { canvas, context } = series;
         if (canvas && context) {
@@ -612,7 +616,7 @@ class HeatmapSeries extends ScatterSeries {
                 (series.options.rowsize || 1)
             ) + 1;
 
-            series.context = series.canvas.getContext('2d', settings) || void 0;
+            series.context = series.canvas.getContext('2d') || void 0;
             return series.context;
         }
 
