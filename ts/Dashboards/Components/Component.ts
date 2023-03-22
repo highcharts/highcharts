@@ -1197,11 +1197,11 @@ namespace Component {
          */
         store?: StoreTypes;
         /**
-         * Sets an ID for the component's `div`.
+         * Sets an ID for the component's container.
          */
         id?: string;
         /**
-         * Additional CSS styles to apply inline to the component `div`.
+         * Additional CSS styles to apply inline to the component's container.
          */
         style?: CSSObject;
         /**
