@@ -401,9 +401,9 @@ class HeatmapSeries extends ScatterSeries {
         }
 
         /**
-         * Make the heatmap render its data points as a interpolated image.
+         * Make the heatmap render its data points as an interpolated image.
          *
-         * @sample {highcharts} highcharts/series-heatmap/interpolation
+         * @sample {highcharts} maps/plotoptions/heatmap-interpolation
          *   Interpolated heatmap image displaying user activity on a website
          *
          * @type      {boolean|undefined}

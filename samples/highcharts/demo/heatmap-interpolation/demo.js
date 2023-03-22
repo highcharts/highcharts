@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
     chart: {
         type: 'heatmap',
-        plotBackgroundImage: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@0c61711011/samples/graphics/example-screenshot.png'
+        plotBackgroundImage: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@3c36bd6dc1/samples/graphics/example-screenshot.png'
     },
     title: {
         text: 'Interpolated heatmap image displaying user activity on a website'
@@ -21,6 +21,7 @@ Highcharts.chart('container', {
         ]
     },
     series: [{
+        name: 'User activity',
         data: JSON.parse(document.getElementById('data').innerText),
         interpolation: true
     }]
