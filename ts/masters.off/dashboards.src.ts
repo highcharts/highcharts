@@ -11,7 +11,7 @@
 import _Board from '../Dashboards/Board.js';
 import _Globals from '../Dashboards/Globals.js';
 import _PluginHandler from '../Dashboards/PluginHandler.js';
-import _Sync from '../Dashboards/Component/Sync/Sync.js';
+import _Sync from '../Dashboards/Components/Sync/Sync.js';
 import _Utilities from '../Dashboards/Utilities.js';
 
 export const classNamePrefix = _Globals.classNamePrefix;

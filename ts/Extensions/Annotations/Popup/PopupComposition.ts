@@ -53,7 +53,7 @@ interface PopupConfigObject {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -69,10 +69,7 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (composedClasses.indexOf(NagivationBindingsClass) === -1) {
-        composedClasses.push(NagivationBindingsClass);
-
-
+    if (U.pushUnique(composedMembers, NagivationBindingsClass)) {
         addEvent(
             NagivationBindingsClass,
             'closePopup',
@@ -85,15 +82,14 @@ function compose(
         );
     }
 
-    if (composedClasses.indexOf(PointerClass) === -1) {
-        composedClasses.push(PointerClass);
-
+    if (U.pushUnique(composedMembers, PointerClass)) {
         wrap(
             PointerClass.prototype,
             'onContainerMouseDown',
             wrapPointerOnContainerMouserDown
         );
     }
+
 }
 
 /**

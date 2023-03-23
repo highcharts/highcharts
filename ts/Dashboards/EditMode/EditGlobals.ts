@@ -73,8 +73,13 @@ const EditGlobals: EditGlobals = {
         editToolsBtn: PREFIX + 'tools-btn',
         editTools: PREFIX + 'tools',
         editGridItems: PREFIX + 'grid-items',
-        popupContentContainer: PREFIX + 'popup-content',
-        popupConfirmBtn: PREFIX + 'popup-confirm-btn',
+
+        // Confirmation popup
+        confirmationPopup: PREFIX + 'confirmation-popup',
+        popupContentContainer: PREFIX + 'confirmation-popup-content',
+        popupConfirmBtn: PREFIX + 'confirmation-popup-confirm-btn',
+        confirmationPopupCloseButton: PREFIX + 'confirmation-popup-close',
+
         editOverlay: PREFIX + 'overlay',
         editOverlayActive: PREFIX + 'overlay-active',
         resizerMenuBtnActive: PREFIX + 'resizer-menu-btn-active',
@@ -92,6 +97,7 @@ const EditGlobals: EditGlobals = {
         id: 'Id',
         title: 'Title',
         caption: 'Caption',
+        chartConfig: 'Chart configutration',
         chartClassName: 'Chart class name',
         chartID: 'Chart id',
         scaleElements: 'Scale elements',
@@ -173,6 +179,7 @@ namespace EditGlobals {
     }
 
     export interface LangOptions {
+        chartConfig?: string;
         editMode?: string;
         style?: string;
         chartOptions?: string;

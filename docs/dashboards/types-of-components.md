@@ -37,7 +37,7 @@ The option to include a Highcharts chart in one of the components is available o
     <script src="https://code.highcharts.com/modules/dashboards-plugin.js"></script>
 ```
 
-The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the store <LINK TO STORE> to connect some dynamic data. The data gets parsed through the `tableAxisMap` option to map correct values from the store to reflect them in the series.
+The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the store <LINK TO STORE> to connect some dynamic data. The data gets parsed through the `columnKeyMap` option to map correct values from the store to reflect them in the series.
 [Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/component-highcharts)
 
 ### DataGrid Component

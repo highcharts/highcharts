@@ -17,7 +17,7 @@
 'use strict';
 
 import type CSSJSONObject from '../CSSJSONObject';
-import type Component from '../Component/Component.js';
+import type Component from '../Components/Component.js';
 import type JSON from '../../Core/JSON';
 import type LayoutType from './Layout';
 import type Row from './Row';
@@ -38,6 +38,10 @@ const {
     merge,
     fireEvent
 } = U;
+
+/**
+ * @internal
+ **/
 class Cell extends GUIElement {
     /* *
     *
@@ -276,7 +280,7 @@ class Cell extends GUIElement {
             rowContainerId = (cell.row.container || {}).id || '';
 
         return {
-            $class: 'Dashboard.Layout.Cell',
+            $class: 'Dashboards.Layout.Cell',
             options: {
                 containerId: (cell.container as HTMLElement).id,
                 parentContainerId: rowContainerId,
@@ -501,27 +505,64 @@ class Cell extends GUIElement {
 }
 
 namespace Cell {
-
+    /**
+     * @internal
+     **/
     export interface CellResponsiveOptions {
         width: string;
         // visible: boolean;
     }
 
-    export interface JSON extends Serializable.JSON<'Dashboard.Layout.Cell'> {
+    /**
+     * @internal
+     **/
+    export interface JSON extends Serializable.JSON<'Dashboards.Layout.Cell'> {
         options: OptionsJSON;
     }
 
+    /**
+     * Options for each cell.
+     **/
     export interface Options {
+        /**
+         * Unique cell id.
+         **/
         id: string;
-        width?: string; // eg 50%, 1/2
+        /**
+         * Width of the cell. Can be a percentage value or a fraction.
+         * For example `50%` or `1/3`.
+         **/
+        width?: string;
+        /**
+         * Height of the cell. Can be a percentage value or a fraction.
+         * For example `50%` or `1/3`.
+         **/
         height?: number;
+        /**
+         * CSS styles for cell container.
+         **/
         style?: CSSJSONObject;
+        /**
+         * Id of the container that holds the cell.
+         **/
         parentContainerId?: string;
+        /**
+         * @internal
+         **/
         mountedComponentJSON?: Component.JSON;
+        /**
+         * To create a nested layout, cell might contain an additional layouts.
+         **/
         layout?: LayoutType.Options;
+        /**
+         * Options for responsive design.
+         **/
         responsive?: Record<string, CellResponsiveOptions>;
     }
 
+    /**
+     * @internal
+     **/
     export interface OptionsJSON extends JSON.Object {
         containerId: string;
         parentContainerId: string;

@@ -61,7 +61,7 @@ interface ControllableAlignObject extends AlignObject {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -231,9 +231,7 @@ class ControllableLabel extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (composedClasses.indexOf(SVGRendererClass) === -1) {
-            composedClasses.push(SVGRendererClass);
-
+        if (U.pushUnique(composedMembers, SVGRendererClass)) {
             const svgRendererProto = SVGRendererClass.prototype;
 
             svgRendererProto.symbols.connector = symbolConnector;

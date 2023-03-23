@@ -34,7 +34,7 @@ const { uniqueKey: coreUniqueKey } = U;
 /**
  * Creates a session-dependent unique key string for reference purposes.
  *
- * @function Dashboard.uniqueKey
+ * @function Dashboards.uniqueKey
  *
  * @return {string}
  * Unique key string

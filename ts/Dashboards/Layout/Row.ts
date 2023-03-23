@@ -35,6 +35,10 @@ const {
     objectEach,
     fireEvent
 } = U;
+
+/**
+ * @internal
+ **/
 class Row extends GUIElement {
     /* *
     *
@@ -322,7 +326,7 @@ class Row extends GUIElement {
         }
 
         return {
-            $class: 'Dashboard.Layout.Row',
+            $class: 'Dashboards.Layout.Row',
             options: {
                 containerId: (row.container as HTMLElement).id,
                 parentContainerId: layoutContainerId,
@@ -527,19 +531,42 @@ class Row extends GUIElement {
 }
 
 namespace Row {
-
-    export interface JSON extends Serializable.JSON<'Dashboard.Layout.Row'> {
+    /**
+     * @internal
+     **/
+    export interface JSON extends Serializable.JSON<'Dashboards.Layout.Row'> {
         options: OptionsJSON;
     }
 
+    /**
+     * Options for the row.
+     **/
     export interface Options {
+        /**
+         * A unique id for the row.
+         **/
         id?: string;
+        /**
+         * The id of the container element.
+         **/
         parentContainerId?: string;
+        /**
+         * An array of cells to be added to the row.
+         **/
         cells?: Array<Cell.Options>;
+        /**
+         * CSS styles for the row.
+         **/
         style?: CSSJSONObject;
+        /**
+         * @internal
+         **/
         cellsJSON?: Array<Cell.JSON>;
     }
 
+    /**
+     * @internal
+     **/
     export interface OptionsJSON extends JSON.Object {
         containerId: string;
         parentContainerId: string;
@@ -547,12 +574,18 @@ namespace Row {
         style?: CSSJSONObject;
     }
 
+    /**
+     * @internal
+     **/
     export interface RowLevel {
         top: number;
         bottom: number;
         cells: Array<Cell>;
     }
 
+    /**
+     * @internal
+     **/
     export interface RowLevelInfo {
         index: number; // level position in RowLevels Array
         rowLevels: Array<RowLevel>;
