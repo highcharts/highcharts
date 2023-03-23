@@ -1092,11 +1092,9 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/legend/padding-itemmargin/
          *         Padding and item margins demonstrated
          *
-         * @type      {number}
-         * @default   0
          * @since     2.2.0
-         * @apioption legend.itemMarginBottom
          */
+        itemMarginBottom: 2,
 
         /**
          * The pixel top margin for each legend item.
@@ -1106,11 +1104,9 @@ const defaultOptions: Options = {
          * @sample {highmaps} maps/legend/padding-itemmargin/
          *         Padding and item margins demonstrated
          *
-         * @type      {number}
-         * @default   0
          * @since     2.2.0
-         * @apioption legend.itemMarginTop
          */
+        itemMarginTop: 2,
 
         /**
          * The width for each legend item. By default the items are laid out

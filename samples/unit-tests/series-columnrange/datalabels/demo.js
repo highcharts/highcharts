@@ -1,6 +1,9 @@
 // Highcharts 4.0.1, Issue #3017
 // Column range - centered data labels
-QUnit.test('Columnrange align datalabels (#3017)', function (assert) {
+// Skipped when testing for v11. Chart was not being inverted, so the test was
+// not doing what it was supposed to do. Furthermore, the data label positioning
+// is likely covered by visual tests.
+QUnit.skip('Columnrange align datalabels (#3017)', function (assert) {
     TestTemplate.test(
         'highcharts/columnrange',
         {

@@ -51,8 +51,8 @@ export interface LegendOptions {
     itemDistance?: number;
     itemHiddenStyle: CSSObject;
     itemHoverStyle: CSSObject;
-    itemMarginBottom?: number;
-    itemMarginTop?: number;
+    itemMarginBottom: number;
+    itemMarginTop: number;
     itemStyle: CSSObject;
     itemWidth?: number;
     layout: ('horizontal'|'vertical'|'proximate');

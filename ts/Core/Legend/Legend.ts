@@ -298,8 +298,8 @@ class Legend {
             );
         }
 
-        this.itemMarginTop = options.itemMarginTop || 0;
-        this.itemMarginBottom = options.itemMarginBottom || 0;
+        this.itemMarginTop = options.itemMarginTop;
+        this.itemMarginBottom = options.itemMarginBottom;
         this.padding = padding;
         this.initialItemY = padding - 5; // 5 is pixels above the text
         this.symbolWidth = pick(options.symbolWidth, 16);
