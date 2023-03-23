@@ -41,7 +41,6 @@ Highcharts.chart('container', {
             condition: {
                 maxWidth: 800
             },
-            // Make the labels less space demanding on mobile
             chartOptions: {
                 chart: {
                     height: '60%'
