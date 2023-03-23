@@ -17,7 +17,7 @@
 import EditGlobals from '../EditGlobals.js';
 import MenuItem from './MenuItem.js';
 
-const MenuItemBindings: Record<string, MenuItem.Options> = {
+const MenuItemBindings: Record<string, Partial<MenuItem.Options>> = {
     /* *
     *
     *  Context menu
