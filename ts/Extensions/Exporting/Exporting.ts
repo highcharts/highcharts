@@ -773,7 +773,7 @@ namespace Exporting {
             innerMenu = createElement(
                 'ul',
                 { className: 'highcharts-menu' },
-                {
+                chart.styledMode ? {} : {
                     listStyle: 'none',
                     margin: 0,
                     padding: 0

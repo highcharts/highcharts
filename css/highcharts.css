@@ -1027,23 +1027,25 @@ input.highcharts-range-selector {
 }
 
 .highcharts-menu {
-    border: 1px solid var(--highcharts-neutral-color-40);
+    border: none;
     background: var(--highcharts-background-color);
-    padding: 5px 0;
+    border-radius: 3px;
+    padding: 0.5em;
     box-shadow: 3px 3px 10px #888888;
 }
 
 .highcharts-menu-item {
-    padding: 0.5em 1em;
     background: none;
+    border-radius: 3px;
     color: var(--highcharts-neutral-color-80);
     cursor: pointer;
+    font-size: 0.8em;
+    padding: 0.5em;
     transition: background 250ms, color 250ms;
 }
 
 .highcharts-menu-item:hover {
-    background: var(--highcharts-highlight-color-80);
-    color: var(--highcharts-background-color);
+    background: var(--highcharts-neutral-color-5);
 }
 
 /* Breadcrumbs */
