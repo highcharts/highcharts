@@ -18,6 +18,7 @@
 
 import type MapNavigationOptions from './MapNavigationOptions';
 import D from '../Core/Defaults.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
 const { extend } = U;
 
@@ -117,6 +118,10 @@ const MapNavigationDefaults: MapNavigationOptions = {
          * @default {"stroke-width": 1, "text-align": "center"}
          */
         theme: {
+            /** @ignore */
+            fill: Palette.backgroundColor,
+            /** @ignore */
+            stroke: Palette.neutralColor10,
             /** @ignore */
             'stroke-width': 1,
             /** @ignore */

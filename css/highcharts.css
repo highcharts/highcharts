@@ -977,12 +977,21 @@ input.highcharts-range-selector {
     text-align: center;
 }
 
+.highcharts-map-navigation.highcharts-button {
+    fill: var(--highcharts-background-color);
+    stroke: var(--highcharts-neutral-color-10);
+}
+
+.highcharts-map-navigation.highcharts-button:hover {
+    fill: var(--highcharts-neutral-color-10);
+}
+
 .highcharts-button.highcharts-zoom-in text {
-    transform: translateX(2.25px);
+    transform: translateX(0.3em);
 }
 
 .highcharts-button.highcharts-zoom-out text {
-    transform: translateX(3.75px);
+    transform: translateX(0.5em);
 }
 
 .highcharts-mapview-inset-border {

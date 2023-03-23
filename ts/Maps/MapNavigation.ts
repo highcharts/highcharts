@@ -184,9 +184,11 @@ MapNavigation.prototype.update = function (
 
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
         if (!mapNav.navButtonsGroup) {
-            mapNav.navButtonsGroup = chart.renderer.g().attr({
-                zIndex: 4 // #4955, // #8392
-            }).add();
+            mapNav.navButtonsGroup = chart.renderer.g()
+                .attr({
+                    zIndex: 4 // #4955, // #8392
+                })
+                .add();
         }
         objectEach(o.buttons, function (
             buttonOptions: MapNavigationButtonOptions,
