@@ -538,7 +538,7 @@ class HeatmapSeries extends ScatterSeries {
                                 r: rgba[0],
                                 g: rgba[1],
                                 b: rgba[2],
-                                a: rgba.length === 4 ? rgba[3] : 255,
+                                a: (rgba.length === 4 ? rgba[3] : 1.0) * 255,
                                 pixelIndex: y * (width * 4) + x * 4
                             };
                         },
@@ -557,7 +557,7 @@ class HeatmapSeries extends ScatterSeries {
                         pixelData.data[pixelIndex + 0] = r;
                         pixelData.data[pixelIndex + 1] = g;
                         pixelData.data[pixelIndex + 2] = b;
-                        pixelData.data[pixelIndex + 3] = a * 255;
+                        pixelData.data[pixelIndex + 3] = a;
                     }
 
                     ctx.putImageData(pixelData, 0, 0);
