@@ -389,6 +389,13 @@ namespace DataGridComponent {
         chartID?: string;
         /**
          * Names / aliases that should be mapped to xAxis values.
+         * ```
+         * Example
+         * columnKeyMap: {
+         *      'Food': 'x',
+         *      'Vitamin A': 'y'
+         * }
+         * ```
          */
         columnKeyMap?: Record<string, string | null>;
     }

@@ -164,7 +164,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * @internal
      */
     public parentCell?: Cell;
-    public connector?: Component.ConnectorTypes; // the attached connector
+    /**
+     * Connector that allows you to load data via URL or from a local source.
+     */
+    public connector?: Component.ConnectorTypes;
     /**
      * Size of the component (width and height).
      */
@@ -204,7 +207,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * An array of options marked as editable by the UI.
      *
-     * @internal
      */
     public editableOptions: EditableOptions;
     /**
@@ -1292,13 +1294,8 @@ namespace Component {
     /**
      * Extracts the name from a given component class.
      *
-<<<<<<< HEAD
-     * @param component
-     * Component type or callback.
-=======
      * @param {DataConnector} component
      * Component class to extract the name from.
->>>>>>> dashboards/main
      *
      * @returns
      * Component name, if the extraction was successful, otherwise an empty

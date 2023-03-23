@@ -184,7 +184,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      * */
 
     /**
-     * Set of chart's options.
+     * A full set of chart options used by the chart.
+     * [Highcharts API](https://api.highcharts.com/highcharts/)
      */
     public chartOptions: Partial<Options>;
     /**
@@ -376,17 +377,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
 
     /**
      * Update the store, when the point is being dragged.
-<<<<<<< HEAD
-     * @param point
-     * Dragged point.
-     * @param store
-     * Store to update.
-     *
-     * @internal
-=======
      * @param  {Point} point Dragged point.
      * @param  {Component.ConnectorTypes} store Connector to update.
->>>>>>> dashboards/main
      */
     private onChartUpdate(
         point: Point,
@@ -735,6 +727,7 @@ namespace HighchartsComponent {
     export interface EditableOptions extends Component.EditableOptions {
         /**
          * A full set of chart options used by the chart.
+         * [Highcharts API](https://api.highcharts.com/highcharts/)
          */
         chartOptions?: Options;
         /**
@@ -747,6 +740,13 @@ namespace HighchartsComponent {
         chartID?: string;
         /**
          * Names / aliases that should be mapped to xAxis values.
+         * ```
+         * Example
+         * columnKeyMap: {
+         *      'Food': 'x',
+         *      'Vitamin A': 'y'
+         * }
+         * ```
          */
         columnKeyMap?: Record<string, string | null>;
     }
