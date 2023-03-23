@@ -373,9 +373,9 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
             // We flip whether or not we update the top or bottom of the guide
             // box at threshold, but if we drag the mouse fast, the top has not
             // reached threshold before we cross over and update the bottom.
-            let threshold = point.series.translatedThreshold,
-                y = guideBox.attr('y'),
-                height,
+            const threshold = point.series.translatedThreshold,
+                y = guideBox.attr('y');
+            let height,
                 diff;
 
             if (pointVals.y >= (point.series.options.threshold as any) || 0) {
@@ -944,16 +944,16 @@ if (seriesTypes.xrange) {
             point: XRangePoint,
             xProp: string
         ): PositionObject {
-            let series = point.series,
+            const series = point.series,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
                 inverted = series.chart.inverted,
-                // Using toPixels handles axis.reversed, but doesn't take
-                // chart.inverted into account.
-                newX = xAxis.toPixels((point as any)[xProp], true),
-                newY = yAxis.toPixels(point.y as any, true),
                 offsetY = series.columnMetrics ? series.columnMetrics.offset :
                     -(point.shapeArgs as any).height / 2;
+            // Using toPixels handles axis.reversed, but doesn't take
+            // chart.inverted into account.
+            let newX = xAxis.toPixels((point as any)[xProp], true),
+                newY = yAxis.toPixels(point.y as any, true);
 
             // Handle chart inverted
             if (inverted) {
@@ -1479,8 +1479,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  *         True if the series is using drag/drop.
  */
 function isSeriesDraggable(series: Series): (boolean|undefined) {
-    let props = ['draggableX', 'draggableY'],
-        i;
+    const props = ['draggableX', 'draggableY'];
 
     // Add optionNames from dragDropProps to the array of props to check for
     objectEach(series.dragDropProps, function (
@@ -1493,7 +1492,7 @@ function isSeriesDraggable(series: Series): (boolean|undefined) {
 
     // Loop over all options we have that could enable dragDrop for this
     // series. If any of them are truthy, this series is draggable.
-    i = props.length;
+    let i = props.length;
     while (i--) {
         if ((series.options.dragDrop as any)[props[i]]) {
             return true;
@@ -1516,7 +1515,10 @@ function isSeriesDraggable(series: Series): (boolean|undefined) {
 function isChartDraggable(chart: Chart): (boolean|undefined) {
     let i = chart.series ? chart.series.length : 0;
 
-    if (chart.hasCartesianSeries && !chart.polar) {
+    if (
+        (chart.hasCartesianSeries && !chart.polar) ||
+        chart.mapView
+    ) {
         while (i--) {
             if (
                 chart.series[i].options.dragDrop &&
@@ -1541,11 +1543,12 @@ function isChartDraggable(chart: Chart): (boolean|undefined) {
  *         True if the point is movable.
  */
 function isPointMovable(point: Point): (boolean|undefined) {
-    let series = point.series,
+    const series = point.series,
+        chart = series.chart,
         seriesDragDropOptions = series.options.dragDrop || {},
         pointDragDropOptions = point.options && point.options.dragDrop,
-        updateProps = series.dragDropProps,
-        hasMovableX,
+        updateProps = series.dragDropProps;
+    let hasMovableX,
         hasMovableY;
 
     objectEach(updateProps, function (
@@ -1570,8 +1573,10 @@ function isPointMovable(point: Point): (boolean|undefined) {
             pointDragDropOptions.draggableX === false &&
             pointDragDropOptions.draggableY === false
         ) &&
-        series.yAxis &&
-        series.xAxis
+        (
+            (series.yAxis && series.xAxis) ||
+            chart.mapView
+        )
     );
 }
 
@@ -1734,10 +1739,16 @@ function getPositionSnapshot(
             // This later will be used to calculate new value according to the
             // current position of the cursor.
             // e.g. `high` value is translated to `highOffset`
-            pointProps[key + 'Offset'] =
-                // e.g. yAxis.toPixels(point.high), xAxis.toPixels(point.end)
-                axis.toPixels((point as any)[key]) -
-                (axis.horiz ? e.chartX : e.chartY);
+            if (point.series.chart.mapView && point.plotX && point.plotY) {
+                pointProps[key + 'Offset'] = key === 'x' ?
+                    point.plotX : point.plotY;
+            } else {
+                pointProps[key + 'Offset'] =
+                    // e.g. yAxis.toPixels(point.high), xAxis.toPixels
+                    // (point.end)
+                    axis.toPixels(point[key as keyof typeof point]) -
+                    (axis.horiz ? e.chartX : e.chartY);
+            }
         });
         (pointProps as any).point = point; // Store reference to point
         res.points[point.id] = pointProps;
@@ -1759,9 +1770,9 @@ function getPositionSnapshot(
  *         Array of points in this group.
  */
 function getGroupedPoints(point: Point): Array<Point> {
-    let series = point.series,
-        points: Array<Point> = [],
+    const series = point.series,
         groupKey = (series.options.dragDrop as any).groupBy;
+    let points: Array<Point> = [];
 
     if (series.boosted) { // #11156
         (series.options.data as any).forEach(function (
@@ -1858,10 +1869,10 @@ function initDragDrop(
     e: PointerEvent,
     point: Point
 ): void {
-    let groupedPoints = getGroupedPoints(point),
+    const groupedPoints = getGroupedPoints(point),
         series = point.series,
-        chart = series.chart,
-        guideBox;
+        chart = series.chart;
+    let guideBox;
 
     // If liveRedraw is disabled, show the guide box with the default state
     if (!pick(
@@ -1910,6 +1921,7 @@ function getNewPoints(
 ): Record<string, Highcharts.DragDropPointObject> {
     const point = dragDropData.point,
         series = point.series,
+        chart = series.chart,
         options = merge(series.options.dragDrop, point.options.dragDrop),
         updateProps: (
             Record<string, Partial<Highcharts.SeriesDragDropPropsObject>>
@@ -1947,7 +1959,11 @@ function getNewPoints(
                 )
             )
         ) {
-            updateProps[key] = val;
+            if (chart.mapView) {
+                updateProps[key === 'x' ? 'lon' : 'lat'] = val;
+            } else {
+                updateProps[key] = val;
+            }
         }
     });
 
@@ -2026,18 +2042,15 @@ function updatePoints(
  *        Difference in Y position.
  */
 function resizeGuideBox(point: Point, dX: number, dY: number): void {
-    let series = point.series,
+    const series = point.series,
         chart = series.chart,
         dragDropData: Highcharts.DragDropDataObject = chart.dragDropData as any,
-        resizeSide,
-        newPoint,
         resizeProp =
-            (series.dragDropProps as any)[dragDropData.updateProp as any];
-
-    // dragDropProp.resizeSide holds info on which side to resize.
-    newPoint = (dragDropData as any).newPoints[point.id as any].newValues;
-    resizeSide = typeof resizeProp.resizeSide === 'function' ?
-        resizeProp.resizeSide(newPoint, point) : resizeProp.resizeSide;
+            (series.dragDropProps as any)[dragDropData.updateProp as any],
+        // dragDropProp.resizeSide holds info on which side to resize.
+        newPoint = (dragDropData as any).newPoints[point.id as any].newValues,
+        resizeSide = typeof resizeProp.resizeSide === 'function' ?
+            resizeProp.resizeSide(newPoint, point) : resizeProp.resizeSide;
 
     // Call resize hook if it is defined
     if (resizeProp.beforeResize) {
@@ -2075,17 +2088,18 @@ function dragMove(
     e: PointerEvent,
     point: Point
 ): void {
-    let series = point.series,
+    const series = point.series,
         chart = series.chart,
         data = chart.dragDropData,
         options = merge(series.options.dragDrop, point.options.dragDrop),
         draggableX = options.draggableX,
         draggableY = options.draggableY,
         origin: Highcharts.DragDropPositionObject = (data as any).origin,
-        dX = e.chartX - origin.chartX,
-        dY = e.chartY - origin.chartY,
-        oldDx = dX,
         updateProp: string = (data as any).updateProp;
+    let dX = e.chartX - origin.chartX,
+        dY = e.chartY - origin.chartY;
+
+    const oldDx = dX;
 
     // Handle inverted
     if (chart.inverted) {
@@ -2190,12 +2204,14 @@ Point.prototype.getDropValues = function (
     newPos: PointerEvent,
     updateProps: Record<string, Highcharts.SeriesDragDropPropsObject>
 ): Record<string, number> {
-    let point = this,
+    const point = this,
         series = point.series,
+        chart = series.chart,
+        mapView = chart.mapView,
         options = merge(series.options.dragDrop, point.options.dragDrop),
         result: Record<string, number> = {},
-        updateSingleProp: (boolean|undefined),
         pointOrigin = origin.points[point.id];
+    let updateSingleProp: (boolean|undefined);
 
     // Find out if we only have one prop to update
     for (const key in updateProps) {
@@ -2220,7 +2236,8 @@ Point.prototype.getDropValues = function (
      *         Limited value
      */
     const limitToRange = function (val: number, direction: string): number {
-        let defaultPrecision = (series as any)[direction.toLowerCase() + 'Axis']
+        const defaultPrecision =
+            (series as any)[direction.toLowerCase() + 'Axis']
                 .categories ? 1 : 0,
             precision = pick<number|undefined, number>(
                 (options as any)['dragPrecision' + direction], defaultPrecision
@@ -2232,13 +2249,93 @@ Point.prototype.getDropValues = function (
             max = pick<number|undefined, number>(
                 (options as any)['dragMax' + direction] as number,
                 Infinity
-            ),
-            res = val;
+            );
+        let res = val;
 
         if (precision) {
             res = Math.round(res / precision) * precision;
         }
         return clamp(res, min, max);
+    };
+
+    /**
+     * Utility function to apply precision and limit a value within the
+     * draggable range used only for Highcharts Maps.
+     * @private
+     * @param {PointerEvent} newPos
+     *        PointerEvent, which is used to get the value
+     * @param {string} direction
+     *        Axis direction
+     * @param {string} key
+     *        Key for choosing between longitude and latitude
+     * @return {number | undefined}
+     *         Limited value
+     */
+    const limitToMapRange = function (
+        newPos: PointerEvent,
+        direction: string,
+        key: string
+    ): number | undefined {
+        if (mapView) {
+            const precision = pick<number|undefined, number>(
+                    (options as any)['dragPrecision' + direction],
+                    0
+                ),
+                lonLatMin = mapView.pixelsToLonLat({
+                    x: 0,
+                    y: 0
+                }),
+                lonLatMax = mapView.pixelsToLonLat({
+                    x: chart.plotBox.width,
+                    y: chart.plotBox.height
+                });
+            let min = pick(
+                    (options as any)['dragMin' + direction] as any,
+                    lonLatMin &&
+                        lonLatMin[key as keyof Highcharts.MapLonLatObject],
+                    -Infinity
+                ),
+                max = pick(
+                    (options as any)['dragMax' + direction] as number,
+                    lonLatMax &&
+                        lonLatMax[key as keyof Highcharts.MapLonLatObject],
+                    Infinity
+                ),
+                res = newPos[key as keyof typeof newPos] as number;
+
+            if (key === 'lat') {
+                // if map is bigger than possible projection range
+                if (isNaN(min) || min > mapView.projection.maxLatitude) {
+                    min = mapView.projection.maxLatitude;
+                }
+
+                if (isNaN(max) || max < -1 * mapView.projection.maxLatitude) {
+                    max = -1 * mapView.projection.maxLatitude;
+                }
+
+                // swap for latitude
+                const temp = max;
+                max = min;
+                min = temp;
+            }
+
+            if (!mapView.projection.hasCoordinates) {
+                // establish y value
+                const lonLatRes = mapView.pixelsToLonLat({
+                    x: newPos.chartX - chart.plotLeft,
+                    y: chart.plotHeight - newPos.chartY + chart.plotTop
+                });
+                if (lonLatRes) {
+                    res = (lonLatRes as any)[key];
+                }
+            }
+
+            if (precision) {
+                res = Math.round(res / precision) * precision;
+            }
+
+            return clamp(res, min, max);
+        }
     };
 
     // Assign new value to property. Adds dX/YValue to the old value, limiting
@@ -2247,19 +2344,22 @@ Point.prototype.getDropValues = function (
         val: Highcharts.SeriesDragDropPropsObject,
         key: string
     ): void {
-        const oldVal = pointOrigin[key],
+        const oldVal = (pointOrigin.point as any)[key],
             axis: Axis = (series as any)[val.axis + 'Axis'],
-            newVal = limitToRange(
-                axis.toValue(
-                    (axis.horiz ? newPos.chartX : newPos.chartY) +
-                    (pointOrigin as any)[key + 'Offset']
-                ),
-                val.axis.toUpperCase()
-            );
+            newVal = mapView ?
+                limitToMapRange(newPos, val.axis.toUpperCase(), key) :
+                limitToRange(
+                    axis.toValue(
+                        (axis.horiz ? newPos.chartX : newPos.chartY) +
+                        (pointOrigin as any)[key + 'Offset']
+                    ),
+                    val.axis.toUpperCase()
+                );
 
         // If we are updating a single prop, and it has a validation function
         // for the prop, run it. If it fails, don't update the value.
         if (
+            newVal &&
             !(
                 updateSingleProp &&
                 val.propValidate &&
@@ -2290,8 +2390,8 @@ Point.prototype.getDropValues = function (
 Series.prototype.getGuideBox = function (
     points: Array<Point>
 ): SVGElement {
-    let chart = this.chart,
-        minX = Infinity,
+    const chart = this.chart;
+    let minX = Infinity,
         maxX = -Infinity,
         minY = Infinity,
         maxY = -Infinity,
@@ -2466,7 +2566,7 @@ Point.prototype.showDragHandles = function (): void {
         val: Highcharts.SeriesDragDropPropsObject,
         key: string
     ): void {
-        let handleOptions: Highcharts.DragDropHandleOptionsObject = merge(
+        const handleOptions: Highcharts.DragDropHandleOptionsObject = merge(
                 defaultDragHandleOptions,
                 val.handleOptions,
                 options.dragHandle
@@ -2479,13 +2579,13 @@ Point.prototype.showDragHandles = function (): void {
             },
             pathFormatter = handleOptions.pathFormatter || val.handleFormatter,
             handlePositioner = val.handlePositioner,
-            pos,
-            handle,
-            path,
             // Run validation function on whether or not we allow individual
             // updating of this prop.
             validate = val.validateIndividualDrag ?
                 val.validateIndividualDrag(point) : true;
+        let pos,
+            handle,
+            path;
 
         if (
             val.resize &&
@@ -2700,8 +2800,8 @@ function mouseMove(
         return;
     }
 
-    let dragDropData = chart.dragDropData,
-        point: Point,
+    const dragDropData = chart.dragDropData;
+    let point: Point,
         seriesDragDropOpts: Highcharts.DragDropOptionsObject,
         newPoints: Record<string, Highcharts.DragDropPointObject>,
         numNewPoints = 0,
