@@ -29,9 +29,9 @@ export default class SyncHandler {
     public static registry: Record<string, SyncHandler> = {};
 
     /**
-     * Adds a handler to the handler regisitry
+     * Adds a handler to the handler regisitry.
      *
-     * @param handler the handler to add to the registry
+     * @param handler The handler to add to the registry.
      */
     public static register(handler: SyncHandler): void {
         const { id } = handler;
@@ -41,7 +41,7 @@ export default class SyncHandler {
     /**
      * Gets a handler from handler registry.
      *
-     * @param handlerID the ID of the handler to get.
+     * @param handlerID The ID of the handler to get.
      */
     public static get(handlerID: string): SyncHandler | undefined {
         return this.registry[handlerID];

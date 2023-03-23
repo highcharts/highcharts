@@ -11,7 +11,7 @@
         "../../../ts/Dashboards/Layout/Layout.ts",
         "../../../ts/Dashboards/Layout/Row.ts",
         "../../../ts/Dashboards/Layout/Cell.ts",
-        "../../../ts/Dashboards/Components/Sync/Handler.ts",
+        "../../../ts/Dashboards/Components/Sync/*.ts",
     ],
     "customCss": "api-docs/typedoc/assets/custom.css",
     "entryPointStrategy": "expand",
