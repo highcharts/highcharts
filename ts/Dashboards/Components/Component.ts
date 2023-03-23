@@ -16,7 +16,8 @@
 
 'use strict';
 
-import type Cell from '../Layout/Cell.js';
+import type Board from '../Board';
+import type Cell from '../Layout/Cell';
 import type ComponentType from './ComponentType';
 import type JSON from '../../Core/JSON';
 import type NavigationBindingsOptionsObject from
@@ -105,6 +106,12 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public parentElement: HTMLElement;
     public parentCell?: Cell;
     public connector?: Component.ConnectorTypes; // the attached connector
+
+    /**
+    * @internal
+    * The board the component belongs to
+    * */
+    public board?: Board;
     protected dimensions: { width: number | null; height: number | null };
     public element: HTMLElement;
     public titleElement?: HTMLElement;
@@ -183,6 +190,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
         this.type = this.options.type;
         this.connector = this.options.connector;
+        this.board = this.options.board;
         this.hasLoaded = false;
         this.shouldRedraw = true;
         this.editableOptions =
@@ -195,6 +203,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             width: null,
             height: null
         };
+
 
         this.syncHandlers = this.handleSyncOptions();
         this.element = createElement('div', {
@@ -417,7 +426,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             this.activeGroup.addComponents([this.id]);
         }
     }
-
 
     private getContentHeight(): number {
         const parentHeight =
@@ -905,6 +913,11 @@ namespace Component {
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions extends EditableOptions {
+        /**
+        * @internal
+        * The Board the component belongs to
+        * */
+        board?: Board;
         parentCell?: Cell;
         parentElement: HTMLElement | string;
         className?: string;
