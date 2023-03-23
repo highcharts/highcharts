@@ -22,7 +22,8 @@
  *
  * */
 
-import type Cell from '../Layout/Cell.js';
+import type Board from '../Board';
+import type Cell from '../Layout/Cell';
 import type ComponentType from './ComponentType';
 import type JSON from '../../Core/JSON';
 import type NavigationBindingsOptionsObject from
@@ -168,6 +169,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * Connector that allows you to load data via URL or from a local source.
      */
     public connector?: Component.ConnectorTypes;
+    /**
+    * @internal
+    * The board the component belongs to
+    * */
+    public board?: Board;
     /**
      * Size of the component (width and height).
      */
@@ -330,6 +336,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
         this.type = this.options.type;
         this.connector = this.options.connector;
+        this.board = this.options.board;
         this.hasLoaded = false;
         this.shouldRedraw = true;
         this.editableOptions =
@@ -342,6 +349,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             width: null,
             height: null
         };
+
 
         this.syncHandlers = this.handleSyncOptions();
         this.element = createElement('div', {
@@ -611,7 +619,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             this.activeGroup.addComponents([this.id]);
         }
     }
-
     /**
      * Gets height of the component's content.
      *
@@ -1141,6 +1148,11 @@ namespace Component {
 
     export interface ComponentOptions extends EditableOptions {
         /**
+         * @internal
+         * The Board the component belongs to
+         * */
+        board?: Board;
+        /*
          * Instance of cell, where component is attached.
          */
         parentCell?: Cell;

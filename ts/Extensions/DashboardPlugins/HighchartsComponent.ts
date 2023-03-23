@@ -248,6 +248,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             this,
             this.syncHandlers
         );
+
         this.chartOptions = (
             this.options.chartOptions ||
             { chart: {} } as Partial<Options>
@@ -297,7 +298,8 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         super.render();
         hcComponent.chart = hcComponent.initChart();
         hcComponent.updateSeries();
-        hcComponent.sync.start();
+
+        this.sync.start();
         hcComponent.emit({ type: 'afterRender' });
         hcComponent.setupConnectorUpdate();
 
@@ -568,7 +570,6 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
      */
     private constructChart(): Chart {
         const charter = (HighchartsComponent.charter || G);
-
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor] || G.chart;
             if (factory) {
