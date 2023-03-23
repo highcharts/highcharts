@@ -14,18 +14,18 @@
  *
  * */
 
-import type ComponentTypes from '../Component/ComponentType';
+import type ComponentTypes from '../Components/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type Serializable from '../Serializable';
-import type KPIComponent from '../Component/KPIComponent';
-import type DataStore from '../../Data/Stores/DataStore';
+import type KPIComponent from '../Components/KPIComponent';
+import type DataConnector from '../../Data/Connectors/DataConnector';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
 import type Row from '../Layout/Row';
 
-import Component from '../Component/Component.js';
-import HTMLComponent from '../Component/HTMLComponent.js';
+import Component from '../Components/Component.js';
+import HTMLComponent from '../Components/HTMLComponent.js';
 import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
 import Globals from '../Globals.js';
 import DataTable from '../../Data/DataTable';
@@ -70,6 +70,7 @@ class Bindings {
         cell = cell || Bindings.getCell(options.cell);
         let component: Component | undefined;
 
+
         // add elements to containers
         if (componentContainer) {
             const ComponentClass = Component.getComponent(options.type);
@@ -78,6 +79,7 @@ class Bindings {
                 component = new HTMLComponent(merge(
                     options,
                     {
+                        board: cell && cell.row.layout.board,
                         parentElement: componentContainer
                     })
                 );
@@ -85,6 +87,8 @@ class Bindings {
                 component = new ComponentClass(merge(
                     options,
                     {
+                        board: cell && cell.row.layout.board,
+                        parentCell: cell,
                         parentElement: componentContainer
                     })
                 );
@@ -237,7 +241,6 @@ namespace Bindings {
         cell: string;
         type: string;
         chartOptions?: any;
-        isResizable?: boolean;
         elements?: any;
         dimensions?: { width: number; height: number };
         events?: any;

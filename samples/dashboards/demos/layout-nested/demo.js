@@ -22,7 +22,6 @@ Dashboards.board('container', {
         }
     },
     gui: {
-        enabled: true,
         layouts: [{
             id: 'layout-in-1',
             rows: [{

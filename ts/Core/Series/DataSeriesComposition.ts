@@ -64,7 +64,7 @@ export declare class DataSeriesComposition extends Series {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -189,9 +189,7 @@ class DataSeriesAdditions {
         SeriesClass: typeof Series
     ): void {
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'init', function (): void {
                 this.datas = new DataSeriesAdditions(
                     this as DataSeriesComposition

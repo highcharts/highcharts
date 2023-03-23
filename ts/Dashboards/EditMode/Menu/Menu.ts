@@ -75,6 +75,7 @@ class Menu {
     public items: Record<string, MenuItem>;
     public activeItems: Array<MenuItem>;
     public parent: any;
+    public currentElementId?: string;
 
     /* *
     *
@@ -94,7 +95,7 @@ class Menu {
 
     // itemsSchemas - default items definitions.
     public initItems(
-        itemsSchemas: Record<string, MenuItem.Options>,
+        itemsSchemas: Record<string, Partial<MenuItem.Options>>,
         activeItems?: boolean
     ): void {
         const menu = this,

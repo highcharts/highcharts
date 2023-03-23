@@ -30,6 +30,7 @@ import Bindings from '../Actions/Bindings.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import DataTable from '../../Data/DataTable.js';
+import CSVConnector from '../../Data/Connectors/CSVConnector.js';
 
 const {
     merge,
@@ -89,6 +90,8 @@ class Sidebar {
         icon: ''
     }];
 
+    public static seriesIconURLPrefix =
+        Globals.iconsURLPrefix + 'series-types/icon-';
     public static components: Array<Sidebar.AddComponentDetails> = [
         {
             text: 'layout',
@@ -128,7 +131,6 @@ class Sidebar {
                 Bindings.addComponent({
                     type: 'html',
                     cell: cellName,
-                    isResizable: true,
                     elements: [
                         {
                             tagName: 'div',
@@ -237,7 +239,7 @@ class Sidebar {
                     return sidebar.onDropNewComponent(dropContext, {
                         cell: '',
                         type: 'DataGrid',
-                        store: new Dashboards.CSVStore(new DataTable(columns))
+                        connector: new CSVConnector(new DataTable(columns))
                     } as any); // necessary for now
                 }
             }
@@ -351,7 +353,7 @@ class Sidebar {
         }
     });
 
-    public static itemsGeneralOptions: Record<string, MenuItem.Options> = {
+    public static itemsGeneralOptions: Record<string, Partial<MenuItem.Options>> = {
         addLayout: {
             id: 'addLayout',
             type: 'addLayout',
@@ -372,14 +374,15 @@ class Sidebar {
         }
     };
 
+    // TODO: Improve this type.
+    public updatedSettings: any = {};
+
     /* *
     *
     *  Constructor
     *
     * */
-    constructor(
-        editMode: EditMode
-    ) {
+    constructor(editMode: EditMode) {
         this.tabs = {};
         this.isVisible = false;
         this.options = merge(
@@ -847,19 +850,29 @@ class Sidebar {
                 activeTab && activeTab.content.container;
             let type;
             let chartTypes = {};
+            let chartConfigOptions = {};
 
             for (const key in componentSettings) {
                 if (componentSettings[key]) {
                     type = componentSettings[key].type;
 
                     if (key === 'chartType') {
-                        const chartTypesEnum = [
-                            'column',
-                            'line',
-                            'scatter',
-                            'spline',
-                            'pie'
-                        ];
+                        const chartTypesEnum = [{
+                            name: 'column',
+                            iconURL:
+                                Sidebar.seriesIconURLPrefix + 'column.svg'
+                        }, {
+                            name: 'line',
+                            iconURL:
+                                Sidebar.seriesIconURLPrefix + 'line.svg'
+                        }, {
+                            name: 'scatter',
+                            iconURL:
+                                Sidebar.seriesIconURLPrefix + 'scatter.svg'
+                        }, {
+                            name: 'pie',
+                            iconURL: Sidebar.seriesIconURLPrefix + 'pie.svg'
+                        }];
 
                         // eslint-disable-next-line
                         const chartOpts = (currentComponent as HighchartsComponent).options.chartOptions;
@@ -870,10 +883,7 @@ class Sidebar {
                                 (chartOpts.series && chartOpts.series[0].type)
                             );
 
-                        if (
-                            chartType &&
-                            chartTypesEnum.indexOf(chartType) !== -1
-                        ) {
+                        if (chartType) {
                             chartTypes = {
                                 items: chartTypesEnum,
                                 value: chartType
@@ -881,6 +891,37 @@ class Sidebar {
                         } else {
                             continue;
                         }
+                    } else if (key === 'chartConfig') {
+                        chartConfigOptions = {
+                            nestedOptions: {
+                                title: {
+                                    enabled: { type: 'input' },
+                                    text: { type: 'input' },
+                                    size: { type: 'input' },
+                                    font: { type: 'input' }
+                                },
+                                yAxis: {
+                                    enabled: { type: 'input' },
+                                    labels: { type: 'input' },
+                                    title: { type: 'input' },
+                                    text: { type: 'input' }
+                                },
+                                legend: {
+                                    enabled: { type: 'input' },
+                                    title: { type: 'input' }
+                                },
+                                dataLabels: {
+                                    size: { type: 'input' },
+                                    font: { type: 'input' }
+                                },
+                                xAxis: {
+                                    enabled: { type: 'input' },
+                                    labels: { type: 'input' },
+                                    title: { type: 'input' },
+                                    text: { type: 'input' }
+                                }
+                            }
+                        };
                     }
 
                     (menuItems as any)[key] = {
@@ -888,8 +929,15 @@ class Sidebar {
                         type: type === 'text' ? 'input' : type,
                         text: (lang as any)[key] || key,
                         isActive: true,
+                        collapsable: true,
                         value: componentSettings[key].value,
-                        ...chartTypes
+                        events: {
+                            change: (id: string, value: string): void => {
+                                sidebar.updatedSettings[id] = value;
+                            }
+                        },
+                        ...chartTypes,
+                        ...chartConfigOptions
                     };
 
                     items.push(
@@ -987,47 +1035,33 @@ class Sidebar {
     }
 
     public updateComponent(): void {
-        const activeTab = this.activeTab;
-        const formFields = activeTab &&
-            activeTab.contentContainer.querySelectorAll(
-                'input, textarea'
-            ) || [];
-        const chartType = activeTab &&
-            activeTab.contentContainer.querySelectorAll('#chartType');
-        const updatedSettings = {};
+        const updatedSettings: Record<string, any> = {};
         const mountedComponent = (this.context as Cell).mountedComponent;
-        let fieldId;
+        const savedSettings = this.updatedSettings;
 
-        for (let i = 0, iEnd = formFields.length; i < iEnd; ++i) {
-            fieldId = formFields[i].getAttribute('id');
+        const keys = Object.keys(savedSettings);
 
-            if (fieldId) {
-                try {
-                    (updatedSettings as any)[fieldId] = JSON.parse(
-                        (formFields[i] as HTMLTextAreaElement).value
-                    );
-
-                    if (
-                        fieldId === 'chartOptions' &&
-                        (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions && // eslint-disable-line
-                        chartType &&
-                        chartType[0]
-                    ) {
-                        (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions = // eslint-disable-line
-                            merge(
-                                (updatedSettings as HighchartsComponent.ComponentOptions).chartOptions, // eslint-disable-line
-                                {
-                                    chart: {
-                                        type: (chartType[0] as any).value
-                                    }
-                                }
-                            );
-                    }
-                } catch {
-                    (updatedSettings as any)[fieldId] =
-                        (formFields[i] as (HTMLInputElement)).value;
-                }
+        for (let i = 0, iEnd = keys.length, key; i < iEnd; ++i) {
+            key = keys[i];
+            if (key === 'chartType') {
+                continue;
             }
+
+            try {
+                updatedSettings[key] = JSON.parse(
+                    savedSettings[key]
+                );
+            } catch (e) {
+                updatedSettings[key] = savedSettings[key];
+            }
+        }
+
+        if (savedSettings.chartType) {
+            updatedSettings.chartOptions = merge(updatedSettings.chartOptions, {
+                chart: {
+                    type: savedSettings.chartType
+                }
+            });
         }
 
         if (mountedComponent) {
@@ -1134,7 +1168,7 @@ class Sidebar {
 interface Sidebar {
     dragDropButton?: HTMLDOMElement;
     closeButton?: HTMLDOMElement;
-    componentEditableOptions?: any;
+    componentEditableOptions?: Menu;
 }
 namespace Sidebar {
     export interface Options {

@@ -20,11 +20,11 @@
  * */
 
 import type DataConverter from '../../Data/Converters/DataConverter';
-import type DataStore from '../../Data/Stores/DataStore';
+import type DataConnector from '../../Data/Connectors/DataConnector';
 import type Serializable from '../Serializable';
 
 import DataTableHelper from './DataTableHelper.js';
-import GoogleSheetsStore from '../../Data/Stores/GoogleSheetsStore.js';
+import GoogleSheetsConnector from '../../Data/Connectors/GoogleSheetsConnector.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -37,24 +37,24 @@ const { merge } = U;
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {GoogleSheetsStoreHelper.JSON} json
+ * @param {GoogleSheetsConnectorHelper.JSON} json
  * JSON to deserialize as a class instance or object.
  *
- * @return {GoogleSheetsStore}
+ * @return {GoogleSheetsConnector}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: GoogleSheetsStoreHelper.JSON
-): GoogleSheetsStore {
+    json: GoogleSheetsConnectorHelper.JSON
+): GoogleSheetsConnector {
     const table = DataTableHelper.fromJSON(json.table),
-        store = new GoogleSheetsStore(
+        connector = new GoogleSheetsConnector(
             table,
             json.options || { googleAPIKey: '', googleSpreadsheetKey: '' }
         );
 
-    merge(true, store.metadata, json.metadata);
+    merge(true, connector.metadata, json.metadata);
 
-    return store;
+    return connector;
 }
 
 /**
@@ -69,24 +69,24 @@ function fromJSON(
  */
 function jsonSupportFor(
     obj: AnyRecord
-): obj is GoogleSheetsStore {
-    return obj instanceof GoogleSheetsStore;
+): obj is GoogleSheetsConnector {
+    return obj instanceof GoogleSheetsConnector;
 }
 
 /**
  * Converts the given class instance to JSON.
  *
- * @param {GoogleSheetsStore} obj
+ * @param {GoogleSheetsConnector} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {GoogleSheetsStoreHelper.JSON}
+ * @return {GoogleSheetsConnectorHelper.JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
-    obj: GoogleSheetsStore
-): GoogleSheetsStoreHelper.JSON {
+    obj: GoogleSheetsConnector
+): GoogleSheetsConnectorHelper.JSON {
     return {
-        $class: 'Data.GoogleSheetsStore',
+        $class: 'Data.GoogleSheetsConnector',
         metadata: obj.metadata,
         options: obj.options,
         table: DataTableHelper.toJSON(obj.table)
@@ -99,7 +99,7 @@ function toJSON(
  *
  * */
 
-namespace GoogleSheetsStoreHelper {
+namespace GoogleSheetsConnectorHelper {
 
     /* *
      *
@@ -107,8 +107,8 @@ namespace GoogleSheetsStoreHelper {
      *
      * */
 
-    export interface JSON extends Serializable.JSON<'Data.GoogleSheetsStore'> {
-        metadata: DataStore.Metadata;
+    export interface JSON extends Serializable.JSON<'Data.GoogleSheetsConnector'> {
+        metadata: DataConnector.Metadata;
         options: OptionsJSON;
         table: DataTableHelper.JSON;
     }
@@ -117,8 +117,9 @@ namespace GoogleSheetsStoreHelper {
         dataRefreshRate: number;
         enablePolling: boolean;
         firstRowAsNames: boolean;
-        googleAPIKey: GoogleSheetsStore.Options['googleAPIKey'];
-        googleSpreadsheetKey: GoogleSheetsStore.Options['googleSpreadsheetKey'];
+        googleAPIKey: GoogleSheetsConnector.Options['googleAPIKey'];
+        googleSpreadsheetKey: GoogleSheetsConnector
+            .Options['googleSpreadsheetKey'];
         worksheet?: number;
     }
 
@@ -130,11 +131,11 @@ namespace GoogleSheetsStoreHelper {
  *
  * */
 
-const GoogleSheetsStoreSerializer: Serializable.Helper<GoogleSheetsStore, GoogleSheetsStoreHelper.JSON> = {
-    $class: 'Data.GoogleSheetsStore',
+const GoogleSheetsConnectorSerializer: Serializable.Helper<GoogleSheetsConnector, GoogleSheetsConnectorHelper.JSON> = {
+    $class: 'Data.GoogleSheetsConnector',
     fromJSON,
     jsonSupportFor,
     toJSON
 };
 
-export default GoogleSheetsStoreHelper;
+export default GoogleSheetsConnectorHelper;

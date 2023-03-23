@@ -262,12 +262,13 @@ namespace MSPointer {
      * @private
      */
     export function compose(ChartClass: typeof Chart): void {
-        if (composedMembers.indexOf(ChartClass) === -1) {
-            composedMembers.push(ChartClass);
+
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 this.pointer = new MSPointer(this, this.options);
             });
         }
+
     }
 
 }

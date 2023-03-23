@@ -19,12 +19,12 @@
  *
  * */
 
-import type DataStore from '../../Data/Stores/DataStore';
+import type DataConnector from '../../Data/Connectors/DataConnector';
 import type JSON from '../../Core/JSON';
 import type Serializable from '../Serializable';
 
 import DataTableHelper from './DataTableHelper.js';
-import HTMLTableStore from '../../Data/Stores/HTMLTableStore.js';
+import HTMLTableConnector from '../../Data/Connectors/HTMLTableConnector.js';
 import U from '../../Core/Utilities.js';
 import HTMLTableConverterHelper from './HTMLTableConverterHelper';
 const { merge } = U;
@@ -38,22 +38,22 @@ const { merge } = U;
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {HTMLTableStoreHelper.JSON} json
+ * @param {HTMLTableConnectorHelper.JSON} json
  * JSON to deserialize as a class instance or object.
  *
- * @return {HTMLTableStore}
+ * @return {HTMLTableConnector}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: HTMLTableStoreHelper.JSON
-): HTMLTableStore {
+    json: HTMLTableConnectorHelper.JSON
+): HTMLTableConnector {
     const converter = HTMLTableConverterHelper.fromJSON(json.converter),
         table = DataTableHelper.fromJSON(json.table),
-        store = new HTMLTableStore(table, json.options, converter);
+        connector = new HTMLTableConnector(table, json.options, converter);
 
-    merge(true, store.metadata, json.metadata);
+    merge(true, connector.metadata, json.metadata);
 
-    return store;
+    return connector;
 }
 
 /**
@@ -68,30 +68,30 @@ function fromJSON(
  */
 function jsonSupportFor(
     obj: AnyRecord
-): obj is HTMLTableStore {
-    return obj instanceof HTMLTableStore;
+): obj is HTMLTableConnector {
+    return obj instanceof HTMLTableConnector;
 }
 
 /**
  * Converts the given class instance to JSON.
  *
- * @param {HTMLTableStore} obj
+ * @param {HTMLTableConnector} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {HTMLTableStoreHelper.JSON}
+ * @return {HTMLTableConnectorHelper.JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
-    obj: HTMLTableStore
-): HTMLTableStoreHelper.JSON {
-    const json: HTMLTableStoreHelper.JSON = {
-            $class: 'Data.HTMLTableStore',
+    obj: HTMLTableConnector
+): HTMLTableConnectorHelper.JSON {
+    const json: HTMLTableConnectorHelper.JSON = {
+            $class: 'Data.HTMLTableConnector',
             converter: HTMLTableConverterHelper.toJSON(obj.converter),
             metadata: obj.metadata,
             options: {},
             table: DataTableHelper.toJSON(obj.table)
         },
-        jsonOptions: HTMLTableStoreHelper.OptionsJSON = json.options,
+        jsonOptions: HTMLTableConnectorHelper.OptionsJSON = json.options,
         options = obj.options;
 
     // options
@@ -120,7 +120,7 @@ function toJSON(
  *
  * */
 
-namespace HTMLTableStoreHelper {
+namespace HTMLTableConnectorHelper {
 
     /* *
      *
@@ -128,14 +128,14 @@ namespace HTMLTableStoreHelper {
      *
      * */
 
-    export interface JSON extends Serializable.JSON<'Data.HTMLTableStore'> {
+    export interface JSON extends Serializable.JSON<'Data.HTMLTableConnector'> {
         converter: HTMLTableConverterHelper.JSON;
-        metadata: DataStore.Metadata;
+        metadata: DataConnector.Metadata;
         options: OptionsJSON;
         table: DataTableHelper.JSON;
     }
 
-    export interface OptionsJSON extends JSON.Object, Partial<HTMLTableStore.Options> {
+    export interface OptionsJSON extends JSON.Object, Partial<HTMLTableConnector.Options> {
         table?: string;
     }
 
@@ -147,11 +147,11 @@ namespace HTMLTableStoreHelper {
  *
  * */
 
-const HTMLTableStoreHelper: Serializable.Helper<HTMLTableStore, HTMLTableStoreHelper.JSON> = {
-    $class: 'Data.HTMLTableStore',
+const HTMLTableConnectorHelper: Serializable.Helper<HTMLTableConnector, HTMLTableConnectorHelper.JSON> = {
+    $class: 'Data.HTMLTableConnector',
     fromJSON,
     jsonSupportFor,
     toJSON
 };
 
-export default HTMLTableStoreHelper;
+export default HTMLTableConnectorHelper;

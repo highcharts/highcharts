@@ -1,4 +1,4 @@
-const { CSVStore } = Dashboards;
+const { CSVConnector } = Dashboards;
 
 // Set global chart options.
 Highcharts.setOptions({
@@ -43,17 +43,17 @@ Highcharts.setOptions({
 });
 
 const csvData = document.getElementById('csv').innerText,
-    store1 = new CSVStore(void 0, {
+    connector1 = new CSVConnector(void 0, {
         csv: csvData,
         firstRowAsNames: true
     }),
-    store2 = new CSVStore(void 0, {
+    connector2 = new CSVConnector(void 0, {
         csv: csvData,
         firstRowAsNames: true
     });
 
-store1.load();
-store2.load();
+connector1.load();
+connector2.load();
 
 Dashboards.board('container', {
     gui: {
@@ -83,12 +83,12 @@ Dashboards.board('container', {
         {
             cell: 'dashboard-col-1',
             type: 'Highcharts',
-            store: store1,
+            connector: connector1,
             sync: {
                 selection: true,
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Europe: null,
                 Africa: null,
@@ -108,12 +108,12 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-2',
             type: 'Highcharts',
-            store: store1,
+            connector: connector1,
             sync: {
                 selection: true,
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Global: null,
                 Europe: null,
@@ -130,12 +130,12 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-3',
             type: 'Highcharts',
-            store: store2,
+            connector: connector2,
             sync: {
                 selection: true,
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Global: null,
                 Europe: null,
@@ -152,12 +152,12 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-4',
             type: 'Highcharts',
-            store: store2,
+            connector: connector2,
             sync: {
                 selection: true,
                 tooltip: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Global: null,
                 Africa: null,
