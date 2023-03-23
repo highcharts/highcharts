@@ -23,6 +23,7 @@ import type { MapBounds } from '../../Maps/MapViewOptions';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type Projection from '../../Maps/Projection';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';

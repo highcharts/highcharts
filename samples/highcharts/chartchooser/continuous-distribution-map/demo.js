@@ -76,13 +76,7 @@
                         tooltip: {
                             valueSuffix: '%'
                         },
-                        borderWidth: 0.5,
-                        states: {
-                            hover: {
-                                color: '#a4edba'
-                            }
-                        },
-                        shadow: false
+                        borderWidth: 0.5
                     }, {
                         type: 'mapline',
                         name: 'State borders',

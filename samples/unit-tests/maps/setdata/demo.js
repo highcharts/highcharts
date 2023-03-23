@@ -837,11 +837,6 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: 'hc-key',
                 name: 'Random data',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
                 dataLabels: {
                     enabled: true,
                     format: '{point.value}'

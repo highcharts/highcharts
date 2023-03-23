@@ -64,11 +64,6 @@ Highcharts.mapChart('map-container', {
         mapData: Highcharts.maps['countries/au/au-all'],
         joinBy: 'hc-key',
         name: 'Random data',
-        states: {
-            hover: {
-                color: '#a4edba'
-            }
-        },
         dataLabels: {
             enabled: true,
             format: '{point.name}'

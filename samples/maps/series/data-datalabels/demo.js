@@ -71,11 +71,6 @@
             dataLabels: {
                 enabled: true,
                 format: '{point.name}:<br>{point.value} items'
-            },
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
             }
         }]
     });

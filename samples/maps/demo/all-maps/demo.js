@@ -224,11 +224,6 @@ $('#mapDropdown').on('change', async function () {
             data,
             joinBy: ['hc-key', 'key'],
             name: 'Random data',
-            states: {
-                hover: {
-                    color: Highcharts.getOptions().colors[2]
-                }
-            },
             dataLabels: {
                 enabled: showDataLabels,
                 formatter,

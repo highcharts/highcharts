@@ -31,11 +31,6 @@
                 name: 'Population density',
                 allowPointSelect: true,
                 cursor: 'pointer',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
                 tooltip: {
                     valueSuffix: '/km²'
                 }

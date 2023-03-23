@@ -50,11 +50,6 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             keys: ['code_hasc', 'value'],
             joinBy: 'code_hasc',
             name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
             dataLabels: {
                 enabled: true,
                 format: '{point.properties.postal}'

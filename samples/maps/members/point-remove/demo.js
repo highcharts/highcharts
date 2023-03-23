@@ -33,9 +33,6 @@
                 allowPointSelect: true,
                 cursor: 'pointer',
                 states: {
-                    hover: {
-                        color: '#a4edba'
-                    },
                     select: {
                         color: '#EFFFEF',
                         borderColor: 'black',

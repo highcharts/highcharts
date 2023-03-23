@@ -75,11 +75,6 @@ QUnit.test('nullInteraction', function (assert) {
                     enabled: true,
                     format: '{point.name}'
                 },
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
                 nullInteraction: true
             }
         ]
