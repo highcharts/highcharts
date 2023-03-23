@@ -986,12 +986,8 @@ input.highcharts-range-selector {
     fill: var(--highcharts-neutral-color-10);
 }
 
-.highcharts-button.highcharts-zoom-in text {
-    transform: translateX(0.3em);
-}
-
-.highcharts-button.highcharts-zoom-out text {
-    transform: translateX(0.5em);
+.highcharts-map-navigation.highcharts-button .highcharts-button-symbol {
+    stroke-width: 2px;
 }
 
 .highcharts-mapview-inset-border {

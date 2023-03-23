@@ -23,6 +23,7 @@ import type {
 } from './MapNavigationOptions';
 import type PointerEvent from '../Core/PointerEvent';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
@@ -205,9 +206,13 @@ MapNavigation.prototype.update = function (
                 );
             }
 
+            const { text, width = 0, height = 0, padding = 0 } = buttonOptions;
+
             const button = chart.renderer
                 .button(
-                    buttonOptions.text || '',
+                    // Display the text from options only if it is not plus or
+                    // minus
+                    (text !== '+' && text !== '-' && text) || '',
                     0,
                     0,
                     outerHandler,
@@ -222,13 +227,38 @@ MapNavigation.prototype.update = function (
                     zoomOut: 'zoom-out'
                 } as Record<string, string>)[n])
                 .attr({
-                    width: buttonOptions.width,
-                    height: buttonOptions.height,
+                    width,
+                    height,
                     title: (chart.options.lang as any)[n],
                     padding: buttonOptions.padding,
                     zIndex: 5
                 })
                 .add(mapNav.navButtonsGroup);
+
+            // Add SVG paths for the default symbols, because the text
+            // representation of + and - is not sharp and position is not easy
+            // to control.
+            if (text === '+' || text === '-') {
+                const d: SVGPath = [
+                    ['M', padding + 3, padding + height / 2],
+                    ['L', padding + width - 3, padding + height / 2]
+                ];
+                if (text === '+') {
+                    d.push(
+                        ['M', padding + width / 2, padding + 3],
+                        ['L', padding + width / 2, padding + height - 3]
+                    );
+                }
+                chart.renderer
+                    .path(d)
+                    .addClass('highcharts-button-symbol')
+                    .attr(chart.styledMode ? {} : {
+                        stroke: buttonOptions.style?.color,
+                        'stroke-width': 2
+                    })
+                    .add(button);
+            }
+
             button.handler = buttonOptions.onclick;
 
             // Stop double click event (#4444)

@@ -100,6 +100,8 @@ const MapNavigationDefaults: MapNavigationOptions = {
          */
         style: {
             /** @ignore */
+            color: Palette.neutralColor60,
+            /** @ignore */
             fontSize: '1em',
             /** @ignore */
             fontWeight: 'bold'
