@@ -557,7 +557,7 @@ class HeatmapSeries extends ScatterSeries {
                         pixelData.data[pixelIndex + 0] = r;
                         pixelData.data[pixelIndex + 1] = g;
                         pixelData.data[pixelIndex + 2] = b;
-                        pixelData.data[pixelIndex + 3] = a;
+                        pixelData.data[pixelIndex + 3] = a * 255;
                     }
 
                     ctx.putImageData(pixelData, 0, 0);
