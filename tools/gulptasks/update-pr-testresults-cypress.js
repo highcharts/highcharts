@@ -29,10 +29,10 @@ function buildImgS3Path(filename, pr) {
 }
 
 function createPRCommentBody(uploadedDiffs) {
-    let commentTemplate = `${DEFAULT_COMMENT_TITLE} - No difference found`;
+    let commentTemplate = `${DEFAULT_COMMENT_TITLE}`;
 
     uploadedDiffs.files.forEach(file => {
-        commentTemplate += `\n\n * [${file.from}](${file.to})`;
+        commentTemplate += `\n\n * [${file.from}](${'https://vrevs.highsoft.com/api/assets/' + file.to})`;
     });
 
     return commentTemplate;
