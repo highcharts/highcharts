@@ -42,6 +42,7 @@ class Layout extends GUIElement {
     *
     * */
 
+    /** @internal */
     public static fromJSON(
         json: Layout.JSON,
         board: Board
@@ -69,6 +70,7 @@ class Layout extends GUIElement {
         return layout;
     }
 
+    /** @internal */
     public static importLocal(
         id: string,
         board: Board
@@ -222,6 +224,7 @@ class Layout extends GUIElement {
         }
     }
 
+    /** @internal */
     public setRowsFromJSON(
         json: Array<Row.JSON>
     ): void {
@@ -293,6 +296,7 @@ class Layout extends GUIElement {
 
     /**
      * Export layout's options and save in the local storage
+     * @internal
      */
     public exportLocal(): void {
         localStorage.setItem(
@@ -380,6 +384,7 @@ class Layout extends GUIElement {
 
     /**
      * Converts the class instance to a class JSON.
+     * @internal
      *
      * @return {Layout.JSON}
      * Class JSON of this Layout instance.

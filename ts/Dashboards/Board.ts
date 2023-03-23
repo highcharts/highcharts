@@ -487,7 +487,6 @@ class Board implements Serializable<Board, Board.JSON> {
 
     /**
      * Converts the given JSON to a class instance.
-     * @internal
      *
      * @param json
      * JSON to deserialize as a class instance or object.

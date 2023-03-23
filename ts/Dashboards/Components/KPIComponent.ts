@@ -349,6 +349,8 @@ class KPIComponent extends Component {
         }
         return '';
     }
+
+    /** @internal */
     public toJSON(): KPIComponent.ClassJSON {
         const base = super.toJSON();
         const json = {
@@ -371,6 +373,7 @@ class KPIComponent extends Component {
         return json;
     }
 
+    /** @internal */
     public static fromJSON(json: KPIComponent.ClassJSON): KPIComponent {
         const options = json.options;
         const chartOptions =
@@ -401,11 +404,13 @@ class KPIComponent extends Component {
 namespace KPIComponent {
     export type ComponentType = KPIComponent;
 
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
         options: ComponentJSONOptions;
 
     }
 
+    /** @internal */
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
         title?: string;
         chartOptions?: string;

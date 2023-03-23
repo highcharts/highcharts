@@ -151,6 +151,7 @@ class Bindings {
         return component;
     }
 
+    /** @internal */
     public static componentFromJSON(
         json: HTMLComponent.ClassJSON|HighchartsComponent.ClassJSON,
         cellContainer: HTMLElement|undefined

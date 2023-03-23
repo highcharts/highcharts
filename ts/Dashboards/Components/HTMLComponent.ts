@@ -72,6 +72,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
      *
      * */
 
+    /** @internal */
     public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
         const options = json.options;
         const elements = (
@@ -256,6 +257,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
         parser.addToDOM(this.contentElement);
     }
 
+    /** @internal */
     public toJSON(): HTMLComponent.ClassJSON {
         const elements = (this.options.elements || [])
             .map((el): string => JSON.stringify(el));
@@ -291,6 +293,7 @@ namespace HTMLComponent {
         scaleElements: boolean;
     }
 
+    /** @internal */
     export interface HTMLComponentJSONOptions extends Component.ComponentOptionsJSON {
         elements: Array<JSON.Object>;
         scaleElements: boolean;
@@ -299,9 +302,12 @@ namespace HTMLComponent {
     export type HTMLComponentEvents =
         Component.EventTypes | JSONEvent;
 
+    /** @internal */
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: HTMLComponent.ClassJSON;
     }>;
+
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
         elements?: string[];
         events?: string[];
