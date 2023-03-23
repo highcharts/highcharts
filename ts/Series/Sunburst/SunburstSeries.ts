@@ -866,7 +866,6 @@ class SunburstSeries extends TreemapSeries {
                 }
             };
         }
-
         points.forEach(function (point): void {
             let node = point.node,
                 level = mapOptionsToLevel[node.level],
@@ -920,7 +919,6 @@ class SunburstSeries extends TreemapSeries {
                 addedHack = true;
                 onComplete = animateLabels;
             }
-
             point.draw({
                 animatableAttribs: animationInfo.to,
                 attribs: extend(
@@ -937,7 +935,6 @@ class SunburstSeries extends TreemapSeries {
                 shapeArgs: shape
             });
         });
-
         // Draw data labels after points
         // TODO draw labels one by one to avoid addtional looping
         if (hackDataLabelAnimation && addedHack) {
@@ -1012,6 +1009,29 @@ class SunburstSeries extends TreemapSeries {
                 return arr;
             }, [] as Array<SunburstNode.NodeValuesObject>
         );
+    }
+
+    public setRootNode(
+        id: string,
+        redraw?: boolean,
+        eventArguments?: SunburstSeries.SetRootNodeObject
+    ): void {
+        const series = this;
+
+        if ( // If the target node is the only one at level 1, skip it. (#18658)
+            series.nodeMap[id].level === 1 &&
+            series.nodeList
+                .filter((node): boolean => node.level === 1)
+                .length === 1
+        ) {
+            if (series.idPreviousRoot === '') {
+                return;
+            }
+
+            id = '';
+        }
+
+        super.setRootNode(id, redraw, eventArguments);
     }
 
     /**
@@ -1239,6 +1259,14 @@ namespace SunburstSeries {
         optionsPoint: SunburstPointOptions;
         point: SunburstPoint;
         shapeArgs: SunburstNode.NodeValuesObject;
+    }
+
+    export interface SetRootNodeObject {
+        newRootId?: string;
+        previousRootId?: string;
+        redraw?: boolean;
+        series?: object;
+        trigger?: string;
     }
 }
 
