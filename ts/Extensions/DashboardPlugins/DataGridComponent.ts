@@ -349,10 +349,13 @@ namespace DataGridComponent {
     *
     * */
 
+    /** @internal */
     export type ComponentType = DataGridComponent;
 
+    /** @internal */
     export type ChartComponentEvents = JSONEvent | Component.EventTypes;
 
+    /** @internal */
     export type JSONEvent = Component.Event<
     'toJSON' | 'fromJSON',
     {
@@ -371,6 +374,7 @@ namespace DataGridComponent {
          * The name of id that is applied to the data grid container.
          */
         dataGridID?: string;
+        /** @internal */
         onUpdate: typeof DataGridComponent.onUpdate
     }
     /** @internal */

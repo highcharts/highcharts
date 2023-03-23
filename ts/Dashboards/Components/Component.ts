@@ -1097,6 +1097,7 @@ namespace Component {
     /**
      * The basic events
      */
+    /** @internal */
     export type EventTypes =
         ResizeEvent |
         UpdateEvent |
@@ -1108,19 +1109,25 @@ namespace Component {
         MessageEvent |
         PresentationModifierEvent;
 
+    /** @internal */
     export type ResizeEvent = Event<'resize', {
         readonly type: 'resize';
         width?: number;
         height?: number;
     }>;
 
+    /** @internal */
     export type UpdateEvent = Event<'update' | 'afterUpdate', {
         options?: ComponentOptions;
     }>;
 
+    /** @internal */
     export type LoadEvent = Event<'load' | 'afterLoad', {}>;
+    /** @internal */
     export type RedrawEvent = Event<'redraw' | 'afterRedraw', {}>;
+    /** @internal */
     export type RenderEvent = Event<'beforeRender' | 'afterRender', {}>;
+    /** @internal */
     export type MessageEvent = Event<'message', {
         message: MessageType;
         detail?: {
@@ -1128,14 +1135,17 @@ namespace Component {
             target: string;
         };
     }>;
+    /** @internal */
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
         json: Serializable.JSON<string>;
     }>;
+    /** @internal */
     export type TableChangedEvent = Event<'tableChanged', {}>;
+    /** @internal */
     export type PresentationModifierEvent =
         Component.Event<'afterPresentationModifier', { table: DataTable }>;
 
-
+    /** @internal */
     export type Event<
         EventType extends string,
         EventRecord extends Record<string, any>> = {
@@ -1144,6 +1154,7 @@ namespace Component {
             detail?: AnyRecord;
         } & EventRecord;
 
+    /** @internal */
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions extends EditableOptions {
@@ -1152,13 +1163,17 @@ namespace Component {
          * The Board the component belongs to
          * */
         board?: Board;
-        /*
+        /**
          * Instance of cell, where component is attached.
+         *
+         * @internal
          */
         parentCell?: Cell;
         /**
          * The HTML element or id of HTML element that is used for appending
          * a component.
+         *
+         * @internal
          */
         parentElement: HTMLElement | string;
         /**
@@ -1206,6 +1221,7 @@ namespace Component {
         id: string;
     }
 
+    /** @internal */
     export type ConnectorTypes = DataConnector;
 
     export interface EditableOptions {
@@ -1228,6 +1244,7 @@ namespace Component {
         caption?: TextOptionsType;
     }
 
+    /** @internal */
     export type TextOptionsType = string | false | TextOptions | undefined;
     /** @internal */
     export interface MessageTarget {
@@ -1239,6 +1256,7 @@ namespace Component {
         );
     }
 
+    /** @internal */
     export type MessageType = string | {
         callback: Function;
     };
@@ -1254,6 +1272,7 @@ namespace Component {
      * Record of component instances
      *
      */
+    /** @internal */
     export const instanceRegistry: Record<string, ComponentType> = {};
 
     /**
@@ -1265,8 +1284,8 @@ namespace Component {
     /**
      *
      * Record of component classes
-     * @todo
      *
+     * @internal
      */
     export const registry: Record<string, Class<Component>> = {};
 
@@ -1312,6 +1331,8 @@ namespace Component {
      * @returns
      * Component name, if the extraction was successful, otherwise an empty
      * string.
+     *
+     * @internal
      */
     export function getName(
         component: (NewableFunction | ComponentType)
@@ -1326,6 +1347,8 @@ namespace Component {
      * Adds a component instance to the registry.
      * @param component
      * The component to add.
+     *
+     * @internal
      */
     export function addInstance(component: ComponentType): void {
         Component.instanceRegistry[component.id] = component;
@@ -1335,6 +1358,8 @@ namespace Component {
      * Removes a component instance from the registry.
      * @param component
      * The component to remove.
+     *
+     * @internal
      */
     export function removeInstance(component: Component<any>): void {
         delete Component.instanceRegistry[component.id];
@@ -1344,6 +1369,8 @@ namespace Component {
      * Retrieves the IDs of the registered component instances.
      * @returns
      * Array of component IDs.
+     *
+     * @internal
      */
     export function getAllInstanceIDs(): string[] {
         return Object.keys(instanceRegistry);
@@ -1353,6 +1380,8 @@ namespace Component {
      * Retrieves all registered component instances.
      * @returns
      * Array of components.
+     *
+     * @internal
      */
     export function getAllInstances(): Component<any>[] {
         const ids = getAllInstanceIDs();
@@ -1382,6 +1411,8 @@ namespace Component {
      *
      * @returns
      * Returns the component type or undefined.
+     *
+     * @internal
      */
     export function getInstanceById(id: string): ComponentType | undefined {
         return instanceRegistry[id];
@@ -1402,6 +1433,7 @@ namespace Component {
      * which can be `group`, `componentID`, or `componentType`
      * as well as the id of the recipient.
      *
+     * @internal
      */
     export function relayMessage(
         sender: ComponentType | ComponentGroup,
