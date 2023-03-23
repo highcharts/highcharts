@@ -12,9 +12,19 @@ Highcharts.chart('container', {
         },
         visible: false
     },
+    xAxis: {
+        visible: false
+    },
+    tooltip: {
+        pointFormat: '{point.value} interactions in this region'
+    },
+    legend: {
+        labelFormat: 'User interactions per region',
+        symbolPadding: 0
+    },
     colorAxis: {
         stops: [
-            [0.1, 'rgba(61, 0, 255, 0.3)'],
+            [0, 'rgba(61, 0, 255, 0.2)'],
             [0.16, 'rgba(0, 255, 188, 1.0)'],
             [0.24, 'rgba(194, 255, 0, 1.0)'],
             [0.64, 'rgba(255, 0, 67, 1.0)']
