@@ -106,6 +106,11 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     public parentElement: HTMLElement;
     public parentCell?: Cell;
     public connector?: Component.ConnectorTypes; // the attached connector
+
+    /**
+    * @internal
+    * The board the component belongs to
+    * */
     public board?: Board;
     protected dimensions: { width: number | null; height: number | null };
     public element: HTMLElement;
