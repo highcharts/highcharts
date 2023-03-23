@@ -1358,7 +1358,7 @@ class Legend {
             // defines the scroll top for each page (#2098)
             allItems.forEach((item, i): void => {
                 legendItem = item.legendItem || {};
-                const y = legendItem.y ? legendItem.y - 2 : 0,
+                const y = legendItem.y || 0,
                     h = Math.round(
                         (legendItem as any).label.getBBox().height
                     );
@@ -1396,7 +1396,7 @@ class Legend {
             // PDF export (#1787)
             if (!clipRect) {
                 clipRect = legend.clipRect =
-                    renderer.clipRect(0, padding, 9999, 0);
+                    renderer.clipRect(0, padding - 2, 9999, 0);
                 legend.contentGroup.clip(clipRect);
             }
 
