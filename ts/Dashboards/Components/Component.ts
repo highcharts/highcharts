@@ -1154,7 +1154,6 @@ namespace Component {
             detail?: AnyRecord;
         } & EventRecord;
 
-    /** @internal */
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions extends EditableOptions {
@@ -1223,7 +1222,7 @@ namespace Component {
 
     /** @internal */
     export type ConnectorTypes = DataConnector;
-
+    /** @internal */
     export interface EditableOptions {
         connector?: ConnectorTypes;
         /**
@@ -1244,7 +1243,6 @@ namespace Component {
         caption?: TextOptionsType;
     }
 
-    /** @internal */
     export type TextOptionsType = string | false | TextOptions | undefined;
     /** @internal */
     export interface MessageTarget {
