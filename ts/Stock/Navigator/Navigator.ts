@@ -1041,6 +1041,7 @@ class Navigator {
                     !this.chart.boosted
                 )
             ) {
+                (e as any).DOMType = e.type;
                 setTimeout(function (): void {
                     navigator.onMouseUp(e);
                 }, 0);
