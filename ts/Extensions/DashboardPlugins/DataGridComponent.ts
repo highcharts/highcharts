@@ -342,6 +342,13 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
  * */
 
 namespace DataGridComponent {
+
+    /* *
+    *
+    *  Declarations
+    *
+    * */
+
     export type ComponentType = DataGridComponent;
 
     export type ChartComponentEvents = JSONEvent | Component.EventTypes;
@@ -356,23 +363,49 @@ namespace DataGridComponent {
     export interface DataGridOptions
         extends Component.ComponentOptions,
         EditableOptions {
+        /**
+         * The name of class that is applied to the data grid container.
+         */
         dataGridClassName?: string;
+        /**
+         * The name of id that is applied to the data grid container.
+         */
         dataGridID?: string;
         onUpdate: typeof DataGridComponent.onUpdate
     }
-
+    /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
+        /**
+         * The set of options like `dataGridClassName` and `dataGridID`.
+         */
         dataGridOptions?: DataGridOptions;
+        /**
+         * The name of class that is applied to the chart's container.
+         */
         chartClassName?: string;
+        /**
+         * The id that is applied to the chart's container.
+         */
         chartID?: string;
+        /**
+         * Names / aliases that should be mapped to xAxis values.
+         * ```
+         * Example
+         * columnKeyMap: {
+         *      'Food': 'x',
+         *      'Vitamin A': 'y'
+         * }
+         * ```
+         */
         columnKeyMap?: Record<string, string | null>;
     }
-
+    /** @internal */
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
         dataGridOptions?: string;
         chartClassName?: string;
         chartID?: string;
     }
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
         options: ComponentJSONOptions;
     }
