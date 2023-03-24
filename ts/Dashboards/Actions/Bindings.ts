@@ -70,6 +70,7 @@ class Bindings {
         cell = cell || Bindings.getCell(options.cell);
         let component: Component | undefined;
 
+
         // add elements to containers
         if (componentContainer) {
             const ComponentClass = Component.getComponent(options.type);
@@ -78,6 +79,7 @@ class Bindings {
                 component = new HTMLComponent(merge(
                     options,
                     {
+                        board: cell && cell.row.layout.board,
                         parentElement: componentContainer
                     })
                 );
@@ -85,6 +87,8 @@ class Bindings {
                 component = new ComponentClass(merge(
                     options,
                     {
+                        board: cell && cell.row.layout.board,
+                        parentCell: cell,
                         parentElement: componentContainer
                     })
                 );
