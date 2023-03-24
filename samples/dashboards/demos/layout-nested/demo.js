@@ -42,7 +42,7 @@ Dashboards.board('container', {
                                         cells: [{
                                             id: 'dashboard-col-layout-2a'
                                         }, {
-                                            id: 'dashboard-col-layout-2b',
+                                            id: 'dashboard-col-layout-2b'
                                         }, {
                                             id: 'dashboard-col-layout-2f'
                                         }]
