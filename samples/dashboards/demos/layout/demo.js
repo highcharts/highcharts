@@ -83,10 +83,8 @@ let board = new Dashboards.Board('container', {
             rows: [{
                 cells: [{
                     id: 'dashboard-col-0',
-                    // width: '400px',
-                    width: 500,
-                    height: '400px'
-                    // height: 400
+                    width: 500, // '1/3' or '300px'
+                    height: 400 // '400px'
                 }, {
                     id: 'dashboard-col-1'
                 }]

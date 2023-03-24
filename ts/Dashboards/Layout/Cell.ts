@@ -400,7 +400,7 @@ class Cell extends GUIElement {
     }
 
     public setSize(
-        width: string // % value or 'auto' or px
+        width: string|number // % value or 'auto' or px
     ): void {
         const cell = this,
             editMode = cell.row.layout.board.editMode;
@@ -533,7 +533,7 @@ namespace Cell {
      * @internal
      **/
     export interface CellResponsiveOptions {
-        width: string;
+        width: string|number;
         // visible: boolean;
     }
 
@@ -553,13 +553,36 @@ namespace Cell {
          **/
         id: string;
         /**
-         * Width of the cell. Can be a percentage value or a fraction.
-         * For example `50%` or `1/3`.
+         * Width of the cell. Can be a percentage value, pixels or a fraction.
+         *
+         * The fraction converts value into percents like in CSS grid is.
+         * For example `1/3` means `33.333%`.
+         *
+         * Examples:
+         * ```
+         * width: 300 // 300px
+         * ```
+         * ```
+         * width: '300px'
+         * ```
+         * ```
+         * width: '1/3' // 33.333%
+         * ```
+         * ```
+         * width: '33.333%'
+         * ```
          **/
         width?: string|number;
         /**
          * Height of the cell.
-         * For example `100px`.
+         *
+         * Examples:
+         * ```
+         * height: 300 // 300px
+         * ```
+         * ```
+         * height: '300px'
+         * ```
          **/
         height?: string|number;
         /**
