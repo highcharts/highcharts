@@ -101,7 +101,7 @@ class NATRIndicator extends ATRIndicator {
                 IndicatorValuesObject<LineSeries>|
                 undefined
             ) = (
-                ATRIndicator.prototype.getValues.apply(this, arguments)
+                super.getValues.apply(this, arguments)
             ),
             atrLength: number = (atrData as any).values.length,
             yVal: Array<Array<number>> = (series.yData as any);
