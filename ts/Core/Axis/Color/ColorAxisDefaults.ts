@@ -347,6 +347,8 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      */
     labels: {
 
+        distance: 8,
+
         /**
          * How to handle overflowing labels on horizontal color axis. If set
          * to `"allow"`, it will not be aligned at all. By default it

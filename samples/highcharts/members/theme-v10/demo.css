@@ -1,0 +1,22 @@
+#outer-container {
+    display: flex;
+    flex-direction: row;
+    margin: 0 -10px;
+}
+
+#outer-container .container {
+    box-sizing: border-box;
+    width: 33.33%;
+    margin: 10px;
+    box-shadow: 1px 2px 3px #888;
+}
+
+@media screen and (max-width: 992px) {
+    #outer-container {
+        flex-direction: column;
+    }
+
+    #outer-container .container {
+        width: auto;
+    }
+}
