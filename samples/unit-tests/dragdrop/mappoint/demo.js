@@ -53,12 +53,7 @@ QUnit.test('Dragdrop with Highcharts Maps MapPoints', function (assert) {
     controller.mouseUp(x, y, void 0, true);
 
     assert.ok(
-        point.plotX < oldPointPlotX,
-        'Dragdrop should work with MapPoint with projection (#18074).'
-    );
-
-    assert.ok(
-        point.plotY < oldPointPlotY,
+        point.plotX < oldPointPlotX && point.plotY < oldPointPlotY,
         'Dragdrop should work with MapPoint with projection (#18074).'
     );
 });
