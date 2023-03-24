@@ -16,13 +16,14 @@
 
 'use strict';
 
+import type Board from '../Board';
+import type Cell from '../Layout/Cell';
 /* *
  *
  *  Imports
  *
  * */
 
-import type Cell from '../Layout/Cell.js';
 import type {
     ComponentType,
     ComponentTypeRegistry
@@ -123,6 +124,12 @@ abstract class Component {
         editableOptionsBindings: EditableOptions.defaultBindings
     };
 
+
+    /**
+    * @internal
+    * The board the component belongs to
+    * */
+    public board?: Board;
     /* *
      *
      *  Constructor
@@ -165,6 +172,7 @@ abstract class Component {
         }
 
         this.connector = this.options.connector;
+        this.board = this.options.board;
         this.hasLoaded = false;
         this.shouldRedraw = true;
         this.editableOptions =
@@ -177,6 +185,7 @@ abstract class Component {
             width: null,
             height: null
         };
+
 
         this.syncHandlers = this.handleSyncOptions();
         this.element = createElement('div', {
@@ -462,7 +471,6 @@ abstract class Component {
             this.activeGroup.addComponents([this.id]);
         }
     }
-
 
     private getContentHeight(): number {
         const parentHeight =
@@ -963,6 +971,11 @@ namespace Component {
 
     export interface ComponentOptions extends EditableOptions {
         [key: string]: unknown;
+        /**
+        * @internal
+        * The Board the component belongs to
+        * */
+        board?: Board;
         className?: string;
         cell?: string;
         // allow overwriting gui elements

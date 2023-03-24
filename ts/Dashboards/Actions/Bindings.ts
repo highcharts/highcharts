@@ -106,6 +106,8 @@ namespace Bindings {
         let componentOptions = merge<Partial<ComponentType['options']>>(
             options,
             {
+                board: cell && cell.row.layout.board,
+                parentCell: cell,
                 parentElement: componentContainer
             }
         );

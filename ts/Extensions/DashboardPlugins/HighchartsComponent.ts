@@ -104,6 +104,7 @@ class HighchartsComponent extends Component {
                 [
                     'chartOptions',
                     'chartType',
+                    'chartConfig',
                     'chartClassName',
                     'chartID'
                 ]
@@ -113,10 +114,12 @@ class HighchartsComponent extends Component {
                 {
                     skipRedraw: [
                         'chartOptions',
+                        'chartConfig',
                         'chartType'
                     ],
                     keyMap: {
                         chartOptions: 'textarea',
+                        chartConfig: 'nested',
                         chartType: 'select'
                     }
                 }
@@ -198,6 +201,7 @@ class HighchartsComponent extends Component {
             this,
             this.syncHandlers
         );
+
         this.chartOptions = (
             this.options.chartOptions ||
             { chart: {} } as Partial<ChartOptions>
@@ -246,7 +250,8 @@ class HighchartsComponent extends Component {
         super.render();
         hcComponent.chart = hcComponent.initChart();
         hcComponent.updateSeries();
-        hcComponent.sync.start();
+
+        this.sync.start();
         hcComponent.emit({ type: 'afterRender' });
         hcComponent.setupConnectorUpdate();
 
@@ -479,7 +484,6 @@ class HighchartsComponent extends Component {
 
     private constructChart(): Chart {
         const charter = (HighchartsComponent.charter || G);
-
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor] || G.chart;
             if (factory) {
