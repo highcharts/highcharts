@@ -75,27 +75,24 @@ const defaultOptions: Options = {
      * are defined in CSS and applied either through series or point class
      * names, or through the [chart.colorCount](#chart.colorCount) option.
      *
-     *
-     * ### Legacy
-     *
-     * In Highcharts 3.x, the default colors were:
-     * ```js
-     * colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce',
-     *         '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a']
-     * ```
-     *
-     * In Highcharts 2.x, the default colors were:
-     * ```js
-     * colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE',
-     *         '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']
-     * ```
-     *
      * @sample {highcharts} highcharts/chart/colors/
      *         Assign a global color theme
+     * @sample highcharts/members/theme-v10/
+     *         Latest release styled like version 10
      *
      * @type    {Array<(Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>}
-     * @default ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9",
-     *          "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
+     * @default [
+     *     "#2caffe",
+     *     "#544fc5",
+     *     "#00e272",
+     *     "#fe6a35",
+     *     "#6b8abc",
+     *     "#d568fb",
+     *     "#2ee0ca",
+     *     "#fa4b42",
+     *     "#feb56a",
+     *     "#91e8e12
+     * ]
      */
     colors: Palettes.colors,
 
