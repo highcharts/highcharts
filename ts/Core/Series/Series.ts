@@ -3932,9 +3932,9 @@ class Series {
         }
 
         // Insert undefined item
-        (series.updateParallelArrays as any)(point, 'splice', [i, 0, 0]);
+        series.updateParallelArrays(point, 'splice', [i, 0, 0]);
         // Update it
-        series.updateParallelArrays(point as any, i);
+        series.updateParallelArrays(point, i);
 
         if (names && point.name) {
             names[x as any] = point.name;
@@ -3962,7 +3962,7 @@ class Series {
                 data[0].remove(false);
             } else {
                 data.shift();
-                series.updateParallelArrays(point as any, 'shift');
+                series.updateParallelArrays(point, 'shift');
 
                 (dataOptions as any).shift();
             }
@@ -4027,7 +4027,7 @@ class Series {
                 }
                 data.splice(i, 1);
                 (series.options.data as any).splice(i, 1);
-                (series.updateParallelArrays as any)(
+                series.updateParallelArrays(
                     point || { series: series },
                     'splice',
                     [i, 1]
