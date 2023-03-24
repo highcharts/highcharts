@@ -17,11 +17,18 @@ Highcharts.chart('container', {
         visible: false
     },
     tooltip: {
-        pointFormat: '{point.value} interactions in this region'
+        formatter: function () {
+            return (
+                ~~this.point.value +
+                ' interactions in this region'
+            );
+        }
     },
     legend: {
-        labelFormat: 'User interactions per region',
-        symbolPadding: 0
+        title: {
+            text: 'User interactions per region'
+        },
+        symbolWidth: 175
     },
     colorAxis: {
         stops: [
