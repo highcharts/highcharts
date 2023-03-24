@@ -117,6 +117,16 @@ class Cell extends GUIElement {
                 rowOptions = row.options || {},
                 cellClassName = layoutOptions.cellClassName || '';
 
+            let cellHeight;
+
+            if (options.height) {
+                if (typeof options.height === 'number') {
+                    cellHeight = options.height + 'px';
+                } else {
+                    cellHeight = options.height;
+                }
+            }
+
             this.setElementContainer({
                 render: row.layout.board.guiEnabled,
                 parentContainer: parentContainer,
@@ -132,7 +142,7 @@ class Cell extends GUIElement {
                     rowOptions.style,
                     options.style,
                     {
-                        height: options.height
+                        height: cellHeight
                     }
                 )
             });
@@ -369,7 +379,8 @@ class Cell extends GUIElement {
         const cell = this,
             cntSize = dashContainerSize ||
                 cell.row.layout.board.getLayoutContainerSize(),
-            respoOptions = cell.options.responsive;
+            respoOptions = cell.options.responsive,
+            optWidth = cell.options.width;
 
         let width;
 
@@ -379,13 +390,9 @@ class Cell extends GUIElement {
                 respoOptions[cntSize] &&
                 respoOptions[cntSize].width
             ) {
-                width = GUIElement.getPercentageWidth(
-                    respoOptions[cntSize].width
-                );
-            } else if (cell.options.width) {
-                width = GUIElement.getPercentageWidth(
-                    cell.options.width
-                );
+                width = cell.convertWidthToValue(respoOptions[cntSize].width);
+            } else if (optWidth) {
+                width = cell.convertWidthToValue(optWidth);
             }
 
             cell.setSize(width || 'auto');
@@ -393,7 +400,7 @@ class Cell extends GUIElement {
     }
 
     public setSize(
-        width: string // % value or 'auto'
+        width: string // % value or 'auto' or px
     ): void {
         const cell = this,
             editMode = cell.row.layout.board.editMode;
@@ -402,13 +409,13 @@ class Cell extends GUIElement {
             if (width === 'auto' && cell.container.style.flex !== '1 1 0%') {
                 cell.container.style.flex = '1 1 0%';
             } else {
-                const percentageWidth = GUIElement.getPercentageWidth(width);
+                const cellWidth = cell.convertWidthToValue(width);
 
                 if (
-                    percentageWidth &&
-                    cell.container.style.flex !== '0 0 ' + percentageWidth
+                    cellWidth &&
+                    cell.container.style.flex !== '0 0 ' + cellWidth
                 ) {
-                    cell.container.style.flex = '0 0 ' + percentageWidth;
+                    cell.container.style.flex = '0 0 ' + cellWidth;
                 }
             }
 
@@ -435,7 +442,7 @@ class Cell extends GUIElement {
 
     // Updates width in responsive options.
     public updateSize(
-        width: string, // % value or 'auto'
+        width: string, // % value or 'auto' or px
         rwdMode?: string // small, medium, large
     ): void {
         const cell = this,
@@ -502,6 +509,23 @@ class Cell extends GUIElement {
             );
         }
     }
+
+    private convertWidthToValue(
+        width: number|string
+    ): string {
+
+        let convertedWidth;
+
+        if (typeof width === 'number') {
+            convertedWidth = width + 'px';
+        } else if (/px/.test(width)) {
+            convertedWidth = width;
+        } else {
+            convertedWidth = GUIElement.getPercentageWidth(width) || '';
+        }
+
+        return convertedWidth;
+    }
 }
 
 namespace Cell {
@@ -532,12 +556,12 @@ namespace Cell {
          * Width of the cell. Can be a percentage value or a fraction.
          * For example `50%` or `1/3`.
          **/
-        width?: string;
+        width?: string|number;
         /**
-         * Height of the cell. Can be a percentage value or a fraction.
-         * For example `50%` or `1/3`.
+         * Height of the cell.
+         * For example `100px`.
          **/
-        height?: number;
+        height?: string|number;
         /**
          * CSS styles for cell container.
          **/
