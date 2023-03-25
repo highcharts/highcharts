@@ -23,7 +23,7 @@
 
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
-import type StoreType from './StoreType';
+import type ConnectorType from './ConnectorType';
 
 import DataConverter from '../Converters/DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -42,11 +42,11 @@ const {
  * */
 
 /**
- * Abstract class providing an interface for managing a DataStore.
+ * Abstract class providing an interface for managing a DataConnector.
  *
  * @private
  */
-abstract class DataStore implements DataEvent.Emitter {
+abstract class DataConnector implements DataEvent.Emitter {
 
     /* *
      *
@@ -55,16 +55,16 @@ abstract class DataStore implements DataEvent.Emitter {
      * */
 
     /**
-     * Registry as a record object with store names and their class.
+     * Registry as a record object with connector names and their class.
      */
-    private static readonly registry = {} as Record<string, StoreType>;
+    private static readonly registry = {} as Record<string, ConnectorType>;
 
     /**
-     * Regular expression to extract the store type (group 1) from the
+     * Regular expression to extract the connector type (group 1) from the
      * stringified class constructor.
      */
     private static readonly typeRegExp = (
-        /^function\s+(\w*?)(?:DataStore)?\s*\(/u
+        /^function\s+(\w*?)(?:DataConnector)?\s*\(/u
     );
 
     /* *
@@ -74,20 +74,20 @@ abstract class DataStore implements DataEvent.Emitter {
      * */
 
     /**
-     * Adds a store class to the registry. The store has to provide the
-     * `DataStore.options` property and the `DataStore.load` method to
+     * Adds a connector class to the registry. The connector has to provide the
+     * `DataConnector.options` property and the `DataConnector.load` method to
      * modify the table.
      *
-     * @param {DataStore} dataStore
-     * Store class (aka class constructor) to register.
+     * @param {DataConnector} dataConnector
+     * Connector class (aka class constructor) to register.
      *
      * @return {boolean}
      * Returns true, if the registration was successful. False is returned, if
-     * their is already a store registered with this class name.
+     * their is already a connector registered with this class name.
      */
-    public static addStore(dataStore: StoreType): boolean {
-        const type = DataStore.getType(dataStore),
-            registry = DataStore.registry;
+    public static addConnector(dataConnector: ConnectorType): boolean {
+        const type = DataConnector.getType(dataConnector),
+            registry = DataConnector.registry;
 
         if (
             typeof type === 'undefined' ||
@@ -96,61 +96,62 @@ abstract class DataStore implements DataEvent.Emitter {
             return false;
         }
 
-        registry[type] = dataStore;
+        registry[type] = dataConnector;
 
         return true;
     }
 
     /**
-     * Returns all registered DataStore types.
+     * Returns all registered DataConnector types.
      *
      * @return {Array<string>}
-     * All registered store types.
+     * All registered connector types.
      */
-    public static getAllStoreTypes(): Array<string> {
-        return Object.keys(DataStore.registry);
+    public static getAllConnectorTypes(): Array<string> {
+        return Object.keys(DataConnector.registry);
     }
 
     /**
-     * Returns a copy of the dataStore registry as record object with
-     * DataStore type and their class.
+     * Returns a copy of the dataConnector registry as record object with
+     * DataConnector type and their class.
      *
-     * @return {Highcharts.Dictionary<DataStoreRegistryType>}
-     * Copy of the dataStore registry.
+     * @return {Highcharts.Dictionary<DataConnectorRegistryType>}
+     * Copy of the dataConnector registry.
      */
-    public static getAllStores(): Record<string, StoreType> {
-        return merge(DataStore.registry);
+    public static getAllConnectors(): Record<string, ConnectorType> {
+        return merge(DataConnector.registry);
     }
 
     /**
-     * Extracts the type from a given DataStore class.
+     * Extracts the type from a given DataConnector class.
      *
-     * @param {DataStore} dataStore
-     * DataStore class to extract the type from.
+     * @param {DataConnector} connector
+     * DataConnector class to extract the type from.
      *
      * @return {string}
-     * DataStore type, if the extraction was successful, otherwise an empty
+     * DataConnector type, if the extraction was successful, otherwise an empty
      * string.
      */
-    private static getType(dataStore: (NewableFunction|StoreType)): string {
+    private static getType(
+        connector: (NewableFunction|ConnectorType)
+    ): string {
         return (
-            dataStore.toString().match(DataStore.typeRegExp) ||
+            connector.toString().match(DataConnector.typeRegExp) ||
             ['', '']
         )[1];
     }
 
     /**
-     * Returns a dataStore class (aka class constructor) of the given dataStore
-     * name.
+     * Returns a DataConnector class (aka class constructor) of the given name.
      *
      * @param {string} type
      * Registered class type.
      *
-     * @return {DataStoreRegistryType|undefined}
+     * @return {DataConnectorRegistryType|undefined}
      * Class, if the class name was found, otherwise `undefined`.
      */
-    public static getStore(type: string): (StoreType|undefined) {
-        return DataStore.registry[type];
+    public static getConnector(type: string): (ConnectorType|undefined) {
+        return DataConnector.registry[type];
     }
 
     /* *
@@ -160,17 +161,17 @@ abstract class DataStore implements DataEvent.Emitter {
      * */
 
     /**
-     * Constructor for the store class.
+     * Constructor for the connector class.
      *
      * @param {DataTable} table
-     * Optional table to use in the store.
+     * Optional table to use in the connector.
      *
-     * @param {DataStore.Metadata} metadata
-     * Optional metadata to use in the store.
+     * @param {DataConnector.Metadata} metadata
+     * Optional metadata to use in the connector.
      */
     public constructor(
         table: DataTable = new DataTable(),
-        metadata: DataStore.Metadata = { columns: {} }
+        metadata: DataConnector.Metadata = { columns: {} }
     ) {
         this.table = table;
         this.metadata = metadata;
@@ -184,14 +185,14 @@ abstract class DataStore implements DataEvent.Emitter {
 
     /**
      * The DataConverter responsible for handling conversion of provided data to
-     * a DataStore.
+     * a DataConnector.
      */
     public abstract readonly converter: DataConverter;
 
     /**
-     * Metadata to describe the store and the content of columns.
+     * Metadata to describe the connector and the content of columns.
      */
-    public metadata: DataStore.Metadata;
+    public metadata: DataConnector.Metadata;
 
     /**
      * Poll timer ID, if active.
@@ -199,7 +200,7 @@ abstract class DataStore implements DataEvent.Emitter {
     public polling?: number;
 
     /**
-     * Table managed by this DataStore instance.
+     * Table managed by this DataConnector instance.
      */
     public table: DataTable;
 
@@ -215,42 +216,43 @@ abstract class DataStore implements DataEvent.Emitter {
      * @param {string} name
      * The name of the column to be described.
      *
-     * @param {DataStore.MetaColumn} columnMeta
+     * @param {DataConnector.MetaColumn} columnMeta
      * The metadata to apply to the column.
      */
     public describeColumn(
         name: string,
-        columnMeta: DataStore.MetaColumn
+        columnMeta: DataConnector.MetaColumn
     ): void {
-        const store = this,
-            columns = store.metadata.columns;
+        const connector = this,
+            columns = connector.metadata.columns;
 
         columns[name] = merge(columns[name] || {}, columnMeta);
     }
 
     /**
-     * Method for applying columns meta information to the whole datastore.
+     * Method for applying columns meta information to the whole DataConnector.
      *
-     * @param {Highcharts.Dictionary<DataStore.MetaColumn>} columns
+     * @param {Highcharts.Dictionary<DataConnector.MetaColumn>} columns
      * Pairs of column names and MetaColumn objects.
      */
     public describeColumns(
-        columns: Record<string, DataStore.MetaColumn>
+        columns: Record<string, DataConnector.MetaColumn>
     ): void {
-        const store = this,
+        const connector = this,
             columnNames = Object.keys(columns);
 
         let columnName: (string|undefined);
 
         while (typeof (columnName = columnNames.pop()) === 'string') {
-            store.describeColumn(columnName, columns[columnName]);
+            connector.describeColumn(columnName, columns[columnName]);
         }
     }
 
     /**
-     * Emits an event on the store to all registered callbacks of this event.
+     * Emits an event on the connector to all registered callbacks of this
+     * event.
      *
-     * @param {DataStore.Event} [e]
+     * @param {DataConnector.Event} [e]
      * Event object containing additional event information.
      */
     public emit<E extends DataEvent>(e: E): void {
@@ -269,8 +271,8 @@ abstract class DataStore implements DataEvent.Emitter {
     public getColumnOrder(
         usePresentationState?: boolean
     ): (Array<string>|undefined) {
-        const store = this,
-            columns = store.metadata.columns,
+        const connector = this,
+            columns = connector.metadata.columns,
             names = Object.keys(columns || {});
 
         if (names.length) {
@@ -301,10 +303,10 @@ abstract class DataStore implements DataEvent.Emitter {
     /**
      * The default load method, which fires the `afterLoad` event
      *
-     * @return {Promise<DataStore>}
-     * The loaded store.
+     * @return {Promise<DataConnector>}
+     * The loaded connector.
      *
-     * @emits DataStore#afterLoad
+     * @emits DataConnector#afterLoad
      */
     public load(): Promise<this> {
         fireEvent(this, 'afterLoad', { table: this.table });
@@ -312,16 +314,16 @@ abstract class DataStore implements DataEvent.Emitter {
     }
 
     /**
-     * Registers a callback for a specific store event.
+     * Registers a callback for a specific connector event.
      *
      * @param {string} type
      * Event type as a string.
      *
      * @param {DataEventEmitter.Callback} callback
-     * Function to register for the store callback.
+     * Function to register for the connector callback.
      *
      * @return {Function}
-     * Function to unregister callback from the store event.
+     * Function to unregister callback from the connector event.
      */
     public on<E extends DataEvent>(
         type: E['type'],
@@ -333,11 +335,11 @@ abstract class DataStore implements DataEvent.Emitter {
     /**
      * The default save method, which fires the `afterSave` event.
      *
-     * @return {Promise<DataStore>}
-     * The saved store.
+     * @return {Promise<DataConnector>}
+     * The saved connector.
      *
-     * @emits DataStore#afterSave
-     * @emits DataStore#saveError
+     * @emits DataConnector#afterSave
+     * @emits DataConnector#saveError
      */
     public save(): Promise<this> {
         fireEvent(this, 'saveError', { table: this.table });
@@ -351,10 +353,10 @@ abstract class DataStore implements DataEvent.Emitter {
      * Order of columns.
      */
     public setColumnOrder(columnNames: Array<string>): void {
-        const store = this;
+        const connector = this;
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            store.describeColumn(columnNames[i], { index: i });
+            connector.describeColumn(columnNames[i], { index: i });
         }
     }
 
@@ -367,21 +369,21 @@ abstract class DataStore implements DataEvent.Emitter {
     public startPolling(
         refreshTime: number = 1000
     ): void {
-        const store = this;
+        const connector = this;
 
-        window.clearTimeout(store.polling);
+        window.clearTimeout(connector.polling);
 
-        store.polling = window.setTimeout((): Promise<void> => store
+        connector.polling = window.setTimeout((): Promise<void> => connector
             .load()['catch'](
-                (error): void => store.emit<DataStore.ErrorEvent>({
+                (error): void => connector.emit<DataConnector.ErrorEvent>({
                     type: 'loadError',
                     error,
-                    table: store.table
+                    table: connector.table
                 })
             )
             .then((): void => {
-                if (store.polling) {
-                    store.startPolling(refreshTime);
+                if (connector.polling) {
+                    connector.startPolling(refreshTime);
                 }
             })
         , refreshTime);
@@ -391,11 +393,11 @@ abstract class DataStore implements DataEvent.Emitter {
      * Stops polling data.
      */
     public stopPolling(): void {
-        const store = this;
+        const connector = this;
 
-        window.clearTimeout(store.polling);
+        window.clearTimeout(connector.polling);
 
-        delete store.polling;
+        delete connector.polling;
     }
 
     /**
@@ -404,10 +406,10 @@ abstract class DataStore implements DataEvent.Emitter {
      * @param {string} name
      * The identifier for the column that should be described
      *
-     * @return {DataStore.MetaColumn|undefined}
+     * @return {DataConnector.MetaColumn|undefined}
      * Returns a MetaColumn object if found.
      */
-    public whatIs(name: string): (DataStore.MetaColumn | undefined) {
+    public whatIs(name: string): (DataConnector.MetaColumn | undefined) {
         return this.metadata.columns[name];
     }
 
@@ -419,7 +421,7 @@ abstract class DataStore implements DataEvent.Emitter {
  *
  * */
 
-namespace DataStore {
+namespace DataConnector {
 
     /* *
      *
@@ -428,7 +430,7 @@ namespace DataStore {
      * */
 
     /**
-     * The event object that is provided on errors within DataStore
+     * The event object that is provided on errors within DataConnector.
      */
     export interface ErrorEvent extends Event {
         type: ('loadError');
@@ -436,22 +438,21 @@ namespace DataStore {
     }
 
     /**
-     * The default event object for a datastore
+     * The default event object for a DataConnector.
      */
     export interface Event extends DataEvent {
         readonly table: DataTable;
     }
 
     /**
-     * The event object that is provided on load events within DataStore
+     * The event object that is provided on load events within DataConnector.
      */
     export interface LoadEvent extends Event {
         type: ('load'|'afterLoad');
     }
 
     /**
-     * Metadata entry containing the name of the column
-     * and a metadata object
+     * Metadata entry containing the name of the column and a metadata object.
      */
     export interface MetaColumn extends JSON.Object {
         dataType?: string;
@@ -476,9 +477,9 @@ namespace DataStore {
  *
  * */
 
-declare module './StoreType' {
-    interface StoreTypeRegistry {
-        // '': typeof DataStore;
+declare module './ConnectorType' {
+    interface ConnectorTypeRegistry {
+        // '': typeof DataConnector;
     }
 }
 
@@ -488,4 +489,4 @@ declare module './StoreType' {
  *
  * */
 
-export default DataStore;
+export default DataConnector;

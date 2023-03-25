@@ -245,7 +245,7 @@ class VariwideSeries extends ColumnSeries {
                 pointStack = stack[xValue as any];
                 if (pointStack && !point.isNull) {
                     pointStack.setOffset(
-                        series.chart.plotLeft - ((pointWidth / 2) || 0),
+                        -(pointWidth / 2) || 0,
                         pointWidth || 0,
                         void 0,
                         void 0,

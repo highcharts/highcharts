@@ -749,6 +749,10 @@ circle.highcharts-legend-nav-inactive { /* tracker */
     stroke: var(--highcharts-neutral-color-20);
 }
 
+.highcharts-timeline-series .highcharts-graph {
+    stroke: var(--highcharts-neutral-color-20);
+}
+
 /* Highstock */
 .highcharts-navigator-mask-outside {
     fill-opacity: 0;
