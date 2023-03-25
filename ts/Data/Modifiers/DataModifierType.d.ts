@@ -20,13 +20,13 @@
 /**
  * Contains all possible types of the class registry.
  */
-export type StoreType = StoreTypeRegistry[keyof StoreTypeRegistry];
+export type DataModifierType = DataModifierTypes[keyof DataModifierTypes];
 
 /**
  * Describes the class registry as a record object with class name and their
  * class types (aka class constructor).
  */
-export interface StoreTypeRegistry {
+export interface DataModifierTypes {
     // nothing here yet
 }
 
@@ -36,4 +36,4 @@ export interface StoreTypeRegistry {
  *
  * */
 
-export default StoreType;
+export default DataModifierType;

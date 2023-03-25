@@ -400,7 +400,12 @@ class XRangeSeries extends ColumnSeries {
 
         // Centering tooltip position (#14147)
         if (!inverted) {
-            tooltipPos[xIndex] += (xAxis.reversed ? -1 : 0) * shapeArgs.width;
+            tooltipPos[xIndex] = clamp(
+                tooltipPos[xIndex] +
+                (xAxis.reversed ? -1 : 0) * shapeArgs.width,
+                0,
+                xAxis.len - 1
+            );
         } else {
             tooltipPos[xIndex] += shapeArgs.width / 2;
         }

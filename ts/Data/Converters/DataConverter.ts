@@ -24,7 +24,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type DataStore from '../Stores/DataStore';
+import type DataConnector from '../Connectors/DataConnector';
 import type JSON from '../../Core/JSON';
 
 import DataTable from '../DataTable.js';
@@ -505,14 +505,14 @@ class DataConverter implements DataEvent.Emitter {
     /**
      * Initiates the data exporting. Should emit `exportError` on failure.
      *
-     * @param {DataStore} store
-     * Store to export from.
+     * @param {DataConnector} connector
+     * Connector to export from.
      *
      * @param {DataConverter.Options} [options]
      * Options for the export.
      */
     public export(
-        store: DataStore,
+        connector: DataConnector,
         options?: DataConverter.Options
     ): string {
         this.emit<DataConverter.Event>({
