@@ -147,6 +147,7 @@ class ColumnSeries extends Series {
     public animate(init: boolean): void {
         const series = this,
             yAxis = this.yAxis,
+            yAxisPos = yAxis.pos,
             options = series.options,
             inverted = this.chart.inverted,
             attr: SVGAttributes = {},
@@ -160,8 +161,8 @@ class ColumnSeries extends Series {
             attr.scaleY = 0.001;
             translatedThreshold = clamp(
                 yAxis.toPixels(options.threshold as any),
-                yAxis.pos,
-                yAxis.pos + yAxis.len
+                yAxisPos,
+                yAxisPos + yAxis.len
             );
             if (inverted) {
                 attr.translateX = translatedThreshold - yAxis.len;
@@ -187,7 +188,7 @@ class ColumnSeries extends Series {
                     step: function (val: any, fx: any): void {
                         if (series.group) {
                             attr[translateProp] = translateStart +
-                                fx.pos * (yAxis.pos - translateStart);
+                                fx.pos * (yAxisPos - translateStart);
                             series.group.attr(attr);
                         }
                     }

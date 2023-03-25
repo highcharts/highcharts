@@ -250,10 +250,10 @@ namespace RangeModifier {
  *
  * */
 
-DataModifier.addModifier(RangeModifier);
+DataModifier.registerType(RangeModifier);
 
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Range: typeof RangeModifier;
     }
 }
