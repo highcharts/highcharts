@@ -133,81 +133,6 @@ abstract class Component {
             });
         }
     }
-    /* *
-     *
-     *  Constructor
-     *
-     * */
-
-    /**
-     * Creates a component in the cell.
-     *
-     * @param options
-     * The options for the component.
-     */
-    constructor(options: Partial<Component.ComponentOptions>) {
-        this.options = merge(
-            Component.defaultOptions as Required<Component.ComponentOptions>,
-            options
-        );
-        this.id = this.options.id && this.options.id.length ?
-            this.options.id :
-            uniqueKey();
-
-        // Todo: we might want to handle this later
-        if (typeof this.options.parentElement === 'string') {
-            const el = document.getElementById(this.options.parentElement);
-            if (!el) {
-                throw new Error(
-                    'Could not find element with id: ' +
-                    this.options.parentElement
-                );
-            }
-            this.parentElement = el;
-
-        } else {
-            this.parentElement = (
-                this.options.parentElement as any ||
-                document.createElement('div')
-            );
-        }
-
-        if (this.options.parentCell) {
-            this.parentCell = this.options.parentCell;
-            if (this.parentCell.container) {
-                this.parentElement = this.parentCell.container;
-            }
-            this.attachCellListeneres();
-        }
-
-        this.connector = this.options.connector;
-        this.board = this.options.board;
-        this.hasLoaded = false;
-        this.shouldRedraw = true;
-        this.editableOptions =
-            new EditableOptions(this, options.editableOptionsBindings);
-
-        this.presentationModifier = this.options.presentationModifier;
-
-        // Initial dimensions
-        this.dimensions = {
-            width: null,
-            height: null
-        };
-
-
-        this.syncHandlers = this.handleSyncOptions();
-        this.element = createElement('div', {
-            className: this.options.className
-        }, this.options.style);
-
-        this.contentElement = createElement('div', {
-            className: `${this.options.className}-content`
-        }, {
-            height: '100%'
-        }, void 0, true);
-
-    }
 
     /* *
      *
@@ -376,6 +301,82 @@ abstract class Component {
      * @internal
      * */
     protected innerResizeTimeouts: number[] = [];
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    /**
+     * Creates a component in the cell.
+     *
+     * @param options
+     * The options for the component.
+     */
+    constructor(options: Partial<Component.ComponentOptions>) {
+        this.options = merge(
+            Component.defaultOptions as Required<Component.ComponentOptions>,
+            options
+        );
+        this.id = this.options.id && this.options.id.length ?
+            this.options.id :
+            uniqueKey();
+
+        // Todo: we might want to handle this later
+        if (typeof this.options.parentElement === 'string') {
+            const el = document.getElementById(this.options.parentElement);
+            if (!el) {
+                throw new Error(
+                    'Could not find element with id: ' +
+                    this.options.parentElement
+                );
+            }
+            this.parentElement = el;
+
+        } else {
+            this.parentElement = (
+                this.options.parentElement as any ||
+                document.createElement('div')
+            );
+        }
+
+        if (this.options.parentCell) {
+            this.parentCell = this.options.parentCell;
+            if (this.parentCell.container) {
+                this.parentElement = this.parentCell.container;
+            }
+            this.attachCellListeneres();
+        }
+
+        this.connector = this.options.connector;
+        this.board = this.options.board;
+        this.hasLoaded = false;
+        this.shouldRedraw = true;
+        this.editableOptions =
+            new EditableOptions(this, options.editableOptionsBindings);
+
+        this.presentationModifier = this.options.presentationModifier;
+
+        // Initial dimensions
+        this.dimensions = {
+            width: null,
+            height: null
+        };
+
+
+        this.syncHandlers = this.handleSyncOptions();
+        this.element = createElement('div', {
+            className: this.options.className
+        }, this.options.style);
+
+        this.contentElement = createElement('div', {
+            className: `${this.options.className}-content`
+        }, {
+            height: '100%'
+        }, void 0, true);
+
+    }
 
     /* *
      *
