@@ -107,9 +107,12 @@ const ScrollbarDefaults: ScrollbarOptions = {
 
     /**
      * The margin between the scrollbar and its axis when the scrollbar is
-     * applied directly to an axis.
+     * applied directly to an axis, or the navigator in case that is enabled.
+     * Defaults to 10 for axis, 0 for navigator.
+     *
+     * @type {number|undefined}
      */
-    margin: 10,
+    margin: void 0,
 
     /**
      * The minimum width of the scrollbar.
