@@ -185,6 +185,7 @@ function onChartAfterSetChartSize(
                 this.chartHeight -
                 navigator.height -
                 scrollbarHeight -
+                (this.scrollbar?.options.margin || 0) -
                 this.spacing[2] -
                 (
                     this.rangeSelector && this.extraBottomMargin ?

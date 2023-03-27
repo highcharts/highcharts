@@ -1,20 +1,14 @@
 Highcharts.stockChart('container', {
 
     scrollbar: {
-        barBackgroundColor: '#dddddd',
-        barBorderRadius: 5,
-        barBorderWidth: 0,
-        buttonsEnabled: false,
-        rifleColor: 'transparent',
-        trackBackgroundColor: '#fafafa',
-        trackBorderWidth: 1,
-        trackBorderColor: '#cccccc',
-        trackBorderRadius: 5,
-        height: 10
-    },
-
-    navigator: {
-        maskInside: false
+        barBorderRadius: 0,
+        barBorderWidth: 1,
+        buttonsEnabled: true,
+        height: 14,
+        margin: 0,
+        rifleColor: '#333',
+        trackBackgroundColor: '#f2f2f2',
+        trackBorderRadius: 0
     },
 
     rangeSelector: {

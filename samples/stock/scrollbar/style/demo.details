@@ -1,5 +1,5 @@
 ---
- name: Highcharts Stock Demo
+ name: Styled scrollbar
  authors:
    - Torstein Hønsi
  js_wrap: b
