@@ -343,10 +343,20 @@ class DataGridComponent extends Component {
  * */
 
 namespace DataGridComponent {
+
+    /* *
+    *
+    *  Declarations
+    *
+    * */
+
+    /** @internal */
     export type ComponentType = DataGridComponent;
 
+    /** @internal */
     export type ChartComponentEvents = JSONEvent | Component.EventTypes;
 
+    /** @internal */
     export type JSONEvent = Component.Event<
     'toJSON' | 'fromJSON',
     {
@@ -357,24 +367,51 @@ namespace DataGridComponent {
     export interface ComponentOptions
         extends Component.ComponentOptions,
         EditableOptions {
+        /**
+         * The name of class that is applied to the data grid container.
+         */
         dataGridClassName?: string;
+        /**
+         * The name of id that is applied to the data grid container.
+         */
         dataGridID?: string;
+        /** @internal */
         onUpdate: typeof DataGridComponent.onUpdate;
         type: 'DataGrid';
     }
-
+    /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
         dataGridOptions?: ComponentOptions;
+        /**
+         * The set of options like `dataGridClassName` and `dataGridID`.
+         */
+        /**
+         * The name of class that is applied to the chart's container.
+         */
         chartClassName?: string;
+        /**
+         * The id that is applied to the chart's container.
+         */
         chartID?: string;
+        /**
+         * Names / aliases that should be mapped to xAxis values.
+         * ```
+         * Example
+         * columnKeyMap: {
+         *      'Food': 'x',
+         *      'Vitamin A': 'y'
+         * }
+         * ```
+         */
         columnKeyMap?: Record<string, string | null>;
     }
-
+    /** @internal */
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
         dataGridOptions?: string;
         chartClassName?: string;
         chartID?: string;
     }
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
         options: ComponentJSONOptions;
     }

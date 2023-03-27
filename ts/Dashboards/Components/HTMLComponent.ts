@@ -55,6 +55,12 @@ AST.allowedReferences = [...AST.allowedReferences, 'data:image/'];
  *
  * */
 
+/**
+ *
+ * Class that represents a HTML component.
+ *
+ */
+
 class HTMLComponent extends Component {
 
     /* *
@@ -62,6 +68,10 @@ class HTMLComponent extends Component {
      *  Static properties
      *
      * */
+
+    /**
+     * Default options of the HTML component.
+     */
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -82,6 +92,17 @@ class HTMLComponent extends Component {
      *
      * */
 
+    /**
+     * Creates component from JSON.
+     *
+     * @param json
+     * Set of component options, used for creating the HTML component.
+     *
+     * @returns
+     * HTML component based on config from JSON.
+     *
+     * @internal
+     */
     public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
         const options = json.options;
         const elements = (
@@ -119,18 +140,39 @@ class HTMLComponent extends Component {
      *
      * */
 
-    private innerElements: HTMLElement[];
+    /**
+     * Array of HTML elements, declared as string or node.
+     */
     private elements: AST.Node[];
+    /**
+     * Enables auto-scaling of the elements inside the component.
+     *
+     * @internal
+     */
     private scaleElements: boolean;
+    /**
+     * HTML component's options.
+     */
     public options: HTMLComponent.HTMLComponentOptions;
+    /**
+     * Reference to sync component that allows to sync.
+     *
+     * @internal
+     */
     public sync: Component['sync'];
 
     /* *
      *
-     *  Class constructor
+     *  Constructor
      *
      * */
 
+    /**
+     * Creates a HTML component in the cell.
+     *
+     * @param options
+     * The options for the component.
+     */
     constructor(options: Partial<HTMLComponent.HTMLComponentOptions>) {
         options = merge(
             HTMLComponent.defaultOptions,
@@ -141,7 +183,6 @@ class HTMLComponent extends Component {
         this.options = options as HTMLComponent.HTMLComponentOptions;
 
         this.type = 'HTML';
-        this.innerElements = [];
         this.elements = [];
         this.scaleElements = !!this.options.scaleElements;
         this.sync = new Component.Sync(
@@ -161,9 +202,11 @@ class HTMLComponent extends Component {
 
     /* *
      *
-     *  Class methods
+     *  Functions
      *
      * */
+
+    /** @internal */
     public load(): this {
         this.emit({
             type: 'load'
@@ -188,8 +231,11 @@ class HTMLComponent extends Component {
         return this;
     }
 
-    // WIP handle scaling inner elements
-    // Could probably also implement responsive config
+    /**
+     * Handle scaling inner elements.
+     *
+     * @internal
+     */
     public autoScale(): void {
         this.element.style.display = 'flex';
         this.element.style.flexDirection = 'column';
@@ -200,7 +246,6 @@ class HTMLComponent extends Component {
                 element.style.maxWidth = '100%';
                 element.style.maxHeight = '100%';
                 element.style.flexBasis = 'auto';
-                // or (100 / this.innerElements.length) + '%';
                 element.style.overflow = 'auto';
             }
         });
@@ -210,8 +255,11 @@ class HTMLComponent extends Component {
         }
     }
 
-    // WIP basic font size scaling
-    // Should also take height into account
+    /**
+     * Basic font size scaling
+     *
+     * @internal
+     */
     public scaleText(): void {
         this.contentElement.childNodes.forEach((element): void => {
             if (element instanceof HTMLElement) {
@@ -248,14 +296,26 @@ class HTMLComponent extends Component {
         return this;
     }
 
+    /**
+     * Handles updating via options.
+     * @param options
+     * The options to apply.
+     *
+     * @returns
+     * The component for chaining.
+     */
     public update(options: Partial<HTMLComponent.HTMLComponentOptions>): this {
         super.update(options);
         this.emit({ type: 'afterUpdate' });
         return this;
     }
 
-    // Could probably use the serialize function moved on
-    // the exportdata branch
+    /**
+     * Could probably use the serialize function moved on
+     * the exportdata branch
+     *
+     * @internal
+     */
     private constructTree(): void {
         // Remove old tree if redrawing
         while (this.contentElement.firstChild) {
@@ -266,6 +326,14 @@ class HTMLComponent extends Component {
         parser.addToDOM(this.contentElement);
     }
 
+    /**
+     * Converts the class instance to a class JSON.
+     *
+     * @returns
+     * Class JSON of this Component instance.
+     *
+     * @internal
+     */
     public toJSON(): HTMLComponent.ClassJSON {
         const elements = (this.options.elements || [])
             .map((el): string => JSON.stringify(el));
@@ -290,33 +358,62 @@ class HTMLComponent extends Component {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
+
 namespace HTMLComponent {
 
+    /* *
+    *
+    *  Declarations
+    *
+    * */
+
+    /** @internal */
     export type ComponentType = HTMLComponent;
 
     export interface HTMLComponentOptions extends Component.ComponentOptions, EditableOptions {
+        /**
+         * Array of HTML elements, declared as string or node.
+         * ```
+         * Example:
+         *
+         * elements: [{
+         *   tagName: 'img',
+         *   attributes: {
+         *       src: 'http://path.to.image'
+         *   }
+         * }]
+         * ```
+         */
         elements?: (AST.Node | string)[];
         type: 'HTML';
     }
-
+    /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
+        /**
+         * Enables auto-scaling of the elements inside the component.
+         *
+         * @internal
+         */
         scaleElements?: boolean;
     }
-
+    /** @internal */
     export interface HTMLComponentOptionsJSON extends Component.ComponentOptionsJSON {
         scaleElements?: boolean;
         type: 'HTML'
     }
 
+    /** @internal */
     export type HTMLComponentEvents =
         Component.EventTypes | JSONEvent;
 
+    /** @internal */
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: HTMLComponent.ClassJSON;
     }>;
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
         elements?: string[];
         events?: string[];
@@ -329,7 +426,6 @@ declare module './ComponentType' {
         HTML: typeof HTMLComponent;
     }
 }
-ComponentRegistry.registerComponent(HTMLComponent);
 
 /* *
  *

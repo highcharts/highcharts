@@ -40,6 +40,7 @@ import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
 import U from '../Core/Utilities.js';
+import HTMLComponent from './Components/HTMLComponent.js';
 const {
     merge,
     addEvent,
@@ -749,6 +750,7 @@ namespace Board {
  * */
 
 Serializable.registerClassPrototype('Board', Board.prototype);
+ComponentRegistry.registerComponent(HTMLComponent);
 
 /* *
  *

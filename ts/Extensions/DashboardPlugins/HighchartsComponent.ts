@@ -67,10 +67,9 @@ declare module '../../Core/GlobalsLike' {
  * */
 
 /**
- * Highcharts component for the Highcharts Dashboards.
- * @private
- * @class
- * @name Highcharts.DashboardComponent
+ *
+ * Class that represents a Highcharts component.
+ *
  */
 class HighchartsComponent extends Component {
 
@@ -80,10 +79,15 @@ class HighchartsComponent extends Component {
      *
      * */
 
+    /** @internal */
     public static charter?: typeof G;
 
+    /** @internal */
     public static syncHandlers = HighchartsSyncHandlers;
 
+    /**
+     * Default options of the Highcharts component.
+     */
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -100,15 +104,15 @@ class HighchartsComponent extends Component {
             },
             chartConstructor: '',
             editableOptions:
-            Component.defaultOptions.editableOptions?.concat(
-                [
-                    'chartOptions',
-                    'chartType',
-                    'chartConfig',
-                    'chartClassName',
-                    'chartID'
-                ]
-            ),
+                (Component.defaultOptions.editableOptions || []).concat(
+                    [
+                        'chartOptions',
+                        'chartType',
+                        'chartConfig',
+                        'chartClassName',
+                        'chartID'
+                    ]
+                ),
             editableOptionsBindings: merge(
                 Component.defaultOptions.editableOptionsBindings,
                 {
@@ -129,7 +133,23 @@ class HighchartsComponent extends Component {
         }
     );
 
+    /* *
+     *
+     *  Static functions
+     *
+     * */
 
+    /**
+     * Creates component from JSON.
+     *
+     * @param json
+     * Set of component options, used for creating the Highcharts component.
+     *
+     * @returns
+     * Highcharts component based on config from JSON.
+     *
+     * @internal
+     */
     public static fromJSON(
         json: HighchartsComponent.ClassJSON
     ): HighchartsComponent {
@@ -165,18 +185,47 @@ class HighchartsComponent extends Component {
      *
      * */
 
+    /**
+     * A full set of chart options used by the chart.
+     * [Highcharts API](https://api.highcharts.com/highcharts/)
+     */
     public chartOptions: Partial<ChartOptions>;
+    /**
+     * Reference to the chart.
+     */
     public chart: Chart | undefined;
+    /**
+     * HTML element where the chart is created.
+     */
     public chartContainer: HTMLElement;
+    /**
+     * Highcharts component's options.
+     */
     public options: HighchartsComponent.Options;
+    /**
+     * Type of constructor used for creating proper chart like: chart, stock,
+     * gantt or map.
+     */
     public chartConstructor: HighchartsComponent.ConstructorType;
+    /**
+     * Reference to sync component that allows to sync i.e tooltips.
+     *
+     * @internal
+     */
     public sync: Component['sync'];
+
     /* *
      *
      *  Constructor
      *
      * */
 
+    /**
+     * Creates a Highcharts component in the cell.
+     *
+     * @param options
+     * The options for the component.
+     */
     constructor(options: Partial<HighchartsComponent.Options>) {
         options = merge(
             HighchartsComponent.defaultOptions,
@@ -227,10 +276,11 @@ class HighchartsComponent extends Component {
 
     /* *
      *
-     *  Class methods
+     *  Functions
      *
      * */
 
+    /** @internal */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -293,6 +343,11 @@ class HighchartsComponent extends Component {
         return this;
     }
 
+    /**
+     * Adds call update value in store, when chart's point is updated.
+     *
+     * @internal
+     * */
     private setupConnectorUpdate(): void {
         const { connector: store, chart } = this;
 
@@ -308,7 +363,9 @@ class HighchartsComponent extends Component {
     }
 
     /**
-     * Internal method for handling option updates
+     * Internal method for handling option updates.
+     *
+     * @internal
      */
     private setOptions(): void {
         if (this.options.chartClassName) {
@@ -340,12 +397,14 @@ class HighchartsComponent extends Component {
         table.setCell(columnName, rowNumber, valueToSet);
     }
     /**
-     * Handles updating via options
-     * @param {Partial<Component.ComponentOptions>} options
-     * The options to apply
+     * Handles updating via options.
+     * @param options
+     * The options to apply.
      *
-     * @param {boolean} redraw
-     * The flag triggers the main redraw operation
+     * @param redraw
+     * The flag triggers the main redraw operation.
+     *
+     * @internal
      */
     private updateComponentOptions(
         options: Partial<HighchartsComponent.Options>,
@@ -354,6 +413,14 @@ class HighchartsComponent extends Component {
         super.update(options, redraw);
     }
 
+    /**
+     * Handles updating via options.
+     * @param options
+     * The options to apply.
+     *
+     * @returns
+     * The component for chaining
+     */
     public update(
         options: Partial<HighchartsComponent.Options>
     ): this {
@@ -367,6 +434,11 @@ class HighchartsComponent extends Component {
         return this;
     }
 
+    /**
+     * Updates chart's series when the data table is changed.
+     *
+     * @internal
+     */
     private updateSeries(): void {
         // Heuristically create series from the store dataTable
         if (this.chart && this.connector) {
@@ -473,7 +545,15 @@ class HighchartsComponent extends Component {
         }
     }
 
-
+    /**
+     * Destroy chart and create a new one.
+     *
+     * @returns
+     * The chart.
+     *
+     * @internal
+     *
+     */
     private initChart(): Chart {
         if (this.chart) {
             this.chart.destroy();
@@ -481,7 +561,15 @@ class HighchartsComponent extends Component {
         return this.constructChart();
     }
 
-
+    /**
+     * Creates chart.
+     *
+     * @returns
+     * The chart.
+     *
+     * @internal
+     *
+     */
     private constructChart(): Chart {
         const charter = (HighchartsComponent.charter || G);
         if (this.chartConstructor !== 'chart') {
@@ -501,7 +589,9 @@ class HighchartsComponent extends Component {
     }
 
     /**
-     * Registers events from the chart options to the callback register
+     * Registers events from the chart options to the callback register.
+     *
+     * @internal
      */
     private registerChartEvents(): void {
         if (this.chart && this.chart.options) {
@@ -559,7 +649,14 @@ class HighchartsComponent extends Component {
             });
         }
     }
-
+    /**
+     * Converts the class instance to a class JSON.
+     *
+     * @returns
+     * Class JSON of this Component instance.
+     *
+     * @internal
+     */
     public toJSON(): HighchartsComponent.ClassJSON {
         const chartOptions = JSON.stringify(this.options.chartOptions),
             chartConstructor = this.options.chartConstructor;
@@ -595,33 +692,77 @@ class HighchartsComponent extends Component {
 
 namespace HighchartsComponent {
 
+    /* *
+    *
+    *  Declarations
+    *
+    * */
+
+    /** @internal */
     export type ComponentType = HighchartsComponent;
 
+    /** @internal */
     export type ConstructorType = (
         'chart' | 'stockChart' | 'mapChart' | 'ganttChart'
     );
 
+    /** @internal */
     export type ChartComponentEvents =
         JSONEvent |
         Component.EventTypes;
 
+    /** @internal */
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: ClassJSON;
     }>;
-
     export interface Options extends Component.ComponentOptions, EditableOptions {
+
+        /**
+         * Whether to allow the component to edit the store to which it is
+         * attached.
+         */
         allowConnectorUpdate?: boolean,
+        /**
+         * The string that declares constructor that is called for creating
+         * a chart.
+         *
+         * Example: `chart`, `stockChart`, `mapChart` or `ganttChart`.
+         *
+         */
         chartConstructor: ConstructorType;
+        /**
+         * Type of the component.
+         */
         type: 'Highcharts';
     }
-
+    /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
-        chartOptions?: Partial<ChartOptions>;
+        /**
+         * A full set of chart options used by the chart.
+         * [Highcharts API](https://api.highcharts.com/highcharts/)
+         */
+        chartOptions: Partial<ChartOptions>;
+        /**
+         * The name of class that is applied to the chart's container.
+         */
         chartClassName?: string;
+        /**
+         * The id that is applied to the chart's container.
+         */
         chartID?: string;
+        /**
+         * Names / aliases that should be mapped to xAxis values.
+         * ```
+         * Example
+         * columnKeyMap: {
+         *      'Food': 'x',
+         *      'Vitamin A': 'y'
+         * }
+         * ```
+         */
         columnKeyMap?: Record<string, string | null>;
     }
-
+    /** @internal */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {
         chartOptions?: string;
         chartClassName?: string;
@@ -629,7 +770,7 @@ namespace HighchartsComponent {
         chartConstructor: ConstructorType;
         type: 'Highcharts'
     }
-
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
         options: OptionsJSON;
     }

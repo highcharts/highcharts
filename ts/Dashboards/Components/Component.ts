@@ -16,6 +16,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Board from '../Board';
 import type Cell from '../Layout/Cell';
 /* *
@@ -74,6 +80,10 @@ import ComponentRegistry from './ComponentRegistry.js';
  *
  * */
 
+/**
+ * Abstract Class of component.
+ * @internal
+ */
 abstract class Component {
 
     /* *
@@ -82,6 +92,27 @@ abstract class Component {
      *
      * */
 
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     *
+     * Creates HTML text element like header or title
+     *
+     * @param tagName
+     * HTML tag name used as wrapper of text like `h1`, `h2` or `p`.
+     * @param elementName
+     * Name of element
+     * @param textOptions
+     * The options for the component
+     * @returns
+     * HTML object when title is created, otherwise undefined
+     *
+     * @internal
+     */
     public static createTextElement(
         tagName: string,
         elementName: string,
@@ -102,40 +133,18 @@ abstract class Component {
             });
         }
     }
-
-    public static Sync = Sync;
-    public static defaultOptions: Partial<Component.ComponentOptions> = {
-        className: `${classNamePrefix}component`,
-        parentElement: document.body,
-        parentCell: void 0,
-        id: '',
-        title: false,
-        caption: false,
-        style: {
-            display: 'flex',
-            'flex-direction': 'column'
-        },
-        sync: Sync.defaultHandlers,
-        editableOptions: [
-            'style',
-            'title',
-            'caption'
-        ],
-        editableOptionsBindings: EditableOptions.defaultBindings
-    };
-
-
-    /**
-    * @internal
-    * The board the component belongs to
-    * */
-    public board?: Board;
     /* *
      *
      *  Constructor
      *
      * */
 
+    /**
+     * Creates a component in the cell.
+     *
+     * @param options
+     * The options for the component.
+     */
     constructor(options: Partial<Component.ComponentOptions>) {
         this.options = merge(
             Component.defaultOptions as Required<Component.ComponentOptions>,
@@ -206,53 +215,166 @@ abstract class Component {
      *
      * */
 
+    /** @internal */
+    public static Sync = Sync;
+    /**
+     * Default options of the component.
+     */
+    public static defaultOptions: Partial<Component.ComponentOptions> = {
+        className: `${classNamePrefix}component`,
+        parentElement: document.body,
+        parentCell: void 0,
+        id: '',
+        title: false,
+        caption: false,
+        style: {
+            display: 'flex',
+            'flex-direction': 'column'
+        },
+        sync: Sync.defaultHandlers,
+        editableOptions: [
+            'style',
+            'title',
+            'caption'
+        ],
+        editableOptionsBindings: EditableOptions.defaultBindings
+    };
+    /**
+     * The HTML element or id of HTML element that is used for appending
+     * a component.
+     *
+     * @internal
+     */
     public parentElement: HTMLElement;
+    /**
+     * Instance of cell, where component is attached.
+     *
+     * @internal
+     */
     public parentCell?: Cell;
-    public connector?: Component.ConnectorTypes; // the attached store
+    /**
+     * Connector that allows you to load data via URL or from a local source.
+     */
+    public connector?: Component.ConnectorTypes;
+    /**
+    * @internal
+    * The board the component belongs to
+    * */
+    public board?: Board;
+    /**
+     * Size of the component (width and height).
+     */
     protected dimensions: { width: number | null; height: number | null };
+    /**
+     * The HTML element where the component is.
+     *
+     * @internal
+     */
     public element: HTMLElement;
+    /**
+     * The HTML element where the title is.
+     */
     public titleElement?: HTMLElement;
+    /**
+     * The HTML element where the caption is.
+     */
     public captionElement?: HTMLElement;
+    /**
+     * The HTML element where the component's content is.
+     *
+     * @internal
+     */
     public contentElement: HTMLElement;
+    /**
+     * The options for the component.
+     * */
     public options: Component.ComponentOptions;
+    /**
+     * Sets an ID for the component's `div`.
+     */
     public id: string;
-    // An array of options marked as editable by the UI.
+    /**
+     * An array of options marked as editable by the UI.
+     *
+     */
     public editableOptions: EditableOptions;
-    // Registry of callbacks registered on the component. Used in the Highcharts
-    // component to keep track of chart events.
+    /**
+     * Registry of callbacks registered on the component. Used in the Highcharts
+     * component to keep track of chart events.
+     *
+     * @internal
+     */
     public callbackRegistry = new CallbackRegistry();
-    // The interval for redrawing the component on data changes.
+    /**
+     * The interval for redrawing the component on data changes.
+     * @internal
+     */
     private tableEventTimeout?: number;
-    // Event listeners tied to the current DataTable. Used for redrawing the
-    // component on data changes.
+    /**
+     * Event listeners tied to the current DataTable. Used for redrawing the
+     * component on data changes.
+     *
+     * @internal
+     */
     private tableEvents: Function[] = [];
-    // Event listeners tied to the parent cell. Used for redrawing/resizing the
-    // component on interactions.
+    /**
+     * Event listeners tied to the parent cell. Used for redrawing/resizing the
+     * component on interactions.
+     *
+     * @internal
+     */
     private cellListeners: Function[] = [];
-    protected hasLoaded: boolean;
-    protected shouldRedraw: boolean;
 
+    /**
+     * @internal
+     */
+    protected hasLoaded: boolean;
+    /**
+     * @internal
+     */
+    protected shouldRedraw: boolean;
+    /**
+     * @internal
+     */
     protected syncHandlers: Sync.OptionsRecord;
 
-    // DataModifier that is applied on top of modifiers set on the DataStore.
+    /**
+     * DataModifier that is applied on top of modifiers set on the DataStore.
+     *
+     * @internal
+     */
     public presentationModifier?: DataModifier;
-    // The table being presented, either a result of the above or a way to
-    // modify the table via events.
+    /**
+     * The table being presented, either a result of the above or a way to
+     * modify the table via events.
+     *
+     * @internal
+     */
     public presentationTable?: DataTable;
 
-    // The active group of the component. Used for sync.
+    /**
+     * The active group of the component. Used for sync.
+     *
+     * @internal
+     */
     public activeGroup: ComponentGroup | undefined = void 0;
 
+    /** @internal */
     public abstract sync: Sync;
 
     /**
-     * Timeouts for calls to `Component.resizeTo()`
+     * Timeouts for calls to `Component.resizeTo()`.
+     *
+     * @internal
+    /* *
      */
     protected resizeTimeouts: number[] = [];
 
     /**
-     * Timeouts for resizing the content. I.e. `chart.setSize()`
-     */
+     * Timeouts for resizing the content. I.e. `chart.setSize()`.
+     *
+     * @internal
+     * */
     protected innerResizeTimeouts: number[] = [];
 
     /* *
@@ -263,7 +385,15 @@ abstract class Component {
 
     /**
     * Handles the sync options. Applies the given defaults if no
-    * specific callback given
+    * specific callback given.
+    *
+    * @param defaultHandlers
+    * Sync handlers on component.
+    *
+    * @returns
+    * Sync component.
+    *
+    * @internal
     */
     protected handleSyncOptions(
         defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
@@ -293,7 +423,11 @@ abstract class Component {
             );
     }
 
-    // Setup listeners on cell/other things up the chain
+    /**
+     * Setup listeners on cell/other things up the chain
+     *
+     * @internal
+     */
     private attachCellListeneres(): void {
         // remove old listeners
         while (this.cellListeners.length) {
@@ -332,7 +466,15 @@ abstract class Component {
         }
     }
 
-    // Set a parent cell
+    /**
+     * Set a parent cell.
+     * @param cell
+     * Instance of a cell.
+     * @param resize
+     * Flag that allow to resize the component.
+     *
+     * @internal
+     */
     public setCell(cell: Cell, resize = false): void {
         this.parentCell = cell;
         if (cell.container) {
@@ -344,6 +486,12 @@ abstract class Component {
         }
     }
 
+    /**
+     * Adds event listeners to data table.
+     * @param table
+     * Data table that is source of data.
+     * @internal
+     */
     private setupTableListeners(table: DataTable): void {
         const connector = this.connector;
 
@@ -381,6 +529,10 @@ abstract class Component {
         }
     }
 
+    /**
+     * Remove event listeners in data table.
+     * @internal
+     */
     private clearTableListeners(): void {
         const connector = this.connector,
             tableEvents = this.tableEvents;
@@ -406,6 +558,16 @@ abstract class Component {
         }
     }
 
+    /**
+     * Attaches data store to the component.
+     * @param connector
+     * Connector of data.
+     *
+     * @returns
+     * Component which can be used in chaining.
+     *
+     * @internal
+     */
     public setConnector(connector: Component.ConnectorTypes | undefined): this {
         // Clean up old event listeners
         while (this.tableEvents.length) {
@@ -457,6 +619,7 @@ abstract class Component {
         return this;
     }
 
+    /** @internal */
     setActiveGroup(group: ComponentGroup | string | null): void {
         if (typeof group === 'string') {
             group = ComponentGroup.getComponentGroup(group) || null;
@@ -471,7 +634,13 @@ abstract class Component {
             this.activeGroup.addComponents([this.id]);
         }
     }
-
+    /**
+     * Gets height of the component's content.
+     *
+     * @returns
+     * Current height as number.
+     * @internal
+     */
     private getContentHeight(): number {
         const parentHeight =
             this.dimensions.height || Number(getStyle(this.element, 'height'));
@@ -488,11 +657,11 @@ abstract class Component {
 
     /**
      * Resize the component
-     * @param {number|string|null} [width]
+     * @param width
      * The width to set the component to.
      * Can be pixels, a percentage string or null.
      * Null will unset the style
-     * @param {number|string|null} [height]
+     * @param height
      * The height to set the component to.
      * Can be pixels, a percentage string or null.
      * Null will unset the style.
@@ -544,6 +713,11 @@ abstract class Component {
         // }
     }
 
+    /**
+     * Adjusts size of component to parent's cell size when animation is done.
+     * @param element
+     * HTML element that is resized.
+     */
     public resizeTo(element: HTMLElement): void {
         while (this.resizeTimeouts.length) {
             const timeout = this.resizeTimeouts.pop();
@@ -566,16 +740,16 @@ abstract class Component {
     }
 
     /**
-     * Handles updating via options
-     * @param {Partial<Component.ComponentOptions>} newOptions
-     * The options to apply
+     * Handles updating via options.
+     * @param newOptions
+     * The options to apply.
      *
-     * @param {boolean} redraw
+     * @param redraw
      * Set to true if the update should redraw the component.
      * If `false` the component will be redrawn only if options are changed.
      *
-     * @return {this}
-     * The component for chaining
+     * @returns
+     * The component for chaining.
      */
     public update(
         newOptions: Partial<Component.ComponentOptions>,
@@ -645,6 +819,11 @@ abstract class Component {
         return this;
     }
 
+    /**
+     * Adds title at the top of component's container.
+     * @param titleOptions
+     * The options for the title.
+     */
     public setTitle(titleOptions: Component.TextOptionsType): void {
         const previousTitle = this.titleElement;
 
@@ -671,6 +850,12 @@ abstract class Component {
         }
     }
 
+    /**
+     * Adds caption at the bottom of component's container.
+     *
+     * @param captionOptions
+     * The options for the caption.
+     */
     public setCaption(captionOptions: Component.TextOptionsType): void {
         const previousCaption = this.captionElement;
         if (
@@ -698,10 +883,12 @@ abstract class Component {
     }
 
     /**
-     * Handles setting things up on initial render
+     * Handles setting things up on initial render.
      *
-     * @return {this}
-     * The component for chaining
+     * @returns
+     * The component for chaining.
+     *
+     * @internal
      */
     public load(): this {
 
@@ -761,10 +948,16 @@ abstract class Component {
 
     /**
      * Renders the component.
-     * @todo make this call load on initial render
-     * @return {this} Component
+     *
+     * @returns
+     * The component for chaining.
+     *
+     * @internal
      */
     public render(): this {
+        /**
+         * TODO: make this call load on initial render
+         */
         if (this.shouldRedraw || !this.hasLoaded) {
             this.load();
             // Call resize to fit to the cell. Only for non HTML elements.
@@ -779,7 +972,8 @@ abstract class Component {
 
     /**
      * Redraws the component.
-     * @return {this} Component
+     * @returns
+     * The component for chaining.
      */
     public redraw(): this {
         // Do a redraw
@@ -795,10 +989,14 @@ abstract class Component {
     }
 
     /**
-     * @todo Should perhaps also remove the component from the registry
-     * or set an `isactive` flag to false
+     * Destroys the component.
      */
     public destroy(): void {
+        /**
+         * TODO: Should perhaps also remove the component from the registry
+         * or set an `isactive` flag to false.
+         */
+
         while (this.element.firstChild) {
             this.element.firstChild.remove();
         }
@@ -809,6 +1007,7 @@ abstract class Component {
         Component.removeInstance(this);
     }
 
+    /** @internal */
     public on<TEvent extends Component.EventTypes>(
         type: TEvent['type'],
         callback: (this: this, e: TEvent) => void
@@ -816,6 +1015,7 @@ abstract class Component {
         return addEvent(this, type, callback);
     }
 
+    /** @internal */
     public emit<TEvent extends Component.EventTypes>(
         e: TEvent
     ): void {
@@ -825,6 +1025,7 @@ abstract class Component {
         fireEvent(this, e.type, e);
     }
 
+    /** @internal */
     public postMessage(
         message: Component.MessageType,
         target: Component.MessageTarget = {
@@ -839,6 +1040,7 @@ abstract class Component {
         }
     }
 
+    /** @internal */
     public onMessage(message: Component.MessageType): void {
         if (message && typeof message === 'string') {
             // do something
@@ -856,8 +1058,10 @@ abstract class Component {
     /**
      * Converts the class instance to a class JSON.
      *
-     * @return {Component.JSON}
+     * @returns
      * Class JSON of this Component instance.
+     *
+     * @internal
      */
     public toJSON(): Component.JSON {
         const dimensions: Record<'width' | 'height', number> = {
@@ -911,7 +1115,7 @@ namespace Component {
     *  Declarations
     *
     * */
-
+    /** @internal */
     export interface JSON extends Serializable.JSON<string> {
         // connector?: DataConnector.ClassJSON;
         options: ComponentOptionsJSON;
@@ -920,6 +1124,7 @@ namespace Component {
     /**
      * The basic events
      */
+    /** @internal */
     export type EventTypes =
         ResizeEvent |
         UpdateEvent |
@@ -931,19 +1136,25 @@ namespace Component {
         MessageEvent |
         PresentationModifierEvent;
 
+    /** @internal */
     export type ResizeEvent = Event<'resize', {
         readonly type: 'resize';
         width?: number;
         height?: number;
     }>;
 
+    /** @internal */
     export type UpdateEvent = Event<'update' | 'afterUpdate', {
         options?: ComponentOptions;
     }>;
 
+    /** @internal */
     export type LoadEvent = Event<'load' | 'afterLoad', {}>;
+    /** @internal */
     export type RedrawEvent = Event<'redraw' | 'afterRedraw', {}>;
+    /** @internal */
     export type RenderEvent = Event<'beforeRender' | 'afterRender', {}>;
+    /** @internal */
     export type MessageEvent = Event<'message', {
         message: MessageType;
         detail?: {
@@ -951,14 +1162,17 @@ namespace Component {
             target: string;
         };
     }>;
+    /** @internal */
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
         json: Serializable.JSON<string>;
     }>;
+    /** @internal */
     export type TableChangedEvent = Event<'tableChanged', {}>;
+    /** @internal */
     export type PresentationModifierEvent =
         Component.Event<'afterPresentationModifier', { table: DataTable }>;
 
-
+    /** @internal */
     export type Event<
         EventType extends string,
         EventRecord extends Record<string, any>> = {
@@ -972,25 +1186,63 @@ namespace Component {
     export interface ComponentOptions extends EditableOptions {
         [key: string]: unknown;
         /**
-        * @internal
-        * The Board the component belongs to
-        * */
+         * @internal
+         * The Board the component belongs to
+         * */
         board?: Board;
-        className?: string;
+        /**
+         * Cell id, where component is attached.
+         */
         cell?: string;
-        // allow overwriting gui elements
-        editableOptions?: Array<string>;
-        editableOptionsBindings?: EditableOptions.OptionsBindings;
-        events?: Record<string, Function>;
-        id?: string;
-        navigationBindings?: NavigationBindingsOptionsObject[];
+        /**
+         * Instance of cell, where component is attached.
+         *
+         * @internal
+         */
         parentCell?: Cell;
-        presentationModifier?: DataModifier;
-        sync?: SyncOptions;
+        /**
+         * The HTML element or id of HTML element that is used for appending
+         * a component.
+         *
+         * @internal
+         */
+        parentElement: HTMLElement | string;
+        /**
+         * The name of class that is applied to the component's container.
+         */
+        className?: string;
+        /**
+         * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
+         */
         type: keyof ComponentTypeRegistry;
+        // allow overwriting gui elements
+        /** @internal */
+        navigationBindings?: NavigationBindingsOptionsObject[];
+        /**
+         * Events attached to the component : `mount`, `unmount`.
+         */
+        events?: Record<string, Function>;
+        /** @internal */
+        editableOptions: Array<string>;
+        /** @internal */
+        editableOptionsBindings: EditableOptions.OptionsBindings;
+        /** @internal */
+        presentationModifier?: DataModifier;
+        /**
+         * Defines which elements should be synced.
+         * ```
+         * Example:
+         * {
+         *     tooltip: true
+         * }
+         * ```
+         *
+         */
+        sync: SyncOptions;
     }
 
     // JSON compatible options for export
+    /** @internal */
     export interface ComponentOptionsJSON extends JSON.Object {
         // connector?: DataConnector.ClassJSON; // connector id
         caption?: string;
@@ -1008,18 +1260,31 @@ namespace Component {
         type: keyof ComponentTypeRegistry;
     }
 
+    /** @internal */
     export type ConnectorTypes = DataConnector;
-
+    /** @internal */
     export interface EditableOptions {
         connector?: ConnectorTypes;
+        /**
+         * Sets an ID for the component's container.
+         */
         id?: string;
+        /**
+         * Additional CSS styles to apply inline to the component's container.
+         */
         style?: CSSObject;
-        title: TextOptionsType;
-        caption: TextOptionsType;
+        /**
+         * The component's title, which will render at the top.
+         */
+        title?: TextOptionsType;
+        /**
+         * The component's caption, which will render at the bottom.
+         */
+        caption?: TextOptionsType;
     }
 
     export type TextOptionsType = string | false | TextOptions | undefined;
-
+    /** @internal */
     export interface MessageTarget {
         type: 'group' | 'componentType' | 'componentID';
         target: (
@@ -1029,6 +1294,7 @@ namespace Component {
         );
     }
 
+    /** @internal */
     export type MessageType = string | {
         callback: Function;
     };
@@ -1044,6 +1310,7 @@ namespace Component {
      * Record of component instances
      *
      */
+    /** @internal */
     export const instanceRegistry: Record<string, ComponentType> = {};
 
 
@@ -1054,51 +1321,82 @@ namespace Component {
     * */
 
     /**
-     * Adds a component instance to the registry
-     * @param {Component} component
-     * The component to add
+     *
+     * @internal
+     * Adds a component instance to the registry.
+     * @param component
+     * The component to add.
+     *
+     * @internal
      */
     export function addInstance(component: ComponentType): void {
         Component.instanceRegistry[component.id] = component;
-
     }
 
     /**
-     * Removes a component instance from the registry
-     * @param {Component} component
-     * The component to remove
+     * Removes a component instance from the registry.
+     * @param component
+     * The component to remove.
+     *
+     * @internal
      */
     export function removeInstance(component: Component): void {
         delete Component.instanceRegistry[component.id];
     }
 
     /**
-     * Retrieves the IDs of the registered component instances
-     * @return {string[]}
-     * Array of component IDs
+     * Retrieves the IDs of the registered component instances.
+     * @returns
+     * Array of component IDs.
+     *
+     * @internal
      */
     export function getAllInstanceIDs(): string[] {
         return Object.keys(instanceRegistry);
     }
 
     /**
-     * Retrieves all registered component instances
-     * @return {ComponentType[]}
-     * Array of components
+     * Retrieves all registered component instances.
+     * @returns
+     * Array of components.
+     *
+     * @internal
      */
     export function getAllInstances(): Component[] {
         const ids = getAllInstanceIDs();
         return ids.map((id): Component => instanceRegistry[id]);
     }
-
     /**
+     * Gets instance of component from registry.
      *
+     * @param id
+     * Component's id that exists in registry.
+     *
+     * @returns
+     * Returns the component type or undefined.
+     *
+     * @internal
      */
     export function getInstanceById(id: string): ComponentType | undefined {
         return instanceRegistry[id];
     }
     /**
+     * Sends a message from the given sender to the target,
+     * with an optional callback.
      *
+     * @param sender
+     * The sender of the message. Can be a Component or a ComponentGroup.
+     *
+     * @param message
+     * The message. It can be a string, or a an object containing a
+     * `callback` function.
+     *
+     * @param targetObj
+     * An object containing the `type` of target,
+     * which can be `group`, `componentID`, or `componentType`
+     * as well as the id of the recipient.
+     *
+     * @internal
      */
     export function relayMessage(
         sender: ComponentType | ComponentGroup,
