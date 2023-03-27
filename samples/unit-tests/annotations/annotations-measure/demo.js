@@ -1,6 +1,11 @@
 // 1
 QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
     var chart = Highcharts.chart('container', {
+        xAxis: {
+            labels: {
+                distance: 8
+            }
+        },
         yAxis: [
             {
                 height: '50%'
