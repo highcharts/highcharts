@@ -161,6 +161,7 @@ namespace Bindings {
         return component;
     }
 
+    /** @internal */
     export function componentFromJSON(
         json: Component.JSON,
         cellContainer: HTMLElement|undefined

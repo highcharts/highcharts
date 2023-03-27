@@ -46,6 +46,7 @@ class Row extends GUIElement {
     *
     * */
 
+    /** @internal */
     public static fromJSON(
         json: Row.JSON,
         layout?: Layout
@@ -205,6 +206,7 @@ class Row extends GUIElement {
         }
     }
 
+    /** @internal */
     public setCellsFromJSON(
         json: Array<Cell.JSON>
     ): void {
@@ -311,6 +313,7 @@ class Row extends GUIElement {
 
     /**
      * Converts the class instance to a class JSON.
+     * @internal
      *
      * @return {Row.JSON}
      * Class JSON of this Row instance.

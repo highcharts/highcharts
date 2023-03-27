@@ -81,6 +81,14 @@ import ComponentRegistry from './ComponentRegistry.js';
  * */
 
 /**
+ *
+ * Abstract Class of component.
+ *
+ * @internal
+ *
+ */
+
+/**
  * Abstract Class of component.
  * @internal
  */
@@ -214,6 +222,9 @@ abstract class Component {
      * The options for the component.
      * */
     public options: Component.ComponentOptions;
+    /**
+     * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
+     */
     /**
      * Sets an ID for the component's `div`.
      */
@@ -1058,6 +1069,7 @@ abstract class Component {
 
     /**
      * Converts the class instance to a class JSON.
+     * @internal
      *
      * @returns
      * Class JSON of this Component instance.
@@ -1117,6 +1129,7 @@ namespace Component {
     *
     * */
     /** @internal */
+    /** @internal */
     export interface JSON extends Serializable.JSON<string> {
         // connector?: DataConnector.ClassJSON;
         options: ComponentOptionsJSON;
@@ -1163,6 +1176,7 @@ namespace Component {
             target: string;
         };
     }>;
+
     /** @internal */
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
         json: Serializable.JSON<string>;
@@ -1242,8 +1256,10 @@ namespace Component {
         sync: SyncOptions;
     }
 
-    // JSON compatible options for export
-    /** @internal */
+    /**
+     * JSON compatible options for export
+     * @internal
+     *  */
     export interface ComponentOptionsJSON extends JSON.Object {
         // connector?: DataConnector.ClassJSON; // connector id
         caption?: string;
@@ -1322,11 +1338,14 @@ namespace Component {
     * */
 
     /**
+     * Adds component to the registry.
      *
      * @internal
      * Adds a component instance to the registry.
      * @param component
      * The component to add.
+     * Returns the true when component was found and added properly to the
+     * registry, otherwise it is false.
      *
      * @internal
      */
@@ -1374,6 +1393,13 @@ namespace Component {
      * Component's id that exists in registry.
      *
      * @returns
+     * Returns the component.
+     * Gets instance of component from registry.
+     *
+     * @param id
+     * Component's id that exists in registry.
+     *
+     * @returns
      * Returns the component type or undefined.
      *
      * @internal
@@ -1391,6 +1417,11 @@ namespace Component {
      * @param message
      * The message. It can be a string, or a an object containing a
      * `callback` function.
+     *
+     * @param targetObj
+     * An object containing the `type` of target,
+     * which can be `group`, `componentID`, or `componentType`
+     * as well as the id of the recipient.
      *
      * @param targetObj
      * An object containing the `type` of target,
