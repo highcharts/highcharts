@@ -17,6 +17,7 @@ Highcharts.chart('container', {
         visible: false
     },
     tooltip: {
+        outside: true,
         formatter: function () {
             return (
                 ~~this.point.value +
