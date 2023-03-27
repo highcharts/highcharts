@@ -49,6 +49,7 @@ class Cell extends GUIElement {
     *
     * */
 
+    /** @internal */
     public static fromJSON(
         json: Cell.JSON,
         row?: Row
@@ -215,6 +216,7 @@ class Cell extends GUIElement {
 
     /**
      * Mount component from JSON.
+     * @internal
      *
      * @param {Component.JSON} [json]
      * Component JSON.
@@ -271,6 +273,7 @@ class Cell extends GUIElement {
 
     /**
      * Converts the class instance to a class JSON.
+     * @internal
      *
      * @return {Cell.JSON}
      * Class JSON of this Cell instance.

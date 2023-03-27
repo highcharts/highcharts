@@ -396,6 +396,7 @@ namespace HTMLComponent {
     export type HTMLComponentEvents =
         Component.EventTypes | JSONEvent;
 
+    /** @internal */
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: HTMLComponent.ClassJSON;
     }>;
