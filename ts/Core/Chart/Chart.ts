@@ -309,8 +309,8 @@ class Chart {
     public clipRect?: SVGElement;
     public colorCounter: number = void 0 as any;
     public container: globalThis.HTMLElement = void 0 as any;
-    public containerHeight?: string;
-    public containerWidth?: string;
+    public containerHeight?: number;
+    public containerWidth?: number;
     public credits?: SVGElement;
     public caption?: SVGElement;
     public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
@@ -1382,14 +1382,19 @@ class Chart {
             optionsChart = chart.options.chart,
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
-            renderTo = chart.renderTo;
+            renderTo = chart.renderTo,
+            naturalWidth = getStyle(renderTo, 'width', true) || 0,
+            containerWidth = naturalWidth > 1 ? naturalWidth : 600,
+            naturalHeight = getStyle(renderTo, 'height', true) || 0,
+            containerHeight = naturalHeight > 1 ? naturalHeight : 400;
 
         // Get inner width and height
         if (!defined(widthOption)) {
-            chart.containerWidth = getStyle(renderTo, 'width') as any;
+            chart.containerWidth = containerWidth;
         }
+
         if (!defined(heightOption)) {
-            chart.containerHeight = getStyle(renderTo, 'height') as any;
+            chart.containerHeight = containerHeight;
         }
 
         /**
@@ -1400,7 +1405,7 @@ class Chart {
          */
         chart.chartWidth = Math.max( // #1393
             0,
-            widthOption || (chart.containerWidth as any) || 600 // #1460
+            widthOption || containerWidth // #1460
         );
         /**
          * The current pixel height of the chart.
@@ -1414,11 +1419,7 @@ class Chart {
                 heightOption as any,
                 chart.chartWidth
             ) ||
-            (
-                (chart.containerHeight as any) > 1 ?
-                    (chart.containerHeight as any) :
-                    400
-            )
+            containerHeight
         );
     }
 
