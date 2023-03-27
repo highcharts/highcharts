@@ -60,7 +60,7 @@ new Board('container', {
     connector,
     sync: {
       'visibility': true,
-      'tooltip': true 
+      'highlight': true 
     }
   }, {
     cell: 'dashboard-col-1',
@@ -74,7 +74,7 @@ new Board('container', {
     connector,
     sync: {
       'visibility': true,
-      'tooltip': {
+      'highlight': {
         handler: true,
         emitter: false
       }

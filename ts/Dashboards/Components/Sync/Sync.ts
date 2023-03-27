@@ -20,7 +20,11 @@ import SyncEmitter from './Emitter.js';
 import SyncHandler from './Handler.js';
 
 namespace Sync {
-    export type EventType = 'visibility' | 'selection' | 'tooltip' | 'panning';
+    export type EventType =
+        'visibility' |
+        'selection' |
+        'highlight' |
+        'panning';
 
     export type EmitterConfig = [
         SyncEmitter['id'],
@@ -115,6 +119,7 @@ class Sync {
      */
     public start(): void {
         const { syncConfig, component } = this;
+        console.log(syncConfig, component);
         Object.keys(syncConfig)
             .forEach((id): void => {
                 let {

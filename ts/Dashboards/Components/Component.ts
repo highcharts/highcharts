@@ -1191,7 +1191,7 @@ namespace Component {
          * ```
          * Example:
          * {
-         *     tooltip: true
+         *     highlight: true
          * }
          * ```
          *

@@ -45,7 +45,7 @@ Dashboards.board('container', {
             connector,
             sync: {
                 visibility: true,
-                tooltip: true,
+                highlight: true,
                 selection: true
             },
             cell: 'dashboard-col-0',
@@ -64,7 +64,7 @@ Dashboards.board('container', {
             connector,
             sync: {
                 visibility: true,
-                tooltip: true,
+                highlight: true,
                 selection: true
             },
             type: 'Highcharts',
@@ -86,7 +86,7 @@ Dashboards.board('container', {
             connector,
             sync: {
                 visibility: true,
-                tooltip: true,
+                highlight: true,
                 selection: true
             },
             type: 'Highcharts',
@@ -109,7 +109,7 @@ Dashboards.board('container', {
             connector,
             editable: true,
             sync: {
-                tooltip: true
+                highlight: true
             }
         }]
 });

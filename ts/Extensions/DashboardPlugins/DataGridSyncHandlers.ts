@@ -48,8 +48,8 @@ const configs: {
     emitters: Record<string, Sync.EmitterConfig>;
 } = {
     emitters: {
-        tooltipEmitter: [
-            'tooltipEmitter',
+        highlightEmitter: [
+            'highlightEmitter',
             function (this: ComponentTypes): Function | void {
                 if (this instanceof (DataGridComponent || window.DataGridComponent)) {
                     const { dataGrid, connector: store, board } = this;
@@ -87,8 +87,8 @@ const configs: {
         ]
     },
     handlers: {
-        tooltipHandler: [
-            'tooltipHandler',
+        highlightHandler: [
+            'highlightHandler',
             void 0, // 'afterHoverPointChange',
             function (this: DataGridComponent): void {
                 const { board } = this;
@@ -147,7 +147,7 @@ const configs: {
 };
 
 const defaults: Sync.OptionsRecord = {
-    tooltip: { emitter: configs.emitters.tooltipEmitter, handler: configs.handlers.tooltipHandler },
+    highlight: { emitter: configs.emitters.highlightEmitter, handler: configs.handlers.highlightHandler },
     selection: { handler: configs.handlers.selectionHandler }
 };
 
