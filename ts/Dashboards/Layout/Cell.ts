@@ -513,18 +513,13 @@ class Cell extends GUIElement {
     private convertWidthToValue(
         width: number|string
     ): string {
-
-        let convertedWidth;
-
         if (typeof width === 'number') {
-            convertedWidth = width + 'px';
-        } else if (/px/.test(width)) {
-            convertedWidth = width;
-        } else {
-            convertedWidth = GUIElement.getPercentageWidth(width) || '';
+            return width + 'px';
         }
-
-        return convertedWidth;
+        if (/px/.test(width)) {
+            return width;
+        }
+        return GUIElement.getPercentageWidth(width) || '';
     }
 }
 
