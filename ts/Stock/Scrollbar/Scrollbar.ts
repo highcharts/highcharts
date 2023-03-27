@@ -474,6 +474,7 @@ class Scrollbar {
             defaultOptions.scrollbar,
             options
         );
+        scroller.options.margin = pick(scroller.options.margin, 10);
 
         scroller.chart = chart;
 
@@ -592,7 +593,7 @@ class Scrollbar {
     public position(x: number, y: number, width: number, height: number): void {
         const scroller = this,
             options = scroller.options,
-            { buttonsEnabled, vertical } = options,
+            { buttonsEnabled, margin = 0, vertical } = options,
             method = scroller.rendered ? 'animate' : 'attr';
 
         let xOffset = height,
@@ -614,13 +615,13 @@ class Scrollbar {
             scroller.yOffset = yOffset = buttonsEnabled ? scroller.size : 0;
             // width without buttons
             scroller.barWidth = height - (buttonsEnabled ? width * 2 : 0);
-            scroller.x = x = x + (scroller.options.margin as any);
+            scroller.x = x = x + margin;
         } else {
             scroller.height = height = scroller.size;
             scroller.xOffset = xOffset = buttonsEnabled ? scroller.size : 0;
             // width without buttons
             scroller.barWidth = width - (buttonsEnabled ? height * 2 : 0);
-            scroller.y = scroller.y + (scroller.options.margin as any);
+            scroller.y = scroller.y + margin;
         }
 
         // Set general position for a group:
