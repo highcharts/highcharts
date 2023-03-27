@@ -32,14 +32,13 @@ Highcharts.chart('container', {
     },
     colorAxis: {
         stops: [
-            [0, 'rgba(61, 0, 255, 0.1)'],
+            [0, 'rgba(61, 0, 255, 0.2)'],
             [0.3, 'rgba(0, 255, 188, 0.3)'],
             [0.6, 'rgba(194, 255, 0, 0.6)'],
             [0.9, 'rgba(255, 0, 67, 0.9)']
         ]
     },
     series: [{
-        turboThreshold: 10000,
         name: 'User activity',
         data: JSON.parse(document.getElementById('data').innerText),
         interpolation: true
