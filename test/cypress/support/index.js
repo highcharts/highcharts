@@ -1,3 +1,7 @@
+const compareSnapshotCommand = require('cypress-visual-regression/dist/command');
+
+compareSnapshotCommand();
+
 Cypress.Commands.add('zoom', chartElement => {
     return cy.get(chartElement)
         .trigger('mouseenter')
@@ -112,5 +116,5 @@ Cypress.Commands.add('selectRange', (range) =>
 
 Cypress.Commands.add('toggleEditMode', ()=>{
     cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
-    cy.get('.highcharts-dashboards-edit-toggle-slider').click();
+    cy.get('.highcharts-dashboards-edit-toggle-slider').first().click();
 });
