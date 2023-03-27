@@ -2,8 +2,3 @@
     height: 400px;
     min-width: 600px;
 }
-
-rect.highcharts-navigator-mask-outside {
-    mix-blend-mode: color;
-    fill: black !important;
-}
