@@ -1129,7 +1129,6 @@ namespace Component {
     *
     * */
     /** @internal */
-    /** @internal */
     export interface JSON extends Serializable.JSON<string> {
         // connector?: DataConnector.ClassJSON;
         options: ComponentOptionsJSON;
