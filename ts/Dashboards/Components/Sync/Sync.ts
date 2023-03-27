@@ -119,7 +119,6 @@ class Sync {
      */
     public start(): void {
         const { syncConfig, component } = this;
-        console.log(syncConfig, component);
         Object.keys(syncConfig)
             .forEach((id): void => {
                 let {
