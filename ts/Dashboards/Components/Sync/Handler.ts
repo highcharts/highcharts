@@ -19,6 +19,7 @@ import type SharedState from '../SharedComponentState';
 
 /**
  * Class responsible for storing handler callbacks used in component sync.
+ * @internal
  */
 export default class SyncHandler {
 

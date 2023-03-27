@@ -20,6 +20,7 @@ export type EmitterFunction = (this: ComponentTypes) => Function | void;
 
 /**
  *  Class responsible for adding event listeners on a component
+ *  @internal
  */
 class SyncEmitter {
     /**
