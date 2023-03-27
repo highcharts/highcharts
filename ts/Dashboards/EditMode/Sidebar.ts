@@ -1101,10 +1101,12 @@ class Sidebar {
             definedWidth = cellRwd && cellRwd.width || cell.options.width;
 
         if (definedWidth && definedWidth !== 'auto') {
-            const percentageValue = GUIElement.getPercentageWidth(definedWidth);
+            const percentageValue = typeof definedWidth === 'number' ?
+                definedWidth :
+                parseFloat(GUIElement.getPercentageWidth(definedWidth) || '');
 
             if (percentageValue) {
-                return Math.round(parseFloat(percentageValue) * 100) / 100;
+                return Math.round(percentageValue * 100) / 100;
             }
         }
 
