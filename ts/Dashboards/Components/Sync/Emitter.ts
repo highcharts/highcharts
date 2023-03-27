@@ -29,7 +29,7 @@ class SyncEmitter {
     public static registry: Record<string, SyncEmitter> = {};
 
     /**
-     * Adds an emitter to the emitter regisitry.
+     * Adds an emitter to the emitter registry.
      *
      * @param emitter the emitter to add to the registry.
      */
