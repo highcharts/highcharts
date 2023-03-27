@@ -50,8 +50,7 @@ class EditMode {
         options?: EditMode.Options
     ) {
         this.iconsURLPrefix =
-            options && options.iconsURLPrefix ||
-            'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/';
+            (options && options.iconsURLPrefix) || this.iconsURLPrefix;
 
         this.options = merge(
             // Default options.
@@ -124,7 +123,7 @@ class EditMode {
 
     private active: boolean = false;
     public options: EditMode.Options;
-    public iconsURLPrefix: string;
+    public iconsURLPrefix: string = 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/';
     public board: Board;
     public lang: EditGlobals.LangOptions;
     public cellToolbar?: CellEditToolbar;
