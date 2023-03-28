@@ -237,7 +237,6 @@ namespace Bindings {
     export interface Options {
 
     }
-
     export interface ComponentOptions {
         cell: string;
         type: string;

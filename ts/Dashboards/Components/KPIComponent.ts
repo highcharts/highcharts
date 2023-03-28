@@ -602,6 +602,7 @@ namespace KPIComponent {
     *
     * */
 
+    /** @internal */
     export type ComponentType = KPIComponent;
     /** @internal */
     export interface ClassJSON extends Component.JSON {
@@ -623,6 +624,8 @@ namespace KPIComponent {
         /**
          * A full set of chart options applied into KPI chart that is displayed
          * below the value.
+         *
+         * [Highcharts API](https://api.highcharts.com/highcharts/)
          */
         chartOptions?: Options;
         style?: CSSObject;
@@ -659,6 +662,7 @@ namespace KPIComponent {
         type?: SubtitleType;
     }
 
+    /** @internal */
     export type SubtitleType = 'text' | 'diff' | 'diffpercent';
     /** @internal */
     export interface ValueFormatterCallbackFunction {

@@ -694,20 +694,23 @@ namespace HighchartsComponent {
     *
     * */
 
+    /** @internal */
     export type ComponentType = HighchartsComponent;
 
+    /** @internal */
     export type ConstructorType = (
         'chart' | 'stockChart' | 'mapChart' | 'ganttChart'
     );
 
+    /** @internal */
     export type ChartComponentEvents =
         JSONEvent |
         Component.EventTypes;
 
+    /** @internal */
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: ClassJSON;
     }>;
-
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
 
         /**

@@ -363,6 +363,7 @@ namespace HTMLComponent {
     *
     * */
 
+    /** @internal */
     export type ComponentType = HTMLComponent;
     export interface HTMLComponentOptions extends Component.ComponentOptions, EditableOptions {
         /**
@@ -384,6 +385,8 @@ namespace HTMLComponent {
     export interface EditableOptions extends Component.EditableOptions {
         /**
          * Enables auto-scaling of the elements inside the component.
+         *
+         * @internal
          */
         scaleElements: boolean;
     }
@@ -393,6 +396,7 @@ namespace HTMLComponent {
         scaleElements: boolean;
     }
 
+    /** @internal */
     export type HTMLComponentEvents =
         Component.EventTypes | JSONEvent;
 
