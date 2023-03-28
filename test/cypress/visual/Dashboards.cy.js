@@ -4,7 +4,6 @@ describe('Dashboards climate demo visual tests', () => {
         cy.visit('/dashboards/demos/climate');
 
         cy.wait('@getTopo') // wait for data to be laoded
-        cy.board() // ensure dashboard is loaded
 
         cy.wait(500)
     })
@@ -33,7 +32,6 @@ describe('Test the rest',  ()=>{
         it('visually comparison after load ' + demo, ()=>{
             cy.visit(demo);
             cy.wait(1500); // TODO: should have a 'animationSettled' command
-            cy.board();
 
             cy.get('#demo-content')
                 .compareSnapshot(

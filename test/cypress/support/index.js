@@ -24,7 +24,7 @@ Cypress.Commands.add('board', () =>
         if (D) {
             if (D.boards[0]) {
                  resolve(D.boards[0]);
-            } else {
+            } else if(D.addEvent) {
                 const unbind = D.addEvent(D.Dashboards, 'load', function() {
                     unbind();
                     resolve(this);
