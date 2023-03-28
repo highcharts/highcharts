@@ -1022,17 +1022,21 @@ class RangeSelector {
         };
 
         // Hide away the input box
-        input.onblur = (): void => {
+        input.onblur = (e: any): void => {
             // update extermes only when inputs are active
             if (input === H.doc.activeElement) { // Only when focused
                 // Update also when no `change` event is triggered, like when
                 // clicking inside the SVG (#4710)
                 updateExtremes();
             }
-            // #10404 - move hide and blur outside focus
-            rangeSelector.hideInput(name);
-            rangeSelector.setInputValue(name);
-            input.blur(); // #4606
+            // Firefox calls the blur event on the datepicker click. Don't hide
+            // the input box if datepicker is clicked, #16556
+            if (!(H.isFirefox && e.target === e.explicitOriginalTarget)) {
+                // #10404 - move hide and blur outside focus
+                rangeSelector.hideInput(name);
+                rangeSelector.setInputValue(name);
+                input.blur(); // #4606
+            }
         };
 
         let keyDown = false;
