@@ -2,11 +2,11 @@ describe('Dashboards climate demo visual tests', () => {
     before(()=>{
         cy.intercept('/**/world.topo.json').as('getTopo');
         cy.visit('/dashboards/demos/climate');
-        cy.board()
         cy.wait('@getTopo') // wait for data to be laoded
     })
 
     it('Climate demo', () => {
+        cy.board()
         cy.get('#demo-content')
             .compareSnapshot('dashboard-climate-loaded', 0.1);
     })

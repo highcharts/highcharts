@@ -20,7 +20,6 @@ Cypress.Commands.add('pan', chartElement => {
 
 Cypress.Commands.add('board', () =>
     cy.window().its('Dashboards.boards').should('exist').then(boards =>{
-        console.log(boards)
         if(boards.length){
             return new Promise((resolve) =>{
                 const [board] = boards;
