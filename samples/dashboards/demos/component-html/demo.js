@@ -15,7 +15,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        type: 'html',
+        type: 'HTML',
         cell: 'dashboard-1',
         elements: [{
             tagName: 'img',
@@ -24,7 +24,7 @@ Dashboards.board('container', {
             }
         }]
     }, {
-        type: 'html',
+        type: 'HTML',
         cell: 'dashboard-2',
         elements: [{
             tagName: 'img',
@@ -33,7 +33,7 @@ Dashboards.board('container', {
             }
         }]
     }, {
-        type: 'html',
+        type: 'HTML',
         cell: 'dashboard-3',
         elements: [{
             tagName: 'h1',

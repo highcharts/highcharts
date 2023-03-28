@@ -22,6 +22,7 @@
 import Component from './Components/Component.js';
 import Board from './Board.js';
 import Sync from './Components/Sync/Sync.js';
+import ComponentRegistry from './Components/ComponentRegistry.js';
 
 /* *
  *
@@ -47,7 +48,7 @@ namespace PluginHandler {
     }
 
     export interface Event {
-        Component: typeof Component;
+        ComponentRegistry: typeof ComponentRegistry;
         Board: typeof Board;
         Sync: typeof Sync;
         revision: number;
@@ -109,8 +110,8 @@ namespace PluginHandler {
         }
 
         onRegister({
-            Component,
             Board,
+            ComponentRegistry,
             Sync,
             revision
         });
@@ -130,7 +131,7 @@ namespace PluginHandler {
 
         if (registry[key]) {
             registry[key].onUnregister({
-                Component,
+                ComponentRegistry: ComponentRegistry,
                 Board,
                 Sync,
                 revision

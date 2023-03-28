@@ -21,10 +21,17 @@
  * Imports
  *
  * */
-import type ComponentTypes from '../ComponentType';
+
+import type ComponentType from '../ComponentType';
 
 import SyncEmitter from './Emitter.js';
 import SyncHandler from './Handler.js';
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace Sync {
     export type EventType = 'visibility' | 'selection' | 'tooltip' | 'panning';
@@ -133,7 +140,7 @@ class Sync {
     /**
      * The component to which the emitters and handlers are attached.
      */
-    public component: ComponentTypes;
+    public component: ComponentType;
 
 
     /**
@@ -156,7 +163,7 @@ class Sync {
      * The emitters and handlers to use for each event.
      */
     constructor(
-        component: ComponentTypes,
+        component: ComponentType,
         syncHandlers: Sync.OptionsRecord = Sync.defaultHandlers
     ) {
         this.component = component;
@@ -254,5 +261,11 @@ class Sync {
     }
 
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Sync;

@@ -172,7 +172,7 @@ let board = new Dashboards.Board('container', {
         }
     }, {
         cell: 'dashboard-col-1',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {
@@ -240,7 +240,7 @@ let board = new Dashboards.Board('container', {
         }
     }, {
         cell: 'dashboard-col-3',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {
@@ -249,7 +249,7 @@ let board = new Dashboards.Board('container', {
         }]
     }, {
         cell: 'dashboard-col-31',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {
@@ -258,7 +258,7 @@ let board = new Dashboards.Board('container', {
         }]
     }, {
         cell: 'dashboard-col-32',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {

@@ -30,10 +30,12 @@ const {
     merge
 } = U;
 import AST from '../../Core/Renderer/HTML/AST.js';
+import ComponentRegistry from './ComponentRegistry.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 
 // TODO: This may affect the AST parsing in Highcharts
 // should look into adding these as options if possible
+// Needs to go in a composition in the Highcharts plugin
 AST.allowedTags = [
     ...AST.allowedTags,
     'option',
@@ -58,7 +60,8 @@ AST.allowedReferences = [...AST.allowedReferences, 'data:image/'];
  * Class that represents a HTML component.
  *
  */
-class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
+
+class HTMLComponent extends Component {
 
     /* *
      *
@@ -72,10 +75,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
+            type: 'HTML',
             scaleElements: false,
             elements: [],
             editableOptions:
-                Component.defaultOptions.editableOptions.concat([
+                Component.defaultOptions.editableOptions?.concat([
                     'scaleElements'
                 ]
                 )
@@ -112,7 +116,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
         const component = new HTMLComponent(
             merge(
-                options,
+                options as any,
                 {
                     elements
                     // connector: (
@@ -180,7 +184,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
 
         this.type = 'HTML';
         this.elements = [];
-        this.scaleElements = this.options.scaleElements;
+        this.scaleElements = !!this.options.scaleElements;
         this.sync = new Component.Sync(
             this,
             this.syncHandlers
@@ -335,8 +339,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEvents> {
             .map((el): string => JSON.stringify(el));
 
         const json = merge(
-            super.toJSON(),
-            { elements }
+            super.toJSON() as HTMLComponent.ClassJSON,
+            {
+                elements,
+                options: this.options
+            }
         );
 
         this.emit({
@@ -365,6 +372,7 @@ namespace HTMLComponent {
 
     /** @internal */
     export type ComponentType = HTMLComponent;
+
     export interface HTMLComponentOptions extends Component.ComponentOptions, EditableOptions {
         /**
          * Array of HTML elements, declared as string or node.
@@ -380,6 +388,7 @@ namespace HTMLComponent {
          * ```
          */
         elements?: (AST.Node | string)[];
+        type: 'HTML';
     }
     /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
@@ -388,12 +397,12 @@ namespace HTMLComponent {
          *
          * @internal
          */
-        scaleElements: boolean;
+        scaleElements?: boolean;
     }
     /** @internal */
-    export interface HTMLComponentJSONOptions extends Component.ComponentOptionsJSON {
-        elements: Array<JSON.Object>;
-        scaleElements: boolean;
+    export interface HTMLComponentOptionsJSON extends Component.ComponentOptionsJSON {
+        scaleElements?: boolean;
+        type: 'HTML'
     }
 
     /** @internal */
@@ -408,6 +417,13 @@ namespace HTMLComponent {
     export interface ClassJSON extends Component.JSON {
         elements?: string[];
         events?: string[];
+        options: HTMLComponentOptionsJSON;
+    }
+}
+
+declare module './ComponentType' {
+    interface ComponentTypeRegistry {
+        HTML: typeof HTMLComponent;
     }
 }
 

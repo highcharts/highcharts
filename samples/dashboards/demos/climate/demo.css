@@ -637,13 +637,15 @@ div.highcharts-dashboards-wrapper .highcharts-dashboards-edit-context-menu-btn {
 }
 
 .highcharts-dashboards-edit-toggle-wrapper-colored > .highcharts-dashboards-edit-toggle-slider,
-.highcharts-dashboards-edit-toggle-wrapper.hd-edit-toggle-wrapper-colored input:checked + .highcharts-dashboards-edit-toggle-slider {
-    background-color: #4A4A53;
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-toggle-wrapper.hd-edit-toggle-wrapper-colored
+input:checked + .highcharts-dashboards-edit-toggle-slider {
+    background-color: #4a4a53;
     border: 1px solid #838394;
 }
 
-.highcharts-dashboards-edit-toggle-wrapper-colored > .highcharts-dashboards-edit-toggle-slider:before {
-    background-color: #DADAE2;
+.highcharts-dashboards-edit-toggle-wrapper-colored > .highcharts-dashboards-edit-toggle-slider ::before {
+    background-color: #dadae2;
     height: 17px;
     width: 17px;
     left: 2px;

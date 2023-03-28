@@ -25,9 +25,9 @@ import type DataGrid from '../../DataGrid/DataGrid';
 import Component from '../../Dashboards/Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
-import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 const { createElement, merge, uniqueKey } = U;
+import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 
 /* *
  *
@@ -41,10 +41,11 @@ const { createElement, merge, uniqueKey } = U;
  * @class
  * @name Highcharts.DashboardComponent
  */
-class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents> {
+class DataGridComponent extends Component {
+
     /* *
      *
-     *  Static properties
+     *  Static Properties
      *
      * */
 
@@ -121,7 +122,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         const dataGridOptions = JSON.parse(json.options.dataGridOptions || '');
 
         const component = new DataGridComponent(
-            merge(options, {
+            merge<DataGridComponent.ComponentOptions>(options as any, {
                 dataGridOptions,
                 syncHandlers: DataGridComponent.syncHandlers
             })
@@ -144,7 +145,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     public dataGrid?: DataGrid;
     public dataGridContainer: HTMLElement;
     public dataGridOptions: Partial<Options>;
-    public options: DataGridComponent.DataGridOptions;
+    public options: DataGridComponent.ComponentOptions;
     public sync: Component['sync'];
 
     /* *
@@ -153,12 +154,12 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
-    constructor(options: Partial<DataGridComponent.DataGridOptions>) {
+    constructor(options: Partial<DataGridComponent.ComponentOptions>) {
         options = merge(DataGridComponent.defaultOptions, options);
 
         super(options);
 
-        this.options = options as DataGridComponent.DataGridOptions;
+        this.options = options as DataGridComponent.ComponentOptions;
         this.type = 'DataGrid';
         this.dataGridContainer = createElement(
             'figure',
@@ -278,7 +279,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
     }
 
-    public update(options: Partial<DataGridComponent.DataGridOptions>): this {
+    public update(options: Partial<DataGridComponent.ComponentOptions>): this {
         super.update(options);
         if (this.dataGrid) {
             this.dataGrid.update(this.options.dataGridOptions || ({} as any));
@@ -363,7 +364,7 @@ namespace DataGridComponent {
     }
     >;
 
-    export interface DataGridOptions
+    export interface ComponentOptions
         extends Component.ComponentOptions,
         EditableOptions {
         /**
@@ -375,14 +376,15 @@ namespace DataGridComponent {
          */
         dataGridID?: string;
         /** @internal */
-        onUpdate: typeof DataGridComponent.onUpdate
+        onUpdate: typeof DataGridComponent.onUpdate;
+        type: 'DataGrid';
     }
     /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
+        dataGridOptions?: ComponentOptions;
         /**
          * The set of options like `dataGridClassName` and `dataGridID`.
          */
-        dataGridOptions?: DataGridOptions;
         /**
          * The name of class that is applied to the chart's container.
          */
@@ -417,7 +419,8 @@ namespace DataGridComponent {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
+
 export default DataGridComponent;

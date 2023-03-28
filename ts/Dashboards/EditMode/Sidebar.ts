@@ -14,7 +14,15 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Component from '../Components/Component';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
+import type MenuItem from './Menu/MenuItem';
 
 import EditMode from './EditMode.js';
 import U from '../../Core/Utilities.js';
@@ -22,7 +30,6 @@ import Cell from '../Layout/Cell.js';
 import Row from '../Layout/Row.js';
 import EditGlobals from './EditGlobals.js';
 import Menu from './Menu/Menu.js';
-import type MenuItem from './Menu/MenuItem.js';
 import Globals from '../Globals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
@@ -33,9 +40,9 @@ import DataTable from '../../Data/DataTable.js';
 import CSVConnector from '../../Data/Connectors/CSVConnector.js';
 
 const {
-    merge,
     createElement,
-    addEvent
+    addEvent,
+    merge
 } = U;
 
 class Sidebar {
@@ -117,7 +124,7 @@ class Sidebar {
                 }
 
                 Bindings.addComponent({
-                    type: 'html',
+                    type: 'HTML',
                     cell: cellName,
                     elements: [
                         {
@@ -161,7 +168,7 @@ class Sidebar {
                     if (sidebar && dropContext) {
                         return sidebar.onDropNewComponent(dropContext, {
                             cell: '',
-                            type: 'html',
+                            type: 'HTML',
                             elements: [{
                                 tagName: 'img',
                                 attributes: {
@@ -1052,11 +1059,14 @@ class Sidebar {
         }
 
         if (savedSettings.chartType) {
-            updatedSettings.chartOptions = merge(updatedSettings.chartOptions, {
-                chart: {
-                    type: savedSettings.chartType
+            updatedSettings.chartOptions = merge(
+                updatedSettings.chartOptions,
+                {
+                    chart: {
+                        type: savedSettings.chartType
+                    }
                 }
-            });
+            );
         }
 
         if (mountedComponent) {
@@ -1066,7 +1076,7 @@ class Sidebar {
 
     public onDropNewComponent(
         dropContext: Cell|Row,
-        componentOptions: Bindings.ComponentOptions
+        componentOptions: Partial<Component.ComponentOptions>
     ): Cell | void {
         const sidebar = this,
             dragDrop = sidebar.editMode.dragDrop;

@@ -389,9 +389,9 @@
     border: none;
     display: inline-block;
     text-transform: uppercase;
-    padding: 0px 5px;
+    padding: 0 5px;
     float: right;
-    margin: 0px;
+    margin: 0;
     width: auto;
     margin-top: 16px;
     line-height: 1em;
