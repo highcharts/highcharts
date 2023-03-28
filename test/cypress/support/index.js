@@ -40,7 +40,10 @@ Cypress.Commands.add('boardRendered', () =>
                     setInterval(()=>{
                         // If highcharts component, wait for chart to be rendered
                         if(component.type === 'Highcharts'){
-                            if(component.chart.hasRendered){
+                            if(
+                                component.chart.hasRendered &&
+                                component.chart.series.every(series => series.hasRendered && series.finishedAnimating)){
+
                                 resolve(component)
                             }
 
