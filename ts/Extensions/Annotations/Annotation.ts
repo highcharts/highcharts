@@ -826,14 +826,15 @@ class Annotation extends EventEmitter implements Controllable {
                 userOptions
             ),
             userOptionsIndex = chart.annotations.indexOf(this),
-            options = merge(true, this.userOptions, userOptions);
+            options = merge(true, this.userOptions, userOptions),
+            Constructor: any = this.constructor;
 
         options.labels = labelsAndShapes.labels;
         options.shapes = labelsAndShapes.shapes;
 
         this.destroy();
-        this.constructor(chart, options);
-
+        const newAnnotation = new Constructor(chart, options);
+        merge(true, this as any, newAnnotation);
         // Update options in chart options, used in exporting (#9767):
         chart.options.annotations[userOptionsIndex] = options;
 
@@ -860,27 +861,24 @@ interface Annotation extends Controllable {
     translate(dx: number, dy: number): void;
 }
 
-merge<Annotation>(
-    true,
-    Annotation.prototype,
-    Controllable.prototype as any,
-    // restore original Annotation implementation after mixin overwrite:
-    merge(
-        Annotation.prototype,
-        {
-            /**
-             * List of events for `annotation.options.events` that should not be
-             * added to `annotation.graphic` but to the `annotation`.
-             *
-             * @private
-             * @type {Array<string>}
-             */
-            nonDOMEvents: ['add', 'afterUpdate', 'drag', 'remove'],
+// Mix in the Controllable, but only those methods that are not present on the
+// Annotation prototype.
+for (const key of Object.getOwnPropertyNames(Controllable.prototype)) {
+    if (!(key in Annotation.prototype)) {
+        (Annotation.prototype as any)[key] =
+            (Controllable.prototype as any)[key];
+    }
+}
 
-            defaultOptions: AnnotationDefaults
-        }
-    )
-);
+/**
+ * List of events for `annotation.options.events` that should not be
+ * added to `annotation.graphic` but to the `annotation`.
+ *
+ * @private
+ * @type {Array<string>}
+ */
+Annotation.prototype.nonDOMEvents = ['add', 'afterUpdate', 'drag', 'remove'];
+(Annotation.prototype as any).defaultOptions = AnnotationDefaults;
 
 /* *
  *

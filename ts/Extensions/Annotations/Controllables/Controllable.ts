@@ -589,10 +589,18 @@ abstract class Controllable {
     ): void {
         const annotation = this.annotation,
             options = merge(true, this.options, newOptions),
-            parentGroup = this.graphic.parentGroup;
+            parentGroup = this.graphic.parentGroup,
+            Constructor: any = this.constructor;
 
         this.destroy();
-        this.constructor(annotation, options, this.index, this.itemType);
+        const newControllable = new Constructor(
+            annotation,
+            options,
+            this.index,
+            this.itemType
+        );
+        merge(true, this as any, newControllable);
+
         this.render(parentGroup);
         this.redraw();
     }

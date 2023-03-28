@@ -222,7 +222,8 @@ namespace PlotLineOrBandAxis {
                     addPlotBandOrLine,
                     getPlotBandPath,
                     removePlotBand,
-                    removePlotLine
+                    removePlotLine,
+                    removePlotBandOrLine
                 }
             );
         }

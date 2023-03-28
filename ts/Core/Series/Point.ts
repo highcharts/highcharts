@@ -414,8 +414,19 @@ class Point {
                 removeEvent(point);
                 point.destroyElements();
             }
+            // make properties nulls and inherit methods in prototype chain
+            let parentClass = Object.getPrototypeOf(point);
+            let props = [
+                ...Object.getOwnPropertyNames(point),
+                ...Object.getOwnPropertyNames(parentClass)
+            ];
 
-            for (prop in point) { // eslint-disable-line guard-for-in
+            do {
+                parentClass = Object.getPrototypeOf(parentClass);
+                props = props.concat(Object.getOwnPropertyNames(parentClass));
+            } while (parentClass instanceof Point);
+
+            for (prop of props) {
                 (point as any)[prop] = null;
             }
         }
