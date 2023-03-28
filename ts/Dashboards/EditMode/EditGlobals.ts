@@ -66,6 +66,8 @@ const EditGlobals: EditGlobals = {
         customSelect: PREFIX + 'custom-select',
         toggleWrapper: PREFIX + 'toggle-wrapper',
         toggleSlider: PREFIX + 'toggle-slider',
+        toggleWrapperColored: PREFIX + 'toggle-wrapper-colored',
+        toggleLabels: PREFIX + 'toggle-labels',
         button: PREFIX + 'button',
         sidebarNavButton: PREFIX + 'sidebar-button-nav',
         labelText: PREFIX + 'label-text',
@@ -106,7 +108,9 @@ const EditGlobals: EditGlobals = {
         confirmButton: 'Confirm',
         cancelButton: 'Cancel',
         viewFullscreen: 'View in full screen',
-        exitFullscreen: 'Exit full screen'
+        exitFullscreen: 'Exit full screen',
+        on: 'on',
+        off: 'off'
     }
 };
 
@@ -196,6 +200,8 @@ namespace EditGlobals {
         cancelButton?: string;
         viewFullscreen?: string;
         exitFullscreen?: string;
+        on: string;
+        off: string;
     }
 
     export type TLangKeys = 'editMode'|'verticalSeparator';

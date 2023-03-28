@@ -635,3 +635,17 @@ div.highcharts-dashboards-wrapper .highcharts-dashboards-edit-context-menu-btn {
 .highcharts-dashboards-wrapper > .highcharts-dashboards-edit-drop-pointer {
     background: #ff8d64;
 }
+
+.highcharts-dashboards-edit-toggle-wrapper-colored > .highcharts-dashboards-edit-toggle-slider,
+.highcharts-dashboards-edit-toggle-wrapper.hd-edit-toggle-wrapper-colored input:checked + .highcharts-dashboards-edit-toggle-slider {
+    background-color: #4A4A53;
+    border: 1px solid #838394;
+}
+
+.highcharts-dashboards-edit-toggle-wrapper-colored > .highcharts-dashboards-edit-toggle-slider:before {
+    background-color: #DADAE2;
+    height: 17px;
+    width: 17px;
+    left: 2px;
+    bottom: 2px;
+}
