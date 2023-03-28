@@ -317,36 +317,55 @@ function renderToggle(
     parentElement: HTMLDOMElement,
     options: FormField
 ): HTMLDOMElement|undefined {
-    let toggle;
 
-    if (parentElement) {
+    if (!parentElement) {
+        return;
+    }
 
-        if (options.title) {
-            renderText(
-                parentElement,
-                options.title
-            );
-        }
-
-        toggle = createElement(
-            'label',
-            {
-                className: EditGlobals.classNames.toggleWrapper
-            },
-            {},
-            parentElement
+    if (options.title) {
+        renderText(
+            parentElement,
+            options.title
         );
+    }
 
-        renderCheckbox(toggle);
+    if (options.enabledOnOffLabels) {
+        EditRenderer.renderText(
+            parentElement,
+            EditGlobals.lang.on,
+            void 0,
+            EditGlobals.classNames.toggleLabels
+        );
+    }
 
-        createElement(
-            'span',
-            {
-                className: EditGlobals.classNames.toggleSlider,
-                onclick: options.callback
-            },
-            {},
-            toggle
+    const toggle = createElement(
+        'label',
+        {
+            className: EditGlobals.classNames.toggleWrapper +
+            ' ' + (options.className || '')
+        },
+        {},
+        parentElement
+    );
+
+    renderCheckbox(toggle);
+
+    createElement(
+        'span',
+        {
+            className: EditGlobals.classNames.toggleSlider,
+            onclick: options.callback
+        },
+        {},
+        toggle
+    );
+
+    if (options.enabledOnOffLabels) {
+        EditRenderer.renderText(
+            parentElement,
+            EditGlobals.lang.off,
+            void 0,
+            EditGlobals.classNames.toggleLabels
         );
     }
 
@@ -370,14 +389,16 @@ function renderToggle(
 function renderText(
     parentElement: HTMLDOMElement,
     text: string,
-    callback?: Function
+    callback?: Function,
+    className?: string
 ): HTMLDOMElement|undefined {
     let textElem;
 
     if (parentElement) {
         textElem = createElement(
             'div', {
-                className: EditGlobals.classNames.labelText,
+                className: EditGlobals.classNames.labelText +
+                        ' ' + (className || ''),
                 textContent: text,
                 onclick: callback
             }, {},
@@ -761,6 +782,8 @@ export interface FormField {
     title?: string;
     onchange?: Function;
     value?: string;
+    className?: string;
+    enabledOnOffLabels?: boolean;
 }
 
 export interface SelectFormField extends FormField {
