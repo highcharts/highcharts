@@ -309,7 +309,6 @@ function renderToggle(
     parentElement: HTMLDOMElement,
     options: FormField
 ): HTMLDOMElement|undefined {
-    let toggle;
 
     if (!parentElement) {
         return;
@@ -331,7 +330,7 @@ function renderToggle(
         );
     }
 
-    toggle = createElement(
+    const toggle = createElement(
         'label',
         {
             className: EditGlobals.classNames.toggleWrapper +
