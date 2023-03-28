@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     chart: {
-        height: '80%',
+        height: '100%',
         type: 'heatmap',
         plotBackgroundImage: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@3c36bd6dc1/samples/graphics/example-screenshot.png'
     },
@@ -43,11 +43,11 @@ Highcharts.chart('container', {
     responsive: {
         rules: [{
             condition: {
-                maxWidth: 800
+                minWidth: 600
             },
             chartOptions: {
                 chart: {
-                    height: '60%'
+                    height: 550
                 }
             }
         }]

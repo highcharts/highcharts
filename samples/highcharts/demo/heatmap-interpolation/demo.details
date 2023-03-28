@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Heatmap with interpolation
  authors:
    - Markus Knutson Barstad
  js_wrap: b
