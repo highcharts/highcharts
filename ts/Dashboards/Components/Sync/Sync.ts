@@ -74,7 +74,7 @@ class Sync {
 
     /**
      * Add new emmiter to the registered emitters.
-     * @param emitter 
+     * @param emitter
      The emitter to register.
      */
     public registerSyncEmitter(emitter: SyncEmitter): void {
