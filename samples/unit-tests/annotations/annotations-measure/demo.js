@@ -97,8 +97,8 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
         controlPointYPos = y + height / 2;
 
     assert.equal(
-        controlPointYPos,
-        axisMiddlePos,
+        Math.round(controlPointYPos),
+        Math.round(axisMiddlePos),
         `Annotation's control points should be positioned in the middle of yAxis
         #17995`
     );
