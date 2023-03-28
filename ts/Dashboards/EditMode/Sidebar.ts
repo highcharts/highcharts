@@ -46,18 +46,6 @@ const {
 } = U;
 
 class Sidebar {
-    /* *
-    *
-    *  Static Properties
-    *
-    * */
-    protected static readonly defaultOptions: Sidebar.Options = {
-        enabled: true,
-        className: 'test',
-        dragIcon: EditGlobals.iconsURL + '/drag.svg',
-        closeIcon: EditGlobals.iconsURL + '/close.svg'
-    };
-
     public static tabs: Array<Sidebar.TabOptions> = [{
     // {
     //     type: 'design',
@@ -389,14 +377,21 @@ class Sidebar {
     *  Constructor
     *
     * */
-    constructor(editMode: EditMode) {
+    constructor(
+        editMode: EditMode
+    ) {
+        this.editMode = editMode;
+
         this.tabs = {};
         this.isVisible = false;
         this.options = merge(
-            Sidebar.defaultOptions,
+            {
+                enabled: true,
+                className: 'test',
+                closeIcon: this.editMode.iconsURLPrefix + 'close.svg'
+            },
             (editMode.options.toolbars || {}).settings
         );
-        this.editMode = editMode;
 
         this.container = this.renderContainer();
 
@@ -1116,10 +1111,12 @@ class Sidebar {
             definedWidth = cellRwd && cellRwd.width || cell.options.width;
 
         if (definedWidth && definedWidth !== 'auto') {
-            const percentageValue = GUIElement.getPercentageWidth(definedWidth);
+            const percentageValue = typeof definedWidth === 'number' ?
+                definedWidth :
+                parseFloat(GUIElement.getPercentageWidth(definedWidth) || '');
 
             if (percentageValue) {
-                return Math.round(parseFloat(percentageValue) * 100) / 100;
+                return Math.round(percentageValue * 100) / 100;
             }
         }
 
@@ -1184,7 +1181,6 @@ namespace Sidebar {
     export interface Options {
         enabled: boolean;
         className: string;
-        dragIcon: string;
         closeIcon: string;
     }
 

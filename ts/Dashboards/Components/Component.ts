@@ -1328,8 +1328,6 @@ namespace Component {
      */
     /** @internal */
     export const instanceRegistry: Record<string, ComponentType> = {};
-
-
     /* *
     *
     *  Functions
@@ -1338,6 +1336,8 @@ namespace Component {
 
     /**
      * Adds component to the registry.
+     *
+     * @internal
      *
      * @internal
      * Adds a component instance to the registry.
@@ -1416,11 +1416,6 @@ namespace Component {
      * @param message
      * The message. It can be a string, or a an object containing a
      * `callback` function.
-     *
-     * @param targetObj
-     * An object containing the `type` of target,
-     * which can be `group`, `componentID`, or `componentType`
-     * as well as the id of the recipient.
      *
      * @param targetObj
      * An object containing the `type` of target,
