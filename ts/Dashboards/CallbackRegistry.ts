@@ -38,6 +38,7 @@ class CallbackRegistry {
         return this.registry[id];
     }
 
+    /** @internal */
     public toJSON(): Record<string, CallbackJSON> {
 
         const json: Record<string, CallbackJSON> = {};

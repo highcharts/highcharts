@@ -1042,6 +1042,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
 
     /**
      * Converts the class instance to a class JSON.
+     * @internal
      *
      * @returns
      * Class JSON of this Component instance.
@@ -1088,6 +1089,7 @@ namespace Component {
     *  Declarations
     *
     * */
+
     /** @internal */
     export interface JSON extends Serializable.JSON<string> {
         // connector?: DataConnector.ClassJSON;
@@ -1135,6 +1137,7 @@ namespace Component {
             target: string;
         };
     }>;
+
     /** @internal */
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
         json: Serializable.JSON<string>;
@@ -1209,8 +1212,10 @@ namespace Component {
         sync: SyncOptions;
     }
 
-    // JSON compatible options for export
-    /** @internal */
+    /**
+     * JSON compatible options for export
+     * @internal
+     *  */
     export interface ComponentOptionsJSON extends JSON.Object {
         // connector?: DataConnector.ClassJSON; // connector id
         parentElement: string; // ID?
