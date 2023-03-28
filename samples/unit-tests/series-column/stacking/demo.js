@@ -1,27 +1,25 @@
 QUnit.test(
     'Negative stack with just one point should be also calculate (#4979)',
     function (assert) {
-        var chart = $('#container')
-                .highcharts({
-                    chart: {
-                        type: 'column'
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+                plotOptions: {
+                    column: {
+                        borderWidth: 0,
+                        stacking: 'percent'
+                    }
+                },
+                series: [
+                    {
+                        data: [-10]
                     },
-                    plotOptions: {
-                        column: {
-                            borderWidth: 0,
-                            stacking: 'percent'
-                        }
-                    },
-                    series: [
-                        {
-                            data: [-10]
-                        },
-                        {
-                            data: [10]
-                        }
-                    ]
-                })
-                .highcharts(),
+                    {
+                        data: [10]
+                    }
+                ]
+            }),
             oldHeight = chart.series[0].points[0].graphic.getBBox(true).height;
 
         chart.series[0].addPoint(-10, false);
@@ -36,9 +34,7 @@ QUnit.test(
 );
 
 QUnit.test('Column outside plot area(#4264)', function (assert) {
-    var chart;
-
-    $('#container').highcharts({
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
             zoomType: 'xy'
@@ -111,8 +107,6 @@ QUnit.test('Column outside plot area(#4264)', function (assert) {
             }
         ]
     });
-
-    chart = $('#container').highcharts();
 
     assert.equal(
         chart.series[0].points[0].graphic.attr('y') +
