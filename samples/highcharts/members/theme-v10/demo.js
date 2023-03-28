@@ -18,7 +18,7 @@ Highcharts.setOptions({
         }
     },
     plotOptions: {
-        series: {
+        area: {
             lineWidth: 2
         },
         column: {
@@ -29,6 +29,12 @@ Highcharts.setOptions({
             dataLabels: {
                 connectorShape: 'fixedOffset'
             }
+        },
+        line: {
+            lineWidth: 2
+        },
+        spline: {
+            lineWidth: 2
         }
     },
     tooltip: {
@@ -68,48 +74,72 @@ Highcharts.setOptions({
         },
         maxColor: '#003399',
         minColor: '#e6ebf5'
+    },
+    scrollbar: {
+        barBorderRadius: 0,
+        barBorderWidth: 1,
+        buttonsEnabled: true,
+        height: 14,
+        margin: 0,
+        rifleColor: '#333',
+        trackBackgroundColor: '#f2f2f2',
+        trackBorderRadius: 0
     }
-});
-
-Highcharts.chart('container-1', {
-
-    title: {
-        text: 'Line and column'
-    },
-
-    xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
-    },
-
-    colorAxis: undefined,
-
-    series: [{
-        data: [1, 4, 3, 5, 4, 6],
-        type: 'column'
-    }, {
-        data: [3, 2, 1, 5, 4, 2]
-    }]
-});
-
-Highcharts.chart('container-2', {
-
-    chart: {
-        type: 'pie'
-    },
-
-    title: {
-        text: 'Pie chart'
-    },
-
-    colorAxis: undefined,
-
-    series: [{
-        data: [9, 8, 7, 6, 5, 4, 3, 2, 1]
-    }]
 });
 
 (async () => {
 
+    Highcharts.chart('container-1', {
+
+        title: {
+            text: 'Line and column'
+        },
+
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+        },
+
+        colorAxis: undefined,
+
+        series: [{
+            data: [1, 4, 3, 5, 4, 6],
+            type: 'column',
+            name: 'Items'
+        }, {
+            data: [3, 2, 1, 5, 4, 2],
+            name: 'Trend'
+        }]
+    });
+
+    Highcharts.chart('container-2', {
+
+        chart: {
+            type: 'pie'
+        },
+
+        title: {
+            text: 'Pie chart'
+        },
+
+        colorAxis: undefined,
+
+        series: [{
+            data: [
+                ['Spain', 9],
+                ['France', 8],
+                ['Italy', 7],
+                ['Greece', 6],
+                ['Turkey', 5],
+                ['Portugal', 4],
+                ['Switzerland', 3],
+                ['Andorra', 2],
+                ['Austria', 1]
+            ],
+            name: 'Items'
+        }]
+    });
+
+    // Map chart
     const topology = await fetch(
         'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
     ).then(response => response.json());
@@ -172,4 +202,27 @@ Highcharts.chart('container-2', {
             }
         }]
     });
+
+    // Stock chart
+    const ohlcData = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlc.json'
+    ).then(response => response.json());
+
+    // create the chart
+    Highcharts.stockChart('container-4', {
+        rangeSelector: {
+            selected: 1
+        },
+
+        title: {
+            text: 'Stock chart'
+        },
+
+        series: [{
+            type: 'candlestick',
+            name: 'AAPL Stock Price',
+            data: ohlcData
+        }]
+    });
+
 })();
