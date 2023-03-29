@@ -26,6 +26,7 @@ import type Axis from '../../Core/Axis/Axis.js';
 import type Chart from '../../Core/Chart/Chart';
 import type Point from '../../Core/Series/Point';
 import type RangeModifier from '../../Data/Modifiers/RangeModifier';
+import type Series from '../../Core/Series/Series';
 import type SharedState from '../../Dashboards/Components/SharedComponentState';
 import type Sync from '../../Dashboards/Components/Sync/Sync';
 import type DataCursor from '../../Data/DataCursor';
@@ -198,7 +199,7 @@ const configs: {
                                                 {
                                                     type: 'position',
                                                     state: 'series.show',
-                                                    column: this.index
+                                                    column: this.name
                                                 }
                                             );
                                         },
@@ -208,7 +209,7 @@ const configs: {
                                                 {
                                                     type: 'position',
                                                     state: 'series.hide',
-                                                    column: this.index
+                                                    column: this.name
                                                 }
                                             );
                                         }
@@ -364,13 +365,27 @@ const configs: {
                 if (store && chart && board) {
                     const { dataCursor } = board;
 
+                    const findSeries = (seriesArray: Series[], name: string): Series | undefined => {
+                        for (const series of seriesArray) {
+                            if (series.name === name) {
+                                return series;
+                            }
+                        }
+                    };
+
                     dataCursor.addListener(store.table.id, 'series.show', (e): void => {
                         if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
-                            chart.series[parseInt(e.cursor.column, 10)].setVisible(true, true);
+                            const series = findSeries(chart.series, e.cursor.column);
+                            if (series) {
+                                series.setVisible(true, true);
+                            }
                         }
                     }).addListener(store.table.id, 'series.hide', (e): void => {
                         if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
-                            chart.series[parseInt(e.cursor.column, 10)].setVisible(false, true);
+                            const series = findSeries(chart.series, e.cursor.column);
+                            if (series) {
+                                series.setVisible(false, true);
+                            }
                         }
                     });
                 }
