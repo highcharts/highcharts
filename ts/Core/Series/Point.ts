@@ -396,8 +396,8 @@ class Point {
             dataSorting = series.options.dataSorting,
             hoverPoints = chart.hoverPoints,
             globalAnimation = point.series.chart.renderer.globalAnimation,
-            animation = animObject(globalAnimation);
-        let prop;
+            animation = animObject(globalAnimation),
+            noop = (): void => {};
 
         /**
          * Allow to call after animation.
@@ -414,20 +414,10 @@ class Point {
                 removeEvent(point);
                 point.destroyElements();
             }
-            // make properties nulls and inherit methods in prototype chain
-            let parentClass = Object.getPrototypeOf(point);
-            let props = [
-                ...Object.getOwnPropertyNames(point),
-                ...Object.getOwnPropertyNames(parentClass)
-            ];
 
-            do {
-                parentClass = Object.getPrototypeOf(parentClass);
-                props = props.concat(Object.getOwnPropertyNames(parentClass));
-            } while (parentClass instanceof Point);
-
-            for (prop of props) {
-                (point as any)[prop] = null;
+            for (const prop in point) { // eslint-disable-line guard-for-in
+                delete point[prop];
+                point.destroy = noop;
             }
         }
 
