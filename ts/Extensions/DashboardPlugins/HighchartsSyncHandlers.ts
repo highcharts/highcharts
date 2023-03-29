@@ -103,8 +103,8 @@ const configs: {
     emitters: Record<string, Sync.EmitterConfig>;
 } = {
     emitters: {
-        tooltipEmitter: [
-            'tooltipEmitter',
+        highlightEmitter: [
+            'highlightEmitter',
             function (this: ComponentType): Function | void {
                 if (this.type === 'Highcharts') {
                     const { chart, board } = this as HighchartsComponent;
@@ -360,7 +360,7 @@ const configs: {
                 }
             }
         ],
-        tooltipHandler:
+        highlightHandler:
             function (this: HighchartsComponent): void {
                 const { chart, board } = this;
                 const table = this.connector && this.connector.table;
@@ -498,7 +498,7 @@ const configs: {
 const defaults: Sync.OptionsRecord = {
     panning: { emitter: configs.emitters.panEmitter, handler: configs.handlers.selectionHandler },
     selection: { emitter: configs.emitters.extremesEmitter, handler: configs.handlers.extremesHandler },
-    tooltip: { emitter: configs.emitters.tooltipEmitter, handler: configs.handlers.tooltipHandler },
+    highlight: { emitter: configs.emitters.highlightEmitter, handler: configs.handlers.highlightHandler },
     visibility: { emitter: configs.emitters.seriesVisibilityEmitter, handler: configs.handlers.seriesVisibilityHandler }
 };
 

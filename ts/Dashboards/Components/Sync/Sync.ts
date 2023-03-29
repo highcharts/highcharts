@@ -34,7 +34,11 @@ import SyncHandler from './Handler.js';
  * */
 
 namespace Sync {
-    export type EventType = 'visibility' | 'selection' | 'tooltip' | 'panning';
+    export type EventType =
+        'visibility' |
+        'selection' |
+        'highlight' |
+        'panning';
 
     export type EmitterConfig = [
         SyncEmitter['id'],
