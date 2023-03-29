@@ -24,10 +24,12 @@
  *
  * */
 
+import type Component from './Components/Component';
 import type DataPoolOptions from '../Data/DataPoolOptions';
 import type JSON from '../Core/JSON';
 
 import Bindings from './Actions/Bindings.js';
+import ComponentRegistry from './Components/ComponentRegistry.js';
 import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
 import DataCursor from '../Data/DataCursor.js';
 import DataCursorHelper from './SerializeHelper/DataCursorHelper.js';
@@ -38,6 +40,7 @@ import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
 import U from '../Core/Utilities.js';
+import HTMLComponent from './Components/HTMLComponent.js';
 const {
     merge,
     addEvent,
@@ -259,7 +262,7 @@ class Board implements Serializable<Board, Board.JSON> {
     /**
      * An array of mounted components on the dashboard.
      * */
-    public mountedComponents: Array<Bindings.MountedComponentsOptions>;
+    public mountedComponents: Array<Bindings.MountedComponent>;
 
     /**
      * The options for the dashboard.
@@ -371,7 +374,7 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      */
     private setComponents(
-        components: Array<Bindings.ComponentOptions>
+        components: Array<Component.ComponentOptions>
     ): void {
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             Bindings.addComponent(components[i]);
@@ -499,7 +502,8 @@ class Board implements Serializable<Board, Board.JSON> {
             board = new Board(
                 options.containerId,
                 {
-                    componentOptions: options.componentOptions,
+                    componentOptions: options.componentOptions as
+                        Partial<Component.ComponentOptions>,
                     responsiveBreakpoints: options.responsiveBreakpoints,
                     dataPool: options.dataPool,
                     layoutsJSON: options.layouts
@@ -533,7 +537,8 @@ class Board implements Serializable<Board, Board.JSON> {
                 dataPool: board.options.dataPool as DataPoolOptions&JSON.Object,
                 guiEnabled: board.guiEnabled,
                 layouts: layouts,
-                componentOptions: board.options.componentOptions,
+                componentOptions: board.options.componentOptions as
+                    Partial<Component.ComponentOptionsJSON>,
                 responsiveBreakpoints: board.options.responsiveBreakpoints
             }
         };
@@ -576,11 +581,11 @@ namespace Board {
         /**
          * List of components to add to the board.
          **/
-        components?: Array<Bindings.ComponentOptions>;
+        components?: Array<Component.ComponentOptions>;
         /**
          * General options for the components.
          **/
-        componentOptions?: Partial<Bindings.ComponentOptions>;
+        componentOptions?: Partial<Component.ComponentOptions>;
         /**
          * A list of serialized layouts to add to the board.
          * @internal
@@ -598,6 +603,14 @@ namespace Board {
      **/
     export interface OptionsJSON extends JSON.Object {
         /**
+         * General options for the components in JSON format.
+         **/
+        componentOptions?: Partial<Component.ComponentOptionsJSON>;
+        /**
+         * List of components to add to the board in JSON fromat.
+         **/
+        components?: Array<Component.ComponentOptionsJSON>;
+        /**
          * Id of the container to which the board is added.
          **/
         containerId: string;
@@ -614,10 +627,6 @@ namespace Board {
          * Whether the GUI is enabled or not.
          **/
         guiEnabled?: boolean;
-        /**
-         * General options for the components.
-         **/
-        componentOptions?: Partial<Bindings.ComponentOptions>;
         /**
          * Responsive breakpoints for the board - small, medium and large.
          **/
@@ -702,6 +711,10 @@ namespace Board {
         }
     };
 
+    /**
+     * @internal
+     */
+    export const componentTypes = ComponentRegistry.types;
 
     /* *
      *
@@ -739,6 +752,7 @@ namespace Board {
  * */
 
 Serializable.registerClassPrototype('Board', Board.prototype);
+ComponentRegistry.registerComponent(HTMLComponent);
 
 /* *
  *

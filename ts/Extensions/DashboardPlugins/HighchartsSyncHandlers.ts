@@ -30,7 +30,7 @@ import type SharedState from '../../Dashboards/Components/SharedComponentState';
 import type Sync from '../../Dashboards/Components/Sync/Sync';
 import type DataCursor from '../../Data/DataCursor';
 
-import ComponentTypes from '../../Dashboards/Components/ComponentType';
+import ComponentType from '../../Dashboards/Components/ComponentType';
 import ComponentGroup from '../../Dashboards/Components/ComponentGroup.js';
 import HighchartsComponent from './HighchartsComponent.js';
 import U from '../../Core/Utilities.js';
@@ -39,16 +39,9 @@ const { addEvent } = U;
 
 /* *
  *
- *  Declarations
+ *  Constants
  *
  * */
-
-declare global {
-    interface Window {
-        HighchartsComponent?: typeof HighchartsComponent;
-    }
-}
-
 
 /**
  *
@@ -112,9 +105,9 @@ const configs: {
     emitters: {
         highlightEmitter: [
             'highlightEmitter',
-            function (this: ComponentTypes): Function | void {
-                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
-                    const { chart, board } = this;
+            function (this: ComponentType): Function | void {
+                if (this.type === 'Highcharts') {
+                    const { chart, board } = this as HighchartsComponent;
                     const table = this.connector && this.connector.table;
 
                     if (board && table) {
@@ -184,9 +177,9 @@ const configs: {
         ],
         seriesVisibilityEmitter: [
             'seriesVisibilityEmitter',
-            function (this: ComponentTypes): Function | void {
-                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
-                    const component = this;
+            function (this: ComponentType): Function | void {
+                if (this.type === 'Highcharts') {
+                    const component = this as HighchartsComponent;
                     return addEvent(component.chart, 'redraw', function (): void {
                         const { chart, connector: store, id, activeGroup } = component;
                         if (
@@ -215,9 +208,9 @@ const configs: {
         ],
         panEmitter: [
             'panEmitter',
-            function (this: ComponentTypes): Function | void {
-                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
-                    const { connector: store, chart, id } = this;
+            function (this: ComponentType): Function | void {
+                if (this.type === 'Highcharts') {
+                    const { connector: store, chart, id } = this as HighchartsComponent;
                     if (store && chart) {
                         const ticks: number[] = [];
                         return addEvent(chart, 'pan', (): void => {
@@ -251,13 +244,13 @@ const configs: {
             }
         ],
         extremesEmitter:
-            function (this: ComponentTypes): Function | void {
-                if (this instanceof (HighchartsComponent || window.HighchartsComponent)) {
+            function (this: ComponentType): Function | void {
+                if (this.type === 'Highcharts') {
                     const {
                         chart,
                         board,
                         connector: store
-                    } = this;
+                    } = this as HighchartsComponent;
 
                     let chartResetSelectionCallback: Function;
                     let chartShowResetButtonCallback: Function;

@@ -24,7 +24,16 @@
 
 import type Board from '../Board';
 import type Cell from '../Layout/Cell';
-import type ComponentType from './ComponentType';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    ComponentType,
+    ComponentTypeRegistry
+} from './ComponentType';
 import type JSON from '../../Core/JSON';
 import type NavigationBindingsOptionsObject from
     '../../Extensions/Annotations/NavigationBindingsOptions';
@@ -63,6 +72,7 @@ import ComponentGroup from './ComponentGroup.js';
 import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
+import ComponentRegistry from './ComponentRegistry.js';
 
 /* *
  *
@@ -77,7 +87,18 @@ import Sync from './Sync/Sync.js';
  * @internal
  *
  */
-abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
+
+/**
+ * Abstract Class of component.
+ * @internal
+ */
+abstract class Component {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
     /* *
      *
@@ -132,11 +153,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * Default options of the component.
      */
-    public static defaultOptions: Component.ComponentOptions = {
+    public static defaultOptions: Partial<Component.ComponentOptions> = {
         className: `${classNamePrefix}component`,
         parentElement: document.body,
         parentCell: void 0,
-        type: '',
         id: '',
         title: false,
         caption: false,
@@ -205,7 +225,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     /**
      * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
      */
-    public type: string;
     /**
      * Sets an ID for the component's `div`.
      */
@@ -283,6 +302,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * Timeouts for calls to `Component.resizeTo()`.
      *
      * @internal
+    /* *
      */
     protected resizeTimeouts: number[] = [];
 
@@ -290,7 +310,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * Timeouts for resizing the content. I.e. `chart.setSize()`.
      *
      * @internal
-     */
+     * */
     protected innerResizeTimeouts: number[] = [];
 
     /* *
@@ -306,7 +326,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
      * The options for the component.
      */
     constructor(options: Partial<Component.ComponentOptions>) {
-        this.options = merge(Component.defaultOptions, options);
+        this.options = merge(
+            Component.defaultOptions as Required<Component.ComponentOptions>,
+            options
+        );
         this.id = this.options.id && this.options.id.length ?
             this.options.id :
             uniqueKey();
@@ -323,7 +346,10 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             this.parentElement = el;
 
         } else {
-            this.parentElement = this.options.parentElement;
+            this.parentElement = (
+                this.options.parentElement as any ||
+                document.createElement('div')
+            );
         }
 
         if (this.options.parentCell) {
@@ -334,7 +360,6 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
             this.attachCellListeneres();
         }
 
-        this.type = this.options.type;
         this.connector = this.options.connector;
         this.board = this.options.board;
         this.hasLoaded = false;
@@ -385,14 +410,16 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
     protected handleSyncOptions(
         defaultHandlers: typeof Sync.defaultHandlers = Sync.defaultHandlers
     ): Component['syncHandlers'] {
-        return Object.keys(this.options.sync)
+        const sync = this.options.sync || {};
+
+        return Object.keys(sync)
             .reduce(
                 (
                     carry: Sync.OptionsRecord,
                     handlerName
                 ): Sync.OptionsRecord => {
                     if (handlerName) {
-                        const handler = this.options.sync[handlerName];
+                        const handler = sync[handlerName];
 
                         if (handler && typeof handler === 'object') {
                             carry[handlerName] = handler;
@@ -1062,18 +1089,30 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         });
 
         const json: Component.JSON = {
-            $class: Component.getName(this.constructor),
+            $class: ComponentRegistry.getName(this.constructor),
             // connector: this.connector ? this.connector.toJSON() : void 0,
             options: {
+                cell: this.options.cell,
                 parentElement: this.parentElement.id,
                 dimensions,
-                type: this.options.type,
-                id: this.options.id || this.id
+                id: this.id,
+                type: this.type
             }
         };
 
         return json;
     }
+
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface Component {
+    type: keyof ComponentTypeRegistry;
 }
 
 /* *
@@ -1089,7 +1128,6 @@ namespace Component {
     *  Declarations
     *
     * */
-
     /** @internal */
     export interface JSON extends Serializable.JSON<string> {
         // connector?: DataConnector.ClassJSON;
@@ -1099,6 +1137,7 @@ namespace Component {
     /**
      * The basic events
      */
+    /** @internal */
     export type EventTypes =
         ResizeEvent |
         UpdateEvent |
@@ -1110,19 +1149,25 @@ namespace Component {
         MessageEvent |
         PresentationModifierEvent;
 
+    /** @internal */
     export type ResizeEvent = Event<'resize', {
         readonly type: 'resize';
         width?: number;
         height?: number;
     }>;
 
+    /** @internal */
     export type UpdateEvent = Event<'update' | 'afterUpdate', {
         options?: ComponentOptions;
     }>;
 
+    /** @internal */
     export type LoadEvent = Event<'load' | 'afterLoad', {}>;
+    /** @internal */
     export type RedrawEvent = Event<'redraw' | 'afterRedraw', {}>;
+    /** @internal */
     export type RenderEvent = Event<'beforeRender' | 'afterRender', {}>;
+    /** @internal */
     export type MessageEvent = Event<'message', {
         message: MessageType;
         detail?: {
@@ -1135,11 +1180,13 @@ namespace Component {
     export type JSONEvent = Event<'toJSON' | 'fromJSON', {
         json: Serializable.JSON<string>;
     }>;
+    /** @internal */
     export type TableChangedEvent = Event<'tableChanged', {}>;
+    /** @internal */
     export type PresentationModifierEvent =
         Component.Event<'afterPresentationModifier', { table: DataTable }>;
 
-
+    /** @internal */
     export type Event<
         EventType extends string,
         EventRecord extends Record<string, any>> = {
@@ -1151,18 +1198,27 @@ namespace Component {
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions extends EditableOptions {
+        [key: string]: unknown;
         /**
          * @internal
          * The Board the component belongs to
          * */
         board?: Board;
-        /*
+        /**
+         * Cell id, where component is attached.
+         */
+        cell?: string;
+        /**
          * Instance of cell, where component is attached.
+         *
+         * @internal
          */
         parentCell?: Cell;
         /**
          * The HTML element or id of HTML element that is used for appending
          * a component.
+         *
+         * @internal
          */
         parentElement: HTMLElement | string;
         /**
@@ -1172,7 +1228,7 @@ namespace Component {
         /**
          * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
          */
-        type: string;
+        type: keyof ComponentTypeRegistry;
         // allow overwriting gui elements
         /** @internal */
         navigationBindings?: NavigationBindingsOptionsObject[];
@@ -1205,15 +1261,24 @@ namespace Component {
      *  */
     export interface ComponentOptionsJSON extends JSON.Object {
         // connector?: DataConnector.ClassJSON; // connector id
-        parentElement: string; // ID?
-        style?: {};
+        caption?: string;
         className?: string;
-        type: string;
+        cell?: string;
+        editableOptions?: JSON.Array<string>;
+        editableOptionsBindings?: EditableOptions.OptionsBindings&JSON.Object;
         id: string;
+        parentCell?: Cell.JSON;
+        // store?: DataStore.ClassJSON; // store id
+        parentElement?: string; // ID?
+        style?: {};
+        sync?: SyncOptions&JSON.Object;
+        title?: string;
+        type: keyof ComponentTypeRegistry;
     }
 
+    /** @internal */
     export type ConnectorTypes = DataConnector;
-
+    /** @internal */
     export interface EditableOptions {
         connector?: ConnectorTypes;
         /**
@@ -1245,6 +1310,7 @@ namespace Component {
         );
     }
 
+    /** @internal */
     export type MessageType = string | {
         callback: Function;
     };
@@ -1260,22 +1326,8 @@ namespace Component {
      * Record of component instances
      *
      */
+    /** @internal */
     export const instanceRegistry: Record<string, ComponentType> = {};
-
-    /**
-     * Regular expression to extract the  name (group 1) from the
-     * stringified class type.
-     */
-    const nameRegExp = /^(?:class|function)\s(\w*?)(?:Component)?\W/;
-
-    /**
-     *
-     * Record of component classes
-     * @todo
-     *
-     */
-    export const registry: Record<string, Class<Component>> = {};
-
     /* *
     *
     *  Functions
@@ -1285,53 +1337,16 @@ namespace Component {
     /**
      * Adds component to the registry.
      *
-     * @param componentClass
-     * Component class.
+     * @internal
      *
-     * @returns
-     * Returns the true when component was found and added properly to the
-     * registry, otherwise it is false.
-     */
-    export function addComponent<T extends Class<Component>>(
-        componentClass: T
-    ): boolean {
-        const name = Component.getName(componentClass);
-
-        if (
-            typeof name === 'undefined' ||
-            registry[name]
-        ) {
-            return false;
-        }
-
-        registry[name] = componentClass;
-
-        return true;
-    }
-
-    /**
-     * Extracts the name from a given component class.
-     *
-     * @param {DataConnector} component
-     * Component class to extract the name from.
-     *
-     * @returns
-     * Component name, if the extraction was successful, otherwise an empty
-     * string.
-     */
-    export function getName(
-        component: (NewableFunction | ComponentType)
-    ): string {
-        return (
-            component.toString().match(nameRegExp) ||
-            ['', '']
-        )[1];
-    }
-
-    /**
+     * @internal
      * Adds a component instance to the registry.
      * @param component
      * The component to add.
+     * Returns the true when component was found and added properly to the
+     * registry, otherwise it is false.
+     *
+     * @internal
      */
     export function addInstance(component: ComponentType): void {
         Component.instanceRegistry[component.id] = component;
@@ -1341,8 +1356,10 @@ namespace Component {
      * Removes a component instance from the registry.
      * @param component
      * The component to remove.
+     *
+     * @internal
      */
-    export function removeInstance(component: Component<any>): void {
+    export function removeInstance(component: Component): void {
         delete Component.instanceRegistry[component.id];
     }
 
@@ -1350,6 +1367,8 @@ namespace Component {
      * Retrieves the IDs of the registered component instances.
      * @returns
      * Array of component IDs.
+     *
+     * @internal
      */
     export function getAllInstanceIDs(): string[] {
         return Object.keys(instanceRegistry);
@@ -1359,27 +1378,13 @@ namespace Component {
      * Retrieves all registered component instances.
      * @returns
      * Array of components.
+     *
+     * @internal
      */
-    export function getAllInstances(): Component<any>[] {
+    export function getAllInstances(): Component[] {
         const ids = getAllInstanceIDs();
-        return ids.map((id): Component<any> => instanceRegistry[id]);
+        return ids.map((id): Component => instanceRegistry[id]);
     }
-
-    /**
-     * Gets component by key from the registry.
-     *
-     * @param key
-     * Key of component that exists in registry.
-     *
-     * @returns
-     * Returns the component.
-     */
-    export function getComponent<T extends Class<Component>>(
-        key: string
-    ): (T | undefined) {
-        return registry[key] as T;
-    }
-
     /**
      * Gets instance of component from registry.
      *
@@ -1387,7 +1392,16 @@ namespace Component {
      * Component's id that exists in registry.
      *
      * @returns
+     * Returns the component.
+     * Gets instance of component from registry.
+     *
+     * @param id
+     * Component's id that exists in registry.
+     *
+     * @returns
      * Returns the component type or undefined.
+     *
+     * @internal
      */
     export function getInstanceById(id: string): ComponentType | undefined {
         return instanceRegistry[id];
@@ -1408,6 +1422,7 @@ namespace Component {
      * which can be `group`, `componentID`, or `componentType`
      * as well as the id of the recipient.
      *
+     * @internal
      */
     export function relayMessage(
         sender: ComponentType | ComponentGroup,

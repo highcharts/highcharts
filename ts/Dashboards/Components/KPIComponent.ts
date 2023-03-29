@@ -25,9 +25,11 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Options from '../../Core/Options';
 import type TextOptions from './TextOptions';
+
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
+import ComponentRegistry from './ComponentRegistry.js';
 import F from '../../Core/FormatUtilities.js';
 const {
     format
@@ -81,21 +83,13 @@ class KPIComponent extends Component {
         const subtitle = JSON.parse(options.subtitle || '{}');
         const title = options.title && JSON.parse(options.title);
         const style = JSON.parse(options.style || '{}');
-        const thresholdColors = options.thresholdColors;
-        const value = options.value;
-        const threshold = options.threshold;
-        const valueFormat = options.valueFormat;
 
         return new KPIComponent(
-            merge(options, {
+            merge(options as any, {
                 chartOptions,
                 title,
                 subtitle,
-                style,
-                thresholdColors,
-                value,
-                threshold,
-                valueFormat
+                style
             })
         );
     }
@@ -114,6 +108,7 @@ class KPIComponent extends Component {
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
+            type: 'KPI',
             className: [
                 Component.defaultOptions.className,
                 `${Component.defaultOptions.className}-kpi`
@@ -567,10 +562,12 @@ class KPIComponent extends Component {
      */
     public toJSON(): KPIComponent.ClassJSON {
         const base = super.toJSON();
-        const json = {
+        const json: KPIComponent.ClassJSON = {
             ...base,
+            type: 'KPI',
             options: {
                 ...base.options,
+                type: 'KPI',
                 value: this.options.value,
                 subtitle: JSON.stringify(this.options.subtitle),
                 title: JSON.stringify(this.options.title),
@@ -602,11 +599,11 @@ namespace KPIComponent {
     *
     * */
 
+    /** @internal */
     export type ComponentType = KPIComponent;
     /** @internal */
     export interface ClassJSON extends Component.JSON {
         options: ComponentJSONOptions;
-
     }
     /** @internal */
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
@@ -615,6 +612,7 @@ namespace KPIComponent {
         style?: string;
         threshold?: number|Array<number>;
         thresholdColors?: Array<string>;
+        type: 'KPI';
         value?: number|string;
         subtitle?: string;
         valueFormat?: string;
@@ -623,6 +621,8 @@ namespace KPIComponent {
         /**
          * A full set of chart options applied into KPI chart that is displayed
          * below the value.
+         *
+         * [Highcharts API](https://api.highcharts.com/highcharts/)
          */
         chartOptions?: Options;
         style?: CSSObject;
@@ -636,6 +636,7 @@ namespace KPIComponent {
          * achieved.
          */
         thresholdColors?: Array<string>;
+        type: 'KPI';
         /**
          * The value that is displayed in KPI component.
          */
@@ -659,6 +660,7 @@ namespace KPIComponent {
         type?: SubtitleType;
     }
 
+    /** @internal */
     export type SubtitleType = 'text' | 'diff' | 'diffpercent';
     /** @internal */
     export interface ValueFormatterCallbackFunction {
@@ -668,5 +670,23 @@ namespace KPIComponent {
         ): string;
     }
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../../Dashboards/Components/ComponentType' {
+    interface ComponentTypeRegistry {
+        KPI: typeof KPIComponent;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default KPIComponent;
