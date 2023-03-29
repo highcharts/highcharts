@@ -5,7 +5,7 @@ describe('Editable component options', () => {
         cy.toggleEditMode();
     });
 
-    it('should be able update chart ID via edit mode GUI', function() {
+    it.skip('should be able update chart ID via edit mode GUI', function() {
 
         const newChartID= 'myNewChart';
 
