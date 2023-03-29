@@ -1551,6 +1551,8 @@ export default MapSeries;
  *
  * @sample maps/series/data-geometry/
  *         Geometry defined in data
+ * @sample maps/series/geometry-types/
+ *         Geometry types
  *
  * @type      {Object}
  * @since 9.3.0
@@ -1561,6 +1563,9 @@ export default MapSeries;
 /**
  * The geometry type. Can be one of `LineString`, `Polygon`, `MultiLineString`
  * or `MultiPolygon`.
+ *
+ * @sample maps/series/geometry-types/
+ *         Geometry types
  *
  * @declare   Highcharts.MapGeometryTypeValue
  * @type      {string}
