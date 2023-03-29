@@ -20,13 +20,13 @@
 /**
  * Contains all possible types of the class registry.
  */
-export type ModifierType = ModifierTypeRegistry[keyof ModifierTypeRegistry];
+export type DataModifierType = DataModifierTypes[keyof DataModifierTypes];
 
 /**
  * Describes the class registry as a record object with class name and their
  * class types (aka class constructor).
  */
-export interface ModifierTypeRegistry {
+export interface DataModifierTypes {
     // nothing here yet
 }
 
@@ -36,4 +36,4 @@ export interface ModifierTypeRegistry {
  *
  * */
 
-export default ModifierType;
+export default DataModifierType;

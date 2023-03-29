@@ -5,8 +5,10 @@ QUnit.test('RangeModifier.modify', function (assert) {
 
     const done = assert.async(),
         table = new DataTable({
-            x: [ -2, -1, 0, 1, 2 ],
-            y: [ 'a', 'b', 'c', 'd', 'e' ]
+            columns: {
+                x: [ -2, -1, 0, 1, 2 ],
+                y: [ 'a', 'b', 'c', 'd', 'e' ]
+            }
         }),
         modifier = new RangeModifier({});
 
@@ -63,8 +65,10 @@ QUnit.test('RangeModifier.modifyCell', function (assert) {
             }]
         }),
         table = new DataTable({
-            x: [ -2, -1, 0, 1, 2 ],
-            y: [ 'a', 'b', 'c', 'd', 'e' ]
+            columns: {
+                x: [ -2, -1, 0, 1, 2 ],
+                y: [ 'a', 'b', 'c', 'd', 'e' ]
+            }
         });
 
     table
@@ -109,8 +113,10 @@ QUnit.test('RangeModifier.modifyColumns', function (assert) {
             }]
         }),
         table = new DataTable({
-            x: [ -2, -1, 0, 1, 2 ],
-            y: [ 'a', 'b', 'c', 'd', 'e' ]
+            columns: {
+                x: [ -2, -1, 0, 1, 2 ],
+                y: [ 'a', 'b', 'c', 'd', 'e' ]
+            }
         });
 
     table
@@ -156,8 +162,10 @@ QUnit.test('RangeModifier.modifyRows', function (assert) {
             }]
         }),
         table = new DataTable({
-            x: [ -2, -1, 0, 1, 2 ],
-            y: [ 'a', 'b', 'c', 'd', 'e' ]
+            columns: {
+                x: [ -2, -1, 0, 1, 2 ],
+                y: [ 'a', 'b', 'c', 'd', 'e' ]
+            }
         });
 
     table
