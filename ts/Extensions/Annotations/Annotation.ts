@@ -462,6 +462,32 @@ class Annotation extends EventEmitter {
     }
 
     /**
+     * Initialize the annotation properties.
+     * @private
+     */
+    public initProperties(
+        chart: AnnotationChart,
+        userOptions: AnnotationOptions
+    ): void {
+        this.setOptions(userOptions);
+
+        const labelsAndShapes = getLabelsAndShapesOptions(
+            this.options,
+            userOptions
+        );
+        this.options.labels = labelsAndShapes.labels;
+        this.options.shapes = labelsAndShapes.shapes;
+
+        this.chart = chart;
+        this.points = [];
+        this.controlPoints = [];
+        this.coll = 'annotations';
+        this.userOptions = userOptions;
+        this.labels = [];
+        this.shapes = [];
+    }
+
+    /**
      * Initialize the annotation.
      * @private
      */
@@ -827,15 +853,14 @@ class Annotation extends EventEmitter {
                 userOptions
             ),
             userOptionsIndex = chart.annotations.indexOf(this),
-            options = merge(true, this.userOptions, userOptions),
-            Constructor: any = this.constructor;
+            options = merge(true, this.userOptions, userOptions);
 
         options.labels = labelsAndShapes.labels;
         options.shapes = labelsAndShapes.shapes;
 
         this.destroy();
-        const newAnnotation = new Constructor(chart, options);
-        merge(true, this as any, newAnnotation);
+        this.initProperties(chart, options);
+        this.init(chart, options);
         // Update options in chart options, used in exporting (#9767):
         chart.options.annotations[userOptionsIndex] = options;
 
