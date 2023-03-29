@@ -11,19 +11,15 @@ Highcharts.chart('container', {
         title: {
             text: undefined
         },
-        visible: false
+        visible: false,
+        endOnTick: false
     },
     xAxis: {
-        visible: false
+        visible: false,
+        margin: 0
     },
     tooltip: {
-        followPointer: true,
-        formatter: function () {
-            return (
-                ~~this.point.value +
-                ' interactions in this region'
-            );
-        }
+        pointFormat: '{point.value:.0f} interactions in this region'
     },
     legend: {
         title: {
@@ -42,7 +38,7 @@ Highcharts.chart('container', {
     series: [{
         name: 'User activity',
         data: JSON.parse(document.getElementById('data').innerText),
-        interpolation: true
+        interpolation: false
     }],
     responsive: {
         rules: [{
