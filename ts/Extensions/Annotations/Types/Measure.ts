@@ -833,8 +833,10 @@ class Measure extends Annotation {
             item.translate(dx, dy)
         );
 
-        this.options.typeOptions.point.x = this.startXMin;
-        this.options.typeOptions.point.y = this.startYMin;
+        this.options.typeOptions.point = {
+            x: this.startXMin,
+            y: this.startYMin
+        };
     }
 
 }

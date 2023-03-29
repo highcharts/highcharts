@@ -286,7 +286,7 @@ QUnit.test('Bindings general tests', function (assert) {
     );
 
     assert.strictEqual(
-        popupEditor[0].children[0].textContent,
+        popupEditor[0].children[1].textContent,
         'Shape options',
         'The labels should be in the correct order in Firefox #14691'
     );

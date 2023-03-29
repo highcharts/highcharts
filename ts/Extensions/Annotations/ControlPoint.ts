@@ -13,6 +13,7 @@
  * */
 
 import type AnnotationChart from './AnnotationChart';
+import type Annotation from './Annotation';
 import type Controllable from './Controllables/Controllable';
 import type { ControlPointOptionsObject } from './ControlPointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -75,7 +76,7 @@ class ControlPoint extends EventEmitter {
 
     public constructor(
         chart: AnnotationChart,
-        target: Controllable,
+        target: (Annotation|Controllable),
         options: ControlPointOptionsObject,
         index?: number
     ) {
@@ -110,7 +111,7 @@ class ControlPoint extends EventEmitter {
 
     public options: ControlPointOptionsObject;
 
-    public target: Controllable;
+    public target: (Annotation|Controllable);
 
     /* *
      *

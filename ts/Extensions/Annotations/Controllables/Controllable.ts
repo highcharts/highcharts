@@ -248,7 +248,7 @@ abstract class Controllable {
      * Get the controllable's points options.
      * @private
      * @return {Array<Highcharts.PointOptionsObject>}
-     *         An array of points' options.
+     * An array of points' options.
      */
     public getPointsOptions(): Array<MockPointOptions> {
         const options = this.options;
@@ -630,7 +630,6 @@ export default Controllable;
  *  API Declarations
  *
  * */
-
 
 /**
  * An object which denots a controllable's anchor positions - relative and

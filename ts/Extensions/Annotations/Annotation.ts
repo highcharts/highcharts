@@ -32,6 +32,7 @@ import type {
     ControllableLabelOptions,
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
+import type MockPointOptions from './MockPointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
@@ -162,7 +163,7 @@ function getLabelsAndShapesOptions(
  * @param {Highcharts.AnnotationsOptions} userOptions
  *        The annotation options
  */
-class Annotation extends EventEmitter implements Controllable {
+class Annotation extends EventEmitter {
 
     /* *
      *
@@ -855,20 +856,22 @@ class Annotation extends EventEmitter implements Controllable {
  *
  * */
 
-interface Annotation extends Controllable {
+interface Annotation {
     defaultOptions: AnnotationOptions;
+    index: Controllable['index'];
     nonDOMEvents: Array<string>;
+    addControlPoints(): void;
+    anchor: Controllable['anchor'];
+    getPointsOptions(): Array<MockPointOptions>;
+    linkPoints(): (Array<AnnotationPointType>|undefined);
+    point: Controllable['point'];
+    transform: Controllable['transform'];
+    transformPoint: Controllable['transformPoint'];
     translate(dx: number, dy: number): void;
+    translatePoint: Controllable['translatePoint'];
 }
 
-// Mix in the Controllable, but only those methods that are not present on the
-// Annotation prototype.
-for (const key of Object.getOwnPropertyNames(Controllable.prototype)) {
-    if (!(key in Annotation.prototype)) {
-        (Annotation.prototype as any)[key] =
-            (Controllable.prototype as any)[key];
-    }
-}
+Annotation.prototype.defaultOptions = AnnotationDefaults;
 
 /**
  * List of events for `annotation.options.events` that should not be
@@ -878,7 +881,16 @@ for (const key of Object.getOwnPropertyNames(Controllable.prototype)) {
  * @type {Array<string>}
  */
 Annotation.prototype.nonDOMEvents = ['add', 'afterUpdate', 'drag', 'remove'];
-(Annotation.prototype as any).defaultOptions = AnnotationDefaults;
+
+Annotation.prototype.addControlPoints = controllableProto.addControlPoints;
+Annotation.prototype.anchor = controllableProto.anchor;
+Annotation.prototype.getPointsOptions = controllableProto.getPointsOptions;
+Annotation.prototype.linkPoints = controllableProto.linkPoints;
+Annotation.prototype.point = controllableProto.point;
+Annotation.prototype.transform = controllableProto.transform;
+Annotation.prototype.transformPoint = controllableProto.transformPoint;
+Annotation.prototype.translate = controllableProto.translate;
+Annotation.prototype.translatePoint = controllableProto.translatePoint;
 
 /* *
  *

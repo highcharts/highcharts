@@ -12,6 +12,7 @@
  *
  * */
 
+import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
 import type {
     AnnotationPoint,
@@ -198,7 +199,7 @@ class MockPoint {
 
     public constructor(
         chart: AnnotationChart,
-        target: (Controllable|null),
+        target: (Annotation|Controllable|null),
         options: (MockPointOptions|Function)
     ) {
         /**
@@ -281,7 +282,7 @@ class MockPoint {
     public plotX: number = void 0 as any;
     public plotY: number = void 0 as any;
     public series: MockSeries;
-    public target: (Controllable|null);
+    public target: (Annotation|Controllable|null);
     public ttBelow?: boolean;
     public visible?: boolean;
     public x?: number;
