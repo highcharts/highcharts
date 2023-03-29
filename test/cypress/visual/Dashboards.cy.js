@@ -6,7 +6,7 @@ describe('Dashboards climate demo visual tests', () => {
     })
 
     it('Climate demo', () => {
-        cy.board()
+        cy.boardRendered()
         cy.get('#demo-content')
             .compareSnapshot('dashboard-climate-loaded', 0.1);
     })
