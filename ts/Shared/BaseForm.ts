@@ -163,7 +163,7 @@ abstract class BaseForm {
         }
 
         // Add close button.
-        popupDiv.appendChild(popupCloseButton);
+        popupDiv.appendChild(popupCloseButton); // Is this necessary?
         popupDiv.style.display = 'block';
         popupDiv.style.height = '';
     }
