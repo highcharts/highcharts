@@ -417,7 +417,7 @@ class Point {
 
             for (const prop in point) { // eslint-disable-line guard-for-in
                 delete point[prop];
-                point.destroy = noop;
+                point.destroy = point.update = noop;
             }
         }
 
