@@ -40,8 +40,6 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import AnnotationChart from './AnnotationChart.js';
 import AnnotationDefaults from './AnnotationDefaults.js';
-import Controllable from './Controllables/Controllable.js';
-const controllableProto = Controllable.prototype;
 import ControllableRect from './Controllables/ControllableRect.js';
 import ControllableCircle from './Controllables/ControllableCircle.js';
 import ControllableEllipse from './Controllables/ControllableEllipse.js';
@@ -259,6 +257,8 @@ class Annotation extends EventEmitter implements ControlTarget {
 
         this.coll = 'annotations';
 
+        this.index = -1;
+
         /**
          * The array of labels which belong to the annotation.
          * @private
@@ -343,10 +343,10 @@ class Annotation extends EventEmitter implements ControlTarget {
     public clipXAxis?: AxisType;
     public clipYAxis?: AxisType;
     public coll: 'annotations' = 'annotations';
-    public collection: Controllable['collection'] = void 0 as any;
     public animationConfig: Partial<AnimationOptions> = void 0 as any;
     public graphic: SVGElement = void 0 as any;
     public group: SVGElement = void 0 as any;
+    public index: number;
     public isUpdating?: boolean;
     public labelCollector: Chart.LabelCollectorFunction = void 0 as any;
     public labels: Array<ControllableLabelType>;
@@ -428,7 +428,7 @@ class Annotation extends EventEmitter implements ControlTarget {
         erase(chart.labelCollectors, this.labelCollector);
 
         super.destroy();
-        controllableProto.destroy.call(this);
+        this.destroyControlTarget();
 
         destroyObjectProperties(this, chart);
     }
@@ -492,11 +492,12 @@ class Annotation extends EventEmitter implements ControlTarget {
     public init(
         _annotationOrChart: (Annotation|AnnotationChart),
         _userOptions: AnnotationOptions,
-        _index?: number
+        index: number = this.index
     ): void {
         const chart = this.chart,
             animOptions = this.options.animation;
 
+        this.index = index;
         this.linkPoints();
         this.addControlPoints();
         this.addShapes();
@@ -585,8 +586,7 @@ class Annotation extends EventEmitter implements ControlTarget {
         this.redrawItems(this.shapes, animation);
         this.redrawItems(this.labels, animation);
 
-
-        controllableProto.redraw.call(this, animation);
+        this.redrawControlPoints(animation);
     }
 
     /**
@@ -688,7 +688,7 @@ class Annotation extends EventEmitter implements ControlTarget {
 
         this.addEvents();
 
-        controllableProto.render.call(this);
+        this.renderControlPoints();
     }
 
     /**
@@ -755,7 +755,9 @@ class Annotation extends EventEmitter implements ControlTarget {
             item.setControlPointsVisibility(visible);
         };
 
-        controllableProto.setControlPointsVisibility.call(this, visible);
+        this.controlPoints.forEach((controlPoint): void => {
+            controlPoint.setVisibility(visible);
+        });
 
         this.shapes.forEach(setItemControlPointsVisibility);
         this.labels.forEach(setItemControlPointsVisibility);
@@ -818,7 +820,14 @@ class Annotation extends EventEmitter implements ControlTarget {
         );
 
         if (!visibility) {
-            this.setControlPointsVisibility(false);
+            const setItemControlPointsVisibility = function (
+                item: ControllableType
+            ): void {
+                item.setControlPointsVisibility(visibility);
+            };
+
+            this.shapes.forEach(setItemControlPointsVisibility);
+            this.labels.forEach(setItemControlPointsVisibility);
 
             if (
                 navigation.activeAnnotation === this &&
@@ -881,15 +890,9 @@ class Annotation extends EventEmitter implements ControlTarget {
 
 interface Annotation extends ControlTarget {
     defaultOptions: AnnotationOptions;
-    index: Controllable['index'];
     nonDOMEvents: Array<string>;
-    anchor: Controllable['anchor'];
     getPointsOptions(): Array<MockPointOptions>;
     linkPoints(): (Array<AnnotationPointType>|undefined);
-    point: Controllable['point'];
-    transform: Controllable['transform'];
-    transformPoint: Controllable['transformPoint'];
-    translatePoint: Controllable['translatePoint'];
 }
 
 Annotation.prototype.defaultOptions = AnnotationDefaults;

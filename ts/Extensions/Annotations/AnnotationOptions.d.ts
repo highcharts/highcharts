@@ -78,7 +78,7 @@ export interface AnnotationTypePointsOptions {
     controlPoint?: number;
     x?: number;
     xAxis?: number;
-    y?: number;
+    y?: (number|null);
     yAxis?: number;
 }
 

@@ -354,7 +354,7 @@ class BasicAnnotation extends Annotation {
             delete options.shapes;
             this.basicType = 'label';
         }
-        Annotation.prototype.init.apply(this, arguments);
+        super.init.apply(this, arguments);
     }
 
 }

@@ -147,19 +147,7 @@ abstract class Controllable implements ControlTarget {
             this.tracker = this.tracker.destroy();
         }
 
-        this.controlPoints.forEach(
-            (controlPoint): void => controlPoint.destroy()
-        );
-
-        this.chart = null as any;
-        this.points = null as any;
-        this.controlPoints = null as any;
-        this.options = null as any;
-
-        if (this.annotation) {
-            this.annotation = null as any;
-        }
-
+        this.destroyControlTarget();
     }
 
     /**
@@ -189,9 +177,7 @@ abstract class Controllable implements ControlTarget {
     public redraw(
         animation?: boolean
     ): void {
-        this.controlPoints.forEach(
-            (controlPoint): void => controlPoint.redraw(animation)
-        );
+        this.redrawControlPoints(animation);
     }
 
     /**
@@ -201,9 +187,7 @@ abstract class Controllable implements ControlTarget {
     public render(
         _parentGroup?: SVGElement
     ): void {
-        this.controlPoints.forEach(
-            (controlPoint): void => controlPoint.render()
-        );
+        this.renderControlPoints();
     }
 
     /**
@@ -257,7 +241,7 @@ abstract class Controllable implements ControlTarget {
     }
 
     /**
-     * Check if a controllable should be rendered/redrawn.
+     * Check if a controllable should be rendered/rednpmrawn.
      * @private
      * @return {boolean}
      *         Whether a controllable should be drawn.

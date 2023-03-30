@@ -38,12 +38,15 @@ interface ControlTarget {
     points: Array<AnnotationPointType>;
     addControlPoints(): void;
     anchor(point: AnnotationPointType): ControlTarget.Anchor;
+    destroyControlTarget(): void;
     getPointsOptions(): Array<MockPointOptions>;
     linkPoints(): (Array<AnnotationPointType>|undefined);
     point(
         pointOptions: (string|Function|MockPoint|MockPointOptions),
         point: (AnnotationPointType|null)
     ): (AnnotationPointType|null);
+    redrawControlPoints(animation?: boolean): void;
+    renderControlPoints(): void;
     transform(
         transformation: string,
         cx: (number|null),
@@ -99,7 +102,7 @@ namespace ControlTarget {
      * */
 
     /**
-     * Add control points to a controllable.
+     * Add control points.
      * @private
      */
     function addControlPoints(
@@ -132,9 +135,10 @@ namespace ControlTarget {
      * Returns object which denotes anchor position - relative and absolute.
      * @private
      * @param {Highcharts.AnnotationPointType} point
-     *        A point like object.
+     * An annotation point.
+     *
      * @return {Highcharts.AnnotationAnchorObject}
-     *         A controllable anchor
+     * An annotation anchor.
      */
     function anchor(
         this: ControlTarget,
@@ -179,9 +183,12 @@ namespace ControlTarget {
             U.merge(true, ControlTargetClass.prototype, {
                 addControlPoints,
                 anchor,
+                destroyControlTarget,
                 getPointsOptions,
                 linkPoints,
                 point,
+                redrawControlPoints,
+                renderControlPoints,
                 transform,
                 transformPoint,
                 translate,
@@ -192,7 +199,29 @@ namespace ControlTarget {
     }
 
     /**
-     * Get the controllable's points options.
+     * Destroy control points.
+     * @private
+     */
+    function destroyControlTarget(
+        this: ControlTarget
+    ): void {
+
+        this.controlPoints.forEach(
+            (controlPoint): void => controlPoint.destroy()
+        );
+
+        this.chart = null as any;
+        this.controlPoints = null as any;
+        this.points = null as any;
+        this.options = null as any;
+
+        if (this.annotation) {
+            this.annotation = null as any;
+        }
+    }
+
+    /**
+     * Get the points options.
      * @private
      * @return {Array<Highcharts.PointOptionsObject>}
      * An array of points' options.
@@ -289,7 +318,32 @@ namespace ControlTarget {
     }
 
     /**
-     * Transform a controllable with a specific transformation.
+     * Redraw control points.
+     * @private
+     */
+    function redrawControlPoints(
+        this: ControlTarget,
+        animation?: boolean
+    ): void {
+        this.controlPoints.forEach(
+            (controlPoint): void => controlPoint.redraw(animation)
+        );
+    }
+
+    /**
+     * Render controll points.
+     * @private
+     */
+    function renderControlPoints(
+        this: ControlTarget
+    ): void {
+        this.controlPoints.forEach(
+            (controlPoint): void => controlPoint.render()
+        );
+    }
+
+    /**
+     * Transform control points with a specific transformation.
      * @private
      * @param {string} transformation
      *        A transformation name
@@ -359,7 +413,7 @@ namespace ControlTarget {
     }
 
     /**
-     * Translate a controllable.
+     * Translate control points.
      * @private
      * @param {number} dx
      *        Translation for x coordinate
@@ -375,7 +429,7 @@ namespace ControlTarget {
     }
 
     /**
-     * Translate a specific point within a controllable.
+     * Translate a specific control point.
      * @private
      * @param {number} dx
      *        Translation for x coordinate
