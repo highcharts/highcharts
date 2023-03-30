@@ -42,8 +42,8 @@ namespace Sync {
      * */
 
     export type EventType = (
+        | 'extremes'
         | 'visibility'
-        | 'selection'
         | 'highlight'
     );
 

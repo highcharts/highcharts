@@ -245,27 +245,30 @@ const configs: {
 
                                                     // TODO: this is a bit silly
                                                     const [series] = eventTarget.series;
-                                                    const [
-                                                        firstVisiblePoint,
-                                                        ...visiblePoints
-                                                    ] = series.points
+                                                    const visiblePoints = series.points
                                                         .filter((point):boolean => point.isInside || false);
+                                                    if (visiblePoints.length) {
 
-                                                    cursor.emitCursor(store.table, {
-                                                        type: 'position',
-                                                        state: `${eventTarget.coll}.extremes.min`,
-                                                        row: firstVisiblePoint.index, // assume this has not been modified
-                                                        column: axis.dateTime ? 'x' : series.name // should possibly look up column names in the table first?
-                                                    },
-                                                    e as any
-                                                    ).emitCursor(store.table, {
-                                                        type: 'position',
-                                                        state: `${eventTarget.coll}.extremes.max`,
-                                                        row: visiblePoints[visiblePoints.length - 1].index,
-                                                        column: axis.dateTime ? 'x' : series.name
-                                                    },
-                                                    e as any
-                                                    );
+                                                        const lastVisiblePoint = visiblePoints[visiblePoints.length - 1];
+                                                        const firsVisiblePoint = visiblePoints[0];
+
+                                                        cursor.emitCursor(store.table, {
+                                                            type: 'position',
+                                                            state: `${eventTarget.coll}.extremes.min`,
+                                                            row: firsVisiblePoint.index, // assume this has not been modified
+                                                            column: axis.dateTime ? 'x' : series.name // should possibly look up column names in the table first?
+                                                        },
+                                                        e as any
+                                                        ).emitCursor(store.table, {
+                                                            type: 'position',
+                                                            state: `${eventTarget.coll}.extremes.max`,
+                                                            row: lastVisiblePoint ? lastVisiblePoint.index : axis.max || void 0,
+                                                            column: axis.dateTime ? 'x' : series.name
+                                                        },
+                                                        e as any
+                                                        );
+                                                    }
+
                                                 }
                                             }
                                         }
