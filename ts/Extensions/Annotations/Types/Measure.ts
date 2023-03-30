@@ -421,12 +421,7 @@ class Measure extends Annotation {
         userOptions: Measure.MeasureOptions,
         index?: number
     ): void {
-        Annotation.prototype.init.call(
-            this,
-            annotationOrChart,
-            userOptions,
-            index
-        );
+        super.init(annotationOrChart, userOptions, index);
 
         this.offsetX = 0;
         this.offsetY = 0;

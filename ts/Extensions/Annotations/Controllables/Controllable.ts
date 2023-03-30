@@ -60,9 +60,9 @@ abstract class Controllable implements ControlTarget {
         this.annotation = annotation;
         this.chart = annotation.chart;
         this.collection = (itemType === 'label' ? 'labels' : 'shapes');
+        this.controlPoints = [];
         this.options = options;
         this.points = [];
-        this.controlPoints = [];
         this.index = index;
         this.itemType = itemType;
         this.init(annotation, options, index);

@@ -614,13 +614,6 @@ const AnnotationDefaults: AnnotationOptions = {
         snap: 2
     },
 
-    typeOptions: {
-        point: {
-            x: 0,
-            y: 0
-        }
-    },
-
     /**
      * Options for annotation's control points. Each control point
      * inherits options from controlPointOptions object.
@@ -707,7 +700,7 @@ const AnnotationDefaults: AnnotationOptions = {
      */
     zIndex: 6
 
-};
+} as AnnotationOptions; // typeOptions are expected but not set
 
 /* *
  *
