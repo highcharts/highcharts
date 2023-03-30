@@ -119,7 +119,7 @@ const configs: {
                 }
             }
         ],
-        selectionHandler: function (this: DataGridComponent): void {
+        extremesHandler: function (this: DataGridComponent): void {
             const { board } = this;
             const table = this.connector && this.connector.table;
             if (board && table) {
@@ -141,7 +141,7 @@ const configs: {
 
 const defaults: Sync.OptionsRecord = {
     highlight: { emitter: configs.emitters.highlightEmitter, handler: configs.handlers.highlightHandler },
-    selection: { handler: configs.handlers.selectionHandler }
+    extremes: { handler: configs.handlers.selectionHandler }
 };
 
 

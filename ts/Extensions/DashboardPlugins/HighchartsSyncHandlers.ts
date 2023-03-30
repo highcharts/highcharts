@@ -489,7 +489,7 @@ const configs: {
 };
 
 const defaults: Sync.OptionsRecord = {
-    selection: { emitter: configs.emitters.extremesEmitter, handler: configs.handlers.extremesHandler },
+    extremes: { emitter: configs.emitters.extremesEmitter, handler: configs.handlers.extremesHandler },
     highlight: { emitter: configs.emitters.highlightEmitter, handler: configs.handlers.highlightHandler },
     visibility: { emitter: configs.emitters.seriesVisibilityEmitter, handler: configs.handlers.seriesVisibilityHandler }
 };

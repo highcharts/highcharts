@@ -87,7 +87,7 @@ const board = new Board('container', {
         events: {},
         connector,
         sync: {
-            selection: true
+            extremes: true
         }
     }, {
         cell: 'dashboard-col-1',
@@ -110,7 +110,7 @@ const board = new Board('container', {
         events: {},
         connector,
         sync: {
-            selection: true
+            extremes: true
         }
     }]
 });
