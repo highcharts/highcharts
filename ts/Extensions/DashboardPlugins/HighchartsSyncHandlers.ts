@@ -220,43 +220,6 @@ const configs: {
                     });
                 }
             },
-        panEmitter: [
-            'panEmitter',
-            function (this: ComponentType): Function | void {
-                if (this.type === 'Highcharts') {
-                    const { connector: store, chart, id } = this as HighchartsComponent;
-                    if (store && chart) {
-                        const ticks: number[] = [];
-                        return addEvent(chart, 'pan', (): void => {
-                            const groups = ComponentGroup.getGroupsFromComponent(id);
-                            // Cancel previous ticks
-                            while (ticks.length) {
-                                const tick = ticks.pop();
-                                if (tick) {
-                                    clearTimeout(tick);
-                                }
-                            }
-
-                            ticks.push(setTimeout((): void => {
-                                const minMaxes = getAxisMinMaxMap(chart);
-                                minMaxes.forEach((minMax): void => {
-                                    const { coll, extremes } = minMax;
-                                    groups.forEach((group): void => {
-                                        group.getSharedState().setSelection(
-                                            { [coll]: extremes },
-                                            false,
-                                            {
-                                                sender: id
-                                            }
-                                        );
-                                    });
-                                });
-                            }, 100));
-                        });
-                    }
-                }
-            }
-        ],
         extremesEmitter:
             function (this: ComponentType): Function | void {
                 if (this.type === 'Highcharts') {
@@ -277,7 +240,7 @@ const configs: {
                                     axis.update({
                                         events: {
                                             afterSetExtremes: (e): void => {
-                                                if (e.trigger === 'zoom' && !(e as any).resetSelection) {
+                                                if (!(e as any).resetSelection) {
                                                     const eventTarget = e.target as unknown as Axis;
 
                                                     // TODO: this is a bit silly
@@ -526,7 +489,6 @@ const configs: {
 };
 
 const defaults: Sync.OptionsRecord = {
-    panning: { emitter: configs.emitters.panEmitter, handler: configs.handlers.selectionHandler },
     selection: { emitter: configs.emitters.extremesEmitter, handler: configs.handlers.extremesHandler },
     highlight: { emitter: configs.emitters.highlightEmitter, handler: configs.handlers.highlightHandler },
     visibility: { emitter: configs.emitters.seriesVisibilityEmitter, handler: configs.handlers.seriesVisibilityHandler }

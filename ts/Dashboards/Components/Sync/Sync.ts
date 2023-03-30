@@ -45,7 +45,6 @@ namespace Sync {
         | 'visibility'
         | 'selection'
         | 'highlight'
-        | 'panning'
     );
 
     export type EmitterConfig = (

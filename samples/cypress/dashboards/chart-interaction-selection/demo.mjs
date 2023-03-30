@@ -87,8 +87,7 @@ const board = new Board('container', {
         events: {},
         connector,
         sync: {
-            selection: true,
-            panning: true
+            selection: true
         }
     }, {
         cell: 'dashboard-col-1',
@@ -111,8 +110,7 @@ const board = new Board('container', {
         events: {},
         connector,
         sync: {
-            selection: true,
-            panning: true
+            selection: true
         }
     }]
 });
