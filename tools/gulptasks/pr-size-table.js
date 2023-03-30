@@ -20,8 +20,8 @@ const files = argv.files ? argv.files.split(',') : [
     'modules/exporting.src.js',
     'modules/heatmap.src.js',
     'modules/offline-exporting.src.js',
-    'dashboards.src',
-    'datagrid.src'
+    'dashboards.src.js',
+    'datagrid.src.js'
 ];
 
 /**
