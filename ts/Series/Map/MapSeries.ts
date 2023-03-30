@@ -1549,8 +1549,8 @@ export default MapSeries;
  * coordinates in `projectedUnits` for geometry type other than `Point`,
  * instead of `[longitude, latitude]`.
  *
- * @sample maps/series/data-geometry/
- *         Geometry defined in data
+ * @sample maps/series/mappoint-line-geometry/
+ *         Map point and line geometry
  * @sample maps/series/geometry-types/
  *         Geometry types
  *
