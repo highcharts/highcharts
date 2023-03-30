@@ -11,6 +11,8 @@ const files = argv.files ? argv.files.split(',') : [
     'highstock.src.js',
     'highmaps.src.js',
     'highcharts-gantt.src.js',
+    'dashboards.src.js',
+    'datagrid.src.js',
     'indicators/indicators-all.src.js',
     'modules/accessibility.src.js',
     'modules/annotations.src.js',
@@ -20,8 +22,7 @@ const files = argv.files ? argv.files.split(',') : [
     'modules/exporting.src.js',
     'modules/heatmap.src.js',
     'modules/offline-exporting.src.js',
-    'dashboards.src.js',
-    'datagrid.src.js'
+    'modules/dashboards-plugin.src.js'
 ];
 
 /**
