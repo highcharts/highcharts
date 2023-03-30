@@ -10,12 +10,6 @@
  *
  * */
 
-import type DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent';
-import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
-import type HTMLComponent from './HTMLComponent';
-import type KPIComponent from './KPIComponent';
-import type ThresholdComponent from './ThresholdComponent';
-
 /* *
  *
  *  Declarations
@@ -23,24 +17,23 @@ import type ThresholdComponent from './ThresholdComponent';
  * */
 
 /**
+ * Contains all possible class types of the class registry.
+ */
+export type ComponentClassType =
+    ComponentTypeRegistry[keyof ComponentTypeRegistry];
+
+/**
  * Contains all possible types of the class registry.
  */
-// export type ComponentType =
-// ComponentTypeRegistry[keyof ComponentTypeRegistry];
-
-export type ComponentTypes =
-    DataGridComponent.ComponentType |
-    HighchartsComponent.ComponentType |
-    HTMLComponent.ComponentType |
-    KPIComponent.ComponentType |
-    ThresholdComponent.ComponentType;
+export type ComponentType = ComponentClassType['prototype'];
 
 /**
  * Describes the class registry as a record object with class name and their
  * class types (aka class constructor).
  */
 export interface ComponentTypeRegistry {
-    // nothing here yet
+    // Extend this interface with the declare module pattern.
+    // [key: string]: typeof Component;
 }
 
 /* *
@@ -49,4 +42,4 @@ export interface ComponentTypeRegistry {
  *
  * */
 
-export default ComponentTypes;
+export default ComponentType;

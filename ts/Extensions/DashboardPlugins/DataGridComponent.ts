@@ -25,9 +25,9 @@ import type DataGrid from '../../DataGrid/DataGrid';
 import Component from '../../Dashboards/Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
-import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 const { createElement, merge, uniqueKey } = U;
+import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 
 /* *
  *
@@ -41,10 +41,11 @@ const { createElement, merge, uniqueKey } = U;
  * @class
  * @name Highcharts.DashboardComponent
  */
-class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents> {
+class DataGridComponent extends Component {
+
     /* *
      *
-     *  Static properties
+     *  Static Properties
      *
      * */
 
@@ -121,7 +122,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         const dataGridOptions = JSON.parse(json.options.dataGridOptions || '');
 
         const component = new DataGridComponent(
-            merge(options, {
+            merge<DataGridComponent.ComponentOptions>(options as any, {
                 dataGridOptions,
                 syncHandlers: DataGridComponent.syncHandlers
             })
@@ -144,7 +145,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     public dataGrid?: DataGrid;
     public dataGridContainer: HTMLElement;
     public dataGridOptions: Partial<Options>;
-    public options: DataGridComponent.DataGridOptions;
+    public options: DataGridComponent.ComponentOptions;
     public sync: Component['sync'];
 
     /* *
@@ -153,12 +154,12 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
-    constructor(options: Partial<DataGridComponent.DataGridOptions>) {
+    constructor(options: Partial<DataGridComponent.ComponentOptions>) {
         options = merge(DataGridComponent.defaultOptions, options);
 
         super(options);
 
-        this.options = options as DataGridComponent.DataGridOptions;
+        this.options = options as DataGridComponent.ComponentOptions;
         this.type = 'DataGrid';
         this.dataGridContainer = createElement(
             'figure',
@@ -278,7 +279,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
     }
 
-    public update(options: Partial<DataGridComponent.DataGridOptions>): this {
+    public update(options: Partial<DataGridComponent.ComponentOptions>): this {
         super.update(options);
         if (this.dataGrid) {
             this.dataGrid.update(this.options.dataGridOptions || ({} as any));
@@ -342,10 +343,20 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
  * */
 
 namespace DataGridComponent {
+
+    /* *
+    *
+    *  Declarations
+    *
+    * */
+
+    /** @internal */
     export type ComponentType = DataGridComponent;
 
+    /** @internal */
     export type ChartComponentEvents = JSONEvent | Component.EventTypes;
 
+    /** @internal */
     export type JSONEvent = Component.Event<
     'toJSON' | 'fromJSON',
     {
@@ -353,26 +364,54 @@ namespace DataGridComponent {
     }
     >;
 
-    export interface DataGridOptions
+    export interface ComponentOptions
         extends Component.ComponentOptions,
         EditableOptions {
+        /**
+         * The name of class that is applied to the data grid container.
+         */
         dataGridClassName?: string;
+        /**
+         * The name of id that is applied to the data grid container.
+         */
         dataGridID?: string;
-        onUpdate: typeof DataGridComponent.onUpdate
+        /** @internal */
+        onUpdate: typeof DataGridComponent.onUpdate;
+        type: 'DataGrid';
     }
-
+    /** @internal */
     export interface EditableOptions extends Component.EditableOptions {
-        dataGridOptions?: DataGridOptions;
+        dataGridOptions?: ComponentOptions;
+        /**
+         * The set of options like `dataGridClassName` and `dataGridID`.
+         */
+        /**
+         * The name of class that is applied to the chart's container.
+         */
         chartClassName?: string;
+        /**
+         * The id that is applied to the chart's container.
+         */
         chartID?: string;
+        /**
+         * Names / aliases that should be mapped to xAxis values.
+         * ```
+         * Example
+         * columnKeyMap: {
+         *      'Food': 'x',
+         *      'Vitamin A': 'y'
+         * }
+         * ```
+         */
         columnKeyMap?: Record<string, string | null>;
     }
-
+    /** @internal */
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
         dataGridOptions?: string;
         chartClassName?: string;
         chartID?: string;
     }
+    /** @internal */
     export interface ClassJSON extends Component.JSON {
         options: ComponentJSONOptions;
     }
@@ -380,7 +419,8 @@ namespace DataGridComponent {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
+
 export default DataGridComponent;

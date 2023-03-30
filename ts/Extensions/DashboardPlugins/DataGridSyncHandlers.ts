@@ -23,7 +23,7 @@
 
 import type Sync from '../../Dashboards/Components/Sync/Sync';
 
-import ComponentTypes from '../../Dashboards/Components/ComponentType';
+import ComponentType from '../../Dashboards/Components/ComponentType';
 import DataGridComponent from './DataGridComponent.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -32,27 +32,20 @@ const {
 
 /* *
  *
- *  Declarations
+ *  Constants
  *
  * */
-
-declare global {
-    interface Window {
-        DataGridComponent?: typeof DataGridComponent;
-    }
-}
-
 
 const configs: {
     handlers: Record<string, Sync.HandlerConfig>;
     emitters: Record<string, Sync.EmitterConfig>;
 } = {
     emitters: {
-        tooltipEmitter: [
-            'tooltipEmitter',
-            function (this: ComponentTypes): Function | void {
-                if (this instanceof (DataGridComponent || window.DataGridComponent)) {
-                    const { dataGrid, connector: store, board } = this;
+        highlightEmitter: [
+            'highlightEmitter',
+            function (this: ComponentType): Function | void {
+                if (this.type === 'DataGrid') {
+                    const { dataGrid, connector: store, board } = this as DataGridComponent;
 
                     if (dataGrid && store && board) {
                         const { dataCursor: cursor } = board;
@@ -87,8 +80,8 @@ const configs: {
         ]
     },
     handlers: {
-        tooltipHandler: [
-            'tooltipHandler',
+        highlightHandler: [
+            'highlightHandler',
             void 0, // 'afterHoverPointChange',
             function (this: DataGridComponent): void {
                 const { board } = this;
@@ -147,8 +140,9 @@ const configs: {
 };
 
 const defaults: Sync.OptionsRecord = {
-    tooltip: { emitter: configs.emitters.tooltipEmitter, handler: configs.handlers.tooltipHandler },
+    highlight: { emitter: configs.emitters.highlightEmitter, handler: configs.handlers.highlightHandler },
     selection: { handler: configs.handlers.selectionHandler }
 };
+
 
 export default defaults;

@@ -15,23 +15,31 @@
  * */
 import type MenuItem from './Menu/MenuItem.js';
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type CSSObject from '../../Core/Renderer/CSSObject';
+
 import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
-import U from '../../Core/Utilities.js';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import Globals from '../Globals.js';
-
+import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import U from '../../Core/Utilities.js';
 const {
     createElement
 } = U;
 
 
 /* *
-*
-*  Functions
-*
-* */
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Function to create a context button.
@@ -309,36 +317,55 @@ function renderToggle(
     parentElement: HTMLDOMElement,
     options: FormField
 ): HTMLDOMElement|undefined {
-    let toggle;
 
-    if (parentElement) {
+    if (!parentElement) {
+        return;
+    }
 
-        if (options.title) {
-            renderText(
-                parentElement,
-                options.title
-            );
-        }
-
-        toggle = createElement(
-            'label',
-            {
-                className: EditGlobals.classNames.toggleWrapper
-            },
-            {},
-            parentElement
+    if (options.title) {
+        renderText(
+            parentElement,
+            options.title
         );
+    }
 
-        renderCheckbox(toggle);
+    if (options.enabledOnOffLabels) {
+        EditRenderer.renderText(
+            parentElement,
+            EditGlobals.lang.on,
+            void 0,
+            EditGlobals.classNames.toggleLabels
+        );
+    }
 
-        createElement(
-            'span',
-            {
-                className: EditGlobals.classNames.toggleSlider,
-                onclick: options.callback
-            },
-            {},
-            toggle
+    const toggle = createElement(
+        'label',
+        {
+            className: EditGlobals.classNames.toggleWrapper +
+            ' ' + (options.className || '')
+        },
+        {},
+        parentElement
+    );
+
+    renderCheckbox(toggle);
+
+    createElement(
+        'span',
+        {
+            className: EditGlobals.classNames.toggleSlider,
+            onclick: options.callback
+        },
+        {},
+        toggle
+    );
+
+    if (options.enabledOnOffLabels) {
+        EditRenderer.renderText(
+            parentElement,
+            EditGlobals.lang.off,
+            void 0,
+            EditGlobals.classNames.toggleLabels
         );
     }
 
@@ -362,14 +389,16 @@ function renderToggle(
 function renderText(
     parentElement: HTMLDOMElement,
     text: string,
-    callback?: Function
+    callback?: Function,
+    className?: string
 ): HTMLDOMElement|undefined {
     let textElem;
 
     if (parentElement) {
         textElem = createElement(
             'div', {
-                className: EditGlobals.classNames.labelText,
+                className: EditGlobals.classNames.labelText +
+                        ' ' + (className || ''),
                 textContent: text,
                 onclick: callback
             }, {},
@@ -753,6 +782,8 @@ export interface FormField {
     title?: string;
     onchange?: Function;
     value?: string;
+    className?: string;
+    enabledOnOffLabels?: boolean;
 }
 
 export interface SelectFormField extends FormField {

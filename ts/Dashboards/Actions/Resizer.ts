@@ -45,6 +45,7 @@ class Resizer {
     *
     * */
 
+    /** @internal */
     public static fromJSON(
         editMode: EditMode,
         json: Resizer.JSON
@@ -511,6 +512,7 @@ class Resizer {
     }
     /**
      * Converts the class instance to a class JSON.
+     * @internal
      *
      * @return {Resizer.JSON}
      * Class JSON of this Resizer instance.

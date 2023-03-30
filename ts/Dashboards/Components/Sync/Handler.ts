@@ -14,7 +14,7 @@
  *
  * */
 
-import type ComponentTypes from '../ComponentType';
+import type ComponentType from '../ComponentType';
 import type SharedState from '../SharedComponentState';
 
 /**
@@ -98,7 +98,7 @@ export default class SyncHandler {
      * @deprecated use {@link register}
      * @param component The component to attach to.
      */
-    public create(component: ComponentTypes): void {
+    public create(component: ComponentType): void {
         const { activeGroup } = component;
         const { func } = this;
         if (activeGroup && this.presentationStateTrigger) {
@@ -124,7 +124,7 @@ export default class SyncHandler {
      *
      * @param component The component to register on.
      */
-    public register(component: ComponentTypes): void {
+    public register(component: ComponentType): void {
         const { func } = this;
         this.callback = func.call(component);
     }

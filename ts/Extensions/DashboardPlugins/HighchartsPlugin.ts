@@ -26,6 +26,19 @@ import HighchartsComponent from './HighchartsComponent.js';
 import KPIComponent from '../../Dashboards/Components/KPIComponent.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Dashboards/Components/ComponentType' {
+    interface ComponentTypeRegistry {
+        Highcharts: typeof HighchartsComponent;
+    }
+}
+
 /* *
  *
  *  Functions
@@ -54,13 +67,9 @@ function connectHighcharts(
 function onRegister(
     e: PluginHandler.Event
 ): void {
-    const {
-        Component,
-        Sync
-    } = e;
-
-    Component.addComponent(HighchartsComponent);
-    Component.addComponent(KPIComponent);
+    const { Sync, ComponentRegistry } = e;
+    ComponentRegistry.registerComponent(HighchartsComponent);
+    ComponentRegistry.registerComponent(KPIComponent);
 
     Sync.defaultHandlers = {
         ...Sync.defaultHandlers,
@@ -78,9 +87,7 @@ function onRegister(
 function onUnregister(
     e: PluginHandler.Event
 ): void {
-    const {
-        Sync
-    } = e;
+    const { Sync } = e;
 
     Object
         .keys(HighchartsSyncHandlers)

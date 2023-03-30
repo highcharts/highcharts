@@ -12,7 +12,7 @@ Dashboards.board('container', {
         }]
     },
     components: [{
-        type: 'html',
+        type: 'HTML',
         cell: 'dashboard-col-0',
         elements: [
             {

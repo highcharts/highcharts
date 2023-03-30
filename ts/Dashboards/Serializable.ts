@@ -29,6 +29,7 @@ import type CoreJSON from '../Core/JSON';
 
 /**
  * Interface to convert objects from and to JSON.
+ * @internal
  *
  * @interface Serializable
  */
@@ -68,6 +69,7 @@ interface Serializable<T extends AnyRecord, TJSON extends Serializable.JSON<stri
 /**
  * Contains the toolset to serialize class instance to JSON and deserialize JSON
  * to class instances.
+ * @internal
  * @private
  */
 namespace Serializable {

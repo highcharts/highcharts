@@ -86,7 +86,7 @@ Dashboards.board('container', {
             connector: connector1,
             sync: {
                 selection: true,
-                tooltip: true
+                highlight: true
             },
             columnKeyMap: {
                 x: 'x',
@@ -111,7 +111,7 @@ Dashboards.board('container', {
             connector: connector1,
             sync: {
                 selection: true,
-                tooltip: true
+                highlight: true
             },
             columnKeyMap: {
                 x: 'x',
@@ -133,7 +133,7 @@ Dashboards.board('container', {
             connector: connector2,
             sync: {
                 selection: true,
-                tooltip: true
+                highlight: true
             },
             columnKeyMap: {
                 x: 'x',
@@ -155,7 +155,7 @@ Dashboards.board('container', {
             connector: connector2,
             sync: {
                 selection: true,
-                tooltip: true
+                highlight: true
             },
             columnKeyMap: {
                 x: 'x',

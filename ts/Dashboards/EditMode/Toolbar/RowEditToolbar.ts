@@ -48,61 +48,6 @@ class RowEditToolbar extends EditToolbar {
         }
     };
 
-    public static items = merge(Menu.items, {
-        drag: {
-            id: 'drag',
-            type: 'icon',
-            icon: EditGlobals.iconsURL + 'drag.svg',
-            events: {
-                onmousedown: function (this: MenuItem, e: any): void {
-                    const rowEditToolbar = (this.menu.parent as RowEditToolbar),
-                        dragDrop = rowEditToolbar.editMode.dragDrop;
-
-                    if (dragDrop && rowEditToolbar.row) {
-                        dragDrop.onDragStart(e, rowEditToolbar.row);
-                    }
-                }
-            }
-        },
-        settings: {
-            id: 'settings',
-            type: 'icon',
-            icon: EditGlobals.iconsURL + 'settings.svg',
-            events: {
-                click: function (this: MenuItem, e: any): void {
-                    (this.menu.parent as RowEditToolbar).onRowOptions(e);
-                }
-            }
-        },
-        destroy: {
-            id: 'destroy',
-            type: 'icon',
-            className: EditGlobals.classNames.menuDestroy,
-            icon: EditGlobals.iconsURL + 'destroy.svg',
-            events: {
-                click: function (this: MenuItem, e: any): void {
-                    const parentNode = (this.menu.parent as RowEditToolbar);
-                    const popup = this.menu.parent.editMode.confirmationPopup;
-
-                    popup.show({
-                        confirmButton: {
-                            value: EditGlobals.lang.confirmButton,
-                            callback: parentNode.onRowDestroy,
-                            context: parentNode
-                        },
-                        cancelButton: {
-                            value: EditGlobals.lang.cancelButton,
-                            callback: (): void => {
-                                popup.closePopup();
-                            }
-                        },
-                        text: EditGlobals.lang.confirmDestroyRow
-                    });
-                }
-            }
-        }
-    });
-
     /* *
     *
     *  Constructor
@@ -119,7 +64,61 @@ class RowEditToolbar extends EditToolbar {
             )
         );
 
-        this.menu.initItems(RowEditToolbar.items);
+        this.menu.initItems(merge(Menu.items, {
+            drag: {
+                id: 'drag',
+                type: 'icon',
+                icon: this.iconURLPrefix + 'drag.svg',
+                events: {
+                    onmousedown: function (this: MenuItem, e: any): void {
+                        const rowEditToolbar =
+                            (this.menu.parent as RowEditToolbar),
+                            dragDrop = rowEditToolbar.editMode.dragDrop;
+
+                        if (dragDrop && rowEditToolbar.row) {
+                            dragDrop.onDragStart(e, rowEditToolbar.row);
+                        }
+                    }
+                }
+            },
+            settings: {
+                id: 'settings',
+                type: 'icon',
+                icon: this.iconURLPrefix + 'settings.svg',
+                events: {
+                    click: function (this: MenuItem, e: any): void {
+                        (this.menu.parent as RowEditToolbar).onRowOptions(e);
+                    }
+                }
+            },
+            destroy: {
+                id: 'destroy',
+                type: 'icon',
+                className: EditGlobals.classNames.menuDestroy,
+                icon: this.iconURLPrefix + 'destroy.svg',
+                events: {
+                    click: function (this: MenuItem, e: any): void {
+                        const parentNode = (this.menu.parent as RowEditToolbar),
+                            popup = this.menu.parent.editMode.confirmationPopup;
+
+                        popup.show({
+                            confirmButton: {
+                                value: EditGlobals.lang.confirmButton,
+                                callback: parentNode.onRowDestroy,
+                                context: parentNode
+                            },
+                            cancelButton: {
+                                value: EditGlobals.lang.cancelButton,
+                                callback: (): void => {
+                                    popup.closePopup();
+                                }
+                            },
+                            text: EditGlobals.lang.confirmDestroyRow
+                        });
+                    }
+                }
+            }
+        }));
     }
 
     /* *

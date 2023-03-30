@@ -384,6 +384,20 @@
     transform: translateX(18px);
 }
 
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-label-text.highcharts-dashboards-edit-toggle-labels {
+    background: none;
+    border: none;
+    display: inline-block;
+    text-transform: uppercase;
+    padding: 0 5px;
+    float: right;
+    margin: 0;
+    width: auto;
+    margin-top: 16px;
+    line-height: 1em;
+    font-size: 0.756em;
+}
+
 /* Edit Mode */
 .highcharts-dashboards-edit-context-menu {
     background-color: var(--highcharts-dashboards-main-background-color);

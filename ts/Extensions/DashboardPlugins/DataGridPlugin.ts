@@ -19,10 +19,22 @@
  *
  * */
 
+import type DataGrid from '../../DataGrid/DataGrid';
 import type PluginHandler from '../../Dashboards/PluginHandler';
 
 import DataGridComponent from './DataGridComponent.js';
-import DataGrid from '../../DataGrid/DataGrid';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Dashboards/Components/ComponentType' {
+    interface ComponentTypeRegistry {
+        DataGrid: typeof DataGridComponent;
+    }
+}
 
 /* *
  *
@@ -50,9 +62,8 @@ function connectDataGrid(
 function onRegister(
     e: PluginHandler.Event
 ): void {
-    const { Component } = e;
-
-    Component.addComponent(DataGridComponent);
+    const { ComponentRegistry } = e;
+    ComponentRegistry.registerComponent(DataGridComponent);
 }
 
 

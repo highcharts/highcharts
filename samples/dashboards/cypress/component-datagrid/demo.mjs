@@ -44,7 +44,7 @@ Dashboard.board('container', {
             connector,
             type: 'Highcharts',
             sync: {
-                tooltip: true
+                highlight: true
             },
             columnKeyMap: {
                 Food: 'x',
@@ -73,7 +73,7 @@ Dashboard.board('container', {
             connector,
             editable: true,
             sync: {
-                tooltip: true
+                highlight: true
             }
         }
     ]

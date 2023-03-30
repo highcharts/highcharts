@@ -314,7 +314,7 @@ async function setupDashboard() {
             type: 'Highcharts',
             connector: cityConnector,
             sync: {
-                tooltip: true
+                highlight: true
             },
             columnKeyMap: {
                 time: null,
@@ -394,7 +394,7 @@ async function setupDashboard() {
             type: 'DataGrid',
             connector: cityConnector,
             sync: {
-                tooltip: true
+                highlight: true
             },
             dataGridOptions: {
                 cellHeight: 38,

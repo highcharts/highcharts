@@ -17,6 +17,7 @@
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
+import ComponentRegistry from './ComponentRegistry.js';
 const {
     isArray,
     isNumber,
@@ -49,7 +50,7 @@ class ThresholdComponent extends Component {
 
         this.options = options as ThresholdComponent.ComponentOptions;
 
-        this.type = 'threshold';
+        this.type = 'Threshold';
         this.sync = new Component.Sync(
             this,
             this.syncHandlers
@@ -154,6 +155,13 @@ class ThresholdComponent extends Component {
         return this;
     }
 
+    public static fromJSON(
+        json: ThresholdComponent.ComponentOptions
+    ): ThresholdComponent {
+
+        const options = json;
+        return new ThresholdComponent(options);
+    }
     public redraw(): this {
         super.redraw();
         return this.render();
@@ -174,6 +182,7 @@ namespace ThresholdComponent {
         component: ComponentConstructor;
         options?: AnyRecord;
         thresholds?: Array<ThresholdOptions>;
+        type: 'Threshold';
         value?: number;
         valueName?: string;
     }
@@ -250,5 +259,23 @@ namespace ThresholdComponent {
         return ret;
     }
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './ComponentType' {
+    interface ComponentTypeRegistry {
+        Threshold: typeof ThresholdComponent;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ThresholdComponent;

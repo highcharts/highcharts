@@ -14,7 +14,15 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Component from '../Components/Component';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
+import type MenuItem from './Menu/MenuItem';
 
 import EditMode from './EditMode.js';
 import U from '../../Core/Utilities.js';
@@ -22,7 +30,6 @@ import Cell from '../Layout/Cell.js';
 import Row from '../Layout/Row.js';
 import EditGlobals from './EditGlobals.js';
 import Menu from './Menu/Menu.js';
-import type MenuItem from './Menu/MenuItem.js';
 import Globals from '../Globals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
@@ -33,24 +40,12 @@ import DataTable from '../../Data/DataTable.js';
 import CSVConnector from '../../Data/Connectors/CSVConnector.js';
 
 const {
-    merge,
     createElement,
-    addEvent
+    addEvent,
+    merge
 } = U;
 
 class Sidebar {
-    /* *
-    *
-    *  Static Properties
-    *
-    * */
-    protected static readonly defaultOptions: Sidebar.Options = {
-        enabled: true,
-        className: 'test',
-        dragIcon: EditGlobals.iconsURL + '/drag.svg',
-        closeIcon: EditGlobals.iconsURL + '/close.svg'
-    };
-
     public static tabs: Array<Sidebar.TabOptions> = [{
     // {
     //     type: 'design',
@@ -129,7 +124,7 @@ class Sidebar {
                 }
 
                 Bindings.addComponent({
-                    type: 'html',
+                    type: 'HTML',
                     cell: cellName,
                     elements: [
                         {
@@ -173,7 +168,7 @@ class Sidebar {
                     if (sidebar && dropContext) {
                         return sidebar.onDropNewComponent(dropContext, {
                             cell: '',
-                            type: 'html',
+                            type: 'HTML',
                             elements: [{
                                 tagName: 'img',
                                 attributes: {
@@ -382,14 +377,21 @@ class Sidebar {
     *  Constructor
     *
     * */
-    constructor(editMode: EditMode) {
+    constructor(
+        editMode: EditMode
+    ) {
+        this.editMode = editMode;
+
         this.tabs = {};
         this.isVisible = false;
         this.options = merge(
-            Sidebar.defaultOptions,
+            {
+                enabled: true,
+                className: 'test',
+                closeIcon: this.editMode.iconsURLPrefix + 'close.svg'
+            },
             (editMode.options.toolbars || {}).settings
         );
-        this.editMode = editMode;
 
         this.container = this.renderContainer();
 
@@ -1057,11 +1059,14 @@ class Sidebar {
         }
 
         if (savedSettings.chartType) {
-            updatedSettings.chartOptions = merge(updatedSettings.chartOptions, {
-                chart: {
-                    type: savedSettings.chartType
+            updatedSettings.chartOptions = merge(
+                updatedSettings.chartOptions,
+                {
+                    chart: {
+                        type: savedSettings.chartType
+                    }
                 }
-            });
+            );
         }
 
         if (mountedComponent) {
@@ -1071,7 +1076,7 @@ class Sidebar {
 
     public onDropNewComponent(
         dropContext: Cell|Row,
-        componentOptions: Bindings.ComponentOptions
+        componentOptions: Partial<Component.ComponentOptions>
     ): Cell | void {
         const sidebar = this,
             dragDrop = sidebar.editMode.dragDrop;
@@ -1106,10 +1111,12 @@ class Sidebar {
             definedWidth = cellRwd && cellRwd.width || cell.options.width;
 
         if (definedWidth && definedWidth !== 'auto') {
-            const percentageValue = GUIElement.getPercentageWidth(definedWidth);
+            const percentageValue = typeof definedWidth === 'number' ?
+                definedWidth :
+                parseFloat(GUIElement.getPercentageWidth(definedWidth) || '');
 
             if (percentageValue) {
-                return Math.round(parseFloat(percentageValue) * 100) / 100;
+                return Math.round(percentageValue * 100) / 100;
             }
         }
 
@@ -1174,7 +1181,6 @@ namespace Sidebar {
     export interface Options {
         enabled: boolean;
         className: string;
-        dragIcon: string;
         closeIcon: string;
     }
 

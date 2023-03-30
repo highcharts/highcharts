@@ -278,6 +278,7 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
 
     /**
      * Converts JSON to a presentation state.
+     * @internal
      *
      * @param {DataPresentationState.ClassJSON} json
      * JSON (usually with a $class property) to convert.
@@ -309,6 +310,7 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
 
     /**
      * Converts the presentation state to JSON.
+     * @internal
      *
      * @return {SharedComponentState.JSON}
      * JSON of this class instance.
