@@ -73,9 +73,10 @@ function getLatestCommitShaSync(useShortVersion = false) {
  * @return {Promise<String>}
  *         Promise to keep with results
  */
-function getFilesChanged() {
+function getFilesChanged(branch = 'master') {
     const ChildProcess = require('child_process');
-    return ChildProcess.execSync('git whatchanged --name-status --pretty="" origin..HEAD').toString() || '';
+
+    return ChildProcess.execSync('git diff --name-status ' + branch).toString() || '';
 }
 
 /* *
