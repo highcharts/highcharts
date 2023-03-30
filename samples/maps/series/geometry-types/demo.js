@@ -95,8 +95,7 @@ Highcharts.getJSON(
                         ]
                     }
                 }]
-            },
-            {
+            }, {
                 name: 'MultiPolygon',
                 type: 'map',
                 data: [{
@@ -128,8 +127,7 @@ Highcharts.getJSON(
                         ]
                     }
                 }]
-            }
-            ]
+            }]
         });
     }
 );
