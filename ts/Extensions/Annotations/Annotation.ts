@@ -49,6 +49,7 @@ import ControllablePath from './Controllables/ControllablePath.js';
 import ControllableImage from './Controllables/ControllableImage.js';
 import ControllableLabel from './Controllables/ControllableLabel.js';
 import ControlPoint from './ControlPoint.js';
+import ControlTarget from './ControlTarget.js';
 import EventEmitter from './EventEmitter.js';
 import MockPoint from './MockPoint.js';
 import NavigationBindings from './NavigationBindings.js';
@@ -163,7 +164,7 @@ function getLabelsAndShapesOptions(
  * @param {Highcharts.AnnotationsOptions} userOptions
  *        The annotation options
  */
-class Annotation extends EventEmitter {
+class Annotation extends EventEmitter implements ControlTarget {
 
     /* *
      *
@@ -337,14 +338,12 @@ class Annotation extends EventEmitter {
      *
      * */
 
-    public annotation: Controllable['annotation'] = void 0 as any;
     public chart: AnnotationChart;
     public clipRect?: SVGElement;
     public clipXAxis?: AxisType;
     public clipYAxis?: AxisType;
     public coll: 'annotations' = 'annotations';
     public collection: Controllable['collection'] = void 0 as any;
-    public controlPoints: Array<ControlPoint>;
     public animationConfig: Partial<AnimationOptions> = void 0 as any;
     public graphic: SVGElement = void 0 as any;
     public group: SVGElement = void 0 as any;
@@ -353,7 +352,6 @@ class Annotation extends EventEmitter {
     public labels: Array<ControllableLabelType>;
     public labelsGroup: SVGElement = void 0 as any;
     public options: AnnotationOptions;
-    public points: Array<AnnotationPointType>;
     public shapes: Array<ControllableShapeType>;
     public shapesGroup: SVGElement = void 0 as any;
     public userOptions: AnnotationOptions;
@@ -881,18 +879,16 @@ class Annotation extends EventEmitter {
  *
  * */
 
-interface Annotation {
+interface Annotation extends ControlTarget {
     defaultOptions: AnnotationOptions;
     index: Controllable['index'];
     nonDOMEvents: Array<string>;
-    addControlPoints(): void;
     anchor: Controllable['anchor'];
     getPointsOptions(): Array<MockPointOptions>;
     linkPoints(): (Array<AnnotationPointType>|undefined);
     point: Controllable['point'];
     transform: Controllable['transform'];
     transformPoint: Controllable['transformPoint'];
-    translate(dx: number, dy: number): void;
     translatePoint: Controllable['translatePoint'];
 }
 
@@ -907,15 +903,7 @@ Annotation.prototype.defaultOptions = AnnotationDefaults;
  */
 Annotation.prototype.nonDOMEvents = ['add', 'afterUpdate', 'drag', 'remove'];
 
-Annotation.prototype.addControlPoints = controllableProto.addControlPoints;
-Annotation.prototype.anchor = controllableProto.anchor;
-Annotation.prototype.getPointsOptions = controllableProto.getPointsOptions;
-Annotation.prototype.linkPoints = controllableProto.linkPoints;
-Annotation.prototype.point = controllableProto.point;
-Annotation.prototype.transform = controllableProto.transform;
-Annotation.prototype.transformPoint = controllableProto.transformPoint;
-Annotation.prototype.translate = controllableProto.translate;
-Annotation.prototype.translatePoint = controllableProto.translatePoint;
+ControlTarget.compose(Annotation);
 
 /* *
  *
