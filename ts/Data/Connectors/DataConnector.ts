@@ -64,7 +64,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * stringified class constructor.
      */
     private static readonly typeRegExp = (
-        /^(?:class|function)\s+(\w*?)(?:Data)?(?:Connector)?\W/u
+        /^(?:class|function)\s+(\w*?)(?:Data)?(?:Connector)?\W/
     );
 
     /* *

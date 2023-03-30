@@ -397,7 +397,7 @@ namespace DataModifier {
      * stringified class type.
      * @internal
      */
-    const nameRegExp = /^(?:class|function)\s+(\w*?)(?:Data)?(?:Modifier)?\W/u;
+    const nameRegExp = /^(?:class|function)\s+(\w*?)(?:Data)?(?:Modifier)?\W/;
 
     /**
      * Registry as a record object with modifier names and their class.
