@@ -778,7 +778,7 @@
     z-index: 100;
 }
 
-.highcharts-dashboards-edit-confirmation-popup-close {
+.highcharts-dashboards-edit-popup-close {
     background-repeat: no-repeat;
     background-position: 50% 50%;
     width: 40px;

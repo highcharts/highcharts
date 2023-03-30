@@ -27,7 +27,7 @@ import type Row from '../Layout/Row.js';
 
 import BaseForm from '../../Shared/BaseForm.js';
 import EditGlobals from './EditGlobals.js';
-import EditRenderer from './EditRenderer.js';
+import GUIElement from '../Layout/GUIElement.js';
 
 /* *
  *
@@ -35,12 +35,27 @@ import EditRenderer from './EditRenderer.js';
  *
  * */
 
+/**
+ * Class which creates the sidebar and handles its behaviour.
+ */
 class SidebarPopup extends BaseForm {
+
     /* *
      *
      *  Constructor
      *
      * */
+
+    /**
+     * Constructor of the SidebarPopup class.
+     *
+     * @param parentDiv
+     * Element to which the sidebar will be appended.
+     * @param iconsURL
+     * URL to the icons.
+     * @param editMode
+     * Instance of EditMode.
+     */
     constructor(parentDiv: HTMLElement, iconsURL: string, editMode: EditMode) {
         super(parentDiv, iconsURL);
         this.editMode = editMode;
@@ -52,7 +67,13 @@ class SidebarPopup extends BaseForm {
      *
      * */
 
+    /**
+     * Instance of EditMode.
+     */
     public editMode: EditMode;
+    /**
+     * Whether the sidebar is visible.
+     */
     public isVisible = false;
 
     /* *
@@ -61,11 +82,73 @@ class SidebarPopup extends BaseForm {
      *
      * */
 
-    public show(context?: Cell | Row): void {
-        this.showPopup(EditGlobals.classNames.editSidebarShow);
-        const editMode = this.editMode;
+    /**
+     * Function to detect on which side of the screen should the sidebar be.
+     *
+     * @param context
+     * The cell or row which is the context of the sidebar.
+     * @returns
+     * Whether the sidebar should be on the right side of the screen.
+     */
+    private detectRightSidebar(context: Cell | Row): boolean {
 
-        this.container.classList.add(EditGlobals.classNames.editSidebarShow);
+        const editMode = this.editMode;
+        const layoutWrapper = editMode.board.layoutsWrapper;
+
+        return GUIElement.getOffsets(
+            context as Cell,
+            layoutWrapper
+        ).left < ((layoutWrapper.offsetWidth / 2) - 10); // 10 = snap
+
+    }
+
+    /**
+     * Function to remove the class names from the sidebar.
+     */
+    private removeClassNames(): void {
+        const classNames = EditGlobals.classNames,
+            classList = this.container.classList;
+        classList.remove(classNames.editSidebarShow);
+        classList.remove(classNames.editSidebarRight);
+        classList.remove(classNames.editSidebarRightShow);
+    }
+
+    /**
+     * Function to add the class names to the sidebar depending on the position
+     * of the sidebar.
+     *
+     * @param isRightSidebar
+     * Whether the sidebar should be on the right side of the screen.
+     */
+    private addClassNames(isRightSidebar: boolean): void {
+        const classList = this.container.classList;
+
+        if (isRightSidebar) {
+            classList.add(
+                EditGlobals.classNames.editSidebarRight
+            );
+        }
+
+        setTimeout(():void => {
+            classList.add(EditGlobals.classNames[
+                isRightSidebar ? 'editSidebarRightShow' : 'editSidebarShow'
+            ]
+            );
+        });
+    }
+
+    /**
+     * Function to show the sidebar.
+     *
+     * @param context
+     * The cell or row which is the context of the sidebar.
+     */
+    public show(context?: Cell | Row): void {
+        const editMode = this.editMode,
+            isRightSidebar = !!(context && this.detectRightSidebar(context));
+
+        this.showPopup(EditGlobals.classNames.editSidebarShow);
+        this.addClassNames(isRightSidebar);
 
         if (editMode.resizer) {
             editMode.resizer.disableResizer();
@@ -76,26 +159,28 @@ class SidebarPopup extends BaseForm {
             editMode.editCellContext.row.setHighlight(true);
         }
 
-        // Hide row and cell toolbars.
         editMode.hideToolbars(['cell', 'row']);
         editMode.stopContextDetection();
 
         this.isVisible = true;
     }
 
+    /**
+     * Function to hide the sidebar.
+     */
     public hide(): void {
-
-        this.closePopup();
-        this.container.classList.remove(EditGlobals.classNames.editSidebarShow);
-        this.editMode.board.container.style.paddingLeft = '';
         const editMode = this.editMode;
-        if (editMode.editCellContext) {
-            editMode.showToolbars(['cell', 'row'], editMode.editCellContext);
-            editMode.editCellContext.row.setHighlight();
+        this.closePopup();
+        this.removeClassNames();
+        const editCellContext = editMode.editCellContext;
+
+        if (editCellContext) {
+            editMode.showToolbars(['cell', 'row'], editCellContext);
+            editCellContext.row.setHighlight();
 
             // Remove cell highlight if active.
-            if (editMode.editCellContext.isHighlighted) {
-                editMode.editCellContext.setHighlight(true);
+            if (editCellContext.isHighlighted) {
+                editCellContext.setHighlight(true);
             }
         }
 
@@ -103,26 +188,35 @@ class SidebarPopup extends BaseForm {
         this.isVisible = false;
     }
 
-    protected addCloseButton(
-        className: string = EditGlobals.classNames.sidebarCloseButton +
-            ' ' +
-            EditGlobals.classNames.sidebarNavButton
-    ): HTMLElement {
-        // return super.addCloseButton.call(this, className);
-        const sidebar = this;
-        const closeIcon =
-            'https://code.highcharts.com/10.3.3/gfx/dashboard-icons/close.svg';
-
-        sidebar.closeButton = EditRenderer.renderButton(sidebar.container, {
-            className,
-            callback: (): void => {
-                sidebar.hide();
-            },
-            icon: closeIcon
-        }) as HTMLElement;
-        return sidebar.closeButton;
+    /**
+     * Function called when the close button is pressed.
+     */
+    public closeButtonEvents(): void {
+        this.hide();
     }
 
+    /**
+     * Function to create and add the close button to the sidebar.
+     *
+     * @param className
+     * Class name of the close button.
+     * @returns Close button element
+     */
+    protected addCloseButton(
+        className: string = EditGlobals.classNames.popupCloseButton
+    ): HTMLElement {
+        return super.addCloseButton.call(this, className);
+    }
+
+    /**
+     * Function that creates the container of the sidebar.
+     *
+     * @param parentDiv
+     * The parent div to which the sidebar will be appended.
+     * @param className
+     * Class name of the sidebar.
+     * @returns The container of the sidebar.
+     */
     protected createPopupContainer(
         parentDiv: HTMLElement,
         className = EditGlobals.classNames.editSidebar
