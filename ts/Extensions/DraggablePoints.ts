@@ -373,25 +373,31 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
             // We flip whether or not we update the top or bottom of the guide
             // box at threshold, but if we drag the mouse fast, the top has not
             // reached threshold before we cross over and update the bottom.
-            let threshold = point.series.translatedThreshold,
-                y = guideBox.attr('y'),
-                height,
+            const plotThreshold = pick(
+                    point.yBottom,
+                    point.series.translatedThreshold
+                ),
+                plotY = guideBox.attr('y') as number,
+                threshold = isNumber(point.stackY) ? (
+                    point.stackY - (point.y || 0)
+                ) : point.series.options.threshold || 0,
+                y = threshold + pointVals.y;
+
+            let height,
                 diff;
 
-            if (pointVals.y >= (point.series.options.threshold as any) || 0) {
+            if (y >= threshold) {
                 // Above threshold - always set height to hit the threshold
-                height = guideBox.attr('height');
-                diff = threshold ?
-                    threshold - ((y as any) + (height as any)) :
-                    0;
+                height = guideBox.attr('height') as number;
+                diff = plotThreshold ? plotThreshold - plotY - height : 0;
                 guideBox.attr({
-                    height: Math.max(0, Math.round((height as any) + diff))
+                    height: Math.max(0, Math.round(height + diff))
                 });
             } else {
                 // Below - always set y to start at threshold
                 guideBox.attr({
-                    y: Math.round((y as any) + (
-                        threshold ? threshold - (y as any) : 0
+                    y: Math.round(plotY + (
+                        plotThreshold ? plotThreshold - plotY : 0
                     ))
                 });
             }
@@ -409,7 +415,7 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
                 flipSide = flipResizeSide(side);
 
             // Force remove handle on other side
-            if ((dragHandles as any)[flipSide]) {
+            if (dragHandles && (dragHandles as any)[flipSide]) {
                 (dragHandles as any)[flipSide].destroy();
                 delete (dragHandles as any)[flipSide];
             }
