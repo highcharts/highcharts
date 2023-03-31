@@ -14,7 +14,6 @@
 
 import type Annotation from '../Annotation';
 import type AnnotationChart from '../AnnotationChart';
-import type { AnnotationPointType } from '../AnnotationSeries';
 import type ControllableLike from './ControllableLike';
 import type ControllableOptions from './ControllableOptions';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
@@ -241,7 +240,7 @@ abstract class Controllable implements ControlTarget {
     }
 
     /**
-     * Check if a controllable should be rendered/rednpmrawn.
+     * Check if a controllable should be rendered/redrawn.
      * @private
      * @return {boolean}
      *         Whether a controllable should be drawn.
