@@ -893,10 +893,6 @@ function wrap<T, K extends FunctionNamesOf<T>>(
 ): void {
     const proceed = obj[method] as T[K]&ArrowFunction;
 
-    if (typeof proceed !== 'function') {
-        throw new Error(`WrapError: ${method} is not a function`);
-    }
-
     obj[method] = function (this: T): ReturnType<typeof func> {
         const outerArgs = arguments,
             scope = this;
