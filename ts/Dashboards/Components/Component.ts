@@ -1357,7 +1357,6 @@ abstract class Component {
                 }
             });
         }
-        
 
         this.on('message', (e): void => {
             if ('message' in e) {
