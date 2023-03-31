@@ -629,12 +629,12 @@ class AreaSeries extends LineSeries {
  * */
 
 interface AreaSeries {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
+    drawLegendSymbol: typeof LegendSymbol.drawLineMarker;
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
     singleStacks: false,
-    drawLegendSymbol: LegendSymbol.drawRectangle
+    drawLegendSymbol: LegendSymbol.drawLineMarker
 });
 
 /* *
