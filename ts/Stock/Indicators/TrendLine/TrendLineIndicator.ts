@@ -118,10 +118,9 @@ class TrendLineIndicator extends SMAIndicator {
         let xVal: Array<number> = [];
         // Create a fake xVal array with consecutive values to avoid issues with
         // ordinal, point.remove etc. #18710
-        for (let i = 0; i < xValLength; i ++) {
+        for (let i = 0; i < xValLength; i++) {
             xVal[i] = i;
         }
-
 
         let sumX = 0,
             sumY = 0,
