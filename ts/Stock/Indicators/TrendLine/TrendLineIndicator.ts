@@ -95,6 +95,7 @@ class TrendLineIndicator extends SMAIndicator {
     public data: Array<TrendLinePoint> = void 0 as any;
     public options: TrendLineOptions = void 0 as any;
     public points: Array<TrendLinePoint> = void 0 as any;
+    public updateAllPoints?: boolean = true;
 
     /* *
      *
@@ -106,13 +107,21 @@ class TrendLineIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: TrendLineParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        const xVal: Array<number> = (series.xData as any),
+        const orgXVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            xValLength: number = xVal.length,
+            xValLength: number = orgXVal.length,
             index: number = (params.index as any);
+
+        let xVal: Array<number> = [];
+        // Create a fake xVal array with consecutive values to avoid issues with
+        // ordinal, point.remove etc. #18710
+        for (let i = 0; i < xValLength; i ++) {
+            xVal[i] = i;
+        }
+
 
         let sumX = 0,
             sumY = 0,
@@ -149,8 +158,8 @@ class TrendLineIndicator extends SMAIndicator {
             y = alpha * x + beta;
 
             // Prepare arrays required for getValues() method
-            LR[i] = [x, y];
-            xData[i] = x;
+            LR[i] = [orgXVal[i], y];
+            xData[i] = orgXVal[i];
             yData[i] = y;
         }
 
