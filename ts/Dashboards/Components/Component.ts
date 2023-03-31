@@ -939,6 +939,425 @@ abstract class Component {
                 }
             });
         }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        if (events) {
+            Object.keys(events).forEach((key): void => {
+                const eventCallback = (events as any)[key];
+                if (eventCallback) {
+                    this.callbackRegistry.addCallback(key, {
+                        type: 'component',
+                        func: eventCallback
+                    });
+                }
+            });
+            objectEach(events, (eventCallback, eventType): void => {
+                if (isFunction(eventCallback)) {
+                    this.on(eventType as any, eventCallback as any);
+                }
+            });
+        }
+        
 
         this.on('message', (e): void => {
             if ('message' in e) {
