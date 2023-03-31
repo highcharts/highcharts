@@ -55,9 +55,6 @@ executors:
   node_image:
     docker:
       - image: cimg/node:16.3.0-browsers
-  semgrep_image:
-    docker:
-      - image: returntocorp/semgrep
 
 commands:
   generate_references_command:
@@ -73,9 +70,11 @@ commands:
 jobs:
   security_scan:
     docker:
-      - image: returntocorp/semgrep
-    name: Scan ts-folder for OWASP top-ten vulnerabilities
-    run: semgrep ci --config "p/owasp-top-ten" "ts/"
+      - image: returntocorp/semgrep #semgrep reccomends this docker image
+    steps:
+      - run:
+          name: Scan ts-folder for OWASP top-ten vulnerabilities
+          command: semgrep ci --config "p/owasp-top-ten" ts/
 
   checkout_and_install:
     <<: *defaults
