@@ -255,8 +255,8 @@ namespace HTMLTableConnector {
  *
  * */
 
-declare module './ConnectorType' {
-    interface ConnectorTypeRegistry {
+declare module './DataConnectorType' {
+    interface DataConnectorRegistry {
         HTMLTable: typeof HTMLTableConnector;
     }
 }

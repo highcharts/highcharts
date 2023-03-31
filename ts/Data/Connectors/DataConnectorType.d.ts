@@ -20,19 +20,20 @@
 /**
  * Contains all possible instances of the connector registry.
  */
-export type ConnectorInstance = ConnectorType['prototype'];
-
-/**
- * Contains all possible types of the connector registry.
- */
-export type ConnectorType = ConnectorTypeRegistry[keyof ConnectorTypeRegistry];
+export type DataConnectorInstance = DataConnectorType['prototype'];
 
 /**
  * Describes the connector registry as a record object with type and class.
  */
-export interface ConnectorTypeRegistry {
+export interface DataConnectorRegistry {
     // nothing here yet
 }
+
+/**
+ * Contains all possible types of the connector registry.
+ */
+export type DataConnectorType =
+    DataConnectorRegistry[keyof DataConnectorRegistry];
 
 /* *
  *
@@ -40,4 +41,4 @@ export interface ConnectorTypeRegistry {
  *
  * */
 
-export default ConnectorType;
+export default DataConnectorType;

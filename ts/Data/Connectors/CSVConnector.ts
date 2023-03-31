@@ -283,9 +283,9 @@ namespace CSVConnector {
  *
  * */
 
-declare module './ConnectorType' {
-    interface ConnectorTypeRegistry {
-        CSVConnector: typeof CSVConnector;
+declare module './DataConnectorType' {
+    interface DataConnectorRegistry {
+        CSV: typeof CSVConnector;
     }
 }
 

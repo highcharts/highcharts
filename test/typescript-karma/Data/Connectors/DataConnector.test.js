@@ -60,9 +60,9 @@ test('DataConnector registry', function (assert) {
     // DataConnector.registry = {};
 
     const connectors = [
-        'CSVConnector',
-        'HTMLTableConnector',
-        'GoogleSheetsConnector'
+        'CSV',
+        'HTMLTable',
+        'GoogleSheets'
     ];
 
     for (const connector of connectors) {

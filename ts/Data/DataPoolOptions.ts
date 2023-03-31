@@ -20,9 +20,9 @@
  * */
 
 import type {
-    ConnectorType,
-    ConnectorTypeRegistry
-} from './Connectors/ConnectorType.js';
+    DataConnectorType,
+    DataConnectorRegistry
+} from './Connectors/DataConnectorType.js';
 
 /* *
  *
@@ -36,8 +36,8 @@ export interface DataPoolOptions {
 
 export interface DataPoolConnectorOptions {
     name: string;
-    options: ConnectorType['prototype']['options'];
-    type: keyof ConnectorTypeRegistry;
+    options: DataConnectorType['prototype']['options'];
+    type: keyof DataConnectorRegistry;
 }
 
 /* *

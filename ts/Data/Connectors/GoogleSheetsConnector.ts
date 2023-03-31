@@ -350,8 +350,8 @@ namespace GoogleSheetsConnector {
  *
  * */
 
-declare module './ConnectorType' {
-    interface ConnectorTypeRegistry {
+declare module './DataConnectorType' {
+    interface DataConnectorRegistry {
         Google: typeof GoogleSheetsConnector;
     }
 }
