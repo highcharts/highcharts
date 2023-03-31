@@ -19,7 +19,9 @@ const files = argv.files ? argv.files.split(',') : [
     'modules/data.src.js',
     'modules/exporting.src.js',
     'modules/heatmap.src.js',
-    'modules/offline-exporting.src.js'
+    'modules/offline-exporting.src.js',
+    'dashboards.src.js',
+    'datagrid.src.js'
 ];
 
 /**
@@ -159,4 +161,4 @@ comment.flags = {
 gulp.task('write-size-table', writeTable);
 gulp.task('write-file-sizes', writeFileSizes);
 gulp.task('pr-comment-sizes', comment);
-gulp.task('compare-size-and-comment', gulp.series(writeTable, comment));
+gulp.task('compare-size-and-comment', writeTable); //gulp.series(writeTable, comment));
