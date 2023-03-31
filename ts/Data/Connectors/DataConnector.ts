@@ -23,10 +23,7 @@
 
 import type DataEvent from '../DataEvent';
 import type JSON from '../../Core/JSON';
-import type {
-    DataConnectorRegistry,
-    DataConnectorType
-} from './DataConnectorType';
+import type { DataConnectorTypes } from './DataConnectorType';
 
 import DataConverter from '../Converters/DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -373,15 +370,9 @@ namespace DataConnector {
      * */
 
     /**
-     * Regular expression to extract the connector type (group 1) from the
-     * stringified class constructor.
-     */
-    const typeRegExp = /^(?:class|function)\s+(\w*?)(?:Data)?(?:Connector)?\W/;
-
-    /**
      * Registry as a record object with connector names and their class.
      */
-    export const types = {} as Record<string, DataConnectorType>;
+    export const types = {} as DataConnectorTypes;
 
     /* *
      *
@@ -390,65 +381,26 @@ namespace DataConnector {
      * */
 
     /**
-     * Extracts the type from a given DataConnector class.
-     *
-     * @private
-     *
-     * @param {DataConnector} connector
-     * DataConnector class to extract the type from.
-     *
-     * @return {string}
-     * DataConnector type, if the extraction was successful, otherwise an empty
-     * string.
-     */
-    function getKey(
-        connector: DataConnectorType
-    ): string {
-        return (connector.toString().match(typeRegExp) || ['', ''])[1];
-    }
-
-    export function getType<T extends keyof DataConnectorRegistry>(
-        key: T
-    ): DataConnectorRegistry[T];
-    export function getType(
-        key: string
-    ): (DataConnectorType|undefined);
-    /**
-     * Returns a modifier class constructor of the given registry name.
-     *
-     * @private
-     *
-     * @param {string} key
-     * Registered key of the modifier type.
-     *
-     * @return {DataConnectorType|undefined}
-     * Class constructor, if the modifier was found, otherwise `undefined`.
-     */
-    export function getType(
-        key: string
-    ): (DataConnectorType|undefined) {
-        return types[key];
-    }
-
-    /**
      * Adds a connector class to the registry. The connector has to provide the
      * `DataConnector.options` property and the `DataConnector.load` method to
      * modify the table.
      *
      * @private
      *
+     * @param {string} key
+     * Registry key of the connector class.
+     *
      * @param {DataConnectorType} DataConnectorClass
      * Connector class (aka class constructor) to register.
      *
      * @return {boolean}
      * Returns true, if the registration was successful. False is returned, if
-     * their is already a connector registered with this class name.
+     * their is already a connector registered with this key.
      */
-    export function registerType(
-        DataConnectorClass: DataConnectorType
+    export function registerType<T extends keyof DataConnectorTypes>(
+        key: T,
+        DataConnectorClass: DataConnectorTypes[T]
     ): boolean {
-        const key = getKey(DataConnectorClass);
-
         return (
             !!key &&
             !types[key] &&

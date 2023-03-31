@@ -256,12 +256,12 @@ namespace HTMLTableConnector {
  * */
 
 declare module './DataConnectorType' {
-    interface DataConnectorRegistry {
+    interface DataConnectorTypes {
         HTMLTable: typeof HTMLTableConnector;
     }
 }
 
-DataConnector.registerType(HTMLTableConnector);
+DataConnector.registerType('HTMLTable', HTMLTableConnector);
 
 /* *
  *

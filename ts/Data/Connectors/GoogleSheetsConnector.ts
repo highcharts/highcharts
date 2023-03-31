@@ -351,12 +351,12 @@ namespace GoogleSheetsConnector {
  * */
 
 declare module './DataConnectorType' {
-    interface DataConnectorRegistry {
-        Google: typeof GoogleSheetsConnector;
+    interface DataConnectorTypes {
+        GoogleSheets: typeof GoogleSheetsConnector;
     }
 }
 
-DataConnector.registerType(GoogleSheetsConnector);
+DataConnector.registerType('GoogleSheets', GoogleSheetsConnector);
 
 /* *
  *
