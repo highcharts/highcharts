@@ -814,14 +814,21 @@ namespace AxisDefaults {
             autoRotationLimit: 80,
 
             /**
-             * Polar charts only. The label's pixel distance from the perimeter
-             * of the plot area.
+             * The label's pixel distance from the perimeter of the plot area.
+             * On cartesian charts, this is overridden if the `labels.y` setting
+             * is set.
+             *
+             * * On polar charts, if it's a percentage string, it is interpreted
+             * the same as [series.radius](#plotOptions.gauge.radius), so the
+             * label can be aligned under the gauge's shape.
+             *
+             * @sample {highcharts} highcharts/yaxis/labels-distance/
+             *         Polar chart, labels centered under the arc
              *
              * @type      {number}
-             * @default   undefined
              * @product   highcharts gantt
              */
-            distance: void 0,
+            distance: 8,
 
             /**
              * Enable or disable the axis labels.
@@ -1013,17 +1020,18 @@ namespace AxisDefaults {
 
             /**
              * The x position offset of all labels relative to the tick
-             * positions on the axis.
+             * positions on the axis. Overrides the `labels.distance` option.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
+             *
+             * @type      {number}
+             * @apioption xAxis.labels.y
              */
-            x: 0,
 
             /**
              * The y position offset of all labels relative to the tick
-             * positions on the axis. The default makes it adapt to the font
-             * size of the bottom axis.
+             * positions on the axis. Overrides the `labels.distance` option.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
@@ -2503,23 +2511,6 @@ namespace AxisDefaults {
          */
         labels: {
             /**
-             * Angular gauges and solid gauges only.
-             * The label's pixel distance from the perimeter of the plot area.
-             *
-             * Since v7.1.2: If it's a percentage string, it is interpreted the
-             * same as [series.radius](#plotOptions.gauge.radius), so label can be
-             * aligned under the gauge's shape.
-             *
-             * @sample {highcharts} highcharts/yaxis/labels-distance/
-             *         Labels centered under the arc
-             *
-             * @type      {number|string}
-             * @default   -25
-             * @product   highcharts
-             * @apioption yAxis.labels.distance
-             */
-
-            /**
              * The y position offset of all labels relative to the tick
              * positions on the axis. For polar and radial axis consider the use
              * of the [distance](#yAxis.labels.distance) option.
@@ -2561,7 +2552,7 @@ namespace AxisDefaults {
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
              */
-            x: -8
+            x: void 0
         },
 
         /**
@@ -3130,7 +3121,7 @@ namespace AxisDefaults {
     // This variable extends the defaultOptions for left axes.
     export const defaultLeftAxisOptions: DeepPartial<AxisOptions> = {
         labels: {
-            x: -15
+            distance: 15
         },
         title: {
             rotation: 270
@@ -3140,7 +3131,7 @@ namespace AxisDefaults {
     // This variable extends the defaultOptions for right axes.
     export const defaultRightAxisOptions: DeepPartial<AxisOptions> = {
         labels: {
-            x: 15
+            distance: 15
         },
         title: {
             rotation: 90
@@ -3150,8 +3141,7 @@ namespace AxisDefaults {
     // This variable extends the defaultOptions for bottom axes.
     export const defaultBottomAxisOptions: DeepPartial<AxisOptions> = {
         labels: {
-            autoRotation: [-45],
-            x: 0
+            autoRotation: [-45]
             // overflow: undefined,
             // staggerLines: null
         },
@@ -3164,8 +3154,7 @@ namespace AxisDefaults {
     // This variable extends the defaultOptions for top axes.
     export const defaultTopAxisOptions: DeepPartial<AxisOptions> = {
         labels: {
-            autoRotation: [-45],
-            x: 0
+            autoRotation: [-45]
             // overflow: undefined
             // staggerLines: null
         },

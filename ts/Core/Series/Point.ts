@@ -405,7 +405,7 @@ class Point {
              * Allow to call after animation.
              * @private
              */
-            function destroyPoint(): void {
+            const destroyPoint = (): void => {
                 // Remove all events and elements
                 if (
                     point.graphic ||
@@ -420,7 +420,7 @@ class Point {
                 for (const prop in point) { // eslint-disable-line guard-for-in
                     delete point[prop];
                 }
-            }
+            };
 
             if (point.legendItem) {
                 // pies have legend items

@@ -465,36 +465,32 @@ class MapSeries extends ScatterSeries {
 
     /**
      * The initial animation for the map series. By default, animation is
-     * disabled. Animation of map shapes is not at all supported in VML
-     * browsers.
+     * disabled.
      * @private
      */
     public animate(init?: boolean): void {
         const { chart, group } = this,
             animation = animObject(this.options.animation);
 
-        if (chart.renderer.isSVG) {
+        // Initialize the animation
+        if (init) {
 
-            // Initialize the animation
-            if (init) {
+            // Scale down the group and place it in the center
+            group.attr({
+                translateX: chart.plotLeft + chart.plotWidth / 2,
+                translateY: chart.plotTop + chart.plotHeight / 2,
+                scaleX: 0.001, // #1499
+                scaleY: 0.001
+            });
 
-                // Scale down the group and place it in the center
-                group.attr({
-                    translateX: chart.plotLeft + chart.plotWidth / 2,
-                    translateY: chart.plotTop + chart.plotHeight / 2,
-                    scaleX: 0.001, // #1499
-                    scaleY: 0.001
-                });
-
-            // Run the animation
-            } else {
-                group.animate({
-                    translateX: chart.plotLeft,
-                    translateY: chart.plotTop,
-                    scaleX: 1,
-                    scaleY: 1
-                }, animation);
-            }
+        // Run the animation
+        } else {
+            group.animate({
+                translateX: chart.plotLeft,
+                translateY: chart.plotTop,
+                scaleX: 1,
+                scaleY: 1
+            }, animation);
         }
     }
 
@@ -516,7 +512,6 @@ class MapSeries extends ScatterSeries {
         return Boolean(
             this.isDirtyData ||
             this.chart.isResizing ||
-            this.chart.renderer.isVML ||
             !this.hasRendered
         );
     }

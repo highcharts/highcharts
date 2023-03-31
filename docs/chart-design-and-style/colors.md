@@ -31,9 +31,9 @@ Linear gradients in Highcharts have a similar syntax to that of SVG:
 The color is given as an object literal containing two properties:
 
 *   **linearGradient** holds another object literal that defines the start position (x1, y1) and the end position (x2, y2) relative to the shape, where 0 is top/left and 1 is bottom/right.
-*   **stops** is an array of tuples. The first item in each tuple is the position in the gradient, where 0 is the start of the gradient and 1 is the end of the gradient. Multiple stops can be applied. The second item is the color for each stop. This color can also be given in the rgba format, though in Internet Explorer 8 and less only the first and last opacity will be applied, and intermediate stops will have opacities interpolated between those.
+*   **stops** is an array of tuples. The first item in each tuple is the position in the gradient, where 0 is the start of the gradient and 1 is the end of the gradient. Multiple stops can be applied. The second item is the color for each stop. This color can also be given in the rgba format.
 
-In modern SVG enabled browsers the linear gradients can be applied to both fills (backgrounds) and strokes (lines). Internet Explorer 8 and less doesn't support gradients on lines, so in these browsers only the first stop color is used.
+The linear gradients can be applied to both fills (backgrounds) and strokes (lines).
 
 Note that linear gradients can be differently defined (as an array or an object). Also, start/end positions might be calculated differently depending on the `gradientUnits` property (this property can only be set in linear gradient declared as object).
 
@@ -60,11 +60,9 @@ Since Highcharts 2.3 radial gradients have been supported. They have a similar s
 The color is given as an object literal containing two properties:
 
 *   **radialGradient** holds another object literal, with three properies. The **cx** and **cy** properties are the horizontal and vertical centers of the radial gradient respectively, relative to the shape where 0 and 1 are the edges and 0.5 is the center of the shape. The r property defines the radius relative to the shape's diameter. When all values are 0.5, the gradient starts in the middle of the circle and ends along the perimeter.
-*   **stops** is an array of tuples. The first item in each tuple is the position in the gradient, where 0 is the start of the gradient and 1 is the end of the gradient. Multiple stops can be applied. The second item is the color for each stop. This color can also be given in the rgba format, though in Internet Explorer 8 and less only the first and last opacity will be applied, and intermediate stops will have opacities interpolated between those.
+*   **stops** is an array of tuples. The first item in each tuple is the position in the gradient, where 0 is the start of the gradient and 1 is the end of the gradient. Multiple stops can be applied. The second item is the color for each stop. This color can also be given in the rgba format.
 
 When a radial gradient is used as the color of a pie slice or the background color of a gauge or polar chart, the gradient is drawn relative to the full circle, not only the specific shape.
-
-In Internet Explorer 8 and less, radial gradients are not natively supported. Instead, we emulate the effect by loading a graphic pattern image. This image is by default loaded from the Highcharts CDN. To load it from your own server, set the [VMLRadialGradientURL](https://api.highcharts.com/highcharts#global.VMLRadialGradientURL).
 
 See the demo of [radial gradients in a pie chart](https://highcharts.com/demo/pie-gradient).
 

@@ -549,6 +549,9 @@ export default LineSeries;
  * `fill` attribute, so the change in class name won't have a visual effect by
  * default.
  *
+ * Since v11, CSS variables on the form `--highcharts-color-{n}` make changing
+ * the color scheme very convenient.
+ *
  * @sample    {highcharts} highcharts/css/colorindex/
  *            Series and point color index
  *

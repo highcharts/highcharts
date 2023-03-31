@@ -38,6 +38,7 @@ export interface ScrollbarOptions {
     buttonBorderColor?: ColorType;
     buttonBorderRadius?: number;
     buttonBorderWidth?: number;
+    buttonsEnabled?: boolean;
     enabled?: boolean;
     height?: number;
     inverted?: boolean;

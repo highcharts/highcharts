@@ -131,7 +131,10 @@
         // "keyofStringsOnly": false                         /* Change the keyof type operator to return 'string' instead of 'string|number'. Ends in TypeScript 5.5. */
         "keyofStringsOnly": true
     },
+    "exclude": [
+        "./masters-es5/"
+    ],
     "include": [
-        "**/*.ts"
+        "./**/*.ts"
     ]
 }

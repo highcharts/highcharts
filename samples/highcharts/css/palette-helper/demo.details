@@ -1,6 +1,7 @@
 ---
- name: Highcharts Demo
+ name: Highcharts Palette Helper
  authors:
    - Torstein Hønsi
+ skipTest: true
  js_wrap: b
 ...

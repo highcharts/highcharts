@@ -1,0 +1,84 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+.highcharts-figure {
+    max-width: 800px;
+    min-width: 360px;
+    margin: 0 auto;
+}
+
+.highcharts-background {
+    transition: all 250ms;
+}
+
+.highcharts-description {
+    margin: 1rem 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Colors for data series and points */
+        --highcharts-color-0: #b3597c;
+        --highcharts-color-1: #c4688c;
+        --highcharts-color-2: #78a8d1;
+        --highcharts-color-3: #7991d2;
+        --highcharts-color-4: #7d7bd4;
+        --highcharts-color-5: #977dd5;
+        --highcharts-color-6: #b3597c;
+        --highcharts-color-7: #b27fd6;
+
+        /* UI colors */
+        --highcharts-background-color: #333;
+
+        /*
+            Neutral color variations
+            https://www.highcharts.com/samples/highcharts/css/palette-helper
+        */
+        --highcharts-neutral-color-100: rgb(255, 255, 255);
+        --highcharts-neutral-color-80: rgb(214, 214, 214);
+        --highcharts-neutral-color-60: rgb(173, 173, 173);
+        --highcharts-neutral-color-40: rgb(133, 133, 133);
+        --highcharts-neutral-color-20: rgb(92, 92, 92);
+        --highcharts-neutral-color-10: rgb(71, 71, 71);
+        --highcharts-neutral-color-5: rgb(61, 61, 61);
+        --highcharts-neutral-color-3: rgb(57, 57, 57);
+
+        /* Highlight color variations */
+        --highcharts-highlight-color-100: rgb(122, 167, 255);
+        --highcharts-highlight-color-80: rgb(108, 144, 214);
+        --highcharts-highlight-color-60: rgb(94, 121, 173);
+        --highcharts-highlight-color-20: rgb(65, 74, 92);
+        --highcharts-highlight-color-10: rgb(58, 63, 71);
+    }
+}
+
+.highcharts-dark {
+    /* Colors for data series and points */
+    --highcharts-color-0: #b3597c;
+    --highcharts-color-1: #c4688c;
+    --highcharts-color-2: #78a8d1;
+    --highcharts-color-3: #7991d2;
+    --highcharts-color-4: #7d7bd4;
+    --highcharts-color-5: #977dd5;
+    --highcharts-color-6: #b3597c;
+    --highcharts-color-7: #b27fd6;
+
+    /* UI colors */
+    --highcharts-background-color: #333;
+
+    /* Neutral color variations */
+    --highcharts-neutral-color-100: rgb(255, 255, 255);
+    --highcharts-neutral-color-80: rgb(214, 214, 214);
+    --highcharts-neutral-color-60: rgb(173, 173, 173);
+    --highcharts-neutral-color-40: rgb(133, 133, 133);
+    --highcharts-neutral-color-20: rgb(92, 92, 92);
+    --highcharts-neutral-color-10: rgb(71, 71, 71);
+    --highcharts-neutral-color-5: rgb(61, 61, 61);
+    --highcharts-neutral-color-3: rgb(57, 57, 57);
+
+    /* Highlight color variations */
+    --highcharts-highlight-color-100: rgb(122, 167, 255);
+    --highcharts-highlight-color-80: rgb(108, 144, 214);
+    --highcharts-highlight-color-60: rgb(94, 121, 173);
+    --highcharts-highlight-color-20: rgb(65, 74, 92);
+    --highcharts-highlight-color-10: rgb(58, 63, 71);
+}

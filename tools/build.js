@@ -166,6 +166,12 @@ const watchESModules = (event, options, type, dependencies, pathESMasters) => {
     });
 };
 
+const getPathToEsMasters = (pathSource, base) => {
+    // remove empty string
+    const splittedPath = base.split('/').filter(name => name);
+    return join(pathSource, splittedPath.pop());
+};
+
 const fnFirstBuild = options => {
     // Build all module files
     const pathJSParts = './js/';
@@ -176,7 +182,8 @@ const fnFirstBuild = options => {
         fileOptions,
         files,
         output,
-        version
+        version,
+        base
     } = options;
     buildModules({
         base: pathJSParts,
@@ -187,7 +194,7 @@ const fnFirstBuild = options => {
     const promises = [];
     types.forEach(type => {
         const pathSource = mapTypeToSource[type];
-        const pathESMasters = join(pathSource, 'masters');
+        const pathESMasters = getPathToEsMasters(pathSource, base);
         promises.push(buildDistFromModules({
             base: pathESMasters,
             debug,
@@ -207,7 +214,8 @@ const getBuildScripts = params => {
     const {
         files,
         type: types,
-        mapTypeToSource
+        mapTypeToSource,
+        base
     } = options;
     const result = {
         fnFirstBuild: () => fnFirstBuild(options),
@@ -217,7 +225,7 @@ const getBuildScripts = params => {
     };
     types.forEach(type => {
         const pathSource = mapTypeToSource[type];
-        const pathESMasters = join(pathSource, 'masters');
+        const pathESMasters = getPathToEsMasters(pathSource, base);
         const key = join(pathSource, '**/*.js').split(sep).join('/');
         const fn = event => {
             const dependencies = getListOfDependencies(
