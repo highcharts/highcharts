@@ -19,10 +19,7 @@
  *
  * */
 
-import type {
-    DataConnectorType,
-    DataConnectorTypes
-} from './Connectors/DataConnectorType.js';
+import type { DataConnectorTypes } from './Connectors/DataConnectorType.js';
 
 /* *
  *
