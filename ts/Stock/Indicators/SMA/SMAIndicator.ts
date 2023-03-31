@@ -462,8 +462,9 @@ class SMAIndicator extends LineSeries {
 
                 indicator.updateData(croppedDataValues);
 
-            // Omit addPoint() and removePoint() cases
             } else if (
+                indicator.updateAllPoints || // #18710
+                // Omit addPoint() and removePoint() cases
                 processedData.xData.length !== oldDataLength - 1 &&
                 processedData.xData.length !== oldDataLength + 1
             ) {
@@ -529,6 +530,7 @@ interface SMAIndicator extends IndicatorLike {
     nameSuffixes: Array<string>;
     pointClass: typeof SMAPoint;
     useCommonDataGrouping: boolean;
+    updateAllPoints?: boolean;
 }
 extend(SMAIndicator.prototype, {
     calculateOn: {
