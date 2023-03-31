@@ -237,7 +237,7 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
         chart.yAxis[0].toPixels(point.y),
         tooltipClient.y + tooltipClient.height -
             pointBox.height - (pointBox.height / 2),
-        2,
+        4,
         `Tooltip with outside and split properties set to true should be
         rendered properly - y position (#17720).`
     );

@@ -23,9 +23,9 @@
 import type DataEvent from '../DataEvent';
 import type DataTable from '../DataTable';
 import type {
-    ModifierType,
-    ModifierTypeRegistry
-} from './ModifierType';
+    DataModifierType,
+    DataModifierTypes
+} from './DataModifierType';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -314,6 +314,8 @@ abstract class DataModifier implements DataEvent.Emitter {
 /**
  * Additionally provided types for modifier events and options, and JSON
  * conversion.
+ *
+ * @private
  */
 namespace DataModifier {
 
@@ -383,7 +385,7 @@ namespace DataModifier {
         /**
          * Name of the related modifier for these options.
          */
-        modifier: keyof ModifierTypeRegistry;
+        modifier: keyof DataModifierTypes;
     }
 
     /* *
@@ -392,49 +394,53 @@ namespace DataModifier {
      *
      * */
 
+
     /**
      * Regular expression to extract the modifier name (group 1) from the
      * stringified class type.
+     * @internal
      */
     const typeRegExp = /^(?:class|function)\s+(\w*?)(?:Data)?(?:Modifier)?\W/;
 
     /**
-     * Registry as a record object with modifier names and their class.
+     * Registry as a record object with modifier names and their class
+     * constructor.
      */
-    export const types: Record<string, ModifierType> = {};
+    export const types = {} as Record<string, DataModifierType>;
 
     /* *
      *
-     *  Static Functions
+     *  Functions
      *
      * */
 
-    export function getModifier<T extends keyof ModifierTypeRegistry>(
+    export function getModifier<T extends keyof DataModifierTypes>(
         name: T
-    ): ModifierTypeRegistry[T];
+    ): DataModifierTypes[T];
     export function getModifier(
         name: string
-    ): (ModifierType|undefined);
+    ): (DataModifierType|undefined);
     /**
-     * Returns a modifier class (aka class constructor) of the given modifier
-     * name.
+     * Returns a modifier class constructor of the given registry name.
      *
      * @param {string} name
-     * Registered class name of the class type.
+     * Registered name of the modifier type.
      *
-     * @return {DataModifier|undefined}
-     * Class type, if the class name was found, otherwise `undefined`.
+     * @return {DataModifierType|undefined}
+     * Class constructor, if the modifier was found, otherwise `undefined`.
      */
     export function getModifier(
         name: string
-    ): (ModifierType|undefined) {
+    ): (DataModifierType|undefined) {
         return types[name];
     }
 
     /**
      * Extracts the type from a given modifier class.
      *
-     * @param {DataModifier} modifier
+     * @private
+     *
+     * @param {DataModifierType} modifier
      * Modifier class to extract the type from.
      *
      * @return {string}
@@ -442,32 +448,34 @@ namespace DataModifier {
      * string.
      */
     function getType(
-        modifier: ModifierType
+        modifier: DataModifierType
     ): string {
         return (modifier.toString().match(typeRegExp) || ['', ''])[1];
     }
 
     /**
      * Adds a modifier class to the registry. The modifier has to provide the
-     * `DataModifier.options` property and the `DataModifier.execute` method to
+     * `DataModifier.options` property and the `DataModifier.modify` method to
      * modify the table.
      *
-     * @param {DataModifier} modifier
+     * @private
+     *
+     * @param {DataModifierType} DataModifierClass
      * Modifier class (aka class constructor) to register.
      *
      * @return {boolean}
      * Returns true, if the registration was successful. False is returned, if
      * their is already a modifier registered with this name.
      */
-    export function registerModifier(
-        modifier: ModifierType
+    export function registerType(
+        DataModifierClass: DataModifierType
     ): boolean {
-        const type = getType(modifier);
+        const type = getType(DataModifierClass);
 
         return (
             !!type &&
             !types[type] &&
-            !!(types[type] = modifier)
+            !!(types[type] = DataModifierClass)
         );
     }
 

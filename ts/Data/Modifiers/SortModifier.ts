@@ -409,13 +409,13 @@ namespace SortModifier {
  *
  * */
 
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Sort: typeof SortModifier;
     }
 }
 
-DataModifier.registerModifier(SortModifier);
+DataModifier.registerType(SortModifier);
 
 /* *
  *
