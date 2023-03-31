@@ -2790,7 +2790,7 @@ class Axis {
             dataMin: axis.dataMin as any,
             dataMax: axis.dataMax as any,
             userMin: axis.userMin,
-            userMax: axis.userMax,
+            userMax: axis.userMax
         };
     }
 
@@ -4427,12 +4427,12 @@ namespace Axis {
         dataMin: number;
         max: number;
         min: number;
-        userMax: number | undefined;
-        userMin: number | undefined;
+        userMax?: number;
+        userMin?: number;
     }
     export interface PanningState {
-        startMin: (number);
-        startMax: (number);
+        startMin: number;
+        startMax: number;
         isDirty?: boolean;
     }
     export interface PlotLinePathOptions {
