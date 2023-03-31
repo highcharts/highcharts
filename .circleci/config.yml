@@ -55,6 +55,9 @@ executors:
   node_image:
     docker:
       - image: cimg/node:16.3.0-browsers
+  semgrep_image:
+    docker:
+      - image: returntocorp/semgrep
 
 commands:
   generate_references_command:
@@ -68,6 +71,12 @@ commands:
       - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
 jobs:
+  security_scan:
+    docker:
+      - image: returntocorp/semgrep
+    name: Scan ts-folder for OWASP top-ten vulnerabilities
+    run: semgrep ci --config "p/owasp-top-ten" "ts/"
+
   checkout_and_install:
     <<: *defaults
     environment:
