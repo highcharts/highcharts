@@ -95,4 +95,24 @@ describe('Add component through UI', () => {
             );
         });
     });
+
+    it('KPI component is added.', function() {
+        grabComponent('KPI');
+        dropComponent('#dashboard-col-0')
+        cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
+        cy.board().then((board) => {
+            assert.equal(
+                board.layouts[0].rows[0].cells.length,
+                3,
+                'New cell should be added.'
+            );
+            const m = board.mountedComponents,
+                component = m[m.length - 1].component;
+            assert.equal(
+                component.type,
+                'KPI',
+                `New component's type should be 'KPI'.`
+            );
+        });
+    });
 });
