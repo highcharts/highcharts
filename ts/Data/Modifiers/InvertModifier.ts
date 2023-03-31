@@ -406,7 +406,7 @@ declare module './DataModifierType' {
     }
 }
 
-DataModifier.registerType(InvertModifier);
+DataModifier.registerType('Invert', InvertModifier);
 
 /* *
  *
