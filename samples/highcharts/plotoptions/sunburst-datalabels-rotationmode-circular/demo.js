@@ -850,10 +850,10 @@ Highcharts.chart('container', {
 });
 
 [...document.querySelectorAll('#button-row button')].forEach(button =>
-    button.addEventListener('click', button => {
+    button.addEventListener('click', e => {
         Highcharts.charts[0].series[0].update({
             dataLabels: {
-                rotationMode: button.innerText
+                rotationMode: e.target.innerText
             }
         });
     })

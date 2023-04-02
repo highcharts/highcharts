@@ -189,6 +189,12 @@ function getDlOptions(
         }
 
         if (rotationMode !== 'auto' && rotationMode !== 'circular') {
+
+            if (point.dataLabel && point.dataLabel.textPath) {
+                options.textPath = {
+                    enabled: false
+                };
+            }
             rotationRad = (
                 (shape.end as any) -
                 ((shape.end as any) - (shape.start as any)) / 2
