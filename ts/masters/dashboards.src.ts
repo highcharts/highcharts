@@ -24,7 +24,6 @@ import DataCursor from '../Data/DataCursor.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';
 import GoogleSheetsConnector from '../Data/Connectors/GoogleSheetsConnector.js';
-import GroupModifier from '../Data/Modifiers/GroupModifier.js';
 import HTMLTableConnector from '../Data/Connectors/HTMLTableConnector.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
 import RangeModifier from '../Data/Modifiers/RangeModifier.js';
@@ -62,7 +61,6 @@ const D = {
     DataPool,
     DataTable,
     GoogleSheetsConnector,
-    GroupModifier,
     HTMLTableConnector,
     PluginHandler,
     RangeModifier,

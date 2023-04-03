@@ -165,7 +165,7 @@ function wrapSeriesSetData(
         }
     }
 
-    datas.setTable(new DataTable(columns, this.name));
+    datas.setTable(new DataTable({ columns, id: this.name }));
 }
 
 /* *

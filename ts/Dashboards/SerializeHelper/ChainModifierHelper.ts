@@ -23,7 +23,6 @@ import type CoreJSON from '../../Core/JSON';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 
 import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
-import GroupModifierHelper from './GroupModifierHelper.js';
 import InvertModifierHelper from './InvertModifierHelper.js';
 import Serializable from '../Serializable.js';
 
@@ -60,10 +59,6 @@ function fromJSON(
     ) {
         modifierJSON = jsonModifiers[i];
         switch (modifierJSON.$class) {
-            case GroupModifierHelper.$class:
-                modifier = GroupModifierHelper
-                    .fromJSON(modifierJSON as GroupModifierHelper.JSON);
-                break;
             case InvertModifierHelper.$class:
                 modifier = InvertModifierHelper
                     .fromJSON(modifierJSON as InvertModifierHelper.JSON);
@@ -128,9 +123,7 @@ function toJSON(
         ++i
     ) {
         modifier = modifiers[i];
-        if (GroupModifierHelper.jsonSupportFor(modifier)) {
-            modifierJSON = GroupModifierHelper.toJSON(modifier);
-        } else if (InvertModifierHelper.jsonSupportFor(modifier)) {
+        if (InvertModifierHelper.jsonSupportFor(modifier)) {
             modifierJSON = InvertModifierHelper.toJSON(modifier);
         } else {
             modifierJSON = Serializable.toJSON(modifiers[i]);

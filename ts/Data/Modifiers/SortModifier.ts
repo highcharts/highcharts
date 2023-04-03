@@ -94,7 +94,9 @@ class SortModifier extends DataModifier {
      * @param {RangeDataModifier.Options} [options]
      * Options to configure the range modifier.
      */
-    public constructor(options?: DeepPartial<SortModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<SortModifier.Options>
+    ) {
         super();
 
         this.options = merge(SortModifier.defaultOptions, options);
@@ -155,9 +157,10 @@ class SortModifier extends DataModifier {
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
+                        .modifyTable(new DataTable({
+                            columns: table
+                                .getColumns([orderByColumn, orderInColumn])
+                        }))
                         .modified
                         .getColumn(orderInColumn)
                 );
@@ -211,9 +214,10 @@ class SortModifier extends DataModifier {
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
+                        .modifyTable(new DataTable({
+                            columns: table
+                                .getColumns([orderByColumn, orderInColumn])
+                        }))
                         .modified
                         .getColumn(orderInColumn)
                 );
@@ -266,9 +270,10 @@ class SortModifier extends DataModifier {
             table.modified.setColumn(
                 orderInColumn,
                 modifier
-                    .modifyTable(new DataTable(
-                        table.getColumns([orderByColumn, orderInColumn])
-                    ))
+                    .modifyTable(new DataTable({
+                        columns: table
+                            .getColumns([orderByColumn, orderInColumn])
+                    }))
                     .modified
                     .getColumn(orderInColumn)
             );
@@ -398,6 +403,20 @@ namespace SortModifier {
         row: DataTable.Row;
     }
 
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+DataModifier.registerType(SortModifier);
+
+declare module './DataModifierType' {
+    interface DataModifierTypes {
+        Sort: typeof SortModifier;
+    }
 }
 
 /* *
