@@ -20,12 +20,12 @@ import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
 import type AnnotationOptions from './AnnotationOptions';
 import type { AnnotationPointType } from './AnnotationSeries';
-import type Controllable from './Controllables/Controllable';
 import type {
     ControllableLabelType,
     ControllableShapeType
 } from './Controllables/ControllableType';
 import type { ControlPointOptionsObject } from './ControlPointOptions';
+import type ControlTarget from './ControlTarget';
 import type { CursorValue } from '../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../Core/Renderer/DOMElementType';
 import type EventCallback from '../../Core/EventCallback';
@@ -270,7 +270,7 @@ abstract class EventEmitter {
                 translation.x = 0;
             }
 
-            const emitter = this as Required<EventEmitter>;
+            const emitter = this as (ControlTarget&Required<EventEmitter>);
 
             if (emitter.points.length) {
                 emitter.translate(translation.x, translation.y);
@@ -340,10 +340,10 @@ abstract class EventEmitter {
                 const annotation = pick(
                     emitter.target && emitter.target.annotation,
                     emitter.target
-                );
+                ) as Annotation;
                 if (annotation) {
                     // Keep annotation selected after dragging control point
-                    (annotation as Annotation).cancelClick = emitter.hasDragged;
+                    annotation.cancelClick = emitter.hasDragged;
                 }
 
                 emitter.cancelClick = emitter.hasDragged;
@@ -410,12 +410,10 @@ interface EventEmitter {
     labels?: Array<ControllableLabelType>;
     nonDOMEvents?: Array<string>;
     options: Partial<(ControlPointOptionsObject|AnnotationOptions)>;
-    points?: Array<AnnotationPointType>;
     removeDrag?: Function;
     removeMouseUp?: Function;
     shapes?: Array<ControllableShapeType>;
-    target?: (Annotation|Controllable);
-    translate?(dx: number, dy: number): void;
+    target?: ControlTarget;
 }
 
 /* *

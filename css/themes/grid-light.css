@@ -1,6 +1,6 @@
 /* Global font */
-@import "https://fonts.googleapis.com/css?family=Dosis:400,600";
-@import "../highcharts.css";
+@import url("https://fonts.googleapis.com/css?family=Dosis:400,600");
+@import url("../highcharts.css");
 
 :root {
     /* Colors for data series and points. */

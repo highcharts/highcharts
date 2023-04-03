@@ -1,6 +1,6 @@
 /* Global font */
-@import "https://fonts.googleapis.com/css?family=Signika:400,700";
-@import "../highcharts.css";
+@import url("https://fonts.googleapis.com/css?family=Signika:400,700");
+@import url("../highcharts.css");
 
 :root {
     --highcharts-background-color: none;
