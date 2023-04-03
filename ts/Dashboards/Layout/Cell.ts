@@ -19,15 +19,15 @@
 import type CSSJSONObject from '../CSSJSONObject';
 import type Component from '../Components/Component.js';
 import type JSON from '../../Core/JSON';
-import type LayoutType from './Layout';
+import LayoutType from './Layout.js';
 import type Row from './Row';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Serializable from '../Serializable';
 
 import Globals from '../Globals.js';
 import GUIElement from './GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import EditGlobals from '../EditMode/EditGlobals.js';
 
 const {
@@ -43,11 +43,12 @@ const {
  * @internal
  **/
 class Cell extends GUIElement {
+
     /* *
-    *
-    *  Static Properties
-    *
-    * */
+     *
+     *  Static Properties
+     *
+     * */
 
     /** @internal */
     public static fromJSON(
@@ -70,7 +71,8 @@ class Cell extends GUIElement {
                     parentContainerId: (row.container && row.container.id) ||
                         options.parentContainerId,
                     mountedComponentJSON: options.mountedComponentJSON,
-                    style: options.style
+                    style: options.style,
+                    layoutJSON: options.layoutJSON
                 }
             );
         }
@@ -79,10 +81,10 @@ class Cell extends GUIElement {
     }
 
     /* *
-    *
-    *  Constructor
-    *
-    * */
+     *
+     *  Constructor
+     *
+     * */
 
     /**
      * Constructs an instance of the Cell class.
@@ -161,20 +163,20 @@ class Cell extends GUIElement {
 
             // nested layout
             if (this.options.layout) {
-                const board = this.row.layout.board,
-                    Layout = this.row.layout.constructor as typeof LayoutType;
-                const optionsGui = board.options.gui;
+                this.setNestedLayout();
+            }
+            if (this.options.layoutJSON) {
+                const layout = this.row.layout,
+                    board = layout.board,
+                    layoutFromJSON = (
+                        layout.constructor as typeof LayoutType
+                    ).fromJSON;
 
-                this.nestedLayout = new Layout(
+                this.nestedLayout = layoutFromJSON(
+                    merge(this.options.layoutJSON, {
+                        parentContainerId: this.options.id
+                    }),
                     board,
-                    merge(
-                        {},
-                        optionsGui && optionsGui.layoutOptions,
-                        this.options.layout,
-                        {
-                            parentContainerId: options.id
-                        }
-                    ),
                     this
                 );
             }
@@ -183,6 +185,24 @@ class Cell extends GUIElement {
         }
     }
 
+    public setNestedLayout(): void {
+        const board = this.row.layout.board,
+            Layout = (this.row.layout.constructor as typeof LayoutType);
+        const optionsGui = board.options.gui;
+
+        this.nestedLayout = new Layout(
+            board,
+            merge(
+                {},
+                optionsGui && optionsGui.layoutOptions,
+                this.options.layout,
+                {
+                    parentContainerId: this.options.id
+                }
+            ),
+            this
+        );
+    }
     /* *
     *
     *  Properties
@@ -299,7 +319,8 @@ class Cell extends GUIElement {
                 parentContainerId: rowContainerId,
                 mountedComponentJSON:
                     cell.mountedComponent && cell.mountedComponent.toJSON(),
-                style: cell.options.style
+                style: cell.options.style,
+                layoutJSON: cell.nestedLayout && cell.nestedLayout.toJSON()
             }
         };
     }
@@ -600,6 +621,10 @@ namespace Cell {
          **/
         layout?: LayoutType.Options;
         /**
+         * To create nested layout from JSON config.
+         */
+        layoutJSON?: LayoutType.JSON;
+        /**
          * Options for responsive design.
          **/
         responsive?: Record<string, CellResponsiveOptions>;
@@ -613,6 +638,7 @@ namespace Cell {
         parentContainerId: string;
         mountedComponentJSON?: Component.JSON;
         style?: CSSJSONObject;
+        layoutJSON?: LayoutType.JSON;
     }
 
 }
