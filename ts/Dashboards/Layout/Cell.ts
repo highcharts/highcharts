@@ -16,10 +16,16 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type CSSJSONObject from '../CSSJSONObject';
 import type Component from '../Components/Component.js';
 import type JSON from '../../Core/JSON';
-import LayoutType from './Layout.js';
+import type LayoutType from './Layout';
 import type Row from './Row';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Serializable from '../Serializable';
@@ -38,6 +44,12 @@ const {
     merge,
     fireEvent
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * @internal
@@ -185,24 +197,6 @@ class Cell extends GUIElement {
         }
     }
 
-    public setNestedLayout(): void {
-        const board = this.row.layout.board,
-            Layout = (this.row.layout.constructor as typeof LayoutType);
-        const optionsGui = board.options.gui;
-
-        this.nestedLayout = new Layout(
-            board,
-            merge(
-                {},
-                optionsGui && optionsGui.layoutOptions,
-                this.options.layout,
-                {
-                    parentContainerId: this.options.id
-                }
-            ),
-            this
-        );
-    }
     /* *
     *
     *  Properties
@@ -244,6 +238,34 @@ class Cell extends GUIElement {
      */
     public isHighlighted?: boolean;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /**
+     * Create a nested layout in the cell and assign it to the nestedCell
+     * property.
+     * @internal
+     */
+    public setNestedLayout(): void {
+        const board = this.row.layout.board,
+            Layout = (this.row.layout.constructor as typeof LayoutType);
+        const optionsGui = board.options.gui;
+
+        this.nestedLayout = new Layout(
+            board,
+            merge(
+                {},
+                optionsGui && optionsGui.layoutOptions,
+                this.options.layout,
+                {
+                    parentContainerId: this.options.id
+                }
+            ),
+            this
+        );
+    }
     /**
      * Mount component from JSON.
      * @internal
@@ -547,6 +569,12 @@ class Cell extends GUIElement {
     }
 }
 
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
 namespace Cell {
     /**
      * @internal
@@ -643,4 +671,9 @@ namespace Cell {
 
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default Cell;
