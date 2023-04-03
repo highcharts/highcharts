@@ -249,7 +249,7 @@ class CSVConverter extends DataConverter {
 
         if (csv) {
             lines = csv
-                .replace(/\r\n|\r/gu, '\n') // Windows | Mac
+                .replace(/\r\n|\r/g, '\n') // Windows | Mac
                 .split(lineDelimiter || '\n');
 
             if (!startRow || startRow < 0) {
@@ -274,7 +274,7 @@ class CSVConverter extends DataConverter {
 
                 // Remove ""s from the headers
                 for (let i = 0; i < headers.length; i++) {
-                    headers[i] = headers[i].replace(/^["']|["']$/gu, '');
+                    headers[i] = headers[i].replace(/^["']|["']$/g, '');
                 }
 
                 converter.headers = headers;
@@ -389,7 +389,7 @@ class CSVConverter extends DataConverter {
                     token = parseFloat(token) as any;
                     pushType('number');
                 } else if (!isNaN(Date.parse(token))) {
-                    token = token.replace(/\//gu, '-');
+                    token = token.replace(/\//g, '-');
                     pushType('date');
                 } else {
                     pushType('string');
@@ -436,7 +436,7 @@ class CSVConverter extends DataConverter {
 
             if (c === '#') {
                 // If there are hexvalues remaining (#13283)
-                if (!/^#[0-F]{3,3}|[0-F]{6,6}/iu.test(columnStr.substring(i))) {
+                if (!/^#[0-F]{3,3}|[0-F]{6,6}/i.test(columnStr.substring(i))) {
                     // The rest of the row is a comment
                     push();
                     return;

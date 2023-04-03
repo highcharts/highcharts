@@ -110,52 +110,12 @@ declare global {
         webkitRequestFullScreen: Function;
     }
 
-    interface HTMLCanvasElement {
-        /** @deprecated */
-        msToBlob: Function;
-    }
-
     interface HTMLElement {
         parentNode: HTMLElement;
     }
 
     interface Math {
         easeInOutSine(pos: number): number;
-    }
-
-    class MSBlobBuilder extends Blob {
-        /** @deprecated */
-        append: Function;
-        /** @deprecated */
-        getBlob: Function;
-    }
-
-    class MSPointerEvent implements Partial<PointerEvent> {
-        /** @deprecated */
-        readonly MSPOINTER_TYPE_TOUCH: string;
-        readonly pointerType: undefined;
-    }
-
-    interface Navigator {
-        /** @deprecated */
-        msSaveOrOpenBlob: Function;
-    }
-
-    interface ObjectConstructor {
-        /**
-         * Sets the prototype of a specified object o to object proto or null.
-         * Returns the object o.
-         * @param o The object to change its prototype.
-         * @param proto The value of the new prototype or null.
-         */
-        setPrototypeOf?<T>(o: T, proto: object | null): T;
-    }
-
-    interface PointerEvent {
-        /** @deprecated */
-        readonly MSPOINTER_TYPE_TOUCH: string;
-        /** @deprecated */
-        readonly toElement: Element;
     }
 
     interface SVGElement {
@@ -172,12 +132,6 @@ declare global {
     }
 
     interface Window {
-        /** @deprecated */
-        MSBlobBuilder?: typeof MSBlobBuilder;
-        /** @deprecated */
-        MSPointerEvent?: typeof MSPointerEvent;
-        /** @deprecated */
-        createObjectURL?: (typeof URL)['createObjectURL'];
         /** @deprecated */
         opera?: unknown;
         /** @deprecated */

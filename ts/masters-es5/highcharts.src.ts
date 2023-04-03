@@ -9,6 +9,11 @@
 'use strict';
 import Highcharts from '../masters/highcharts.src.js';
 import MSPointer from '../Core/MSPointer.js';
+declare global {
+    interface ObjectConstructor {
+        setPrototypeOf?<T>(o: T, proto: object | null): T;
+    }
+}
 const G: AnyRecord = Highcharts;
 if (MSPointer.isRequired()) {
     G.Pointer.dissolve();

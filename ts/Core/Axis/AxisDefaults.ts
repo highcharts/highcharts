@@ -1029,7 +1029,7 @@ namespace AxisDefaults {
              * positions on the axis. Overrides the `labels.distance` option.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
-             *         Y axis labels placed on grid lines
+             *         X axis labels placed on grid lines
              *
              * @type      {number}
              * @apioption xAxis.labels.y
