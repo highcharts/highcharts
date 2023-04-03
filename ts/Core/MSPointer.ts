@@ -238,6 +238,43 @@ class MSPointer extends Pointer {
 
 /* *
  *
+ *  Class Namespace
+ *
+ * */
+
+namespace MSPointer {
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(ChartClass: typeof Chart): void {
+
+        if (U.pushUnique(composedMembers, ChartClass)) {
+            addEvent(ChartClass, 'beforeRender', function (): void {
+                this.pointer = new MSPointer(this, this.options);
+            });
+        }
+
+    }
+
+}
+
+/* *
+ *
  *  Default Export
  *
  * */

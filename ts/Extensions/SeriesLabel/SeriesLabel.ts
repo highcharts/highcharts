@@ -126,7 +126,7 @@ interface LabelClearPointObject extends PositionObject {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 const labelDistance = 3;
 
@@ -362,23 +362,17 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         // Leave both events, we handle animation differently (#9815)
         addEvent(Chart, 'load', onChartRedraw);
         addEvent(Chart, 'redraw', onChartRedraw);
     }
 
-    if (composedClasses.indexOf(SVGRendererClass) === -1) {
-        composedClasses.push(SVGRendererClass);
-
+    if (U.pushUnique(composedMembers, SVGRendererClass)) {
         SVGRendererClass.prototype.symbols.connector = symbolConnector;
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions({ plotOptions: { series: { label: SeriesLabelDefaults } } });
     }
 

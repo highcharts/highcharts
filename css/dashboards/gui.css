@@ -6,9 +6,6 @@
  * License: www.highcharts.com/license
  */
 
-/* Popup */
-@import url("../annotations/popup.css");
-
 :root,
 .highcharts-dashboards-light {
     /* Base colors */
@@ -46,6 +43,10 @@
     /* Sidebar */
     --highcharts-dashboards-sidebar-button-color: #2196f3;
     --highcharts-dashboards-sidebar-button-contrast-color: #0d47a1;
+
+    /* Dropdown */
+    --highcharts-dashboards-dropdown-box-shadow-color: 34, 34, 34, 0.1;
+    --highcharts-dashboards-dropdown-border-color: #838394;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -745,28 +746,54 @@
     opacity: 0.3;
 }
 
-.highcharts-popup {
+/* Confirmation popup */
+
+.highcharts-dashboards-edit-confirmation-popup {
     min-height: 160px;
-    width: 200px;
-    left: calc(50% - 150px);
+    width: 300px;
+    display: none;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background-color: var(--highcharts-dashboards-main-background-color);
+    color: var(--highcharts-neutral-color-60);
+    font-size: 0.876em;
+    max-height: 90%;
+    top: 5%;
+    overflow: hidden;
+    position: absolute;
+    z-index: 100;
 }
 
-.highcharts-popup .highcharts-dashboards-edit-popup-content {
+.highcharts-dashboards-edit-confirmation-popup-close {
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    color: var(--highcharts-neutral-color-80);
+}
+
+.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-content {
     padding-top: 60px;
     clear: both;
     text-align: center;
 }
 
-.highcharts-popup .highcharts-dashboards-edit-popup-content button {
+.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-content button {
     float: none;
 }
 
-.highcharts-popup .highcharts-dashboards-edit-popup-content.highcharts-dashboards-edit-label-text {
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-content.highcharts-dashboards-edit-label-text {
     width: 100%;
     padding: 10px 0;
 }
 
-.highcharts-popup .highcharts-dashboards-edit-popup-content button.highcharts-dashboards-edit-popup-confirm-btn {
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-content button.highcharts-dashboards-edit-confirmation-popup-confirm-btn {
     background-color: var(--highcharts-dashboards-red-color);
     color: var(--highcharts-dashboards-main-font-color);
 }
@@ -816,3 +843,59 @@
 .highcharts-dashboards-row .highcharts-dashboards-cell:focus {
     outline: 5px auto -webkit-focus-ring-color;
 }
+
+/* Dropdown */
+ul.highcharts-dashboards-dropdown-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--highcharts-dashboards-main-background-color);
+    box-sizing: border-box;
+    padding: 16px 8px;
+    margin-top: 4px;
+    border: 1px solid var(--highcharts-dashboards-dropdown-border-color);
+    box-shadow: 0 10px 24px rgba(var(--highcharts-dashboards-dropdown-box-shadow-color));
+    list-style-type: none;
+}
+
+div.highcharts-dashboards-dropdown {
+    position: relative;
+    color: var(--highcharts-dashboards-main-font-color);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    line-height: 16px;
+}
+
+.highcharts-dashboards-dropdown > button.highcharts-dashboards-dropdown-button {
+    color: var(--highcharts-dashboards-main-font-color);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 8px;
+    margin: 2px;
+    gap: 2px;
+    background: var(--highcharts-dashboards-main-background-color);
+    border: 1px solid var(--highcharts-dashboards-dropdown-border-color);
+    border-radius: 2px;
+}
+
+button.highcharts-dashboards-select-option-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    cursor: pointer;
+    margin: 0;
+    background: var(--highcharts-dashboards-main-background-color);
+    color: var(--highcharts-dashboards-main-font-color);
+}
+
+button.highcharts-dashboards-select-option-button:hover {
+    background-color: var(--highcharts-dashboards-wrapper-background-color);
+}
+
+/* End of Dropdown */

@@ -23,9 +23,7 @@ import type {
 import type TrendLinePoint from './TrendLinePoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -108,19 +106,19 @@ class TrendLineIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: TrendLineParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        let xVal: Array<number> = (series.xData as any),
+        const xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            sumX = 0,
+            xValLength: number = xVal.length,
+            index: number = (params.index as any);
+
+        let sumX = 0,
             sumY = 0,
             sumXY = 0,
             sumX2 = 0,
-            xValLength: number = xVal.length,
-            index: number = (params.index as any),
             alpha: number,
-            beta: number,
             i: number,
             x: number,
             y: number;
@@ -143,7 +141,7 @@ class TrendLineIndicator extends SMAIndicator {
             alpha = 0;
         }
 
-        beta = (sumY - alpha * sumX) / xValLength;
+        const beta = (sumY - alpha * sumX) / xValLength;
 
         // Calculate linear regression:
         for (i = 0; i < xValLength; i++) {
@@ -162,6 +160,7 @@ class TrendLineIndicator extends SMAIndicator {
             values: LR
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+
 }
 
 /* *

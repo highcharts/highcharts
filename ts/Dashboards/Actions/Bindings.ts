@@ -14,18 +14,18 @@
  *
  * */
 
-import type ComponentTypes from '../Component/ComponentType';
+import type ComponentTypes from '../Components/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type Serializable from '../Serializable';
-import type KPIComponent from '../Component/KPIComponent';
-import type DataStore from '../../Data/Stores/DataStore';
+import type KPIComponent from '../Components/KPIComponent';
+import type DataConnector from '../../Data/Connectors/DataConnector';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
 import type Row from '../Layout/Row';
 
-import Component from '../Component/Component.js';
-import HTMLComponent from '../Component/HTMLComponent.js';
+import Component from '../Components/Component.js';
+import HTMLComponent from '../Components/HTMLComponent.js';
 import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
 import Globals from '../Globals.js';
 import DataTable from '../../Data/DataTable';

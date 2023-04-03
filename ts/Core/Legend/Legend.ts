@@ -68,6 +68,12 @@ const {
  *
  * */
 
+declare module '../Chart/ChartLike' {
+    interface ChartLike {
+        legend: Legend;
+    }
+}
+
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         legendIndex?: number;
@@ -215,8 +221,6 @@ class Legend {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Initialize the legend.
@@ -1568,7 +1572,6 @@ class Legend {
         }
     }
 
-
     /**
      * @private
      * @function Highcharts.Legend#setItemEvents
@@ -1726,7 +1729,6 @@ class Legend {
             );
         });
     }
-
 }
 
 /* *
@@ -1747,6 +1749,12 @@ interface Legend extends LegendLike {
 
 namespace Legend {
 
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface CheckBoxElement extends HTMLDOMElement {
         checked?: boolean;
         x: number;
@@ -1754,6 +1762,42 @@ namespace Legend {
     }
 
     export type Item = (BubbleLegendItem|Series|Point);
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(ChartClass: typeof Chart): void {
+
+        if (U.pushUnique(composedMembers, ChartClass)) {
+            addEvent(ChartClass, 'beforeMargins', function (): void {
+                /**
+                 * The legend contains an interactive overview over chart items,
+                 * usually individual series or points depending on the series
+                 * type. The color axis and bubble legend are also rendered in
+                 * the chart legend.
+                 *
+                 * @name Highcharts.Chart#legend
+                 * @type {Highcharts.Legend}
+                 */
+                this.legend = new Legend(this, this.options.legend);
+            });
+        }
+
+    }
 
 }
 

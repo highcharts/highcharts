@@ -7,7 +7,7 @@ import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlug
 
 Highcharts.win.Highcharts = Highcharts;
 
-const { CSVStore, PluginHandler } = Dashboard;
+const { CSVConnector, PluginHandler } = Dashboard;
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
@@ -17,15 +17,15 @@ PluginHandler.addPlugin(DataGridPlugin);
 
 const csvData = document.getElementById('csv').innerText;
 
-const store = new CSVStore(void 0, {
+const connector = new CSVConnector(void 0, {
     csv: csvData,
     firstRowAsNames: true
 });
 
-store.load();
+connector.load();
 
 Dashboard.board('container', {
-    store: store,
+    connector,
     gui: {
         layouts: [{
             id: 'layout-1',
@@ -41,7 +41,7 @@ Dashboard.board('container', {
     components: [
         {
             cell: 'dashboard-col-0',
-            store,
+            connector,
             type: 'Highcharts',
             sync: {
                 tooltip: true
@@ -70,7 +70,7 @@ Dashboard.board('container', {
         }, {
             cell: 'dashboard-col-1',
             type: 'DataGrid',
-            store,
+            connector,
             editable: true,
             sync: {
                 tooltip: true

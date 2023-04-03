@@ -15,15 +15,11 @@
  * */
 
 import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
-import type {
-    TRIXOptions
-} from './TRIXOptions';
+import type { TRIXOptions } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    tema: TEMAIndicator
-} = SeriesRegistry.seriesTypes;
+const { tema: TEMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,

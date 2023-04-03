@@ -23,9 +23,9 @@ import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 
-import Component from '../../Dashboards/Component/Component.js';
+import Component from '../../Dashboards/Components/Component.js';
+import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
-import DataStore from '../../Data/Stores/DataStore.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 const { createElement, merge, uniqueKey } = U;
@@ -88,7 +88,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      */
     public static onUpdate(
         e: KeyboardEvent,
-        store: Component.StoreTypes
+        store: Component.ConnectorTypes
     ): void {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {
@@ -210,18 +210,18 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
 
         this.dataGridOptions = this.options.dataGridOptions || ({} as any);
 
-        if (this.store) {
+        if (this.connector) {
             // this.on('tableChanged', (): void => this.updateSeries());
 
             // Reload the store when polling.
-            this.store.on('afterLoad', (e: DataStore.Event): void => {
-                if (e.table && this.store) {
-                    this.store.table.setColumns(e.table.getColumns());
+            this.connector.on('afterLoad', (e: DataConnector.Event): void => {
+                if (e.table && this.connector) {
+                    this.connector.table.setColumns(e.table.getColumns());
                 }
             });
 
             // Update the DataGrid when store changed.
-            this.store.table.on('afterSetCell', (e: any): void => {
+            this.connector.table.on('afterSetCell', (e: any): void => {
                 const dataGrid = this.dataGrid;
                 let shouldUpdateTheGrid = true;
 
@@ -286,7 +286,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         this.sync.start();
         this.emit({ type: 'afterRender' });
 
-        this.setupStoreUpdate();
+        this.setupConnectorUpdate();
 
         return this;
     }
@@ -325,7 +325,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
                 this.dataGridContainer,
                 {
                     ...this.options.dataGridOptions,
-                    dataTable: this.store && this.store.table.modified
+                    dataTable: this.connector && this.connector.table.modified
                 }
             );
             return this.dataGrid;
@@ -334,17 +334,16 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         throw new Error('DataGrid not connected.');
     }
 
-    /** @internal */
-    private setupStoreUpdate(): void {
-        const { store, dataGrid } = this;
+    private setupConnectorUpdate(): void {
+        const { connector, dataGrid } = this;
 
-        if (store && dataGrid) {
+        if (connector && dataGrid) {
             dataGrid.on<DataGrid.Event>('cellClick', (e): void => {
                 if ('input' in e) {
                     e.input.addEventListener(
                         'keyup',
                         (keyEvent): void =>
-                            this.options.onUpdate(keyEvent, store)
+                            this.options.onUpdate(keyEvent, connector)
                     );
                 }
             });
