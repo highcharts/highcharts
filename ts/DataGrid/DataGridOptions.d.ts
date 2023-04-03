@@ -33,8 +33,8 @@ import type DataTable from '../Data/DataTable';
 export interface DataGridOptions {
 
     /**
-     * Height of each grid cell. This is used to calculate the amount of visible
-     * cells in a container and the size of the scrollbar.
+     * Height of each grid cell in pixels. This is used to calculate the amount
+     * of visible cells in a container and the size of the scrollbar.
      *
      * @default 25
      */
@@ -90,7 +90,6 @@ export interface ColumnHeaderOptions {
  */
 export interface ColumnOptions {
 
-    /**
     /**
      * Switch to make the column cells editable ('true') or read-only ('false').
      *
