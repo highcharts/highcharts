@@ -668,17 +668,16 @@ class Series {
      */
     public updateParallelArrays(
         point: Point,
-        i: (number|string)
+        i: (number|string),
+        iArgs?: Array<any>
     ): void {
         const series = point.series,
-            args = arguments,
             fn = isNumber(i) ?
                 // Insert the value in the given position
                 function (key: string): void {
                     const val = key === 'y' && series.toYData ?
                         series.toYData(point) :
                         (point as any)[key];
-
                     (series as any)[key + 'Data'][i] = val;
                 } :
                 // Apply the method specified in i with the following
@@ -686,7 +685,7 @@ class Series {
                 function (key: string): void {
                     (Array.prototype as any)[i].apply(
                         (series as any)[key + 'Data'],
-                        Array.prototype.slice.call(args, 2)
+                        iArgs
                     );
                 };
 
@@ -3933,9 +3932,9 @@ class Series {
         }
 
         // Insert undefined item
-        (series.updateParallelArrays as any)(point, 'splice', i, 0, 0);
+        series.updateParallelArrays(point, 'splice', [i, 0, 0]);
         // Update it
-        series.updateParallelArrays(point as any, i);
+        series.updateParallelArrays(point, i);
 
         if (names && point.name) {
             names[x as any] = point.name;
@@ -3963,7 +3962,7 @@ class Series {
                 data[0].remove(false);
             } else {
                 data.shift();
-                series.updateParallelArrays(point as any, 'shift');
+                series.updateParallelArrays(point, 'shift');
 
                 (dataOptions as any).shift();
             }
@@ -4028,11 +4027,10 @@ class Series {
                 }
                 data.splice(i, 1);
                 (series.options.data as any).splice(i, 1);
-                (series.updateParallelArrays as any)(
+                series.updateParallelArrays(
                     point || { series: series },
                     'splice',
-                    i,
-                    1
+                    [i, 1]
                 );
 
                 if (point) {

@@ -1388,12 +1388,17 @@ class Navigator {
 
         // Initialize the scrollbar
         if ((chart.options.scrollbar as any).enabled) {
+
+            const options = merge<DeepPartial<ScrollbarOptions>>(
+                chart.options.scrollbar,
+                { vertical: chart.inverted }
+            );
+            if (!isNumber(options.margin) && navigator.navigatorEnabled) {
+                options.margin = 0;
+            }
             chart.scrollbar = navigator.scrollbar = new Scrollbar(
                 chart.renderer,
-                merge(chart.options.scrollbar, {
-                    margin: navigator.navigatorEnabled ? 0 : 10,
-                    vertical: chart.inverted
-                } as DeepPartial<ScrollbarOptions>),
+                options,
                 chart
             );
             addEvent(navigator.scrollbar, 'changed', function (

@@ -422,7 +422,7 @@ class ChainModifier extends DataModifier {
     }
 
     /**
-     * Removes a configured modifier from all positions of the modifier chain.
+     * Removes a configured modifier from all positions in the modifier chain.
      *
      * @param {DataModifier} modifier
      * Configured modifier to remove.
@@ -516,10 +516,10 @@ namespace ChainModifier {
  *
  * */
 
-DataModifier.addModifier(ChainModifier);
+DataModifier.registerType(ChainModifier);
 
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Chain: typeof ChainModifier;
     }
 }
