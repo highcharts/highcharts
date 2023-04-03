@@ -65,7 +65,9 @@ class InvertModifier extends DataModifier {
      * @param {InvertModifier.Options} [options]
      * Options to configure the invert modifier.
      */
-    public constructor(options?: DeepPartial<InvertModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<InvertModifier.Options>
+    ) {
         super();
 
         this.options = merge(InvertModifier.defaultOptions, options);
