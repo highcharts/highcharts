@@ -28,7 +28,6 @@ export interface RSIOptions extends SMAOptions {
 }
 
 export interface RSIParamsOptions extends SMAParamsOptions {
-    // for inheritance
     decimals?: number;
 }
 

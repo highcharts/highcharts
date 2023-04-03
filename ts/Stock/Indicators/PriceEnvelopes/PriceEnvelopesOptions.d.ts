@@ -34,7 +34,6 @@ export interface PriceEnvelopesParamsOptions extends SMAParamsOptions {
     topBand: number;
     bottomBand: number;
     period: number;
-    // for inheritance
 }
 
 /* *
