@@ -219,7 +219,7 @@ class EditMode {
         if (!editMode.sidebar) {
             editMode.sidebar = new SidebarPopup(
                 this.board.container,
-                EditGlobals.iconsURL,
+                this.iconsURLPrefix,
                 editMode
             );
         }

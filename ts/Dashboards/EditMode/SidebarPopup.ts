@@ -7,10 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Sebastian Bochan
- *  - Wojciech Chmiel
- *  - Gøran Slettemark
- *  - Sophie Bremer
+ *  Pawel Lysy
  *
  * */
 
@@ -21,9 +18,9 @@
  *  Imports
  *
  * */
-import type EditMode from './EditMode.js';
+import type EditMode from './EditMode';
 import type Cell from '../Layout/Cell';
-import type Row from '../Layout/Row.js';
+import type Row from '../Layout/Row';
 
 import BaseForm from '../../Shared/BaseForm.js';
 import EditGlobals from './EditGlobals.js';
