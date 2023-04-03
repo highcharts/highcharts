@@ -14,7 +14,7 @@
  *
  * */
 
-import type ComponentTypes from '../ComponentType';
+import type ComponentType from '../ComponentType';
 import type SharedState from '../SharedComponentState';
 
 /* *
@@ -40,11 +40,15 @@ export default class SyncHandler {
     }
 
     public id: string;
-    public presentationStateTrigger: SharedState.eventTypes;
+    public presentationStateTrigger?: SharedState.eventTypes;
     public func: Function;
     public callback?: Function;
 
-    constructor(id: string, trigger: SharedState.eventTypes, func: Function) {
+    constructor(
+        id: string,
+        trigger: SharedState.eventTypes | undefined,
+        func: Function
+    ) {
         this.id = id;
         this.presentationStateTrigger = trigger;
         this.func = func;
@@ -52,10 +56,10 @@ export default class SyncHandler {
         SyncHandler.register(this);
     }
 
-    public create(component: ComponentTypes): void {
+    public create(component: ComponentType): void {
         const { activeGroup } = component;
         const { func } = this;
-        if (activeGroup) {
+        if (activeGroup && this.presentationStateTrigger) {
             this.callback = activeGroup
                 .getSharedState()
                 .on(
@@ -70,6 +74,11 @@ export default class SyncHandler {
                     }
                 );
         }
+    }
+
+    public register(component: ComponentType): void {
+        const { func } = this;
+        this.callback = func.call(component);
     }
 
     public remove(): void {

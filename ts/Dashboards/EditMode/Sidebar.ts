@@ -14,7 +14,15 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Component from '../Components/Component';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
+import type MenuItem from './Menu/MenuItem';
 
 import EditMode from './EditMode.js';
 import U from '../../Core/Utilities.js';
@@ -22,7 +30,6 @@ import Cell from '../Layout/Cell.js';
 import Row from '../Layout/Row.js';
 import EditGlobals from './EditGlobals.js';
 import Menu from './Menu/Menu.js';
-import type MenuItem from './Menu/MenuItem.js';
 import Globals from '../Globals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
@@ -33,24 +40,12 @@ import DataTable from '../../Data/DataTable.js';
 import CSVConnector from '../../Data/Connectors/CSVConnector.js';
 
 const {
-    merge,
     createElement,
-    addEvent
+    addEvent,
+    merge
 } = U;
 
 class Sidebar {
-    /* *
-    *
-    *  Static Properties
-    *
-    * */
-    protected static readonly defaultOptions: Sidebar.Options = {
-        enabled: true,
-        className: 'test',
-        dragIcon: EditGlobals.iconsURL + '/drag.svg',
-        closeIcon: EditGlobals.iconsURL + '/close.svg'
-    };
-
     public static tabs: Array<Sidebar.TabOptions> = [{
     // {
     //     type: 'design',
@@ -129,9 +124,8 @@ class Sidebar {
                 }
 
                 Bindings.addComponent({
-                    type: 'html',
+                    type: 'HTML',
                     cell: cellName,
-                    isResizable: true,
                     elements: [
                         {
                             tagName: 'div',
@@ -174,7 +168,7 @@ class Sidebar {
                     if (sidebar && dropContext) {
                         return sidebar.onDropNewComponent(dropContext, {
                             cell: '',
-                            type: 'html',
+                            type: 'HTML',
                             elements: [{
                                 tagName: 'img',
                                 attributes: {
@@ -242,6 +236,21 @@ class Sidebar {
                         type: 'DataGrid',
                         connector: new CSVConnector(new DataTable(columns))
                     } as any); // necessary for now
+                }
+            }
+        }, {
+            text: 'KPI',
+            onDrop: function (
+                sidebar: Sidebar,
+                dropContext: Cell | Row
+            ): Cell|void {
+                if (sidebar && dropContext) {
+                    return sidebar.onDropNewComponent(dropContext, {
+                        cell: '',
+                        type: 'KPI',
+                        title: 'Example KPI',
+                        value: 70
+                    });
                 }
             }
         }
@@ -354,7 +363,7 @@ class Sidebar {
         }
     });
 
-    public static itemsGeneralOptions: Record<string, MenuItem.Options> = {
+    public static itemsGeneralOptions: Record<string, Partial<MenuItem.Options>> = {
         addLayout: {
             id: 'addLayout',
             type: 'addLayout',
@@ -386,13 +395,18 @@ class Sidebar {
     constructor(
         editMode: EditMode
     ) {
+        this.editMode = editMode;
+
         this.tabs = {};
         this.isVisible = false;
         this.options = merge(
-            Sidebar.defaultOptions,
+            {
+                enabled: true,
+                className: 'test',
+                closeIcon: this.editMode.iconsURLPrefix + 'close.svg'
+            },
             (editMode.options.toolbars || {}).settings
         );
-        this.editMode = editMode;
 
         this.container = this.renderContainer();
 
@@ -853,6 +867,7 @@ class Sidebar {
                 activeTab && activeTab.content.container;
             let type;
             let chartTypes = {};
+            let chartConfigOptions = {};
 
             for (const key in componentSettings) {
                 if (componentSettings[key]) {
@@ -885,9 +900,7 @@ class Sidebar {
                                 (chartOpts.series && chartOpts.series[0].type)
                             );
 
-                        if (
-                            chartType
-                        ) {
+                        if (chartType) {
                             chartTypes = {
                                 items: chartTypesEnum,
                                 value: chartType
@@ -895,6 +908,37 @@ class Sidebar {
                         } else {
                             continue;
                         }
+                    } else if (key === 'chartConfig') {
+                        chartConfigOptions = {
+                            nestedOptions: {
+                                title: {
+                                    enabled: { type: 'input' },
+                                    text: { type: 'input' },
+                                    size: { type: 'input' },
+                                    font: { type: 'input' }
+                                },
+                                yAxis: {
+                                    enabled: { type: 'input' },
+                                    labels: { type: 'input' },
+                                    title: { type: 'input' },
+                                    text: { type: 'input' }
+                                },
+                                legend: {
+                                    enabled: { type: 'input' },
+                                    title: { type: 'input' }
+                                },
+                                dataLabels: {
+                                    size: { type: 'input' },
+                                    font: { type: 'input' }
+                                },
+                                xAxis: {
+                                    enabled: { type: 'input' },
+                                    labels: { type: 'input' },
+                                    title: { type: 'input' },
+                                    text: { type: 'input' }
+                                }
+                            }
+                        };
                     }
 
                     (menuItems as any)[key] = {
@@ -902,13 +946,15 @@ class Sidebar {
                         type: type === 'text' ? 'input' : type,
                         text: (lang as any)[key] || key,
                         isActive: true,
+                        collapsable: true,
                         value: componentSettings[key].value,
                         events: {
                             change: (id: string, value: string): void => {
                                 sidebar.updatedSettings[id] = value;
                             }
                         },
-                        ...chartTypes
+                        ...chartTypes,
+                        ...chartConfigOptions
                     };
 
                     items.push(
@@ -1028,11 +1074,14 @@ class Sidebar {
         }
 
         if (savedSettings.chartType) {
-            updatedSettings.chartOptions = merge(updatedSettings.chartOptions, {
-                chart: {
-                    type: savedSettings.chartType
+            updatedSettings.chartOptions = merge(
+                updatedSettings.chartOptions,
+                {
+                    chart: {
+                        type: savedSettings.chartType
+                    }
                 }
-            });
+            );
         }
 
         if (mountedComponent) {
@@ -1042,7 +1091,7 @@ class Sidebar {
 
     public onDropNewComponent(
         dropContext: Cell|Row,
-        componentOptions: Bindings.ComponentOptions
+        componentOptions: Partial<Component.ComponentOptions>
     ): Cell | void {
         const sidebar = this,
             dragDrop = sidebar.editMode.dragDrop;
@@ -1077,10 +1126,12 @@ class Sidebar {
             definedWidth = cellRwd && cellRwd.width || cell.options.width;
 
         if (definedWidth && definedWidth !== 'auto') {
-            const percentageValue = GUIElement.getPercentageWidth(definedWidth);
+            const percentageValue = typeof definedWidth === 'number' ?
+                definedWidth :
+                parseFloat(GUIElement.getPercentageWidth(definedWidth) || '');
 
             if (percentageValue) {
-                return Math.round(parseFloat(percentageValue) * 100) / 100;
+                return Math.round(percentageValue * 100) / 100;
             }
         }
 
@@ -1145,7 +1196,6 @@ namespace Sidebar {
     export interface Options {
         enabled: boolean;
         className: string;
-        dragIcon: string;
         closeIcon: string;
     }
 

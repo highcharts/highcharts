@@ -13,24 +13,33 @@
  *  - Sophie Bremer
  *
  * */
+import type MenuItem from './Menu/MenuItem.js';
+
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type CSSObject from '../../Core/Renderer/CSSObject';
 
 import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
-import U from '../../Core/Utilities.js';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import Globals from '../Globals.js';
-
+import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import U from '../../Core/Utilities.js';
 const {
     createElement
 } = U;
 
 
 /* *
-*
-*  Functions
-*
-* */
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Function to create a context button.
@@ -69,6 +78,69 @@ function renderContextButton(
     return ctxBtnElement;
 }
 
+function renderCollapse(
+    parentElement: HTMLDOMElement,
+    title: string
+): { outerElement: HTMLDOMElement; content: HTMLDOMElement } | undefined {
+    if (!parentElement) {
+        return;
+    }
+
+    const accordeon = createElement(
+        'div',
+        { className: 'highcharts-dashboards-outer-accordeon' },
+        {},
+        parentElement
+    );
+    const header = createElement(
+        'div',
+        {
+            className: 'highcharts-dashboards-outer-accordeon-header'
+        },
+        {},
+        accordeon
+    );
+
+    const headerBtn = createElement(
+        'button',
+        { className: 'highcharts-dashboards-outer-accordeon-header-btn' },
+        {},
+        header
+    );
+    const titleElement = createElement(
+        'span',
+        { textContent: title },
+        {},
+        headerBtn
+    );
+
+    const headerIcon = createElement(
+        'img',
+        {
+            className: 'highcharts-dashboards-outer-accordeon-header-icon',
+            src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
+        },
+        {},
+        headerBtn
+    );
+
+    const content = createElement(
+        'div',
+        { className: 'highcharts-dashboards-outer-accordeon-content' },
+        { display: 'none' },
+        accordeon
+    );
+
+    headerBtn.addEventListener('click', function (): void {
+        const display = content.style.display;
+        content.style.display = display === 'none' ? 'block' : 'none';
+        headerIcon.style.transform =
+            display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
+    });
+
+    return { outerElement: accordeon, content: content };
+}
+
 /**
  * Function to create select element.
  *
@@ -89,9 +161,6 @@ function renderSelect(
         return;
     }
 
-    if (options.title) {
-        renderText(parentElement, options.title);
-    }
     const customSelect = createElement(
         'div',
         {
@@ -200,7 +269,6 @@ function renderSelectElement(
         { height: '40px', width: '100%' },
         selectOption
     );
-
     let icon: HTMLElement|undefined;
     if (option.iconURL) {
         icon = createElement(
@@ -249,36 +317,55 @@ function renderToggle(
     parentElement: HTMLDOMElement,
     options: FormField
 ): HTMLDOMElement|undefined {
-    let toggle;
 
-    if (parentElement) {
+    if (!parentElement) {
+        return;
+    }
 
-        if (options.title) {
-            renderText(
-                parentElement,
-                options.title
-            );
-        }
-
-        toggle = createElement(
-            'label',
-            {
-                className: EditGlobals.classNames.toggleWrapper
-            },
-            {},
-            parentElement
+    if (options.title) {
+        renderText(
+            parentElement,
+            options.title
         );
+    }
 
-        renderCheckbox(toggle);
+    if (options.enabledOnOffLabels) {
+        EditRenderer.renderText(
+            parentElement,
+            EditGlobals.lang.on,
+            void 0,
+            EditGlobals.classNames.toggleLabels
+        );
+    }
 
-        createElement(
-            'span',
-            {
-                className: EditGlobals.classNames.toggleSlider,
-                onclick: options.callback
-            },
-            {},
-            toggle
+    const toggle = createElement(
+        'label',
+        {
+            className: EditGlobals.classNames.toggleWrapper +
+            ' ' + (options.className || '')
+        },
+        {},
+        parentElement
+    );
+
+    renderCheckbox(toggle);
+
+    createElement(
+        'span',
+        {
+            className: EditGlobals.classNames.toggleSlider,
+            onclick: options.callback
+        },
+        {},
+        toggle
+    );
+
+    if (options.enabledOnOffLabels) {
+        EditRenderer.renderText(
+            parentElement,
+            EditGlobals.lang.off,
+            void 0,
+            EditGlobals.classNames.toggleLabels
         );
     }
 
@@ -302,14 +389,16 @@ function renderToggle(
 function renderText(
     parentElement: HTMLDOMElement,
     text: string,
-    callback?: Function
+    callback?: Function,
+    className?: string
 ): HTMLDOMElement|undefined {
     let textElem;
 
     if (parentElement) {
         textElem = createElement(
             'div', {
-                className: EditGlobals.classNames.labelText,
+                className: EditGlobals.classNames.labelText +
+                        ' ' + (className || ''),
                 textContent: text,
                 onclick: callback
             }, {},
@@ -318,6 +407,119 @@ function renderText(
     }
 
     return textElem;
+}
+
+function renderNested(
+    parentElement: HTMLDOMElement,
+    options: any
+): HTMLDOMElement|undefined {
+
+    if (!parentElement) {
+        return;
+    }
+    const keys = Object.keys(options.nestedOptions);
+    for (let i = 0, iEnd = keys.length; i < iEnd; ++i) {
+        const name = keys[i];
+        const nestedOptions = options.nestedOptions[name];
+
+
+        const nested = createElement(
+            'div',
+            {
+                className: 'highcharts-dashboards-nested'
+            },
+            {},
+            parentElement
+        );
+
+        const header = createElement(
+            'div',
+            {
+                className: 'highcharts-dashboards-nested-header'
+            },
+            {},
+            nested
+        );
+        const headerBtn = createElement(
+            'button',
+            { className: 'highcharts-dashboards-nested-header-btn' },
+            {
+                border: 'none',
+                font: 'inherit',
+                color: 'inherit',
+                background: 'none',
+                margin: 0,
+                width: '100%',
+                display: 'flex'
+            },
+            header
+        );
+
+        const headerIcon = createElement(
+            'img',
+            {
+                className: 'highcharts-dashboards-nested-header-icon',
+                src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
+            },
+            {},
+            headerBtn
+        );
+
+
+        createElement(
+            'span',
+            { textContent: name },
+            {},
+            headerBtn
+        );
+
+        const switchElement = createElement(
+            'img',
+            {
+                className: 'highcharts-dashboards-nested-switch',
+                src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
+            },
+            {},
+            header
+        );
+
+        const content = createElement(
+            'div',
+            {
+                className: 'highcharts-dashboards-nested-content'
+            },
+            { display: 'none' },
+            nested
+        );
+
+        headerBtn.addEventListener('click', function (): void {
+            const display = content.style.display;
+            content.style.display = display === 'none' ? 'flex' : 'none';
+            headerIcon.style.transform =
+                display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
+        });
+        const nestedKeys = Object.keys(nestedOptions);
+
+        for (let j = 0, jEnd = nestedKeys.length; j < jEnd; ++j) {
+            const nestedKey = nestedKeys[j];
+            const nestedOption = nestedOptions[nestedKey];
+            const rendererFunction = getRendererFunction(nestedOption.type);
+            if (!rendererFunction) {
+                continue;
+            }
+
+            const element = rendererFunction(
+                content,
+                {
+                    title: nestedKey,
+                    value: '',
+                    name: nestedKey,
+                    id: nestedKey
+                }
+            );
+        }
+    }
+    return;
 }
 
 /**
@@ -337,20 +539,28 @@ function renderText(
  */
 function renderIcon(
     parentElement: HTMLDOMElement,
-    icon: string,
-    callback?: Function
+    options: IconFormField
 ): HTMLDOMElement|undefined {
-    let iconElem;
+    const { icon, callback } = options;
 
-    if (parentElement) {
-        iconElem = createElement(
-            'div', {
-                onclick: callback
-            }, {},
-            parentElement
-        );
+    if (!parentElement) {
+        return;
+    }
 
-        (iconElem.style as any)['background-image'] = 'url(' + icon + ')';
+    const iconElem = createElement(
+        'div', {
+            onclick: callback
+        }, {},
+        parentElement
+    );
+
+    (iconElem.style as any)['background-image'] = 'url(' + icon + ')';
+
+    const mousedown = options.mousedown;
+    if (mousedown) {
+        iconElem.onmousedown = function (): void {
+            mousedown.apply(options.menuItem, arguments);
+        };
     }
 
     return iconElem;
@@ -515,18 +725,36 @@ function renderButton(
 
     return button;
 }
+function getRendererFunction(type: RendererElement): Function|undefined {
+    return {
+        select: renderSelect,
+        toggle: renderToggle,
+        text: renderText,
+        collapse: renderCollapse,
+        icon: renderIcon,
+        contextButton: renderContextButton,
+        input: renderInput,
+        textarea: renderTextarea,
+        checkbox: renderCheckbox,
+        nested: renderNested,
+        button: renderButton
+    }[type];
+}
 
 
 const EditRenderer = {
     renderSelect,
     renderToggle,
     renderText,
+    renderCollapse,
     renderIcon,
     renderContextButton,
     renderInput,
     renderTextarea,
     renderCheckbox,
-    renderButton
+    renderButton,
+    renderNested,
+    getRendererFunction
 };
 
 export default EditRenderer;
@@ -540,20 +768,25 @@ export interface ButtonOptions {
     style?: CSSObject;
 }
 
+export interface IconFormField {
+    icon: string;
+    mousedown?: Function;
+    menuItem?: MenuItem;
+    callback?: Function;
+}
 export interface FormField {
+    icon?: string;
     id: string;
     name: string;
     callback?: Function;
     title?: string;
     onchange?: Function;
     value?: string;
+    className?: string;
+    enabledOnOffLabels?: boolean;
 }
 
-export interface SelectFormField {
-    callback?: Function;
-    onchange?: Function;
-    id: string;
-    name: string;
+export interface SelectFormField extends FormField {
     title: string;
     value: string;
     items: Array<SelectFormFieldItem>;
@@ -562,5 +795,23 @@ export interface SelectFormField {
 export interface SelectFormFieldItem {
     name: 'string';
     iconURL: 'string';
+}
+
+export interface NestedFormField {
+    nestedOptions: Record<string, NestedOptions>;
+}
+export interface NestedOptions {
 
 }
+
+export type RendererElement =
+    | 'select'
+    | 'toggle'
+    | 'text'
+    | 'collapse'
+    | 'icon'
+    | 'contextButton'
+    | 'input'
+    | 'textarea'
+    | 'checkbox'
+    | 'button';

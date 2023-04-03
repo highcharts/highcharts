@@ -30,7 +30,6 @@ const layouts = [{
 
 const components = [{
     cell: 'dashboard-col-0',
-    isResizable: true,
     type: 'chart',
     chartOptions: {
         type: 'pie',
@@ -44,7 +43,7 @@ const components = [{
     }
 }, {
     cell: 'dashboard-col-1',
-    type: 'html',
+    type: 'HTML',
     elements: [{
         tagName: 'img',
         attributes: {

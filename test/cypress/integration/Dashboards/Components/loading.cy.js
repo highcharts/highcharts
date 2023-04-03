@@ -19,7 +19,7 @@ describe('Component loading', () => {
         assert(cellBox[dimension] >= imageBox[dimension], 'Out of bounds: ' + dimension);
       }
     });
-
   });
+
 
 });

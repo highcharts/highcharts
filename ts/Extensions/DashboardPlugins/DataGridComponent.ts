@@ -26,9 +26,9 @@ import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 import Component from '../../Dashboards/Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
-import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 const { createElement, merge, uniqueKey } = U;
+import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 
 /* *
  *
@@ -40,11 +40,11 @@ const { createElement, merge, uniqueKey } = U;
  * DataGrid component for Highcharts Dashboards.
  * @internal
  */
-class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents> {
+class DataGridComponent extends Component {
 
     /* *
      *
-     *  Static properties
+     *  Static Properties
      *
      * */
 
@@ -141,7 +141,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         const dataGridOptions = JSON.parse(json.options.dataGridOptions || '');
 
         const component = new DataGridComponent(
-            merge(options, {
+            merge<DataGridComponent.ComponentOptions>(options as any, {
                 dataGridOptions,
                 syncHandlers: DataGridComponent.syncHandlers
             })
@@ -168,7 +168,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
     /** @internal */
     public dataGridOptions: Partial<Options>;
     /** @internal */
-    public options: DataGridComponent.DataGridOptions;
+    public options: DataGridComponent.ComponentOptions;
     /** @internal */
     public sync: Component['sync'];
 
@@ -178,13 +178,12 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
      *
      * */
 
-    /** @internal */
-    constructor(options: Partial<DataGridComponent.DataGridOptions>) {
+    constructor(options: Partial<DataGridComponent.ComponentOptions>) {
         options = merge(DataGridComponent.defaultOptions, options);
 
         super(options);
 
-        this.options = options as DataGridComponent.DataGridOptions;
+        this.options = options as DataGridComponent.ComponentOptions;
         this.type = 'DataGrid';
         this.dataGridContainer = createElement(
             'figure',
@@ -308,8 +307,7 @@ class DataGridComponent extends Component<DataGridComponent.ChartComponentEvents
         }
     }
 
-    /** @internal */
-    public update(options: Partial<DataGridComponent.DataGridOptions>): this {
+    public update(options: Partial<DataGridComponent.ComponentOptions>): this {
         super.update(options);
         if (this.dataGrid) {
             this.dataGrid.update(this.options.dataGridOptions || ({} as any));
@@ -400,9 +398,8 @@ namespace DataGridComponent {
     /**
      * Options to control the DataGrid component.
      */
-    export interface DataGridOptions
-        extends Component.ComponentOptions,
-        EditableOptions {
+    export interface ComponentOptions
+        extends Component.ComponentOptions, EditableOptions {
 
         /**
          * The style class to add to the rendered data grid container.
@@ -418,6 +415,8 @@ namespace DataGridComponent {
          * Callback to use when a change in the data grid occures.
          */
         onUpdate: typeof DataGridComponent.onUpdate
+
+        type: 'DataGrid';
     }
 
     /**
@@ -432,11 +431,27 @@ namespace DataGridComponent {
          */
         dataGridOptions?: BaseDataGridOptions;
 
-        /** @internal */
+        /**
+         * The set of options like `dataGridClassName` and `dataGridID`.
+         */
         chartClassName?: string;
 
-        /** @internal */
+        /**
+         * The id that is applied to the chart's container.
+         */
         chartID?: string;
+
+        /**
+         * Names / aliases that should be mapped to xAxis values.
+         * ```
+         * Example
+         * columnKeyMap: {
+         *      'Food': 'x',
+         *      'Vitamin A': 'y'
+         * }
+         * ```
+         */
+        columnKeyMap?: Record<string, string | null>;
 
         /** @internal */
         tableAxisMap?: Record<string, string | null>;
@@ -465,7 +480,8 @@ namespace DataGridComponent {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
+
 export default DataGridComponent;

@@ -38,9 +38,9 @@ Dashboards.board('container', {
             connector,
             type: 'Highcharts',
             sync: {
-                tooltip: true
+                highlight: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -67,7 +67,7 @@ Dashboards.board('container', {
             connector,
             editable: true,
             sync: {
-                tooltip: true
+                highlight: true
             }
         }
     ]

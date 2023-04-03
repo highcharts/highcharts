@@ -14,35 +14,56 @@
  *
  * */
 
-import type ComponentTypes from '../Components/ComponentType';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    ComponentType,
+    ComponentTypeRegistry
+} from '../Components/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
-import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
-import type Serializable from '../Serializable';
-import type KPIComponent from '../Components/KPIComponent';
-import type DataConnector from '../../Data/Connectors/DataConnector';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
 import type Row from '../Layout/Row';
+import type Component from '../Components/Component.js';
 
-import Component from '../Components/Component.js';
-import HTMLComponent from '../Components/HTMLComponent.js';
-import DataGridComponent from '../../Extensions/DashboardPlugins/DataGridComponent.js';
-import Globals from '../Globals.js';
-import DataTable from '../../Data/DataTable';
+import ComponentRegistry from '../Components/ComponentRegistry.js';
 import U from '../../Core/Utilities.js';
-const {
-    fireEvent,
-    addEvent,
-    merge
-} = U;
+const { merge, addEvent, fireEvent } = U;
+import Globals from '../Globals.js';
 
-class Bindings {
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace Bindings {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface MountedComponent {
+        cell: Cell;
+        component: Component;
+        options: Partial<Component.ComponentOptions>;
+    }
+
     /* *
      *
      *  Functions
      *
      * */
-    private static getGUIElement(idOrElement: string): GUIElement|undefined {
+
+    function getGUIElement(idOrElement: string): GUIElement|undefined {
         const container = typeof idOrElement === 'string' ?
             document.getElementById(idOrElement) : idOrElement;
 
@@ -59,146 +80,110 @@ class Bindings {
         return guiElement;
     }
 
-    public static addComponent(
-        options: Bindings.ComponentOptions,
+    export function addComponent(
+        options: Partial<Component.ComponentOptions>,
         cell?: Cell
-    ): Component | undefined {
-        const componentContainer = document.getElementById(options.cell);
-        const optionsStates = options.states;
+    ):(Component|undefined) {
+        // TODO: Check if there are states in the options, and if so, add them
+        const optionsStates = (options as any).states;
         const optionsEvents = options.events;
 
-        cell = cell || Bindings.getCell(options.cell);
-        let component: Component | undefined;
+        cell = cell || Bindings.getCell(options.cell || '');
 
-        // add elements to containers
-        if (componentContainer) {
-            const ComponentClass = Component.getComponent(options.type);
-
-            if (options.type === 'html') {
-                component = new HTMLComponent(merge(
-                    options,
-                    {
-                        parentElement: componentContainer
-                    })
-                );
-            } else if (ComponentClass) {
-                component = new ComponentClass(merge(
-                    options,
-                    {
-                        parentElement: componentContainer
-                    })
-                );
-            } else {
-                return;
-            }
-
-            if (component) {
-                component.render();
-            }
-
-            // update cell size (when component is wider, cell should adjust)
-            // this.updateSize();
+        if (!cell || !cell.container || !options.type) {
+            return;
         }
+
+        const componentContainer = cell.container;
+
+        const ComponentClass =
+            ComponentRegistry.getComponent(options.type) as Class<Component>;
+
+        if (!ComponentClass) {
+            return;
+        }
+
+        let componentOptions = merge<Partial<ComponentType['options']>>(
+            options,
+            {
+                board: cell && cell.row.layout.board,
+                parentCell: cell,
+                parentElement: componentContainer
+            }
+        );
+
+        const component = new ComponentClass(componentOptions);
+
+        component.render();
+        // update cell size (when component is wider, cell should adjust)
+        // this.updateSize();
 
         // add events
-        if (component) {
-            fireEvent(component, 'mount');
-        }
+        fireEvent(component, 'mount');
 
-        if (cell && component) {
-            component.setCell(cell);
-            cell.mountedComponent = component;
 
-            cell.row.layout.board.mountedComponents.push({
-                options: options,
-                component: component,
-                cell: cell
+        component.setCell(cell);
+        cell.mountedComponent = component;
+
+        cell.row.layout.board.mountedComponents.push({
+            options: options,
+            component: component,
+            cell: cell
+        });
+
+        // events
+        if (optionsEvents && optionsEvents.click) {
+            addEvent(componentContainer, 'click', ():void => {
+                optionsEvents.click();
+
+                if (
+                    cell &&
+                    component &&
+                    componentContainer &&
+                    optionsStates &&
+                    optionsStates.active
+                ) {
+                    cell.setActiveState();
+                }
             });
-
-            // events
-            if (optionsEvents && optionsEvents.click) {
-                addEvent(componentContainer, 'click', ():void => {
-                    optionsEvents.click();
-
-                    if (
-                        cell &&
-                        component &&
-                        componentContainer &&
-                        optionsStates &&
-                        optionsStates.active
-                    ) {
-                        cell.setActiveState();
-                    }
-                });
-            }
-
-            // states
-            if (
-                componentContainer &&
-                optionsStates &&
-                optionsStates.hover
-            ) {
-                componentContainer.classList.add(
-                    Globals.classNames.cellHover
-                );
-            }
         }
 
-        if (component) {
-            fireEvent(component, 'afterLoad');
+        // states
+        if (
+            optionsStates &&
+            optionsStates.hover
+        ) {
+            componentContainer.classList.add(Globals.classNames.cellHover);
         }
+
+        fireEvent(component, 'afterLoad');
 
         return component;
     }
 
-    public static componentFromJSON(
-        json: HTMLComponent.ClassJSON|HighchartsComponent.ClassJSON,
+    /** @internal */
+    export function componentFromJSON(
+        json: Component.JSON,
         cellContainer: HTMLElement|undefined
     ): (Component|undefined) {
-        let component: (Component|undefined);
-        let componentClass;
+        let componentClass = ComponentRegistry.getComponent(
+            json.$class as keyof ComponentTypeRegistry
+        );
 
-        switch (json.$class) {
-            case 'HTML':
-                component = HTMLComponent.fromJSON(
-                    json as HTMLComponent.ClassJSON
-                );
-                break;
-            case 'Highcharts':
-                componentClass = Component.getComponent(json.$class);
-                if (componentClass) {
-                    component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
-                }
-                break;
-            case 'DataGrid':
-                component = DataGridComponent.fromJSON(
-                    json as DataGridComponent.ClassJSON
-                );
-                break;
-            case 'KPI':
-                componentClass = Component.getComponent(json.$class);
-                if (componentClass) {
-                    component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
-                }
-                break;
-            default:
-                return;
+        if (!componentClass) {
+            return;
         }
+        const component = componentClass.fromJSON(json as any);
 
         if (component) {
             component.render();
         }
 
-        // update cell size (when component is wider, cell should adjust)
-        // this.updateSize();
-
-        // TODO - events
-
         return component;
     }
 
-    public static getCell(idOrElement: string): Cell|undefined {
-        const cell = Bindings.getGUIElement(idOrElement);
+    export function getCell(idOrElement: string): Cell|undefined {
+        const cell = getGUIElement(idOrElement);
 
         if (!(cell && cell.getType() === 'cell')) {
             return;
@@ -207,8 +192,8 @@ class Bindings {
         return (cell as Cell);
     }
 
-    public static getRow(idOrElement: string): Row|undefined {
-        const row = Bindings.getGUIElement(idOrElement);
+    export function getRow(idOrElement: string): Row|undefined {
+        const row = getGUIElement(idOrElement);
 
         if (!(row && row.getType() === 'row')) {
             return;
@@ -217,8 +202,8 @@ class Bindings {
         return (row as Row);
     }
 
-    public static getLayout(idOrElement: string): Layout|undefined {
-        const layout = Bindings.getGUIElement(idOrElement);
+    export function getLayout(idOrElement: string): Layout|undefined {
+        const layout = getGUIElement(idOrElement);
 
         if (!(layout && layout.getType() === 'layout')) {
             return;
@@ -228,26 +213,10 @@ class Bindings {
     }
 }
 
-namespace Bindings {
-    export interface Options {
-
-    }
-
-    export interface ComponentOptions {
-        cell: string;
-        type: string;
-        chartOptions?: any;
-        isResizable?: boolean;
-        elements?: any;
-        dimensions?: { width: number; height: number };
-        events?: any;
-        states?: any;
-    }
-    export interface MountedComponentsOptions {
-        options: any;
-        component?: Component;
-        cell: Cell;
-    }
-}
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Bindings;

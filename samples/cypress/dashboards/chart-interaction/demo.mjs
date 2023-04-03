@@ -56,7 +56,6 @@ const board = new Board('container', {
     },
     components: [{
         cell: 'dashboard-col-0',
-        isResizable: true,
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -72,7 +71,7 @@ const board = new Board('container', {
         connector,
         sync: {
           'visibility' : true, 
-          'tooltip': true
+          'highlight': true
         }
     }, {
         cell: 'dashboard-col-1',
@@ -91,7 +90,7 @@ const board = new Board('container', {
         connector,
         sync: {
           'visibility' : true, 
-          'tooltip': true
+          'highlight': true
         }
     }]
 });

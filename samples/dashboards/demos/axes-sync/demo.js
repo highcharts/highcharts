@@ -86,9 +86,9 @@ Dashboards.board('container', {
             connector: connector1,
             sync: {
                 selection: true,
-                tooltip: true
+                highlight: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Europe: null,
                 Africa: null,
@@ -111,9 +111,9 @@ Dashboards.board('container', {
             connector: connector1,
             sync: {
                 selection: true,
-                tooltip: true
+                highlight: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Global: null,
                 Europe: null,
@@ -133,9 +133,9 @@ Dashboards.board('container', {
             connector: connector2,
             sync: {
                 selection: true,
-                tooltip: true
+                highlight: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Global: null,
                 Europe: null,
@@ -155,9 +155,9 @@ Dashboards.board('container', {
             connector: connector2,
             sync: {
                 selection: true,
-                tooltip: true
+                highlight: true
             },
-            tableAxisMap: {
+            columnKeyMap: {
                 x: 'x',
                 Global: null,
                 Africa: null,

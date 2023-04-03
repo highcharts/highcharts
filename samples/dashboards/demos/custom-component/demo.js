@@ -1,4 +1,4 @@
-const Component = Dashboards.Component;
+const { ComponentRegistry, Component } = Dashboards;
 
 class YouTubeComponent extends Component {
     constructor(options) {
@@ -31,7 +31,7 @@ class YouTubeComponent extends Component {
     }
 }
 
-Component.addComponent(YouTubeComponent);
+ComponentRegistry.registerComponent(YouTubeComponent);
 
 Dashboards.board('container', {
     editMode: {

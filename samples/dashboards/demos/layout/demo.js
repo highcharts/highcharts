@@ -83,7 +83,8 @@ let board = new Dashboards.Board('container', {
             rows: [{
                 cells: [{
                     id: 'dashboard-col-0',
-                    height: '400px'
+                    width: 500, // '1/3' or '300px'
+                    height: 400 // '400px'
                 }, {
                     id: 'dashboard-col-1'
                 }]
@@ -149,7 +150,6 @@ let board = new Dashboards.Board('container', {
     },
     components: [{
         cell: 'dashboard-col-0',
-        isResizable: true,
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -172,7 +172,7 @@ let board = new Dashboards.Board('container', {
         }
     }, {
         cell: 'dashboard-col-1',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {
@@ -240,7 +240,7 @@ let board = new Dashboards.Board('container', {
         }
     }, {
         cell: 'dashboard-col-3',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {
@@ -249,7 +249,7 @@ let board = new Dashboards.Board('container', {
         }]
     }, {
         cell: 'dashboard-col-31',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {
@@ -258,7 +258,7 @@ let board = new Dashboards.Board('container', {
         }]
     }, {
         cell: 'dashboard-col-32',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {

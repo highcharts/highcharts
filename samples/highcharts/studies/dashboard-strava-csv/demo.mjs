@@ -457,7 +457,6 @@ const components = state => [
     },
     {
         cell: "columnchart",
-        isResizable: true,
         type: "Highcharts",
         connector,
         presentationModifier: new SortModifier({
@@ -465,7 +464,7 @@ const components = state => [
             orderByColumn: 'Activity Date'
         }),
         showByDefault: true, // if false, only include columns in the map below?
-        tableAxisMap: {
+        columnKeyMap: {
             "Activity Date": "x",
             'Activity Type': null,
             'Activity ID': null,
@@ -490,7 +489,7 @@ const components = state => [
                     // Remove columns not in axis map
                     const [row] = this.presentationTable.getRowObjects(1, 1);
                     const removeColumns = Object.keys(row)
-                        .filter(key => !(key in this.options.tableAxisMap));
+                        .filter(key => !(key in this.options.columnKeyMap));
 
                     this.presentationTable.deleteColumns(removeColumns);
                 }
@@ -499,13 +498,12 @@ const components = state => [
     },
     {
         cell: "piechart",
-        isResizable: true,
         type: "Highcharts",
         connector,
         presentationModifier: new GroupModifier({
             groupColumn: 'Activity Type'
         }),
-        tableAxisMap: {
+        columnKeyMap: {
             Activity: 'x'
         },
         chartOptions: {
@@ -534,13 +532,12 @@ const components = state => [
     },
     {
         cell: "totals",
-        isResizable: true,
         type: "Highcharts",
         connector,
         presentationModifier: new GroupModifier({
             groupColumn: 'Activity Type'
         }),
-        tableAxisMap: {
+        columnKeyMap: {
             Activity: 'x'
         },
         chartOptions: {

@@ -45,13 +45,12 @@ Dashboards.board('container', {
             connector,
             sync: {
                 visibility: true,
-                tooltip: true,
+                highlight: true,
                 selection: true
             },
             cell: 'dashboard-col-0',
-            isResizable: true,
             type: 'Highcharts',
-            tableAxisMap: {
+            columnKeyMap: {
                 Food: 'x',
                 'Vitamin A': 'value'
             },
@@ -65,11 +64,11 @@ Dashboards.board('container', {
             connector,
             sync: {
                 visibility: true,
-                tooltip: true,
+                highlight: true,
                 selection: true
             },
             type: 'Highcharts',
-            tableAxisMap: {
+            columnKeyMap: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -87,11 +86,11 @@ Dashboards.board('container', {
             connector,
             sync: {
                 visibility: true,
-                tooltip: true,
+                highlight: true,
                 selection: true
             },
             type: 'Highcharts',
-            tableAxisMap: {
+            columnKeyMap: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -110,7 +109,7 @@ Dashboards.board('container', {
             connector,
             editable: true,
             sync: {
-                tooltip: true
+                highlight: true
             }
         }]
 });

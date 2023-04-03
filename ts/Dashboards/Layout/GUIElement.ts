@@ -90,7 +90,7 @@ abstract class GUIElement {
     public static getPercentageWidth(
         width: string // supported formats '50%' or '1/2'
     ): string | undefined {
-        const fractionRegEx = /^([0-9]{1})[\-\/\.]([0-9]{1,2})$/u;
+        const fractionRegEx = /^([0-9]{1})[\-\/\.]([0-9]{1,2})$/;
 
         let result;
 

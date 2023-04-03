@@ -14,9 +14,9 @@
  *
  * */
 
-import type ComponentTypes from '../ComponentType';
+import type ComponentType from '../ComponentType';
 
-export type EmitterFunction = (this: ComponentTypes) => Function | void;
+export type EmitterFunction = (this: ComponentType) => Function | void;
 
 /* *
  *
@@ -49,7 +49,7 @@ class SyncEmitter {
         SyncEmitter.register(this);
     }
 
-    public create(component: ComponentTypes): void {
+    public create(component: ComponentType): void {
         this.callback = this.func.call(component);
     }
 

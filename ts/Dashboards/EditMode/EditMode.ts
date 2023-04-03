@@ -42,41 +42,41 @@ const {
 class EditMode {
     /* *
     *
-    *  Static Properties
-    *
-    * */
-    protected static readonly defaultOptions: EditMode.Options = {
-        enabled: true,
-        contextMenu: {
-            icon: EditGlobals.iconsURL + 'menu.svg'
-        },
-        tools: {
-            addComponentBtn: {
-                icon: EditGlobals.iconsURL + 'add.svg'
-            },
-            rwdIcons: {
-                small: EditGlobals.iconsURL + 'smartphone.svg',
-                medium: EditGlobals.iconsURL + 'tablet.svg',
-                large: EditGlobals.iconsURL + 'computer.svg'
-            }
-        },
-        confirmationPopup: {
-            close: {
-                icon: EditGlobals.iconsURL + 'close.svg'
-            }
-        }
-    };
-
-    /* *
-    *
     *  Constructor
     *
     * */
     constructor(
         board: Board,
-        options: EditMode.Options|undefined
+        options?: EditMode.Options
     ) {
-        this.options = merge(EditMode.defaultOptions, options || {});
+        this.iconsURLPrefix =
+            (options && options.iconsURLPrefix) || this.iconsURLPrefix;
+
+        this.options = merge(
+            // Default options.
+            {
+                enabled: true,
+                contextMenu: {
+                    icon: this.iconsURLPrefix + 'menu.svg'
+                },
+                tools: {
+                    addComponentBtn: {
+                        icon: this.iconsURLPrefix + 'add.svg'
+                    },
+                    rwdIcons: {
+                        small: this.iconsURLPrefix + 'smartphone.svg',
+                        medium: this.iconsURLPrefix + 'tablet.svg',
+                        large: this.iconsURLPrefix + 'computer.svg'
+                    }
+                },
+                confirmationPopup: {
+                    close: {
+                        icon: this.iconsURLPrefix + 'close.svg'
+                    }
+                }
+            },
+            options || {});
+
         this.board = board;
         this.lang = merge({}, EditGlobals.lang, this.options.lang);
 
@@ -100,7 +100,7 @@ class EditMode {
 
         this.confirmationPopup = new ConfirmationPopup(
             board.container,
-            EditGlobals.iconsURL,
+            this.iconsURLPrefix,
             this,
             this.options.confirmationPopup
         );
@@ -123,6 +123,7 @@ class EditMode {
 
     private active: boolean = false;
     public options: EditMode.Options;
+    public iconsURLPrefix: string = 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/';
     public board: Board;
     public lang: EditGlobals.LangOptions;
     public cellToolbar?: CellEditToolbar;
@@ -799,6 +800,13 @@ class EditMode {
 namespace EditMode {
     export interface Options {
         enabled: boolean;
+        /**
+         * The URL prefix for the icons used in the edit mode like the context
+         * menu icons, the row and cell edit toolbar icons, etc.
+         *
+         * @default 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/'
+         */
+        iconsURLPrefix?: string;
         lang?: EditGlobals.LangOptions|string;
         toolbars?: EditMode.Toolbars;
         dragDrop?: DragDrop.Options;
