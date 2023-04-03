@@ -94,7 +94,9 @@ class SortModifier extends DataModifier {
      * @param {RangeDataModifier.Options} [options]
      * Options to configure the range modifier.
      */
-    public constructor(options?: DeepPartial<SortModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<SortModifier.Options>
+    ) {
         super();
 
         this.options = merge(SortModifier.defaultOptions, options);

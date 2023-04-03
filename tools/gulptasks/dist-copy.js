@@ -184,6 +184,8 @@ const VENDOR_FILTER = [
  * */
 
 /**
+ * Distribution copy
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
