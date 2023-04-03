@@ -736,8 +736,8 @@ class Sidebar {
 
     public detectRightSidebar(): boolean {
 
+        const sidebar = this;
         const editMode = this.editMode;
-        const sidebar = editMode.sidebar;
         const layoutWrapper = editMode.board.layoutsWrapper;
 
         if (sidebar) {

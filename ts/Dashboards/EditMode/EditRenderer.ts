@@ -704,27 +704,30 @@ function renderButton(
 ): HTMLDOMElement|undefined {
     let button;
 
-    if (parentElement) {
-        button = createElement(
-            'button', {
-                className: (
-                    EditGlobals.classNames.button + ' ' +
-                    (options.className || '')
-                ),
-                onclick: options.callback,
-                textContent: options.value
-            }, options.style || {},
-            parentElement
-        );
+    if (!parentElement) {
+        return;
+    }
 
-        if (options.icon) {
-            (button.style as any)['background-image'] =
-                'url(' + options.icon + ')';
-        }
+    button = createElement(
+        'button', {
+            className: (
+                EditGlobals.classNames.button + ' ' +
+                (options.className || '')
+            ),
+            onclick: options.callback,
+            textContent: options.value
+        }, options.style || {},
+        parentElement
+    );
+
+    if (options.icon) {
+        (button.style as any)['background-image'] =
+            'url(' + options.icon + ')';
     }
 
     return button;
 }
+
 function getRendererFunction(type: RendererElement): Function|undefined {
     return {
         select: renderSelect,

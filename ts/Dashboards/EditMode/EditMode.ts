@@ -24,7 +24,7 @@ import type Cell from '../Layout/Cell.js';
 import type Row from '../Layout/Row.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
 import RowEditToolbar from './Toolbar/RowEditToolbar.js';
-import Sidebar from './Sidebar.js';
+import SidebarPopup from './SidebarPopup.js';
 import EditContextMenu from './EditContextMenu.js';
 import DragDrop from '../Actions/DragDrop.js';
 import Resizer from '../Actions/Resizer.js';
@@ -128,7 +128,7 @@ class EditMode {
     public lang: EditGlobals.LangOptions;
     public cellToolbar?: CellEditToolbar;
     public rowToolbar?: RowEditToolbar;
-    public sidebar?: Sidebar;
+    public sidebar?: SidebarPopup;
     public dragDrop?: DragDrop;
     public resizer?: Resizer;
     public isInitialized: boolean;
@@ -217,7 +217,11 @@ class EditMode {
 
         // Init Sidebar.
         if (!editMode.sidebar) {
-            editMode.sidebar = new Sidebar(editMode);
+            editMode.sidebar = new SidebarPopup(
+                this.board.container,
+                this.iconsURLPrefix,
+                editMode
+            );
         }
 
         editMode.isInitialized = true;
@@ -819,7 +823,7 @@ namespace EditMode {
     export interface Toolbars {
         cell?: CellEditToolbar.Options;
         row?: RowEditToolbar.Options;
-        settings?: Sidebar.Options;
+        settings?: SidebarPopup.Options;
     }
 
     export interface Tools {

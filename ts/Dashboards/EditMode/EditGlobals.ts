@@ -80,7 +80,7 @@ const EditGlobals: EditGlobals = {
         confirmationPopup: PREFIX + 'confirmation-popup',
         popupContentContainer: PREFIX + 'confirmation-popup-content',
         popupConfirmBtn: PREFIX + 'confirmation-popup-confirm-btn',
-        confirmationPopupCloseButton: PREFIX + 'confirmation-popup-close',
+        popupCloseButton: PREFIX + 'popup-close',
 
         editOverlay: PREFIX + 'overlay',
         editOverlayActive: PREFIX + 'overlay-active',
