@@ -120,6 +120,10 @@ class NetworkgraphSeries extends Series {
 
     public points: Array<NetworkgraphPoint> = void 0 as any;
 
+    public deferred: boolean = true;
+    public firstDlDraw: boolean = false;
+    public secondDlDraw: boolean = false;
+
     /* *
      *
      *  Functions
@@ -199,17 +203,40 @@ class NetworkgraphSeries extends Series {
      * @private
      */
     public drawDataLabels(): void {
-        const textPath = (this.options.dataLabels as any).textPath;
+        if (this.deferred) {
+            return;
+        }
+
+        // "freeze" drawing data labels between the first & second
+        // drawDataLabels() method call -> this will keep the animation going
+        if (this.firstDlDraw && !this.secondDlDraw) {
+            this.deferred = true;
+            this.secondDlDraw = true;
+
+            // freeze for 150 miliseconds (animation duration)
+            setTimeout((): void => {
+                this.deferred = false;
+            }, 150);
+
+            return;
+        }
+
+        const dlOptions = this.options.dataLabels,
+            textPath = (dlOptions as any).textPath;
 
         // Render node labels:
         Series.prototype.drawDataLabels.call(this, this.nodes);
 
         // Render link labels:
-        (this.options.dataLabels as any).textPath =
-            (this.options.dataLabels as any).linkTextPath;
+        (dlOptions as any).textPath = (dlOptions as any).linkTextPath;
         Series.prototype.drawDataLabels.call(this, this.data);
 
-        (this.options.dataLabels as any).textPath = textPath;
+        // @todo: remove any casting here
+        (dlOptions as any).textPath = textPath;
+
+        if (!this.firstDlDraw) {
+            this.firstDlDraw = true;
+        }
     }
 
     /**
@@ -297,8 +324,40 @@ class NetworkgraphSeries extends Series {
         chart: NetworkgraphChart,
         options: Partial<NetworkgraphSeriesOptions>
     ): NetworkgraphSeries {
-
         super.init(chart, options);
+
+        const dlOptions = this.options.dataLabels;
+
+        // time from init() to the time when dataLabels show up #14398
+        // default set to 2.5 seconds
+        let deferTime = 2500;
+
+        // PROBLEM: if this time is too high
+        // then the dataLabels will never draw because the drawDataLabels()
+        // will not be called after the end of simulation
+        // but how to take care of this edge case?
+
+        // if dataLabels.animation.defer set by the user, use this value
+        if (dlOptions &&
+            dlOptions.animation &&
+            typeof dlOptions.animation !== 'boolean' &&
+            dlOptions.animation.defer
+        ) {
+            deferTime = dlOptions.animation.defer;
+        }
+
+        // @todo: fix casting here
+        // even if the defer is set by the user,
+        // networkgraph will use a custom defer method (with setTimeout)
+        // so we need to set it automatically to a very small number
+        ((dlOptions as any).animation as any).defer = 150;
+
+        // drawDataLabels() fires for the first time after
+        // deferTime - 150 - then the dataLabels animation fires
+        // which will take 150 miliseconds (animation duration)
+        setTimeout((): void => {
+            this.deferred = false;
+        }, deferTime - 150);
 
         addEvent(this, 'updatedData', (): void => {
             if (this.layout) {

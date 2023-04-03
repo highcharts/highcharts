@@ -458,7 +458,9 @@ namespace DataLabel {
         const series = this,
             chart = series.chart,
             seriesOptions = series.options,
-            hasRendered = series.hasRendered || 0,
+            hasRendered = series.type === 'networkgraph' ?
+                ((series as any).firstDlDraw || 0) :
+                (series.hasRendered || 0),
             renderer = chart.renderer,
             { backgroundColor, plotBackgroundColor } = chart.options.chart,
             contrastColor = renderer.getContrast(
