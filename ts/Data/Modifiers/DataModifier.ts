@@ -23,9 +23,9 @@
 import type DataEvent from '../DataEvent';
 import type DataTable from '../DataTable';
 import type {
-    ModifierType,
-    ModifierTypeRegistry
-} from './ModifierType';
+    DataModifierType,
+    DataModifierTypes
+} from './DataModifierType';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -314,6 +314,8 @@ abstract class DataModifier implements DataEvent.Emitter {
 /**
  * Additionally provided types for modifier events and options, and JSON
  * conversion.
+ *
+ * @private
  */
 namespace DataModifier {
 
@@ -383,7 +385,7 @@ namespace DataModifier {
         /**
          * Name of the related modifier for these options.
          */
-        modifier: keyof ModifierTypeRegistry;
+        modifier: keyof DataModifierTypes;
     }
 
     /* *
@@ -396,43 +398,21 @@ namespace DataModifier {
      * Regular expression to extract the modifier name (group 1) from the
      * stringified class type.
      */
-    const typeRegExp = /^(?:class|function)\s+(\w*?)(?:Data)?(?:Modifier)?\W/;
+    const nameRegExp = /^(?:class|function)\s+(\w*?)(?:Data)?(?:Modifier)?\W/;
 
     /**
      * Registry as a record object with modifier names and their class.
      */
-    export const types: Record<string, ModifierType> = {};
+    export const types = {} as Record<string, DataModifierType>;
 
     /* *
      *
-     *  Static Functions
+     *  Functions
      *
      * */
 
-    export function getModifier<T extends keyof ModifierTypeRegistry>(
-        name: T
-    ): ModifierTypeRegistry[T];
-    export function getModifier(
-        name: string
-    ): (ModifierType|undefined);
     /**
-     * Returns a modifier class (aka class constructor) of the given modifier
-     * name.
-     *
-     * @param {string} name
-     * Registered class name of the class type.
-     *
-     * @return {DataModifier|undefined}
-     * Class type, if the class name was found, otherwise `undefined`.
-     */
-    export function getModifier(
-        name: string
-    ): (ModifierType|undefined) {
-        return types[name];
-    }
-
-    /**
-     * Extracts the type from a given modifier class.
+     * Extracts the registry name from a given modifier class.
      *
      * @param {DataModifier} modifier
      * Modifier class to extract the type from.
@@ -441,10 +421,10 @@ namespace DataModifier {
      * Modifier type, if the extraction was successful, otherwise an empty
      * string.
      */
-    function getType(
-        modifier: ModifierType
+    function getName(
+        modifier: DataModifierType
     ): string {
-        return (modifier.toString().match(typeRegExp) || ['', ''])[1];
+        return (modifier.toString().match(nameRegExp) || ['', ''])[1];
     }
 
     /**
@@ -459,15 +439,15 @@ namespace DataModifier {
      * Returns true, if the registration was successful. False is returned, if
      * their is already a modifier registered with this name.
      */
-    export function registerModifier(
-        modifier: ModifierType
+    export function registerType(
+        modifier: DataModifierType
     ): boolean {
-        const type = getType(modifier);
+        const name = getName(modifier);
 
         return (
-            !!type &&
-            !types[type] &&
-            !!(types[type] = modifier)
+            !!name &&
+            !types[name] &&
+            !!(types[name] = modifier)
         );
     }
 

@@ -20,7 +20,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type ModifierType from './ModifierType';
+import type DataModifierType from './DataModifierType';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -84,11 +84,11 @@ class ChainModifier extends DataModifier {
         for (
             let i = 0,
                 iEnd = optionsChain.length,
-                ModifierClass: (ModifierType|undefined);
+                ModifierClass: (DataModifierType|undefined);
             i < iEnd;
             ++i
         ) {
-            ModifierClass = DataModifier.getModifier(optionsChain[i].modifier);
+            ModifierClass = DataModifier.types[optionsChain[i].modifier];
 
             if (ModifierClass) {
                 chain.unshift(new ModifierClass(optionsChain[i]));
@@ -388,7 +388,7 @@ class ChainModifier extends DataModifier {
     }
 
     /**
-     * Removes a configured modifier from all positions of the modifier chain.
+     * Removes a configured modifier from all positions in the modifier chain.
      *
      * @param {DataModifier} modifier
      * Configured modifier to remove.
@@ -471,7 +471,7 @@ namespace ChainModifier {
         /**
          * Array of options of the chain modifiers.
          */
-        chain?: Array<ModifierType['prototype']['options']>;
+        chain?: Array<DataModifierType['prototype']['options']>;
         /**
          * Whether to revert the order before execution.
          */
@@ -486,13 +486,13 @@ namespace ChainModifier {
  *
  * */
 
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Chain: typeof ChainModifier;
     }
 }
 
-DataModifier.registerModifier(ChainModifier);
+DataModifier.registerType(ChainModifier);
 
 /* *
  *
