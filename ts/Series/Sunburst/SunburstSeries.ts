@@ -58,6 +58,7 @@ const {
     defined,
     error,
     extend,
+    fireEvent,
     isNumber,
     isObject,
     isString,
@@ -590,6 +591,14 @@ class SunburstSeries extends TreemapSeries {
          * @private
          */
         center: ['50%', '50%'],
+
+        /**
+         * @product highcharts
+         *
+         * @private
+         */
+        clip: false,
+
         colorByPoint: false,
         /**
          * Disable inherited opacity from Treemap series.
@@ -941,6 +950,8 @@ class SunburstSeries extends TreemapSeries {
         } else {
             Series.prototype.drawDataLabels.call(series);
         }
+
+        series.idPreviousRoot = idRoot;
     }
 
     /**
@@ -998,6 +1009,29 @@ class SunburstSeries extends TreemapSeries {
                 return arr;
             }, [] as Array<SunburstNode.NodeValuesObject>
         );
+    }
+
+    public setRootNode(
+        id: string,
+        redraw?: boolean,
+        eventArguments?: SunburstSeries.SetRootNodeObject
+    ): void {
+        const series = this;
+
+        if ( // If the target node is the only one at level 1, skip it. (#18658)
+            series.nodeMap[id].level === 1 &&
+            series.nodeList
+                .filter((node): boolean => node.level === 1)
+                .length === 1
+        ) {
+            if (series.idPreviousRoot === '') {
+                return;
+            }
+
+            id = '';
+        }
+
+        super.setRootNode(id, redraw, eventArguments);
     }
 
     /**
@@ -1089,8 +1123,14 @@ class SunburstSeries extends TreemapSeries {
             nodeIds: Record<string, boolean> = {};
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
-        // Call prototype function
-        Series.prototype.translate.call(series);
+
+        if (!this.processedXData) { // hidden series
+            this.processData();
+        }
+        this.generatePoints();
+
+        fireEvent(this, 'afterTranslate');
+
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
 
@@ -1175,8 +1215,10 @@ interface SunburstSeries {
     NodeClass: typeof SunburstNode;
 }
 extend(SunburstSeries.prototype, {
+    axisTypes: [],
     drawDataLabels: noop, // drawDataLabels is called in drawPoints
     getCenter: getCenter,
+    isCartesian: false,
     // Mark that the sunburst is supported by the series on point feature.
     onPointSupported: true,
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,
@@ -1217,6 +1259,14 @@ namespace SunburstSeries {
         optionsPoint: SunburstPointOptions;
         point: SunburstPoint;
         shapeArgs: SunburstNode.NodeValuesObject;
+    }
+
+    export interface SetRootNodeObject {
+        newRootId?: string;
+        previousRootId?: string;
+        redraw?: boolean;
+        series?: object;
+        trigger?: string;
     }
 }
 

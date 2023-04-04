@@ -551,6 +551,9 @@ circle.highcharts-legend-nav-active, circle.highcharts-legend-nav-inactive { /* 
     fill-opacity: 1;
     stroke: $neutral-color-20;
 }
+.highcharts-timeline-series .highcharts-graph {
+    stroke: $neutral-color-20;
+}
 
 /* Highstock */
 .highcharts-navigator-mask-outside {

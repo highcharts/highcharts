@@ -60,13 +60,13 @@ function compose(
 
     if (
         TooltipClass &&
-        composedMembers.indexOf(TooltipClass) === -1
+        U.pushUnique(composedMembers, TooltipClass)
     ) {
-        composedMembers.push(TooltipClass);
-
         addEvent(TooltipClass, 'headerFormatter', onTooltipHeaderFormatter);
     }
+
 }
+
 /**
  * Extend the original method, make the tooltip's header reflect the grouped
  * range.
