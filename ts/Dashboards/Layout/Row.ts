@@ -225,6 +225,7 @@ class Row extends GUIElement {
                     containerId: cellJSON.options.containerId,
                     parentContainerId: cellJSON.options.parentContainerId,
                     style: cellJSON.options.style,
+                    layoutJSON: cellJSON.options.layoutJSON,
                     mountedComponentJSON: void 0 // Will be mounted later.
                 }
             }, row);

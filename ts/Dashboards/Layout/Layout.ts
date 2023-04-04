@@ -45,7 +45,8 @@ class Layout extends GUIElement {
     /** @internal */
     public static fromJSON(
         json: Layout.JSON,
-        board: Board
+        board: Board,
+        parentCell?: Cell
     ): Layout|undefined {
         const options = json.options,
             // Check if layout container exists.
@@ -55,15 +56,16 @@ class Layout extends GUIElement {
                 {
                     id: options.containerId,
                     copyId: container ? uniqueKey() : '',
-                    parentContainerId: board.container.id ||
-                        options.parentContainerId,
+                    parentContainerId:
+                        options.parentContainerId || board.container.id,
                     rowsJSON: options.rows,
                     style: options.style
-                }
+                },
+                parentCell
             );
 
         // Save layout in the dashboard.
-        if (layout) {
+        if (layout && !parentCell) {
             board.layouts.push(layout);
         }
 
@@ -116,9 +118,10 @@ class Layout extends GUIElement {
         this.isVisible = true;
 
         // Get parent container
-        const parentContainer = document.getElementById(
-            options.parentContainerId || ''
-        ) || board.layoutsWrapper;
+        const parentContainer = parentCell ? parentCell.container :
+            document.getElementById(
+                options.parentContainerId || ''
+            ) || board.layoutsWrapper;
 
         // Set layout level.
         if (parentCell) {
@@ -281,6 +284,12 @@ class Layout extends GUIElement {
      */
     public destroy(): void {
         const layout = this;
+
+        for (let i = layout.board.layouts.length - 1; i >= 0; i--) {
+            if (layout.board.layouts[i] === layout) {
+                layout.board.layouts.splice(i, 1);
+            }
+        }
 
         // Destroy rows.
         for (let i = layout.rows.length - 1; i >= 0; i--) {

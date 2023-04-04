@@ -182,3 +182,77 @@ test('Components and rows in layout with set height', function (assert) {
 
     layouts[0].style = {}
 })
+
+test('Nested layouts serialization.', function (assert) {
+    const container = setupContainer();
+
+    const chartComponentOptions = {
+        type: 'Highcharts',
+        chartOptions: {
+            type: 'line',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }],
+            chart: {
+                animation: false
+            }
+        }
+    };
+    const board = new Board(container.id, {
+        editMode: {
+            enabled: true,
+            contextMenu: {
+                enabled: true,
+                items: ['editMode']
+            }
+        },
+        gui: {
+            layouts: [{
+                id: 'layout-in-1',
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-col-nolayout-0'
+                    }, {
+                        id: 'dashboard-col-layout-0',
+                        layout: {
+                            rows: [{
+                                cells: [{
+                                    id: 'dashboard-col-layout-1',
+                                }, {
+                                    id: 'dashboard-col-layout-4',
+                                }]
+                            }]
+                        }
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            cell: 'dashboard-col-nolayout-0',
+            ...chartComponentOptions
+        }, {
+            cell: 'dashboard-col-layout-1',
+            ...chartComponentOptions
+        }, {
+            cell: 'dashboard-col-layout-4',
+            ...chartComponentOptions
+        }]
+
+    });
+    const layoutToExport = board.layouts[0];
+    const exportedLayoutId = layoutToExport.options.id;
+    const exportedRows = layoutToExport.rows;
+    const exportedRowsLength = layoutToExport.rows.length;
+    const exportedCellsLength = exportedRows[0].cells.length;
+    const numberOfMountedComponents = board.mountedComponents.length;
+    layoutToExport.exportLocal();
+    layoutToExport.destroy();
+    const importedLayout = board.importLayoutLocal(exportedLayoutId);
+
+
+    assert.equal(importedLayout.rows.length, exportedRowsLength, 'The imported layout has an equal number of rows as exported one.')
+    assert.equal(importedLayout.rows[0].cells.length, exportedCellsLength, 'The imported layout has an equal number of cells as exported one.')
+    assert.equal(numberOfMountedComponents, importedLayout.board.mountedComponents.length, 'The number of mounted components should be the same after importing the layout.')
+    assert.true(importedLayout.rows[0].cells[1] !== undefined, 'The imported cell has a nested layout.')
+});
