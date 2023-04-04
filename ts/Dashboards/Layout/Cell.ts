@@ -650,6 +650,7 @@ namespace Cell {
         layout?: LayoutType.Options;
         /**
          * To create nested layout from JSON config.
+         * @internal
          */
         layoutJSON?: LayoutType.JSON;
         /**
