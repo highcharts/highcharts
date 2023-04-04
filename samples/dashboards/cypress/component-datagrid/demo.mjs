@@ -72,6 +72,9 @@ Dashboard.board('container', {
             type: 'DataGrid',
             connector,
             editable: true,
+            dataGridOptions: {
+                headerFormat: '{text} amount'
+            },
             sync: {
                 highlight: true
             }

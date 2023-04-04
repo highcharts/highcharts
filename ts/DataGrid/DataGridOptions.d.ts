@@ -27,6 +27,16 @@ export interface DataGridOptions {
     columns: Record<string, ColumnOptions>;
     dataTable?: DataTable;
     editable: boolean;
+    /**
+     * A string used to format the header row's cells. The context is the
+     * column's name and can be accessed only by using `{text}`.
+     *
+     * @example
+     * ```js
+     * headerFormat: '{text} (custom format)'
+     * ```
+     */
+    headerFormat?: string;
     resizableColumns: boolean;
 }
 

@@ -29,6 +29,7 @@ const {
     makeDiv
 } = DataGridUtils;
 import defaultOptions from './DataGridDefaults.js';
+import F from '../Core/FormatUtilities.js';
 import H from '../Core/Globals.js';
 const {
     doc
@@ -587,6 +588,26 @@ class DataGrid {
         this.rowElements.push(rowEl);
     }
 
+    /**
+     * Allows formatting of the header cell text based on provided format
+     * option. If that is not provided, the column name is returned.
+     * @internal
+     *
+     * @param columnName
+     * Column name to format.
+     */
+    private formatHeaderCell(columnName: string): string {
+        const options = this.options,
+            headerFormat = options.headerFormat,
+            ctx = { text: columnName };
+
+        if (headerFormat) {
+            return F.format(headerFormat, ctx);
+        }
+
+        return columnName;
+    }
+
 
     /**
      * Render a column header for a column.
@@ -606,7 +627,7 @@ class DataGrid {
         const headerEl = makeDiv(className);
         headerEl.style.height = this.options.cellHeight + 'px';
 
-        headerEl.textContent = columnName;
+        headerEl.textContent = this.formatHeaderCell(columnName);
         parentEl.appendChild(headerEl);
     }
 
