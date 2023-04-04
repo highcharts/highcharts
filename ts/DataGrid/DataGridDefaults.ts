@@ -12,16 +12,44 @@
  *  - Øystein Moseng
  *
  * */
+
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataGridOptions from './DataGridOptions';
 
-const defaultOptions: DataGridOptions = {
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/** @internal */
+const DataGridDefaults = {
+    /** @internal */
     cellHeight: 25,
+    /** @internal */
     columnHeaders: {
+        /** @internal */
         enabled: true
     },
+    /** @internal */
     columns: {},
+    /** @internal */
     editable: true,
+    /** @internal */
     resizableColumns: true
-};
+} as Required<DataGridOptions>;
 
-export default defaultOptions;
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default DataGridDefaults;
