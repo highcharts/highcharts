@@ -38,17 +38,16 @@ const {
  * */
 
 /**
- * Class to manage columns and rows in a table structure.
+ * Class to manage columns and rows in a table structure. It provides methods
+ * to add, remove, and manipulate columns and rows, as well as to retrieve data
+ * from specific cells.
  *
  * @private
  * @class
  * @name Highcharts.DataTable
  *
- * @param {Highcharts.DataTableColumnCollection} [columns]
- * Collection of columns.
- *
- * @param {string} [id]
- * DataTable identifier.
+ * @param {Highcharts.DataTableOptions} [options]
+ * Options to initialize the new DataTable instance.
  */
 class DataTable implements DataEvent.Emitter {
 
@@ -59,7 +58,9 @@ class DataTable implements DataEvent.Emitter {
      * */
 
     /**
-     * Null state for a row record.
+     * Null state for a row record. In some cases, a row in a table may not
+     * contain any data or may be invalid. In these cases, a null state can be
+     * used to indicate that the row record is empty or invalid.
      *
      * @name Highcharts.DataTable.NULL
      * @type {Highcharts.DataTableRowObject}
@@ -78,7 +79,10 @@ class DataTable implements DataEvent.Emitter {
      * */
 
     /**
-     * Tests whether a row contains only null values.
+     * Tests whether a row contains only `null` values or is equal to
+     * DataTable.NULL. If all columns have `null` values, the function returns
+     * `true`. Otherwise, it returns `false` to indicate that the row contains
+     * at least one non-null value.
      *
      * @function Highcharts.DataTable.isNull
      *
@@ -90,7 +94,7 @@ class DataTable implements DataEvent.Emitter {
      *
      * @example
      * if (DataTable.isNull(row)) {
-     *   // handle null
+     *   // handle null row
      * }
      */
     public static isNull(
@@ -131,37 +135,37 @@ class DataTable implements DataEvent.Emitter {
     /**
      * Constructs an instance of the DataTable class.
      *
-     * @param {Highcharts.DataTableColumnCollection} [columns]
-     * Collection of columns.
-     *
-     * @param {string} [id]
-     * DataTable identifier.
+     * @param {Highcharts.DataTableOptions} [options]
+     * Options to initialize the new DataTable instance.
      */
     public constructor(
-        columns: DataTable.ColumnCollection = {},
-        id?: string
+        options: DataTable.Options = {}
     ) {
+
+        this.aliasMap = {};
+
         /**
-         * Whether the ID was automatic generated or given.
+         * Whether the ID was automatic generated or given in the constructor.
          *
          * @name Highcharts.DataTable#autoId
          * @type {boolean}
          */
-        this.autoId = !id;
+        this.autoId = !options.id;
         this.columns = {};
 
         /**
-         * ID of the table.
+         * ID of the table for indentification purposes.
          *
          * @name Highcharts.DataTable#id
          * @type {string}
          */
-        this.id = (id || uniqueKey());
+        this.id = (options.id || uniqueKey());
         this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
 
-        const columnNames = Object.keys(columns),
+        const columns = options.columns || {},
+            columnNames = Object.keys(columns),
             thisColumns = this.columns;
 
         let rowCount = 0;
@@ -185,6 +189,21 @@ class DataTable implements DataEvent.Emitter {
         }
 
         this.rowCount = rowCount;
+
+        const aliasMap = options.aliasMap || {},
+            aliases = Object.keys(aliasMap),
+            thisAliasMap = this.aliasMap;
+
+        for (
+            let i = 0,
+                iEnd = aliases.length,
+                alias: string;
+            i < iEnd;
+            ++i
+        ) {
+            alias = aliases[i];
+            thisAliasMap[alias] = aliasMap[alias];
+        }
     }
 
     /* *
@@ -197,7 +216,7 @@ class DataTable implements DataEvent.Emitter {
      * Mapping aliases to column names.
      * @private
      */
-    private readonly aliasMap: Record<string, string> = {};
+    private readonly aliasMap: DataTable.ColumnAliasMap;
 
     public readonly autoId: boolean;
 
@@ -220,7 +239,9 @@ class DataTable implements DataEvent.Emitter {
      * */
 
     /**
-     * Returns a clone of this data table.
+     * Returns a clone of this table. The cloned table is completely independent
+     * of the original, and any changes made to the clone will not affect
+     * the original table.
      *
      * @function Highcharts.DataTable#clone
      *
@@ -241,30 +262,23 @@ class DataTable implements DataEvent.Emitter {
         eventDetail?: DataEvent.Detail
     ): DataTable {
         const table = this,
-            aliasMap = table.aliasMap,
-            aliases = Object.keys(table.aliasMap);
+            tableOptions: DataTable.Options = {};
 
         table.emit({ type: 'cloneTable', detail: eventDetail });
 
-        const tableClone: DataTable = new DataTable(
-            (skipColumns ? {} : table.columns),
-            (table.autoId ? void 0 : table.id)
-        );
+        if (!skipColumns) {
+            tableOptions.aliasMap = table.aliasMap;
+            tableOptions.columns = table.columns;
+        }
+
+        if (!table.autoId) {
+            tableOptions.id = table.id;
+        }
+
+        const tableClone: DataTable = new DataTable(tableOptions);
 
         if (!skipColumns) {
             tableClone.versionTag = table.versionTag;
-
-            if (aliases.length) {
-                const cloneAliasMap = tableClone.aliasMap;
-                for (
-                    let i = 0, iEnd = aliases.length, alias: string;
-                    i < iEnd;
-                    ++i
-                ) {
-                    alias = aliases[i];
-                    cloneAliasMap[alias] = aliasMap[alias];
-                }
-            }
         }
 
         table.emit({
@@ -277,7 +291,9 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
-     * Deletes a column alias and returns the original column name.
+     * Deletes a column alias and returns the original column name. If the alias
+     * is not found, the method returns `undefined`. Deleting an alias does not
+     * affect the data in the table, only the way columns are accessed.
      *
      * @function Highcharts.DataTable#deleteColumnAlias
      *
@@ -1107,7 +1123,7 @@ class DataTable implements DataEvent.Emitter {
      * @param {string} columnNameOrAlias
      * Column to search in.
      *
-     * @param {boolean|number|string|Highcharts.DataTable} cellValue
+     * @param {Highcharts.DataTableCellType} cellValue
      * Cell value to search for. `NaN` and `undefined` are not supported.
      *
      * @return {boolean}
@@ -1115,7 +1131,7 @@ class DataTable implements DataEvent.Emitter {
      */
     public hasRowWith(
         columnNameOrAlias: string,
-        cellValue: (boolean|number|string|DataTable)
+        cellValue: DataTable.CellType
     ): boolean {
         const table = this;
 
@@ -1297,7 +1313,9 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
-     * Defines an alias for a column.
+     * Defines an alias for a column. If a column name for one of the
+     * get-functions matches an column alias, the column name will be replaced
+     * with the original column name.
      *
      * @function Highcharts.DataTable#setColumnAlias
      *
@@ -1305,10 +1323,10 @@ class DataTable implements DataEvent.Emitter {
      * Column alias to create.
      *
      * @param {string} columnName
-     * Column name to create an alias for.
+     * Original column name to create an alias for.
      *
      * @return {boolean}
-     * True if successfully changed, false if reserved.
+     * `true` if successfully changed, `false` if reserved.
      */
     public setColumnAlias(
         columnAlias: string,
@@ -1450,17 +1468,13 @@ class DataTable implements DataEvent.Emitter {
             modified: table.modified
         });
 
+        table.modified = table;
         table.modifier = modifier;
 
         if (modifier) {
             promise = modifier.modify(table);
         } else {
-            promise = Promise
-                .resolve(table)
-                .then((table): this => {
-                    table.modified = table;
-                    return table;
-                });
+            promise = Promise.resolve(table);
         }
 
         return promise
@@ -1641,7 +1655,7 @@ namespace DataTable {
     /**
      * Possible value types for a table cell.
      */
-    export type CellType = (DataTable|JSON.Primitive);
+    export type CellType = JSON.Primitive;
 
     /**
      * Event object for clone-related events.
@@ -1659,6 +1673,11 @@ namespace DataTable {
     export interface Column extends Array<DataTable.CellType> {
         [index: number]: CellType;
     }
+
+    /**
+     * Map of column alias to column name.
+     */
+    export type ColumnAliasMap = Record<string, string>;
 
     /**
      * Collection of columns, where the key is the column name (or alias) and
@@ -1700,6 +1719,27 @@ namespace DataTable {
             'setModifier'|'afterSetModifier'
         );
         readonly modifier: (DataModifier|undefined);
+    }
+
+    /**
+     * Options to initialize a new DataTable instance.
+     */
+    export interface Options {
+
+        /**
+         * Initial map of column aliases to original column names.
+         */
+        aliasMap?: ColumnAliasMap;
+
+        /**
+         * Initial columns with their values.
+         */
+        columns?: ColumnCollection;
+
+        /**
+         * Custom ID to identify the new DataTable instance.
+         */
+        id?: string;
     }
 
     /**
@@ -1780,6 +1820,25 @@ export default DataTable;
  *//**
  * @name Highcharts.DataTableColumnCollection#[key:string]
  * @type {Highcharts.DataTableColumn}
+ */
+
+/**
+ * Options to initialize a new DataTable instance.
+ * @private
+ * @interface Highcharts.DataTableOptions
+ * @readonly
+ *//**
+ * Initial map of column aliases to original column names.
+ * @name Highcharts.DataTableOptions#aliasMap
+ * @type {Highcharts.Dictionary<string>|undefined}
+ *//**
+ * Initial columns with their values.
+ * @name Highcharts.DataTableOptions#columns
+ * @type {Highcharts.DataTableColumnCollection|undefined}
+ *//**
+ * Custom ID to identify the new DataTable instance.
+ * @name Highcharts.DataTableOptions#id
+ * @type {string|undefined}
  */
 
 /**

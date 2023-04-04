@@ -42,44 +42,7 @@ import DataTable from '../../Data/DataTable.js';
 function fromJSON(
     json: DataTableHelper.JSON
 ): DataTable {
-    const jsonColumns = json.columns,
-        columnNames = Object.keys(jsonColumns),
-        columns: DataTable.ColumnCollection = {},
-        iEnd = columnNames.length;
-
-    // deserialize columns
-
-    for (
-        let i = 0,
-            column: DataTable.Column,
-            columnName: string,
-            jsonColumn: DataTableHelper.ColumnJSON;
-        i < iEnd;
-        ++i
-    ) {
-        columnName = columnNames[i];
-        column = [];
-        jsonColumn = jsonColumns[columnName];
-        for (
-            let j = 0,
-                jEnd = column.length,
-                cell: (DataTableHelper.JSON|CoreJSON.Primitive);
-            j < jEnd;
-            ++j
-        ) {
-            cell = jsonColumn[j];
-            if (cell && typeof cell === 'object') {
-                column[j] = fromJSON(cell);
-            } else {
-                column[j] = cell;
-            }
-        }
-        columns[columnName] = column;
-    }
-
-    // done
-
-    return new DataTable(columns, json.id);
+    return new DataTable({ columns: json.columns, id: json.id });
 }
 
 /**
@@ -111,52 +74,13 @@ function toJSON(
     obj: DataTable
 ): DataTableHelper.JSON {
     const json: DataTableHelper.JSON = {
-            $class: 'Data.DataTable',
-            columns: {}
-        },
-        jsonColumns = json.columns;
-
-    // serialize columns
-
-    const columns = obj.getColumns(),
-        columnNames = Object.keys(columns),
-        iEnd = columnNames.length;
-
-    for (
-        let i = 0,
-            column: DataTable.Column,
-            columnName: string,
-            jsonColumn: DataTableHelper.ColumnJSON;
-        i < iEnd;
-        ++i
-    ) {
-        columnName = columnNames[i];
-        column = columns[columnName];
-        jsonColumn = [];
-        for (
-            let j = 0,
-                jEnd = column.length,
-                cell: DataTable.CellType;
-            j < jEnd;
-            ++j
-        ) {
-            cell = column[j];
-            if (cell instanceof DataTable) {
-                jsonColumn[j] = toJSON(cell);
-            } else {
-                jsonColumn[j] = cell;
-            }
-        }
-        jsonColumns[columnName] = jsonColumn;
-    }
-
-    // serialize custom id
+        $class: 'Data.DataTable',
+        columns: obj.getColumns()
+    };
 
     if (!obj.autoId) {
         json.id = obj.id;
     }
-
-    // done
 
     return json;
 }
@@ -175,7 +99,7 @@ namespace DataTableHelper {
      *
      * */
 
-    export type ColumnJSON = CoreJSON.Array<(JSON|CoreJSON.Primitive)>;
+    export type ColumnJSON = CoreJSON.Array<CoreJSON.Primitive>;
 
     export interface JSON extends Serializable.JSON<'Data.DataTable'> {
         columns: CoreJSON.Object<ColumnJSON>;

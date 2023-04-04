@@ -32,12 +32,12 @@ A table can be created with predefined columns and a manual ID to differentiate
 between table instances.
 
 ```TypeScript
-const table = new DataTable(
-    {
+const table = new DataTable({
+    columns: {
         year: [1984, 1990],
         title: ['Gremlins', 'Gremlins 2: The New Batch']
     },
-    'gremlins_movies'
+    id: 'gremlins_movies'
 );
 table.id === 'gremlins_movies';
 table.autoId === false;
@@ -168,8 +168,10 @@ in addition to retrieve the original order.
 ```TypeScript
 const dataGrid = new DataGrid('container', {
     dataTable: new DataTable({
-        Value: [ 12.34, 45.67, 78.90 ],
-        Currency: [ 'EUR', 'DKK', 'NOK' ]
+        columns: {
+            Value: [ 12.34, 45.67, 78.90 ],
+            Currency: [ 'EUR', 'DKK', 'NOK' ]
+        }
     }
 });
 ```
@@ -179,9 +181,11 @@ If a row reference is needed, this index column has to be part of the table.
 ```TypeScript
 const dataGrid = new DataGrid('container', {
     dataTable: new DataTable({
-        '': [1, 2, 3],
-        Value: [ 12.34, 45.67, 78.90 ],
-        Currency: [ 'EUR', 'DKK', 'NOK' ]
+        columns: {
+            '': [1, 2, 3],
+            Value: [ 12.34, 45.67, 78.90 ],
+            Currency: [ 'EUR', 'DKK', 'NOK' ]
+        }
     }
 });
 dataGrid.table.getRow(dataGrid.table.getRowIndexBy('', 2));
@@ -249,7 +253,7 @@ provide a table with existing data.
 ```TypeScript
 const connector = new CSVConnector();
 connector.table.getRowCount() === 0;
-const table = new DataTable({ column: [1, 2, 3] });
+const table = new DataTable({ columns: { column: [1, 2, 3] } });
 const connector2 = new CSVConnector(table);
 connector.table.getRowCount() === 3;
 ```

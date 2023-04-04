@@ -19,7 +19,6 @@
  *
  * */
 
-import Component from './Components/Component.js';
 import Board from './Board.js';
 import Sync from './Components/Sync/Sync.js';
 import ComponentRegistry from './Components/ComponentRegistry.js';
@@ -39,14 +38,27 @@ namespace PluginHandler {
      * */
 
     export interface DashboardPlugin<T = (AnyRecord|undefined)> {
+        /** @internal */
         custom: T;
+        /**
+         * Maximal version of plugin that is compatible with dashboard
+         */
         maxRevision?: number;
+        /**
+         * Minimal version of plugin that is compatible with dashboard
+         */
         minRevision?: number;
+        /**
+         * Name of plugin
+         */
         name: string;
+        /** @internal */
         onRegister: PluginHandler.EventCallback;
+        /** @internal */
         onUnregister: PluginHandler.EventCallback;
     }
 
+    /** @internal */
     export interface Event {
         ComponentRegistry: typeof ComponentRegistry;
         Board: typeof Board;
@@ -54,6 +66,7 @@ namespace PluginHandler {
         revision: number;
     }
 
+    /** @internal */
     export type EventCallback = (e: Event) => void;
 
     /* *
@@ -62,10 +75,13 @@ namespace PluginHandler {
      *
      * */
 
+    /** @internal */
     export const registry: Record<string, DashboardPlugin> = {};
 
     /**
      * Revision of the Dashboard plugin API.
+     *
+     * @internal
      */
     export const revision: number = 0;
 

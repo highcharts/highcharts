@@ -24,6 +24,7 @@
 	"code/modules/boost-canvas.src.js",
 	"code/modules/boost.src.js",
 	"code/modules/data.src.js",
+	"code/modules/data-tools.src.js",
     "code/modules/draggable-points.src.js",
 	"code/modules/static-scale.src.js",
 	"code/modules/broken-axis.src.js",

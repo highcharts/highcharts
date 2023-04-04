@@ -151,7 +151,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
          *       format = '<span style="color:' + this.point.color +
          *           '">● </span>';
          *   } else {
-         *       format = '<span>● </span>';
+         *       format = '<span class="highcharts-color-' +
+         *          this.point.colorIndex + '">● </span>';
          *   }
          *   format += '<span>' + (this.key || '') + '</span><br/>' +
          *       (this.point.label || '');
@@ -167,7 +168,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
                 format = '<span style="color:' + this.point.color +
                     '">● </span>';
             } else {
-                format = '<span>● </span>';
+                format = '<span class="highcharts-color-' +
+                    this.point.colorIndex + '">● </span>';
             }
             format += '<span class="highcharts-strong">' +
                 ((this as any).key || '') + '</span><br/>' +

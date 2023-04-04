@@ -97,16 +97,16 @@ class NATRIndicator extends ATRIndicator {
         series: TLinkedSeries,
         params: NATRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let atrData: (
+        const atrData: (
                 IndicatorValuesObject<LineSeries>|
                 undefined
             ) = (
-                ATRIndicator.prototype.getValues.apply(this, arguments)
+                super.getValues.apply(this, arguments)
             ),
             atrLength: number = (atrData as any).values.length,
-            period: number = (params.period as any) - 1,
-            yVal: Array<Array<number>> = (series.yData as any),
-            i = 0;
+            yVal: Array<Array<number>> = (series.yData as any);
+        let i = 0,
+            period: number = (params.period as any) - 1;
 
         if (!atrData) {
             return;

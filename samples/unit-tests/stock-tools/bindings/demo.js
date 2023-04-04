@@ -70,6 +70,46 @@ QUnit.test('Bindings general tests', function (assert) {
         );
     }
 
+    const verticalAnnotation = chart.addAnnotation({
+            type: 'verticalLine',
+            typeOptions: {
+                point: {
+                    xAxis: 0,
+                    yAxis: 0,
+                    x: 5,
+                    y: 15
+                }
+            }
+        }),
+        { x, y } = verticalAnnotation.shapes[0].graphic.getBBox();
+
+    controller.mouseDown(
+        plotLeft + x - 10,
+        plotTop + y - 15
+    );
+
+    controller.mouseMove(
+        plotLeft + 100,
+        plotTop + 100
+    );
+
+    controller.mouseUp();
+
+    selectButton('save-chart');
+
+    const annotationStorage = localStorage.getItem('highcharts-chart');
+
+    assert.deepEqual(
+        JSON.parse(annotationStorage).annotations[0].typeOptions,
+        verticalAnnotation.userOptions.typeOptions,
+        'Annotation position saves correctly in localStorage after drag and drop'
+    );
+
+    verticalAnnotation.destroy();
+    chart.annotations.length = 0;
+
+    localStorage.removeItem('highcharts-chart');
+
     // Annotations with multiple steps:
     [
         'circle-annotation',

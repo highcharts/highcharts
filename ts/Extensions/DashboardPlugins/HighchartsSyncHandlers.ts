@@ -26,6 +26,7 @@ import type Axis from '../../Core/Axis/Axis.js';
 import type Chart from '../../Core/Chart/Chart';
 import type Point from '../../Core/Series/Point';
 import type RangeModifier from '../../Data/Modifiers/RangeModifier';
+import type Series from '../../Core/Series/Series';
 import type SharedState from '../../Dashboards/Components/SharedComponentState';
 import type Sync from '../../Dashboards/Components/Sync/Sync';
 import type DataCursor from '../../Data/DataCursor';
@@ -175,37 +176,50 @@ const configs: {
                 }
             }
         ],
-        seriesVisibilityEmitter: [
-            'seriesVisibilityEmitter',
+        seriesVisibilityEmitter:
             function (this: ComponentType): Function | void {
                 if (this.type === 'Highcharts') {
                     const component = this as HighchartsComponent;
-                    return addEvent(component.chart, 'redraw', function (): void {
-                        const { chart, connector: store, id, activeGroup } = component;
+                    return this.on('afterRender', (): void => {
+                        const { chart, connector: store, board } = component;
                         if (
                             store && // has a store
-                            chart &&
-                            chart.hasRendered
+                            board &&
+                            chart
                         ) {
+                            const { dataCursor: cursor } = board;
                             const { series } = chart;
-                            const visibilityMap: Record<string, boolean> = {};
-                            for (let i = 0; i < series.length; i++) {
-                                const seriesID = series[i].options.id;
-                                if (seriesID) {
-                                    visibilityMap[seriesID] = series[i].visible;
-                                }
-                            }
-                            if (Object.keys(visibilityMap).length && activeGroup) {
-                                activeGroup.getSharedState().setColumnVisibility(visibilityMap, {
-                                    sender: id
-                                });
-                            }
 
+                            series.forEach((series): void => {
+                                series.update({
+                                    events: {
+                                        show: function (): void {
+                                            cursor.emitCursor(
+                                                store.table,
+                                                {
+                                                    type: 'position',
+                                                    state: 'series.show',
+                                                    column: this.name
+                                                }
+                                            );
+                                        },
+                                        hide: function (): void {
+                                            cursor.emitCursor(
+                                                store.table,
+                                                {
+                                                    type: 'position',
+                                                    state: 'series.hide',
+                                                    column: this.name
+                                                }
+                                            );
+                                        }
+                                    }
+                                });
+                            });
                         }
                     });
                 }
-            }
-        ],
+            },
         panEmitter: [
             'panEmitter',
             function (this: ComponentType): Function | void {
@@ -345,21 +359,37 @@ const configs: {
             }
     },
     handlers: {
-        seriesVisibilityHandler: [
-            'seriesVisibilityHandler',
-            'afterColumnVisibilityChange',
-            function (this: HighchartsComponent, e: SharedState.ColumnVisibilityEvent): void {
-                const { chart, connector: store } = this;
-                if (store && chart) {
-                    chart.series.forEach((series): void => {
-                        const seriesID = series.options.id;
-                        if (seriesID) {
-                            series.setVisible(e.visibilityMap[seriesID], false);
+        seriesVisibilityHandler:
+            function (this: HighchartsComponent): void {
+                const { chart, connector: store, board } = this;
+                if (store && chart && board) {
+                    const { dataCursor } = board;
+
+                    const findSeries = (seriesArray: Series[], name: string): Series | undefined => {
+                        for (const series of seriesArray) {
+                            if (series.name === name) {
+                                return series;
+                            }
+                        }
+                    };
+
+                    dataCursor.addListener(store.table.id, 'series.show', (e): void => {
+                        if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
+                            const series = findSeries(chart.series, e.cursor.column);
+                            if (series) {
+                                series.setVisible(true, true);
+                            }
+                        }
+                    }).addListener(store.table.id, 'series.hide', (e): void => {
+                        if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
+                            const series = findSeries(chart.series, e.cursor.column);
+                            if (series) {
+                                series.setVisible(false, true);
+                            }
                         }
                     });
                 }
-            }
-        ],
+            },
         highlightHandler:
             function (this: HighchartsComponent): void {
                 const { chart, board } = this;

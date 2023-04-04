@@ -491,8 +491,10 @@ function seriesSetStackedPoints(
             // This point's index within the stack, pushed to stack.points[1]
             stack.cumulative = (stack.total || 1) - 1;
         } else {
-            stack.cumulative =
-                pick(stack.cumulative, stackThreshold as any) + (y || 0);
+            stack.cumulative = correctFloat(
+                pick(stack.cumulative, stackThreshold as any) +
+                (y || 0)
+            );
         }
 
         if (y !== null) {
