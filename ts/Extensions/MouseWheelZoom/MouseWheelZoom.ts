@@ -125,12 +125,29 @@ const zoomBy = function (
         defined(xAxis.dataMax) && defined(xAxis.dataMin) &&
         defined(yAxis.dataMax) && defined(yAxis.dataMin)) {
 
-        const fixToX = (mouseX ?
-                (xAxis.reversed ? ((xAxis.len - (mouseX - xAxis.pos)) /
-                    xAxis.len) :
-                    ((mouseX - xAxis.pos) / xAxis.len)) : 0.5
-            ),
-            xRange = xAxis.max - xAxis.min,
+
+        if (chart.inverted) {
+            const emulateRoof = yAxis.pos + yAxis.len;
+
+            // Get the correct values
+            centerXArg = xAxis.toValue(mouseY);
+            centerYArg = yAxis.toValue(mouseX);
+
+            // Swapping x and y for simplicity when chart is inverted.
+            const tmp = mouseX;
+            mouseX = mouseY;
+            mouseY = emulateRoof - tmp;
+        }
+
+        let fixToX = mouseX ? ((mouseX - xAxis.pos) / xAxis.len) : 0.5;
+        if (xAxis.reversed && !chart.inverted ||
+            chart.inverted && !xAxis.reversed) {
+            // We are taking into account that xAxis automatically gets
+            // reversed when chart.inverted
+            fixToX = 1 - fixToX;
+        }
+
+        const xRange = xAxis.max - xAxis.min,
             centerX = pick(centerXArg, xAxis.min + xRange / 2),
             newXRange = xRange * howMuch,
             yRange = yAxis.max - yAxis.min,
