@@ -338,11 +338,6 @@ class NetworkgraphSeries extends Series {
         // default set to 2.5 seconds
         let deferTime = 2500;
 
-        // PROBLEM: if this time is too high
-        // then the dataLabels will never draw because the drawDataLabels()
-        // will not be called after the end of simulation
-        // but how to take care of this edge case?
-
         // if dataLabels.animation.defer set by the user, use this value
         if (dlOptions &&
             dlOptions.animation &&
