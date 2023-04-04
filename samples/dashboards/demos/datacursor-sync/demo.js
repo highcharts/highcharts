@@ -105,28 +105,31 @@ function buildChartOptions(type, table, cursor) {
 // Build table with Highcharts.Series aliases
 function buildVegeTable() {
     const table = new DataTable({
-        vegetable: [
-            'Broccoli',
-            'Carrots',
-            'Corn',
-            'Cucumbers',
-            'Onions',
-            'Potatos',
-            'Spinach',
-            'Tomatos'
+        columns: {
+            vegetable: [
+                'Broccoli',
+                'Carrots',
+                'Corn',
+                'Cucumbers',
+                'Onions',
+                'Potatos',
+                'Spinach',
+                'Tomatos'
 
-        ],
-        amount: [
-            44,
-            51,
-            38,
-            45,
-            57,
-            62,
-            35,
-            61
-        ]
-    }, 'Vegetables');
+            ],
+            amount: [
+                44,
+                51,
+                38,
+                45,
+                57,
+                62,
+                35,
+                61
+            ]
+        },
+        id: 'Vegetables'
+    });
 
     table.setColumnAlias('name', 'vegetable');
     table.setColumnAlias('y', 'amount');

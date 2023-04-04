@@ -21,6 +21,7 @@
 
 import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
+import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 
 import Component from '../../Dashboards/Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -36,10 +37,8 @@ import DataGridSyncHandlers from './DataGridSyncHandlers.js';
  * */
 
 /**
- * DataGrid component for the Highcharts Dashboards.
- * @private
- * @class
- * @name Highcharts.DashboardComponent
+ * DataGrid component for Highcharts Dashboards.
+ * @internal
  */
 class DataGridComponent extends Component {
 
@@ -49,8 +48,13 @@ class DataGridComponent extends Component {
      *
      * */
 
+    /** @internal */
     public static syncHandlers = DataGridSyncHandlers;
+
+    /** @internal */
     public static DataGridConstructor?: typeof DataGrid;
+
+    /** @internal */
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -60,7 +64,8 @@ class DataGridComponent extends Component {
             editableOptions: [],
             syncHandlers: DataGridSyncHandlers,
             onUpdate: DataGridComponent.onUpdate
-        });
+        }
+    );
 
     /* *
      *
@@ -68,6 +73,19 @@ class DataGridComponent extends Component {
      *
      * */
 
+    /**
+     * Default update function, if data grid has changed. This functionality can
+     * be replaced with the {@link DataGridComponent.DataGridOptions#onUpdate}
+     * option.
+     *
+     * @internal
+     *
+     * @param e
+     * Related keyboard event of the change.
+     *
+     * @param store
+     * Relate store of the change.
+     */
     public static onUpdate(
         e: KeyboardEvent,
         store: Component.ConnectorTypes
@@ -115,6 +133,7 @@ class DataGridComponent extends Component {
         }
     }
 
+    /** @internal */
     public static fromJSON(
         json: DataGridComponent.ClassJSON
     ): DataGridComponent {
@@ -142,10 +161,15 @@ class DataGridComponent extends Component {
      *
      * */
 
+    /** @internal */
     public dataGrid?: DataGrid;
+    /** @internal */
     public dataGridContainer: HTMLElement;
+    /** @internal */
     public dataGridOptions: Partial<Options>;
+    /** @internal */
     public options: DataGridComponent.ComponentOptions;
+    /** @internal */
     public sync: Component['sync'];
 
     /* *
@@ -238,6 +262,7 @@ class DataGridComponent extends Component {
      *
      * */
 
+    /** @internal */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -250,6 +275,7 @@ class DataGridComponent extends Component {
         return this;
     }
 
+    /** @internal */
     public render(): this {
         this.emit({ type: 'beforeRender' });
         super.render();
@@ -264,11 +290,13 @@ class DataGridComponent extends Component {
         return this;
     }
 
+    /** @internal */
     public redraw(): this {
         super.redraw();
         return this.render();
     }
 
+    /** @internal */
     public resize(
         width?: number | string | null,
         height?: number | string | null
@@ -288,6 +316,7 @@ class DataGridComponent extends Component {
         return this;
     }
 
+    /** @internal */
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
             this.dataGrid = new DataGridComponent.DataGridConstructor(
@@ -304,21 +333,22 @@ class DataGridComponent extends Component {
     }
 
     private setupConnectorUpdate(): void {
-        const { connector: store, dataGrid } = this;
+        const { connector, dataGrid } = this;
 
-        if (store && dataGrid) {
+        if (connector && dataGrid) {
             dataGrid.on<DataGrid.Event>('cellClick', (e): void => {
                 if ('input' in e) {
                     e.input.addEventListener(
                         'keyup',
                         (keyEvent): void =>
-                            this.options.onUpdate(keyEvent, store)
+                            this.options.onUpdate(keyEvent, connector)
                     );
                 }
             });
         }
     }
 
+    /** @internal */
     public toJSON(): DataGridComponent.ClassJSON {
         const dataGridOptions = JSON.stringify(this.options.dataGridOptions);
         const base = super.toJSON();
@@ -334,6 +364,7 @@ class DataGridComponent extends Component {
         this.emit({ type: 'toJSON', json });
         return json;
     }
+
 }
 
 /* *
@@ -345,10 +376,10 @@ class DataGridComponent extends Component {
 namespace DataGridComponent {
 
     /* *
-    *
-    *  Declarations
-    *
-    * */
+     *
+     *  Declarations
+     *
+     * */
 
     /** @internal */
     export type ComponentType = DataGridComponent;
@@ -364,35 +395,52 @@ namespace DataGridComponent {
     }
     >;
 
+    /**
+     * Options to control the DataGrid component.
+     */
     export interface ComponentOptions
-        extends Component.ComponentOptions,
-        EditableOptions {
+        extends Component.ComponentOptions, EditableOptions {
+
         /**
-         * The name of class that is applied to the data grid container.
+         * The style class to add to the rendered data grid container.
          */
         dataGridClassName?: string;
+
         /**
-         * The name of id that is applied to the data grid container.
+         * The identifier for the rendered data grid container.
          */
         dataGridID?: string;
-        /** @internal */
-        onUpdate: typeof DataGridComponent.onUpdate;
+
+        /**
+         * Callback to use when a change in the data grid occures.
+         */
+        onUpdate: typeof DataGridComponent.onUpdate
+
         type: 'DataGrid';
     }
-    /** @internal */
+
+    /**
+     * Options to control the DataGrid component. These options can be changed
+     * in edit mode of a dashboard.
+     */
     export interface EditableOptions extends Component.EditableOptions {
-        dataGridOptions?: ComponentOptions;
+
+        /**
+         * Generic options to adjust behavor and styling of the rendered data
+         * grid.
+         */
+        dataGridOptions?: BaseDataGridOptions;
+
         /**
          * The set of options like `dataGridClassName` and `dataGridID`.
          */
-        /**
-         * The name of class that is applied to the chart's container.
-         */
         chartClassName?: string;
+
         /**
          * The id that is applied to the chart's container.
          */
         chartID?: string;
+
         /**
          * Names / aliases that should be mapped to xAxis values.
          * ```
@@ -404,15 +452,28 @@ namespace DataGridComponent {
          * ```
          */
         columnKeyMap?: Record<string, string | null>;
+
+        /** @internal */
+        tableAxisMap?: Record<string, string | null>;
     }
+
     /** @internal */
-    export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
+    export interface ComponentJSONOptions
+        extends Component.ComponentOptionsJSON {
+
+        /** @internal */
         dataGridOptions?: string;
+
+        /** @internal */
         chartClassName?: string;
+
+        /** @internal */
         chartID?: string;
     }
+
     /** @internal */
     export interface ClassJSON extends Component.JSON {
+        /** @internal */
         options: ComponentJSONOptions;
     }
 }

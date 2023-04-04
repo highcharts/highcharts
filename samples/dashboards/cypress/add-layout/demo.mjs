@@ -3,7 +3,6 @@
 import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import DataGrid from '../../../../code/es-modules/masters/datagrid.src.js';
-import HighchartsComponent from '../../../../code/es-modules/Dashboards/Components/HTMLComponent.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/DataGridPlugin.js';
 
@@ -44,7 +43,7 @@ Dashboards.board('container', {
                 rows: [{
                     cells: [{
                         id: 'dashboard-col-0',
-                        width: '50%',
+                        width: '50%'
                     }, {
                         id: 'dashboard-col-1',
                         width: '1/2'
@@ -68,7 +67,7 @@ Dashboards.board('container', {
                     animation: false,
                     type: 'pie'
                 }
-            },
+            }
         }, {
             cell: 'dashboard-col-1',
             type: 'HTML',
@@ -80,6 +79,6 @@ Dashboards.board('container', {
                     }
                 }
             ]
-        },
+        }
     ]
 });
