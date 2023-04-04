@@ -374,7 +374,7 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
             // box at threshold, but if we drag the mouse fast, the top has not
             // reached threshold before we cross over and update the bottom.
             const plotThreshold = pick(
-                    point.yBottom,
+                    point.yBottom, // Added support for stacked series. (#18741)
                     point.series.translatedThreshold
                 ),
                 plotY = guideBox.attr('y') as number,
@@ -386,7 +386,7 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
             let height,
                 diff;
 
-            if (y >= threshold) {
+            if (point.series.yAxis.reversed ? y < threshold : y >= threshold) {
                 // Above threshold - always set height to hit the threshold
                 height = guideBox.attr('height') as number;
                 diff = plotThreshold ? plotThreshold - plotY - height : 0;
