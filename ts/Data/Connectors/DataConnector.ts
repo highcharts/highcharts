@@ -22,7 +22,6 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type JSON from '../../Core/JSON';
 import type { DataConnectorTypes } from './DataConnectorType';
 
 import DataConverter from '../Converters/DataConverter.js';
@@ -348,10 +347,10 @@ namespace DataConnector {
     /**
      * Metadata entry containing the name of the column and a metadata object.
      */
-    export interface MetaColumn extends JSON.Object {
+    export interface MetaColumn {
         dataType?: string;
         // validator: Function;
-        defaultValue?: JSON.Primitive;
+        defaultValue?: (boolean|null|number|string);
         index?: number;
         title?: string;
     }
@@ -359,7 +358,7 @@ namespace DataConnector {
     /**
      * Metadata
      */
-    export interface Metadata extends JSON.Object {
+    export interface Metadata {
         columns: Record<string, MetaColumn>;
     }
 

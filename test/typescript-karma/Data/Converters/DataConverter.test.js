@@ -100,8 +100,10 @@ test('asNumber', function (assert) {
 });
 
 test('asDate', function (assert) {
-    let converter = new DataConverter({}, function (value) {
-        return new Date('2009-01-01').getTime();
+    let converter = new DataConverter({
+        parseDate: function (value) {
+            return new Date('2009-01-01').getTime();
+        }
     });
 
     assert.strictEqual(

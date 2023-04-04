@@ -95,14 +95,14 @@ class HTMLTableConverter extends DataConverter {
     /**
      * Constructs an instance of the HTML table parser.
      *
-     * @param {HTMLTableConverter.OptionsType} [options]
+     * @param {HTMLTableConverter.UserOptions} [options]
      * Options for the CSV parser.
      *
      * @param {HTMLElement|null} [tableElement]
      * The HTML table to parse
      */
     constructor(
-        options?: Partial<HTMLTableConverter.OptionsType>,
+        options?: Partial<HTMLTableConverter.UserOptions>,
         tableElement: (HTMLElement|null) = null
     ) {
         super();
@@ -390,7 +390,7 @@ class HTMLTableConverter extends DataConverter {
     /**
      * Initiates the parsing of the HTML table
      *
-     * @param {HTMLTableConverter.OptionsType}[options]
+     * @param {HTMLTableConverter.UserOptions}[options]
      * Options for the parser
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -401,7 +401,7 @@ class HTMLTableConverter extends DataConverter {
      * @emits HTMLTableParser#parseError
      */
     public parse(
-        options: HTMLTableConverter.OptionsType,
+        options: HTMLTableConverter.UserOptions,
         eventDetail?: DataEvent.Detail
     ): void {
         const converter = this,
@@ -556,11 +556,6 @@ namespace HTMLTableConverter {
      * */
 
     /**
-     * The available options for the parser
-     */
-    export type OptionsType = Partial<Options & SpecialOptions>;
-
-    /**
      * Options for the parser compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
@@ -579,6 +574,11 @@ namespace HTMLTableConverter {
     export interface SpecialOptions {
         tableHTML?: (HTMLElement|null);
     }
+
+    /**
+     * Available options of the HTMLTableConverter.
+     */
+    export type UserOptions = Partial<Options & SpecialOptions>;
 
 }
 

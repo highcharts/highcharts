@@ -23,7 +23,6 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type JSON from '../../Core/JSON';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
@@ -69,7 +68,7 @@ class CSVConnector extends DataConnector {
      * @param {DataTable} table
      * Optional table to create the connector from.
      *
-     * @param {CSVConnector.OptionsType} options
+     * @param {CSVConnector.UserOptions} options
      * Options for the connector and parser.
      *
      * @param {DataConverter} converter
@@ -77,7 +76,7 @@ class CSVConnector extends DataConnector {
      */
     public constructor(
         table: DataTable = new DataTable(),
-        options: CSVConnector.OptionsType = {},
+        options: CSVConnector.UserOptions = {},
         converter?: CSVConverter
     ) {
         super(table);
@@ -239,12 +238,6 @@ namespace CSVConnector {
     export type Event = (ErrorEvent|LoadEvent);
 
     /**
-     * Options for the CSVConnector class constructor.
-     */
-    export type OptionsType =
-        Partial<(CSVConnector.Options&CSVConverter.OptionsType)>;
-
-    /**
      * @todo move this to the dataparser?
      */
     export interface DataBeforeParseCallbackFunction {
@@ -266,14 +259,22 @@ namespace CSVConnector {
     }
 
     /**
-     * Internal options for CSVConnector.
+     * Options of the CSVConnector.
      */
-    export interface Options extends JSON.Object {
+    export interface Options {
         csv: string;
         csvURL: string;
         enablePolling: boolean;
         dataRefreshRate: number;
     }
+
+    /**
+     * Available options for constructor and converter of the CSVConnector.
+     */
+    export type UserOptions = (
+        & Partial<CSVConnector.Options>
+        & CSVConverter.UserOptions
+    );
 
 }
 

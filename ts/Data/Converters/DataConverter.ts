@@ -25,7 +25,6 @@
 
 import type DataEvent from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
-import type JSON from '../../Core/JSON';
 
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
@@ -71,68 +70,22 @@ class DataConverter implements DataEvent.Emitter {
 
     /* *
      *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Converts an array of columns to a table instance. Second dimension of the
-     * array are the row cells.
-     *
-     * @param {Array<DataTable.Column>} [columns]
-     * Array to convert.
-     *
-     * @param {Array<string>} [headers]
-     * Column names to use.
-     *
-     * @return {DataTable}
-     * Table instance from the arrays.
-     */
-    public static getTableFromColumns(
-        columns: Array<DataTable.Column> = [],
-        headers: Array<string> = []
-    ): DataTable {
-        const table = new DataTable();
-
-        for (
-            let i = 0,
-                iEnd = Math.max(headers.length, columns.length);
-            i < iEnd;
-            ++i
-        ) {
-            table.setColumn(
-                headers[i] || `${i}`,
-                columns[i]
-            );
-        }
-
-        return table;
-    }
-
-    /* *
-     *
      *  Constructor
      *
      * */
 
     /**
-     * Constructs an instance of the Data Converter.
+     * Constructs an instance of the DataConverter.
      *
-     * @param {DataConverter.Options} [options]
-     * Options for the Data Converter.
-     *
-     * @param {DataConverter.ParseDateCallbackFunction} [parseDate]
-     * A function to parse string representations of dates
-     * into JavaScript timestamps.
+     * @param {DataConverter.UserOptions} [options]
+     * Options for the DataConverter.
      */
     public constructor(
-        options?: Partial<DataConverter.Options>,
-        parseDate?: DataConverter.ParseDateFunction
+        options?: DataConverter.UserOptions
     ) {
         let decimalPoint;
 
         this.options = merge(DataConverter.defaultOptions, options);
-        this.parseDateFn = parseDate;
 
         decimalPoint = this.options.decimalPoint;
 
@@ -154,11 +107,8 @@ class DataConverter implements DataEvent.Emitter {
 
     /**
      * A collection of available date formats.
-     *
-     * @name Highcharts.Data#dateFormats
-     * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
-    private dateFormats: Record<string, DataConverter.DateFormatObject> = {
+    public dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})([\-\.\/])([0-9]{1,2})\2([0-9]{1,2})$/u,
             parser: function (match: (RegExpMatchArray|null)): number {
@@ -236,11 +186,6 @@ class DataConverter implements DataEvent.Emitter {
      * Options for the DataConverter.
      */
     public readonly options: DataConverter.Options;
-
-    /**
-     * Custom parsing function used instead of build-in parseDate method.
-     */
-    public parseDateFn?: DataConverter.ParseDateFunction;
 
     /* *
      *
@@ -605,10 +550,10 @@ class DataConverter implements DataEvent.Emitter {
     /**
      * Initiates the data parsing. Should emit `parseError` on failure.
      *
-     * @param {DataConverter.Options} options
-     * Options for the converter.
+     * @param {DataConverter.UserOptions} options
+     * Options of the DataConverter.
      */
-    public parse(options: DataConverter.Options): void {
+    public parse(options: DataConverter.UserOptions): void {
         this.emit<DataConverter.Event>({
             type: 'parseError',
             columns: [],
@@ -630,16 +575,17 @@ class DataConverter implements DataEvent.Emitter {
      * to use to parse date values.
      */
     private parseDate(value: string, dateFormatProp?: string): number {
-        const converter = this;
+        const converter = this,
+            options = converter.options;
 
-        let dateFormat = dateFormatProp || converter.options.dateFormat,
+        let dateFormat = dateFormatProp || options.dateFormat,
             result = NaN,
             key,
             format,
             match;
 
-        if (converter.parseDateFn) {
-            result = converter.parseDateFn(value);
+        if (options.parseDate) {
+            result = options.parseDate(value);
         } else {
             // Auto-detect the date format the first time
             if (!dateFormat) {
@@ -784,7 +730,7 @@ namespace DataConverter {
     /**
      * The shared options for all DataConverter instances
      */
-    export interface Options extends JSON.Object {
+    export interface Options {
         dateFormat?: string;
         alternativeFormat?: string;
         decimalPoint?: string;
@@ -793,6 +739,13 @@ namespace DataConverter {
         startColumn: number;
         endColumn: number;
         firstRowAsNames: boolean;
+
+        /**
+         * A function to parse string representations of dates into JavaScript
+         * timestamps. If not set, the default implementation will be used.
+         */
+        parseDate?: DataConverter.ParseDateFunction;
+
         switchRowsAndColumns: boolean;
     }
 
@@ -807,9 +760,52 @@ namespace DataConverter {
     /**
      * Contains supported types to convert values from and to.
      */
-    export type Type = (
-        boolean|null|number|string|DataTable|Date|undefined
-    );
+    export type Type = (boolean|null|number|string|DataTable|Date|undefined);
+
+    /**
+     * Options of the DataConverter.
+     */
+    export type UserOptions = Partial<Options>;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Converts an array of columns to a table instance. Second dimension of the
+     * array are the row cells.
+     *
+     * @param {Array<DataTable.Column>} [columns]
+     * Array to convert.
+     *
+     * @param {Array<string>} [headers]
+     * Column names to use.
+     *
+     * @return {DataTable}
+     * Table instance from the arrays.
+     */
+    export function getTableFromColumns(
+        columns: Array<DataTable.Column> = [],
+        headers: Array<string> = []
+    ): DataTable {
+        const table = new DataTable();
+
+        for (
+            let i = 0,
+                iEnd = Math.max(headers.length, columns.length);
+            i < iEnd;
+            ++i
+        ) {
+            table.setColumn(
+                headers[i] || `${i}`,
+                columns[i]
+            );
+        }
+
+        return table;
+    }
 
 }
 

@@ -23,7 +23,6 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type JSON from '../../Core/JSON';
 
 import DataConnector from './DataConnector.js';
 import DataTable from '../DataTable.js';
@@ -257,7 +256,10 @@ namespace GoogleSheetsConnector {
         readonly url: string;
     }
 
-    export interface Options extends JSON.Object {
+    /**
+     * Options of the GoogleSheetsConnector.
+     */
+    export interface Options {
         dataRefreshRate: number;
         enablePolling: boolean;
         endColumn?: number;
@@ -270,6 +272,15 @@ namespace GoogleSheetsConnector {
         startRow?: number;
         worksheet?: number;
     }
+
+    /**
+     * Available options for constructor and converter of the
+     * GoogleSheetsConnector.
+     */
+    export type UserOptions = (
+        & Partial<Options>
+        & GoogleSheetsConverter.UserOptions
+    );
 
     /* *
      *
@@ -292,7 +303,7 @@ namespace GoogleSheetsConnector {
     export function buildFetchURL(
         apiKey: string,
         sheetKey: string,
-        options: Partial<(FetchURLOptions|Options)> = {}
+        options: Partial<(FetchURLOptions&Options)> = {}
     ): string {
         return (
             `https://sheets.googleapis.com/v4/spreadsheets/${sheetKey}/values/` +

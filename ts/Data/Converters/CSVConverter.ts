@@ -66,11 +66,11 @@ class CSVConverter extends DataConverter {
     /**
      * Constructs an instance of the CSV parser.
      *
-     * @param {CSVConverter.OptionsType} [options]
+     * @param {CSVConverter.UserOptions} [options]
      * Options for the CSV parser.
      */
     public constructor(
-        options?: CSVConverter.OptionsType
+        options?: CSVConverter.UserOptions
     ) {
         super();
 
@@ -202,7 +202,7 @@ class CSVConverter extends DataConverter {
     /**
      * Initiates parsing of CSV
      *
-     * @param {CSVConverter.OptionsType}[options]
+     * @param {CSVConverter.UserOptions}[options]
      * Options for the parser
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -212,7 +212,7 @@ class CSVConverter extends DataConverter {
      * @emits CSVDataParser#afterParse
      */
     public parse(
-        options: CSVConverter.OptionsType,
+        options: CSVConverter.UserOptions,
         eventDetail?: DataEvent.Detail
     ): void {
         const converter = this,
@@ -619,11 +619,6 @@ namespace CSVConverter {
     }
 
     /**
-     * All available options for the parser
-     */
-    export type OptionsType = Partial<(Options&SpecialOptions)>;
-
-    /**
      * Options for the CSV parser that are compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
@@ -642,6 +637,11 @@ namespace CSVConverter {
         beforeParse?: DataBeforeParseCallbackFunction;
         decimalRegex?: RegExp;
     }
+
+    /**
+     * Avaliable options of the CSVConverter.
+     */
+    export type UserOptions = Partial<(Options&SpecialOptions)>;
 
 }
 

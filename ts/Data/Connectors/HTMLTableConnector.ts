@@ -23,7 +23,6 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type JSON from '../../Core/JSON';
 
 import DataConnector from './DataConnector.js';
 import DataTable from '../DataTable.js';
@@ -68,7 +67,7 @@ class HTMLTableConnector extends DataConnector {
      * @param {DataTable} table
      * Optional table to create the connector from
      *
-     * @param {HTMLTableConnector.OptionsType} options
+     * @param {HTMLTableConnector.UserOptions} options
      * Options for the connector and parser
      *
      * @param {DataConverter} converter
@@ -76,7 +75,7 @@ class HTMLTableConnector extends DataConnector {
      */
     public constructor(
         table: DataTable = new DataTable(),
-        options: HTMLTableConnector.OptionsType = {},
+        options: HTMLTableConnector.UserOptions = {},
         converter?: HTMLTableConverter
     ) {
         super(table);
@@ -99,7 +98,7 @@ class HTMLTableConnector extends DataConnector {
      * @todo this should not include parsing options
      */
     public readonly options: (
-        HTMLTableConnector.Options&HTMLTableConverter.OptionsType
+        HTMLTableConnector.Options&HTMLTableConverter.UserOptions
     );
 
     /**
@@ -217,7 +216,7 @@ namespace HTMLTableConnector {
     /**
      * Options for exporting the connector as an HTML table
      */
-    export interface ExportOptions extends JSON.Object {
+    export interface ExportOptions {
         decimalPoint?: string|null;
         exportIDColumn?: boolean;
         tableCaption?: string;
@@ -235,17 +234,20 @@ namespace HTMLTableConnector {
     }
 
     /**
-     * Internal options for the HTMLTableConnector class
+     * Options of the HTMLTableConnector.
      */
     export interface Options {
         table: (string|HTMLElement);
     }
 
     /**
-     * Options used in the constructor of HTMLTableConnector
+     * Available options for constructor and converter of the
+     * HTMLTableConnector.
      */
-    export type OptionsType =
-        Partial<(HTMLTableConnector.Options&HTMLTableConverter.OptionsType)>;
+    export type UserOptions = (
+        & Partial<HTMLTableConnector.Options>
+        & HTMLTableConverter.UserOptions
+    );
 
 }
 
