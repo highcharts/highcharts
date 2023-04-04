@@ -1656,13 +1656,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * series animation has finished. Setting to `false` renders the
          * data label immediately. If set to `true` inherits the defer
          * time set in [plotOptions.series.animation](#plotOptions.series.animation).
-         * If set to a number, a defer time is specified in milliseconds.
-         *
-         * @sample highcharts/plotoptions/animation-defer
-         *         Set defer time
          *
          * @since     4.0.0
-         * @type      {boolean|number}
+         * @type      {boolean}
          * @product   highcharts highstock gantt
          */
         defer: true,
