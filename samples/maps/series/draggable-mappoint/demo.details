@@ -1,0 +1,6 @@
+---
+ name: Highcharts Maps with Draggable Points module
+ authors:
+   - Hubert Kozik
+ js_wrap: b
+...

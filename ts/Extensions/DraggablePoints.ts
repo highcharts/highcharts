@@ -1108,14 +1108,21 @@ if (seriesTypes.xrange) {
  * [point.drag](plotOptions.series.point.events.drag) and
  * [point.drop](plotOptions.series.point.events.drop).
  *
- * @sample highcharts/dragdrop/resize-column
+ * @sample {highcharts|highstock}
+ *         highcharts/dragdrop/resize-column
  *         Draggable column and line series
- * @sample highcharts/dragdrop/bar-series
+ * @sample {highcharts|highstock}
+ *         highcharts/dragdrop/bar-series
  *         Draggable bar
- * @sample highcharts/dragdrop/drag-bubble
+ * @sample {highcharts|highstock}
+ *         highcharts/dragdrop/drag-bubble
  *         Draggable bubbles
- * @sample highcharts/dragdrop/drag-xrange
+ * @sample {highcharts|highstock}
+ *         highcharts/dragdrop/drag-xrange
  *         Draggable X range series
+ * @sample {highmaps}
+ *         maps/series/draggable-mappoint
+ *         Draggable Map Point series
  *
  * @declare   Highcharts.SeriesDragDropOptionsObject
  * @since     6.2.0
@@ -2302,6 +2309,10 @@ Point.prototype.getDropValues = function (
                     Infinity
                 ),
                 res = newPos[key as keyof typeof newPos] as number;
+
+            if (mapView.projection.options.name === 'Orthographic') {
+                return res;
+            }
 
             if (key === 'lat') {
                 // if map is bigger than possible projection range
