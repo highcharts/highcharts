@@ -74,6 +74,7 @@ Dashboards.board('container', {
             connector,
             editable: true,
             dataGridOptions: {
+                cellFormat: '{value:.2f} kg',
                 headerFormat: '{text} amount'
             },
             sync: {

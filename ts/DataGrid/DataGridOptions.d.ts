@@ -31,6 +31,21 @@ import type DataTable from '../Data/DataTable';
  * Options to control the content and the user experience of a grid structure.
  */
 export interface DataGridOptions {
+    /**
+     * A string used to format each cell's content. The context is the cell's
+     * value and can be accessed only by using `{value}` and `{text}`.
+     * First one is used for formatting numbers, second one for
+     * formatting strings.
+     *
+     * @example
+     * ```js
+     * cellFormat: '{value:.2f} kg'
+     * ```
+     * ```js
+     * cellFormat: '{text} (custom format)'
+     * ```
+     */
+    cellFormat?: string;
 
     /**
      * Height of each grid cell in pixels. This is used to calculate the amount

@@ -25,6 +25,7 @@
 
 import type DataEvent from '../Data/DataEvent';
 import type DataGridOptions from './DataGridOptions';
+import type JSON from '../Core/JSON';
 
 import DataTable from '../Data/DataTable.js';
 import DataGridUtils from './DataGridUtils.js';
@@ -398,7 +399,7 @@ class DataGrid {
     // ---------------- Private methods
 
     /**
-     * Determs whether a column is editable or not.
+     * Determine whether a column is editable or not.
      *
      * @internal
      *
@@ -521,7 +522,7 @@ class DataGrid {
                 const cell = cellElements[k] as HTMLElement;
                 const value = this.dataTable
                     .getCell(columnsInPresentationOrder[k], i);
-                cell.textContent = dataTableCellToString(value);
+                cell.textContent = this.formatCell(value);
 
                 // TODO: consider adding these dynamically to the input element
                 cell.dataset.originalData = cell.textContent;
@@ -805,6 +806,35 @@ class DataGrid {
         return columnName;
     }
 
+    /**
+     * Allows formatting of the cell text based on provided format option.
+     * If that is not provided, the cell value is returned.
+     * @internal
+     *
+     * @param  cellValue
+     * The value of the cell to format.
+     */
+    private formatCell(cellValue: JSON.Primitive): string {
+        const options = this.options,
+            cellFormat = options.cellFormat;
+        let formattedCell = cellValue || '';
+
+        if (cellFormat) {
+            if (
+                typeof cellValue === 'number' &&
+                cellFormat.indexOf('value') > -1
+            ) {
+                formattedCell = F.format(cellFormat, { value: cellValue });
+            } else if (
+                typeof cellValue === 'string' &&
+                cellFormat.indexOf('text') > -1
+            ) {
+                formattedCell = F.format(cellFormat, { text: cellValue });
+            }
+        }
+
+        return formattedCell.toString();
+    }
 
     /**
      * Render a column header for a column.
