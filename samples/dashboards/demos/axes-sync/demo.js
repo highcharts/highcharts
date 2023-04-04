@@ -1,4 +1,4 @@
-const { CSVConnector } = Dashboards;
+const { CSVConnector } = Dashboards.DataConnector.registry;
 
 // Set global chart options.
 Highcharts.setOptions({

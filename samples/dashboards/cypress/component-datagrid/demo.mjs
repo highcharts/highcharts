@@ -1,4 +1,4 @@
-import Dashboard from '../../../../code/es-modules/masters/dashboards.src.js';
+import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 import DataGrid from '../../../../code/es-modules/masters/datagrid.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import '../../../../code/es-modules/masters/modules/draggable-points.src.js';
@@ -7,7 +7,8 @@ import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlug
 
 Highcharts.win.Highcharts = Highcharts;
 
-const { CSVConnector, PluginHandler } = Dashboard;
+const { PluginHandler } = Dashboards;
+const { CSVConnector } = Dashboards.DataConnector.registry;
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
@@ -24,7 +25,7 @@ const connector = new CSVConnector(void 0, {
 
 connector.load();
 
-Dashboard.board('container', {
+Dashboards.board('container', {
     connector,
     gui: {
         layouts: [{
