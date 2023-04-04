@@ -123,6 +123,7 @@ class NetworkgraphSeries extends Series {
     public deferred: boolean = true;
     public firstDlDraw: boolean = false;
     public secondDlDraw: boolean = false;
+    public dlFadeDuration: number = 200;
 
     /* *
      *
@@ -207,6 +208,9 @@ class NetworkgraphSeries extends Series {
             return;
         }
 
+        const hasRendered = this.hasRendered;
+        this.hasRendered = this.firstDlDraw;
+
         // "freeze" drawing data labels between the first & second
         // drawDataLabels() method call -> this will keep the animation going
         if (this.firstDlDraw && !this.secondDlDraw) {
@@ -216,7 +220,7 @@ class NetworkgraphSeries extends Series {
             // freeze for 150 miliseconds (animation duration)
             setTimeout((): void => {
                 this.deferred = false;
-            }, 150);
+            }, this.dlFadeDuration);
 
             return;
         }
@@ -237,6 +241,8 @@ class NetworkgraphSeries extends Series {
         if (!this.firstDlDraw) {
             this.firstDlDraw = true;
         }
+
+        this.hasRendered = hasRendered;
     }
 
     /**
@@ -350,14 +356,14 @@ class NetworkgraphSeries extends Series {
         // even if the defer is set by the user,
         // networkgraph will use a custom defer method (with setTimeout)
         // so we need to set it automatically to a very small number
-        ((dlOptions as any).animation as any).defer = 150;
+        ((dlOptions as any).animation as any).defer = this.dlFadeDuration;
 
         // drawDataLabels() fires for the first time after
         // deferTime - 150 - then the dataLabels animation fires
         // which will take 150 miliseconds (animation duration)
         setTimeout((): void => {
             this.deferred = false;
-        }, deferTime - 150);
+        }, deferTime - this.dlFadeDuration);
 
         addEvent(this, 'updatedData', (): void => {
             if (this.layout) {
@@ -371,6 +377,11 @@ class NetworkgraphSeries extends Series {
                     node.resolveColor();
                 }
             });
+        });
+
+        addEvent(this, 'afterSimulation', function (): void {
+            this.deferred = false;
+            this.drawDataLabels();
         });
 
         return this;
@@ -655,6 +666,19 @@ export default NetworkgraphSeries;
  * @name Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject#key
  * @type {string}
  * @since 7.0.0
+ */
+
+/**
+ * Callback that fires after the end of Networkgraph series simulation
+ * when the layout is stable.
+ *
+ * @callback Highcharts.NetworkgraphAfterSimulationCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
  */
 
 ''; // detach doclets above

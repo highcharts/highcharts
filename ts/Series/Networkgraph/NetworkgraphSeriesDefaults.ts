@@ -458,6 +458,14 @@ export default NetworkgraphSeriesDefaults;
  * */
 
 /**
+ * Fires after the simulation is ended and the layout is stable.
+ *
+ * @type      {Highcharts.NetworkgraphAfterSimulationCallbackFunction}
+ * @product   highcharts
+ * @apioption series.networkgraph.events.afterSimulation
+ */
+
+/**
  * A `networkgraph` series. If the [type](#series.networkgraph.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
