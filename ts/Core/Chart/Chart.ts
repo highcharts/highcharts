@@ -2303,7 +2303,7 @@ class Chart {
      * @function Highcharts.Chart#linkSeries
      * @emits Highcharts.Chart#event:afterLinkSeries
      */
-    public linkSeries(): void {
+    public linkSeries(isUpdating?:boolean): void {
         const chart = this,
             chartSeries = chart.series;
 
@@ -2340,7 +2340,7 @@ class Chart {
             }
         });
 
-        fireEvent(this, 'afterLinkSeries');
+        fireEvent(this, 'afterLinkSeries', { isUpdating });
     }
 
     /**
