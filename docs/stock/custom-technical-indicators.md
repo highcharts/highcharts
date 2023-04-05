@@ -79,7 +79,7 @@ function getLinearRegression(xData, yData) {
   var sumX = (xValLength - 1) * xValLength / 2,
       sumY = 0,
       sumXY = 0,
-      sumX2 = 0,
+      sumX2 = ((xValLength - 1) * (xValLength) * (2 * xValLength - 1)) / 6,
       linearData = [],
       linearXData = [],
       linearYData = [],
@@ -91,7 +91,6 @@ function getLinearRegression(xData, yData) {
     y = yData[i];
     sumY += y;
     sumXY += i * y;
-    sumX2 += i * i;
   }
 
   // Get slope and offset:
