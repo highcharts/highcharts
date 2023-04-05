@@ -75,6 +75,7 @@ Dashboards.board('container', {
             editable: true,
             dataGridOptions: {
                 cellFormat: '{value:.2f} kg',
+                columnsToDisplay: ['Vitamin A'],
                 headerFormat: '{text} amount'
             },
             sync: {

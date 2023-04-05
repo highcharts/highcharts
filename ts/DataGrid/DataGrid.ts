@@ -249,7 +249,7 @@ class DataGrid {
 
         // Init data table
         this.dataTable = this.initDataTable();
-        this.columnNames = this.dataTable.getColumnNames();
+        this.columnNames = this.getColumnsToDisplay();
 
         this.rowElements = [];
         this.draggedResizeHandle = null;
@@ -397,6 +397,24 @@ class DataGrid {
     }
 
     // ---------------- Private methods
+
+    /**
+     * Find common columns in the data table and the columns to display option
+     * if declared.
+     * @internal
+     */
+    private getColumnsToDisplay(): Array<string> {
+        const tableColumns = this.dataTable.getColumnNames(),
+            columnsToDisplay = this.options.columnsToDisplay || [];
+
+        if (columnsToDisplay.length === 0) {
+            return tableColumns;
+        }
+
+        return tableColumns.filter(function (columnName): boolean {
+            return columnsToDisplay.indexOf(columnName) !== -1;
+        });
+    }
 
     /**
      * Determine whether a column is editable or not.
@@ -870,8 +888,8 @@ class DataGrid {
      * @internal
      */
     private renderColumnHeaders(): void {
-        const columnNames = this.dataTable.getColumnNames();
-        const columnHeadersContainer = this.columnHeadersContainer =
+        const columnNames = this.columnNames,
+            columnHeadersContainer = this.columnHeadersContainer =
             this.columnHeadersContainer || makeDiv('hc-dg-column-headers');
 
         emptyHTMLElement(columnHeadersContainer);

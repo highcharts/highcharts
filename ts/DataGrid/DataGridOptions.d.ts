@@ -67,6 +67,11 @@ export interface DataGridOptions {
     columns?: Record<string, ColumnOptions>;
 
     /**
+     * Declare an array of column names to display in the grid structure.
+     */
+    columnsToDisplay?: Array<string>;
+
+    /**
      * Table data to display in the grid structure.
      */
     dataTable?: DataTable;
