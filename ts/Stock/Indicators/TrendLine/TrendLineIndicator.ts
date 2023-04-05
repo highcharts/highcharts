@@ -118,7 +118,8 @@ class TrendLineIndicator extends SMAIndicator {
         let sumX = (xValLength - 1) * xValLength / 2,
             sumY = 0,
             sumXY = 0,
-            sumX2 = 0,
+            sumX2 =
+                ((xValLength - 1) * (xValLength) * (2 * xValLength - 1)) / 6,
             alpha: number,
             i: number,
             y: number;
@@ -128,7 +129,6 @@ class TrendLineIndicator extends SMAIndicator {
             y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
             sumY += y;
             sumXY += i * y;
-            sumX2 += i * i;
         }
 
         // Get slope and offset:
