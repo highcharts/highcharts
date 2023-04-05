@@ -64,27 +64,18 @@ class HTMLTableConnector extends DataConnector {
     /**
      * Constructs an instance of HTMLTableConnector.
      *
-     * @param {DataTable} table
-     * Optional table to create the connector from
-     *
-     * @param {HTMLTableConnector.UserOptions} options
-     * Options for the connector and parser
-     *
-     * @param {DataConverter} converter
-     * Optional converter to replace the default converter
+     * @param {HTMLTableConnector.UserOptions} [options]
+     * Options for the connector and converter.
      */
     public constructor(
-        table: DataTable = new DataTable(),
-        options: HTMLTableConnector.UserOptions = {},
-        converter?: HTMLTableConverter
+        options?: HTMLTableConnector.UserOptions
     ) {
-        super(table);
+        const mergedOptions = merge(HTMLTableConnector.defaultOptions, options);
 
-        this.options = merge(HTMLTableConnector.defaultOptions, options);
-        this.converter = converter || new HTMLTableConverter(
-            this.options,
-            this.tableElement
-        );
+        super(mergedOptions);
+
+        this.converter = new HTMLTableConverter(mergedOptions);
+        this.options = mergedOptions;
     }
 
     /* *
@@ -97,9 +88,7 @@ class HTMLTableConnector extends DataConnector {
      * Options for the HTMLTable dataconnector
      * @todo this should not include parsing options
      */
-    public readonly options: (
-        HTMLTableConnector.Options&HTMLTableConverter.UserOptions
-    );
+    public readonly options: HTMLTableConnector.Options;
 
     /**
      * The attached parser, which can be replaced in the constructor
@@ -168,7 +157,7 @@ class HTMLTableConnector extends DataConnector {
         }
 
         connector.converter.parse(
-            merge({ tableHTML: connector.tableElement }, connector.options),
+            merge({ tableElement: connector.tableElement }, connector.options),
             eventDetail
         );
 
@@ -236,7 +225,7 @@ namespace HTMLTableConnector {
     /**
      * Options of the HTMLTableConnector.
      */
-    export interface Options {
+    export interface Options extends DataConnector.Options {
         table: (string|HTMLElement);
     }
 
@@ -244,10 +233,7 @@ namespace HTMLTableConnector {
      * Available options for constructor and converter of the
      * HTMLTableConnector.
      */
-    export type UserOptions = (
-        & Partial<HTMLTableConnector.Options>
-        & HTMLTableConverter.UserOptions
-    );
+    export type UserOptions = (Partial<Options>&HTMLTableConverter.UserOptions);
 
 }
 

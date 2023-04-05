@@ -83,20 +83,18 @@ class DataConverter implements DataEvent.Emitter {
     public constructor(
         options?: DataConverter.UserOptions
     ) {
-        let decimalPoint;
+        const mergedOptions = merge(DataConverter.defaultOptions, options);
 
-        this.options = merge(DataConverter.defaultOptions, options);
+        let regExpPoint = mergedOptions.decimalPoint;
 
-        decimalPoint = this.options.decimalPoint;
+        if (regExpPoint === '.' || regExpPoint === ',') {
+            regExpPoint = regExpPoint === '.' ? '\\.' : ',';
 
-        if (decimalPoint !== '.' && decimalPoint !== ',') {
-            decimalPoint = void 0;
+            this.decimalRegExp =
+                new RegExp('^(-?[0-9]+)' + regExpPoint + '([0-9]+)$', 'u');
         }
 
-        this.decimalRegex = (
-            decimalPoint &&
-            new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$', 'u')
-        );
+        this.options = mergedOptions;
     }
 
     /* *
@@ -180,7 +178,7 @@ class DataConverter implements DataEvent.Emitter {
     /**
      * Regular expression used in the trim method to change a decimal point.
      */
-    protected decimalRegex?: RegExp;
+    protected decimalRegExp?: RegExp;
 
     /**
      * Options for the DataConverter.
@@ -239,13 +237,14 @@ class DataConverter implements DataEvent.Emitter {
 
     /**
      * Casts a string value to it's guessed type
-     * @param {string} value
-     * The string to examine
+     *
+     * @param {*} value
+     * The value to examine.
      *
      * @return {number|string|Date}
-     * The converted value
+     * The converted value.
      */
-    public asGuessedType(value: string): (number|string|Date) {
+    public asGuessedType(value: unknown): (number|string|Date) {
         const converter = this,
             typeMap: Record<ReturnType<DataConverter['guessType']>, Function> = {
                 'number': converter.asNumber,
@@ -272,15 +271,24 @@ class DataConverter implements DataEvent.Emitter {
         if (typeof value === 'boolean') {
             return value ? 1 : 0;
         }
+
         if (typeof value === 'string') {
+            const decimalRegex = this.decimalRegExp;
+
             if (value.indexOf(' ') > -1) {
                 value = value.replace(/\s+/gu, '');
             }
-            if (this.decimalRegex) {
-                value = value.replace(this.decimalRegex, '$1.$2');
+
+            if (decimalRegex) {
+                if (!decimalRegex.test(value)) {
+                    return NaN;
+                }
+                value = value.replace(decimalRegex, '$1.$2');
             }
+
             return parseFloat(value);
         }
+
         if (value instanceof Date) {
             return value.getDate();
         }
@@ -479,50 +487,51 @@ class DataConverter implements DataEvent.Emitter {
     }
 
     /**
-     * Guesses the potential type of a string value
-     * (for parsing CSV etc)
+     * Guesses the potential type of a string value for parsing CSV etc.
      *
-     * @param {string} value
-     * The string to examine
+     * @param {*} value
+     * The value to examine.
+     *
      * @return {'number'|'string'|'Date'}
-     * `string`, `Date` or `number`
+     * Type string, either `string`, `Date`, or `number`.
      */
     public guessType(
-        value: string
+        value: unknown
     ): ('number'|'string'|'Date') {
-        const converter = this,
-            trimVal = converter.trim(value),
-            trimInsideVal = converter.trim(value, true),
-            floatVal = parseFloat(trimInsideVal);
+        const converter = this;
 
-        let result: ('string' | 'Date' | 'number') = 'string',
-            dateVal;
+        let result: ('string' | 'Date' | 'number') = 'string';
 
-        // is numeric
-        if (+trimInsideVal === floatVal) {
+        if (typeof value === 'string') {
+            const trimedValue = converter.trim(`${value}`),
+                decimalRegExp = converter.decimalRegExp;
 
-            // If the number is greater than milliseconds in a year, assume
-            // datetime.
-            if (
-                floatVal > 365 * 24 * 3600 * 1000
-            ) {
-                result = 'Date';
+            let innerTrimedValue = converter.trim(trimedValue, true);
+
+            if (decimalRegExp) {
+                innerTrimedValue = (
+                    decimalRegExp.test(innerTrimedValue) ?
+                        innerTrimedValue.replace(decimalRegExp, '$1.$2') :
+                        ''
+                );
+            }
+
+            const floatValue = parseFloat(innerTrimedValue);
+
+            if (+innerTrimedValue === floatValue) {
+                // string is numeric
+                value = floatValue;
             } else {
-                result = 'number';
-            }
+                // determine if a date string
+                const dateValue = converter.parseDate(value);
 
-        // String, continue to determine if it is
-        // a date string or really a string.
-        } else {
-            if (trimVal && trimVal.length) {
-                dateVal = converter.parseDate(value);
+                result = isNumber(dateValue) ? 'Date' : 'string';
             }
+        }
 
-            if (dateVal && isNumber(dateVal)) {
-                result = 'Date';
-            } else {
-                result = 'string';
-            }
+        if (typeof value === 'number') {
+            // greater than milliseconds in a year assumed timestamp
+            result = value > 365 * 24 * 3600 * 1000 ? 'Date' : 'number';
         }
 
         return result;
@@ -666,18 +675,12 @@ class DataConverter implements DataEvent.Emitter {
         str: string,
         inside?: boolean
     ): string {
-        const converter = this;
-
         if (typeof str === 'string') {
             str = str.replace(/^\s+|\s+$/gu, '');
 
-            // Clear white space insdie the string, like thousands separators
+            // Clear white space inside the string, like thousands separators
             if (inside && /^[0-9\s]+$/u.test(str)) {
                 str = str.replace(/\s/gu, '');
-            }
-
-            if (converter.decimalRegex) {
-                str = str.replace(converter.decimalRegex, '$1.$2');
             }
         }
 

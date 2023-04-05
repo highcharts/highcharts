@@ -72,9 +72,11 @@ class CSVConverter extends DataConverter {
     public constructor(
         options?: CSVConverter.UserOptions
     ) {
-        super();
+        const mergedOptions = merge(CSVConverter.defaultOptions, options);
 
-        this.options = merge(CSVConverter.defaultOptions, options);
+        super(mergedOptions);
+
+        this.options = mergedOptions;
     }
 
     /* *
@@ -122,13 +124,15 @@ class CSVConverter extends DataConverter {
         let { decimalPoint, itemDelimiter } = options;
 
         if (!decimalPoint) {
-            decimalPoint = itemDelimiter !== ',' && useLocalDecimalPoint ?
-                (1.1).toLocaleString()[1] :
-                '.';
+            decimalPoint = (
+                itemDelimiter !== ',' && useLocalDecimalPoint ?
+                    (1.1).toLocaleString()[1] :
+                    '.'
+            );
         }
 
         if (!itemDelimiter) {
-            itemDelimiter = decimalPoint === ',' ? ';' : ',';
+            itemDelimiter = (decimalPoint === ',' ? ';' : ',');
         }
 
         const columns =

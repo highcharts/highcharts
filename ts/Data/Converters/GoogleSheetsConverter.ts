@@ -74,11 +74,14 @@ class GoogleSheetsConverter extends DataConverter {
     constructor(
         options?: GoogleSheetsConverter.UserOptions
     ) {
-        super();
+        const mergedOptions =
+            merge(GoogleSheetsConverter.defaultOptions, options);
+
+        super(mergedOptions);
 
         this.columns = [];
         this.header = [];
-        this.options = merge(GoogleSheetsConverter.defaultOptions, options);
+        this.options = mergedOptions;
     }
 
     /* *

@@ -26,7 +26,6 @@ import type DataEvent from '../DataEvent';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
-import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -65,31 +64,23 @@ class CSVConnector extends DataConnector {
     /**
      * Constructs an instance of CSVConnector.
      *
-     * @param {DataTable} table
-     * Optional table to create the connector from.
-     *
-     * @param {CSVConnector.UserOptions} options
-     * Options for the connector and parser.
-     *
-     * @param {DataConverter} converter
-     * Optional converter to replace the default converter.
+     * @param {CSVConnector.UserOptions} [options]
+     * Options for the connector and converter.
      */
     public constructor(
-        table: DataTable = new DataTable(),
-        options: CSVConnector.UserOptions = {},
-        converter?: CSVConverter
+        options?: CSVConnector.UserOptions
     ) {
-        super(table);
+        const mergedOptions = merge(CSVConnector.defaultOptions, options);
 
-        this.options = merge(
-            CSVConnector.defaultOptions,
-            options
-        );
+        super(mergedOptions);
 
-        this.converter = converter || new CSVConverter(options);
+        this.converter = new CSVConverter(mergedOptions);
+        this.options = mergedOptions;
 
-        if (options.enablePolling) {
-            this.startPolling(Math.max(options.dataRefreshRate || 0, 1) * 1000);
+        if (mergedOptions.enablePolling) {
+            this.startPolling(
+                Math.max(mergedOptions.dataRefreshRate || 0, 1) * 1000
+            );
         }
     }
 
@@ -261,7 +252,7 @@ namespace CSVConnector {
     /**
      * Options of the CSVConnector.
      */
-    export interface Options {
+    export interface Options extends DataConnector.Options {
         csv: string;
         csvURL: string;
         enablePolling: boolean;
@@ -271,10 +262,7 @@ namespace CSVConnector {
     /**
      * Available options for constructor and converter of the CSVConnector.
      */
-    export type UserOptions = (
-        & Partial<CSVConnector.Options>
-        & CSVConverter.UserOptions
-    );
+    export type UserOptions = (Partial<Options>&CSVConverter.UserOptions);
 
 }
 

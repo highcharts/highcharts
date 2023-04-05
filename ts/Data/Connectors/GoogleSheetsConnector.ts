@@ -106,25 +106,19 @@ class GoogleSheetsConnector extends DataConnector {
     /**
      * Constructs an instance of GoogleSheetsConnector
      *
-     * @param {DataTable} [table]
-     * Optional table to create the connector from.
-     *
-     * @param {CSVConnector.OptionsType} [options]
+     * @param {GoogleSheetsConnector.UserOptions} [options]
      * Options for the connector and converter.
-     *
-     * @param {DataConverter} converter
-     * Optional converter to replace the default converter.
      */
     public constructor(
-        table: DataTable = new DataTable(),
-        options: Partial<GoogleSheetsConnector.Options> = {},
-        converter?: GoogleSheetsConverter
+        options?: GoogleSheetsConnector.UserOptions
     ) {
-        super(table);
-        this.options = merge(GoogleSheetsConnector.defaultOptions, options);
-        this.converter = converter || new GoogleSheetsConverter({
-            firstRowAsNames: this.options.firstRowAsNames
-        });
+        const mergedOptions =
+            merge(GoogleSheetsConnector.defaultOptions, options);
+
+        super(mergedOptions);
+
+        this.converter = new GoogleSheetsConverter(mergedOptions);
+        this.options = mergedOptions;
     }
 
     /* *
@@ -259,7 +253,7 @@ namespace GoogleSheetsConnector {
     /**
      * Options of the GoogleSheetsConnector.
      */
-    export interface Options {
+    export interface Options extends DataConnector.Options {
         dataRefreshRate: number;
         enablePolling: boolean;
         endColumn?: number;
@@ -277,10 +271,8 @@ namespace GoogleSheetsConnector {
      * Available options for constructor and converter of the
      * GoogleSheetsConnector.
      */
-    export type UserOptions = (
-        & Partial<Options>
-        & GoogleSheetsConverter.UserOptions
-    );
+    export type UserOptions =
+        (Partial<Options>&GoogleSheetsConverter.UserOptions);
 
     /* *
      *
