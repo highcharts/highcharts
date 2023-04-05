@@ -107,38 +107,28 @@ class TrendLineIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: TrendLineParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        const orgXVal: Array<number> = (series.xData as any),
+        const xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            xValLength: number = orgXVal.length,
+            xValLength: number = xVal.length,
             index: number = (params.index as any);
 
-        let xVal: Array<number> = [];
-        // Create a fake xVal array with consecutive values to avoid issues with
-        // ordinal, point.remove etc. #18710
-        for (let i = 0; i < xValLength; i++) {
-            xVal[i] = i;
-        }
-
-        let sumX = 0,
+        let sumX = (xValLength - 1) * xValLength / 2,
             sumY = 0,
             sumXY = 0,
             sumX2 = 0,
             alpha: number,
             i: number,
-            x: number,
             y: number;
 
         // Get sums:
         for (i = 0; i < xValLength; i++) {
-            x = xVal[i];
             y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
-            sumX += x;
             sumY += y;
-            sumXY += x * y;
-            sumX2 += x * x;
+            sumXY += i * y;
+            sumX2 += i * i;
         }
 
         // Get slope and offset:
@@ -153,12 +143,11 @@ class TrendLineIndicator extends SMAIndicator {
 
         // Calculate linear regression:
         for (i = 0; i < xValLength; i++) {
-            x = xVal[i];
-            y = alpha * x + beta;
+            y = alpha * i + beta;
 
             // Prepare arrays required for getValues() method
-            LR[i] = [orgXVal[i], y];
-            xData[i] = orgXVal[i];
+            LR[i] = [xVal[i], y];
+            xData[i] = xVal[i];
             yData[i] = y;
         }
 
