@@ -4,7 +4,10 @@ Highcharts.mapChart('container', {
     },
 
     mapNavigation: {
-        enabled: true
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
+        }
     },
 
     mapView: {
