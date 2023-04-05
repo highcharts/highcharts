@@ -7,11 +7,11 @@
     // Create the chart
     Highcharts.mapChart('container', {
         chart: {
-            map: topology
+            margin: 0
         },
 
         title: {
-            text: 'Best attractions in Oslo'
+            text: ''
         },
 
         subtitle: {
@@ -39,6 +39,13 @@
 
         tooltip: {
             pointFormat: '{point.name}'
+        },
+
+        legend: {
+            align: 'center',
+            itemStyle: {
+                textOutline: '1 1 1px rgba(255,255,255)'
+            }
         },
 
         plotOptions: {

@@ -1,6 +1,10 @@
 Highcharts.mapChart('container', {
+    chart: {
+        margin: 0
+    },
+
     title: {
-        text: 'Custom URL in TiledWebMap configuration'
+        text: ''
     },
 
     mapView: {
@@ -18,6 +22,7 @@ Highcharts.mapChart('container', {
         type: 'tiledwebmap',
         provider: {
             url: 'https://a.tile.openstreetmap.org/{zoom}/{x}/{y}.png'
-        }
+        },
+        showInLegend: false
     }]
 });

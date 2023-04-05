@@ -1,6 +1,10 @@
 Highcharts.mapChart('container', {
+    chart: {
+        margin: 0
+    },
+
     title: {
-        text: 'Highcharts Maps TiledWebMap Series with map points'
+        text: ''
     },
 
     mapNavigation: {
@@ -12,6 +16,12 @@ Highcharts.mapChart('container', {
 
     mapView: {
         zoom: 2
+    },
+
+    plotOptions: {
+        series: {
+            showInLegend: false
+        }
     },
 
     series: [{

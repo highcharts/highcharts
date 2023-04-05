@@ -1,6 +1,10 @@
 Highcharts.mapChart('container', {
+    chart: {
+        margin: 0
+    },
+
     title: {
-        text: 'Basic configuration for TiledWebMap'
+        text: ''
     },
 
     mapView: {
@@ -17,6 +21,7 @@ Highcharts.mapChart('container', {
             type: 'Stamen',
             theme: 'Toner',
             subdomain: 'c'
-        }
+        },
+        showInLegend: false
     }]
 });

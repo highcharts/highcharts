@@ -10,11 +10,14 @@
     Highcharts.mapChart('container', {
         chart: {
             map: topology,
-            spacingBottom: 20
+            margin: 0,
+            marginBottom: 45,
+            borderColor: '#ccc',
+            borderWidth: 2
         },
 
         title: {
-            text: 'Europe time zones on TiledWebMap'
+            text: ''
         },
 
         accessibility: {
