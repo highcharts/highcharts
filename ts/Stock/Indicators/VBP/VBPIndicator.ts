@@ -258,6 +258,11 @@ class VBPIndicator extends SMAIndicator {
 
         super.init.apply(indicator, arguments);
 
+        // Fire recalculateValues() after indicator update, #17007
+        addEvent(this, 'afterUpdate', function (): void {
+            this.recalculateValues();
+        });
+
         // Only after series are linked add some additional logic/properties.
         const unbinder = addEvent(
             StockChart,
