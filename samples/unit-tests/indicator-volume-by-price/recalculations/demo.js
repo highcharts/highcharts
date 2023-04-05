@@ -154,6 +154,24 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     // End of #16277 testing, start other tests
 
+    VBPIndicator.update({
+        params: {
+            ranges: 6
+        }
+    });
+
+    assert.strictEqual(
+        VBPIndicator.options.params.ranges,
+        6,
+        'We should be able to update VBP params with update(), #17007.'
+    );
+
+    VBPIndicator.update({
+        params: {
+            ranges: 12
+        }
+    });
+
     function round(array) {
         return array.map(function (value) {
             return value === null ? null : Number(value.toFixed(2));
