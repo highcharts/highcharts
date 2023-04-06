@@ -122,8 +122,9 @@ class NetworkgraphSeries extends Series {
 
     public deferred: boolean = true;
     public firstDlDraw: boolean = false;
-    public secondDlDraw: boolean = false;
-    public dlFadeDuration: number = 200;
+    public shouldSkipOpacity: boolean = false;
+    public shouldAnimate: boolean = true;
+    public dlFadeDuration: number = 500;
 
     /* *
      *
@@ -211,35 +212,29 @@ class NetworkgraphSeries extends Series {
         const hasRendered = this.hasRendered;
         this.hasRendered = this.firstDlDraw;
 
-        // "freeze" drawing data labels between the first & second
-        // drawDataLabels() method call -> this will keep the animation going
-        if (this.firstDlDraw && !this.secondDlDraw) {
-            this.deferred = true;
-            this.secondDlDraw = true;
-
-            // freeze for 150 miliseconds (animation duration)
-            setTimeout((): void => {
-                this.deferred = false;
-            }, this.dlFadeDuration);
-
-            return;
-        }
-
         const dlOptions = this.options.dataLabels,
             textPath = (dlOptions as any).textPath;
 
         // Render node labels:
-        Series.prototype.drawDataLabels.call(this, this.nodes);
+        Series.prototype.drawDataLabels.call(this, this.nodes,
+            this.shouldSkipOpacity, !this.firstDlDraw);
 
         // Render link labels:
         (dlOptions as any).textPath = (dlOptions as any).linkTextPath;
-        Series.prototype.drawDataLabels.call(this, this.data);
+        Series.prototype.drawDataLabels.call(this, this.data,
+            this.shouldSkipOpacity, !this.firstDlDraw);
 
         // @todo: remove any casting here
         (dlOptions as any).textPath = textPath;
 
         if (!this.firstDlDraw) {
             this.firstDlDraw = true;
+            this.shouldAnimate = false;
+            this.shouldSkipOpacity = true;
+
+            setTimeout((): void => {
+                this.shouldSkipOpacity = false;
+            }, 1000);
         }
 
         this.hasRendered = hasRendered;

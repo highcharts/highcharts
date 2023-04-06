@@ -91,7 +91,7 @@ declare module './SeriesLike' {
             alignTo: BBoxObject,
             isNew?: boolean
         ): void;
-        drawDataLabels(points?:Array<Point>): void;
+        drawDataLabels(points?:Array<Point>, shouldSkipOpacity?: boolean, shouldAnimate?: boolean): void;
         justifyDataLabel(
             dataLabel: SVGElement,
             options: DataLabelOptions,
@@ -453,7 +453,9 @@ namespace DataLabel {
      */
     function drawDataLabels(
         this: Series,
-        points: Array<Point> = this.points
+        points: Array<Point> = this.points,
+        shouldSkipOpacity: boolean = false,
+        shouldAnimate: boolean = false
     ): void {
         const series = this,
             chart = series.chart,
@@ -499,28 +501,56 @@ namespace DataLabel {
             (seriesDlOptions as any).enabled ||
             series._hasPointLabels
         ) {
-
             // Create a separate group for the data labels to avoid rotation
-            dataLabelsGroup = series.plotGroup(
-                'dataLabelsGroup',
-                'data-labels',
-                !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
-                (seriesDlOptions as any).zIndex || 6
-            );
+            if (series.type !== 'networkgraph') {
+                dataLabelsGroup = series.plotGroup(
+                    'dataLabelsGroup',
+                    'data-labels',
+                    !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
+                    (seriesDlOptions as any).zIndex || 6
+                );
 
-            dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
-            if (!hasRendered) {
-                const group = series.dataLabelsGroup;
-                if (group) {
-                    if (series.visible) { // #2597, #3023, #3024
-                        dataLabelsGroup.show();
+                dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
+
+                if (!hasRendered) {
+                    const group = series.dataLabelsGroup;
+                    if (group) {
+                        if (series.visible) { // #2597, #3023, #3024
+                            dataLabelsGroup.show();
+                        }
+                        (group[
+                            seriesOptions.animation ? 'animate' : 'attr'
+                        ] as any)(
+                            { opacity: 1 },
+                            animationConfig
+                        );
                     }
-                    (group[
-                        seriesOptions.animation ? 'animate' : 'attr'
-                    ] as any)(
-                        { opacity: 1 },
-                        animationConfig
-                    );
+                }
+            } else if (shouldAnimate) {
+                dataLabelsGroup = series.plotGroup(
+                    'dataLabelsGroup',
+                    'data-labels',
+                    !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
+                    (seriesDlOptions as any).zIndex || 6
+                );
+
+                if (!shouldSkipOpacity) {
+                    dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
+                }
+
+                if (!hasRendered) {
+                    const group = series.dataLabelsGroup;
+                    if (group) {
+                        if (series.visible) { // #2597, #3023, #3024
+                            dataLabelsGroup.show();
+                        }
+                        (group[
+                            seriesOptions.animation ? 'animate' : 'attr'
+                        ] as any)(
+                            { opacity: 1 },
+                            animationConfig
+                        );
+                    }
                 }
             }
 
