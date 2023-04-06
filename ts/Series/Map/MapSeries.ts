@@ -532,6 +532,17 @@ class MapSeries extends ScatterSeries {
         if (this.dataLabelsGroup) {
             this.dataLabelsGroup.clip(this.chart.clipRect);
         }
+
+        this.points.forEach((point): void => {
+            if (point.dataLabel) {
+                if (
+                    point.projectedPath &&
+                    !point.projectedPath.length
+                ) {
+                    point.dataLabel.hide();
+                }
+            }
+        });
     }
 
     /**
