@@ -300,66 +300,66 @@ class SMAIndicator extends LineSeries {
             function ({ isUpdating }: AnyRecord): void {
                 // #18643 indicator shouldn't recalculate
                 // values while series updating.
-                if (!isUpdating) {
-                    const hasEvents = !!indicator.dataEventsToUnbind.length;
+                if (isUpdating) {
+                    return;
+                }
+                const hasEvents = !!indicator.dataEventsToUnbind.length;
 
-                    if (indicator.linkedParent) {
-                        if (!hasEvents) {
-                            // No matter which indicator, always recalculate
-                            // after updating the data.
+                if (indicator.linkedParent) {
+                    if (!hasEvents) {
+                        // No matter which indicator, always recalculate after
+                        // updating the data.
+                        indicator.dataEventsToUnbind.push(
+                            addEvent(
+                                indicator.linkedParent,
+                                'updatedData',
+                                function (): void {
+                                    indicator.recalculateValues();
+                                }
+                            )
+                        );
+
+                        // Some indicators (like VBP) requires an additional
+                        // event (afterSetExtremes) to properly show the data.
+                        if (indicator.calculateOn.xAxis) {
                             indicator.dataEventsToUnbind.push(
                                 addEvent(
-                                    indicator.linkedParent,
-                                    'updatedData',
+                                    indicator.linkedParent.xAxis,
+                                    indicator.calculateOn.xAxis,
                                     function (): void {
                                         indicator.recalculateValues();
                                     }
                                 )
                             );
-
-                            // Some indicators (like VBP) requires an additional
-                            // event (afterSetExtremes) to properly show
-                            // the data.
-                            if (indicator.calculateOn.xAxis) {
-                                indicator.dataEventsToUnbind.push(
-                                    addEvent(
-                                        indicator.linkedParent.xAxis,
-                                        indicator.calculateOn.xAxis,
-                                        function (): void {
-                                            indicator.recalculateValues();
-                                        }
-                                    )
-                                );
-                            }
                         }
-
-                        // Most indicators are being calculated on chart's init.
-                        if (indicator.calculateOn.chart === 'init') {
-                            if (!indicator.processedYData) {
-                                indicator.recalculateValues();
-                            }
-                        } else if (!hasEvents) {
-                            // Some indicators (like VBP) has to recalculate
-                            // their values after other chart's events (render).
-                            const unbinder = addEvent(
-                                indicator.chart,
-                                indicator.calculateOn.chart,
-                                function (): void {
-                                    indicator.recalculateValues();
-                                    // Call this just once.
-                                    unbinder();
-                                }
-                            );
-                        }
-                    } else {
-                        return error(
-                            'Series ' +
-                            indicator.options.linkedTo +
-                            ' not found! Check `linkedTo`.',
-                            false,
-                            chart
-                        ) as any;
                     }
+
+                    // Most indicators are being calculated on chart's init.
+                    if (indicator.calculateOn.chart === 'init') {
+                        if (!indicator.processedYData) {
+                            indicator.recalculateValues();
+                        }
+                    } else if (!hasEvents) {
+                        // Some indicators (like VBP) has to recalculate their
+                        // values after other chart's events (render).
+                        const unbinder = addEvent(
+                            indicator.chart,
+                            indicator.calculateOn.chart,
+                            function (): void {
+                                indicator.recalculateValues();
+                                // Call this just once.
+                                unbinder();
+                            }
+                        );
+                    }
+                } else {
+                    return error(
+                        'Series ' +
+                        indicator.options.linkedTo +
+                        ' not found! Check `linkedTo`.',
+                        false,
+                        chart
+                    ) as any;
                 }
             }, {
                 order: 0
