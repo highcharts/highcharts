@@ -161,9 +161,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.strictEqual(
-        VBPIndicator.options.params.ranges,
+        VBPIndicator.volumeDataArray.length,
         6,
-        'We should be able to update VBP params with update(), #17007.'
+        'VBP params should be updated after update(), #17007.'
     );
 
     VBPIndicator.update({
