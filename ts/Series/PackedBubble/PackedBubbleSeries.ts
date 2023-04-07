@@ -1240,6 +1240,7 @@ interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
     yData: BubbleSeriesType['yData'];
     zData: BubbleSeriesType['zData'];
     zoneAxis: BubbleSeriesType['zoneAxis'];
+    initDataLabels: BubbleSeriesType['initDataLabels'];
     getPointsCollection(): Array<PackedBubblePoint>;
     indexateNodes: NetworkgraphSeries['indexateNodes'];
     markerAttribs: BubbleSeriesType['markerAttribs'];
@@ -1260,6 +1261,7 @@ extend(PackedBubbleSeries.prototype, {
     pointValKey: 'value',
     requireSorting: false,
     trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup'],
+    initDataLabels: seriesProto.initDataLabels,
     alignDataLabel: seriesProto.alignDataLabel,
     indexateNodes: noop as NetworkgraphSeries['indexateNodes'],
     onMouseDown: DragNodesComposition.onMouseDown,

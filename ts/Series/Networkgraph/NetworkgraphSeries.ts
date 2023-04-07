@@ -52,7 +52,8 @@ const {
     defined,
     extend,
     merge,
-    pick
+    pick,
+    syncTimeout
 } = U;
 
 /* *
@@ -120,10 +121,11 @@ class NetworkgraphSeries extends Series {
 
     public points: Array<NetworkgraphPoint> = void 0 as any;
 
-    public deferred: boolean = true;
-    public firstDlDraw: boolean = false;
-    public shouldSkipOpacity: boolean = false;
-    public shouldAnimate: boolean = true;
+    // properties to handle dataLabel defered animation
+    public dlDeferred: boolean = true;
+    public dlFirstDraw: boolean = false;
+    public dlShouldAnimate: boolean = true;
+    public dlShouldSetOpacity: boolean = true;
     public dlFadeDuration: number = 500;
 
     /* *
@@ -200,44 +202,78 @@ class NetworkgraphSeries extends Series {
     }
 
     /**
+     * Networkgraph needs a custom initDataLabels function
+     * to initiate the animation in a different way
+     * than for other series (drawDataLabels is called each frame)
+     * @private
+     */
+    public initDataLabels(this: NetworkgraphSeries): SVGElement {
+        const series = this,
+            shouldAnimate = series.dlShouldAnimate;
+
+        // if it's the first drawDataLabels() call
+        // then we'll create the group & setup the animation
+        if (shouldAnimate) {
+            const dataLabelsGroup =
+                Series.prototype.initDataLabelsGroup.call(this);
+
+            dataLabelsGroup.attr({ opacity: 0 });
+
+            const group = series.dataLabelsGroup;
+            if (group) {
+                if (series.visible) {
+                    dataLabelsGroup.show();
+                }
+
+                group.animate(
+                    { opacity: 1 },
+                    { duration: this.dlFadeDuration }
+                );
+            }
+
+            return dataLabelsGroup;
+        }
+
+        // if it's not the first drawDataLabels() call then
+        // the dataLabelsGroup should already exist on the series
+        if (series.dataLabelsGroup) {
+            return series.dataLabelsGroup;
+        }
+
+        // to avoid casting, if it doesn't exist (altough it should)
+        // create the dataLabelsGroup and return it
+        return Series.prototype.initDataLabelsGroup.call(this);
+    }
+
+    /**
      * Networkgraph has two separate collecions of nodes and lines, render
      * dataLabels for both sets:
      * @private
      */
     public drawDataLabels(): void {
-        if (this.deferred) {
+        // we defer drawing the dataLabels
+        // until dataLabels.animation.defer time passes
+        if (this.dlDeferred) {
             return;
         }
-
-        const hasRendered = this.hasRendered;
-        this.hasRendered = this.firstDlDraw;
 
         const dlOptions = this.options.dataLabels,
             textPath = (dlOptions as any).textPath;
 
         // Render node labels:
-        Series.prototype.drawDataLabels.call(this, this.nodes,
-            this.shouldSkipOpacity, !this.firstDlDraw);
+        Series.prototype.drawDataLabels.call(this, this.nodes);
 
         // Render link labels:
         (dlOptions as any).textPath = (dlOptions as any).linkTextPath;
-        Series.prototype.drawDataLabels.call(this, this.data,
-            this.shouldSkipOpacity, !this.firstDlDraw);
+        Series.prototype.drawDataLabels.call(this, this.data);
 
         // @todo: remove any casting here
         (dlOptions as any).textPath = textPath;
 
-        if (!this.firstDlDraw) {
-            this.firstDlDraw = true;
-            this.shouldAnimate = false;
-            this.shouldSkipOpacity = true;
-
-            setTimeout((): void => {
-                this.shouldSkipOpacity = false;
-            }, 1000);
+        if (!this.dlFirstDraw) {
+            this.dlFirstDraw = true;
+            this.dlShouldAnimate = false;
         }
-
-        this.hasRendered = hasRendered;
     }
 
     /**
@@ -329,9 +365,10 @@ class NetworkgraphSeries extends Series {
 
         const dlOptions = this.options.dataLabels;
 
-        // time from init() to the time when dataLabels show up #14398
-        // default set to 2.5 seconds
-        let deferTime = 2500;
+        // time from init() to the time when the drawDataLabels()
+        // is called for the first time, #14398
+        // default set to 2.0 seconds
+        let deferTime = 2000;
 
         // if dataLabels.animation.defer set by the user, use this value
         if (dlOptions &&
@@ -342,18 +379,11 @@ class NetworkgraphSeries extends Series {
             deferTime = dlOptions.animation.defer;
         }
 
-        // @todo: fix casting here
-        // even if the defer is set by the user,
-        // networkgraph will use a custom defer method (with setTimeout)
-        // so we need to set it automatically to a very small number
-        ((dlOptions as any).animation as any).defer = this.dlFadeDuration;
-
         // drawDataLabels() fires for the first time after
-        // deferTime - 150 - then the dataLabels animation fires
-        // which will take 150 miliseconds (animation duration)
-        setTimeout((): void => {
-            this.deferred = false;
-        }, deferTime - this.dlFadeDuration);
+        // deferTime after which the dataLabels fade-in animation fires
+        syncTimeout((): void => {
+            this.dlDeferred = false;
+        }, deferTime);
 
         addEvent(this, 'updatedData', (): void => {
             if (this.layout) {
@@ -370,7 +400,7 @@ class NetworkgraphSeries extends Series {
         });
 
         addEvent(this, 'afterSimulation', function (): void {
-            this.deferred = false;
+            this.dlDeferred = false;
             this.drawDataLabels();
         });
 
