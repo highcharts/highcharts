@@ -26,6 +26,7 @@ import type Series from './Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
+import type AnimationOptions from '../Animation/AnimationOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
@@ -84,6 +85,10 @@ declare module './SeriesLike' {
         _hasPointLabels?: boolean;
         dataLabelsGroup?: SVGElement;
         dataLabelPositioners?: DataLabel.PositionersObject;
+        initDataLabelsGroup(): SVGElement;
+        initDataLabels(
+            animationConfig?: Partial<AnimationOptions>
+        ): SVGElement;
         alignDataLabel(
             point: Point,
             dataLabel: SVGElement,
@@ -91,7 +96,7 @@ declare module './SeriesLike' {
             alignTo: BBoxObject,
             isNew?: boolean
         ): void;
-        drawDataLabels(points?:Array<Point>, shouldSkipOpacity?: boolean, shouldAnimate?: boolean): void;
+        drawDataLabels(points?:Array<Point>): void;
         justifyDataLabel(
             dataLabel: SVGElement,
             options: DataLabelOptions,
@@ -439,6 +444,8 @@ namespace DataLabel {
         if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
+            seriesProto.initDataLabelsGroup = initDataLabelsGroup;
+            seriesProto.initDataLabels = initDataLabels;
             seriesProto.alignDataLabel = alignDataLabel;
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
@@ -448,19 +455,70 @@ namespace DataLabel {
     }
 
     /**
+     * Create the SVGElement group for dataLabels
+     * @private
+     */
+    function initDataLabelsGroup(this: Series): SVGElement {
+        const series = this,
+            hasRendered = (series.hasRendered || 0),
+            seriesDlOptions = series.options.dataLabels;
+
+        const dataLabelsGroup = series.plotGroup(
+            'dataLabelsGroup',
+            'data-labels',
+            !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
+            (seriesDlOptions as any).zIndex || 6
+        );
+
+        return dataLabelsGroup;
+    }
+
+    /**
+     * Init the data labels
+     * with the correct animation
+     * @private
+     */
+    function initDataLabels(
+        this: Series,
+        animationConfig: Partial<AnimationOptions>
+    ): SVGElement {
+        const series = this,
+            hasRendered = (series.hasRendered || 0);
+
+        // Create a separate group for the data labels to avoid rotation
+        const dataLabelsGroup = this.initDataLabelsGroup();
+
+        dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
+
+        if (!hasRendered) {
+            const group = series.dataLabelsGroup;
+            if (group) {
+                if (series.visible) { // #2597, #3023, #3024
+                    dataLabelsGroup.show();
+                }
+                (group[
+                    series.options.animation ? 'animate' : 'attr'
+                ] as any)(
+                    { opacity: 1 },
+                    animationConfig
+                );
+            }
+        }
+
+        return dataLabelsGroup;
+    }
+
+    /**
      * Draw the data labels
      * @private
      */
     function drawDataLabels(
         this: Series,
-        points: Array<Point> = this.points,
-        shouldSkipOpacity: boolean = false,
-        shouldAnimate: boolean = false
+        points: Array<Point> = this.points
     ): void {
         const series = this,
             chart = series.chart,
             seriesOptions = series.options,
-            hasRendered = (series.hasRendered || 0),
             renderer = chart.renderer,
             { backgroundColor, plotBackgroundColor } = chart.options.chart,
             contrastColor = renderer.getContrast(
@@ -501,58 +559,7 @@ namespace DataLabel {
             (seriesDlOptions as any).enabled ||
             series._hasPointLabels
         ) {
-            // Create a separate group for the data labels to avoid rotation
-            if (series.type !== 'networkgraph') {
-                dataLabelsGroup = series.plotGroup(
-                    'dataLabelsGroup',
-                    'data-labels',
-                    !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
-                    (seriesDlOptions as any).zIndex || 6
-                );
-
-                dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
-
-                if (!hasRendered) {
-                    const group = series.dataLabelsGroup;
-                    if (group) {
-                        if (series.visible) { // #2597, #3023, #3024
-                            dataLabelsGroup.show();
-                        }
-                        (group[
-                            seriesOptions.animation ? 'animate' : 'attr'
-                        ] as any)(
-                            { opacity: 1 },
-                            animationConfig
-                        );
-                    }
-                }
-            } else if (shouldAnimate) {
-                dataLabelsGroup = series.plotGroup(
-                    'dataLabelsGroup',
-                    'data-labels',
-                    !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
-                    (seriesDlOptions as any).zIndex || 6
-                );
-
-                if (!shouldSkipOpacity) {
-                    dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
-                }
-
-                if (!hasRendered) {
-                    const group = series.dataLabelsGroup;
-                    if (group) {
-                        if (series.visible) { // #2597, #3023, #3024
-                            dataLabelsGroup.show();
-                        }
-                        (group[
-                            seriesOptions.animation ? 'animate' : 'attr'
-                        ] as any)(
-                            { opacity: 1 },
-                            animationConfig
-                        );
-                    }
-                }
-            }
+            dataLabelsGroup = this.initDataLabels(animationConfig);
 
             // Make the labels for each point
             points.forEach((point): void => {
