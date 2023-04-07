@@ -399,20 +399,19 @@ class DataGrid {
     // ---------------- Private methods
 
     /**
-     * Find common columns in the data table and the columns to display option
-     * if declared.
+     * Check which columns should be displayed based on the individual
+     * column `show` option.
      * @internal
      */
     private getColumnsToDisplay(): Array<string> {
-        const tableColumns = this.dataTable.getColumnNames(),
-            columnsToDisplay = this.options.columnsToDisplay || [];
-
-        if (columnsToDisplay.length === 0) {
-            return tableColumns;
-        }
+        const columnsOptions = this.options.columns,
+            tableColumns = this.dataTable.getColumnNames();
 
         return tableColumns.filter(function (columnName): boolean {
-            return columnsToDisplay.indexOf(columnName) !== -1;
+            if (columnsOptions[columnName]) {
+                return !!columnsOptions[columnName].show;
+            }
+            return true;
         });
     }
 
