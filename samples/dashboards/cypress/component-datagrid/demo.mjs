@@ -73,11 +73,6 @@ Dashboards.board('container', {
             type: 'DataGrid',
             connector,
             editable: true,
-            dataGridOptions: {
-                cellFormat: '{value:.2f} kg',
-                columnsToDisplay: ['Vitamin A'],
-                headerFormat: '{text} amount'
-            },
             sync: {
                 highlight: true
             }
