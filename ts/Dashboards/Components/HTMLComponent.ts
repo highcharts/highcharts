@@ -79,9 +79,11 @@ class HTMLComponent extends Component {
             scaleElements: false,
             elements: [],
             editableOptions:
-                Component.defaultOptions.editableOptions?.concat([
-                    'scaleElements'
-                ]
+                Component.defaultOptions.editableOptions?.concat(
+                    [{
+                        name: 'scaleElements',
+                        type: 'toggle'
+                    }]
                 )
         }
     );

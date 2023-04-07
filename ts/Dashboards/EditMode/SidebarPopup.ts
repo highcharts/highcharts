@@ -24,8 +24,12 @@ import type Row from '../Layout/Row';
 
 import BaseForm from '../../Shared/BaseForm.js';
 import EditGlobals from './EditGlobals.js';
-import GUIElement from '../Layout/GUIElement.js';
+import U from '../../Core/Utilities.js';
+const { createElement } = U;
 
+import EditRenderer from './EditRenderer.js';
+import GUIElement from '../Layout/GUIElement.js';
+import Component from '../Components/Component';
 /* *
  *
  *  Class
@@ -160,8 +164,40 @@ class SidebarPopup extends BaseForm {
         editMode.stopContextDetection();
 
         this.isVisible = true;
+
+        this.generateContent(context);
     }
 
+    public generateContent(context?: Cell | Row): void {
+        if (!context) {
+            // TODO: Add content when there is no context
+            return;
+        }
+
+        const type = context.getType();
+        if (type === 'cell') {
+            const component = (context as Cell).mountedComponent;
+            if (!component) {
+                return;
+            }
+            this.createAccordeonMenu(component);
+        }
+    }
+
+    public createAccordeonMenu(component: Component): void {
+        const editableOptions = component.editableOptions.getOptions();
+        let option,
+            content;
+
+        for (let i = 0, end = editableOptions.length; i < end; i++) {
+            option = editableOptions[i];
+            content = EditRenderer.renderCollapse(
+                this.container,
+                option.name
+            ).content;
+            EditRenderer.renderAccordeon(option, content, (): void => {});
+        }
+    }
     /**
      * Function to hide the sidebar.
      */

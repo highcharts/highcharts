@@ -165,12 +165,13 @@ abstract class Component {
             'flex-direction': 'column'
         },
         sync: Sync.defaultHandlers,
-        editableOptions: [
-            'style',
-            'title',
-            'caption'
-        ],
-        editableOptionsBindings: EditableOptions.defaultBindings
+        editableOptions: [{
+            name: 'title',
+            type: 'input'
+        }, {
+            name: 'caption',
+            type: 'input'
+        }]
     };
     /**
      * The HTML element or id of HTML element that is used for appending
@@ -1237,7 +1238,7 @@ namespace Component {
          */
         events?: Record<string, Function>;
         /** @internal */
-        editableOptions: Array<string>;
+        editableOptions: Array<EditableOptions.Configuration>;
         /** @internal */
         editableOptionsBindings: EditableOptions.OptionsBindings;
         /** @internal */

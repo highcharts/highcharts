@@ -13,7 +13,6 @@
  *  - Sophie Bremer
  *
  * */
-import type MenuItem from './Menu/MenuItem.js';
 
 'use strict';
 
@@ -23,7 +22,9 @@ import type MenuItem from './Menu/MenuItem.js';
  *
  * */
 
+import type MenuItem from './Menu/MenuItem.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type EditableOptions from '../Components/EditableOptions';
 
 import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
@@ -81,10 +82,7 @@ function renderContextButton(
 function renderCollapse(
     parentElement: HTMLDOMElement,
     title: string
-): { outerElement: HTMLDOMElement; content: HTMLDOMElement } | undefined {
-    if (!parentElement) {
-        return;
-    }
+): { outerElement: HTMLDOMElement; content: HTMLDOMElement } {
 
     const accordeon = createElement(
         'div',
@@ -417,12 +415,12 @@ function renderNested(
     if (!parentElement) {
         return;
     }
-    const keys = Object.keys(options.nestedOptions);
-    for (let i = 0, iEnd = keys.length; i < iEnd; ++i) {
-        const name = keys[i];
-        const nestedOptions = options.nestedOptions[name];
 
+    const detailedOptions = options.detailedOptions;
 
+    for (let i = 0, iEnd = detailedOptions.length; i < iEnd; ++i) {
+        const name = detailedOptions[i].name;
+        const nestedOptions = detailedOptions[i].options;
         const nested = createElement(
             'div',
             {
@@ -498,25 +496,10 @@ function renderNested(
             headerIcon.style.transform =
                 display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
         });
-        const nestedKeys = Object.keys(nestedOptions);
 
-        for (let j = 0, jEnd = nestedKeys.length; j < jEnd; ++j) {
-            const nestedKey = nestedKeys[j];
-            const nestedOption = nestedOptions[nestedKey];
-            const rendererFunction = getRendererFunction(nestedOption.type);
-            if (!rendererFunction) {
-                continue;
-            }
-
-            const element = rendererFunction(
-                content,
-                {
-                    title: nestedKey,
-                    value: '',
-                    name: nestedKey,
-                    id: nestedKey
-                }
-            );
+        for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
+            const nestedOption = nestedOptions[j];
+            renderAccordeon(nestedOption, content, options.onchange);
         }
     }
     return;
@@ -566,6 +549,23 @@ function renderIcon(
     return iconElem;
 }
 
+function renderAccordeon(
+    option: EditableOptions.Configuration,
+    parentNode: HTMLElement,
+    onchange: Function
+): void {
+    const renderFunction = EditRenderer.getRendererFunction(option.type);
+
+    if (!renderFunction) {
+        return;
+    }
+
+    renderFunction(parentNode, {
+        ...option,
+        onchange: onchange
+        // value: this.getValue(option.path /* czy tam pid*/)
+    });
+}
 /**
  * Function to create input element.
  *
@@ -581,7 +581,7 @@ function renderIcon(
 function renderInput(
     parentElement: HTMLDOMElement,
     options: FormField
-): HTMLDOMElement|undefined {
+): HTMLDOMElement | undefined {
 
     if (!parentElement) {
         return;
@@ -617,6 +617,7 @@ function renderInput(
     }
     return input;
 }
+
 
 /**
  * Function to create textarea element.
@@ -753,6 +754,7 @@ const EditRenderer = {
     renderIcon,
     renderContextButton,
     renderInput,
+    renderAccordeon: renderAccordeon,
     renderTextarea,
     renderCheckbox,
     renderButton,
@@ -812,6 +814,7 @@ export type RendererElement =
     | 'toggle'
     | 'text'
     | 'collapse'
+    | 'nested'
     | 'icon'
     | 'contextButton'
     | 'input'

@@ -328,4 +328,4 @@ let board = new Board('container', {
     }]
 });
 
-board.editMode.activateEditMode();
+board.editMode.activate();

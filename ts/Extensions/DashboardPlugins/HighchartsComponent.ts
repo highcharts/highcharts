@@ -104,30 +104,71 @@ class HighchartsComponent extends Component {
             },
             chartConstructor: '',
             editableOptions:
-                (Component.defaultOptions.editableOptions || []).concat(
-                    [
-                        'chartOptions',
-                        'chartType',
-                        'chartConfig',
-                        'chartClassName',
-                        'chartID'
-                    ]
-                ),
-            editableOptionsBindings: merge(
-                Component.defaultOptions.editableOptionsBindings,
+            (Component.defaultOptions.editableOptions || []).concat([
                 {
-                    skipRedraw: [
-                        'chartOptions',
-                        'chartConfig',
-                        'chartType'
-                    ],
-                    keyMap: {
-                        chartOptions: 'textarea',
-                        chartConfig: 'nested',
-                        chartType: 'select'
-                    }
+                    name: 'chartOptions',
+                    type: 'nested',
+                    detailedOptions: [{
+                        name: 'xAxis',
+                        hasToggle: true,
+                        options: [{
+                            name: 'title',
+                            path: ['xAxis', 'title', 'text'],
+                            type: 'input'
+                        }, {
+                            name: 'type',
+                            pid: ['xAxis', 'type'],
+                            type: 'select',
+                            items: [{
+                                name: 'linear'
+                            }, {
+                                name: 'datetime'
+                            }, {
+                                name: 'logarithmic'
+                            }]
+                        }]
+                    }, {
+                        name: 'chart',
+                        hasToggle: false,
+                        options: [{
+                            name: 'type',
+                            type: 'select',
+                            items: [{
+                                name: 'column',
+                                iconURL: 'column.svg'
+                            }, {
+                                name: 'line',
+                                iconURL: 'line.svg'
+                            }, {
+                                name: 'scatter',
+                                iconURL: 'scatter.svg'
+                            }, {
+                                name: 'pie',
+                                iconURL: 'pie.svg'
+                            }]
+                        }, {
+                            name: 'title',
+                            type: 'input'
+                        }, {
+                            name: 'subtitle',
+                            type: 'input'
+                        }]
+                    }, {
+                        name: 'legend',
+                        hasToggle: true,
+                        options: [{}]
+                    }]
+                }, {
+                    name: 'chartConfig',
+                    type: 'textarea'
+                }, {
+                    name: 'chartClassName',
+                    type: 'input'
+                }, {
+                    name: 'chartID',
+                    type: 'input'
                 }
-            ),
+            ]),
             syncHandlers: HighchartsSyncHandlers,
             columnKeyMap: {}
         }

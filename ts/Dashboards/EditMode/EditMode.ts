@@ -181,9 +181,9 @@ class EditMode {
         const editMode = this;
 
         if (editMode.active) {
-            editMode.deactivateEditMode();
+            editMode.deactivate();
         } else {
-            editMode.activateEditMode();
+            editMode.activate();
         }
     }
 
@@ -397,7 +397,7 @@ class EditMode {
         }
     }
 
-    public activateEditMode(): void {
+    public activate(): void {
         const editMode = this;
 
         // Init edit mode.
@@ -426,7 +426,7 @@ class EditMode {
         editMode.isContextDetectionActive = true;
     }
 
-    public deactivateEditMode(): void {
+    public deactivate(): void {
         const editMode = this,
             dashboardCnt = editMode.board.container;
 

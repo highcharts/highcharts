@@ -842,7 +842,7 @@ class Sidebar {
         const cell = (sidebar.context as Cell);
         const currentComponent = cell && cell.mountedComponent;
         const componentSettings = currentComponent &&
-            currentComponent.editableOptions.getEditableOptions();
+            currentComponent.editableOptions.getOptions();
 
         if (componentSettings) {
             const menuItems = {};
@@ -854,99 +854,99 @@ class Sidebar {
             let chartTypes = {};
             let chartConfigOptions = {};
 
-            for (const key in componentSettings) {
-                if (componentSettings[key]) {
-                    type = componentSettings[key].type;
+            // for (const key in componentSettings) {
+            //     if (componentSettings[key]) {
+            //         type = componentSettings[key].fieldType;
 
-                    if (key === 'chartType') {
-                        const chartTypesEnum = [{
-                            name: 'column',
-                            iconURL:
-                                Sidebar.seriesIconURLPrefix + 'column.svg'
-                        }, {
-                            name: 'line',
-                            iconURL:
-                                Sidebar.seriesIconURLPrefix + 'line.svg'
-                        }, {
-                            name: 'scatter',
-                            iconURL:
-                                Sidebar.seriesIconURLPrefix + 'scatter.svg'
-                        }, {
-                            name: 'pie',
-                            iconURL: Sidebar.seriesIconURLPrefix + 'pie.svg'
-                        }];
+            //         if (key === 'chartType') {
+            //             const chartTypesEnum = [{
+            //                 name: 'column',
+            //                 iconURL:
+            //                     Sidebar.seriesIconURLPrefix + 'column.svg'
+            //             }, {
+            //                 name: 'line',
+            //                 iconURL:
+            //                     Sidebar.seriesIconURLPrefix + 'line.svg'
+            //             }, {
+            //                 name: 'scatter',
+            //                 iconURL:
+            //                     Sidebar.seriesIconURLPrefix + 'scatter.svg'
+            //             }, {
+            //                 name: 'pie',
+            //                 iconURL: Sidebar.seriesIconURLPrefix + 'pie.svg'
+            //             }];
 
-                        // eslint-disable-next-line
-                        const chartOpts = (currentComponent as HighchartsComponent).options.chartOptions;
+            // eslint-disable-next-line
+            //             const chartOpts = (currentComponent as HighchartsComponent).options.chartOptions;
 
-                        const chartType = chartOpts &&
-                            (
-                                (chartOpts.chart && chartOpts.chart.type) ||
-                                (chartOpts.series && chartOpts.series[0].type)
-                            );
+            //             const chartType = chartOpts &&
+            //                 (
+            //                    (chartOpts.chart && chartOpts.chart.type) ||
+            //                    (chartOpts.series && chartOpts.series[0].type)
+            //                 );
 
-                        if (chartType) {
-                            chartTypes = {
-                                items: chartTypesEnum,
-                                value: chartType
-                            };
-                        } else {
-                            continue;
-                        }
-                    } else if (key === 'chartConfig') {
-                        chartConfigOptions = {
-                            nestedOptions: {
-                                title: {
-                                    enabled: { type: 'input' },
-                                    text: { type: 'input' },
-                                    size: { type: 'input' },
-                                    font: { type: 'input' }
-                                },
-                                yAxis: {
-                                    enabled: { type: 'input' },
-                                    labels: { type: 'input' },
-                                    title: { type: 'input' },
-                                    text: { type: 'input' }
-                                },
-                                legend: {
-                                    enabled: { type: 'input' },
-                                    title: { type: 'input' }
-                                },
-                                dataLabels: {
-                                    size: { type: 'input' },
-                                    font: { type: 'input' }
-                                },
-                                xAxis: {
-                                    enabled: { type: 'input' },
-                                    labels: { type: 'input' },
-                                    title: { type: 'input' },
-                                    text: { type: 'input' }
-                                }
-                            }
-                        };
-                    }
+            //             if (chartType) {
+            //                 chartTypes = {
+            //                     items: chartTypesEnum,
+            //                     value: chartType
+            //                 };
+            //             } else {
+            //                 continue;
+            //             }
+            //         } else if (key === 'chartConfig') {
+            //             chartConfigOptions = {
+            //                 nestedOptions: {
+            //                     title: {
+            //                         enabled: { type: 'input' },
+            //                         text: { type: 'input' },
+            //                         size: { type: 'input' },
+            //                         font: { type: 'input' }
+            //                     },
+            //                     yAxis: {
+            //                         enabled: { type: 'input' },
+            //                         labels: { type: 'input' },
+            //                         title: { type: 'input' },
+            //                         text: { type: 'input' }
+            //                     },
+            //                     legend: {
+            //                         enabled: { type: 'input' },
+            //                         title: { type: 'input' }
+            //                     },
+            //                     dataLabels: {
+            //                         size: { type: 'input' },
+            //                         font: { type: 'input' }
+            //                     },
+            //                     xAxis: {
+            //                         enabled: { type: 'input' },
+            //                         labels: { type: 'input' },
+            //                         title: { type: 'input' },
+            //                         text: { type: 'input' }
+            //                     }
+            //                 }
+            //             };
+            //         }
 
-                    (menuItems as any)[key] = {
-                        id: key,
-                        type: type === 'text' ? 'input' : type,
-                        text: (lang as any)[key] || key,
-                        isActive: true,
-                        collapsable: true,
-                        value: componentSettings[key].value,
-                        events: {
-                            change: (id: string, value: string): void => {
-                                sidebar.updatedSettings[id] = value;
-                            }
-                        },
-                        ...chartTypes,
-                        ...chartConfigOptions
-                    };
+            //         (menuItems as any)[key] = {
+            //             id: key,
+            //             type: type === 'text' ? 'input' : type,
+            //             text: (lang as any)[key] || key,
+            //             isActive: true,
+            //             collapsable: true,
+            //             value: componentSettings[key].value,
+            //             events: {
+            //                 change: (id: string, value: string): void => {
+            //                     sidebar.updatedSettings[id] = value;
+            //                 }
+            //             },
+            //             ...chartTypes,
+            //             ...chartConfigOptions
+            //         };
 
-                    items.push(
-                        key
-                    );
-                }
-            }
+            //         items.push(
+            //             key
+            //         );
+            //     }
+            // }
 
             // remove previous options
             if (sidebar.componentEditableOptions) {
