@@ -125,7 +125,6 @@ class NetworkgraphSeries extends Series {
     public dlDeferred: boolean = true;
     public dlFirstDraw: boolean = false;
     public dlShouldAnimate: boolean = true;
-    public dlShouldSetOpacity: boolean = true;
     public dlFadeDuration: number = 500;
 
     /* *
@@ -220,6 +219,7 @@ class NetworkgraphSeries extends Series {
             dataLabelsGroup.attr({ opacity: 0 });
 
             const group = series.dataLabelsGroup;
+
             if (group) {
                 if (series.visible) {
                     dataLabelsGroup.show();
@@ -257,19 +257,31 @@ class NetworkgraphSeries extends Series {
             return;
         }
 
-        const dlOptions = this.options.dataLabels,
-            textPath = (dlOptions as any).textPath;
+        const dlOptions = this.options.dataLabels;
+
+        let textPath;
+        if (dlOptions && dlOptions.textPath) {
+            textPath = dlOptions.textPath;
+        }
 
         // Render node labels:
         Series.prototype.drawDataLabels.call(this, this.nodes);
 
         // Render link labels:
-        (dlOptions as any).textPath = (dlOptions as any).linkTextPath;
+        if (dlOptions && dlOptions.linkTextPath) {
+            // if linkTextPath is set, render link labels with linkTextPath
+            dlOptions.textPath = dlOptions.linkTextPath;
+        }
+
         Series.prototype.drawDataLabels.call(this, this.data);
 
-        // @todo: remove any casting here
-        (dlOptions as any).textPath = textPath;
+        // go back to textPath for nodes
+        if (dlOptions && dlOptions.textPath) {
+            dlOptions.textPath = textPath;
+        }
 
+        // We should not initiate the animation anymore
+        // after the first call of drawDataLabels() method
         if (!this.dlFirstDraw) {
             this.dlFirstDraw = true;
             this.dlShouldAnimate = false;
