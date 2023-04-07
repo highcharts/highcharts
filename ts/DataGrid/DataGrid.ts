@@ -44,6 +44,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
+    defined,
     fireEvent,
     isNumber,
     merge,
@@ -408,7 +409,8 @@ class DataGrid {
             tableColumns = this.dataTable.getColumnNames();
 
         return tableColumns.filter(function (columnName): boolean {
-            if (columnsOptions[columnName]) {
+            const column = columnsOptions[columnName];
+            if (column && defined(column.show)) {
                 return !!columnsOptions[columnName].show;
             }
             return true;
@@ -536,10 +538,12 @@ class DataGrid {
 
 
             for (let k = 0; k < columnsInPresentationOrder.length; k++) {
-                const cell = cellElements[k] as HTMLElement;
-                const value = this.dataTable
-                    .getCell(columnsInPresentationOrder[k], i);
-                cell.textContent = this.formatCell(value);
+                const cell = cellElements[k] as HTMLElement,
+                    column = columnsInPresentationOrder[k],
+                    value = this.dataTable
+                        .getCell(columnsInPresentationOrder[k], i);
+
+                cell.textContent = this.formatCell(value, column);
 
                 // TODO: consider adding these dynamically to the input element
                 cell.dataset.originalData = cell.textContent;
@@ -813,7 +817,8 @@ class DataGrid {
      */
     private formatHeaderCell(columnName: string): string {
         const options = this.options,
-            headerFormat = options.headerFormat,
+            columnOptions = options.columns[columnName],
+            headerFormat = columnOptions && columnOptions.headerFormat,
             ctx = { text: columnName };
 
         if (headerFormat) {
@@ -830,10 +835,14 @@ class DataGrid {
      *
      * @param  cellValue
      * The value of the cell to format.
+     *
+     * @param  column
+     * The column name the cell belongs to.
      */
-    private formatCell(cellValue: JSON.Primitive): string {
+    private formatCell(cellValue: JSON.Primitive, column: string): string {
         const options = this.options,
-            cellFormat = options.cellFormat;
+            columnOptions = options.columns[column],
+            cellFormat = columnOptions && columnOptions.cellFormat;
         let formattedCell = cellValue || '';
 
         if (cellFormat) {
