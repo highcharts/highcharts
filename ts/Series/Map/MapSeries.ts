@@ -128,7 +128,7 @@ class MapSeries extends ScatterSeries {
      *         Choropleth map
      *
      * @extends      plotOptions.scatter
-     * @excluding    marker, cluster
+     * @excluding    dragDrop, marker, cluster
      * @product      highmaps
      * @optionparent plotOptions.map
      *
@@ -1239,7 +1239,9 @@ class MapSeries extends ScatterSeries {
             if (
                 mapView &&
                 !mapView.userOptions.center &&
-                !isNumber(mapView.userOptions.zoom)
+                !isNumber(mapView.userOptions.zoom) &&
+                mapView.zoom === mapView.minZoom // #18542 don't zoom out if
+                // map is zoomed
             ) {
                 // Not only recalculate bounds but also fit view
                 mapView.fitToBounds(void 0, void 0, false); // #17012
@@ -1415,7 +1417,7 @@ export default MapSeries;
  * is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.map
- * @excluding dataParser, dataURL, marker
+ * @excluding dataParser, dataURL, dragDrop, marker
  * @product   highmaps
  * @apioption series.map
  */
@@ -1549,8 +1551,10 @@ export default MapSeries;
  * coordinates in `projectedUnits` for geometry type other than `Point`,
  * instead of `[longitude, latitude]`.
  *
- * @sample maps/series/data-geometry/
- *         Geometry defined in data
+ * @sample maps/series/mappoint-line-geometry/
+ *         Map point and line geometry
+ * @sample maps/series/geometry-types/
+ *         Geometry types
  *
  * @type      {Object}
  * @since 9.3.0
@@ -1561,6 +1565,9 @@ export default MapSeries;
 /**
  * The geometry type. Can be one of `LineString`, `Polygon`, `MultiLineString`
  * or `MultiPolygon`.
+ *
+ * @sample maps/series/geometry-types/
+ *         Geometry types
  *
  * @declare   Highcharts.MapGeometryTypeValue
  * @type      {string}

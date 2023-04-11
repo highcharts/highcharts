@@ -958,6 +958,9 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         'The point\'s color should be correct.'
     );
 
+    mapView.update({
+        zoom: mapView.minZoom
+    }, false);
     // Remove ru point from data
     const removedPoint = data.splice(148, 1)[0];
     series.setData(data);
