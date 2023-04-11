@@ -1,5 +1,5 @@
 ---
-name: Data geometry
+name: Map point and line geometry
 authors:
   - Torstein Hønsi
 js_wrap: b

@@ -68,7 +68,9 @@ class RangeModifier extends DataModifier {
      * @param {RangeModifier.Options} [options]
      * Options to configure the range modifier.
      */
-    public constructor(options?: DeepPartial<RangeModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<RangeModifier.Options>
+    ) {
         super();
 
         this.options = merge(RangeModifier.defaultOptions, options);
@@ -227,8 +229,7 @@ namespace RangeModifier {
      */
     export interface RangeOptions {
         /**
-         * Column containing the filtered values. This can be an index or a
-         * name.
+         * Column containing the values to filter.
          */
         column: string;
         /**

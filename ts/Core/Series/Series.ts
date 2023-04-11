@@ -4096,7 +4096,7 @@ class Series {
 
             // Redraw
             chart.isDirtyLegend = chart.isDirtyBox = true;
-            chart.linkSeries();
+            chart.linkSeries(keepEvents);
 
             if (pick(redraw, true)) {
                 chart.redraw(animation);
