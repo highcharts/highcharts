@@ -424,12 +424,6 @@ jobs:
       - run:
           name: Write file sizes at master
           command: npx gulp write-file-sizes --filename master.json
-      - run:
-          name: File size comparison
-          command: |
-            npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json &&
-            npx gulp compare-size-and-comment --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
-
       - run: npm i --no-save @highcharts/highcharts-utils cross-env cypress-visual-regression
       - run:
           name: Run utils in background
@@ -456,6 +450,12 @@ jobs:
           name: Comment on PR and upload visual test images if any produced
           command: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} npx gulp update-pr-testresults-cypress --fail-silently --user circleci-mu --pr {}
           when: always
+      - run:
+          name: File size comparison
+          command: |
+            npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json &&
+            npx gulp compare-size-and-comment --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
+
 
   nightly_visual_diff:
     <<: *defaults
