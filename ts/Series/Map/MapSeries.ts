@@ -128,7 +128,7 @@ class MapSeries extends ScatterSeries {
      *         Choropleth map
      *
      * @extends      plotOptions.scatter
-     * @excluding    marker, cluster
+     * @excluding    dragDrop, marker, cluster
      * @product      highmaps
      * @optionparent plotOptions.map
      *
@@ -1417,7 +1417,7 @@ export default MapSeries;
  * is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.map
- * @excluding dataParser, dataURL, marker
+ * @excluding dataParser, dataURL, dragDrop, marker
  * @product   highmaps
  * @apioption series.map
  */
