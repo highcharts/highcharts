@@ -55,7 +55,7 @@ interface GoogleError {
  * */
 
 /**
- * Tests JSON object for Google Error.
+ * Tests Google's response for error.
  * @private
  */
 function isGoogleError(

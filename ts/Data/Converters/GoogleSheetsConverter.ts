@@ -23,7 +23,6 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type JSON from '../../Core/JSON';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -203,18 +202,18 @@ namespace GoogleSheetsConverter {
      * */
 
     /**
-     * Options for the parser compatible with ClassJSON
+     * Options of the GoogleSheetsConverter.
      */
     export interface Options extends DataConverter.Options {
         json?: GoogleSpreadsheetJSON;
     }
 
     /**
-     * Googles Spreasheet format
+     * Google's spreadsheet format.
      */
-    export interface GoogleSpreadsheetJSON extends JSON.Object {
+    export interface GoogleSpreadsheetJSON {
         majorDimension: ('COLUMNS'|'ROWS');
-        values: Array<Array<JSON.Primitive>>;
+        values: Array<Array<(boolean|null|number|string|undefined)>>;
     }
 
     /**

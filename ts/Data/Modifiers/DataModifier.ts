@@ -22,7 +22,6 @@
 
 import type DataEvent from '../DataEvent';
 import type DataTable from '../DataTable';
-import type JSON from '../../Core/JSON';
 import type DataModifierType from './DataModifierType';
 
 import U from '../../Core/Utilities.js';
@@ -310,9 +309,7 @@ abstract class DataModifier implements DataEvent.Emitter {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
- *
+ * Additionally provided types for modifier events and options.
  * @private
  */
 namespace DataModifier {
@@ -379,7 +376,7 @@ namespace DataModifier {
     /**
      * Options to configure the modifier.
      */
-    export interface Options extends JSON.Object {
+    export interface Options {
         /**
          * Name of the related modifier for these options.
          */
