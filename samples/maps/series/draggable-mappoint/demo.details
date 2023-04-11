@@ -2,5 +2,6 @@
  name: Highcharts Maps with Draggable Points module
  authors:
    - Hubert Kozik
+ requiresManualTesting: true
  js_wrap: b
 ...

@@ -48,7 +48,7 @@ Highcharts.getJSON(
 
                         // initialize custom labels
                         chart.customLonText = chart.renderer.text(
-                            `Longitude: 
+                            `Longitude:
                             ${chart.series[2].points[0].lon.toFixed(3)}`,
                             0, 450)
                             .css({
@@ -57,7 +57,7 @@ Highcharts.getJSON(
                             .add();
 
                         chart.customLatText = chart.renderer.text(
-                            `Latitude: 
+                            `Latitude:
                             ${chart.series[2].points[0].lat.toFixed(3)}`,
                             0, 470)
                             .css({
@@ -87,7 +87,7 @@ Highcharts.getJSON(
             },
 
             subtitle: {
-                text: 'Click and drag the Map Point to change its position <br> Click and drag anywhere else to rotate globe<br>',
+                text: 'Click and drag the marker to change the map point position <br> Click and drag anywhere else to rotate globe<br>',
                 align: 'left'
             },
 
@@ -155,9 +155,10 @@ Highcharts.getJSON(
                 type: 'mappoint',
                 color: '#fbd304',
                 marker: {
-                    radius: 6,
+                    radius: 10,
                     lineWidth: 1,
-                    lineColor: '#564801'
+                    lineColor: '#564801',
+                    symbol: 'mapmarker'
                 },
                 dragDrop: {
                     draggableX: true,
