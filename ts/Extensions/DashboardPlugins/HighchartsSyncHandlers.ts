@@ -24,7 +24,6 @@
 
 import type Axis from '../../Core/Axis/Axis.js';
 import type Chart from '../../Core/Chart/Chart';
-import type Point from '../../Core/Series/Point';
 import type RangeModifier from '../../Data/Modifiers/RangeModifier';
 import type Series from '../../Core/Series/Series';
 import type SharedState from '../../Dashboards/Components/SharedComponentState';
@@ -32,7 +31,6 @@ import type Sync from '../../Dashboards/Components/Sync/Sync';
 import type DataCursor from '../../Data/DataCursor';
 
 import ComponentType from '../../Dashboards/Components/ComponentType';
-import ComponentGroup from '../../Dashboards/Components/ComponentGroup.js';
 import HighchartsComponent from './HighchartsComponent.js';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
@@ -43,61 +41,6 @@ const { addEvent } = U;
  *  Constants
  *
  * */
-
-/**
- *
- */
-function getAxisMinMaxMap(chart: Chart): Array<{
-    coll: string;
-    extremes: { min: number | undefined; max: number | undefined };
-}> {
-    return chart.axes
-        .filter((axis): boolean => (chart.options.chart.zoomType || '')
-            .indexOf(axis.coll.slice(0, 1)) > -1 // A bit silly
-        )
-        .map((axis): { coll: string; extremes: { min: number | undefined; max: number | undefined } } => {
-            const { min, max, coll } = axis;
-            return {
-                coll,
-                extremes: {
-                    min: typeof min === 'number' ? min : void 0,
-                    max: typeof max === 'number' ? max : void 0
-                }
-            };
-        }
-        );
-}
-
-
-/**
- * Finds a matching point in the chart
- * @param {Chart} chart
- * The chart
- * @param {Point} hoverPoint
- * The point-like to look for
- *
- * @return {Point | undefined}
- * A point if found
- */
-function findMatchingPoint(
-    chart: Chart,
-    hoverPoint: SharedState.PresentationHoverPointType
-): Point | undefined {
-    const { x, y, series } = hoverPoint;
-
-    for (let i = 0; i < chart.series.length; i++) {
-        if (series && chart.series[i].options.id === series.options.id) {
-            const { points } = chart.series[i];
-            for (let j = 0; j < points.length; j++) {
-                const point = points[j];
-
-                if (point.visible && point.series.visible && point.x === x) {
-                    return point;
-                }
-            }
-        }
-    }
-}
 
 const configs: {
     handlers: Record<string, Sync.HandlerConfig>;
@@ -122,7 +65,6 @@ const configs: {
                                             events: {
                                                 // emit table cursor
                                                 mouseOver: function (): void {
-
                                                     let offset = 0;
                                                     const modifier = table.getModifier();
                                                     if (modifier && 'getModifiedTableOffset' in modifier) {
@@ -229,12 +171,23 @@ const configs: {
                         connector: store
                     } = this as HighchartsComponent;
 
-                    let chartResetSelectionCallback: Function;
-                    let chartShowResetButtonCallback: Function;
+                    const callbacks: Function[] = [];
 
                     if (store && chart && board) {
                         this.on('afterRender', (): void => {
                             const { dataCursor: cursor } = board;
+
+                            callbacks.push((): void => {
+                                cursor.remitCursor(store.table.id, {
+                                    type: 'position',
+                                    state: 'xAxis.extremes.min'
+                                });
+                                cursor.remitCursor(store.table.id, {
+                                    type: 'position',
+                                    state: 'xAxis.extremes.max'
+                                });
+                            });
+
                             if (chart.axes) {
                                 chart.axes.forEach((axis): void => {
                                     axis.update({
@@ -243,13 +196,11 @@ const configs: {
                                                 if (!(e as any).resetSelection) {
                                                     const axis = e.target as unknown as Axis;
 
-
                                                     // Find a series that that is in the datatable
                                                     // TODO: it should find the series with the largest difference between first value and last value
-                                                    const [series] = axis.series;// axis.series.filter(series => store.table.getColumnNames()[0] === series.name);
+                                                    const [series] = axis.series.filter((series): boolean => store.table.getColumnNames()[0] === series.name);
 
                                                     if (series) {
-
                                                         // Get the indexes of the first and last drawn points
                                                         const visiblePoints = series.points
                                                             .filter((point): boolean => point.isInside || false);
@@ -291,40 +242,39 @@ const configs: {
                                     },
                                     false
                                     );
-
-
                                 });
 
-                                chartResetSelectionCallback = addEvent(chart, 'selection', function (e): void {
-                                    if ('resetSelection' in e && e.resetSelection) {
+                                callbacks.push(
+                                    addEvent(chart, 'selection', function (e): void {
+                                        if ('resetSelection' in e && e.resetSelection) {
+                                            cursor.emitCursor(store.table, {
+                                                type: 'position',
+                                                state: 'chart.resetSelection'
+                                            },
+                                            e as any
+                                            );
+                                        }
+                                    })
+                                );
+
+                                callbacks.push(
+                                    addEvent(chart, 'afterShowResetZoom', function (e): void {
                                         cursor.emitCursor(store.table, {
                                             type: 'position',
-                                            state: 'chart.resetSelection'
+                                            state: 'chart.showResetZoom'
                                         },
                                         e as any
                                         );
-                                    }
-                                });
-
-                                chartShowResetButtonCallback = addEvent(chart, 'afterShowResetZoom', function (e): void {
-                                    cursor.emitCursor(store.table, {
-                                        type: 'position',
-                                        state: 'chart.showResetZoom'
-                                    },
-                                    e as any
-                                    );
-                                });
+                                    })
+                                );
                             }
                         });
 
                         // Return cleanup
                         return function (): void {
-                            if (chartResetSelectionCallback) {
-                                chartResetSelectionCallback();
-                            }
-                            if (chartShowResetButtonCallback) {
-                                chartShowResetButtonCallback();
-                            }
+                            // Call back the cleanup callbacks
+                            callbacks.forEach((callback): void => callback());
+
                             chart.axes.forEach((axis): void => {
                                 axis.update(
                                     {
@@ -423,6 +373,8 @@ const configs: {
         extremesHandler:
             function (this: HighchartsComponent): Function | void {
 
+                const callbacks: Function[] = [];
+
 
                 const { chart, board, connector: store } = this;
 
@@ -495,7 +447,7 @@ const configs: {
 
                     ['xAxis', 'yAxis'].forEach((dimension): void => {
                         const handleUpdateExtremes = (e: DataCursor.Event): void => {
-                            const { cursor, event, table } = e;
+                            const { cursor, event } = e;
 
                             if (cursor.type === 'position') {
                                 const eventTarget = event && event.target as unknown as Axis;
@@ -520,37 +472,43 @@ const configs: {
 
                         cursor.addListener(store.table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
                         cursor.addListener(store.table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
+
+                        callbacks.push(
+                            (): void => {
+                                cursor.removeListener(store.table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
+                                cursor.removeListener(store.table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
+                            }
+                        );
                     });
 
-                    // these could potentially be different handlers / emitters
-                    cursor.addListener(store.table.id, 'chart.resetSelection', (e): void => {
+                    const handleChartResetSelection = (e: DataCursor.Event): void => {
                         const { cursor, event } = e;
                         const eventTarget = event && event.target as unknown as Chart;
 
                         if (cursor.type === 'position' && eventTarget !== chart) {
                             chart.zoomOut();
                         }
-                    });
+                    };
 
-                    cursor.addListener(store.table.id, 'chart.showResetZoom', (e): void => {
+                    cursor.addListener(store.table.id, 'chart.resetSelection', handleChartResetSelection);
+
+                    const handleChartShowZoom = (e: DataCursor.Event): void => {
                         const { cursor, event } = e;
                         const eventTarget = event && event.target as unknown as Chart;
                         if (cursor.type === 'position' && eventTarget !== chart) {
                             chart.showResetZoom();
                         }
+                    };
+
+                    cursor.addListener(store.table.id, 'chart.showResetZoom', handleChartShowZoom);
+
+                    callbacks.push((): void => {
+                        cursor.removeListener(store.table.id, 'chart.resetSelection', handleChartResetSelection);
+                        cursor.addListener(store.table.id, 'chart.showResetZoom', handleChartShowZoom);
                     });
 
-
                     return (): void => {
-                        cursor.remitCursor(store.table.id, {
-                            type: 'position',
-                            state: 'xAxis.extremes.min'
-                        });
-                        cursor.remitCursor(store.table.id, {
-                            type: 'position',
-                            state: 'xAxis.extremes.max'
-                        });
-
+                        callbacks.forEach((callback): void => callback());
                     };
 
                 }
