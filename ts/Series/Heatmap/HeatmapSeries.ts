@@ -601,16 +601,18 @@ class HeatmapSeries extends ScatterSeries {
         if (canvas && context) {
             context.clearRect(0, 0, canvas.width, canvas.height);
         } else {
+            const
+                { min: xMin, max: xMax } = series.xAxis.getExtremes(),
+                { min: yMin, max: yMax } = series.yAxis.getExtremes();
+
             series.canvas = doc.createElement('canvas');
 
-            series.canvas.width = ((
-                (series.xAxis.max || 0) - (series.xAxis.min || 0)) /
-                (series.options.colsize || 1)
+            series.canvas.width = (
+                ((xMax || 0) - (xMin || 0)) / (series.options.colsize || 1)
             ) + 1;
 
-            series.canvas.height = ((
-                (series.yAxis.max || 0) - (series.yAxis.min || 0)) /
-                (series.options.rowsize || 1)
+            series.canvas.height = (
+                ((yMax || 0) - (yMin || 0)) / (series.options.rowsize || 1)
             ) + 1;
 
             series.context = series.canvas.getContext('2d') || void 0;
