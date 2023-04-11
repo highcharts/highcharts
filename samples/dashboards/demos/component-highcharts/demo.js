@@ -20,6 +20,9 @@ Dashboards.board('container', {
         type: 'Highcharts',
         cell: 'cell-id',
         chartOptions: {
+            title: {
+                text: 'Line chart'
+            },
             series: [{
                 data: [1, 2, 3, 2, 3]
             }]
@@ -28,6 +31,9 @@ Dashboards.board('container', {
         type: 'Highcharts',
         cell: 'cell-id-2',
         chartOptions: {
+            title: {
+                text: 'Pie chart'
+            },
             series: [{
                 type: 'pie',
                 data: [1, 2, 3, 2, 3]

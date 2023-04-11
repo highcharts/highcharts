@@ -6,11 +6,33 @@
  * License: www.highcharts.com/license
  */
 
-:root {
+:root,
+.highcharts-light {
     --highcharts-datagrid-grid-color: #dddddd;
+    --highcharts-datagrid-text-color: #000000;
     --highcharts-datagrid-background-color: #ffffff;
     --highcharts-datagrid-header-background-color: #eeeeee;
-    --highcharts-datagrid-row-hover-color: #808080;
+    --highcharts-datagrid-row-hover-color: #e6ebf5;
+    --highcharts-datagrid-highlight-color: rgba(255, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-datagrid-grid-color: #888888;
+        --highcharts-datagrid-text-color: #ffffff;
+        --highcharts-datagrid-background-color: #444444;
+        --highcharts-datagrid-header-background-color: #666666;
+        --highcharts-datagrid-row-hover-color: #666666;
+        --highcharts-datagrid-highlight-color: rgba(255, 0, 0, 0.5);
+    }
+}
+
+.highcharts-dark {
+    --highcharts-datagrid-grid-color: #888888;
+    --highcharts-datagrid-text-color: #ffffff;
+    --highcharts-datagrid-background-color: #444444;
+    --highcharts-datagrid-header-background-color: #666666;
+    --highcharts-datagrid-row-hover-color: #666666;
     --highcharts-datagrid-highlight-color: rgba(255, 0, 0, 0.5);
 }
 
@@ -19,6 +41,7 @@
     height: 100%;
     box-sizing: border-box;
     border: 1px solid var(--highcharts-datagrid-grid-color);
+    color: var(--highcharts-datagrid-text-color);
 }
 
 .hc-dg-outer-container {
