@@ -66,6 +66,11 @@ export interface NetworkgraphDataLabelsFormatterContextObject
     point: NetworkgraphPoint;
 }
 
+export interface NetworkgraphDataLabelsAnimationObject {
+    defer?: number;
+    fadeDuration?: number;
+}
+
 export interface NetworkgraphDataLabelsOptionsObject
     extends DataLabelOptions {
 
@@ -74,6 +79,8 @@ export interface NetworkgraphDataLabelsOptionsObject
     linkFormat?: string;
     linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
     linkTextPath?: DataLabelTextPathOptions;
+
+    animation?: NetworkgraphDataLabelsAnimationObject;
 }
 
 export interface NetworkgraphLinkOptions {

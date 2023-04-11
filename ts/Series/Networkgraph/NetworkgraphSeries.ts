@@ -122,10 +122,8 @@ class NetworkgraphSeries extends Series {
     public points: Array<NetworkgraphPoint> = void 0 as any;
 
     // properties to handle dataLabel defered animation
-    public dlDeferred: boolean = true;
-    public dlFirstDraw: boolean = false;
-    public dlShouldAnimate: boolean = true;
-    public dlFadeDuration: number = 500;
+    public deferDataLabels: boolean = true;
+    public shouldAnimateDataLabels: boolean = true;
 
     /* *
      *
@@ -208,18 +206,26 @@ class NetworkgraphSeries extends Series {
      */
     public initDataLabels(this: NetworkgraphSeries): SVGElement {
         const series = this,
-            shouldAnimate = series.dlShouldAnimate;
+            dlOptions = series.options.dataLabels,
+            shouldAnimate = series.shouldAnimateDataLabels;
+
+        let fadeDuration = 500;
+        if (dlOptions &&
+            dlOptions.animation &&
+            dlOptions.animation.fadeDuration) {
+            fadeDuration = dlOptions.animation.fadeDuration;
+        }
 
         // if it's the first drawDataLabels() call
-        // then we'll create the group & setup the animation
+        // then we'll create the SVG group for the first time
+        // & setup the animation from opacity 0 to opacity 1
+        // which lasts for time 'fadeDuration'
         if (shouldAnimate) {
-            const dataLabelsGroup =
-                Series.prototype.initDataLabelsGroup.call(this);
+            const dataLabelsGroup = this.initDataLabelsGroup();
 
             dataLabelsGroup.attr({ opacity: 0 });
 
             const group = series.dataLabelsGroup;
-
             if (group) {
                 if (series.visible) {
                     dataLabelsGroup.show();
@@ -227,7 +233,7 @@ class NetworkgraphSeries extends Series {
 
                 group.animate(
                     { opacity: 1 },
-                    { duration: this.dlFadeDuration }
+                    { duration: fadeDuration }
                 );
             }
 
@@ -236,13 +242,14 @@ class NetworkgraphSeries extends Series {
 
         // if it's not the first drawDataLabels() call then
         // the dataLabelsGroup should already exist on the series
+        // and we should return it
         if (series.dataLabelsGroup) {
             return series.dataLabelsGroup;
         }
 
         // to avoid casting, if it doesn't exist (altough it should)
         // create the dataLabelsGroup and return it
-        return Series.prototype.initDataLabelsGroup.call(this);
+        return this.initDataLabelsGroup();
     }
 
     /**
@@ -253,7 +260,7 @@ class NetworkgraphSeries extends Series {
     public drawDataLabels(): void {
         // we defer drawing the dataLabels
         // until dataLabels.animation.defer time passes
-        if (this.dlDeferred) {
+        if (this.deferDataLabels) {
             return;
         }
 
@@ -282,9 +289,8 @@ class NetworkgraphSeries extends Series {
 
         // We should not initiate the animation anymore
         // after the first call of drawDataLabels() method
-        if (!this.dlFirstDraw) {
-            this.dlFirstDraw = true;
-            this.dlShouldAnimate = false;
+        if (this.shouldAnimateDataLabels) {
+            this.shouldAnimateDataLabels = false;
         }
     }
 
@@ -385,7 +391,6 @@ class NetworkgraphSeries extends Series {
         // if dataLabels.animation.defer set by the user, use this value
         if (dlOptions &&
             dlOptions.animation &&
-            typeof dlOptions.animation !== 'boolean' &&
             dlOptions.animation.defer
         ) {
             deferTime = dlOptions.animation.defer;
@@ -394,7 +399,7 @@ class NetworkgraphSeries extends Series {
         // drawDataLabels() fires for the first time after
         // deferTime after which the dataLabels fade-in animation fires
         syncTimeout((): void => {
-            this.dlDeferred = false;
+            this.deferDataLabels = false;
         }, deferTime);
 
         addEvent(this, 'updatedData', (): void => {
@@ -412,7 +417,7 @@ class NetworkgraphSeries extends Series {
         });
 
         addEvent(this, 'afterSimulation', function (): void {
-            this.dlDeferred = false;
+            this.deferDataLabels = false;
             this.drawDataLabels();
         });
 
