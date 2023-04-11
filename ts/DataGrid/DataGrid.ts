@@ -546,7 +546,7 @@ class DataGrid {
                 cell.textContent = this.formatCell(value, column);
 
                 // TODO: consider adding these dynamically to the input element
-                cell.dataset.originalData = cell.textContent;
+                cell.dataset.originalData = '' + value;
                 cell.dataset.columnName = columnsInPresentationOrder[k];
                 // TODO: get this from the store if set?
                 cell.dataset.dataType = typeof value;
@@ -600,7 +600,7 @@ class DataGrid {
     private onCellClick(cellEl: HTMLElement, columnName: string): void {
         if (this.isColumnEditable(columnName)) {
             let input = cellEl.querySelector('input');
-            const cellValue = cellEl.textContent;
+            const cellValue = cellEl.getAttribute('data-original-data');
 
             if (!input) {
                 this.removeCellInputElement();
@@ -671,10 +671,21 @@ class DataGrid {
     private removeCellInputElement(): void {
         const cellInputEl = this.cellInputEl;
         if (cellInputEl) {
+            const parentNode = cellInputEl.parentNode;
+
             // TODO: This needs to modify DataTable. The change in DataTable
             // should cause a re-render?
-            if (cellInputEl.parentNode) {
-                cellInputEl.parentNode.textContent = cellInputEl.value;
+            if (parentNode) {
+                const cellValueType = parentNode.getAttribute('data-data-type'),
+                    columnName = parentNode.getAttribute('data-column-name');
+                let cellValue: string | number = cellInputEl.value;
+
+                if (cellValueType === 'number') {
+                    cellValue = parseFloat(cellValue);
+                }
+
+                parentNode.textContent =
+                    this.formatCell(cellValue, columnName || '');
             }
             cellInputEl.remove();
             delete this.cellInputEl;
