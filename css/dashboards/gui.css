@@ -53,12 +53,16 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --highcharts-dashboards-wrapper-background-color: #808080;
+        --highcharts-dashboards-main-background-color: #444444;
+        --highcharts-dashboards-wrapper-background-color: #222222;
+        --highcharts-dashboards-main-font-color: #ffffff;
     }
 }
 
 .highcharts-dashboards-dark {
-    --highcharts-dashboards-wrapper-background-color: #808080;
+    --highcharts-dashboards-main-background-color: #444444;
+    --highcharts-dashboards-wrapper-background-color: #222222;
+    --highcharts-dashboards-main-font-color: #ffffff;
 }
 
 .highcharts-dashboards,
@@ -124,7 +128,13 @@
         0 0.25rem 0.5313rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
         0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
     background-clip: border-box;
+    border-radius: 3px;
     overflow: auto;
+}
+
+.highcharts-dashboards-component-title {
+    color: var(--highcharts-dashboards-main-font-color);
+    margin: 0.5em 10px;
 }
 
 .highcharts-dashboards-component img {

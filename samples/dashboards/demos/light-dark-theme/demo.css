@@ -2,6 +2,10 @@
 @import url("https://code.highcharts.com/css/datagrid.css");
 @import url("https://code.highcharts.com/css/dashboards/gui.css");
 
+.highcharts-description {
+    margin-top: 1em;
+}
+
 #csv {
     display: none;
 }
