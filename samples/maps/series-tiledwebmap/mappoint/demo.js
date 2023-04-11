@@ -46,7 +46,20 @@ Highcharts.mapChart('container', {
 
     mapView: {
         center: [0, 20],
-        zoom: 2
+        zoom: 2,
+        fitToGeometry: {
+            type: 'MultiPoint',
+            coordinates: [
+                // Alaska west
+                [-164, 54],
+                // Greenland north
+                [-35, 84],
+                // New Zealand east
+                [179, -38],
+                // Chile south
+                [-68, -55]
+            ]
+        }
     },
 
     legend: {

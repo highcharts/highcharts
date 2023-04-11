@@ -787,15 +787,14 @@ addEvent(Chart, 'beforeMapViewInit', function (e: any): boolean {
                             name: providerProjectionName,
                             parallels: [y1, y2],
                             rotation: [-(x1 + x2) / 2]
-                        }// ,
-                        // minZoom: 0 // commenting due to bug - will be fixed
+                        }
                     };
                 } else {
                     this.options.mapView.recommendedMapView = {
                         projection: {
                             name: providerProjectionName
-                        }// ,
-                        // minZoom: 0 // commenting due to bug - will be fixed
+                        },
+                        minZoom: 0
                     };
                 }
             }
