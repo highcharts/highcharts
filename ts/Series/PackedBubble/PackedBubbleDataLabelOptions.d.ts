@@ -38,6 +38,10 @@ export interface PackedBubbleDataLabelFormatterObject extends Point.PointLabelOb
     point: PackedBubblePoint;
 }
 
+export interface PackedBubbleDataLabelAnimationObject {
+    defer?: number;
+}
+
 export interface PackedBubbleDataLabelOptions extends DataLabelOptions {
     format?: string;
     formatter?: PackedBubbleDataLabelsFormatterCallbackFunction;
@@ -47,6 +51,7 @@ export interface PackedBubbleDataLabelOptions extends DataLabelOptions {
     );
     parentNodeTextPath?: DataLabelTextPathOptions;
     textPath?: DataLabelTextPathOptions;
+    animation?: PackedBubbleDataLabelAnimationObject;
 }
 
 /* *

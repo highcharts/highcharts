@@ -216,6 +216,11 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
         },
         style: {
             transition: 'opacity 2000ms'
+        },
+
+        animation: {
+            defer: 2000,
+            fadeDuration: 500
         }
 
     },
