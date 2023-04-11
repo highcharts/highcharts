@@ -11,8 +11,7 @@ Highcharts.chart('container', {
         title: {
             text: undefined
         },
-        visible: false,
-        endOnTick: false
+        visible: false
     },
     xAxis: {
         visible: false,
@@ -38,7 +37,7 @@ Highcharts.chart('container', {
     series: [{
         name: 'User activity',
         data: JSON.parse(document.getElementById('data').innerText),
-        interpolation: false
+        interpolation: true
     }],
     responsive: {
         rules: [{

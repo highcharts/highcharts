@@ -451,7 +451,6 @@ class HeatmapSeries extends ScatterSeries {
             series = this,
             seriesOptions = series.options,
             interpolation = seriesOptions.interpolation,
-
             seriesMarkerOptions = seriesOptions.marker || {};
 
         if (interpolation) {
@@ -481,14 +480,8 @@ class HeatmapSeries extends ScatterSeries {
                 if (canvas && ctx && colorAxis) {
                     const
                         { boost: seriesBoost, points, xAxis, yAxis } = series,
-                        { dataMin: xMin, dataMax: xMax } = xAxis as {
-                            dataMin: number,
-                            dataMax: number
-                        },
-                        { dataMin: yMin, dataMax: yMax } = yAxis as {
-                            dataMin: number,
-                            dataMax: number
-                        },
+                        { min: xMin, max: xMax } = xAxis.getExtremes(),
+                        { min: yMin, max: yMax } = yAxis.getExtremes(),
                         { width, height } = canvas,
                         pointsLen = points.length,
                         yIncr = inverted ?
@@ -580,6 +573,7 @@ class HeatmapSeries extends ScatterSeries {
 
         } else if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
             Series.prototype.drawPoints.call(series);
+
             series.points.forEach((point): void => {
                 if (point.graphic) {
 
@@ -610,12 +604,12 @@ class HeatmapSeries extends ScatterSeries {
             series.canvas = doc.createElement('canvas');
 
             series.canvas.width = ((
-                (series.xAxis.dataMax || 0) - (series.xAxis.dataMin || 0)) /
+                (series.xAxis.max || 0) - (series.xAxis.min || 0)) /
                 (series.options.colsize || 1)
             ) + 1;
 
             series.canvas.height = ((
-                (series.yAxis.dataMax || 0) - (series.yAxis.dataMin || 0)) /
+                (series.yAxis.max || 0) - (series.yAxis.min || 0)) /
                 (series.options.rowsize || 1)
             ) + 1;
 
