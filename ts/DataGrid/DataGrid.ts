@@ -582,7 +582,7 @@ class DataGrid {
      */
     private onScroll(e: Event): void {
         e.preventDefault();
-        window.requestAnimationFrame(this.updateVisibleCells);
+        window.requestAnimationFrame(this.updateVisibleCells.bind(this));
     }
 
 
