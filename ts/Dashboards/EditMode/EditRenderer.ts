@@ -257,6 +257,7 @@ function renderSelect(
             options.onchange
         );
     }
+
     return customSelect;
 }
 
@@ -306,7 +307,7 @@ function renderSelectElement(
         }
 
         if (callback) {
-            return callback(id, option.name);
+            return callback(option.name);
         }
     });
 }
@@ -426,7 +427,7 @@ function renderText(
     return textElem;
 }
 
-function renderNestedHeaders(
+function renderNestedHeader(
     parentElement: HTMLDOMElement,
     name: string,
     allowEnabled: boolean
@@ -547,24 +548,6 @@ function renderIcon(
     return iconElem;
 }
 
-// function renderAccordeon(
-//     option: EditableOptions.Configuration,
-//     parentNode: HTMLElement,
-//     onchange: Function
-// ): void {
-//     const renderFunction = EditRenderer.getRendererFunction(option.type);
-
-//     if (!renderFunction) {
-//         return;
-//     }
-
-//     renderFunction(parentNode, {
-//         ...option,
-//         onchange: onchange
-//         // value: this.getValue(option.path /* czy tam pid*/)
-//     });
-// }
-
 /**
  * Function to create input element.
  *
@@ -613,7 +596,7 @@ function renderInput(
     const onchange = options.onchange;
     if (onchange) {
         input.addEventListener('change', function (e: any): void {
-            onchange(options.id, e.target.value);
+            onchange(e.target.value);
         });
     }
     return input;
@@ -663,7 +646,7 @@ function renderTextarea(
     const onchange = options.onchange;
     if (onchange) {
         textarea.addEventListener('change', function (e: any): void {
-            onchange(options.id, e.target.value);
+            onchange(e.target.value);
         });
     }
 
@@ -742,8 +725,8 @@ function getRendererFunction(type: RendererElement): Function|undefined {
         input: renderInput,
         textarea: renderTextarea,
         checkbox: renderCheckbox,
-        nestedHeaders: renderNestedHeaders,
-        button: renderButton,
+        nestedHeaders: renderNestedHeader,
+        button: renderButton
     }[type];
 }
 
@@ -759,7 +742,7 @@ const EditRenderer = {
     renderTextarea,
     renderCheckbox,
     renderButton,
-    renderNestedHeaders: renderNestedHeaders,
+    renderNestedHeaders: renderNestedHeader,
     getRendererFunction
 };
 
@@ -781,6 +764,7 @@ export interface IconFormField {
     callback?: Function;
 }
 export interface FormField {
+    propertyPath?: Array<string>;
     iconsURLPrefix?: string;
     icon?: string;
     id: string;

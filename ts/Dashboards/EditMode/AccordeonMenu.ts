@@ -2,12 +2,10 @@ import type Component from '../Components/Component.js';
 import type EditableOptions from '../Components/EditableOptions';
 
 import EditRenderer from './EditRenderer.js';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
 
 class AccordeonMenu {
     private iconsURLPrefix: string;
-    private changedOptions = {};
+    private changedOptions: DeepPartial<Component.ComponentOptions> = {};
 
     constructor(iconsURLPrefix: string) {
         this.iconsURLPrefix = iconsURLPrefix;
@@ -30,14 +28,19 @@ class AccordeonMenu {
         }
     }
 
-    public updateOption(
-        optionsToUpdate: DeepPartial<Component.ComponentOptions>
-    ) {
-        return function (path: Array<string>, value: any): void {
+    public updateOptions(
+        optionsToUpdate: DeepPartial<Component.ComponentOptions>,
+        path?: Array<string>
+    ): (value: boolean | string | number) => void {
+        if (!path) {
+            return (): void => {};
+        }
+
+        return function (value: boolean | string | number): void {
             let currentLevel = optionsToUpdate as any;
 
             for (let i = 0; i < path.length - 1; i++) {
-                const key = path[i];
+                const key: string = path[i];
                 if (!(key in currentLevel)) {
                     currentLevel[key] = {};
                 }
@@ -67,7 +70,6 @@ class AccordeonMenu {
         parentNode: HTMLElement,
         component: Component
     ): void {
-
         if (option.type === 'nested') {
             return this.renderNested(parentNode, option, component);
         }
@@ -77,10 +79,16 @@ class AccordeonMenu {
             return;
         }
 
-        renderFunction(parentNode, {
+        const options = {
             ...option,
-            value: this.getValue(component, option.propertyPath)
-        });
+            iconsURLPrefix: this.iconsURLPrefix,
+            value: this.getValue(component, option.propertyPath),
+            onchange: this.updateOptions(
+                this.changedOptions,
+                option.propertyPath
+            )
+        };
+        renderFunction(parentNode, options);
     }
 
     public renderNested(
@@ -88,7 +96,6 @@ class AccordeonMenu {
         options: EditableOptions.Configuration,
         component: Component
     ): void {
-
         if (!parentElement || !options.detailedOptions) {
             return;
         }
@@ -106,10 +113,11 @@ class AccordeonMenu {
             );
 
             for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
-                const nestedOption = merge(nestedOptions[j], {
-                    iconsURLPrefix: this.iconsURLPrefix
-                });
-                this.renderAccordeon(nestedOption as any, content, component);
+                this.renderAccordeon(
+                    nestedOptions[j] as any,
+                    content,
+                    component
+                );
             }
         }
         return;
