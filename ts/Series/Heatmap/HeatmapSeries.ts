@@ -455,8 +455,9 @@ class HeatmapSeries extends ScatterSeries {
 
         if (interpolation) {
             const
-                { image, chart } = series,
+                { image, chart, xAxis } = series,
                 { plotWidth, plotHeight, inverted } = chart,
+                xPadding = xAxis.minPixelPadding,
                 dimsByInversion = inverted ? {
                     width: plotHeight,
                     height: plotWidth,
@@ -464,7 +465,7 @@ class HeatmapSeries extends ScatterSeries {
                     rotationOriginY: plotWidth / 2,
                     rotation: 180
                 } : {
-                    width: plotWidth,
+                    width: plotWidth - (xPadding * 2),
                     height: plotHeight
                 };
 
@@ -486,7 +487,7 @@ class HeatmapSeries extends ScatterSeries {
                         pointsLen = points.length,
                         yIncr = inverted ?
                             (y: number): number => y :
-                            (y: number): number => yMax - y,
+                            (y: number): number => (yMax - y),
                         toPlotScale = function (
                             min: number,
                             max: number,
@@ -495,11 +496,12 @@ class HeatmapSeries extends ScatterSeries {
                         ): number {
                             const
                                 scale = (
-                                    (plotMax) /
+                                    plotMax /
                                     (max - min)
                                 );
                             return ~~((value - min) * scale);
                         },
+
                         getPixelData = function (p: HeatmapPoint): {
                             r: number,
                             g: number,
@@ -519,7 +521,7 @@ class HeatmapSeries extends ScatterSeries {
                                     xMin,
                                     xMax,
                                     p.x,
-                                    width - 1
+                                    width
                                 ),
                                 y = toPlotScale(
                                     yMin,
@@ -532,7 +534,7 @@ class HeatmapSeries extends ScatterSeries {
                                 g: rgba[1],
                                 b: rgba[2],
                                 a: (rgba.length === 4 ? rgba[3] : 1.0) * 255,
-                                pixelIndex: y * (width * 4) + x * 4
+                                pixelIndex: (y * (width * 4) + x * 4)
                             };
                         },
                         pixelData = ctx.createImageData(width, height);
@@ -557,7 +559,7 @@ class HeatmapSeries extends ScatterSeries {
 
                     series.image = chart.renderer.image(
                         canvas.toDataURL(),
-                        0,
+                        xPadding,
                         0
                     )
                         .attr(dimsByInversion)
@@ -601,18 +603,16 @@ class HeatmapSeries extends ScatterSeries {
         if (canvas && context) {
             context.clearRect(0, 0, canvas.width, canvas.height);
         } else {
-            const
-                { min: xMin, max: xMax } = series.xAxis.getExtremes(),
-                { min: yMin, max: yMax } = series.yAxis.getExtremes();
-
             series.canvas = doc.createElement('canvas');
 
-            series.canvas.width = (
-                ((xMax || 0) - (xMin || 0)) / (series.options.colsize || 1)
+            series.canvas.width = ((
+                (series.xAxis.max || 0) - (series.xAxis.min || 0)) /
+                (series.options.colsize || 1)
             ) + 1;
 
-            series.canvas.height = (
-                ((yMax || 0) - (yMin || 0)) / (series.options.rowsize || 1)
+            series.canvas.height = ((
+                (series.yAxis.max || 0) - (series.yAxis.min || 0)) /
+                (series.options.rowsize || 1)
             ) + 1;
 
             series.context = series.canvas.getContext('2d') || void 0;

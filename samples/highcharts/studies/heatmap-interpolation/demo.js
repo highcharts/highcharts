@@ -8,13 +8,7 @@ const chart = Highcharts.chart('container', {
     },
 
     xAxis: {
-        type: 'datetime',
-        minPadding: 0,
-        maxPadding: 0
-    },
-
-    yAxis: {
-        endOnTick: false
+        type: 'datetime'
     },
 
     colorAxis: {
