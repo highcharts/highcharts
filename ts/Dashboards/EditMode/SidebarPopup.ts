@@ -24,12 +24,8 @@ import type Row from '../Layout/Row';
 
 import BaseForm from '../../Shared/BaseForm.js';
 import EditGlobals from './EditGlobals.js';
-import U from '../../Core/Utilities.js';
-const { createElement } = U;
-
-import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
-import Component from '../Components/Component';
+import AccordeonMenu from './AccordeonMenu.js';
 /* *
  *
  *  Class
@@ -60,6 +56,7 @@ class SidebarPopup extends BaseForm {
     constructor(parentDiv: HTMLElement, iconsURL: string, editMode: EditMode) {
         super(parentDiv, iconsURL);
         this.editMode = editMode;
+        this.accordeonMenu = new AccordeonMenu(this.iconsURL);
     }
 
     /* *
@@ -76,6 +73,8 @@ class SidebarPopup extends BaseForm {
      * Whether the sidebar is visible.
      */
     public isVisible = false;
+
+    public accordeonMenu: AccordeonMenu;
 
     /* *
      *
@@ -180,26 +179,7 @@ class SidebarPopup extends BaseForm {
             if (!component) {
                 return;
             }
-            this.createAccordeonMenu(component);
-        }
-    }
-
-    public createAccordeonMenu(component: Component): void {
-        const editableOptions = component.editableOptions.getOptions();
-        let option,
-            content;
-
-        for (let i = 0, end = editableOptions.length; i < end; i++) {
-            option = editableOptions[i];
-            content = EditRenderer.renderCollapse(
-                this.container,
-                option.name
-            ).content;
-            EditRenderer.renderAccordeon(
-                U.merge(option, { iconsURLPrefix: this.iconsURL }),
-                content,
-                (): void => {}
-            );
+            this.accordeonMenu.renderContent(this.container, component);
         }
     }
 

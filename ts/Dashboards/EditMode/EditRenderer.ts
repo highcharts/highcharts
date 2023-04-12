@@ -426,104 +426,81 @@ function renderText(
     return textElem;
 }
 
-function renderNested(
+function renderNestedHeaders(
     parentElement: HTMLDOMElement,
-    options: any
-): HTMLDOMElement|undefined {
+    name: string,
+    allowEnabled: boolean
+): HTMLDOMElement {
+    const nested = createElement(
+        'div',
+        {
+            className: 'highcharts-dashboards-nested'
+        },
+        {},
+        parentElement
+    );
 
-    if (!parentElement) {
-        return;
-    }
+    const header = createElement(
+        'div',
+        {
+            className: 'highcharts-dashboards-nested-header'
+        },
+        {},
+        nested
+    );
 
-    const detailedOptions = options.detailedOptions;
+    const headerBtn = createElement(
+        'button',
+        { className: 'highcharts-dashboards-nested-header-btn' },
+        {
+            border: 'none',
+            font: 'inherit',
+            color: 'inherit',
+            background: 'none',
+            margin: 0,
+            width: '100%',
+            display: 'flex'
+        },
+        header
+    );
 
-    for (let i = 0, iEnd = detailedOptions.length; i < iEnd; ++i) {
-        const name = detailedOptions[i].name;
-        const nestedOptions = detailedOptions[i].options;
-        const nested = createElement(
-            'div',
-            {
-                className: 'highcharts-dashboards-nested'
-            },
-            {},
-            parentElement
-        );
+    const headerIcon = createElement(
+        'img',
+        {
+            className: 'highcharts-dashboards-nested-header-icon',
+            src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
+        },
+        {},
+        headerBtn
+    );
 
-        const header = createElement(
-            'div',
-            {
-                className: 'highcharts-dashboards-nested-header'
-            },
-            {},
-            nested
-        );
-        const headerBtn = createElement(
-            'button',
-            { className: 'highcharts-dashboards-nested-header-btn' },
-            {
-                border: 'none',
-                font: 'inherit',
-                color: 'inherit',
-                background: 'none',
-                margin: 0,
-                width: '100%',
-                display: 'flex'
-            },
-            header
-        );
+    createElement('span', { textContent: name }, {}, headerBtn);
 
-        const headerIcon = createElement(
-            'img',
-            {
-                className: 'highcharts-dashboards-nested-header-icon',
-                src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
-            },
-            {},
-            headerBtn
-        );
-
-
-        createElement(
-            'span',
-            { textContent: name },
-            {},
-            headerBtn
-        );
-
-        if (detailedOptions[i].allowEnabled) {
-            renderToggle(
-                header, {
-                    enabledOnOffLabels: true,
-                    id: name,
-                    name: name
-                }
-            );
-        }
-
-        const content = createElement(
-            'div',
-            {
-                className: 'highcharts-dashboards-nested-content'
-            },
-            { display: 'none' },
-            nested
-        );
-
-        headerBtn.addEventListener('click', function (): void {
-            const display = content.style.display;
-            content.style.display = display === 'none' ? 'flex' : 'none';
-            headerIcon.style.transform =
-                display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
+    if (allowEnabled) {
+        renderToggle(header, {
+            enabledOnOffLabels: true,
+            id: name,
+            name: name
         });
-
-        for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
-            const nestedOption = merge(nestedOptions[j], {
-                iconsURLPrefix: options.iconsURLPrefix
-            });
-            renderAccordeon(nestedOption, content, options.onchange);
-        }
     }
-    return;
+
+    const content = createElement(
+        'div',
+        {
+            className: 'highcharts-dashboards-nested-content'
+        },
+        { display: 'none' },
+        nested
+    );
+
+    headerBtn.addEventListener('click', function (): void {
+        const display = content.style.display;
+        content.style.display = display === 'none' ? 'flex' : 'none';
+        headerIcon.style.transform =
+            display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
+    });
+
+    return content;
 }
 
 /**
@@ -570,23 +547,23 @@ function renderIcon(
     return iconElem;
 }
 
-function renderAccordeon(
-    option: EditableOptions.Configuration,
-    parentNode: HTMLElement,
-    onchange: Function
-): void {
-    const renderFunction = EditRenderer.getRendererFunction(option.type);
+// function renderAccordeon(
+//     option: EditableOptions.Configuration,
+//     parentNode: HTMLElement,
+//     onchange: Function
+// ): void {
+//     const renderFunction = EditRenderer.getRendererFunction(option.type);
 
-    if (!renderFunction) {
-        return;
-    }
+//     if (!renderFunction) {
+//         return;
+//     }
 
-    renderFunction(parentNode, {
-        ...option,
-        onchange: onchange
-        // value: this.getValue(option.path /* czy tam pid*/)
-    });
-}
+//     renderFunction(parentNode, {
+//         ...option,
+//         onchange: onchange
+//         // value: this.getValue(option.path /* czy tam pid*/)
+//     });
+// }
 
 /**
  * Function to create input element.
@@ -765,8 +742,9 @@ function getRendererFunction(type: RendererElement): Function|undefined {
         input: renderInput,
         textarea: renderTextarea,
         checkbox: renderCheckbox,
-        nested: renderNested,
-        button: renderButton
+        nestedHeaders: renderNestedHeaders,
+        button: renderButton,
+        nested: (): void => {}
     }[type];
 }
 
@@ -779,11 +757,10 @@ const EditRenderer = {
     renderIcon,
     renderContextButton,
     renderInput,
-    renderAccordeon: renderAccordeon,
     renderTextarea,
     renderCheckbox,
     renderButton,
-    renderNested,
+    renderNestedHeaders: renderNestedHeaders,
     getRendererFunction
 };
 
@@ -841,6 +818,7 @@ export type RendererElement =
     | 'toggle'
     | 'text'
     | 'collapse'
+    | 'nestedHeaders'
     | 'nested'
     | 'icon'
     | 'contextButton'

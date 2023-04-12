@@ -112,12 +112,12 @@ class HighchartsComponent extends Component {
                         name: 'xAxis',
                         options: [{
                             name: 'title',
-                            propPath:
+                            propertyPath:
                                 ['chartOptions', 'xAxis', 'title', 'text'],
                             type: 'input'
                         }, {
                             name: 'type',
-                            propPath: ['chartOptions', 'xAxis', 'type'],
+                            propertyPath: ['chartOptions', 'xAxis', 'type'],
                             type: 'select',
                             items: [{
                                 name: 'linear'
@@ -131,7 +131,7 @@ class HighchartsComponent extends Component {
                         name: 'chart',
                         options: [{
                             name: 'type',
-                            propPath: ['chartOptions', 'chart', 'type'],
+                            propertyPath: ['chartOptions', 'chart', 'type'],
                             type: 'select',
                             items: [{
                                 name: 'column',
@@ -148,11 +148,11 @@ class HighchartsComponent extends Component {
                             }]
                         }, {
                             name: 'title',
-                            propPath: ['chartOptions', 'title', 'text'],
+                            propertyPath: ['chartOptions', 'title', 'text'],
                             type: 'input'
                         }, {
                             name: 'subtitle',
-                            propPath: ['chartOptions', 'subtitle', 'text'],
+                            propertyPath: ['chartOptions', 'subtitle', 'text'],
                             type: 'input'
                         }]
                     }, {

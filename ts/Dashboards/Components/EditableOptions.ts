@@ -15,12 +15,7 @@
  * */
 
 import type { RendererElement } from '../EditMode/EditRenderer.js';
-
-import Component from './Component.js';
-import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
+import type Component from './Component.js';
 
 namespace EditableOptions {
 
@@ -28,15 +23,18 @@ namespace EditableOptions {
         name: string;
         type: RendererElement;
         detailedOptions?: Array<DetailedOptions>
+        propertyPath?: Array<string>
         value?: any;
     }
 
     export interface DetailedOptions {
         name: string;
         allowEnabled?: boolean;
+        propertyPath?: Array<string>;
         options: Array<Record<string, any>>;
-
     }
+
+
     export interface OptionsBindings {
         keyMap: Record<string, string>;
         typeMap: Record<string, string>;
