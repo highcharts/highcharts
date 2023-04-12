@@ -33,7 +33,7 @@ namespace EditableOptions {
 
     export interface DetailedOptions {
         name: string;
-        hasToggle: boolean;
+        allowEnabled?: boolean;
         options: Array<Record<string, any>>;
 
     }

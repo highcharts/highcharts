@@ -32,6 +32,7 @@ import Globals from '../Globals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import U from '../../Core/Utilities.js';
 const {
+    merge,
     createElement
 } = U;
 
@@ -159,6 +160,16 @@ function renderSelect(
         return;
     }
 
+    if (options.name) {
+        renderText(
+            parentElement,
+            options.name,
+            void 0,
+            true
+        );
+    }
+
+    const iconsURLPrefix = options.iconsURLPrefix || '';
     const customSelect = createElement(
         'div',
         {
@@ -195,7 +206,7 @@ function renderSelect(
         headerIcon = createElement(
             'img',
             {
-                src: iconURL,
+                src: iconsURLPrefix + iconURL,
                 className: 'highcharts-dashboards-icon'
             },
             {},
@@ -215,7 +226,7 @@ function renderSelect(
         'img',
         {
             className: 'highcharts-dashboards-dropdown-pointer',
-            src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
+            src: iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
         btn
@@ -238,7 +249,7 @@ function renderSelect(
 
     for (let i = 0, iEnd = options.items.length; i < iEnd; ++i) {
         renderSelectElement(
-            options.items[i] || {},
+            merge(options.items[i] || {}, { iconsURLPrefix }),
             dropdown,
             placeholder,
             options.id,
@@ -260,6 +271,7 @@ function renderSelectElement(
     headerIcon?: HTMLElement,
     callback?: Function
 ): void {
+    const iconURL = option.iconsURLPrefix + option.iconURL;
     const selectOption = createElement('li', {}, { margin: 0 }, dropdown);
     const selectOptionBtn = createElement(
         'button',
@@ -272,7 +284,7 @@ function renderSelectElement(
         icon = createElement(
             'img',
             {
-                src: option.iconURL
+                src: iconURL
             },
             { width: '24px', height: '24px' },
             selectOptionBtn
@@ -290,7 +302,7 @@ function renderSelectElement(
         placeholder.textContent = option.name || '';
 
         if (headerIcon && option.iconURL) {
-            (headerIcon as HTMLImageElement).src = option.iconURL;
+            (headerIcon as HTMLImageElement).src = iconURL;
         }
 
         if (callback) {
@@ -320,18 +332,23 @@ function renderToggle(
         return;
     }
 
+    const toggleContainer = createElement(
+        'div',
+        { className: 'highcharts-dashboards-toggle-container' },
+        {},
+        parentElement
+    );
     if (options.title) {
         renderText(
-            parentElement,
+            toggleContainer,
             options.title
         );
     }
 
     if (options.enabledOnOffLabels) {
         EditRenderer.renderText(
-            parentElement,
-            EditGlobals.lang.on,
-            void 0,
+            toggleContainer,
+            EditGlobals.lang.off,
             EditGlobals.classNames.toggleLabels
         );
     }
@@ -343,7 +360,7 @@ function renderToggle(
             ' ' + (options.className || '')
         },
         {},
-        parentElement
+        toggleContainer
     );
 
     renderCheckbox(toggle);
@@ -360,15 +377,15 @@ function renderToggle(
 
     if (options.enabledOnOffLabels) {
         EditRenderer.renderText(
-            parentElement,
-            EditGlobals.lang.off,
-            void 0,
+            toggleContainer,
+            EditGlobals.lang.on,
             EditGlobals.classNames.toggleLabels
         );
     }
 
-    return toggle;
+    return toggleContainer;
 }
+
 
 /**
  * Function to create text element.
@@ -387,18 +404,20 @@ function renderToggle(
 function renderText(
     parentElement: HTMLDOMElement,
     text: string,
-    callback?: Function,
-    className?: string
+    className?: string,
+    isLabel?: boolean
 ): HTMLDOMElement|undefined {
     let textElem;
 
     if (parentElement) {
+        const labelFor = isLabel ? { htmlFor: text } : {};
         textElem = createElement(
-            'div', {
+            isLabel ? 'label' : 'div',
+            {
                 className: EditGlobals.classNames.labelText +
                         ' ' + (className || ''),
                 textContent: text,
-                onclick: callback
+                ...labelFor
             }, {},
             parentElement
         );
@@ -471,14 +490,12 @@ function renderNested(
             headerBtn
         );
 
-        const switchElement = createElement(
-            'img',
-            {
-                className: 'highcharts-dashboards-nested-switch',
-                src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
-            },
-            {},
-            header
+        renderToggle(
+            header, {
+                enabledOnOffLabels: true,
+                id: name,
+                name: name
+            }
         );
 
         const content = createElement(
@@ -498,7 +515,9 @@ function renderNested(
         });
 
         for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
-            const nestedOption = nestedOptions[j];
+            const nestedOption = merge(nestedOptions[j], {
+                iconsURLPrefix: options.iconsURLPrefix
+            });
             renderAccordeon(nestedOption, content, options.onchange);
         }
     }
@@ -566,6 +585,7 @@ function renderAccordeon(
         // value: this.getValue(option.path /* czy tam pid*/)
     });
 }
+
 /**
  * Function to create input element.
  *
@@ -587,10 +607,12 @@ function renderInput(
         return;
     }
 
-    if (options.title) {
+    if (options.name) {
         renderText(
             parentElement,
-            options.title
+            options.name,
+            void 0,
+            true
         );
     }
 
@@ -618,7 +640,6 @@ function renderInput(
     return input;
 }
 
-
 /**
  * Function to create textarea element.
  *
@@ -640,10 +661,12 @@ function renderTextarea(
         return;
     }
 
-    if (options.title) {
+    if (options.name) {
         renderText(
             parentElement,
-            options.title
+            options.name,
+            void 0,
+            true
         );
     }
 
@@ -780,6 +803,7 @@ export interface IconFormField {
     callback?: Function;
 }
 export interface FormField {
+    iconsURLPrefix?: string;
     icon?: string;
     id: string;
     name: string;
@@ -798,8 +822,9 @@ export interface SelectFormField extends FormField {
 }
 
 export interface SelectFormFieldItem {
-    name: 'string';
-    iconURL: 'string';
+    iconsURLPrefix: string
+    name: string;
+    iconURL: string;
 }
 
 export interface NestedFormField {

@@ -110,10 +110,9 @@ class HighchartsComponent extends Component {
                     type: 'nested',
                     detailedOptions: [{
                         name: 'xAxis',
-                        hasToggle: true,
                         options: [{
                             name: 'title',
-                            path: ['xAxis', 'title', 'text'],
+                            propPath: ['xAxis', 'title', 'text'],
                             type: 'input'
                         }, {
                             name: 'type',
@@ -129,22 +128,21 @@ class HighchartsComponent extends Component {
                         }]
                     }, {
                         name: 'chart',
-                        hasToggle: false,
                         options: [{
                             name: 'type',
                             type: 'select',
                             items: [{
                                 name: 'column',
-                                iconURL: 'column.svg'
+                                iconURL: 'series-types/icon-column.svg'
                             }, {
                                 name: 'line',
-                                iconURL: 'line.svg'
+                                iconURL: 'series-types/icon-line.svg'
                             }, {
                                 name: 'scatter',
-                                iconURL: 'scatter.svg'
+                                iconURL: 'series-types/icon-scatter.svg'
                             }, {
                                 name: 'pie',
-                                iconURL: 'pie.svg'
+                                iconURL: 'series-types/icon-pie.svg'
                             }]
                         }, {
                             name: 'title',
@@ -155,7 +153,7 @@ class HighchartsComponent extends Component {
                         }]
                     }, {
                         name: 'legend',
-                        hasToggle: true,
+                        allowEnabled: true,
                         options: [{}]
                     }]
                 }, {

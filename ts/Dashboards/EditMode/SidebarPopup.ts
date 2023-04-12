@@ -195,9 +195,14 @@ class SidebarPopup extends BaseForm {
                 this.container,
                 option.name
             ).content;
-            EditRenderer.renderAccordeon(option, content, (): void => {});
+            EditRenderer.renderAccordeon(
+                U.merge(option, { iconsURLPrefix: this.iconsURL }),
+                content,
+                (): void => {}
+            );
         }
     }
+
     /**
      * Function to hide the sidebar.
      */

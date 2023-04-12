@@ -27,7 +27,7 @@
     --highcharts-dashboards-shadow-color: 4, 9, 20;
 
     /* Pointer */
-    --highcharts-dashboards-pointer-selected-color: #2196f3;
+    --highcharts-dashboards-pointer-selected-color: #4a4a53;
     --highcharts-dashboards-pointer-color: #8085e8;
 
     /* Row */
@@ -329,13 +329,16 @@
     margin-left: 10px;
 }
 
+.highcharts-dashboards-toggle-container {
+    display: flex;
+}
+
 .highcharts-dashboards-edit-toggle-wrapper {
     position: relative;
     display: inline-block;
     width: 43px;
     height: 23px;
-    float: right;
-    margin-top: -4px;
+    margin-top: 2px;
 }
 
 .highcharts-dashboards-edit-toggle-wrapper input {
@@ -390,10 +393,9 @@
     display: inline-block;
     text-transform: uppercase;
     padding: 0 5px;
-    float: right;
     margin: 0;
     width: auto;
-    margin-top: 16px;
+    margin-top: 10px;
     line-height: 1em;
     font-size: 0.756em;
 }

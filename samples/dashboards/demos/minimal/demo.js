@@ -113,3 +113,8 @@ Dashboards.board('container', {
             }
         }]
 });
+
+
+const board = Dashboards.boards[0];
+board.editMode.activate();
+board.editMode.sidebar.show(board.mountedComponents[0].cell);

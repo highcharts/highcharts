@@ -123,7 +123,7 @@ class EditMode {
 
     private active: boolean = false;
     public options: EditMode.Options;
-    public iconsURLPrefix: string = 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/';
+    public iconsURLPrefix: string = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@d3590f4/gfx/dashboard-icons/';
     public board: Board;
     public lang: EditGlobals.LangOptions;
     public cellToolbar?: CellEditToolbar;
