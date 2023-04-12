@@ -395,7 +395,7 @@ class AST {
      * Utility function to set html content for an element by passing in a
      * markup string. The markup is safely parsed by the AST class to avoid
      * XSS vulnerabilities. This function should be used instead of setting
-     * `textContent` in all cases where the content is not fully trusted.
+     * `innerHTML` in all cases where the content is not fully trusted.
      *
      * @static
      * @function Highcharts.AST#setElementHTML
