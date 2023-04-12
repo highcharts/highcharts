@@ -39,10 +39,10 @@ describe('layout resize on window changes', () => {
         let containerTop;
 
         cy.get('.hc-dg-outer-container')
-        .invoke('scrollTop')
-        .then((scrollTopValue) => {
-            containerTop = scrollTopValue;
-        });
+            .invoke('scrollTop')
+            .then((scrollTopValue) => {
+                containerTop = scrollTopValue;
+            });
 
         cy.get('.highcharts-dashboards-component-content').eq(0)
             .trigger('mousedown', 300)
