@@ -55,6 +55,8 @@ const {
     pick,
     syncTimeout
 } = U;
+import A from '../../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 
 /* *
  *
@@ -123,7 +125,7 @@ class NetworkgraphSeries extends Series {
 
     // properties to handle dataLabel defered animation
     public deferDataLabels: boolean = true;
-    public shouldAnimateDataLabels: boolean = true;
+    public shouldInitializeDataLabels: boolean = true;
 
     /* *
      *
@@ -207,35 +209,27 @@ class NetworkgraphSeries extends Series {
     public initDataLabels(this: NetworkgraphSeries): SVGElement {
         const series = this,
             dlOptions = series.options.dataLabels,
-            shouldAnimate = series.shouldAnimateDataLabels;
-
-        let fadeDuration = 500;
-        if (dlOptions &&
-            dlOptions.animation &&
-            dlOptions.animation.fadeDuration) {
-            fadeDuration = dlOptions.animation.fadeDuration;
-        }
+            shouldInitialize = series.shouldInitializeDataLabels;
 
         // if it's the first drawDataLabels() call
         // then we'll create the SVG group for the first time
         // & setup the animation from opacity 0 to opacity 1
-        // which lasts for time 'fadeDuration'
-        if (shouldAnimate) {
+        // which lasts based on style.transition property
+        if (shouldInitialize) {
+            // create the SVG element for the dataLabels group
             const dataLabelsGroup = this.initDataLabelsGroup();
 
-            dataLabelsGroup.attr({ opacity: 0 });
-
-            const group = series.dataLabelsGroup;
-            if (group) {
-                if (series.visible) {
-                    dataLabelsGroup.show();
-                }
-
-                group.animate(
-                    { opacity: 1 },
-                    { duration: fadeDuration }
-                );
+            // apply the dataLabels.style.transition not only to the
+            // individual dataLabels but also to the entire group
+            // to play the animation when the group appears
+            if (dlOptions && dlOptions.style && dlOptions.style.transition) {
+                dataLabelsGroup.attr({
+                    style: `transition: ${dlOptions.style.transition} ease 0s;`
+                });
             }
+
+            // initialize the opacity of the group to 0 (start of animation)
+            dataLabelsGroup.attr({ opacity: 0 });
 
             return dataLabelsGroup;
         }
@@ -244,6 +238,7 @@ class NetworkgraphSeries extends Series {
         // the dataLabelsGroup should already exist on the series
         // and we should return it
         if (series.dataLabelsGroup) {
+            series.dataLabelsGroup.attr({ opacity: 1 });
             return series.dataLabelsGroup;
         }
 
@@ -289,8 +284,8 @@ class NetworkgraphSeries extends Series {
 
         // We should not initiate the animation anymore
         // after the first call of drawDataLabels() method
-        if (this.shouldAnimateDataLabels) {
-            this.shouldAnimateDataLabels = false;
+        if (this.shouldInitializeDataLabels) {
+            this.shouldInitializeDataLabels = false;
         }
     }
 
@@ -383,24 +378,12 @@ class NetworkgraphSeries extends Series {
 
         const dlOptions = this.options.dataLabels;
 
-        // time from init() to the time when the drawDataLabels()
-        // is called for the first time, #14398
-        // default set to 2.0 seconds
-        let deferTime = 2000;
-
-        // if dataLabels.animation.defer set by the user, use this value
-        if (dlOptions &&
-            dlOptions.animation &&
-            dlOptions.animation.defer
-        ) {
-            deferTime = dlOptions.animation.defer;
-        }
-
         // drawDataLabels() fires for the first time after
-        // deferTime after which the dataLabels fade-in animation fires
+        // dataLabels.animation.defer time unless
+        // the dataLabels.animation = false
         syncTimeout((): void => {
             this.deferDataLabels = false;
-        }, deferTime);
+        }, dlOptions ? animObject(dlOptions.animation).defer : 0);
 
         addEvent(this, 'updatedData', (): void => {
             if (this.layout) {
@@ -418,7 +401,8 @@ class NetworkgraphSeries extends Series {
 
         addEvent(this, 'afterSimulation', function (): void {
             this.deferDataLabels = false;
-            this.drawDataLabels();
+            this.drawDataLabels(); // first time initialization with opacity = 0
+            this.drawDataLabels(); // second time for setting the opacity = 1
         });
 
         return this;

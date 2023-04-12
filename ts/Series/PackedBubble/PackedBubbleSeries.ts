@@ -20,7 +20,6 @@ import type Axis from '../../Core/Axis/Axis';
 import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions';
 import type BubbleSeriesType from '../Bubble/BubbleSeries';
 import type Chart from '../../Core/Chart/Chart';
-import type Series from '../../Core/Series/Series';
 import type { DragNodesPoint, DragNodesSeries } from '../DragNodesComposition';
 import type Legend from '../../Core/Legend/Legend';
 import type NetworkgraphSeries from '../Networkgraph/NetworkgraphSeries';
