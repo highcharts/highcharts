@@ -21,11 +21,19 @@ namespace EditableOptions {
 
     export interface Configuration {
         name: string;
-        type: RendererElement;
+        type: ElementType;
         detailedOptions?: Array<DetailedOptions>
         propertyPath?: Array<string>
         value?: any;
     }
+
+    export type ElementType =
+        | 'input'
+        | 'text'
+        | 'textarea'
+        | 'toggle'
+        | 'select'
+        | 'nested';
 
     export interface DetailedOptions {
         name: string;

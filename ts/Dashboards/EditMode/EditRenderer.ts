@@ -744,7 +744,6 @@ function getRendererFunction(type: RendererElement): Function|undefined {
         checkbox: renderCheckbox,
         nestedHeaders: renderNestedHeaders,
         button: renderButton,
-        nested: (): void => {}
     }[type];
 }
 
@@ -819,7 +818,6 @@ export type RendererElement =
     | 'text'
     | 'collapse'
     | 'nestedHeaders'
-    | 'nested'
     | 'icon'
     | 'contextButton'
     | 'input'
