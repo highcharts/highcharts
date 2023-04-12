@@ -555,7 +555,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
      */
     public getLinkedDescription(): string {
         const el = this.linkedDescriptionElement,
-            content = el && el.innerHTML || '';
+            content = el && el.textContent || '';
 
         return stripHTMLTagsFromString(content);
     }

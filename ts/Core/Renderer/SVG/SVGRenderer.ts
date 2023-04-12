@@ -290,7 +290,7 @@ class SVGRenderer implements SVGRendererLike {
         attr(container, 'dir', 'ltr');
 
         // For browsers other than IE, add the namespace attribute (#1978)
-        if (container.innerHTML.indexOf('xmlns') === -1) {
+        if (!container.hasAttribute('xmlns')) {
             attr(element, 'xmlns', this.SVG_NS);
         }
 

@@ -1123,7 +1123,7 @@ class Data {
 
                             (columns as any)[colNo - startColumn][
                                 rowNo - startRow
-                            ] = item.innerHTML;
+                            ] = item.textContent;
 
                             // Loop over all previous indices and make sure
                             // they are nulls, not undefined.
@@ -1779,7 +1779,7 @@ class Data {
      *
      * @example
      * const data = Highcharts.data({
-     *   csv: document.getElementById('data').innerHTML
+     *   csv: document.getElementById('data').textContent
      * }).getData();
      *
      * @function Highcharts.Data#getData
