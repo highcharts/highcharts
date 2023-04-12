@@ -65,7 +65,9 @@ class InvertModifier extends DataModifier {
      * @param {InvertModifier.Options} [options]
      * Options to configure the invert modifier.
      */
-    public constructor(options?: DeepPartial<InvertModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<InvertModifier.Options>
+    ) {
         super();
 
         this.options = merge(InvertModifier.defaultOptions, options);
@@ -400,10 +402,10 @@ namespace InvertModifier {
  *
  * */
 
-DataModifier.addModifier(InvertModifier);
+DataModifier.registerType(InvertModifier);
 
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Invert: typeof InvertModifier;
     }
 }
