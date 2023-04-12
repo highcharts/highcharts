@@ -490,13 +490,15 @@ function renderNested(
             headerBtn
         );
 
-        renderToggle(
-            header, {
-                enabledOnOffLabels: true,
-                id: name,
-                name: name
-            }
-        );
+        if (detailedOptions[i].allowEnabled) {
+            renderToggle(
+                header, {
+                    enabledOnOffLabels: true,
+                    id: name,
+                    name: name
+                }
+            );
+        }
 
         const content = createElement(
             'div',
