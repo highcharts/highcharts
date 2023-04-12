@@ -622,12 +622,23 @@ class EditMode {
                         className: EditGlobals.classNames.editToolsBtn,
                         icon: (rwdIcons as any)[key] || '',
                         value: key,
-                        callback: (): void => {
+                        callback: (e: PointerEvent): void => {
+                            const button = e.target as HTMLElement;
+
+                            // Deselect all buttons.
+                            this.rwdMenu.forEach((btn: HTMLElement): void => {
+                                btn.classList.remove('selected');
+                            });
+
+                            // Select given button.
+                            button.classList.add('selected');
+
+                            // Change board width.
                             this.board.layoutsWrapper.style.width =
                                 rwdBreakingPoints[key] + 'px';
                             this.rwdMode = key;
 
-                            // reflow elements
+                            // Reflow elements.
                             this.board.reflow();
                         },
                         style: {
