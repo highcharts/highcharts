@@ -12,5 +12,5 @@ const columns = (() => {
 })();
 
 const grid = new DataGrid.DataGrid('container', {
-    dataTable: new DataTable(columns)
+    dataTable: new DataTable({ columns })
 });

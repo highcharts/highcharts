@@ -30,7 +30,6 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
 
 import Component from '../../Dashboards/Components/Component.js';
-import ComponentRegistry from '../../Dashboards/Components/ComponentRegistry.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataTable from '../../Data/DataTable.js';
@@ -521,9 +520,9 @@ class HighchartsComponent extends Component {
             // Insert the data
             seriesList.forEach((series): void => {
                 const xKey = Object.keys(xKeyMap)[0];
-                const seriesTable = new DataTable(
-                    table.modified.getColumns([xKey, series.name])
-                );
+                const seriesTable = new DataTable({
+                    columns: table.modified.getColumns([xKey, series.name])
+                });
 
                 seriesTable.renameColumn(series.name, 'y');
 
