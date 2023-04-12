@@ -2789,8 +2789,8 @@ class Axis {
                 axis.max as any,
             dataMin: axis.dataMin as any,
             dataMax: axis.dataMax as any,
-            userMin: axis.userMin as any,
-            userMax: axis.userMax as any
+            userMin: axis.userMin,
+            userMax: axis.userMax
         };
     }
 
@@ -4427,12 +4427,12 @@ namespace Axis {
         dataMin: number;
         max: number;
         min: number;
-        userMax: number;
-        userMin: number;
+        userMax?: number;
+        userMin?: number;
     }
     export interface PanningState {
-        startMin: (number);
-        startMax: (number);
+        startMin: number;
+        startMax: number;
         isDirty?: boolean;
     }
     export interface PlotLinePathOptions {
@@ -4683,12 +4683,12 @@ export default Axis;
  * The user defined maximum, either from the `max` option or from a zoom or
  * `setExtremes` action.
  * @name Highcharts.ExtremesObject#userMax
- * @type {number}
+ * @type {number|undefined}
  *//**
  * The user defined minimum, either from the `min` option or from a zoom or
  * `setExtremes` action.
  * @name Highcharts.ExtremesObject#userMin
- * @type {number}
+ * @type {number|undefined}
  */
 
 /**

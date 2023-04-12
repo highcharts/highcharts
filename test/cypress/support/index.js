@@ -19,21 +19,54 @@ Cypress.Commands.add('pan', chartElement => {
 })
 
 Cypress.Commands.add('board', () =>
-    cy.window().then(win => new Cypress.Promise((resolve, reject) => {
-        const D = win.Dashboards;
-        if (D) {
-            if (D.boards[0]) {
-                 resolve(D.boards[0]);
-            } else {
-                const unbind = D.addEvent(D.Dashboards, 'load', function() {
-                    unbind();
-                    resolve(this);
-                });
+    cy.window().its('Dashboards.boards').should('exist').then(boards =>{
+        if(boards.length){
+            return new Promise((resolve) =>{
+                const [board] = boards;
+                resolve(board)
+
+            })
+        } else return Promise.reject('No boards found')
+    })
+);
+
+Cypress.Commands.add('boardRendered', () =>
+    cy.board().then( async board=>{
+        await Promise.all(
+            board.mountedComponents.map(async ({component}) => {
+                return new Promise((resolve, reject) =>{
+                    let attempts = 0;
+
+                    setInterval(()=>{
+                        // If highcharts component, wait for chart to be rendered
+                        if(component.type === 'Highcharts'){
+                            if(
+                                component.chart.hasRendered &&
+                                component.chart.series.every(series => series.hasRendered && series.finishedAnimating)){
+
+                                resolve(component)
+                            }
+
+                        } else if(component.hasLoaded){
+
+                            resolve(component)
+
+                        }
+
+                        attempts++;
+
+                        if(attempts > 10){
+                            reject('Took more than 10 attempts')
+                        }
+
+
+                    }, 200)
+
+                })
             }
-        } else {
-            reject(new Error('global Dashboards namespace is missing.'));
-        }
-    }))
+            )
+        )
+    })
 );
 
 Cypress.Commands.add('hideSidebar', () =>

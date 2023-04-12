@@ -34,4 +34,28 @@ describe('layout resize on window changes', () => {
             )
         })
     })
+
+    it('Chart and DataGridComponent should have synced selection events.', () => {
+        let containerTop;
+
+        cy.get('.hc-dg-outer-container')
+            .invoke('scrollTop')
+            .then((scrollTopValue) => {
+                containerTop = scrollTopValue;
+            });
+
+        cy.get('.highcharts-dashboards-component-content').eq(0)
+            .trigger('mousedown', 300)
+            .trigger('mousemove', 300, 100)
+            .trigger('mouseup');
+
+
+        cy.get('.hc-dg-outer-container').then($container =>{
+            assert.ok(
+                $container.scrollTop() > containerTop,
+                'When selecting a range in the chart, the DataGridComponent should scroll.'
+            )
+
+        })
+    });
 });

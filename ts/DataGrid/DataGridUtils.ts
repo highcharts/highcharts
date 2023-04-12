@@ -13,7 +13,19 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataTable from '../Data/DataTable';
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 const DataGridUtils = {
     dataTableCellToString(cell: DataTable.CellType): string {
@@ -37,5 +49,11 @@ const DataGridUtils = {
         return div;
     }
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default DataGridUtils;

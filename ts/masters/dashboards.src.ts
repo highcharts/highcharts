@@ -16,20 +16,27 @@
  *
  * */
 
-import CSVConnector from '../Data/Connectors/CSVConnector.js';
+import DataConnector from '../Data/Connectors/DataConnector.js';
 import Board from '../Dashboards/Board.js';
 import Component from '../Dashboards/Components/Component.js';
+import ComponentRegistry from '../Dashboards/Components/ComponentRegistry.js';
 import DataPool from '../Data/DataPool.js';
 import DataCursor from '../Data/DataCursor.js';
+import DataModifier from '../Data/Modifiers/DataModifier.js';
 import DataTable from '../Data/DataTable.js';
 import Globals from '../Dashboards/Globals.js';
-import GoogleSheetsConnector from '../Data/Connectors/GoogleSheetsConnector.js';
-import GroupModifier from '../Data/Modifiers/GroupModifier.js';
-import HTMLTableConnector from '../Data/Connectors/HTMLTableConnector.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
-import RangeModifier from '../Data/Modifiers/RangeModifier.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
+
+// Fill registries
+import '../Data/Connectors/CSVConnector.js';
+import '../Data/Connectors/HTMLTableConnector.js';
+import '../Data/Connectors/GoogleSheetsConnector.js';
+import '../Data/Modifiers/ChainModifier.js';
+import '../Data/Modifiers/InvertModifier.js';
+import '../Data/Modifiers/RangeModifier.js';
+import '../Data/Modifiers/SortModifier.js';
 
 /* *
  *
@@ -57,15 +64,13 @@ const D = {
     Board,
     board: Board.board,
     Component,
-    CSVConnector,
+    ComponentRegistry,
+    DataConnector,
     DataCursor,
+    DataModifier,
     DataPool,
     DataTable,
-    GoogleSheetsConnector,
-    GroupModifier,
-    HTMLTableConnector,
     PluginHandler,
-    RangeModifier,
     Sync,
     _modules: (typeof _modules === 'undefined' ? {} : _modules)
 };

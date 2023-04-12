@@ -311,8 +311,7 @@ class Chart {
     public clipRect?: SVGElement;
     public colorCounter: number = void 0 as any;
     public container: globalThis.HTMLElement = void 0 as any;
-    public containerHeight?: string;
-    public containerWidth?: string;
+    public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
     public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
@@ -1373,6 +1372,19 @@ class Chart {
     }
 
     /**
+     * Internal function to get the available size of the container element
+     *
+     * @private
+     * @function Highcharts.Chart#getContainerBox
+     */
+    public getContainerBox(): { width: number, height: number } {
+        return {
+            width: getStyle(this.renderTo, 'width', true) || 0,
+            height: getStyle(this.renderTo, 'height', true) || 0
+        };
+    }
+
+    /**
      * Internal function to get the chart width and height according to options
      * and container size. Sets {@link Chart.chartWidth} and
      * {@link Chart.chartHeight}.
@@ -1385,15 +1397,7 @@ class Chart {
             optionsChart = chart.options.chart,
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
-            renderTo = chart.renderTo;
-
-        // Get inner width and height
-        if (!defined(widthOption)) {
-            chart.containerWidth = getStyle(renderTo, 'width') as any;
-        }
-        if (!defined(heightOption)) {
-            chart.containerHeight = getStyle(renderTo, 'height') as any;
-        }
+            containerBox = chart.getContainerBox();
 
         /**
          * The current pixel width of the chart.
@@ -1403,7 +1407,7 @@ class Chart {
          */
         chart.chartWidth = Math.max( // #1393
             0,
-            widthOption || (chart.containerWidth as any) || 600 // #1460
+            widthOption || containerBox.width || 600 // #1460
         );
         /**
          * The current pixel height of the chart.
@@ -1417,12 +1421,10 @@ class Chart {
                 heightOption as any,
                 chart.chartWidth
             ) ||
-            (
-                (chart.containerHeight as any) > 1 ?
-                    (chart.containerHeight as any) :
-                    400
-            )
+            (containerBox.height > 1 ? containerBox.height : 400)
         );
+
+        chart.containerBox = containerBox;
     }
 
     /**
@@ -1643,6 +1645,9 @@ class Chart {
             options.exporting && options.exporting.allowHTML,
             chart.styledMode
         ) as Chart.Renderer;
+
+        chart.containerBox = chart.getContainerBox();
+
         // Set the initial animation from the options
         setAnimation(void 0, chart);
 
@@ -1760,27 +1765,25 @@ class Chart {
     public reflow(e?: Event): void {
         const chart = this,
             optionsChart = chart.options.chart,
-            renderTo = chart.renderTo,
             hasUserSize = (
                 defined(optionsChart.width) &&
                 defined(optionsChart.height)
             ),
-            width = optionsChart.width || getStyle(renderTo, 'width'),
-            height = optionsChart.height || getStyle(renderTo, 'height');
+            oldBox = chart.containerBox,
+            containerBox = chart.getContainerBox();
 
         delete chart.pointer.chartPosition;
 
-        // Width and height checks for display:none. Target is doc in IE8 and
-        // Opera, win in Firefox, Chrome and IE9.
         if (
             !hasUserSize &&
             !chart.isPrinting &&
-            width &&
-            height
+            oldBox &&
+            // When fired by resize observer inside hidden container
+            containerBox.width
         ) {
             if (
-                width !== chart.containerWidth ||
-                height !== chart.containerHeight
+                containerBox.width !== oldBox.width ||
+                containerBox.height !== oldBox.height
             ) {
                 U.clearTimeout(chart.reflowTimeout as any);
                 // When called from window.resize, e is set, else it's called
@@ -1793,8 +1796,7 @@ class Chart {
                     }
                 }, e ? 100 : 0);
             }
-            chart.containerWidth = width as any;
-            chart.containerHeight = height as any;
+            chart.containerBox = containerBox;
         }
     }
 

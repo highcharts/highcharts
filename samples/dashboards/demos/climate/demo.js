@@ -1,4 +1,6 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
+const { Range: RangeModifier } = Dashboards.DataModifier.types;
+
 const dataPool = new Dashboards.DataPool();
 const dataScopes = {
     FD: 'Days with Frost',
@@ -791,7 +793,7 @@ async function buildCitiesMap() {
 async function buildCityData(minValue, maxValue) {
     const table = await dataPool.getConnectorTable(cityScope);
 
-    table.setModifier(new Dashboards.RangeModifier({
+    table.setModifier(new RangeModifier({
         ranges: [{
             column: 'time',
             minValue,

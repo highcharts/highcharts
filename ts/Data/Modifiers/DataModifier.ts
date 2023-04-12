@@ -23,7 +23,7 @@
 import type DataEvent from '../DataEvent';
 import type DataTable from '../DataTable';
 import type JSON from '../../Core/JSON';
-import type ModifierType from './ModifierType';
+import type DataModifierType from './DataModifierType';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -44,111 +44,6 @@ const {
  * @private
  */
 abstract class DataModifier implements DataEvent.Emitter {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    /**
-     * Regular expression to extract the modifier name (group 1) from the
-     * stringified class type.
-     */
-    private static readonly nameRegExp = (
-        /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/
-    );
-
-    /**
-     * Registry as a record object with modifier names and their class.
-     */
-    private static readonly registry = {} as Record<string, ModifierType>;
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Adds a modifier class to the registry. The modifier has to provide the
-     * `DataModifier.options` property and the `DataModifier.execute` method to
-     * modify the table.
-     *
-     * @param {DataModifier} modifier
-     * Modifier class (aka class constructor) to register.
-     *
-     * @return {boolean}
-     * Returns true, if the registration was successful. False is returned, if
-     * their is already a modifier registered with this name.
-     */
-    public static addModifier(modifier: ModifierType): boolean {
-        const name = DataModifier.getName(modifier),
-            registry = DataModifier.registry;
-
-        if (
-            typeof name === 'undefined' ||
-            registry[name]
-        ) {
-            return false;
-        }
-
-        registry[name] = modifier;
-
-        return true;
-    }
-
-    /**
-     * Returns all registered modifier names.
-     *
-     * @return {Array<string>}
-     * All registered modifier names.
-     */
-    public static getAllModifierNames(): Array<string> {
-        return Object.keys(DataModifier.registry);
-    }
-
-    /**
-     * Returns a copy of the modifier registry as record object with
-     * modifier names and their modifier class.
-     *
-     * @return {Record<string,DataModifierRegistryType>}
-     * Copy of the modifier registry.
-     */
-    public static getAllModifiers(): Record<string, ModifierType> {
-        return merge(DataModifier.registry);
-    }
-
-    /**
-     * Returns a modifier class (aka class constructor) of the given modifier
-     * name.
-     *
-     * @param {string} name
-     * Registered class name of the class type.
-     *
-     * @return {DataModifier|undefined}
-     * Class type, if the class name was found, otherwise `undefined`.
-     */
-    public static getModifier(name: string): (ModifierType|undefined) {
-        return DataModifier.registry[name];
-    }
-
-    /**
-     * Extracts the name from a given modifier class.
-     *
-     * @param {DataModifier} modifier
-     * Modifier class to extract the name from.
-     *
-     * @return {string}
-     * Modifier name, if the extraction was successful, otherwise an empty
-     * string.
-     */
-    private static getName(modifier: (NewableFunction|ModifierType)): string {
-        return (
-            modifier.toString().match(DataModifier.nameRegExp) ||
-            ['', '']
-        )[1];
-    }
 
     /* *
      *
@@ -417,6 +312,8 @@ abstract class DataModifier implements DataEvent.Emitter {
 /**
  * Additionally provided types for modifier events and options, and JSON
  * conversion.
+ *
+ * @private
  */
 namespace DataModifier {
 
@@ -489,6 +386,82 @@ namespace DataModifier {
         modifier: string;
     }
 
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    /**
+     * Regular expression to extract the modifier name (group 1) from the
+     * stringified class type.
+     * @internal
+     */
+    const nameRegExp = /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/;
+
+    /**
+     * Registry as a record object with modifier names and their class.
+     */
+    export const types = {} as Record<string, DataModifierType>;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Adds a modifier class to the registry. The modifier has to provide the
+     * `DataModifier.options` property and the `DataModifier.execute` method to
+     * modify the table.
+     *
+     * @private
+     *
+     * @param {DataModifierType} DataModifierClass
+     * Modifier class (aka class constructor) to register.
+     *
+     * @return {boolean}
+     * Returns true, if the registration was successful. False is returned, if
+     * their is already a modifier registered with this name.
+     */
+    export function registerType(
+        DataModifierClass: DataModifierType
+    ): boolean {
+        const name = getName(DataModifierClass);
+
+        if (
+            typeof name === 'undefined' ||
+            types[name]
+        ) {
+            return false;
+        }
+
+        types[name] = DataModifierClass;
+
+        return true;
+    }
+
+    /**
+     * Extracts the name from a given modifier class.
+     *
+     * @private
+     *
+     * @param {DataModifier} modifier
+     * Modifier class to extract the name from.
+     *
+     * @return {string}
+     * Modifier name, if the extraction was successful, otherwise an empty
+     * string.
+     */
+    function getName(
+        modifier: (NewableFunction|DataModifierType)
+    ): string {
+        return (
+            modifier.toString().match(nameRegExp) ||
+            ['', '']
+        )[1];
+    }
+
 }
 
 /* *
@@ -497,8 +470,8 @@ namespace DataModifier {
  *
  * */
 
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         '': typeof DataModifier;
     }
 }

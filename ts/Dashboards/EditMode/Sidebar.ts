@@ -238,6 +238,21 @@ class Sidebar {
                     } as any); // necessary for now
                 }
             }
+        }, {
+            text: 'KPI',
+            onDrop: function (
+                sidebar: Sidebar,
+                dropContext: Cell | Row
+            ): Cell|void {
+                if (sidebar && dropContext) {
+                    return sidebar.onDropNewComponent(dropContext, {
+                        cell: '',
+                        type: 'KPI',
+                        title: 'Example KPI',
+                        value: 70
+                    });
+                }
+            }
         }
     ];
 

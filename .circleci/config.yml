@@ -420,6 +420,21 @@ jobs:
           git fetch origin << parameters.reference-branch >> &&
           git checkout << parameters.reference-branch >>  &&
           npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+      
+      - run:
+          name: Write file sizes at master
+          command: npx gulp write-file-sizes --filename master.json
+      - generate_references_command:
+          browsercount: 2
+      - run: |
+          git checkout ${CIRCLE_BRANCH} && git log --oneline -5 &&
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force
+      - run:
+          name: File size comparison
+          command: |
+            npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json &&
+            npx gulp compare-size-and-comment --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
+
       - run: npm i --no-save @highcharts/highcharts-utils cross-env cypress-visual-regression
       - run:
           name: Run utils in background
