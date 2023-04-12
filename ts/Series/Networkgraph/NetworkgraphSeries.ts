@@ -231,6 +231,13 @@ class NetworkgraphSeries extends Series {
             // initialize the opacity of the group to 0 (start of animation)
             dataLabelsGroup.attr({ opacity: 0 });
 
+            const group = series.dataLabelsGroup;
+            if (group) {
+                if (series.visible) { // #2597, #3023, #3024
+                    dataLabelsGroup.show();
+                }
+            }
+
             return dataLabelsGroup;
         }
 
