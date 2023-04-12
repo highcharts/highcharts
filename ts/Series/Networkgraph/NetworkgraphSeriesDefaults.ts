@@ -219,8 +219,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
         },
 
         animation: {
-            defer: 2000,
-            fadeDuration: 500
+            defer: 2000
         }
 
     },
