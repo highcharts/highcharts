@@ -493,7 +493,7 @@ class HTMLTableConverter extends DataConverter {
                         }
 
                         let cellValue = converter.asGuessedType(
-                            item.textContent as string || ""
+                            item.textContent as string || '';
                         );
                         if (cellValue instanceof Date) {
                             cellValue = cellValue.getTime();
