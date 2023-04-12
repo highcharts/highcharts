@@ -84,9 +84,6 @@ Dashboards.board('container', {
     .forEach(input => {
         input.addEventListener('click', e => {
             document.getElementById('container').className =
-                e.target.value === 'none' ?
-                    '' :
-                    `highcharts-${e.target.value} ` +
-                    `highcharts-dashboards-${e.target.value}`;
+                e.target.value === 'none' ? '' : `highcharts-${e.target.value}`;
         });
     });

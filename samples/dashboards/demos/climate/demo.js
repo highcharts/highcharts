@@ -571,17 +571,16 @@ async function setupDashboard() {
                         events: {
                             click: function () {
                                 const board = this.menu.editMode.board,
-                                    darModeClass =
-                                        Dashboards.classNamePrefix + 'dark-mode';
+                                    darkModeClass = 'highcharts-dark';
 
                                 darkMode = !darkMode;
 
                                 if (darkMode) {
                                     board.container.classList
-                                        .add(darModeClass);
+                                        .add(darkModeClass);
                                 } else {
                                     board.container.classList
-                                        .remove(darModeClass);
+                                        .remove(darkModeClass);
                                 }
                             }
                         }
