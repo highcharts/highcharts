@@ -2,6 +2,11 @@ import type Component from '../Components/Component.js';
 import type EditableOptions from '../Components/EditableOptions';
 
 import EditRenderer from './EditRenderer.js';
+import U from '../../Core/Utilities.js';
+const {
+    createElement
+} = U;
+
 
 class AccordeonMenu {
     private iconsURLPrefix: string;
@@ -14,13 +19,23 @@ class AccordeonMenu {
         container: HTMLElement,
         component: Component
     ): void {
+
         const editableOptions = component.editableOptions.getOptions();
         let option, content;
+
+        const accordeonMenuContainer = createElement(
+            'div',
+            {
+                className: 'highcharts-dashboards-accordeon-menu'
+            },
+            {},
+            container
+        );
 
         for (let i = 0, end = editableOptions.length; i < end; i++) {
             option = editableOptions[i];
             content = EditRenderer.renderCollapse(
-                container,
+                accordeonMenuContainer,
                 option.name
             ).content;
 
@@ -32,11 +47,12 @@ class AccordeonMenu {
         optionsToUpdate: DeepPartial<Component.ComponentOptions>,
         path?: Array<string>
     ): (value: boolean | string | number) => void {
+
         if (!path) {
             return (): void => {};
         }
 
-        return function (value: boolean | string | number): void {
+        return function onChange(value: boolean | string | number): void {
             let currentLevel = optionsToUpdate as any;
 
             for (let i = 0; i < path.length - 1; i++) {
@@ -54,15 +70,34 @@ class AccordeonMenu {
     public renderContent(container: HTMLElement, component: Component): void {
         const editableOptions = component.editableOptions.getOptions();
         let option, content;
+        const accordeonContainer = createElement(
+            'div',
+            {
+                className: 'highcharts-dashboards-accordeon-menu'
+            },
+            {},
+            container
+        );
+
         for (let i = 0, end = editableOptions.length; i < end; i++) {
             option = editableOptions[i];
             content = EditRenderer.renderCollapse(
-                container,
+                accordeonContainer,
                 option.name
             ).content;
 
             this.renderAccordeon(option, content, component);
         }
+
+        EditRenderer.renderButton(
+            accordeonContainer,
+            {
+                value: 'Update',
+                callback: (): void => {
+                    component.update(this.changedOptions as any);
+                }
+            }
+        );
     }
 
     public renderAccordeon(
@@ -89,6 +124,7 @@ class AccordeonMenu {
             )
         };
         renderFunction(parentNode, options);
+
     }
 
     public renderNested(
@@ -119,6 +155,7 @@ class AccordeonMenu {
                     component
                 );
             }
+
         }
         return;
     }

@@ -106,7 +106,7 @@ function renderCollapse(
         {},
         header
     );
-    const titleElement = createElement(
+    createElement(
         'span',
         { textContent: title },
         {},

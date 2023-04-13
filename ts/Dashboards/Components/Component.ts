@@ -167,9 +167,11 @@ abstract class Component {
         sync: Sync.defaultHandlers,
         editableOptions: [{
             name: 'title',
+            propertyPath: ['title'],
             type: 'input'
         }, {
             name: 'caption',
+            propertyPath: ['caption'],
             type: 'input'
         }]
     };
