@@ -18,6 +18,7 @@ import DataPool from '../../Data/DataPool.js';
 import DataTable from '../../Data/DataTable.js';
 import '../../Data/Modifiers/ChainModifier.js';
 import '../../Data/Modifiers/InvertModifier.js';
+import '../../Data/Modifiers/MathModifier/MathModifier.js';
 import '../../Data/Modifiers/RangeModifier.js';
 import '../../Data/Modifiers/SortModifier.js';
 const G: AnyRecord = Highcharts;
