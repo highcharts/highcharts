@@ -108,10 +108,10 @@ class AccordeonMenu {
 
         const renderFunction = EditRenderer.getRendererFunction(option.type);
 
+
         if (!renderFunction) {
             return;
         }
-console.log(option);
         renderFunction(parentNode, {
             ...option,
             iconsURLPrefix: this.iconsURLPrefix,

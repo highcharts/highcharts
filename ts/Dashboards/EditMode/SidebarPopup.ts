@@ -26,6 +26,7 @@ import BaseForm from '../../Shared/BaseForm.js';
 import EditGlobals from './EditGlobals.js';
 import GUIElement from '../Layout/GUIElement.js';
 import AccordeonMenu from './AccordeonMenu.js';
+import EditRenderer from './EditRenderer.js';
 /* *
  *
  *  Class
@@ -172,6 +173,12 @@ class SidebarPopup extends BaseForm {
             // TODO: Add content when there is no context
             return;
         }
+
+        EditRenderer.renderText(
+            this.container,
+            'Settings',
+            'highcharts-dashboards-sidebar-title'
+        );
 
         const type = context.getType();
         if (type === 'cell') {
