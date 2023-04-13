@@ -673,7 +673,7 @@ workflows:
               ignore: master
           context: highcharts-staging
       - visual_comparison_with_dashboards:
-          requires: [lint]
+          requires: [test_cypress]
           filters:
             branches:
               ignore: master
