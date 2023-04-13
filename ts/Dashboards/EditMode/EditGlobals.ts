@@ -22,7 +22,7 @@ const PREFIX = DG.classNamePrefix + 'edit-';
 
 const EditGlobals: EditGlobals = {
     prefix: PREFIX,
-    iconsURL: 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/',
+    iconsURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@0b8caf6/gfx/dashboard-icons/',
     classNames: {
         resizeSnap: PREFIX + 'resize-snap',
         resizeSnapX: PREFIX + 'resize-snap-x',

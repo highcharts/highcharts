@@ -57,7 +57,10 @@ class SidebarPopup extends BaseForm {
     constructor(parentDiv: HTMLElement, iconsURL: string, editMode: EditMode) {
         super(parentDiv, iconsURL);
         this.editMode = editMode;
-        this.accordeonMenu = new AccordeonMenu(this.iconsURL);
+        this.accordeonMenu = new AccordeonMenu(
+            this.iconsURL,
+            this.hide.bind(this)
+        );
     }
 
     /* *
@@ -174,11 +177,7 @@ class SidebarPopup extends BaseForm {
             return;
         }
 
-        EditRenderer.renderText(
-            this.container,
-            'Settings',
-            'highcharts-dashboards-sidebar-title'
-        );
+        this.renderHeader('Settings', this.iconsURL + 'settings.svg');
 
         const type = context.getType();
         if (type === 'cell') {
@@ -220,6 +219,16 @@ class SidebarPopup extends BaseForm {
         this.hide();
     }
 
+    public renderHeader(title: string, iconURL: string): void {
+        const icon = EditRenderer.renderIcon(this.container, {
+            icon: iconURL,
+            className: EditGlobals.classNames.editSidebarTitle
+        });
+
+        if (icon) {
+            icon.textContent = title;
+        }
+    }
     /**
      * Function to create and add the close button to the sidebar.
      *

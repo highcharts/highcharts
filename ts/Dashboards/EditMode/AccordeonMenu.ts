@@ -10,10 +10,12 @@ const {
 
 class AccordeonMenu {
     private iconsURLPrefix: string;
+    private closeSidebar: Function;
     private changedOptions: DeepPartial<Component.ComponentOptions> = {};
 
-    constructor(iconsURLPrefix: string) {
+    constructor(iconsURLPrefix: string, closeSidebar: Function) {
         this.iconsURLPrefix = iconsURLPrefix;
+        this.closeSidebar = closeSidebar;
     }
     public createAccordeonMenu(
         container: HTMLElement,
@@ -64,6 +66,7 @@ class AccordeonMenu {
     }
 
     public renderContent(container: HTMLElement, component: Component): void {
+        const menu = this;
         const editableOptions = component.editableOptions.getOptions();
         let option, content;
         const accordeonContainer = createElement(
@@ -91,6 +94,18 @@ class AccordeonMenu {
                 value: 'Update',
                 callback: (): void => {
                     component.update(this.changedOptions as any);
+                    menu.closeSidebar();
+                }
+            }
+        );
+
+        EditRenderer.renderButton(
+            accordeonContainer,
+            {
+                value: 'Cancel',
+                callback: (): void => {
+                    menu.changedOptions = {};
+                    menu.closeSidebar();
                 }
             }
         );

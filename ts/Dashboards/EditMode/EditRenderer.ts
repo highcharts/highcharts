@@ -531,7 +531,8 @@ function renderIcon(
 
     const iconElem = createElement(
         'div', {
-            onclick: callback
+            onclick: callback,
+            className: options.className
         }, {},
         parentElement
     );
@@ -758,6 +759,7 @@ export interface ButtonOptions {
 }
 
 export interface IconFormField {
+    className?: string;
     icon: string;
     mousedown?: Function;
     menuItem?: MenuItem;

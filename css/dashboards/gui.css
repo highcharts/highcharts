@@ -665,25 +665,12 @@
     color: var(--highcharts-dashboards-neutral-color-80);
     padding: 5px 5px 5px 30px;
     text-transform: uppercase;
+    background-repeat: no-repeat;
+    background-position: 0% 50%;
     position: relative;
     font-weight: bold;
+    font-size: 20px;
     width: 75%;
-}
-
-.highcharts-dashboards-edit-sidebar-title::before {
-    content: " ";
-    position: absolute;
-    left: 0;
-    top: 7px;
-    display: block;
-    width: 24px;
-    height: 20px;
-    background-size: 20px;
-    background-color: var(--highcharts-dashboards-edit-cell-color);
-    -webkit-mask-image: url("https://code.highcharts.com/gfx/dashboard-icons/settings.svg");
-    mask-image: url("https://code.highcharts.com/gfx/dashboard-icons/settings.svg");
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
 }
 
 .highcharts-dashboards-edit-sidebar-tab-wrapper {

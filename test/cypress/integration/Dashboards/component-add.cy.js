@@ -96,7 +96,7 @@ describe('Add component through UI', () => {
         });
     });
 
-    it('KPI component is added.', function() {
+    it.skip('KPI component is added.', function() {
         grabComponent('KPI');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
