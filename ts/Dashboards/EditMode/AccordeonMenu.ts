@@ -48,23 +48,19 @@ class AccordeonMenu {
         value: boolean | string | number
     ): void {
         let currentLevel = this.changedOptions as any;
-        const pathLength = propertyPath.length;
+        const pathLength = propertyPath.length - 1;
 
         for (let i = 0; i < pathLength; i++) {
-            const key: string = propertyPath[i];
+            const key = propertyPath[i];
 
             if (!currentLevel[key]) {
                 currentLevel[key] = {};
             }
 
-            // last key applies value
-            if (i === pathLength - 1) {
-                currentLevel[key] = value;
-            }
-
             currentLevel = currentLevel[key];
         }
 
+        currentLevel[propertyPath[pathLength]] = value;
     }
 
     public renderContent(container: HTMLElement, component: Component): void {
@@ -94,8 +90,7 @@ class AccordeonMenu {
             {
                 value: 'Update',
                 callback: (): void => {
-                    console.log(this.changedOptions);
-                    // component.update(this.changedOptions as any);
+                    component.update(this.changedOptions as any);
                 }
             }
         );

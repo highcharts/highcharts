@@ -171,6 +171,14 @@ class HighchartsComponent extends Component {
                 }
             ]),
             syncHandlers: HighchartsSyncHandlers,
+            editableOptionsBindings: merge(
+                Component.defaultOptions.editableOptionsBindings,
+                {
+                    skipRedraw: [
+                        'chartOptions',
+                        'chartConfig'
+                    ]
+                }),
             columnKeyMap: {}
         }
     );
