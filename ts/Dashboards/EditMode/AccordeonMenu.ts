@@ -106,24 +106,25 @@ class AccordeonMenu {
         parentNode: HTMLElement,
         component: Component
     ): void {
+
         if (option.type === 'nested') {
             return this.renderNested(parentNode, option, component);
         }
+
         const renderFunction = EditRenderer.getRendererFunction(option.type);
 
         if (!renderFunction) {
             return;
         }
 
-        const options = {
+        renderFunction(parentNode, {
             ...option,
             iconsURLPrefix: this.iconsURLPrefix,
             value: this.getValue(component, option.propertyPath),
             onchange: (
                 value: boolean | string | number
             ): void => this.updateOptions(option.propertyPath || [], value)
-        };
-        renderFunction(parentNode, options);
+        });
 
     }
 
