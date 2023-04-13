@@ -1631,8 +1631,8 @@ class Tooltip {
         const tooltip = this;
 
         if (!this.shouldStickOnContact()) {
-            if (tooltip.tracker && Object.keys(tooltip.tracker).length) {
-                tooltip.tracker.destroy();
+            if (tooltip.tracker) {
+                tooltip.tracker = tooltip.tracker.destroy();
             }
             return;
         }
@@ -1679,7 +1679,7 @@ class Tooltip {
                 Math.max(Math.abs(anchorPos[1]), labelBBox.height)
         );
 
-        if (tooltip.tracker && Object.keys(tooltip.tracker).length) {
+        if (tooltip.tracker) {
             tooltip.tracker.attr(box);
         } else {
             tooltip.tracker = label.renderer
