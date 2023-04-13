@@ -6,7 +6,7 @@
  *
  * */
 
-/* eslint-disable no-use-before-define */
+/* eslint-disable no-use-before-define, require-unicode-regexp */
 
 /* *
  *
@@ -162,8 +162,8 @@ function processVariables(content) {
             variables.split(/\r\n|\r|\n/gu).map(function (line) {
 
                 if (
-                    variables.match(/\/\*\* @class \*\//gu) ||
-                    // eslint-disable-next-line require-unicode-regexp
+                    variables.match(/\/[^\/\n\r]+\//g) ||
+                    variables.match(/\/\*\* @class \*\//g) ||
                     variables.match(/(['"])[^\1\n]*,[^\1\n]*\1/g)
                 ) {
                     // skip lines with complex strings
