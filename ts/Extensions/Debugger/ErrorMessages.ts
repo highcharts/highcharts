@@ -59,7 +59,7 @@ const errorMessages: Record<string, Record<string, string>> = {
     },
     "21": {
         "title": "Can't find Proj4js library",
-        "text": "<h1>Can't find Proj4js library</h1><p>Using latitude/longitude functionality in Highmaps requires the <a href=\"http://proj4js.org\">Proj4js</a> library to be loaded.</p>"
+        "text": "<h1>Can't find Proj4js library</h1><p>Using latitude/longitude functionality with pre-projected GeoJSON in Highcharts Maps requires the <a href=\"http://proj4js.org\">Proj4js</a> library to be loaded.</p><p>It is recommended to utilize TopoJSON for Highcharts v10 and above, as built-in projection support is included and no third-party library is required. For more information, see the <a href=\"https://www.highcharts.com/blog/tutorials/highcharts-now-prefers-topojson-maps/\">Highcharts now prefers topojson maps</a>.</p>"
     },
     "22": {
         "title": "Map does not support latitude/longitude",

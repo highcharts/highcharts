@@ -1376,10 +1376,8 @@ class Legend {
                 if (
                     // check the last item
                     i === allItems.length - 1 &&
-                    // if adding next page is needed
-                    y + h - pages[len - 1] > clipHeight &&
-                    // and will fully fit inside a new page
-                    h <= clipHeight
+                    // if adding next page is needed (#18768)
+                    y + h - pages[len - 1] > clipHeight
                 ) {
                     pages.push(y);
                     legendItem.pageIx = len;
@@ -1394,7 +1392,7 @@ class Legend {
             // PDF export (#1787)
             if (!clipRect) {
                 clipRect = legend.clipRect =
-                    renderer.clipRect(0, padding, 9999, 0);
+                    renderer.clipRect(0, padding - 2, 9999, 0);
                 legend.contentGroup.clip(clipRect);
             }
 

@@ -30,7 +30,6 @@ export interface KeltnerChannelsOptions extends SMAOptions {
 export interface KeltnerChannelsParamsOptions extends SMAParamsOptions {
     periodATR: number;
     multiplierATR: number;
-    // for inheritance
 }
 
 /* *
