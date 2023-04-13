@@ -457,7 +457,15 @@ class HeatmapSeries extends ScatterSeries {
             const
                 { image, chart, xAxis } = series,
                 { plotWidth, plotHeight, inverted } = chart,
-                xPadding = xAxis.minPixelPadding,
+                { minPadding, maxPadding } = xAxis.options,
+                xMinPadding = ((minPadding === 0 || minPadding) ?
+                    minPadding :
+                    xAxis.minPixelPadding
+                ),
+                xMaxPadding = ((maxPadding === 0 || maxPadding) ?
+                    maxPadding :
+                    xAxis.minPixelPadding
+                ),
                 dimsByInversion = inverted ? {
                     width: plotHeight,
                     height: plotWidth,
@@ -465,10 +473,9 @@ class HeatmapSeries extends ScatterSeries {
                     rotationOriginY: plotWidth / 2,
                     rotation: 180
                 } : {
-                    width: plotWidth - (xPadding * 2),
+                    width: plotWidth - (xMinPadding + xMaxPadding),
                     height: plotHeight
                 };
-
             if (!image) {
                 const
                     colorAxis = (
@@ -480,11 +487,18 @@ class HeatmapSeries extends ScatterSeries {
 
                 if (canvas && ctx && colorAxis) {
                     const
-                        { boost: seriesBoost, points, xAxis, yAxis } = series,
+                        { boost: seriesBoost, points, yAxis } = series,
+                        pointsLen = points.length,
                         { min: xMin, max: xMax } = xAxis.getExtremes(),
                         { min: yMin, max: yMax } = yAxis.getExtremes(),
                         { width, height } = canvas,
-                        pointsLen = points.length,
+                        pixelDataWidth = (width * 4),
+                        widthBeginPointSpace = (
+                            width - 1 / Math.round(xAxis.len / width)
+                        ),
+                        heightBeginPointSpace = (
+                            height - 1 / Math.round(yAxis.len / height)
+                        ),
                         yIncr = inverted ?
                             (y: number): number => y :
                             (y: number): number => (yMax - y),
@@ -496,12 +510,11 @@ class HeatmapSeries extends ScatterSeries {
                         ): number {
                             const
                                 scale = (
-                                    plotMax /
+                                    (plotMax) /
                                     (max - min)
                                 );
                             return ~~((value - min) * scale);
                         },
-
                         getPixelData = function (p: HeatmapPoint): {
                             r: number,
                             g: number,
@@ -521,20 +534,20 @@ class HeatmapSeries extends ScatterSeries {
                                     xMin,
                                     xMax,
                                     p.x,
-                                    width
+                                    widthBeginPointSpace
                                 ),
                                 y = toPlotScale(
                                     yMin,
                                     yMax,
                                     yIncr(p.y),
-                                    height - 1
+                                    heightBeginPointSpace
                                 );
                             return {
                                 r: rgba[0],
                                 g: rgba[1],
                                 b: rgba[2],
                                 a: (rgba.length === 4 ? rgba[3] : 1.0) * 255,
-                                pixelIndex: (y * (width * 4) + x * 4)
+                                pixelIndex: (y * pixelDataWidth + x * 4)
                             };
                         },
                         pixelData = ctx.createImageData(width, height);
@@ -559,7 +572,7 @@ class HeatmapSeries extends ScatterSeries {
 
                     series.image = chart.renderer.image(
                         canvas.toDataURL(),
-                        xPadding,
+                        xMinPadding,
                         0
                     )
                         .attr(dimsByInversion)

@@ -15,7 +15,9 @@ Highcharts.chart('container', {
     },
     xAxis: {
         visible: false,
-        margin: 0
+        margin: 0,
+        minPadding: 0,
+        maxPadding: 0
     },
     tooltip: {
         pointFormat: '{point.value:.0f} interactions in this region'
