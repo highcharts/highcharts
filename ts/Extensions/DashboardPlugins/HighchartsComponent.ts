@@ -112,7 +112,7 @@ class HighchartsComponent extends Component {
                         options: [{
                             name: 'title',
                             propertyPath:
-                                ['chartOptions', 'xAxis', 'title', 'text'],
+                                ['chartOptions', 'xAxis', 'title'],
                             type: 'input'
                         }, {
                             name: 'type',

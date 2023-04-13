@@ -74,7 +74,11 @@ Dashboards.board('container', {
             },
             chartOptions: {
                 xAxis: {
+                    title: 'Names',
                     type: 'category'
+                },
+                title: {
+                    text: 'names'
                 },
                 chart: {
                     animation: false,
