@@ -467,16 +467,15 @@ class HeatmapSeries extends ScatterSeries {
                     maxPadding :
                     minPixelPadding
                 ),
-                dimsByInversion = inverted ? {
-                    width: plotHeight,
-                    height: plotWidth,
-                    rotationOriginX: plotHeight / 2,
-                    rotationOriginY: plotWidth / 2,
-                    rotation: 180
-                } : {
-                    width: plotWidth - (xMinPadding + xMaxPadding),
-                    height: plotHeight
+                [widthByInversion, heightByInversion] = (inverted ?
+                    [plotHeight, plotWidth] :
+                    [plotWidth, plotHeight]
+                ),
+                dims = {
+                    width: widthByInversion - (xMinPadding + xMaxPadding),
+                    height: heightByInversion
                 };
+
             if (!image) {
                 const
                     colorAxis = (
@@ -490,50 +489,50 @@ class HeatmapSeries extends ScatterSeries {
                     const
                         { boost: seriesBoost, points, yAxis } = series,
                         pointsLen = points.length,
-                        { min: xMin, max: xMax } = xAxis.getExtremes(),
-                        { min: yMin, max: yMax } = yAxis.getExtremes(),
                         { width, height } = canvas,
-                        pixelDataWidth = (width * 4),
-                        widthBeginPointSpace = (
-                            width - 1 / Math.round(xAxis.len / width)
-                        ),
-                        heightBeginPointSpace = (
-                            height - 1 / Math.round(yAxis.len / height)
-                        ),
-                        yIncr = inverted ?
-                            (y: number): number => y :
-                            (y: number): number => (yMax - y),
-                        toPlotScale = function (
-                            min: number,
-                            max: number,
-                            value: number,
-                            plotMax: number
-                        ): number {
+                        pixelIndex = ((): Function => {
                             const
-                                scale = (
-                                    (plotMax) /
-                                    (max - min)
-                                );
-                            return ~~((value - min) * scale);
-                        },
-                        getPixelCompIndex = ((): Function => {
-                            const
-                                rowFunc = yAxis.reversed ?
+                                { min: xMin, max: xMax } = xAxis.getExtremes(),
+                                { min: yMin, max: yMax } = yAxis.getExtremes(),
+                                yPixelScale = (
+                                    (
+                                        height - 1 /
+                                        Math.round(yAxis.len / height)
+                                    ) /
+                                    (yMax - yMin)
+                                ),
+                                xPixelScale = (
+                                    (
+                                        width - 1 /
+                                        Math.round(xAxis.len / width)
+                                    ) /
+                                    (xMax - xMin)
+                                ),
+                                row = (yAxis.reversed ?
                                     (y: number): number => (
-                                        (4 * (height - 1) * width) -
-                                        (y * pixelDataWidth)
+                                        ((height - 1) - y) * width
                                     ) :
-                                    (y: number): number => (y * pixelDataWidth),
-                                colFunc = xAxis.reversed ?
-                                    (x: number): number => (
-                                        pixelDataWidth - x * 4
-                                    ) :
-                                    (x: number): number => (x * 4);
-
-                            return (
-                                (x: number, y: number): number => (
-                                    rowFunc(y) +
-                                    colFunc(x)
+                                    (y: number): number => (y * width)
+                                ),
+                                col = (xAxis.reversed ?
+                                    (x: number): number => (width - x) :
+                                    (x: number): number => (x)
+                                ),
+                                scaled = (
+                                    axisVal: number,
+                                    axisMin: number,
+                                    pixelScale: number
+                                ): number => (
+                                    ~~((axisVal - axisMin) * pixelScale)
+                                ),
+                                yIncr = (inverted ?
+                                    (y: number): number => y :
+                                    (y: number): number => (yMax - y)
+                                );
+                            return (x: number, y: number): number => (
+                                4 * (
+                                    row(scaled(yIncr(y), yMin, yPixelScale)) +
+                                    col(scaled(x, xMin, xPixelScale))
                                 )
                             );
                         })(),
@@ -545,33 +544,22 @@ class HeatmapSeries extends ScatterSeries {
                             pixelIndex: number
                         } {
                             const
-                                rgba = (colorAxis.toColor(
-                                    p.value || 0, p) as string)
+                                rgba = (
+                                    colorAxis.toColor(
+                                        p.value || 0, p) as string)
                                     .split(')')[0]
                                     .split('(')[1]
                                     .split(',')
                                     .map((s): number => (
                                         parseFloat(s) ||
-                                        parseInt(s, 10))),
-                                x = toPlotScale(
-                                    xMin,
-                                    xMax,
-                                    p.x,
-                                    widthBeginPointSpace
-                                ),
-                                y = toPlotScale(
-                                    yMin,
-                                    yMax,
-                                    yIncr(p.y),
-                                    heightBeginPointSpace
-                                );
-
+                                        parseInt(s, 10)
+                                    ));
                             return {
                                 r: rgba[0],
                                 g: rgba[1],
                                 b: rgba[2],
                                 a: (rgba.length === 4 ? rgba[3] : 1.0) * 255,
-                                pixelIndex: getPixelCompIndex(x, y)
+                                pixelIndex: pixelIndex(p.x, p.y)
                             };
                         },
                         pixelData = ctx.createImageData(width, height);
@@ -585,7 +573,6 @@ class HeatmapSeries extends ScatterSeries {
                         const { r, g, b, a, pixelIndex } = getPixelData(
                             points[i]
                         );
-
                         pixelData.data[pixelIndex + 0] = r;
                         pixelData.data[pixelIndex + 1] = g;
                         pixelData.data[pixelIndex + 2] = b;
@@ -599,15 +586,15 @@ class HeatmapSeries extends ScatterSeries {
                         xMinPadding,
                         0
                     )
-                        .attr(dimsByInversion)
+                        .attr(dims)
                         .add(series.group);
                 }
 
             } else if (!(
-                image.width === dimsByInversion.width &&
-                image.height === dimsByInversion.height
+                image.width === dims.width &&
+                image.height === dims.height
             )) {
-                image.attr(dimsByInversion);
+                image.attr(dims);
             }
 
         } else if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
