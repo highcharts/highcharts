@@ -44,27 +44,27 @@ class AccordeonMenu {
     }
 
     public updateOptions(
-        optionsToUpdate: DeepPartial<Component.ComponentOptions>,
-        path?: Array<string>
-    ): (value: boolean | string | number) => void {
+        propertyPath: Array<string>,
+        value: boolean | string | number
+    ): void {
+        let currentLevel = this.changedOptions as any;
+        const pathLength = propertyPath.length;
 
-        if (!path) {
-            return (): void => {};
-        }
+        for (let i = 0; i < pathLength; i++) {
+            const key: string = propertyPath[i];
 
-        return function onChange(value: boolean | string | number): void {
-            let currentLevel = optionsToUpdate as any;
-
-            for (let i = 0; i < path.length - 1; i++) {
-                const key: string = path[i];
-                if (!(key in currentLevel)) {
-                    currentLevel[key] = {};
-                }
-                currentLevel = currentLevel[key];
+            if (!currentLevel[key]) {
+                currentLevel[key] = {};
             }
 
-            currentLevel[path[path.length - 1]] = value;
-        };
+            // last key applies value
+            if (i === pathLength - 1) {
+                currentLevel[key] = value;
+            }
+
+            currentLevel = currentLevel[key];
+        }
+
     }
 
     public renderContent(container: HTMLElement, component: Component): void {
@@ -94,7 +94,8 @@ class AccordeonMenu {
             {
                 value: 'Update',
                 callback: (): void => {
-                    component.update(this.changedOptions as any);
+                    console.log(this.changedOptions);
+                    // component.update(this.changedOptions as any);
                 }
             }
         );
@@ -118,10 +119,9 @@ class AccordeonMenu {
             ...option,
             iconsURLPrefix: this.iconsURLPrefix,
             value: this.getValue(component, option.propertyPath),
-            onchange: this.updateOptions(
-                this.changedOptions,
-                option.propertyPath
-            )
+            onchange: (
+                value: boolean | string | number
+            ): void => this.updateOptions(option.propertyPath || [], value)
         };
         renderFunction(parentNode, options);
 
