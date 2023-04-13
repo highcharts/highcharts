@@ -285,6 +285,26 @@ class MapBubbleSeries extends BubbleSeries {
         this.getRadii();
         this.translateBubble();
     }
+
+    updateParallelArrays(
+        point: Point,
+        i: (number|string),
+        iArgs?: Array<any>
+    ): void {
+        super.updateParallelArrays.call(
+            this,
+            point,
+            i,
+            iArgs
+        );
+
+        let processedXData = this.processedXData,
+            xData = this.xData;
+
+        if (processedXData && xData) {
+            processedXData.length = xData.length;
+        }
+    }
 }
 
 /* *

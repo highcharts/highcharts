@@ -1,0 +1,10 @@
+---
+name: Density of Cities in the World 
+authors:
+  - Piotr Madej, Magdalena Gut
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Series types
+...

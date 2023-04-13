@@ -57,6 +57,11 @@ QUnit.module('Color axis for series types', function () {
                             { start: 0, end: 4, y: 1 },
                             { start: 2, end: 5, y: 2 }
                         ];
+                    } else if (type === 'geoheatmap') {
+                        cfg.series[0].data = [
+                            { lat: 0, lon: 10, value: 1 },
+                            { lat: 10, lon: 0, value: 2 }
+                        ];
                     }
 
                     var chart = Highcharts.chart('container', cfg),

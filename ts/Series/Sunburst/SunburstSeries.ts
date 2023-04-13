@@ -958,6 +958,8 @@ class SunburstSeries extends TreemapSeries {
         } else {
             Series.prototype.drawDataLabels.call(series);
         }
+
+        series.idPreviousRoot = idRoot;
     }
 
     /**
@@ -1015,6 +1017,29 @@ class SunburstSeries extends TreemapSeries {
                 return arr;
             }, [] as Array<SunburstNode.NodeValuesObject>
         );
+    }
+
+    public setRootNode(
+        id: string,
+        redraw?: boolean,
+        eventArguments?: SunburstSeries.SetRootNodeObject
+    ): void {
+        const series = this;
+
+        if ( // If the target node is the only one at level 1, skip it. (#18658)
+            series.nodeMap[id].level === 1 &&
+            series.nodeList
+                .filter((node): boolean => node.level === 1)
+                .length === 1
+        ) {
+            if (series.idPreviousRoot === '') {
+                return;
+            }
+
+            id = '';
+        }
+
+        super.setRootNode(id, redraw, eventArguments);
     }
 
     /**
@@ -1242,6 +1267,14 @@ namespace SunburstSeries {
         optionsPoint: SunburstPointOptions;
         point: SunburstPoint;
         shapeArgs: SunburstNode.NodeValuesObject;
+    }
+
+    export interface SetRootNodeObject {
+        newRootId?: string;
+        previousRootId?: string;
+        redraw?: boolean;
+        series?: object;
+        trigger?: string;
     }
 }
 
