@@ -22,7 +22,7 @@ QUnit.test(
 
         chart.update({
             chart: {
-                width: 400
+                width: 440
             },
             legend: {
                 maxHeight: 40,
