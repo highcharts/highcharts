@@ -420,10 +420,6 @@ jobs:
           git fetch origin << parameters.reference-branch >> &&
           git checkout << parameters.reference-branch >>  &&
           npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
-      
-      - run:
-          name: Write file sizes at master
-          command: npx gulp write-file-sizes --filename master.json
       - run: npm i --no-save @highcharts/highcharts-utils cross-env cypress-visual-regression
       - run:
           name: Run utils in background
@@ -450,12 +446,43 @@ jobs:
           name: Comment on PR and upload visual test images if any produced
           command: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} npx gulp update-pr-testresults-cypress --fail-silently --user circleci-mu --pr {}
           when: always
+
+  filesize_comparison: 
+    <<: *defaults
+    description: Create visual comparison base images
+    parameters:
+      reference-branch:
+        description: "The reference branch"
+        type: string
+        default: "dashboards/main"
+    steps:
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - <<: *add_gh_user_config
+      - run: |
+          if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+            echo "Not a PR according to CircleCI, so marking this step successful"
+            circleci step halt
+          fi
+      - <<: *load_workspace
+      - run: | # checkout reference branch
+          git fetch origin << parameters.reference-branch >> &&
+          git checkout << parameters.reference-branch >>  &&
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+      - run:
+          name: Write file sizes at reference branch
+          command: npx gulp write-file-sizes --filename master.json
+      - run:
+          command: git checkout ${CIRCLE_BRANCH}
+          when: always # always go back
+      - run: npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
       - run:
           name: File size comparison
           command: |
             npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json &&
             npx gulp compare-size-and-comment --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
-
+      - store_artifacts:
+          path: /home/circleci/repo/highcharts/tmp/filesizes
 
   nightly_visual_diff:
     <<: *defaults
@@ -638,6 +665,12 @@ workflows:
               ignore: 
                 - master
                 - /db\/.*/
+          context: highcharts-staging
+      - filesize_comparison:
+          requires: [lint]
+          filters:
+            branches:
+              ignore: master
           context: highcharts-staging
       - visual_comparison_with_dashboards:
           requires: [lint]
