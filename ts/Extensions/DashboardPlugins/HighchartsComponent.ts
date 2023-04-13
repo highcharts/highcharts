@@ -161,6 +161,7 @@ class HighchartsComponent extends Component {
                     }]
                 }, {
                     name: 'chartConfig',
+                    propertyPath: ['chartOptions'],
                     type: 'textarea'
                 }, {
                     name: 'chartClassName',

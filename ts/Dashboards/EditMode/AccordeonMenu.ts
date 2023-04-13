@@ -111,7 +111,7 @@ class AccordeonMenu {
         if (!renderFunction) {
             return;
         }
-
+console.log(option);
         renderFunction(parentNode, {
             ...option,
             iconsURLPrefix: this.iconsURLPrefix,
@@ -162,7 +162,13 @@ class AccordeonMenu {
         if (!propertyPath) {
             return;
         }
+
+        if (propertyPath.length === 1 && propertyPath[0] === 'chartOptions') {
+            return JSON.stringify(component.options.chartOptions, null, 2);
+        }
+
         let value = component.options as any;
+
         for (let i = 0, end = propertyPath.length; i < end; i++) {
             if (!value) {
                 return;
