@@ -138,6 +138,20 @@ QUnit.test('Soft threshold', function (assert) {
         [0, 10],
         'Hard max and flat data and minRange'
     );
+
+    chart.xAxis[0].update({
+        categories: ['cat1', 'cat2']
+    }, false);
+    chart.series[0].points[2].remove(false);
+    chart.series[0].points[1].remove();
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        1,
+        `There shouldn't be visible unwanted ticks after updating the series,
+        minRange should be updated based on data if not set in chart
+        configuration (#18066).`
+    );
 });
 
 QUnit.test('Soft threshold = false', function (assert) {

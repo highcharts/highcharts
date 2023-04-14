@@ -1240,7 +1240,7 @@ class Axis {
         // Set the automatic minimum range based on the closest point distance
         if (
             axis.isXAxis &&
-            typeof axis.minRange === 'undefined' &&
+            !defined(axis.userMinRange) && // #18066
             !log
         ) {
 
