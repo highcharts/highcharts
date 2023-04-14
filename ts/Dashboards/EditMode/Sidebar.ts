@@ -86,7 +86,7 @@ class Sidebar {
     }];
 
     public static seriesIconURLPrefix =
-        Globals.iconsURLPrefix + 'series-types/icon-';
+        EditGlobals.iconsURLPrefix + 'series-types/icon-';
     public static components: Array<Sidebar.AddComponentDetails> = [
         {
             text: 'layout',
