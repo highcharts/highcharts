@@ -123,7 +123,7 @@ class EditMode {
 
     private active: boolean = false;
     public options: EditMode.Options;
-    public iconsURLPrefix: string = EditGlobals.iconsURL;
+    public iconsURLPrefix: string = EditGlobals.iconsURLPrefix;
     public board: Board;
     public lang: EditGlobals.LangOptions;
     public cellToolbar?: CellEditToolbar;

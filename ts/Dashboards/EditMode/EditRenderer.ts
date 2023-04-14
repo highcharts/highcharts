@@ -28,7 +28,6 @@ import type EditableOptions from '../Components/EditableOptions';
 
 import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
-import Globals from '../Globals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -117,7 +116,7 @@ function renderCollapse(
         'img',
         {
             className: 'highcharts-dashboards-outer-accordeon-header-icon',
-            src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
+            src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
         headerBtn
@@ -469,7 +468,7 @@ function renderNestedHeader(
         'img',
         {
             className: 'highcharts-dashboards-nested-header-icon',
-            src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
+            src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
         headerBtn
