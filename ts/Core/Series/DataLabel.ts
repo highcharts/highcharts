@@ -474,8 +474,7 @@ namespace DataLabel {
     }
 
     /**
-     * Init the data labels
-     * with the correct animation
+     * Init the data labels with the correct animation
      * @private
      */
     function initDataLabels(

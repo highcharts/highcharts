@@ -123,9 +123,7 @@ class NetworkgraphSeries extends Series {
 
     public points: Array<NetworkgraphPoint> = void 0 as any;
 
-    // properties to handle dataLabel defered animation
     public deferDataLabels: boolean = true;
-    public shouldInitializeDataLabels: boolean = true;
 
     /* *
      *
@@ -208,50 +206,29 @@ class NetworkgraphSeries extends Series {
      */
     public initDataLabels(this: NetworkgraphSeries): SVGElement {
         const series = this,
-            dlOptions = series.options.dataLabels,
-            shouldInitialize = series.shouldInitializeDataLabels;
+            dlOptions = series.options.dataLabels;
 
-        // if it's the first drawDataLabels() call
-        // then we'll create the SVG group for the first time
-        // & setup the animation from opacity 0 to opacity 1
-        // which lasts based on style.transition property
-        if (shouldInitialize) {
-            // create the SVG element for the dataLabels group
+        if (!series.dataLabelsGroup) {
             const dataLabelsGroup = this.initDataLabelsGroup();
 
-            // apply the dataLabels.style.transition not only to the
+            // Apply the dataLabels.style not only to the
             // individual dataLabels but also to the entire group
-            // to play the animation when the group appears
-            if (dlOptions && dlOptions.style && dlOptions.style.transition) {
-                dataLabelsGroup.attr({
-                    style: `transition: ${dlOptions.style.transition} ease 0s;`
-                });
+            if (dlOptions?.style) {
+                dataLabelsGroup.css(dlOptions.style);
             }
 
-            // initialize the opacity of the group to 0 (start of animation)
+            // Initialize the opacity of the group to 0 (start of animation)
             dataLabelsGroup.attr({ opacity: 0 });
 
-            const group = series.dataLabelsGroup;
-            if (group) {
-                if (series.visible) { // #2597, #3023, #3024
-                    dataLabelsGroup.show();
-                }
+            if (series.visible) { // #2597, #3023, #3024
+                dataLabelsGroup.show();
             }
 
             return dataLabelsGroup;
         }
 
-        // if it's not the first drawDataLabels() call then
-        // the dataLabelsGroup should already exist on the series
-        // and we should return it
-        if (series.dataLabelsGroup) {
-            series.dataLabelsGroup.attr({ opacity: 1 });
-            return series.dataLabelsGroup;
-        }
-
-        // to avoid casting, if it doesn't exist (altough it should)
-        // create the dataLabelsGroup and return it
-        return this.initDataLabelsGroup();
+        series.dataLabelsGroup.attr({ opacity: 1 });
+        return series.dataLabelsGroup;
     }
 
     /**
@@ -260,7 +237,7 @@ class NetworkgraphSeries extends Series {
      * @private
      */
     public drawDataLabels(): void {
-        // we defer drawing the dataLabels
+        // We defer drawing the dataLabels
         // until dataLabels.animation.defer time passes
         if (this.deferDataLabels) {
             return;
@@ -269,7 +246,7 @@ class NetworkgraphSeries extends Series {
         const dlOptions = this.options.dataLabels;
 
         let textPath;
-        if (dlOptions && dlOptions.textPath) {
+        if (dlOptions?.textPath) {
             textPath = dlOptions.textPath;
         }
 
@@ -277,22 +254,16 @@ class NetworkgraphSeries extends Series {
         Series.prototype.drawDataLabels.call(this, this.nodes);
 
         // Render link labels:
-        if (dlOptions && dlOptions.linkTextPath) {
-            // if linkTextPath is set, render link labels with linkTextPath
+        if (dlOptions?.linkTextPath) {
+            // If linkTextPath is set, render link labels with linkTextPath
             dlOptions.textPath = dlOptions.linkTextPath;
         }
 
         Series.prototype.drawDataLabels.call(this, this.data);
 
-        // go back to textPath for nodes
-        if (dlOptions && dlOptions.textPath) {
+        // Go back to textPath for nodes
+        if (dlOptions?.textPath) {
             dlOptions.textPath = textPath;
-        }
-
-        // We should not initiate the animation anymore
-        // after the first call of drawDataLabels() method
-        if (this.shouldInitializeDataLabels) {
-            this.shouldInitializeDataLabels = false;
         }
     }
 
@@ -406,10 +377,16 @@ class NetworkgraphSeries extends Series {
             });
         });
 
+        // If the dataLabels.animation.defer time is longer than
+        // the time it takes for the layout to become stable then
+        // drawDataLabels would never be called (that's why we force it here)
         addEvent(this, 'afterSimulation', function (): void {
             this.deferDataLabels = false;
-            this.drawDataLabels(); // first time initialization with opacity = 0
-            this.drawDataLabels(); // second time for setting the opacity = 1
+            this.drawDataLabels();
+
+            if (this.dataLabelsGroup) {
+                this.dataLabelsGroup.attr({ opacity: 1 });
+            }
         });
 
         return this;
