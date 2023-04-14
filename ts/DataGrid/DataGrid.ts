@@ -537,7 +537,11 @@ class DataGrid {
             const cellElements = rowElement.childNodes;
 
 
-            for (let k = 0; k < columnsInPresentationOrder.length; k++) {
+            for (
+                let k = 0, kEnd = columnsInPresentationOrder.length;
+                k < kEnd;
+                k++
+            ) {
                 const cell = cellElements[k] as HTMLElement,
                     column = columnsInPresentationOrder[k],
                     value = this.dataTable
@@ -829,11 +833,10 @@ class DataGrid {
     private formatHeaderCell(columnName: string): string {
         const options = this.options,
             columnOptions = options.columns[columnName],
-            headerFormat = columnOptions && columnOptions.headerFormat,
-            ctx = { text: columnName };
+            headerFormat = columnOptions && columnOptions.headerFormat;
 
         if (headerFormat) {
-            return F.format(headerFormat, ctx);
+            return F.format(headerFormat, { text: columnName });
         }
 
         return columnName;
