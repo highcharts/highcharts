@@ -156,7 +156,12 @@ class AccordeonMenu {
             const content = EditRenderer.renderNestedHeaders(
                 parentElement,
                 name,
-                !!allowEnabled
+                !!allowEnabled,
+                (value: boolean | string | number): void =>
+                    this.updateOptions(
+                        detailedOptions[i].propertyPath || [],
+                        value
+                    )
             );
 
             for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {

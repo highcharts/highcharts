@@ -364,7 +364,14 @@ function renderToggle(
         toggleContainer
     );
 
-    renderCheckbox(toggle);
+    const input = renderCheckbox(toggle);
+    const onchange = options.onchange;
+    if (input && onchange) {
+        input.addEventListener('change', (e: any): void => {
+            onchange(e.target.checked);
+        });
+    }
+
 
     createElement(
         'span',
@@ -430,7 +437,8 @@ function renderText(
 function renderNestedHeader(
     parentElement: HTMLDOMElement,
     name: string,
-    allowEnabled: boolean
+    allowEnabled: boolean,
+    onchange: (value: boolean) => void
 ): HTMLDOMElement {
     const nested = createElement(
         'div',
@@ -481,7 +489,8 @@ function renderNestedHeader(
         renderToggle(header, {
             enabledOnOffLabels: true,
             id: name,
-            name: name
+            name: name,
+            onchange
         });
     }
 
