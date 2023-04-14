@@ -341,7 +341,7 @@ function subtasks() {
                 connectors: {
                     lineWidth: 2
                 },
-                borderRadius: 0
+                borderRadius: 2
             }
         },
         series: [{
@@ -590,7 +590,7 @@ function nav() {
                 type: 'gantt',
                 color: 'white',
                 borderColor: 'white',
-                borderRadius: 0,
+                borderRadius: 1,
                 pointWidth: 10,
                 accessibility: {
                     enabled: false
@@ -648,9 +648,9 @@ function nav() {
             series: {
                 groupPadding: 0.3,
                 pointPadding: 0.3,
-                pointWidth: 30,
+                pointWidth: 25,
                 borderWidth: 0,
-                borderRadius: 0,
+                borderRadius: 2,
                 dataLabels: {
                     enabled: false,
                     color: 'white',
