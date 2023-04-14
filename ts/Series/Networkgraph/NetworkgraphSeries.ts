@@ -213,7 +213,7 @@ class NetworkgraphSeries extends Series {
 
             // Apply the dataLabels.style not only to the
             // individual dataLabels but also to the entire group
-            if (dlOptions?.style) {
+            if (!series.chart.styledMode && dlOptions?.style) {
                 dataLabelsGroup.css(dlOptions.style);
             }
 
@@ -358,10 +358,14 @@ class NetworkgraphSeries extends Series {
 
         // drawDataLabels() fires for the first time after
         // dataLabels.animation.defer time unless
-        // the dataLabels.animation = false
-        syncTimeout((): void => {
+        // the dataLabels.animation = false or dataLabels.defer = false
+        if (!dlOptions?.defer || !options.layoutAlgorithm?.enableSimulation) {
             this.deferDataLabels = false;
-        }, dlOptions ? animObject(dlOptions.animation).defer : 0);
+        } else {
+            syncTimeout((): void => {
+                this.deferDataLabels = false;
+            }, dlOptions ? animObject(dlOptions.animation).defer : 0);
+        }
 
         addEvent(this, 'updatedData', (): void => {
             if (this.layout) {
