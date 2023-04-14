@@ -19,7 +19,7 @@
  *
  * */
 
-export type Arguments = Array<Term>;
+export type Arguments = Array<(Range|Term)>;
 
 export type Formula = Array<(Operator|Term)>;
 
@@ -45,7 +45,7 @@ export interface Range {
     type: 'range';
 }
 
-export type Term = (Formula|Function|Pointer|Range|Value);
+export type Term = (Formula|Function|Pointer|Value);
 
 export type Value = number;
 
@@ -56,13 +56,23 @@ export type Value = number;
  * */
 
 function isFormula(
-    item: unknown
+    item: (Range|Operator|Term)
 ): item is Formula {
     return item instanceof Array;
 }
 
+function isFunction(
+    item: (Range|Operator|Term)
+): item is Function {
+    return (
+        typeof item === 'object' &&
+        !(item instanceof Array) &&
+        item.type === 'function'
+    );
+}
+
 function isOperator(
-    item: unknown
+    item: (Range|Operator|Term)
 ): item is Operator {
     return (
         typeof item === 'string' &&
@@ -70,8 +80,28 @@ function isOperator(
     );
 }
 
+function isPointer(
+    item: (Range|Operator|Term)
+): item is Pointer {
+    return (
+        typeof item === 'object' &&
+        !(item instanceof Array) &&
+        item.type === 'pointer'
+    );
+}
+
+function isRange(
+    item: (Range|Operator|Term)
+): item is Range {
+    return (
+        typeof item === 'object' &&
+        !(item instanceof Array) &&
+        item.type === 'range'
+    );
+}
+
 function isValue(
-    item: unknown
+    item: (Range|Operator|Term)
 ): item is Value {
     return typeof item === 'number';
 }
@@ -84,7 +114,10 @@ function isValue(
 
 const MathFormula = {
     isFormula,
+    isFunction,
     isOperator,
+    isPointer,
+    isRange,
     isValue
 };
 
