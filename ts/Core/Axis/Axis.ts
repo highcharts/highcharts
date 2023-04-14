@@ -1240,7 +1240,7 @@ class Axis {
         // Set the automatic minimum range based on the closest point distance
         if (
             axis.isXAxis &&
-            !defined(axis.userMinRange) && // #18066
+            typeof axis.minRange === 'undefined' &&
             !log
         ) {
 
@@ -2544,6 +2544,12 @@ class Axis {
             }
 
             axis.forceRedraw = false;
+
+            // #18066 delete minRange property to ensure that it will be
+            // calculated again after dirty data in series
+            if (!axis.userMinRange) {
+                axis.minRange = void 0;
+            }
 
             // get data extremes if needed
             axis.getSeriesExtremes();

@@ -139,10 +139,24 @@ QUnit.test('Soft threshold', function (assert) {
         'Hard max and flat data and minRange'
     );
 
+    chart.series[0].points[2].remove(false);
     chart.xAxis[0].update({
         categories: ['cat1', 'cat2']
     }, false);
-    chart.series[0].points[2].remove(false);
+    chart.addSeries({
+        data: [0]
+    });
+    chart.series[0].setVisible(false);
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        1,
+        `There shouldn't be visible unwanted ticks after hiding series, which
+        has more points, than the other (#18066).`
+    );
+
+    chart.series[0].setVisible(true);
+    chart.series[1].remove(false);
     chart.series[0].points[1].remove();
 
     assert.strictEqual(
