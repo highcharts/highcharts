@@ -223,7 +223,7 @@ function renderSelect(
         {},
         btnContent
     );
-    createElement(
+    const dropdownPointer = createElement(
         'img',
         {
             className: EditGlobals.classNames.dropdownIcon,
@@ -244,6 +244,10 @@ function renderSelect(
     btn.addEventListener('click', function (): void {
         dropdown.style.display =
             dropdown.style.display === 'none' ? 'flex' : 'none';
+        dropdownPointer.style.transform =
+            dropdown.style.display === 'none' ?
+                'rotate(0deg)' :
+                'rotate(90deg)';
     });
 
     for (let i = 0, iEnd = options.items.length; i < iEnd; ++i) {
@@ -490,7 +494,7 @@ function renderNestedHeader(
         const display = content.style.display;
         content.style.display = display === 'none' ? 'flex' : 'none';
         headerIcon.style.transform =
-            display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
+            display === 'none' ? 'rotate(-90deg)' : 'rotate(0deg)';
     });
 
     return content;
