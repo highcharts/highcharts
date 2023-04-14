@@ -218,6 +218,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
             transition: 'opacity 2000ms'
         },
 
+        defer: true,
         animation: {
             defer: 2000
         }
