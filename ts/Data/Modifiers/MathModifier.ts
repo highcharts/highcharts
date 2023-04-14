@@ -19,11 +19,10 @@
  *
  * */
 
-import type DataEvent from '../../DataEvent';
-import type DataTable from '../../DataTable';
+import type DataEvent from '../DataEvent';
+import type DataTable from '../DataTable';
 
-import DataModifier from '../DataModifier.js';
-import MathFormula from './MathFormula.js';
+import DataModifier from './DataModifier.js';
 
 /* *
  *
@@ -115,41 +114,6 @@ namespace MathModifier {
         alternativeSeparator: boolean;
     }
 
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    export const parseFormula = MathFormula.parseFormula;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    export function elementaryAlgebra(
-        operation: string,
-        x: number,
-        y: number
-    ): number {
-        switch (operation) {
-            case '+':
-                return x + y;
-            case '-':
-                return x - y;
-            case '*':
-                return x * y;
-            case '/':
-                return x / y;
-            case '^':
-                return Math.pow(x, y);
-            default:
-                return NaN;
-        }
-    }
-
 }
 
 /* *
@@ -158,7 +122,7 @@ namespace MathModifier {
  *
  * */
 
-declare module '../DataModifierType' {
+declare module './DataModifierType' {
     interface DataModifierTypes {
         Math: typeof MathModifier
     }

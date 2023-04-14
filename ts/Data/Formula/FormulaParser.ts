@@ -15,41 +15,29 @@
 
 /* *
  *
+ *  Imports
+ *
+ * */
+
+import type {
+    Arguments,
+    Formula,
+    Function,
+    Operator,
+    Pointer,
+    Range,
+    Value
+} from './FormulaTypes.js';
+
+/* *
+ *
  *  Declarations
  *
  * */
 
-export type MathArguments =
-    Array<(number|MathFormula|MathFunction|MathPointer|MathRange)>;
-
-export type MathFormula =
-    Array<(number|MathFormula|MathFunction|MathOperator|MathPointer|MathRange)>;
-
-export interface MathFunction {
-    arguments: MathArguments;
-    name: string;
-    type: 'function';
-}
-
-export type MathOperator = ('+'|'-'|'*'|'/'|'^');
-
-export interface MathPointer {
-    column: number;
-    row: number;
-    type: 'pointer';
-}
-
-export interface MathRange {
-    beginColumn: number;
-    beginRow: number;
-    endColumn: number;
-    endRow: number;
-    type: 'range';
-}
-
-export interface FormulaParseError extends Error {
+export interface FormulaParserError extends Error {
     message: string;
-    name: 'FormulaParseError';
+    name: 'FormulaParserError';
 }
 
 /* *
@@ -124,9 +112,9 @@ function extractParantheses(
 function parseArguments(
     text: string,
     alternativeSeparator: boolean
-): MathArguments {
-    const argumentsSeparator = (alternativeSeparator ? ';' : ','),
-        mathArguments: MathArguments = [];
+): Arguments {
+    const args: Arguments = [],
+        argumentsSeparator = (alternativeSeparator ? ';' : ',');
 
     let parantheseLevel = 0,
         term = '';
@@ -145,7 +133,7 @@ function parseArguments(
             !parantheseLevel &&
             term
         ) {
-            mathArguments.push(parseTerm(term, alternativeSeparator));
+            args.push(parseTerm(term, alternativeSeparator));
             term = '';
         } else if (char !== ' ') {
             term += char;
@@ -158,114 +146,115 @@ function parseArguments(
         }
     }
 
+    // look for left-overs
     if (!parantheseLevel && term) {
-        mathArguments.push(parseTerm(term, alternativeSeparator));
+        args.push(parseTerm(term, alternativeSeparator));
     }
 
-    return mathArguments;
+    return args;
 }
 
 function parseFormula(
     text: string,
     alternativeSeparator: boolean
-): MathFormula {
+): Formula {
     const decimalRegExp = (
             alternativeSeparator ?
                 decimal2RegExp :
                 decimal1RegExp
         ),
-        mathFormula: MathFormula = [];
+        formula: Formula = [];
 
     let match: (RegExpMatchArray|null),
-        more = text.trim();
+        next = text.trim();
 
-    while (more) {
+    while (next) {
 
-        // Check for an function
-        match = more.match(functionRegExp);
+        // Check for a function
+        match = next.match(functionRegExp);
         if (match) {
-            more = more.substring(match[0].length - 1).trim();
+            next = next.substring(match[0].length - 1).trim();
 
-            const parantheses = extractParantheses(more),
-                mathFunction: MathFunction = {
+            const parantheses = extractParantheses(next),
+                formulaFunction: Function = {
                     type: 'function',
                     name: match[1],
-                    arguments: parseArguments(parantheses, alternativeSeparator)
+                    args: parseArguments(parantheses, alternativeSeparator)
                 };
 
             if (
-                mathFormula.length &&
-                typeof mathFormula[mathFormula.length - 1] !== 'string'
+                formula.length &&
+                typeof formula[formula.length - 1] !== 'string'
             ) {
-                mathFormula.push('+');
+                formula.push('+');
             }
 
-            mathFormula.push(mathFunction);
+            formula.push(formulaFunction);
 
-            more = more.substring(parantheses.length + 2).trim();
+            next = next.substring(parantheses.length + 2).trim();
 
             continue;
         }
 
-        // Check for an A1 notation
-        match = more.match(pointerOrRangeRegExp);
+        // Check for an A1 pointer notation
+        match = next.match(pointerOrRangeRegExp);
         if (match) {
-            mathFormula.push(parsePointerOrRange(match));
+            formula.push(parsePointerOrRange(match));
 
-            more = more.substring(match[0].length).trim();
+            next = next.substring(match[0].length).trim();
 
             continue;
         }
 
         // Check for a number value
-        match = more.match(decimalRegExp);
+        match = next.match(decimalRegExp);
         if (match) {
-            mathFormula.push(parseFloat(match[0]));
+            formula.push(parseFloat(match[0]));
 
-            more = more.substring(match[0].length).trim();
+            next = next.substring(match[0].length).trim();
 
             continue;
         }
 
         // Check for a formula operator
-        match = more.match(operatorRegExp);
+        match = next.match(operatorRegExp);
         if (match) {
-            mathFormula.push(match[0] as MathOperator);
+            formula.push(match[0] as Operator);
 
-            more = more.substring(match[0].length).trim();
+            next = next.substring(match[0].length).trim();
 
             continue;
         }
 
         // Check for a formula in parantheses
-        if (more[0] === '(') {
-            const paranteses = extractParantheses(more);
+        if (next[0] === '(') {
+            const paranteses = extractParantheses(next);
 
             if (paranteses) {
-                mathFormula
+                formula
                     .push(parseFormula(paranteses, alternativeSeparator));
 
-                more = more.substring(paranteses.length + 2).trim();
+                next = next.substring(paranteses.length + 2).trim();
 
                 continue;
             }
         }
 
         // Something is not right
-        const position = text.length - more.length,
+        const position = text.length - next.length,
             error = new Error(
                 'Unexpected character `' +
                 text.substring(position, position + 1) +
                 '` at position ' + (position + 1) +
                 '. (`...' + text.substring(position - 5, position + 6) + '...`)'
-            ) as FormulaParseError;
+            ) as FormulaParserError;
 
-        error.name = 'FormulaParseError';
+        error.name = 'FormulaParserError';
 
         throw error;
     }
 
-    return mathFormula;
+    return formula;
 }
 
 function parsePointerColumn(
@@ -293,7 +282,7 @@ function parsePointerColumn(
 
 function parsePointerOrRange(
     match: RegExpMatchArray
-): (MathPointer|MathRange) {
+): (Pointer|Range) {
 
     if (match[4]) {
         return {
@@ -315,13 +304,13 @@ function parsePointerOrRange(
 function parseTerm(
     text: string,
     alternativeSeparator: boolean
-): (number|MathFormula|MathFunction|MathPointer|MathRange) {
-    const mathFormula = parseFormula(text, alternativeSeparator);
+): (Formula|Function|Pointer|Range|Value) {
+    const formula = parseFormula(text, alternativeSeparator);
 
     return (
-        mathFormula.length === 1 && typeof mathFormula[0] !== 'string' ?
-            mathFormula[0] :
-            mathFormula
+        formula.length === 1 && typeof formula[0] !== 'string' ?
+            formula[0] :
+            formula
     );
 }
 
@@ -331,8 +320,8 @@ function parseTerm(
  *
  * */
 
-const MathFormula = {
+const FormulaParser = {
     parseFormula
 };
 
-export default MathFormula;
+export default FormulaParser;
