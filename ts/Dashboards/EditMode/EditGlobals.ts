@@ -64,6 +64,8 @@ const EditGlobals: EditGlobals = {
         menuDestroy: PREFIX + 'menu-destroy',
         editSidebarWrapper: PREFIX + 'sidebar-wrapper',
         customSelect: PREFIX + 'custom-select',
+        customSelectButton: PREFIX + 'custom-option-button',
+        toggleContainer: PREFIX + 'toggle-container',
         toggleWrapper: PREFIX + 'toggle-wrapper',
         toggleSlider: PREFIX + 'toggle-slider',
         toggleWrapperColored: PREFIX + 'toggle-wrapper-colored',
@@ -89,7 +91,28 @@ const EditGlobals: EditGlobals = {
         editSidebarTabBtnWrapper: PREFIX + 'tabs-buttons-wrapper',
         editSidebarRight: PREFIX + 'sidebar-right',
         editSidebarRightShow: PREFIX + 'sidebar-right-show',
-        viewFullscreen: PREFIX + 'view-fullscreen'
+        viewFullscreen: PREFIX + 'view-fullscreen',
+
+        // Accordeon
+        accordeonMenu: PREFIX + 'accordeon-menu',
+        accordeonContainer: PREFIX + 'outer-accordeon',
+        accordeonHeader: PREFIX + 'outer-accordeon-header',
+        accordeonHeaderBtn: PREFIX + 'outer-accordeon-header-btn',
+        accordeonHeaderIcon: PREFIX + 'outer-accordeon-header-icon',
+        accordeonContent: PREFIX + 'outer-accordeon-content',
+        accordeonNestedWrapper: PREFIX + 'accordeon-nested',
+        accordeonNestedHeader: PREFIX + 'accordeon-nested-header',
+        accordeonNestedHeaderBtn: PREFIX + 'accordeon-nested-header-btn',
+        accordeonNestedHeaderIcon: PREFIX + 'accordeon-nested-header-icon',
+        accordeonNestedContent: PREFIX + 'accordeon-nested-content',
+
+        // Custom dropdown with icons
+        dropdown: PREFIX + 'dropdown',
+        dropdownContent: PREFIX + 'dropdown-content',
+        dropdownButton: PREFIX + 'dropdown-button',
+        dropdownIcon: PREFIX + 'pointer',
+
+        icon: PREFIX + 'icon'
     },
     lang: {
         editMode: 'Edit mode',
@@ -99,7 +122,7 @@ const EditGlobals: EditGlobals = {
         id: 'Id',
         title: 'Title',
         caption: 'Caption',
-        chartConfig: 'Chart configutration',
+        chartConfig: 'Chart configuration',
         chartClassName: 'Chart class name',
         chartID: 'Chart id',
         scaleElements: 'Scale elements',
@@ -110,7 +133,8 @@ const EditGlobals: EditGlobals = {
         viewFullscreen: 'View in full screen',
         exitFullscreen: 'Exit full screen',
         on: 'on',
-        off: 'off'
+        off: 'off',
+        settings: 'Settings'
     }
 };
 
@@ -163,8 +187,12 @@ namespace EditGlobals {
         menuDestroy: string;
         editSidebarWrapper: string;
         customSelect: string;
+        customSelectButton: string;
+        toggleContainer: string;
         toggleWrapper: string;
         toggleSlider: string;
+        toggleWrapperColored: string;
+        toggleLabels: string;
         button: string;
         labelText: string;
         sidebarNavButton: string;
@@ -180,6 +208,22 @@ namespace EditGlobals {
         editSidebarTabBtnWrapper: string;
         editSidebarRight: string;
         editSidebarRightShow: string;
+        accordeonMenu: string;
+        accordeonContainer: string;
+        accordeonHeader: string;
+        accordeonHeaderBtn: string;
+        accordeonHeaderIcon: string;
+        accordeonContent: string;
+        accordeonNestedWrapper: string;
+        accordeonNestedHeader: string;
+        accordeonNestedHeaderBtn: string;
+        accordeonNestedHeaderIcon: string;
+        accordeonNestedContent: string;
+        dropdown: string;
+        dropdownContent: string;
+        dropdownButton: string;
+        dropdownIcon:string;
+        icon: string;
     }
 
     export interface LangOptions {
@@ -202,6 +246,7 @@ namespace EditGlobals {
         exitFullscreen?: string;
         on: string;
         off: string;
+        settings: string;
     }
 
     export type TLangKeys = 'editMode'|'verticalSeparator';

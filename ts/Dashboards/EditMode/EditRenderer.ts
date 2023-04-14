@@ -24,7 +24,6 @@
 
 import type MenuItem from './Menu/MenuItem.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type EditableOptions from '../Components/EditableOptions';
 
 import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
@@ -69,11 +68,12 @@ function renderContextButton(
                 onclick: function (): void {
                     editMode.onContextBtnClick(editMode);
                 }
-            }, {}, parentNode
+            }, {
+                background: 'url(' +
+                    editMode.options.contextMenu.icon +
+                ') no-repeat 50% 50%'
+            }, parentNode
         );
-        ctxBtnElement.style.background = 'url(' +
-            editMode.options.contextMenu.icon +
-        ') no-repeat 50% 50%';
     }
 
     return ctxBtnElement;
@@ -86,14 +86,14 @@ function renderCollapse(
 
     const accordeon = createElement(
         'div',
-        { className: 'highcharts-dashboards-outer-accordeon' },
+        { className: EditGlobals.classNames.accordeonContainer },
         {},
         parentElement
     );
     const header = createElement(
         'div',
         {
-            className: 'highcharts-dashboards-outer-accordeon-header'
+            className: EditGlobals.classNames.accordeonHeader
         },
         {},
         accordeon
@@ -101,7 +101,7 @@ function renderCollapse(
 
     const headerBtn = createElement(
         'button',
-        { className: 'highcharts-dashboards-outer-accordeon-header-btn' },
+        { className: EditGlobals.classNames.accordeonHeaderBtn },
         {},
         header
     );
@@ -115,7 +115,7 @@ function renderCollapse(
     const headerIcon = createElement(
         'img',
         {
-            className: 'highcharts-dashboards-outer-accordeon-header-icon',
+            className: EditGlobals.classNames.accordeonHeaderIcon,
             src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
@@ -124,8 +124,8 @@ function renderCollapse(
 
     const content = createElement(
         'div',
-        { className: 'highcharts-dashboards-outer-accordeon-content' },
-        { display: 'none' },
+        { className: EditGlobals.classNames.accordeonContent },
+        {},
         accordeon
     );
 
@@ -172,7 +172,7 @@ function renderSelect(
     const customSelect = createElement(
         'div',
         {
-            className: 'highcharts-dashboards-dropdown'
+            className: EditGlobals.classNames.dropdown
         },
         {},
         parentElement
@@ -181,19 +181,21 @@ function renderSelect(
     const btn = createElement(
         'button',
         {
-            className: 'highcharts-dashboards-dropdown-button'
+            className: EditGlobals.classNames.dropdownButton
         },
         {
             margin: 0
         },
         customSelect
     );
+
     const btnContent = createElement(
         'div',
         {},
-        { display: 'flex', 'align-items': 'center' },
+        {},
         btn
     );
+
     const iconURL = (
         U.find(options.items, (item): boolean => item.name === options.value) ||
         {}
@@ -206,7 +208,7 @@ function renderSelect(
             'img',
             {
                 src: iconsURLPrefix + iconURL,
-                className: 'highcharts-dashboards-icon'
+                className: EditGlobals.classNames.icon
             },
             {},
             btnContent
@@ -224,7 +226,7 @@ function renderSelect(
     createElement(
         'img',
         {
-            className: 'highcharts-dashboards-dropdown-pointer',
+            className: EditGlobals.classNames.dropdownIcon,
             src: iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
@@ -234,11 +236,9 @@ function renderSelect(
     let dropdown = createElement(
         'ul',
         {
-            className: 'highcharts-dashboards-dropdown-content'
+            className: EditGlobals.classNames.dropdownContent
         },
-        {
-            display: 'none'
-        },
+        {},
         customSelect
     );
     btn.addEventListener('click', function (): void {
@@ -275,18 +275,20 @@ function renderSelectElement(
     const selectOption = createElement('li', {}, { margin: 0 }, dropdown);
     const selectOptionBtn = createElement(
         'button',
-        { className: 'highcharts-dashboards-select-option-button' },
-        { height: '40px', width: '100%' },
+        { className: EditGlobals.classNames.customSelectButton },
+        {},
         selectOption
     );
+
     let icon: HTMLElement|undefined;
+
     if (option.iconURL) {
         icon = createElement(
             'img',
             {
                 src: iconURL
             },
-            { width: '24px', height: '24px' },
+            {},
             selectOptionBtn
         );
     }
@@ -334,7 +336,7 @@ function renderToggle(
 
     const toggleContainer = createElement(
         'div',
-        { className: 'highcharts-dashboards-toggle-container' },
+        { className: EditGlobals.classNames.toggleContainer },
         {},
         parentElement
     );
@@ -386,7 +388,6 @@ function renderToggle(
     return toggleContainer;
 }
 
-
 /**
  * Function to create text element.
  *
@@ -434,7 +435,7 @@ function renderNestedHeader(
     const nested = createElement(
         'div',
         {
-            className: 'highcharts-dashboards-nested'
+            className: EditGlobals.classNames.accordeonNestedWrapper
         },
         {},
         parentElement
@@ -443,7 +444,7 @@ function renderNestedHeader(
     const header = createElement(
         'div',
         {
-            className: 'highcharts-dashboards-nested-header'
+            className: EditGlobals.classNames.accordeonNestedHeader
         },
         {},
         nested
@@ -451,23 +452,15 @@ function renderNestedHeader(
 
     const headerBtn = createElement(
         'button',
-        { className: 'highcharts-dashboards-nested-header-btn' },
-        {
-            border: 'none',
-            font: 'inherit',
-            color: 'inherit',
-            background: 'none',
-            margin: 0,
-            width: '100%',
-            display: 'flex'
-        },
+        { className: EditGlobals.classNames.accordeonNestedHeaderBtn },
+        {},
         header
     );
 
     const headerIcon = createElement(
         'img',
         {
-            className: 'highcharts-dashboards-nested-header-icon',
+            className: EditGlobals.classNames.accordeonNestedHeaderIcon,
             src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
@@ -487,9 +480,9 @@ function renderNestedHeader(
     const content = createElement(
         'div',
         {
-            className: 'highcharts-dashboards-nested-content'
+            className: EditGlobals.classNames.accordeonNestedContent
         },
-        { display: 'none' },
+        {},
         nested
     );
 
@@ -594,6 +587,7 @@ function renderInput(
     );
 
     const onchange = options.onchange;
+
     if (onchange) {
         input.addEventListener('change', function (e: any): void {
             onchange(e.target.value);
@@ -644,6 +638,7 @@ function renderTextarea(
     );
 
     const onchange = options.onchange;
+
     if (onchange) {
         textarea.addEventListener('change', function (e: any): void {
             onchange(e.target.value);

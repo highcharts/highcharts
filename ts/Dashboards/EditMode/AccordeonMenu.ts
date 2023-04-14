@@ -3,6 +3,7 @@ import type EditableOptions from '../Components/EditableOptions';
 
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
+import EditGlobals from './EditGlobals.js';
 const {
     createElement
 } = U;
@@ -16,33 +17,6 @@ class AccordeonMenu {
     constructor(iconsURLPrefix: string, closeSidebar: Function) {
         this.iconsURLPrefix = iconsURLPrefix;
         this.closeSidebar = closeSidebar;
-    }
-    public createAccordeonMenu(
-        container: HTMLElement,
-        component: Component
-    ): void {
-
-        const editableOptions = component.editableOptions.getOptions();
-        let option, content;
-
-        const accordeonMenuContainer = createElement(
-            'div',
-            {
-                className: 'highcharts-dashboards-accordeon-menu'
-            },
-            {},
-            container
-        );
-
-        for (let i = 0, end = editableOptions.length; i < end; i++) {
-            option = editableOptions[i];
-            content = EditRenderer.renderCollapse(
-                accordeonMenuContainer,
-                option.name
-            ).content;
-
-            this.renderAccordeon(option, content, component);
-        }
     }
 
     public updateOptions(
@@ -69,10 +43,11 @@ class AccordeonMenu {
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
         let option, content;
+
         const accordeonContainer = createElement(
             'div',
             {
-                className: 'highcharts-dashboards-accordeon-menu'
+                className: EditGlobals.classNames.accordeonMenu
             },
             {},
             container
@@ -91,7 +66,7 @@ class AccordeonMenu {
         EditRenderer.renderButton(
             accordeonContainer,
             {
-                value: 'Update',
+                value: EditGlobals.lang.confirmButton,
                 callback: (): void => {
                     component.update(this.changedOptions as any);
                     menu.closeSidebar();
@@ -102,7 +77,7 @@ class AccordeonMenu {
         EditRenderer.renderButton(
             accordeonContainer,
             {
-                value: 'Cancel',
+                value: EditGlobals.lang.cancelButton,
                 callback: (): void => {
                     menu.changedOptions = {};
                     menu.closeSidebar();
