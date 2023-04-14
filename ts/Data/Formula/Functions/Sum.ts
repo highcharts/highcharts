@@ -29,13 +29,38 @@ import ProcessorFunction from './ProcessorFunction.js';
  *
  * */
 
-function callback(
-    values: Array<Value>
+/**
+ * Processor for the `SUM(...values)` implementation. Calculates the sum of the
+ * given values.
+ *
+ * @private
+ * @function Formula.ProcessorFunction.types.SUM
+ *
+ * @param {Array<(Formula.Value|Array<Formula.Value>)>} values
+ * Values to process.
+ *
+ * @return {Formula.Value}
+ * Result value of the process.
+ */
+function process(
+    values: Array<(Value|Array<Value>)>
 ): Value {
     let result = 0;
 
-    for (let i = 0, iEnd = values.length; i < iEnd; ++i) {
-        result += values[i];
+    for (
+        let i = 0,
+            iEnd = values.length,
+            value: (Value|Array<Value>);
+        i < iEnd;
+        ++i
+    ) {
+        value = values[i];
+
+        if (typeof value === 'number') {
+            result += value;
+        } else {
+            result += process(value);
+        }
     }
 
     return result;
@@ -49,7 +74,7 @@ function callback(
 
 
 const Sum: ProcessorFunction = {
-    callback
+    process
 };
 
 ProcessorFunction.registerType('SUM', Sum);

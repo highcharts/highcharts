@@ -175,12 +175,29 @@ function parseArguments(
     return args;
 }
 
+/**
+ * Converts a spreadsheet formula string into a formula array. Throws a
+ * `FormulaParserError` when the string can not be parsed.
+ *
+ * @private
+ * @function Formula.parseFormula
+ *
+ * @param {string} text
+ * Spreadsheet formula string, without the leading `=`.
+ *
+ * @param {boolean} alternativeSeparators
+ * * `false` to expect `,` between arguments and `.` in decimals;
+ * * `true` to expect `;` between arguments and `,` in decimals.
+ *
+ * @return {Formula.Formula}
+ * Formula array representing the string.
+ */
 function parseFormula(
     text: string,
-    alternativeSeparator: boolean
+    alternativeSeparators: boolean
 ): Formula {
     const decimalRegExp = (
-            alternativeSeparator ?
+            alternativeSeparators ?
                 decimal2RegExp :
                 decimal1RegExp
         ),
@@ -201,7 +218,7 @@ function parseFormula(
             formula.push(parseFunction(
                 match,
                 parantheses,
-                alternativeSeparator
+                alternativeSeparators
             ));
 
             next = next.substring(parantheses.length + 2).trim();
@@ -245,7 +262,7 @@ function parseFormula(
 
             if (paranteses) {
                 formula
-                    .push(parseFormula(paranteses, alternativeSeparator));
+                    .push(parseFormula(paranteses, alternativeSeparators));
 
                 next = next.substring(paranteses.length + 2).trim();
 
@@ -347,7 +364,7 @@ function parseTerm(
     alternativeSeparators: boolean
 ): (Formula|Function|Pointer|Range|Value) {
 
-    // Check for a range notation
+    // Check for a A1:A1 range notation
     const match = text.match(rangeRegExp);
     if (match) {
         return parseRange(match);

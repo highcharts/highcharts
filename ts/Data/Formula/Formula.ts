@@ -22,6 +22,7 @@
 import FormulaParser from './FormulaParser.js';
 import FormulaProcessor from './FormulaProcessor.js';
 import FormulaType from './FormulaTypes.js';
+import ProcessorFunction from './Functions/ProcessorFunction.js';
 
 import './Functions/Average.js';
 import './Functions/Sum.js';
@@ -53,10 +54,17 @@ export type {
  *
  * */
 
+/**
+ * Formula engine to make use of spreadsheet formula strings.
+ *
+ * @private
+ * @namespace Formula
+ */
 const Formula = {
     ...FormulaParser,
     ...FormulaProcessor,
-    ...FormulaType
+    ...FormulaType,
+    ProcessorFunction
 };
 
 export default Formula;

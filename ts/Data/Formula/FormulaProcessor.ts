@@ -60,9 +60,22 @@ function basicOperation(
     }
 }
 
+/**
+ * Processes a formula array on the given table. If the formula does not contain
+ * pointers or ranges, then no table has to be provided.
+ *
+ * @param {Formula.Formula} formula
+ * Formula array to process.
+ *
+ * @param {Highcharts.DataTable} [table]
+ * Table to use for pointer and ranges.
+ *
+ * @return {Formula.Value|undefined}
+ * Result value of the process. `undefined` indicates an empty formula array.
+ */
 function processFormula(
     formula: Formula,
-    table: DataTable
+    table?: DataTable
 ): (Value|undefined) {
     let x: (Value|undefined);
 
@@ -89,7 +102,7 @@ function processFormula(
         } else if (FormulaTypes.isFunction(item)) {
             y = (processFunction(item, table) || NaN);
         } else if (FormulaTypes.isPointer(item)) {
-            y = (processPointer(item, table) || NaN);
+            y = (table && processPointer(item, table) || NaN);
         }
 
         if (typeof y !== 'undefined') {
@@ -104,13 +117,13 @@ function processFormula(
 
 function processFunction(
     item: Function,
-    table: DataTable
+    table?: DataTable
 ): (Value|undefined) {
     const processor = ProcessorFunction.types[item.name];
 
     if (processor) {
         const args = item.args,
-            values: Array<Value> = [];
+            values: Array<(Value|Array<Value>)> = [];
 
         // First process all arguments to values
         for (let i = 0, iEnd = args.length, term: (Range|Term); i < iEnd; ++i) {
@@ -122,11 +135,7 @@ function processFunction(
 
             // Add values of a range
             } else if (FormulaTypes.isRange(term)) {
-                const rangeValues = (processRange(term, table) || []);
-
-                for (let j = 0, jEnd = rangeValues.length; j < jEnd; ++j) {
-                    values.push(rangeValues[j]);
-                }
+                values.push(table && processRange(term, table) || []);
 
             // Process functions, operations, pointers with formula processor
             } else {
@@ -141,7 +150,7 @@ function processFunction(
         }
 
         // Provide all values to the processor function
-        return processor.callback(values);
+        return processor.process(values);
     }
 }
 

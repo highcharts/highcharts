@@ -35,8 +35,23 @@ const keyRegExp = /^[A-Z][A-Z\.]*$/;
  *
  * */
 
+/**
+ * Describes a registered function for the FormulaProcessor.
+ *
+ * @private
+ * @interface Formula.ProcessorFunction
+ */
 interface ProcessorFunction {
-    callback: (values: Array<Value>) => Value;
+    /**
+     * Processor for the given values.
+     *
+     * @param {Array<(Formula.Value|Array<Formula.Value>)>} values
+     * Values to process.
+     *
+     * @return {Formula.Value}
+     * Result value of the process.
+     */
+    process: (values: Array<(Value|Array<Value>)>) => Value;
 }
 
 /* *
@@ -45,6 +60,10 @@ interface ProcessorFunction {
  *
  * */
 
+/**
+ * Contains the registry of functions for the FormulaProcessor.
+ * @private
+ */
 namespace ProcessorFunction {
 
     /* *
@@ -53,6 +72,9 @@ namespace ProcessorFunction {
      *
      * */
 
+    /**
+     * Registry of functions for the FormulaProcessor.
+     */
     export const types: Record<string, ProcessorFunction> = {};
 
     /* *
@@ -61,14 +83,27 @@ namespace ProcessorFunction {
      *
      * */
 
+    /**
+     * Registers a function for the FormulaProcessor.
+     *
+     * @param {string} key
+     * Key of the function in spreadsheets notation with upper case.
+     *
+     * @param {Formula.ProcessorFunction} processorFunction
+     * ProcessorFunction for the FormulaProcessor. This is an object so that it
+     * can take additional parameter for future validation routines.
+     *
+     * @return {boolean}
+     * Return true, if the ProcessorFunction has been registered.
+     */
     export function registerType(
         key: string,
-        DataModifierClass: ProcessorFunction
+        processorFunction: ProcessorFunction
     ): boolean {
         return (
             keyRegExp.test(key) &&
             !types[key] &&
-            !!(types[key] = DataModifierClass)
+            !!(types[key] = processorFunction)
         );
     }
 
