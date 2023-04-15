@@ -152,17 +152,15 @@ class AccordeonMenu {
         for (let i = 0, iEnd = detailedOptions.length; i < iEnd; ++i) {
             const name = detailedOptions[i].name;
             const nestedOptions = detailedOptions[i].options;
-            const allowEnabled = detailedOptions[i].allowEnabled;
-            const content = EditRenderer.renderNestedHeaders(
-                parentElement,
+            const allowEnabled = !!detailedOptions[i].allowEnabled;
+            const propertyPath = detailedOptions[i].propertyPath || [];
+            const content = EditRenderer.renderNestedHeader(parentElement, {
                 name,
-                !!allowEnabled,
-                (value: boolean | string | number): void =>
-                    this.updateOptions(
-                        detailedOptions[i].propertyPath || [],
-                        value
-                    )
-            );
+                value: !!this.getValue(component, propertyPath),
+                allowEnabled,
+                onchange: (value: boolean | string | number): void =>
+                    this.updateOptions(propertyPath, value)
+            });
 
             for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
                 this.renderAccordeon(
