@@ -24,7 +24,6 @@
 
 import type MenuItem from './Menu/MenuItem.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type EditableOptions from '../Components/EditableOptions';
 
 import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
@@ -79,10 +78,18 @@ function renderContextButton(
     return ctxBtnElement;
 }
 
+/**
+ * Creates the collapsable header element.
+ * @param parentElement
+ * The HTMLElement to which the element should be rendered to.
+ * @param title
+ * Title to be displayed on the collapsable element.
+ * @returns the outer element and content in the collapsable div.
+ */
 function renderCollapse(
-    parentElement: HTMLDOMElement,
+    parentElement: HTMLElement,
     title: string
-): { outerElement: HTMLDOMElement; content: HTMLDOMElement } {
+): { outerElement: HTMLElement; content: HTMLElement } {
 
     const accordeon = createElement(
         'div',
