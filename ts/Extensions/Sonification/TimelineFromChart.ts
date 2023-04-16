@@ -170,6 +170,9 @@ function getPropMetrics(chart: Chart): PropMetrics {
             val: unknown,
             seriesIx: number|null
         ): void => {
+            const removeInvertedFlag = (s: string): string => (
+                s.charAt(0) === '-' ? s.slice(1) : s
+            );
             if (typeof val === 'string' && param !== 'text') {
                 if (param === 'pitch' && isNoteDefinition(val)) {
                     return;
@@ -178,20 +181,23 @@ function getPropMetrics(chart: Chart): PropMetrics {
                     perSeriesProps[val] = true;
                     addTimeProp(val, seriesIx);
                 }
-                props[val] = true;
+                props[removeInvertedFlag(val)] = true;
                 return;
             }
-            const paramOpts = val as Sonification.MappingParameterOptions;
-            if (paramOpts.mapTo && typeof paramOpts.mapTo === 'string') {
+            const paramOpts = val as Sonification
+                .MappingParameterOptions | undefined;
+            if (
+                paramOpts && paramOpts.mapTo &&
+                typeof paramOpts.mapTo === 'string'
+            ) {
+                const mapTo = removeInvertedFlag(paramOpts.mapTo);
                 if (param === 'time') {
-                    addTimeProp(paramOpts.mapTo, seriesIx);
+                    addTimeProp(mapTo, seriesIx);
                 }
                 if (param === 'time' || paramOpts.within === 'series') {
-                    perSeriesProps[paramOpts.mapTo] = true;
+                    perSeriesProps[mapTo] = true;
                 }
-                props[(
-                    val as Sonification.MappingParameterOptions
-                ).mapTo] = true;
+                props[mapTo] = true;
                 return;
             }
             if (
