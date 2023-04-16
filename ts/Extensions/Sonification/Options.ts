@@ -197,7 +197,7 @@ const Options: DeepPartial<OptionsType> = {
         enabled: true,
         duration: 6000,
         afterSeriesWait: 700,
-        updateInterval: 1000,
+        updateInterval: 300,
         masterVolume: 0.6,
         order: 'sequential',
         showPlayMarker: true,
