@@ -89,7 +89,7 @@ interface NavigationBindingsButtonEventsObject {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -325,11 +325,33 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
         eventArguments.activeAnnotation = true;
     }
 
+    // #18276, show popup on touchend, but not on touchmove
+    let touchStartX: number,
+        touchStartY: number;
+
+    function saveCoords(this: Annotation, e: AnyRecord): void {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }
+
+    function checkForTouchmove(this: Annotation, e: AnyRecord): void {
+        const hasMoved = touchStartX ? Math.sqrt(
+            Math.pow(touchStartX - e.changedTouches[0].clientX, 2) +
+            Math.pow(touchStartY - e.changedTouches[0].clientY, 2)
+        ) >= 4 : false;
+
+        if (!hasMoved) {
+            selectAndShowPopup.call(this, e);
+        }
+    }
+
     merge(
         true,
         annotationType.prototype.defaultOptions.events,
         {
-            click: selectAndShowPopup
+            click: selectAndShowPopup,
+            touchstart: saveCoords,
+            touchend: checkForTouchmove
         }
     );
 }
@@ -407,9 +429,7 @@ class NavigationBindings {
         ChartClass: typeof Chart
     ): void {
 
-        if (composedClasses.indexOf(AnnotationClass) === -1) {
-            composedClasses.push(AnnotationClass);
-
+        if (U.pushUnique(composedMembers, AnnotationClass)) {
             addEvent(AnnotationClass, 'remove', onAnnotationRemove);
 
             // Basic shapes:
@@ -423,17 +443,13 @@ class NavigationBindings {
             });
         }
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'destroy', onChartDestroy);
             addEvent(ChartClass, 'load', onChartLoad);
             addEvent(ChartClass, 'render', onChartRender);
         }
 
-        if (composedClasses.indexOf(NavigationBindings) === -1) {
-            composedClasses.push(NavigationBindings);
-
+        if (U.pushUnique(composedMembers, NavigationBindings)) {
             addEvent(
                 NavigationBindings,
                 'closePopup',
@@ -446,9 +462,7 @@ class NavigationBindings {
             );
         }
 
-        if (composedClasses.indexOf(setOptions) === -1) {
-            composedClasses.push(setOptions);
-
+        if (U.pushUnique(composedMembers, setOptions)) {
             setOptions(NavigationBindingDefaults);
         }
 

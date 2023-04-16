@@ -91,26 +91,31 @@ function addOverlapToSets(
     relations: Array<Highcharts.VennRelationObject>
 ): Array<Highcharts.VennRelationObject> {
     // Calculate the amount of overlap per set.
-    const mapOfIdToProps = relations
+    const mapOfIdToProps: Record<string, Highcharts.VennPropsObject> = {};
+
+    relations
         // Filter out relations consisting of 2 sets.
         .filter((relation): boolean => (relation.sets.length === 2))
         // Sum up the amount of overlap for each set.
-        .reduce(
-            (map, relation): Record<string, Highcharts.VennPropsObject> => {
-                relation.sets.forEach((set, i, arr): void => {
-                    if (!isObject(map[set])) {
-                        map[set] = {
-                            overlapping: {},
-                            totalOverlap: 0
-                        };
+        .forEach((relation): void => {
+            relation.sets.forEach((set, i, arr): void => {
+                if (!isObject(mapOfIdToProps[set])) {
+                    mapOfIdToProps[set] = {
+                        totalOverlap: 0,
+                        overlapping: {}
+                    };
+                }
+
+                mapOfIdToProps[set] = {
+                    totalOverlap: (mapOfIdToProps[set].totalOverlap || 0) +
+                        relation.value,
+                    overlapping: {
+                        ...(mapOfIdToProps[set].overlapping || {}),
+                        [arr[1 - i]]: relation.value
                     }
-                    map[set].totalOverlap += relation.value;
-                    map[set].overlapping[arr[1 - i]] = relation.value;
-                });
-                return map;
-            },
-            {} as Record<string, Highcharts.VennPropsObject>
-        );
+                };
+            });
+        });
 
     relations
         // Filter out single sets
@@ -455,8 +460,11 @@ function layoutGreedyVenn(
     ): void {
         const circle = set.circle;
 
-        circle.x = coordinates.x;
-        circle.y = coordinates.y;
+        if (circle) {
+            circle.x = coordinates.x;
+            circle.y = coordinates.y;
+        }
+
         positionedSets.push(set);
     };
 
@@ -481,14 +489,23 @@ function layoutGreedyVenn(
     sortedByOverlap.forEach(function (
         set: Highcharts.VennRelationObject
     ): void {
-        const circle = set.circle,
-            radius = circle.r,
+        const circle = set.circle;
+        if (!circle) {
+            return;
+        }
+
+        const radius = circle.r,
             overlapping = set.overlapping;
 
         const bestPosition = positionedSets.reduce(
             (best, positionedSet, i): Highcharts.VennLabelOverlapObject => {
-                const positionedCircle = positionedSet.circle,
-                    overlap = overlapping[positionedSet.sets[0]];
+                const positionedCircle = positionedSet.circle;
+
+                if (!positionedCircle || !overlapping) {
+                    return best;
+                }
+
+                const overlap = overlapping[positionedSet.sets[0]];
 
                 // Calculate the distance between the sets to get the
                 // correct overlap
@@ -513,12 +530,17 @@ function layoutGreedyVenn(
                     positionedSet2: Highcharts.VennRelationObject
                 ): void {
                     const positionedCircle2 = positionedSet2.circle,
-                        overlap2 = overlapping[positionedSet2.sets[0]],
-                        distance2 = getDistanceBetweenCirclesByOverlap(
-                            radius,
-                            positionedCircle2.r,
-                            overlap2
-                        );
+                        overlap2 = overlapping[positionedSet2.sets[0]];
+
+                    if (!positionedCircle2) {
+                        return;
+                    }
+
+                    const distance2 = getDistanceBetweenCirclesByOverlap(
+                        radius,
+                        positionedCircle2.r,
+                        overlap2
+                    );
 
                     // Add intersections to list of coordinates.
                     possibleCoordinates = possibleCoordinates.concat(
@@ -788,7 +810,8 @@ function nelderMead(
  * @return {Array<object>} Returns an array of valid venn data.
  */
 function processVennData(
-    data: Array<VennPointOptions>
+    data: Array<VennPointOptions>,
+    splitter: string
 ): Array<Highcharts.VennRelationObject> {
     const d = isArray(data) ? data : [];
 
@@ -798,8 +821,8 @@ function processVennData(
             x: VennPointOptions
         ): Array<string> {
             // Check if x is a valid set, and that it is not an duplicate.
-            if (isValidSet(x) && arr.indexOf((x.sets as any)[0]) === -1) {
-                arr.push((x.sets as any)[0]);
+            if (x.sets && isValidSet(x) && arr.indexOf(x.sets[0]) === -1) {
+                arr.push(x.sets[0]);
             }
             return arr;
         }, [])
@@ -810,13 +833,18 @@ function processVennData(
         relation: VennPointOptions
     ): Record<string, Highcharts.VennRelationObject> {
         if (
+            relation.sets &&
             isValidRelation(relation) &&
-            !(relation.sets as any).some(function (set: string): boolean {
+            !relation.sets.some(function (set: string): boolean {
                 return validSets.indexOf(set) === -1;
             })
         ) {
-            mapOfIdToRelation[(relation.sets as any).sort().join()] =
-                relation as any;
+            mapOfIdToRelation[
+                relation.sets.sort().join(splitter)
+            ] = {
+                sets: relation.sets,
+                value: relation.value || 0
+            };
         }
         return mapOfIdToRelation;
     }, {});
@@ -830,15 +858,15 @@ function processVennData(
         const remaining = arr.slice(i + 1);
 
         remaining.forEach(function (set2: string): void {
-            combinations.push(set + ',' + set2);
+            combinations.push(set + splitter + set2);
         });
         return combinations;
     }, []).forEach(function (combination: string): void {
         if (!mapOfIdToRelation[combination]) {
             const obj: Highcharts.VennRelationObject = {
-                sets: combination.split(','),
+                sets: combination.split(splitter),
                 value: 0
-            } as any;
+            };
 
             mapOfIdToRelation[combination] = obj;
         }
@@ -866,7 +894,11 @@ function sortByTotalOverlap(
     a: Highcharts.VennRelationObject,
     b: Highcharts.VennRelationObject
 ): number {
-    return b.totalOverlap - a.totalOverlap;
+    if (typeof b.totalOverlap !== 'undefined' &&
+        typeof a.totalOverlap !== 'undefined') {
+        return b.totalOverlap - a.totalOverlap;
+    }
+    return NaN;
 }
 
 /* *

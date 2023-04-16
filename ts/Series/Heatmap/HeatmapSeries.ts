@@ -106,7 +106,7 @@ class HeatmapSeries extends ScatterSeries {
      *               dashStyle, findNearestPointBy, getExtremesFromAll, jitter,
      *               linecap, lineWidth, pointInterval, pointIntervalUnit,
      *               pointRange, pointStart, shadow, softThreshold, stacking,
-     *               step, threshold, cluster
+     *               step, threshold, cluster, dragDrop
      * @product      highcharts highmaps
      * @optionparent plotOptions.heatmap
      */
@@ -839,7 +839,7 @@ export default HeatmapSeries;
  * Requires `modules/heatmap`.
  *
  * @extends   series,plotOptions.heatmap
- * @excluding cropThreshold, dataParser, dataURL, pointRange, stack,
+ * @excluding cropThreshold, dataParser, dataURL, dragDrop ,pointRange, stack,
  * @product   highcharts highmaps
  * @apioption series.heatmap
  */

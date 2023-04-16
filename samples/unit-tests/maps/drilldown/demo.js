@@ -41,7 +41,7 @@ QUnit.test('Map drilldown animation', assert => {
         setTimeout(function () {
             assert.ok(
                 startPos.x > chart.series[0].group.getBBox().x,
-                `When drilling down, animation should first zoom to mappoint.`
+                'When drilling down, animation should first zoom to mappoint.'
             );
         }, duration / 2);
 

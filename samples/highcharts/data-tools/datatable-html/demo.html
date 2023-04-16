@@ -1,0 +1,37 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data-tools.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<form id="form">
+    <fieldset>
+        <legend><h4>DataTable.setColumn()</h4></legend>
+        <label for="add-column-input">Name:</label>
+        <input type="text" id="add-column-input" value="name" />
+        <button type="button" id="add-column-button">Add Column</label>
+    </fieldset>
+    <fieldset>
+        <legend><h4>DataTable.setRow()</h4></legend>
+        <label for="add-row-input">Values:</label>
+        <input type="text" id="add-row-input" value="343, speed of sound" />
+        <button type="button" id="add-row-button">Add Row</label>
+    </fieldset>
+    <fieldset>
+        <legend><h4>DataTable.setModifier()</h4></legend>
+        <label for="set-modifier">Type:</label>
+        <select type="radio" id="set-modifier" name="modifier">
+            <option selected>off</option>
+            <option>Invert</option>
+            <option>Sort</option>
+        </select>
+    </fieldset>
+</form>
+
+<p>
+    Use the form fields above to add a column or row to the table below.
+    The values for a row can be separated by comma or semicolon.
+    Set a modifier above to see the <i>DataTable.modified</i> version of the
+    table with structural changes.
+</p>
+
+<h4>DataTable.modified:</h4>
+<div id="container"></div>

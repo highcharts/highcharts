@@ -167,7 +167,7 @@ namespace DataLabel {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -435,16 +435,16 @@ namespace DataLabel {
      * @private
      */
     export function compose(SeriesClass: typeof Series): void {
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            const seriesProto = SeriesClass.prototype;
 
-            composedClasses.push(SeriesClass);
+        if (U.pushUnique(composedMembers, SeriesClass)) {
+            const seriesProto = SeriesClass.prototype;
 
             seriesProto.alignDataLabel = alignDataLabel;
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
             seriesProto.setDataLabelStartPos = setDataLabelStartPos;
         }
+
     }
 
     /**

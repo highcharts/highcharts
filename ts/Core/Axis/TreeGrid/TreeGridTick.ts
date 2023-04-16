@@ -70,7 +70,7 @@ export interface TreeGridTick extends Tick {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -373,9 +373,7 @@ class TreeGridTickAdditions {
         TickClass: typeof Tick
     ): void {
 
-        if (composedClasses.indexOf(TickClass) === -1) {
-            composedClasses.push(TickClass);
-
+        if (U.pushUnique(composedMembers, TickClass)) {
             addEvent(TickClass, 'init', onTickInit);
 
             wrap(TickClass.prototype, 'getLabelPosition', wrapGetLabelPosition);
@@ -401,6 +399,7 @@ class TreeGridTickAdditions {
                 this.treeGrid.toggleCollapse(redraw);
             };
         }
+
     }
 
     /* *

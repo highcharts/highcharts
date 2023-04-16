@@ -560,7 +560,7 @@ namespace KeyboardNavigation {
      *
      * */
 
-    const composedItems: Array<(Document|Function)> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -579,17 +579,13 @@ namespace KeyboardNavigation {
     ): (T&typeof ChartComposition) {
         MenuComponent.compose(ChartClass);
 
-        if (composedItems.indexOf(ChartClass) === -1) {
-            composedItems.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.dismissPopupContent = chartDismissPopupContent;
         }
 
-        if (composedItems.indexOf(doc) === -1) {
-            composedItems.push(doc);
-
+        if (U.pushUnique(composedMembers, doc)) {
             addEvent(doc, 'keydown', documentOnKeydown);
         }
 
