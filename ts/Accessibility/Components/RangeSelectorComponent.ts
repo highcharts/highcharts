@@ -329,12 +329,12 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
-     * Handle move between input elements
+     * Handle move between input elements with Tab key
      * @private
      */
     public onInputKbdMove(
         direction: number
-    ): void {
+    ): boolean {
         const chart = this.chart;
         const rangeSel = chart.rangeSelector;
         const newIx = chart.highlightedInputRangeIx = (
@@ -344,9 +344,12 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
         if (newIxOutOfRange) {
             if (chart.accessibility) {
+                // Ignore focus
+                chart.accessibility.keyboardNavigation.exiting = true;
                 chart.accessibility.keyboardNavigation.tabindexContainer
                     .focus();
-                chart.accessibility.keyboardNavigation.move(direction);
+
+                return chart.accessibility.keyboardNavigation.move(direction);
             }
         } else if (rangeSel) {
             const svgEl = rangeSel[newIx ? 'maxDateBox' : 'minDateBox'];
@@ -355,6 +358,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
                 chart.setFocusToElement(svgEl, inputEl);
             }
         }
+        return true;
     }
 
 
@@ -388,10 +392,12 @@ class RangeSelectorComponent extends AccessibilityComponent {
             }
             const keydownHandler = (e: KeyboardEvent): void => {
                 const isTab = (e.which || e.keyCode) === this.keyCodes.tab;
-                if (isTab) {
+                if (
+                    isTab &&
+                    component.onInputKbdMove(e.shiftKey ? -1 : 1)
+                ) {
                     e.preventDefault();
                     e.stopPropagation();
-                    component.onInputKbdMove(e.shiftKey ? -1 : 1);
                 }
             };
             const minRemover = addEvent(minInput, 'keydown', keydownHandler);
