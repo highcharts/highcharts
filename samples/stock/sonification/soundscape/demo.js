@@ -43,7 +43,9 @@ var chart = Highcharts.stockChart('container', {
                 crosshairInterval = setInterval(function () {
                     var ix = timeline.getCurrentTime() / len * endIx,
                         point = points[
-                            Math.round(crosshairStart.index + ix)
+                            Math.round(
+                                crosshairStart.index - points[0].index + ix
+                            )
                         ];
                     if (point) {
                         // Highlight point with crosshair
@@ -117,28 +119,51 @@ var chart = Highcharts.stockChart('container', {
                         }, false);
                     }
                 }
-            }
+            },
+            cropThreshold: 0 // We play all uncropped points, so make sure they get cropped
         }
     },
     xAxis: {
         crosshair: {
             color: 'rgba(70, 120, 160, 0.7)',
-            width: 20
-        }
+            width: 20,
+            className: 'hc-crosshair' // For CSS transition
+        },
+        minRange: 1000 * 60 * 60 * 24 * 10 // 10 days
     },
     // Each series gets its own y-axis since they measure on different scales
     yAxis: [{
-        visible: false
+        opposite: false,
+        gridLineWidth: 0,
+        labels: {
+            format: '{text}°F'
+        }
     }, {
-        visible: false
+        opposite: false,
+        gridLineWidth: 0,
+        labels: {
+            format: '{text}%'
+        }
     }, {
-        visible: false
+        opposite: false,
+        gridLineWidth: 0,
+        labels: {
+            format: '{text} mph'
+        }
     }, {
-        visible: false
+        visible: false,
+        opposite: false,
+        gridLineWidth: 0
     }, {
-        visible: false
+        opposite: false,
+        gridLineWidth: 0,
+        labels: {
+            format: '{text} hPa'
+        }
     }, {
-        visible: false
+        visible: false,
+        opposite: false,
+        gridLineWidth: 0
     }],
     series: [{
         // Temperature
@@ -163,13 +188,13 @@ var chart = Highcharts.stockChart('container', {
             tracks: [{
                 activeWhen: {
                     prop: 'y',
-                    min: 32
+                    min: 32 // Above freezing
                 }
             }, {
                 instrument: 'lead',
                 activeWhen: {
                     prop: 'y',
-                    max: 31.999
+                    max: 31.999 // Below freezing
                 },
                 mapping: {
                     lowpass: {
@@ -290,9 +315,13 @@ var chart = Highcharts.stockChart('container', {
                 },
                 instrument: 'vibraphone',
                 mapping: {
-                    volume: 0.3,
+                    volume: {
+                        mapTo: 'y',
+                        within: 'series',
+                        min: 0.4,
+                        max: 1
+                    },
                     pitch: 'c3',
-                    noteDuration: 1000,
                     tremolo: {
                         speed: 'y',
                         within: 'series',
@@ -304,16 +333,7 @@ var chart = Highcharts.stockChart('container', {
                     }
                 }
             },
-            tracks: [{
-                mapping: {
-                    volume: {
-                        mapTo: 'y',
-                        within: 'series',
-                        min: 0.2,
-                        max: 1.5
-                    }
-                }
-            }, {
+            tracks: [{}, {
                 mapping: {
                     pitch: 'd#3'
                 },

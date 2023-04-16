@@ -1,12 +1,13 @@
 figure {
-    width: 1000px;
+    max-width: 1300px;
+    min-width: 500px;
     margin: 0 auto;
     position: relative;
     font-family: sans-serif;
 }
 
 #container {
-    height: 500px;
+    height: 550px;
 }
 
 #legend {
@@ -24,6 +25,10 @@ figure {
     display: block;
     margin: 1rem auto;
     width: 7rem;
+}
+
+.hc-crosshair {
+    transition: all 0.15s;
 }
 
 pre {
