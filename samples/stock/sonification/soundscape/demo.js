@@ -66,7 +66,7 @@ var chart = Highcharts.stockChart('container', {
                     return date.toLocaleString('en-US', { month: 'long' });
                 },
                 rate: 2.5,
-                volume: 0.5
+                volume: 0.3
             },
             valueInterval: 1000 * 60 * 60 * 24, // One day
             activeWhen: function (context) {
@@ -137,33 +137,47 @@ var chart = Highcharts.stockChart('container', {
         gridLineWidth: 0,
         labels: {
             format: '{text}°F'
+        },
+        accessibility: {
+            description: 'Temperature'
         }
     }, {
         opposite: false,
         gridLineWidth: 0,
         labels: {
             format: '{text}%'
+        },
+        accessibility: {
+            description: 'Humidity'
         }
     }, {
         opposite: false,
         gridLineWidth: 0,
         labels: {
             format: '{text} mph'
+        },
+        accessibility: {
+            description: 'Wind speed'
         }
     }, {
         visible: false,
-        opposite: false,
-        gridLineWidth: 0
+        accessibility: {
+            description: 'Precipitation'
+        }
     }, {
         opposite: false,
         gridLineWidth: 0,
         labels: {
             format: '{text} hPa'
+        },
+        accessibility: {
+            description: 'Air pressure'
         }
     }, {
         visible: false,
-        opposite: false,
-        gridLineWidth: 0
+        accessibility: {
+            description: 'Visibility'
+        }
     }],
     series: [{
         // Temperature
@@ -424,7 +438,31 @@ var chart = Highcharts.stockChart('container', {
 });
 
 
+// ---------------------------------------------------------------
 // Custom legend
+
+function playEarcon(id) {
+    var instr = {
+            temp: ['piano', 'a6', 'e5'],
+            humid: ['flute', 'a5', 'e5'],
+            wind: ['wind', 'c5', 'c6'],
+            pressure: ['vibraphone', 'c3', 'd#3'],
+            rain: ['chord', 'c3', 'g3'],
+            visibility: ['noise', 'c1', 'c1']
+        }[id],
+        opts = function (note) {
+            return {
+                note: note,
+                noteDuration: 200,
+                tremoloDepth: 0,
+                pan: 0,
+                volume: id === 'visibility' ? 0.15 : 0.5
+            };
+        };
+    chart.sonification.playNote(instr[0], opts(instr[1]));
+    chart.sonification.playNote(instr[0], opts(instr[2]), 200);
+}
+
 ['temp', 'humid', 'wind', 'pressure'].forEach(function (id, ix) {
     document.getElementById(id).onclick = function () {
         chart.series[0].setVisible(ix === 0, false);
@@ -432,20 +470,36 @@ var chart = Highcharts.stockChart('container', {
         chart.series[2].setVisible(ix === 2, false);
         chart.series[4].setVisible(ix === 3, false);
         chart.redraw();
+        playEarcon(id);
     };
 });
 document.getElementById('rain').onclick = function () {
     chart.series[3].setVisible(this.checked);
+    if (this.checked) {
+        playEarcon('rain');
+    }
 };
 document.getElementById('visibility').onclick = function () {
     chart.series[5].setVisible(this.checked);
+    if (this.checked) {
+        playEarcon('visibility');
+    }
 };
 document.getElementById('months').onclick = function () {
-    // We have to manually trigger update since the sonification
-    // is prebuilt.
+    // Handled in options, but we have to manually trigger update
+    // since the sonification is prebuilt.
     chart.sonification.update();
+
+    if (this.checked) {
+        chart.sonification.speak('December', {
+            language: 'en-US',
+            rate: 2.5,
+            volume: 0.2
+        });
+    }
 };
 
+// ---------------------------------------------------------------
 // Play button
 document.getElementById('play').onclick = function () {
     if (chart.sonification.isPlaying()) {

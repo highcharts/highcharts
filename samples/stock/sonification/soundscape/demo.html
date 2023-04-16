@@ -3,41 +3,57 @@
 <script src="https://code.highcharts.com/modules/sonification.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-<figure class="highcharts-figure">
-    <div id="legend">
-        <div id="focus">
+<div id="legend">
+    <div id="focus">
+        <div class="item">
             <input type="radio" name="focus" id="temp" value="temp" checked>
             <label for="temp">Temperature</label>
-        
+        </div>
+
+        <div class="item">
             <input type="radio" name="focus" id="humid" value="humid">
             <label for="humid">Humidity</label>
-        
+        </div>
+    
+        <div class="item">
             <input type="radio" name="focus" id="wind" value="wind">
             <label for="wind">Wind Speed</label>
-        
-            <input type="radio" name="focus" id="pressure" value="pressure">
-            <label for="pressure">Pressure</label>
         </div>
-        
-        <div id="extras">
+    
+        <div class="item">
+            <input type="radio" name="focus" id="pressure" value="pressure">
+            <label for="pressure">Air Pressure</label>
+        </div>
+    </div>
+    
+    <div id="extras">
+        <div class="item">
             <input type="checkbox" id="rain" name="rain" checked>
-            <label for="rain">Precipitation</label>
-        
+            <label for="rain">Show precipitation</label>
+        </div>
+    
+        <div class="item">
             <input type="checkbox" id="visibility" name="visibility" checked>
-            <label for="visibility">Visibility</label>
+            <label for="visibility">Show visibility</label>
+        </div>
 
+        <div class="item">
             <input type="checkbox" id="months" name="months" checked>
             <label for="months">Speak months</label>
         </div>
     </div>
+</div>
 
+<figure class="highcharts-figure">
+    <button id="play">
+        <span class="icon" aria-hidden="true">♬</span>
+        Play chart
+    </button>
     <div id="container"></div>
     <p class="highcharts-description">
-        This is a complex sonification demo, demonstrating different techniques for sonifying data. Choose between focusing on temperature, humidity, wind speed, or pressure. Precipitation and visibility can be turned on and off individually. Precipitation is sonified as chords increasing in intensity as the rainfall increases. Visibility is sonified as noise increasing in intensity as visibility is reduced, illustrating fog. Click on points to sonify that particular area of the chart.
+        This is a complex sonification demo, demonstrating different techniques for sonifying data. Choose between focusing on temperature, humidity, wind speed, or pressure. Precipitation and visibility data can be turned on and off individually. Precipitation is sonified as chords increasing in intensity as the rainfall increases. Visibility is sonified as noise increasing in intensity as visibility is reduced, illustrating fog. Click on points to sonify that particular area of the chart.
     </p>
 </figure>
-
-<button id="play">Play chart</button>
 
 <pre id="csv">Time,Temperature (°F),Humidity (%),Wind speed (mph),Precipitation (inches),Pressure (millibar),Visibility (miles)
     2013-01-01T00:00:00Z,37.94,54.51,16.11092,0,1014.4,10
