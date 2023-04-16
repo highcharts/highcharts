@@ -62,6 +62,8 @@ declare module '../../Core/Chart/ChartLike' {
         /** @requires modules/sonification */
         sonify: (onEnd?: Function) => void;
         /** @requires modules/sonification */
+        toggleSonify: (reset?: boolean, onEnd?: Function) => void;
+        /** @requires modules/sonification */
         updateSonificationEnabled: () => void;
     }
 }
@@ -433,6 +435,28 @@ namespace Sonification {
                 sonify: function (onEnd?: Function): void {
                     if (this.sonification) {
                         this.sonification.sonifyChart(false, onEnd);
+                    }
+                },
+                toggleSonify: function (
+                    reset = true, onEnd?: Function
+                ): void {
+                    if (!this.sonification) {
+                        return;
+                    }
+                    const timeline = this.sonification.timeline;
+                    if (win.speechSynthesis) {
+                        win.speechSynthesis.cancel();
+                    }
+                    if (timeline && this.sonification.isPlaying()) {
+                        if (reset) {
+                            this.sonification.cancel();
+                        } else {
+                            timeline.pause();
+                        }
+                    } else if (timeline && timeline.isPaused) {
+                        timeline.resume();
+                    } else {
+                        this.sonification.sonifyChart(reset, onEnd);
                     }
                 }
             });
