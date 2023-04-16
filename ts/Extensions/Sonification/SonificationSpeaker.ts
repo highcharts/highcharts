@@ -17,16 +17,14 @@ const {
     pick
 } = U;
 
-declare global {
-    namespace Sonification {
-        interface SpeakerOptions {
-            // Preferred voice, falls back to language if not found
-            name?: string;
-            language: string;
-            pitch?: number;
-            rate?: number;
-            volume?: number;
-        }
+namespace SonificationSpeaker {
+    export interface SpeakerOptions {
+        // Preferred voice, falls back to language if not found
+        name?: string;
+        language: string;
+        pitch?: number;
+        rate?: number;
+        volume?: number;
     }
 }
 
@@ -39,7 +37,7 @@ class SonificationSpeaker {
     private scheduled: number[];
     private masterVolume = 1;
 
-    constructor(private options: Sonification.SpeakerOptions) {
+    constructor(private options: SonificationSpeaker.SpeakerOptions) {
         this.synthesis = window.speechSynthesis;
         if (typeof speechSynthesis.onvoiceschanged !== 'undefined') {
             speechSynthesis.onvoiceschanged = this.setVoice.bind(this);
@@ -49,7 +47,7 @@ class SonificationSpeaker {
     }
 
 
-    say(message: string, options?: Partial<Sonification.SpeakerOptions>): void {
+    say(message: string, options?: Partial<SonificationSpeaker.SpeakerOptions>): void {
         if (this.synthesis) {
             this.synthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(message);
@@ -69,7 +67,7 @@ class SonificationSpeaker {
 
 
     // Time in milliseconds from now
-    sayAtTime(time: number, message: string, options?: Partial<Sonification.SpeakerOptions>): void {
+    sayAtTime(time: number, message: string, options?: Partial<SonificationSpeaker.SpeakerOptions>): void {
         this.scheduled.push(
             setTimeout(this.say.bind(this, message, options), time)
         );

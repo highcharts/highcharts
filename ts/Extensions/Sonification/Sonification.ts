@@ -51,6 +51,7 @@ const {
 import defaultSonificationOptions from './Options.js';
 import SonificationTimeline from './SonificationTimeline.js';
 import SonificationInstrument from './SonificationInstrument.js';
+import SonificationSpeaker from './SonificationSpeaker.js';
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
@@ -301,6 +302,17 @@ class Sonification {
             (): void => instr && instr.destroy(),
             delayMs + duration + 500
         );
+    }
+
+
+    // Speak text string with options
+    speak(
+        text: string,
+        speakerOptions: SonificationSpeaker.SpeakerOptions,
+        delayMs = 0
+    ): void {
+        const speaker = new SonificationSpeaker(speakerOptions);
+        speaker.sayAtTime(delayMs, text);
     }
 
 

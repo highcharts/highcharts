@@ -24,7 +24,7 @@ declare global {
             relatedPoint?: Point;
             instrumentEventOptions?: SonificationInstrument
                 .ScheduledEventOptions;
-            speechOptions?: Partial<Sonification.SpeakerOptions>;
+            speechOptions?: Partial<SonificationSpeaker.SpeakerOptions>;
             message?: string;
             callback?: Function;
         }
