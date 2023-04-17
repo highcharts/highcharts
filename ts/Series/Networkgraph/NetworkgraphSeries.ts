@@ -359,7 +359,9 @@ class NetworkgraphSeries extends Series {
         // drawDataLabels() fires for the first time after
         // dataLabels.animation.defer time unless
         // the dataLabels.animation = false or dataLabels.defer = false
-        if (!dlOptions?.defer || !options.layoutAlgorithm?.enableSimulation) {
+        // or if the simulation is disabled
+        if (!this.options.dataLabels?.defer ||
+            !this.options.layoutAlgorithm?.enableSimulation) {
             this.deferDataLabels = false;
         } else {
             syncTimeout((): void => {
@@ -387,10 +389,6 @@ class NetworkgraphSeries extends Series {
         addEvent(this, 'afterSimulation', function (): void {
             this.deferDataLabels = false;
             this.drawDataLabels();
-
-            if (this.dataLabelsGroup) {
-                this.dataLabelsGroup.attr({ opacity: 1 });
-            }
         });
 
         return this;
