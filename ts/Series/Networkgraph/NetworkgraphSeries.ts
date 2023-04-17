@@ -360,7 +360,7 @@ class NetworkgraphSeries extends Series {
         // dataLabels.animation.defer time unless
         // the dataLabels.animation = false or dataLabels.defer = false
         // or if the simulation is disabled
-        if (!this.options.dataLabels?.defer ||
+        if (!dlOptions?.defer ||
             !this.options.layoutAlgorithm?.enableSimulation) {
             this.deferDataLabels = false;
         } else {
