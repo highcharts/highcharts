@@ -3,7 +3,6 @@ import type EditableOptions from '../Components/EditableOptions';
 
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
-import HTMLComponent from '../Components/HTMLComponent.js';
 const {
     createElement
 } = U;
