@@ -3,6 +3,7 @@ import type EditableOptions from '../Components/EditableOptions';
 
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
+import HTMLComponent from '../Components/HTMLComponent.js';
 const {
     createElement
 } = U;
@@ -93,7 +94,9 @@ class AccordeonMenu {
             {
                 value: 'Update',
                 callback: (): void => {
-                    component.update(this.changedOptions as any);
+                    component.update(
+                        this.changedOptions as Partial<Component.ComponentOptions>
+                    );
                     menu.closeSidebar();
                 }
             }
@@ -161,7 +164,7 @@ class AccordeonMenu {
 
             for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
                 this.renderAccordeon(
-                    nestedOptions[j] as any,
+                    nestedOptions[j] as EditableOptions.Configuration,
                     content,
                     component
                 );
@@ -185,11 +188,11 @@ class AccordeonMenu {
         let value = component.options as any;
 
         for (let i = 0, end = propertyPath.length; i < end; i++) {
-            if (!value) {
-                return;
+            if (value) {
+                value = value[propertyPath[i]];
             }
-            value = value[propertyPath[i]];
         }
+
         return value;
     }
 }
