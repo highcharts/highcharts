@@ -115,10 +115,13 @@ function renderCollapse(
     const headerIcon = createElement(
         'img',
         {
-            className: EditGlobals.classNames.accordeonHeaderIcon,
+            className:
+                EditGlobals.classNames.accordeonHeaderIcon +
+                ' ' +
+                EditGlobals.classNames.rotateElement,
             src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
-        { transform: 'rotate(90deg)' },
+        {},
         headerBtn
     );
 
@@ -134,8 +137,7 @@ function renderCollapse(
     headerBtn.addEventListener('click', function (): void {
         const display = content.style.display;
         content.style.display = display === 'none' ? 'block' : 'none';
-        headerIcon.style.transform =
-            display === 'none' ? 'rotate(0deg)' : 'rotate(90deg)';
+        headerIcon.classList.toggle(EditGlobals.classNames.rotateElement);
     });
 
     return { outerElement: accordeon, content: content };
@@ -226,10 +228,13 @@ function renderSelect(
     const dropdownPointer = createElement(
         'img',
         {
-            className: EditGlobals.classNames.dropdownIcon,
+            className:
+                EditGlobals.classNames.dropdownIcon +
+                ' ' +
+                EditGlobals.classNames.rotateElement,
             src: iconsURLPrefix + 'dropdown-pointer.svg'
         },
-        { transform: 'rotate(90deg)' },
+        {},
         btn
     );
 
@@ -244,10 +249,7 @@ function renderSelect(
     btn.addEventListener('click', function (): void {
         dropdown.style.display =
             dropdown.style.display === 'none' ? 'flex' : 'none';
-        dropdownPointer.style.transform =
-            dropdown.style.display === 'none' ?
-                'rotate(90deg)' :
-                'rotate(0deg)';
+        dropdownPointer.classList.toggle(EditGlobals.classNames.rotateElement);
     });
 
     for (let i = 0, iEnd = options.items.length; i < iEnd; ++i) {
@@ -464,10 +466,13 @@ function renderNestedHeader(
     const headerIcon = createElement(
         'img',
         {
-            className: EditGlobals.classNames.accordeonNestedHeaderIcon,
+            className:
+                EditGlobals.classNames.accordeonNestedHeaderIcon +
+                ' ' +
+                EditGlobals.classNames.rotateElementReverse,
             src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
-        { transform: 'rotate(-90deg)' },
+        {},
         headerBtn
     );
 
@@ -493,8 +498,9 @@ function renderNestedHeader(
     headerBtn.addEventListener('click', function (): void {
         const display = content.style.display;
         content.style.display = display === 'none' ? 'flex' : 'none';
-        headerIcon.style.transform =
-            display === 'none' ? 'rotate(0deg)' : 'rotate(-90deg)';
+        headerIcon.classList.toggle(
+            EditGlobals.classNames.rotateElementReverse
+        );
     });
 
     return content;

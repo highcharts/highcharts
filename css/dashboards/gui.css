@@ -674,6 +674,14 @@
     width: 75%;
 }
 
+.highcharts-dashboards-edit-rotate-element {
+    transform: rotate(90deg);
+}
+
+.highcharts-dashboards-edit-rotate-element-reverse {
+    transform: rotate(-90deg);
+}
+
 .highcharts-dashboards-edit-sidebar-tab-wrapper {
     display: none;
 }
@@ -863,7 +871,7 @@
 }
 
 .highcharts-dashboards-edit-dropdown-content li {
-    margin: 0px;
+    margin: 0;
 }
 
 .highcharts-dashboards-edit-dropdown {
