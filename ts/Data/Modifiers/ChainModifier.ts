@@ -492,7 +492,7 @@ declare module './DataModifierType' {
     }
 }
 
-DataModifier.registerType(ChainModifier);
+DataModifier.registerType('Chain', ChainModifier);
 
 /* *
  *

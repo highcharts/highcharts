@@ -257,7 +257,7 @@ declare module './DataModifierType' {
     }
 }
 
-DataModifier.registerType(RangeModifier);
+DataModifier.registerType('Range', RangeModifier);
 
 /* *
  *

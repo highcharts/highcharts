@@ -417,7 +417,7 @@ declare module './DataModifierType' {
     }
 }
 
-DataModifier.registerType(SortModifier);
+DataModifier.registerType('Sort', SortModifier);
 
 /* *
  *
