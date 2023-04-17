@@ -499,6 +499,7 @@ class ControllableLabel extends Controllable {
     ): (PositionObject|null|undefined) {
         const item = this.graphic,
             chart = this.annotation.chart,
+            tooltip = chart.tooltip,
             point = this.points[0],
             itemOptions = this.options,
             anchorAbsolutePosition = anchor.absolutePosition,
@@ -516,14 +517,12 @@ class ControllableLabel extends Controllable {
         if (item && showItem) {
             const { width = 0, height = 0 } = item;
 
-            if (
-                itemOptions.distance &&
-                chart.tooltip
-            ) {
-                itemPosition = chart.tooltip.getPosition.call(
+            if (itemOptions.distance && tooltip) {
+                itemPosition = tooltip.getPosition.call(
                     {
-                        chart: chart,
-                        distance: pick(itemOptions.distance, 16)
+                        chart,
+                        distance: pick(itemOptions.distance, 16),
+                        getPlayingField: tooltip.getPlayingField
                     },
                     width,
                     height,
