@@ -80,6 +80,8 @@ function renderContextButton(
 
 /**
  * Creates the collapsable header element.
+ * @internal
+ *
  * @param parentElement
  * The HTMLElement to which the element should be rendered to.
  * @param title
@@ -660,6 +662,15 @@ function renderTextarea(
     return textarea;
 }
 
+/**
+ * Function to render the input of type checkbox.
+ *
+ * @param parentElement
+ * An element to which render the checkbox to
+ *
+ * @returns
+ * The checkbox element
+ */
 function renderCheckbox(
     parentElement: HTMLDOMElement
 ): HTMLDOMElement|undefined {
@@ -721,6 +732,15 @@ function renderButton(
     return button;
 }
 
+/**
+ * Get the renderer function based on the type of the element to render.
+ *
+ * @param type
+ * Type of the element to render
+ *
+ * @returns
+ * function to render a specific element
+ */
 function getRendererFunction(type: RendererElement): Function|undefined {
     return {
         select: renderSelect,
@@ -749,7 +769,7 @@ const EditRenderer = {
     renderTextarea,
     renderCheckbox,
     renderButton,
-    renderNestedHeaders: renderNestedHeader,
+    renderNestedHeader: renderNestedHeader,
     getRendererFunction
 };
 

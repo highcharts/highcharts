@@ -212,7 +212,7 @@ class AccordeonMenu {
             const name = detailedOptions[i].name;
             const nestedOptions = detailedOptions[i].options;
             const allowEnabled = detailedOptions[i].allowEnabled;
-            const content = EditRenderer.renderNestedHeaders(
+            const content = EditRenderer.renderNestedHeader(
                 parentElement,
                 name,
                 !!allowEnabled
