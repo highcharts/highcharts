@@ -115,6 +115,7 @@ class AST {
      * @type {Array<string>}
      */
     public static allowedAttributes = [
+        'alt',
         'aria-controls',
         'aria-describedby',
         'aria-expanded',
