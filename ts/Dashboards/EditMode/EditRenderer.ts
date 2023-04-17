@@ -524,7 +524,7 @@ function renderIcon(
     const iconElem = createElement(
         'div', {
             onclick: callback,
-            className: options.className
+            className: options.className || ''
         }, {},
         parentElement
     );

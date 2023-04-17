@@ -486,6 +486,7 @@
     background-repeat: no-repeat;
     background-position: 50% 50%;
     cursor: pointer;
+    filter: brightness(0) invert(1);
 }
 
 .highcharts-dashboards-edit-toolbar-row {
