@@ -13,6 +13,7 @@
     --highcharts-dashboards-neutral-color-80: #333333;
     --highcharts-dashboards-neutral-color-50: #808080;
     --highcharts-dashboards-neutral-color-20: #cccccc;
+    --highcharts-dashboards-neutral-color-10: #e7e7ec;
     --highcharts-dashboards-neutral-color-5: #f7f7f7;
     --highcharts-dashboards-neutral-color-3: #f2f2f2;
     --highcharts-dashboards-neutral-color-0: #ffffff;
@@ -331,6 +332,7 @@
 
 .highcharts-dashboards-toggle-container {
     display: flex;
+    min-width: 100px;
 }
 
 .highcharts-dashboards-edit-toggle-wrapper {
@@ -634,7 +636,9 @@
 .highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-button {
     background-repeat: no-repeat;
     float: right;
-    margin-top: 0;
+    margin-top: 10px;
+    margin-left: 5px;
+    cursor: pointer;
 }
 
 .highcharts-dashboards-edit-sidebar-show {
@@ -647,18 +651,12 @@
     transition: right 0.5s;
 }
 
-.highcharts-dashboards-edit-label-text {
-    display: inline-block;
-}
-
 .highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-label-text {
-    background: var(--highcharts-dashboards-neutral-color-20);
-    border: 1px solid var(--highcharts-dashboards-neutral-color-20);
-    color: var(--highcharts-dashboards-main-font-color);
     font-weight: bold;
     padding: 3px;
     margin-top: 15px;
     margin-bottom: 5px;
+    display: inline-block;
 }
 
 .highcharts-dashboards-edit-sidebar-title {
@@ -884,10 +882,12 @@ div.highcharts-dashboards-dropdown {
     background: var(--highcharts-dashboards-main-background-color);
     border: 1px solid var(--highcharts-dashboards-dropdown-border-color);
     border-radius: 2px;
+    cursor: pointer;
 }
 
 button.highcharts-dashboards-select-option-button {
     display: flex;
+    border: none;
     flex-direction: row;
     justify-content: start;
     align-items: center;
@@ -910,7 +910,7 @@ button.highcharts-dashboards-select-option-button:hover {
 /* Nested options dropdown */
 .highcharts-dashboards-nested {
     display: flex;
-    margin: 4px 0;
+    margin: 10px 0;
     flex-direction: column;
     background-color: var(--highcharts-dashboards-main-background-color);
     border-radius: 2px;
@@ -921,7 +921,7 @@ button.highcharts-dashboards-select-option-button:hover {
     flex-direction: row;
     justify-content: space-between;
     align-self: stretch;
-    padding: 5px;
+    padding: 10px 5px;
 }
 
 .highcharts-dashboards-nested-header-btn {
@@ -933,11 +933,12 @@ button.highcharts-dashboards-select-option-button:hover {
     margin: 0;
     width: 100%;
     display: flex;
+    cursor: pointer;
 }
 
-div.highcharts-dashboards-nested-content {
-    margin: 12px;
-    padding: 4px;
+.highcharts-dashboards-nested-content {
+    margin: 0px 10px 10px 10px;
+    padding: 10px;
     flex-direction: column;
     background-color: var(--highcharts-dashboards-neutral-color-5);
 }
@@ -959,13 +960,9 @@ button.highcharts-dashboards-outer-accordeon-header-btn {
     align-items: center;
 }
 
-button.highcharts-dashboards-outer-accordeon-header-btn:hover {
-    background-color: var(--highcharts-dashboards-neutral-color-50);
-}
-
 div.highcharts-dashboards-outer-accordeon {
     padding: 0;
-    background: var(--highcharts-dashboards-neutral-color-20);
+    background: var(--highcharts-dashboards-neutral-color-10);
     margin: 8px 0;
     font-style: normal;
     font-weight: 700;
@@ -974,8 +971,38 @@ div.highcharts-dashboards-outer-accordeon {
     line-height: 16px;
 }
 
-div.highcharts-dashboards-outer-accordeon-content {
-    padding: 16px;
+.highcharts-dashboards-outer-accordeon-content {
+    padding: 0px 16px 16px 16px;
 }
 
+.highcharts-dashboards-outer-accordeon-content > .highcharts-dashboards-edit-label-text {
+    display: none;
+}
+
+.highcharts-dashboards-outer-accordeon-content input,
+.highcharts-dashboards-outer-accordeon-content select,
+.highcharts-dashboards-outer-accordeon-content textarea,
+.highcharts-dashboards-outer-accordeon-content label {
+    width: calc(100% - 6px);
+}
+
+.highcharts-dashboards-outer-accordeon-content textarea {
+    min-height: 300px;
+    overflow-y: auto;
+}
+
+.highcharts-dashboards-outer-accordeon-content .highcharts-dashboards-nested-content label {
+    font-weight: normal;
+    font-size: 12px;
+    padding: 0px;
+    margin-bottom: 2px;
+}
+
+.highcharts-dashboards-outer-accordeon-content .highcharts-dashboards-nested-content label:first-child {
+    margin-top: 5px;
+}
 /* End of outer accordeon */
+
+.highcharts-dashboards-edit-sidebar-title {
+    margin-bottom: 20px;
+}
