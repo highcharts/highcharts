@@ -738,7 +738,7 @@ namespace OfflineExporting {
             checkDone = (): void => {
                 if (images && imagesEmbedded === imagesLength) {
                     successCallback(sanitize(
-                        (chartCopyContainer as any).textContent
+                        (chartCopyContainer as any).innerHTML
                     ));
                 }
             },
@@ -790,7 +790,7 @@ namespace OfflineExporting {
             if (!images || !images.length) {
                 // Use SVG of chart copy
                 successCallback(
-                    sanitize((chartCopyContainer as any).textContent)
+                    sanitize((chartCopyContainer as any).innerHTML)
                 );
                 return;
             }
