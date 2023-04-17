@@ -1291,7 +1291,7 @@ QUnit.test('Long labels and ellipsis', function (assert) {
 });
 
 QUnit.test('Label ellipsis and expanding', function (assert) {
-    var chart = new Highcharts.chart('container', {
+    var chart = new Highcharts.Chart('container', {
         chart: {
             width: 300
         },
@@ -1325,7 +1325,7 @@ QUnit.test('Label ellipsis and expanding', function (assert) {
 });
 
 QUnit.test('Label ellipsis and resetting categories', assert => {
-    const chart = new Highcharts.chart('container', {
+    const chart = new Highcharts.Chart('container', {
         chart: {
             width: 600,
             height: 400
