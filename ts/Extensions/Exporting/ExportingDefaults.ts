@@ -682,7 +682,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        symbolX: 12.5,
+        symbolX: 14.5,
 
         /**
          * The y position of the center of the symbol inside the button.
@@ -692,7 +692,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        symbolY: 10.5,
+        symbolY: 13.5,
 
         /**
          * Alignment for the buttons.
@@ -720,7 +720,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        height: 22,
+        height: 28,
 
         /**
          * A text string to add to the individual button.
@@ -784,7 +784,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        width: 24,
+        width: 28,
 
         /**
          * Fill color for the symbol within the button.

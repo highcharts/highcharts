@@ -239,14 +239,16 @@ MapNavigation.prototype.update = function (
             // representation of + and - is not sharp and position is not easy
             // to control.
             if (text === '+' || text === '-') {
-                const d: SVGPath = [
-                    ['M', padding + 3, padding + height / 2],
-                    ['L', padding + width - 3, padding + height / 2]
-                ];
+                // Mysterious +1 to achieve centering
+                const w = width + 1,
+                    d: SVGPath = [
+                        ['M', padding + 3, padding + height / 2],
+                        ['L', padding + w - 3, padding + height / 2]
+                    ];
                 if (text === '+') {
                     d.push(
-                        ['M', padding + width / 2, padding + 3],
-                        ['L', padding + width / 2, padding + height - 3]
+                        ['M', padding + w / 2, padding + 3],
+                        ['L', padding + w / 2, padding + height - 3]
                     );
                 }
                 chart.renderer
@@ -254,7 +256,8 @@ MapNavigation.prototype.update = function (
                     .addClass('highcharts-button-symbol')
                     .attr(chart.styledMode ? {} : {
                         stroke: buttonOptions.style?.color,
-                        'stroke-width': 2
+                        'stroke-width': 3,
+                        'stroke-linecap': 'round'
                     })
                     .add(button);
             }
