@@ -618,7 +618,7 @@ class Tooltip {
                     documentElement.offsetWidth,
                     documentElement.clientWidth
                 ) - 2 * distance :
-                chart.chartWidth,
+                chart.spacingBox.width,
             height: outside ?
                 Math.max(
                     body.scrollHeight,
