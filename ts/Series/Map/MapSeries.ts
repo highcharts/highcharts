@@ -528,6 +528,7 @@ class MapSeries extends ScatterSeries {
         if (this.dataLabelsGroup) {
             this.dataLabelsGroup.clip(this.chart.clipRect);
         }
+
     }
 
     /**
@@ -1281,6 +1282,12 @@ class MapSeries extends ScatterSeries {
                     point.shapeArgs = {
                         d: MapPoint.getProjectedPath(point, projection)
                     };
+                }
+
+                if (point.projectedPath && !point.projectedPath.length) {
+                    point.setVisible(false);
+                } else {
+                    point.setVisible(true);
                 }
             });
         }

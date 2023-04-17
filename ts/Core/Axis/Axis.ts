@@ -2545,6 +2545,12 @@ class Axis {
 
             axis.forceRedraw = false;
 
+            // #18066 delete minRange property to ensure that it will be
+            // calculated again after dirty data in series
+            if (!axis.userMinRange) {
+                axis.minRange = void 0;
+            }
+
             // get data extremes if needed
             axis.getSeriesExtremes();
 

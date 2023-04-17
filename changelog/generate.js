@@ -80,7 +80,8 @@ const getFile = url => new Promise((resolve, reject) => {
     async function getLog(callback) {
         var log = await prLog(
             params.since,
-            params.fromCache
+            params.fromCache,
+            params.branches
         ).catch(e => console.error(e));
 
         callback(log);

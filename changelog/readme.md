@@ -21,7 +21,7 @@ describing the internals of how it was fixed.
 
 
 ## Workflow of generating the changelog
-1. Run the script that copies PR descriptions since the last release into markdown files for each product.
+1. Run the script that copies PR descriptions since the last release into markdown files for each product. When including feature branches (typically on minor/major releases), remember to add the `branches` argument: `--branches master,v11`.
 
     ```
     node changelog/generate --review
@@ -29,7 +29,7 @@ describing the internals of how it was fixed.
 
 3. Review the contents of the generated HTML page in a browser, and make edits upstream in the PR descriptions.
 
-3. Generate again, this time without the `review` flag.
+3. Generate again, this time without the `review` flag. Remember the `branches` argument if applicable.
 
     ```
     node changelog/generate

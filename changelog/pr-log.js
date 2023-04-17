@@ -23,7 +23,7 @@ const log = {
 };
 
 // Whenever the string 'Upgrade note' appears, the next paragraph is interpreted
-// as the not
+// as the note
 const parseUpgradeNote = p => {
     const paragraphs = p.body.split('\n');
     for (let i = 0; i < paragraphs.length; i++) {
@@ -34,7 +34,10 @@ const parseUpgradeNote = p => {
     return void 0;
 };
 
-const loadPulls = async since => {
+const loadPulls = async (
+    since,
+    branches = 'master'
+) => {
     let page = 1;
     let pulls = [];
 
@@ -55,12 +58,10 @@ const loadPulls = async since => {
     );
     const after = Date.parse(commit.headers['last-modified']);
 
+    const branchesArr = branches.split(',');
     while (page < 20) {
-        const baseBranches = [
-            'master'
-        ];
         const pageData = [];
-        for (const base of baseBranches) {
+        for (const base of branchesArr) {
 
             let { data } = await octokit.pulls.list({
                 owner: 'highcharts',
@@ -97,7 +98,7 @@ const loadPulls = async since => {
     return pulls;
 };
 
-module.exports = async (since, fromCache) => {
+module.exports = async (since, fromCache, branches) => {
 
     const included = [],
         tmpFileName = path.join(os.tmpdir(), 'pulls.json');
@@ -107,7 +108,7 @@ module.exports = async (since, fromCache) => {
         pulls = await fs.readFile(tmpFileName);
         pulls = JSON.parse(pulls);
     } else {
-        pulls = await loadPulls(since);
+        pulls = await loadPulls(since, branches);
         await fs.writeFile(tmpFileName, JSON.stringify(pulls));
     }
 
