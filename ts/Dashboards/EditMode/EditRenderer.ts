@@ -125,7 +125,9 @@ function renderCollapse(
     const content = createElement(
         'div',
         { className: EditGlobals.classNames.accordeonContent },
-        {},
+        {
+            display: 'none'
+        },
         accordeon
     );
 
@@ -183,9 +185,7 @@ function renderSelect(
         {
             className: EditGlobals.classNames.dropdownButton
         },
-        {
-            margin: 0
-        },
+        {},
         customSelect
     );
 
@@ -272,7 +272,7 @@ function renderSelectElement(
     callback?: Function
 ): void {
     const iconURL = option.iconsURLPrefix + option.iconURL;
-    const selectOption = createElement('li', {}, { margin: 0 }, dropdown);
+    const selectOption = createElement('li', {}, {}, dropdown);
     const selectOptionBtn = createElement(
         'button',
         { className: EditGlobals.classNames.customSelectButton },
