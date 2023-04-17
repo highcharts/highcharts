@@ -23,6 +23,8 @@ import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type Legend from '../../Core/Legend/Legend';
+import type Series from '../../Core/Series/Series';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -215,7 +217,16 @@ class AreaSeries extends LineSeries {
          * @since   2.0
          * @product highcharts highstock
          */
-        threshold: 0
+        threshold: 0,
+
+        /**
+         * Whether to display the symbol with line in the legend or only the
+         * rectangle.
+         *
+         * @type    {boolean}
+         * @product highcharts highstock
+         */
+        legendSymbol: false
     });
 
     /* *
@@ -618,6 +629,18 @@ class AreaSeries extends LineSeries {
         return segment;
     }
 
+    /**
+     * Drawing legend symbol based on the user option.
+     * @private
+     */
+    public drawLegendSymbol(legend: Legend, item?: Series): void {
+        if (this.options.legendSymbol) {
+            LegendSymbol.drawLineMarker.call(this, legend);
+        } else if (item) {
+            LegendSymbol.drawRectangle.call(this, legend, item);
+        }
+    }
+
     /* eslint-enable valid-jsdoc */
 
 }
@@ -629,12 +652,11 @@ class AreaSeries extends LineSeries {
  * */
 
 interface AreaSeries {
-    drawLegendSymbol: typeof LegendSymbol.drawLineMarker;
+    drawLegendSymbol: (legend: Legend, item?: Series) => void;
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
-    singleStacks: false,
-    drawLegendSymbol: LegendSymbol.drawLineMarker
+    singleStacks: false
 });
 
 /* *

@@ -30,6 +30,7 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
     fillOpacity?: number;
     negativeFillColor?: ColorType;
     states?: SeriesStatesOptions<AreaSeries>;
+    legendSymbol?: boolean;
 }
 
 /* *
