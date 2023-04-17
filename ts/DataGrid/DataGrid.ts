@@ -406,15 +406,21 @@ class DataGrid {
      */
     private getColumnsToDisplay(): Array<string> {
         const columnsOptions = this.options.columns,
-            tableColumns = this.dataTable.getColumnNames();
+            tableColumns = this.dataTable.getColumnNames(),
+            filteredColumns = [];
 
-        return tableColumns.filter(function (columnName): boolean {
+        for (let i = 0; i < tableColumns.length; i++) {
+            const columnName = tableColumns[i];
             const column = columnsOptions[columnName];
             if (column && defined(column.show)) {
-                return !!columnsOptions[columnName].show;
+                if (columnsOptions[columnName].show) {
+                    filteredColumns.push(columnName);
+                }
+            } else {
+                filteredColumns.push(columnName);
             }
-            return true;
-        });
+        }
+        return filteredColumns;
     }
 
     /**
