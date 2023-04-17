@@ -2,20 +2,15 @@
     class CustomProviderDefinition {
         constructor() {
             this.themes = {
-                Female: {
-                    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@b58f45082b/samples/graphics/human-anatomy-tiles/female/{zoom}/{x}/{y}.png',
-                    minZoom: 1,
-                    maxZoom: 3
-                },
-                Male: {
-                    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@b58f45082b/samples/graphics/human-anatomy-tiles/male/{zoom}/{x}/{y}.png',
+                Standard: {
+                    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/graphics/human-anatomy-tiles/{zoom}/{x}/{y}.png',
                     minZoom: 1,
                     maxZoom: 3
                 }
             };
             this.initialProjectionName = 'WebMercator'; // fake projection
             this.defaultCredits =
-                'Images from <a href="https://www.innerbody.com/">innerbody</a>';
+                '<a href="https://www.freepik.com/free-photo/human-body-running_1036783.htm#query=human%20anatomy&position=40&from_view=search&track=ais">Image by kjpargeter</a> on Freepik';
         }
     }
 
@@ -24,27 +19,6 @@
 }(Highcharts));
 
 Highcharts.mapChart('container', {
-    chart: {
-        events: {
-            load() {
-                const chart = this,
-                    twmSeries = chart.series[0],
-                    btn = document.getElementById('switchGender');
-
-                btn.addEventListener('click', function () {
-                    const newTheme =
-                        twmSeries.options.provider.theme === 'Female' ?
-                            'Male' : 'Female';
-                    twmSeries.update({
-                        provider: {
-                            theme: newTheme
-                        }
-                    });
-                });
-            }
-        }
-    },
-
     title: {
         text: 'Simple Anatomy Explorer'
     },
@@ -91,7 +65,7 @@ Highcharts.mapChart('container', {
         type: 'tiledwebmap',
         provider: {
             type: 'CustomProvider',
-            theme: 'Female'
+            theme: 'Standard'
         }
     }, {
         type: 'map',
@@ -102,10 +76,10 @@ Highcharts.mapChart('container', {
             geometry: {
                 type: 'Polygon',
                 coordinates: [[
-                    [-18, 84.2],
-                    [20, 84.2],
-                    [20, 76.5],
-                    [-18, 76.5]
+                    [-58, 81.2],
+                    [-19.6, 81.2],
+                    [-15, 74.5],
+                    [-54, 69]
                 ]]
             }
         }, {
@@ -113,35 +87,40 @@ Highcharts.mapChart('container', {
             geometry: {
                 type: 'Polygon',
                 coordinates: [[
-                    [-25, 75],
-                    [25, 75],
-                    [25, 50],
-                    [-25, 50]
+                    [-43.36, 71.41],
+                    [4.5, 74],
+                    [7, 49],
+                    [-30.8, 40.6]
                 ]]
             }
         }, {
-            name: 'Arms and hands',
+            name: 'Right arm and hand',
             geometry: {
                 type: 'Polygon',
                 coordinates: [[
-                    [25, 75],
-                    [40, 73],
-                    [43, 45],
-                    [62, -30],
-                    [37, -30],
-                    [38, 0],
-                    [30, 40],
-                    [27, 49],
-                    [25, 75],
-                    [-25, 75],
-                    [-40, 73],
-                    [-43, 45],
-                    [-62, -30],
-                    [-37, -30],
-                    [-38, 0],
-                    [-30, 40],
-                    [-27, 49],
-                    [-25, 75]
+                    [-73.4, 65.5],
+                    [-53.6, 63.4],
+                    [-57, 57],
+                    [-45, 50],
+                    [-37.2, 60],
+                    [-31, 40],
+                    [-45, 29],
+                    [-79, 56]
+                ]]
+            }
+        }, {
+            name: 'Left arm and hand',
+            geometry: {
+                type: 'Polygon',
+                coordinates: [[
+                    [4.5, 74],
+                    [42, 64],
+                    [39, 29],
+                    [22, 26],
+                    [15, 40.25],
+                    [24, 46],
+                    [23, 59],
+                    [6.6, 63.5]
                 ]]
             }
         }, {
@@ -149,10 +128,10 @@ Highcharts.mapChart('container', {
             geometry: {
                 type: 'Polygon',
                 coordinates: [[
-                    [-25, 50],
-                    [25, 50],
-                    [35, -10],
-                    [-35, -10]
+                    [-30.8, 40.6],
+                    [7, 49],
+                    [30.6, 0.72],
+                    [-11, -2]
                 ]]
             }
         }, {
@@ -160,10 +139,16 @@ Highcharts.mapChart('container', {
             geometry: {
                 type: 'Polygon',
                 coordinates: [[
-                    [-35, -10],
-                    [35, -10],
-                    [25, -84.5],
-                    [-25, -84.5]
+                    [-18.9, 15.3],
+                    [-11, -2],
+                    [30.6, 0.72],
+                    [57, -40],
+                    [100, -70],
+                    [100, -84.5],
+                    [-20, -84.5],
+                    [-20, -65],
+                    [-64, -32],
+                    [-45, 4]
                 ]]
             }
         }]

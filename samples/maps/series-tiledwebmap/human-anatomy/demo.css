@@ -3,32 +3,3 @@
     height: 640px;
     margin: 0 auto;
 }
-
-#wrapper {
-    display: grid;
-    place-items: center;
-}
-
-#switchGender {
-    background: linear-gradient(to bottom right, #ef4765, #ff9a5a);
-    border: 0;
-    border-radius: 12px;
-    color: #fff;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 2.5;
-    outline: transparent;
-    padding: 0 1rem;
-    text-align: center;
-    text-decoration: none;
-    transition: 0.2s ease-in-out 0s;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    white-space: nowrap;
-}
-
-#switchGender:hover {
-    transform: scale(1.05);
-}
