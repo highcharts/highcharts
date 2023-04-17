@@ -1646,7 +1646,7 @@ class Tooltip {
 
         if (!this.shouldStickOnContact()) {
             if (tooltip.tracker) {
-                tooltip.tracker.destroy();
+                tooltip.tracker = tooltip.tracker.destroy();
             }
             return;
         }
