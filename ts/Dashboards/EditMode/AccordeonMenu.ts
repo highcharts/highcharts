@@ -188,9 +188,11 @@ class AccordeonMenu {
         let value = component.options as any;
 
         for (let i = 0, end = propertyPath.length; i < end; i++) {
-            if (value) {
-                value = value[propertyPath[i]];
+            if (!value) {
+                return;
             }
+
+            value = value[propertyPath[i]];
         }
 
         return value;
