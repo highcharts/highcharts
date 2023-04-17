@@ -95,6 +95,7 @@ class TrendLineIndicator extends SMAIndicator {
     public data: Array<TrendLinePoint> = void 0 as any;
     public options: TrendLineOptions = void 0 as any;
     public points: Array<TrendLinePoint> = void 0 as any;
+    public updateAllPoints?: boolean = true;
 
     /* *
      *
@@ -114,23 +115,20 @@ class TrendLineIndicator extends SMAIndicator {
             xValLength: number = xVal.length,
             index: number = (params.index as any);
 
-        let sumX = 0,
+        let sumX = (xValLength - 1) * xValLength / 2,
             sumY = 0,
             sumXY = 0,
-            sumX2 = 0,
+            sumX2 =
+                ((xValLength - 1) * (xValLength) * (2 * xValLength - 1)) / 6,
             alpha: number,
             i: number,
-            x: number,
             y: number;
 
         // Get sums:
         for (i = 0; i < xValLength; i++) {
-            x = xVal[i];
             y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
-            sumX += x;
             sumY += y;
-            sumXY += x * y;
-            sumX2 += x * x;
+            sumXY += i * y;
         }
 
         // Get slope and offset:
@@ -145,12 +143,11 @@ class TrendLineIndicator extends SMAIndicator {
 
         // Calculate linear regression:
         for (i = 0; i < xValLength; i++) {
-            x = xVal[i];
-            y = alpha * x + beta;
+            y = alpha * i + beta;
 
             // Prepare arrays required for getValues() method
-            LR[i] = [x, y];
-            xData[i] = x;
+            LR[i] = [xVal[i], y];
+            xData[i] = xVal[i];
             yData[i] = y;
         }
 

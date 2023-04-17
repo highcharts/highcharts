@@ -129,6 +129,8 @@ class Point {
 
     public dataLabels?: Array<SVGLabel>;
 
+    public destroyed = false;
+
     public formatPrefix: string = 'point';
 
     public graphic?: SVGElement;
@@ -390,63 +392,66 @@ class Point {
      * @function Highcharts.Point#destroy
      */
     public destroy(): void {
-        const point = this,
-            series = point.series,
-            chart = series.chart,
-            dataSorting = series.options.dataSorting,
-            hoverPoints = chart.hoverPoints,
-            globalAnimation = point.series.chart.renderer.globalAnimation,
-            animation = animObject(globalAnimation);
-        let prop;
+        if (!this.destroyed) {
+            const point = this,
+                series = point.series,
+                chart = series.chart,
+                dataSorting = series.options.dataSorting,
+                hoverPoints = chart.hoverPoints,
+                globalAnimation = point.series.chart.renderer.globalAnimation,
+                animation = animObject(globalAnimation);
 
-        /**
-         * Allow to call after animation.
-         * @private
-         */
-        function destroyPoint(): void {
-            // Remove all events and elements
-            if (
-                point.graphic ||
-                point.graphics ||
-                point.dataLabel ||
-                point.dataLabels
-            ) {
-                removeEvent(point);
-                point.destroyElements();
+            /**
+             * Allow to call after animation.
+             * @private
+             */
+            const destroyPoint = (): void => {
+                // Remove all events and elements
+                if (
+                    point.graphic ||
+                    point.graphics ||
+                    point.dataLabel ||
+                    point.dataLabels
+                ) {
+                    removeEvent(point);
+                    point.destroyElements();
+                }
+
+                for (const prop in point) { // eslint-disable-line guard-for-in
+                    delete point[prop];
+                }
+            };
+
+            if (point.legendItem) {
+                // pies have legend items
+                chart.legend.destroyItem(point);
             }
 
-            for (prop in point) { // eslint-disable-line guard-for-in
-                (point as any)[prop] = null;
+            if (hoverPoints) {
+                point.setState();
+                erase(hoverPoints, point);
+                if (!hoverPoints.length) {
+                    chart.hoverPoints = null as any;
+                }
+
             }
-        }
-
-        if (point.legendItem) {
-            // pies have legend items
-            chart.legend.destroyItem(point);
-        }
-
-        if (hoverPoints) {
-            point.setState();
-            erase(hoverPoints, point);
-            if (!hoverPoints.length) {
-                chart.hoverPoints = null as any;
+            if (point === chart.hoverPoint) {
+                point.onMouseOut();
             }
 
-        }
-        if (point === chart.hoverPoint) {
-            point.onMouseOut();
-        }
+            // Remove properties after animation
+            if (!dataSorting || !dataSorting.enabled) {
+                destroyPoint();
 
-        // Remove properties after animation
-        if (!dataSorting || !dataSorting.enabled) {
-            destroyPoint();
+            } else {
+                this.animateBeforeDestroy();
+                syncTimeout(destroyPoint, animation.duration);
+            }
 
-        } else {
-            this.animateBeforeDestroy();
-            syncTimeout(destroyPoint, animation.duration);
+            chart.pointCount--;
         }
 
-        chart.pointCount--;
+        this.destroyed = true;
     }
 
     /**

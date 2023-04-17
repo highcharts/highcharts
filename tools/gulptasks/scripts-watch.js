@@ -12,7 +12,7 @@ const gulp = require('gulp');
 
 const WATCH_GLOBS = [
     'js/**/*.js',
-    'css/**/*.scss'
+    'css/**/*.css'
 ];
 
 /* *

@@ -16,9 +16,9 @@ import type { AlignObject } from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotation';
 import type AnnotationChart from '../AnnotationChart';
 import type { AnnotationPointType } from '../AnnotationSeries';
-import type { ControllableAnchorObject } from './Controllable';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type { ControllableLabelOptions } from './ControllableOptions';
+import type ControlTarget from '../ControlTarget';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -477,7 +477,7 @@ class ControllableLabel extends Controllable {
      */
     public anchor(
         _point: AnnotationPointType
-    ): ControllableAnchorObject {
+    ): ControlTarget.Anchor {
         const anchor = super.anchor.apply(this, arguments),
             x = this.options.x || 0,
             y = this.options.y || 0;
@@ -495,7 +495,7 @@ class ControllableLabel extends Controllable {
      * Returns the label position relative to its anchor.
      */
     public position(
-        anchor: ControllableAnchorObject
+        anchor: ControlTarget.Anchor
     ): (PositionObject|null|undefined) {
         const item = this.graphic,
             chart = this.annotation.chart,
