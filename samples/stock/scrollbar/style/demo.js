@@ -1,18 +1,20 @@
 Highcharts.stockChart('container', {
 
     scrollbar: {
-        barBackgroundColor: 'gray',
-        barBorderRadius: 7,
+        barBackgroundColor: '#dddddd',
+        barBorderRadius: 5,
         barBorderWidth: 0,
-        buttonBackgroundColor: 'gray',
-        buttonBorderWidth: 0,
-        buttonArrowColor: 'yellow',
-        buttonBorderRadius: 7,
-        rifleColor: 'yellow',
-        trackBackgroundColor: 'white',
+        buttonsEnabled: false,
+        rifleColor: 'transparent',
+        trackBackgroundColor: '#fafafa',
         trackBorderWidth: 1,
-        trackBorderColor: 'silver',
-        trackBorderRadius: 7
+        trackBorderColor: '#cccccc',
+        trackBorderRadius: 5,
+        height: 10
+    },
+
+    navigator: {
+        maskInside: false
     },
 
     rangeSelector: {
@@ -21,6 +23,6 @@ Highcharts.stockChart('container', {
 
     series: [{
         name: 'USD to EUR',
-        data: usdeur
+        data: usdeur.splice(usdeur.length - 250)
     }]
 });

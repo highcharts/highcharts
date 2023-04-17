@@ -39,7 +39,6 @@ import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
 import type { ChartPanningOptions } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
-import type Oldie from '../../Extensions/Oldie/Oldie';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type Series from '../Series/Series';
@@ -76,7 +75,6 @@ const {
     svg,
     win
 } = H;
-import MSPointer from '../MSPointer.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
@@ -311,8 +309,7 @@ class Chart {
     public clipRect?: SVGElement;
     public colorCounter: number = void 0 as any;
     public container: globalThis.HTMLElement = void 0 as any;
-    public containerHeight?: number;
-    public containerWidth?: number;
+    public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
     public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
@@ -618,8 +615,7 @@ class Chart {
             optionsChart = chart.options.chart,
             type = (
                 options.type ||
-                optionsChart.type ||
-                optionsChart.defaultSeriesType
+                optionsChart.type
             ) as string,
             SeriesClass = seriesTypes[type];
 
@@ -1373,6 +1369,19 @@ class Chart {
     }
 
     /**
+     * Internal function to get the available size of the container element
+     *
+     * @private
+     * @function Highcharts.Chart#getContainerBox
+     */
+    public getContainerBox(): { width: number, height: number } {
+        return {
+            width: getStyle(this.renderTo, 'width', true) || 0,
+            height: getStyle(this.renderTo, 'height', true) || 0
+        };
+    }
+
+    /**
      * Internal function to get the chart width and height according to options
      * and container size. Sets {@link Chart.chartWidth} and
      * {@link Chart.chartHeight}.
@@ -1385,20 +1394,7 @@ class Chart {
             optionsChart = chart.options.chart,
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
-            renderTo = chart.renderTo,
-            naturalWidth = getStyle(renderTo, 'width', true) || 0,
-            containerWidth = naturalWidth > 1 ? naturalWidth : 600,
-            naturalHeight = getStyle(renderTo, 'height', true) || 0,
-            containerHeight = naturalHeight > 1 ? naturalHeight : 400;
-
-        // Get inner width and height
-        if (!defined(widthOption)) {
-            chart.containerWidth = containerWidth;
-        }
-
-        if (!defined(heightOption)) {
-            chart.containerHeight = containerHeight;
-        }
+            containerBox = chart.getContainerBox();
 
         /**
          * The current pixel width of the chart.
@@ -1408,7 +1404,7 @@ class Chart {
          */
         chart.chartWidth = Math.max( // #1393
             0,
-            widthOption || containerWidth // #1460
+            widthOption || containerBox.width || 600 // #1460
         );
         /**
          * The current pixel height of the chart.
@@ -1422,8 +1418,10 @@ class Chart {
                 heightOption as any,
                 chart.chartWidth
             ) ||
-            containerHeight
+            (containerBox.height > 1 ? containerBox.height : 400)
         );
+
+        chart.containerBox = containerBox;
     }
 
     /**
@@ -1644,6 +1642,9 @@ class Chart {
             options.exporting && options.exporting.allowHTML,
             chart.styledMode
         ) as Chart.Renderer;
+
+        chart.containerBox = chart.getContainerBox();
+
         // Set the initial animation from the options
         setAnimation(void 0, chart);
 
@@ -1761,27 +1762,27 @@ class Chart {
     public reflow(e?: Event): void {
         const chart = this,
             optionsChart = chart.options.chart,
-            renderTo = chart.renderTo,
             hasUserSize = (
                 defined(optionsChart.width) &&
                 defined(optionsChart.height)
             ),
-            width = optionsChart.width || getStyle(renderTo, 'width'),
-            height = optionsChart.height || getStyle(renderTo, 'height');
+            oldBox = chart.containerBox,
+            containerBox = chart.getContainerBox();
 
         delete chart.pointer.chartPosition;
 
-        // Width and height checks for display:none. Target is doc in IE8 and
-        // Opera, win in Firefox, Chrome and IE9.
+        // Width and height checks for display:none. Target is doc in Opera
+        // and win in Firefox, Chrome and IE9.
         if (
             !hasUserSize &&
             !chart.isPrinting &&
-            width &&
-            height
+            oldBox &&
+            // When fired by resize observer inside hidden container
+            containerBox.width
         ) {
             if (
-                width !== chart.containerWidth ||
-                height !== chart.containerHeight
+                containerBox.width !== oldBox.width ||
+                containerBox.height !== oldBox.height
             ) {
                 U.clearTimeout(chart.reflowTimeout as any);
                 // When called from window.resize, e is set, else it's called
@@ -1794,8 +1795,7 @@ class Chart {
                     }
                 }, e ? 100 : 0);
             }
-            chart.containerWidth = width as any;
-            chart.containerHeight = height as any;
+            chart.containerBox = containerBox;
         }
     }
 
@@ -2268,7 +2268,7 @@ class Chart {
 
             // The default series type's class
             klass = seriesTypes[
-                (optionsChart.type || optionsChart.defaultSeriesType) as any
+                optionsChart.type as any
             ];
 
             // Get the value from available chart-wide properties
@@ -2303,7 +2303,7 @@ class Chart {
      * @function Highcharts.Chart#linkSeries
      * @emits Highcharts.Chart#event:afterLinkSeries
      */
-    public linkSeries(): void {
+    public linkSeries(isUpdating?:boolean): void {
         const chart = this,
             chartSeries = chart.series;
 
@@ -2340,7 +2340,7 @@ class Chart {
             }
         });
 
-        fireEvent(this, 'afterLinkSeries');
+        fireEvent(this, 'afterLinkSeries', { isUpdating });
     }
 
     /**
@@ -2354,41 +2354,6 @@ class Chart {
             serie.translate();
             serie.render();
         });
-    }
-
-    /**
-     * Render labels for the chart.
-     *
-     * @private
-     * @function Highcharts.Chart#renderLabels
-     */
-    public renderLabels(): void {
-        const chart = this,
-            labels = chart.options.labels as Oldie.LabelsOptions;
-
-        if (labels.items) {
-            labels.items.forEach(function (
-                label: LabelsItemsOptions
-            ): void {
-                const style = extend(labels.style as any, label.style as any),
-                    x = pInt(style.left) + chart.plotLeft,
-                    y = pInt(style.top) + chart.plotTop + 12;
-
-                // delete to prevent rewriting in IE
-                delete style.left;
-                delete style.top;
-
-                chart.renderer.text(
-                    label.html as any,
-                    x,
-                    y
-                )
-                    .attr({ zIndex: 2 })
-                    .css(style)
-                    .add();
-
-            });
-        }
     }
 
     /**
@@ -2493,9 +2458,6 @@ class Chart {
                 .add();
         }
         chart.renderSeries();
-
-        // Labels
-        chart.renderLabels();
 
         // Credits
         chart.addCredits();
@@ -2668,11 +2630,6 @@ class Chart {
     public firstRender(): void {
         const chart = this,
             options = chart.options;
-
-        // Hook for oldIE to check whether the chart is ready to render
-        if (chart.isReadyToRender && !chart.isReadyToRender()) {
-            return;
-        }
 
         // Create the container
         chart.getContainer();

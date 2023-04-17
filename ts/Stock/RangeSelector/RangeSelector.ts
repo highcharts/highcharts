@@ -849,7 +849,7 @@ class RangeSelector {
         let date = Date.parse(input);
 
         // If the value isn't parsed directly to a value by the
-        // browser's Date.parse method, like YYYY-MM-DD in IE8, try
+        // browser's Date.parse method, try
         // parsing it a different way
         if (!isNumber(date)) {
             const parts = inputDate.split('-');

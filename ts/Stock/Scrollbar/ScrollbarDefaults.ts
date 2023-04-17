@@ -82,6 +82,13 @@ const ScrollbarDefaults: ScrollbarOptions = {
     buttonBorderRadius: 0,
 
     /**
+     * Enable or disable the buttons at the end of the scrollbar.
+     *
+     * @since next
+     */
+    buttonsEnabled: true,
+
+    /**
      * Enable or disable the scrollbar.
      *
      * @sample stock/scrollbar/enabled/

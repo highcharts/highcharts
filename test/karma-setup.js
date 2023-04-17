@@ -184,7 +184,7 @@ XMLHttpRequest.prototype.send = function () {
     }
 }
 
-// Hijack fetch to run local sources. Note the oldIE-friendly syntax.
+// Hijack fetch to run local sources.
 if (window.Promise) {
     window.fetch = function (url) {
         return new Promise(function (resolve, reject) {
@@ -716,11 +716,6 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 }
                 resolve(diff);
             })
-        ['catch'](function (error) { // to avoid IE8 failure
-            console.log(error && error.message);
-            resolve(error && error.message); // skip and continue processing
-        });
-
     });
 }
 
