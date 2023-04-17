@@ -1,0 +1,82 @@
+
+.highcharts-figure {
+    min-width: 400px;
+    max-width: 1200px;
+    margin: 1em auto;
+    position: relative;
+}
+
+#container {
+    height: 700px;
+    flex-grow: 1;
+}
+
+#csv {
+    display: none;
+}
+
+.hc-crosshair {
+    transition: all 0.338s;
+}
+
+.hc-axis-title {
+    display: flex;
+    width: 130px;
+    height: 30px;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.hc-axis-icon {
+    width: 22px;
+    margin-right: 10px;
+    filter: sepia() hue-rotate(30deg) saturate(50%);
+}
+
+.hc-axis-title-text {
+    font-size: 0.9rem;
+    flex-grow: 1;
+}
+
+.hc-axis-title:hover {
+    text-decoration: underline;
+}
+
+.hc-axis-title input {
+    height: 16px;
+    width: 16px;
+    margin-right: 10px;
+    accent-color: #35a02b;
+}
+
+#play {
+    display: block;
+    position: absolute;
+    top: 25px;
+    right: 10px;
+    z-index: 10;
+    width: 10rem;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    line-height: 1;
+    text-align: center;
+    border: none;
+    border-radius: 7px;
+    text-decoration: none;
+    background: #c34a41;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+#play .icon {
+    margin-right: 3px;
+}
+
+#play:hover {
+    background: #da493f;
+}
+
+#play:active {
+    background: #ac443c;
+}
