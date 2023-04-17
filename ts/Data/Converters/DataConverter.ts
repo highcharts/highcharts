@@ -160,7 +160,7 @@ class DataConverter implements DataEvent.Emitter {
      */
     private dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
-            regex: /^([0-9]{4})([\-\.\/])([0-9]{1,2})\2([0-9]{1,2})$/u,
+            regex: /^([0-9]{4})([\-\.\/])([0-9]{1,2})\2([0-9]{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -170,7 +170,7 @@ class DataConverter implements DataEvent.Emitter {
             }
         },
         'dd/mm/YYYY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{4})$/u,
+            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{4})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -181,7 +181,7 @@ class DataConverter implements DataEvent.Emitter {
             alternative: 'mm/dd/YYYY' // different format with the same regex
         },
         'mm/dd/YYYY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{4})$/u,
+            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{4})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -191,7 +191,7 @@ class DataConverter implements DataEvent.Emitter {
             }
         },
         'dd/mm/YY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{2})$/u,
+            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 const d = new Date();
 
@@ -212,7 +212,7 @@ class DataConverter implements DataEvent.Emitter {
             alternative: 'mm/dd/YY' // different format with the same regex
         },
         'mm/dd/YY': {
-            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{2})$/u,
+            regex: /^([0-9]{1,2})([\-\.\/])([0-9]{1,2})\2([0-9]{2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
@@ -329,7 +329,7 @@ class DataConverter implements DataEvent.Emitter {
         }
         if (typeof value === 'string') {
             if (value.indexOf(' ') > -1) {
-                value = value.replace(/\s+/gu, '');
+                value = value.replace(/\s+/g, '');
             }
             if (this.decimalRegex) {
                 value = value.replace(this.decimalRegex, '$1.$2');
@@ -406,7 +406,7 @@ class DataConverter implements DataEvent.Emitter {
             ) {
                 thing = data[i]
                     .trim()
-                    .replace(/[-\.\/]/gu, ' ')
+                    .replace(/[-\.\/]/g, ' ')
                     .split(' ');
 
                 guessedFormat = [
@@ -723,11 +723,11 @@ class DataConverter implements DataEvent.Emitter {
         const converter = this;
 
         if (typeof str === 'string') {
-            str = str.replace(/^\s+|\s+$/gu, '');
+            str = str.replace(/^\s+|\s+$/g, '');
 
             // Clear white space insdie the string, like thousands separators
-            if (inside && /^[0-9\s]+$/u.test(str)) {
-                str = str.replace(/\s/gu, '');
+            if (inside && /^[0-9\s]+$/.test(str)) {
+                str = str.replace(/\s/g, '');
             }
 
             if (converter.decimalRegex) {

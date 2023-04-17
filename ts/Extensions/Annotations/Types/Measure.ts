@@ -421,12 +421,7 @@ class Measure extends Annotation {
         userOptions: Measure.MeasureOptions,
         index?: number
     ): void {
-        Annotation.prototype.init.call(
-            this,
-            annotationOrChart,
-            userOptions,
-            index
-        );
+        super.init(annotationOrChart, userOptions, index);
 
         this.offsetX = 0;
         this.offsetY = 0;
@@ -833,8 +828,10 @@ class Measure extends Annotation {
             item.translate(dx, dy)
         );
 
-        this.options.typeOptions.point.x = this.startXMin;
-        this.options.typeOptions.point.y = this.startYMin;
+        this.options.typeOptions.point = {
+            x: this.startXMin,
+            y: this.startYMin
+        };
     }
 
 }

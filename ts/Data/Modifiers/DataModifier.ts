@@ -397,7 +397,7 @@ namespace DataModifier {
      * stringified class type.
      * @internal
      */
-    const nameRegExp = /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/;
+    const nameRegExp = /^(?:class|function)\s+(\w*?)(?:Data)?(?:Modifier)?\W/;
 
     /**
      * Registry as a record object with modifier names and their class.
@@ -462,18 +462,6 @@ namespace DataModifier {
         )[1];
     }
 
-}
-
-/* *
- *
- *  Registry
- *
- * */
-
-declare module './DataModifierType' {
-    interface DataModifierTypes {
-        '': typeof DataModifier;
-    }
 }
 
 /* *

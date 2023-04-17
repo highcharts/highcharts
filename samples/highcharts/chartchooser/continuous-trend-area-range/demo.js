@@ -33,7 +33,8 @@ Highcharts.chart('container', {
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/bergen-wind-prediction.csv',
         seriesMapping: [{ low: 0, high: 1 }, { y: 2 }],
         complete: function (options) {
-            options.series[1].name = 'Possible wind';
+            options.series[0].name = 'Possible wind';
+            options.series[1].name = 'Expected wind';
         }
     },
 

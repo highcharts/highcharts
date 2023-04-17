@@ -105,11 +105,6 @@ namespace BrandLightTheme {
                 }
             }
         },
-        labels: {
-            style: {
-                color: '#46465C'
-            }
-        },
         credits: {
             style: {
                 color: '#46465C'
