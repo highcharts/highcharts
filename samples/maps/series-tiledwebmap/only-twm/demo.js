@@ -1,10 +1,17 @@
 Highcharts.mapChart('container', {
+    chart: {
+        margin: 0
+    },
+
     title: {
         text: 'Highcharts Maps basic TiledWebMap Series'
     },
 
     mapNavigation: {
-        enabled: true
+        enabled: true,
+        buttonOptions: {
+            alignTo: 'spacingBox'
+        }
     },
 
     legend: {

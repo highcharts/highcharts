@@ -53,7 +53,6 @@
                 theme: {
                     'stroke-width': 1,
                     stroke: 'silver',
-                    r: 8,
                     padding: 10
                 }
             }
@@ -62,18 +61,7 @@
         mapNavigation: {
             enabled: true,
             buttonOptions: {
-                x: 10,
-                theme: {
-                    r: 8
-                }
-            },
-            buttons: {
-                zoomIn: {
-                    y: 10
-                },
-                zoomOut: {
-                    y: 38
-                }
+                alignTo: 'spacingBox'
             }
         },
 

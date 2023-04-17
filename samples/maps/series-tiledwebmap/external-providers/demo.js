@@ -11,6 +11,7 @@
     // Initialize the chart
     Highcharts.mapChart('container', {
         chart: {
+            margin: 0,
             events: {
                 load() {
                     const chart = this,
@@ -62,15 +63,24 @@
             }
         },
         title: {
-            text: 'Highcharts Maps TiledWebMap Series'
+            text: null
         },
 
         mapNavigation: {
-            enabled: true
+            enabled: true,
+            buttonOptions: {
+                alignTo: 'spacingBox'
+            }
         },
 
         mapView: {
             zoom: 3
+        },
+
+        legend: {
+            backgroundColor: '#ffffffdd',
+            align: 'left',
+            layout: 'vertical'
         },
 
         series: [{

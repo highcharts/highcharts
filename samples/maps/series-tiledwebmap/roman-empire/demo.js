@@ -9,15 +9,18 @@
     Highcharts.mapChart('container', {
 
         chart: {
-            map: provinces
+            map: provinces,
+            margin: 0
         },
 
         title: {
-            text: 'The Roman Empire'
+            text: 'The Roman Empire',
+            align: 'right'
         },
 
         subtitle: {
-            text: 'An example of shapes crossing current borders'
+            text: 'An example of shapes crossing current borders',
+            align: 'right'
         },
 
         credits: {
@@ -27,8 +30,7 @@
         navigation: {
             buttonOptions: {
                 align: 'left',
-                x: 9,
-                y: 10,
+                x: -1,
                 height: 28,
                 width: 28,
                 symbolSize: 14,
@@ -37,7 +39,6 @@
                 theme: {
                     'stroke-width': 1,
                     stroke: 'silver',
-                    r: 8,
                     padding: 10
                 }
             }
@@ -46,18 +47,7 @@
         mapNavigation: {
             enabled: true,
             buttonOptions: {
-                x: 10,
-                theme: {
-                    r: 8
-                }
-            },
-            buttons: {
-                zoomIn: {
-                    y: 10
-                },
-                zoomOut: {
-                    y: 38
-                }
+                alignTo: 'spacingBox'
             }
         },
 
