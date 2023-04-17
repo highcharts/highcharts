@@ -255,13 +255,13 @@ namespace HTMLTableConnector {
  *
  * */
 
-DataConnector.addConnector(HTMLTableConnector);
-
-declare module './ConnectorType' {
-    interface ConnectorTypeRegistry {
+declare module './DataConnectorType' {
+    interface DataConnectorTypes {
         HTMLTable: typeof HTMLTableConnector;
     }
 }
+
+DataConnector.registerType('HTMLTable', HTMLTableConnector);
 
 /* *
  *

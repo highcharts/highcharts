@@ -65,12 +65,12 @@ test('DataConnector registry', function (assert) {
         'GoogleSheets'
     ];
 
-    connectors.forEach(connector => {
+    for (const connector of connectors) {
         assert.strictEqual(
-            typeof DataConnector.getConnector(connector),
+            typeof DataConnector.types[connector],
             'function',
             `${connector} is registered`
         )
-   });
+    }
 
 });
