@@ -127,16 +127,18 @@ function renderCollapse(
 
     const content = createElement(
         'div',
-        { className: EditGlobals.classNames.accordeonContent },
         {
-            display: 'none'
+            className:
+                EditGlobals.classNames.accordeonContent +
+                ' ' +
+                EditGlobals.classNames.hiddenElement
         },
+        {},
         accordeon
     );
 
     headerBtn.addEventListener('click', function (): void {
-        const display = content.style.display;
-        content.style.display = display === 'none' ? 'block' : 'none';
+        content.classList.toggle(EditGlobals.classNames.hiddenElement);
         headerIcon.classList.toggle(EditGlobals.classNames.rotateElement);
     });
 
@@ -220,7 +222,7 @@ function renderSelect(
         'span',
         {
             textContent: options.value,
-            id: options.id
+            id: options.id || ''
         },
         {},
         btnContent
@@ -238,17 +240,19 @@ function renderSelect(
         btn
     );
 
-    let dropdown = createElement(
+    const dropdown = createElement(
         'ul',
         {
-            className: EditGlobals.classNames.dropdownContent
+            className:
+                EditGlobals.classNames.dropdownContent +
+                ' ' +
+                EditGlobals.classNames.hiddenElement
         },
         {},
         customSelect
     );
     btn.addEventListener('click', function (): void {
-        dropdown.style.display =
-            dropdown.style.display === 'none' ? 'flex' : 'none';
+        dropdown.classList.toggle(EditGlobals.classNames.hiddenElement);
         dropdownPointer.classList.toggle(EditGlobals.classNames.rotateElement);
     });
 
@@ -258,6 +262,7 @@ function renderSelect(
             dropdown,
             placeholder,
             options.id,
+            dropdownPointer,
             headerIcon,
             options.onchange
         );
@@ -274,6 +279,7 @@ function renderSelectElement(
     dropdown: HTMLElement,
     placeholder: HTMLElement,
     id: string,
+    dropdownPointer: HTMLElement,
     headerIcon?: HTMLElement,
     callback?: Function
 ): void {
@@ -306,7 +312,8 @@ function renderSelectElement(
     );
 
     selectOptionBtn.addEventListener('click', function (): void {
-        dropdown.style.display = 'none';
+        dropdown.classList.remove(EditGlobals.classNames.hiddenElement);
+        dropdownPointer.classList.toggle(EditGlobals.classNames.rotateElement);
         placeholder.textContent = option.name || '';
 
         if (headerIcon && option.iconURL) {
@@ -489,15 +496,17 @@ function renderNestedHeader(
     const content = createElement(
         'div',
         {
-            className: EditGlobals.classNames.accordeonNestedContent
+            className:
+                EditGlobals.classNames.accordeonNestedContent +
+                ' ' +
+                EditGlobals.classNames.hiddenElement
         },
         {},
         nested
     );
 
     headerBtn.addEventListener('click', function (): void {
-        const display = content.style.display;
-        content.style.display = display === 'none' ? 'flex' : 'none';
+        content.classList.toggle(EditGlobals.classNames.hiddenElement);
         headerIcon.classList.toggle(
             EditGlobals.classNames.rotateElementReverse
         );

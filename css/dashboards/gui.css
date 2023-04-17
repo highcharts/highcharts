@@ -435,10 +435,6 @@
     border: 1px solid var(--highcharts-dashboards-neutral-color-80);
 }
 
-.highcharts-dashboards-edit-menu-item {
-    display: none;
-}
-
 .highcharts-dashboards-edit-tools {
     overflow: hidden;
     width: 100%;
@@ -682,7 +678,7 @@
     transform: rotate(-90deg);
 }
 
-.highcharts-dashboards-edit-sidebar-tab-wrapper {
+div > .highcharts-dashboards-edit-hidden-element {
     display: none;
 }
 
@@ -858,7 +854,7 @@
 
 /* Dropdown */
 .highcharts-dashboards-edit-dropdown-content {
-    display: none;
+    display: flex;
     flex-direction: column;
     gap: 4px;
     background: var(--highcharts-dashboards-main-background-color);
@@ -951,7 +947,7 @@
     padding: 4px;
     flex-direction: column;
     background-color: var(--highcharts-dashboards-neutral-color-5);
-    display: none;
+    display: flex;
 }
 
 .highcharts-dashboards-edit-custom-option-button {
