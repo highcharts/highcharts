@@ -11,7 +11,7 @@ figure {
 }
 
 .hc-crosshair {
-    transition: all 0.15s;
+    transition: all 0.15s linear;
 }
 
 #legend {
