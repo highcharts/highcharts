@@ -123,11 +123,12 @@ class AccordeonMenu {
 
     /**
      * Update the options object with new nested value, based on the property
-     * path. If the objects in the path are not defiend, the function will
+     * path. If the objects in the path are not defined, the function will
      * create them.
      *
      * @param propertyPath
-     * Path of the property for which the value should be updated.
+     * Path of the property for which the value should be updated,
+     * e.g. ['chartOptions', 'chart', 'type']
      * @param value
      * New value of the property.
      */
@@ -157,8 +158,10 @@ class AccordeonMenu {
      *
      * @param options
      * Configuration object of the Component options.
-     * @param parentNode the HTML to which the accoreon menu should be rendered to.
-     * @param component the component for which the menu should be rendered.
+     * @param parentNode
+     * A container where the accordion is rendered.
+     * @param component
+     * the component for which the menu should be rendered.
      */
     public renderAccordeon(
         options: EditableOptions.Configuration,
@@ -237,8 +240,9 @@ class AccordeonMenu {
      * @param component
      * The component for which the value should be returned.
      * @param propertyPath
-     * Path to a value.
-     * @returns The value retrieved from the component.
+     * Path to a value, e.g. ['chartOptions', 'chart', 'type']
+     * @returns
+     * The value retrieved from the component.
      */
     public getValue(
         component: Component,
