@@ -330,7 +330,7 @@
     margin-left: 10px;
 }
 
-.highcharts-dashboards-toggle-container {
+.highcharts-dashboards-edit-toggle-container {
     display: flex;
     min-width: 100px;
 }
@@ -488,6 +488,7 @@
     background-repeat: no-repeat;
     background-position: 50% 50%;
     cursor: pointer;
+    filter: brightness(0) invert(1);
 }
 
 .highcharts-dashboards-edit-toolbar-row {
@@ -669,6 +670,7 @@
     font-weight: bold;
     font-size: 20px;
     width: 75%;
+    cursor: pointer;
 }
 
 .highcharts-dashboards-edit-sidebar-tab-wrapper {
@@ -846,8 +848,8 @@
 }
 
 /* Dropdown */
-ul.highcharts-dashboards-dropdown-content {
-    display: flex;
+.highcharts-dashboards-edit-dropdown-content {
+    display: none;
     flex-direction: column;
     gap: 4px;
     background: var(--highcharts-dashboards-main-background-color);
@@ -859,7 +861,12 @@ ul.highcharts-dashboards-dropdown-content {
     list-style-type: none;
 }
 
-div.highcharts-dashboards-dropdown {
+.highcharts-dashboards-edit-dropdown-content li {
+    margin: 0px;
+    background: none;
+}
+
+.highcharts-dashboards-edit-dropdown {
     position: relative;
     color: var(--highcharts-dashboards-main-font-color);
     font-weight: 700;
@@ -869,7 +876,7 @@ div.highcharts-dashboards-dropdown {
     line-height: 16px;
 }
 
-.highcharts-dashboards-dropdown > button.highcharts-dashboards-dropdown-button {
+.highcharts-dashboards-edit-dropdown .highcharts-dashboards-edit-dropdown-button {
     color: var(--highcharts-dashboards-main-font-color);
     box-sizing: border-box;
     display: flex;
@@ -885,7 +892,16 @@ div.highcharts-dashboards-dropdown {
     cursor: pointer;
 }
 
-button.highcharts-dashboards-select-option-button {
+.highcharts-dashboards-edit-dropdown-button-content {
+    display: flex;
+    align-items: center;
+}
+
+.highcharts-dashboards-edit-dropdown .highcharts-dashboards-edit-dropdown-button img {
+    margin-right: 10px;
+}
+
+.highcharts-dashboards-edit-select-option-button {
     display: flex;
     border: none;
     flex-direction: row;
@@ -897,18 +913,18 @@ button.highcharts-dashboards-select-option-button {
     color: var(--highcharts-dashboards-main-font-color);
 }
 
-button.highcharts-dashboards-select-option-button:hover {
+.highcharts-dashboards-edit-select-option-button:hover {
     background-color: var(--highcharts-dashboards-wrapper-background-color);
 }
 
-button.highcharts-dashboards-select-option-button:hover {
+.highcharts-dashboards-edit-select-option-button:hover {
     background-color: var(--highcharts-dashboards-neutral-color-3);
 }
 
 /* End of Dropdown */
 
 /* Nested options dropdown */
-.highcharts-dashboards-nested {
+.highcharts-dashboards-edit-accordeon-nested {
     display: flex;
     margin: 10px 0;
     flex-direction: column;
@@ -916,7 +932,7 @@ button.highcharts-dashboards-select-option-button:hover {
     border-radius: 2px;
 }
 
-.highcharts-dashboards-nested-header {
+.highcharts-dashboards-edit-accordeon-nested-header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -924,29 +940,48 @@ button.highcharts-dashboards-select-option-button:hover {
     padding: 10px 5px;
 }
 
-.highcharts-dashboards-nested-header-btn {
+.highcharts-dashboards-edit-accordeon-nested-header-btn {
     align-items: center;
     border: none;
-    font: inherit;
-    color: inherit;
     background: none;
     margin: 0;
-    width: 100%;
+    width: 60%;
     display: flex;
     cursor: pointer;
 }
 
-.highcharts-dashboards-nested-content {
+.highcharts-dashboards-edit-accordeon-nested-content {
     margin: 0px 10px 10px 10px;
     padding: 10px;
     flex-direction: column;
     background-color: var(--highcharts-dashboards-neutral-color-5);
+    display: none;
+}
+
+.highcharts-dashboards-edit-custom-option-button {
+    height: 40px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.highcharts-dashboards-edit-custom-option-button:hover {
+    background-color:var(--highcharts-dashboards-neutral-color-10);
+}
+
+.highcharts-dashboards-edit-custom-option-button > img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
 }
 
 /* end of nested options dropdown */
 
 /* outer Accordeon */
-button.highcharts-dashboards-outer-accordeon-header-btn {
+.highcharts-dashboards-edit-outer-accordeon-header-btn {
     border: none;
     font: inherit;
     color: inherit;
@@ -960,7 +995,7 @@ button.highcharts-dashboards-outer-accordeon-header-btn {
     align-items: center;
 }
 
-div.highcharts-dashboards-outer-accordeon {
+.highcharts-dashboards-edit-outer-accordeon {
     padding: 0;
     background: var(--highcharts-dashboards-neutral-color-10);
     margin: 8px 0;
@@ -971,34 +1006,34 @@ div.highcharts-dashboards-outer-accordeon {
     line-height: 16px;
 }
 
-.highcharts-dashboards-outer-accordeon-content {
+.highcharts-dashboards-edit-outer-accordeon-content {
     padding: 0px 16px 16px 16px;
 }
 
-.highcharts-dashboards-outer-accordeon-content > .highcharts-dashboards-edit-label-text {
+.highcharts-dashboards-edit-outer-accordeon-content > .highcharts-dashboards-edit-label-text {
     display: none;
 }
 
-.highcharts-dashboards-outer-accordeon-content input,
-.highcharts-dashboards-outer-accordeon-content select,
-.highcharts-dashboards-outer-accordeon-content textarea,
-.highcharts-dashboards-outer-accordeon-content label {
+.highcharts-dashboards-edit-outer-accordeon-content input,
+.highcharts-dashboards-edit-outer-accordeon-content select,
+.highcharts-dashboards-edit-outer-accordeon-content textarea,
+.highcharts-dashboards-edit-outer-accordeon-content label {
     width: calc(100% - 6px);
 }
 
-.highcharts-dashboards-outer-accordeon-content textarea {
+.highcharts-dashboards-edit-outer-accordeon-content textarea {
     min-height: 300px;
     overflow-y: auto;
 }
 
-.highcharts-dashboards-outer-accordeon-content .highcharts-dashboards-nested-content label {
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-accordeon-nested-content label {
     font-weight: normal;
     font-size: 12px;
     padding: 0px;
     margin-bottom: 2px;
 }
 
-.highcharts-dashboards-outer-accordeon-content .highcharts-dashboards-nested-content label:first-child {
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-accordeon-nested-content label:first-child {
     margin-top: 5px;
 }
 /* End of outer accordeon */
