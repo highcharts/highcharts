@@ -417,6 +417,7 @@
     width: 32px;
     height: 32px;
     margin-left: 16px;
+    border-radius: 4px;
     padding: 5px;
     border: none;
     float: right;
@@ -424,7 +425,8 @@
 }
 
 .highcharts-dashboards-edit-context-menu-btn:hover {
-    background-color: var(--highcharts-dashboards-neutral-color-0);
+    background-color: var(--highcharts-dashboards-neutral-color-50) !important;
+    filter: invert(100%);
 }
 
 .highcharts-dashboards-edit-menu-item {

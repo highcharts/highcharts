@@ -70,9 +70,11 @@ function renderContextButton(
                 }
             }, {}, parentNode
         );
+
         ctxBtnElement.style.background = 'url(' +
             editMode.options.contextMenu.icon +
-        ') no-repeat 50% 50%';
+            ') no-repeat 50% 50% var(--highcharts-dashboards-neutral-color-0)';
+
     }
 
     return ctxBtnElement;
