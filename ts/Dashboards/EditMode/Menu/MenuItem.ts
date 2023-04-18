@@ -89,7 +89,7 @@ class MenuItem {
 
         return createElement(
             'div',
-            { className: className },
+            { className: className || '' },
             merge(
                 this.options.style || {},
                 // to remove

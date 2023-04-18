@@ -177,7 +177,10 @@ class SidebarPopup extends BaseForm {
             return;
         }
 
-        this.renderHeader('Settings', this.iconsURL + 'settings.svg');
+        this.renderHeader(
+            EditGlobals.lang.settings,
+            this.iconsURL + 'settings.svg'
+        );
 
         const type = context.getType();
         if (type === 'cell') {

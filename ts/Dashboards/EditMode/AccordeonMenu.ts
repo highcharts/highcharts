@@ -21,12 +21,15 @@
  * */
 
 import type Component from '../Components/Component.js';
+import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type EditableOptions from '../Components/EditableOptions';
 
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
+import EditGlobals from './EditGlobals.js';
 const {
-    createElement
+    createElement,
+    merge
 } = U;
 
 /* *
@@ -79,10 +82,11 @@ class AccordeonMenu {
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
         let option, content;
+
         const accordeonContainer = createElement(
             'div',
             {
-                className: 'highcharts-dashboards-accordeon-menu'
+                className: EditGlobals.classNames.accordeonMenu
             },
             {},
             container
@@ -101,7 +105,7 @@ class AccordeonMenu {
         EditRenderer.renderButton(
             accordeonContainer,
             {
-                value: 'Update',
+                value: EditGlobals.lang.confirmButton,
                 callback: (): void => {
                     component.update(this.changedOptions as any);
                     menu.closeSidebar();
@@ -112,7 +116,7 @@ class AccordeonMenu {
         EditRenderer.renderButton(
             accordeonContainer,
             {
-                value: 'Cancel',
+                value: EditGlobals.lang.cancelButton,
                 callback: (): void => {
                     menu.changedOptions = {};
                     menu.closeSidebar();
@@ -214,12 +218,15 @@ class AccordeonMenu {
         for (let i = 0, iEnd = detailedOptions.length; i < iEnd; ++i) {
             const name = detailedOptions[i].name;
             const nestedOptions = detailedOptions[i].options;
-            const allowEnabled = detailedOptions[i].allowEnabled;
-            const content = EditRenderer.renderNestedHeader(
-                parentElement,
+            const allowEnabled = !!detailedOptions[i].allowEnabled;
+            const propertyPath = detailedOptions[i].propertyPath || [];
+            const content = EditRenderer.renderNestedHeader(parentElement, {
                 name,
-                !!allowEnabled
-            );
+                isEnabled: !!this.getValue(component, propertyPath),
+                allowEnabled,
+                onchange: (value: boolean | string | number): void =>
+                    this.updateOptions(propertyPath, value)
+            });
 
             for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
                 this.renderAccordeon(
@@ -256,7 +263,12 @@ class AccordeonMenu {
             return JSON.stringify(component.options.chartOptions, null, 2);
         }
 
-        let value = component.options as any;
+        const componentOptions = component.options;
+        const chart = (component as HighchartsComponent).chart;
+        const chartOptions = chart && chart.options;
+        let value = merge(componentOptions, {
+            chartOptions
+        }) as any;
 
         for (let i = 0, end = propertyPath.length; i < end; i++) {
             if (!value) {

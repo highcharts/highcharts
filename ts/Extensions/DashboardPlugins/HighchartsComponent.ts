@@ -157,6 +157,7 @@ class HighchartsComponent extends Component {
                     }, {
                         name: 'legend',
                         allowEnabled: true,
+                        propertyPath: ['chartOptions', 'legend', 'enabled'],
                         options: [{}]
                     }]
                 }, {
@@ -165,9 +166,11 @@ class HighchartsComponent extends Component {
                     type: 'textarea'
                 }, {
                     name: 'chartClassName',
+                    propertyPath: ['chartClassName'],
                     type: 'input'
                 }, {
                     name: 'chartID',
+                    propertyPath: ['chartID'],
                     type: 'input'
                 }
             ]),
