@@ -827,10 +827,17 @@ class Point {
         chartCoordinates?: boolean,
         plotY: number|undefined = this.plotY
     ): [number, number]|undefined {
+
+        if (this.destroyed) {
+            return;
+        }
+
         const { plotX, series } = this,
             { chart, xAxis, yAxis } = series;
+
         let posX = 0,
             posY = 0;
+
         if (isNumber(plotX) && isNumber(plotY)) {
             if (chartCoordinates) {
                 posX = xAxis ? xAxis.pos : chart.plotLeft;
