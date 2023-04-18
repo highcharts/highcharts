@@ -116,11 +116,6 @@ namespace SkiesTheme {
             itemHiddenStyle: {
                 color: 'silver'
             }
-        },
-        labels: {
-            style: {
-                color: '#3E576F'
-            }
         }
     };
 

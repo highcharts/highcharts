@@ -22,7 +22,6 @@
 
 import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
-import type JSON from '../Core/JSON';
 
 import U from '../Core/Utilities.js';
 const {
@@ -1630,7 +1629,7 @@ class DataTable implements DataEvent.Emitter {
  * */
 
 /**
- * Additionally it provides necessary types for events and JSON conversion.
+ * Additionally it provides necessary types for events.
  */
 namespace DataTable {
 
@@ -1655,7 +1654,7 @@ namespace DataTable {
     /**
      * Possible value types for a table cell.
      */
-    export type CellType = JSON.Primitive;
+    export type CellType = (boolean|number|null|string|undefined);
 
     /**
      * Event object for clone-related events.

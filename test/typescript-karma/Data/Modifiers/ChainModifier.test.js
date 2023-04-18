@@ -52,16 +52,16 @@ QUnit.test('ChainModifier.benchmark', function (assert) {
 QUnit.test('ChainModifier.modify', function (assert) {
 
     const done = assert.async(),
-        modifier = new ChainModifier(
-            {},
-            new RangeModifier({
+        modifier = new ChainModifier({
+            chain: [{
+                modifier: 'Range',
                 ranges: [{
                     column: 'y',
                     minValue: 'A',
                     maxValue: 'b'
                 }]
-            })
-        ),
+            }]
+        }),
         table = new DataTable({
             columns: {
                 x: [1, 2, 3, 4, 5, 6],
@@ -108,9 +108,8 @@ QUnit.test('ChainModifier.modifyCell', function (assert) {
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
+        .setModifier(new ChainModifier(
+            {},
             new RangeModifier({
                 ranges: [{
                     column: 'x',
@@ -171,9 +170,8 @@ QUnit.test('ChainModifier.modifyColumns', function (assert) {
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
+        .setModifier(new ChainModifier(
+            {},
             new RangeModifier({
                 ranges: [{
                     column: 'x',
@@ -236,9 +234,8 @@ QUnit.test('ChainModifier.modifyRows', function (assert) {
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
+        .setModifier(new ChainModifier(
+            {},
             new RangeModifier({
                 ranges: [{
                     column: 'x',

@@ -10,8 +10,7 @@ module.exports = {
         'export-module/legacy-export-servers',
         'maps/latlon',
         'stock/compare',
-        'stock/cumulative-sum',
-        'chart-and-series-types/pictorial'
+        'stock/cumulative-sum'
     ],
     /* List of old paths that should be redirected */
     redirects: [

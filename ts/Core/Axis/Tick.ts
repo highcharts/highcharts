@@ -512,7 +512,7 @@ class Tick {
         y: number,
         label: SVGElement,
         horiz: boolean,
-        labelOptions: PositionObject,
+        labelOptions: AxisLabelOptions,
         tickmarkOffset: number,
         index: number,
         step: number
@@ -535,15 +535,16 @@ class Tick {
                     ) :
                     0
             ),
+            distance = labelOptions.distance,
             pos = {} as PositionObject;
 
         let yOffset: number,
             line: number;
 
         if (axis.side === 0) {
-            yOffset = label.rotation ? -8 : -label.getBBox().height;
+            yOffset = label.rotation ? -distance : -label.getBBox().height;
         } else if (axis.side === 2) {
-            yOffset = rotCorr.y + 8;
+            yOffset = rotCorr.y + distance;
         } else {
             // #3140, #3140
             yOffset = Math.cos((label.rotation as any) * deg2rad) *
@@ -557,7 +558,10 @@ class Tick {
         }
 
         x = x +
-            labelOptions.x +
+            pick(
+                labelOptions.x,
+                [0, 1, 0, -1][axis.side] * distance
+            ) +
             labelOffsetCorrection +
             rotCorr.x -
             (

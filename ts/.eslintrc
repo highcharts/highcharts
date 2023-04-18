@@ -57,7 +57,7 @@
         "prefer-const": 1, // @todo
         "prefer-spread": 0, // @todo
         "prefer-rest-params": 0, // @todo
-        "require-unicode-regexp": 0,
+        "require-unicode-regexp": 0, // incompatible with ES2017- targets
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "semi": 0,
         "valid-jsdoc": 0,
