@@ -1,14 +1,16 @@
 Highcharts Internals
 ====================
+
 These are the internal TypeScript sources. They have been migrated from the
-previous JavaScript version. The sources are validated by ESLint rules. These
-rules are maintained to let sources become as consistent and compatible as
-possible.
+previous JavaScript version. The sources are validated by ESLint rules, JSDoc
+and TypeScript. These rules are maintained to let sources become as consistent
+as possible.
 
 **Please note:** The declarations for distribution are still generated from the
 JSDoc doclets of the sources, so that they are in sync with the official API
 documentation. As a consequence, types in sources and doclets share only a few
 similarities.
+
 
 
 Content
@@ -75,8 +77,8 @@ You can also test your knowledge on the TypeScript
 - type import: `import type M from './module';`
 - type intersection: `(MyClass&AnyRecord)`
 - type union: `(number|string)`
-- utility types: `ReadOnly<Array<string>>`; see ([handbook](https://www.typescriptlang.org/docs/handbook/utility-types.html))
-
+- utility types: `ReadOnly<Array<string>>`; see
+  ([handbook](https://www.typescriptlang.org/docs/handbook/utility-types.html))
 - Make use of parantheses around type lists. (`Array<(number|null|string)>`)
 - Do not use `any` type in new code as it is only used for the migration phase
 - Add paragraphs around conditional types `(A extends B ? C : D)`, type lists
@@ -120,14 +122,6 @@ like to add real members, make use of the static keyword and separate files.
 Coding Limitations
 ------------------
 
-### Code with ES5 (ES2009) in mind
-
-Some code will not be proper transpiled by TypeScript or post-processors, and
-must be avoided.
-
-- Do not use `for (…of…)` loops
-- Do not use optional chaining like `a?.b` (ES2018)
-
 
 ### Code with strict rules in mind
 
@@ -146,14 +140,8 @@ assurance and instead use preferred
 Both documentation and declarations of the distribution do not use the
 TypeScript sources yet. Instead they are based exclusively on the JSDoc doclets
 in the sources. As a consequence, types in sources and doclets share only a few
-similarities.
-
-
-### Test with Internet Explorer in mind
-
-Be aware that TypeScript cannot convert all modern syntax to a pattern, that is
-compatible with Internet Explorer. Debugging tests can become challenging, if
-they firstly fail because of syntax errors.
+similarities. Public interfaces for example have to be defined twice, once in
+TypeScript and a second time as JSDoclets.
 
 
 

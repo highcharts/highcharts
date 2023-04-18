@@ -1,0 +1,2702 @@
+[
+    {
+        "lat": -70,
+        "lon": -180,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -160,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -150,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -140,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -130,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -120,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -110,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -100,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -90,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -80,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -70,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -60,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -50,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -40,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -20,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": -10,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 0,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 10,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 20,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 30,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 40,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 50,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 60,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 70,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 80,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 90,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 100,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 110,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 120,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 130,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 140,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 150,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 160,
+        "value": null
+    },
+    {
+        "lat": -70,
+        "lon": 170,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -180,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -160,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -150,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -140,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -130,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -120,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -110,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -100,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -90,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -80,
+        "value": 7
+    },
+    {
+        "lat": -60,
+        "lon": -70,
+        "value": 7
+    },
+    {
+        "lat": -60,
+        "lon": -60,
+        "value": 1
+    },
+    {
+        "lat": -60,
+        "lon": -50,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -40,
+        "value": 1
+    },
+    {
+        "lat": -60,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -20,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": -10,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 0,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 10,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 20,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 30,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 40,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 50,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 60,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 70,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 80,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 90,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 100,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 110,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 120,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 130,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 140,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 150,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 160,
+        "value": null
+    },
+    {
+        "lat": -60,
+        "lon": 170,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -180,
+        "value": 1
+    },
+    {
+        "lat": -50,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -160,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -150,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -140,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -130,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -120,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -110,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -100,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -90,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -80,
+        "value": 47
+    },
+    {
+        "lat": -50,
+        "lon": -70,
+        "value": 29
+    },
+    {
+        "lat": -50,
+        "lon": -60,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -50,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -40,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -20,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": -10,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 0,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 10,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 20,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 30,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 40,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 50,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 60,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 70,
+        "value": 1
+    },
+    {
+        "lat": -50,
+        "lon": 80,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 90,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 100,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 110,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 120,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 130,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 140,
+        "value": 121
+    },
+    {
+        "lat": -50,
+        "lon": 150,
+        "value": null
+    },
+    {
+        "lat": -50,
+        "lon": 160,
+        "value": 24
+    },
+    {
+        "lat": -50,
+        "lon": 170,
+        "value": 239
+    },
+    {
+        "lat": -40,
+        "lon": -180,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -160,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -150,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -140,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -130,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -120,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -110,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -100,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -90,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -80,
+        "value": 108
+    },
+    {
+        "lat": -40,
+        "lon": -70,
+        "value": 415
+    },
+    {
+        "lat": -40,
+        "lon": -60,
+        "value": 319
+    },
+    {
+        "lat": -40,
+        "lon": -50,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -40,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": -20,
+        "value": 1
+    },
+    {
+        "lat": -40,
+        "lon": -10,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": 0,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": 10,
+        "value": 32
+    },
+    {
+        "lat": -40,
+        "lon": 20,
+        "value": 87
+    },
+    {
+        "lat": -40,
+        "lon": 30,
+        "value": 6
+    },
+    {
+        "lat": -40,
+        "lon": 40,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": 50,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": 60,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": 70,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": 80,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": 90,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": 100,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": 110,
+        "value": 374
+    },
+    {
+        "lat": -40,
+        "lon": 120,
+        "value": 15
+    },
+    {
+        "lat": -40,
+        "lon": 130,
+        "value": 391
+    },
+    {
+        "lat": -40,
+        "lon": 140,
+        "value": 913
+    },
+    {
+        "lat": -40,
+        "lon": 150,
+        "value": 1007
+    },
+    {
+        "lat": -40,
+        "lon": 160,
+        "value": null
+    },
+    {
+        "lat": -40,
+        "lon": 170,
+        "value": 256
+    },
+    {
+        "lat": -30,
+        "lon": -180,
+        "value": 8
+    },
+    {
+        "lat": -30,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": -160,
+        "value": 2
+    },
+    {
+        "lat": -30,
+        "lon": -150,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": -140,
+        "value": 2
+    },
+    {
+        "lat": -30,
+        "lon": -130,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": -120,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": -110,
+        "value": 1
+    },
+    {
+        "lat": -30,
+        "lon": -100,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": -90,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": -80,
+        "value": 23
+    },
+    {
+        "lat": -30,
+        "lon": -70,
+        "value": 215
+    },
+    {
+        "lat": -30,
+        "lon": -60,
+        "value": 559
+    },
+    {
+        "lat": -30,
+        "lon": -50,
+        "value": 580
+    },
+    {
+        "lat": -30,
+        "lon": -40,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": -20,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": -10,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": 0,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": 10,
+        "value": 31
+    },
+    {
+        "lat": -30,
+        "lon": 20,
+        "value": 254
+    },
+    {
+        "lat": -30,
+        "lon": 30,
+        "value": 103
+    },
+    {
+        "lat": -30,
+        "lon": 40,
+        "value": 47
+    },
+    {
+        "lat": -30,
+        "lon": 50,
+        "value": 116
+    },
+    {
+        "lat": -30,
+        "lon": 60,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": 70,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": 80,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": 90,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": 100,
+        "value": null
+    },
+    {
+        "lat": -30,
+        "lon": 110,
+        "value": 41
+    },
+    {
+        "lat": -30,
+        "lon": 120,
+        "value": 5
+    },
+    {
+        "lat": -30,
+        "lon": 130,
+        "value": 22
+    },
+    {
+        "lat": -30,
+        "lon": 140,
+        "value": 61
+    },
+    {
+        "lat": -30,
+        "lon": 150,
+        "value": 688
+    },
+    {
+        "lat": -30,
+        "lon": 160,
+        "value": 29
+    },
+    {
+        "lat": -30,
+        "lon": 170,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": -180,
+        "value": 43
+    },
+    {
+        "lat": -20,
+        "lon": -170,
+        "value": 4
+    },
+    {
+        "lat": -20,
+        "lon": -160,
+        "value": 7
+    },
+    {
+        "lat": -20,
+        "lon": -150,
+        "value": 24
+    },
+    {
+        "lat": -20,
+        "lon": -140,
+        "value": 1
+    },
+    {
+        "lat": -20,
+        "lon": -130,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": -120,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": -110,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": -100,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": -90,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": -80,
+        "value": 784
+    },
+    {
+        "lat": -20,
+        "lon": -70,
+        "value": 180
+    },
+    {
+        "lat": -20,
+        "lon": -60,
+        "value": 58
+    },
+    {
+        "lat": -20,
+        "lon": -50,
+        "value": 293
+    },
+    {
+        "lat": -20,
+        "lon": -40,
+        "value": 145
+    },
+    {
+        "lat": -20,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": -20,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": -10,
+        "value": 1
+    },
+    {
+        "lat": -20,
+        "lon": 0,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": 10,
+        "value": 36
+    },
+    {
+        "lat": -20,
+        "lon": 20,
+        "value": 81
+    },
+    {
+        "lat": -20,
+        "lon": 30,
+        "value": 127
+    },
+    {
+        "lat": -20,
+        "lon": 40,
+        "value": 186
+    },
+    {
+        "lat": -20,
+        "lon": 50,
+        "value": 6
+    },
+    {
+        "lat": -20,
+        "lon": 60,
+        "value": 2
+    },
+    {
+        "lat": -20,
+        "lon": 70,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": 80,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": 90,
+        "value": 1
+    },
+    {
+        "lat": -20,
+        "lon": 100,
+        "value": 1
+    },
+    {
+        "lat": -20,
+        "lon": 110,
+        "value": null
+    },
+    {
+        "lat": -20,
+        "lon": 120,
+        "value": 38
+    },
+    {
+        "lat": -20,
+        "lon": 130,
+        "value": 62
+    },
+    {
+        "lat": -20,
+        "lon": 140,
+        "value": 115
+    },
+    {
+        "lat": -20,
+        "lon": 150,
+        "value": 2
+    },
+    {
+        "lat": -20,
+        "lon": 160,
+        "value": 11
+    },
+    {
+        "lat": -20,
+        "lon": 170,
+        "value": 7
+    },
+    {
+        "lat": -10,
+        "lon": -180,
+        "value": 3
+    },
+    {
+        "lat": -10,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": -10,
+        "lon": -160,
+        "value": null
+    },
+    {
+        "lat": -10,
+        "lon": -150,
+        "value": 1
+    },
+    {
+        "lat": -10,
+        "lon": -140,
+        "value": 1
+    },
+    {
+        "lat": -10,
+        "lon": -130,
+        "value": null
+    },
+    {
+        "lat": -10,
+        "lon": -120,
+        "value": null
+    },
+    {
+        "lat": -10,
+        "lon": -110,
+        "value": null
+    },
+    {
+        "lat": -10,
+        "lon": -100,
+        "value": 2
+    },
+    {
+        "lat": -10,
+        "lon": -90,
+        "value": 74
+    },
+    {
+        "lat": -10,
+        "lon": -80,
+        "value": 572
+    },
+    {
+        "lat": -10,
+        "lon": -70,
+        "value": 39
+    },
+    {
+        "lat": -10,
+        "lon": -60,
+        "value": 39
+    },
+    {
+        "lat": -10,
+        "lon": -50,
+        "value": 219
+    },
+    {
+        "lat": -10,
+        "lon": -40,
+        "value": 352
+    },
+    {
+        "lat": -10,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": -10,
+        "lon": -20,
+        "value": 1
+    },
+    {
+        "lat": -10,
+        "lon": -10,
+        "value": null
+    },
+    {
+        "lat": -10,
+        "lon": 0,
+        "value": 3
+    },
+    {
+        "lat": -10,
+        "lon": 10,
+        "value": 61
+    },
+    {
+        "lat": -10,
+        "lon": 20,
+        "value": 66
+    },
+    {
+        "lat": -10,
+        "lon": 30,
+        "value": 359
+    },
+    {
+        "lat": -10,
+        "lon": 40,
+        "value": 7
+    },
+    {
+        "lat": -10,
+        "lon": 50,
+        "value": 9
+    },
+    {
+        "lat": -10,
+        "lon": 60,
+        "value": null
+    },
+    {
+        "lat": -10,
+        "lon": 70,
+        "value": 3
+    },
+    {
+        "lat": -10,
+        "lon": 80,
+        "value": null
+    },
+    {
+        "lat": -10,
+        "lon": 90,
+        "value": 4
+    },
+    {
+        "lat": -10,
+        "lon": 100,
+        "value": 528
+    },
+    {
+        "lat": -10,
+        "lon": 110,
+        "value": 667
+    },
+    {
+        "lat": -10,
+        "lon": 120,
+        "value": 204
+    },
+    {
+        "lat": -10,
+        "lon": 130,
+        "value": 116
+    },
+    {
+        "lat": -10,
+        "lon": 140,
+        "value": 51
+    },
+    {
+        "lat": -10,
+        "lon": 150,
+        "value": 13
+    },
+    {
+        "lat": -10,
+        "lon": 160,
+        "value": 12
+    },
+    {
+        "lat": -10,
+        "lon": 170,
+        "value": 8
+    },
+    {
+        "lat": 0,
+        "lon": -180,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": -160,
+        "value": 4
+    },
+    {
+        "lat": 0,
+        "lon": -150,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": -140,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": -130,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": -120,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": -110,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": -100,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": -90,
+        "value": 549
+    },
+    {
+        "lat": 0,
+        "lon": -80,
+        "value": 1381
+    },
+    {
+        "lat": 0,
+        "lon": -70,
+        "value": 125
+    },
+    {
+        "lat": 0,
+        "lon": -60,
+        "value": 47
+    },
+    {
+        "lat": 0,
+        "lon": -50,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": -40,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": -20,
+        "value": 98
+    },
+    {
+        "lat": 0,
+        "lon": -10,
+        "value": 201
+    },
+    {
+        "lat": 0,
+        "lon": 0,
+        "value": 655
+    },
+    {
+        "lat": 0,
+        "lon": 10,
+        "value": 188
+    },
+    {
+        "lat": 0,
+        "lon": 20,
+        "value": 43
+    },
+    {
+        "lat": 0,
+        "lon": 30,
+        "value": 227
+    },
+    {
+        "lat": 0,
+        "lon": 40,
+        "value": 62
+    },
+    {
+        "lat": 0,
+        "lon": 50,
+        "value": 1
+    },
+    {
+        "lat": 0,
+        "lon": 60,
+        "value": null
+    },
+    {
+        "lat": 0,
+        "lon": 70,
+        "value": 180
+    },
+    {
+        "lat": 0,
+        "lon": 80,
+        "value": 52
+    },
+    {
+        "lat": 0,
+        "lon": 90,
+        "value": 339
+    },
+    {
+        "lat": 0,
+        "lon": 100,
+        "value": 318
+    },
+    {
+        "lat": 0,
+        "lon": 110,
+        "value": 127
+    },
+    {
+        "lat": 0,
+        "lon": 120,
+        "value": 1450
+    },
+    {
+        "lat": 0,
+        "lon": 130,
+        "value": 21
+    },
+    {
+        "lat": 0,
+        "lon": 140,
+        "value": 13
+    },
+    {
+        "lat": 0,
+        "lon": 150,
+        "value": 29
+    },
+    {
+        "lat": 0,
+        "lon": 160,
+        "value": 18
+    },
+    {
+        "lat": 0,
+        "lon": 170,
+        "value": 21
+    },
+    {
+        "lat": 10,
+        "lon": -180,
+        "value": null
+    },
+    {
+        "lat": 10,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": 10,
+        "lon": -160,
+        "value": 27
+    },
+    {
+        "lat": 10,
+        "lon": -150,
+        "value": null
+    },
+    {
+        "lat": 10,
+        "lon": -140,
+        "value": null
+    },
+    {
+        "lat": 10,
+        "lon": -130,
+        "value": null
+    },
+    {
+        "lat": 10,
+        "lon": -120,
+        "value": null
+    },
+    {
+        "lat": 10,
+        "lon": -110,
+        "value": 710
+    },
+    {
+        "lat": 10,
+        "lon": -100,
+        "value": 4710
+    },
+    {
+        "lat": 10,
+        "lon": -90,
+        "value": 877
+    },
+    {
+        "lat": 10,
+        "lon": -80,
+        "value": 464
+    },
+    {
+        "lat": 10,
+        "lon": -70,
+        "value": 592
+    },
+    {
+        "lat": 10,
+        "lon": -60,
+        "value": 10
+    },
+    {
+        "lat": 10,
+        "lon": -50,
+        "value": null
+    },
+    {
+        "lat": 10,
+        "lon": -40,
+        "value": null
+    },
+    {
+        "lat": 10,
+        "lon": -30,
+        "value": 25
+    },
+    {
+        "lat": 10,
+        "lon": -20,
+        "value": 186
+    },
+    {
+        "lat": 10,
+        "lon": -10,
+        "value": 139
+    },
+    {
+        "lat": 10,
+        "lon": 0,
+        "value": 285
+    },
+    {
+        "lat": 10,
+        "lon": 10,
+        "value": 135
+    },
+    {
+        "lat": 10,
+        "lon": 20,
+        "value": 26
+    },
+    {
+        "lat": 10,
+        "lon": 30,
+        "value": 104
+    },
+    {
+        "lat": 10,
+        "lon": 40,
+        "value": 335
+    },
+    {
+        "lat": 10,
+        "lon": 50,
+        "value": 21
+    },
+    {
+        "lat": 10,
+        "lon": 60,
+        "value": null
+    },
+    {
+        "lat": 10,
+        "lon": 70,
+        "value": 931
+    },
+    {
+        "lat": 10,
+        "lon": 80,
+        "value": 190
+    },
+    {
+        "lat": 10,
+        "lon": 90,
+        "value": 213
+    },
+    {
+        "lat": 10,
+        "lon": 100,
+        "value": 1166
+    },
+    {
+        "lat": 10,
+        "lon": 110,
+        "value": 87
+    },
+    {
+        "lat": 10,
+        "lon": 120,
+        "value": 2965
+    },
+    {
+        "lat": 10,
+        "lon": 130,
+        "value": null
+    },
+    {
+        "lat": 10,
+        "lon": 140,
+        "value": 24
+    },
+    {
+        "lat": 10,
+        "lon": 150,
+        "value": null
+    },
+    {
+        "lat": 10,
+        "lon": 160,
+        "value": 5
+    },
+    {
+        "lat": 10,
+        "lon": 170,
+        "value": 1
+    },
+    {
+        "lat": 20,
+        "lon": -180,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": -160,
+        "value": 94
+    },
+    {
+        "lat": 20,
+        "lon": -150,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": -140,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": -130,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": -120,
+        "value": 69
+    },
+    {
+        "lat": 20,
+        "lon": -110,
+        "value": 2355
+    },
+    {
+        "lat": 20,
+        "lon": -100,
+        "value": 1419
+    },
+    {
+        "lat": 20,
+        "lon": -90,
+        "value": 985
+    },
+    {
+        "lat": 20,
+        "lon": -80,
+        "value": 119
+    },
+    {
+        "lat": 20,
+        "lon": -70,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": -60,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": -50,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": -40,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": -20,
+        "value": 122
+    },
+    {
+        "lat": 20,
+        "lon": -10,
+        "value": 12
+    },
+    {
+        "lat": 20,
+        "lon": 0,
+        "value": 8
+    },
+    {
+        "lat": 20,
+        "lon": 10,
+        "value": 13
+    },
+    {
+        "lat": 20,
+        "lon": 20,
+        "value": 8
+    },
+    {
+        "lat": 20,
+        "lon": 30,
+        "value": 84
+    },
+    {
+        "lat": 20,
+        "lon": 40,
+        "value": 84
+    },
+    {
+        "lat": 20,
+        "lon": 50,
+        "value": 151
+    },
+    {
+        "lat": 20,
+        "lon": 60,
+        "value": 177
+    },
+    {
+        "lat": 20,
+        "lon": 70,
+        "value": 1118
+    },
+    {
+        "lat": 20,
+        "lon": 80,
+        "value": 941
+    },
+    {
+        "lat": 20,
+        "lon": 90,
+        "value": 354
+    },
+    {
+        "lat": 20,
+        "lon": 100,
+        "value": 1220
+    },
+    {
+        "lat": 20,
+        "lon": 110,
+        "value": 615
+    },
+    {
+        "lat": 20,
+        "lon": 120,
+        "value": 133
+    },
+    {
+        "lat": 20,
+        "lon": 130,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": 140,
+        "value": 1
+    },
+    {
+        "lat": 20,
+        "lon": 150,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": 160,
+        "value": null
+    },
+    {
+        "lat": 20,
+        "lon": 170,
+        "value": null
+    },
+    {
+        "lat": 30,
+        "lon": -180,
+        "value": null
+    },
+    {
+        "lat": 30,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": 30,
+        "lon": -160,
+        "value": null
+    },
+    {
+        "lat": 30,
+        "lon": -150,
+        "value": null
+    },
+    {
+        "lat": 30,
+        "lon": -140,
+        "value": null
+    },
+    {
+        "lat": 30,
+        "lon": -130,
+        "value": 498
+    },
+    {
+        "lat": 30,
+        "lon": -120,
+        "value": 952
+    },
+    {
+        "lat": 30,
+        "lon": -110,
+        "value": 560
+    },
+    {
+        "lat": 30,
+        "lon": -100,
+        "value": 1853
+    },
+    {
+        "lat": 30,
+        "lon": -90,
+        "value": 2747
+    },
+    {
+        "lat": 30,
+        "lon": -80,
+        "value": 1346
+    },
+    {
+        "lat": 30,
+        "lon": -70,
+        "value": 2
+    },
+    {
+        "lat": 30,
+        "lon": -60,
+        "value": null
+    },
+    {
+        "lat": 30,
+        "lon": -50,
+        "value": null
+    },
+    {
+        "lat": 30,
+        "lon": -40,
+        "value": 2
+    },
+    {
+        "lat": 30,
+        "lon": -30,
+        "value": 48
+    },
+    {
+        "lat": 30,
+        "lon": -20,
+        "value": 28
+    },
+    {
+        "lat": 30,
+        "lon": -10,
+        "value": 2493
+    },
+    {
+        "lat": 30,
+        "lon": 0,
+        "value": 599
+    },
+    {
+        "lat": 30,
+        "lon": 10,
+        "value": 1205
+    },
+    {
+        "lat": 30,
+        "lon": 20,
+        "value": 1031
+    },
+    {
+        "lat": 30,
+        "lon": 30,
+        "value": 2052
+    },
+    {
+        "lat": 30,
+        "lon": 40,
+        "value": 777
+    },
+    {
+        "lat": 30,
+        "lon": 50,
+        "value": 207
+    },
+    {
+        "lat": 30,
+        "lon": 60,
+        "value": 407
+    },
+    {
+        "lat": 30,
+        "lon": 70,
+        "value": 658
+    },
+    {
+        "lat": 30,
+        "lon": 80,
+        "value": 39
+    },
+    {
+        "lat": 30,
+        "lon": 90,
+        "value": 47
+    },
+    {
+        "lat": 30,
+        "lon": 100,
+        "value": 1020
+    },
+    {
+        "lat": 30,
+        "lon": 110,
+        "value": 981
+    },
+    {
+        "lat": 30,
+        "lon": 120,
+        "value": 483
+    },
+    {
+        "lat": 30,
+        "lon": 130,
+        "value": 914
+    },
+    {
+        "lat": 30,
+        "lon": 140,
+        "value": 186
+    },
+    {
+        "lat": 30,
+        "lon": 150,
+        "value": null
+    },
+    {
+        "lat": 30,
+        "lon": 160,
+        "value": null
+    },
+    {
+        "lat": 30,
+        "lon": 170,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": -180,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": -160,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": -150,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": -140,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": -130,
+        "value": 644
+    },
+    {
+        "lat": 40,
+        "lon": -120,
+        "value": 442
+    },
+    {
+        "lat": 40,
+        "lon": -110,
+        "value": 264
+    },
+    {
+        "lat": 40,
+        "lon": -100,
+        "value": 1081
+    },
+    {
+        "lat": 40,
+        "lon": -90,
+        "value": 2094
+    },
+    {
+        "lat": 40,
+        "lon": -80,
+        "value": 3758
+    },
+    {
+        "lat": 40,
+        "lon": -70,
+        "value": 274
+    },
+    {
+        "lat": 40,
+        "lon": -60,
+        "value": 34
+    },
+    {
+        "lat": 40,
+        "lon": -50,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": -40,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": -20,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": -10,
+        "value": 6575
+    },
+    {
+        "lat": 40,
+        "lon": 0,
+        "value": 13536
+    },
+    {
+        "lat": 40,
+        "lon": 10,
+        "value": 12610
+    },
+    {
+        "lat": 40,
+        "lon": 20,
+        "value": 7640
+    },
+    {
+        "lat": 40,
+        "lon": 30,
+        "value": 1672
+    },
+    {
+        "lat": 40,
+        "lon": 40,
+        "value": 1293
+    },
+    {
+        "lat": 40,
+        "lon": 50,
+        "value": 65
+    },
+    {
+        "lat": 40,
+        "lon": 60,
+        "value": 135
+    },
+    {
+        "lat": 40,
+        "lon": 70,
+        "value": 212
+    },
+    {
+        "lat": 40,
+        "lon": 80,
+        "value": 141
+    },
+    {
+        "lat": 40,
+        "lon": 90,
+        "value": 106
+    },
+    {
+        "lat": 40,
+        "lon": 100,
+        "value": 162
+    },
+    {
+        "lat": 40,
+        "lon": 110,
+        "value": 143
+    },
+    {
+        "lat": 40,
+        "lon": 120,
+        "value": 259
+    },
+    {
+        "lat": 40,
+        "lon": 130,
+        "value": 176
+    },
+    {
+        "lat": 40,
+        "lon": 140,
+        "value": 202
+    },
+    {
+        "lat": 40,
+        "lon": 150,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": 160,
+        "value": null
+    },
+    {
+        "lat": 40,
+        "lon": 170,
+        "value": null
+    },
+    {
+        "lat": 50,
+        "lon": -180,
+        "value": null
+    },
+    {
+        "lat": 50,
+        "lon": -170,
+        "value": 5
+    },
+    {
+        "lat": 50,
+        "lon": -160,
+        "value": 7
+    },
+    {
+        "lat": 50,
+        "lon": -150,
+        "value": null
+    },
+    {
+        "lat": 50,
+        "lon": -140,
+        "value": 9
+    },
+    {
+        "lat": 50,
+        "lon": -130,
+        "value": 29
+    },
+    {
+        "lat": 50,
+        "lon": -120,
+        "value": 120
+    },
+    {
+        "lat": 50,
+        "lon": -110,
+        "value": 52
+    },
+    {
+        "lat": 50,
+        "lon": -100,
+        "value": 13
+    },
+    {
+        "lat": 50,
+        "lon": -90,
+        "value": 3
+    },
+    {
+        "lat": 50,
+        "lon": -80,
+        "value": 2
+    },
+    {
+        "lat": 50,
+        "lon": -70,
+        "value": 9
+    },
+    {
+        "lat": 50,
+        "lon": -60,
+        "value": 2
+    },
+    {
+        "lat": 50,
+        "lon": -50,
+        "value": null
+    },
+    {
+        "lat": 50,
+        "lon": -40,
+        "value": null
+    },
+    {
+        "lat": 50,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": 50,
+        "lon": -20,
+        "value": 3
+    },
+    {
+        "lat": 50,
+        "lon": -10,
+        "value": 4306
+    },
+    {
+        "lat": 50,
+        "lon": 0,
+        "value": 6401
+    },
+    {
+        "lat": 50,
+        "lon": 10,
+        "value": 5224
+    },
+    {
+        "lat": 50,
+        "lon": 20,
+        "value": 1734
+    },
+    {
+        "lat": 50,
+        "lon": 30,
+        "value": 1220
+    },
+    {
+        "lat": 50,
+        "lon": 40,
+        "value": 656
+    },
+    {
+        "lat": 50,
+        "lon": 50,
+        "value": 439
+    },
+    {
+        "lat": 50,
+        "lon": 60,
+        "value": 263
+    },
+    {
+        "lat": 50,
+        "lon": 70,
+        "value": 118
+    },
+    {
+        "lat": 50,
+        "lon": 80,
+        "value": 272
+    },
+    {
+        "lat": 50,
+        "lon": 90,
+        "value": 120
+    },
+    {
+        "lat": 50,
+        "lon": 100,
+        "value": 149
+    },
+    {
+        "lat": 50,
+        "lon": 110,
+        "value": 67
+    },
+    {
+        "lat": 50,
+        "lon": 120,
+        "value": 47
+    },
+    {
+        "lat": 50,
+        "lon": 130,
+        "value": 20
+    },
+    {
+        "lat": 50,
+        "lon": 140,
+        "value": 12
+    },
+    {
+        "lat": 50,
+        "lon": 150,
+        "value": 17
+    },
+    {
+        "lat": 50,
+        "lon": 160,
+        "value": 3
+    },
+    {
+        "lat": 50,
+        "lon": 170,
+        "value": null
+    },
+    {
+        "lat": 60,
+        "lon": -180,
+        "value": 4
+    },
+    {
+        "lat": 60,
+        "lon": -170,
+        "value": 5
+    },
+    {
+        "lat": 60,
+        "lon": -160,
+        "value": 8
+    },
+    {
+        "lat": 60,
+        "lon": -150,
+        "value": 34
+    },
+    {
+        "lat": 60,
+        "lon": -140,
+        "value": 3
+    },
+    {
+        "lat": 60,
+        "lon": -130,
+        "value": 3
+    },
+    {
+        "lat": 60,
+        "lon": -120,
+        "value": 6
+    },
+    {
+        "lat": 60,
+        "lon": -110,
+        "value": 1
+    },
+    {
+        "lat": 60,
+        "lon": -100,
+        "value": 3
+    },
+    {
+        "lat": 60,
+        "lon": -90,
+        "value": 1
+    },
+    {
+        "lat": 60,
+        "lon": -80,
+        "value": 2
+    },
+    {
+        "lat": 60,
+        "lon": -70,
+        "value": 2
+    },
+    {
+        "lat": 60,
+        "lon": -60,
+        "value": 6
+    },
+    {
+        "lat": 60,
+        "lon": -50,
+        "value": 4
+    },
+    {
+        "lat": 60,
+        "lon": -40,
+        "value": 1
+    },
+    {
+        "lat": 60,
+        "lon": -30,
+        "value": 24
+    },
+    {
+        "lat": 60,
+        "lon": -20,
+        "value": 11
+    },
+    {
+        "lat": 60,
+        "lon": -10,
+        "value": 29
+    },
+    {
+        "lat": 60,
+        "lon": 0,
+        "value": 139
+    },
+    {
+        "lat": 60,
+        "lon": 10,
+        "value": 315
+    },
+    {
+        "lat": 60,
+        "lon": 20,
+        "value": 551
+    },
+    {
+        "lat": 60,
+        "lon": 30,
+        "value": 147
+    },
+    {
+        "lat": 60,
+        "lon": 40,
+        "value": 69
+    },
+    {
+        "lat": 60,
+        "lon": 50,
+        "value": 40
+    },
+    {
+        "lat": 60,
+        "lon": 60,
+        "value": 36
+    },
+    {
+        "lat": 60,
+        "lon": 70,
+        "value": 39
+    },
+    {
+        "lat": 60,
+        "lon": 80,
+        "value": 8
+    },
+    {
+        "lat": 60,
+        "lon": 90,
+        "value": 4
+    },
+    {
+        "lat": 60,
+        "lon": 100,
+        "value": 3
+    },
+    {
+        "lat": 60,
+        "lon": 110,
+        "value": 9
+    },
+    {
+        "lat": 60,
+        "lon": 120,
+        "value": 18
+    },
+    {
+        "lat": 60,
+        "lon": 130,
+        "value": 14
+    },
+    {
+        "lat": 60,
+        "lon": 140,
+        "value": 7
+    },
+    {
+        "lat": 60,
+        "lon": 150,
+        "value": 10
+    },
+    {
+        "lat": 60,
+        "lon": 160,
+        "value": 3
+    },
+    {
+        "lat": 60,
+        "lon": 170,
+        "value": 3
+    },
+    {
+        "lat": 70,
+        "lon": -180,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -170,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -160,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": -150,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": -140,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -130,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -120,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -110,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -100,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -90,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -80,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": -70,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": -60,
+        "value": 2
+    },
+    {
+        "lat": 70,
+        "lon": -50,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -40,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -30,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -20,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": -10,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": 0,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": 10,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": 20,
+        "value": 15
+    },
+    {
+        "lat": 70,
+        "lon": 30,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": 40,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": 50,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": 60,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": 70,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": 80,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": 90,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": 100,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": 110,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": 120,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": 130,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": 140,
+        "value": 1
+    },
+    {
+        "lat": 70,
+        "lon": 150,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": 160,
+        "value": null
+    },
+    {
+        "lat": 70,
+        "lon": 170,
+        "value": null
+    }
+]

@@ -1,0 +1,10 @@
+---
+name: GeoHeatmap Aerosol Particle Radius In September 2016
+authors:
+  - Magdalena Gut, Piotr Madej
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - Series types
+...

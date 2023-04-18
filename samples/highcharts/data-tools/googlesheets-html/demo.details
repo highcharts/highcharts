@@ -1,0 +1,7 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Sophie Bremer
+ js_wrap: b
+ skipTest: true
+...

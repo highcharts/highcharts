@@ -346,7 +346,7 @@ QUnit.test(
 );
 
 QUnit.test('Dynamic point states', function (assert) {
-    var chart = new Highcharts.chart('container', {
+    var chart = new Highcharts.Chart('container', {
             chart: {
                 zoomType: 'xy'
             },

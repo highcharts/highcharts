@@ -63,6 +63,7 @@ class MapLineSeries extends MapSeries {
      *         Flight routes
      *
      * @extends      plotOptions.map
+     * @excluding    dragDrop
      * @product      highmaps
      * @optionparent plotOptions.mapline
      */
@@ -190,7 +191,7 @@ export default MapLineSeries;
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.mapline
- * @excluding dataParser, dataURL, marker
+ * @excluding dataParser, dataURL, dragDrop, marker
  * @product   highmaps
  * @apioption series.mapline
  */

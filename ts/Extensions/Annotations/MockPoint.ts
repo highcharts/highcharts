@@ -12,6 +12,7 @@
  *
  * */
 
+import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
 import type {
     AnnotationPoint,
@@ -19,6 +20,7 @@ import type {
 } from './AnnotationSeries';
 import type Axis from '../../Core/Axis/Axis';
 import type Controllable from './Controllables/Controllable';
+import type ControlTarget from './ControlTarget';
 import type MockPointOptions from './MockPointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
@@ -198,7 +200,7 @@ class MockPoint {
 
     public constructor(
         chart: AnnotationChart,
-        target: (Controllable|null),
+        target: (ControlTarget|null),
         options: (MockPointOptions|Function)
     ) {
         /**
@@ -281,7 +283,7 @@ class MockPoint {
     public plotX: number = void 0 as any;
     public plotY: number = void 0 as any;
     public series: MockSeries;
-    public target: (Controllable|null);
+    public target: (ControlTarget|null);
     public ttBelow?: boolean;
     public visible?: boolean;
     public x?: number;

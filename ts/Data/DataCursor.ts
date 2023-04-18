@@ -445,12 +445,12 @@ namespace DataCursor {
         }
         if (cursorA.type === 'range' && cursorB.type === 'range') {
             return (
+                cursorA.firstRow === cursorB.firstRow &&
+                cursorA.lastRow === cursorB.lastRow &&
                 (
                     JSON.stringify(cursorA.columns) ===
                     JSON.stringify(cursorB.columns)
-                ) &&
-                cursorA.firstRow === cursorB.firstRow &&
-                cursorA.lastRow === cursorB.lastRow
+                )
             );
         }
         return false;

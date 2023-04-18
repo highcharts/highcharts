@@ -20,8 +20,7 @@
 /**
  * Contains all possible types of the modifier registry.
  */
-export type DataModifierType =
-    DataModifierTypes[keyof DataModifierTypes]['prototype'];
+export type DataModifierType = DataModifierTypes[keyof DataModifierTypes];
 
 /**
  * Describes the modifier registry as a record object with key and class

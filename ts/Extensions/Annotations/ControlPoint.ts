@@ -13,8 +13,10 @@
  * */
 
 import type AnnotationChart from './AnnotationChart';
+import type Annotation from './Annotation';
 import type Controllable from './Controllables/Controllable';
-import type { ControlPointOptionsObject } from './ControlPointOptions';
+import type ControlPointOptions from './ControlPointOptions';
+import type ControlTarget from './ControlTarget';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import EventEmitter from './EventEmitter.js';
@@ -32,7 +34,7 @@ const {
 
 declare module './MockPointOptions' {
     interface MockPointOptions {
-        controlPoint?: ControlPointOptionsObject;
+        controlPoint?: ControlPointOptions;
     }
 }
 
@@ -75,8 +77,8 @@ class ControlPoint extends EventEmitter {
 
     public constructor(
         chart: AnnotationChart,
-        target: Controllable,
-        options: ControlPointOptionsObject,
+        target: ControlTarget,
+        options: ControlPointOptions,
         index?: number
     ) {
         super();
@@ -108,9 +110,9 @@ class ControlPoint extends EventEmitter {
      */
     public nonDOMEvents = ['drag'];
 
-    public options: ControlPointOptionsObject;
+    public options: ControlPointOptions;
 
-    public target: Controllable;
+    public target: ControlTarget;
 
     /* *
      *
@@ -192,7 +194,7 @@ class ControlPoint extends EventEmitter {
      * New options for the control point.
      */
     public update(
-        userOptions: Partial<ControlPointOptionsObject>
+        userOptions: Partial<ControlPointOptions>
     ): void {
         const chart = this.chart,
             target = this.target,
