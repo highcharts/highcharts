@@ -327,23 +327,24 @@ function renderSelectElement(
  */
 function renderToggle(
     parentElement: HTMLDOMElement,
-    options: FormField
+    options: ToggleFormField
 ): HTMLDOMElement|undefined {
 
     if (!parentElement) {
         return;
     }
 
+    const { value, title } = options;
     const toggleContainer = createElement(
         'div',
         { className: EditGlobals.classNames.toggleContainer },
         {},
         parentElement
     );
-    if (options.title) {
+    if (title) {
         renderText(
             toggleContainer,
-            options.title
+            title
         );
     }
 
@@ -365,7 +366,14 @@ function renderToggle(
         toggleContainer
     );
 
-    renderCheckbox(toggle);
+    const input = renderCheckbox(toggle, value);
+    const onchange = options.onchange;
+    if (input && onchange) {
+        input.addEventListener('change', (e: any): void => {
+            onchange(e.target.checked);
+        });
+    }
+
 
     createElement(
         'span',
@@ -429,9 +437,10 @@ function renderText(
 
 function renderNestedHeader(
     parentElement: HTMLDOMElement,
-    name: string,
-    allowEnabled: boolean
+    options: NestedHeaderFormField
 ): HTMLDOMElement {
+
+    const { name, allowEnabled, onchange, isEnabled } = options;
     const nested = createElement(
         'div',
         {
@@ -473,7 +482,9 @@ function renderNestedHeader(
         renderToggle(header, {
             enabledOnOffLabels: true,
             id: name,
-            name: name
+            name: name,
+            onchange,
+            value: isEnabled
         });
     }
 
@@ -649,14 +660,16 @@ function renderTextarea(
 }
 
 function renderCheckbox(
-    parentElement: HTMLDOMElement
+    parentElement: HTMLDOMElement,
+    checked?: boolean
 ): HTMLDOMElement|undefined {
     let input;
 
     if (parentElement) {
         input = createElement(
             'input', {
-                type: 'checkbox'
+                type: 'checkbox',
+                checked: !!checked
             }, {
 
             },
@@ -737,7 +750,7 @@ const EditRenderer = {
     renderTextarea,
     renderCheckbox,
     renderButton,
-    renderNestedHeaders: renderNestedHeader,
+    renderNestedHeader,
     getRendererFunction
 };
 
@@ -785,8 +798,22 @@ export interface SelectFormFieldItem {
     iconURL: string;
 }
 
-export interface NestedFormField {
-    nestedOptions: Record<string, NestedOptions>;
+export interface ToggleFormField {
+    title?: string;
+    value: boolean;
+    enabledOnOffLabels?: boolean;
+    className?: string;
+    callback?: Function;
+    onchange?: (value: boolean) => void;
+    id: string;
+    name: string;
+}
+
+export interface NestedHeaderFormField {
+    name: string;
+    allowEnabled: boolean;
+    onchange: (value: boolean) => void;
+    isEnabled: boolean;
 }
 export interface NestedOptions {
 
