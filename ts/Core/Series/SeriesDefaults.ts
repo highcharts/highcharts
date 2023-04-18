@@ -2509,7 +2509,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @validvalue ["lineMarker", "rectangle"]
      *
-     * @private
+     * @sample {highcharts} highcharts/series/legend-symbol/
+     *         Change the legend symbol
      */
     legendSymbol: 'rectangle'
 
