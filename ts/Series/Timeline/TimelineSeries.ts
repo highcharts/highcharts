@@ -466,13 +466,10 @@ class TimelineSeries extends LineSeries {
  * */
 
 interface TimelineSeries {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointClass: typeof TimelinePoint;
     trackerGroups: Array<string>;
 }
 extend(TimelineSeries.prototype, {
-    // Use a simple symbol from LegendSymbolMixin
-    drawLegendSymbol: LegendSymbol.drawRectangle,
     // Use a group of trackers from TrackerMixin
     drawTracker: ColumnSeries.prototype.drawTracker,
     pointClass: TimelinePoint,

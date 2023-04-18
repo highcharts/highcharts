@@ -149,8 +149,6 @@ extend(MapLineSeries.prototype, {
 
     colorProp: 'stroke',
 
-    drawLegendSymbol: Series.prototype.drawLegendSymbol,
-
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'

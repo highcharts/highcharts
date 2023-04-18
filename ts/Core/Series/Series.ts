@@ -48,6 +48,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
+import type { LegendSymbolType } from './SeriesOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -64,6 +65,7 @@ const {
     svg,
     win
 } = H;
+import type Legend from '../Legend/Legend';
 import LegendSymbol from '../Legend/LegendSymbol.js';
 import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
@@ -4851,6 +4853,24 @@ class Series {
         return this.chart.isInsidePlot(plotX, plotY, options);
     }
 
+    /**
+     * Draws the legend symbol based on the legendSymbol user option.
+     *
+     * @private
+     */
+    public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
+        const legendSymbol = this.options.legendSymbol;
+
+        // @todo: figure out a way to remove any casting here
+        if (!legendSymbol || !LegendSymbol[legendSymbol]) {
+            return;
+        }
+
+        (LegendSymbol[legendSymbol] as any).call(
+            this, legend, item
+        );
+    }
+
     /** eslint-enable valid-jsdoc */
 
 }
@@ -4882,7 +4902,6 @@ extend(Series.prototype, {
     colorCounter: 0,
     cropShoulder: 1,
     directTouch: false,
-    drawLegendSymbol: LegendSymbol.drawLineMarker,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
     // each point's x and y values are stored in this.xData and this.yData:

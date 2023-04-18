@@ -613,7 +613,6 @@ class PieSeries extends Series {
 
 interface PieSeries {
     drawGraph: undefined;
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
     pointClass: typeof PiePoint;
 }
@@ -624,8 +623,6 @@ extend(PieSeries.prototype, {
     directTouch: true,
 
     drawGraph: void 0,
-
-    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     drawTracker: ColumnSeries.prototype.drawTracker,
 

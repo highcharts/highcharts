@@ -776,7 +776,6 @@ class VennSeries extends ScatterSeries {
 interface VennSeries {
     axisTypes: Array<string>;
     directTouch: boolean;
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     isCartesian: boolean;
     pointArrayMap: Array<string>;
     pointClass: typeof VennPoint;
@@ -785,7 +784,6 @@ interface VennSeries {
 extend(VennSeries.prototype, {
     axisTypes: [],
     directTouch: true,
-    drawLegendSymbol: LegendSymbol.drawRectangle,
     isCartesian: false,
     pointArrayMap: ['value'],
     pointClass: VennPoint,

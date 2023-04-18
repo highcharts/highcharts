@@ -594,7 +594,9 @@ class TreemapSeries extends ScatterSeries {
                  */
                 shadow: false
             }
-        }
+        },
+
+        legendSymbol: 'rectangle'
     } as TreemapSeriesOptions);
 
     /* *
@@ -1927,7 +1929,6 @@ interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series
     colorAttribs: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getExtremesFromAll: boolean;
     optionalAxis: string;
     parallelArrays: Array<string>;
@@ -1944,7 +1945,6 @@ extend(TreemapSeries.prototype, {
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
     colorKey: 'colorValue', // Point color option key
     directTouch: true,
-    drawLegendSymbol: LegendSymbol.drawRectangle,
     getExtremesFromAll: true,
     getSymbol: noop,
     optionalAxis: 'colorAxis',

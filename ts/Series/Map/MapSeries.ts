@@ -1300,7 +1300,6 @@ class MapSeries extends ScatterSeries {
  * */
 
 interface MapSeries extends ColorMapComposition.SeriesComposition {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
     pointArrayMap: ColorMapComposition.SeriesComposition['pointArrayMap'];
     pointClass: typeof MapPoint;
@@ -1336,8 +1335,6 @@ extend(MapSeries.prototype, {
 
     // No graph for the map series
     drawGraph: noop,
-
-    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     forceDL: true,
 

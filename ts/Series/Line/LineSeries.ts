@@ -60,7 +60,7 @@ class LineSeries extends Series {
          * @optionparent plotOptions.series
          */
         {
-            // nothing here yet
+            legendSymbol: 'lineMarker'
         } as PlotOptionsOf<LineSeries>
     );
 

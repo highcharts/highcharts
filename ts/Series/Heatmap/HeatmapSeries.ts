@@ -730,7 +730,6 @@ interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getSymbol: typeof Series.prototype.getSymbol;
 }
 extend(HeatmapSeries.prototype, {
@@ -759,11 +758,6 @@ extend(HeatmapSeries.prototype, {
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
-
-    /**
-     * @private
-     */
-    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     getSymbol: Series.prototype.getSymbol
 

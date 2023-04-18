@@ -944,21 +944,6 @@ extend(ColumnSeries.prototype, {
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
     directTouch: true,
-
-    /**
-     * Use a solid rectangle like the area series types
-     *
-     * @private
-     * @function Highcharts.seriesTypes.column#drawLegendSymbol
-     *
-     * @param {Highcharts.Legend} legend
-     *        The legend object
-     *
-     * @param {Highcharts.Series|Highcharts.Point} item
-     *        The series (this) or point
-     */
-    drawLegendSymbol: LegendSymbol.drawRectangle,
-
     getSymbol: noop,
 
     // use separate negative stacks, unlike area stacks where a negative

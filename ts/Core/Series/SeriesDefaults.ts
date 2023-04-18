@@ -2502,7 +2502,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @private
      */
-    findNearestPointBy: 'x'
+    findNearestPointBy: 'x',
+
+    /**
+     * What type of legend symbol to render for this series.
+     *
+     * @validvalue ["lineMarker", "rectangle"]
+     *
+     * @private
+     */
+    legendSymbol: 'rectangle'
 
 };
 

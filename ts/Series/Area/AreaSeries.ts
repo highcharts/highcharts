@@ -219,14 +219,8 @@ class AreaSeries extends LineSeries {
          */
         threshold: 0,
 
-        /**
-         * Whether to display the symbol with line in the legend or only the
-         * rectangle.
-         *
-         * @type    {boolean}
-         * @product highcharts highstock
-         */
-        legendSymbol: false
+        legendSymbol: 'rectangle'
+
     });
 
     /* *
@@ -629,18 +623,6 @@ class AreaSeries extends LineSeries {
         return segment;
     }
 
-    /**
-     * Drawing legend symbol based on the user option.
-     * @private
-     */
-    public drawLegendSymbol(legend: Legend, item?: Series): void {
-        if (this.options.legendSymbol) {
-            LegendSymbol.drawLineMarker.call(this, legend);
-        } else if (item) {
-            LegendSymbol.drawRectangle.call(this, legend, item);
-        }
-    }
-
     /* eslint-enable valid-jsdoc */
 
 }
@@ -652,7 +634,6 @@ class AreaSeries extends LineSeries {
  * */
 
 interface AreaSeries {
-    drawLegendSymbol: (legend: Legend, item?: Series) => void;
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {

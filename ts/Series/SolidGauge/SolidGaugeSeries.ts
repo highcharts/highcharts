@@ -275,13 +275,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
 interface SolidGaugeSeries {
     pointClass: typeof SolidGaugePoint;
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
 }
-
-extend(SolidGaugeSeries.prototype, {
-    drawLegendSymbol: LegendSymbol.drawRectangle
-});
-
 
 /* *
  *

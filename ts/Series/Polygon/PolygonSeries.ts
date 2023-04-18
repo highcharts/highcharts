@@ -119,14 +119,12 @@ class PolygonSeries extends ScatterSeries {
 }
 
 interface PolygonSeries {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointClass: typeof PolygonPoint;
     type: string;
 }
 
 extend(PolygonSeries.prototype, {
     type: 'polygon',
-    drawLegendSymbol: LegendSymbol.drawRectangle,
     drawTracker: Series.prototype.drawTracker,
     setStackedPoints: noop // No stacking points on polygons (#5310)
 });
