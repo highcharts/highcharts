@@ -90,16 +90,12 @@ const EditGlobals: EditGlobals = {
 
         // Accordeon
         accordeonMenu: PREFIX + 'accordeon-menu',
-        accordeonContainer: PREFIX + 'outer-accordeon',
-        accordeonHeader: PREFIX + 'outer-accordeon-header',
-        accordeonHeaderBtn: PREFIX + 'outer-accordeon-header-btn',
-        accordeonHeaderIcon: PREFIX + 'outer-accordeon-header-icon',
-        accordeonContent: PREFIX + 'outer-accordeon-content',
+        accordeonContainer: PREFIX + 'accordeon',
+        accordeonHeader: PREFIX + 'accordeon-header',
+        accordeonHeaderBtn: PREFIX + 'accordeon-header-btn',
+        accordeonHeaderIcon: PREFIX + 'accordeon-header-icon',
+        accordeonContent: PREFIX + 'accordeon-content',
         accordeonNestedWrapper: PREFIX + 'accordeon-nested',
-        accordeonNestedHeader: PREFIX + 'accordeon-nested-header',
-        accordeonNestedHeaderBtn: PREFIX + 'accordeon-nested-header-btn',
-        accordeonNestedHeaderIcon: PREFIX + 'accordeon-nested-header-icon',
-        accordeonNestedContent: PREFIX + 'accordeon-nested-content',
         hiddenElement: PREFIX + 'hidden-element',
         collapsableContentHeader: PREFIX + 'collapsable-content-header',
 
