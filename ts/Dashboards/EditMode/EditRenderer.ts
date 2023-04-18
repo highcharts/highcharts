@@ -27,7 +27,7 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 
 import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import { HTMLDOMElement as HTMLElement } from '../../Core/Renderer/DOMElementType.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -55,9 +55,9 @@ const {
  * Context button element.
  */
 function renderContextButton(
-    parentNode: HTMLDOMElement,
+    parentNode: HTMLElement,
     editMode: EditMode
-): HTMLDOMElement|undefined {
+): HTMLElement|undefined {
 
     let ctxBtnElement;
 
@@ -164,9 +164,9 @@ function renderCollapse(
  * Select element
  */
 function renderSelect(
-    parentElement: HTMLDOMElement,
+    parentElement: HTMLElement,
     options: SelectFormField
-): HTMLDOMElement|undefined {
+): HTMLElement|undefined {
     if (!parentElement) {
         return;
     }
@@ -336,9 +336,9 @@ function renderSelectElement(
  * Toggle element
  */
 function renderToggle(
-    parentElement: HTMLDOMElement,
+    parentElement: HTMLElement,
     options: ToggleFormField
-): HTMLDOMElement|undefined {
+): HTMLElement|undefined {
 
     if (!parentElement) {
         return;
@@ -421,11 +421,11 @@ function renderToggle(
  * @returns text Element
  */
 function renderText(
-    parentElement: HTMLDOMElement,
+    parentElement: HTMLElement,
     text: string,
     className?: string,
     isLabel?: boolean
-): HTMLDOMElement|undefined {
+): HTMLElement|undefined {
     let textElem;
 
     if (parentElement) {
@@ -445,10 +445,22 @@ function renderText(
     return textElem;
 }
 
+/**
+ * Renders nested header element.
+ *
+ * @param parentElement
+ * The element to which the new elemenet should be appended.
+ *
+ * @param options
+ * Nested header options.
+ *
+ * @returns
+ * The rendered element.
+ */
 function renderNestedHeader(
-    parentElement: HTMLDOMElement,
+    parentElement: HTMLElement,
     options: NestedHeaderFormField
-): HTMLDOMElement {
+): HTMLElement {
 
     const { name, allowEnabled, onchange, isEnabled } = options;
     const nested = createElement(
@@ -533,9 +545,9 @@ function renderNestedHeader(
  * Icon Element
  */
 function renderIcon(
-    parentElement: HTMLDOMElement,
+    parentElement: HTMLElement,
     options: IconFormField
-): HTMLDOMElement|undefined {
+): HTMLElement|undefined {
     const { icon, callback } = options;
 
     if (!parentElement) {
@@ -575,9 +587,9 @@ function renderIcon(
  * Input Element
  */
 function renderInput(
-    parentElement: HTMLDOMElement,
+    parentElement: HTMLElement,
     options: FormField
-): HTMLDOMElement | undefined {
+): HTMLElement | undefined {
 
     if (!parentElement) {
         return;
@@ -630,9 +642,9 @@ function renderInput(
  * textarea Element
  */
 function renderTextarea(
-    parentElement: HTMLDOMElement,
+    parentElement: HTMLElement,
     options: FormField
-): HTMLDOMElement|undefined {
+): HTMLElement|undefined {
 
     if (!parentElement) {
         return;
@@ -679,9 +691,9 @@ function renderTextarea(
  * The checkbox element
  */
 function renderCheckbox(
-    parentElement: HTMLDOMElement,
+    parentElement: HTMLElement,
     checked?: boolean
-): HTMLDOMElement|undefined {
+): HTMLElement|undefined {
     let input;
 
     if (parentElement) {
@@ -712,9 +724,9 @@ function renderCheckbox(
  * Button Element
  */
 function renderButton(
-    parentElement: HTMLDOMElement,
+    parentElement: HTMLElement,
     options: ButtonOptions
-): HTMLDOMElement|undefined {
+): HTMLElement|undefined {
     let button;
 
     if (!parentElement) {
