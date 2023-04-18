@@ -305,7 +305,7 @@ var chart = Highcharts.stockChart('container', {
         sonification: {
             defaultInstrumentOptions: {
                 pointGrouping: {
-                    groupTimespan: 200
+                    groupTimespan: 150
                 },
                 instrument: 'vibraphone',
                 mapping: {
@@ -317,13 +317,21 @@ var chart = Highcharts.stockChart('container', {
                     },
                     pitch: 'c3',
                     tremolo: {
-                        speed: 'y',
-                        within: 'series',
+                        speed: {
+                            mapTo: 'y',
+                            within: 'series',
+                            min: 0.3,
+                            max: 0.4
+                        },
                         depth: 1
                     },
                     highpass: {
-                        frequency: '-y',
-                        within: 'series'
+                        frequency: {
+                            mapTo: '-y',
+                            within: 'series',
+                            min: 1,
+                            max: 1000
+                        }
                     }
                 }
             },
