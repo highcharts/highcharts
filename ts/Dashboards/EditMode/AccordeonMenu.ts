@@ -131,8 +131,8 @@ class AccordeonMenu {
      * create them.
      *
      * @param propertyPath
-     * Path of the property for which the value should be updated,
-     * e.g. ['chartOptions', 'chart', 'type']
+     * Path of the property for which the value should be updated.
+     * Example: ```['chartOptions', 'chart', 'type']```
      * @param value
      * New value of the property.
      */
@@ -247,7 +247,7 @@ class AccordeonMenu {
      * @param component
      * The component for which the value should be returned.
      * @param propertyPath
-     * Path to a value, e.g. ['chartOptions', 'chart', 'type']
+     * Path to a value. Example:  ```['chartOptions', 'chart', 'type']```
      * @returns
      * The value retrieved from the component.
      */
