@@ -601,8 +601,7 @@
 .highcharts-dashboards-edit-sidebar-item button {
     background-color: var(--highcharts-dashboards-edit-cell-color);
     color: var(--highcharts-dashboards-neutral-color-0);
-    padding: 5px 10px;
-    margin-top: 20px;
+    padding: 5px;
     border: none;
     border-radius: 3px;
     background-size: 20px;
@@ -631,11 +630,9 @@
 }
 
 .highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-button {
-    background-repeat: no-repeat;
-    float: right;
-    margin-top: 10px;
-    margin-left: 5px;
     cursor: pointer;
+    gap: 10px;
+    flex: 1;
 }
 
 .highcharts-dashboards-edit-sidebar-show {
@@ -689,7 +686,7 @@
 .highcharts-dashboards-edit-grid-items div {
     width: calc(100% - 20px);
     clear: both;
-    margin: 10px 0px;
+    margin: 10px 0;
     padding: 10px;
     text-align: center;
     display: inline-block;
@@ -1040,6 +1037,11 @@
 
 .highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-accordeon-nested-content label:first-child {
     margin-top: 5px;
+}
+
+.highcharts-dashboards-edit-accordeon-menu-buttons-container {
+    display: flex;
+    gap: 10px;
 }
 
 /* End of outer accordeon */
