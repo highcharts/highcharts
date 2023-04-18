@@ -105,12 +105,16 @@ const EditGlobals: EditGlobals = {
         accordeonNestedHeaderBtn: PREFIX + 'accordeon-nested-header-btn',
         accordeonNestedHeaderIcon: PREFIX + 'accordeon-nested-header-icon',
         accordeonNestedContent: PREFIX + 'accordeon-nested-content',
+        hiddenElement: PREFIX + 'hidden-element',
+        collapsableContentHeader: PREFIX + 'collapsable-content-header',
 
         // Custom dropdown with icons
         dropdown: PREFIX + 'dropdown',
         dropdownContent: PREFIX + 'dropdown-content',
         dropdownButton: PREFIX + 'dropdown-button',
+        dropdownButtonContent: PREFIX + 'dropdown-button-content',
         dropdownIcon: PREFIX + 'pointer',
+        rotateElement: PREFIX + 'rotate-element',
 
         icon: PREFIX + 'icon'
     },
@@ -222,6 +226,7 @@ namespace EditGlobals {
         dropdown: string;
         dropdownContent: string;
         dropdownButton: string;
+        dropdownButtonContent: string;
         dropdownIcon:string;
         icon: string;
     }

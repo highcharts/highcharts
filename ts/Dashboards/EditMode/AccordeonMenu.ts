@@ -107,7 +107,9 @@ class AccordeonMenu {
             {
                 value: EditGlobals.lang.confirmButton,
                 callback: (): void => {
-                    component.update(this.changedOptions as any);
+                    component.update(
+                        this.changedOptions as Partial<Component.ComponentOptions>
+                    );
                     menu.closeSidebar();
                 }
             }
@@ -230,7 +232,7 @@ class AccordeonMenu {
 
             for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
                 this.renderAccordeon(
-                    nestedOptions[j] as any,
+                    nestedOptions[j] as EditableOptions.Configuration,
                     content,
                     component
                 );
@@ -274,8 +276,10 @@ class AccordeonMenu {
             if (!value) {
                 return;
             }
+
             value = value[propertyPath[i]];
         }
+
         return value;
     }
 }
