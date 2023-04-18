@@ -28,7 +28,6 @@ import type Series from '../../Core/Series/Series';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
