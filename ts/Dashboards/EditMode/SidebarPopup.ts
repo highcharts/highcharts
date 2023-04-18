@@ -376,36 +376,41 @@ class SidebarPopup extends BaseForm {
     }
 
     public renderAddComponentsList(): void {
+        const sidebar = this;
         const components = SidebarPopup.components;
         let gridElement;
+
+        const gridWrapper = createElement('div', {
+            className: EditGlobals.classNames.editGridItems
+        }, {}, sidebar.container);
 
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             gridElement = createElement(
                 'div',
                 {},
                 {},
-                this.container
+                gridWrapper
             );
 
             // Drag drop new component.
-            // (gridElement.onmousedown as any) = (e: PointerEvent): void => {
-            //     if (sidebar.editMode.dragDrop) {
-            //         sidebar.hide(false, true);
-            //         sidebar.editMode.dragDrop.onDragStart(
-            //             e,
-            //             void 0,
-            //             (dropContext: Cell|Row): void => {
-            //                 const newCell =
-            //                     components[i].onDrop(sidebar, dropContext);
+            (gridElement.onmousedown as any) = (e: PointerEvent): void => {
+                if (sidebar.editMode.dragDrop) {
+                    sidebar.hide();
+                    sidebar.editMode.dragDrop.onDragStart(
+                        e,
+                        void 0,
+                        (dropContext: Cell|Row): void => {
+                            const newCell =
+                                components[i].onDrop(sidebar, dropContext);
 
-            //                 if (newCell) {
-            //                     sidebar.editMode.setEditCellContext(newCell);
-            //                     sidebar.show(newCell);
-            //                 }
-            //             }
-            //         );
-            //     }
-            // };
+                            if (newCell) {
+                                sidebar.editMode.setEditCellContext(newCell);
+                                sidebar.show(newCell);
+                            }
+                        }
+                    );
+                }
+            };
             gridElement.innerHTML = components[i].text;
         }
         return;

@@ -42,11 +42,6 @@ const EditGlobals: EditGlobals = {
         editSidebarShow: PREFIX + 'sidebar-show',
         editSidebarHide: PREFIX + 'sidebar-hide',
         editSidebarTitle: PREFIX + 'sidebar-title',
-        editSidebarTab: PREFIX + 'sidebar-tab',
-        editSidebarTabContainer: PREFIX + 'sidebar-tab-wrapper',
-        editSidebarTabsContainer: PREFIX + 'sidebar-tabs',
-        editSidebarTabContent: PREFIX + 'sidebar-tab-content',
-        editSidebarTabActive: PREFIX + 'toolbar-tab-active',
         editSidebarMenuItem: PREFIX + 'sidebar-item',
         rowContextHighlight: PREFIX + 'row-context-highlight',
         cellEditHighlight: PREFIX + 'cell-highlight',
@@ -166,11 +161,6 @@ namespace EditGlobals {
         editSidebarShow: string;
         editSidebarHide: string;
         editSidebarTitle: string;
-        editSidebarTab: string;
-        editSidebarTabContainer: string;
-        editSidebarTabsContainer: string;
-        editSidebarTabContent: string;
-        editSidebarTabActive: string;
         editSidebarMenuItem: string;
         rowContextHighlight: string;
         cellEditHighlight: string;
