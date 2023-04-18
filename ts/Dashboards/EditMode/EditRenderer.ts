@@ -484,7 +484,7 @@ function renderNestedHeader(
             className:
                 EditGlobals.classNames.accordeonNestedHeaderIcon +
                 ' ' +
-                EditGlobals.classNames.rotateElementReverse,
+                EditGlobals.classNames.rotateElement,
             src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
@@ -516,7 +516,7 @@ function renderNestedHeader(
     headerBtn.addEventListener('click', function (): void {
         content.classList.toggle(EditGlobals.classNames.hiddenElement);
         headerIcon.classList.toggle(
-            EditGlobals.classNames.rotateElementReverse
+            EditGlobals.classNames.rotateElement
         );
     });
 

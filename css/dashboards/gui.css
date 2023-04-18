@@ -674,10 +674,6 @@
     transform: rotate(90deg);
 }
 
-.highcharts-dashboards-edit-rotate-element-reverse {
-    transform: rotate(-90deg);
-}
-
 /* stylelint-disable-next-line max-line-length */
 .highcharts-dashboards-edit-collapsable-content-header > .highcharts-dashboards-edit-hidden-element {
     display: none;

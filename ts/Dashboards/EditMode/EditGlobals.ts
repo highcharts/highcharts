@@ -114,7 +114,6 @@ const EditGlobals: EditGlobals = {
         dropdownButton: PREFIX + 'dropdown-button',
         dropdownIcon: PREFIX + 'pointer',
         rotateElement: PREFIX + 'rotate-element',
-        rotateElementReverse: PREFIX + 'rotate-element-reverse',
 
         icon: PREFIX + 'icon'
     },
