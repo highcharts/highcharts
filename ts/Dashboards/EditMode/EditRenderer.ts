@@ -365,7 +365,7 @@ function renderToggle(
         toggleContainer
     );
 
-    const input = renderCheckbox(toggle);
+    const input = renderCheckbox(toggle, value);
     const onchange = options.onchange;
     if (input && onchange) {
         input.addEventListener('change', (e: any): void => {
@@ -440,7 +440,7 @@ function renderNestedHeader(
     options: NestedHeaderFormField
 ): HTMLDOMElement {
 
-    const { name, allowEnabled, onchange, value } = options;
+    const { name, allowEnabled, onchange, isEnabled } = options;
     const nested = createElement(
         'div',
         {
@@ -492,7 +492,7 @@ function renderNestedHeader(
             id: name,
             name: name,
             onchange,
-            value
+            value: isEnabled
         });
     }
 
@@ -756,7 +756,7 @@ const EditRenderer = {
     renderTextarea,
     renderCheckbox,
     renderButton,
-    renderNestedHeader: renderNestedHeader,
+    renderNestedHeader,
     getRendererFunction
 };
 
@@ -819,7 +819,7 @@ export interface NestedHeaderFormField {
     name: string;
     allowEnabled: boolean;
     onchange: (value: boolean) => void;
-    value: boolean;
+    isEnabled: boolean;
 }
 export interface NestedOptions {
 

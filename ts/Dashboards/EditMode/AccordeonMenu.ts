@@ -1,10 +1,12 @@
 import type Component from '../Components/Component.js';
+import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type EditableOptions from '../Components/EditableOptions';
 
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
-    createElement
+    createElement,
+    merge
 } = U;
 
 
@@ -156,7 +158,7 @@ class AccordeonMenu {
             const propertyPath = detailedOptions[i].propertyPath || [];
             const content = EditRenderer.renderNestedHeader(parentElement, {
                 name,
-                value: !!this.getValue(component, propertyPath),
+                isEnabled: !!this.getValue(component, propertyPath),
                 allowEnabled,
                 onchange: (value: boolean | string | number): void =>
                     this.updateOptions(propertyPath, value)
@@ -185,7 +187,12 @@ class AccordeonMenu {
             return JSON.stringify(component.options.chartOptions, null, 2);
         }
 
-        let value = component.options as any;
+        const componentOptions = component.options;
+        const chart = (component as HighchartsComponent).chart;
+        const chartOptions = chart && chart.options;
+        let value = merge(componentOptions, {
+            chartOptions
+        }) as any;
 
         for (let i = 0, end = propertyPath.length; i < end; i++) {
             if (!value) {
