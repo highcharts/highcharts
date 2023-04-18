@@ -448,9 +448,15 @@ class SidebarPopup extends BaseForm {
      */
     public hide(): void {
         const editMode = this.editMode;
+        const editCellContext = editMode.editCellContext;
+
         this.closePopup();
         this.removeClassNames();
-        const editCellContext = editMode.editCellContext;
+
+        // Remove edit overlay if active.
+        if (editMode.isEditOverlayActive) {
+            editMode.setEditOverlay(true);
+        }
 
         if (editCellContext) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
