@@ -1,9 +1,4 @@
-// Allow input tags in axis labels
-Highcharts.AST.allowedTags.push('input');
-Highcharts.AST.allowedTags.push('label');
-Highcharts.AST.allowedAttributes.push('checked');
-
-var masterVolume = 0.8;
+var masterVolume = 0.85;
 
 // ------------------------------------------------------------------------
 // Controls
@@ -36,24 +31,55 @@ function onRender() {
     ['bass-on', 'chimes-on', 'shaker1-on', 'piano-on', 'flute-on',
         'synth-on', 'shaker2-on', 'pad-on', 'basspad-on'
     ].forEach(function (id, seriesIx) {
+        var series = chart.series[seriesIx];
         document.getElementById(id).onclick = function () {
             var timeline = chart.sonification.timeline,
                 muted = !this.checked;
-            if (!timeline) {
-                return;
+            if (timeline) {
+                if (
+                    series.options.sonification &&
+                    series.options.sonification.enabled === false &&
+                    !muted
+                ) {
+                    // Series was muted before timeline was made, have to do
+                    // update & rebuild
+                    series.update({
+                        sonification: { enabled: true }
+                    });
+                }
+                setInstrumentMute(seriesIx, timeline.channels, muted);
+            } else {
+                // Timeline not built yet - user interaction needed on page
+                series.update({
+                    sonification: { enabled: !muted }
+                }, false);
             }
-            setInstrumentMute(seriesIx, timeline.channels, muted);
-            chart.series[seriesIx].setState(muted ? 'inactive' : 'normal');
+            series.setState(muted ? 'inactive' : 'normal');
         };
     });
 
     // Set plot border radius
     chart.plotBackground.attr('r', '9px');
+
+    // Expose y axis titles to screen readers directly
+    chart.yAxis.forEach(function (a) {
+        a.axisGroup.div.setAttribute('aria-hidden', 'false');
+    });
 }
 
 
 // ------------------------------------------------------------------------
 // Chart
+
+Highcharts.SVGRenderer.prototype.symbols.box = function (x, y, w, h) {
+    const x2 = w * 2;
+    return ['M', x, y, 'L', x + x2, y, 'L', x + x2, y + h, 'L', x, y + h, 'z'];
+};
+
+// Allow input tags in axis labels
+Highcharts.AST.allowedTags.push('input');
+Highcharts.AST.allowedTags.push('label');
+Highcharts.AST.allowedAttributes.push('checked');
 
 // Convenience function to get y axis options, since we have 9 of them
 function buildYAxisOpts(height, top, labelText, checkboxId, iconSrc) {
@@ -63,6 +89,9 @@ function buildYAxisOpts(height, top, labelText, checkboxId, iconSrc) {
         offset: 0,
         labels: {
             enabled: false
+        },
+        accessibility: {
+            description: labelText
         },
         gridLineWidth: 0,
         title: {
@@ -85,10 +114,16 @@ Highcharts.chart('container', {
     chart: {
         type: 'scatter',
         marginLeft: 150,
+        marginBottom: 25,
         events: {
             render: onRender
         },
-        plotBackgroundColor: '#F5F5F5'
+        plotBackgroundColor: '#F5F5F5',
+        plotShadow: {
+            color: '#aaa',
+            opacity: 0.1,
+            width: 10
+        }
     },
     title: {
         text: 'Musical Chart',
@@ -112,6 +147,22 @@ Highcharts.chart('container', {
             showPlayMarker: false
         }
     },
+    accessibility: {
+        keyboardNavigation: {
+            enabled: false
+        },
+        screenReaderSection: {
+            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+        },
+        landmarkVerbosity: 'one'
+    },
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionSingular: 'The chart has 1 X axis displaying time.'
+            }
+        }
+    },
     data: {
         csv: document.getElementById('csv').textContent,
         complete: function (opts) {
@@ -131,9 +182,9 @@ Highcharts.chart('container', {
     xAxis: {
         crosshair: {
             enabled: true,
-            width: 15,
-            color: '#75A073',
-            className: 'hc-crosshair'
+            width: 10,
+            color: '#609A5E',
+            className: 'hc-crosshair' // Smoothed with CSS transitions
         },
         visible: false,
         minPadding: 0.02
@@ -189,7 +240,10 @@ Highcharts.chart('container', {
     ],
     plotOptions: {
         series: {
-            enableMouseTracking: false
+            enableMouseTracking: false,
+            accessibility: {
+                exposeAsGroupOnly: true
+            }
         }
     },
 
@@ -215,7 +269,7 @@ Highcharts.chart('container', {
         marker: {
             symbol: 'circle',
             radius: 5,
-            lineColor: '#508055',
+            lineColor: '#505F55',
             lineWidth: 3
         }
     }, {
@@ -246,7 +300,8 @@ Highcharts.chart('container', {
                 }
             }]
         },
-        color: '#c0f090',
+        colorByPoint: true,
+        colors: ['#c0f090', '#b0c0f0', '#f0c090', '#f0f070'],
         marker: {
             symbol: 'diamond',
             radius: 4,
@@ -266,10 +321,8 @@ Highcharts.chart('container', {
         },
         color: '#204020',
         marker: {
-            symbol: 'square',
-            radius: 3,
-            lineColor: '#408050',
-            lineWidth: 2
+            symbol: 'box',
+            radius: 2
         }
     }, {
         // Piano
@@ -471,9 +524,9 @@ Highcharts.chart('container', {
         // Shaker 2
         sonification: {
             defaultInstrumentOptions: {
-                instrument: 'step',
+                instrument: 'chop',
                 mapping: {
-                    volume: 1,
+                    volume: 0.3,
                     pan: 1,
                     highpass: {
                         frequency: 250
@@ -492,10 +545,8 @@ Highcharts.chart('container', {
         },
         color: '#204020',
         marker: {
-            symbol: 'square',
-            radius: 3,
-            lineColor: '#408050',
-            lineWidth: 2
+            symbol: 'box',
+            radius: 2
         }
     }, {
         // Pad

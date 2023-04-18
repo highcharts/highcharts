@@ -1,6 +1,6 @@
 # Play chart as sound
-In this demo we are using the sonification module to play a musical chart. The chart shows when and what the different instruments are playing as the sound plays.
+In this demo we are using the sonification module to play a musical chart. This is an advanced demo showcasing more artistic ways of configuring audio charts. The sonification module has been built with capabilities geared towards musical artists as well, allowing complex audio experiences to be designed through visualization.
 
 ####  Tip
-- Hiding a series by clicking the legend items will mute that series.
-- Pressing ESC will stop playing immediately.
+- Click on the different instruments to turn them on and off. 
+- Pressing ESC will stop playing.
