@@ -276,4 +276,23 @@ QUnit.test('Image', assert => {
         TestUtilities.lolexUninstall(clock);
         throw error;
     }
+
+    symbol1.imgwidth = 56;
+    symbol1.imgheight = 150;
+    symbol1.attr({
+        width: 0,
+        height: 0
+    });
+
+    assert.equal(
+        symbol1.translateX,
+        -symbol1.imgwidth / 2,
+        'Symbol should be correctly centered in X (#18790)'
+    );
+
+    assert.equal(
+        symbol1.translateY,
+        -symbol1.imgheight / 2,
+        'Symbol should be correctly centered in Y (#18790)'
+    );
 });

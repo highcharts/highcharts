@@ -66,13 +66,11 @@ const {
     fireEvent,
     isArray,
     isFunction,
-    isNumber,
     isString,
     merge,
     objectEach,
     pick,
     pInt,
-    removeEvent,
     syncTimeout,
     uniqueKey
 } = U;
@@ -531,7 +529,7 @@ class SVGElement implements SVGElementLike {
 
         // When the page is hidden save resources in the background by not
         // running animation at all (#9749).
-        if (pick(doc.hidden, doc.msHidden, doc.webkitHidden, false)) {
+        if (doc.hidden) {
             animOptions.duration = 0;
         }
 
@@ -1207,7 +1205,6 @@ class SVGElement implements SVGElementLike {
             ownerSVGElement = (element as SVGDOMElement).ownerSVGElement;
 
         let parentToClean: (SVGElement|undefined) = (
-                renderer.isSVG &&
                 element.nodeName === 'SPAN' &&
                 wrapper.parentGroup ||
                 void 0
@@ -1529,8 +1526,7 @@ class SVGElement implements SVGElementLike {
                     bBox = { x: 0, y: 0, width: 0, height: 0 };
                 }
 
-
-            // VML Renderer or useHTML within SVG
+            // useHTML within SVG
             } else {
 
                 bBox = wrapper.htmlGetBBox();
@@ -1539,85 +1535,83 @@ class SVGElement implements SVGElementLike {
 
             // True SVG elements as well as HTML elements in modern browsers
             // using the .useHTML option need to compensated for rotation
-            if (renderer.isSVG) {
-                width = bBox.width;
-                height = bBox.height;
+            width = bBox.width;
+            height = bBox.height;
 
-                // Workaround for wrong bounding box in IE, Edge and Chrome on
-                // Windows. With Highcharts' default font, IE and Edge report
-                // a box height of 16.899 and Chrome rounds it to 17. If this
-                // stands uncorrected, it results in more padding added below
-                // the text than above when adding a label border or background.
-                // Also vertical positioning is affected.
-                // https://jsfiddle.net/highcharts/em37nvuj/
-                // (#1101, #1505, #1669, #2568, #6213).
-                if (isSVG) {
-                    bBox.height = height = (
-                        ({
-                            '11px,17': 14,
-                            '13px,20': 16
-                        } as Record<string, number>)[
-                            `${fontSize || ''},${Math.round(height)}`
-                        ] ||
-                        height
-                    );
-                }
-
-                // Adjust for rotated text
-                if (rotation) {
-
-                    const baseline = Number(
-                            element.getAttribute('y') || 0
-                        ) - bBox.y,
-                        alignFactor = ({
-                            'right': 1,
-                            'center': 0.5
-                        } as Record<string, number>)[alignValue || 0] || 0,
-                        rad = rotation * deg2rad,
-                        rad90 = (rotation - 90) * deg2rad,
-                        wCosRad = width * Math.cos(rad),
-                        wSinRad = width * Math.sin(rad),
-                        cosRad90 = Math.cos(rad90),
-                        sinRad90 = Math.sin(rad90),
-
-                        // Find the starting point on the left side baseline of
-                        // the text
-                        pX = bBox.x + alignFactor * (width - wCosRad),
-                        pY = bBox.y + baseline - alignFactor * wSinRad,
-
-                        // Find all corners
-                        aX = pX + baseline * cosRad90,
-                        bX = aX + wCosRad,
-                        cX = bX - height * cosRad90,
-                        dX = cX - wCosRad,
-
-                        aY = pY + baseline * sinRad90,
-                        bY = aY + wSinRad,
-                        cY = bY - height * sinRad90,
-                        dY = cY - wSinRad;
-
-                    // Deduct the bounding box from the corners
-                    bBox.x = Math.min(aX, bX, cX, dX);
-                    bBox.y = Math.min(aY, bY, cY, dY);
-                    bBox.width = Math.max(aX, bX, cX, dX) - bBox.x;
-                    bBox.height = Math.max(aY, bY, cY, dY) - bBox.y;
-                }
+            // Workaround for wrong bounding box in IE, Edge and Chrome on
+            // Windows. With Highcharts' default font, IE and Edge report
+            // a box height of 16.899 and Chrome rounds it to 17. If this
+            // stands uncorrected, it results in more padding added below
+            // the text than above when adding a label border or background.
+            // Also vertical positioning is affected.
+            // https://jsfiddle.net/highcharts/em37nvuj/
+            // (#1101, #1505, #1669, #2568, #6213).
+            if (isSVG) {
+                bBox.height = height = (
+                    ({
+                        '11px,17': 14,
+                        '13px,20': 16
+                    } as Record<string, number>)[
+                        `${fontSize || ''},${Math.round(height)}`
+                    ] ||
+                    height
+                );
             }
 
-            // Cache it. When loading a chart in a hidden iframe in Firefox and
-            // IE/Edge, the bounding box height is 0, so don't cache it (#5620).
-            if (cacheKey && (textStr === '' || bBox.height > 0)) {
+            // Adjust for rotated text
+            if (rotation) {
 
-                // Rotate (#4681)
-                while (cacheKeys.length > 250) {
-                    delete cache[cacheKeys.shift() as any];
-                }
+                const baseline = Number(
+                        element.getAttribute('y') || 0
+                    ) - bBox.y,
+                    alignFactor = ({
+                        'right': 1,
+                        'center': 0.5
+                    } as Record<string, number>)[alignValue || 0] || 0,
+                    rad = rotation * deg2rad,
+                    rad90 = (rotation - 90) * deg2rad,
+                    wCosRad = width * Math.cos(rad),
+                    wSinRad = width * Math.sin(rad),
+                    cosRad90 = Math.cos(rad90),
+                    sinRad90 = Math.sin(rad90),
 
-                if (!cache[cacheKey]) {
-                    cacheKeys.push(cacheKey);
-                }
-                cache[cacheKey] = bBox;
+                    // Find the starting point on the left side baseline of
+                    // the text
+                    pX = bBox.x + alignFactor * (width - wCosRad),
+                    pY = bBox.y + baseline - alignFactor * wSinRad,
+
+                    // Find all corners
+                    aX = pX + baseline * cosRad90,
+                    bX = aX + wCosRad,
+                    cX = bX - height * cosRad90,
+                    dX = cX - wCosRad,
+
+                    aY = pY + baseline * sinRad90,
+                    bY = aY + wSinRad,
+                    cY = bY - height * sinRad90,
+                    dY = cY - wSinRad;
+
+                // Deduct the bounding box from the corners
+                bBox.x = Math.min(aX, bX, cX, dX);
+                bBox.y = Math.min(aY, bY, cY, dY);
+                bBox.width = Math.max(aX, bX, cX, dX) - bBox.x;
+                bBox.height = Math.max(aY, bY, cY, dY) - bBox.y;
             }
+        }
+
+        // Cache it. When loading a chart in a hidden iframe in Firefox and
+        // IE/Edge, the bounding box height is 0, so don't cache it (#5620).
+        if (cacheKey && (textStr === '' || bBox.height > 0)) {
+
+            // Rotate (#4681)
+            while (cacheKeys.length > 250) {
+                delete cache[cacheKeys.shift() as any];
+            }
+
+            if (!cache[cacheKey]) {
+                cacheKeys.push(cacheKey);
+            }
+            cache[cacheKey] = bBox;
         }
         return bBox;
     }
@@ -2545,7 +2539,7 @@ class SVGElement implements SVGElementLike {
                     ) {
                         parentNode.insertBefore(
                             element,
-                            childNodes[i + 1] || null // null for oldIE export
+                            childNodes[i + 1]
                         );
                         inserted = true;
                     }
@@ -2555,7 +2549,7 @@ class SVGElement implements SVGElementLike {
             if (!inserted) {
                 parentNode.insertBefore(
                     element,
-                    childNodes[svgParent ? 3 : 0] || null // null for oldIE
+                    childNodes[svgParent ? 3 : 0]
                 );
                 inserted = true;
             }

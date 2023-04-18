@@ -1,0 +1,9 @@
+.highcharts-figure {
+    min-width: 300px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#container {
+    height: 600px;
+}

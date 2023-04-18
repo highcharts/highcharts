@@ -2545,6 +2545,12 @@ class Axis {
 
             axis.forceRedraw = false;
 
+            // #18066 delete minRange property to ensure that it will be
+            // calculated again after dirty data in series
+            if (!axis.userMinRange) {
+                axis.minRange = void 0;
+            }
+
             // get data extremes if needed
             axis.getSeriesExtremes();
 
@@ -3484,6 +3490,7 @@ class Axis {
                         labelOffset
                     );
                 });
+
             }
 
             if (axis.staggerLines) {
@@ -3543,9 +3550,13 @@ class Axis {
                 horiz ?
                     pick(
                         labelOptions.y,
-                        axis.tickRotCorr.y + directionFactor * 8
+                        axis.tickRotCorr.y +
+                            directionFactor * labelOptions.distance
                     ) :
-                    labelOptions.x
+                    pick(
+                        labelOptions.x,
+                        directionFactor * labelOptions.distance
+                    )
             );
         }
 
