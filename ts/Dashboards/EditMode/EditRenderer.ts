@@ -153,8 +153,7 @@ function renderCollapseHeader(
         'img',
         {
             className:
-                EditGlobals.classNames.accordeonHeaderIcon +
-                ' ' +
+                EditGlobals.classNames.accordeonHeaderIcon + ' ' +
                 EditGlobals.classNames.rotateElement,
             src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
@@ -166,8 +165,7 @@ function renderCollapseHeader(
         'div',
         {
             className:
-                EditGlobals.classNames.accordeonContent +
-                ' ' +
+                EditGlobals.classNames.accordeonContent + ' ' +
                 EditGlobals.classNames.hiddenElement
         },
         {},

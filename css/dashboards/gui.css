@@ -668,6 +668,7 @@
     font-size: 20px;
     width: 75%;
     cursor: pointer;
+    margin-bottom: 20px;
 }
 
 .highcharts-dashboards-edit-rotate-element {
@@ -1047,10 +1048,6 @@
 }
 
 /* End of outer accordeon */
-
-.highcharts-dashboards-edit-sidebar-title {
-    margin-bottom: 20px;
-}
 
 /* stylelint-disable-next-line max-line-length */
 .highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-content.highcharts-dashboards-edit-hidden-element {
