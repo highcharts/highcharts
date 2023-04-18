@@ -89,7 +89,7 @@ function renderContextButton(
  *
  * @param options
  * Nested header options.
- * 
+ *
  * @returns the outer element and content in the collapsable div.
  */
 function renderCollapseHeader(

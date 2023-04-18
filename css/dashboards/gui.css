@@ -335,7 +335,8 @@
     min-width: 100px;
 }
 
-.highcharts-dashboards-edit-toggle-wrapper {
+.highcharts-dashboards-edit-toggle-wrapper,
+.highcharts-dashboards-edit-accordeon-content label.highcharts-dashboards-edit-toggle-wrapper {
     position: relative;
     display: inline-block;
     width: 43px;
@@ -670,11 +671,10 @@
 }
 
 .highcharts-dashboards-edit-rotate-element {
-    transform: rotate(90deg);
+    transform: rotate(-90deg);
 }
 
-/* stylelint-disable-next-line max-line-length */
-.highcharts-dashboards-edit-collapsable-content-header > .highcharts-dashboards-edit-hidden-element {
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-hidden-element {
     display: none;
 }
 
@@ -689,7 +689,7 @@
 .highcharts-dashboards-edit-grid-items div {
     width: calc(100% - 20px);
     clear: both;
-    margin: 10px 0px;
+    margin: 10px 0;
     padding: 10px;
     text-align: center;
     display: inline-block;
@@ -937,10 +937,6 @@
     border-radius: 2px;
 }
 
-/* .highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-label-text {
-    display: inline-block;
-} */
-/* 
 .highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-header {
     display: flex;
     flex-direction: row;
@@ -948,17 +944,19 @@
     align-self: stretch;
     padding: 10px 5px;
 }
-*/
 
-/* .highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-header-btn {
+.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-header-btn {
+    flex-direction: row-reverse;
+    justify-content: left;
     align-items: center;
     border: none;
     background: none;
     margin: 0;
     width: 60%;
+    padding: 0;
     display: flex;
     cursor: pointer;
-} */
+}
 
 .highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-content {
     margin: 0 10px 10px;
@@ -986,7 +984,7 @@
     width: 24px;
     height: 24px;
     margin-right: 10px;
-} 
+}
 
 /* end of nested options dropdown */
 
@@ -1052,4 +1050,9 @@
 
 .highcharts-dashboards-edit-sidebar-title {
     margin-bottom: 20px;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-content.highcharts-dashboards-edit-hidden-element {
+    display: none;
 }
