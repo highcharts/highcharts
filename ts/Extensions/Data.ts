@@ -1123,7 +1123,7 @@ class Data {
 
                             (columns as any)[colNo - startColumn][
                                 rowNo - startRow
-                            ] = item.textContent;
+                            ] = item.innerHTML;
 
                             // Loop over all previous indices and make sure
                             // they are nulls, not undefined.

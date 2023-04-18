@@ -294,7 +294,7 @@ class HTMLElement extends SVGElement {
                 currentTextTransform = [
                     rotation,
                     align,
-                    elem.textContent,
+                    elem.innerHTML,
                     wrapper.textWidth,
                     wrapper.textAlign
                 ].join(',');

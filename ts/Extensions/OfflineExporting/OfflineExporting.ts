@@ -278,7 +278,7 @@ namespace OfflineExporting {
 
             // If there are no non-ASCII characters in the SVG, do not use
             // bother downloading the font files
-            if (pdfFont && !hasNonASCII(svgElement.textContent || '')) {
+            if (pdfFont && !hasNonASCII(svgElement.innerHTML || '')) {
                 pdfFont = void 0;
             }
 
