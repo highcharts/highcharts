@@ -134,7 +134,8 @@ const EditGlobals: EditGlobals = {
         exitFullscreen: 'Exit full screen',
         on: 'on',
         off: 'off',
-        settings: 'Settings'
+        settings: 'Settings',
+        addComponent: 'Add component'
     }
 };
 
@@ -247,6 +248,7 @@ namespace EditGlobals {
         on: string;
         off: string;
         settings: string;
+        addComponent: string;
     }
 
     export type TLangKeys = 'editMode'|'verticalSeparator';
