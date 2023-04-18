@@ -106,6 +106,7 @@ const EditGlobals: EditGlobals = {
         accordeonNestedHeaderIcon: PREFIX + 'accordeon-nested-header-icon',
         accordeonNestedContent: PREFIX + 'accordeon-nested-content',
         hiddenElement: PREFIX + 'hidden-element',
+        collapsableContentHeader: PREFIX + 'collapsable-content-header',
 
         // Custom dropdown with icons
         dropdown: PREFIX + 'dropdown',

@@ -678,7 +678,8 @@
     transform: rotate(-90deg);
 }
 
-div > .highcharts-dashboards-edit-hidden-element {
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-collapsable-content-header > .highcharts-dashboards-edit-hidden-element {
     display: none;
 }
 

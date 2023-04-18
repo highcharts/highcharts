@@ -86,7 +86,12 @@ function renderCollapse(
 
     const accordeon = createElement(
         'div',
-        { className: EditGlobals.classNames.accordeonContainer },
+        {
+            className:
+                EditGlobals.classNames.accordeonContainer +
+                ' ' +
+                EditGlobals.classNames.collapsableContentHeader
+        },
         {},
         parentElement
     );
@@ -178,7 +183,9 @@ function renderSelect(
     const customSelect = createElement(
         'div',
         {
-            className: EditGlobals.classNames.dropdown
+            className: EditGlobals.classNames.dropdown +
+                ' ' +
+                EditGlobals.classNames.collapsableContentHeader
         },
         {},
         parentElement
@@ -448,7 +455,8 @@ function renderNestedHeader(
     const nested = createElement(
         'div',
         {
-            className: EditGlobals.classNames.accordeonNestedWrapper
+            className: EditGlobals.classNames.accordeonNestedWrapper + ' ' +
+            EditGlobals.classNames.collapsableContentHeader
         },
         {},
         parentElement
