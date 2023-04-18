@@ -458,7 +458,7 @@ class HTMLTableConverter extends DataConverter {
                     item.tagName === 'TD' ||
                     item.tagName === 'TH'
                 ) {
-                    headers.push(item.textContent as string || '');
+                    headers.push(item.innerHTML);
                 }
             }
 
@@ -493,7 +493,7 @@ class HTMLTableConverter extends DataConverter {
                         }
 
                         let cellValue = converter.asGuessedType(
-                            item.textContent as string || ''
+                            item.innerHTML
                         );
                         if (cellValue instanceof Date) {
                             cellValue = cellValue.getTime();
