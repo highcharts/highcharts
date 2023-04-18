@@ -112,6 +112,7 @@ const EditGlobals: EditGlobals = {
         dropdown: PREFIX + 'dropdown',
         dropdownContent: PREFIX + 'dropdown-content',
         dropdownButton: PREFIX + 'dropdown-button',
+        dropdownButtonContent: PREFIX + 'dropdown-button-content',
         dropdownIcon: PREFIX + 'pointer',
         rotateElement: PREFIX + 'rotate-element',
 
@@ -225,6 +226,7 @@ namespace EditGlobals {
         dropdown: string;
         dropdownContent: string;
         dropdownButton: string;
+        dropdownButtonContent: string;
         dropdownIcon:string;
         icon: string;
     }

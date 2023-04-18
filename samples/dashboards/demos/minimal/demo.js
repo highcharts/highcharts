@@ -120,5 +120,6 @@ Dashboards.board('container', {
 
 
 const board = Dashboards.boards[0];
+const cell = board.mountedComponents[1].cell;
 board.editMode.activate();
-board.editMode.sidebar.show(board.mountedComponents[0].cell);
+board.editMode.sidebar.show(cell);
