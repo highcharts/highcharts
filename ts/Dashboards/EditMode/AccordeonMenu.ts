@@ -1,3 +1,25 @@
+/* *
+ *
+ *  (c) 2009-2023 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Pawel Lysy
+ *  - Sebastian Bochan
+ *
+ * */
+
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Component from '../Components/Component.js';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type EditableOptions from '../Components/EditableOptions';
@@ -10,37 +32,52 @@ const {
     merge
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
 
+/**
+ * Accordeon menu class.
+ */
 class AccordeonMenu {
-    private iconsURLPrefix: string;
-    private closeSidebar: Function;
-    private changedOptions: DeepPartial<Component.ComponentOptions> = {};
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     constructor(iconsURLPrefix: string, closeSidebar: Function) {
         this.iconsURLPrefix = iconsURLPrefix;
         this.closeSidebar = closeSidebar;
     }
 
-    public updateOptions(
-        propertyPath: Array<string>,
-        value: boolean | string | number
-    ): void {
-        let currentLevel = this.changedOptions as any;
-        const pathLength = propertyPath.length - 1;
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-        for (let i = 0; i < pathLength; i++) {
-            const key = propertyPath[i];
+    private iconsURLPrefix: string;
+    private closeSidebar: Function;
+    private changedOptions: DeepPartial<Component.ComponentOptions> = {};
 
-            if (!currentLevel[key]) {
-                currentLevel[key] = {};
-            }
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-            currentLevel = currentLevel[key];
-        }
-
-        currentLevel[propertyPath[pathLength]] = value;
-    }
-
+    /**
+     * Renders the menu for given component.
+     *
+     * @param container
+     * The HTML Element to render the menu in.
+     * @param component
+     * The component to render the menu for.
+     */
     public renderContent(container: HTMLElement, component: Component): void {
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
@@ -90,33 +127,85 @@ class AccordeonMenu {
         );
     }
 
+    /**
+     * Update the options object with new nested value, based on the property
+     * path. If the objects in the path are not defined, the function will
+     * create them.
+     *
+     * @param propertyPath
+     * Path of the property for which the value should be updated.
+     * Example: ```['chartOptions', 'chart', 'type']```
+     * @param value
+     * New value of the property.
+     */
+    public updateOptions(
+        propertyPath: Array<string>,
+        value: boolean | string | number
+    ): void {
+        let currentLevel = this.changedOptions as any;
+        const pathLength = propertyPath.length - 1;
+
+        for (let i = 0; i < pathLength; i++) {
+            const key = propertyPath[i];
+
+            if (!currentLevel[key]) {
+                currentLevel[key] = {};
+            }
+
+            currentLevel = currentLevel[key];
+        }
+
+        currentLevel[propertyPath[pathLength]] = value;
+    }
+
+    /**
+     * Renders either a basic or nested element. This function can be recursivly
+     * called, if there are multiple nested options.
+     *
+     * @param options
+     * Configuration object of the Component options.
+     * @param parentNode
+     * A container where the accordion is rendered.
+     * @param component
+     * the component for which the menu should be rendered.
+     */
     public renderAccordeon(
-        option: EditableOptions.Configuration,
+        options: EditableOptions.Configuration,
         parentNode: HTMLElement,
         component: Component
     ): void {
 
-        if (option.type === 'nested') {
-            return this.renderNested(parentNode, option, component);
+        if (options.type === 'nested') {
+            return this.renderNested(parentNode, options, component);
         }
 
-        const renderFunction = EditRenderer.getRendererFunction(option.type);
+        const renderFunction = EditRenderer.getRendererFunction(options.type);
 
 
         if (!renderFunction) {
             return;
         }
         renderFunction(parentNode, {
-            ...option,
+            ...options,
             iconsURLPrefix: this.iconsURLPrefix,
-            value: this.getValue(component, option.propertyPath),
+            value: this.getValue(component, options.propertyPath),
             onchange: (
                 value: boolean | string | number
-            ): void => this.updateOptions(option.propertyPath || [], value)
+            ): void => this.updateOptions(options.propertyPath || [], value)
         });
 
     }
 
+    /**
+     * Render nested menu for the component.
+     *
+     * @param parentElement
+     * HTML element to which the nested structure should be rendered to
+     * @param options
+     * configuration object for the options
+     * @param component
+     * The component instance for the options should be rendered
+     */
     public renderNested(
         parentElement: HTMLElement,
         options: EditableOptions.Configuration,
@@ -152,6 +241,18 @@ class AccordeonMenu {
         }
         return;
     }
+
+    /**
+     * Gets the value from the component based on the provided propertyPath
+     * array.
+     *
+     * @param component
+     * The component for which the value should be returned.
+     * @param propertyPath
+     * Path to a value. Example:  ```['chartOptions', 'chart', 'type']```
+     * @returns
+     * The value retrieved from the component.
+     */
     public getValue(
         component: Component,
         propertyPath?: Array<string>
