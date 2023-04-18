@@ -623,20 +623,28 @@ class EditMode {
                         icon: (rwdIcons as any)[key] || '',
                         value: key,
                         callback: (e: PointerEvent): void => {
-                            const button = e.target as HTMLElement;
+                            const button = e.target as HTMLElement,
+                                isSelected =
+                                    button.classList.contains('selected');
 
-                            // Deselect all buttons.
-                            this.rwdMenu.forEach((btn: HTMLElement): void => {
-                                btn.classList.remove('selected');
-                            });
+                            // Deselect given button and reset board width.
+                            if (isSelected) {
+                                button.classList.remove('selected');
+                                this.board.layoutsWrapper.style.width = '100%';
+                                this.rwdMode = '';
+                            } else {
+                                // Deselect all buttons.
+                                this.rwdMenu.forEach(
+                                    (btn: HTMLElement): void => {
+                                        btn.classList.remove('selected');
+                                    });
 
-                            // Select given button.
-                            button.classList.add('selected');
-
-                            // Change board width.
-                            this.board.layoutsWrapper.style.width =
-                                rwdBreakingPoints[key] + 'px';
-                            this.rwdMode = key;
+                                // Select given button and change board width.
+                                button.classList.add('selected');
+                                this.board.layoutsWrapper.style.width =
+                                    rwdBreakingPoints[key] + 'px';
+                                this.rwdMode = key;
+                            }
 
                             // Reflow elements.
                             this.board.reflow();
