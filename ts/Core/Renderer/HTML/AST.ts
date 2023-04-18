@@ -592,7 +592,7 @@ class AST {
             );
         } else {
             const body = createElement('div');
-            body.textContent = markup;
+            body.innerHTML = markup;
             doc = { body };
         }
 
