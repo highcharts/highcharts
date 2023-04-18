@@ -1779,7 +1779,7 @@ class Data {
      *
      * @example
      * const data = Highcharts.data({
-     *   csv: document.getElementById('data').textContent
+     *   csv: document.getElementById('data').innerHTML
      * }).getData();
      *
      * @function Highcharts.Data#getData
