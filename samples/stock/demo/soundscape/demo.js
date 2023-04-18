@@ -1,7 +1,5 @@
 var playDuration = 25000,
-    lastMonth,
-    crosshairStart,
-    crosshairInterval;
+    lastMonth;
 
 var chart = Highcharts.stockChart('container', {
     title: {
@@ -16,7 +14,8 @@ var chart = Highcharts.stockChart('container', {
         masterVolume: 0.5,
         duration: playDuration,
         order: 'simultaneous',
-        showPlayMarker: false, // We manually trigger crosshair instead
+        showPlayMarker: true,
+        showCrosshairOnly: true,
         pointGrouping: {
             groupTimespan: 250,
             algorithm: 'minmax'
@@ -27,34 +26,13 @@ var chart = Highcharts.stockChart('container', {
                     min: 'a3',
                     max: 'a7'
                 }
-            }
+            },
+            // Only show marker for the main tracks
+            showPlayMarker: false
         },
         events: {
             beforeUpdate: function () {
                 lastMonth = null; // Reset for speech context.
-            },
-            // Show smooth crosshair when sonifying. Since we use
-            // pointGrouping aggressively, the normal play marker will
-            // jump around a bit, so this looks nicer.
-            onPlay: function (timeline) {
-                var len = timeline.getLength(),
-                    points = crosshairStart.series.points,
-                    endIx = points.length - 1;
-                crosshairInterval = setInterval(function () {
-                    var ix = timeline.getCurrentTime() / len * endIx,
-                        point = points[
-                            Math.round(
-                                crosshairStart.index - points[0].index + ix
-                            )
-                        ];
-                    if (point) {
-                        // Highlight point with crosshair
-                        point.series.xAxis.drawCrosshair(void 0, point);
-                    }
-                }, len / 300);
-            },
-            onStop: function () {
-                clearInterval(crosshairInterval);
             }
         },
         // Speak months
@@ -112,7 +90,6 @@ var chart = Highcharts.stockChart('container', {
                             xAxis = this.xAxis,
                             startTime = playDuration *
                                 (x - xAxis.min) / (xAxis.max - xAxis.min);
-                        crosshairStart = event.point;
                         timeline.play(function (timelineEvent) {
                             return timelineEvent.time > startTime &&
                                 timelineEvent.time < startTime + 1500;
@@ -197,7 +174,8 @@ var chart = Highcharts.stockChart('container', {
                     pitch: {
                         scale: Highcharts.sonification.Scales.majorPentatonic
                     }
-                }
+                },
+                showPlayMarker: true
             },
             tracks: [{
                 activeWhen: {
@@ -240,7 +218,8 @@ var chart = Highcharts.stockChart('container', {
                         min: 'a2',
                         max: 'a6'
                     }
-                }
+                },
+                showPlayMarker: true
             }]
         }
     }, {
@@ -253,10 +232,11 @@ var chart = Highcharts.stockChart('container', {
         showInNavigator: true,
         sonification: {
             pointGrouping: {
-                groupTimespan: 300
+                groupTimespan: 100
             },
             tracks: [{
                 instrument: 'wind',
+                showPlayMarker: true,
                 pitch: {
                     min: 'c1',
                     max: 'c7'
@@ -325,7 +305,7 @@ var chart = Highcharts.stockChart('container', {
         sonification: {
             defaultInstrumentOptions: {
                 pointGrouping: {
-                    groupTimespan: 400
+                    groupTimespan: 200
                 },
                 instrument: 'vibraphone',
                 mapping: {
@@ -347,7 +327,11 @@ var chart = Highcharts.stockChart('container', {
                     }
                 }
             },
-            tracks: [{}, {
+            tracks: [{
+                // Default track always playing
+                showPlayMarker: true
+            }, {
+                // Adding more tracks above certain thresholds
                 mapping: {
                     pitch: 'd#3'
                 },
@@ -501,15 +485,7 @@ document.getElementById('months').onclick = function () {
 
 // ---------------------------------------------------------------
 // Play button
-document.getElementById('play').onclick = function () {
-    if (chart.sonification.isPlaying()) {
-        chart.sonification.cancel();
-    } else {
-        // Start crosshair at beginning of first visible series
-        crosshairStart = chart.series.find(function (s) {
-            return s.visible;
-        }).points[1];
 
-        chart.sonify();
-    }
+document.getElementById('play').onclick = function () {
+    chart.toggleSonify();
 };
