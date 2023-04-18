@@ -185,7 +185,7 @@ class DataPool {
             }
 
             const connector =
-                new ConnectorClass(void 0, connectorOptions.options);
+                new ConnectorClass(connectorOptions.options);
 
             this.connectors[connectorOptions.name] = connector;
 

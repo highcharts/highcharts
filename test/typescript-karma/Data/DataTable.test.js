@@ -1,7 +1,7 @@
 import DataTable from '/base/code/es-modules/Data/DataTable.js';
 import SortModifier from '/base/code/es-modules/Data/Modifiers/SortModifier.js';
 
-QUnit.test('DataTable Clone', function (assert) {
+QUnit.test('DataTable clone', function (assert) {
     const table = new DataTable({ id: 'table' });
 
     table.setRows([[ 'row1', 1 ]]);

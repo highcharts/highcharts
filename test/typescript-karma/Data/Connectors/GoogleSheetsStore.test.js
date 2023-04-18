@@ -6,7 +6,7 @@ const { test, only } = QUnit;
 test('GoogleDataConnector', function (assert) {
     const registeredEvents = [];
 
-    const connector = new GoogleSheetsConnector(undefined, {
+    const connector = new GoogleSheetsConnector({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
         googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
     });
@@ -59,7 +59,7 @@ test('GoogleDataConnector', function (assert) {
 test('GoogleDataConnector, bad spreadsheetkey', function (assert) {
     const registeredEvents = [];
 
-    const connector = new GoogleSheetsConnector(undefined, {
+    const connector = new GoogleSheetsConnector({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
         googleSpreadsheetKey: 'thisisnotaworkingspreadsheet'
     });

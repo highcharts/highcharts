@@ -309,9 +309,7 @@ abstract class DataModifier implements DataEvent.Emitter {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
- *
+ * Additionally provided types for modifier events and options.
  * @private
  */
 namespace DataModifier {
