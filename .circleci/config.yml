@@ -421,6 +421,9 @@ jobs:
           git checkout << parameters.reference-branch >>  &&
           npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
       - run: npm i --no-save @highcharts/highcharts-utils cross-env cypress-visual-regression
+      - run: 
+          name: Clear previous files if present 
+          command: rm -rf /home/circleci/repo/highcharts/cypress/screenshots && rm -rf /home/circleci/repo/highcharts/cypress/snapshots
       - run:
           name: Run utils in background
           command: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
