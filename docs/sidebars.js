@@ -65,7 +65,8 @@ module.exports = {
             'maps/flowmap-series',
             'maps/mapbubble-series',
             'maps/marker-clusters',
-            'maps/tilemap-series'
+            'maps/tilemap-series',
+            'maps/geoheatmap-series'
         ],
         'Gantt': [
             'gantt/getting-started-gantt',
@@ -105,6 +106,7 @@ module.exports = {
             'chart-and-series-types/packed-bubble',
             'chart-and-series-types/parallel-coordinates-chart',
             'chart-and-series-types/pareto-chart',
+            'chart-and-series-types/pictorial',
             'chart-and-series-types/pie-chart',
             'chart-and-series-types/polar-chart',
             'chart-and-series-types/radial-bar-chart',

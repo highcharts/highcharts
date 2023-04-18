@@ -99,11 +99,6 @@ namespace BrandDarkTheme {
                 color: '#fff'
             }
         },
-        labels: {
-            style: {
-                color: '#707073'
-            }
-        },
         plotOptions: {
             series: {
                 dataLabels: {

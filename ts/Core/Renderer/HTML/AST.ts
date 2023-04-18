@@ -62,7 +62,7 @@ const emptyHTML = trustedTypesPolicy ?
     '';
 
 
-// In IE8, DOMParser is undefined. IE9 and PhantomJS are only able to parse XML.
+// IE9 and PhantomJS are only able to parse XML.
 const hasValidDOMParser = (function (): boolean {
     try {
         return Boolean(new DOMParser().parseFromString(

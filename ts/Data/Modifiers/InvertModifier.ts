@@ -50,7 +50,7 @@ class InvertModifier extends DataModifier {
      * Default options for the invert modifier.
      */
     public static readonly defaultOptions: InvertModifier.Options = {
-        modifier: 'InvertModifier'
+        modifier: 'Invert'
     };
 
     /* *
@@ -402,13 +402,13 @@ namespace InvertModifier {
  *
  * */
 
-DataModifier.registerType(InvertModifier);
-
 declare module './DataModifierType' {
     interface DataModifierTypes {
         Invert: typeof InvertModifier;
     }
 }
+
+DataModifier.registerType('Invert', InvertModifier);
 
 /* *
  *

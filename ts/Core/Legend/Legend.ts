@@ -382,8 +382,7 @@ class Legend {
 
             if (label) {
                 label.css({
-                    fill: textColor,
-                    color: textColor // #1553, oldIE
+                    fill: textColor
                 });
             }
 
@@ -1381,7 +1380,8 @@ class Legend {
                     // check the last item
                     i === allItems.length - 1 &&
                     // if adding next page is needed (#18768)
-                    y + h - pages[len - 1] > clipHeight
+                    y + h - pages[len - 1] > clipHeight &&
+                    y > pages[len - 1]
                 ) {
                     pages.push(y);
                     legendItem.pageIx = len;
