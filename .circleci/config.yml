@@ -709,7 +709,7 @@ workflows:
 #          browsers: "Win.IE8"
       - test_browsers:
           name: "test-Mac.Safari"
-          requires: ["generate_ts_declarations"]
+          requires: ["filesize_comparison", "generate_ts_declarations"]
           browsers: "Mac.Safari"
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
@@ -719,7 +719,7 @@ workflows:
       - test_browsers:
           name: "test-Win.Chrome"
           browsercount: 2
-          requires: ["test-Mac.Safari"]
+          requires: ["verify-samples-Chrome", "test-Mac.Safari"]
           browsers: "Win.Chrome"
       - check_for_docs_changes_and_deploy:
           requires: ["test-Mac.Safari", "test-Win.Chrome"]
