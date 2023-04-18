@@ -63,6 +63,7 @@ class AccordeonMenu {
     private iconsURLPrefix: string;
     private closeSidebar: Function;
     private changedOptions: DeepPartial<Component.ComponentOptions> = {};
+    private chartOptionsJSON = {};
 
     /* *
      *
@@ -107,8 +108,13 @@ class AccordeonMenu {
             {
                 value: EditGlobals.lang.confirmButton,
                 callback: (): void => {
+                    const changedOptions = this
+                        .changedOptions as Partial<Component.ComponentOptions>;
+
                     component.update(
-                        this.changedOptions as Partial<Component.ComponentOptions>
+                        merge(changedOptions, {
+                            chartOptions: this.chartOptionsJSON
+                        })
                     );
                     menu.closeSidebar();
                 }
@@ -145,6 +151,16 @@ class AccordeonMenu {
         let currentLevel = this.changedOptions as any;
         const pathLength = propertyPath.length - 1;
 
+        if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
+            try {
+                const parsedValue = JSON.parse(value as string);
+                this.chartOptionsJSON = parsedValue;
+            } catch (e) {
+                // console.log('Invalid JSON passed to the chart chart config');
+                // TODO: Handle the wrong config passed from the user.
+            }
+
+        }
         for (let i = 0; i < pathLength; i++) {
             const key = propertyPath[i];
 
