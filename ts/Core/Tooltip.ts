@@ -618,7 +618,7 @@ class Tooltip {
                     documentElement.offsetWidth,
                     documentElement.clientWidth
                 ) - 2 * distance :
-                chart.spacingBox.width,
+                chart.chartWidth,
             height: outside ?
                 Math.max(
                     body.scrollHeight,
@@ -1148,7 +1148,11 @@ class Tooltip {
                     // (#6659)
                     if (!options.style.width || styledMode) {
                         label.css({
-                            width: this.getPlayingField().width + 'px'
+                            width: (
+                                this.outside ?
+                                    this.getPlayingField() :
+                                    chart.spacingBox
+                            ).width + 'px'
                         });
                     }
 
