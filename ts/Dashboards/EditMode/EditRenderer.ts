@@ -191,7 +191,9 @@ function renderSelect(
 
     const btnContent = createElement(
         'div',
-        {},
+        {
+            className: EditGlobals.classNames.dropdownButtonContent
+        },
         {},
         btn
     );
