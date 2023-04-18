@@ -27,6 +27,15 @@ const {
     merge
 } = U;
 
+declare global {
+    namespace Sonification {
+        type TimelineFilterCallback = (
+            e: Sonification.TimelineEvent,
+            ix: number,
+            arr: Sonification.TimelineEvent[]
+        ) => boolean;
+    }
+}
 
 interface SonificationTimelineOptions {
     onPlay?: Function;
@@ -44,7 +53,7 @@ interface SonificationTimelineOptions {
  * @private
  */
 function filterChannels(
-    filter: ArrayFilterCallbackFunction<Sonification.TimelineEvent>,
+    filter: Sonification.TimelineFilterCallback,
     channels: TimelineChannel[]
 ): TimelineChannel[] {
     interface FilteredChannel {
@@ -127,7 +136,7 @@ class SonificationTimeline {
     // The filterPersists argument determines whether or not the filter persists
     // after e.g. pausing and resuming. Usually this should be true.
     play(
-        filter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>,
+        filter?: Sonification.TimelineFilterCallback,
         filterPersists = true,
         resetAfter = true,
         onEnd?: Function
@@ -334,7 +343,7 @@ class SonificationTimeline {
         next: boolean,
         onEnd?: Function,
         onBoundaryHit?: Function,
-        eventFilter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>
+        eventFilter?: Sonification.TimelineFilterCallback
     ): void {
         if (this.isPlaying) {
             this.pause();
@@ -403,7 +412,7 @@ class SonificationTimeline {
         targetVal: number,
         onEnd?: Function,
         onBoundaryHit?: Function,
-        eventFilter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>
+        eventFilter?: Sonification.TimelineFilterCallback
     ): void {
         const filter = (
             e: Sonification.TimelineEvent,
@@ -521,7 +530,7 @@ class SonificationTimeline {
 
     // Get last played / current point
     getCurrentPoint(
-        filter?: ArrayFilterCallbackFunction<Sonification.TimelineEvent>
+        filter?: Sonification.TimelineFilterCallback
     ): Point|null {
         const curTime = this.resumeFromTime,
             channels = this.playingChannels || this.channels;

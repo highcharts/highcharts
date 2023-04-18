@@ -246,7 +246,7 @@ class Sonification {
     playAdjacent(
         next: boolean,
         onEnd?: Function,
-        eventFilter?: ArrayFilterCallbackFunction<globalThis.Sonification.TimelineEvent>
+        eventFilter?: globalThis.Sonification.TimelineFilterCallback
     ): void {
         if (!this.ready(
             this.playAdjacent.bind(this, next, onEnd, eventFilter)
