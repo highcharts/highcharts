@@ -118,7 +118,7 @@ Highcharts.chart('container', {
         events: {
             render: onRender
         },
-        plotBackgroundColor: '#F5F5F5',
+        plotBackgroundColor: '#F7F7F8',
         plotShadow: {
             color: '#aaa',
             opacity: 0.1,
@@ -398,7 +398,7 @@ Highcharts.chart('container', {
                     },
                     pan: 0,
                     noteDuration: 280,
-                    volume: 0.72,
+                    volume: 0.68,
                     playDelay: -2
                 }
             },

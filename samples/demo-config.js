@@ -7,7 +7,7 @@
  */
 module.exports = {
     Highcharts: {
-        categories: ['Line charts', 'Area charts', 'Column and bar charts', 'Pie charts', 'Scatter and bubble charts', 'Combinations', 'Styled mode (CSS styling)', 'Accessible charts', 'Dynamic charts', '3D charts', 'Gauges', 'Heat and tree maps', 'More chart types'],
+        categories: ['Line charts', 'Area charts', 'Column and bar charts', 'Pie charts', 'Scatter and bubble charts', 'Combinations', 'Styled mode (CSS styling)', 'Accessibility', 'Audio charts', 'Dynamic charts', '3D charts', 'Gauges', 'Heat and tree maps', 'More chart types'],
         filter: { tags: ['Highcharts demo'] },
         path: '/'
     },

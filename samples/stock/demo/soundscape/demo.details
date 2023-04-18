@@ -1,11 +1,12 @@
 ---
-name: Musical chart
+name: Soundscape
 authors:
   - Øystein Moseng
 js_wrap: b
 requiresManualTesting: true
 tags:
-  - Highcharts demo
+  - Highcharts Stock demo
 categories:
-  - Audio charts
+  - General:
+      priority: 6
 ...
