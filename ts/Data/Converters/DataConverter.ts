@@ -91,7 +91,7 @@ class DataConverter implements DataEvent.Emitter {
             regExpPoint = regExpPoint === '.' ? '\\.' : ',';
 
             this.decimalRegExp =
-                new RegExp('^(-?[0-9]+)' + regExpPoint + '([0-9]+)$', 'u');
+                new RegExp('^(-?[0-9]+)' + regExpPoint + '([0-9]+)$');
         }
 
         this.options = mergedOptions;
