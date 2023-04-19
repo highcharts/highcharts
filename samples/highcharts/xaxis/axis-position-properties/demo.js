@@ -11,10 +11,10 @@ Highcharts.chart('container', {
     },
 
     yAxis: [{
-        height: '45%'
+        height: '40%'
     }, {
-        height: '45%',
-        top: '50%',
+        height: '40%',
+        top: '70%',
         offset: 0
     }],
 
@@ -41,7 +41,7 @@ Highcharts.chart('container', {
         },
         height: '50%',
         width: '50%',
-        top: '50%',
+        top: '60%',
         offset: 0
     }, {
         lineColor: colors[3],
@@ -50,7 +50,7 @@ Highcharts.chart('container', {
         },
         height: '50%',
         width: '50%',
-        top: '50%',
+        top: '60%',
         left: '50%',
         offset: 0
     }],
@@ -71,6 +71,10 @@ Highcharts.chart('container', {
         data: [29, 71, 106, 129, 144, 176, 135, 148, 216, 194, 95, 54],
         xAxis: 3,
         yAxis: 1
-    }]
+    }],
+
+    legend: {
+        margin: 50
+    }
 
 });
