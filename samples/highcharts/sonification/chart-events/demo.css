@@ -1,4 +1,11 @@
-#container {
+#outer {
     max-width: 700px;
     margin: auto;
+    position: relative;
+}
+
+#sonify {
+    position: absolute;
+    top: 20px;
+    right: 5px;
 }
