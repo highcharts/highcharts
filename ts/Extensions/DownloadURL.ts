@@ -22,9 +22,28 @@ const {
  * @private
  */
 declare global {
+    interface HTMLCanvasElement {
+        /** @deprecated */
+        msToBlob: Function;
+    }
     namespace Highcharts {
         function dataURLtoBlob(dataURL: string): (string|undefined);
         function downloadURL(dataURL: (string|URL), filename: string): void;
+    }
+    /** @deprecated */
+    interface MSBlobBuilder extends Blob {
+        /** @deprecated */
+        append: Function;
+        /** @deprecated */
+        getBlob: Function;
+    }
+    interface Navigator {
+        /** @deprecated */
+        msSaveOrOpenBlob: Function;
+    }
+    interface Window {
+        /** @deprecated */
+        MSBlobBuilder?: Class<MSBlobBuilder>;
     }
 }
 

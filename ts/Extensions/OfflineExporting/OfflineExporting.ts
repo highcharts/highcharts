@@ -51,7 +51,6 @@ const {
     error,
     extend,
     fireEvent,
-    pick,
     merge
 } = U;
 
@@ -104,7 +103,7 @@ declare module '../../Core/Chart/ChartLike' {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -166,9 +165,7 @@ namespace OfflineExporting {
         ChartClass: T
     ): (typeof Composition&T) {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as Composition;
 
             chartProto.getSVGForLocalExport = getSVGForLocalExport;
@@ -420,8 +417,8 @@ namespace OfflineExporting {
             // SVG download. In this case, we want to use Microsoft specific
             // Blob if available
             try {
-                if (typeof win.navigator.msSaveOrOpenBlob !== 'undefined') {
-                    blob = new MSBlobBuilder();
+                if (typeof win.MSBlobBuilder !== 'undefined') {
+                    blob = new win.MSBlobBuilder();
                     blob.append(svg);
                     svgurl = blob.getBlob('image/svg+xml') as any;
                 } else {

@@ -41,7 +41,7 @@ const {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -149,9 +149,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         setOptions({
             // Set default bubble legend options
             legend: {
@@ -162,15 +160,11 @@ function compose(
         wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
     }
 
-    if (composedClasses.indexOf(LegendClass) === -1) {
-        composedClasses.push(LegendClass);
-
+    if (U.pushUnique(composedMembers, LegendClass)) {
         addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
     }
 
-    if (composedClasses.indexOf(SeriesClass) === -1) {
-        composedClasses.push(SeriesClass);
-
+    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
     }
 
@@ -291,7 +285,12 @@ function onLegendAfterGetAllItems(
 /**
  * Toggle bubble legend depending on the visible status of bubble series.
  */
-function onSeriesLegendItemClick(this: Series): void {
+function onSeriesLegendItemClick(this: Series, e: any): void | boolean {
+    // #14080 don't fire this code if click function is prevented
+    if (e.defaultPrevented) {
+        return false;
+    }
+
     const series = this,
         chart = series.chart,
         visible = series.visible,

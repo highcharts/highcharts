@@ -47,6 +47,14 @@ declare module './AxisType' {
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+const composedMembers: Array<unknown> = [];
+
+/* *
+ *
  *  Composition
  *
  * */
@@ -58,7 +66,12 @@ declare module './AxisType' {
  * @private
  */
 class ScrollbarAxis {
-    private static composed: Array<typeof Axis> = [];
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * Attaches to axis events to create scrollbars if enabled.
@@ -72,9 +85,7 @@ class ScrollbarAxis {
      * Scrollbar class to use.
      */
     public static compose<T extends typeof Axis>(AxisClass: T, ScrollbarClass: typeof Scrollbar): (T&ScrollbarAxis) {
-        if (ScrollbarAxis.composed.indexOf(AxisClass) === -1) {
-            ScrollbarAxis.composed.push(AxisClass);
-        } else {
+        if (!U.pushUnique(composedMembers, AxisClass)) {
             return AxisClass as (T&ScrollbarAxis);
         }
 
@@ -256,7 +267,7 @@ class ScrollbarAxis {
                 }
 
                 (scrollbarsOffsets as any)[offsetsIndex] += scrollbar.size +
-                    (scrollbar.options.margin as any);
+                    (scrollbar.options.margin || 0);
 
                 if (
                     isNaN(scrollMin) ||
@@ -295,15 +306,15 @@ class ScrollbarAxis {
         // Make space for a scrollbar:
         addEvent(AxisClass, 'afterGetOffset', function (): void {
             const axis = this as ScrollbarAxis,
-                opposite = axis.scrollbar && !axis.scrollbar.options.opposite,
-                index = axis.horiz ? 2 : opposite ? 3 : 1,
-                scrollbar = axis.scrollbar;
+                scrollbar = axis.scrollbar,
+                opposite = scrollbar && !scrollbar.options.opposite,
+                index = axis.horiz ? 2 : opposite ? 3 : 1;
 
             if (scrollbar) {
                 // reset scrollbars offsets
                 axis.chart.scrollbarsOffsets = [0, 0];
                 axis.chart.axisOffset[index] +=
-                    scrollbar.size + (scrollbar.options.margin as any);
+                    scrollbar.size + (scrollbar.options.margin || 0);
             }
         });
 

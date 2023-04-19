@@ -798,4 +798,27 @@ QUnit.test('XRange series and tooltip position', assert => {
         2.001,
         'Inverted chart, no reversed xAxis, reversed yAxis'
     );
+
+    chart.update({
+        chart: {
+            inverted: false
+        },
+        xAxis: {
+            reversed: false
+        }
+    });
+
+    chart.xAxis[0].setExtremes(4.8, 10);
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    const chartContainer = chart.container.getBoundingClientRect();
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+
+    assert.close(
+        labelBox.left + labelBox.width / 2,
+        chart.plotLeft + chartContainer.left,
+        2,
+        'Tooltip on plotLeft when only far right part of the point is visible'
+    );
+
 });

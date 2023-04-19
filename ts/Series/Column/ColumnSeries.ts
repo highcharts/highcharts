@@ -147,6 +147,7 @@ class ColumnSeries extends Series {
     public animate(init: boolean): void {
         const series = this,
             yAxis = this.yAxis,
+            yAxisPos = yAxis.pos,
             options = series.options,
             inverted = this.chart.inverted,
             attr: SVGAttributes = {},
@@ -160,8 +161,8 @@ class ColumnSeries extends Series {
             attr.scaleY = 0.001;
             translatedThreshold = clamp(
                 yAxis.toPixels(options.threshold as any),
-                yAxis.pos,
-                yAxis.pos + yAxis.len
+                yAxisPos,
+                yAxisPos + yAxis.len
             );
             if (inverted) {
                 attr.translateX = translatedThreshold - yAxis.len;
@@ -187,7 +188,7 @@ class ColumnSeries extends Series {
                     step: function (val: any, fx: any): void {
                         if (series.group) {
                             attr[translateProp] = translateStart +
-                                fx.pos * (yAxis.pos - translateStart);
+                                fx.pos * (yAxisPos - translateStart);
                             series.group.attr(attr);
                         }
                     }
@@ -343,10 +344,6 @@ class ColumnSeries extends Series {
         let right,
             yCrisp = (borderWidth as any) % 2 ? 0.5 : 1;
 
-        if (chart.inverted && chart.renderer.isVML) {
-            yCrisp += 1;
-        }
-
         // Horizontal. We need to first compute the exact right edge, then
         // round it and compute the width from there.
         if (this.options.crisp) {
@@ -493,8 +490,6 @@ class ColumnSeries extends Series {
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             threshold = options.threshold,
-            translatedThreshold = series.translatedThreshold =
-                yAxis.getThreshold(threshold as any),
             minPointLength = pick(options.minPointLength, 5),
             metrics = series.getColumnMetrics(),
             seriesPointWidth = metrics.width,
@@ -503,10 +498,12 @@ class ColumnSeries extends Series {
             dataMax = series.dataMax;
         // postprocessed for border width
         let seriesBarW = series.barW =
-            Math.max(seriesPointWidth, 1 + 2 * borderWidth);
+                Math.max(seriesPointWidth, 1 + 2 * borderWidth),
+            translatedThreshold = series.translatedThreshold =
+                yAxis.getThreshold(threshold as any);
 
         if (chart.inverted) {
-            (translatedThreshold as any) -= 0.5; // #3355
+            translatedThreshold -= 0.5; // #3355
         }
 
         // When the pointPadding is 0, we want the columns to be packed

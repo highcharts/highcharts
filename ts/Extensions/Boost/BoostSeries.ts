@@ -98,6 +98,7 @@ interface BoostAlteredObject {
 }
 
 interface BoostPointMockup {
+    destroy(): void;
     x: (false|number);
     clientX: number;
     dist?: number;
@@ -137,7 +138,7 @@ export declare class BoostSeriesComposition extends Series {
 
 const CHUNK_SIZE = 3000;
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -202,9 +203,8 @@ function compose<T extends typeof Series>(
     seriesTypes: typeof SeriesRegistry.seriesTypes,
     wglMode?: boolean
 ): (T&typeof BoostSeriesComposition) {
-    if (composedClasses.indexOf(SeriesClass) === -1) {
-        composedClasses.push(SeriesClass);
 
+    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'destroy', onSeriesDestroy);
         addEvent(SeriesClass, 'hide', onSeriesHide);
 
@@ -237,9 +237,7 @@ function compose<T extends typeof Series>(
         );
     }
 
-    if (composedClasses.indexOf(getOptions) === -1) {
-        composedClasses.push(getOptions);
-
+    if (U.pushUnique(composedMembers, getOptions)) {
         const plotOptions =
             getOptions().plotOptions as SeriesTypePlotOptions;
 
@@ -267,9 +265,8 @@ function compose<T extends typeof Series>(
 
         if (
             AreaSeries &&
-            composedClasses.indexOf(AreaSeries) === -1
+            U.pushUnique(composedMembers, AreaSeries)
         ) {
-            composedClasses.push(AreaSeries);
             extend(AreaSeries.prototype, {
                 fill: true,
                 fillOpacity: true,
@@ -279,9 +276,8 @@ function compose<T extends typeof Series>(
 
         if (
             AreaSplineSeries &&
-            composedClasses.indexOf(AreaSplineSeries) === -1
+            U.pushUnique(composedMembers, AreaSplineSeries)
         ) {
-            composedClasses.push(AreaSplineSeries);
             extend(AreaSplineSeries.prototype, {
                 fill: true,
                 fillOpacity: true,
@@ -291,10 +287,8 @@ function compose<T extends typeof Series>(
 
         if (
             BubbleSeries &&
-            composedClasses.indexOf(BubbleSeries) === -1
+            U.pushUnique(composedMembers, BubbleSeries)
         ) {
-            composedClasses.push(BubbleSeries);
-
             const bubbleProto = BubbleSeries.prototype;
 
             // By default, the bubble series does not use the KD-tree, so force
@@ -320,9 +314,8 @@ function compose<T extends typeof Series>(
 
         if (
             ColumnSeries &&
-            composedClasses.indexOf(ColumnSeries) === -1
+            U.pushUnique(composedMembers, ColumnSeries)
         ) {
-            composedClasses.push(ColumnSeries);
             extend(ColumnSeries.prototype, {
                 fill: true,
                 sampling: true
@@ -331,9 +324,8 @@ function compose<T extends typeof Series>(
 
         if (
             ScatterSeries &&
-            composedClasses.indexOf(ScatterSeries) === -1
+            U.pushUnique(composedMembers, ScatterSeries)
         ) {
-            composedClasses.push(ScatterSeries);
             ScatterSeries.prototype.fill = true;
         }
 
@@ -341,8 +333,7 @@ function compose<T extends typeof Series>(
         // size/color calculations in the shader easily.
         // @todo This likely needs future optimization.
         [HeatmapSeries, TreemapSeries].forEach((SC): void => {
-            if (SC && composedClasses.indexOf(SC) === -1) {
-                composedClasses.push(SC);
+            if (SC && U.pushUnique(composedMembers, SC)) {
                 wrap(SC.prototype, 'drawPoints', wrapSeriesDrawPoints);
             }
         });
@@ -983,6 +974,7 @@ function seriesRenderCanvas(this: Series): void {
                 }
 
                 points.push({
+                    destroy: noop,
                     x: xDataFull ? xDataFull[cropStart + i] : false,
                     clientX: clientX,
                     plotX: clientX,

@@ -38,6 +38,7 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highstock.'],
         ['es-modules', 'masters', 'indicators'],
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
+        ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'map.'],
         ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'map.'],
@@ -59,6 +60,7 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highmaps.'],
         ['es-modules', 'masters', 'modules', 'broken-axis.'],
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
+        ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'gantt.'],
         ['es-modules', 'masters', 'modules', 'map.'],
         ['es-modules', 'modules', 'broken-axis.'],
@@ -83,6 +85,7 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'indicators'],
         ['es-modules', 'masters', 'modules', 'broken-axis.'],
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
+        ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'gantt.'],
         ['es-modules', 'masters', 'modules', 'series-label.'],
         ['es-modules', 'masters', 'modules', 'solid-gauge.'],
@@ -116,6 +119,7 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highstock.'],
         ['es-modules', 'masters', 'indicators'],
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
+        ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'map.'],
         ['es-modules', 'masters', 'modules', 'series-label.'],
         ['es-modules', 'masters', 'modules', 'solid-gauge.'],
@@ -180,8 +184,10 @@ const VENDOR_FILTER = [
  * */
 
 /**
+ * Distribution copy
+ *
  * @return {Promise<void>}
- *         Promise to keep
+ * Promise to keep
  */
 function distCopy() {
 

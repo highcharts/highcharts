@@ -24,6 +24,7 @@ import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
+import type Legend from '../../Legend/Legend';
 import type { LegendItemObject } from '../../Legend/LegendItem';
 import type LegendOptions from '../../Legend/LegendOptions';
 import type Point from '../../Series/Point.js';
@@ -36,9 +37,6 @@ import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
-import H from '../../Globals.js';
-const { noop } = H;
-import Legend from '../../Legend/Legend.js';
 import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
@@ -190,7 +188,7 @@ class ColorAxis extends Axis implements AxisLike {
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
     public legendColor?: GradientColor;
     public legendItem?: LegendItemObject;
-    public name: string = ''; // Prevents 'undefined' in legend in IE8
+    public name?: string;
     public options: ColorAxis.Options = void 0 as any;
     public stops: GradientColor['stops'] = void 0 as any;
     public visible: boolean = true;
@@ -550,6 +548,7 @@ class ColorAxis extends Axis implements AxisLike {
             legendItem = item.legendItem || {},
             padding = legend.padding,
             legendOptions = legend.options,
+            labelOptions = axis.options.labels,
             itemDistance = pick(legendOptions.itemDistance, 10),
             horiz = axis.horiz,
             width = pick(
@@ -588,7 +587,8 @@ class ColorAxis extends Axis implements AxisLike {
             (
                 horiz ?
                     itemDistance :
-                    this.options.labels.x + this.maxLabelLength
+                    pick(labelOptions.x, labelOptions.distance) +
+                        this.maxLabelLength
             )
         );
         legendItem.labelHeight = height + padding + (horiz ? labelPadding : 0);

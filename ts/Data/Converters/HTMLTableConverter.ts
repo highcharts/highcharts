@@ -23,7 +23,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type DataStore from '../Stores/DataStore';
+import type DataConnector from '../Connectors/DataConnector';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -93,30 +93,25 @@ class HTMLTableConverter extends DataConverter {
      * */
 
     /**
-     * Constructs an instance of the HTML table parser.
+     * Constructs an instance of the HTMLTableConverter.
      *
-     * @param {HTMLTableConverter.OptionsType} [options]
-     * Options for the CSV parser.
-     *
-     * @param {HTMLElement|null} [tableElement]
-     * The HTML table to parse
+     * @param {HTMLTableConverter.UserOptions} [options]
+     * Options for the HTMLTableConverter.
      */
     constructor(
-        options?: Partial<HTMLTableConverter.OptionsType>,
-        tableElement: (HTMLElement|null) = null
+        options?: HTMLTableConverter.UserOptions
     ) {
-        super();
+        const mergedOptions = merge(HTMLTableConverter.defaultOptions, options);
+
+        super(mergedOptions);
 
         this.columns = [];
         this.headers = [];
-        this.options = merge(HTMLTableConverter.defaultOptions, options);
+        this.options = mergedOptions;
 
-        if (tableElement) {
-            this.tableElement = tableElement;
-            this.tableElementID = tableElement.id;
-        } else if (options && options.tableHTML) {
-            this.tableElement = options.tableHTML;
-            this.tableElementID = options.tableHTML.id;
+        if (mergedOptions.tableElement) {
+            this.tableElement = mergedOptions.tableElement;
+            this.tableElementID = mergedOptions.tableElement.id;
         }
     }
 
@@ -144,26 +139,27 @@ class HTMLTableConverter extends DataConverter {
      * */
 
     /**
-     * Exports the datastore as an HTML string, using the options
+     * Exports the dataconnector as an HTML string, using the options
      * provided on import unless other options are provided.
      *
-     * @param {DataStore} store
-     * Store instance to export from.
+     * @param {DataConnector} connector
+     * Connector instance to export from.
      *
-     * @param {HTMLTableStore.ExportOptions} [options]
+     * @param {HTMLTableConnector.ExportOptions} [options]
      * Options that override default or existing export options.
      *
      * @return {string}
      * HTML from the current dataTable.
      */
     public export(
-        store: DataStore,
+        connector: DataConnector,
         options: HTMLTableConverter.Options = this.options
     ): string {
         const exportNames = (options.firstRowAsNames !== false),
             useMultiLevelHeaders = options.useMultiLevelHeaders;
 
-        const columns = store.getSortedColumns(options.usePresentationOrder),
+        const columns =
+                connector.getSortedColumns(options.usePresentationOrder),
             columnNames = Object.keys(columns),
             htmlRows: Array<string> = [],
             columnsCount = columnNames.length;
@@ -211,7 +207,7 @@ class HTMLTableConverter extends DataConverter {
                 }
 
                 // Alternative: Datatype from HTML attribute with
-                // store.whatIs(columnName)
+                // connector.whatIs(columnName)
                 if (
                     !(
                         typeof cellValue === 'string' ||
@@ -389,7 +385,7 @@ class HTMLTableConverter extends DataConverter {
     /**
      * Initiates the parsing of the HTML table
      *
-     * @param {HTMLTableConverter.OptionsType}[options]
+     * @param {HTMLTableConverter.UserOptions}[options]
      * Options for the parser
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -400,7 +396,7 @@ class HTMLTableConverter extends DataConverter {
      * @emits HTMLTableParser#parseError
      */
     public parse(
-        options: HTMLTableConverter.OptionsType,
+        options: HTMLTableConverter.UserOptions,
         eventDetail?: DataEvent.Detail
     ): void {
         const converter = this,
@@ -413,7 +409,7 @@ class HTMLTableConverter extends DataConverter {
                 endColumn,
                 firstRowAsNames
             } = parseOptions,
-            tableHTML = parseOptions.tableHTML || this.tableElement;
+            tableHTML = parseOptions.tableElement || this.tableElement;
 
 
         if (!(tableHTML instanceof HTMLElement)) {
@@ -426,7 +422,7 @@ class HTMLTableConverter extends DataConverter {
             });
             return;
         }
-        converter.tableElement = this.tableElement;
+        converter.tableElement = tableHTML;
         converter.tableElementID = tableHTML.id;
 
         this.emit<DataConverter.Event>({
@@ -555,17 +551,13 @@ namespace HTMLTableConverter {
      * */
 
     /**
-     * The available options for the parser
-     */
-    export type OptionsType = Partial<Options & SpecialOptions>;
-
-    /**
      * Options for the parser compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
         decimalPoint?: string;
         exportIDColumn?: boolean;
         tableCaption?: string;
+        tableElement?: (HTMLElement|null);
         useLocalDecimalPoint?: boolean;
         useMultiLevelHeaders?: boolean;
         useRowspanHeaders?: boolean;
@@ -573,11 +565,9 @@ namespace HTMLTableConverter {
     }
 
     /**
-     * Options not compatible with ClassJSON
+     * Available options of the HTMLTableConverter.
      */
-    export interface SpecialOptions {
-        tableHTML?: (HTMLElement|null);
-    }
+    export type UserOptions = Partial<Options>;
 
 }
 

@@ -668,17 +668,16 @@ class Series {
      */
     public updateParallelArrays(
         point: Point,
-        i: (number|string)
+        i: (number|string),
+        iArgs?: Array<any>
     ): void {
         const series = point.series,
-            args = arguments,
             fn = isNumber(i) ?
                 // Insert the value in the given position
                 function (key: string): void {
                     const val = key === 'y' && series.toYData ?
                         series.toYData(point) :
                         (point as any)[key];
-
                     (series as any)[key + 'Data'][i] = val;
                 } :
                 // Apply the method specified in i with the following
@@ -686,7 +685,7 @@ class Series {
                 function (key: string): void {
                     (Array.prototype as any)[i].apply(
                         (series as any)[key + 'Data'],
-                        Array.prototype.slice.call(args, 2)
+                        iArgs
                     );
                 };
 
@@ -1246,7 +1245,7 @@ class Series {
             data.forEach(function (point, i): void {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
-                if (point !== oldData[i].y && (oldData[i].update)) {
+                if (point !== oldData[i].y && !oldData[i].destroyed) {
                     oldData[i].update(point, false, null as any, false);
                 }
             });
@@ -1472,15 +1471,12 @@ class Series {
                 }
             } else {
                 for (i = 0; i < dataLength; i++) {
-                    // stray commas in oldIE:
-                    if (typeof data[i] !== 'undefined') {
-                        pt = { series: series };
-                        series.pointClass.prototype.applyOptions.apply(
-                            pt,
-                            [data[i]]
-                        );
-                        series.updateParallelArrays(pt as any, i);
-                    }
+                    pt = { series: series };
+                    series.pointClass.prototype.applyOptions.apply(
+                        pt,
+                        [data[i]]
+                    );
+                    series.updateParallelArrays(pt as any, i);
                 }
             }
 
@@ -1496,9 +1492,7 @@ class Series {
             // destroy old points
             i = oldDataLength;
             while (i--) {
-                if (oldData[i] && (oldData[i].destroy)) {
-                    oldData[i].destroy();
-                }
+                oldData[i]?.destroy();
             }
 
             // reset minRange (#878)
@@ -3146,30 +3140,6 @@ class Series {
                     }
                 }
 
-                // VML SUPPPORT
-                if (inverted && renderer.isVML) {
-                    if (axis.isXAxis) {
-                        clipAttr = {
-                            x: 0,
-                            y: reversed ? pxPosMin : pxPosMax,
-                            height: clipAttr.width,
-                            width: chart.chartWidth
-                        };
-                    } else {
-                        clipAttr = {
-                            x: (
-                                clipAttr.y -
-                                chart.plotLeft -
-                                chart.spacingBox.x
-                            ),
-                            y: 0,
-                            width: clipAttr.height,
-                            height: chart.chartHeight
-                        };
-                    }
-                }
-                // END OF VML SUPPORT
-
                 if (clips[i]) {
                     clips[i].animate(clipAttr);
                 } else {
@@ -3230,7 +3200,7 @@ class Series {
         const isNew = !group,
             attrs: SVGAttributes = {
                 visibility,
-                zIndex: zIndex || 0.1 // IE8 and pointer logic use this
+                zIndex: zIndex || 0.1 // Pointer logic uses this
             };
 
         // Avoid setting undefined opacity, or in styled mode
@@ -3364,9 +3334,8 @@ class Series {
             hasRendered = series.hasRendered,
             chartSeriesGroup = chart.seriesGroup,
             inverted = chart.inverted;
-        // Animation doesn't work in IE8 quirks when the group div is
-        // hidden, and looks bad in other oldIE
-        let animDuration = (!series.finishedAnimating && chart.renderer.isSVG) ?
+
+        let animDuration = (!series.finishedAnimating) ?
             animOptions.duration : 0;
 
         fireEvent(this, 'render');
@@ -3775,9 +3744,6 @@ class Series {
             /*
              * Empirical lowest possible opacities for TRACKER_FILL for an
              * element to stay invisible but clickable
-             * IE6: 0.002
-             * IE7: 0.002
-             * IE8: 0.002
              * IE9: 0.00000000001 (unlimited)
              * IE10: 0.0001 (exporting only)
              * FF: 0.00000000001 (unlimited)
@@ -3933,9 +3899,9 @@ class Series {
         }
 
         // Insert undefined item
-        (series.updateParallelArrays as any)(point, 'splice', i, 0, 0);
+        series.updateParallelArrays(point, 'splice', [i, 0, 0]);
         // Update it
-        series.updateParallelArrays(point as any, i);
+        series.updateParallelArrays(point, i);
 
         if (names && point.name) {
             names[x as any] = point.name;
@@ -3963,7 +3929,7 @@ class Series {
                 data[0].remove(false);
             } else {
                 data.shift();
-                series.updateParallelArrays(point as any, 'shift');
+                series.updateParallelArrays(point, 'shift');
 
                 (dataOptions as any).shift();
             }
@@ -4028,11 +3994,10 @@ class Series {
                 }
                 data.splice(i, 1);
                 (series.options.data as any).splice(i, 1);
-                (series.updateParallelArrays as any)(
+                series.updateParallelArrays(
                     point || { series: series },
                     'splice',
-                    i,
-                    1
+                    [i, 1]
                 );
 
                 if (point) {
@@ -4098,7 +4063,7 @@ class Series {
 
             // Redraw
             chart.isDirtyLegend = chart.isDirtyBox = true;
-            chart.linkSeries();
+            chart.linkSeries(keepEvents);
 
             if (pick(redraw, true)) {
                 chart.redraw(animation);

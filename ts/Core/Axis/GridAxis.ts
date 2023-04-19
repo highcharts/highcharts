@@ -145,7 +145,7 @@ enum GridAxisSide {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -209,10 +209,9 @@ function compose<T extends typeof Axis>(
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
 
-    if (composedClasses.indexOf(AxisClass) === -1) {
-        composedClasses.push(AxisClass);
-
+    if (U.pushUnique(composedMembers, AxisClass)) {
         AxisClass.keepProps.push('grid');
+
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;
 
         wrap(AxisClass.prototype, 'unsquish', wrapUnsquish);
@@ -240,11 +239,11 @@ function compose<T extends typeof Axis>(
         addEvent(AxisClass, 'destroy', onDestroy);
     }
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
+    if (U.pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
     }
 
-    if (composedClasses.indexOf(TickClass) === -1) {
+    if (U.pushUnique(composedMembers, TickClass)) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',
@@ -974,7 +973,7 @@ function onAfterTickSize(
     } = this;
     if (gridOptions.enabled && maxLabelDimensions) {
         const labelPadding =
-            (Math.abs((defaultLeftAxisOptions.labels as any).x) * 2);
+            (defaultLeftAxisOptions.labels as any).distance * 2;
         const distance = horiz ?
             (
                 gridOptions.cellHeight ||

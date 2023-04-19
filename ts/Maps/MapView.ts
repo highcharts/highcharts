@@ -957,7 +957,7 @@ class MapView {
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
-                    (this.minZoom || Infinity) < worldZoom * 1.1
+                    (this.minZoom || Infinity) < worldZoom * 1.3
                 ) {
 
                     // Empirical ratio where the globe rotates roughly the same
@@ -983,6 +983,7 @@ class MapView {
                                 rotation: [-lon, -lat]
                             }
                         }, false);
+                        this.fitToBounds(void 0, void 0, false);
                         this.zoom = zoom;
                         chart.redraw(false);
 
@@ -1129,7 +1130,15 @@ class MapView {
             }
 
             // Fit to natural bounds if center/zoom are not explicitly given
-            if (!options.center && !isNumber(options.zoom)) {
+            if (
+                !options.center &&
+                // do not fire fitToBounds if user don't want to set zoom
+                Object.hasOwnProperty.call(
+                    options,
+                    'zoom'
+                ) &&
+                !isNumber(options.zoom)
+            ) {
                 this.fitToBounds(void 0, void 0, false);
             }
         }

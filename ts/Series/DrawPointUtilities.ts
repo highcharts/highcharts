@@ -79,11 +79,10 @@ function draw(
 
     let graphic = point.graphic;
 
-    params.attribs = params.attribs || {};
-
-    // Assigning class in dot notation does go well in IE8
-    // eslint-disable-next-line dot-notation
-    params.attribs['class'] = point.getClassName();
+    params.attribs = {
+        ...params.attribs,
+        'class': point.getClassName()
+    } || {};
 
     if ((point.shouldDraw())) {
         if (!graphic) {

@@ -420,7 +420,7 @@ namespace NewDataAnnouncer {
      *
      * */
 
-    export const composedClasses: Array<Function> = [];
+    export const composedMembers: Array<unknown> = [];
 
 
     /* *
@@ -436,9 +436,7 @@ namespace NewDataAnnouncer {
         SeriesClass: typeof Series
     ): void {
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(
                 SeriesClass as typeof Accessibility.SeriesComposition,
                 'addPoint',
@@ -450,6 +448,7 @@ namespace NewDataAnnouncer {
                 seriesOnUpdatedData
             );
         }
+
     }
 
 

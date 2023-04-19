@@ -34,7 +34,7 @@ const {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -49,9 +49,7 @@ function compose(
     TickClass: typeof Tick
 ): void {
 
-    if (composedClasses.indexOf(TickClass) === -1) {
-        composedClasses.push(TickClass);
-
+    if (U.pushUnique(composedMembers, TickClass)) {
         addEvent(
             TickClass,
             'afterGetLabelPosition',
