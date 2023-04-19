@@ -327,6 +327,13 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                     }
                 };
 
+                // Disable catching mouse events for html mode when hidden
+                // (#18821)
+                if (label.div) {
+                    label.div.style['pointer-events'] = newOpacity ?
+                        'auto' : 'none';
+                }
+
                 isLabelAffected = true;
 
                 // Animate or set the opacity
