@@ -954,6 +954,7 @@
     padding: 0;
     display: flex;
     cursor: pointer;
+    text-transform: capitalize;
 }
 
 .highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-content {
@@ -1038,6 +1039,7 @@
     font-size: 12px;
     padding: 0;
     margin-bottom: 2px;
+    text-transform: capitalize;
 }
 
 .highcharts-dashboards-edit-accordeon-nested label:first-child {

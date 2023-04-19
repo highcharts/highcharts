@@ -134,7 +134,9 @@ function renderCollapseHeader(
 
     createElement(
         'span',
-        { textContent: name },
+        {
+            textContent: (EditGlobals.lang as any)[name] || name
+        },
         {},
         headerBtn
     );
