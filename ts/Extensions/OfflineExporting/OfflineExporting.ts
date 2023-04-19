@@ -417,8 +417,8 @@ namespace OfflineExporting {
             // SVG download. In this case, we want to use Microsoft specific
             // Blob if available
             try {
-                if (typeof win.navigator.msSaveOrOpenBlob !== 'undefined') {
-                    blob = new MSBlobBuilder();
+                if (typeof win.MSBlobBuilder !== 'undefined') {
+                    blob = new win.MSBlobBuilder();
                     blob.append(svg);
                     svgurl = blob.getBlob('image/svg+xml') as any;
                 } else {

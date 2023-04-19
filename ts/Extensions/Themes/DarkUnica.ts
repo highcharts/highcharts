@@ -155,11 +155,6 @@ namespace DarkUnicaTheme {
                 color: '#666'
             }
         },
-        labels: {
-            style: {
-                color: '#707073'
-            }
-        },
 
         drilldown: {
             activeAxisLabelStyle: {

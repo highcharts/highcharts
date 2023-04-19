@@ -23,7 +23,6 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type JSON from '../../Core/JSON';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -66,19 +65,22 @@ class GoogleSheetsConverter extends DataConverter {
      * */
 
     /**
-     * Constructs an instance of the GoogleSheetsParser.
+     * Constructs an instance of the GoogleSheetsConverter.
      *
-     * @param {GoogleSheetsConverter.OptionsType} [options]
-     * Options for the Google Sheets parser.
+     * @param {GoogleSheetsConverter.UserOptions} [options]
+     * Options for the GoogleSheetsConverter.
      */
     constructor(
-        options?: GoogleSheetsConverter.OptionsType
+        options?: GoogleSheetsConverter.UserOptions
     ) {
-        super();
+        const mergedOptions =
+            merge(GoogleSheetsConverter.defaultOptions, options);
+
+        super(mergedOptions);
 
         this.columns = [];
         this.header = [];
-        this.options = merge(GoogleSheetsConverter.defaultOptions, options);
+        this.options = mergedOptions;
     }
 
     /* *
@@ -104,7 +106,7 @@ class GoogleSheetsConverter extends DataConverter {
     /**
      * Initiates the parsing of the Google Sheet
      *
-     * @param {GoogleSheetsConverter.OptionsType}[options]
+     * @param {GoogleSheetsConverter.UserOptions}[options]
      * Options for the parser
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -114,14 +116,14 @@ class GoogleSheetsConverter extends DataConverter {
      * @emits GoogleSheetsParser#afterParse
      */
     public parse(
-        json: Partial<GoogleSheetsConverter.Options>,
+        options: GoogleSheetsConverter.UserOptions,
         eventDetail?: DataEvent.Detail
     ): (boolean|undefined) {
         const converter = this,
-            parserOptions = merge(converter.options, json),
+            parseOptions = merge(converter.options, options),
             columns = ((
-                parserOptions.json &&
-                parserOptions.json.values
+                parseOptions.json &&
+                parseOptions.json.values
             ) || []).map(
                 (column): DataTable.Column => column.slice()
             );
@@ -147,7 +149,7 @@ class GoogleSheetsConverter extends DataConverter {
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
             column = columns[i];
             converter.header[i] = (
-                parserOptions.firstRowAsNames ?
+                parseOptions.firstRowAsNames ?
                     `${column.shift()}` :
                     uniqueKey()
             );
@@ -200,24 +202,24 @@ namespace GoogleSheetsConverter {
      * */
 
     /**
-     * The available options for the parser
-     */
-    export type OptionsType = Partial<Options>;
-
-    /**
-     * Options for the parser compatible with ClassJSON
+     * Options of the GoogleSheetsConverter.
      */
     export interface Options extends DataConverter.Options {
         json?: GoogleSpreadsheetJSON;
     }
 
     /**
-     * Googles Spreasheet format
+     * Google's spreadsheet format.
      */
-    export interface GoogleSpreadsheetJSON extends JSON.Object {
+    export interface GoogleSpreadsheetJSON {
         majorDimension: ('COLUMNS'|'ROWS');
-        values: Array<Array<JSON.Primitive>>;
+        values: Array<Array<(boolean|null|number|string|undefined)>>;
     }
+
+    /**
+     * Available options of the GoogleSheetsConverter.
+     */
+    export type UserOptions = Partial<Options>;
 
 }
 

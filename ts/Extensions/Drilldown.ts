@@ -1748,7 +1748,7 @@ if (MapSeries) {
                 chart = this.chart,
                 group = this.group;
 
-            if (chart && chart.renderer.isSVG && group && series.options) {
+            if (chart && group && series.options) {
                 // Initialize the animation
                 if (init && chart.mapView) {
                     group.attr({
@@ -1814,7 +1814,7 @@ if (MapSeries) {
                 chart = this.chart,
                 group = this.group;
 
-            if (chart && chart.renderer.isSVG && group) {
+            if (chart && group) {
 
                 // Initialize the animation
                 if (init) {
