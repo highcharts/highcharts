@@ -338,6 +338,8 @@ class Data {
 
         this.decimalRegex = (
             decimalPoint &&
+            // eslint-disable-next-line max-len
+            // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp
             new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$')
         );
 

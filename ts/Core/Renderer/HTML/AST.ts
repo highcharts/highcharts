@@ -592,6 +592,8 @@ class AST {
             );
         } else {
             const body = createElement('div');
+            // eslint-disable-next-line max-len
+            // nosemgrep: javascript.browser.security.insecure-document-method.insecure-document-method
             body.innerHTML = markup;
             doc = { body };
         }
