@@ -775,14 +775,14 @@
 
 .highcharts-dashboards-edit-popup-close {
     background-repeat: no-repeat;
-    background-position: 50% 50%;
+    background-size: 16px;
+    background-position: 0% 100%;
     width: 40px;
     height: 40px;
     cursor: pointer;
     position: absolute;
     top: 0%;
     right: 0%;
-    color: var(--highcharts-neutral-color-80);
 }
 
 .highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-content {
