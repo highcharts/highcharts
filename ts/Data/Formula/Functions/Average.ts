@@ -26,8 +26,6 @@ import type { Value } from '../FormulaTypes';
 
 
 import FormulaFunction from './FormulaFunction.js';
-import FormulaTypes from '../FormulaTypes.js';
-const { asNumber } = FormulaTypes;
 
 /* *
  *
@@ -52,7 +50,8 @@ const { asNumber } = FormulaTypes;
 function process(
     values: Array<(Value|Array<Value>)>
 ): number {
-    let result = 0;
+    let count = 0,
+        result = 0;
 
     for (
         let i = 0,
@@ -63,14 +62,23 @@ function process(
     ) {
         value = values[i];
 
-        if (value instanceof Array) {
-            result += process(value);
-        } else {
-            result += asNumber(value);
+        if (typeof value === 'number') {
+            if (!isNaN(value)) {
+                ++count;
+                result += value;
+            }
+        } else if (value instanceof Array) {
+            for (let j = 0, jEnd = value.length, jValue: Value; j < jEnd; ++j) {
+                jValue = value[j];
+                if (typeof jValue === 'number' && !isNaN(jValue)) {
+                    ++count;
+                    result += jValue;
+                }
+            }
         }
     }
 
-    return (result / values.length);
+    return (count ? (result / count) : 0);
 }
 
 

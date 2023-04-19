@@ -272,7 +272,16 @@ function processPointer(
     const columnName = table.getColumnNames()[pointer.column];
 
     if (columnName) {
-        return table.getCellAsNumber(columnName, pointer.row, true);
+        const cell = table.getCell(columnName, pointer.row);
+
+        switch (typeof cell) {
+            case 'boolean':
+            case 'number':
+            case 'string':
+                return cell;
+            default:
+                return NaN;
+        }
     }
 }
 
