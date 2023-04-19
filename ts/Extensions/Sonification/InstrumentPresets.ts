@@ -35,7 +35,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             { frequency: 2600, Q: 0.8, gain: 8 },
             { frequency: 3500, Q: 0.8, gain: 6 },
             { frequency: 6200, Q: 0.8, gain: 10 },
-            { frequency: 8000, gain: -26 },
+            { frequency: 8000, gain: -23 },
             { frequency: 10000, Q: 0.4, gain: -12 }
         ],
         oscillators: [{
@@ -465,6 +465,71 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
         }]
     },
 
+    // BASIC1 ---------------------------
+    basic1: {
+        masterVolume: 0.9,
+        noteGlideDuration: 0,
+        masterReleaseEnvelope: [
+            { t: 1, vol: 0.36 },
+            { t: 24, vol: 0.15 },
+            { t: 119, vol: 0 }
+        ],
+        eq: [
+            { frequency: 150, Q: 0.6, gain: -12 },
+            { frequency: 1100, Q: 1, gain: -2 },
+            { frequency: 2200, Q: 1, gain: -16 },
+            { frequency: 5000, Q: 1, gain: 8 },
+            { frequency: 6400, Q: 1, gain: 10 },
+            { frequency: 8000, Q: 1, gain: 12 },
+            { frequency: 10800, Q: 1, gain: 8 }
+        ],
+        oscillators: [{
+            type: 'triangle',
+            volume: 0.9,
+            volumePitchTrackingMultiplier: 0.05,
+            lowpass: { frequency: 17, frequencyPitchTrackingMultiplier: 100 },
+            highpass: { frequency: 200 }
+        }, {
+            type: 'whitenoise',
+            volume: 0.04,
+            lowpass: { frequency: 9000, Q: 3 },
+            highpass: { frequency: 6000, Q: 3 },
+            vmOscillator: 0,
+            attackEnvelope: [
+                { t: 0, vol: 0 },
+                { t: 26, vol: 1 },
+                { t: 71, vol: 0.73 }
+            ]
+        }]
+    },
+
+    // BASIC2 ---------------------------
+    basic2: {
+        masterVolume: 0.3,
+        eq: [
+            { frequency: 200, Q: 0.7, gain: 6 },
+            { frequency: 450, Q: 1, gain: 2 },
+            { frequency: 1300, Q: 1, gain: -2 },
+            { frequency: 2600, Q: 0.8, gain: 6 },
+            { frequency: 3500, Q: 0.8, gain: 6 },
+            { frequency: 6200, Q: 0.8, gain: 10 },
+            { frequency: 8000, Q: 1, gain: -18 },
+            { frequency: 10000, Q: 0.4, gain: -12 }
+        ],
+        oscillators: [{
+            type: 'pulse',
+            volume: 0.4,
+            pulseWidth: 0.55,
+            volumePitchTrackingMultiplier: 0.1,
+            lowpass: {
+                frequency: 4.5,
+                frequencyPitchTrackingMultiplier: 900,
+                Q: -2
+            },
+            highpass: { frequency: 270 }
+        }]
+    },
+
     // CHORD -------------------------------
     chord: {
         masterVolume: 1,
@@ -538,6 +603,48 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
                 { t: 155, vol: 0.91 },
                 { t: 289, vol: 0.78 }
             ]
+        }]
+    },
+
+    // WOBBLE ---------------------------
+    wobble: {
+        masterVolume: 0.9,
+        masterReleaseEnvelope: [
+            { t: 1, vol: 0.36 },
+            { t: 24, vol: 0.15 },
+            { t: 119, vol: 0 }
+        ],
+        eq: [
+            { frequency: 150, Q: 0.6, gain: -12 },
+            { frequency: 1100, Q: 1, gain: -2 },
+            { frequency: 2200, Q: 1, gain: -16 },
+            { frequency: 5000, Q: 1, gain: 8 },
+            { frequency: 6400, Q: 1, gain: 10 },
+            { frequency: 8000, Q: 1, gain: 12 },
+            { frequency: 10800, Q: 1, gain: 8 }
+        ],
+        oscillators: [{
+            type: 'triangle',
+            volume: 0.9,
+            volumePitchTrackingMultiplier: 0.1,
+            lowpass: { frequency: 17, frequencyPitchTrackingMultiplier: 100 },
+            highpass: { frequency: 200 }
+        }, {
+            type: 'whitenoise',
+            volume: 0.04,
+            lowpass: { frequency: 9000, Q: 3 },
+            highpass: { frequency: 6000, Q: 3 },
+            vmOscillator: 0,
+            attackEnvelope: [
+                { t: 0, vol: 0 },
+                { t: 26, vol: 1 },
+                { t: 71, vol: 0.73 }
+            ]
+        }, {
+            type: 'sine',
+            freqMultiplier: 0.011,
+            volume: 30,
+            fmOscillator: 0
         }]
     },
 
