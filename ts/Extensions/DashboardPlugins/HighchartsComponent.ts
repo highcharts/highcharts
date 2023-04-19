@@ -108,6 +108,34 @@ class HighchartsComponent extends Component {
                     name: 'chartOptions',
                     type: 'nested',
                     detailedOptions: [{
+                        name: 'chart',
+                        options: [{
+                            name: 'title',
+                            propertyPath: ['chartOptions', 'title', 'text'],
+                            type: 'input'
+                        }, {
+                            name: 'subtitle',
+                            propertyPath: ['chartOptions', 'subtitle', 'text'],
+                            type: 'input'
+                        }, {
+                            name: 'type',
+                            propertyPath: ['chartOptions', 'chart', 'type'],
+                            type: 'select',
+                            items: [{
+                                name: 'column',
+                                iconURL: 'series-types/icon-column.svg'
+                            }, {
+                                name: 'line',
+                                iconURL: 'series-types/icon-line.svg'
+                            }, {
+                                name: 'scatter',
+                                iconURL: 'series-types/icon-scatter.svg'
+                            }, {
+                                name: 'pie',
+                                iconURL: 'series-types/icon-pie.svg'
+                            }]
+                        }]
+                    }, {
                         name: 'xAxis',
                         options: [{
                             name: 'title',
@@ -127,32 +155,23 @@ class HighchartsComponent extends Component {
                             }]
                         }]
                     }, {
-                        name: 'chart',
+                        name: 'yAxis',
                         options: [{
+                            name: 'title',
+                            propertyPath:
+                                ['chartOptions', 'yAxis', 'title'],
+                            type: 'input'
+                        }, {
                             name: 'type',
-                            propertyPath: ['chartOptions', 'chart', 'type'],
+                            propertyPath: ['chartOptions', 'xAxis', 'type'],
                             type: 'select',
                             items: [{
-                                name: 'column',
-                                iconURL: 'series-types/icon-column.svg'
+                                name: 'linear'
                             }, {
-                                name: 'line',
-                                iconURL: 'series-types/icon-line.svg'
+                                name: 'datetime'
                             }, {
-                                name: 'scatter',
-                                iconURL: 'series-types/icon-scatter.svg'
-                            }, {
-                                name: 'pie',
-                                iconURL: 'series-types/icon-pie.svg'
+                                name: 'logarithmic'
                             }]
-                        }, {
-                            name: 'title',
-                            propertyPath: ['chartOptions', 'title', 'text'],
-                            type: 'input'
-                        }, {
-                            name: 'subtitle',
-                            propertyPath: ['chartOptions', 'subtitle', 'text'],
-                            type: 'input'
                         }]
                     }, {
                         name: 'legend',
@@ -169,6 +188,36 @@ class HighchartsComponent extends Component {
                             }, {
                                 name: 'right'
                             }]
+                        }]
+                    }, {
+                        name: 'tooltip',
+                        allowEnabled: true,
+                        propertyPath: ['chartOptions', 'tooltip', 'enabled'],
+                        options: [{
+                            name: 'pointFormat',
+                            propertyPath: ['chartOptions', 'tooltip', 'pointFormat'],
+                            type: 'input'
+                        }]
+                    }, {
+                        name: 'credentials',
+                        allowEnabled: true,
+                        propertyPath: ['chartOptions', 'credits'],
+                        options: [{
+                            name: 'name',
+                            propertyPath: [
+                                'chartOptions',
+                                'credits',
+                                'text'
+                            ],
+                            type: 'input'
+                        }, {
+                            name: 'url',
+                            propertyPath: [
+                                'chartOptions',
+                                'credits',
+                                'href'
+                            ],
+                            type: 'input'
                         }]
                     }]
                 }, {
