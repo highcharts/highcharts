@@ -973,7 +973,7 @@ function onAfterTickSize(
     } = this;
     if (gridOptions.enabled && maxLabelDimensions) {
         const labelPadding =
-            (Math.abs((defaultLeftAxisOptions.labels as any).x) * 2);
+            (defaultLeftAxisOptions.labels as any).distance * 2;
         const distance = horiz ?
             (
                 gridOptions.cellHeight ||
