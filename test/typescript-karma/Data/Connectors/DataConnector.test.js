@@ -7,7 +7,7 @@ import '/base/code/es-modules/Data/Connectors/HTMLTableConnector.js';
 const { test, only } = QUnit;
 
 test('DataConnector metadata', function (assert) {
-    const connector = new CSVConnector(undefined, {});
+    const connector = new CSVConnector();
 
     connector.describeColumns({
         'column1': {
