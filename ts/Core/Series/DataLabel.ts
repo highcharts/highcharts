@@ -459,18 +459,12 @@ namespace DataLabel {
      * @private
      */
     function initDataLabelsGroup(this: Series): SVGElement {
-        const series = this,
-            hasRendered = (series.hasRendered || 0),
-            seriesDlOptions = series.options.dataLabels;
-
-        const dataLabelsGroup = series.plotGroup(
+        return this.plotGroup(
             'dataLabelsGroup',
             'data-labels',
-            !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
-            (seriesDlOptions as any).zIndex || 6
+            this.hasRendered ? 'inherit' : 'hidden', // #5133, #10220
+            (this.options.dataLabels as any).zIndex || 6
         );
-
-        return dataLabelsGroup;
     }
 
     /**
@@ -482,25 +476,20 @@ namespace DataLabel {
         animationConfig: Partial<AnimationOptions>
     ): SVGElement {
         const series = this,
-            hasRendered = (series.hasRendered || 0);
+            hasRendered = series.hasRendered || 0;
 
         // Create a separate group for the data labels to avoid rotation
-        const dataLabelsGroup = this.initDataLabelsGroup();
+        const dataLabelsGroup = this.initDataLabelsGroup()
+            .attr({ opacity: +hasRendered }); // #3300
 
-        dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
-
-        if (!hasRendered) {
-            const group = series.dataLabelsGroup;
-            if (group) {
-                if (series.visible) { // #2597, #3023, #3024
-                    dataLabelsGroup.show();
-                }
-                (group[
-                    series.options.animation ? 'animate' : 'attr'
-                ] as any)(
-                    { opacity: 1 },
-                    animationConfig
-                );
+        if (!hasRendered && dataLabelsGroup) {
+            if (series.visible) { // #2597, #3023, #3024
+                dataLabelsGroup.show();
+            }
+            if (series.options.animation) {
+                dataLabelsGroup.animate({ opacity: 1 }, animationConfig);
+            } else {
+                dataLabelsGroup.attr({ opacity: 1 });
             }
         }
 
