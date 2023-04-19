@@ -158,7 +158,18 @@ class HighchartsComponent extends Component {
                         name: 'legend',
                         allowEnabled: true,
                         propertyPath: ['chartOptions', 'legend', 'enabled'],
-                        options: [{}]
+                        options: [{
+                            name: 'align',
+                            propertyPath: ['chartOptions', 'legend', 'align'],
+                            type: 'select',
+                            items: [{
+                                name: 'left'
+                            }, {
+                                name: 'center'
+                            }, {
+                                name: 'right'
+                            }]
+                        }]
                     }]
                 }, {
                     name: 'chartConfig',
