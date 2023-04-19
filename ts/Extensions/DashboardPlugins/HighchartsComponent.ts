@@ -199,6 +199,33 @@ class HighchartsComponent extends Component {
                             type: 'input'
                         }]
                     }, {
+                        name: 'dataLabels',
+                        propertyPath: [
+                            'chartOptions',
+                            'plotOptions',
+                            'series',
+                            'enabled'
+                        ],
+                        allowEnabled: true,
+                        options: [{
+                            name: 'align',
+                            propertyPath: [
+                                'chartOptions',
+                                'plotOptions',
+                                'series',
+                                'dataLabels',
+                                'align'
+                            ],
+                            type: 'select',
+                            items: [{
+                                name: 'left'
+                            }, {
+                                name: 'center'
+                            }, {
+                                name: 'right'
+                            }]
+                        }]
+                    }, {
                         name: 'credits',
                         allowEnabled: true,
                         propertyPath: ['chartOptions', 'credits'],
