@@ -22,7 +22,8 @@ const PREFIX = DG.classNamePrefix + 'edit-';
 
 const EditGlobals: EditGlobals = {
     prefix: PREFIX,
-    iconsURLPrefix: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@0b8caf6/gfx/dashboard-icons/',
+    iconsURLPrefix:
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@0b8caf6/gfx/dashboard-icons/',
     classNames: {
         resizeSnap: PREFIX + 'resize-snap',
         resizeSnapX: PREFIX + 'resize-snap-x',
@@ -96,6 +97,9 @@ const EditGlobals: EditGlobals = {
         accordeonHeaderIcon: PREFIX + 'accordeon-header-icon',
         accordeonContent: PREFIX + 'accordeon-content',
         accordeonNestedWrapper: PREFIX + 'accordeon-nested',
+        accordeonMenuButtonsContainer:
+            PREFIX + 'accordeon-menu-buttons-container',
+        accordeonMenuButton: PREFIX + 'accordeon-menu-button',
         hiddenElement: PREFIX + 'hidden-element',
         collapsableContentHeader: PREFIX + 'collapsable-content-header',
 

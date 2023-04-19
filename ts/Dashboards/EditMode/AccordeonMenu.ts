@@ -103,8 +103,15 @@ class AccordeonMenu {
             this.renderAccordeon(option, content, component);
         }
 
+        const buttonContainer = createElement(
+            'div',
+            { className: EditGlobals.classNames.accordeonMenuButtonsContainer },
+            {},
+            accordeonContainer
+        );
+
         EditRenderer.renderButton(
-            accordeonContainer,
+            buttonContainer,
             {
                 value: EditGlobals.lang.confirmButton,
                 callback: (): void => {
@@ -116,17 +123,20 @@ class AccordeonMenu {
                             chartOptions: this.chartOptionsJSON
                         })
                     );
+                    menu.changedOptions = {};
+                    menu.chartOptionsJSON = {};
                     menu.closeSidebar();
                 }
             }
         );
 
         EditRenderer.renderButton(
-            accordeonContainer,
+            buttonContainer,
             {
                 value: EditGlobals.lang.cancelButton,
                 callback: (): void => {
                     menu.changedOptions = {};
+                    menu.chartOptionsJSON = {};
                     menu.closeSidebar();
                 }
             }
