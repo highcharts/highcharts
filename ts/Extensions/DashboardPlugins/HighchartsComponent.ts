@@ -163,7 +163,7 @@ class HighchartsComponent extends Component {
                             type: 'input'
                         }, {
                             name: 'type',
-                            propertyPath: ['chartOptions', 'xAxis', 'type'],
+                            propertyPath: ['chartOptions', 'yAxis', 'type'],
                             type: 'select',
                             items: [{
                                 name: 'linear'
