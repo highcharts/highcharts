@@ -14,14 +14,20 @@
  *
  * */
 
-import U from '../../Core/Utilities.js';
-import Board from '../Board.js';
-import EditGlobals from './EditGlobals.js';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import EditRenderer from './EditRenderer.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
 import type Layout from '../Layout/Layout.js';
 import type Cell from '../Layout/Cell.js';
 import type Row from '../Layout/Row.js';
+import type Board from '../Board.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+
+import U from '../../Core/Utilities.js';
+import EditGlobals from './EditGlobals.js';
+import EditRenderer from './EditRenderer.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
 import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 import SidebarPopup from './SidebarPopup.js';
@@ -39,6 +45,11 @@ const {
     css
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
 class EditMode {
     /* *
     *
@@ -801,6 +812,12 @@ class EditMode {
         }
     }
 }
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
 namespace EditMode {
     export interface Options {
         enabled: boolean;
@@ -850,4 +867,9 @@ namespace EditMode {
     }
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default EditMode;
