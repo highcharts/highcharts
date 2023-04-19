@@ -95,9 +95,9 @@ class AccordeonMenu {
 
         for (let i = 0, end = editableOptions.length; i < end; i++) {
             option = editableOptions[i];
-            content = EditRenderer.renderCollapse(
+            content = EditRenderer.renderCollapseHeader(
                 accordeonContainer,
-                option.name
+                { name: option.name }
             ).content;
 
             this.renderAccordeon(option, content, component);
@@ -238,18 +238,21 @@ class AccordeonMenu {
             const nestedOptions = detailedOptions[i].options;
             const allowEnabled = !!detailedOptions[i].allowEnabled;
             const propertyPath = detailedOptions[i].propertyPath || [];
-            const content = EditRenderer.renderNestedHeader(parentElement, {
-                name,
-                isEnabled: !!this.getValue(component, propertyPath),
-                allowEnabled,
-                onchange: (value: boolean | string | number): void =>
-                    this.updateOptions(propertyPath, value)
-            });
+            const collapsedHeader = EditRenderer.renderCollapseHeader(
+                parentElement, {
+                    name,
+                    isEnabled: !!this.getValue(component, propertyPath),
+                    allowEnabled,
+                    onchange: (value: boolean | string | number): void =>
+                        this.updateOptions(propertyPath, value),
+                    isNested: true
+                }
+            );
 
             for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
                 this.renderAccordeon(
                     nestedOptions[j] as EditableOptions.Configuration,
-                    content,
+                    collapsedHeader.content,
                     component
                 );
             }

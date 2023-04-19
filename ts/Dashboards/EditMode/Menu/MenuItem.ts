@@ -111,9 +111,9 @@ class MenuItem {
         const collapsable = options.collapsable;
         let container;
         if (collapsable) {
-            const collapsableElement = (EditRenderer.renderCollapse(
+            const collapsableElement = (EditRenderer.renderCollapseHeader(
                 item.container,
-                options.text || ''
+                { name: options.text || '' }
             ));
 
             if (!collapsableElement) {
