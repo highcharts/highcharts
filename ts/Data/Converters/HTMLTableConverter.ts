@@ -487,9 +487,8 @@ class HTMLTableConverter extends DataConverter {
                             columns[relativeColumnIndex] = [];
                         }
 
-                        let cellValue = converter.asGuessedType(
-                            item.innerHTML
-                        );
+                        let cellValue = converter.asGuessedType(item.innerHTML);
+
                         if (cellValue instanceof Date) {
                             cellValue = cellValue.getTime();
                         }
