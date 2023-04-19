@@ -199,7 +199,7 @@ class HighchartsComponent extends Component {
                             type: 'input'
                         }]
                     }, {
-                        name: 'credentials',
+                        name: 'credits',
                         allowEnabled: true,
                         propertyPath: ['chartOptions', 'credits'],
                         options: [{

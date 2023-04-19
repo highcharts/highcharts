@@ -82,6 +82,7 @@ class AccordeonMenu {
     public renderContent(container: HTMLElement, component: Component): void {
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
+        // const lang = this.editMode.lang;
         let option, content;
 
         const accordeonContainer = createElement(
