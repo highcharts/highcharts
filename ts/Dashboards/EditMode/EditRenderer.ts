@@ -24,6 +24,7 @@
 
 import type MenuItem from './Menu/MenuItem.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type EditableOptions from '../Components/EditableOptions.js';
 
 import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
@@ -85,22 +86,32 @@ function renderContextButton(
  *
  * @param parentElement
  * The HTMLElement to which the element should be rendered to.
- * @param title
- * Title to be displayed on the collapsable element.
+ *
+ * @param options
+ * Nested header options.
+ *
  * @returns the outer element and content in the collapsable div.
  */
-function renderCollapse(
+function renderCollapseHeader(
     parentElement: HTMLElement,
-    title: string
+    options: NestedHeaderFormField
 ): { outerElement: HTMLElement; content: HTMLElement } {
+
+    const {
+        name,
+        allowEnabled,
+        onchange,
+        isEnabled,
+        isNested
+    } = options;
 
     const accordeon = createElement(
         'div',
         {
             className:
-                EditGlobals.classNames.accordeonContainer +
-                ' ' +
-                EditGlobals.classNames.collapsableContentHeader
+                EditGlobals.classNames[
+                    isNested ? 'accordeonNestedWrapper' : 'accordeonContainer'
+                ] + ' ' + EditGlobals.classNames.collapsableContentHeader
         },
         {},
         parentElement
@@ -120,19 +131,29 @@ function renderCollapse(
         {},
         header
     );
+
     createElement(
         'span',
-        { textContent: title },
+        { textContent: name },
         {},
         headerBtn
     );
+
+    if (allowEnabled) {
+        renderToggle(header, {
+            enabledOnOffLabels: true,
+            id: name,
+            name: name,
+            onchange,
+            value: isEnabled || false
+        });
+    }
 
     const headerIcon = createElement(
         'img',
         {
             className:
-                EditGlobals.classNames.accordeonHeaderIcon +
-                ' ' +
+                EditGlobals.classNames.accordeonHeaderIcon + ' ' +
                 EditGlobals.classNames.rotateElement,
             src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
@@ -144,8 +165,7 @@ function renderCollapse(
         'div',
         {
             className:
-                EditGlobals.classNames.accordeonContent +
-                ' ' +
+                EditGlobals.classNames.accordeonContent + ' ' +
                 EditGlobals.classNames.hiddenElement
         },
         {},
@@ -468,97 +488,6 @@ function renderText(
 }
 
 /**
- * Renders nested header element.
- *
- * @param parentElement
- * The element to which the new elemenet should be appended.
- *
- * @param options
- * Nested header options.
- *
- * @returns
- * The rendered element.
- */
-function renderNestedHeader(
-    parentElement: HTMLElement,
-    options: NestedHeaderFormField
-): HTMLElement {
-
-    const { name, allowEnabled, onchange, isEnabled } = options;
-    const nested = createElement(
-        'div',
-        {
-            className: EditGlobals.classNames.accordeonNestedWrapper + ' ' +
-            EditGlobals.classNames.collapsableContentHeader
-        },
-        {},
-        parentElement
-    );
-
-    const header = createElement(
-        'div',
-        {
-            className: EditGlobals.classNames.accordeonNestedHeader
-        },
-        {},
-        nested
-    );
-
-    const headerBtn = createElement(
-        'button',
-        { className: EditGlobals.classNames.accordeonNestedHeaderBtn },
-        {},
-        header
-    );
-
-    const headerIcon = createElement(
-        'img',
-        {
-            className:
-                EditGlobals.classNames.accordeonNestedHeaderIcon +
-                ' ' +
-                EditGlobals.classNames.rotateElement,
-            src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
-        },
-        {},
-        headerBtn
-    );
-
-    createElement('span', { textContent: name }, {}, headerBtn);
-
-    if (allowEnabled) {
-        renderToggle(header, {
-            enabledOnOffLabels: true,
-            id: name,
-            name: name,
-            onchange,
-            value: isEnabled
-        });
-    }
-
-    const content = createElement(
-        'div',
-        {
-            className:
-                EditGlobals.classNames.accordeonNestedContent +
-                ' ' +
-                EditGlobals.classNames.hiddenElement
-        },
-        {},
-        nested
-    );
-
-    headerBtn.addEventListener('click', function (): void {
-        content.classList.toggle(EditGlobals.classNames.hiddenElement);
-        headerIcon.classList.toggle(
-            EditGlobals.classNames.rotateElement
-        );
-    });
-
-    return content;
-}
-
-/**
  * Function to create Icon element.
  *
  * @param parentElement
@@ -796,13 +725,12 @@ function getRendererFunction(type: RendererElement): Function|undefined {
         select: renderSelect,
         toggle: renderToggle,
         text: renderText,
-        collapse: renderCollapse,
+        collapse: renderCollapseHeader,
         icon: renderIcon,
         contextButton: renderContextButton,
         input: renderInput,
         textarea: renderTextarea,
         checkbox: renderCheckbox,
-        nestedHeaders: renderNestedHeader,
         button: renderButton
     }[type];
 }
@@ -812,14 +740,13 @@ const EditRenderer = {
     renderSelect,
     renderToggle,
     renderText,
-    renderCollapse,
+    renderCollapseHeader,
     renderIcon,
     renderContextButton,
     renderInput,
     renderTextarea,
     renderCheckbox,
     renderButton,
-    renderNestedHeader,
     getRendererFunction
 };
 
@@ -880,9 +807,10 @@ export interface ToggleFormField {
 
 export interface NestedHeaderFormField {
     name: string;
-    allowEnabled: boolean;
-    onchange: (value: boolean) => void;
-    isEnabled: boolean;
+    allowEnabled?: boolean;
+    onchange?: (value: boolean) => void;
+    isEnabled?: boolean;
+    isNested?: boolean;
 }
 export interface NestedOptions {
 
@@ -893,7 +821,6 @@ export type RendererElement =
     | 'toggle'
     | 'text'
     | 'collapse'
-    | 'nestedHeaders'
     | 'icon'
     | 'contextButton'
     | 'input'

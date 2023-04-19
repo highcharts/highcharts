@@ -335,7 +335,8 @@
     min-width: 100px;
 }
 
-.highcharts-dashboards-edit-toggle-wrapper {
+.highcharts-dashboards-edit-toggle-wrapper,
+.highcharts-dashboards-edit-accordeon-content label.highcharts-dashboards-edit-toggle-wrapper {
     position: relative;
     display: inline-block;
     width: 43px;
@@ -664,14 +665,14 @@
     font-size: 20px;
     width: 75%;
     cursor: pointer;
+    margin-bottom: 20px;
 }
 
 .highcharts-dashboards-edit-rotate-element {
-    transform: rotate(90deg);
+    transform: rotate(-90deg);
 }
 
-/* stylelint-disable-next-line max-line-length */
-.highcharts-dashboards-edit-collapsable-content-header > .highcharts-dashboards-edit-hidden-element {
+.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-hidden-element {
     display: none;
 }
 
@@ -934,7 +935,7 @@
     border-radius: 2px;
 }
 
-.highcharts-dashboards-edit-accordeon-nested-header {
+.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -942,17 +943,20 @@
     padding: 10px 5px;
 }
 
-.highcharts-dashboards-edit-accordeon-nested-header-btn {
+.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-header-btn {
+    flex-direction: row-reverse;
+    justify-content: left;
     align-items: center;
     border: none;
     background: none;
     margin: 0;
     width: 60%;
+    padding: 0;
     display: flex;
     cursor: pointer;
 }
 
-.highcharts-dashboards-edit-accordeon-nested-content {
+.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-content {
     margin: 0 10px 10px;
     padding: 10px;
     flex-direction: column;
@@ -960,7 +964,7 @@
     display: flex;
 }
 
-.highcharts-dashboards-edit-custom-option-button {
+.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-custom-option-button {
     height: 40px;
     width: 100%;
     display: flex;
@@ -970,11 +974,11 @@
     cursor: pointer;
 }
 
-.highcharts-dashboards-edit-custom-option-button:hover {
+.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-custom-option-button:hover {
     background-color: var(--highcharts-dashboards-neutral-color-10);
 }
 
-.highcharts-dashboards-edit-custom-option-button > img {
+.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-custom-option-button > img {
     width: 24px;
     height: 24px;
     margin-right: 10px;
@@ -983,7 +987,7 @@
 /* end of nested options dropdown */
 
 /* outer Accordeon */
-.highcharts-dashboards-edit-outer-accordeon-header-btn {
+.highcharts-dashboards-edit-accordeon-header-btn {
     border: none;
     font: inherit;
     color: inherit;
@@ -997,7 +1001,7 @@
     align-items: center;
 }
 
-.highcharts-dashboards-edit-outer-accordeon {
+.highcharts-dashboards-edit-accordeon {
     padding: 0;
     background: var(--highcharts-dashboards-neutral-color-10);
     margin: 8px 0;
@@ -1008,34 +1012,35 @@
     line-height: 16px;
 }
 
-.highcharts-dashboards-edit-outer-accordeon-content {
+.highcharts-dashboards-edit-accordeon-content {
     padding: 0 16px 16px;
 }
 
-.highcharts-dashboards-edit-outer-accordeon-content > .highcharts-dashboards-edit-label-text {
+.highcharts-dashboards-edit-accordeon-content > .highcharts-dashboards-edit-label-text {
     display: none;
 }
 
-.highcharts-dashboards-edit-outer-accordeon-content input,
-.highcharts-dashboards-edit-outer-accordeon-content select,
-.highcharts-dashboards-edit-outer-accordeon-content textarea,
-.highcharts-dashboards-edit-outer-accordeon-content label {
+.highcharts-dashboards-edit-accordeon-content input,
+.highcharts-dashboards-edit-accordeon-content select,
+.highcharts-dashboards-edit-accordeon-content textarea,
+.highcharts-dashboards-edit-accordeon-content label {
     width: calc(100% - 6px);
 }
 
-.highcharts-dashboards-edit-outer-accordeon-content textarea {
+.highcharts-dashboards-edit-accordeon-content textarea {
     min-height: 300px;
     overflow-y: auto;
 }
 
-.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-accordeon-nested-content label {
+.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-content > label {
+    display: inline-block;
     font-weight: normal;
     font-size: 12px;
     padding: 0;
     margin-bottom: 2px;
 }
 
-.highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-accordeon-nested-content label:first-child {
+.highcharts-dashboards-edit-accordeon-nested label:first-child {
     margin-top: 5px;
 }
 
@@ -1046,6 +1051,7 @@
 
 /* End of outer accordeon */
 
-.highcharts-dashboards-edit-sidebar-title {
-    margin-bottom: 20px;
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-content.highcharts-dashboards-edit-hidden-element {
+    display: none;
 }
