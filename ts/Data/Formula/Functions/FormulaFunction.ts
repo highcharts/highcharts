@@ -11,7 +11,9 @@
  *
  * */
 
+
 'use strict';
+
 
 /* *
  *
@@ -19,7 +21,9 @@
  *
  * */
 
+
 import type { Value } from '../FormulaTypes';
+
 
 /* *
  *
@@ -27,7 +31,9 @@ import type { Value } from '../FormulaTypes';
  *
  * */
 
+
 const keyRegExp = /^[A-Z][A-Z\.]*$/;
+
 
 /* *
  *
@@ -35,24 +41,28 @@ const keyRegExp = /^[A-Z][A-Z\.]*$/;
  *
  * */
 
+
 /**
  * Describes a registered function for the FormulaProcessor.
  *
  * @private
- * @interface Formula.ProcessorFunction
+ * @interface Highcharts.FormulaFunction
  */
-interface ProcessorFunction {
+interface FormulaFunction {
+
     /**
      * Processor for the given values.
      *
-     * @param {Array<(Formula.Value|Array<Formula.Value>)>} values
-     * Values to process.
+     * @param {Array<(Highcharts.FormulaValue|Array<Highcharts.FormulaValue>)>} values
+     * Values to process. This is a regular array to avoid stack overflows.
      *
-     * @return {Formula.Value}
+     * @return {Highcharts.FormulaValue}
      * Result value of the process.
      */
-    process: (values: Array<(Value|Array<Value>)>) => Value;
+    process: (values: Array<(Value|Array<Value>)>) => (Value|Array<Value>);
+
 }
+
 
 /* *
  *
@@ -60,11 +70,13 @@ interface ProcessorFunction {
  *
  * */
 
+
 /**
  * Contains the registry of functions for the FormulaProcessor.
  * @private
  */
-namespace ProcessorFunction {
+namespace FormulaFunction {
+
 
     /* *
      *
@@ -72,10 +84,12 @@ namespace ProcessorFunction {
      *
      * */
 
+
     /**
      * Registry of functions for the FormulaProcessor.
      */
-    export const types: Record<string, ProcessorFunction> = {};
+    export const types: Record<string, FormulaFunction> = {};
+
 
     /* *
      *
@@ -83,13 +97,14 @@ namespace ProcessorFunction {
      *
      * */
 
+
     /**
      * Registers a function for the FormulaProcessor.
      *
      * @param {string} key
      * Key of the function in spreadsheets notation with upper case.
      *
-     * @param {Formula.ProcessorFunction} processorFunction
+     * @param {Highcharts.FormulaFunction} formulaFunction
      * ProcessorFunction for the FormulaProcessor. This is an object so that it
      * can take additional parameter for future validation routines.
      *
@@ -98,16 +113,18 @@ namespace ProcessorFunction {
      */
     export function registerType(
         key: string,
-        processorFunction: ProcessorFunction
+        formulaFunction: FormulaFunction
     ): boolean {
         return (
             keyRegExp.test(key) &&
             !types[key] &&
-            !!(types[key] = processorFunction)
+            !!(types[key] = formulaFunction)
         );
     }
 
+
 }
+
 
 /* *
  *
@@ -115,4 +132,5 @@ namespace ProcessorFunction {
  *
  * */
 
-export default ProcessorFunction;
+
+export default FormulaFunction;

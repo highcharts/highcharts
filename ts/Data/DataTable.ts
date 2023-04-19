@@ -659,14 +659,6 @@ class DataTable implements DataEvent.Emitter {
         return `${(column && column[rowIndex])}`;
     }
 
-    public getColumn(
-        columnNameOrAlias: string,
-        asReference?: boolean
-    ): (DataTable.Column|undefined);
-    public getColumn(
-        columnNameOrAlias: string,
-        asReference: true
-    ): (Readonly<DataTable.Column>|undefined);
     /**
      * Fetches the given column by the canonical column name or by an alias.
      * This function is a simplified wrap of {@link getColumns}.
@@ -803,14 +795,6 @@ class DataTable implements DataEvent.Emitter {
         return columnNames;
     }
 
-    public getColumns(
-        columnNamesOrAliases?: Array<string>,
-        asReference?: boolean
-    ): DataTable.ColumnCollection;
-    public getColumns(
-        columnNamesOrAliases: (Array<string>|undefined),
-        asReference: true
-    ): Record<string, Readonly<DataTable.Column>>;
     /**
      * Retrieves all or the given columns.
      *
@@ -1643,9 +1627,7 @@ namespace DataTable {
      * Event object for cell-related events.
      */
     export interface CellEvent extends DataEvent {
-        readonly type: (
-            'setCell'|'afterSetCell'
-        );
+        readonly type: ('setCell'|'afterSetCell');
         readonly cellValue: CellType;
         readonly columnName: string;
         readonly rowIndex: number;
@@ -1660,9 +1642,7 @@ namespace DataTable {
      * Event object for clone-related events.
      */
     export interface CloneEvent extends DataEvent {
-        readonly type: (
-            'cloneTable'|'afterCloneTable'
-        );
+        readonly type: ('cloneTable'|'afterCloneTable');
         readonly tableClone?: DataTable;
     }
 
@@ -1694,7 +1674,7 @@ namespace DataTable {
             'deleteColumns'|'afterDeleteColumns'|
             'setColumns'|'afterSetColumns'
         );
-        readonly columns?: Readonly<ColumnCollection>;
+        readonly columns?: ColumnCollection;
         readonly columnNames: Array<string>;
         readonly rowIndex?: number;
     }
@@ -1709,16 +1689,6 @@ namespace DataTable {
         SetModifierEvent|
         RowEvent
     );
-
-    /**
-     * Event object for modifier-related events.
-     */
-    export interface ModifierEvent extends DataEvent {
-        readonly type: (
-            'setModifier'|'afterSetModifier'
-        );
-        readonly modifier: (DataModifier|undefined);
-    }
 
     /**
      * Options to initialize a new DataTable instance.
@@ -1759,7 +1729,7 @@ namespace DataTable {
         );
         readonly rowCount: number;
         readonly rowIndex: number;
-        readonly rows?: ReadonlyArray<(Readonly<Row>|Readonly<RowObject>)>;
+        readonly rows?: Array<(Row|RowObject)>;
     }
 
     /**
@@ -1801,7 +1771,7 @@ export default DataTable;
 /**
  * Possible value types for a table cell.
  * @private
- * @typedef {boolean|null|number|string|Highcharts.DataTable|undefined} Highcharts.DataTableCellType
+ * @typedef {boolean|null|number|string|undefined} Highcharts.DataTableCellType
  */
 
 /**

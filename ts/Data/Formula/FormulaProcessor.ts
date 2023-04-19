@@ -11,7 +11,9 @@
  *
  * */
 
+
 'use strict';
+
 
 /* *
  *
@@ -19,10 +21,12 @@
  *
  * */
 
+
 import type DataTable from '../DataTable';
 import type {
     Formula,
     Function,
+    Item,
     Operator,
     Pointer,
     Range,
@@ -30,8 +34,19 @@ import type {
     Value
 } from './FormulaTypes';
 
+
+import FormulaFunction from './Functions/FormulaFunction.js';
 import FormulaTypes from './FormulaTypes.js';
-import ProcessorFunction from './Functions/ProcessorFunction.js';
+const {
+    asNumber,
+    isFormula,
+    isFunction,
+    isOperator,
+    isPointer,
+    isRange,
+    isValue
+} = FormulaTypes;
+
 
 /* *
  *
@@ -39,11 +54,46 @@ import ProcessorFunction from './Functions/ProcessorFunction.js';
  *
  * */
 
+
+/**
+ * Process a basic operation of two given values.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaOperator} operator
+ * Operator between values.
+ *
+ * @param {Highcharts.FormulaValue} x
+ * First value for operation.
+ *
+ * @param {Highcharts.FormulaValue} y
+ * Second value for operation.
+ *
+ * @return {Highcharts.FormulaValue}
+ * Operation result. `NaN` if operation is not support.
+ */
 function basicOperation(
     operator: Operator,
     x: Value,
     y: Value
-): number {
+): Value {
+
+    switch (operator) {
+        case '=':
+            return x == y ? 1 : 0; // eslint-disable-line eqeqeq
+        case '<':
+            return x < y ? 1 : 0;
+        case '<=':
+            return x <= y ? 1 : 0;
+        case '>':
+            return x > y ? 1 : 0;
+        case '>=':
+            return x >= y ? 1 : 0;
+    }
+
+    x = asNumber(x);
+    y = asNumber(y);
+
     switch (operator) {
         case '+':
             return x + y;
@@ -60,15 +110,19 @@ function basicOperation(
     }
 }
 
+
 /**
  * Processes a formula array on the given table. If the formula does not contain
  * pointers or ranges, then no table has to be provided.
+ *
+ * @private
+ * @function Highcharts.processFormula
  *
  * @param {Formula.Formula} formula
  * Formula array to process.
  *
  * @param {Highcharts.DataTable} [table]
- * Table to use for pointer and ranges.
+ * Table to use for pointers and ranges.
  *
  * @return {Formula.Value|undefined}
  * Result value of the process. `undefined` indicates an empty formula array.
@@ -82,31 +136,52 @@ function processFormula(
     for (
         let i = 0,
             iEnd = formula.length,
-            item: (Operator|Term),
+            item: Item,
             operator: (Operator|undefined),
-            y: (Value|undefined);
+            y: (Value|undefined),
+            ys: (Value|Array<Value>|undefined);
         i < iEnd;
         ++i
     ) {
         item = formula[i];
 
-        if (FormulaTypes.isOperator(item)) {
+        // Remember operator for operation on next item
+        if (isOperator(item)) {
             operator = item;
             continue;
         }
 
-        if (FormulaTypes.isValue(item)) {
+        // Next item is a value
+        if (isValue(item)) {
             y = item;
-        } else if (FormulaTypes.isFormula(item)) {
+
+        // Next item is a formula and needs to get processed first
+        } else if (isFormula(item)) {
             y = (processFormula(formula, table) || NaN);
-        } else if (FormulaTypes.isFunction(item)) {
-            y = (processFunction(item, table) || NaN);
-        } else if (FormulaTypes.isPointer(item)) {
+
+        // Next item is a function call and needs to get processed first
+        } else if (isFunction(item)) {
+            ys = (processFunction(item, table) || NaN);
+            y = (isValue(ys) ? ys : NaN);
+
+        // Next item is a pointer and needs to get resolved
+        } else if (isPointer(item)) {
             y = (table && processPointer(item, table) || NaN);
+
         }
 
+        // If we have a next value, lets do the operation
         if (typeof y !== 'undefined') {
-            x = basicOperation((operator || '+'), (x || 0), y);
+
+            // Next value is our first value
+            if (typeof x === 'undefined') {
+                x = y;
+
+            // Regular next value
+            } else {
+                x = basicOperation((operator || '+'), x, y);
+            }
+
             operator = void 0;
             y = void 0;
         }
@@ -115,14 +190,31 @@ function processFormula(
     return x;
 }
 
+
+/**
+ * Process a function  on the give table. If the arguments do not contain
+ * pointers or ranges, then no table has to be provided.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaFunction} formulaFunction
+ * Formula function to process.
+ *
+ * @param {Highcharts.DataTable} [table]
+ * Table to use for pointers and ranges.
+ *
+ * @return {Value|Array<Value>|undefined}
+ * Result value (or values) of the process. `undefined` indicates an unknown
+ * function.
+ */
 function processFunction(
-    item: Function,
+    formulaFunction: Function,
     table?: DataTable
-): (Value|undefined) {
-    const processor = ProcessorFunction.types[item.name];
+): (Value|Array<Value>|undefined) {
+    const processor = FormulaFunction.types[formulaFunction.name];
 
     if (processor) {
-        const args = item.args,
+        const args = formulaFunction.args,
             values: Array<(Value|Array<Value>)> = [];
 
         // First process all arguments to values
@@ -130,18 +222,22 @@ function processFunction(
             term = args[i];
 
             // Add value
-            if (FormulaTypes.isValue(term)) {
+            if (isValue(term)) {
                 values.push(term);
 
             // Add values of a range
-            } else if (FormulaTypes.isRange(term)) {
+            } else if (isRange(term)) {
                 values.push(table && processRange(term, table) || []);
+
+            // Add values of a function
+            } else if (isFunction(term)) {
+                values.push(table && processFunction(term, table) || NaN);
 
             // Process functions, operations, pointers with formula processor
             } else {
                 values.push(
                     processFormula(
-                        FormulaTypes.isFormula(term) ? term : [term],
+                        isFormula(term) ? term : [term],
                         table
                     ) ||
                     NaN
@@ -154,35 +250,79 @@ function processFunction(
     }
 }
 
+
+/**
+ * Extracts the cell value from a table for a given pointer.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaPointer} pointer
+ * Formula pointer to use.
+ *
+ * @param {Highcharts.DataTable} table
+ * Table to extract from.
+ *
+ * @return {Highcharts.FormulaValue}
+ * Extracted value. 'undefined' might also indicate that the cell was not found.
+ */
 function processPointer(
-    item: Pointer,
+    pointer: Pointer,
     table: DataTable
 ): (Value|undefined) {
-    const columnName = table.getColumnNames()[item.column];
+    const columnName = table.getColumnNames()[pointer.column];
 
     if (columnName) {
-        return table.getCellAsNumber(columnName, item.row, true);
+        return table.getCellAsNumber(columnName, pointer.row, true);
     }
 }
 
+
+/**
+ * Extracts cell values from a table for a given range.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaRange} range
+ * Formula range to use.
+ *
+ * @param {Highcharts.DataTable} table
+ * Table to extract from.
+ *
+ * @return {Array<Highcharts.FormulaValue>|undefined}
+ * Extracted values. 'undefined' indicates that the range was not found.
+ */
 function processRange(
-    item: Range,
+    range: Range,
     table: DataTable
 ): (Array<Value>|undefined) {
     const columnNames = table
         .getColumnNames()
-        .slice(item.beginColumn, item.endColumn + 1);
+        .slice(range.beginColumn, range.endColumn + 1);
 
     if (columnNames.length) {
         const values: Array<Value> = [];
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            const cells = table
-                .getColumnAsNumbers(columnNames[i], true)
-                .slice(item.beginRow, item.endRow + 1);
+            const cells = table.getColumn(columnNames[i], true) || [];
 
-            for (let j = 0, jEnd = cells.length; j < jEnd; ++j) {
-                values.push(cells[j]);
+            for (
+                let j = range.beginRow,
+                    jEnd = range.endRow + 1,
+                    cell: DataTable.CellType;
+                j < jEnd;
+                ++j
+            ) {
+                cell = cells[j];
+                switch (typeof cell) {
+                    case 'boolean':
+                    case 'number':
+                    case 'string':
+                        values.push(cell);
+                        break;
+                    default:
+                        values.push(NaN);
+                        break;
+                }
             }
         }
 
@@ -190,14 +330,17 @@ function processRange(
     }
 }
 
+
 /* *
  *
  *  Default Export
  *
  * */
 
+
 const FormulaProcessor = {
     processFormula
 };
+
 
 export default FormulaProcessor;

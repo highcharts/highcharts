@@ -11,7 +11,9 @@
  *
  * */
 
+
 'use strict';
+
 
 /* *
  *
@@ -19,24 +21,54 @@
  *
  * */
 
+
+/**
+ * Arguments array of a formula function with terms and ranges.
+ */
 export type Arguments = Array<(Range|Term)>;
 
+
+/**
+ * Formula array with terms and operators.
+ */
 export type Formula = Array<(Operator|Term)>;
 
+
+/**
+ * Formula function with an arguments array.
+ */
 export interface Function {
     args: Readonly<Arguments>;
     name: string;
     type: 'function';
 }
 
-export type Operator = ('+'|'-'|'*'|'/'|'^');
 
+/**
+ * Item in arguments or formula.
+ */
+export type Item = (Operator|Range|Term);
+
+
+/**
+ * Formula operators, either basic arithmetic, or basic logic.
+ */
+export type Operator = ('+'|'-'|'*'|'/'|'^'|'='|'<'|'<='|'>'|'>=');
+
+
+/**
+ * Represents an A1 pointer to a table cell.
+ */
 export interface Pointer {
     column: number;
     row: number;
     type: 'pointer';
 }
 
+
+/**
+ * Represents an A1:A1 range to cells of a table.
+ */
 export interface Range {
     beginColumn: number;
     beginRow: number;
@@ -45,9 +77,33 @@ export interface Range {
     type: 'range';
 }
 
+
+/**
+ * A term represents some form of processing into a value or is already a value.
+ */
 export type Term = (Formula|Function|Pointer|Value);
 
-export type Value = number;
+
+/**
+ * A value to use in a operation or process.
+ */
+export type Value = (boolean|number|string);
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+
+/**
+ * Array of all possible operators.
+ * @private
+ */
+const operators: Array<string> =
+    ['+', '-', '*', '/', '^', '=', '<', '<=', '>', '>='];
+
 
 /* *
  *
@@ -55,14 +111,63 @@ export type Value = number;
  *
  * */
 
+
+/**
+ * Converts non-number types to number.
+ *
+ * @param {Highcharts.FormulaValue} value
+ * Value to convert.
+ *
+ * @return {number}
+ * Number value. `NaN` if not convertable.
+ */
+function asNumber(
+    value: Value
+): number {
+    switch (typeof value) {
+        case 'boolean':
+            return value ? 1 : 0;
+        case 'number':
+            return value;
+        case 'string':
+            return parseFloat(value);
+        default:
+            return NaN;
+    }
+}
+
+
+/**
+ * Tests an item for a Formula array.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaItem} item
+ * Item to test.
+ *
+ * @return {boolean}
+ * `true`, if the item is a formula (or argument) array.
+ */
 function isFormula(
-    item: (Range|Operator|Term)
+    item: Item
 ): item is Formula {
     return item instanceof Array;
 }
 
+
+/**
+ * Tests an item for a Function structure.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaItem} item
+ * Item to test.
+ *
+ * @return {boolean}
+ * `true`, if the item is a formula function.
+ */
 function isFunction(
-    item: (Range|Operator|Term)
+    item: Item
 ): item is Function {
     return (
         typeof item === 'object' &&
@@ -71,17 +176,41 @@ function isFunction(
     );
 }
 
+
+/**
+ * Tests an item for an Operator string.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaItem} item
+ * Item to test.
+ *
+ * @return {boolean}
+ * `true`, if the item is an operator string.
+ */
 function isOperator(
-    item: (Range|Operator|Term)
+    item: Item
 ): item is Operator {
     return (
         typeof item === 'string' &&
-        '+-*/^'.indexOf(item) >= 0
+        operators.indexOf(item) >= 0
     );
 }
 
+
+/**
+ * Tests an item for a Pointer structure.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaItem} item
+ * Item to test.
+ *
+ * @return {boolean}
+ * `true`, if the item is a pointer.
+ */
 function isPointer(
-    item: (Range|Operator|Term)
+    item: Item
 ): item is Pointer {
     return (
         typeof item === 'object' &&
@@ -90,8 +219,20 @@ function isPointer(
     );
 }
 
+
+/**
+ * Tests an item for a Range structure.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaItem} item
+ * Item to test.
+ *
+ * @return {boolean}
+ * `true`, if the item is a range.
+ */
 function isRange(
-    item: (Range|Operator|Term)
+    item: Item
 ): item is Range {
     return (
         typeof item === 'object' &&
@@ -100,11 +241,28 @@ function isRange(
     );
 }
 
+
+/**
+ * Tests an item for a Value structure.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaItem} item
+ * Item to test.
+ *
+ * @return {boolean}
+ * `true`, if the item is a value.
+ */
 function isValue(
-    item: (Range|Operator|Term)
+    item: Item
 ): item is Value {
-    return typeof item === 'number';
+    return (
+        typeof item === 'boolean' ||
+        typeof item === 'number' ||
+        typeof item === 'string'
+    );
 }
+
 
 /* *
  *
@@ -112,7 +270,9 @@ function isValue(
  *
  * */
 
+
 const MathFormula = {
+    asNumber,
     isFormula,
     isFunction,
     isOperator,
@@ -120,5 +280,6 @@ const MathFormula = {
     isRange,
     isValue
 };
+
 
 export default MathFormula;

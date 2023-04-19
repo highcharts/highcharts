@@ -1,0 +1,11 @@
+* Common use-cases:
+  - SUBTOTAL-3
+  - SUBTOTAL-9
+
+  - AND
+  - OR
+  - XOR
+
+  - COUNTIF(range, test-string)
+  - COUNTIFS
+  - SUMIF(range, test-string)

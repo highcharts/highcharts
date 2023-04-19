@@ -11,7 +11,9 @@
  *
  * */
 
+
 'use strict';
+
 
 /* *
  *
@@ -19,13 +21,19 @@
  *
  * */
 
+
 import FormulaParser from './FormulaParser.js';
 import FormulaProcessor from './FormulaProcessor.js';
 import FormulaType from './FormulaTypes.js';
-import ProcessorFunction from './Functions/ProcessorFunction.js';
+import FormulaFunction from './Functions/FormulaFunction.js';
+
 
 import './Functions/Average.js';
+import './Functions/Count.js';
+import './Functions/If.js';
+import './Functions/Not.js';
 import './Functions/Sum.js';
+
 
 /* *
  *
@@ -33,14 +41,17 @@ import './Functions/Sum.js';
  *
  * */
 
+
 export type {
     FormulaParserError
 } from './FormulaParser';
+
 
 export type {
     Arguments,
     Formula,
     Function,
+    Item,
     Operator,
     Pointer,
     Range,
@@ -48,23 +59,24 @@ export type {
     Value
 } from './FormulaTypes';
 
+
 /* *
  *
  *  Default Export
  *
  * */
 
+
 /**
  * Formula engine to make use of spreadsheet formula strings.
- *
- * @private
- * @namespace Formula
+ * @internal
  */
 const Formula = {
     ...FormulaParser,
     ...FormulaProcessor,
     ...FormulaType,
-    ProcessorFunction
+    FormulaFunction
 };
+
 
 export default Formula;

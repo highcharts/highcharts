@@ -40,6 +40,10 @@ import type {
  * */
 
 
+/**
+ * Formula parser might struggle over a syntax error.
+ * @private
+ */
 export interface FormulaParserError extends Error {
     message: string;
     name: 'FormulaParserError';
@@ -54,34 +58,34 @@ export interface FormulaParserError extends Error {
 
 
 /**
- * @internal
+ * @private
  */
 const decimal1RegExp = /^[+-]?\d+(?:\.\d+)?(?:e[+-]\d+)?/;
 
 
 /**
- * @internal
+ * @private
  */
 const decimal2RegExp = /^[+-]?\d+(?:,\d+)?(?:e[+-]\d+)?/;
 
 
 /**
  * - Group 1: Function name
- * @internal
+ * @private
  */
 const functionRegExp = /^([A-Z][A-Z\d\.]*)\(/;
 
 
 /**
- * @internal
+ * @private
  */
-const operatorRegExp = /^[+\-*\/^]/;
+const operatorRegExp = /^(?:[+\-*\/^<=>]|<=|=>)/;
 
 
 /**
  * - Group 1: Start column
  * - Group 2: Start row
- * @internal
+ * @private
  */
 const pointerRegExp = /^([A-Z]+)(\d+)(?!\:)/;
 
@@ -91,7 +95,7 @@ const pointerRegExp = /^([A-Z]+)(\d+)(?!\:)/;
  * - Group 2: Start row
  * - Group 3: End column
  * - Group 4: End row
- * @internal
+ * @private
  */
 const rangeRegExp = /^([A-Z]+)(\d+)\:([A-Z]+)(\d+)/;
 
@@ -103,16 +107,39 @@ const rangeRegExp = /^([A-Z]+)(\d+)\:([A-Z]+)(\d+)/;
  * */
 
 
+/**
+ * Extracts the inner string of the most outer parantheses.
+ *
+ * @private
+ *
+ * @param {string} text
+ * Text string to extract from.
+ *
+ * @return {string}
+ * Extracted parantheses. If not found an exception will be thrown.
+ */
 function extractParantheses(
     text: string
 ): string {
     let parantheseLevel = 0;
 
-    for (let i = 0, iEnd = text.length, char: string; i < iEnd; ++i) {
+    for (
+        let i = 0,
+            iEnd = text.length,
+            char: string,
+            parantheseStart = 1;
+        i < iEnd;
+        ++i
+    ) {
         char = text[i];
 
         if (char === '(') {
+            if (!parantheseLevel) {
+                parantheseStart = i + 1;
+            }
+
             ++parantheseLevel;
+
             continue;
         }
 
@@ -120,22 +147,83 @@ function extractParantheses(
             --parantheseLevel;
 
             if (!parantheseLevel) {
-                return text.substring(1, i);
+                return text.substring(parantheseStart, i);
             }
         }
     }
 
-    const error = new Error('Incomplete parantheses.');
-    error.name = 'ExtractParanthesesError';
-    throw error;
+    if (parantheseLevel > 0) {
+        const error = new Error('Incomplete parantheses.');
+        error.name = 'ExtractParanthesesError';
+        throw error;
+    }
+
+    return '';
 }
 
+
+/**
+ * Parses an argument string. Formula arrays with a single term will be
+ * simplified to the term.
+ *
+ * @private
+ *
+ * @param {string} text
+ * Argument string to parse.
+ *
+ * @param {boolean} alternativeSeparators
+ * Whether to expect `;` as argument separator and `,` as decimal separator.
+ *
+ * @return {Formula|Function|Pointer|Range|Value}
+ * The recognized term structure.
+ */
+function parseArgument(
+    text: string,
+    alternativeSeparators: boolean
+): (Formula|Function|Pointer|Range|Value) {
+
+    // Check for a A1:A1 range notation
+    const match = text.match(rangeRegExp);
+    if (match) {
+        return {
+            type: 'range',
+            beginColumn: (parsePointerColumn(match[1]) - 1),
+            beginRow: (parseInt(match[2], 10) - 1),
+            endColumn: (parsePointerColumn(match[3]) - 1),
+            endRow: (parseInt(match[4], 10) - 1)
+        };
+    }
+
+    // Fallback to formula processing for A1 pointer and operations
+    const formula = parseFormula(text, alternativeSeparators);
+    return (
+        formula.length === 1 && typeof formula[0] !== 'string' ?
+            formula[0] :
+            formula
+    );
+}
+
+
+/**
+ * Parse arguments string inside function parantheses.
+ *
+ * @private
+ *
+ * @param {string} text
+ * Parantheses string of the function.
+ *
+ * @param {boolean} alternativeSeparators
+ * Whether to expect `;` as argument separator and `,` as decimal separator.
+ *
+ * @return {Highcharts.FormulaArguments}
+ * Parsed arguments array.
+ */
 function parseArguments(
     text: string,
-    alternativeSeparator: boolean
+    alternativeSeparators: boolean
 ): Arguments {
     const args: Arguments = [],
-        argumentsSeparator = (alternativeSeparator ? ';' : ',');
+        argumentsSeparator = (alternativeSeparators ? ';' : ',');
 
     let parantheseLevel = 0,
         term = '';
@@ -154,7 +242,7 @@ function parseArguments(
             !parantheseLevel &&
             term
         ) {
-            args.push(parseTerm(term, alternativeSeparator));
+            args.push(parseArgument(term, alternativeSeparators));
             term = '';
         } else if (char !== ' ') {
             term += char;
@@ -169,11 +257,12 @@ function parseArguments(
 
     // look for left-overs
     if (!parantheseLevel && term) {
-        args.push(parseTerm(term, alternativeSeparator));
+        args.push(parseArgument(term, alternativeSeparators));
     }
 
     return args;
 }
+
 
 /**
  * Converts a spreadsheet formula string into a formula array. Throws a
@@ -186,7 +275,7 @@ function parseArguments(
  * Spreadsheet formula string, without the leading `=`.
  *
  * @param {boolean} alternativeSeparators
- * * `false` to expect `,` between arguments and `.` in decimals;
+ * * `false` to expect `,` between arguments and `.` in decimals.
  * * `true` to expect `;` between arguments and `,` in decimals.
  *
  * @return {Formula.Formula}
@@ -211,15 +300,15 @@ function parseFormula(
         // Check for a function
         match = next.match(functionRegExp);
         if (match) {
-            next = next.substring(match[0].length - 1).trim();
+            next = next.substring(match[1].length).trim();
 
             const parantheses = extractParantheses(next);
 
-            formula.push(parseFunction(
-                match,
-                parantheses,
-                alternativeSeparators
-            ));
+            formula.push({
+                type: 'function',
+                name: match[1],
+                args: parseArguments(parantheses, alternativeSeparators)
+            });
 
             next = next.substring(parantheses.length + 2).trim();
 
@@ -229,7 +318,11 @@ function parseFormula(
         // Check for an A1 pointer notation
         match = next.match(pointerRegExp);
         if (match) {
-            formula.push(parsePointer(match));
+            formula.push({
+                type: 'pointer',
+                column: (parsePointerColumn(match[1]) - 1),
+                row: (parseInt(match[2], 10) - 1)
+            });
 
             next = next.substring(match[0].length).trim();
 
@@ -287,18 +380,19 @@ function parseFormula(
     return formula;
 }
 
-function parseFunction(
-    match: RegExpMatchArray,
-    parantheses: string,
-    alternativeSeparator: boolean
-): Function {
-    return {
-        type: 'function',
-        name: match[1],
-        args: parseArguments(parantheses, alternativeSeparator)
-    };
-}
 
+/**
+ * Converts a pointer column `A` of `A1` into a number. Supports endless sizes
+ * `ZZZ...`, just limited by integer precision.
+ *
+ * @private
+ *
+ * @param {string} text
+ * Column string to convert.
+ *
+ * @return {number}
+ * Converted column index.
+ */
 function parsePointerColumn(
     text: string
 ): number {
@@ -322,63 +416,6 @@ function parsePointerColumn(
     return column;
 }
 
-function parsePointer(
-    match: RegExpMatchArray
-): Pointer {
-
-    return {
-        type: 'pointer',
-        column: (parsePointerColumn(match[1]) - 1),
-        row: (parseInt(match[2], 10) - 1)
-    };
-}
-
-function parseRange(
-    match: RegExpMatchArray
-): Range {
-    return {
-        type: 'range',
-        beginColumn: (parsePointerColumn(match[1]) - 1),
-        beginRow: (parseInt(match[2], 10) - 1),
-        endColumn: (parsePointerColumn(match[3]) - 1),
-        endRow: (parseInt(match[4], 10) - 1)
-    };
-}
-
-
-/**
- * Parses an argument string. Formula arrays with a single term will be
- * simplified to the term.
- *
- * @param {string} text
- * Argument string to parse.
- *
- * @param {boolean} alternativeSeparators
- * Whether to expect `;` as argument separator and `,` as decimal separator.
- *
- * @return {Formula|Function|Pointer|Range|Value}
- * The recognized term structure.
- */
-function parseTerm(
-    text: string,
-    alternativeSeparators: boolean
-): (Formula|Function|Pointer|Range|Value) {
-
-    // Check for a A1:A1 range notation
-    const match = text.match(rangeRegExp);
-    if (match) {
-        return parseRange(match);
-    }
-
-    // Fallback to formula processing
-    const formula = parseFormula(text, alternativeSeparators);
-    return (
-        formula.length === 1 && typeof formula[0] !== 'string' ?
-            formula[0] :
-            formula
-    );
-}
-
 
 /* *
  *
@@ -390,5 +427,6 @@ function parseTerm(
 const FormulaParser = {
     parseFormula
 };
+
 
 export default FormulaParser;

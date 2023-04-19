@@ -11,7 +11,9 @@
  *
  * */
 
+
 'use strict';
+
 
 /* *
  *
@@ -19,15 +21,20 @@
  *
  * */
 
+
 import type { Value } from '../FormulaTypes';
 
-import ProcessorFunction from './ProcessorFunction.js';
+
+import FormulaFunction from './FormulaFunction.js';
+import FormulaTypes from '../FormulaTypes.js';
+const { asNumber } = FormulaTypes;
 
 /* *
  *
  *  Functions
  *
  * */
+
 
 /**
  * Processor for the `AVERAGE(...values)` implementation. Calculates the average
@@ -36,15 +43,15 @@ import ProcessorFunction from './ProcessorFunction.js';
  * @private
  * @function Formula.ProcessorFunction.types.AVERAGE
  *
- * @param {Array<(Formula.Value|Array<Formula.Value>)>} values
+ * @param {Array<(Highcharts.FormulaValue|Array<Highcharts.FormulaValue>)>} values
  * Values to process.
  *
- * @return {Formula.Value}
+ * @return {number}
  * Result value of the process.
  */
 function process(
     values: Array<(Value|Array<Value>)>
-): Value {
+): number {
     let result = 0;
 
     for (
@@ -56,15 +63,16 @@ function process(
     ) {
         value = values[i];
 
-        if (typeof value === 'number') {
-            result += value;
-        } else {
+        if (value instanceof Array) {
             result += process(value);
+        } else {
+            result += asNumber(value);
         }
     }
 
     return (result / values.length);
 }
+
 
 /* *
  *
@@ -73,16 +81,19 @@ function process(
  * */
 
 
-const Average: ProcessorFunction = {
+const Average: FormulaFunction = {
     process
 };
 
-ProcessorFunction.registerType('AVERAGE', Average);
+
+FormulaFunction.registerType('AVERAGE', Average);
+
 
 /* *
  *
  *  Default Export
  *
  * */
+
 
 export default Average;

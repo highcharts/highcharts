@@ -26,8 +26,6 @@ import type { Value } from '../FormulaTypes';
 
 
 import FormulaFunction from './FormulaFunction.js';
-import FormulaTypes from '../FormulaTypes.js';
-const { asNumber } = FormulaTypes;
 
 
 /* *
@@ -38,11 +36,11 @@ const { asNumber } = FormulaTypes;
 
 
 /**
- * Processor for the `SUM(...values)` implementation. Calculates the sum of the
- * given values.
+ * Processor for the `COUNT(range)` implementation. Returns the number of
+ * given values that are numbers.
  *
  * @private
- * @function Formula.ProcessorFunction.types.SUM
+ * @function Formula.ProcessorFunction.types.COUNT
  *
  * @param {Array<(Highcharts.FormulaValue|Array<Highcharts.FormulaValue>)>} values
  * Values to process.
@@ -53,7 +51,7 @@ const { asNumber } = FormulaTypes;
 function process(
     values: Array<(Value|Array<Value>)>
 ): number {
-    let result = 0;
+    let count = 0;
 
     for (
         let i = 0,
@@ -64,14 +62,19 @@ function process(
     ) {
         value = values[i];
 
-        if (value instanceof Array) {
-            result += process(value);
-        } else {
-            result += asNumber(value);
+        if (
+            typeof value === 'number' &&
+            !isNaN(value)
+        ) {
+            ++count;
+        } else if (
+            value instanceof Array
+        ) {
+            count += process(value);
         }
     }
 
-    return result;
+    return count;
 }
 
 
@@ -82,12 +85,12 @@ function process(
  * */
 
 
-const Sum: FormulaFunction = {
+const Count: FormulaFunction = {
     process
 };
 
 
-FormulaFunction.registerType('SUM', Sum);
+FormulaFunction.registerType('COUNT', Count);
 
 
 /* *
@@ -97,4 +100,4 @@ FormulaFunction.registerType('SUM', Sum);
  * */
 
 
-export default Sum;
+export default Count;
