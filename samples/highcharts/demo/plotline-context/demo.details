@@ -1,0 +1,11 @@
+---
+name: Basic context cues
+authors:
+  - Øystein Moseng
+js_wrap: b
+requiresManualTesting: true
+tags:
+  - Highcharts demo
+categories:
+  - Audio charts
+...

@@ -6,6 +6,7 @@ for (var i = 0; i < 1000; ++i) {
         Math.sin(i / 200) * 6 + Math.random() - 0.5
     ]);
 }
+// Some less dense data
 data = data.concat([
     [11, 0],
     [11.5, null],

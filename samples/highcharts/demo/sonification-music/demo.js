@@ -448,7 +448,7 @@ Highcharts.chart('container', {
         },
         type: 'spline',
         dashStyle: 'Solid',
-        color: '#E5F6E5',
+        color: '#EAFFEA',
         lineWidth: 3,
         shadow: {
             color: '#cfe',
