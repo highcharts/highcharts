@@ -123,6 +123,10 @@ Highcharts.chart('container', {
             color: '#aaa',
             opacity: 0.1,
             width: 10
+        },
+        scrollablePlotArea: {
+            minWidth: 700,
+            opacity: 0.94
         }
     },
     title: {

@@ -1,6 +1,6 @@
 
 .highcharts-figure {
-    min-width: 430px;
+    min-width: 320px;
     max-width: 1200px;
     margin: 1em auto;
     position: relative;
@@ -84,6 +84,13 @@
     background: #c1372d;
     color: #ffffff;
     cursor: pointer;
+}
+
+@media (max-width: 450px) {
+    #play {
+        position: static;
+        margin-bottom: 10px;
+    }
 }
 
 #play .icon {
