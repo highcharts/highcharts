@@ -184,12 +184,11 @@ class ChainModifier extends DataModifier {
         table: T,
         eventDetail?: DataEvent.Detail
     ): Promise<T> {
-        const chain = this,
-            modifiers = (
-                chain.options.reverse ?
-                    chain.modifiers.reverse() :
-                    chain.modifiers.slice()
-            );
+        const modifiers = (
+            this.options.reverse ?
+                this.chain.slice().reverse() :
+                this.chain.slice()
+        );
 
         let promiseChain: Promise<T> = Promise.resolve(table);
 
@@ -206,7 +205,7 @@ class ChainModifier extends DataModifier {
         });
 
         promiseChain = promiseChain['catch']((error): Promise<T> => {
-            chain.emit<DataModifier.Event>({
+            this.emit<DataModifier.Event>({
                 type: 'error',
                 detail: eventDetail,
                 table
@@ -476,8 +475,8 @@ class ChainModifier extends DataModifier {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace ChainModifier {
 

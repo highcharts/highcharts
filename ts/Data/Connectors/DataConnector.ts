@@ -22,7 +22,6 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type JSON from '../../Core/JSON';
 import type { DataConnectorTypes } from './DataConnectorType';
 
 import DataConverter from '../Converters/DataConverter.js';
@@ -57,18 +56,14 @@ abstract class DataConnector implements DataEvent.Emitter {
     /**
      * Constructor for the connector class.
      *
-     * @param {DataTable} table
-     * Optional table to use in the connector.
-     *
-     * @param {DataConnector.Metadata} metadata
-     * Optional metadata to use in the connector.
+     * @param {DataConnector.UserOptions} [options]
+     * Options to use in the connector.
      */
     public constructor(
-        table: DataTable = new DataTable(),
-        metadata: DataConnector.Metadata = { columns: {} }
+        options: DataConnector.UserOptions = {}
     ) {
-        this.table = table;
-        this.metadata = metadata;
+        this.table = new DataTable(options.dataTable);
+        this.metadata = options.metadata || { columns: {} };
     }
 
     /* *
@@ -348,10 +343,10 @@ namespace DataConnector {
     /**
      * Metadata entry containing the name of the column and a metadata object.
      */
-    export interface MetaColumn extends JSON.Object {
+    export interface MetaColumn {
         dataType?: string;
         // validator: Function;
-        defaultValue?: JSON.Primitive;
+        defaultValue?: (boolean|null|number|string);
         index?: number;
         title?: string;
     }
@@ -359,9 +354,22 @@ namespace DataConnector {
     /**
      * Metadata
      */
-    export interface Metadata extends JSON.Object {
+    export interface Metadata {
         columns: Record<string, MetaColumn>;
     }
+
+    /**
+     * Option of the DataConnector.
+     */
+    export interface Options {
+        dataTable?: DataTable.Options;
+        metadata?: Metadata;
+    }
+
+    /**
+     * Option of the DataConnector.
+     */
+    export type UserOptions = Partial<Options>;
 
     /* *
      *

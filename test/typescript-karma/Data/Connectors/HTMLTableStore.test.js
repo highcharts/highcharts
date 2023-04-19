@@ -275,7 +275,7 @@ test('HTMLTableConnector from HTML element', function (assert) {
     const tableElement = createElement('div');
     tableElement.innerHTML = tableHTML;
 
-    const connector = new HTMLTableConnector(undefined, { table: tableElement });
+    const connector = new HTMLTableConnector({ table: tableElement });
 
     const doneLoading = assert.async();
 
@@ -310,7 +310,7 @@ test('HTMLTableConverter', function (assert) {
     tableElement.setAttribute('id', 'myDivider');
     tableElement.innerHTML = tableHTML;
 
-    const dataconverter = new HTMLTableConverter({}, tableElement)
+    const dataconverter = new HTMLTableConverter({ tableElement })
     const done = assert.async();
 
     dataconverter.on('afterParse', e => {
@@ -319,30 +319,34 @@ test('HTMLTableConverter', function (assert) {
             tableElement.id,
             'Exported converter should have correct `tableElementID`.'
         );
-        assert.ok(true);
         done();
-    })
-    dataconverter.parse()
+    });
+    dataconverter.parse();
 });
 
 test('Export as HTML', function (assert) {
-    const tableCSV = `identifier,Range (low),Range (mid),Range (high),something else,Range (ultra)
+    const csv = `identifier,Range (low),Range (mid),Range (high),something else,Range (ultra)
 1,2,5,10,"Blue",22`;
 
     // Load the table from the CSV
-    const csvconnector = new CSVConnector(undefined, { csv: tableCSV });
+    const csvconnector = new CSVConnector({ csv });
     csvconnector.load();
 
-    const htmlconnector = new HTMLTableConnector(csvconnector.table),
-        htmlconverter = htmlconnector.converter;
+    const connector = new HTMLTableConnector({
+            dataTable: {
+                columns: csvconnector.table.getColumns()
+            }
+        }),
+        converter = connector.converter;
 
     // Export with default settings (multiline and rowspan should be enabled)
-    let htmlString = htmlconverter.export(htmlconnector);
-    const HTMLElement = createElement('div');
-    HTMLElement.innerHTML = htmlString;
+    let htmlExport = converter.export(connector);
+
+    const tableElement = createElement('div');
+    tableElement.innerHTML = htmlExport;
 
     assert.strictEqual(
-        HTMLElement.querySelectorAll('thead tr').length,
+        tableElement.querySelectorAll('thead tr').length,
         2,
         'Table head should have two rows'
     );
@@ -360,35 +364,35 @@ test('Export as HTML', function (assert) {
     // );
 
     // Multilevel headers disabled
-    htmlString = htmlconverter.export(htmlconnector, {
+    htmlExport = converter.export(connector, {
         useMultiLevelHeaders: false
     });
-    HTMLElement.innerHTML = htmlString;
+    tableElement.innerHTML = htmlExport;
 
     assert.strictEqual(
-        HTMLElement.querySelectorAll('thead tr').length,
+        tableElement.querySelectorAll('thead tr').length,
         1,
         'Table head should have a single row'
     );
     assert.strictEqual(
-        HTMLElement.querySelectorAll('th[colspan]').length,
+        tableElement.querySelectorAll('th[colspan]').length,
         0,
         'Exported table should have no headers with colspan'
     );
     assert.strictEqual(
-        HTMLElement.querySelectorAll('th[rowspan]').length,
+        tableElement.querySelectorAll('th[rowspan]').length,
         0,
         'Exported table should have no headers with rowspan'
     );
 
     // table caption
-    htmlString = htmlconverter.export(htmlconnector, {
+    htmlExport = converter.export(connector, {
         useMultiLevelHeaders: false,
         tableCaption: 'My Data Table'
     });
 
-    HTMLElement.innerHTML = htmlString;
-    const captionSearch = HTMLElement.querySelectorAll('caption');
+    tableElement.innerHTML = htmlExport;
+    const captionSearch = tableElement.querySelectorAll('caption');
 
     assert.strictEqual(
         captionSearch.length,
@@ -401,25 +405,25 @@ test('Export as HTML', function (assert) {
     );
 
     // Make sure the exported table is parseable, and returns the same result
-    const connectorFromExportedHTML = new HTMLTableConnector(undefined, { table: HTMLElement });
-    const doneLoading = assert.async();
+    const connectorWithExport = new HTMLTableConnector({ table: tableElement });
+    const done = assert.async();
 
-    connectorFromExportedHTML.on('afterLoad', e => {
+    connectorWithExport.on('afterLoad', e => {
         assert.strictEqual(
-            htmlconverter.export(connectorFromExportedHTML),
-            htmlconverter.export(htmlconnector),
+            converter.export(connectorWithExport),
+            converter.export(connector),
             'Connector from parsed table should produce same result as original connector'
         );
-        doneLoading();
+        done();
     });
-    connectorFromExportedHTML.on('loadError', () => {
+    connectorWithExport.on('loadError', () => {
         assert.ok(
             false,
             'The load failed'
         )
-        doneLoading();
+        done();
     });
 
-    connectorFromExportedHTML.load();
+    connectorWithExport.load();
     assert.ok(true)
 })
