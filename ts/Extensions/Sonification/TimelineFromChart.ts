@@ -1041,6 +1041,7 @@ function timelineFromChart(
                             time: pointGroupTime + t / 2 + t * ix
                         }));
                     }
+                    pointGroup = [];
                 };
                 (series.points || []).forEach((point, pointIx): void => {
                     const isLastPoint = pointIx === series.points.length - 1;
