@@ -83,6 +83,8 @@ class TiledWebMapSeries extends MapSeries {
      * A tiledwebmap series allows user to display dynamically joined individual
      * images (tiles) and join them together to create a map.
      *
+     * @sample maps/series-tiledwebmap/simple-demo-norway
+     *         Simple demo of data for Norway on TiledWebMap
      * @sample maps/series-tiledwebmap/only-twm
      *         OpenStreetMap demo
      *
@@ -837,6 +839,11 @@ export default TiledWebMapSeries;
  * A `tiledwebmap` series. The [type](#series.tiledwebmap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
+ * @sample maps/series-tiledwebmap/simple-demo-norway
+ *         Simple demo of data for Norway on TiledWebMap
+ * @sample maps/series-tiledwebmap/only-twm
+ *         OpenStreetMap demo
+ *
  * @extends   series,plotOptions.tiledwebmap
  * @excluding affectsMapView, allAreas, allowPointSelect, animation,
  * animationLimit, boostBlending, boostThreshold, borderColor, borderWidth,
@@ -851,6 +858,9 @@ export default TiledWebMapSeries;
 
 /**
  * Provider options for the series.
+ *
+ * @sample maps/series-tiledwebmap/human-anatomy
+ *         Human Anatomy Explorer - Custom TiledWebMap Provider
  *
  * @since     next
  * @product   highmaps
@@ -873,8 +883,10 @@ export default TiledWebMapSeries;
  * Set a tiles theme. Check the [providers documentation](https://www.highcharts.com/docs/maps/tiledwebmap-series)
  * for official list of available themes.
  *
- * @sample maps/series-tiledwebmap/basic-configuration
- *         Basic configuration for TiledWebMap
+ * @sample maps/series-tiledwebmap/europe-timezones
+ *         Imagery basemap for Europe
+ * @sample maps/series-tiledwebmap/hiking-trail
+ *         Topo basemap and MapLine
  *
  * @type      {string}
  * @since     next

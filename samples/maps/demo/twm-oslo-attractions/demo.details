@@ -3,4 +3,8 @@ name: Best attractions in Oslo
 authors:
   - Hubert Kozik
 js_wrap: b
+tags:
+  - Highcharts Maps demo
+categories:
+  - General
 ...

@@ -87,7 +87,9 @@
             type: 'tiledwebmap',
             name: 'TWM Tiles',
             provider: {
-                type: 'OpenStreetMap'
+                type: 'OpenStreetMap',
+                subdomain: 'a',
+                theme: 'Standard'
             }
         }, {
             type: 'mappoint',
