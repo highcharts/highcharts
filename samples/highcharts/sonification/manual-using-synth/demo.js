@@ -1,31 +1,29 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
+var chart;
 
-    Highcharts.chart('container', {
+Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
+    chart = Highcharts.chart('container', {
         chart: {
             backgroundColor: 'transparent'
         },
 
         title: {
-            text: '2 Years of AAPL Stock Price'
+            text: '2 Years of AAPL Stock Price',
+            align: 'left'
         },
 
         xAxis: {
             type: 'datetime',
             crosshair: {
                 enabled: true,
-                width: 3
+                width: 3,
+                color: '#9080a0'
             }
-        },
-
-        tooltip: {
-            enabled: false
         },
 
         yAxis: {
             labels: {
                 format: '${value}'
             },
-            gridLineColor: '#555',
             title: {
                 enabled: false
             }
@@ -35,21 +33,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
             enabled: false
         },
 
-        credits: {
-            enabled: false
-        },
-
-        annotations: [{
-            labels: [{
-                point: {
-                    x: 818,
-                    y: 50
-                },
-                text: '$182.01',
-                backgroundColor: '#557C6B'
-            }]
-        }],
-
         series: [{
             name: 'AAPL',
             data: data
@@ -58,6 +41,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
 });
 
 
+// Naive data grouping that builds a new data array from the min and max
+// point for each bin
 function groupData(data, numPerBin) {
     var grouped = [];
     for (var i = 0, len = data.length; i < len; i += numPerBin) {
@@ -70,6 +55,7 @@ function groupData(data, numPerBin) {
 }
 
 
+// Sonify the chart manually
 function sonifyChart(audioContext, synth, chart) {
     var noteToFreq = Highcharts.sonification.SonificationInstrument
         .musicalNoteToFrequency;
@@ -79,46 +65,65 @@ function sonifyChart(audioContext, synth, chart) {
         len = data.length,
         minVal = chart.yAxis[0].dataMin,
         maxVal = chart.yAxis[0].dataMax,
-        minNote = 22,
+        minNote = 22, // note number 0 is c0
         maxNote = 84,
         hoverPoint;
 
-    data.forEach(function (p, ix) {
+    data.forEach(function (y, ix) {
+        // Map y value to note
         var note = Math.round(
-                (p - minVal) /
+                (y - minVal) /
                 (maxVal - minVal) * (maxNote - minNote) + minNote
             ),
+            // Offset of note in milliseconds
             msOffset = ix / len * duration;
 
+        // Schedule the synth to play this note at the desired time
         synth.playFreqAtTime(
             audioContext.currentTime + msOffset / 1000,
             noteToFreq(note),
             400
         );
 
+        // Naively find the connected data point, and schedule the
+        // crosshair drawing
         var point = chart.series[0].points[ix * binSize / 2 + 2];
         setTimeout(function () {
             if (point) {
                 point.series.xAxis.drawCrosshair(null, point);
                 point.setState('hover');
                 hoverPoint = point;
-            } else {
+            } else if (hoverPoint) {
                 chart.xAxis[0].hideCrosshair();
                 hoverPoint.setState();
             }
         }, msOffset);
     });
+
+    setTimeout(function () {
+        document.getElementById('play').style.visibility = 'visible';
+    }, duration);
 }
 
 
+// When we click play, set up an audio context and the synth, then sonify
 document.getElementById('play').onclick = function () {
+    if (!chart) {
+        return;
+    }
+
     var audioContext = new AudioContext(),
         synth = new Highcharts.sonification.SynthPatch(
             audioContext,
-            JSON.parse(document.getElementById('preset').textContent)
+            // Use a preset or send in options to the synth directly here
+            Highcharts.sonification.InstrumentPresets.piano
         );
     synth.connect(audioContext.destination);
     synth.startSilently();
 
-    sonifyChart(audioContext, synth, Highcharts.charts[0]);
+    sonifyChart(audioContext, synth, chart);
+
+    // Hide button so we don't have to handle starting/stopping multiple
+    // sonifications at the same time, just to keep this demo simple
+    this.style.visibility = 'hidden';
 };

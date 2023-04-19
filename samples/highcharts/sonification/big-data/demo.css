@@ -29,9 +29,3 @@
     margin: 0 auto;
     position: relative;
 }
-
-@media (max-width: 575px) {
-    #btn {
-        width: 30%;
-    }
-}

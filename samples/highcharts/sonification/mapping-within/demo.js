@@ -19,8 +19,24 @@ var chart = Highcharts.chart('container', {
         }
     },
 
-    yAxis: [{}, {
-        opposite: true
+    yAxis: [{
+        height: '40%',
+        top: '0%',
+        offset: 0,
+        tickAmount: 2,
+        lineWidth: 2,
+        title: {
+            text: 'Axis 1'
+        }
+    }, {
+        height: '40%',
+        top: '60%',
+        offset: 0,
+        tickAmount: 2,
+        lineWidth: 2,
+        title: {
+            text: 'Axis 2'
+        }
     }],
 
     xAxis: {
@@ -56,7 +72,7 @@ function within(within) {
                         }
                     }
                 }
-            });
+            }, false);
             chart.sonify();
         }
     };

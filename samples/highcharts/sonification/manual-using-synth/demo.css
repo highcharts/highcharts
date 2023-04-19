@@ -1,10 +1,10 @@
 .highcharts-figure {
-    max-width: 700px;
+    max-width: 900px;
     margin: 0 auto;
     position: relative;
 }
 
-#sonify {
+#play {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -17,14 +17,14 @@
     font-weight: 500;
     border-radius: 4px;
     padding: 0.375rem 0;
-    width: 10rem;
+    width: 6rem;
     margin-bottom: 0.25rem;
     margin-top: 0.25rem;
     text-align: center;
     cursor: pointer;
 }
 
-#sonify:hover {
+#play:hover {
     background-color: #25386f;
     color: #fff;
 }

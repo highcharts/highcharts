@@ -19,7 +19,7 @@ var chart = Highcharts.chart('container', {
                 series.chart.sonification.speak(series.name, {
                     language: 'en-US',
                     rate: 2.5,
-                    volume: 0.5
+                    volume: 0.3
                 });
             },
             // Play a noise on series end
@@ -37,7 +37,7 @@ var chart = Highcharts.chart('container', {
                         note: note,
                         noteDuration: 400,
                         pan: 0,
-                        volume: 1
+                        volume: 0.4
                     }, time);
                 };
                 playNote('c6', 40);
@@ -46,7 +46,7 @@ var chart = Highcharts.chart('container', {
                 timeline.chart.sonification.speak('End', {
                     language: 'en-US',
                     rate: 2,
-                    volume: 0.7
+                    volume: 0.3
                 }, 400);
             }
         }

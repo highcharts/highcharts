@@ -1,1 +1,0 @@
-1. Verify that the series plays the points without issues.

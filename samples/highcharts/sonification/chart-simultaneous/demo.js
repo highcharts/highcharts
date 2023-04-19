@@ -1,10 +1,13 @@
 var chart = Highcharts.chart('container', {
     title: {
-        text: 'Series sonified simultaneously'
+        text: 'Series sonified simultaneously',
+        align: 'left',
+        margin: 25
     },
 
     subtitle: {
-        text: 'Earcon when finished'
+        text: 'Earcon when finished',
+        align: 'left'
     },
 
     tooltip: {
@@ -36,7 +39,9 @@ var chart = Highcharts.chart('container', {
 
     xAxis: {
         crosshair: {
-            enabled: true
+            enabled: true,
+            width: 3,
+            color: '#9088b0'
         }
     },
 
@@ -60,6 +65,7 @@ var chart = Highcharts.chart('container', {
     }, {
         sonification: {
             tracks: [{
+                instrument: 'piano',
                 mapping: {
                     pan: 1 // Pan this series right
                 }
@@ -78,9 +84,5 @@ var chart = Highcharts.chart('container', {
 
 // Click button to sonify or stop
 document.getElementById('sonify').onclick = function () {
-    if (chart.sonification.isPlaying()) {
-        chart.sonification.cancel();
-    } else {
-        chart.sonify();
-    }
+    chart.toggleSonify();
 };
