@@ -99,11 +99,9 @@ class ConfirmationPopup extends BaseForm {
         ) + 'px';
 
         // render text
-        EditRenderer.renderText(
-            this.contentContainer,
-            options.text || '',
-            void 0
-        );
+        EditRenderer.renderText(this.contentContainer, {
+            title: options.text || ''
+        });
 
         // render buttons
         // Cancel

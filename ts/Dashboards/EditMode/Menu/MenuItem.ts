@@ -15,7 +15,7 @@
  * */
 
 import type CSSJSONObject from '../../CSSJSONObject';
-import type { RendererElement, SelectFormFieldItem } from '../EditRenderer.js';
+import type { RendererElement, SelectFormFieldItemOptions } from '../EditRenderer.js';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
@@ -102,28 +102,7 @@ class MenuItem {
     public setInnerElement(): HTMLDOMElement|undefined {
         const item = this,
             options = item.options,
-            callback = function (): void {
-                if (options.events && options.events.click) {
-                    options.events.click.apply(item, arguments);
-                }
-            };
-
-        const collapsable = options.collapsable;
-        let container;
-        if (collapsable) {
-            const collapsableElement = (EditRenderer.renderCollapseHeader(
-                item.container,
-                { name: options.text || '' }
-            ));
-
-            if (!collapsableElement) {
-                return;
-            }
-
-            container = collapsableElement.content;
-        } else {
             container = item.container;
-        }
 
         const renderItem = EditRenderer.getRendererFunction(
             options.type as RendererElement
@@ -133,7 +112,13 @@ class MenuItem {
             return;
         }
 
-        return renderItem(container, this.getElementOptions(options, callback));
+        const element = renderItem(container, this.getElementOptions(options));
+        const callback = function (): void {
+            if (options.events && options.events.click) {
+                options.events.click.apply(item, arguments);
+            }
+        };
+        element.addEventListener('click', callback);
     }
 
     private getElementOptions(
@@ -147,7 +132,6 @@ class MenuItem {
             title: options.collapsable ? '' : options.text || '',
             callback,
             item: this,
-            nestedOptions: options.nestedOptions,
             icon: options.icon,
             mousedown: options.events && options.events.onmousedown,
             value: options.value || '',
@@ -208,7 +192,7 @@ namespace MenuItem {
         isActive?: boolean;
         title?: string;
         value?: string;
-        items?: Array<string> | Array<SelectFormFieldItem>;
+        items?: Array<string> | Array<SelectFormFieldItemOptions>;
     }
 }
 

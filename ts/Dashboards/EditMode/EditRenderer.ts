@@ -24,7 +24,6 @@
 
 import type MenuItem from './Menu/MenuItem.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type EditableOptions from '../Components/EditableOptions.js';
 
 import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
@@ -94,7 +93,7 @@ function renderContextButton(
  */
 function renderCollapseHeader(
     parentElement: HTMLElement,
-    options: NestedHeaderFormField
+    options: NestedHeaderFormFieldOptions
 ): { outerElement: HTMLElement; content: HTMLElement } {
 
     const {
@@ -194,19 +193,14 @@ function renderCollapseHeader(
  */
 function renderSelect(
     parentElement: HTMLElement,
-    options: SelectFormField
+    options: SelectFormFieldOptions
 ): HTMLElement|undefined {
     if (!parentElement) {
         return;
     }
 
     if (options.name) {
-        renderText(
-            parentElement,
-            options.name,
-            void 0,
-            true
-        );
+        renderText(parentElement, { title: options.name, isLabel: true });
     }
 
     const iconsURLPrefix = options.iconsURLPrefix || '';
@@ -314,7 +308,7 @@ function renderSelect(
  * @internal
  */
 function renderSelectElement(
-    option: SelectFormFieldItem,
+    option: SelectFormFieldItemOptions,
     dropdown: HTMLElement,
     placeholder: HTMLElement,
     id: string,
@@ -379,7 +373,7 @@ function renderSelectElement(
  */
 function renderToggle(
     parentElement: HTMLElement,
-    options: ToggleFormField
+    options: ToggleFormFieldOptions
 ): HTMLElement|undefined {
 
     if (!parentElement) {
@@ -394,18 +388,14 @@ function renderToggle(
         parentElement
     );
     if (title) {
-        renderText(
-            toggleContainer,
-            title
-        );
+        renderText(toggleContainer, { title });
     }
 
     if (options.enabledOnOffLabels) {
-        EditRenderer.renderText(
-            toggleContainer,
-            EditGlobals.lang.off,
-            EditGlobals.classNames.toggleLabels
-        );
+        EditRenderer.renderText(toggleContainer, {
+            title: EditGlobals.lang.off,
+            className: EditGlobals.classNames.toggleLabels
+        });
     }
 
     const toggle = createElement(
@@ -438,11 +428,10 @@ function renderToggle(
     );
 
     if (options.enabledOnOffLabels) {
-        EditRenderer.renderText(
-            toggleContainer,
-            EditGlobals.lang.on,
-            EditGlobals.classNames.toggleLabels
-        );
+        EditRenderer.renderText(toggleContainer, {
+            title: EditGlobals.lang.on,
+            className: EditGlobals.classNames.toggleLabels
+        });
     }
 
     return toggleContainer;
@@ -464,22 +453,22 @@ function renderToggle(
  */
 function renderText(
     parentElement: HTMLElement,
-    text: string,
-    className?: string,
-    isLabel?: boolean
-): HTMLElement|undefined {
+    options: TextOptions
+): HTMLElement | undefined {
     let textElem;
 
+    const { title: text, className, isLabel } = options;
     if (parentElement) {
         const labelFor = isLabel ? { htmlFor: text } : {};
         textElem = createElement(
             isLabel ? 'label' : 'div',
             {
-                className: EditGlobals.classNames.labelText +
-                        ' ' + (className || ''),
+                className:
+                    EditGlobals.classNames.labelText + ' ' + (className || ''),
                 textContent: text,
                 ...labelFor
-            }, {},
+            },
+            {},
             parentElement
         );
     }
@@ -504,7 +493,7 @@ function renderText(
  */
 function renderIcon(
     parentElement: HTMLElement,
-    options: IconFormField
+    options: IconFormFieldOptions
 ): HTMLElement|undefined {
     const { icon, callback } = options;
 
@@ -546,7 +535,7 @@ function renderIcon(
  */
 function renderInput(
     parentElement: HTMLElement,
-    options: FormField
+    options: FormFieldOptions
 ): HTMLElement | undefined {
 
     if (!parentElement) {
@@ -554,12 +543,7 @@ function renderInput(
     }
 
     if (options.name) {
-        renderText(
-            parentElement,
-            options.name,
-            void 0,
-            true
-        );
+        renderText(parentElement, { title: options.name, isLabel: true });
     }
 
     const input = createElement(
@@ -601,7 +585,7 @@ function renderInput(
  */
 function renderTextarea(
     parentElement: HTMLElement,
-    options: FormField
+    options: FormFieldOptions
 ): HTMLElement|undefined {
 
     if (!parentElement) {
@@ -609,12 +593,7 @@ function renderTextarea(
     }
 
     if (options.name) {
-        renderText(
-            parentElement,
-            options.name,
-            void 0,
-            true
-        );
+        renderText(parentElement, { title: options.name, isLabel: true });
     }
 
     const textarea = createElement(
@@ -761,14 +740,14 @@ export interface ButtonOptions {
     style?: CSSObject;
 }
 
-export interface IconFormField {
+export interface IconFormFieldOptions {
     className?: string;
     icon: string;
     mousedown?: Function;
     menuItem?: MenuItem;
     callback?: Function;
 }
-export interface FormField {
+export interface FormFieldOptions {
     propertyPath?: Array<string>;
     iconsURLPrefix?: string;
     icon?: string;
@@ -782,19 +761,25 @@ export interface FormField {
     enabledOnOffLabels?: boolean;
 }
 
-export interface SelectFormField extends FormField {
+export interface SelectFormFieldOptions extends FormFieldOptions {
     title: string;
     value: string;
-    items: Array<SelectFormFieldItem>;
+    items: Array<SelectFormFieldItemOptions>;
 }
 
-export interface SelectFormFieldItem {
+export interface SelectFormFieldItemOptions {
     iconsURLPrefix: string
     name: string;
     iconURL: string;
 }
 
-export interface ToggleFormField {
+export interface TextOptions {
+    title: string;
+    className?: string;
+    isLabel?: boolean;
+}
+
+export interface ToggleFormFieldOptions {
     title?: string;
     value: boolean;
     enabledOnOffLabels?: boolean;
@@ -805,15 +790,12 @@ export interface ToggleFormField {
     name: string;
 }
 
-export interface NestedHeaderFormField {
+export interface NestedHeaderFormFieldOptions {
     name: string;
     allowEnabled?: boolean;
     onchange?: (value: boolean) => void;
     isEnabled?: boolean;
     isNested?: boolean;
-}
-export interface NestedOptions {
-
 }
 
 export type RendererElement =
