@@ -11,6 +11,7 @@ Highcharts.chart('container', {
         title: {
             text: undefined
         },
+        endOnTick: false,
         visible: false
     },
     xAxis: {
