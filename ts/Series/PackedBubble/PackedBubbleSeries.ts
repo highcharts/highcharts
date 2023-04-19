@@ -59,8 +59,11 @@ const {
     isArray,
     isNumber,
     merge,
-    pick
+    pick,
+    syncTimeout
 } = U;
+import A from '../../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 
 /* *
  *
@@ -134,6 +137,8 @@ class PackedBubbleSeries extends BubbleSeries {
     public points: Array<PackedBubblePoint> = void 0 as any;
 
     public xData: Array<number> = void 0 as any;
+
+    public deferDataLabels: boolean = true;
 
     /* *
      *
@@ -480,11 +485,50 @@ class PackedBubbleSeries extends BubbleSeries {
     }
 
     /**
+     * PackedBubble needs a custom initDataLabels function
+     * to initiate the animation in a different way
+     * than for other series (drawDataLabels is called each frame)
+     * @private
+     */
+    public initDataLabels(this: PackedBubbleSeries): SVGElement {
+        const series = this,
+            dlOptions = series.options.dataLabels;
+
+        if (!series.dataLabelsGroup) {
+            const dataLabelsGroup = this.initDataLabelsGroup();
+
+            // Apply the dataLabels.style not only to the
+            // individual dataLabels but also to the entire group
+            if (!series.chart.styledMode && dlOptions?.style) {
+                dataLabelsGroup.css(dlOptions.style);
+            }
+
+            // Initialize the opacity of the group to 0 (start of animation)
+            dataLabelsGroup.attr({ opacity: 0 });
+
+            if (series.visible) { // #2597, #3023, #3024
+                dataLabelsGroup.show();
+            }
+
+            return dataLabelsGroup;
+        }
+
+        series.dataLabelsGroup.attr({ opacity: 1 });
+        return series.dataLabelsGroup;
+    }
+
+    /**
      * Packedbubble has two separate collecions of nodes if split, render
      * dataLabels for both sets:
      * @private
      */
     public drawDataLabels(): void {
+        // We defer drawing the dataLabels
+        // until dataLabels.animation.defer time passes
+        if (this.deferDataLabels) {
+            return;
+        }
+
         seriesProto.drawDataLabels.call(this, this.points);
 
         // Render parentNode labels:
@@ -660,6 +704,21 @@ class PackedBubbleSeries extends BubbleSeries {
 
     public init(): PackedBubbleSeries {
         seriesProto.init.apply(this, arguments);
+
+        const dlOptions = this.options.dataLabels;
+
+        // drawDataLabels() fires for the first time after
+        // dataLabels.animation.defer time unless
+        // the dataLabels.animation = false or dataLabels.defer = false
+        // or if the simulation is disabled
+        if (!dlOptions?.defer ||
+            !this.options.layoutAlgorithm?.enableSimulation) {
+            this.deferDataLabels = false;
+        } else {
+            syncTimeout((): void => {
+                this.deferDataLabels = false;
+            }, dlOptions ? animObject(dlOptions.animation).defer : 0);
+        }
 
         /* eslint-disable no-invalid-this */
 
@@ -1240,7 +1299,7 @@ interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
     yData: BubbleSeriesType['yData'];
     zData: BubbleSeriesType['zData'];
     zoneAxis: BubbleSeriesType['zoneAxis'];
-    initDataLabels: BubbleSeriesType['initDataLabels'];
+    initDataLabels: PackedBubbleSeries['initDataLabels'];
     getPointsCollection(): Array<PackedBubblePoint>;
     indexateNodes: NetworkgraphSeries['indexateNodes'];
     markerAttribs: BubbleSeriesType['markerAttribs'];
@@ -1261,7 +1320,6 @@ extend(PackedBubbleSeries.prototype, {
     pointValKey: 'value',
     requireSorting: false,
     trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup'],
-    initDataLabels: seriesProto.initDataLabels,
     alignDataLabel: seriesProto.alignDataLabel,
     indexateNodes: noop as NetworkgraphSeries['indexateNodes'],
     onMouseDown: DragNodesComposition.onMouseDown,
