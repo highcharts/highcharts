@@ -1026,6 +1026,22 @@ function timelineFromChart(
                 // Go through the points and add events to channel
                 let pointGroup: PointGroupItem[] = [],
                     pointGroupTime = 0;
+                const addCurrentPointGroup = (groupSpanTime: number): void => {
+                    if (pointGroup.length === 1) {
+                        add({
+                            point: pointGroup[0].point,
+                            time: pointGroupTime + groupSpanTime / 2
+                        });
+                    } else {
+                        const points = getGroupedPoints(
+                                pointGroupOpts, pointGroup),
+                            t = groupSpanTime / points.length;
+                        points.forEach((p, ix): unknown => add({
+                            point: p,
+                            time: pointGroupTime + t / 2 + t * ix
+                        }));
+                    }
+                };
                 (series.points || []).forEach((point, pointIx): void => {
                     const isLastPoint = pointIx === series.points.length - 1;
                     const time = getPointTime(
@@ -1036,7 +1052,7 @@ function timelineFromChart(
 
                     const context: PointGroupItem = { point, time };
 
-                    // Is this track active?
+                    // Is this point active?
                     if (
                         !mergedOpts.mapping ||
                         !isActive(context, activeWhen, lastPropValue)
@@ -1059,20 +1075,7 @@ function timelineFromChart(
                                 // Only happens if last point is within group
                                 pointGroup.push(context);
                             }
-                            if (pointGroup.length === 1) {
-                                add({
-                                    point: pointGroup[0].point,
-                                    time: pointGroupTime + spanTime / 2
-                                });
-                            } else {
-                                const points = getGroupedPoints(
-                                        pointGroupOpts, pointGroup),
-                                    t = spanTime / points.length;
-                                points.forEach((p, ix): unknown => add({
-                                    point: p,
-                                    time: pointGroupTime + t / 2 + t * ix
-                                }));
-                            }
+                            addCurrentPointGroup(spanTime);
 
                             pointGroupTime = Math.floor(time / groupSpan) *
                                 groupSpan;
@@ -1090,6 +1093,14 @@ function timelineFromChart(
                         }
                     }
                 });
+
+                // Remaining points in group (in case last point was inactive)
+                if (pointGroup.length) {
+                    addCurrentPointGroup(
+                        pointGroup[pointGroup.length - 1].time -
+                        pointGroup[0].time
+                    );
+                }
             });
 
             // Add callbacks to first/last events
