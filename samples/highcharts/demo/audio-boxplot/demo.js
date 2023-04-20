@@ -1,4 +1,3 @@
-// Create the chart
 var chart = Highcharts.chart('container', {
     title: {
         text: 'Exam scores per class',

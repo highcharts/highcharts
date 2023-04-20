@@ -1,0 +1,11 @@
+---
+name: Audio map
+authors:
+  - Øystein Moseng
+js_wrap: b
+requiresManualTesting: true
+tags:
+  - Highcharts Maps demo
+categories:
+  - General
+...

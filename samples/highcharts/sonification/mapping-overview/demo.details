@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Mapping overview
  authors:
    - Øystein Moseng
  requiresManualTesting: true
