@@ -409,7 +409,9 @@ class MapSeries extends ScatterSeries {
                  */
                 color: Palette.neutralColor20
             }
-        }
+        },
+
+        legendSymbol: 'rectangle'
     } as MapSeriesOptions);
 
     /* *

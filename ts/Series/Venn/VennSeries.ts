@@ -203,7 +203,8 @@ class VennSeries extends ScatterSeries {
         },
         tooltip: {
             pointFormat: '{point.name}: {point.value}'
-        }
+        },
+        legendSymbol: 'rectangle'
     } as VennSeriesOptions);
 
     /* *

@@ -389,7 +389,9 @@ class HeatmapSeries extends ScatterSeries {
                 brightness: 0.2
             }
 
-        }
+        },
+
+        legendSymbol: 'rectangle'
 
     } as HeatmapSeriesOptions);
 
