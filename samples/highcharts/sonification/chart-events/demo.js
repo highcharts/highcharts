@@ -15,25 +15,24 @@ var chart = Highcharts.chart('container', {
         duration: 7500,
         events: {
             // Speak series name on start
-            onSeriesStart: function (series) {
-                series.chart.sonification.speak(series.name, {
-                    language: 'en-US',
+            onSeriesStart: function (e) {
+                e.series.chart.sonification.speak(e.series.name, {
                     rate: 2.5,
                     volume: 0.3
                 });
             },
             // Play a noise on series end
-            onSeriesEnd: function (series) {
-                series.chart.sonification.playNote('chop', {
+            onSeriesEnd: function (e) {
+                e.series.chart.sonification.playNote('chop', {
                     note: 0,
                     pan: 1,
                     volume: 1.2
                 }, 80);
             },
             // Play notes and then announce end
-            onEnd: function (timeline) {
+            onEnd: function (e) {
                 var playNote = function (note, time) {
-                    timeline.chart.sonification.playNote('vibraphone', {
+                    e.chart.sonification.playNote('vibraphone', {
                         note: note,
                         noteDuration: 400,
                         pan: 0,
@@ -43,8 +42,7 @@ var chart = Highcharts.chart('container', {
                 playNote('c6', 40);
                 playNote('g6', 200);
 
-                timeline.chart.sonification.speak('End', {
-                    language: 'en-US',
+                e.chart.sonification.speak('End', {
                     rate: 2,
                     volume: 0.3
                 }, 400);

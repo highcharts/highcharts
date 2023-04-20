@@ -19,8 +19,8 @@ var chart = Highcharts.chart('container', {
         order: 'simultaneous',
         duration: 4000,
         events: {
-            onEnd: function (timeline) {
-                var s = timeline.chart.sonification;
+            onEnd: function (e) {
+                var s = e.chart.sonification;
                 s.playNote('vibraphone', { note: 'G4' });
                 s.playNote('vibraphone', { note: 'C4', pan: -1 });
                 s.playNote('vibraphone', { note: 'E4', pan: 0 }, 200);

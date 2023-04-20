@@ -287,7 +287,7 @@ Highcharts.chart('container', {
                         min: 'd5',
                         max: 'g6'
                     },
-                    volume: 0.07,
+                    volume: 0.08,
                     pan: 0.95
                 }
             },
@@ -299,7 +299,7 @@ Highcharts.chart('container', {
                         min: 'd6',
                         max: 'g7'
                     },
-                    volume: 0.05,
+                    volume: 0.06,
                     playDelay: 11
                 }
             }]
@@ -321,7 +321,26 @@ Highcharts.chart('container', {
                     volume: 0.25,
                     pan: -1
                 }
-            }
+            },
+            tracks: [{
+                // Default
+            }, {
+                instrument: 'kick',
+                mapping: {
+                    pan: 0,
+                    volume: 0.2,
+                    pitch: {
+                        // Map to Y, but always map to the same pitch,
+                        // so we play only when there is a Y value
+                        min: 'd5',
+                        max: 'd5'
+                    }
+                },
+                activeWhen: {
+                    prop: 'x',
+                    min: 24
+                }
+            }]
         },
         color: '#204020',
         marker: {
@@ -363,18 +382,32 @@ Highcharts.chart('container', {
                 // Plucked double comes in eventually
                 instrument: 'plucked',
                 mapping: {
+                    volume: 0.12,
                     lowpass: {
-                        frequency: 5000
+                        frequency: 6000
                     },
-                    pitch: {
-                        min: 'd3',
-                        max: 'e4'
-                    },
-                    volume: 0.08,
                     pan: 1,
                     playDelay: -4
                 },
                 // This track comes in when x = 24
+                activeWhen: {
+                    prop: 'x',
+                    min: 24
+                }
+            }, {
+                // Delay for plucked
+                instrument: 'plucked',
+                mapping: {
+                    lowpass: {
+                        frequency: 4000
+                    },
+                    highpass: {
+                        frequency: 300
+                    },
+                    volume: 0.07,
+                    pan: 1,
+                    playDelay: 338
+                },
                 activeWhen: {
                     prop: 'x',
                     min: 24
@@ -402,7 +435,7 @@ Highcharts.chart('container', {
                     },
                     pan: 0,
                     noteDuration: 280,
-                    volume: 0.68,
+                    volume: 0.6,
                     playDelay: -2
                 }
             },
@@ -484,8 +517,8 @@ Highcharts.chart('container', {
                     volume: {
                         mapTo: 'y',
                         within: 'series',
-                        min: 0.03,
-                        max: 0.1
+                        min: 0.05,
+                        max: 0.15
                     },
                     playDelay: 4
                 }
@@ -496,7 +529,7 @@ Highcharts.chart('container', {
                 // Negative delay
                 mapping: {
                     playDelay: -338,
-                    volume: 0.07,
+                    volume: 0.09,
                     pan: -1,
                     pitch: {
                         min: 'd5',
@@ -507,7 +540,7 @@ Highcharts.chart('container', {
                 // Delay
                 mapping: {
                     playDelay: 169,
-                    volume: 0.05,
+                    volume: 0.07,
                     pan: -0.5,
                     pitch: {
                         min: 'd5',
@@ -527,18 +560,12 @@ Highcharts.chart('container', {
     }, {
         // Shaker 2
         sonification: {
-            defaultInstrumentOptions: {
+            tracks: [{
                 instrument: 'chop',
                 mapping: {
-                    volume: 0.3,
-                    pan: 1,
-                    highpass: {
-                        frequency: 250
-                    }
+                    volume: 0.35,
+                    pan: 1
                 }
-            },
-            tracks: [{
-                // Default
             }, {
                 instrument: 'shaker',
                 mapping: {
@@ -576,8 +603,8 @@ Highcharts.chart('container', {
                     volume: {
                         mapTo: 'y',
                         within: 'series',
-                        min: 0.03,
-                        max: 0.08
+                        min: 0.04,
+                        max: 0.1
                     }
                 }
             },
@@ -622,7 +649,7 @@ Highcharts.chart('container', {
                         min: 'd1',
                         max: 'd2'
                     },
-                    volume: 0.15,
+                    volume: 0.16,
                     noteDuration: 1300,
                     lowpass: {
                         frequency: 500

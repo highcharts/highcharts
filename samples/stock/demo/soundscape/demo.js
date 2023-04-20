@@ -484,7 +484,6 @@ document.getElementById('months').onclick = function () {
 
     if (this.checked) {
         chart.sonification.speak('December', {
-            language: 'en-US',
             rate: 2.5,
             volume: 0.2
         });
