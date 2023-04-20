@@ -62,14 +62,11 @@ function process(
     ) {
         value = values[i];
 
-        if (
-            typeof value === 'number' &&
-            !isNaN(value)
-        ) {
-            ++count;
-        } else if (
-            value instanceof Array
-        ) {
+        if (typeof value === 'number') {
+            if (!isNaN(value)) {
+                ++count;
+            }
+        } else if (value instanceof Array) {
             count += process(value);
         }
     }

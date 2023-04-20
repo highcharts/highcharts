@@ -1,11 +1,25 @@
 * Common use-cases:
+  - AND
+  - AVERAGE ✅
+  - AVERAGEA
+  - AVERAGEIF ⏳
+  - AVERAGEIFS ⏳
+  - COUNT ✅
+  - COUNTIF ⏳
+  - COUNTIFS ⏳
+  - IF ✅
+  - MAX
+  - MEDIAN
+  - MIN
+  - MODE
+  - MODE.MULT
+  - MODE.SNGL
+  - NOT ✅
+  - OR
+  - PRODUCT
   - SUBTOTAL-3
   - SUBTOTAL-9
-
-  - AND
-  - OR
+  - SUM ✅
+  - SUMIF ⏳
+  - SUMIFS ⏳
   - XOR
-
-  - COUNTIF(range, test-string)
-  - COUNTIFS
-  - SUMIF(range, test-string)

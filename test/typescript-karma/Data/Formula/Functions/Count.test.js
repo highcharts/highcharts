@@ -1,6 +1,7 @@
 import DataTable from '/base/code/es-modules/Data/DataTable.js';
 import Formula from '/base/code/es-modules/Data/Formula/Formula.js';
 
+
 QUnit.test('Formula.ProcessorFunction.types.COUNT', function (assert) {
     const table = new DataTable({
             columns: { values: [1, 2, 3, 4, 5, 6, false, true, null, '7'] }
