@@ -236,9 +236,8 @@ class FlowMapSeries extends MapLineSeries {
              */
             headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.options.weight}</b>'
-        },
+        }
 
-        legendSymbol: 'rectangle'
     } as FlowMapSeriesOptions);
 
     /* *
