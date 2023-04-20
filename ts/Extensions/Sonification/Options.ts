@@ -15,22 +15,38 @@
 import type OptionsType from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
+import type Chart from '../../Core/Chart/Chart';
 import type SonificationTimeline from './SonificationTimeline';
 import type SynthPatch from './SynthPatch';
 
 declare global {
     namespace Sonification {
-        interface EventContext {
+        interface TimelineEventContext {
             time: number;
             point?: Point;
             value?: number;
         }
-        type SeriesCallback = (
-            series: Series, timeline: SonificationTimeline
-        ) => void;
-        type TrackValueCallback = (context: EventContext) => number;
-        type TrackStringCallback = (context: EventContext) => string;
-        type TrackPredicateCallback = (context: EventContext) => boolean;
+        interface ChartEventContext {
+            chart?: Chart,
+            timeline?: SonificationTimeline,
+            pointsPlayed?: Point[]
+        }
+        interface SeriesEventContext {
+            series?: Series,
+            timeline?: SonificationTimeline
+        }
+        interface BoundaryHitContext {
+            chart?: Chart,
+            timeline: SonificationTimeline,
+            attemptedNext?: boolean
+        }
+        type SeriesCallback = (s: SeriesEventContext) => void;
+        type ChartCallback = (c: ChartEventContext) => void;
+        type BoundaryHitCallback = (e: BoundaryHitContext) => void;
+        type TrackValueCallback = (context: TimelineEventContext) => number;
+        type TrackStringCallback = (context: TimelineEventContext) => string;
+        type TrackPredicateCallback =
+            (context: TimelineEventContext) => boolean;
         type TrackOptions = Array<InstrumentTrackOptions|SpeechTrackOptions>;
         type InstrumentContextTrackOptions = InstrumentTrackOptions &
         ContextOptions;
@@ -137,14 +153,15 @@ declare global {
         }
 
         interface ChartSonificationEventsOptions {
-            onPlay?: Function;
-            onStop?: Function;
-            onEnd?: Function;
+            onPlay?: ChartCallback;
+            onStop?: ChartCallback;
+            onEnd?: ChartCallback;
             onSeriesStart?: SeriesCallback;
             onSeriesEnd?: SeriesCallback;
-            onBoundaryHit?: Function;
-            beforeUpdate?: Function;
-            afterUpdate?: Function;
+            onBoundaryHit?: BoundaryHitCallback;
+            beforePlay?: ChartCallback;
+            beforeUpdate?: ChartCallback;
+            afterUpdate?: ChartCallback;
         }
 
         interface ChartSonificationOptions {

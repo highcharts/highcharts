@@ -38,9 +38,9 @@ declare global {
 }
 
 interface SonificationTimelineOptions {
-    onPlay?: Function;
-    onEnd?: Function;
-    onStop?: Function;
+    onPlay?: Sonification.ChartCallback;
+    onEnd?: Sonification.ChartCallback;
+    onStop?: Sonification.ChartCallback;
     showPlayMarker?: boolean;
     showCrosshairOnly?: boolean;
     skipThreshold?: number;
@@ -139,7 +139,7 @@ class SonificationTimeline {
         filter?: Sonification.TimelineFilterCallback,
         filterPersists = true,
         resetAfter = true,
-        onEnd?: Function
+        onEnd?: Sonification.ChartCallback
     ): void {
         if (this.isPlaying) {
             this.cancel();
@@ -169,7 +169,7 @@ class SonificationTimeline {
         }
 
         if (onPlay) {
-            onPlay(this);
+            onPlay({ chart: this.chart, timeline: this });
         }
 
         let maxTime = 0;
@@ -270,19 +270,20 @@ class SonificationTimeline {
             onStop = this.options.onStop;
         this.scheduledCallbacks.push(setTimeout(
             (): void => {
-                const chart = this.chart;
+                const chart = this.chart,
+                    context = { chart, timeline: this, pointsPlayed };
                 this.isPlaying = false;
                 if (resetAfter) {
                     this.resetPlayState();
                 }
                 if (onStop) {
-                    onStop({ timeline: this, pointsPlayed });
+                    onStop(context);
                 }
                 if (onEndOpt) {
-                    onEndOpt(this, pointsPlayed);
+                    onEndOpt(context);
                 }
                 if (onEnd) {
-                    onEnd(this, pointsPlayed);
+                    onEnd(context);
                 }
                 if (chart) {
                     if (chart.tooltip) {
@@ -341,8 +342,8 @@ class SonificationTimeline {
     // Play event(s) occurring next/prev from paused state.
     playAdjacent(
         next: boolean,
-        onEnd?: Function,
-        onBoundaryHit?: Function,
+        onEnd?: Sonification.ChartCallback,
+        onBoundaryHit?: Sonification.BoundaryHitCallback,
         eventFilter?: Sonification.TimelineFilterCallback
     ): void {
         if (this.isPlaying) {
@@ -386,7 +387,9 @@ class SonificationTimeline {
 
         if (closestTime === Infinity || closestTime === -Infinity) {
             if (onBoundaryHit) {
-                onBoundaryHit({ timeline: this, next });
+                onBoundaryHit({
+                    chart: this.chart, timeline: this, attemptedNext: next
+                });
             }
             return;
         }
@@ -410,8 +413,8 @@ class SonificationTimeline {
     playClosestToPropValue(
         prop: keyof Point,
         targetVal: number,
-        onEnd?: Function,
-        onBoundaryHit?: Function,
+        onEnd?: Sonification.ChartCallback,
+        onBoundaryHit?: Sonification.BoundaryHitCallback,
         eventFilter?: Sonification.TimelineFilterCallback
     ): void {
         const filter = (
@@ -456,7 +459,7 @@ class SonificationTimeline {
                 closestEvent as Sonification.TimelineEvent
             ).time;
         } else if (onBoundaryHit) {
-            onBoundaryHit({ timeline: this });
+            onBoundaryHit({ chart: this.chart, timeline: this });
         }
     }
 
@@ -477,7 +480,7 @@ class SonificationTimeline {
 
     // Divide timeline into 100 parts of equal time, and play one of them.
     // Used for scrubbing.
-    playSegment(segment: number, onEnd?: Function): void {
+    playSegment(segment: number, onEnd?: Sonification.ChartCallback): void {
         const numSegments = 100;
         const eventTimes = {
             first: Infinity,
@@ -579,7 +582,10 @@ class SonificationTimeline {
 
 
     cancel(): void {
-        this.fireStopEvent();
+        const onStop = this.options.onStop;
+        if (onStop) {
+            onStop({ chart: this.chart, timeline: this });
+        }
         this.isPlaying = false;
         this.channels.forEach((c): void => c.cancel());
         if (this.playingChannels && this.playingChannels !== this.channels) {
@@ -633,14 +639,6 @@ class SonificationTimeline {
         delete this.playingChannels;
         this.playTimestamp = this.resumeFromTime = 0;
         this.isPaused = false;
-    }
-
-
-    private fireStopEvent(): void {
-        const onStop = this.options.onStop;
-        if (onStop) {
-            onStop({ timeline: this });
-        }
     }
 
 

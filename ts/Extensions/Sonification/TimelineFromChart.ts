@@ -335,7 +335,7 @@ function mapToVirtualAxis(
  * @private
  */
 function getMappingParameterValue(
-    context: Sonification.EventContext,
+    context: Sonification.TimelineEventContext,
     propMetrics: PropMetrics,
     useSeriesExtremes: boolean,
     defaultMapping: Required<Sonification.MappingParameterOptions>,
@@ -459,7 +459,7 @@ function getMappingParameterValue(
  * @private
  */
 function getParamValWithDefault(
-    context: Sonification.EventContext,
+    context: Sonification.TimelineEventContext,
     propMetrics: PropMetrics,
     useSeriesExtremes: boolean,
     mappingParamOptions: Sonification.MappingParameter,
@@ -602,7 +602,7 @@ function addTimelineChannelFromTrack(
  * @private
  */
 function addMappedInstrumentEvent(
-    context: Sonification.EventContext,
+    context: Sonification.TimelineEventContext,
     channel: TimelineChannel,
     mappingOptions: Sonification.InstrumentTrackMappingOptions,
     propMetrics: PropMetrics,
@@ -719,7 +719,7 @@ function addMappedInstrumentEvent(
  * @private
  */
 function getSpeechMessageValue(
-    context: Sonification.EventContext,
+    context: Sonification.TimelineEventContext,
     messageParam: string|Sonification.TrackStringCallback
 ): string {
     return format(
@@ -737,7 +737,7 @@ function getSpeechMessageValue(
  * @private
  */
 function addMappedSpeechEvent(
-    context: Sonification.EventContext,
+    context: Sonification.TimelineEventContext,
     channel: TimelineChannel,
     mappingOptions: Sonification.SpeechTrackMappingOptions,
     propMetrics: PropMetrics,
@@ -779,7 +779,7 @@ function addMappedSpeechEvent(
  * @private
  */
 function addMappedEventForPoint(
-    context: Sonification.EventContext,
+    context: Sonification.TimelineEventContext,
     channel: TimelineChannel,
     trackOptions: (
         Sonification.InstrumentTrackOptions|
@@ -874,7 +874,7 @@ function getGroupedPoints(
  * @private
  */
 function isActive(
-    context: Sonification.EventContext,
+    context: Sonification.TimelineEventContext,
     activeWhen?: Sonification.TrackPredicateCallback|
     Sonification.ValueConstraints,
     lastPropValue?: number
@@ -1114,10 +1114,10 @@ function timelineFromChart(
                     e.time > last.time ? e : last
                 ), { time: -Infinity });
             firstEvent.callback = eventOptions.onSeriesStart ?
-                eventOptions.onSeriesStart.bind(null, series, timeline) :
+                eventOptions.onSeriesStart.bind(null, { series, timeline }) :
                 void 0;
             lastEvent.callback = eventOptions.onSeriesEnd ?
-                eventOptions.onSeriesEnd.bind(null, series, timeline) :
+                eventOptions.onSeriesEnd.bind(null, { series, timeline }) :
                 void 0;
 
             // Add the context tracks that are not related to points
