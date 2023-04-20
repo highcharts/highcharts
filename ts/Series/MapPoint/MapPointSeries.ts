@@ -100,7 +100,8 @@ class MapPointSeries extends ScatterSeries {
                 /** @internal */
                 color: Palette.neutralColor100
             }
-        }
+        },
+        legendSymbol: 'lineMarker'
     } as MapPointSeriesOptions);
 
     /* *

@@ -79,7 +79,8 @@ class PolygonSeries extends ScatterSeries {
             followPointer: true,
             pointFormat: ''
         },
-        trackByArea: true
+        trackByArea: true,
+        legendSymbol: 'rectangle'
     }) as PolygonSeriesOptions;
 
     /* *
