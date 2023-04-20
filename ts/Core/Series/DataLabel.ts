@@ -518,7 +518,7 @@ namespace DataLabel {
                     (group[
                         seriesOptions.animation ? 'animate' : 'attr'
                     ] as any)(
-                        { opacity: 1 },
+                        { opacity: seriesOptions.opacity }, // #17006
                         animationConfig
                     );
                 }
