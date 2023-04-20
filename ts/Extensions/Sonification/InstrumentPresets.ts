@@ -69,7 +69,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
 
     // PLUCKED --------------------------
     plucked: {
-        masterVolume: 0.7,
+        masterVolume: 0.5,
         midiInstrument: 25,
         masterAttackEnvelope: [
             { t: 1, vol: 0.71 },
@@ -85,14 +85,14 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             { frequency: 1600, Q: 1, gain: -14 },
             { frequency: 2200, Q: 1, gain: -8 },
             { frequency: 3600, Q: 1, gain: -2 },
-            { frequency: 6400, Q: 2, gain: -6 },
-            { frequency: 12800, Q: 1, gain: 2 }
+            { frequency: 6400, Q: 2, gain: -6 }
         ],
         oscillators: [{
             type: 'sawtooth',
             volume: 0.9,
             volumePitchTrackingMultiplier: 0.6,
             highpass: { frequency: 100 },
+            lowpass: { frequency: 8000 },
             releaseEnvelope: [
                 { t: 1, vol: 1 },
                 { t: 315, vol: 0.56 },
@@ -103,7 +103,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
 
     // FLUTE ----------------------------
     flute: {
-        masterVolume: 0.95,
+        masterVolume: 1.1,
         midiInstrument: 74,
         noteGlideDuration: 30,
         masterAttackEnvelope: [
@@ -129,7 +129,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
         ],
         oscillators: [{
             type: 'triangle',
-            volume: 0.9,
+            volume: 1,
             volumePitchTrackingMultiplier: 0.4,
             lowpass: {
                 frequency: 12,
@@ -151,7 +151,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             ]
         }, {
             type: 'whitenoise',
-            volume: 0.12,
+            volume: 0.13,
             lowpass: {
                 frequency: 9000,
                 Q: 3
@@ -467,7 +467,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
 
     // BASIC1 ---------------------------
     basic1: {
-        masterVolume: 0.9,
+        masterVolume: 1,
         noteGlideDuration: 0,
         masterReleaseEnvelope: [
             { t: 1, vol: 0.36 },
@@ -485,7 +485,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
         ],
         oscillators: [{
             type: 'triangle',
-            volume: 0.9,
+            volume: 1,
             volumePitchTrackingMultiplier: 0.05,
             lowpass: { frequency: 17, frequencyPitchTrackingMultiplier: 100 },
             highpass: { frequency: 200 }
@@ -743,6 +743,46 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             volume: 1.5,
             lowpass: { frequency: 300 },
             highpass: { frequency: 100, Q: 6 }
+        }]
+    },
+
+    kick: {
+        masterVolume: 0.55,
+        masterAttackEnvelope: [
+            { t: 1, vol: 0.8 },
+            { t: 15, vol: 1 },
+            { t: 45, vol: 0.35 },
+            { t: 121, vol: 0.11 },
+            { t: 242, vol: 0 }
+        ],
+        eq: [
+            { frequency: 50, gain: 6 },
+            { frequency: 400, gain: -18 },
+            { frequency: 1600, gain: 18 }
+        ],
+        oscillators: [{
+            type: 'triangle',
+            fixedFrequency: 90,
+            volume: 1,
+            lowpass: { frequency: 300 },
+            attackEnvelope: [
+                { t: 1, vol: 1 },
+                { t: 6, vol: 1 },
+                { t: 45, vol: 0.01 }
+            ]
+        }, {
+            type: 'whitenoise',
+            volume: 0.4,
+            lowpass: { frequency: 200 },
+            attackEnvelope: [
+                { t: 1, vol: 1 },
+                { t: 30, vol: 0 }
+            ]
+        }, {
+            type: 'triangle',
+            freqMultiplier: 0.1,
+            volume: 1,
+            lowpass: { frequency: 200 }
         }]
     },
 
