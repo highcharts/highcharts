@@ -124,13 +124,13 @@ function basicOperation(
  * @param {Highcharts.DataTable} [table]
  * Table to use for pointers and ranges.
  *
- * @return {Formula.Value|undefined}
- * Result value of the process. `undefined` indicates an empty formula array.
+ * @return {Formula.Value}
+ * Result value of the process. `NaN` indicates an error.
  */
 function processFormula(
     formula: Formula,
     table?: DataTable
-): (Value|undefined) {
+): Value {
     let x: (Value|undefined);
 
     for (
@@ -138,8 +138,8 @@ function processFormula(
             iEnd = formula.length,
             item: Item,
             operator: (Operator|undefined),
-            y: (Value|undefined),
-            ys: (Value|Array<Value>|undefined);
+            result: (Value|Array<Value>),
+            y: (Value|undefined);
         i < iEnd;
         ++i
     ) {
@@ -157,16 +157,16 @@ function processFormula(
 
         // Next item is a formula and needs to get processed first
         } else if (isFormula(item)) {
-            y = (processFormula(formula, table) || NaN);
+            y = processFormula(formula, table);
 
         // Next item is a function call and needs to get processed first
         } else if (isFunction(item)) {
-            ys = (processFunction(item, table) || NaN);
-            y = (isValue(ys) ? ys : NaN);
+            result = processFunction(item, table);
+            y = (isValue(result) ? result : NaN); // arrays are not allowed here
 
         // Next item is a pointer and needs to get resolved
         } else if (isPointer(item)) {
-            y = (table && processPointer(item, table) || NaN);
+            y = (table && processPointer(item, table));
 
         }
 
@@ -187,7 +187,7 @@ function processFormula(
         }
     }
 
-    return x;
+    return isValue(x) ? x : NaN;
 }
 
 
@@ -210,7 +210,7 @@ function processFormula(
 function processFunction(
     formulaFunction: Function,
     table?: DataTable
-): (Value|Array<Value>|undefined) {
+): (Value|Array<Value>) {
     const processor = FormulaFunction.types[formulaFunction.name];
 
     if (processor) {
@@ -218,7 +218,13 @@ function processFunction(
             values: Array<(Value|Array<Value>)> = [];
 
         // First process all arguments to values
-        for (let i = 0, iEnd = args.length, term: (Range|Term); i < iEnd; ++i) {
+        for (
+            let i = 0,
+                iEnd = args.length,
+                term: (Range|Term);
+            i < iEnd;
+            ++i
+        ) {
             term = args[i];
 
             // Add value
@@ -231,23 +237,22 @@ function processFunction(
 
             // Add values of a function
             } else if (isFunction(term)) {
-                values.push(table && processFunction(term, table) || NaN);
+                values.push(processFunction(term, table));
 
             // Process functions, operations, pointers with formula processor
             } else {
-                values.push(
-                    processFormula(
-                        isFormula(term) ? term : [term],
-                        table
-                    ) ||
-                    NaN
-                );
+                values.push(processFormula(
+                    (isFormula(term) ? term : [term]),
+                    table
+                ));
             }
         }
 
         // Provide all values to the processor function
         return processor.process(values);
     }
+
+    return NaN;
 }
 
 
@@ -268,21 +273,26 @@ function processFunction(
 function processPointer(
     pointer: Pointer,
     table: DataTable
-): (Value|undefined) {
+): Value {
     const columnName = table.getColumnNames()[pointer.column];
 
     if (columnName) {
         const cell = table.getCell(columnName, pointer.row);
 
-        switch (typeof cell) {
-            case 'boolean':
-            case 'number':
-            case 'string':
-                return cell;
-            default:
-                return NaN;
+        if (
+            typeof cell === 'string' &&
+            cell[0] === '=' &&
+            table !== table.modified
+        ) {
+            // Look in the modified table for formula result
+            const result = table.modified.getCell(columnName, pointer.row);
+            return isValue(result) ? result : NaN;
         }
+
+        return isValue(cell) ? cell : NaN;
     }
+
+    return NaN;
 }
 
 
@@ -297,46 +307,49 @@ function processPointer(
  * @param {Highcharts.DataTable} table
  * Table to extract from.
  *
- * @return {Array<Highcharts.FormulaValue>|undefined}
- * Extracted values. 'undefined' indicates that the range was not found.
+ * @return {Array<Highcharts.FormulaValue>}
+ * Extracted values.
  */
 function processRange(
     range: Range,
     table: DataTable
-): (Array<Value>|undefined) {
+): Array<Value> {
     const columnNames = table
-        .getColumnNames()
-        .slice(range.beginColumn, range.endColumn + 1);
+            .getColumnNames()
+            .slice(range.beginColumn, range.endColumn + 1),
+        values: Array<Value> = [];
 
-    if (columnNames.length) {
-        const values: Array<Value> = [];
+    for (
+        let i = 0,
+            iEnd = columnNames.length,
+            cell: DataTable.CellType;
+        i < iEnd;
+        ++i
+    ) {
+        const cells = table.getColumn(columnNames[i], true) || [];
 
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            const cells = table.getColumn(columnNames[i], true) || [];
+        for (
+            let j = range.beginRow,
+                jEnd = range.endRow + 1;
+            j < jEnd;
+            ++j
+        ) {
+            cell = cells[j];
 
-            for (
-                let j = range.beginRow,
-                    jEnd = range.endRow + 1,
-                    cell: DataTable.CellType;
-                j < jEnd;
-                ++j
+            if (
+                typeof cell === 'string' &&
+                cell[0] === '=' &&
+                table !== table.modified
             ) {
-                cell = cells[j];
-                switch (typeof cell) {
-                    case 'boolean':
-                    case 'number':
-                    case 'string':
-                        values.push(cell);
-                        break;
-                    default:
-                        values.push(NaN);
-                        break;
-                }
+                // Look in the modified table for formula result
+                cell = table.modified.getCell(columnNames[i], j);
             }
-        }
 
-        return values;
+            values.push(isValue(cell) ? cell : NaN);
+        }
     }
+
+    return values;
 }
 
 

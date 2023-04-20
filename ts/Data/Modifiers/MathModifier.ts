@@ -24,13 +24,19 @@
 
 import type DataEvent from '../DataEvent';
 import type DataTable from '../DataTable';
-import type { Formula } from '../Formula/Formula';
+import type {
+    Formula,
+    Value
+} from '../Formula/Formula';
 
 
 import DataModifier from './DataModifier.js';
 import FormulaParser from '../Formula/FormulaParser.js';
 import FormulaProcessor from '../Formula/FormulaProcessor.js';
-
+import FormulaTypes from '../Formula/FormulaTypes.js';
+const {
+    isValue
+} = FormulaTypes;
 
 /* *
  *
@@ -193,9 +199,8 @@ class MathModifier extends DataModifier {
                 );
 
                 // process parsed formula string
-                column[i] = FormulaProcessor
-                    .processFormula(cacheFormula, table) || NaN;
-
+                column[i] =
+                    FormulaProcessor.processFormula(cacheFormula, table);
             }
         }
 
@@ -243,7 +248,7 @@ class MathModifier extends DataModifier {
             ++i
         ) {
             // @todo pass some form of row index to recalculate pointer/ranges
-            column[i] = FormulaProcessor.processFormula(formula, table) || NaN;
+            column[i] = FormulaProcessor.processFormula(formula, table);
         }
 
         return column;

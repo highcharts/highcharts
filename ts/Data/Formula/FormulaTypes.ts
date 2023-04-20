@@ -58,6 +58,8 @@ export type Operator = ('+'|'-'|'*'|'/'|'^'|'='|'<'|'<='|'>'|'>=');
 
 /**
  * Represents an A1 pointer to a table cell.
+ *
+ * **Note:** Pointer to a formula is only supported as a back reference.
  */
 export interface Pointer {
     column: number;
@@ -68,6 +70,8 @@ export interface Pointer {
 
 /**
  * Represents an A1:A1 range to cells of a table.
+ *
+ * **Note:** Range with formulas is only supported as back references.
  */
 export interface Range {
     beginColumn: number;
@@ -247,14 +251,14 @@ function isRange(
  *
  * @private
  *
- * @param {Highcharts.FormulaItem} item
+ * @param {Highcharts.FormulaItem|null|undefined} item
  * Item to test.
  *
  * @return {boolean}
  * `true`, if the item is a value.
  */
 function isValue(
-    item: Item
+    item: (Item|null|undefined)
 ): item is Value {
     return (
         typeof item === 'boolean' ||
