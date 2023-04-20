@@ -515,7 +515,7 @@ class HeatmapSeries extends ScatterSeries {
                                     (y: number): number => (y * width)
                                 ),
                                 col = (xAxis.reversed ?
-                                    (x: number): number => (width - x) :
+                                    (x: number): number => ((width - 1) - x) :
                                     (x: number): number => (x)
                                 ),
                                 scaled = (
@@ -524,14 +524,10 @@ class HeatmapSeries extends ScatterSeries {
                                     pixelScale: number
                                 ): number => (
                                     ~~((axisVal - axisMin) * pixelScale)
-                                ),
-                                yIncr = (inverted ?
-                                    (y: number): number => y :
-                                    (y: number): number => (yMax - y)
                                 );
                             return (x: number, y: number): number => (
                                 4 * (
-                                    row(scaled(yIncr(y), yMin, yPixelScale)) +
+                                    row(scaled(yMax - y, yMin, yPixelScale)) +
                                     col(scaled(x, xMin, xPixelScale))
                                 )
                             );
