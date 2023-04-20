@@ -24,11 +24,9 @@
 
 import type MenuItem from './Menu/MenuItem.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type EditableOptions from '../Components/EditableOptions.js';
+import type EditMode from './EditMode.js';
 
-import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
-import { HTMLDOMElement as HTMLElement } from '../../Core/Renderer/DOMElementType.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
