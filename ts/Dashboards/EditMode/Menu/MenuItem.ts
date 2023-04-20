@@ -112,30 +112,32 @@ class MenuItem {
             return;
         }
 
-        const element = renderItem(container, this.getElementOptions(options));
         const callback = function (): void {
             if (options.events && options.events.click) {
                 options.events.click.apply(item, arguments);
             }
         };
+        const element = renderItem(
+            container,
+            this.getElementOptions(options, callback)
+        );
         element.addEventListener('click', callback);
     }
 
     private getElementOptions(
         options: MenuItem.Options,
-        callback?: () => void
+        callback?: Function
     ): MenuItem.Options {
 
         return {
             id: options.id,
             name: options.id,
             title: options.collapsable ? '' : options.text || '',
-            callback,
             item: this,
             icon: options.icon,
             mousedown: options.events && options.events.onmousedown,
             value: options.value || '',
-            onchange: options.events && options.events.change,
+            onchange: callback,
             items: options.items
         };
     }

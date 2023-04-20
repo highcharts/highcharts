@@ -331,6 +331,8 @@
 }
 
 .highcharts-dashboards-edit-toggle-container {
+    align-items: center;
+    justify-content: space-around;
     display: flex;
     min-width: 100px;
 }
@@ -398,7 +400,6 @@
     padding: 0 5px;
     margin: 0;
     width: auto;
-    margin-top: 10px;
     line-height: 1em;
     font-size: 0.756em;
 }
