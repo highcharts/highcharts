@@ -112,16 +112,16 @@ class MenuItem {
             return;
         }
 
+        const value = this.options.getValue && this.options.getValue(item);
         const callback = function (): void {
             if (options.events && options.events.click) {
                 options.events.click.apply(item, arguments);
             }
         };
-        const element = renderItem(
+        return renderItem(
             container,
-            this.getElementOptions(options, callback)
+            this.getElementOptions(merge(options, { value }), callback)
         );
-        element.addEventListener('click', callback);
     }
 
     private getElementOptions(
@@ -184,6 +184,7 @@ namespace MenuItem {
         type?: 'addComponent'|'addLayout'|'horizontalSeparator'|'icon'|'input'|
         'toggle'|'text'|'textarea'|'verticalSeparator'|'select';
         text?: string;
+        getValue?: (item: MenuItem) => string | number | boolean;
         className?: string;
         events?: Record<Event['type'], Function>;
         mousedown?: Function;

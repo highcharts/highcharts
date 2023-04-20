@@ -414,6 +414,12 @@ function renderToggle(
         input.addEventListener('change', (e: any): void => {
             onchange(e.target.checked);
         });
+
+        toggleContainer.addEventListener('click', (e: any): void => {
+            onchange((input as HTMLInputElement).checked);
+            (input as HTMLInputElement).checked = !(input as HTMLInputElement)
+                .checked;
+        });
     }
 
 
@@ -433,6 +439,7 @@ function renderToggle(
             className: EditGlobals.classNames.toggleLabels
         });
     }
+
 
     return toggleContainer;
 }
