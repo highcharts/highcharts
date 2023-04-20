@@ -1,0 +1,11 @@
+---
+name: Sonified function
+authors:
+  - Øystein Moseng
+js_wrap: b
+skipTest: true
+tags:
+  - Highcharts demo
+categories:
+  - Audio charts
+...
