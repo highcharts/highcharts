@@ -196,9 +196,13 @@ const configs: {
                                                 if (!(e as any).resetSelection) {
                                                     const axis = e.target as unknown as Axis;
 
-                                                    // Find a series that that is in the datatable
-                                                    // TODO: it should find the series with the largest difference between first value and last value
-                                                    const [series] = axis.series.filter((series): boolean => store.table.getColumnNames()[0] === series.name);
+                                                    // Prefer a series that's in a related table,
+                                                    // but allow for other data
+                                                    const seriesInTable = axis.series
+                                                        .filter((series): boolean => store.table.getColumnNames()[0] === series.name);
+                                                    const [series] = seriesInTable.length ?
+                                                        seriesInTable :
+                                                        axis.series;
 
                                                     if (series) {
                                                         // Get the indexes of the first and last drawn points
@@ -215,7 +219,7 @@ const configs: {
                                                             state: `${axis.coll}.extremes.max`
                                                         };
 
-                                                        if (axis.coll === 'xAxis' && visiblePoints.length) {
+                                                        if (seriesInTable.length && axis.coll === 'xAxis' && visiblePoints.length) {
                                                             minCursorData.row = visiblePoints[0].index;
                                                             minCursorData.column = axis.dateTime ? 'x' : series.name;
 
@@ -375,75 +379,10 @@ const configs: {
 
                 const callbacks: Function[] = [];
 
-
                 const { chart, board, connector: store } = this;
 
                 if (chart && board && store && store.table) {
                     const { dataCursor: cursor } = board;
-
-                    // Leaving this as an example on how to do it via the dataTable for other components
-                    // Since this is HC -> HC we can just use axis values
-                    // ['xAxis'].forEach((dimension): void => {
-                    //     let timeOut = 0;
-                    //
-                    //     const onAfterUpdate = (axis: Axis): void => {
-                    //         if (timeOut) {
-                    //             clearTimeout(timeOut);
-                    //         }
-                    //         timeOut = setTimeout((): void => {
-                    //             if(cursor.stateMap[store.table.id]){
-                    //                 const states = cursor.stateMap[store.table.id];
-                    //                  const mins = states['xAxis.extremes.min'];
-                    //                  const maxes = states['xAxis.extremes.max'];
-                    //
-                    //                  const minRow: number = (mins[mins.length -1] as any).row;
-                    //                  const minColumn: string = (mins[mins.length -1] as any).column;
-                    //                  const maxRow: number = (maxes[maxes.length -1] as any).row ;
-                    //                  const maxColumn: string = (maxes[maxes.length -1] as any).column;
-                    //
-                    //                  const minValue = store.table.getCellAsNumber(minColumn, minRow);
-                    //                  const maxValue = store.table.getCellAsNumber(maxColumn, maxRow);
-                    //
-                    //                  console.log({minValue, maxValue})
-                    //
-                    //                  if(minValue !== null && maxValue !== null){
-                    //                     axis.setExtremes(minRow, maxRow);
-                    //                  }
-                    //
-                    //             }
-                    //
-                    //             timeOut = 0;
-                    //         }, 10);
-                    //     };
-                    //
-                    //     function handleUpdateExtremes(e: DataCursor.Event){
-                    //         const { cursor, event, table } = e;
-                    //
-                    //         if (cursor.type === 'position') {
-                    //             const { row, column } = cursor;
-                    //             const eventTarget = event && event.target as unknown as Axis;
-                    //
-                    //             if (column && row !== undefined) {
-                    //
-                    //                 if (eventTarget && chart) {
-                    //                     const axes = chart.xAxis;
-                    //                     axes.forEach((axis): void => {
-                    //                         if (eventTarget.coll === axis.coll && eventTarget !== axis) {
-                    //                             onAfterUpdate(axis)
-                    //                         }
-                    //                     });
-                    //                 }
-                    //             }
-                    //         }
-                    //
-                    //     }
-                    //
-                    //     cursor.addListener(store.table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
-                    //
-                    //     cursor.addListener(store.table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
-                    // });
-                    //
-
 
                     ['xAxis', 'yAxis'].forEach((dimension): void => {
                         const handleUpdateExtremes = (e: DataCursor.Event): void => {
@@ -454,13 +393,26 @@ const configs: {
                                 if (eventTarget && chart) {
                                     const axes = (chart as any)[dimension] as unknown as Axis[];
                                     axes.forEach((axis): void => {
-                                        if (eventTarget.coll === axis.coll && eventTarget !== axis) {
+                                        if (
+                                            eventTarget.coll === axis.coll &&
+                                            eventTarget !== axis
+                                        ) {
                                             if (eventTarget.min !== null && eventTarget.max !== null) {
                                                 if (
                                                     axis.max !== eventTarget.max &&
                                                         axis.min !== eventTarget.min
                                                 ) {
-                                                    axis.setExtremes(eventTarget.min, eventTarget.max);
+                                                    axis
+                                                        .setExtremes(
+                                                            eventTarget.min,
+                                                            eventTarget.max,
+                                                            true,
+                                                            false,
+                                                            {
+                                                                trigger: 'dashboards-sync'
+                                                            }
+                                                        );
+
                                                 }
                                             }
                                         }
@@ -485,7 +437,11 @@ const configs: {
                         const { cursor, event } = e;
                         const eventTarget = event && event.target as unknown as Chart;
 
-                        if (cursor.type === 'position' && eventTarget !== chart) {
+                        if (
+                            cursor.type === 'position' &&
+                            eventTarget &&
+                            eventTarget !== chart
+                        ) {
                             chart.zoomOut();
                         }
                     };
@@ -495,7 +451,11 @@ const configs: {
                     const handleChartShowZoom = (e: DataCursor.Event): void => {
                         const { cursor, event } = e;
                         const eventTarget = event && event.target as unknown as Chart;
-                        if (cursor.type === 'position' && eventTarget !== chart) {
+                        if (
+                            cursor.type === 'position' &&
+                            eventTarget &&
+                            eventTarget !== chart
+                        ) {
                             chart.showResetZoom();
                         }
                     };
