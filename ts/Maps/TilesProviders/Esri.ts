@@ -6,7 +6,7 @@
 
 import type ProviderDefinition from '../ProviderDefinition';
 
-export default class Esri implements ProviderDefinition {
+class Esri implements ProviderDefinition {
     themes = {
         WorldStreetMap: {
             url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
@@ -78,3 +78,5 @@ export default class Esri implements ProviderDefinition {
         USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong),
         Esri (Thailand), TomTom, 2012`;
 }
+
+export default Esri;

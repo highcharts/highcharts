@@ -6,7 +6,7 @@
 
 import type ProviderDefinition from '../ProviderDefinition';
 
-export default class OpenStreetMap implements ProviderDefinition {
+class OpenStreetMap implements ProviderDefinition {
     subdomains = ['a', 'b', 'c'];
 
     themes = {
@@ -36,3 +36,5 @@ export default class OpenStreetMap implements ProviderDefinition {
     defaultCredits = `Map data \u00a92023 <a href="https://www.openstreetmap.org/copyright">
             OpenStreetMap</a>`;
 }
+
+export default OpenStreetMap;

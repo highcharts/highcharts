@@ -6,7 +6,7 @@
 
 import type ProviderDefinition from '../ProviderDefinition';
 
-export default class Stamen implements ProviderDefinition {
+class Stamen implements ProviderDefinition {
     subdomains = ['a', 'b', 'c', 'd'];
 
     themes = {
@@ -53,3 +53,5 @@ export default class Stamen implements ProviderDefinition {
         Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under
         <a href="https://www.openstreetmap.org/copyright">ODbL</a>`;
 }
+
+export default Stamen;

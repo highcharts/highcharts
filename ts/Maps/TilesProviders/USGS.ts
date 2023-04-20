@@ -6,7 +6,7 @@
 
 import type ProviderDefinition from '../ProviderDefinition';
 
-export default class USGS implements ProviderDefinition {
+class USGS implements ProviderDefinition {
     themes = {
         USTopo: {
             url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
@@ -30,3 +30,5 @@ export default class USGS implements ProviderDefinition {
     defaultCredits = `Tiles courtesy of the <a href="https://usgs.gov/">U.S.
         Geological Survey</a>`;
 }
+
+export default USGS;

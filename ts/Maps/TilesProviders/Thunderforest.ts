@@ -6,7 +6,7 @@
 
 import type ProviderDefinition from '../ProviderDefinition';
 
-export default class Thunderforest implements ProviderDefinition {
+class Thunderforest implements ProviderDefinition {
     subdomains = ['a', 'b', 'c'];
 
     themes = {
@@ -64,3 +64,5 @@ export default class Thunderforest implements ProviderDefinition {
 
     requiresApiKey = true;
 }
+
+export default Thunderforest;

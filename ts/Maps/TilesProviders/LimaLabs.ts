@@ -6,7 +6,7 @@
 
 import type ProviderDefinition from '../ProviderDefinition';
 
-export default class LimaLabs implements ProviderDefinition {
+class LimaLabs implements ProviderDefinition {
     themes = {
         Standard: {
             url: 'https://cdn.lima-labs.com/{zoom}/{x}/{y}.png?api={apikey}',
@@ -21,3 +21,5 @@ export default class LimaLabs implements ProviderDefinition {
 
     requiresApiKey = true;
 }
+
+export default LimaLabs;
