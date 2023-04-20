@@ -351,7 +351,7 @@ function renderSelectElement(
     );
 
     selectOptionBtn.addEventListener('click', function (): void {
-        dropdown.classList.remove(EditGlobals.classNames.hiddenElement);
+        dropdown.classList.add(EditGlobals.classNames.hiddenElement);
         dropdownPointer.classList.toggle(EditGlobals.classNames.rotateElement);
         placeholder.textContent = option.name || '';
 
