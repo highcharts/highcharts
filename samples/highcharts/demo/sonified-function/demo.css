@@ -10,14 +10,14 @@
 
 #sonify {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 0;
+    right: 8px;
     z-index: 1;
     background-color: #fff;
     border: 1px solid #25386f;
     color: #25386f;
     font-size: 0.9rem;
-    min-height: 30px;
+    min-height: 25px;
     font-weight: 500;
     border-radius: 4px;
     padding: 0.375rem 0;

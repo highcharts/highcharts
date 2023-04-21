@@ -14,10 +14,9 @@ const el = document.getElementById.bind(document),
 // Note: always plays the sequence on the first synth.
 function playSequence(notes, durationMultiplier) {
     if (audioContext && synths[0]) {
-        const t = audioContext.currentTime;
         notes.forEach(
             (freq, i) => synths[0].synthPatch.playFreqAtTime(
-                t + i * 0.1 * durationMultiplier, freq, 150 * durationMultiplier
+                i * 0.1 * durationMultiplier, freq, 150 * durationMultiplier
             )
         );
     }
@@ -291,7 +290,7 @@ class Synth {
             el(oscillator.controlIds.vmOsc).onchange =
             el(oscillator.controlIds.fmOsc).onchange = function () {
                 if (this.value === '' + id) {
-                    alert("Oscillator can't modulate itself - please assign to a different oscillator.");
+                    alert('Oscillator can\'t modulate itself - please assign to a different oscillator.');
                     this.value = '';
                 }
             };

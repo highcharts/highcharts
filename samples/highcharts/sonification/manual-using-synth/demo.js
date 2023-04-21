@@ -56,7 +56,7 @@ function groupData(data, numPerBin) {
 
 
 // Sonify the chart manually
-function sonifyChart(audioContext, synth, chart) {
+function sonifyChart(synth, chart) {
     var noteToFreq = Highcharts.sonification.SonificationInstrument
         .musicalNoteToFrequency;
     var binSize = 20,
@@ -80,7 +80,7 @@ function sonifyChart(audioContext, synth, chart) {
 
         // Schedule the synth to play this note at the desired time
         synth.playFreqAtTime(
-            audioContext.currentTime + msOffset / 1000,
+            msOffset / 1000,
             noteToFreq(note),
             400
         );
@@ -121,7 +121,7 @@ document.getElementById('play').onclick = function () {
     synth.connect(audioContext.destination);
     synth.startSilently();
 
-    sonifyChart(audioContext, synth, chart);
+    sonifyChart(synth, chart);
 
     // Hide button so we don't have to handle starting/stopping multiple
     // sonifications at the same time, just to keep this demo simple

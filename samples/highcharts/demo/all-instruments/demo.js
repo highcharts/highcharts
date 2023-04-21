@@ -13,16 +13,12 @@ var chart = Highcharts.chart('container', {
         events: {
             // Announce first series before playing
             beforePlay: function (e) {
-                e.chart.sonification.speak('Revenue', {
-                    rate: 2, volume: 0.5
-                });
+                e.chart.sonification.speak('Revenue');
             },
             // Announce second series after first one ends
             onSeriesEnd: function (e) {
                 if (e.series.index === 0) {
-                    e.series.chart.sonification.speak('Profit margin', {
-                        rate: 2, volume: 0.5
-                    }, 150);
+                    e.series.chart.sonification.speak('Profit margin', null, 150);
                 }
             }
         },
