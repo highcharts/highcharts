@@ -29,8 +29,8 @@ import type {
     Function,
     Item,
     Operator,
-    Pointer,
     Range,
+    Reference,
     Term,
     Value
 } from './FormulaTypes';
@@ -42,8 +42,8 @@ const {
     isFormula,
     isFunction,
     isOperator,
-    isPointer,
     isRange,
+    isReference,
     isValue
 } = FormulaTypes;
 
@@ -158,14 +158,14 @@ function getArgumentValue(
         return processFunction(arg, table);
     }
 
-    // Process functions, operations, pointers with formula processor
+    // Process functions, operations, references with formula processor
     return processFormula((isFormula(arg) ? arg : [arg]), table);
 }
 
 
 /**
  */
-function getArgumentValues(
+function getArgumentsValues(
     args: Arguments,
     table?: DataTable
 ): Array<(Value|Array<Value>)> {
@@ -180,12 +180,12 @@ function getArgumentValues(
 
 
 /**
- * Extracts the cell value from a table for a given pointer.
+ * Extracts the cell value from a table for a given reference.
  *
  * @private
  *
- * @param {Highcharts.FormulaPointer} pointer
- * Formula pointer to use.
+ * @param {Highcharts.FormulaReference} reference
+ * Formula reference to use.
  *
  * @param {Highcharts.DataTable} table
  * Table to extract from.
@@ -193,14 +193,14 @@ function getArgumentValues(
  * @return {Highcharts.FormulaValue}
  * Extracted value. 'undefined' might also indicate that the cell was not found.
  */
-function getPointerValue(
-    pointer: Pointer,
+function getReferenceValue(
+    reference: Reference,
     table: DataTable
 ): Value {
-    const columnName = table.getColumnNames()[pointer.column];
+    const columnName = table.getColumnNames()[reference.column];
 
     if (columnName) {
-        const cell = table.getCell(columnName, pointer.row);
+        const cell = table.getCell(columnName, reference.row);
 
         if (
             typeof cell === 'string' &&
@@ -208,7 +208,7 @@ function getPointerValue(
             table !== table.modified
         ) {
             // Look in the modified table for formula result
-            const result = table.modified.getCell(columnName, pointer.row);
+            const result = table.modified.getCell(columnName, reference.row);
             return isValue(result) ? result : NaN;
         }
 
@@ -278,7 +278,7 @@ function getRangeValues(
 
 /**
  * Processes a formula array on the given table. If the formula does not contain
- * pointers or ranges, then no table has to be provided.
+ * references or ranges, then no table has to be provided.
  *
  * @private
  * @function Highcharts.processFormula
@@ -287,7 +287,7 @@ function getRangeValues(
  * Formula array to process.
  *
  * @param {Highcharts.DataTable} [table]
- * Table to use for pointers and ranges.
+ * Table to use for references and ranges.
  *
  * @return {Formula.Value}
  * Result value of the process. `NaN` indicates an error.
@@ -329,9 +329,9 @@ function processFormula(
             result = processFunction(item, table);
             y = (isValue(result) ? result : NaN); // arrays are not allowed here
 
-        // Next item is a pointer and needs to get resolved
-        } else if (isPointer(item)) {
-            y = (table && getPointerValue(item, table));
+        // Next item is a reference and needs to get resolved
+        } else if (isReference(item)) {
+            y = (table && getReferenceValue(item, table));
 
         }
 
@@ -358,7 +358,7 @@ function processFormula(
 
 /**
  * Process a function  on the give table. If the arguments do not contain
- * pointers or ranges, then no table has to be provided.
+ * references or ranges, then no table has to be provided.
  *
  * @private
  *
@@ -366,7 +366,7 @@ function processFormula(
  * Formula function to process.
  *
  * @param {Highcharts.DataTable} [table]
- * Table to use for pointers and ranges.
+ * Table to use for references and ranges.
  *
  * @return {Value|Array<Value>}
  * Result value (or values) of the process. `NaN` indicates an error.
@@ -423,9 +423,9 @@ function registerProcessorFunction(
 
 const FormulaProcessor = {
     getArgumentValue,
-    getArgumentValues,
-    getPointerValue,
+    getArgumentsValues,
     getRangeValues,
+    getReferenceValue,
     processFormula,
     processorFunctions,
     registerProcessorFunction

@@ -52,7 +52,7 @@ import FormulaProcessor from '../FormulaProcessor.js';
  * Arguments to process.
  *
  * @param {Highcharts.DataTable} [table]
- * Table to process.
+ * Table to use for references and ranges.
  *
  * @return {number}
  * Result value of the process.
@@ -61,7 +61,7 @@ function COUNT(
     args: Arguments,
     table?: DataTable
 ): number {
-    const values = FormulaProcessor.getArgumentValues(args, table);
+    const values = FormulaProcessor.getArgumentsValues(args, table);
 
     let count = 0;
 

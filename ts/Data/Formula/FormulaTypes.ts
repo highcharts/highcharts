@@ -57,21 +57,9 @@ export type Operator = ('+'|'-'|'*'|'/'|'^'|'='|'<'|'<='|'>'|'>=');
 
 
 /**
- * Represents an A1 pointer to a table cell.
- *
- * **Note:** Pointer to a formula is only supported as a back reference.
- */
-export interface Pointer {
-    column: number;
-    row: number;
-    type: 'pointer';
-}
-
-
-/**
  * Represents an A1:A1 range to cells of a table.
  *
- * **Note:** Range with formulas is only supported as back references.
+ * **Note:** Ranges with formulas are only supported as back references.
  */
 export interface Range {
     beginColumn: number;
@@ -83,9 +71,21 @@ export interface Range {
 
 
 /**
+ * Represents an A1 reference to a table cell.
+ *
+ * **Note:** References to a formula are only supported as a back reference.
+ */
+export interface Reference {
+    column: number;
+    row: number;
+    type: 'reference';
+}
+
+
+/**
  * A term represents some form of processing into a value or is already a value.
  */
-export type Term = (Formula|Function|Pointer|Value);
+export type Term = (Formula|Function|Reference|Value);
 
 
 /**
@@ -203,28 +203,6 @@ function isOperator(
 
 
 /**
- * Tests an item for a Pointer structure.
- *
- * @private
- *
- * @param {Highcharts.FormulaItem} item
- * Item to test.
- *
- * @return {boolean}
- * `true`, if the item is a pointer.
- */
-function isPointer(
-    item: Item
-): item is Pointer {
-    return (
-        typeof item === 'object' &&
-        !(item instanceof Array) &&
-        item.type === 'pointer'
-    );
-}
-
-
-/**
  * Tests an item for a Range structure.
  *
  * @private
@@ -242,6 +220,28 @@ function isRange(
         typeof item === 'object' &&
         !(item instanceof Array) &&
         item.type === 'range'
+    );
+}
+
+
+/**
+ * Tests an item for a Reference structure.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaItem} item
+ * Item to test.
+ *
+ * @return {boolean}
+ * `true`, if the item is a reference.
+ */
+function isReference(
+    item: Item
+): item is Reference {
+    return (
+        typeof item === 'object' &&
+        !(item instanceof Array) &&
+        item.type === 'reference'
     );
 }
 
@@ -280,8 +280,8 @@ const MathFormula = {
     isFormula,
     isFunction,
     isOperator,
-    isPointer,
     isRange,
+    isReference,
     isValue
 };
 

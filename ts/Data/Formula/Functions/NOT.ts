@@ -47,7 +47,7 @@ import FormulaProcessor from '../FormulaProcessor.js';
  * Arguments to process.
  *
  * @param {Highcharts.DataTable} [table]
- * Table to process.
+ * Table to use for references and ranges.
  *
  * @return {boolean}
  * Result value of the process.

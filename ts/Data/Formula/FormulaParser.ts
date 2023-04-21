@@ -27,8 +27,8 @@ import type {
     Formula,
     Function,
     Operator,
-    Pointer,
     Range,
+    Reference,
     Value
 } from './FormulaTypes.js';
 
@@ -85,19 +85,19 @@ const operatorRegExp = /^(?:[+\-*\/^<=>]|<=|=>)/;
 /**
  * - Group 1: Start column
  * - Group 2: Start row
- * @private
- */
-const pointerRegExp = /^([A-Z]+)(\d+)(?!\:)/;
-
-
-/**
- * - Group 1: Start column
- * - Group 2: Start row
  * - Group 3: End column
  * - Group 4: End row
  * @private
  */
 const rangeRegExp = /^([A-Z]+)(\d+)\:([A-Z]+)(\d+)/;
+
+
+/**
+ * - Group 1: Start column
+ * - Group 2: Start row
+ * @private
+ */
+const referenceRegExp = /^([A-Z]+)(\d+)(?!\:)/;
 
 
 /* *
@@ -174,27 +174,27 @@ function extractParantheses(
  * @param {boolean} alternativeSeparators
  * Whether to expect `;` as argument separator and `,` as decimal separator.
  *
- * @return {Formula|Function|Pointer|Range|Value}
+ * @return {Formula|Function|Range|Reference|Value}
  * The recognized term structure.
  */
 function parseArgument(
     text: string,
     alternativeSeparators: boolean
-): (Formula|Function|Pointer|Range|Value) {
+): (Formula|Function|Range|Reference|Value) {
 
     // Check for a A1:A1 range notation
     const match = text.match(rangeRegExp);
     if (match) {
         return {
             type: 'range',
-            beginColumn: (parsePointerColumn(match[1]) - 1),
+            beginColumn: (parseReferenceColumn(match[1]) - 1),
             beginRow: (parseInt(match[2], 10) - 1),
-            endColumn: (parsePointerColumn(match[3]) - 1),
+            endColumn: (parseReferenceColumn(match[3]) - 1),
             endRow: (parseInt(match[4], 10) - 1)
         };
     }
 
-    // Fallback to formula processing for A1 pointer and operations
+    // Fallback to formula processing for A1 reference and operations
     const formula = parseFormula(text, alternativeSeparators);
     return (
         formula.length === 1 && typeof formula[0] !== 'string' ?
@@ -315,12 +315,12 @@ function parseFormula(
             continue;
         }
 
-        // Check for an A1 pointer notation
-        match = next.match(pointerRegExp);
+        // Check for an A1 reference notation
+        match = next.match(referenceRegExp);
         if (match) {
             formula.push({
-                type: 'pointer',
-                column: (parsePointerColumn(match[1]) - 1),
+                type: 'reference',
+                column: (parseReferenceColumn(match[1]) - 1),
                 row: (parseInt(match[2], 10) - 1)
             });
 
@@ -382,7 +382,7 @@ function parseFormula(
 
 
 /**
- * Converts a pointer column `A` of `A1` into a number. Supports endless sizes
+ * Converts a reference column `A` of `A1` into a number. Supports endless sizes
  * `ZZZ...`, just limited by integer precision.
  *
  * @private
@@ -393,7 +393,7 @@ function parseFormula(
  * @return {number}
  * Converted column index.
  */
-function parsePointerColumn(
+function parseReferenceColumn(
     text: string
 ): number {
     let column = 0;

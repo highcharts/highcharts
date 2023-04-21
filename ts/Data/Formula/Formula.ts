@@ -52,8 +52,8 @@ export type {
     Function,
     Item,
     Operator,
-    Pointer,
     Range,
+    Reference,
     Term,
     Value
 } from './FormulaTypes';

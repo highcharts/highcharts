@@ -247,7 +247,7 @@ class MathModifier extends DataModifier {
             i < iEnd;
             ++i
         ) {
-            // @todo pass some form of row index to recalculate pointer/ranges
+            // @todo pass some form of row index for references/ranges
             column[i] = FormulaProcessor.processFormula(formula, table);
         }
 

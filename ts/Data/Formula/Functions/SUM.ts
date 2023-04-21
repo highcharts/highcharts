@@ -24,7 +24,10 @@
  * */
 
 
-import type { Arguments, Value } from '../FormulaTypes';
+import type {
+    Arguments,
+    Value
+} from '../FormulaTypes';
 import type DataTable from '../../DataTable';
 
 
@@ -50,7 +53,7 @@ const { asNumber } = FormulaTypes;
  * @param {Highcharts.FormulaArguments} args
  * Arguments to process.
  *
- * @param {Highcharts.FormulaArguments} [table]
+ * @param {Highcharts.DataTable} [table]
  * Table to process.
  *
  * @return {number}
@@ -60,7 +63,8 @@ function SUM(
     args: Arguments,
     table?: DataTable
 ): number {
-    const values = FormulaProcessor.getArgumentValues(args, table);
+    const values = FormulaProcessor.getArgumentsValues(args, table);
+
     let result = 0;
 
     for (

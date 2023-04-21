@@ -5,13 +5,13 @@ const escapeStringForHTML = Highcharts.A11yHTMLUtilities.escapeStringForHTML;
 const MathModifier = Highcharts.DataModifier.types.Math;
 const table = new Highcharts.DataTable({
     columns: {
-        dayOfWeek: [1, 2, 3, 4, 5, 6, 7],
-        soldMeals: [10, 20, 30, 40, 50, 60, '-', '=AVERAGE(B1:B6)'],
-        disposedMeals: [1, 2, 4, 8, 16, 32, '-', '=AVERAGE(C1:C6)'],
-        totalMeals: [
+        'Day of Week': [1, 2, 3, 4, 5, 6, 7, 'Average:'],
+        'Sold meals': [10, 20, 30, 40, 50, 60, '-', '=AVERAGE(B1:B6)'],
+        'Disposed meals': [1, 2, 4, 8, 16, 32, '-', '=AVERAGE(C1:C6)'],
+        'Total meals': [
             '=SUM(B1:C1)', '=SUM(B2:C2)', '=SUM(B3:C3)', '=SUM(B4:C4)',
             '=SUM(B5:C5)', '=SUM(B6:C6)', '-',
-            '=SUM(AVERAGE(B1:B6), AVERAGE(C1:C6))'
+            '=SUM(B8:C8)'
         ]
     }
 });
