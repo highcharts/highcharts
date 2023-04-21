@@ -46,6 +46,13 @@ const {
         }
     }
 } = SeriesRegistry;
+
+import D from '../RAFDeferDataLabels.js';
+const {
+    initDataLabels,
+    initDataLabelsDefer
+} = D;
+
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -53,10 +60,9 @@ const {
     extend,
     merge,
     pick,
-    syncTimeout
 } = U;
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+
+
 
 /* *
  *
@@ -199,39 +205,6 @@ class NetworkgraphSeries extends Series {
     }
 
     /**
-     * Networkgraph needs a custom initDataLabels function
-     * to initiate the animation in a different way
-     * than for other series (drawDataLabels is called each frame)
-     * @private
-     */
-    public initDataLabels(this: NetworkgraphSeries): SVGElement {
-        const series = this,
-            dlOptions = series.options.dataLabels;
-
-        if (!series.dataLabelsGroup) {
-            const dataLabelsGroup = this.initDataLabelsGroup();
-
-            // Apply the dataLabels.style not only to the
-            // individual dataLabels but also to the entire group
-            if (!series.chart.styledMode && dlOptions?.style) {
-                dataLabelsGroup.css(dlOptions.style);
-            }
-
-            // Initialize the opacity of the group to 0 (start of animation)
-            dataLabelsGroup.attr({ opacity: 0 });
-
-            if (series.visible) { // #2597, #3023, #3024
-                dataLabelsGroup.show();
-            }
-
-            return dataLabelsGroup;
-        }
-
-        series.dataLabelsGroup.attr({ opacity: 1 });
-        return series.dataLabelsGroup;
-    }
-
-    /**
      * Networkgraph has two separate collecions of nodes and lines, render
      * dataLabels for both sets:
      * @private
@@ -353,21 +326,7 @@ class NetworkgraphSeries extends Series {
         options: Partial<NetworkgraphSeriesOptions>
     ): NetworkgraphSeries {
         super.init(chart, options);
-
-        const dlOptions = this.options.dataLabels;
-
-        // drawDataLabels() fires for the first time after
-        // dataLabels.animation.defer time unless
-        // the dataLabels.animation = false or dataLabels.defer = false
-        // or if the simulation is disabled
-        if (!dlOptions?.defer ||
-            !this.options.layoutAlgorithm?.enableSimulation) {
-            this.deferDataLabels = false;
-        } else {
-            syncTimeout((): void => {
-                this.deferDataLabels = false;
-            }, dlOptions ? animObject(dlOptions.animation).defer : 0);
-        }
+        initDataLabelsDefer.call(this);
 
         addEvent(this, 'updatedData', (): void => {
             if (this.layout) {
@@ -602,6 +561,7 @@ extend(NetworkgraphSeries.prototype, {
     pointArrayMap: ['from', 'to'],
     requireSorting: false,
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
+    initDataLabels: initDataLabels,
     buildKDTree: noop,
     createNode: NodesComposition.createNode,
     drawTracker: columnProto.drawTracker,

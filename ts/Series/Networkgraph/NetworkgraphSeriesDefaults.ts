@@ -220,7 +220,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
 
         defer: true,
         animation: {
-            defer: 2000
+            defer: 1000
         }
 
     },
