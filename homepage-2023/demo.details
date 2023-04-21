@@ -1,6 +1,0 @@
----
- name: Highcharts Demo
- authors:
-   - Pawel Dalek
- js_wrap: b
-...
