@@ -1,15 +1,9 @@
 var chart = Highcharts.chart('container', {
-    title: {
-        text: 'Unemployment rate last 20 years',
-        align: 'left',
-        margin: 25
-    },
-    subtitle: {
-        text: 'Shown in percent of labor force',
-        align: 'left'
-    },
     chart: {
         type: 'spline'
+    },
+    title: {
+        text: null
     },
     sonification: {
         duration: 27000,
@@ -146,13 +140,8 @@ document.getElementById('controls').onkeydown = function (e) {
 document.getElementById('sonify').onclick = function () {
     // Show the help field and set keyboard focus to it
     var controls = document.getElementById('controls');
-    controls.style.visibility = 'visible';
-    controls.style.height = '35px';
-    chart.update({
-        title: {
-            margin: 100
-        }
-    });
+    controls.className = 'visible';
+
     setTimeout(function () {
         controls.focus();
     }, 10);

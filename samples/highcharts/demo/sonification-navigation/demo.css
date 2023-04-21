@@ -1,19 +1,35 @@
 .highcharts-figure {
-    max-width: 900px;
+    max-width: 1000px;
+    min-width: 320px;
     margin: 0 auto;
-    position: relative;
+}
+
+#top {
+    padding: 0 10px;
+}
+
+#title {
+    font-size: 0.8rem;
+    font-family: Helvetica, sans-serif;
+    color: #333;
+}
+
+#title h1 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    margin-top: 0;
+    font-weight: normal;
+}
+
+#title p {
+    margin: 0;
 }
 
 #container {
-    height: 500px;
+    height: 450px;
 }
 
 #controls {
-    position: absolute;
-    top: 65px;
-    right: 5px;
-    left: 5px;
-    z-index: 10;
     padding: 10px;
     color: #333;
     font-size: 0.8rem;
@@ -34,22 +50,24 @@
     background-color: #f0f5f3;
 }
 
+#controls.visible {
+    height: auto;
+    visibility: visible;
+    margin: 15px 10px;
+}
+
 #sonify {
-    position: absolute;
-    top: 10px;
-    right: 5px;
-    z-index: 1;
     background-color: #fff;
     border: 1px solid #25386f;
     color: #25386f;
     font-size: 0.9rem;
-    min-height: 30px;
+    max-height: 1.8rem;
     font-weight: 500;
     border-radius: 4px;
     padding: 0.375rem 0;
     width: 7rem;
     margin-bottom: 0.25rem;
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
     text-align: center;
     cursor: pointer;
 }
@@ -57,6 +75,13 @@
 #sonify:hover {
     background-color: #25386f;
     color: #fff;
+}
+
+@media (min-width: 530px) {
+    #top {
+        display: flex;
+        justify-content: space-between;
+    }
 }
 
 #csv {

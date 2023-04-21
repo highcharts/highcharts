@@ -242,7 +242,8 @@ const Options: DeepPartial<OptionsType> = {
             language: 'en-US',
             mapping: {
                 time: 'x',
-                rate: 1.3
+                rate: 1.3,
+                volume: 0.4
             },
             pointGrouping: {
                 algorithm: 'last'

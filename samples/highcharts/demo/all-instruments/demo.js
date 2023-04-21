@@ -2,7 +2,7 @@ var chart = Highcharts.chart('container', {
     title: {
         text: 'Audio Chart',
         align: 'left',
-        margin: 25
+        margin: 15
     },
     legend: {
         enabled: false
@@ -42,7 +42,10 @@ var chart = Highcharts.chart('container', {
         }
     },
     accessibility: {
-        landmarkVerbosity: 'one'
+        landmarkVerbosity: 'one',
+        point: {
+            describeNull: false
+        }
     },
     yAxis: [{
         top: '0%',
@@ -69,7 +72,10 @@ var chart = Highcharts.chart('container', {
     }],
     xAxis: {
         minPadding: 0.04,
-        maxPadding: 0.04
+        maxPadding: 0.04,
+        accessibility: {
+            rangeDescription: '2017 to 2024'
+        }
     },
     plotOptions: {
         series: {

@@ -1,5 +1,6 @@
 .highcharts-figure {
     max-width: 800px;
+    min-width: 320px;
     margin: 0 auto;
     position: relative;
 }
@@ -27,6 +28,13 @@
 #sonify:hover {
     background-color: #25386f;
     color: #fff;
+}
+
+@media (max-width: 380px) {
+    #sonify {
+        position: static;
+        margin-bottom: 10px;
+    }
 }
 
 #csv {

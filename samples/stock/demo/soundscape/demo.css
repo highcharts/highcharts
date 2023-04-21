@@ -1,6 +1,6 @@
 figure {
     max-width: 1300px;
-    min-width: 460px;
+    min-width: 320px;
     margin: 0 auto;
     position: relative;
     font-family: sans-serif;
@@ -102,6 +102,13 @@ figure {
 
 #play:active {
     background: #1954ad;
+}
+
+@media (max-width: 470px) {
+    #play {
+        position: static;
+        margin-bottom: 10px;
+    }
 }
 
 pre {

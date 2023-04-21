@@ -11,6 +11,13 @@
     z-index: 1;
 }
 
+@media (max-width: 410px) {
+    #controls {
+        position: static;
+        margin-bottom: 15px;
+    }
+}
+
 #preset {
     margin-right: 10px;
     min-height: 30px;

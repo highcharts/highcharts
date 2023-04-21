@@ -1,5 +1,5 @@
 .highcharts-figure {
-    max-width: 550px;
+    width: 550px;
     margin: 0 auto;
     position: relative;
 }
