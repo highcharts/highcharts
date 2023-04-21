@@ -22,12 +22,10 @@ function markerAttribs(point) {
 function generatePnfData() {
     const series = this,
         options = series.options,
-        userOptions = series.userOptions,
         data = options.data,
-        boxSize = userOptions.boxSize || options.boxSize,
+        boxSize = options.boxSize,
         finalData = series.finalData,
-        reversal =
-            boxSize * (userOptions.reversalAmount || options.reversalAmount),
+        reversal = boxSize * options.reversalAmount,
         markerUp = options.markerUp;
 
     let upTrend;
@@ -55,8 +53,8 @@ function generatePnfData() {
             const newPoint = lastPoint + flipFactor * (boxSize * i);
             currPointGroup.y.push(newPoint);
         }
-
     }
+
     if (this.isDirtyData || (!this.isDirtyData && finalData.length === 0)) {
 
         this.finalData.length = 0;
@@ -78,7 +76,6 @@ function generatePnfData() {
                 break;
             }
         }
-
 
         data.forEach(point => {
             const x = point[0],
@@ -133,10 +130,8 @@ function generatePnfData() {
                     marker: point.symbol
                 }
             });
-
         });
     });
-
 
     return {
         groupedXData,
@@ -169,6 +164,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getClosest', function (proceed) {
     });
     return ret;
 });
+
 // eslint-disable-next-line no-underscore-dangle
 Highcharts.wrap(Highcharts._modules['Core/Series/Series.js'].prototype, 'groupData', function (proceed) {
     if (this.is('pointandfigure')) {
@@ -177,7 +173,6 @@ Highcharts.wrap(Highcharts._modules['Core/Series/Series.js'].prototype, 'groupDa
             ));
     }
     return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
 });
 
 Highcharts.seriesType(
@@ -242,7 +237,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
         title: {
             text: 'AAPL stock price - Point and Figure'
         },
-
         series: [{
             name: 'AAPL',
             type: 'pointandfigure',
