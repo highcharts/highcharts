@@ -29,8 +29,12 @@ import FormulaType from './FormulaTypes.js';
 
 import './Functions/AND.js';
 import './Functions/AVERAGE.js';
+import './Functions/AVERAGEA.js';
 import './Functions/COUNT.js';
 import './Functions/IF.js';
+import './Functions/ISNA.js';
+import './Functions/MAX.js';
+import './Functions/MIN.js';
 import './Functions/NOT.js';
 import './Functions/OR.js';
 import './Functions/PRODUCT.js';

@@ -8,17 +8,25 @@ QUnit.test('Formula.processorFunctions.PRODUCT', function (assert) {
                 values: [0, 1, 2, 3, 4, '6', false, true, null, void 0]
             }
         }),
-        formula1 = Formula.parseFormula('PRODUCT(A1:A10)'),
-        formula2 = Formula.parseFormula('PRODUCT(A1:A5)');
+        formula1 = Formula.parseFormula('PRODUCT(A6:A10)'),
+        formula2 = Formula.parseFormula('PRODUCT(A1:A5)'),
+        formula3 = Formula.parseFormula('PRODUCT(A2:A5)');
 
-    assert.ok(
-        isNaN(Formula.processFormula(formula1, table)),
-        'PRODUCT test should return not a number.'
+    assert.strictEqual(
+        Formula.processFormula(formula1, table),
+        0,
+        'PRODUCT test should return expected value. (1)'
     );
 
     assert.strictEqual(
         Formula.processFormula(formula2, table),
         0,
-        'PRODUCT test should return expected value.'
+        'PRODUCT test should return expected value. (2)'
+    );
+
+    assert.strictEqual(
+        Formula.processFormula(formula3, table),
+        24,
+        'PRODUCT test should return expected value. (3)'
     );
 });

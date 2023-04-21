@@ -60,6 +60,12 @@ export interface FormulaParserError extends Error {
 /**
  * @private
  */
+const booleanRegExp = /^(?:FALSE|TRUE)/;
+
+
+/**
+ * @private
+ */
 const decimal1RegExp = /^[+-]?\d+(?:\.\d+)?(?:e[+-]\d+)?/;
 
 
@@ -323,6 +329,16 @@ function parseFormula(
                 column: (parseReferenceColumn(match[1]) - 1),
                 row: (parseInt(match[2], 10) - 1)
             });
+
+            next = next.substring(match[0].length).trim();
+
+            continue;
+        }
+
+        // Check for a boolean value
+        match = next.match(booleanRegExp);
+        if (match) {
+            formula.push(match[0] === 'TRUE');
 
             next = next.substring(match[0].length).trim();
 

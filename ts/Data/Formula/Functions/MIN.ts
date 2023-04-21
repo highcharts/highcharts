@@ -33,9 +33,6 @@ import type DataTable from '../../DataTable';
 
 import FormulaProcessor from '../FormulaProcessor.js';
 const { getArgumentsValues } = FormulaProcessor;
-import FormulaTypes from '../FormulaTypes.js';
-const { asNumber } = FormulaTypes;
-
 
 /* *
  *
@@ -45,11 +42,11 @@ const { asNumber } = FormulaTypes;
 
 
 /**
- * Processor for the `PRODUCT(...values)` implementation. Calculates the product
- * of the given values.
+ * Processor for the `MIN(...values)` implementation. Calculates the lowest
+ * of the given values that are numbers.
  *
  * @private
- * @function Formula.processorFunctions.PRODUCT
+ * @function Formula.processorFunctions.MIN
  *
  * @param {Highcharts.FormulaArguments} args
  * Arguments to process.
@@ -60,14 +57,13 @@ const { asNumber } = FormulaTypes;
  * @return {number}
  * Result value of the process.
  */
-function PRODUCT(
+function MIN(
     args: Arguments,
     table?: DataTable
 ): number {
     const values = getArgumentsValues(args, table);
 
-    let result = 1,
-        calculated = false;
+    let result = Number.POSITIVE_INFINITY;
 
     for (
         let i = 0,
@@ -80,19 +76,20 @@ function PRODUCT(
 
         switch (typeof value) {
             case 'number':
-                if (!isNaN(value)) {
-                    calculated = true;
-                    result *= value;
+                if (value < result) {
+                    result = value;
                 }
                 break;
             case 'object':
-                calculated = true;
-                result *= PRODUCT(value, table);
+                value = MIN(value);
+                if (value < result) {
+                    result = value;
+                }
                 break;
         }
     }
 
-    return (calculated ? result : 0);
+    return isFinite(result) ? result : 0;
 }
 
 
@@ -103,7 +100,7 @@ function PRODUCT(
  * */
 
 
-FormulaProcessor.registerProcessorFunction('PRODUCT', PRODUCT);
+FormulaProcessor.registerProcessorFunction('MIN', MIN);
 
 
 /* *
@@ -113,4 +110,4 @@ FormulaProcessor.registerProcessorFunction('PRODUCT', PRODUCT);
  * */
 
 
-export default PRODUCT;
+export default MIN;

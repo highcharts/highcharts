@@ -14,8 +14,6 @@
 
 'use strict';
 
-/* eslint-disable new-cap */
-
 
 /* *
  *
@@ -32,7 +30,7 @@ import type DataTable from '../../DataTable';
 
 
 import FormulaProcessor from '../FormulaProcessor.js';
-const { getArgumentsValues } = FormulaProcessor;
+const { getArgumentValue } = FormulaProcessor;
 import FormulaTypes from '../FormulaTypes.js';
 const { asNumber } = FormulaTypes;
 
@@ -45,11 +43,11 @@ const { asNumber } = FormulaTypes;
 
 
 /**
- * Processor for the `PRODUCT(...values)` implementation. Calculates the product
- * of the given values.
+ * Processor for the `AVERAGEA(...values)` implementation. Calculates the
+ * average of the given values. Strings and FALSE are calculated as 0.
  *
  * @private
- * @function Formula.processorFunctions.PRODUCT
+ * @function Formula.processorFunctions.AVERAGEA
  *
  * @param {Highcharts.FormulaArguments} args
  * Arguments to process.
@@ -60,39 +58,41 @@ const { asNumber } = FormulaTypes;
  * @return {number}
  * Result value of the process.
  */
-function PRODUCT(
+function AVERAGEA(
     args: Arguments,
     table?: DataTable
 ): number {
-    const values = getArgumentsValues(args, table);
-
-    let result = 1,
-        calculated = false;
+    let count = 0,
+        result = 0;
 
     for (
         let i = 0,
-            iEnd = values.length,
+            iEnd = args.length,
             value: (Value|Array<Value>);
         i < iEnd;
         ++i
     ) {
-        value = values[i];
+        value = getArgumentValue(args[i], table);
 
-        switch (typeof value) {
-            case 'number':
-                if (!isNaN(value)) {
-                    calculated = true;
-                    result *= value;
-                }
-                break;
-            case 'object':
-                calculated = true;
-                result *= PRODUCT(value, table);
-                break;
+        if (typeof value !== 'object') {
+            value = asNumber(value);
+            if (!isNaN(value)) {
+                ++count;
+                result += value;
+            }
+            continue;
+        }
+
+        for (let j = 0, jEnd = value.length, jValue: number; j < jEnd; ++j) {
+            jValue = asNumber(value[j]);
+            if (!isNaN(jValue)) {
+                ++count;
+                result += jValue;
+            }
         }
     }
 
-    return (calculated ? result : 0);
+    return (count ? (result / count) : 0);
 }
 
 
@@ -103,7 +103,7 @@ function PRODUCT(
  * */
 
 
-FormulaProcessor.registerProcessorFunction('PRODUCT', PRODUCT);
+FormulaProcessor.registerProcessorFunction('AVERAGEA', AVERAGEA);
 
 
 /* *
@@ -113,4 +113,4 @@ FormulaProcessor.registerProcessorFunction('PRODUCT', PRODUCT);
  * */
 
 
-export default PRODUCT;
+export default AVERAGEA;

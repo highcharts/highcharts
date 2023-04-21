@@ -76,10 +76,15 @@ function SUM(
     ) {
         value = values[i];
 
-        if (value instanceof Array) {
-            result += SUM(value, table);
-        } else {
-            result += asNumber(value);
+        switch (typeof value) {
+            case 'number':
+                if (!isNaN(value)) {
+                    result += value;
+                }
+                break;
+            case 'object':
+                result += SUM(value, table);
+                break;
         }
     }
 

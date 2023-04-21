@@ -30,6 +30,7 @@ import type DataTable from '../../DataTable';
 
 
 import FormulaProcessor from '../FormulaProcessor.js';
+const { getArgumentsValues } = FormulaProcessor;
 
 /* *
  *
@@ -40,7 +41,7 @@ import FormulaProcessor from '../FormulaProcessor.js';
 
 /**
  * Processor for the `AVERAGE(...values)` implementation. Calculates the average
- * value of the given values.
+ * of the given values that are numbers.
  *
  * @private
  * @function Formula.processorFunctions.AVERAGE
@@ -58,7 +59,7 @@ function AVERAGE(
     args: Arguments,
     table?: DataTable
 ): number {
-    const values = FormulaProcessor.getArgumentsValues(args, table);
+    const values = getArgumentsValues(args, table);
 
     let count = 0,
         result = 0;
@@ -72,19 +73,31 @@ function AVERAGE(
     ) {
         value = values[i];
 
-        if (typeof value === 'number') {
-            if (!isNaN(value)) {
-                ++count;
-                result += value;
-            }
-        } else if (value instanceof Array) {
-            for (let j = 0, jEnd = value.length, jValue: Value; j < jEnd; ++j) {
-                jValue = value[j];
-                if (typeof jValue === 'number' && !isNaN(jValue)) {
+        switch (typeof value) {
+            case 'number':
+                if (!isNaN(value)) {
                     ++count;
-                    result += jValue;
+                    result += value;
                 }
-            }
+                break;
+            case 'object':
+                for (
+                    let j = 0,
+                        jEnd = value.length,
+                        jValue: Value;
+                    j < jEnd;
+                    ++j
+                ) {
+                    jValue = value[j];
+                    if (
+                        typeof jValue === 'number' &&
+                        !isNaN(jValue)
+                    ) {
+                        ++count;
+                        result += jValue;
+                    }
+                }
+                break;
         }
     }
 

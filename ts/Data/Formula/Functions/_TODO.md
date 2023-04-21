@@ -1,18 +1,19 @@
 * Common use-cases:
   - AND ✅
   - AVERAGE ✅
-  - AVERAGEA
+  - AVERAGEA ✅
   - AVERAGEIF ⏳
   - AVERAGEIFS ⏳
   - COUNT ✅
   - COUNTIF ⏳
   - COUNTIFS ⏳
   - IF ✅
-  - IFS
-  - MAX
+  - IFS ⏳
+  - ISNA ✅
+  - MAX ✅
   - MAXIFS ⏳
   - MEDIAN
-  - MIN
+  - MIN ✅
   - MINIFS ⏳
   - MODE
   - MODE.MULT
@@ -25,4 +26,5 @@
   - SUM ✅
   - SUMIF ⏳
   - SUMIFS ⏳
+  - SWITCH ⏳
   - XOR

@@ -137,6 +137,18 @@ function basicOperation(
 
 
 /**
+ * Converts an argument to Value and in case of a range to an array of Values.
+ *
+ * @function Highcharts.Formula.getArgumentValue
+ *
+ * @param {Highcharts.FormulaRange|Highcharts.FormulaTerm} arg
+ * Formula range or term to convert.
+ *
+ * @param {Highcharts.DataTable} [table]
+ * Table to use for references and ranges.
+ *
+ * @return {Highcharts.FormulaValue|Array<Highcharts.FormulaValue>}
+ * Converted value.
  */
 function getArgumentValue(
     arg: (Range|Term),
@@ -164,6 +176,18 @@ function getArgumentValue(
 
 
 /**
+ * Converts all arguments to Values and in case of ranges to arrays of Values.
+ *
+ * @function Highcharts.Formula.getArgumentsValues
+ *
+ * @param {Highcharts.FormulaArguments} args
+ * Formula arguments to convert.
+ *
+ * @param {Highcharts.DataTable} [table]
+ * Table to use for references and ranges.
+ *
+ * @return {Array<(Highcharts.FormulaValue|Array<Highcharts.FormulaValue>)>}
+ * Converted values.
  */
 function getArgumentsValues(
     args: Arguments,
@@ -176,46 +200,6 @@ function getArgumentsValues(
     }
 
     return values;
-}
-
-
-/**
- * Extracts the cell value from a table for a given reference.
- *
- * @private
- *
- * @param {Highcharts.FormulaReference} reference
- * Formula reference to use.
- *
- * @param {Highcharts.DataTable} table
- * Table to extract from.
- *
- * @return {Highcharts.FormulaValue}
- * Extracted value. 'undefined' might also indicate that the cell was not found.
- */
-function getReferenceValue(
-    reference: Reference,
-    table: DataTable
-): Value {
-    const columnName = table.getColumnNames()[reference.column];
-
-    if (columnName) {
-        const cell = table.getCell(columnName, reference.row);
-
-        if (
-            typeof cell === 'string' &&
-            cell[0] === '=' &&
-            table !== table.modified
-        ) {
-            // Look in the modified table for formula result
-            const result = table.modified.getCell(columnName, reference.row);
-            return isValue(result) ? result : NaN;
-        }
-
-        return isValue(cell) ? cell : NaN;
-    }
-
-    return NaN;
 }
 
 
@@ -273,6 +257,46 @@ function getRangeValues(
     }
 
     return values;
+}
+
+
+/**
+ * Extracts the cell value from a table for a given reference.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaReference} reference
+ * Formula reference to use.
+ *
+ * @param {Highcharts.DataTable} table
+ * Table to extract from.
+ *
+ * @return {Highcharts.FormulaValue}
+ * Extracted value. 'undefined' might also indicate that the cell was not found.
+ */
+function getReferenceValue(
+    reference: Reference,
+    table: DataTable
+): Value {
+    const columnName = table.getColumnNames()[reference.column];
+
+    if (columnName) {
+        const cell = table.getCell(columnName, reference.row);
+
+        if (
+            typeof cell === 'string' &&
+            cell[0] === '=' &&
+            table !== table.modified
+        ) {
+            // Look in the modified table for formula result
+            const result = table.modified.getCell(columnName, reference.row);
+            return isValue(result) ? result : NaN;
+        }
+
+        return isValue(cell) ? cell : NaN;
+    }
+
+    return NaN;
 }
 
 
@@ -368,7 +392,7 @@ function processFormula(
  * @param {Highcharts.DataTable} [table]
  * Table to use for references and ranges.
  *
- * @return {Value|Array<Value>}
+ * @return {Highcharts.FormulaValue|Array<Highcharts.FormulaValue>}
  * Result value (or values) of the process. `NaN` indicates an error.
  */
 function processFunction(

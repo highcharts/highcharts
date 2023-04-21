@@ -131,12 +131,10 @@ function asNumber(
     switch (typeof value) {
         case 'boolean':
             return value ? 1 : 0;
-        case 'number':
-            return value;
         case 'string':
-            return parseFloat(value);
+            return 0;
         default:
-            return NaN;
+            return value;
     }
 }
 
