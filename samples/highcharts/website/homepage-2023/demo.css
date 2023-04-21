@@ -1,0 +1,26 @@
+.container {
+    /* margin-top: 200px; */
+   /* border: 1px solid #fff; */
+    height: 400px;
+    width: 1400px;
+    /* margin-left: 25%; */
+    position: absolute;
+    top: 400px;
+}
+
+
+.container.variwide {
+    top: 455px;
+}
+.fake {
+    position: relative;
+    padding-bottom: 10px;
+    width: 1400px;
+    height: 800px;
+    background-repeat: no-repeat;
+    background-image:url('http://192.168.1.176:3030/page-bg.png');
+    background-size: cover;
+}
+
+
+
