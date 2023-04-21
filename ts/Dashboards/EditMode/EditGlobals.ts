@@ -116,14 +116,15 @@ const EditGlobals: EditGlobals = {
     lang: {
         editMode: 'Edit mode',
         style: 'Styles',
-        chartOptions: 'Chart options',
-        chartType: 'Chart type',
         id: 'Id',
         title: 'Title',
         caption: 'Caption',
         chartConfig: 'Chart configuration',
         chartClassName: 'Chart class name',
-        chartID: 'Chart id',
+        chartID: 'Chart ID',
+        chartOptions: 'Chart options',
+        chartType: 'Chart type',
+        pointFormat: 'Point format',
         scaleElements: 'Scale elements',
         confirmDestroyRow: 'Do you want to destroy the row?',
         confirmDestroyCell: 'Do you want to destroy the cell?',
@@ -134,7 +135,8 @@ const EditGlobals: EditGlobals = {
         on: 'on',
         off: 'off',
         settings: 'Settings',
-        addComponent: 'Add component'
+        addComponent: 'Add component',
+        dataLabels: 'Data labels'
     }
 };
 
@@ -233,6 +235,7 @@ namespace EditGlobals {
         caption?: string;
         chartClassName?: string;
         chartID?: string;
+        pointFormat?: string;
         scaleElements?: string;
         confirmDestroyRow?: string;
         confirmDestroyCell?: string;
@@ -244,6 +247,7 @@ namespace EditGlobals {
         off: string;
         settings: string;
         addComponent: string;
+        dataLabels?: string;
     }
 
     export type TLangKeys = 'editMode'|'verticalSeparator';

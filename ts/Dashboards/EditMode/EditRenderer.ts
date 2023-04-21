@@ -24,10 +24,9 @@
 
 import type MenuItem from './Menu/MenuItem.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type EditMode from './EditMode.js';
 
-import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
-import { HTMLDOMElement as HTMLElement } from '../../Core/Renderer/DOMElementType.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -133,7 +132,9 @@ function renderCollapseHeader(
 
     createElement(
         'span',
-        { textContent: name },
+        {
+            textContent: (EditGlobals.lang as any)[name] || name
+        },
         {},
         headerBtn
     );
@@ -345,7 +346,7 @@ function renderSelectElement(
     );
 
     selectOptionBtn.addEventListener('click', function (): void {
-        dropdown.classList.remove(EditGlobals.classNames.hiddenElement);
+        dropdown.classList.add(EditGlobals.classNames.hiddenElement);
         dropdownPointer.classList.toggle(EditGlobals.classNames.rotateElement);
         placeholder.textContent = option.name || '';
 
