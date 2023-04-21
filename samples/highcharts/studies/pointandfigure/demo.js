@@ -21,11 +21,14 @@ function markerAttribs(point) {
 
 function generatePnfData() {
     const series = this,
-        data = series.options.data,
-        boxSize = series.options.boxSize,
+        options = series.options,
+        userOptions = series.userOptions,
+        data = options.data,
+        boxSize = userOptions.boxSize || options.boxSize,
         finalData = series.finalData,
-        reversal = boxSize * series.options.reversalAmount,
-        symbolUp = series.options.symbolUp;
+        reversal =
+            boxSize * (userOptions.reversalAmount || options.reversalAmount),
+        markerUp = options.markerUp;
 
     let upTrend;
 
@@ -35,7 +38,7 @@ function generatePnfData() {
     }
 
     function pushPointGroup(x, y, up) {
-        const symbol = up ? symbolUp : null;
+        const symbol = up ? markerUp : null;
         finalData.push({
             x,
             y,
@@ -181,6 +184,7 @@ Highcharts.seriesType(
     'pointandfigure',
     'scatter', {
     // Options
+        reversalAmount: 3,
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
                 '<b> {series.name}</b><br/>' +
@@ -196,7 +200,7 @@ Highcharts.seriesType(
             enabled: true,
             forced: true
         },
-        symbolUp: {
+        markerUp: {
             symbol: 'xsign',
             lineColor: 'green',
             lineWidth: 2
@@ -243,8 +247,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
             name: 'AAPL',
             type: 'pointandfigure',
             data,
-            boxSize: 3,
-            reversalAmount: 3
+            boxSize: 3
         }]
     });
 });
