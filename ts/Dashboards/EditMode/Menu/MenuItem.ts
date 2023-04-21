@@ -118,10 +118,14 @@ class MenuItem {
                 options.events.click.apply(item, arguments);
             }
         };
-        return renderItem(
+        const element = renderItem(
             container,
             this.getElementOptions(merge(options, { value }), callback)
         );
+
+        if (options.events && options.events.click) {
+            element.addEventListener('click', callback);
+        }
     }
 
     private getElementOptions(
