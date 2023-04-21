@@ -1059,6 +1059,13 @@ function timelineFromChart(
                         !isActive(context, activeWhen, lastPropValue)
                     ) {
                         updateLastPropValue(point);
+                        // Remaining points in group
+                        if (isLastPoint && pointGroup.length) {
+                            addCurrentPointGroup(
+                                pointGroup[pointGroup.length - 1].time -
+                                pointGroup[0].time
+                            );
+                        }
                         return;
                     }
                     updateLastPropValue(point);
@@ -1094,14 +1101,6 @@ function timelineFromChart(
                         }
                     }
                 });
-
-                // Remaining points in group (in case last point was inactive)
-                if (pointGroup.length) {
-                    addCurrentPointGroup(
-                        pointGroup[pointGroup.length - 1].time -
-                        pointGroup[0].time
-                    );
-                }
             });
 
             // Add callbacks to first/last events
