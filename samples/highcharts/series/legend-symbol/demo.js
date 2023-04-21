@@ -5,10 +5,12 @@ Highcharts.chart('container', {
 
     series: [{
         type: 'area',
+        name: 'Default legend symbol',
         data: [1, 2, 3, 2, 4]
     }, {
         type: 'area',
         data: [2, 3, 2, 5, 4],
-        legendSymbol: 'lineMarker'
+        legendSymbol: 'lineMarker',
+        name: 'lineMarker'
     }]
 });

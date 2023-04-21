@@ -4859,16 +4859,8 @@ class Series {
      * @private
      */
     public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
-        const legendSymbol = this.options.legendSymbol;
-
-        // @todo: figure out a way to remove any casting here
-        if (!legendSymbol || !LegendSymbol[legendSymbol]) {
-            return;
-        }
-
-        (LegendSymbol[legendSymbol] as any).call(
-            this, legend, item
-        );
+        LegendSymbol[this.options.legendSymbol || 'rectangle']
+            ?.call(this, legend, item);
     }
 
     /** eslint-enable valid-jsdoc */

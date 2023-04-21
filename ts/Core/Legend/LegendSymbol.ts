@@ -51,9 +51,9 @@ declare module '../Series/PointLike' {
 declare module '../Series/SeriesLike' {
     interface SeriesLike extends LegendItem {
         drawLegendSymbol: (
-            typeof LegendSymbol.lineMarker|
-            typeof LegendSymbol.rectangle
-        );
+            legend: Legend,
+            item: (Point|Series)
+        ) => void;
     }
 }
 
@@ -86,7 +86,8 @@ namespace LegendSymbol {
      */
     export function lineMarker(
         this: Series,
-        legend: Legend
+        legend: Legend,
+        item?: LegendItem
     ): void {
 
         const legendItem = this.legendItem = this.legendItem || {},
@@ -191,7 +192,7 @@ namespace LegendSymbol {
     export function rectangle(
         this: Series,
         legend: Legend,
-        item: (Point|Series)
+        item: LegendItem
     ): void {
         const legendItem = item.legendItem || {},
             options = legend.options,
