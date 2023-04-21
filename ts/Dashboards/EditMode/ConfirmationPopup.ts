@@ -74,7 +74,7 @@ class ConfirmationPopup extends BaseForm {
     }
 
     protected addCloseButton(
-        className: string = EditGlobals.classNames.confirmationPopupCloseButton
+        className: string = EditGlobals.classNames.popupCloseButton
     ): HTMLElement {
         return super.addCloseButton(className);
     }

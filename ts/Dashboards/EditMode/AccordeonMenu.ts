@@ -29,7 +29,8 @@ import U from '../../Core/Utilities.js';
 import EditGlobals from './EditGlobals.js';
 const {
     createElement,
-    merge
+    merge,
+    error
 } = U;
 
 /* *
@@ -168,6 +169,10 @@ class AccordeonMenu {
             } catch (e) {
                 // console.log('Invalid JSON passed to the chart chart config');
                 // TODO: Handle the wrong config passed from the user.
+                error(
+                    'Dashboards Error: Wrong JSON config structure passed as' +
+                        ' a chart options.'
+                );
             }
 
         }
