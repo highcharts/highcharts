@@ -107,7 +107,6 @@ class SonificationInstrument {
         params: SonificationInstrument.ScheduledEventOptions
     ): void {
         const mergedParams = extend(this.curParams, params),
-            audioTime = this.audioContext.currentTime + time,
             freq = defined(params.frequency) ?
                 params.frequency : defined(params.note) ?
                     SonificationInstrument.musicalNoteToFrequency(params.note) :
@@ -115,34 +114,34 @@ class SonificationInstrument {
 
         if (defined(freq)) {
             this.synthPatch.playFreqAtTime(
-                audioTime, freq, mergedParams.noteDuration);
+                time, freq, mergedParams.noteDuration);
         }
         if (
             defined(mergedParams.tremoloDepth) ||
             defined(mergedParams.tremoloSpeed)
         ) {
             this.setTremoloAtTime(
-                audioTime, mergedParams.tremoloDepth, mergedParams.tremoloSpeed
+                time, mergedParams.tremoloDepth, mergedParams.tremoloSpeed
             );
         }
         if (defined(mergedParams.pan)) {
-            this.setPanAtTime(audioTime, mergedParams.pan);
+            this.setPanAtTime(time, mergedParams.pan);
         }
         if (defined(mergedParams.volume)) {
-            this.setVolumeAtTime(audioTime, mergedParams.volume);
+            this.setVolumeAtTime(time, mergedParams.volume);
         }
         if (
             defined(mergedParams.lowpassFreq) ||
             defined(mergedParams.lowpassResonance)
         ) {
-            this.setFilterAtTime('lowpass', audioTime,
+            this.setFilterAtTime('lowpass', time,
                 mergedParams.lowpassFreq, mergedParams.lowpassResonance);
         }
         if (
             defined(mergedParams.highpassFreq) ||
             defined(mergedParams.highpassResonance)
         ) {
-            this.setFilterAtTime('highpass', audioTime,
+            this.setFilterAtTime('highpass', time,
                 mergedParams.highpassFreq, mergedParams.highpassResonance);
         }
     }
@@ -150,61 +149,65 @@ class SonificationInstrument {
 
     // Time is given in seconds, where 0 is now.
     silenceAtTime(time: number): void {
-        this.synthPatch.silenceAtTime(this.audioContext.currentTime + time);
+        this.synthPatch.silenceAtTime(time);
     }
 
 
-    // Time is given in AudioContext timespace.
+    // Time is given in seconds.
     setPanAtTime(time: number, pan: number): void {
         if (this.panNode) {
             this.panNode.pan.setTargetAtTime(
-                pan, time, SonificationInstrument.rampTime);
+                pan, time + this.audioContext.currentTime,
+                SonificationInstrument.rampTime);
         }
     }
 
 
-    // Time is given in AudioContext timespace.
+    // Time is given in seconds.
     setFilterAtTime(
         filter: 'lowpass'|'highpass',
         time: number,
         frequency?: number,
         resonance?: number
     ): void {
-        const node: BiquadFilterNode = (this as any)[filter + 'Node'];
+        const node: BiquadFilterNode = (this as any)[filter + 'Node'],
+            audioTime = this.audioContext.currentTime + time;
         if (node) {
             if (defined(resonance)) {
                 node.Q.setTargetAtTime(
-                    resonance, time, SonificationInstrument.rampTime);
+                    resonance, audioTime, SonificationInstrument.rampTime);
             }
             if (defined(frequency)) {
                 node.frequency.setTargetAtTime(
-                    frequency, time, SonificationInstrument.rampTime);
+                    frequency, audioTime, SonificationInstrument.rampTime);
             }
         }
     }
 
 
-    // Time is given in AudioContext timespace.
+    // Time is given in seconds.
     setVolumeAtTime(time: number, volume: number): void {
         if (this.volumeNode) {
             this.volumeNode.gain.setTargetAtTime(
-                volume, time, SonificationInstrument.rampTime);
+                volume, time + this.audioContext.currentTime,
+                SonificationInstrument.rampTime);
         }
     }
 
 
     // Speed and depth go from 0 to 1.
-    // Time is given in AudioContext timespace.
+    // Time is given in seconds.
     setTremoloAtTime(
         time: number, depth?: number, speed?: number
     ): void {
+        const audioTime = this.audioContext.currentTime + time;
         if (this.tremoloDepth && defined(depth)) {
             this.tremoloDepth.gain.setTargetAtTime(
-                depth, time, SonificationInstrument.rampTime);
+                depth, audioTime, SonificationInstrument.rampTime);
         }
         if (this.tremoloOsc && defined(speed)) {
             this.tremoloOsc.frequency.setTargetAtTime(
-                15 * speed, time, SonificationInstrument.rampTime);
+                15 * speed, audioTime, SonificationInstrument.rampTime);
         }
     }
 

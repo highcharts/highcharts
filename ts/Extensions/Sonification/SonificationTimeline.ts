@@ -339,6 +339,34 @@ class SonificationTimeline {
     }
 
 
+    // Play a short moment, then pause, setting the cursor to the final
+    // event's time.
+    anchorPlayMoment(
+        eventFilter: Sonification.TimelineFilterCallback,
+        onEnd?: Sonification.ChartCallback
+    ): void {
+        if (this.isPlaying) {
+            this.pause();
+        }
+
+        let finalEventTime = 0;
+        this.play((e, ix, arr): boolean => {
+            // We have to keep track of final event time ourselves, since
+            // play() messes with the time internally upon filtering.
+            const res = eventFilter(e, ix, arr);
+            if (res && e.time > finalEventTime) {
+                finalEventTime = e.time;
+            }
+            return res;
+        }, false, false, onEnd);
+
+        this.playingChannels = this.playingChannels || this.channels;
+        this.isPaused = true;
+        this.isPlaying = false;
+        this.resumeFromTime = finalEventTime;
+    }
+
+
     // Play event(s) occurring next/prev from paused state.
     playAdjacent(
         next: boolean,
@@ -393,17 +421,17 @@ class SonificationTimeline {
             }
             return;
         }
-        this.play((e, ix, arr): boolean => {
-            const withinTime = next ?
-                e.time > fromTime && e.time <= closestTime + margin :
-                e.time < fromTime && e.time >= closestTime - margin;
-            return eventFilter ? withinTime && eventFilter(e, ix, arr) :
-                withinTime;
-        }, false, false, onEnd);
-        this.playingChannels = this.playingChannels || this.channels;
-        this.isPaused = true;
-        this.isPlaying = false;
-        this.resumeFromTime = closestTime;
+
+        this.anchorPlayMoment(
+            (e, ix, arr): boolean => {
+                const withinTime = next ?
+                    e.time > fromTime && e.time <= closestTime + margin :
+                    e.time < fromTime && e.time >= closestTime - margin;
+                return eventFilter ? withinTime && eventFilter(e, ix, arr) :
+                    withinTime;
+            },
+            onEnd
+        );
     }
 
 
@@ -532,42 +560,28 @@ class SonificationTimeline {
 
 
     // Get last played / current point
-    getCurrentPoint(
+    // Since events are scheduled we can't just store points as we play them
+    getLastPlayedPoint(
         filter?: Sonification.TimelineFilterCallback
     ): Point|null {
-        const curTime = this.resumeFromTime,
+        const curTime = this.getCurrentTime(),
             channels = this.playingChannels || this.channels;
         let closestDiff = Infinity,
             closestPoint = null;
         channels.forEach((c): void => {
             const events = c.events.filter((e, ix, arr): boolean => !!(
-                e.relatedPoint && e.time <= curTime &&
-                (!filter || filter(e, ix, arr))));
-
-            let s = 0,
-                e = events.length;
-            while (s < e) {
-                const mid = (s + e) >> 1,
-                    t = events[mid].time,
-                    cmp = t - curTime;
-                if (cmp > 0) { // ahead
-                    e = mid;
-                } else if (cmp < 0) { // behind
-                    s = mid + 1;
-                } else { // === from time
-                    e = s = mid;
+                    e.relatedPoint && e.time <= curTime &&
+                    (!filter || filter(e, ix, arr)))),
+                closestEvent = events[events.length - 1];
+            if (closestEvent) {
+                const closestTime = closestEvent.time,
+                    diff = Math.abs(closestTime - curTime);
+                if (diff < closestDiff) {
+                    closestDiff = diff;
+                    closestPoint = closestEvent.relatedPoint;
                 }
             }
-
-            const event = events[Math.min(s, events.length - 1)],
-                closestTime = event && event.time,
-                diff = Math.abs(closestTime - curTime);
-            if (defined(closestTime) && diff < closestDiff) {
-                closestDiff = diff;
-                closestPoint = event.relatedPoint;
-            }
         });
-
         return closestPoint;
     }
 

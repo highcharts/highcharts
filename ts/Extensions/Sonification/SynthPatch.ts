@@ -632,7 +632,7 @@ class SynthPatch {
     }
 
 
-    // Mute sound at time (in seconds, in the AudioContext timespace)
+    // Mute sound at time (in seconds)
     // Will still run release envelope. Note: If scheduled multiple times in
     // succession, the release envelope will run, and that could make sound.
     silenceAtTime(time: number): void {
@@ -640,7 +640,7 @@ class SynthPatch {
             this.outputNode.gain.value = 0;
             return; // Skip if not needed
         }
-        this.releaseAtTime(time || this.audioContext.currentTime);
+        this.releaseAtTime((time || 0) + this.audioContext.currentTime);
     }
 
 
@@ -653,7 +653,7 @@ class SynthPatch {
     }
 
 
-    // Play a frequency at time (in seconds, in the AudioContext timespace).
+    // Play a frequency at time (in seconds).
     // Time denotes when the attack ramp starts. Note duration is given in
     // milliseconds. If note duration is not given, the note plays indefinitely.
     playFreqAtTime(
@@ -661,7 +661,7 @@ class SynthPatch {
         frequency: number,
         noteDuration?: number
     ): void {
-        const t = time || this.audioContext.currentTime,
+        const t = (time || 0) + this.audioContext.currentTime,
             opts = this.options;
         this.oscillators.forEach((o): void => {
             o.setFreqAtTime(t, frequency, opts.noteGlideDuration);

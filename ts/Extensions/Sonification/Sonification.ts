@@ -239,8 +239,8 @@ class Sonification {
         if (this.timeline) {
             this.timeline.reset();
             this.beforePlay();
-            this.timeline.play((e): boolean => e.relatedPoint === point,
-                void 0, void 0, onEnd);
+            this.timeline.anchorPlayMoment(
+                (e): boolean => e.relatedPoint === point, onEnd);
         }
     }
 
@@ -271,22 +271,67 @@ class Sonification {
         if (this.timeline) {
             const opts = this.chart.options.sonification,
                 onHit = opts && opts.events && opts.events.onBoundaryHit;
-            if (!this.boundaryInstrument && !onHit) {
-                this.boundaryInstrument = new SynthPatch(
-                    this.audioContext as AudioContext,
-                    merge(InstrumentPresets.step, { masterVolume: 1.3 })
-                );
-                this.boundaryInstrument.startSilently();
-                this.boundaryInstrument.connect(
-                    this.audioDestination as AudioDestinationNode
-                );
+            if (!onHit) {
+                this.initBoundaryInstrument();
             }
             this.timeline.playAdjacent(next, onEnd, onHit || ((): void => {
-                if (this.boundaryInstrument) {
-                    this.boundaryInstrument.playFreqAtTime(0, 220, 300);
-                }
+                this.defaultBoundaryHit();
             }), eventFilter);
         }
+    }
+
+
+    // Play next/prev series relative to current prop value
+    playAdjacentSeries(
+        next?: boolean,
+        prop: keyof Point = 'x',
+        onEnd?: globalThis.Sonification.ChartCallback
+    ): Series|null {
+        const lastPlayed = this.getLastPlayedPoint();
+        if (lastPlayed) {
+            const targetSeriesIx = lastPlayed.series.index + (
+                next ? 1 : -1
+            );
+            this.playClosestToProp(prop, lastPlayed[prop] as number,
+                (e): boolean => !!e.relatedPoint &&
+                    e.relatedPoint.series.index === targetSeriesIx, onEnd);
+            return this.chart.series[targetSeriesIx] || null;
+        }
+        return null;
+    }
+
+
+    // Play points/events closest to a prop relative to a reference value
+    playClosestToProp(
+        prop: keyof Point,
+        targetValue: number,
+        targetFilter?: globalThis.Sonification.TimelineFilterCallback,
+        onEnd?: globalThis.Sonification.ChartCallback
+    ): void {
+        if (!this.ready(this.playClosestToProp.bind(
+            this, prop, targetValue, targetFilter, onEnd))) {
+            return;
+        }
+        if (this.timeline) {
+            const opts = this.chart.options.sonification,
+                onHit = opts && opts.events && opts.events.onBoundaryHit;
+            if (!onHit) {
+                this.initBoundaryInstrument();
+            }
+            this.timeline.playClosestToPropValue(
+                prop, targetValue, onEnd, onHit || ((): void =>
+                    this.defaultBoundaryHit()
+                ), targetFilter);
+        }
+    }
+
+
+    // Get last played point
+    getLastPlayedPoint(): Point|null {
+        if (this.timeline) {
+            return this.timeline.getLastPlayedPoint();
+        }
+        return null;
     }
 
 
@@ -323,11 +368,15 @@ class Sonification {
     // Speak text string with options
     speak(
         text: string,
-        speakerOptions: SonificationSpeaker.SpeakerOptions,
+        speakerOptions: SonificationSpeaker.SpeakerOptions|null,
         delayMs = 0
     ): void {
         const speaker = new SonificationSpeaker(
-            merge({ language: 'en-US' }, speakerOptions)
+            merge({
+                language: 'en-US',
+                rate: 1.5,
+                volume: 0.4
+            }, speakerOptions || {})
         );
         speaker.sayAtTime(delayMs, text);
     }
@@ -390,6 +439,30 @@ class Sonification {
             beforePlay = opts && opts.events && opts.events.beforePlay;
         if (beforePlay) {
             beforePlay({ chart: this.chart, timeline: this.timeline });
+        }
+    }
+
+
+    // Initialize the builtin boundary hit instrument
+    private initBoundaryInstrument(): void {
+        if (!this.boundaryInstrument) {
+            this.boundaryInstrument = new SynthPatch(
+                this.audioContext as AudioContext,
+                merge(InstrumentPresets.chop, { masterVolume: 0.3 })
+            );
+            this.boundaryInstrument.startSilently();
+            this.boundaryInstrument.connect(
+                this.audioDestination as AudioDestinationNode
+            );
+        }
+    }
+
+
+    // The default boundary hit sound
+    private defaultBoundaryHit(): void {
+        if (this.boundaryInstrument) {
+            this.boundaryInstrument.playFreqAtTime(0.1, 1, 200);
+            this.boundaryInstrument.playFreqAtTime(0.2, 1, 200);
         }
     }
 }
