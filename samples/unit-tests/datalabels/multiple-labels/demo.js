@@ -192,4 +192,17 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
         result,
         'All data labels should be visible when chart is inverted (#12370).'
     );
+
+    const newOpacity = 0.4;
+
+    chart.series[0].update({
+        opacity: newOpacity
+    });
+
+    assert.strictEqual(
+        chart.series[0].dataLabelsGroup.opacity,
+        newOpacity,
+        `Data labels should inherit the opacity from the series on the initial
+        render (#17006).`
+    );
 });
