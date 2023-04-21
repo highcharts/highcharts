@@ -88,7 +88,7 @@ Highcharts.mapChart('container', {
         type: 'mappoint',
         name: 'Museums',
         marker: {
-            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/graphics/museum.svg)',
+            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@67f46da560/samples/graphics/museum.svg)',
             width: 24,
             height: 24
         },
@@ -145,7 +145,7 @@ Highcharts.mapChart('container', {
         type: 'mappoint',
         name: 'Parks',
         marker: {
-            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/graphics/tree.svg)',
+            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@67f46da560/samples/graphics/tree.svg)',
             width: 24,
             height: 24
         },
@@ -172,7 +172,7 @@ Highcharts.mapChart('container', {
         type: 'mappoint',
         name: 'Great buildings',
         marker: {
-            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/graphics/building.svg)',
+            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@67f46da560/samples/graphics/building.svg)',
             width: 24,
             height: 24
         },
@@ -211,7 +211,7 @@ Highcharts.mapChart('container', {
         type: 'mappoint',
         name: 'Restaurants',
         marker: {
-            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/graphics/eat.svg)',
+            symbol: 'url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@67f46da560/samples/graphics/eat.svg)',
             width: 24,
             height: 24
         },
