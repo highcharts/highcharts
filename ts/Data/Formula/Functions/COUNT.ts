@@ -14,6 +14,8 @@
 
 'use strict';
 
+/* eslint-disable new-cap */
+
 
 /* *
  *
@@ -22,10 +24,14 @@
  * */
 
 
-import type { Value } from '../FormulaTypes';
+import type {
+    Arguments,
+    Value
+} from '../FormulaTypes';
+import type DataTable from '../../DataTable';
 
 
-import FormulaFunction from './FormulaFunction.js';
+import FormulaProcessor from '../FormulaProcessor.js';
 
 
 /* *
@@ -36,21 +42,27 @@ import FormulaFunction from './FormulaFunction.js';
 
 
 /**
- * Processor for the `COUNT(range)` implementation. Returns the number of
+ * Processor for the `COUNT(...values)` implementation. Returns the count of
  * given values that are numbers.
  *
  * @private
- * @function Formula.ProcessorFunction.types.COUNT
+ * @function Formula.processorFunctions.COUNT
  *
- * @param {Array<(Highcharts.FormulaValue|Array<Highcharts.FormulaValue>)>} values
- * Values to process.
+ * @param {Highcharts.FormulaArguments} args
+ * Arguments to process.
+ *
+ * @param {Highcharts.DataTable} [table]
+ * Table to process.
  *
  * @return {number}
  * Result value of the process.
  */
-function process(
-    values: Array<(Value|Array<Value>)>
+function COUNT(
+    args: Arguments,
+    table?: DataTable
 ): number {
+    const values = FormulaProcessor.getArgumentValues(args, table);
+
     let count = 0;
 
     for (
@@ -67,7 +79,7 @@ function process(
                 ++count;
             }
         } else if (value instanceof Array) {
-            count += process(value);
+            count += COUNT(value, table);
         }
     }
 
@@ -82,12 +94,7 @@ function process(
  * */
 
 
-const Count: FormulaFunction = {
-    process
-};
-
-
-FormulaFunction.registerType('COUNT', Count);
+FormulaProcessor.registerProcessorFunction('COUNT', COUNT);
 
 
 /* *
@@ -97,4 +104,4 @@ FormulaFunction.registerType('COUNT', Count);
  * */
 
 
-export default Count;
+export default COUNT;

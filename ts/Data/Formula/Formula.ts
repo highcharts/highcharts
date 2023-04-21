@@ -25,14 +25,13 @@
 import FormulaParser from './FormulaParser.js';
 import FormulaProcessor from './FormulaProcessor.js';
 import FormulaType from './FormulaTypes.js';
-import FormulaFunction from './Functions/FormulaFunction.js';
 
 
-import './Functions/Average.js';
-import './Functions/Count.js';
-import './Functions/If.js';
-import './Functions/Not.js';
-import './Functions/Sum.js';
+import './Functions/AVERAGE.js';
+import './Functions/COUNT.js';
+import './Functions/IF.js';
+import './Functions/NOT.js';
+import './Functions/SUM.js';
 
 
 /* *
@@ -74,8 +73,7 @@ export type {
 const Formula = {
     ...FormulaParser,
     ...FormulaProcessor,
-    ...FormulaType,
-    FormulaFunction
+    ...FormulaType
 };
 
 

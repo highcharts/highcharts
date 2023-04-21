@@ -8,9 +8,12 @@
   - COUNTIF ⏳
   - COUNTIFS ⏳
   - IF ✅
+  - IFS
   - MAX
+  - MAXIFS ⏳
   - MEDIAN
   - MIN
+  - MINIFS ⏳
   - MODE
   - MODE.MULT
   - MODE.SNGL

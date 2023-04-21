@@ -14,6 +14,8 @@
 
 'use strict';
 
+/* eslint-disable new-cap */
+
 
 /* *
  *
@@ -22,10 +24,11 @@
  * */
 
 
-import type { Value } from '../FormulaTypes';
+import type { Arguments, Value } from '../FormulaTypes';
+import type DataTable from '../../DataTable';
 
 
-import FormulaFunction from './FormulaFunction.js';
+import FormulaProcessor from '../FormulaProcessor.js';
 import FormulaTypes from '../FormulaTypes.js';
 const { asNumber } = FormulaTypes;
 
@@ -42,17 +45,22 @@ const { asNumber } = FormulaTypes;
  * given values.
  *
  * @private
- * @function Formula.ProcessorFunction.types.SUM
+ * @function Formula.processorFunctions.SUM
  *
- * @param {Array<(Highcharts.FormulaValue|Array<Highcharts.FormulaValue>)>} values
- * Values to process.
+ * @param {Highcharts.FormulaArguments} args
+ * Arguments to process.
+ *
+ * @param {Highcharts.FormulaArguments} [table]
+ * Table to process.
  *
  * @return {number}
  * Result value of the process.
  */
-function process(
-    values: Array<(Value|Array<Value>)>
+function SUM(
+    args: Arguments,
+    table?: DataTable
 ): number {
+    const values = FormulaProcessor.getArgumentValues(args, table);
     let result = 0;
 
     for (
@@ -65,7 +73,7 @@ function process(
         value = values[i];
 
         if (value instanceof Array) {
-            result += process(value);
+            result += SUM(value, table);
         } else {
             result += asNumber(value);
         }
@@ -82,12 +90,7 @@ function process(
  * */
 
 
-const Sum: FormulaFunction = {
-    process
-};
-
-
-FormulaFunction.registerType('SUM', Sum);
+FormulaProcessor.registerProcessorFunction('SUM', SUM); // 🐝
 
 
 /* *
@@ -97,4 +100,4 @@ FormulaFunction.registerType('SUM', Sum);
  * */
 
 
-export default Sum;
+export default SUM;

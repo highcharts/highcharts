@@ -24,6 +24,7 @@
 
 import type DataTable from '../DataTable';
 import type {
+    Arguments,
     Formula,
     Function,
     Item,
@@ -35,7 +36,6 @@ import type {
 } from './FormulaTypes';
 
 
-import FormulaFunction from './Functions/FormulaFunction.js';
 import FormulaTypes from './FormulaTypes.js';
 const {
     asNumber,
@@ -46,6 +46,31 @@ const {
     isRange,
     isValue
 } = FormulaTypes;
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+
+export interface ProcessorFunction {
+    (args: Arguments, table?: DataTable): (Value|Array<Value>);
+}
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+
+const processorFunctions: Record<string, ProcessorFunction> = {};
+
+
+const processorFunctionNameRegExp = /^[A-Z][A-Z\.]*$/;
 
 
 /* *
@@ -112,6 +137,146 @@ function basicOperation(
 
 
 /**
+ */
+function getArgumentValue(
+    arg: (Range|Term),
+    table?: DataTable
+): (Value|Array<Value>) {
+
+    // Add value
+    if (isValue(arg)) {
+        return arg;
+    }
+
+    // Add values of a range
+    if (isRange(arg)) {
+        return (table && getRangeValues(arg, table) || []);
+    }
+
+    // Add values of a function
+    if (isFunction(arg)) {
+        return processFunction(arg, table);
+    }
+
+    // Process functions, operations, pointers with formula processor
+    return processFormula((isFormula(arg) ? arg : [arg]), table);
+}
+
+
+/**
+ */
+function getArgumentValues(
+    args: Arguments,
+    table?: DataTable
+): Array<(Value|Array<Value>)> {
+    const values: Array<(Value|Array<Value>)> = [];
+
+    for (let i = 0, iEnd = args.length; i < iEnd; ++i) {
+        values.push(getArgumentValue(args[i], table));
+    }
+
+    return values;
+}
+
+
+/**
+ * Extracts the cell value from a table for a given pointer.
+ *
+ * @private
+ *
+ * @param {Highcharts.FormulaPointer} pointer
+ * Formula pointer to use.
+ *
+ * @param {Highcharts.DataTable} table
+ * Table to extract from.
+ *
+ * @return {Highcharts.FormulaValue}
+ * Extracted value. 'undefined' might also indicate that the cell was not found.
+ */
+function getPointerValue(
+    pointer: Pointer,
+    table: DataTable
+): Value {
+    const columnName = table.getColumnNames()[pointer.column];
+
+    if (columnName) {
+        const cell = table.getCell(columnName, pointer.row);
+
+        if (
+            typeof cell === 'string' &&
+            cell[0] === '=' &&
+            table !== table.modified
+        ) {
+            // Look in the modified table for formula result
+            const result = table.modified.getCell(columnName, pointer.row);
+            return isValue(result) ? result : NaN;
+        }
+
+        return isValue(cell) ? cell : NaN;
+    }
+
+    return NaN;
+}
+
+
+/**
+ * Extracts cell values from a table for a given range.
+ *
+ * @function Highcharts.Formula.getRangeValues
+ *
+ * @param {Highcharts.FormulaRange} range
+ * Formula range to use.
+ *
+ * @param {Highcharts.DataTable} table
+ * Table to extract from.
+ *
+ * @return {Array<Highcharts.FormulaValue>}
+ * Extracted values.
+ */
+function getRangeValues(
+    range: Range,
+    table: DataTable
+): Array<Value> {
+    const columnNames = table
+            .getColumnNames()
+            .slice(range.beginColumn, range.endColumn + 1),
+        values: Array<Value> = [];
+
+    for (
+        let i = 0,
+            iEnd = columnNames.length,
+            cell: DataTable.CellType;
+        i < iEnd;
+        ++i
+    ) {
+        const cells = table.getColumn(columnNames[i], true) || [];
+
+        for (
+            let j = range.beginRow,
+                jEnd = range.endRow + 1;
+            j < jEnd;
+            ++j
+        ) {
+            cell = cells[j];
+
+            if (
+                typeof cell === 'string' &&
+                cell[0] === '=' &&
+                table !== table.modified
+            ) {
+                // Look in the modified table for formula result
+                cell = table.modified.getCell(columnNames[i], j);
+            }
+
+            values.push(isValue(cell) ? cell : NaN);
+        }
+    }
+
+    return values;
+}
+
+
+/**
  * Processes a formula array on the given table. If the formula does not contain
  * pointers or ranges, then no table has to be provided.
  *
@@ -166,7 +331,7 @@ function processFormula(
 
         // Next item is a pointer and needs to get resolved
         } else if (isPointer(item)) {
-            y = (table && processPointer(item, table));
+            y = (table && getPointerValue(item, table));
 
         }
 
@@ -203,53 +368,21 @@ function processFormula(
  * @param {Highcharts.DataTable} [table]
  * Table to use for pointers and ranges.
  *
- * @return {Value|Array<Value>|undefined}
- * Result value (or values) of the process. `undefined` indicates an unknown
- * function.
+ * @return {Value|Array<Value>}
+ * Result value (or values) of the process. `NaN` indicates an error.
  */
 function processFunction(
     formulaFunction: Function,
     table?: DataTable
 ): (Value|Array<Value>) {
-    const processor = FormulaFunction.types[formulaFunction.name];
+    const processor = processorFunctions[formulaFunction.name];
 
     if (processor) {
-        const args = formulaFunction.args,
-            values: Array<(Value|Array<Value>)> = [];
-
-        // First process all arguments to values
-        for (
-            let i = 0,
-                iEnd = args.length,
-                term: (Range|Term);
-            i < iEnd;
-            ++i
-        ) {
-            term = args[i];
-
-            // Add value
-            if (isValue(term)) {
-                values.push(term);
-
-            // Add values of a range
-            } else if (isRange(term)) {
-                values.push(table && processRange(term, table) || []);
-
-            // Add values of a function
-            } else if (isFunction(term)) {
-                values.push(processFunction(term, table));
-
-            // Process functions, operations, pointers with formula processor
-            } else {
-                values.push(processFormula(
-                    (isFormula(term) ? term : [term]),
-                    table
-                ));
-            }
+        try {
+            return processor(formulaFunction.args, table);
+        } catch {
+            return NaN;
         }
-
-        // Provide all values to the processor function
-        return processor.process(values);
     }
 
     return NaN;
@@ -257,99 +390,27 @@ function processFunction(
 
 
 /**
- * Extracts the cell value from a table for a given pointer.
+ * Registers a function for the FormulaProcessor.
  *
- * @private
+ * @param {string} name
+ * Name of the function in spreadsheets notation with upper case.
  *
- * @param {Highcharts.FormulaPointer} pointer
- * Formula pointer to use.
+ * @param {Highcharts.FormulaFunction} processorFunction
+ * ProcessorFunction for the FormulaProcessor. This is an object so that it
+ * can take additional parameter for future validation routines.
  *
- * @param {Highcharts.DataTable} table
- * Table to extract from.
- *
- * @return {Highcharts.FormulaValue}
- * Extracted value. 'undefined' might also indicate that the cell was not found.
+ * @return {boolean}
+ * Return true, if the ProcessorFunction has been registered.
  */
-function processPointer(
-    pointer: Pointer,
-    table: DataTable
-): Value {
-    const columnName = table.getColumnNames()[pointer.column];
-
-    if (columnName) {
-        const cell = table.getCell(columnName, pointer.row);
-
-        if (
-            typeof cell === 'string' &&
-            cell[0] === '=' &&
-            table !== table.modified
-        ) {
-            // Look in the modified table for formula result
-            const result = table.modified.getCell(columnName, pointer.row);
-            return isValue(result) ? result : NaN;
-        }
-
-        return isValue(cell) ? cell : NaN;
-    }
-
-    return NaN;
-}
-
-
-/**
- * Extracts cell values from a table for a given range.
- *
- * @private
- *
- * @param {Highcharts.FormulaRange} range
- * Formula range to use.
- *
- * @param {Highcharts.DataTable} table
- * Table to extract from.
- *
- * @return {Array<Highcharts.FormulaValue>}
- * Extracted values.
- */
-function processRange(
-    range: Range,
-    table: DataTable
-): Array<Value> {
-    const columnNames = table
-            .getColumnNames()
-            .slice(range.beginColumn, range.endColumn + 1),
-        values: Array<Value> = [];
-
-    for (
-        let i = 0,
-            iEnd = columnNames.length,
-            cell: DataTable.CellType;
-        i < iEnd;
-        ++i
-    ) {
-        const cells = table.getColumn(columnNames[i], true) || [];
-
-        for (
-            let j = range.beginRow,
-                jEnd = range.endRow + 1;
-            j < jEnd;
-            ++j
-        ) {
-            cell = cells[j];
-
-            if (
-                typeof cell === 'string' &&
-                cell[0] === '=' &&
-                table !== table.modified
-            ) {
-                // Look in the modified table for formula result
-                cell = table.modified.getCell(columnNames[i], j);
-            }
-
-            values.push(isValue(cell) ? cell : NaN);
-        }
-    }
-
-    return values;
+function registerProcessorFunction(
+    name: string,
+    processorFunction: ProcessorFunction
+): boolean {
+    return (
+        processorFunctionNameRegExp.test(name) &&
+        !processorFunctions[name] &&
+        !!(processorFunctions[name] = processorFunction)
+    );
 }
 
 
@@ -361,8 +422,13 @@ function processRange(
 
 
 const FormulaProcessor = {
-    processFormula
+    getArgumentValue,
+    getArgumentValues,
+    getPointerValue,
+    getRangeValues,
+    processFormula,
+    processorFunctions,
+    registerProcessorFunction
 };
-
 
 export default FormulaProcessor;

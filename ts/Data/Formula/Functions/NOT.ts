@@ -22,10 +22,11 @@
  * */
 
 
-import type { Value } from '../FormulaTypes';
+import type { Arguments } from '../FormulaTypes';
+import type DataTable from '../../DataTable.js';
 
 
-import FormulaFunction from './FormulaFunction.js';
+import FormulaProcessor from '../FormulaProcessor.js';
 
 
 /* *
@@ -40,18 +41,22 @@ import FormulaFunction from './FormulaFunction.js';
  * result.
  *
  * @private
- * @function Formula.ProcessorFunction.types.NOT
+ * @function Formula.processorFunctions.NOT
  *
- * @param {Array<(Highcharts.FormulaValue|Array<Highcharts.FormulaValue>)>} values
- * Values to process.
+ * @param {Highcharts.FormulaArguments} args
+ * Arguments to process.
+ *
+ * @param {Highcharts.DataTable} [table]
+ * Table to process.
  *
  * @return {boolean}
  * Result value of the process.
  */
-function process(
-    values: Array<(Value|Array<Value>)>
+function NOT(
+    args: Arguments,
+    table?: DataTable
 ): boolean {
-    return !values[0];
+    return !!FormulaProcessor.getArgumentValue(args[0], table);
 }
 
 
@@ -62,12 +67,7 @@ function process(
  * */
 
 
-const Not: FormulaFunction = {
-    process
-};
-
-
-FormulaFunction.registerType('NOT', Not);
+FormulaProcessor.registerProcessorFunction('NOT', NOT);
 
 
 /* *
@@ -77,4 +77,4 @@ FormulaFunction.registerType('NOT', Not);
  * */
 
 
-export default Not;
+export default NOT;

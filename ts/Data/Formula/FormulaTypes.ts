@@ -38,14 +38,14 @@ export type Formula = Array<(Operator|Term)>;
  * Formula function with an arguments array.
  */
 export interface Function {
-    args: Readonly<Arguments>;
+    args: Arguments;
     name: string;
     type: 'function';
 }
 
 
 /**
- * Item in arguments or formula.
+ * Item in arguments and formulas.
  */
 export type Item = (Operator|Range|Term);
 

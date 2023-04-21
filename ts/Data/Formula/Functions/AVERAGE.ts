@@ -22,10 +22,14 @@
  * */
 
 
-import type { Value } from '../FormulaTypes';
+import type {
+    Arguments,
+    Value
+} from '../FormulaTypes';
+import type DataTable from '../../DataTable';
 
 
-import FormulaFunction from './FormulaFunction.js';
+import FormulaProcessor from '../FormulaProcessor.js';
 
 /* *
  *
@@ -39,17 +43,23 @@ import FormulaFunction from './FormulaFunction.js';
  * value of the given values.
  *
  * @private
- * @function Formula.ProcessorFunction.types.AVERAGE
+ * @function Formula.processorFunctions.AVERAGE
  *
- * @param {Array<(Highcharts.FormulaValue|Array<Highcharts.FormulaValue>)>} values
- * Values to process.
+ * @param {Highcharts.FormulaArguments} args
+ * Arguments to process.
+ *
+ * @param {Highcharts.DataTable} [table]
+ * Table to process.
  *
  * @return {number}
  * Result value of the process.
  */
-function process(
-    values: Array<(Value|Array<Value>)>
+function AVERAGE(
+    args: Arguments,
+    table?: DataTable
 ): number {
+    const values = FormulaProcessor.getArgumentValues(args, table);
+
     let count = 0,
         result = 0;
 
@@ -89,12 +99,7 @@ function process(
  * */
 
 
-const Average: FormulaFunction = {
-    process
-};
-
-
-FormulaFunction.registerType('AVERAGE', Average);
+FormulaProcessor.registerProcessorFunction('AVERAGE', AVERAGE);
 
 
 /* *
@@ -104,4 +109,4 @@ FormulaFunction.registerType('AVERAGE', Average);
  * */
 
 
-export default Average;
+export default AVERAGE;
