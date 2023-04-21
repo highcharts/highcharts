@@ -1,6 +1,6 @@
 ---
- name: Highcharts Demo
+ name: Highcharts Homepage Animations
  authors:
-   - Pawel Dalek
+   - Nancy Dillon
  js_wrap: b
 ...
