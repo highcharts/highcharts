@@ -2,7 +2,7 @@ QUnit.test('Zoom type', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'line',
-            zoomType: 'x',
+            zoomType: 'y',
             width: 600,
             height: 300
         },
@@ -81,6 +81,21 @@ QUnit.test('Zoom type', function (assert) {
         chart.resetZoomButton.translateY - chart.plotTop,
         buttonY,
         'The zoom button should have been re-aligned'
+    );
+
+    chart.zoomOut();
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+    const plotTop = chart.plotTop;
+
+    // zoom at the top of the plot
+    controller.pan([500, plotTop + 10], [530, plotTop + 10]);
+    assert.ok(
+        chart.resetZoomButton,
+        'Y zoom should work when panning at the top of the plot on inverted chart (#18103)'
     );
 });
 

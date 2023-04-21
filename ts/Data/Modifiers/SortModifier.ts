@@ -360,8 +360,8 @@ class SortModifier extends DataModifier {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace SortModifier {
 
@@ -417,7 +417,7 @@ declare module './DataModifierType' {
     }
 }
 
-DataModifier.registerType(SortModifier);
+DataModifier.registerType('Sort', SortModifier);
 
 /* *
  *

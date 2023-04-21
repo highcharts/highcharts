@@ -1071,6 +1071,9 @@ namespace AxisDefaults {
          * interpreted as percentages of the plot width, offset from plot area
          * left.
          *
+         * @sample {highcharts} highcharts/xaxis/axis-position-properties
+         *         Different axis position properties
+         *
          * @type      {number|string}
          * @product   highcharts highstock
          * @apioption xAxis.left
@@ -1082,6 +1085,9 @@ namespace AxisDefaults {
          *
          * Since Highcharts 2: If it's a percentage string, it is interpreted
          * as percentages of the plot height, offset from plot area top.
+         *
+         * @sample {highcharts} highcharts/xaxis/axis-position-properties
+         *         Different axis position properties
          *
          * @type      {number|string}
          * @product   highcharts highstock
@@ -2201,6 +2207,9 @@ namespace AxisDefaults {
          * Since Highcharts 2: If it's a percentage string, it is interpreted
          * as percentages of the total plot height.
          *
+         * @sample {highcharts} highcharts/xaxis/axis-position-properties
+         *         Different axis position properties
+         *
          * @type      {number|string}
          * @product   highcharts highstock
          * @apioption xAxis.height
@@ -2212,6 +2221,9 @@ namespace AxisDefaults {
          *
          * Since Highcharts v5.0.13: If it's a percentage string, it is
          * interpreted as percentages of the total plot width.
+         *
+         * @sample {highcharts} highcharts/xaxis/axis-position-properties
+         *         Different axis position properties
          *
          * @type      {number|string}
          * @product   highcharts highstock

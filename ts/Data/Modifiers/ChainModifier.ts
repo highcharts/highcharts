@@ -168,6 +168,55 @@ class ChainModifier extends DataModifier {
     }
 
     /**
+     * Applies several modifications to the table and returns a modified copy of
+     * the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Table to modify.
+     *
+     * @param {DataEvent.Detail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Promise<Highcharts.DataTable>}
+     * Table with `modified` property as a reference.
+     */
+    public modify<T extends DataTable>(
+        table: T,
+        eventDetail?: DataEvent.Detail
+    ): Promise<T> {
+        const modifiers = (
+            this.options.reverse ?
+                this.chain.slice().reverse() :
+                this.chain.slice()
+        );
+
+        let promiseChain: Promise<T> = Promise.resolve(table);
+
+        for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
+            const modifier = modifiers[i];
+            promiseChain = promiseChain.then((chainTable): Promise<T> =>
+                modifier.modify(chainTable.modified as T, eventDetail)
+            );
+        }
+
+        promiseChain = promiseChain.then((chainTable): T => {
+            table.modified = chainTable.modified;
+            return table;
+        });
+
+        promiseChain = promiseChain['catch']((error): Promise<T> => {
+            this.emit<DataModifier.Event>({
+                type: 'error',
+                detail: eventDetail,
+                table
+            });
+            throw error;
+        });
+
+        return promiseChain;
+    }
+
+    /**
      * Applies partial modifications of a cell change to the property `modified`
      * of the given modified table.
      *
@@ -373,7 +422,7 @@ class ChainModifier extends DataModifier {
             ++i
         ) {
             modifier = modifiers[i];
-            modified = modifier.modifyTable(modified).modified;
+            modified = modifier.modifyTable(modified, eventDetail).modified;
         }
 
         table.modified = modified;
@@ -426,8 +475,8 @@ class ChainModifier extends DataModifier {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace ChainModifier {
 
@@ -492,7 +541,7 @@ declare module './DataModifierType' {
     }
 }
 
-DataModifier.registerType(ChainModifier);
+DataModifier.registerType('Chain', ChainModifier);
 
 /* *
  *

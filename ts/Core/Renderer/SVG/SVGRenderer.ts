@@ -1553,8 +1553,8 @@ class SVGRenderer implements SVGRendererLike {
 
                         if (!alignByTranslate) {
                             this.translate(
-                                ((width || 0) - (imgSize * scale)) / 2,
-                                ((height || 0) - (imgSize * scale)) / 2
+                                ((width || 0) - (imgwidth * scale)) / 2,
+                                ((height || 0) - (imgheight * scale)) / 2
                             );
                         }
                     }

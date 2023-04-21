@@ -767,7 +767,8 @@ class Chart {
 
         if (!options.ignoreY && e.isInsidePlot) {
             const yAxis = (
-                options.axis && !options.axis.isXAxis && options.axis
+                !inverted && options.axis &&
+                !options.axis.isXAxis && options.axis
             ) || (
                 series && (inverted ? series.xAxis : series.yAxis)
             ) || {
