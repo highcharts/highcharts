@@ -458,44 +458,38 @@ class HeatmapSeries extends ScatterSeries {
                 { image, chart, xAxis, yAxis } = series,
                 { plotWidth, plotHeight, inverted } = chart,
                 [
-                    { min: xMinPadding, max: xMaxPadding },
-                    { min: yMinPadding, max: yMaxPadding }
-                ] = [xAxis, yAxis].map((axis): {
-                    min: number,
-                    max: number
-                } => {
-                    const
-                        { minPixelPadding, userOptions, reversed } = axis,
-                        { minPadding, maxPadding } = userOptions,
-                        foundMinPadding = (minPadding === 0 || minPadding ?
-                            minPadding :
-                            minPixelPadding
-                        ),
-                        foundMaxPadding = (maxPadding === 0 || maxPadding ?
-                            maxPadding :
-                            minPixelPadding
-                        );
-                    return reversed ? {
-                        min: foundMaxPadding,
-                        max: foundMinPadding
-                    } : {
-                        min: foundMinPadding,
-                        max: foundMaxPadding
-                    };
+                    [xMinPadding, xMaxPadding],
+                    [yMinPadding, yMaxPadding]
+                ] = [xAxis, yAxis].map(({
+                    minPixelPadding,
+                    userOptions,
+                    reversed
+                }): number[] => {
+                    const { minPadding, maxPadding } = userOptions;
+                    return (
+                        (reversed ?
+                            [minPadding, maxPadding] :
+                            [maxPadding, minPadding]
+                        ).map((bound): number => (
+                            (bound === 0 || bound) ?
+                                bound :
+                                minPixelPadding
+                        ))
+                    );
                 }),
-                adjustedWidth = plotWidth - (xMinPadding + xMaxPadding),
-                adjustedHeight = plotHeight - (yMinPadding + yMaxPadding),
+                xTotalPadding = (xMinPadding + xMaxPadding),
+                yTotalPadding = (yMinPadding + yMaxPadding),
                 dims = (inverted ?
                     {
-                        x: yMinPadding,
-                        y: xMinPadding,
-                        width: adjustedHeight,
-                        height: adjustedWidth
+                        x: xMinPadding,
+                        y: yMaxPadding,
+                        width: plotHeight - xTotalPadding,
+                        height: plotWidth - yTotalPadding
                     } : {
                         x: xMinPadding,
-                        y: yMinPadding,
-                        width: adjustedWidth,
-                        height: adjustedHeight
+                        y: yMaxPadding,
+                        width: plotWidth - xTotalPadding,
+                        height: plotHeight - yTotalPadding
                     }
                 );
 
@@ -600,7 +594,9 @@ class HeatmapSeries extends ScatterSeries {
 
                     ctx.putImageData(pixelData, 0, 0);
 
-                    series.image = chart.renderer.image(canvas.toDataURL())
+                    series.image = chart.renderer.image(
+                        canvas.toDataURL()
+                    )
                         .attr(dims)
                         .add(series.group);
                 }
