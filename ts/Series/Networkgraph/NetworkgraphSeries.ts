@@ -59,9 +59,8 @@ const {
     defined,
     extend,
     merge,
-    pick,
+    pick
 } = U;
-
 
 
 /* *
