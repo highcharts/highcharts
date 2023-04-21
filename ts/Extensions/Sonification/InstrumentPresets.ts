@@ -80,11 +80,11 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             { t: 442, vol: 0 }
         ],
         eq: [
-            { frequency: 800, Q: 1, gain: -8 },
+            { frequency: 800, gain: -8 },
             { frequency: 1400, Q: 4, gain: 4 },
-            { frequency: 1600, Q: 1, gain: -14 },
-            { frequency: 2200, Q: 1, gain: -8 },
-            { frequency: 3600, Q: 1, gain: -2 },
+            { frequency: 1600, gain: -14 },
+            { frequency: 2200, gain: -8 },
+            { frequency: 3600, gain: -2 },
             { frequency: 6400, Q: 2, gain: -6 }
         ],
         oscillators: [{
@@ -182,14 +182,14 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             { t: 586, vol: 0 }
         ],
         eq: [
-            { frequency: 200, Q: 1, gain: -6 },
-            { frequency: 400, Q: 1, gain: -8 },
+            { frequency: 200, gain: -6 },
+            { frequency: 400, gain: -8 },
             { frequency: 800, Q: 0.5, gain: -10 },
-            { frequency: 1200, Q: 1, gain: 4 },
-            { frequency: 3600, Q: 1, gain: -4 },
-            { frequency: 4200, Q: 1, gain: -12 },
-            { frequency: 7400, Q: 1, gain: -14 },
-            { frequency: 10000, Q: 1, gain: 2 }
+            { frequency: 1200, gain: 4 },
+            { frequency: 3600, gain: -4 },
+            { frequency: 4200, gain: -12 },
+            { frequency: 7400, gain: -14 },
+            { frequency: 10000, gain: 2 }
         ],
         oscillators: [{
             type: 'triangle',
@@ -476,12 +476,12 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
         ],
         eq: [
             { frequency: 150, Q: 0.6, gain: -12 },
-            { frequency: 1100, Q: 1, gain: -2 },
-            { frequency: 2200, Q: 1, gain: -16 },
-            { frequency: 5000, Q: 1, gain: 8 },
-            { frequency: 6400, Q: 1, gain: 10 },
-            { frequency: 8000, Q: 1, gain: 12 },
-            { frequency: 10800, Q: 1, gain: 8 }
+            { frequency: 1100, gain: -2 },
+            { frequency: 2200, gain: -16 },
+            { frequency: 5000, gain: 8 },
+            { frequency: 6400, gain: 10 },
+            { frequency: 8000, gain: 12 },
+            { frequency: 10800, gain: 8 }
         ],
         oscillators: [{
             type: 'triangle',
@@ -508,12 +508,12 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
         masterVolume: 0.3,
         eq: [
             { frequency: 200, Q: 0.7, gain: 6 },
-            { frequency: 450, Q: 1, gain: 2 },
-            { frequency: 1300, Q: 1, gain: -2 },
+            { frequency: 450, gain: 2 },
+            { frequency: 1300, gain: -2 },
             { frequency: 2600, Q: 0.8, gain: 6 },
             { frequency: 3500, Q: 0.8, gain: 6 },
             { frequency: 6200, Q: 0.8, gain: 10 },
-            { frequency: 8000, Q: 1, gain: -18 },
+            { frequency: 8000, gain: -18 },
             { frequency: 10000, Q: 0.4, gain: -12 }
         ],
         oscillators: [{
@@ -542,14 +542,14 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
             { t: 600, vol: 0 }
         ],
         eq: [
-            { frequency: 200, Q: 1, gain: -8 },
+            { frequency: 200, gain: -8 },
             { frequency: 600, Q: 2, gain: 4 },
-            { frequency: 800, Q: 1, gain: -10 },
-            { frequency: 1600, Q: 1, gain: -2 },
-            { frequency: 2200, Q: 1, gain: -6 },
+            { frequency: 800, gain: -10 },
+            { frequency: 1600, gain: -2 },
+            { frequency: 2200, gain: -6 },
             { frequency: 3600, Q: 0.7, gain: -2 },
-            { frequency: 6400, Q: 1, gain: 6 },
-            { frequency: 12800, Q: 1, gain: 6 }
+            { frequency: 6400, gain: 6 },
+            { frequency: 12800, gain: 6 }
         ],
         oscillators: [{
             type: 'triangle',
@@ -616,12 +616,12 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
         ],
         eq: [
             { frequency: 150, Q: 0.6, gain: -12 },
-            { frequency: 1100, Q: 1, gain: -2 },
-            { frequency: 2200, Q: 1, gain: -16 },
-            { frequency: 5000, Q: 1, gain: 8 },
-            { frequency: 6400, Q: 1, gain: 10 },
-            { frequency: 8000, Q: 1, gain: 12 },
-            { frequency: 10800, Q: 1, gain: 8 }
+            { frequency: 1100, gain: -2 },
+            { frequency: 2200, gain: -16 },
+            { frequency: 5000, gain: 8 },
+            { frequency: 6400, gain: 10 },
+            { frequency: 8000, gain: 12 },
+            { frequency: 10800, gain: 8 }
         ],
         oscillators: [{
             type: 'triangle',
