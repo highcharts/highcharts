@@ -44,6 +44,9 @@ class EditContextMenu extends Menu {
         editMode: {
             id: 'editMode',
             type: 'toggle',
+            getValue: function (item: MenuItem): boolean {
+                return item.menu.editMode.isActive();
+            },
             text: 'Edit mode',
             events: {
                 click: function (this: MenuItem): void {
@@ -54,10 +57,10 @@ class EditContextMenu extends Menu {
     });
 
     /* *
-    *
-    *  Constructor
-    *
-    * */
+     *
+     *  Constructor
+     *
+     * */
     constructor(
         parentElement: HTMLElement,
         options: EditContextMenu.Options,
