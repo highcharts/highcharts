@@ -481,13 +481,9 @@ class HeatmapSeries extends ScatterSeries {
                 yTotalPadding = (yMinPadding + yMaxPadding),
                 dims = (inverted ?
                     {
-                        x: xMinPadding,
-                        y: yMaxPadding,
                         width: plotHeight - xTotalPadding,
                         height: plotWidth - yTotalPadding
                     } : {
-                        x: xMinPadding,
-                        y: yMaxPadding,
                         width: plotWidth - xTotalPadding,
                         height: plotHeight - yTotalPadding
                     }
@@ -595,7 +591,7 @@ class HeatmapSeries extends ScatterSeries {
                     ctx.putImageData(pixelData, 0, 0);
 
                     series.image = chart.renderer.image(
-                        canvas.toDataURL()
+                        canvas.toDataURL(), xMinPadding, yMaxPadding
                     )
                         .attr(dims)
                         .add(series.group);
