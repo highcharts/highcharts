@@ -14,6 +14,8 @@
 
 'use strict';
 
+/* eslint-disable new-cap */
+
 
 /* *
  *
@@ -32,6 +34,7 @@ import type DataTable from '../../DataTable';
 import FormulaProcessor from '../FormulaProcessor.js';
 const { getArgumentValue } = FormulaProcessor;
 
+
 /* *
  *
  *  Functions
@@ -40,12 +43,11 @@ const { getArgumentValue } = FormulaProcessor;
 
 
 /**
- * Processor for the `IF(test, value1, value2)` implementation. Returns one of
- * the values based on the test result. `value1` will be returned, if the test
+ * Processor for the `OR(...tests)` implementation. Returns `TRUE`, if one test
  * result is not `0` or `FALSE`.
  *
  * @private
- * @function Formula.processorFunctions.IF
+ * @function Formula.processorFunctions.AND
  *
  * @param {Highcharts.FormulaArguments} args
  * Arguments to process.
@@ -56,15 +58,30 @@ const { getArgumentValue } = FormulaProcessor;
  * @return {Highcharts.FormulaValue|Array<Highcharts.FormulaValue>}
  * Result value of the process.
  */
-function IF(
+function OR(
     args: Arguments,
     table?: DataTable
-): (Value|Array<Value>) {
-    return (
-        getArgumentValue(args[0], table) ?
-            getArgumentValue(args[1], table) :
-            getArgumentValue(args[2], table)
-    );
+): boolean {
+
+    for (
+        let i = 0,
+            iEnd = args.length,
+            value: (Value|Array<Value>);
+        i < iEnd;
+        ++i
+    ) {
+        value = getArgumentValue(args[i], table);
+
+        if (value instanceof Array) {
+            if (OR(value, table)) {
+                return true;
+            }
+        } else if (value) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
@@ -75,7 +92,7 @@ function IF(
  * */
 
 
-FormulaProcessor.registerProcessorFunction('IF', IF);
+FormulaProcessor.registerProcessorFunction('OR', OR);
 
 
 /* *
@@ -85,4 +102,4 @@ FormulaProcessor.registerProcessorFunction('IF', IF);
  * */
 
 
-export default IF;
+export default OR;

@@ -1,5 +1,5 @@
 * Common use-cases:
-  - AND
+  - AND ✅
   - AVERAGE ✅
   - AVERAGEA
   - AVERAGEIF ⏳
@@ -18,8 +18,8 @@
   - MODE.MULT
   - MODE.SNGL
   - NOT ✅
-  - OR
-  - PRODUCT
+  - OR ✅
+  - PRODUCT ✅
   - SUBTOTAL-3
   - SUBTOTAL-9
   - SUM ✅

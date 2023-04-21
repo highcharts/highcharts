@@ -27,7 +27,7 @@ import type DataTable from '../../DataTable.js';
 
 
 import FormulaProcessor from '../FormulaProcessor.js';
-
+const { getArgumentValue } = FormulaProcessor;
 
 /* *
  *
@@ -56,7 +56,7 @@ function NOT(
     args: Arguments,
     table?: DataTable
 ): boolean {
-    return !!FormulaProcessor.getArgumentValue(args[0], table);
+    return !!getArgumentValue(args[0], table);
 }
 
 

@@ -24,19 +24,12 @@
 
 import type DataEvent from '../DataEvent';
 import type DataTable from '../DataTable';
-import type {
-    Formula,
-    Value
-} from '../Formula/Formula';
+import type { Formula } from '../Formula/Formula';
 
 
 import DataModifier from './DataModifier.js';
 import FormulaParser from '../Formula/FormulaParser.js';
 import FormulaProcessor from '../Formula/FormulaProcessor.js';
-import FormulaTypes from '../Formula/FormulaTypes.js';
-const {
-    isValue
-} = FormulaTypes;
 
 /* *
  *
@@ -248,7 +241,7 @@ class MathModifier extends DataModifier {
             ++i
         ) {
             // @todo pass some form of row index for references/ranges
-            column[i] = FormulaProcessor.processFormula(formula, table);
+            column[i] = FormulaProcessor.processFormula(formula, modified);
         }
 
         return column;

@@ -27,10 +27,13 @@ import FormulaProcessor from './FormulaProcessor.js';
 import FormulaType from './FormulaTypes.js';
 
 
+import './Functions/AND.js';
 import './Functions/AVERAGE.js';
 import './Functions/COUNT.js';
 import './Functions/IF.js';
 import './Functions/NOT.js';
+import './Functions/OR.js';
+import './Functions/PRODUCT.js';
 import './Functions/SUM.js';
 
 
