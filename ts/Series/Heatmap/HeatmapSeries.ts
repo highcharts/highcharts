@@ -455,26 +455,44 @@ class HeatmapSeries extends ScatterSeries {
 
         if (interpolation) {
             const
-                { image, chart, xAxis } = series,
+                { image, chart, xAxis, yAxis } = series,
                 { plotWidth, plotHeight, inverted } = chart,
-                { minPixelPadding, userOptions } = xAxis,
-                { minPadding, maxPadding } = userOptions,
-                xMinPadding = ((minPadding === 0 || minPadding) ?
-                    minPadding :
-                    minPixelPadding
-                ),
-                xMaxPadding = ((maxPadding === 0 || maxPadding) ?
-                    maxPadding :
-                    minPixelPadding
-                ),
-                [widthByInversion, heightByInversion] = (inverted ?
-                    [plotHeight, plotWidth] :
-                    [plotWidth, plotHeight]
-                ),
-                dims = {
-                    width: widthByInversion - (xMinPadding + xMaxPadding),
-                    height: heightByInversion
-                };
+                [
+                    { minPadding: xMinPadding, maxPadding: xMaxPadding },
+                    { minPadding: yMinPadding, maxPadding: yMaxPadding }
+                ] = [xAxis, yAxis].map((axis): {
+                    minPadding: number,
+                    maxPadding: number
+                } => {
+                    const
+                        { minPixelPadding, userOptions } = axis,
+                        { minPadding, maxPadding } = userOptions;
+                    return {
+                        minPadding: (minPadding === 0 || minPadding ?
+                            minPadding :
+                            minPixelPadding
+                        ),
+                        maxPadding: (maxPadding === 0 || maxPadding ?
+                            maxPadding :
+                            minPixelPadding
+                        )
+                    };
+                }),
+                adjustedWidth = plotWidth - (xMinPadding + xMaxPadding),
+                adjustedHeight = plotHeight - (yMinPadding + yMaxPadding),
+                dims = (inverted ?
+                    {
+                        x: yMinPadding,
+                        y: xMinPadding,
+                        width: adjustedHeight,
+                        height: adjustedWidth
+                    } : {
+                        x: xMinPadding,
+                        y: yMinPadding,
+                        width: adjustedWidth,
+                        height: adjustedHeight
+                    }
+                );
 
             if (!image) {
                 const
@@ -487,7 +505,7 @@ class HeatmapSeries extends ScatterSeries {
 
                 if (canvas && ctx && colorAxis) {
                     const
-                        { boost: seriesBoost, points, yAxis } = series,
+                        { boost: seriesBoost, points } = series,
                         pointsLen = points.length,
                         { width, height } = canvas,
                         pixelIndex = ((): Function => {
@@ -577,11 +595,7 @@ class HeatmapSeries extends ScatterSeries {
 
                     ctx.putImageData(pixelData, 0, 0);
 
-                    series.image = chart.renderer.image(
-                        canvas.toDataURL(),
-                        xMinPadding,
-                        0
-                    )
+                    series.image = chart.renderer.image(canvas.toDataURL())
                         .attr(dims)
                         .add(series.group);
                 }

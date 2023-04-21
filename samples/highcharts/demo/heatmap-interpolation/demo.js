@@ -12,7 +12,9 @@ Highcharts.chart('container', {
             text: undefined
         },
         endOnTick: false,
-        visible: false
+        visible: false,
+        minPadding: 0,
+        maxPadding: 0
     },
     xAxis: {
         visible: false,
