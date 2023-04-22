@@ -895,3 +895,17 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
  * */
 
 export default InstrumentPresets;
+
+
+/* *
+ *
+ *  API declarations
+ *
+ * */
+
+/**
+ * @typedef {"piano"|"plucked"|"flute"|"lead"|"vibraphone"|"saxophone"|"trumpet"|"sawsynth"|"basic1"|"basic2"|"chord"|"wobble"|"sine"|"sineGlide"|"triangle"|"sawtooth"|"square"|"chop"|"shaker"|"step"|"kick"|"shortnote"|"noise"|"filteredNoise"|"wind"} Highcharts.SonificationSynthPreset
+ * @requires modules/sonification
+ */
+
+(''); // Keep above doclets in JS file

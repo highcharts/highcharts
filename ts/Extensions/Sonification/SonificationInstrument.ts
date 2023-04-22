@@ -427,7 +427,7 @@ export default SonificationInstrument;
  * The synth configuration for the instrument. Can be either a string,
  * referencing the instrument presets, or an actual SynthPatch configuration.
  * @name Highcharts.SonificationInstrumentOptionsObject#synthPatch
- * @type {string|Highcharts.SynthPatchOptionsObject}
+ * @type {Highcharts.SonificationSynthPreset|Highcharts.SynthPatchOptionsObject}
  * @sample highcharts/demo/all-instruments
  *      All instrument presets
  * @sample highcharts/sonification/custom-instrument

@@ -32,3 +32,45 @@ const Scales = {
  * */
 
 export default Scales;
+
+
+/* *
+ *
+ *  API declarations
+ *
+ * */
+
+/**
+ * Preset scales for pitch mapping.
+ * @requires modules/sonification
+ * @interface Highcharts.SonificationScalePresetsObject
+ *//**
+ * @name Highcharts.SonificationScalePresetsObject#minor
+ * @type {Array<number>}
+ * //**
+ * @name Highcharts.SonificationScalePresetsObject#dorian
+ * @type {Array<number>}
+ * //**
+ * @name Highcharts.SonificationScalePresetsObject#harmonicMinor
+ * @type {Array<number>}
+ * //**
+ * @name Highcharts.SonificationScalePresetsObject#phrygian
+ * @type {Array<number>}
+ * //**
+ * @name Highcharts.SonificationScalePresetsObject#major
+ * @type {Array<number>}
+ * //**
+ * @name Highcharts.SonificationScalePresetsObject#lydian
+ * @type {Array<number>}
+ * //**
+ * @name Highcharts.SonificationScalePresetsObject#mixolydian
+ * @type {Array<number>}
+ * //**
+ * @name Highcharts.SonificationScalePresetsObject#majorPentatonic
+ * @type {Array<number>}
+ * //**
+ * @name Highcharts.SonificationScalePresetsObject#minorPentatonic
+ * @type {Array<number>}
+ */
+
+(''); // Keep above doclets in JS file
