@@ -522,7 +522,7 @@ function renderIcon(
     const mousedown = options.mousedown;
     if (mousedown) {
         iconElem.onmousedown = function (): void {
-            mousedown.apply(options.menuItem, arguments);
+            mousedown.apply(options.item, arguments);
         };
     }
 
@@ -752,7 +752,7 @@ export interface IconFormFieldOptions {
     className?: string;
     icon: string;
     mousedown?: Function;
-    menuItem?: MenuItem;
+    item?: MenuItem;
     callback?: Function;
 }
 export interface FormFieldOptions {

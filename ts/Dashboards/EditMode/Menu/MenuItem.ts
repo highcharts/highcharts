@@ -123,7 +123,11 @@ class MenuItem {
             this.getElementOptions(merge(options, { value }), callback)
         );
 
-        if (options.events && options.events.click) {
+        const events = options.events;
+        if (!events) {
+            return;
+        }
+        if (events.click) {
             element.addEventListener('click', callback);
         }
     }
