@@ -560,8 +560,24 @@ class Oscillator {
 
 
 /**
+ * The SynthPatch class. This class represents an instance and configuration
+ * of the built-in Highcharts synthesizer. It can be used to play various
+ * generated sounds.
+ *
+ * @sample highcharts/sonification/manual-using-synth
+ *         Using Synth directly to sonify manually
+ * @sample highcharts/sonification/custom-instrument
+ *         Using custom Synth options with chart
+ *
+ * @requires module:modules/sonification
+ *
  * @class
- * @private
+ * @name Highcharts.SynthPatch
+ *
+ * @param {AudioContext} audioContext
+ *        The AudioContext to connect to.
+ * @param {Highcharts.SynthPatchOptionsObject} options
+ *        Configuration for the synth.
  */
 class SynthPatch {
     static stopRampTime = 0.012; // Ramp time to 0 when stopping sound
@@ -615,14 +631,20 @@ class SynthPatch {
     }
 
 
-    // Start the oscillators, but don't output sound
+    /**
+     * Start the oscillators, but don't output sound.
+     * @function Highcharts.SynthPatch#startSilently
+     */
     startSilently(): void {
         this.outputNode.gain.value = 0;
         this.oscillators.forEach((o): void => o.start());
     }
 
 
-    // Stop (can't be started again)
+    /**
+     * Stop the synth. It can't be started again.
+     * @function Highcharts.SynthPatch#stop
+     */
     stop(): void {
         const curTime = this.audioContext.currentTime,
             endTime = curTime + SynthPatch.stopRampTime;
@@ -632,9 +654,13 @@ class SynthPatch {
     }
 
 
-    // Mute sound at time (in seconds)
-    // Will still run release envelope. Note: If scheduled multiple times in
-    // succession, the release envelope will run, and that could make sound.
+    /**
+     * Mute sound at time (in seconds).
+     * Will still run release envelope. Note: If scheduled multiple times in
+     * succession, the release envelope will run, and that could make sound.
+     * @function Highcharts.SynthPatch#silenceAtTime
+     * @param {number} time Time offset from now, in seconds
+     */
     silenceAtTime(time: number): void {
         if (!time && this.outputNode.gain.value < 0.01) {
             this.outputNode.gain.value = 0;
@@ -644,7 +670,10 @@ class SynthPatch {
     }
 
 
-    // Mute sound immediately
+    /**
+     * Mute sound immediately.
+     * @function Highcharts.SynthPatch#mute
+     */
     mute(): void {
         this.cancelScheduled();
         miniRampToVolAtTime(
@@ -653,9 +682,15 @@ class SynthPatch {
     }
 
 
-    // Play a frequency at time (in seconds).
-    // Time denotes when the attack ramp starts. Note duration is given in
-    // milliseconds. If note duration is not given, the note plays indefinitely.
+    /**
+     * Play a frequency at time (in seconds).
+     * Time denotes when the attack ramp starts. Note duration is given in
+     * milliseconds. If note duration is not given, the note plays indefinitely.
+     * @function Highcharts.SynthPatch#silenceAtTime
+     * @param {number} time Time offset from now, in seconds
+     * @param {number} frequency The frequency to play at
+     * @param {number|undefined} noteDuration Duration to play, in milliseconds
+     */
     playFreqAtTime(
         time: number,
         frequency: number,
@@ -681,7 +716,10 @@ class SynthPatch {
     }
 
 
-    // Cancel any scheduled actions
+    /**
+     * Cancel any scheduled actions
+     * @function Highcharts.SynthPatch#cancelScheduled
+     */
     cancelScheduled(): void {
         this.outputNode.gain.cancelScheduledValues(
             this.audioContext.currentTime);
@@ -689,13 +727,21 @@ class SynthPatch {
     }
 
 
-    // Connect the SynthPatch output to an audio node / destination
+    /**
+     * Connect the SynthPatch output to an audio node / destination
+     * @function Highcharts.SynthPatch#connect
+     * @param {AudioNode} destinationNode The node to connect to
+     * @return {AudioNode} The destination node, to allow chaining.
+     */
     connect(destinationNode: AudioNode): AudioNode {
         return this.outputNode.connect(destinationNode);
     }
 
 
-    // Create nodes for master EQ
+    /**
+     * Create nodes for master EQ
+     * @private
+     */
     private createEqChain(outputNode: AudioNode): void {
         this.eqNodes = (this.options.eq || []).map((eqDef): BiquadFilterNode =>
             new BiquadFilterNode(this.audioContext, {
@@ -710,7 +756,10 @@ class SynthPatch {
     }
 
 
-    // Fade by release envelopes at time
+    /**
+     * Fade by release envelopes at time
+     * @private
+     */
     private releaseAtTime(time: number): void {
         let maxReleaseDuration = 0;
         this.oscillators.forEach((o): void => {
@@ -752,3 +801,182 @@ class SynthPatch {
  * */
 
 export default SynthPatch;
+
+
+/* *
+ *
+ *  API declarations
+ *
+ * */
+
+/**
+ * An EQ filter definition for a low/highpass filter.
+ * @requires module:modules/sonification
+ * @interface Highcharts.SynthPatchPassFilter
+ *//**
+ * Filter frequency.
+ * @name Highcharts.SynthPatchPassFilter#frequency
+ * @type {number|undefined}
+ *//**
+ * A pitch tracking multiplier similarly to the one for oscillator volume.
+ * Affects the filter frequency.
+ * @name Highcharts.SynthPatchPassFilter#frequencyPitchTrackingMultiplier
+ * @type {number|undefined}
+ *//**
+ * Filter resonance bump/dip in dB. Defaults to 0.
+ * @name Highcharts.SynthPatchPassFilter#Q
+ * @type {number|undefined}
+ */
+
+/**
+ * @typedef {Highcharts.Record<"t"|"vol",number>} Highcharts.SynthEnvelopePoint
+ * @requires module:modules/sonification
+ */
+
+/**
+ * @typedef {Array<Highcharts.SynthEnvelopePoint>} Highcharts.SynthEnvelope
+ * @requires module:modules/sonification
+ */
+
+/**
+ * @typedef {"sine"|"square"|"sawtooth"|"triangle"|"whitenoise"|"pulse"} Highcharts.SynthPatchOscillatorType
+ * @requires module:modules/sonification
+ */
+
+/**
+ * Configuration for an oscillator for the synth.
+ * @requires module:modules/sonification
+ * @interface Highcharts.SynthPatchOscillatorOptionsObject
+ *//**
+ * The type of oscillator. This describes the waveform of the oscillator.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#type
+ * @type {Highcharts.SynthPatchOscillatorType|undefined}
+ *//**
+ * A volume modifier for the oscillator. Defaults to 1.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#volume
+ * @type {number|undefined}
+ *//**
+ * A multiplier for the input frequency of the oscillator. Defaults to 1. If
+ * this is for example set to 4, an input frequency of 220Hz will cause the
+ * oscillator to play at 880Hz.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#freqMultiplier
+ * @type {number|undefined}
+ *//**
+ * Play a fixed frequency for the oscillator - ignoring input frequency. The
+ * frequency multiplier is still applied.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#fixedFrequency
+ * @type {number|undefined}
+ *//**
+ * Applies a detuning of all frequencies. Set in cents. Defaults to 0.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#detune
+ * @type {number|undefined}
+ *//**
+ * Width of the pulse waveform. Only applies to "pulse" type oscillators. A
+ * width of 0.5 is roughly equal to a square wave. This is the default.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#pulseWidth
+ * @type {number|undefined}
+ * Index of another oscillator to use as carrier, with this oscillator being
+ * used as a volume modulator. The first oscillator in the array has index 0,
+ * and so on. This option can be used to produce tremolo effects.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#vmOscillator
+ * @type {number|undefined}
+ *//**
+ * Index of another oscillator to use as carrier, with this oscillator being
+ * used as a frequency modulator. Note: If the carrier is a pulse oscillator,
+ * the modulation will be on pulse width instead of frequency, allowing for
+ * PWM effects.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#fmOscillator
+ * @type {number|undefined}
+ *//**
+ * A tracking multiplier used for frequency dependent behavior. For example, by
+ * setting the volume tracking multiplier to 0.01, the volume will be lower at
+ * higher notes. The multiplier is a logarithmic function, where 1 is at ca
+ * 50Hz, and you define the output multiplier for an input frequency around
+ * 3.2kHz.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#volumePitchTrackingMultiplier
+ * @type {number|undefined}
+ *//**
+ * Volume envelope for note attack, specific to this oscillator.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#attackEnvelope
+ * @type {Highcharts.SynthEnvelope|undefined}
+ *//**
+ * Volume envelope for note release, specific to this oscillator.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#releaseEnvelope
+ * @type {Highcharts.SynthEnvelope|undefined}
+ *//**
+ * Highpass filter options for the oscillator.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#highpass
+ * @type {Highcharts.SynthPatchPassFilter|undefined}
+ *//**
+ * Lowpass filter options for the oscillator.
+ * @name Highcharts.SynthPatchOscillatorOptionsObject#lowpass
+ * @type {Highcharts.SynthPatchPassFilter|undefined}
+ */
+
+/**
+ * An EQ filter definition for a bell filter.
+ * @requires module:modules/sonification
+ * @interface Highcharts.SynthPatchEQFilter
+ *//**
+ * Filter frequency.
+ * @name Highcharts.SynthPatchEQFilter#frequency
+ * @type {number|undefined}
+ *//**
+ * Filter gain. Defaults to 0.
+ * @name Highcharts.SynthPatchEQFilter#gain
+ * @type {number|undefined}
+ *//**
+ * Filter Q. Defaults to 1. Lower numbers mean a wider bell.
+ * @name Highcharts.SynthPatchEQFilter#Q
+ * @type {number|undefined}
+ */
+
+/**
+ * A set of options for the SynthPatch class.
+ *
+ * @requires module:modules/sonification
+ *
+ * @interface Highcharts.SynthPatchOptionsObject
+ *//**
+ * Global volume modifier for the synth. Defaults to 1. Note that if the total
+ * volume of all oscillators is too high, the browser's audio engine can
+ * distort.
+ * @name Highcharts.SynthPatchOptionsObject#masterVolume
+ * @type {number|undefined}
+ *//**
+ * Time in milliseconds to glide between notes. Causes a glissando effect.
+ * @name Highcharts.SynthPatchOptionsObject#noteGlideDuration
+ * @type {number|undefined}
+ *//**
+ * MIDI instrument ID for the synth. Used with MIDI export of Timelines to have
+ * tracks open with a similar instrument loaded when imported into other
+ * applications. Defaults to 1, "Acoustic Grand Piano".
+ * @name Highcharts.SynthPatchOptionsObject#midiInstrument
+ * @type {number|undefined}
+ *//**
+ * Volume envelope for the overall attack of a note - what happens to the
+ * volume when a note first plays. If the volume goes to 0 in the attack
+ * envelope, the synth will not be able to play the note continuously/
+ * sustained, and the notes will be staccato.
+ * @name Highcharts.SynthPatchOptionsObject#masterAttackEnvelope
+ * @type {Highcharts.SynthEnvelope|undefined}
+ *//**
+ * Volume envelope for the overall release of a note - what happens to the
+ * volume when a note stops playing. If the release envelope starts at a higher
+ * volume than the attack envelope ends, the volume will first rise to that
+ * volume before falling when releasing a note. If the note is released while
+ * the attack envelope is still in effect, the attack envelope is interrupted,
+ * and the release envelope plays instead.
+ * @name Highcharts.SynthPatchOptionsObject#masterReleaseEnvelope
+ * @type {Highcharts.SynthEnvelope|undefined}
+ *//**
+ * Master EQ filters for the synth, affecting the overall sound.
+ * @name Highcharts.SynthPatchOptionsObject#eq
+ * @type {Array<Highcharts.SynthPatchEQFilter>|undefined}
+ *//**
+ * Array of oscillators to add to the synth.
+ * @name Highcharts.SynthPatchOptionsObject#oscillators
+ * @type {Array<Highcharts.SynthPatchOscillatorOptionsObject>|undefined}
+ */
+
+(''); // Keep above doclets in JS file
