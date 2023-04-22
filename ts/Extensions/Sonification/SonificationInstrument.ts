@@ -48,8 +48,27 @@ namespace SonificationInstrument {
     }
 }
 
+
 /**
- * @private
+ * The SonificationInstrument class. This class represents an instrument with
+ * mapping capabilities. The instrument wraps a SynthPatch object, and extends
+ * it with functionality such as panning, tremolo, and global low/highpass
+ * filters.
+ *
+ * @sample highcharts/sonification/instrument-raw
+ *         Using SonificationInstrument directly, with no chart.
+ *
+ * @requires modules/sonification
+ *
+ * @class
+ * @name Highcharts.SonificationInstrument
+ *
+ * @param {AudioContext} audioContext
+ *        The AudioContext to use.
+ * @param {AudioNode} outputNode
+ *        The destination node to connect to.
+ * @param {Highcharts.SonificationInstrumentOptionsObject} options
+ *        Configuration for the instrument.
  */
 class SonificationInstrument {
     readonly midiTrackName?: string;
@@ -93,15 +112,25 @@ class SonificationInstrument {
     }
 
 
+    /**
+     * Set the overall volume.
+     * @function Highcharts.SonificationInstrument#setMasterVolume
+     * @param {number} volume The volume to set, from 0 to 1.
+     */
     setMasterVolume(volume: number): void {
         this.masterVolNode.gain.setTargetAtTime(
             volume, 0, SonificationInstrument.rampTime);
     }
 
 
-    // Schedule an event at a certain time, whether it is playing a note
-    // or changing the parameters of the instrument. Time is given in seconds,
-    // where 0 is now.
+    /**
+     * Schedule an instrument event at a given time offset, whether it is
+     * playing a note or changing the parameters of the instrument.
+     * @function Highcharts.SonificationInstrument#scheduleEventAtTime
+     * @param {number} time Time is given in seconds, where 0 is now.
+     * @param {Highcharts.SonificationInstrumentScheduledEventOptionsObject} params
+     * Parameters for the instrument event.
+     */
     scheduleEventAtTime(
         time: number,
         params: SonificationInstrument.ScheduledEventOptions
@@ -147,14 +176,60 @@ class SonificationInstrument {
     }
 
 
-    // Time is given in seconds, where 0 is now.
+    /**
+     * Schedule silencing the instrument at a given time offset.
+     * @function Highcharts.SonificationInstrument#silenceAtTime
+     * @param {number} time Time is given in seconds, where 0 is now.
+     */
     silenceAtTime(time: number): void {
         this.synthPatch.silenceAtTime(time);
     }
 
 
-    // Time is given in seconds.
-    setPanAtTime(time: number, pan: number): void {
+    /**
+     * Cancel currently playing sounds and any scheduled actions.
+     * @function Highcharts.SonificationInstrument#cancel
+     */
+    cancel(): void {
+        this.synthPatch.mute();
+        [
+            this.tremoloDepth && this.tremoloDepth.gain,
+            this.tremoloOsc && this.tremoloOsc.frequency,
+            this.lowpassNode && this.lowpassNode.frequency,
+            this.lowpassNode && this.lowpassNode.Q,
+            this.highpassNode && this.highpassNode.frequency,
+            this.highpassNode && this.highpassNode.Q,
+            this.panNode && this.panNode.pan,
+            this.volumeNode.gain
+        ].forEach((p): unknown => (p && p.cancelScheduledValues(0)));
+    }
+
+
+    /**
+     * Stop instrument and destroy it, cleaning up used resources.
+     * @function Highcharts.SonificationInstrument#destroy
+     */
+    destroy(): void {
+        this.cancel();
+        this.synthPatch.stop();
+        if (this.tremoloOsc) {
+            this.tremoloOsc.stop();
+        }
+        [
+            this.tremoloDepth, this.tremoloOsc, this.lowpassNode,
+            this.highpassNode, this.panNode, this.volumeNode,
+            this.masterVolNode
+        ].forEach(
+            ((n): void => n && n.disconnect())
+        );
+    }
+
+
+    /**
+     * Schedule a pan value at a given time offset.
+     * @private
+     */
+    private setPanAtTime(time: number, pan: number): void {
         if (this.panNode) {
             this.panNode.pan.setTargetAtTime(
                 pan, time + this.audioContext.currentTime,
@@ -163,8 +238,11 @@ class SonificationInstrument {
     }
 
 
-    // Time is given in seconds.
-    setFilterAtTime(
+    /**
+     * Schedule a filter configuration at a given time offset.
+     * @private
+     */
+    private setFilterAtTime(
         filter: 'lowpass'|'highpass',
         time: number,
         frequency?: number,
@@ -185,8 +263,11 @@ class SonificationInstrument {
     }
 
 
-    // Time is given in seconds.
-    setVolumeAtTime(time: number, volume: number): void {
+    /**
+     * Schedule a volume value at a given time offset.
+     * @private
+     */
+    private setVolumeAtTime(time: number, volume: number): void {
         if (this.volumeNode) {
             this.volumeNode.gain.setTargetAtTime(
                 volume, time + this.audioContext.currentTime,
@@ -195,9 +276,11 @@ class SonificationInstrument {
     }
 
 
-    // Speed and depth go from 0 to 1.
-    // Time is given in seconds.
-    setTremoloAtTime(
+    /**
+     * Schedule a tremolo configuration at a given time offset.
+     * @private
+     */
+    private setTremoloAtTime(
         time: number, depth?: number, speed?: number
     ): void {
         const audioTime = this.audioContext.currentTime + time;
@@ -212,37 +295,10 @@ class SonificationInstrument {
     }
 
 
-    cancel(): void {
-        this.synthPatch.mute();
-        [
-            this.tremoloDepth && this.tremoloDepth.gain,
-            this.tremoloOsc && this.tremoloOsc.frequency,
-            this.lowpassNode && this.lowpassNode.frequency,
-            this.lowpassNode && this.lowpassNode.Q,
-            this.highpassNode && this.highpassNode.frequency,
-            this.highpassNode && this.highpassNode.Q,
-            this.panNode && this.panNode.pan,
-            this.volumeNode.gain
-        ].forEach((p): unknown => (p && p.cancelScheduledValues(0)));
-    }
-
-
-    destroy(): void {
-        this.cancel();
-        this.synthPatch.stop();
-        if (this.tremoloOsc) {
-            this.tremoloOsc.stop();
-        }
-        [
-            this.tremoloDepth, this.tremoloOsc, this.lowpassNode,
-            this.highpassNode, this.panNode, this.volumeNode,
-            this.masterVolNode
-        ].forEach(
-            ((n): void => n && n.disconnect())
-        );
-    }
-
-
+    /**
+     * Create audio nodes according to instrument capabilities
+     * @private
+     */
     private createNodesFromCapabilities(
         capabilities: SonificationInstrumentCapabilitiesOptions
     ): void {
@@ -273,8 +329,11 @@ class SonificationInstrument {
     }
 
 
-    // Connect audio node chain from output down to input, depending on
-    // which nodes exist.
+    /**
+     * Connect audio node chain from output down to input, depending on which
+     * nodes exist.
+     * @private
+     */
     private connectCapabilityNodes(input: AudioNode, output: AudioNode): void {
         [
             this.panNode,
@@ -289,7 +348,11 @@ class SonificationInstrument {
     }
 
 
-    // Get number of notes from C0 from a string like "F#4"
+    /**
+     * Get number of notes from C0 from a string like "F#4"
+     * @static
+     * @private
+     */
     static noteStringToC0Distance(note: string): number {
         // eslint-disable-next-line require-unicode-regexp
         const match = note.match(/^([a-g][#b]?)([0-8])$/i),
@@ -305,7 +368,15 @@ class SonificationInstrument {
     }
 
 
-    // Note can be a string 'c0' to 'b8' or a number of semitones from c0.
+    /**
+     * Convert a note value to a frequency.
+     * @static
+     * @function Highcharts.SonificationInstrument#musicalNoteToFrequency
+     * @param {string|number} note
+     * Note to convert. Can be a string 'c0' to 'b8' or a number of semitones
+     * from c0.
+     * @return {number} The converted frequency
+     */
     static musicalNoteToFrequency(note: string|number): number {
         const notesFromC0 = typeof note === 'string' ?
             this.noteStringToC0Distance(note) : note;
@@ -321,3 +392,110 @@ class SonificationInstrument {
  * */
 
 export default SonificationInstrument;
+
+/* *
+ *
+ *  API definitions
+ *
+ * */
+
+/**
+ * Capabilities configuration for a SonificationInstrument.
+ * @requires modules/sonification
+ * @interface Highcharts.SonificationInstrumentCapabilitiesOptionsObject
+ *//**
+ * Whether or not instrument should be able to pan. Defaults to `true`.
+ * @name Highcharts.SonificationInstrumentCapabilitiesOptionsObject#pan
+ * @type {boolean|undefined}
+ *//**
+ * Whether or not instrument should be able to use tremolo effects. Defaults
+ * to `false`.
+ * @name Highcharts.SonificationInstrumentCapabilitiesOptionsObject#tremolo
+ * @type {boolean|undefined}
+ *//**
+ * Whether or not instrument should be able to use filter effects. Defaults
+ * to `false`.
+ * @name Highcharts.SonificationInstrumentCapabilitiesOptionsObject#filters
+ * @type {boolean|undefined}
+ */
+
+/**
+ * Configuration for a SonificationInstrument.
+ * @requires modules/sonification
+ * @interface Highcharts.SonificationInstrumentOptionsObject
+ *//**
+ * The synth configuration for the instrument. Can be either a string,
+ * referencing the instrument presets, or an actual SynthPatch configuration.
+ * @name Highcharts.SonificationInstrumentOptionsObject#synthPatch
+ * @type {string|Highcharts.SynthPatchOptionsObject}
+ * @sample highcharts/demo/all-instruments
+ *      All instrument presets
+ * @sample highcharts/sonification/custom-instrument
+ *      Custom instrument preset
+ *//**
+ * Define additional capabilities for the instrument, such as panning, filters,
+ * and tremolo effects.
+ * @name Highcharts.SonificationInstrumentOptionsObject#capabilities
+ * @type {Highcharts.SonificationInstrumentCapabilitiesOptionsObject|undefined}
+ *//**
+ * A track name to use for this instrument in MIDI export.
+ * @name Highcharts.SonificationInstrumentOptionsObject#midiTrackName
+ * @type {string|undefined}
+ */
+
+/**
+ * Options for a scheduled event for a SonificationInstrument
+ * @requires modules/sonification
+ * @interface Highcharts.SonificationInstrumentScheduledEventOptionsObject
+ *//**
+ * Number of semitones from c0, or a note string - such as "c4" or "F#6".
+ * @name Highcharts.SonificationInstrumentScheduledEventOptionsObject#note
+ * @type {number|string|undefined}
+ *//**
+ * Note frequency in Hertz. Overrides note, if both are given.
+ * @name Highcharts.SonificationInstrumentScheduledEventOptionsObject#frequency
+ * @type {number|undefined}
+ *//**
+ * Duration to play the note in milliseconds. If not given, the note keeps
+ * playing indefinitely
+ * @name Highcharts.SonificationInstrumentScheduledEventOptionsObject#noteDuration
+ * @type {number|undefined}
+ *//**
+ * Depth/intensity of the tremolo effect - which is a periodic change in
+ * volume. From 0 to 1.
+ * @name Highcharts.SonificationInstrumentScheduledEventOptionsObject#tremoloDepth
+ * @type {number|undefined}
+ *//**
+ * Speed of the tremolo effect, from 0 to 1.
+ * @name Highcharts.SonificationInstrumentScheduledEventOptionsObject#tremoloSpeed
+ * @type {number|undefined}
+ *//**
+ * Stereo panning value, from -1 (left) to 1 (right).
+ * @name Highcharts.SonificationInstrumentScheduledEventOptionsObject#pan
+ * @type {number|undefined}
+ *//**
+ * Volume of the instrument, from 0 to 1. Can be set independent of the
+ * master/overall volume.
+ * @name Highcharts.SonificationInstrumentScheduledEventOptionsObject#volume
+ * @type {number|undefined}
+ *//**
+ * Frequency of the lowpass filter, in Hertz.
+ * @name Highcharts.SonificationInstrumentScheduledEventOptionsObject#lowpassFreq
+ * @type {number|undefined}
+ *//**
+ * Resonance of the lowpass filter, in dB. Can be negative for a dip, or
+ * positive for a bump.
+ * @name Highcharts.SonificationInstrumentScheduledEventOptionsObject#lowpassResonance
+ * @type {number|undefined}
+ *//**
+ * Frequency of the highpass filter, in Hertz.
+ * @name Highcharts.SonificationInstrumentScheduledEventOptionsObject#highpassFreq
+ * @type {number|undefined}
+ *//**
+ * Resonance of the highpass filter, in dB. Can be negative for a dip, or
+ * positive for a bump.
+ * @name Highcharts.SonificationInstrumentScheduledEventOptionsObject#highpassResonance
+ * @type {number|undefined}
+ */
+
+(''); // Keep above doclets in JS file

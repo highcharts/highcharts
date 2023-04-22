@@ -569,13 +569,13 @@ class Oscillator {
  * @sample highcharts/sonification/custom-instrument
  *         Using custom Synth options with chart
  *
- * @requires module:modules/sonification
+ * @requires modules/sonification
  *
  * @class
  * @name Highcharts.SynthPatch
  *
  * @param {AudioContext} audioContext
- *        The AudioContext to connect to.
+ *        The AudioContext to use.
  * @param {Highcharts.SynthPatchOptionsObject} options
  *        Configuration for the synth.
  */
@@ -728,9 +728,9 @@ class SynthPatch {
 
 
     /**
-     * Connect the SynthPatch output to an audio node / destination
+     * Connect the SynthPatch output to an audio node / destination.
      * @function Highcharts.SynthPatch#connect
-     * @param {AudioNode} destinationNode The node to connect to
+     * @param {AudioNode} destinationNode The node to connect to.
      * @return {AudioNode} The destination node, to allow chaining.
      */
     connect(destinationNode: AudioNode): AudioNode {
@@ -811,7 +811,7 @@ export default SynthPatch;
 
 /**
  * An EQ filter definition for a low/highpass filter.
- * @requires module:modules/sonification
+ * @requires modules/sonification
  * @interface Highcharts.SynthPatchPassFilter
  *//**
  * Filter frequency.
@@ -830,22 +830,22 @@ export default SynthPatch;
 
 /**
  * @typedef {Highcharts.Record<"t"|"vol",number>} Highcharts.SynthEnvelopePoint
- * @requires module:modules/sonification
+ * @requires modules/sonification
  */
 
 /**
  * @typedef {Array<Highcharts.SynthEnvelopePoint>} Highcharts.SynthEnvelope
- * @requires module:modules/sonification
+ * @requires modules/sonification
  */
 
 /**
  * @typedef {"sine"|"square"|"sawtooth"|"triangle"|"whitenoise"|"pulse"} Highcharts.SynthPatchOscillatorType
- * @requires module:modules/sonification
+ * @requires modules/sonification
  */
 
 /**
  * Configuration for an oscillator for the synth.
- * @requires module:modules/sonification
+ * @requires modules/sonification
  * @interface Highcharts.SynthPatchOscillatorOptionsObject
  *//**
  * The type of oscillator. This describes the waveform of the oscillator.
@@ -915,7 +915,7 @@ export default SynthPatch;
 
 /**
  * An EQ filter definition for a bell filter.
- * @requires module:modules/sonification
+ * @requires modules/sonification
  * @interface Highcharts.SynthPatchEQFilter
  *//**
  * Filter frequency.
@@ -934,7 +934,7 @@ export default SynthPatch;
 /**
  * A set of options for the SynthPatch class.
  *
- * @requires module:modules/sonification
+ * @requires modules/sonification
  *
  * @interface Highcharts.SynthPatchOptionsObject
  *//**
