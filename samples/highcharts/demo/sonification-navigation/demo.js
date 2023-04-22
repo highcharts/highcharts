@@ -87,9 +87,7 @@ var chart = Highcharts.chart('container', {
 document.getElementById('controls').onkeydown = function (e) {
     var lastPlayed,
         speaker = new Highcharts.sonification.SonificationSpeaker({
-            language: 'en-US',
-            volume: 0.4,
-            rate: 2
+            volume: 0.4, rate: 2
         });
 
     // Announce values + series name after playing individual points. We

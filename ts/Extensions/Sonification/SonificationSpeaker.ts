@@ -19,17 +19,30 @@ const {
 
 namespace SonificationSpeaker {
     export interface SpeakerOptions {
-        // Preferred voice, falls back to language if not found
         name?: string;
-        language: string;
+        language?: string;
         pitch?: number;
         rate?: number;
         volume?: number;
     }
 }
 
+
 /**
- * @private
+ * The SonificationSpeaker class. This class represents an announcer using
+ * speech synthesis. It allows for scheduling speech announcements, as well
+ * as speech parameter changes - including rate, volume and pitch.
+ *
+ * @sample highcharts/demo/sonification-navigation
+ *         Demo using SonificationSpeaker directly for some announcements
+ *
+ * @requires modules/sonification
+ *
+ * @class
+ * @name Highcharts.SonificationSpeaker
+ *
+ * @param {Highcharts.SonificationSpeakerOptionsObject} options
+ *        Configuration for the speaker
  */
 class SonificationSpeaker {
     private synthesis: SpeechSynthesis;
@@ -47,7 +60,15 @@ class SonificationSpeaker {
     }
 
 
-    say(message: string, options?: Partial<SonificationSpeaker.SpeakerOptions>): void {
+    /**
+     * Say a message using the speaker voice. Interrupts other currently
+     * speaking announcements from this speaker.
+     * @function Highcharts.SonificationSpeaker#say
+     * @param {string} message The message to speak.
+     * @param {SonificationSpeakerOptionsObject|undefined} options
+     * Optionally override spaker configuration.
+     */
+    say(message: string, options?: SonificationSpeaker.SpeakerOptions): void {
         if (this.synthesis) {
             this.synthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(message);
@@ -66,14 +87,31 @@ class SonificationSpeaker {
     }
 
 
-    // Time in milliseconds from now
-    sayAtTime(time: number, message: string, options?: Partial<SonificationSpeaker.SpeakerOptions>): void {
+    /**
+     * Schedule a message using the speaker voice.
+     * @function Highcharts.SonificationSpeaker#sayAtTime
+     * @param {number} time
+     * The time offset to speak at, in milliseconds from now.
+     * @param {string} message
+     * The message to speak.
+     * @param {SonificationSpeakerOptionsObject|undefined} options
+     * Optionally override spaker configuration.
+     */
+    sayAtTime(
+        time: number,
+        message: string,
+        options?: SonificationSpeaker.SpeakerOptions
+    ): void {
         this.scheduled.push(
             setTimeout(this.say.bind(this, message, options), time)
         );
     }
 
 
+    /**
+     * Clear scheduled announcements, and stop current speech.
+     * @function Highcharts.SonificationSpeaker#cancel
+     */
     cancel(): void {
         this.scheduled.forEach(clearTimeout);
         this.scheduled = [];
@@ -81,22 +119,38 @@ class SonificationSpeaker {
     }
 
 
-    // Ran on TimelineChannel.destroy
+    /**
+     * Stop speech and release any used resources
+     * @private
+     */
     destroy(): void {
+        // Ran on TimelineChannel.destroy
+        // (polymorphism with SonificationInstrument).
         // Currently all we need to do is cancel.
         this.cancel();
     }
 
 
+    /**
+     * Set speaker overall/master volume modifier. This affects all
+     * announcements, and applies in addition to the individual announcement
+     * volume.
+     * @function Highcharts.SonificationSpeaker#setMasterVolume
+     * @param {number} vol Volume from 0 to 1.
+     */
     setMasterVolume(vol: number): void {
         this.masterVolume = vol;
     }
 
 
+    /**
+     * Set the active synthesis voice for the speaker.
+     * @private
+     */
     private setVoice(): void {
         if (this.synthesis) {
             const name = this.options.name,
-                lang = this.options.language,
+                lang = this.options.language || 'en-US',
                 voices = this.synthesis.getVoices(),
                 len = voices.length;
             let langFallback;
@@ -125,3 +179,40 @@ class SonificationSpeaker {
  * */
 
 export default SonificationSpeaker;
+
+
+/* *
+ *
+ *  API declarations
+ *
+ * */
+
+/**
+ * Configuration for a SonificationSpeaker.
+ * @requires modules/sonification
+ * @interface Highcharts.SonificationSpeakerOptionsObject
+ *//**
+ * Name of the voice synthesis to use. If not found, reverts to the default
+ * voice for the language chosen.
+ * @name Highcharts.SonificationSpeakerOptionsObject#name
+ * @type {string|undefined}
+ *//**
+ * The language of the voice synthesis. Defaults to `"en-US"`.
+ * @name Highcharts.SonificationSpeakerOptionsObject#language
+ * @type {string|undefined}
+ *//**
+ * The pitch modifier of the voice. Defaults to `1`. Set higher for a higher
+ * voice pitch.
+ * @name Highcharts.SonificationSpeakerOptionsObject#pitch
+ * @type {number|undefined}
+ *//**
+ * The speech rate modifier. Defaults to `1`.
+ * @name Highcharts.SonificationSpeakerOptionsObject#rate
+ * @type {number|undefined}
+ *//**
+ * The speech volume, from 0 to 1. Defaults to `1`.
+ * @name Highcharts.SonificationSpeakerOptionsObject#volume
+ * @type {number|undefined}
+ */
+
+(''); // Keep above doclets in JS file
