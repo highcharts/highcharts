@@ -280,3 +280,55 @@ const Options: DeepPartial<OptionsType> = {
 };
 
 export default Options;
+
+/* *
+ *
+ *  API declarations
+ *
+ * */
+
+/**
+ * Event context object sent to sonification chart events.
+ * @requires modules/sonification
+ * @interface Highcharts.SonificationChartEventCallbackContext
+ *//**
+ * The relevant chart
+ * @name Highcharts.SonificationChartEventCallbackContext#chart
+ * @type {Highcharts.Chart|undefined}
+ *//**
+ * The points that were played, if any
+ * @name Highcharts.SonificationChartEventCallbackContext#pointsPlayed
+ * @type {Array<Highcharts.Point>|undefined}
+ *//**
+ * The playing timeline object with advanced and internal content
+ * @name Highcharts.SonificationChartEventCallbackContext#timeline
+ * @type {AnyRecord|undefined}
+ */
+
+/**
+ * Event context object sent to sonification series events.
+ * @requires modules/sonification
+ * @interface Highcharts.SonificationSeriesEventCallbackContext
+ *//**
+ * The relevant series
+ * @name Highcharts.SonificationSeriesEventCallbackContext#series
+ * @type {Highcharts.Series|undefined}
+ *//**
+ * The playing timeline object with advanced and internal content
+ * @name Highcharts.SonificationSeriesEventCallbackContext#timeline
+ * @type {AnyRecord|undefined}
+ */
+
+/**
+ * Callback function for sonification events on chart.
+ * @callback Highcharts.SonificationChartEventCallback
+ * @param {Highcharts.SonificationChartEventCallbackContext} e Sonification chart event context
+ */
+
+/**
+ * Callback function for sonification events on series.
+ * @callback Highcharts.SonificationSeriesEventCallback
+ * @param {Highcharts.SonificationSeriesEventCallbackContext} e Sonification series event context
+ */
+
+(''); // Keep above doclets in JS file

@@ -65,7 +65,7 @@ class SonificationSpeaker {
      * speaking announcements from this speaker.
      * @function Highcharts.SonificationSpeaker#say
      * @param {string} message The message to speak.
-     * @param {SonificationSpeakerOptionsObject|undefined} options
+     * @param {SonificationSpeakerOptionsObject} [options]
      * Optionally override spaker configuration.
      */
     say(message: string, options?: SonificationSpeaker.SpeakerOptions): void {
@@ -94,7 +94,7 @@ class SonificationSpeaker {
      * The time offset to speak at, in milliseconds from now.
      * @param {string} message
      * The message to speak.
-     * @param {SonificationSpeakerOptionsObject|undefined} options
+     * @param {SonificationSpeakerOptionsObject} [options]
      * Optionally override spaker configuration.
      */
     sayAtTime(

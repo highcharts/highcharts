@@ -45,30 +45,39 @@ export default Scales;
  * @requires modules/sonification
  * @interface Highcharts.SonificationScalePresetsObject
  *//**
+ * Minor scale (aeolian)
  * @name Highcharts.SonificationScalePresetsObject#minor
  * @type {Array<number>}
- * //**
+ *//**
+ * Dorian scale
  * @name Highcharts.SonificationScalePresetsObject#dorian
  * @type {Array<number>}
- * //**
+ *//**
+ * Harmonic minor scale
  * @name Highcharts.SonificationScalePresetsObject#harmonicMinor
  * @type {Array<number>}
- * //**
+ *//**
+ * Phrygian scale
  * @name Highcharts.SonificationScalePresetsObject#phrygian
  * @type {Array<number>}
- * //**
+ *//**
+ * Major (ionian) scale
  * @name Highcharts.SonificationScalePresetsObject#major
  * @type {Array<number>}
- * //**
+ *//**
+ * Lydian scale
  * @name Highcharts.SonificationScalePresetsObject#lydian
  * @type {Array<number>}
- * //**
+ *//**
+ * Mixolydian scale
  * @name Highcharts.SonificationScalePresetsObject#mixolydian
  * @type {Array<number>}
- * //**
+ *//**
+ * Major pentatonic scale
  * @name Highcharts.SonificationScalePresetsObject#majorPentatonic
  * @type {Array<number>}
- * //**
+ *//**
+ * Minor pentatonic scale
  * @name Highcharts.SonificationScalePresetsObject#minorPentatonic
  * @type {Array<number>}
  */

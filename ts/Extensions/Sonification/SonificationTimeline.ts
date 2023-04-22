@@ -87,6 +87,9 @@ function filterChannels(
 
 
 /**
+ * The SonificationTimeline class. This class represents a timeline of
+ * audio events scheduled to play. It provides functionality for manipulating
+ * and navigating the timeline.
  * @private
  */
 class SonificationTimeline {
@@ -508,6 +511,7 @@ class SonificationTimeline {
 
     // Divide timeline into 100 parts of equal time, and play one of them.
     // Used for scrubbing.
+    // Note: Should be optimized?
     playSegment(segment: number, onEnd?: Sonification.ChartCallback): void {
         const numSegments = 100;
         const eventTimes = {
@@ -671,3 +675,28 @@ class SonificationTimeline {
  * */
 
 export default SonificationTimeline;
+
+
+/* *
+ *
+ *  API declarations
+ *
+ * */
+
+/**
+ * Filter callback for filtering timeline events on a SonificationTimeline.
+ *
+ * @callback Highcharts.SonificationTimelineFilterCallback
+ *
+ * @param {Highcharts.SonificationTimelineEvent} e TimelineEvent being filtered
+ *
+ * @param {number} ix Index of TimelineEvent in current event array
+ *
+ * @param {Array<Highcharts.SonificationTimelineEvent>} arr The current event array
+ *
+ * @return {boolean}
+ * The function should return true if the TimelineEvent should be included,
+ * false otherwise.
+ */
+
+(''); // Keep above doclets in JS file

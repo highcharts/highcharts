@@ -60,14 +60,11 @@ import timelineFromChart from './TimelineFromChart.js';
 declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         sonification?: Sonification;
-        /** @requires modules/sonification */
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
-        /** @requires modules/sonification */
         toggleSonify: (
             reset?: boolean,
             onEnd?: globalThis.Sonification.ChartCallback
         ) => void;
-        /** @requires modules/sonification */
         updateSonificationEnabled: () => void;
     }
 }
@@ -84,14 +81,44 @@ declare module '../../Core/Series/PointLike' {
 
 
 /**
- * @private
+ * The Sonification class. This class represents a chart's sonification
+ * capabilities. A chart automatically gets an instance of this class when
+ * applicable.
+ *
+ * @sample highcharts/sonification/chart-events
+ *         Basic demo accessing some of the chart.sonification methods.
+ * @sample highcharts/demo/sonification-navigation
+ *         More advanced demo using more functionality.
+ *
+ * @requires modules/sonification
+ *
+ * @class
+ * @name Highcharts.Sonification
+ *
+ * @param {Highcharts.Chart} chart The chart to tie the sonification to
  */
 class Sonification {
-    forceReady?: boolean; // Used for testing (when working audio is not needed)
-    propMetrics?: PropMetrics; // Used for testing, updated on timeline creation
+    /**
+     * Used for testing when working audio is not needed, but we want
+     * synchronous timeline calculation.
+     * @private
+     */
+    forceReady?: boolean;
+    /**
+     * Used for testing, updated on timeline creation
+     * @private
+     */
+    propMetrics?: PropMetrics;
+    /**
+     * The internal SonificationTimeline, accessed for more advanced
+     * functionality & testing
+     * @private
+     */
     timeline?: SonificationTimeline;
-    audioContext?: AudioContext;
-    unbindKeydown: Function;
+
+    // Internal props
+    private unbindKeydown: Function;
+    private audioContext?: AudioContext;
     private retryContextCounter = 0;
     private lastUpdate = 0;
     private scheduledUpdate?: number;
@@ -118,6 +145,343 @@ class Sonification {
     }
 
 
+    /**
+     * Set the audio destination node to something other than the default
+     * output. This allows for inserting custom WebAudio chains after the
+     * sonification.
+     * @function Highcharts.Sonification#setAudioDestination
+     * @param {AudioDestinationNode} audioDestination The destination node
+     */
+    setAudioDestination(audioDestination: AudioDestinationNode): void {
+        this.audioDestination = audioDestination;
+        this.update();
+    }
+
+
+    /**
+     * Check if sonification is playing currently
+     * @function Highcharts.Sonification#isPlaying
+     * @return {boolean} `true` if currently playing, `false` if not
+     */
+    isPlaying(): boolean {
+        return !!this.timeline && this.timeline.isPlaying;
+    }
+
+
+    /**
+     * Divide timeline into 100 parts of equal time, and play one of them.
+     * Can be used for scrubbing navigation.
+     * @function Highcharts.Sonification#playSegment
+     *
+     * @sample highcharts/sonification/scrubbing
+     *         Scrubbing with slider
+     *
+     * @param {number} segment The segment to play, from 0 to 100
+     * @param {Highcharts.SonificationChartEventCallback} [onEnd] Callback to call after play completed
+     */
+    playSegment(
+        segment: number, onEnd?: globalThis.Sonification.ChartCallback
+    ): void {
+        if (!this.ready(this.playSegment.bind(this, segment, onEnd))) {
+            return;
+        }
+        if (this.timeline) {
+            this.timeline.playSegment(segment, onEnd);
+        }
+    }
+
+
+    /**
+     * Play point(s)/event(s) adjacent to current timeline cursor location.
+     * @function Highcharts.Sonification#playAdjacent
+     *
+     * @sample highcharts/demo/sonification-navigation
+     *         Sonification keyboard navigation
+     *
+     * @param {number} next Pass `true` to play next point, `false` for previous
+     * @param {Highcharts.SonificationChartEventCallback} [onEnd]
+     * Callback to call after play completed
+     * @param {Highcharts.SonificationTimelineFilterCallback} [eventFilter]
+     * Filter to apply to the events before finding adjacent to play
+     */
+    playAdjacent(
+        next: boolean,
+        onEnd?: globalThis.Sonification.ChartCallback,
+        eventFilter?: globalThis.Sonification.TimelineFilterCallback
+    ): void {
+        if (!this.ready(
+            this.playAdjacent.bind(this, next, onEnd, eventFilter)
+        )) {
+            return;
+        }
+        if (this.timeline) {
+            const opts = this.chart.options.sonification,
+                onHit = opts && opts.events && opts.events.onBoundaryHit;
+            if (!onHit) {
+                this.initBoundaryInstrument();
+            }
+            this.timeline.playAdjacent(next, onEnd, onHit || ((): void => {
+                this.defaultBoundaryHit();
+            }), eventFilter);
+        }
+    }
+
+
+    /**
+     * Play next/previous series, picking the point closest to a prop value
+     * from last played point. By default picks the point in the adjacent
+     * series with the closest x value as the last played point.
+     * @function Highcharts.Sonification#playAdjacentSeries
+     *
+     * @sample highcharts/demo/sonification-navigation
+     *         Sonification keyboard navigation
+     *
+     * @param {number} next Pass `true` to play next series, `false` for previous
+     * @param {string} [prop] Prop to find closest value of, defaults to `x`.
+     * @param {Highcharts.SonificationChartEventCallback} [onEnd]
+     * Callback to call after play completed
+     *
+     * @return {Highcharts.Series|null} The played series, or `null` if none found
+     */
+    playAdjacentSeries(
+        next?: boolean,
+        prop: keyof Point = 'x',
+        onEnd?: globalThis.Sonification.ChartCallback
+    ): Series|null {
+        const lastPlayed = this.getLastPlayedPoint();
+        if (lastPlayed) {
+            const targetSeriesIx = lastPlayed.series.index + (
+                next ? 1 : -1
+            );
+            this.playClosestToProp(prop, lastPlayed[prop] as number,
+                (e): boolean => !!e.relatedPoint &&
+                    e.relatedPoint.series.index === targetSeriesIx, onEnd);
+            return this.chart.series[targetSeriesIx] || null;
+        }
+        return null;
+    }
+
+
+    /**
+     * Play point(s)/event(s) closest to a prop relative to a reference value.
+     * @function Highcharts.Sonification#playClosestToProp
+     *
+     * @param {string} prop Prop to compare.
+     * @param {number} targetValue Target value to find closest value of.
+     * @param {Highcharts.SonificationTimelineFilterCallback} [targetFilter]
+     * Filter to apply to the events before finding closest point(s)
+     * @param {Highcharts.SonificationChartEventCallback} [onEnd]
+     * Callback to call after play completed
+     */
+    playClosestToProp(
+        prop: keyof Point,
+        targetValue: number,
+        targetFilter?: globalThis.Sonification.TimelineFilterCallback,
+        onEnd?: globalThis.Sonification.ChartCallback
+    ): void {
+        if (!this.ready(this.playClosestToProp.bind(
+            this, prop, targetValue, targetFilter, onEnd))) {
+            return;
+        }
+        if (this.timeline) {
+            const opts = this.chart.options.sonification,
+                onHit = opts && opts.events && opts.events.onBoundaryHit;
+            if (!onHit) {
+                this.initBoundaryInstrument();
+            }
+            this.timeline.playClosestToPropValue(
+                prop, targetValue, onEnd, onHit || ((): void =>
+                    this.defaultBoundaryHit()
+                ), targetFilter);
+        }
+    }
+
+
+    /**
+     * Get last played point
+     * @function Highcharts.Sonification#getLastPlayedPoint
+     *
+     * @sample highcharts/demo/sonification-navigation
+     *         Sonification keyboard navigation
+     *
+     * @return {Highcharts.Point|null} The point, or null if none
+     */
+    getLastPlayedPoint(): Point|null {
+        if (this.timeline) {
+            return this.timeline.getLastPlayedPoint();
+        }
+        return null;
+    }
+
+
+    /**
+     * Play a note with a specific instrument, and optionally a time offset.
+     * @function Highcharts.Sonification#playNote
+     *
+     * @sample highcharts/sonification/chart-events
+     *         Custom notifications
+     *
+     * @param {Highcharts.SonificationSynthPreset|Highcharts.SynthPatchOptionsObject} instrument
+     * The instrument to play. Can be either a string referencing the
+     * instrument presets, or an actual SynthPatch configuration.
+     * @param {Highcharts.SonificationInstrumentScheduledEventOptionsObject} options
+     * Configuration for the instrument event to play.
+     * @param {number} [delayMs]
+     * Time offset from now, in milliseconds. Defaults to 0.
+     */
+    playNote(
+        instrument: string|SynthPatch.SynthPatchOptions,
+        options: SonificationInstrument.ScheduledEventOptions,
+        delayMs = 0
+    ): void {
+        if (!this.ready(this.playNote.bind(this, instrument, options))) {
+            return;
+        }
+        const duration = options.noteDuration = options.noteDuration || 500;
+        const instr = new SonificationInstrument(
+            this.audioContext as AudioContext,
+            this.audioDestination as AudioDestinationNode,
+            {
+                synthPatch: instrument,
+                capabilities: {
+                    filters: true,
+                    tremolo: true,
+                    pan: true
+                }
+            }
+        );
+        instr.scheduleEventAtTime(delayMs / 1000, options);
+        setTimeout(
+            (): void => instr && instr.destroy(),
+            delayMs + duration + 500
+        );
+    }
+
+
+    /**
+     * Speak a text string, optionally with a custom speaker configuration
+     * @function Highcharts.Sonification#speak
+     *
+     * @sample highcharts/sonification/chart-events
+     *         Custom notifications
+     *
+     * @param {string} text Text to announce
+     * @param {Highcharts.SonificationSpeakerOptionsObject} [speakerOptions]
+     * Options for the announcement
+     * @param {number} [delayMs]
+     * Time offset from now, in milliseconds. Defaults to 0.
+     */
+    speak(
+        text: string,
+        speakerOptions?: SonificationSpeaker.SpeakerOptions,
+        delayMs = 0
+    ): void {
+        const speaker = new SonificationSpeaker(
+            merge({
+                language: 'en-US',
+                rate: 1.5,
+                volume: 0.4
+            }, speakerOptions || {})
+        );
+        speaker.sayAtTime(delayMs, text);
+    }
+
+
+    /**
+     * Cancel current playing audio and reset the timeline.
+     * @function Highcharts.Sonification#cancel
+     */
+    cancel(): void {
+        if (this.timeline) {
+            this.timeline.cancel();
+        }
+        fireEvent(this, 'cancel');
+    }
+
+
+    /**
+     * Start download of a MIDI file export of the timeline.
+     * @function Highcharts.Sonification#downloadMIDI
+     */
+    downloadMIDI(): void {
+        if (!this.ready(this.downloadMIDI.bind(this))) {
+            return;
+        }
+        if (this.timeline) {
+            this.timeline.reset();
+            this.timeline.downloadMIDI();
+        }
+    }
+
+
+    /**
+     * Implementation of chart.sonify
+     * @private
+     */
+    sonifyChart(
+        resetAfter?: boolean, onEnd?: globalThis.Sonification.ChartCallback
+    ): void {
+        if (!this.ready(this.sonifyChart.bind(this, resetAfter, onEnd))) {
+            return;
+        }
+
+        if (this.timeline) {
+            this.timeline.reset();
+            this.beforePlay();
+            this.timeline.play(void 0, void 0, resetAfter, onEnd);
+        }
+    }
+
+
+    /**
+     * Implementation of series.sonify
+     * @private
+     */
+    sonifySeries(
+        series: Series, resetAfter?: boolean,
+        onEnd?: globalThis.Sonification.ChartCallback
+    ): void {
+        if (!this.ready(this.sonifySeries.bind(
+            this, series, resetAfter, onEnd
+        ))) {
+            return;
+        }
+
+        if (this.timeline) {
+            this.timeline.reset();
+            this.beforePlay();
+            this.timeline.play((e): boolean =>
+                !!e.relatedPoint && e.relatedPoint.series === series,
+            void 0, resetAfter, onEnd);
+        }
+    }
+
+
+    /**
+     * Implementation of point.sonify
+     * @private
+     */
+    sonifyPoint(
+        point: Point, onEnd?: globalThis.Sonification.ChartCallback
+    ): void {
+        if (!this.ready(this.sonifyPoint.bind(this, point, onEnd))) {
+            return;
+        }
+
+        if (this.timeline) {
+            this.timeline.reset();
+            this.beforePlay();
+            this.timeline.anchorPlayMoment(
+                (e): boolean => e.relatedPoint === point, onEnd);
+        }
+    }
+
+
+    /**
+     * Set the overall/master volume for the sonification.
+     * Usually handled through chart update.
+     * @private
+     */
     setMasterVolume(vol: number): void {
         if (this.timeline) {
             this.timeline.setMasterVolume(vol);
@@ -125,12 +489,10 @@ class Sonification {
     }
 
 
-    setAudioDestination(audioDestination: AudioDestinationNode): void {
-        this.audioDestination = audioDestination;
-        this.update();
-    }
-
-
+    /**
+     * Destroy the sonification capabilities
+     * @private
+     */
     destroy(): void {
         this.unbindKeydown();
         if (this.timeline) {
@@ -147,6 +509,13 @@ class Sonification {
     }
 
 
+    /**
+     * Update the timeline with latest chart changes. Usually handled
+     * automatically. Note that the [sonification.updateInterval](https://api.highcharts.com/highcharts/sonification.updateInterval)
+     * option can stop updates from happening in rapid succession, including
+     * manual calls to this function.
+     * @private
+     */
     update(): void {
         const sOpts = this.chart.options && this.chart.options.sonification;
         if (!this.ready(this.update.bind(this)) || !sOpts) {
@@ -189,219 +558,11 @@ class Sonification {
     }
 
 
-    isPlaying(): boolean {
-        return !!this.timeline && this.timeline.isPlaying;
-    }
-
-
-    sonifyChart(
-        resetAfter?: boolean, onEnd?: globalThis.Sonification.ChartCallback
-    ): void {
-        if (!this.ready(this.sonifyChart.bind(this, resetAfter, onEnd))) {
-            return;
-        }
-
-        if (this.timeline) {
-            this.timeline.reset();
-            this.beforePlay();
-            this.timeline.play(void 0, void 0, resetAfter, onEnd);
-        }
-    }
-
-
-    sonifySeries(
-        series: Series, resetAfter?: boolean,
-        onEnd?: globalThis.Sonification.ChartCallback
-    ): void {
-        if (!this.ready(this.sonifySeries.bind(
-            this, series, resetAfter, onEnd
-        ))) {
-            return;
-        }
-
-        if (this.timeline) {
-            this.timeline.reset();
-            this.beforePlay();
-            this.timeline.play((e): boolean =>
-                !!e.relatedPoint && e.relatedPoint.series === series,
-            void 0, resetAfter, onEnd);
-        }
-    }
-
-
-    sonifyPoint(
-        point: Point, onEnd?: globalThis.Sonification.ChartCallback
-    ): void {
-        if (!this.ready(this.sonifyPoint.bind(this, point, onEnd))) {
-            return;
-        }
-
-        if (this.timeline) {
-            this.timeline.reset();
-            this.beforePlay();
-            this.timeline.anchorPlayMoment(
-                (e): boolean => e.relatedPoint === point, onEnd);
-        }
-    }
-
-
-    playSegment(
-        segment: number, onEnd?: globalThis.Sonification.ChartCallback
-    ): void {
-        if (!this.ready(this.playSegment.bind(this, segment, onEnd))) {
-            return;
-        }
-        if (this.timeline) {
-            this.timeline.playSegment(segment, onEnd);
-        }
-    }
-
-
-    // Play points/events adjacent to current timeline cursor location
-    playAdjacent(
-        next: boolean,
-        onEnd?: globalThis.Sonification.ChartCallback,
-        eventFilter?: globalThis.Sonification.TimelineFilterCallback
-    ): void {
-        if (!this.ready(
-            this.playAdjacent.bind(this, next, onEnd, eventFilter)
-        )) {
-            return;
-        }
-        if (this.timeline) {
-            const opts = this.chart.options.sonification,
-                onHit = opts && opts.events && opts.events.onBoundaryHit;
-            if (!onHit) {
-                this.initBoundaryInstrument();
-            }
-            this.timeline.playAdjacent(next, onEnd, onHit || ((): void => {
-                this.defaultBoundaryHit();
-            }), eventFilter);
-        }
-    }
-
-
-    // Play next/prev series relative to current prop value
-    playAdjacentSeries(
-        next?: boolean,
-        prop: keyof Point = 'x',
-        onEnd?: globalThis.Sonification.ChartCallback
-    ): Series|null {
-        const lastPlayed = this.getLastPlayedPoint();
-        if (lastPlayed) {
-            const targetSeriesIx = lastPlayed.series.index + (
-                next ? 1 : -1
-            );
-            this.playClosestToProp(prop, lastPlayed[prop] as number,
-                (e): boolean => !!e.relatedPoint &&
-                    e.relatedPoint.series.index === targetSeriesIx, onEnd);
-            return this.chart.series[targetSeriesIx] || null;
-        }
-        return null;
-    }
-
-
-    // Play points/events closest to a prop relative to a reference value
-    playClosestToProp(
-        prop: keyof Point,
-        targetValue: number,
-        targetFilter?: globalThis.Sonification.TimelineFilterCallback,
-        onEnd?: globalThis.Sonification.ChartCallback
-    ): void {
-        if (!this.ready(this.playClosestToProp.bind(
-            this, prop, targetValue, targetFilter, onEnd))) {
-            return;
-        }
-        if (this.timeline) {
-            const opts = this.chart.options.sonification,
-                onHit = opts && opts.events && opts.events.onBoundaryHit;
-            if (!onHit) {
-                this.initBoundaryInstrument();
-            }
-            this.timeline.playClosestToPropValue(
-                prop, targetValue, onEnd, onHit || ((): void =>
-                    this.defaultBoundaryHit()
-                ), targetFilter);
-        }
-    }
-
-
-    // Get last played point
-    getLastPlayedPoint(): Point|null {
-        if (this.timeline) {
-            return this.timeline.getLastPlayedPoint();
-        }
-        return null;
-    }
-
-
-    // Play a note
-    playNote(
-        instrument: string|SynthPatch.SynthPatchOptions,
-        options: SonificationInstrument.ScheduledEventOptions,
-        delayMs = 0
-    ): void {
-        if (!this.ready(this.playNote.bind(this, instrument, options))) {
-            return;
-        }
-        const duration = options.noteDuration = options.noteDuration || 500;
-        const instr = new SonificationInstrument(
-            this.audioContext as AudioContext,
-            this.audioDestination as AudioDestinationNode,
-            {
-                synthPatch: instrument,
-                capabilities: {
-                    filters: true,
-                    tremolo: true,
-                    pan: true
-                }
-            }
-        );
-        instr.scheduleEventAtTime(delayMs / 1000, options);
-        setTimeout(
-            (): void => instr && instr.destroy(),
-            delayMs + duration + 500
-        );
-    }
-
-
-    // Speak text string with options
-    speak(
-        text: string,
-        speakerOptions: SonificationSpeaker.SpeakerOptions|null,
-        delayMs = 0
-    ): void {
-        const speaker = new SonificationSpeaker(
-            merge({
-                language: 'en-US',
-                rate: 1.5,
-                volume: 0.4
-            }, speakerOptions || {})
-        );
-        speaker.sayAtTime(delayMs, text);
-    }
-
-
-    cancel(): void {
-        if (this.timeline) {
-            this.timeline.cancel();
-        }
-        fireEvent(this, 'cancel');
-    }
-
-
-    downloadMIDI(): void {
-        if (!this.ready(this.downloadMIDI.bind(this))) {
-            return;
-        }
-        if (this.timeline) {
-            this.timeline.downloadMIDI();
-        }
-    }
-
-
-    // Only continue if sonification enabled. If audioContext is
-    // suspended, retry up to 20 times with a small delay.
+    /**
+     * Only continue if sonification enabled. If audioContext is
+     * suspended, retry up to 20 times with a small delay.
+     * @private
+     */
     private ready(whenReady: () => void): boolean {
         if (
             !this.audioContext ||
@@ -433,7 +594,10 @@ class Sonification {
     }
 
 
-    // Call beforePlay event handler if exists
+    /**
+     * Call beforePlay event handler if exists
+     * @private
+     */
     private beforePlay(): void {
         const opts = this.chart.options.sonification,
             beforePlay = opts && opts.events && opts.events.beforePlay;
@@ -443,7 +607,10 @@ class Sonification {
     }
 
 
-    // Initialize the builtin boundary hit instrument
+    /**
+     * Initialize the builtin boundary hit instrument
+     * @private
+     */
     private initBoundaryInstrument(): void {
         if (!this.boundaryInstrument) {
             this.boundaryInstrument = new SynthPatch(
@@ -458,7 +625,10 @@ class Sonification {
     }
 
 
-    // The default boundary hit sound
+    /**
+     * The default boundary hit sound
+     * @private
+     */
     private defaultBoundaryHit(): void {
         if (this.boundaryInstrument) {
             this.boundaryInstrument.playFreqAtTime(0.1, 1, 200);
@@ -635,3 +805,99 @@ merge(
  * */
 
 export default Sonification;
+
+
+/* *
+ *
+ *  API declarations
+ *
+ * */
+
+/**
+ * Play a sonification of a chart.
+ *
+ * @function Highcharts.Chart#sonify
+ * @param {Highcharts.SonificationChartEventCallback} [onEnd]
+ * Callback to call after play completed
+ *
+ * @requires modules/sonification
+ */
+
+/**
+ * Play/pause sonification of a chart.
+ *
+ * @function Highcharts.Chart#toggleSonify
+ *
+ * @param {boolean} [reset]
+ * Reset the playing cursor after play completed. Defaults to `true`.
+ * @param {Highcharts.SonificationChartEventCallback} [onEnd]
+ * Callback to call after play completed
+ *
+ * @requires modules/sonification
+ */
+
+/**
+ * Play a sonification of a series.
+ *
+ * @function Highcharts.Series#sonify
+ * @param {Highcharts.SonificationChartEventCallback} [onEnd]
+ * Callback to call after play completed
+ *
+ * @requires modules/sonification
+ */
+
+/**
+ * Play a sonification of a point.
+ *
+ * @function Highcharts.Point#sonify
+ * @param {Highcharts.SonificationChartEventCallback} [onEnd]
+ * Callback to call after play completed
+ *
+ * @requires modules/sonification
+ */
+
+/**
+ * Sonification capabilities for the chart.
+ *
+ * @name Highcharts.Chart#sonification
+ * @type {Highcharts.Sonification|undefined}
+ *
+ * @requires modules/sonification
+ */
+
+/**
+ * Collection of Sonification classes and objects.
+ * @requires modules/sonification
+ * @interface Highcharts.SonificationGlobalObject
+ *//**
+ * SynthPatch presets
+ * @name Highcharts.SonificationGlobalObject#InstrumentPresets
+ * @type {Record<Highcharts.SonificationSynthPreset,Highcharts.SynthPatchOptionsObject>|undefined}
+ *//**
+ * Musical scale presets
+ * @name Highcharts.SonificationGlobalObject#Scales
+ * @type {Highcharts.SonificationScalePresetsObject|undefined}
+ *//**
+ * SynthPatch class
+ * @name Highcharts.SonificationGlobalObject#SynthPatch
+ * @type {Highcharts.SynthPatch|undefined}
+ *//**
+ * SonificationInstrument class
+ * @name Highcharts.SonificationGlobalObject#SonificationInstrument
+ * @type {Highcharts.SonificationInstrument|undefined}
+ *//**
+ * SonificationSpeaker class
+ * @name Highcharts.SonificationGlobalObject#SonificationSpeaker
+ * @type {Highcharts.SonificationSpeaker|undefined}
+ */
+
+/**
+ * Global Sonification classes and objects.
+ *
+ * @name Highcharts.sonification
+ * @type {Highcharts.SonificationGlobalObject}
+ *
+ * @requires modules/sonification
+ */
+
+(''); // Keep above doclets in JS file

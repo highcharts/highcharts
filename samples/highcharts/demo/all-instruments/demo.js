@@ -18,7 +18,7 @@ var chart = Highcharts.chart('container', {
             // Announce second series after first one ends
             onSeriesEnd: function (e) {
                 if (e.series.index === 0) {
-                    e.series.chart.sonification.speak('Profit margin', null, 150);
+                    e.series.chart.sonification.speak('Profit margin', {}, 150);
                 }
             }
         },

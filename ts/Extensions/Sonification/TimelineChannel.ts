@@ -24,7 +24,7 @@ declare global {
             relatedPoint?: Point;
             instrumentEventOptions?: SonificationInstrument
                 .ScheduledEventOptions;
-            speechOptions?: Partial<SonificationSpeaker.SpeakerOptions>;
+            speechOptions?: SonificationSpeaker.SpeakerOptions;
             message?: string;
             callback?: Function;
         }
@@ -33,6 +33,8 @@ declare global {
 
 
 /**
+ * Represents a channel of TimelineEvents for an engine (either an instrument
+ * or a speaker).
  * @private
  */
 class TimelineChannel {
@@ -93,3 +95,44 @@ class TimelineChannel {
  * */
 
 export default TimelineChannel;
+
+
+/* *
+ *
+ *  API declarations
+ *
+ * */
+
+/**
+ * A TimelineEvent object represents a scheduled audio event to play for a
+ * SonificationTimeline.
+ * @requires modules/sonification
+ * @interface Highcharts.SonificationTimelineEvent
+ *//**
+ * Time is given in milliseconds, where 0 is now.
+ * @name Highcharts.SonificationTimelineEvent#time
+ * @type {number}
+ *//**
+ * A reference to a data point related to the TimelineEvent. Populated when
+ * sonifying points.
+ * @name Highcharts.SonificationTimelineEvent#relatedPoint
+ * @type {Highcharts.Point|undefined}
+ *//**
+ * Options for an instrument event to be played.
+ * @name Highcharts.SonificationTimelineEvent#instrumentEventOptions
+ * @type {Highcharts.SonificationInstrumentScheduledEventOptionsObject|undefined}
+ *//**
+ * Options for a speech event to be played.
+ * @name Highcharts.SonificationTimelineEvent#speechOptions
+ * @type {Highcharts.SonificationSpeakerOptionsObject|undefined}
+ *//**
+ * The message to speak for speech events.
+ * @name Highcharts.SonificationTimelineEvent#message
+ * @type {string|undefined}
+ *//**
+ * Callback to call when playing the event.
+ * @name Highcharts.SonificationTimelineEvent#callback
+ * @type {Function|undefined}
+ */
+
+(''); // Keep above doclets in JS file
