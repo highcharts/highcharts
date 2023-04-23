@@ -229,6 +229,190 @@ const Options: DeepPartial<OptionsType> = {
      * @optionparent sonification
      */
     sonification: {
+        /**
+         * Global tracks to add to every series.
+         *
+         * Defined as an array of either instrument or speech tracks,
+         * or a combination.
+         *
+         * @type {Array<*>}
+         * @extends sonification.defaultSpeechOptions
+         * @extends sonification.defaultInstrumentOptions
+         * @apioption sonification.globalTracks
+         */
+
+        /**
+         * Rate mapping for speech tracks.
+         * @extends sonification.defaultSpeechOptions.mapping.rate
+         * @apioption sonification.globalTracks.mapping.rate
+         */
+
+        /**
+         * Text mapping for speech tracks.
+         * @extends sonification.defaultSpeechOptions.mapping.text
+         * @apioption sonification.globalTracks.mapping.text
+         */
+
+        /**
+         * Context tracks to add globally, an array of either instrument
+         * tracks, speech tracks, or a mix.
+         *
+         * Context tracks are not tied to data points, but play at a set
+         * interval - either based on time or on prop values.
+         *
+         * @sample  highcharts/demo/plotline-context
+         *          Using contexts
+         * @type {Array<*>}
+         * @extends sonification.globalTracks
+         * @apioption sonification.globalContextTracks
+         */
+
+        /**
+         * Set a context track to play periodically every `timeInterval`
+         * milliseconds while the sonification is playing.
+         *
+         * @sample  highcharts/demo/plotline-context
+         *          Using contexts
+         * @type {number}
+         * @apioption sonification.globalContextTracks.timeInterval
+         */
+
+        /**
+         * Set a context track to play periodically every `valueInterval`
+         * units of a data property `valueProp` while the sonification is
+         * playing.
+         *
+         * For example, setting `valueProp` to `x` and `valueInterval` to 5
+         * will play the context track for every 5th X value.
+         *
+         * The context audio events will be mapped to time according to the
+         * prop value relative to the min/max values for that prop.
+         *
+         * @sample  highcharts/demo/plotline-context
+         *          Using contexts
+         * @type {number}
+         * @apioption sonification.globalContextTracks.valueInterval
+         */
+
+        /**
+         * The point property to play context for when using `valueInterval`.
+         * @type {string}
+         * @default "x"
+         * @apioption sonification.globalContextTracks.valueProp
+         */
+
+        /**
+         * How to map context events to time when using the `valueInterval`
+         * option.
+         * @type {"linear"|"logarithmic"}
+         * @default "linear"
+         * @apioption sonification.globalContextTracks.valueMapFunction
+         */
+
+        /**
+         * Set up event handlers for the sonification
+         * @apioption sonification.events
+         */
+
+        /**
+         * Called on play.
+         *
+         * A context object is passed to the function, with properties `chart`
+         * and `timeline`.
+         *
+         * @type {Function}
+         * @apioption sonification.events.onPlay
+         */
+
+        /**
+         * Called on pause, cancel, or if play is completed.
+         *
+         * A context object is passed to the function, with properties `chart`,
+         * `timeline` and `pointsPlayed`. `pointsPlayed` is an array of `Point`
+         * objects, referencing data points that were related to the audio
+         * events played.
+         *
+         * @type {Function}
+         * @apioption sonification.events.onStop
+         */
+
+        /**
+         * Called when play is completed.
+         *
+         * A context object is passed to the function, with properties `chart`,
+         * `timeline` and `pointsPlayed`. `pointsPlayed` is an array of `Point`
+         * objects, referencing data points that were related to the audio
+         * events played.
+         *
+         * @type {Function}
+         * @apioption sonification.events.onEnd
+         */
+
+        /**
+         * Called immediately when a play is requested.
+         *
+         * A context object is passed to the function, with properties `chart`
+         * and `timeline`.
+         *
+         * @type {Function}
+         * @apioption sonification.events.beforePlay
+         */
+
+        /**
+         * Called before updating the sonification.
+         *
+         * A context object is passed to the function, with properties `chart`
+         * and `timeline`.
+         *
+         * @type {Function}
+         * @apioption sonification.events.beforeUpdate
+         */
+
+        /**
+         * Called after updating the sonification.
+         *
+         * A context object is passed to the function, with properties `chart`
+         * and `timeline`.
+         *
+         * @type {Function}
+         * @apioption sonification.events.afterUpdate
+         */
+
+        /**
+         * Called on the beginning of playing a series.
+         *
+         * A context object is passed to the function, with properties `series`
+         * and `timeline`.
+         *
+         * @type {Function}
+         * @apioption sonification.events.onSeriesStart
+         */
+
+        /**
+         * Called when finished playing a series.
+         *
+         * A context object is passed to the function, with properties `series`
+         * and `timeline`.
+         *
+         * @type {Function}
+         * @apioption sonification.events.onSeriesEnd
+         */
+
+        /**
+         * Called when attempting to play an adjacent point or series, and
+         * there is none.
+         *
+         * By default a percussive sound is played.
+         *
+         * A context object is passed to the function, with properties `chart`,
+         * `timeline`, and `attemptedNext`. `attemptedNext` is a boolean
+         * property that is `true` if the boundary hit was from trying to play
+         * the next series/point, and `false` if it was from trying to play the
+         * previous.
+         *
+         * @type {Function}
+         * @apioption sonification.events.onBoundaryHit
+         */
 
         /**
          * Enable sonification functionality for the chart.
@@ -259,7 +443,7 @@ const Options: DeepPartial<OptionsType> = {
         /**
          * Overall/master volume for the sonification, from 0 to 1.
          */
-        masterVolume: 0.6,
+        masterVolume: 0.7,
 
         /**
          * What order to play the data series in, either `sequential` where
@@ -355,6 +539,100 @@ const Options: DeepPartial<OptionsType> = {
          *          Sonify points on click
          */
         defaultInstrumentOptions: {
+            /**
+             * Round pitch mapping to musical notes.
+             *
+             * If `false`, will play the exact mapped note, even if it is out
+             * of tune compared to the musical notes as defined by 440Hz
+             * standard tuning.
+             */
+            roundToMusicalNotes: true,
+
+            /**
+             * Type of track. Always `"instrument"` for instrument tracks, and
+             * `"speech"` for speech tracks.
+             * @type {"instrument"|"speech"}
+             * @default instrument
+             * @apioption sonification.defaultInstrumentOptions.type
+             */
+
+            /**
+             * Show play marker (tooltip and/or crosshair) for a track.
+             * @type {boolean}
+             * @default true
+             * @apioption sonification.defaultInstrumentOptions.showPlayMarker
+             */
+
+            /**
+             * Name to use for a track when exporting to MIDI.
+             * By default it uses the series name if the track is related to
+             * a series.
+             * @type {string}
+             * @apioption sonification.defaultInstrumentOptions.midiName
+             */
+
+            /**
+             * Options for point grouping, specifically for instrument tracks.
+             * @extends sonification.pointGrouping
+             * @apioption sonification.defaultInstrumentOptions.pointGrouping
+             */
+
+            /**
+             * Define a condition for when a track should be active and not.
+             *
+             * Can either be a function callback or a configuration object.
+             *
+             * If a function is used, it should return a `boolean` for whether
+             * or not the track should be active. The function is called for
+             * each audio event, and receives a parameter object with `time`,
+             * and potentially `point` and `value` properties depending on the
+             * track. `point` is available if the audio event is related to a
+             * data point. `value` is available if the track is used as a
+             * context track, and `valueInterval` is used.
+             *
+             * @sample  highcharts/sonification/mapping-zones
+             *          Mapping zones
+             * @type {Function|object}
+             * @apioption sonification.defaultInstrumentOptions.activeWhen
+             */
+
+            /**
+             * Track is only active when `prop` is above or at this value.
+             * @type {number}
+             * @apioption sonification.defaultInstrumentOptions.activeWhen.min
+             */
+
+            /**
+             * Track is only active when `prop` is below or at this value.
+             * @type {number}
+             * @apioption sonification.defaultInstrumentOptions.activeWhen.max
+             */
+
+            /**
+             * Track is only active when `prop` was below, and is now at or
+             * above this value.
+             *
+             * If both `crossingUp` and `crossingDown` are defined, the track
+             * is active if either condition is met.
+             * @type {number}
+             * @apioption sonification.defaultInstrumentOptions.activeWhen.crossingUp
+             */
+
+            /**
+             * Track is only active when `prop` was above, and is now at or
+             * below this value.
+             *
+             * If both `crossingUp` and `crossingDown` are defined, the track
+             * is active if either condition is met.
+             * @type {number}
+             * @apioption sonification.defaultInstrumentOptions.activeWhen.crossingDown
+             */
+
+            /**
+             * The point property to compare, for example `y` or `x`.
+             * @type {string}
+             * @apioption sonification.defaultInstrumentOptions.activeWhen.prop
+             */
 
             /**
              * Instrument to use for playing.
@@ -379,6 +657,14 @@ const Options: DeepPartial<OptionsType> = {
              *  - A number, setting the value of the audio parameter directly.
              *  - A callback function, returning the value programmatically.
              *  - An object defining detailed configuration of the mapping.
+             *
+             * If a function is used, it should return the desired value for
+             * the audio parameter. The function is called for each audio event
+             * to be played, and receives a context object parameter with
+             * `time`, and potentially `point` and `value` depending on the
+             * track. `point` is available if the audio event is related to a
+             * data point, and `value` is available if the track is used for a
+             * context track using `valueInterval`.
              *
              * @sample  highcharts/sonification/mapping-overview
              *          Overview of common mapping parameters
@@ -484,6 +770,9 @@ const Options: DeepPartial<OptionsType> = {
                  * lowest `x` value plays first, and points with the highest
                  * `x` value plays last.
                  *
+                 * Can be set to a fixed value, a prop to map to, a function,
+                 * or a mapping object.
+                 *
                  * @sample  highcharts/sonification/point-play-time
                  *          Play points in order of Y value
                  * @default "x"
@@ -564,6 +853,9 @@ const Options: DeepPartial<OptionsType> = {
                  * By default it is mapped to `x`, making the sound move from
                  * left to right as the chart plays.
                  *
+                 * Can be set to a fixed value, a prop to map to, a function,
+                 * or a mapping object.
+                 *
                  * @extends sonification.defaultInstrumentOptions.mapping.time
                  * @default "x"
                  */
@@ -579,6 +871,9 @@ const Options: DeepPartial<OptionsType> = {
                  * `sawsynth`, `wobble`, `basic1`, `basic2`, `sine`,
                  * `sineGlide`, `triangle`, `square`, `sawtooth`, `noise`,
                  * `filteredNoise`, and `wind`.
+                 *
+                 * Can be set to a fixed value, a prop to map to, a function,
+                 * or a mapping object.
                  *
                  * @extends sonification.defaultInstrumentOptions.mapping.time
                  * @default 200
@@ -605,6 +900,9 @@ const Options: DeepPartial<OptionsType> = {
                  *
                  * Thirdly, it is possible to define a musical scale to follow
                  * when mapping.
+                 *
+                 * Can be set to a fixed value, an array, a prop to map to, a
+                 * function, or a mapping object.
                  *
                  * @sample  highcharts/sonification/pitch-mapping
                  *          Various types of mapping used
@@ -636,6 +934,9 @@ const Options: DeepPartial<OptionsType> = {
                  * Gap in milliseconds between notes if pitch is mapped to an
                  * array of notes.
                  *
+                 * Can be set to a fixed value, a prop to map to, a function,
+                 * or a mapping object.
+                 *
                  * @sample  maps/demo/audio-map
                  *          Mapping to gap between notes
                  * @extends sonification.defaultInstrumentOptions.mapping.time
@@ -645,13 +946,160 @@ const Options: DeepPartial<OptionsType> = {
             }
         },
 
+        /**
+         * Default sonification options for all speech tracks.
+         *
+         * If specific options are also set on individual tracks or per
+         * series, those will override these options.
+         *
+         * @sample  highcharts/sonification/speak-values
+         *          Speak values
+         * @extends sonification.defaultInstrumentOptions
+         * @excluding roundToMusicalNotes, midiName, instrument
+         */
         defaultSpeechOptions: {
+            /**
+             * Type of track. Always `"instrument"` for instrument tracks, and
+             * `"speech"` for speech tracks.
+             * @type {"instrument"|"speech"}
+             * @default speech
+             * @apioption sonification.defaultSpeechOptions.type
+             */
+
+            /**
+             * Name of the voice synthesis to prefer for speech tracks.
+             *
+             * If not available, falls back to the default voice for the
+             * selected language.
+             *
+             * Different platforms provide different voices for web speech
+             * synthesis.
+             *
+             * @type {string}
+             * @apioption sonification.defaultSpeechOptions.preferredVoice
+             */
+
+            /**
+             * The language to speak in for speech tracks, as an IETF BCP 47
+             * language tag.
+             *
+             * @sample  maps/demo/audio-map
+             *          French language speech
+             */
             language: 'en-US',
+
+            /**
+             * Mapping configuration for the speech/audio parameters.
+             *
+             * All parameters except `text` can be either:
+             *  - A string, referencing a point property to map to.
+             *  - A number, setting the value of the speech parameter directly.
+             *  - A callback function, returning the value programmatically.
+             *  - An object defining detailed configuration of the mapping.
+             *
+             * If a function is used, it should return the desired value for
+             * the speech parameter. The function is called for each speech
+             * event to be played, and receives a context object parameter with
+             * `time`, and potentially `point` and `value` depending on the
+             * track. `point` is available if the audio event is related to a
+             * data point, and `value` is available if the track is used for a
+             * context track using `valueInterval`.
+             *
+             * @extends sonification.defaultInstrumentOptions.mapping
+             * @excluding frequency, gapBetweenNotes, highpass, lowpass, tremolo,
+             *  noteDuration, pan
+             * @apioption sonification.defaultSpeechOptions.mapping
+             */
             mapping: {
+                /**
+                 * Milliseconds to wait before playing, comes in addition to
+                 * the time determined by the `time` mapping.
+                 *
+                 * Can also be negative to play before the mapped time.
+                 *
+                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 * @apioption sonification.defaultSpeechOptions.mapping.playDelay
+                 */
+
+                /**
+                 * Speech pitch (how high/low the voice is) multiplier.
+                 * @sample  highcharts/sonification/speak-values
+                 *          Speak values
+                 * @default 1
+                 * @type {string|number|Function|object}
+                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 * @excluding scale
+                 * @apioption sonification.defaultSpeechOptions.mapping.pitch
+                 */
+
+                /**
+                 * @default undefined
+                 * @apioption sonification.defaultSpeechOptions.mapping.pitch.mapTo
+                 */
+
+                /**
+                 * @default undefined
+                 * @apioption sonification.defaultSpeechOptions.mapping.pitch.min
+                 */
+
+                /**
+                 * @default undefined
+                 * @apioption sonification.defaultSpeechOptions.mapping.pitch.max
+                 */
+
+                /**
+                 * @default undefined
+                 * @apioption sonification.defaultSpeechOptions.mapping.pitch.within
+                 */
+
+                /**
+                 * The text to announce for speech tracks. Can either be a
+                 * format string or a function.
+                 *
+                 * If it is a function, it should return the format string to
+                 * announce. The function is called for each audio event, and
+                 * receives a parameter object with `time`, and potentially
+                 * `point` and `value` properties depending on the track.
+                 * `point` is available if the audio event is related to a data
+                 * point. `value` is available if the track is used as a
+                 * context track, and `valueInterval` is used.
+                 *
+                 * If it is a format string, in addition to normal string
+                 * content, format values can be accessed using bracket
+                 * notation. For example `"Value is {point.y}%"`.
+                 *
+                 * `time`, `point` and `value` are available to the format
+                 * strings similarly to with functions. Nested properties can
+                 * be accessed with dot notation, for example
+                 * `"Density: {point.options.custom.density}"`
+                 *
+                 * @sample  highcharts/sonification/speak-values
+                 *          Speak values
+                 * @type {string|Function}
+                 * @apioption sonification.defaultSpeechOptions.mapping.text
+                 */
+
+                /**
+                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 * @default "x"
+                 */
                 time: 'x',
+
+                /**
+                 * Speech rate (speed) multiplier.
+                 * @extends sonification.defaultInstrumentOptions.mapping.time
+                 * @default 1.3
+                 */
                 rate: 1.3,
+
+                /**
+                 * Volume of the speech announcement.
+                 * @extends sonification.defaultInstrumentOptions.mapping.volume
+                 * @default 0.4
+                 */
                 volume: 0.4
             },
+
             pointGrouping: {
                 algorithm: 'last'
             }
@@ -709,6 +1157,63 @@ export default Options;
  *  API declarations
  *
  * */
+
+/**
+ * Sonification/audio chart options for a series.
+ *
+ * @since      next
+ * @requires   modules/sonification
+ * @apioption  plotOptions.series.sonification
+ */
+
+/**
+ * Whether or not sonification is enabled for this series.
+ * @type {boolean}
+ * @default true
+ * @apioption  plotOptions.series.sonification.enabled
+ */
+
+/**
+ * Context tracks for this series. Context tracks are tracks that are not
+ * tied to data points.
+ *
+ * Given as an array of instrument tracks, speech tracks, or a mix of both.
+ *
+ * @type {Array<*>}
+ * @extends sonification.globalContextTracks
+ * @apioption  plotOptions.series.sonification.contextTracks
+ */
+
+/**
+ * Tracks for this series.
+ *
+ * Given as an array of instrument tracks, speech tracks, or a mix of both.
+ *
+ * @type {Array<*>}
+ * @extends sonification.globalTracks
+ * @apioption  plotOptions.series.sonification.tracks
+ */
+
+/**
+ * Default options for all this series' instrument tracks.
+ *
+ * @extends sonification.defaultInstrumentOptions
+ * @apioption  plotOptions.series.sonification.defaultInstrumentOptions
+ */
+
+/**
+ * Default options for all this series' speech tracks.
+ *
+ * @extends sonification.defaultSpeechOptions
+ * @apioption  plotOptions.series.sonification.defaultSpeechOptions
+ */
+
+/**
+ * Sonification point grouping options for this series.
+ *
+ * @extends sonification.pointGrouping
+ * @apioption  plotOptions.series.sonification.pointGrouping
+ */
 
 /**
  * Event context object sent to sonification chart events.
