@@ -11,7 +11,7 @@
     --color-background: none;
 }
 
-.highcharts-dashboards-wrapper.highcharts-dashboards-dark-mode {
+.highcharts-dashboards-wrapper.highcharts-dark {
     --button-filter: invert(1);
     --color-background: #46475d;
 }
@@ -36,7 +36,7 @@
     --color-text: #2f2b38;
 }
 
-.highcharts-dashboards-wrapper.highcharts-dashboards-dark-mode #kpi-layout {
+.highcharts-dashboards-wrapper.highcharts-dark #kpi-layout {
     --color-axis-labels: #838394;
     --color-background: #0d0d0d;
     --color-pane: #20202c;
@@ -62,7 +62,7 @@
     --color-row2-background: #f7f7f7;
 }
 
-.highcharts-dashboards-wrapper.highcharts-dashboards-dark-mode #selection-grid {
+.highcharts-dashboards-wrapper.highcharts-dark #selection-grid {
     --color-background: #20202c;
     --color-border: #4a4a53;
     --color-header-background: #0d0d0d;
@@ -88,7 +88,7 @@
     --color-thumb-line: #f7f7f7;
 }
 
-.highcharts-dashboards-wrapper.highcharts-dashboards-dark-mode #time-range-selector {
+.highcharts-dashboards-wrapper.highcharts-dark #time-range-selector {
     --color-axis-labels: #e7e7ec;
     --color-background: #0d0d0d;
     --color-grid: #838394;
@@ -116,7 +116,7 @@
     --color-tooltip-background: #dadae2;
 }
 
-.highcharts-dashboards-wrapper.highcharts-dashboards-dark-mode #world-map {
+.highcharts-dashboards-wrapper.highcharts-dark #world-map {
     --color-navigation: #20202b;
     --color-navigation-line: #646478;
     --color-navigation-text: #838393;
@@ -570,7 +570,7 @@ div.highcharts-dashboards-wrapper .highcharts-dashboards-edit-context-menu-btn {
 
 /* Safari fix for manual dark mode */
 /* stylelint-disable-next-line max-line-length */
-.highcharts-dashboards-wrapper.highcharts-dashboards-dark-mode #world-map .highcharts-series-1 .highcharts-data-label text {
+.highcharts-dashboards-wrapper.highcharts-dark #world-map .highcharts-series-1 .highcharts-data-label text {
     paint-order: stroke;
     stroke-width: 2px;
 }
