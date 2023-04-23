@@ -17,12 +17,12 @@
  * */
 
 import type Chart from './Chart/Chart';
-import type Defaults from './Defaults';
 import type Point from './Series/Point';
 import type Pointer from './Pointer';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
 import type RectangleObject from './Renderer/RectangleObject';
+import type SizeObject from './Renderer/SizeObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGRenderer from './Renderer/SVG/SVGRenderer';
@@ -601,6 +601,37 @@ class Tooltip {
     }
 
     /**
+     * Get the total area available area to place the tooltip
+     *
+     * @private
+     */
+    public getPlayingField(): SizeObject {
+        const { body, documentElement } = doc,
+            { chart, distance, outside } = this;
+        return {
+            width: outside ?
+                // Substract distance to prevent scrollbars
+                Math.max(
+                    body.scrollWidth,
+                    documentElement.scrollWidth,
+                    body.offsetWidth,
+                    documentElement.offsetWidth,
+                    documentElement.clientWidth
+                ) - 2 * distance :
+                chart.chartWidth,
+            height: outside ?
+                Math.max(
+                    body.scrollHeight,
+                    documentElement.scrollHeight,
+                    body.offsetHeight,
+                    documentElement.offsetHeight,
+                    documentElement.clientHeight
+                ) :
+                chart.chartHeight
+        };
+    }
+
+    /**
      * Place the tooltip in a chart without spilling over and not covering the
      * point itself.
      *
@@ -630,26 +661,9 @@ class Tooltip {
             // Don't use h if chart isn't inverted (#7242) ???
             h = (chart.inverted && (point as any).h) || 0, // #4117 ???
             outside = this.outside,
-            { body, documentElement } = doc,
-            outerWidth = outside ?
-                // substract distance to prevent scrollbars
-                Math.max(
-                    body.scrollWidth,
-                    documentElement.scrollWidth,
-                    body.offsetWidth,
-                    documentElement.offsetWidth,
-                    documentElement.clientWidth
-                ) - 2 * distance :
-                chart.chartWidth,
-            outerHeight = outside ?
-                Math.max(
-                    body.scrollHeight,
-                    documentElement.scrollHeight,
-                    body.offsetHeight,
-                    documentElement.offsetHeight,
-                    documentElement.clientHeight
-                ) :
-                chart.chartHeight,
+            playingField = this.getPlayingField(),
+            outerWidth = playingField.width,
+            outerHeight = playingField.height,
             chartPosition = chart.pointer.getChartPosition(),
             scaleX = (val: number): number => ( // eslint-disable-line no-confusing-arrow
                 val * chartPosition.scaleX
@@ -1134,7 +1148,11 @@ class Tooltip {
                     // (#6659)
                     if (!options.style.width || styledMode) {
                         label.css({
-                            width: chart.spacingBox.width + 'px'
+                            width: (
+                                this.outside ?
+                                    this.getPlayingField() :
+                                    chart.spacingBox
+                            ).width + 'px'
                         });
                     }
 
