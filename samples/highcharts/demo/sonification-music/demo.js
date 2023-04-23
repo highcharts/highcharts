@@ -144,7 +144,7 @@ Highcharts.chart('container', {
     sonification: {
         duration: 14400,
         order: 'simultaneous',
-        showCrosshairOnly: true,
+        showTooltip: false,
         masterVolume: masterVolume,
         defaultInstrumentOptions: {
             // Only show for one track since we have some delayed tracks

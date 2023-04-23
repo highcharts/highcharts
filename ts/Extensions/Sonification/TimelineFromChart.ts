@@ -953,8 +953,8 @@ function timelineFromChart(
             onPlay: eventOptions.onPlay,
             onEnd: eventOptions.onEnd,
             onStop: eventOptions.onStop,
-            showCrosshairOnly: options.showCrosshairOnly,
-            showPlayMarker: options.showPlayMarker
+            showCrosshair: options.showCrosshair,
+            showTooltip: options.showTooltip
         }, chart);
 
     // Expose PropMetrics for tests

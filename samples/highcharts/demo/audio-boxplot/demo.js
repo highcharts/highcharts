@@ -9,7 +9,7 @@ var chart = Highcharts.chart('container', {
         align: 'left'
     },
     sonification: {
-        showCrosshairOnly: true,
+        showTooltip: false,
         duration: 22000
     },
     accessibility: {

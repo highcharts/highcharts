@@ -14,8 +14,7 @@ var chart = Highcharts.stockChart('container', {
         masterVolume: 0.5,
         duration: playDuration,
         order: 'simultaneous',
-        showPlayMarker: true,
-        showCrosshairOnly: true,
+        showTooltip: false,
         pointGrouping: {
             groupTimespan: 250,
             algorithm: 'minmax'

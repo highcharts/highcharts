@@ -21,7 +21,7 @@
         sonification: {
             // Play marker / tooltip can make it hard to click other points
             // while a point is playing, so we turn it off
-            showPlayMarker: false
+            showTooltip: false
         },
         legend: {
             layout: 'vertical',

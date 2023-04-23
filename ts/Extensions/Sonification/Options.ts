@@ -171,8 +171,8 @@ declare global {
             masterVolume: number;
             order: 'sequential'|'simultaneous';
             events?: ChartSonificationEventsOptions;
-            showPlayMarker: boolean;
-            showCrosshairOnly?: boolean;
+            showTooltip: boolean;
+            showCrosshair: boolean;
             pointGrouping: PointGroupingOptions;
             globalTracks?: TrackOptions;
             globalContextTracks?: ContextTrackOptions;
@@ -210,20 +210,100 @@ declare module '../../Core/Series/SeriesOptions' {
 
 
 const Options: DeepPartial<OptionsType> = {
+    /**
+     * Options for configuring sonification for the chart. Requires the
+     * [sonification module](https://code.highcharts.com/modules/sonification.js)
+     * to be loaded.
+     *
+     * @since        next
+     * @requires     modules/sonification
+     * @optionparent sonification
+     */
     sonification: {
+
+        /**
+         * Enable sonification functionality for the chart.
+         * @since next
+         */
         enabled: true,
+
+        /**
+         * The total duration of the sonification, in milliseconds.
+         * @since next
+         */
         duration: 6000,
+
+        /**
+         * The time to wait in milliseconds after each data series when playing
+         * the series one after the other.
+         * @see [order](#sonification.order)
+         * @sample  highcharts/sonification/chart-earcon
+         *          Notification after series
+         * @since next
+         */
         afterSeriesWait: 700,
-        updateInterval: 300,
+
+        /**
+         * How long to wait between each recomputation of the sonification, if
+         * the chart updates rapidly. This avoids slowing down processes like
+         * panning. Given in milliseconds.
+         * @since next
+         */
+        updateInterval: 200,
+
+        /**
+         * Overall/master volume for the sonification, from 0 to 1.
+         * @since next
+         */
         masterVolume: 0.6,
+
+        /**
+         * What order to play the data series in, either `sequential` where
+         * the series play individually one after the other, or `simultaneous`
+         * where the series play all at once.
+         * @sample  highcharts/sonification/chart-simultaneous
+         *          Simultaneous sonification
+         * @type  {"sequential"|"simultaneous"}
+         * @since next
+         */
         order: 'sequential',
-        showPlayMarker: true,
+
+        /**
+         * Show tooltip as the chart plays.
+         *
+         * Note that if multiple tracks that play at different times try to
+         * show the tooltip, it can be glitchy, so it is recommended in those
+         * cases to turn this on/off for individual tracks.
+         *
+         * @see [showPlayMarker](#plotOptions.series.sonification.tracks.showPlayMarker)
+         * @see [showCrosshair](#sonification.showCrosshair)
+         * @since next
+         */
+        showTooltip: true,
+
+        /**
+         * Show X and Y axis crosshairs (if they exist) as the chart plays.
+         *
+         * Note that if multiple tracks that play at different times try to
+         * show the crosshairs, it can be glitchy, so it is recommended in
+         * those cases to turn this on/off for individual tracks.
+         *
+         * @see [showPlayMarker](#plotOptions.series.sonification.tracks.showPlayMarker)
+         * @see [showTooltip](#sonification.showTooltip)
+         * @see [crosshair](#xAxis.crosshair)
+         * @since next
+         */
+        showCrosshair: true,
+
+
         pointGrouping: {
             enabled: true,
             groupTimespan: 15,
             algorithm: 'minmax',
             prop: 'y'
         },
+
+
         defaultInstrumentOptions: {
             instrument: 'piano',
             mapping: {
@@ -238,6 +318,7 @@ const Options: DeepPartial<OptionsType> = {
                 }
             }
         },
+
         defaultSpeechOptions: {
             language: 'en-US',
             mapping: {
@@ -280,6 +361,7 @@ const Options: DeepPartial<OptionsType> = {
 };
 
 export default Options;
+
 
 /* *
  *

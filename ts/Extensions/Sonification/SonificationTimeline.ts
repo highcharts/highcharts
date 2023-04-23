@@ -41,8 +41,8 @@ interface SonificationTimelineOptions {
     onPlay?: Sonification.ChartCallback;
     onEnd?: Sonification.ChartCallback;
     onStop?: Sonification.ChartCallback;
-    showPlayMarker?: boolean;
-    showCrosshairOnly?: boolean;
+    showTooltip?: boolean;
+    showCrosshair?: boolean;
     skipThreshold?: number;
 }
 
@@ -156,8 +156,8 @@ class SonificationTimeline {
 
         const skipThreshold = this.options.skipThreshold || 2,
             onPlay = this.options.onPlay,
-            showPlayMarker = this.options.showPlayMarker,
-            showCrosshairOnly = this.options.showCrosshairOnly,
+            showTooltip = this.options.showTooltip,
+            showCrosshair = this.options.showCrosshair,
             channels = filter ?
                 filterChannels(filter, this.playingChannels || this.channels) :
                 this.channels,
@@ -222,7 +222,7 @@ class SonificationTimeline {
                 const point = e.relatedPoint,
                     chart = point && point.series && point.series.chart,
                     needsCallback = e.callback ||
-                        point && (showPlayMarker || showCrosshairOnly) &&
+                        point && (showTooltip || showCrosshair) &&
                         channel.showPlayMarker !== false &&
                         (e.time - lastCallbackTime > 50 || i === numEvents - 1);
 
@@ -236,10 +236,7 @@ class SonificationTimeline {
                                 e.callback();
                             }
                             if (point) {
-                                if (
-                                    showPlayMarker &&
-                                    showCrosshairOnly
-                                ) {
+                                if (showCrosshair) {
                                     const s = point.series;
                                     if (s && s.xAxis && s.xAxis.crosshair) {
                                         s.xAxis.drawCrosshair(void 0, point);
@@ -247,8 +244,9 @@ class SonificationTimeline {
                                     if (s && s.yAxis && s.yAxis.crosshair) {
                                         s.yAxis.drawCrosshair(void 0, point);
                                     }
-                                } else if (
-                                    showPlayMarker && !(
+                                }
+                                if (
+                                    showTooltip && !(
                                         // Don't re-hover if shared tooltip
                                         chart && chart.hoverPoints &&
                                         chart.hoverPoints.length > 1 &&

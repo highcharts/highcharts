@@ -12,7 +12,6 @@ const chart = Highcharts.chart('container', {
         }
     },
     sonification: {
-        showPlayMarker: true,
         updateInterval: 0 // Allow chart updates without delay
     },
     tooltip: {
