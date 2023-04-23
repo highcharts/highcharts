@@ -74,11 +74,7 @@ Dashboards.board('container', {
             },
             chartOptions: {
                 xAxis: {
-                    title: 'Names',
                     type: 'category'
-                },
-                title: {
-                    text: 'names'
                 },
                 chart: {
                     animation: false,
@@ -117,9 +113,3 @@ Dashboards.board('container', {
             }
         }]
 });
-
-
-const board = Dashboards.boards[0];
-const cell = board.mountedComponents[1].cell;
-board.editMode.activate();
-board.editMode.sidebar.show(cell);
