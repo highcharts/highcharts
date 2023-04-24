@@ -45,9 +45,7 @@ const {
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
-import Axis from '../../Core/Axis/Axis';
-import ColorType from '../../Core/Color/ColorType';
-import { GradientColorStop } from '../../Core/Color/GradientColor';
+
 const {
     extend,
     fireEvent,
@@ -457,35 +455,17 @@ class HeatmapSeries extends ScatterSeries {
             const
                 { image, chart, xAxis, yAxis } = series,
                 { plotWidth, plotHeight, inverted } = chart,
-                [
-                    [xMinPadding, xMaxPadding],
-                    [yMinPadding, yMaxPadding]
-                ] = [xAxis, yAxis].map(({
-                    minPixelPadding,
-                    userOptions,
-                    reversed
-                }): number[] => {
-                    const { minPadding, maxPadding } = userOptions;
-                    return (
-                        (reversed ?
-                            [minPadding, maxPadding] :
-                            [maxPadding, minPadding]
-                        ).map((bound): number => (
-                            (bound === 0 || bound) ?
-                                bound :
-                                minPixelPadding
-                        ))
-                    );
-                }),
-                xTotalPadding = (xMinPadding + xMaxPadding),
-                yTotalPadding = (yMinPadding + yMaxPadding),
+                xFactor = (1 / (seriesOptions.colsize || 1)),
+                xFacHalf = xFactor / 2,
+                yFactor = (1 / (seriesOptions.rowsize || 1)),
+                yFacHalf = xFactor / 2,
                 dims = (inverted ?
                     {
-                        width: plotHeight - xTotalPadding,
-                        height: plotWidth - yTotalPadding
+                        width: plotHeight - xFacHalf,
+                        height: plotWidth - yFacHalf
                     } : {
-                        width: plotWidth - xTotalPadding,
-                        height: plotHeight - yTotalPadding
+                        width: plotWidth - xFacHalf,
+                        height: plotHeight - yFacHalf
                     }
                 );
 
@@ -501,26 +481,23 @@ class HeatmapSeries extends ScatterSeries {
                 if (canvas && ctx && colorAxis) {
                     const
                         { boost: seriesBoost, points } = series,
-                        pointsLen = points.length,
                         { width, height } = canvas,
+                        pixelData = new Uint8ClampedArray(points.length * 4),
+
+
                         pixelIndex = ((): Function => {
                             const
                                 { min: xMin, max: xMax } = xAxis.getExtremes(),
                                 { min: yMin, max: yMax } = yAxis.getExtremes(),
-                                yPixelScale = (
-                                    (
-                                        height - 1 /
-                                        Math.round(yAxis.len / height)
-                                    ) /
-                                    (yMax - yMin)
+
+                                scaled = (
+                                    axisVal: number,
+                                    axisMin: number,
+                                    pixelScale: number
+                                ): number => (
+                                    ~~((axisVal - axisMin) * pixelScale)
                                 ),
-                                xPixelScale = (
-                                    (
-                                        width - 1 /
-                                        Math.round(xAxis.len / width)
-                                    ) /
-                                    (xMax - xMin)
-                                ),
+
                                 row = (yAxis.reversed ?
                                     (y: number): number => (
                                         ((height - 1) - y) * width
@@ -530,68 +507,57 @@ class HeatmapSeries extends ScatterSeries {
                                 col = (xAxis.reversed ?
                                     (x: number): number => ((width - 1) - x) :
                                     (x: number): number => (x)
-                                ),
-                                scaled = (
-                                    axisVal: number,
-                                    axisMin: number,
-                                    pixelScale: number
-                                ): number => (
-                                    ~~((axisVal - axisMin) * pixelScale)
                                 );
+
                             return (x: number, y: number): number => (
                                 4 * (
-                                    row(scaled(yMax - y, yMin, yPixelScale)) +
-                                    col(scaled(x, xMin, xPixelScale))
+                                    row(scaled(yMax - y, yMin, yFactor)) +
+                                    col(scaled(x, xMin, xFactor))
                                 )
                             );
                         })(),
-                        getPixelData = function (p: HeatmapPoint): {
-                            r: number,
-                            g: number,
-                            b: number,
-                            a: number,
-                            pixelIndex: number
-                        } {
-                            const
-                                rgba = (
-                                    colorAxis.toColor(
-                                        p.value || 0, p) as string)
-                                    .split(')')[0]
-                                    .split('(')[1]
-                                    .split(',')
-                                    .map((s): number => (
-                                        parseFloat(s) ||
-                                        parseInt(s, 10)
-                                    ));
-                            return {
-                                r: rgba[0],
-                                g: rgba[1],
-                                b: rgba[2],
-                                a: (rgba.length === 4 ? rgba[3] : 1.0) * 255,
-                                pixelIndex: pixelIndex(p.x, p.y)
-                            };
-                        },
-                        pixelData = ctx.createImageData(width, height);
+                        getRGBA = (p: HeatmapPoint): number[] => {
+                            const rgba = (
+                                colorAxis.toColor(
+                                    p.value || 0, p) as string)
+                                .split(')')[0]
+                                .split('(')[1]
+                                .split(',')
+                                .map((s): number => (
+                                    parseFloat(s) ||
+                                    parseInt(s, 10)
+                                ));
+
+                            rgba[3] = (rgba.length === 4 ? rgba[3] : 1.0) * 255;
+
+                            return rgba;
+                        };
 
                     if (!seriesBoost && !chart.boost) {
                         series.buildKDTree();
                         series.directTouch = false;
                     }
 
-                    for (let i = 0; i < pointsLen; i++) {
-                        const { r, g, b, a, pixelIndex } = getPixelData(
-                            points[i]
+                    points.forEach((p): void => {
+                        pixelData.set(
+                            getRGBA(p),
+                            pixelIndex(p.x, p.y)
                         );
-                        pixelData.data[pixelIndex + 0] = r;
-                        pixelData.data[pixelIndex + 1] = g;
-                        pixelData.data[pixelIndex + 2] = b;
-                        pixelData.data[pixelIndex + 3] = a;
-                    }
+                    });
 
-                    ctx.putImageData(pixelData, 0, 0);
+
+                    ctx.putImageData(
+                        new ImageData(
+                            pixelData,
+                            width,
+                            height
+                        ),
+                        0,
+                        0
+                    );
 
                     series.image = chart.renderer.image(
-                        canvas.toDataURL(), xMinPadding, yMaxPadding
+                        canvas.toDataURL(), xFacHalf, yFacHalf
                     )
                         .attr(dims)
                         .add(series.group);
