@@ -1166,20 +1166,18 @@ class Pointer {
      */
     public onContainerMouseLeave(e: MouseEvent): void {
         const chart = charts[pick(Pointer.hoverChartIndex, -1)];
-        const tooltip = this.chart.tooltip;
 
         e = this.normalize(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target
-        if (chart && e.relatedTarget) {
+        if (
+            chart &&
+            e.relatedTarget &&
+            !this.inClass(e.relatedTarget as any, 'highcharts-tooltip')
+        ) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;
-        }
-
-        // #11635, Firefox wheel scroll does not fire out events consistently
-        if (tooltip && !tooltip.isHidden) {
-            this.reset();
         }
     }
 

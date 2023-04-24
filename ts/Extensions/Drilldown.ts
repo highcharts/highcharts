@@ -1533,7 +1533,10 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
                         dataLabel = point.dataLabel;
 
 
-                    if (point.graphic) { // #3407
+                    if (
+                        point.graphic && // #3407
+                        point.visible // Don't show if invisible (#18303)
+                    ) {
                         point.graphic[verb](inherit);
                     }
 
