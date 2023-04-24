@@ -46,7 +46,7 @@ import type {
  */
 export interface FormulaParserError extends Error {
     message: string;
-    name: 'FormulaParserError';
+    name: 'FormulaParseError';
 }
 
 
@@ -160,7 +160,7 @@ function extractParantheses(
 
     if (parantheseLevel > 0) {
         const error = new Error('Incomplete parantheses.');
-        error.name = 'ExtractParanthesesError';
+        error.name = 'FormulaParseError';
         throw error;
     }
 
@@ -388,7 +388,7 @@ function parseFormula(
                 '. (`...' + text.substring(position - 5, position + 6) + '...`)'
             ) as FormulaParserError;
 
-        error.name = 'FormulaParserError';
+        error.name = 'FormulaParseError';
 
         throw error;
     }

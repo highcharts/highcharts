@@ -55,6 +55,16 @@ const {
  * */
 
 
+/**
+ * Formula processor might not process a term.
+ * @private
+ */
+export interface FormulaProcessError extends Error {
+    message: string;
+    name: 'FormulaProcessError';
+}
+
+
 export interface ProcessorFunction {
     (args: Arguments, table?: DataTable): (Value|Array<Value>);
 }
@@ -409,7 +419,9 @@ function processFunction(
         }
     }
 
-    return NaN;
+    const error = new Error(`Function "${formulaFunction.name}" not found.`);
+    error.name = 'FormulaProcessError';
+    throw error;
 }
 
 
