@@ -389,6 +389,9 @@ var chart = Highcharts.stockChart('container', {
         lineWidth: 1,
         fillOpacity: 0.4,
         threshold: 10,
+        tooltip: {
+            valueDecimals: 2
+        },
         sonification: {
             pointGrouping: {
                 groupTimespan: 100
