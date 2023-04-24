@@ -393,9 +393,8 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      * @default   #ffffff
      * @product   highcharts highstock gantt
      */
-    borderColor: Palette.backgroundColor,
+    borderColor: Palette.backgroundColor
 
-    legendSymbol: 'rectangle'
 };
 
 /**

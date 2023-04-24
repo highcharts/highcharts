@@ -2512,7 +2512,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highcharts} highcharts/series/legend-symbol/
      *         Change the legend symbol
      */
-    legendSymbol: 'rectangle'
 
 };
 
