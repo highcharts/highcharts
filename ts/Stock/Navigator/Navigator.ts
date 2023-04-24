@@ -160,7 +160,6 @@ class Navigator {
     public opposite: boolean = void 0 as any;
     public otherHandlePos?: number;
     public outline: SVGElement = void 0 as any;
-    public outlineHeight: number = void 0 as any;
     public range: number = void 0 as any;
     public rendered: boolean = void 0 as any;
     public reversedExtremes?: boolean;
@@ -257,45 +256,46 @@ class Navigator {
             outlineWidth = navigator.outline.strokeWidth(),
             halfOutline = outlineWidth / 2,
             outlineCorrection = (outlineWidth % 2) / 2, // #5800
-            outlineHeight = navigator.outlineHeight,
             scrollButtonSize = navigator.scrollButtonSize,
-            navigatorSize = navigator.size;
+            navigatorSize = navigator.size,
+            navigatorTop = navigator.top,
+            height = navigator.height,
+            lineTop = navigatorTop - halfOutline,
+            lineBtm = navigatorTop + height;
 
         let left = navigator.left,
-            navigatorTop = navigator.top,
             verticalMin,
             path: SVGPath;
 
         if (inverted) {
-            left -= navigator.scrollbarHeight + halfOutline;
             verticalMin = navigatorTop + zoomedMax + outlineCorrection;
             zoomedMax = navigatorTop + zoomedMin + outlineCorrection;
 
             path = [
                 [
                     'M',
-                    left + outlineHeight,
+                    left + height,
                     navigatorTop - scrollButtonSize - outlineCorrection
                 ],
                 // top right of zoomed range
-                ['L', left + outlineHeight, verticalMin],
+                ['L', left + height, verticalMin],
                 ['L', left, verticalMin], // top left of z.r.
-                ['L', left, zoomedMax], // bottom left of z.r.
-                ['L', left + outlineHeight, zoomedMax], // bottom right of z.r.
+                ['M', left, zoomedMax], // bottom left of z.r.
+                ['L', left + height, zoomedMax], // bottom right of z.r.
                 [
                     'L',
-                    left + outlineHeight,
+                    left + height,
                     navigatorTop + navigatorSize + scrollButtonSize
                 ]
             ];
             if (maskInside) {
                 path.push(
                     // upper left of zoomed range
-                    ['M', left + outlineHeight, verticalMin - halfOutline],
+                    ['M', left + height, verticalMin - halfOutline],
                     // upper right of z.r.
                     [
                         'L',
-                        left + outlineHeight,
+                        left + height,
                         zoomedMax + halfOutline
                     ]
                 );
@@ -304,28 +304,32 @@ class Navigator {
             left -= scrollButtonSize;
             zoomedMin += left + scrollButtonSize - outlineCorrection;
             zoomedMax += left + scrollButtonSize - outlineCorrection;
-            navigatorTop += halfOutline;
 
             path = [
                 // left
-                ['M', left, navigatorTop],
+                ['M', left, lineTop],
                 // upper left of zoomed range
-                ['L', zoomedMin, navigatorTop],
+                ['L', zoomedMin, lineTop],
                 // lower left of z.r.
-                ['L', zoomedMin, navigatorTop + outlineHeight],
+                ['L', zoomedMin, lineBtm],
                 // lower right of z.r.
-                ['L', zoomedMax, navigatorTop + outlineHeight],
+                ['M', zoomedMax, lineBtm],
                 // upper right of z.r.
-                ['L', zoomedMax, navigatorTop],
+                ['L', zoomedMax, lineTop],
                 // right
-                ['L', left + navigatorSize + scrollButtonSize * 2, navigatorTop]
+                [
+                    'L',
+                    left + navigatorSize + scrollButtonSize * 2,
+                    navigatorTop + halfOutline
+                ]
             ];
+
             if (maskInside) {
                 path.push(
                     // upper left of zoomed range
-                    ['M', zoomedMin - halfOutline, navigatorTop],
+                    ['M', zoomedMin - halfOutline, lineTop],
                     // upper right of z.r.
-                    ['L', zoomedMax + halfOutline, navigatorTop]
+                    ['L', zoomedMax + halfOutline, lineTop]
                 );
             }
         }
@@ -1241,7 +1245,6 @@ class Navigator {
         this.navigatorEnabled = navigatorEnabled as any;
         this.navigatorOptions = navigatorOptions;
         this.scrollbarOptions = scrollbarOptions;
-        this.outlineHeight = height + scrollbarHeight;
 
         this.opposite = pick(
             navigatorOptions.opposite,
@@ -1399,7 +1402,7 @@ class Navigator {
                 { vertical: chart.inverted }
             );
             if (!isNumber(options.margin) && navigator.navigatorEnabled) {
-                options.margin = 0;
+                options.margin = chart.inverted ? -3 : 3;
             }
             chart.scrollbar = navigator.scrollbar = new Scrollbar(
                 chart.renderer,
@@ -2028,7 +2031,7 @@ class Navigator {
                     (chart as any)[marginName] =
                         ((chart as any)[marginName] || 0) + (
                             navigator.navigatorEnabled || !chart.inverted ?
-                                navigator.outlineHeight :
+                                navigator.height + navigator.scrollbarHeight :
                                 0
                         ) + navigator.navigatorOptions.margin;
                 }

@@ -267,17 +267,6 @@ class HTMLElement extends SVGElement {
             marginTop: translateY as any
         });
 
-        if (!renderer.styledMode && wrapper.shadows) { // used in labels/tooltip
-            wrapper.shadows.forEach(function (
-                shadow: DOMElementType
-            ): void {
-                css(shadow, {
-                    marginLeft: translateX + 1 as any,
-                    marginTop: translateY + 1 as any
-                });
-            });
-        }
-
         if (elem.tagName === 'SPAN') {
             const rotation = wrapper.rotation,
                 textWidth = wrapper.textWidth && pInt(wrapper.textWidth),
@@ -325,10 +314,7 @@ class HTMLElement extends SVGElement {
 
             // Do the calculations and DOM access only if properties changed
             if (currentTextTransform !== wrapper.cTT) {
-                baseline = renderer.fontMetrics(
-                    elem.style.fontSize as any,
-                    elem
-                ).b;
+                baseline = renderer.fontMetrics(elem).b;
 
                 // Renderer specific handling of span rotation, but only if we
                 // have something to update.

@@ -104,7 +104,7 @@ export interface SeriesOptions {
     colorIndex?: number;
     colors?: Array<ColorType>;
     connectNulls?: boolean;
-    crisp?: (boolean|number);
+    crisp?: boolean;
     cursor?: CursorValue;
     dashStyle?: DashStyleValue;
     data?: Array<(PointOptions|PointShortOptions)>;

@@ -176,7 +176,7 @@ class MapSeries extends ScatterSeries {
          * @type   {Highcharts.SeriesLinecapValue}
          * @since  10.3.3
          */
-        linecap: 'butt',
+        linecap: 'round',
 
         /**
          * @ignore-option
@@ -258,7 +258,7 @@ class MapSeries extends ScatterSeries {
          *
          * @private
          */
-        borderColor: Palette.neutralColor20,
+        borderColor: Palette.neutralColor10,
 
         /**
          * The border width of each map area.
@@ -337,7 +337,7 @@ class MapSeries extends ScatterSeries {
             hover: {
 
                 /** @ignore-option */
-                halo: null as any,
+                halo: void 0,
 
                 /**
                  * The color of the shape in this state.
@@ -357,6 +357,7 @@ class MapSeries extends ScatterSeries {
                  * @product   highmaps
                  * @apioption plotOptions.series.states.hover.borderColor
                  */
+                borderColor: Palette.neutralColor60,
 
                 /**
                  * The border width of the point in this state
@@ -365,6 +366,7 @@ class MapSeries extends ScatterSeries {
                  * @product   highmaps
                  * @apioption plotOptions.series.states.hover.borderWidth
                  */
+                borderWidth: 2
 
                 /**
                  * The relative brightness of the point when hovered, relative
@@ -372,10 +374,9 @@ class MapSeries extends ScatterSeries {
                  *
                  * @type      {number}
                  * @product   highmaps
-                 * @default   0.2
+                 * @default   0
                  * @apioption plotOptions.series.states.hover.brightness
                  */
-                brightness: 0.2
             },
 
             /**
@@ -940,6 +941,7 @@ class MapSeries extends ScatterSeries {
             if (defined(stateStrokeWidth)) {
                 pointStrokeWidth = stateStrokeWidth;
             }
+            attr.stroke = stateOptions.borderColor ?? point.color;
         }
 
         if (pointStrokeWidth && mapView) {

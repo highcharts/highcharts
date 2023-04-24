@@ -61,7 +61,7 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
 
                 assert.deepEqual(
                     tooltip.label.text.element.textContent.split('\u200B'),
-                    ['0', '● Series 1: 1', ''],
+                    ['0', '⏺ Series 1: 1', ''],
                     'Tooltip should have label text of first series.'
                 );
 
@@ -81,7 +81,7 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
                     assert.deepEqual(
                         tooltip.label && tooltip.label.text.element.textContent
                             .split('\u200B'),
-                        ['0', '● Series 1: 1', ''],
+                        ['0', '⏺ Series 1: 1', ''],
                         'Tooltip should have label text of first series. (2)'
                     );
                 }
@@ -101,7 +101,7 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
                 assert.deepEqual(
                     tooltip.label && tooltip.label.text.element.textContent
                         .split('\u200B'),
-                    ['0', '● Series 2: 1.1', ''],
+                    ['0', '⏺ Series 2: 1.1', ''],
                     'Tooltip should have label text of second series.'
                 );
             }

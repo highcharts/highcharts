@@ -79,8 +79,6 @@ class PiePoint extends Point {
 
     public series: PieSeries = void 0 as any;
 
-    public shadowGroup?: SVGElement;
-
     public sliced?: boolean;
 
     public slicedTranslation?: PiePoint.TranslationAttributes;
@@ -147,7 +145,8 @@ class PiePoint extends Point {
                 // through between the halo and the slice (#7495).
                     innerR: (shapeArgs as any).r - 1,
                     start: (shapeArgs as any).start,
-                    end: (shapeArgs as any).end
+                    end: (shapeArgs as any).end,
+                    borderRadius: (shapeArgs as any).borderRadius
                 }
             );
     }
@@ -216,7 +215,7 @@ class PiePoint extends Point {
             // Show and hide associated elements. This is performed
             // regardless of redraw or not, because chart.redraw only
             // handles full series.
-            ['graphic', 'dataLabel', 'connector', 'shadowGroup'].forEach(
+            ['graphic', 'dataLabel', 'connector'].forEach(
                 (key: string): void => {
                     if ((this as any)[key]) {
                         (this as any)[key][vis ? 'show' : 'hide'](vis);
@@ -286,10 +285,6 @@ class PiePoint extends Point {
         if (this.graphic) {
             this.graphic.animate(this.getTranslate());
         }
-
-        if (this.shadowGroup) {
-            this.shadowGroup.animate(this.getTranslate());
-        }
     }
 }
 
@@ -356,42 +351,51 @@ extend(PiePoint.prototype, {
             connectorPosition: PiePoint.LabelConnectorPositionObject,
             options: PieDataLabelOptions
         ): SVGPath {
-            const touchingSliceAt = connectorPosition.touchingSliceAt,
-                series = this.series,
-                pieCenterX = series.center[0],
+            const { breakAt, touchingSliceAt } = connectorPosition,
+                { series } = this,
+                [cx, cy, diameter] = series.center,
+                r = diameter / 2,
                 plotWidth = series.chart.plotWidth,
                 plotLeft = series.chart.plotLeft,
-                alignment = labelPosition.alignment,
-                radius = (this.shapeArgs as any).r,
-                crookDistance = relativeLength( // % to fraction
-                    options.crookDistance as any, 1
-                ),
-                crookX = alignment === 'left' ?
-                    pieCenterX + radius + (plotWidth + plotLeft -
-                    pieCenterX - radius) * (1 - crookDistance) :
-                    plotLeft + (pieCenterX - radius) * crookDistance,
-                segmentWithCrook: SVGPath.LineTo = [
-                    'L',
-                    crookX,
-                    labelPosition.y
-                ];
+                leftAligned = labelPosition.alignment === 'left',
+                { x, y } = labelPosition;
 
-            let useCrook = true;
+            let crookX = breakAt.x;
+            if (options.crookDistance) {
+                const crookDistance = relativeLength( // % to fraction
+                    options.crookDistance, 1
+                );
+                crookX = leftAligned ?
+                    cx +
+                    r +
+                    (plotWidth + plotLeft - cx - r) * (1 - crookDistance) :
+                    plotLeft + (cx - r) * crookDistance;
 
-            // crookedLine formula doesn't make sense if the path overlaps
+            // When the crookDistance option is undefined, make the bend in the
+            // intersection between the radial line in the middle of the slice,
+            // and the extension of the label position.
+            } else {
+                crookX = cx + (cy - y) * Math.tan(
+                    (this.angle || 0) - Math.PI / 2
+                );
+            }
+
+            const path: SVGPath = [['M', x, y]];
+
+            // The crookedLine formula doesn't make sense if the path overlaps
             // the label - use straight line instead in that case
-            if (alignment === 'left' ?
-                (crookX > labelPosition.x || crookX < touchingSliceAt.x) :
-                (crookX < labelPosition.x || crookX > touchingSliceAt.x)) {
-                useCrook = false;
+            if (
+                leftAligned ?
+                    (crookX <= x && crookX >= breakAt.x) :
+                    (crookX >= x && crookX <= breakAt.x)
+            ) {
+                path.push(['L', crookX, y]);
             }
 
-            // assemble the path
-            const path: SVGPath = [['M', labelPosition.x, labelPosition.y]];
-            if (useCrook) {
-                path.push(segmentWithCrook);
-            }
-            path.push(['L', touchingSliceAt.x, touchingSliceAt.y]);
+            path.push(
+                ['L', breakAt.x, breakAt.y],
+                ['L', touchingSliceAt.x, touchingSliceAt.y]
+            );
             return path;
         }
     }

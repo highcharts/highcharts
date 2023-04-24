@@ -43,6 +43,7 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from './SeriesType';
+import type StackItem from '../Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -2183,11 +2184,11 @@ class Series {
         for (i = 0; i < dataLength; i++) {
             const point = points[i],
                 xValue = point.x;
-            let pointStack,
+            let stackItem: StackItem|undefined,
                 stackValues: (Array<number>|undefined),
                 yValue = point.y,
                 lowValue = point.low;
-            const stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(
+            const stacks = stacking && yAxis.stacking?.stacks[(
                 series.negStacks &&
                 (yValue as any) <
                 (stackThreshold ? 0 : (threshold as any)) ?
@@ -2213,8 +2214,8 @@ class Series {
             // Calculate the bottom y value for stacked series
             if (stacking &&
                 series.visible &&
-                stack &&
-                stack[xValue]
+                stacks &&
+                stacks[xValue]
             ) {
                 stackIndicator = series.getStackIndicator(
                     stackIndicator,
@@ -2223,16 +2224,16 @@ class Series {
                 );
 
                 if (!point.isNull && stackIndicator.key) {
-                    pointStack = stack[xValue];
-                    stackValues = pointStack.points[stackIndicator.key];
+                    stackItem = stacks[xValue];
+                    stackValues = stackItem.points[stackIndicator.key];
                 }
 
-                if (pointStack && isArray(stackValues)) {
+                if (stackItem && isArray(stackValues)) {
                     lowValue = stackValues[0];
                     yValue = stackValues[1];
 
                     if (lowValue === stackThreshold &&
-                        stackIndicator.key === stack[xValue].base
+                        stackIndicator.key === stacks[xValue].base
                     ) {
                         lowValue = pick(
                             isNumber(threshold) ? threshold : yAxis.min
@@ -2248,12 +2249,10 @@ class Series {
                         lowValue = void 0;
                     }
 
-                    point.total = point.stackTotal = pick(pointStack.total);
-                    point.percentage = defined(point.y) && pointStack.total ?
-                        (point.y / pointStack.total * 100) : void 0;
+                    point.total = point.stackTotal = pick(stackItem.total);
+                    point.percentage = defined(point.y) && stackItem.total ?
+                        (point.y / stackItem.total * 100) : void 0;
                     point.stackY = yValue;
-
-                    // Place the stack label
 
                     // in case of variwide series (where widths of points are
                     // different in most cases), stack labels are positioned
@@ -2261,7 +2260,7 @@ class Series {
                     // labels are correctly positioned later, at the end of the
                     // variwide's translate function (#10962)
                     if (!(series as any).irregularWidths) {
-                        pointStack.setOffset(
+                        stackItem.setOffset(
                             series.pointXOffset || 0,
                             series.barW || 0,
                             void 0,
@@ -4125,8 +4124,7 @@ class Series {
                 'group',
                 'markerGroup',
                 'dataLabelsGroup',
-                'transformGroup',
-                'shadowGroup'
+                'transformGroup'
             ],
             // Animation must be enabled when calling update before the initial
             // animation has first run. This happens when calling update

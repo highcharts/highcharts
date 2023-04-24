@@ -64,6 +64,9 @@ QUnit.test(
                 rangeSelector: {
                     enabled: false
                 },
+                scrollbar: {
+                    buttonsEnabled: true
+                },
                 series: [
                     {
                         data: [4, 20, 100, 5, 2, 33, 12, 23]

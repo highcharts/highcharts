@@ -1,17 +1,12 @@
 // Data retrieved from https://netmarketshare.com/
 // Make monochrome colors
-var pieColors = (function () {
-    var colors = [],
-        base = Highcharts.getOptions().colors[0],
-        i;
-
-    for (i = 0; i < 10; i += 1) {
-        // Start out with a darkened base color (negative brighten), and end
-        // up with a much brighter color
-        colors.push(Highcharts.color(base).brighten((i - 3) / 7).get());
-    }
-    return colors;
-}());
+const colors = Highcharts.getOptions().colors.map((c, i) =>
+    // Start out with a darkened base color (negative brighten), and end
+    // up with a much brighter color
+    Highcharts.color(Highcharts.getOptions().colors[0])
+        .brighten((i - 3) / 7)
+        .get()
+);
 
 // Build the chart
 Highcharts.chart('container', {
@@ -37,7 +32,8 @@ Highcharts.chart('container', {
         pie: {
             allowPointSelect: true,
             cursor: 'pointer',
-            colors: pieColors,
+            colors,
+            borderRadius: 5,
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b><br>{point.percentage:.1f} %',

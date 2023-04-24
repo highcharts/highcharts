@@ -272,10 +272,7 @@ namespace DataLabel {
             let bBox = dataLabel.getBBox(true),
                 bBoxCorrection = [0, 0];
 
-            baseline = chart.renderer.fontMetrics(
-                chart.styledMode ? void 0 : (options.style as any).fontSize,
-                dataLabel
-            ).b;
+            baseline = chart.renderer.fontMetrics(dataLabel).b;
 
             // The alignment box is a singular point
             alignTo = extend({

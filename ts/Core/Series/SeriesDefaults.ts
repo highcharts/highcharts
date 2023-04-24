@@ -62,10 +62,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         On one single series
      *
      * @product highcharts highstock
-     *
-     * @private
      */
-    lineWidth: 2,
+    lineWidth: 1,
 
     /**
      * For some series, there is a limit that shuts down animation
@@ -710,6 +708,11 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * shadow can be an object configuration containing `color`, `offsetX`,
      * `offsetY`, `opacity` and `width`.
      *
+     * Note that in some cases, like stacked columns or other dense layouts, the
+     * series may cast shadows on each other. In that case, the
+     * `chart.seriesGroupShadow` allows applying a common drop shadow to the
+     * whole series group.
+     *
      * @sample {highcharts} highcharts/plotoptions/series-shadow/
      *         Shadow enabled
      *
@@ -1172,7 +1175,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  */
                 animation: {
                     /** @internal */
-                    duration: 50
+                    duration: 150
                 },
 
                 /**
@@ -1916,7 +1919,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
         style: {
             /** @internal */
-            fontSize: '11px',
+            fontSize: '0.7em',
             /** @internal */
             fontWeight: 'bold',
             /** @internal */
@@ -2129,7 +2132,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @internal
                  */
-                duration: 50
+                duration: 150
             },
 
             /**
@@ -2282,7 +2285,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              */
             animation: {
                 /** @internal */
-                duration: 50
+                duration: 150
             },
             /**
              * Opacity of series elements (dataLabels, line, area).
