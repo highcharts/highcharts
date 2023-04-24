@@ -558,18 +558,6 @@ const ChartDefaults: ChartOptions = {
     allowMutatingData: true,
 
     /**
-     * Alias of `type`.
-     *
-     * @sample {highcharts} highcharts/chart/defaultseriestype/
-     *         Bar
-     *
-     * @deprecated
-     *
-     * @product highcharts
-     */
-    defaultSeriesType: 'line',
-
-    /**
      * If true, the axes will scale to the remaining visible series once
      * one series is hidden. If false, hiding and showing a series will
      * not affect the axes or the other series. For stacks, once one series
