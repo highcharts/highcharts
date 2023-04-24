@@ -204,6 +204,7 @@ class HighchartsComponent extends Component {
                             'chartOptions',
                             'plotOptions',
                             'series',
+                            'dataLabels',
                             'enabled'
                         ],
                         allowEnabled: true,
