@@ -422,10 +422,13 @@
     border: none;
     float: right;
     cursor: pointer;
+    background-repeat: no-repeat;
+    background-color: var(--highcharts-dashboards-neutral-color-0);
+    background-position: 50% 50%;
 }
 
 .highcharts-dashboards-edit-context-menu-btn:hover {
-    background-color: var(--highcharts-dashboards-neutral-color-50) !important;
+    background-color: var(--highcharts-dashboards-neutral-color-50);
     filter: invert(100%);
 }
 
