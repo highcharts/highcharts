@@ -630,7 +630,7 @@ class EditMode {
                             // Deselect given button and reset board width.
                             if (isSelected) {
                                 button.classList.remove('selected');
-                                this.board.layoutsWrapper.style.width = '100%';
+                                this.board.layoutsWrapper.style.width = '';
                                 this.rwdMode = '';
                             } else {
                                 // Deselect all buttons.
