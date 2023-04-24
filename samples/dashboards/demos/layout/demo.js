@@ -28,34 +28,6 @@ let board = new Dashboards.Board('container', {
                         board = Dashboards.importLocal();
                     }
                 }
-            }, {
-                id: 'export-layout',
-                text: 'Export 1 layout',
-                events: {
-                    click: function () {
-                        exportedLayoutId = board.layouts[0].options.id;
-                        board.layouts[0].exportLocal();
-                    }
-                }
-            }, {
-                id: 'delete-layout',
-                text: 'Delete 1 layout',
-                events: {
-                    click: function () {
-                        board.layouts[0].destroy();
-                    }
-                }
-            }, {
-                id: 'import-layout',
-                text: 'Import saved layout',
-                events: {
-                    click: function () {
-                        const layout = board.importLayoutLocal(
-                            exportedLayoutId
-                        );
-                        console.log('Imported layout: ', layout);
-                    }
-                }
             }]
         },
         lang: {
