@@ -1,6 +1,6 @@
 // Create an array with data from y = 1 / x
-var functionData = [];
-for (var x = -6; x < 6; x += 0.01) {
+const functionData = [];
+for (let x = -6; x < 6; x += 0.01) {
     // Note: Push y = null for x = 0
     functionData.push([
         x, Math.round(x * 100) ? 1 / x : null
@@ -8,7 +8,7 @@ for (var x = -6; x < 6; x += 0.01) {
 }
 
 // Create the chart
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         marginTop: 40,
         marginLeft: 10,

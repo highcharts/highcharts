@@ -1,4 +1,4 @@
-var masterVolume = 0.85;
+const masterVolume = 0.85;
 
 // ------------------------------------------------------------------------
 // Controls
@@ -14,7 +14,7 @@ function setInstrumentMute(targetSeriesIx, channels, mute) {
 
 // Called on chart render
 function onRender() {
-    var chart = this;
+    const chart = this;
 
     // Chart play button
     document.getElementById('play').onclick = function () {
@@ -31,9 +31,9 @@ function onRender() {
     ['bass-on', 'chimes-on', 'shaker1-on', 'piano-on', 'flute-on',
         'synth-on', 'shaker2-on', 'pad-on', 'basspad-on'
     ].forEach(function (id, seriesIx) {
-        var series = chart.series[seriesIx];
+        const series = chart.series[seriesIx];
         document.getElementById(id).onclick = function () {
-            var timeline = chart.sonification.timeline,
+            const timeline = chart.sonification.timeline,
                 muted = !this.checked;
             if (timeline) {
                 if (

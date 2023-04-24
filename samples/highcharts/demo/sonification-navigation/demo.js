@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'spline'
     },
@@ -85,10 +85,11 @@ var chart = Highcharts.chart('container', {
 
 // Handle the keyboard navigation
 document.getElementById('controls').onkeydown = function (e) {
-    var lastPlayed,
-        speaker = new Highcharts.sonification.SonificationSpeaker({
-            volume: 0.4, rate: 2
-        });
+    let lastPlayed;
+
+    const speaker = new Highcharts.sonification.SonificationSpeaker({
+        volume: 0.4, rate: 2
+    });
 
     // Announce values + series name after playing individual points. We
     // just reuse the accessibility description for the point, for simplicity.
@@ -107,7 +108,7 @@ document.getElementById('controls').onkeydown = function (e) {
             e.key === 'ArrowRight', onSinglePointPlayed);
 
     } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-        var newSeries = chart.sonification
+        const newSeries = chart.sonification
             .playAdjacentSeries(e.key === 'ArrowUp', 'x', onSinglePointPlayed);
         lastPlayed = chart.sonification.getLastPlayedPoint();
         if (lastPlayed.x && newSeries) {
@@ -137,7 +138,7 @@ document.getElementById('controls').onkeydown = function (e) {
 // Start sonification mode
 document.getElementById('sonify').onclick = function () {
     // Show the help field and set keyboard focus to it
-    var controls = document.getElementById('controls');
+    const controls = document.getElementById('controls');
     controls.className = 'visible';
 
     setTimeout(function () {

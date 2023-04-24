@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     title: {
         text: 'Audio Chart',
         align: 'left',
@@ -111,7 +111,7 @@ document.getElementById('sonify').onclick = function () {
 Object.keys(
     Highcharts.sonification.InstrumentPresets
 ).forEach(function (preset) {
-    var option = document.createElement('option');
+    const option = document.createElement('option');
     option.textContent = option.value = preset;
     document.getElementById('preset').appendChild(option);
 });
