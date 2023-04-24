@@ -5,7 +5,7 @@ describe('Editable component options', () => {
         cy.toggleEditMode();
     });
 
-    it.skip('should be able update chart ID via edit mode GUI', function() {
+    it('should be able update chart ID via edit mode GUI', function() {
         const newChartID = 'myNewChart';
 
         cy.get('.highcharts-dashboards-component').first().click();
