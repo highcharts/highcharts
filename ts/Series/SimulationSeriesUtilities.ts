@@ -21,7 +21,7 @@ const { syncTimeout } = U;
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 
-type RAFSeries = (NetworkgraphSeries | PackedBubbleSeries);
+type SimulationSeries = (NetworkgraphSeries | PackedBubbleSeries);
 
 /**
  * Create a setTimeout for the first drawDataLabels()
