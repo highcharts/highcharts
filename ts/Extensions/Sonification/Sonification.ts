@@ -505,6 +505,7 @@ class Sonification {
         if (this.audioContext) {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this.audioContext.close();
+            delete this.audioContext;
         }
     }
 
