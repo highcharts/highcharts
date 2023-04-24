@@ -759,9 +759,7 @@ class MapSeries extends ScatterSeries {
 
                 let animOptions: boolean | Partial<AnimationOptions> | undefined = {};
 
-                if (chart.options.chart) {
-                    animOptions = merge({}, chart.options.chart.animation);
-                }
+                animOptions = merge({}, renderer.globalAnimation);
 
                 if (typeof animOptions !== 'boolean') {
                     const userStep = animOptions.step;
@@ -792,7 +790,8 @@ class MapSeries extends ScatterSeries {
             // When dragging or first rendering, animation is off
             } else {
                 transformGroup.attr(merge(
-                    svgTransform, { 'stroke-width': strokeWidth / scale }
+                    svgTransform,
+                    { 'stroke-width': strokeWidth / scale, animator: 1 }
                 ));
 
                 animatePoints(scale); // #18166
