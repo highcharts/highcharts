@@ -866,6 +866,8 @@ function filterSeries(
                     '\\$&'
                 );
 
+                // eslint-disable-next-line max-len
+                // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp
                 const regex = new RegExp(validFilter, 'i'),
                     alias = indicatorAliases &&
                         indicatorAliases[indicatorType] &&

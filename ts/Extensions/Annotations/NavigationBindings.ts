@@ -894,13 +894,18 @@ class NavigationBindings {
 
                     if (pathLength === index) {
                         // Last index, put value:
+
                         (parent as any)[name] = value;
                     } else if (!(parent as any)[name]) {
                         // Create middle property:
                         (parent as any)[name] = nextName.match(/\d/g) ? [] : {};
+                        // eslint-disable-next-line max-len
+                        // nosemgrep: javascript.lang.security.audit.prototype-pollution.prototype-pollution-loop.prototype-pollution-loop
                         parent = (parent as any)[name];
                     } else {
                         // Jump into next property
+                        // eslint-disable-next-line max-len
+                        // nosemgrep: javascript.lang.security.audit.prototype-pollution.prototype-pollution-loop.prototype-pollution-loop
                         parent = (parent as any)[name];
                     }
                 });

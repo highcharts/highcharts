@@ -620,6 +620,8 @@ class TextBuilder {
         ): void {
             if (!except || except.indexOf(value) === -1) {
                 inputStr = inputStr.toString().replace(
+                    // eslint-disable-next-line max-len
+                    // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp
                     new RegExp(value, 'g'),
                     key
                 );

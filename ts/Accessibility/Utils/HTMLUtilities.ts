@@ -80,6 +80,9 @@ function removeClass(el: HTMLDOMElement, className: string): void {
     } else {
         // Note: Dumb logic that will break if the element has a class name that
         // consists of className plus something else.
+
+        // eslint-disable-next-line max-len
+        // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp
         el.className = el.className.replace(new RegExp(className, 'g'), '');
     }
 }

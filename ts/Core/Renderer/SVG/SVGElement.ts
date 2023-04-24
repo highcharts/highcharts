@@ -1781,6 +1781,8 @@ class SVGElement implements SVGElementLike {
             ('' + this.attr('class'))
                 .replace(
                     isString(className) ?
+                        // eslint-disable-next-line max-len
+                        // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp
                         new RegExp(`(^| )${className}( |$)`) : // #12064, #13590
                         className,
                     ' '

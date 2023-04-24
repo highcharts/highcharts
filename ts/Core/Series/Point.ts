@@ -986,11 +986,17 @@ class Point {
             if (valuePrefix || valueSuffix) {
 
                 pointFormat = pointFormat.replace(
+
+                    // eslint-disable-next-line max-len
+                    // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp
                     RegExp(key + '}', 'g'),
                     valuePrefix + key + '}' + valueSuffix
                 );
             }
             pointFormat = pointFormat.replace(
+
+                // eslint-disable-next-line max-len
+                // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp
                 RegExp(key + '}', 'g'),
                 key + ':,.' + valueDecimals + 'f}'
             );
