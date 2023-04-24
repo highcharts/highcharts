@@ -1,4 +1,5 @@
-const { CSVConnector, board } = Dashboards;
+const { board } = Dashboards;
+const CSVConnector = Dashboards.DataConnector.registry.CSVConnector;
 
 const connector = new CSVConnector(undefined, {
     csv: `$GME,$AMC,$NOK

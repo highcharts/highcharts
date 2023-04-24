@@ -45,7 +45,8 @@ Dashboards.board('container', {
             connector,
             type: 'Highcharts',
             sync: {
-                highlight: true
+                highlight: true,
+                selection: true
             },
             columnKeyMap: {
                 Food: 'x',
@@ -57,10 +58,12 @@ Dashboards.board('container', {
                 },
                 chart: {
                     animation: false,
-                    type: 'column'
+                    type: 'column',
+                    zoomType: 'x'
                 },
                 plotOptions: {
                     series: {
+                        animation: false,
                         dragDrop: {
                             draggableY: true,
                             dragPrecisionY: 1
@@ -74,7 +77,8 @@ Dashboards.board('container', {
             connector,
             editable: true,
             sync: {
-                highlight: true
+                highlight: true,
+                selection: true
             }
         }
     ]

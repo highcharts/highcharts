@@ -6,19 +6,86 @@
  * License: www.highcharts.com/license
  */
 
-:root {
-    --highcharts-datagrid-grid-color: #dddddd;
-    --highcharts-datagrid-background-color: #ffffff;
-    --highcharts-datagrid-header-background-color: #eeeeee;
-    --highcharts-datagrid-row-hover-color: #808080;
-    --highcharts-datagrid-highlight-color: rgba(255, 0, 0, 0.5);
+:root,
+.highcharts-light {
+    --highcharts-background-color: #ffffff;
+
+    /* Neutral colors */
+    --highcharts-neutral-color-100: #000000;
+    --highcharts-neutral-color-80: #333333;
+    --highcharts-neutral-color-60: #666666;
+    --highcharts-neutral-color-20: #cccccc;
+    --highcharts-neutral-color-10: #e6e6e6;
+    --highcharts-neutral-color-5: #f2f2f2;
+    --highcharts-neutral-color-3: #f7f7f7;
+    --highcharts-neutral-color-0: #ffffff;
+
+    /* Highlight colors */
+    --highcharts-highlight-color-100: #0022ff;
+    --highcharts-highlight-color-80: #334eff;
+    --highcharts-highlight-color-60: #667aff;
+    --highcharts-highlight-color-20: #ccd3ff;
+    --highcharts-highlight-color-10: #e6e9ff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* UI colors */
+        --highcharts-background-color: #333333;
+
+        /*
+            Neutral color variations
+            https://www.highcharts.com/samples/highcharts/css/palette-helper
+        */
+        --highcharts-neutral-color-100: rgb(255, 255, 255);
+        --highcharts-neutral-color-80: rgb(214, 214, 214);
+        --highcharts-neutral-color-60: rgb(173, 173, 173);
+        --highcharts-neutral-color-40: rgb(133, 133, 133);
+        --highcharts-neutral-color-20: rgb(92, 92, 92);
+        --highcharts-neutral-color-10: rgb(71, 71, 71);
+        --highcharts-neutral-color-5: rgb(61, 61, 61);
+        --highcharts-neutral-color-3: rgb(57, 57, 57);
+
+        /* Highlight color variations */
+        --highcharts-highlight-color-100: rgb(122, 167, 255);
+        --highcharts-highlight-color-80: rgb(108, 144, 214);
+        --highcharts-highlight-color-60: rgb(94, 121, 173);
+        --highcharts-highlight-color-20: rgb(65, 74, 92);
+        --highcharts-highlight-color-10: rgb(58, 63, 71);
+    }
+}
+
+.highcharts-dark {
+    /* UI colors */
+    --highcharts-background-color: #333333;
+
+    /*
+        Neutral color variations
+        https://www.highcharts.com/samples/highcharts/css/palette-helper
+    */
+    --highcharts-neutral-color-100: rgb(255, 255, 255);
+    --highcharts-neutral-color-80: rgb(214, 214, 214);
+    --highcharts-neutral-color-60: rgb(173, 173, 173);
+    --highcharts-neutral-color-40: rgb(133, 133, 133);
+    --highcharts-neutral-color-20: rgb(92, 92, 92);
+    --highcharts-neutral-color-10: rgb(71, 71, 71);
+    --highcharts-neutral-color-5: rgb(61, 61, 61);
+    --highcharts-neutral-color-3: rgb(57, 57, 57);
+
+    /* Highlight color variations */
+    --highcharts-highlight-color-100: rgb(122, 167, 255);
+    --highcharts-highlight-color-80: rgb(108, 144, 214);
+    --highcharts-highlight-color-60: rgb(94, 121, 173);
+    --highcharts-highlight-color-20: rgb(65, 74, 92);
+    --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
 
 .hc-dg-container {
     position: relative;
     height: 100%;
     box-sizing: border-box;
-    border: 1px solid var(--highcharts-datagrid-grid-color);
+    border: 1px solid var(--highcharts-neutral-color-20);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .hc-dg-outer-container {
@@ -46,8 +113,8 @@
 .hc-dg-cell {
     display: flex;
     align-items: center;
-    border-left: 1px solid var(--highcharts-datagrid-grid-color);
-    border-top: 1px solid var(--highcharts-datagrid-grid-color);
+    border-left: 1px solid var(--highcharts-neutral-color-20);
+    border-top: 1px solid var(--highcharts-neutral-color-20);
     overflow: hidden;
     padding: 0 8px;
     flex: 1;
@@ -63,19 +130,19 @@
     margin: 0 -8px;
     padding: 0 6px;
     box-sizing: border-box;
-    border: 2px solid var(--highcharts-datagrid-highlight-color);
+    border: 2px solid var(--highcharts-highlight-color-100);
     outline: none;
     font: inherit;
 }
 
 .hc-dg-row {
     display: flex;
-    background: var(--highcharts-datagrid-background-color);
+    background: var(--highcharts-background-color);
     width: 100%;
 }
 
 .hc-dg-row.hovered {
-    background-color: var(--highcharts-datagrid-row-hover-color);
+    background-color: var(--highcharts-highlight-color-20);
 }
 
 .hc-dg-row:first-child .hc-dg-cell {
@@ -85,8 +152,8 @@
 .hc-dg-column-header {
     display: flex;
     align-items: center;
-    border-left: 1px solid var(--highcharts-datagrid-grid-color);
-    border-bottom: 1px solid var(--highcharts-datagrid-grid-color);
+    border-left: 1px solid var(--highcharts-neutral-color-20);
+    border-bottom: 1px solid var(--highcharts-neutral-color-20);
     overflow: hidden;
     padding: 0 8px;
     flex: 1;
@@ -100,14 +167,14 @@
 
 .hc-dg-column-headers {
     display: flex;
-    background-color: var(--highcharts-datagrid-header-background-color);
+    background-color: var(--highcharts-neutral-color-10);
     width: 100%;
 }
 
 .hc-dg-col-resize-handle {
     cursor: ew-resize;
     opacity: 0;
-    background-color: var(--highcharts-datagrid-highlight-color);
+    background-color: var(--highcharts-highlight-color-100);
     position: absolute;
     top: 0;
     width: 5px;
@@ -115,7 +182,7 @@
 
 .hc-dg-col-resize-crosshair {
     position: absolute;
-    background-color: var(--highcharts-datagrid-highlight-color);
+    background-color: var(--highcharts-highlight-color-100);
     width: 3px;
     left: 0;
     opacity: 0;

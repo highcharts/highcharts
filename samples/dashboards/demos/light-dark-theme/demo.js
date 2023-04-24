@@ -44,9 +44,15 @@ Dashboards.board('container', {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
+            title: {
+                text: 'Column chart'
+            },
             chartOptions: {
                 xAxis: {
                     type: 'category'
+                },
+                title: {
+                    text: ''
                 },
                 chart: {
                     animation: false,
@@ -54,10 +60,7 @@ Dashboards.board('container', {
                 },
                 plotOptions: {
                     series: {
-                        dragDrop: {
-                            draggableY: true,
-                            dragPrecisionY: 1
-                        }
+                        colorByPoint: true
                     }
                 }
             }
@@ -66,9 +69,21 @@ Dashboards.board('container', {
             type: 'DataGrid',
             connector,
             editable: true,
+            title: {
+                text: 'Grid component'
+            },
             sync: {
                 highlight: true
             }
         }
     ]
 });
+
+
+[...document.querySelectorAll('input[name="color-mode"]')]
+    .forEach(input => {
+        input.addEventListener('click', e => {
+            document.getElementById('container').className =
+                e.target.value === 'none' ? '' : `highcharts-${e.target.value}`;
+        });
+    });

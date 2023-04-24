@@ -11,6 +11,7 @@
         "../../../ts/Dashboards/Layout/Layout.ts",
         "../../../ts/Dashboards/Layout/Row.ts",
         "../../../ts/Dashboards/Layout/Cell.ts",
+        "../../../ts/Dashboards/Components/Sync/*.ts",
         "../../../ts/Dashboards/PluginHandler.ts",
         "../../../ts/Data/DataTable.ts",
         "../../../ts/Data/DataTable.ts",

@@ -7,31 +7,29 @@
  */
 
 :root,
-.highcharts-dashboards-light {
-    /* Base colors */
-    --highcharts-dashboards-neutral-color-100: #000000;
-    --highcharts-dashboards-neutral-color-80: #333333;
-    --highcharts-dashboards-neutral-color-50: #808080;
-    --highcharts-dashboards-neutral-color-20: #cccccc;
-    --highcharts-dashboards-neutral-color-5: #f7f7f7;
-    --highcharts-dashboards-neutral-color-3: #f2f2f2;
-    --highcharts-dashboards-neutral-color-0: #ffffff;
-    --highcharts-dashboards-red-color: #e01d5a;
-    --highcharts-dashboards-blue-border-color: 26, 54, 126;
-    --highcharts-dashboards-transparent: transparent;
+.highcharts-light {
+    /* Neutral colors */
+    --highcharts-neutral-color-100: #000000;
+    --highcharts-neutral-color-80: #333333;
+    --highcharts-neutral-color-60: #666666;
+    --highcharts-neutral-color-20: #cccccc;
+    --highcharts-neutral-color-5: #f2f2f2;
+    --highcharts-neutral-color-3: #f7f7f7;
+    --highcharts-neutral-color-0: #ffffff;
+
+    /* Highlight colors */
+    --highcharts-highlight-color-100: #0022ff;
+    --highcharts-highlight-color-80: #334eff;
+    --highcharts-highlight-color-60: #667aff;
+    --highcharts-highlight-color-20: #ccd3ff;
+    --highcharts-highlight-color-10: #e6e9ff;
+
+    /* Other colors */
+    --highcharts-dashboards-danger-color: #e01d5a;
 
     /* General */
-    --highcharts-dashboards-main-background-color: #ffffff;
-    --highcharts-dashboards-wrapper-background-color: #f3f3f3;
-    --highcharts-dashboards-main-font-color: #000000;
+    --highcharts-background-color: #ffffff;
     --highcharts-dashboards-shadow-color: 4, 9, 20;
-
-    /* Pointer */
-    --highcharts-dashboards-pointer-selected-color: #2196f3;
-    --highcharts-dashboards-pointer-color: #8085e8;
-
-    /* Row */
-    --highcharts-dashboards-row-border-color: #4b4b4d;
 
     /* Edit row */
     --highcharts-dashboards-edit-row-color: #7bb343;
@@ -39,31 +37,69 @@
     --highcharts-dashboards-edit-row-highlight-color: 224, 239, 173;
 
     /* Edit cell */
-    --highcharts-dashboards-edit-cell-color: #1779ba;
     --highcharts-dashboards-highlight-cell-color: 0, 0, 0;
-
-    /* Sidebar */
-    --highcharts-dashboards-sidebar-button-color: #2196f3;
-    --highcharts-dashboards-sidebar-button-contrast-color: #0d47a1;
 
     /* Dropdown */
     --highcharts-dashboards-dropdown-box-shadow-color: 34, 34, 34, 0.1;
-    --highcharts-dashboards-dropdown-border-color: #838394;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --highcharts-dashboards-wrapper-background-color: #808080;
+        /* UI colors */
+        --highcharts-background-color: #333333;
+
+        /*
+            Neutral color variations
+            https://www.highcharts.com/samples/highcharts/css/palette-helper
+        */
+        --highcharts-neutral-color-100: rgb(255, 255, 255);
+        --highcharts-neutral-color-80: rgb(214, 214, 214);
+        --highcharts-neutral-color-60: rgb(173, 173, 173);
+        --highcharts-neutral-color-40: rgb(133, 133, 133);
+        --highcharts-neutral-color-20: rgb(92, 92, 92);
+        --highcharts-neutral-color-10: rgb(71, 71, 71);
+        --highcharts-neutral-color-5: rgb(61, 61, 61);
+        --highcharts-neutral-color-3: rgb(57, 57, 57);
+        --highcharts-neutral-color-0: rgb(0, 0, 0);
+
+        /* Highlight color variations */
+        --highcharts-highlight-color-100: rgb(122, 167, 255);
+        --highcharts-highlight-color-80: rgb(108, 144, 214);
+        --highcharts-highlight-color-60: rgb(94, 121, 173);
+        --highcharts-highlight-color-20: rgb(65, 74, 92);
+        --highcharts-highlight-color-10: rgb(58, 63, 71);
     }
 }
 
-.highcharts-dashboards-dark {
-    --highcharts-dashboards-wrapper-background-color: #808080;
+.highcharts-dark {
+    /* UI colors */
+    --highcharts-background-color: #333333;
+
+    /*
+        Neutral color variations
+        https://www.highcharts.com/samples/highcharts/css/palette-helper
+    */
+    --highcharts-neutral-color-100: rgb(255, 255, 255);
+    --highcharts-neutral-color-80: rgb(214, 214, 214);
+    --highcharts-neutral-color-60: rgb(173, 173, 173);
+    --highcharts-neutral-color-40: rgb(133, 133, 133);
+    --highcharts-neutral-color-20: rgb(92, 92, 92);
+    --highcharts-neutral-color-10: rgb(71, 71, 71);
+    --highcharts-neutral-color-5: rgb(61, 61, 61);
+    --highcharts-neutral-color-3: rgb(57, 57, 57);
+    --highcharts-neutral-color-0: rgb(0, 0, 0);
+
+    /* Highlight color variations */
+    --highcharts-highlight-color-100: rgb(122, 167, 255);
+    --highcharts-highlight-color-80: rgb(108, 144, 214);
+    --highcharts-highlight-color-60: rgb(94, 121, 173);
+    --highcharts-highlight-color-20: rgb(65, 74, 92);
+    --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
 
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
-    background-color: var(--highcharts-dashboards-wrapper-background-color);
+    background-color: var(--highcharts-neutral-color-5);
     padding: 20px 10px;
     position: relative;
     overflow: hidden;
@@ -103,7 +139,7 @@
 .highcharts-dashboards-row,
 .highcharts-dashboards-row .highcharts-dashboards-cell {
     box-sizing: border-box;
-    border: 1px dashed var(--highcharts-dashboards-transparent);
+    border: 1px dashed transparent;
 }
 
 .highcharts-dashboards-cell img {
@@ -117,14 +153,20 @@
 .highcharts-dashboards-cell > .highcharts-dashboards-component {
     position: relative;
     margin: 5px;
-    background-color: var(--highcharts-dashboards-main-background-color);
+    background-color: var(--highcharts-background-color);
     box-shadow:
         0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
         0 0.9375rem 1.4063rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
         0 0.25rem 0.5313rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
         0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
     background-clip: border-box;
+    border-radius: 3px;
     overflow: auto;
+}
+
+.highcharts-dashboards-component-title {
+    color: var(--highcharts-neutral-color-100);
+    margin: 0.5em 10px;
 }
 
 .highcharts-dashboards-component img {
@@ -145,7 +187,7 @@
 }
 
 .highcharts-dashboards-edit-enabled .highcharts-dashboards-row {
-    border: 1px dashed var(--highcharts-dashboards-row-border-color);
+    border: 1px dashed var(--highcharts-neutral-color-60);
 }
 
 .highcharts-dashboards-edit-enabled .highcharts-dashboards-edit-row-context-highlight {
@@ -154,8 +196,8 @@
             -45deg,
             rgba(var(--highcharts-dashboards-edit-row-highlight-color), 0.7),
             rgba(var(--highcharts-dashboards-edit-row-highlight-color), 0.7) 5px,
-            var(--highcharts-dashboards-neutral-color-0) 5px,
-            var(--highcharts-dashboards-neutral-color-0) 10px
+            var(--highcharts-neutral-color-0) 5px,
+            var(--highcharts-neutral-color-0) 10px
         );
 }
 
@@ -165,7 +207,7 @@
     z-index: 100;
     pointer-events: auto;
     transition: all 0.5s ease;
-    border-color: var(--highcharts-dashboards-edit-cell-color);
+    border-color: var(--highcharts-highlight-color-60);
     box-sizing: border-box;
 }
 
@@ -187,8 +229,8 @@
             45deg,
             rgba(var(--highcharts-dashboards-edit-row-highlight-color), 0.7),
             rgba(var(--highcharts-dashboards-edit-row-highlight-color), 0.7) 10px,
-            var(--highcharts-dashboards-neutral-color-0) 10px,
-            var(--highcharts-dashboards-neutral-color-0) 20px
+            var(--highcharts-neutral-color-0) 10px,
+            var(--highcharts-neutral-color-0) 20px
         );
     opacity: 0.5;
     transition: 0.1s;
@@ -205,7 +247,7 @@
     display: none;
     cursor: grab;
     pointer-events: none;
-    background-color: var(--highcharts-dashboards-main-background-color);
+    background-color: var(--highcharts-background-color);
     box-shadow:
         0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
         0 0.9375rem 1.4063rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
@@ -218,7 +260,7 @@
     z-index: 100;
     display: none;
     pointer-events: none;
-    border: 4px solid var(--highcharts-dashboards-pointer-selected-color);
+    border: 4px solid var(--highcharts-highlight-color-60);
     opacity: 0.5;
 }
 
@@ -227,7 +269,7 @@
     z-index: 101;
     display: none;
     pointer-events: none;
-    border: 2px solid var(--highcharts-dashboards-pointer-color);
+    border: 2px solid var(--highcharts-highlight-color-20);
 }
 
 .w-1-5 {
@@ -252,9 +294,9 @@
 
 .highcharts-dashboards-edit-resize-snap {
     position: absolute;
-    background: var(--highcharts-dashboards-main-background-color);
+    background: var(--highcharts-background-color);
     border-radius: 9999px;
-    border: 1px solid var(--highcharts-dashboards-neutral-color-50);
+    border: 1px solid var(--highcharts-neutral-color-60);
     z-index: 10;
 }
 
@@ -275,13 +317,13 @@
 }
 
 .highcharts-dashboards-edit-resizer-menu-btn-active {
-    color: var(--highcharts-dashboards-sidebar-button-color);
+    color: var(--highcharts-highlight-color-60);
 }
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component .title-wrapper {
     margin: 0;
     padding-bottom: 15px;
-    border-bottom: 1px solid rgba(var(--highcharts-dashboards-blue-border-color), 0.125);
+    border-bottom: 1px solid var(--highcharts-highlight-color-10);
 }
 
 .highcharts-dashboards-toolbar {
@@ -296,13 +338,13 @@
 .highcharts-dashboards-toolbar .tools-row {
     display: inline-block;
     float: left;
-    background-color: var(--highcharts-dashboards-neutral-color-50);
+    background-color: var(--highcharts-neutral-color-60);
     padding: 0 10px;
 }
 
 .highcharts-dashboards-toolbar .tools-cell {
     display: inline-block;
-    background-color: var(--highcharts-dashboards-neutral-color-20);
+    background-color: var(--highcharts-neutral-color-20);
     padding: 0 10px;
 }
 
@@ -351,7 +393,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--highcharts-dashboards-neutral-color-20);
+    background-color: var(--highcharts-neutral-color-20);
     -webkit-transition: 0.4s;
     transition: 0.4s;
     border-radius: 34px;
@@ -364,18 +406,18 @@
     width: 16px;
     left: 4px;
     bottom: 4px;
-    background-color: var(--highcharts-dashboards-neutral-color-0);
+    background-color: var(--highcharts-neutral-color-0);
     -webkit-transition: 0.4s;
     transition: 0.4s;
     border-radius: 50%;
 }
 
 .highcharts-dashboards-edit-toggle-wrapper input:checked + .highcharts-dashboards-edit-toggle-slider {
-    background-color: var(--highcharts-dashboards-pointer-selected-color);
+    background-color: var(--highcharts-highlight-color-60);
 }
 
 .highcharts-dashboards-edit-toggle-wrapper input:focus + .highcharts-dashboards-edit-toggle-slider {
-    box-shadow: 0 0 1px var(--highcharts-dashboards-pointer-selected-color);
+    box-shadow: 0 0 1px var(--highcharts-highlight-color-60);
 }
 
 .highcharts-dashboards-edit-toggle-wrapper input:checked + .highcharts-dashboards-edit-toggle-slider::before {
@@ -400,7 +442,7 @@
 
 /* Edit Mode */
 .highcharts-dashboards-edit-context-menu {
-    background-color: var(--highcharts-dashboards-main-background-color);
+    background-color: var(--highcharts-background-color);
     margin-left: auto;
     border-radius: 3px;
     position: absolute;
@@ -418,19 +460,19 @@
     height: 32px;
     margin-left: auto;
     padding: 5px;
-    border-color: var(--highcharts-dashboards-transparent);
+    border-color: transparent;
     border-radius: 3px;
     float: right;
 }
 
 .highcharts-dashboards-edit-context-menu-btn div {
     height: 4px;
-    background-color: var(--highcharts-dashboards-neutral-color-50);
+    background-color: var(--highcharts-neutral-color-60);
     margin: 0 0 4px;
 }
 
 .highcharts-dashboards-edit-context-menu-btn:hover {
-    border: 1px solid var(--highcharts-dashboards-neutral-color-80);
+    border: 1px solid var(--highcharts-neutral-color-80);
 }
 
 .highcharts-dashboards-edit-menu-item {
@@ -444,18 +486,18 @@
 
 .highcharts-dashboards-edit-context-menu-item {
     padding: 10px 15px;
-    color: var(--highcharts-dashboards-neutral-color-50);
+    color: var(--highcharts-neutral-color-60);
     font-size: 0.876em;
     line-height: 1em;
     cursor: pointer;
 }
 
 .highcharts-dashboards-edit-context-menu-item:hover {
-    color: var(--highcharts-dashboards-main-font-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-dashboards-edit-separator {
-    background-color: var(--highcharts-dashboards-neutral-color-20);
+    background-color: var(--highcharts-neutral-color-20);
     height: 1px;
     margin: 5px 0;
     padding: 0;
@@ -463,7 +505,7 @@
 }
 
 .highcharts-dashboards-edit-toolbar {
-    color: var(--highcharts-dashboards-neutral-color-50);
+    color: var(--highcharts-neutral-color-60);
     position: absolute;
     z-index: 99;
     border-radius: 3px;
@@ -509,21 +551,21 @@
 }
 
 .highcharts-dashboards-edit-toolbar-cell {
-    background-color: var(--highcharts-dashboards-edit-cell-color);
+    background-color: var(--highcharts-highlight-color-60);
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    color: var(--highcharts-dashboards-main-background-color);
+    color: var(--highcharts-background-color);
 }
 
 .highcharts-dashboards-edit-toolbar-cell .highcharts-dashboards-edit-toolbar-item:hover {
-    background-color: var(--highcharts-dashboards-sidebar-button-contrast-color);
+    background-color: var(--highcharts-highlight-color-80);
 }
 
 .highcharts-dashboards-edit-toolbar-cell-outline {
     position: absolute;
     pointer-events: none;
     display: none;
-    border: 2px solid var(--highcharts-dashboards-edit-cell-color);
+    border: 2px solid var(--highcharts-highlight-color-60);
     opacity: 1;
 }
 
@@ -537,7 +579,7 @@
 
 .highcharts-dashboards-edit-menu-vertical-separator {
     height: 1px;
-    background-color: var(--highcharts-dashboards-neutral-color-20);
+    background-color: var(--highcharts-neutral-color-20);
     margin-top: 2px;
     margin-bottom: 2px;
     padding: 0;
@@ -549,8 +591,8 @@
     left: -340px; /* width + paddings */
     transition: 0.5s;
     width: 300px;
-    background-color: var(--highcharts-dashboards-main-background-color);
-    color: var(--highcharts-dashboards-neutral-color-50);
+    background-color: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-60);
     position: absolute;
     z-index: 1000;
     min-height: 500px;
@@ -572,8 +614,8 @@
 .highcharts-dashboards-edit-tools-btn {
     display: inline-block;
     padding: 4px 10px 4px 30px;
-    background-color: var(--highcharts-dashboards-transparent);
-    border: 1px solid var(--highcharts-dashboards-transparent);
+    background-color: transparent;
+    border: 1px solid transparent;
     background-repeat: no-repeat;
     background-size: 22px;
     background-position-y: 4px;
@@ -581,7 +623,7 @@
 }
 
 .highcharts-dashboards-edit-tools-btn:hover {
-    border: 1px solid var(--highcharts-dashboards-neutral-color-20);
+    border: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .highcharts-dashboards-edit-sidebar-item {
@@ -591,15 +633,15 @@
 .highcharts-dashboards-edit-sidebar-item input,
 .highcharts-dashboards-edit-sidebar-item textarea,
 .highcharts-dashboards-edit-sidebar-item select {
-    color: var(--highcharts-dashboards-neutral-color-50);
-    border: 1px solid var(--highcharts-dashboards-neutral-color-50);
+    color: var(--highcharts-neutral-color-60);
+    border: 1px solid var(--highcharts-neutral-color-60);
     border-radius: 3px;
 }
 
 .highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-button,
 .highcharts-dashboards-edit-sidebar-item button {
-    background-color: var(--highcharts-dashboards-edit-cell-color);
-    color: var(--highcharts-dashboards-neutral-color-0);
+    background-color: var(--highcharts-highlight-color-60);
+    color: var(--highcharts-neutral-color-0);
     padding: 5px 10px;
     margin-top: 20px;
     border: none;
@@ -609,14 +651,14 @@
 
 .highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-button:hover,
 .highcharts-dashboards-edit-sidebar-item button:hover {
-    background-color: var(--highcharts-dashboards-sidebar-button-contrast-color);
+    background-color: var(--highcharts-highlight-color-80);
 }
 
 .highcharts-dashboards-edit-button.highcharts-dashboards-edit-sidebar-button-nav {
     min-width: 34px;
     min-height: 34px;
     background-position: 50% 50%;
-    background-color: var(--highcharts-dashboards-main-background-color);
+    background-color: var(--highcharts-background-color);
 }
 
 .highcharts-dashboards-edit-sidebar-button-nav.highcharts-dashboards-edit-close-btn {
@@ -625,8 +667,8 @@
 }
 
 .highcharts-dashboards-edit-sidebar-button-nav.highcharts-dashboards-edit-close-btn:hover {
-    background-color: var(--highcharts-dashboards-main-background-color);
-    border: 1px solid var(--highcharts-dashboards-sidebar-button-contrast-color);
+    background-color: var(--highcharts-background-color);
+    border: 1px solid var(--highcharts-highlight-color-80);
 }
 
 .highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-button {
@@ -650,9 +692,9 @@
 }
 
 .highcharts-dashboards-edit-sidebar .highcharts-dashboards-edit-label-text {
-    background: var(--highcharts-dashboards-neutral-color-20);
-    border: 1px solid var(--highcharts-dashboards-neutral-color-20);
-    color: var(--highcharts-dashboards-main-font-color);
+    background: var(--highcharts-neutral-color-20);
+    border: 1px solid var(--highcharts-neutral-color-20);
+    color: var(--highcharts-neutral-color-100);
     font-weight: bold;
     padding: 3px;
     margin-top: 15px;
@@ -660,7 +702,7 @@
 }
 
 .highcharts-dashboards-edit-sidebar-title {
-    color: var(--highcharts-dashboards-neutral-color-80);
+    color: var(--highcharts-neutral-color-80);
     padding: 5px 5px 5px 30px;
     text-transform: uppercase;
     position: relative;
@@ -677,7 +719,7 @@
     width: 24px;
     height: 20px;
     background-size: 20px;
-    background-color: var(--highcharts-dashboards-edit-cell-color);
+    background-color: var(--highcharts-highlight-color-60);
     -webkit-mask-image: url("https://code.highcharts.com/gfx/dashboard-icons/settings.svg");
     mask-image: url("https://code.highcharts.com/gfx/dashboard-icons/settings.svg");
     -webkit-mask-repeat: no-repeat;
@@ -704,7 +746,7 @@
 }
 
 .highcharts-dashboards-edit-grid-items div:hover {
-    background-color: var(--highcharts-dashboards-wrapper-background-color);
+    background-color: var(--highcharts-neutral-color-5);
 }
 
 .highcharts-dashboards-edit-sidebar-tabs {
@@ -718,10 +760,10 @@
 .highcharts-dashboards-edit-sidebar-tab {
     text-align: left;
     padding: 5px;
-    border-bottom: 3px solid var(--highcharts-dashboards-transparent);
+    border-bottom: 3px solid transparent;
     transition: 0.3s;
     font-size: 0.876em;
-    color: var(--highcharts-dashboards-main-font-color);
+    color: var(--highcharts-neutral-color-100);
     margin-left: 25px;
 }
 
@@ -738,8 +780,8 @@
 .highcharts-dashboards-edit-toolbar-tab-active {
     cursor: pointer;
     opacity: 1;
-    border-color: var(--highcharts-dashboards-edit-cell-color);
-    color: var(--highcharts-dashboards-edit-cell-color);
+    border-color: var(--highcharts-highlight-color-60);
+    color: var(--highcharts-highlight-color-60);
 }
 
 .highcharts-dashboards-edit-tabs-buttons-wrapper {
@@ -768,7 +810,7 @@
     display: none;
     left: 50%;
     transform: translate(-50%, 0);
-    background-color: var(--highcharts-dashboards-main-background-color);
+    background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-60);
     font-size: 0.876em;
     max-height: 90%;
@@ -808,8 +850,8 @@
 
 /* stylelint-disable-next-line max-line-length */
 .highcharts-dashboards-edit-confirmation-popup .highcharts-dashboards-edit-confirmation-popup-content button.highcharts-dashboards-edit-confirmation-popup-confirm-btn {
-    background-color: var(--highcharts-dashboards-red-color);
-    color: var(--highcharts-dashboards-main-font-color);
+    background-color: var(--highcharts-dashboards-danger-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-dashboards-edit-overlay {
@@ -863,18 +905,18 @@ ul.highcharts-dashboards-dropdown-content {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    background: var(--highcharts-dashboards-main-background-color);
+    background: var(--highcharts-background-color);
     box-sizing: border-box;
     padding: 16px 8px;
     margin-top: 4px;
-    border: 1px solid var(--highcharts-dashboards-dropdown-border-color);
+    border: 1px solid var(--highcharts-neutral-color-60);
     box-shadow: 0 10px 24px rgba(var(--highcharts-dashboards-dropdown-box-shadow-color));
     list-style-type: none;
 }
 
 div.highcharts-dashboards-dropdown {
     position: relative;
-    color: var(--highcharts-dashboards-main-font-color);
+    color: var(--highcharts-neutral-color-100);
     font-weight: 700;
     font-size: 14px;
     display: flex;
@@ -883,7 +925,7 @@ div.highcharts-dashboards-dropdown {
 }
 
 .highcharts-dashboards-dropdown > button.highcharts-dashboards-dropdown-button {
-    color: var(--highcharts-dashboards-main-font-color);
+    color: var(--highcharts-neutral-color-100);
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
@@ -892,8 +934,8 @@ div.highcharts-dashboards-dropdown {
     padding: 6px 8px;
     margin: 2px;
     gap: 2px;
-    background: var(--highcharts-dashboards-main-background-color);
-    border: 1px solid var(--highcharts-dashboards-dropdown-border-color);
+    background: var(--highcharts-background-color);
+    border: 1px solid var(--highcharts-neutral-color-60);
     border-radius: 2px;
 }
 
@@ -904,16 +946,16 @@ button.highcharts-dashboards-select-option-button {
     align-items: center;
     cursor: pointer;
     margin: 0;
-    background: var(--highcharts-dashboards-main-background-color);
-    color: var(--highcharts-dashboards-main-font-color);
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 button.highcharts-dashboards-select-option-button:hover {
-    background-color: var(--highcharts-dashboards-wrapper-background-color);
+    background-color: var(--highcharts-neutral-color-5);
 }
 
 button.highcharts-dashboards-select-option-button:hover {
-    background-color: var(--highcharts-dashboards-neutral-color-3);
+    background-color: var(--highcharts-neutral-color-5);
 }
 
 /* End of Dropdown */
@@ -923,7 +965,7 @@ button.highcharts-dashboards-select-option-button:hover {
     display: flex;
     margin: 4px 0;
     flex-direction: column;
-    background-color: var(--highcharts-dashboards-main-background-color);
+    background-color: var(--highcharts-background-color);
     border-radius: 2px;
 }
 
@@ -950,7 +992,7 @@ div.highcharts-dashboards-nested-content {
     margin: 12px;
     padding: 4px;
     flex-direction: column;
-    background-color: var(--highcharts-dashboards-neutral-color-5);
+    background-color: var(--highcharts-neutral-color-3);
 }
 
 /* end of nested options dropdown */
@@ -971,17 +1013,17 @@ button.highcharts-dashboards-outer-accordeon-header-btn {
 }
 
 button.highcharts-dashboards-outer-accordeon-header-btn:hover {
-    background-color: var(--highcharts-dashboards-neutral-color-50);
+    background-color: var(--highcharts-neutral-color-60);
 }
 
 div.highcharts-dashboards-outer-accordeon {
     padding: 0;
-    background: var(--highcharts-dashboards-neutral-color-20);
+    background: var(--highcharts-neutral-color-20);
     margin: 8px 0;
     font-style: normal;
     font-weight: 700;
     font-size: 14px;
-    color: var(--highcharts-dashboards-neutral-color-80);
+    color: var(--highcharts-neutral-color-80);
     line-height: 16px;
 }
 
