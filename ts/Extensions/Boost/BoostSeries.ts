@@ -1357,6 +1357,7 @@ function wrapSeriesSearchPoint(
 const BoostSeries = {
     compose,
     destroyGraphics,
+    eachAsync,
     getPoint
 };
 
