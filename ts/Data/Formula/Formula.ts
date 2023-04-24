@@ -34,6 +34,7 @@ import './Functions/COUNT.js';
 import './Functions/IF.js';
 import './Functions/ISNA.js';
 import './Functions/MAX.js';
+import './Functions/MEDIAN.js';
 import './Functions/MIN.js';
 import './Functions/NOT.js';
 import './Functions/OR.js';

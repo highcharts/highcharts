@@ -32,8 +32,6 @@ import type DataTable from '../../DataTable';
 
 
 import FormulaProcessor from '../FormulaProcessor.js';
-import FormulaTypes from '../FormulaTypes.js';
-const { asNumber } = FormulaTypes;
 
 
 /* *
