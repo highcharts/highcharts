@@ -19,11 +19,11 @@
  *  Imports
  *
  * */
-import type Layout from '../Layout/Layout.js';
-import type Cell from '../Layout/Cell.js';
-import type Row from '../Layout/Row.js';
-import type Board from '../Board.js';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import type Layout from '../Layout/Layout';
+import type Cell from '../Layout/Cell';
+import type Row from '../Layout/Row';
+import type Board from '../Board';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 
 import U from '../../Core/Utilities.js';
 import EditGlobals from './EditGlobals.js';

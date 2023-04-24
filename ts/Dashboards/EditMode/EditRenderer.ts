@@ -632,6 +632,9 @@ function renderTextarea(
  * @param parentElement
  * An element to which render the checkbox to
  *
+ * @param checked
+ * Whether the checkbox should be checked or not.
+ *
  * @returns
  * The checkbox element
  */

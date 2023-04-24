@@ -228,7 +228,7 @@ class HighchartsComponent extends Component {
                     }, {
                         name: 'credits',
                         allowEnabled: true,
-                        propertyPath: ['chartOptions', 'credits'],
+                        propertyPath: ['chartOptions', 'credits', 'enabled'],
                         options: [{
                             name: 'name',
                             propertyPath: [

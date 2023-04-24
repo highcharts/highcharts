@@ -20,7 +20,7 @@
  *
  * */
 
-import type Component from '../Components/Component.js';
+import type Component from '../Components/Component';
 import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type EditableOptions from '../Components/EditableOptions';
 
@@ -106,7 +106,9 @@ class AccordeonMenu {
 
         const buttonContainer = createElement(
             'div',
-            { className: EditGlobals.classNames.accordeonMenuButtonsContainer },
+            {
+                className: EditGlobals.classNames.accordeonMenuButtonsContainer
+            },
             {},
             accordeonContainer
         );
