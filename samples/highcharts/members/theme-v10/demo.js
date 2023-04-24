@@ -17,6 +17,12 @@ Highcharts.setOptions({
             fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif'
         }
     },
+    title: {
+        style: {
+            fontWeight: 'normal',
+            fontSize: '18px'
+        }
+    },
     plotOptions: {
         area: {
             lineWidth: 2
