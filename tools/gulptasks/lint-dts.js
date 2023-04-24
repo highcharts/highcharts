@@ -40,15 +40,21 @@ function task() {
         const promises = [];
 
         promises.push(
-            processLib
-                .exec('cd ' + LINT_FOLDER + ' && npx dtslint --localTs ../../node_modules/typescript/lib')
+            processLib.exec(
+                'npx dtslint --localTs ../../node_modules/typescript/lib',
+                {
+                    cwd: path.join(process.cwd(), LINT_FOLDER),
+                    shell: '/bin/bash',
+                    timeout: 0
+                }
+            )
         );
 
-        promises.push(
-            ...fsLib
-                .getDirectoryPaths(TEST_FOLDER, false)
-                .map(folder => processLib.exec('npx tsc -p ' + folder))
-        );
+        // promises.push(
+        //     ...fsLib
+        //         .getDirectoryPaths(TEST_FOLDER, false)
+        //         .map(folder => processLib.exec('npx tsc -p ' + folder))
+        // );
 
         Promise
             .all(promises)

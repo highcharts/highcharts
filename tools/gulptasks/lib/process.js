@@ -52,21 +52,26 @@ let onExitCallbacks;
  * Outputs stdout to the console.
  *
  * @param {string} command
- *        Command to execute in terminal
+ * Command to execute in terminal
  *
- * @param {boolean} silent
- *        Silents the command output to stdout
+ * @param {boolean|ChildProcess.ExecOptionsWithStringEncoding} [options]
+ * Silents the command stdout, or sets more detailed process options.
  *
  * @return {Promise<string>}
- *         Promise to keep with all terminal output
+ * Promise to keep with all terminal output
  */
-function exec(command, silent) {
-
+function exec(command, options) {
     const ChildProcess = require('child_process');
+
+    const silent = (
+        typeof options === 'boolean' ?
+            options :
+            options && options.silent
+    );
 
     return new Promise((resolve, reject) => {
 
-        const cli = ChildProcess.exec(command, (error, stdout) => {
+        const cli = ChildProcess.exec(command, options, (error, stdout) => {
             if (error) {
                 LogLib.failure(error);
                 reject(error);
@@ -163,7 +168,7 @@ function onExit(name, callback) {
                     });
 
                 if (exit) {
-                    process.exit(code); // eslint-disable-line no-process-exit
+                    process.exit(code); // eslint-disable-line node/no-process-exit
                 }
             })
         ));
