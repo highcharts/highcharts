@@ -25,6 +25,7 @@
 
 import type DataEvent from '../Data/DataEvent';
 import type DataGridOptions from './DataGridOptions';
+import type JSON from '../Core/JSON';
 
 import DataTable from '../Data/DataTable.js';
 import DataGridUtils from './DataGridUtils.js';
@@ -33,6 +34,7 @@ const {
     emptyHTMLElement,
     makeDiv
 } = DataGridUtils;
+import F from '../Core/FormatUtilities.js';
 import DataGridDefaults from './DataGridDefaults.js';
 import H from '../Core/Globals.js';
 const {
@@ -42,6 +44,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
+    defined,
     fireEvent,
     isNumber,
     merge,
@@ -247,7 +250,7 @@ class DataGrid {
 
         // Init data table
         this.dataTable = this.initDataTable();
-        this.columnNames = this.dataTable.getColumnNames();
+        this.columnNames = this.getColumnsToDisplay();
 
         this.rowElements = [];
         this.draggedResizeHandle = null;
@@ -397,7 +400,31 @@ class DataGrid {
     // ---------------- Private methods
 
     /**
-     * Determs whether a column is editable or not.
+     * Check which columns should be displayed based on the individual
+     * column `show` option.
+     * @internal
+     */
+    private getColumnsToDisplay(): Array<string> {
+        const columnsOptions = this.options.columns,
+            tableColumns = this.dataTable.getColumnNames(),
+            filteredColumns = [];
+
+        for (let i = 0; i < tableColumns.length; i++) {
+            const columnName = tableColumns[i];
+            const column = columnsOptions[columnName];
+            if (column && defined(column.show)) {
+                if (columnsOptions[columnName].show) {
+                    filteredColumns.push(columnName);
+                }
+            } else {
+                filteredColumns.push(columnName);
+            }
+        }
+        return filteredColumns;
+    }
+
+    /**
+     * Determine whether a column is editable or not.
      *
      * @internal
      *
@@ -516,14 +543,20 @@ class DataGrid {
             const cellElements = rowElement.childNodes;
 
 
-            for (let k = 0; k < columnsInPresentationOrder.length; k++) {
-                const cell = cellElements[k] as HTMLElement;
-                const value = this.dataTable
-                    .getCell(columnsInPresentationOrder[k], i);
-                cell.textContent = dataTableCellToString(value);
+            for (
+                let k = 0, kEnd = columnsInPresentationOrder.length;
+                k < kEnd;
+                k++
+            ) {
+                const cell = cellElements[k] as HTMLElement,
+                    column = columnsInPresentationOrder[k],
+                    value = this.dataTable
+                        .getCell(columnsInPresentationOrder[k], i);
+
+                cell.textContent = this.formatCell(value, column);
 
                 // TODO: consider adding these dynamically to the input element
-                cell.dataset.originalData = cell.textContent;
+                cell.dataset.originalData = '' + value;
                 cell.dataset.columnName = columnsInPresentationOrder[k];
                 // TODO: get this from the store if set?
                 cell.dataset.dataType = typeof value;
@@ -577,7 +610,7 @@ class DataGrid {
     private onCellClick(cellEl: HTMLElement, columnName: string): void {
         if (this.isColumnEditable(columnName)) {
             let input = cellEl.querySelector('input');
-            const cellValue = cellEl.textContent;
+            const cellValue = cellEl.getAttribute('data-original-data');
 
             if (!input) {
                 this.removeCellInputElement();
@@ -648,10 +681,21 @@ class DataGrid {
     private removeCellInputElement(): void {
         const cellInputEl = this.cellInputEl;
         if (cellInputEl) {
+            const parentNode = cellInputEl.parentNode;
+
             // TODO: This needs to modify DataTable. The change in DataTable
             // should cause a re-render?
-            if (cellInputEl.parentNode) {
-                cellInputEl.parentNode.textContent = cellInputEl.value;
+            if (parentNode) {
+                const cellValueType = parentNode.getAttribute('data-data-type'),
+                    columnName = parentNode.getAttribute('data-column-name');
+                let cellValue: string | number = cellInputEl.value;
+
+                if (cellValueType === 'number') {
+                    cellValue = parseFloat(cellValue);
+                }
+
+                parentNode.textContent =
+                    this.formatCell(cellValue, columnName || '');
             }
             cellInputEl.remove();
             delete this.cellInputEl;
@@ -784,6 +828,59 @@ class DataGrid {
         this.rowElements.push(rowEl);
     }
 
+    /**
+     * Allows formatting of the header cell text based on provided format
+     * option. If that is not provided, the column name is returned.
+     * @internal
+     *
+     * @param columnName
+     * Column name to format.
+     */
+    private formatHeaderCell(columnName: string): string {
+        const options = this.options,
+            columnOptions = options.columns[columnName],
+            headerFormat = columnOptions && columnOptions.headerFormat;
+
+        if (headerFormat) {
+            return F.format(headerFormat, { text: columnName });
+        }
+
+        return columnName;
+    }
+
+    /**
+     * Allows formatting of the cell text based on provided format option.
+     * If that is not provided, the cell value is returned.
+     * @internal
+     *
+     * @param  cellValue
+     * The value of the cell to format.
+     *
+     * @param  column
+     * The column name the cell belongs to.
+     */
+    private formatCell(cellValue: JSON.Primitive, column: string): string {
+        const options = this.options,
+            columnOptions = options.columns[column],
+            cellFormat = columnOptions && columnOptions.cellFormat;
+        let formattedCell = cellValue || '';
+
+        if (cellFormat) {
+            if (
+                typeof cellValue === 'number' &&
+                cellFormat.indexOf('value') > -1
+            ) {
+                formattedCell = F.format(cellFormat, { value: cellValue });
+            } else if (
+                typeof cellValue === 'string' &&
+                cellFormat.indexOf('text') > -1
+            ) {
+                formattedCell = F.format(cellFormat, { text: cellValue });
+            }
+        }
+
+        return formattedCell.toString();
+    }
 
     /**
      * Render a column header for a column.
@@ -809,7 +906,7 @@ class DataGrid {
         const headerEl = makeDiv(className);
         headerEl.style.height = this.options.cellHeight + 'px';
 
-        headerEl.textContent = columnName;
+        headerEl.textContent = this.formatHeaderCell(columnName);
         parentEl.appendChild(headerEl);
     }
 
@@ -819,8 +916,8 @@ class DataGrid {
      * @internal
      */
     private renderColumnHeaders(): void {
-        const columnNames = this.dataTable.getColumnNames();
-        const columnHeadersContainer = this.columnHeadersContainer =
+        const columnNames = this.columnNames,
+            columnHeadersContainer = this.columnHeadersContainer =
             this.columnHeadersContainer || makeDiv('hc-dg-column-headers');
 
         emptyHTMLElement(columnHeadersContainer);
