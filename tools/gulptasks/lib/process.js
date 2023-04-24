@@ -54,20 +54,16 @@ let onExitCallbacks;
  * @param {string} command
  * Command to execute in terminal
  *
- * @param {boolean|ChildProcess.ExecOptionsWithStringEncoding} [options]
- * Silents the command stdout, or sets more detailed process options.
+ * @param {ChildProcess.ExecOptionsWithStringEncoding} [options]
+ * Sets more detailed process options.
  *
  * @return {Promise<string>}
  * Promise to keep with all terminal output
  */
-function exec(command, options) {
+function exec(command, options = {}) {
     const ChildProcess = require('child_process');
 
-    const silent = (
-        typeof options === 'boolean' ?
-            options :
-            options && options.silent
-    );
+    const silent = options.silent;
 
     return new Promise((resolve, reject) => {
 
@@ -77,7 +73,11 @@ function exec(command, options) {
                 reject(error);
             } else {
                 LogLib.success(
-                    (silent ? 'Command finished (silent):' : 'Command finished:'),
+                    (
+                        silent ?
+                            'Command finished (silent):' :
+                            'Command finished:'
+                    ),
                     command
                 );
                 resolve(stdout);

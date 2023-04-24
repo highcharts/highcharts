@@ -50,11 +50,11 @@ function task() {
             )
         );
 
-        // promises.push(
-        //     ...fsLib
-        //         .getDirectoryPaths(TEST_FOLDER, false)
-        //         .map(folder => processLib.exec('npx tsc -p ' + folder))
-        // );
+        promises.push(
+            ...fsLib
+                .getDirectoryPaths(TEST_FOLDER, false)
+                .map(folder => processLib.exec('npx tsc -p ' + folder))
+        );
 
         Promise
             .all(promises)
