@@ -1,4 +1,5 @@
 import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
+import Board from '../../../../code/es-modules/masters/dashboards.src.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
@@ -22,13 +23,65 @@ const chartDemo = {
     }
 };
 
-const board = Dashboards.board('container-nested-layout', {
+let board = Dashboards.board('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
             enabled: true,
             icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
-            items: ['editMode']
+            items: ['editMode', {
+                id: 'export-dashboard',
+                text: 'Export dashboard',
+                events: {
+                    click: function () {
+                        board.exportLocal();
+                    }
+                }
+            }, {
+                id: 'delete-dashboard',
+                text: 'Delete current dashboard',
+                events: {
+                    click: function () {
+                        board.destroy();
+                    }
+                }
+            }, {
+                id: 'import-dashboard',
+                text: 'Import saved dashboard',
+                events: {
+                    click: function () {
+                        board = Board.importLocal();
+                    }
+                }
+            }, {
+                id: 'export-layout',
+                text: 'Export 1 layout',
+                events: {
+                    click: function () {
+                        exportedLayoutId = board.layouts[0].options.id;
+                        board.layouts[0].exportLocal();
+                    }
+                }
+            }, {
+                id: 'delete-layout',
+                text: 'Delete 1 layout',
+                events: {
+                    click: function () {
+                        board.layouts[0].destroy();
+                    }
+                }
+            }, {
+                id: 'import-layout',
+                text: 'Import saved layout',
+                events: {
+                    click: function () {
+                        const layout = board.importLayoutLocal(
+                            exportedLayoutId
+                        );
+                        console.log('Imported layout: ', layout);
+                    }
+                }
+            }]
         },
         resize: {
             enabled: true,
