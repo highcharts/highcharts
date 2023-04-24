@@ -75,7 +75,7 @@ function AND(
         if (
             !value ||
             (
-                value instanceof Array &&
+                typeof value === 'object' &&
                 !AND(value, table)
             )
         ) {

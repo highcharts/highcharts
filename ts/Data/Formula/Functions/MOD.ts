@@ -14,8 +14,6 @@
 
 'use strict';
 
-/* eslint-disable new-cap */
-
 
 /* *
  *
@@ -34,7 +32,6 @@ import type DataTable from '../../DataTable';
 import FormulaProcessor from '../FormulaProcessor.js';
 const { getArgumentValue } = FormulaProcessor;
 
-
 /* *
  *
  *  Functions
@@ -43,11 +40,11 @@ const { getArgumentValue } = FormulaProcessor;
 
 
 /**
- * Processor for the `OR(...tests)` implementation. Returns `TRUE`, if one test
- * result is not `0` or `FALSE`.
+ * Processor for the `MOD(value1, value2)` implementation. Calculates the rest
+ * of the division with the given values.
  *
  * @private
- * @function Formula.processorFunctions.AND
+ * @function Formula.processorFunctions.MOD
  *
  * @param {Highcharts.FormulaArguments} args
  * Arguments to process.
@@ -55,33 +52,33 @@ const { getArgumentValue } = FormulaProcessor;
  * @param {Highcharts.DataTable} [table]
  * Table to use for references and ranges.
  *
- * @return {boolean}
+ * @return {number}
  * Result value of the process.
  */
-function OR(
+function MOD(
     args: Arguments,
     table?: DataTable
-): boolean {
+): number {
+    let value1 = getArgumentValue(args[0], table),
+        value2 = getArgumentValue(args[1], table);
 
-    for (
-        let i = 0,
-            iEnd = args.length,
-            value: (Value|Array<Value>);
-        i < iEnd;
-        ++i
-    ) {
-        value = getArgumentValue(args[i], table);
-
-        if (typeof value === 'object') {
-            if (OR(value, table)) {
-                return true;
-            }
-        } else if (value) {
-            return true;
-        }
+    if (typeof value1 === 'object') {
+        value1 = value1[0];
     }
 
-    return false;
+    if (typeof value2 === 'object') {
+        value2 = value2[0];
+    }
+
+    if (
+        typeof value1 !== 'number' ||
+        typeof value2 !== 'number' ||
+        value2 === 0
+    ) {
+        return NaN;
+    }
+
+    return value1 % value2;
 }
 
 
@@ -92,7 +89,7 @@ function OR(
  * */
 
 
-FormulaProcessor.registerProcessorFunction('OR', OR);
+FormulaProcessor.registerProcessorFunction('MOD', MOD);
 
 
 /* *
@@ -102,4 +99,4 @@ FormulaProcessor.registerProcessorFunction('OR', OR);
  * */
 
 
-export default OR;
+export default MOD;

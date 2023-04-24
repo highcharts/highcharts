@@ -36,10 +36,13 @@ import './Functions/ISNA.js';
 import './Functions/MAX.js';
 import './Functions/MEDIAN.js';
 import './Functions/MIN.js';
+import './Functions/MOD.js';
+import './Functions/MODE.js';
 import './Functions/NOT.js';
 import './Functions/OR.js';
 import './Functions/PRODUCT.js';
 import './Functions/SUM.js';
+import './Functions/XOR.js';
 
 
 /* *

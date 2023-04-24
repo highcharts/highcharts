@@ -12,12 +12,13 @@
   - ISNA ✅
   - MAX ✅
   - MAXIFS ⏳
-  - MEDIAN
+  - MEDIAN ✅
   - MIN ✅
   - MINIFS ⏳
-  - MODE
-  - MODE.MULT
-  - MODE.SNGL
+  - MOD ✅
+  - MODE ✅
+  - MODE.MULT ✅
+  - MODE.SNGL ✅
   - NOT ✅
   - OR ✅
   - PRODUCT ✅
@@ -27,4 +28,4 @@
   - SUMIF ⏳
   - SUMIFS ⏳
   - SWITCH ⏳
-  - XOR
+  - XOR ✅

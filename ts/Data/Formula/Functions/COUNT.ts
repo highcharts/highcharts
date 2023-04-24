@@ -74,12 +74,15 @@ function COUNT(
     ) {
         value = values[i];
 
-        if (typeof value === 'number') {
-            if (!isNaN(value)) {
-                ++count;
-            }
-        } else if (value instanceof Array) {
-            count += COUNT(value, table);
+        switch (typeof value) {
+            case 'number':
+                if (!isNaN(value)) {
+                    ++count;
+                }
+                break;
+            case 'object':
+                count += COUNT(value, table);
+                break;
         }
     }
 
