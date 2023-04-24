@@ -84,17 +84,17 @@ function AVERAGE(
                 for (
                     let j = 0,
                         jEnd = value.length,
-                        jValue: Value;
+                        value2: Value;
                     j < jEnd;
                     ++j
                 ) {
-                    jValue = value[j];
+                    value2 = value[j];
                     if (
-                        typeof jValue === 'number' &&
-                        !isNaN(jValue)
+                        typeof value2 === 'number' &&
+                        !isNaN(value2)
                     ) {
                         ++count;
-                        result += jValue;
+                        result += value2;
                     }
                 }
                 break;

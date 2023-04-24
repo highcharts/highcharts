@@ -27,10 +27,8 @@ import type DataTable from '../../DataTable.js';
 
 
 import FormulaProcessor from '../FormulaProcessor.js';
-const {
-    getArgumentValue,
-    getArgumentsValues
-} = FormulaProcessor;
+const { getArgumentValue } = FormulaProcessor;
+
 
 /* *
  *
@@ -71,7 +69,7 @@ function NOT(
             return !value;
     }
 
-    return value === null ? true : NaN;
+    return NaN;
 }
 
 

@@ -83,11 +83,11 @@ function AVERAGEA(
             continue;
         }
 
-        for (let j = 0, jEnd = value.length, jValue: number; j < jEnd; ++j) {
-            jValue = asNumber(value[j]);
-            if (!isNaN(jValue)) {
+        for (let j = 0, jEnd = value.length, value2: number; j < jEnd; ++j) {
+            value2 = asNumber(value[j]);
+            if (!isNaN(value2)) {
                 ++count;
-                result += jValue;
+                result += value2;
             }
         }
     }

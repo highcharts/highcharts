@@ -83,16 +83,16 @@ function MEDIAN(
                 for (
                     let j = 0,
                         jEnd = value.length,
-                        jValue: Value;
+                        value2: Value;
                     j < jEnd;
                     ++j
                 ) {
-                    jValue = value[j];
+                    value2 = value[j];
                     if (
-                        typeof jValue === 'number' &&
-                        !isNaN(jValue)
+                        typeof value2 === 'number' &&
+                        !isNaN(value2)
                     ) {
-                        median.push(jValue);
+                        median.push(value2);
                     }
                 }
                 break;
@@ -131,8 +131,5 @@ FormulaProcessor.registerProcessorFunction('MEDIAN', MEDIAN);
  *
  * */
 
-const StatisticsFunctions = {
-    MEDIAN
-};
 
-export default StatisticsFunctions;
+export default MEDIAN;
