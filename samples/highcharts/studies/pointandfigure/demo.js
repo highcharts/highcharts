@@ -1,3 +1,5 @@
+const { isNumber, relativeLength, defined } = Highcharts;
+
 Highcharts.SVGRenderer.prototype.symbols.xsign = function (x, y, w, h) {
     return ['M', x, y, 'L', x + w, y + h, 'M', x + w, y, 'L', x, y + h, 'z'];
 };
@@ -24,9 +26,13 @@ function generatePnfData() {
         options = series.options,
         data = options.data,
         boxSize = options.boxSize,
+        calculatedBoxSize = isNumber(boxSize) ?
+            boxSize : relativeLength(boxSize, data[0][4]),
         finalData = series.finalData,
-        reversal = boxSize * options.reversalAmount,
+        reversal = calculatedBoxSize * options.reversalAmount,
         markerUp = options.markerUp;
+
+    series.calculatedBoxSize = calculatedBoxSize;
 
     let upTrend;
 
@@ -47,10 +53,12 @@ function generatePnfData() {
     function pushNewPoint(y, upTrend, lastPoint) {
         const currPointGroup = finalData[finalData.length - 1],
             flipFactor = upTrend ? 1 : -1,
-            times = Math.floor(flipFactor * (y - lastPoint) / boxSize);
+            times = Math.floor(
+                flipFactor * (y - lastPoint) / calculatedBoxSize
+            );
 
         for (let i = 1; i <= times; i++) {
-            const newPoint = lastPoint + flipFactor * (boxSize * i);
+            const newPoint = lastPoint + flipFactor * (calculatedBoxSize * i);
             currPointGroup.y.push(newPoint);
         }
     }
@@ -65,12 +73,12 @@ function generatePnfData() {
                 close = data[i][4],
                 firstPoint = data[0][4];
 
-            if (close - firstPoint >= boxSize) {
+            if (close - firstPoint >= calculatedBoxSize) {
                 pushPointGroup(x, [close], true);
                 upTrend = true;
                 break;
             }
-            if (firstPoint - close >= boxSize) {
+            if (firstPoint - close >= calculatedBoxSize) {
                 pushPointGroup(x, [close], false);
                 upTrend = false;
                 break;
@@ -84,7 +92,7 @@ function generatePnfData() {
 
             if (upTrend) {
 
-                if (close - lastPoint >= boxSize) { // Add point going UP
+                if (close - lastPoint >= calculatedBoxSize) { // Add point going UP
                     pushNewPoint(close, upTrend, lastPoint);
                 }
 
@@ -98,7 +106,7 @@ function generatePnfData() {
 
             if (!upTrend) {
 
-                if (lastPoint - close >= boxSize) { // Add point going DOWN
+                if (lastPoint - close >= calculatedBoxSize) { // Add point going DOWN
                     pushNewPoint(close, upTrend, lastPoint);
                 }
 
@@ -122,7 +130,7 @@ function generatePnfData() {
 
         point.y.forEach(y => {
             groupedXData.push(x);
-            groupedYData.push(y);
+            groupedYData.push(+y.toFixed(2));
             groupMap.push({
                 start: x,
                 length: point.y.length,
@@ -154,8 +162,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getClosest', function (proceed) {
                     visible = series.visible ||
                         !series.chart.options.chart.ignoreHiddenSeries;
 
-                if (Highcharts.defined(seriesClosest) && visible) {
-                    ret = Highcharts.defined(ret) ?
+                if (defined(seriesClosest) && visible) {
+                    ret = defined(ret) ?
                         Math.min(ret, seriesClosest) :
                         seriesClosest;
                 }
@@ -179,6 +187,7 @@ Highcharts.seriesType(
     'pointandfigure',
     'scatter', {
     // Options
+        boxSize: '5%',
         reversalAmount: 3,
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
@@ -216,11 +225,11 @@ Highcharts.seriesType(
         generatePnfData,
         translate() {
             const metrics = this.getColumnMetrics(),
-                boxSize = this.options.boxSize;
+                calculatedBoxSize = this.calculatedBoxSize;
             this.markerWidth =
                 metrics.width + metrics.paddedWidth + metrics.offset;
             this.markerHeight =
-                this.yAxis.toPixels(0) - this.yAxis.toPixels(boxSize);
+                this.yAxis.toPixels(0) - this.yAxis.toPixels(calculatedBoxSize);
             return Highcharts.Series.prototype.translate.call(this);
         }
     }, {
@@ -240,8 +249,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
         series: [{
             name: 'AAPL',
             type: 'pointandfigure',
-            data,
-            boxSize: 3
+            data
         }]
     });
 });
