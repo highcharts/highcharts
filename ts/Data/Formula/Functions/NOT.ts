@@ -27,7 +27,10 @@ import type DataTable from '../../DataTable.js';
 
 
 import FormulaProcessor from '../FormulaProcessor.js';
-const { getArgumentValue } = FormulaProcessor;
+const {
+    getArgumentValue,
+    getArgumentsValues
+} = FormulaProcessor;
 
 /* *
  *
@@ -49,14 +52,26 @@ const { getArgumentValue } = FormulaProcessor;
  * @param {Highcharts.DataTable} [table]
  * Table to use for references and ranges.
  *
- * @return {boolean}
+ * @return {boolean|number}
  * Result value of the process.
  */
 function NOT(
     args: Arguments,
     table?: DataTable
-): boolean {
-    return !!getArgumentValue(args[0], table);
+): (boolean|number) {
+    let value = getArgumentValue(args[0], table);
+
+    if (typeof value === 'object') {
+        value = value[0];
+    }
+
+    switch (typeof value) {
+        case 'boolean':
+        case 'number':
+            return !value;
+    }
+
+    return value === null ? true : NaN;
 }
 
 
