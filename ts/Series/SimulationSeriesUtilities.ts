@@ -29,7 +29,7 @@ type SimulationSeries = (NetworkgraphSeries | PackedBubbleSeries);
  * for series which have enabled simulation.
  * @private
  */
-function initDataLabelsDefer(this: RAFSeries): void {
+function initDataLabelsDefer(this: SimulationSeries): void {
     const dlOptions = this.options.dataLabels;
 
     // drawDataLabels() fires for the first time after
@@ -52,7 +52,7 @@ function initDataLabelsDefer(this: RAFSeries): void {
  * simulation enabled works fine.
  * @private
  */
-function initDataLabels(this: RAFSeries): SVGElement {
+function initDataLabels(this: SimulationSeries): SVGElement {
     const series = this,
         dlOptions = series.options.dataLabels;
 
