@@ -47,7 +47,7 @@ const {
     }
 } = SeriesRegistry;
 
-import D from '../RAFDeferDataLabels.js';
+import D from '../SimulationSeriesUtilities.js';
 const {
     initDataLabels,
     initDataLabelsDefer
