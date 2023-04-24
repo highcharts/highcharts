@@ -8,12 +8,9 @@
     margin: 1rem -10px;
 }
 
-svg {
-    transition: font-size 500ms;
-}
-
 .btn-group button.btn-outline-secondary {
     color: black;
+    border-color: #6c757d;
 }
 
 .btn-group button#font-smaller {
@@ -26,4 +23,10 @@ svg {
 
 .btn-group #font-100 {
     width: 5rem;
+}
+
+.btn-group button:disabled {
+    border-color: #6c757d;
+    opacity: 1;
+    color: #888;
 }
