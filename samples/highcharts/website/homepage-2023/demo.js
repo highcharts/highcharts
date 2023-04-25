@@ -32,7 +32,6 @@ const dataSK =
         ['Petal', 'POS & Consumer Lending', 435.00],
         ['Monzo', 'Digital Banking', 419.32],
         ['Airwallex', 'Payments Processing & Networks', 402.70],
-        ['Unqork', 'Financial Services', 365.20],
         ['Hippo', 'Insurance', 359.00],
         ['Paidy', 'POS & Consumer Lending', 277.90]
     ];
@@ -172,7 +171,7 @@ const arc = {
         type: 'arcdiagram',
         name: 'Train connections',
         linkWeight: 1,
-        reversed: true,
+        reversed: false,
         centeredLinks: true,
         dataLabels: {
             enabled: false,
@@ -502,7 +501,7 @@ const rc = {
                                 borderRadius: 4,
                                 opacity: 0.9,
                                 dataLabels: {
-                                    enabled: true,
+                                    enabled: false,
                                     style: {
                                         fontSize: '10px',
                                         color: 'rgba(0, 0, 0, 0.5)'
@@ -533,7 +532,8 @@ const rc = {
     colors: colors,
     xAxis: {
         visible: false,
-        categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
+        categories: ['Apples', 'Pears', 'Bananas', 'Oranges', 'Lemons',
+            'Limes', 'Grapes', 'Kiwis', 'Mangoes', 'Strawberries']
     },
     yAxis: {
         gridLineColor: 'rgba(255, 255, 255, 0.1)',
@@ -552,7 +552,7 @@ const rc = {
         enabled: false
     },
     accessibility: {
-        enabled: false
+        enabled: true
     },
     title: {
         text: ''
@@ -649,7 +649,7 @@ const str = {
         min: Date.UTC(2011, 1, 1),
         max: Date.UTC(2020, 1, 1),
         visible: false,
-        reversed: true,
+        reversed: false,
         maxPadding: 0,
         type: 'datetime',
         labels: {
@@ -1827,7 +1827,6 @@ const charts = [arc, str, cr, sk, rc];
 function makeChart() {
     const chartNum = Math.round(randomNumber(0, 4));
     const chart = charts[chartNum];
-    console.log(chartNum);
     Highcharts.chart('hero', chart);
 }
 
