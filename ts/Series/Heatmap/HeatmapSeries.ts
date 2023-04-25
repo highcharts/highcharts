@@ -16,7 +16,6 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorAxis from '../../Core/Axis/Color/ColorAxis';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
@@ -51,7 +50,6 @@ const {
     fireEvent,
     isNumber,
     merge,
-    objectEach,
     pick
 } = U;
 
