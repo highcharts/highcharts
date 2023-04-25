@@ -1099,6 +1099,10 @@
     margin-top: 5px;
 }
 
+.highcharts-dashboards-edit-accordeon-menu {
+    margin-bottom: 20px;
+}
+
 .highcharts-dashboards-edit-accordeon-menu-buttons-container {
     display: flex;
     gap: 10px;
