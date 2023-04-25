@@ -70,6 +70,12 @@
         --highcharts-highlight-color-20: rgb(65, 74, 92);
         --highcharts-highlight-color-10: rgb(58, 63, 71);
     }
+
+    .highcharts-dashboards-edit-popup-close,
+    .highcharts-dashboards-edit-pointer,
+    .highcharts-dashboards-edit-accordeon-header-icon {
+        filter: invert(1);
+    }
 }
 
 .highcharts-dark {
@@ -910,6 +916,10 @@
 .highcharts-dashboards-edit-dropdown-content li {
     margin: 0;
     background: none;
+}
+
+.highcharts-dashboards-edit-dropdown-content span {
+    color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-dashboards-edit-dropdown {
