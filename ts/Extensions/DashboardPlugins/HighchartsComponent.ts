@@ -194,9 +194,9 @@ class HighchartsComponent extends Component {
                         allowEnabled: true,
                         propertyPath: ['chartOptions', 'tooltip', 'enabled'],
                         options: [{
-                            name: 'pointFormat',
-                            propertyPath: ['chartOptions', 'tooltip', 'pointFormat'],
-                            type: 'input'
+                            title: 'split',
+                            propertyPath: ['chartOptions', 'tooltip', 'split'],
+                            type: 'toggle'
                         }]
                     }, {
                         name: 'dataLabels',
@@ -570,7 +570,7 @@ class HighchartsComponent extends Component {
         this.setOptions();
 
         if (this.chart) {
-            this.chart.update(this.options.chartOptions || {});
+            this.chart.update(merge(this.options.chartOptions) || {});
         }
         this.emit({ type: 'afterUpdate' });
         return this;

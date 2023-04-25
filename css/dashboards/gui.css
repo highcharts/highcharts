@@ -739,14 +739,15 @@
 
 .highcharts-dashboards-edit-grid-items {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 .highcharts-dashboards-edit-grid-items div {
-    width: calc(100% - 20px);
     clear: both;
     margin: 10px 0;
-    padding: 10px;
     text-align: center;
+    padding: 10px;
     display: inline-block;
     background-color: var(--highcharts-dashboards-neutral-color-10);
     cursor: grab;
@@ -1080,13 +1081,6 @@
 
 .highcharts-dashboards-edit-accordeon-content > .highcharts-dashboards-edit-label-text {
     display: none;
-}
-
-.highcharts-dashboards-edit-accordeon-content input,
-.highcharts-dashboards-edit-accordeon-content select,
-.highcharts-dashboards-edit-accordeon-content textarea,
-.highcharts-dashboards-edit-accordeon-content label {
-    width: calc(100% - 6px);
 }
 
 .highcharts-dashboards-edit-accordeon-content textarea {
