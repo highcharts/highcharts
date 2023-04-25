@@ -24,7 +24,6 @@ describe('Add component through UI', () => {
         grabComponent('layout');
         dropComponent('#dashboard-col-0');
         cy.board().then((board) => {
-            console.log(board);
             assert.equal(
                 board.layouts.length,
                 2,
