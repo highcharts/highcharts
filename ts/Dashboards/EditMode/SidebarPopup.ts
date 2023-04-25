@@ -406,6 +406,7 @@ class SidebarPopup extends BaseForm {
                             if (newCell) {
                                 sidebar.editMode.setEditCellContext(newCell);
                                 sidebar.show(newCell);
+                                newCell.setHighlight();
                             }
                         }
                     );
