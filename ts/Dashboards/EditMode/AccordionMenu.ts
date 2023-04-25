@@ -98,6 +98,15 @@ class AccordionMenu {
 
         for (let i = 0, end = editableOptions.length; i < end; i++) {
             option = editableOptions[i];
+
+            if (option.name === 'store') {
+                // get items
+                option = {
+                    ...option,
+                    items: []
+                };
+            }
+
             content = EditRenderer.renderCollapseHeader(
                 accordionContainer,
                 { name: option.name }

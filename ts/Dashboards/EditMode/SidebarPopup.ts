@@ -321,6 +321,7 @@ class SidebarPopup extends BaseForm {
 
     public generateContent(context?: Cell | Row): void {
 
+        // title
         this.renderHeader(
             context ? EditGlobals.lang.settings : EditGlobals.lang.addComponent,
             this.iconsURL + 'settings.svg'

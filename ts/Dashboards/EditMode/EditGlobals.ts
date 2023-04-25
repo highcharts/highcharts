@@ -256,6 +256,7 @@ namespace EditGlobals {
         [key: string]: string;
     }
 
+
     export type TLangKeys = 'editMode'|'verticalSeparator';
 }
 

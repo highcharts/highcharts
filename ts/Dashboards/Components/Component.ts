@@ -167,6 +167,10 @@ abstract class Component {
         },
         sync: Sync.defaultHandlers,
         editableOptions: [{
+            name: 'store',
+            propertyPath: ['store'],
+            type: 'select'
+        }, {
             name: 'title',
             propertyPath: ['title'],
             type: 'input'
