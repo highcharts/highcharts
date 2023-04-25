@@ -25,6 +25,7 @@ namespace EditableOptions {
         detailedOptions?: Array<DetailedOptions>
         propertyPath?: Array<string>
         value?: any;
+        items?: Array<Record<string, string>>
     }
 
     export type ElementType =

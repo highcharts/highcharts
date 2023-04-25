@@ -136,7 +136,8 @@ const EditGlobals: EditGlobals = {
         off: 'off',
         settings: 'Settings',
         addComponent: 'Add component',
-        dataLabels: 'Data labels'
+        dataLabels: 'Data labels',
+        store: 'Data store'
     }
 };
 
@@ -253,6 +254,7 @@ namespace EditGlobals {
         settings: string;
         addComponent: string;
         dataLabels?: string;
+        store?: string;
     }
 
     export type TLangKeys = 'editMode'|'verticalSeparator';
