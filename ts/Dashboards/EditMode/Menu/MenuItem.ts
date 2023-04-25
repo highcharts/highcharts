@@ -123,13 +123,6 @@ class MenuItem {
             this.getElementOptions(merge(options, { value }), callback)
         );
 
-        const events = options.events;
-        if (!events) {
-            return;
-        }
-        if (events.click) {
-            element.addEventListener('click', callback);
-        }
     }
 
     private getElementOptions(
@@ -144,6 +137,7 @@ class MenuItem {
             item: this,
             icon: options.icon,
             mousedown: options.events && options.events.onmousedown,
+            click: options.events && options.events.click,
             value: options.value || '',
             onchange: callback,
             items: options.items
@@ -186,6 +180,7 @@ namespace MenuItem {
     export interface Options {
         nestedOptions?: Record<string, Options>;
         callback?: () => void;
+        click?: Function;
         collapsable?: boolean;
         id: string;
         name?: string;

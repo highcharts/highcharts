@@ -520,12 +520,18 @@ function renderIcon(
     (iconElem.style as any)['background-image'] = 'url(' + icon + ')';
 
     const mousedown = options.mousedown;
+    const click = options.click;
     if (mousedown) {
         iconElem.onmousedown = function (): void {
             mousedown.apply(options.item, arguments);
         };
     }
 
+    if (click) {
+        iconElem.onclick = function (): void {
+            click.apply(options.item, arguments);
+        };
+    }
     return iconElem;
 }
 
@@ -754,6 +760,7 @@ export interface ButtonOptions {
 export interface IconFormFieldOptions {
     className?: string;
     icon: string;
+    click?: Function;
     mousedown?: Function;
     item?: MenuItem;
     callback?: Function;
