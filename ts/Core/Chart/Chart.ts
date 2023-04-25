@@ -858,7 +858,7 @@ class Chart {
         }
 
         // Adjust title layout (reflow multiline text)
-        chart.layOutTitles();
+        chart.layOutTitles(false);
 
         // link stacked series
         i = series.length;
@@ -1278,7 +1278,7 @@ class Chart {
      * @param {boolean} [redraw=true]
      * @emits Highcharts.Chart#event:afterLayOutTitles
      */
-    public layOutTitles(redraw?: boolean): void {
+    public layOutTitles(redraw = true): void {
         const titleOffset = [0, 0, 0],
             renderer = this.renderer,
             spacingBox = this.spacingBox;
@@ -1361,7 +1361,7 @@ class Chart {
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
             // Redraw if necessary (#2719, #2744)
-            if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
+            if (this.hasRendered && redraw && this.isDirtyBox) {
                 this.redraw();
             }
         }
