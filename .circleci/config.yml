@@ -70,11 +70,11 @@ commands:
 jobs:
   security_scan:
     docker:
-      - image: returntocorp/semgrep #semgrep reccomends this docker image
+      - image: returntocorp/semgrep # semgrep reccomends this docker image
     steps:
       - run:
           name: Scan ts-folder for OWASP top-ten vulnerabilities
-          command: semgrep ci --config "p/owasp-top-ten" ts/
+          command: semgrep ci --config "auto" --config "p/cwe-top-25" --config "p/owasp-top-ten" --config "p/secrets" --config "p/gitleaks" --max-target-bytes 2000000 ts/
 
   checkout_and_install:
     <<: *defaults
