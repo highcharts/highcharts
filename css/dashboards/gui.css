@@ -76,6 +76,10 @@
     .highcharts-dashboards-edit-accordeon-header-icon {
         filter: invert(1);
     }
+
+    .highcharts-dashboards-edit-sidebar-title {
+        filter: brightness(0) invert(1);
+    }
 }
 
 .highcharts-dark {
