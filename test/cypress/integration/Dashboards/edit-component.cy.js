@@ -5,24 +5,173 @@ describe('Editable component options', () => {
         cy.toggleEditMode();
     });
 
-    it.skip('should be able update chart ID via edit mode GUI', function() {
-
-        const newChartID= 'myNewChart';
+    it('should be able update chart ID via edit mode GUI', function() {
+        const newChartID = 'myNewChart';
 
         cy.get('.highcharts-dashboards-component').first().click();
         cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
-        cy.get('button.highcharts-dashboards-outer-accordeon-header-btn').contains('Chart id').click();
-        cy.get('#chartID').as('chartIDfield')
+        
+        // type new value
+        cy.get('.highcharts-dashboards-edit-accordeon')
+            .last().click()
+            .find('input[name="chartID"]').clear().type(newChartID);
 
-        cy.get('@chartIDfield').invoke('val').then(exisitingVal =>{
-
-            cy.get('@chartIDfield').clear().type(newChartID);
-            cy.contains('Apply').click()
-            cy.get('#' + newChartID);
-
-            // TODO when handler is updated
-            // cy.get('#' + exisitingVal).should('not.exist')
+        // call update
+        cy.contains('Confirm').click();
+        cy.board().then((board) => {
+            assert.equal(
+                board.mountedComponents[0].component.options.chartID,
+                newChartID,
+                'New chartID is applied.'
+            );
         });
     });
 
+    it('Chart options should be updated via edit mode GUI', function() {
+        const newChartOptions = {
+            chart: {
+                type: 'column'
+            },
+            credits: {
+                text: 'column',
+                href: 'http://column.com'
+            },
+            legend: {
+                enabled: true,
+                align: 'left'
+            },
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        align: 'left'
+                    }
+                }
+            },
+            subtitle: {
+                text: 'column subtitle'
+            },
+            title: {
+                text: 'column title'
+            },
+            tooltip: {
+                enabled: true,
+                pointFormat: 'column format'
+            },
+            xAxis: {
+                title: 'column xAxis title',
+                type: 'linear'
+            },
+            yAxis: {
+                title: 'column yAxis title',
+                type: 'linear'
+            }
+        };
+    
+        cy.get('.highcharts-dashboards-component').first().click();
+        cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
+        
+        // type new value
+        cy.get('.highcharts-dashboards-edit-accordeon')
+            .contains('Chart options')
+            .click();
+    
+
+        cy.get('.highcharts-dashboards-edit-accordeon-content .highcharts-dashboards-edit-accordeon-header')
+            .each((item) => {
+                cy.wrap(item).click().then(() => {
+                    const currentOption = item.find('span').text();
+                    const detailsContent = item.siblings('.highcharts-dashboards-edit-accordeon-content').eq(0);
+                    const toggleInput = item.find('input');
+                    const dropdown = detailsContent.find('button.highcharts-dashboards-edit-dropdown-button');
+    
+                    if (currentOption.match(/chart/ig)) {
+                        cy.wrap(detailsContent.find('input[name="title"]')).clear().type(newChartOptions.title.text);
+                        cy.wrap(detailsContent.find('input[name="subtitle"]')).clear().type(newChartOptions.subtitle.text);
+                    }
+
+                    if (currentOption.match(/credits/ig)) {
+                        cy.wrap(detailsContent.find('input[name="url"]'))
+                            .clear().type(newChartOptions.credits.href);
+                        cy.wrap(detailsContent.find('input[name="name"]'))
+                            .clear().type(newChartOptions.credits.text);
+                    }
+        
+                    if (currentOption.match(/xaxis/ig)) {
+                        cy.wrap(detailsContent.find('input[name="title"]'))
+                            .clear().type(newChartOptions.xAxis.title);
+                    }
+        
+                    if (currentOption.match(/yaxis/ig)) {
+                        cy.wrap(detailsContent.find('input[name="title"]'))
+                            .clear().type(newChartOptions.yAxis.title);
+                    }
+        
+                    if (currentOption.match(/tooltip/ig)) {
+                        cy.wrap(detailsContent.find('input[name="pointFormat"]'))
+                            .clear().type(newChartOptions.tooltip.pointFormat);
+                    }
+
+                    // toggle
+                    if (toggleInput.length > 0) {
+                        item.find('.highcharts-dashboards-edit-toggle-wrapper').click();
+                    }
+
+                    // select
+                    if (dropdown.length > 0) {
+                        cy.wrap(dropdown).click().parent().find('li').eq(0).click();
+                    }
+                });
+            });
+        
+        
+   
+    
+        // call update
+        cy.contains('Confirm').click();
+        cy.board().then((board) => {
+            assert.deepEqual(
+                board.mountedComponents[0].component.chart.userOptions.chart.type,
+                newChartOptions.chart.type,
+                'New chart options are applied on chart.'
+            );
+
+            assert.deepEqual(
+                board.mountedComponents[0].component.chart.userOptions.title,
+                newChartOptions.title,
+                'New title options are applied on chart.'
+            );
+
+            assert.deepEqual(
+                board.mountedComponents[0].component.chart.userOptions.subtitle,
+                newChartOptions.subtitle,
+                'New subtitle options are applied on chart.'
+            );
+
+            assert.deepEqual(
+                board.mountedComponents[0].component.chart.userOptions.legend,
+                newChartOptions.legend,
+                'New legend options are applied on chart.'
+            );
+
+            assert.deepEqual(
+                board.mountedComponents[0].component.chart.userOptions.xAxis,
+                newChartOptions.xAxis,
+                'New xAxis options are applied on chart.'
+            );
+
+            assert.deepEqual(
+                board.mountedComponents[0].component.chart.userOptions.yAxis,
+                newChartOptions.yAxis,
+                'New yAxis options are applied on chart.'
+            );
+
+            assert.deepEqual(
+                board.mountedComponents[0].component.chart.userOptions.plotOptions,
+                newChartOptions.plotOptions,
+                'New data labels options are applied on chart.'
+            );
+        });
+    });
+  
 });
