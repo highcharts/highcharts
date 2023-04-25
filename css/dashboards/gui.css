@@ -491,6 +491,10 @@
     border: 1px solid var(--highcharts-neutral-color-80);
 }
 
+.highcharts-dashboards-edit-menu-item {
+    display: none;
+}
+
 .highcharts-dashboards-edit-tools {
     overflow: hidden;
     width: 100%;
