@@ -2444,7 +2444,7 @@ const defaultOptions: Options = {
          * @since      2.2
          * @apioption  tooltip.pointFormat
          */
-        pointFormat: '<span style="color:{point.color}">\u23FA</span> {series.name}: <b>{point.y}</b><br/>',
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 
         /**
          * The background color or gradient for the tooltip.
