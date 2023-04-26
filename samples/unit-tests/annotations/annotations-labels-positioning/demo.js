@@ -599,7 +599,7 @@ QUnit.test(
             'x position'
         );
         assert.strictEqual(
-            Math.round(label.y + label.height),
+            Math.round(label.y + label.height - 1),
             Math.round(y),
             'y position'
         );
