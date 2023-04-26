@@ -30,7 +30,9 @@ import EditGlobals from './EditGlobals.js';
 const {
     createElement,
     merge,
-    error
+    error,
+    splat,
+    isArray
 } = U;
 
 /* *
@@ -309,8 +311,8 @@ class AccordeonMenu {
             chartOptions
         }, {
             chartOptions: {
-                yAxis: U.splat(chart && chart.yAxis[0].options),
-                xAxis: U.splat(chart && chart.xAxis[0].options),
+                yAxis: splat(chart && chart.yAxis[0].options),
+                xAxis: splat(chart && chart.xAxis[0].options),
                 plotOptions: {
                     series: (chartOptions?.plotOptions || {})[chartType]
                 }
@@ -322,7 +324,7 @@ class AccordeonMenu {
                 return;
             }
 
-            if (U.isArray(value)) {
+            if (isArray(value)) {
                 value = value[0];
             }
 
