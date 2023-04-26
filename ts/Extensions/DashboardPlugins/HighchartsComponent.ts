@@ -448,7 +448,7 @@ class HighchartsComponent extends Component {
         hcComponent.setupConnectorUpdate();
 
         addEvent(hcComponent.chart, 'afterUpdate', function ():void {
-            const options = this.options;
+            const options = this.userOptions;
 
             if (hcComponent.hasLoaded) {
                 hcComponent.updateComponentOptions({

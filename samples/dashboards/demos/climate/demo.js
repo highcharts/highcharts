@@ -342,6 +342,9 @@ async function setupDashboard() {
                 credits: {
                     enabled: false
                 },
+                legend: {
+                    enabled: true
+                },
                 colorAxis: buildColorAxis(),
                 series: [{
                     // type: 'spline',
@@ -350,9 +353,6 @@ async function setupDashboard() {
                     animationLimit: 0,
                     events: {
                         afterAnimate: () => resolve()
-                    },
-                    legend: {
-                        enabled: false
                     },
                     marker: {
                         enabledThreshold: 0.5
