@@ -455,7 +455,6 @@ class HeatmapSeries extends ScatterSeries {
                 { image, chart, xAxis, yAxis } = series,
                 { plotWidth, plotHeight, inverted } = chart,
                 { colsize, rowsize } = seriesOptions,
-
                 {
                     minPadding: xMinPadding,
                     maxPadding: xMaxPadding
@@ -470,41 +469,38 @@ class HeatmapSeries extends ScatterSeries {
                         [
                             plotHeight,
                             plotWidth,
-                            (1 / (rowsize || 1)),
-                            (1 / (colsize || 1))
+                            (1 / pick(rowsize, 1)),
+                            (1 / pick(colsize, 1))
                         ] : [
                             plotWidth,
                             plotHeight,
-                            (1 / (colsize || 1)),
-                            (1 / (rowsize || 1))
+                            (1 / pick(colsize, 1)),
+                            (1 / pick(rowsize, 1))
                         ]
                 ),
 
-                xPad = (baseWidth / (xFactor || 1) / 2) / 2,
-                yPad = (baseHeight / (yFactor || 1) / 2) / 2,
+                xPad = (baseWidth / pick(xFactor, 1) / 2) / 2,
+                yPad = (baseHeight / pick(yFactor, 1) / 2) / 2,
 
-                [xAdjustedMin, xAdjustedMax] = (
-                    [xMinPadding, xMaxPadding]
-                ).map(
-                    (pad): number => (
-                        (isNumber(pad) && pad || xAxis.minPixelPadding / 2)
-                    ) + xPad
-                ),
-
-                [yAdjustedMin, yAdjustedMax] = [
-                    (yMinPadding || 0) + yPad, (yMaxPadding || 0) + yPad
-                ],
-
-                [xExtremeEnd, yExtremeEnd] = [
-                    (xAxis.reversed ? xAdjustedMax : xAdjustedMin),
-                    (yAxis.reversed ? yAdjustedMax : yAdjustedMin)
-                ],
-
+                [pinHeight, y, pinWidth, x] = [
+                    (pick(yMinPadding, 0) + yPad) / yPad,
+                    (pick(yMaxPadding, 0) + yPad) / yPad
+                ].concat([
+                    xMinPadding,
+                    xMaxPadding
+                ].map((pad): number => (
+                    (
+                        (isNumber(pad) && pad ||
+                        xAxis.minPixelPadding / 2) +
+                        xPad
+                    )) /
+                xPad
+                )),
                 dims = {
-                    width: baseWidth - (xAdjustedMin / xPad),
-                    height: baseHeight - (yAdjustedMin / yPad),
-                    x: xAdjustedMax / xPad,
-                    y: yAdjustedMax / yPad
+                    width: baseWidth - pinWidth,
+                    height: baseHeight - pinHeight,
+                    x: x,
+                    y: y
                 };
 
             if (!image) {
@@ -565,9 +561,7 @@ class HeatmapSeries extends ScatterSeries {
                                     parseInt(s, 10)
                                 ));
 
-                            rgba[3] = (
-                                rgba.length === 4 ? rgba[3] : 1.0
-                            ) * 255;
+                            rgba[3] = pick(rgba[3], 1.0) * 255;
 
                             return rgba;
                         };
