@@ -455,6 +455,7 @@ class HeatmapSeries extends ScatterSeries {
                 { image, chart, xAxis, yAxis } = series,
                 { plotWidth, plotHeight, inverted } = chart,
                 { colsize, rowsize } = seriesOptions,
+
                 {
                     minPadding: xMinPadding,
                     maxPadding: xMaxPadding
@@ -463,35 +464,48 @@ class HeatmapSeries extends ScatterSeries {
                     minPadding: yMinPadding,
                     maxPadding: yMaxPadding
                 } = yAxis.userOptions,
-                [dims, xFactor, yFactor] = (
+
+                [baseWidth, baseHeight, xFactor, yFactor] = (
                     inverted ?
                         [
-                            {
-                                width: plotHeight,
-                                height: plotWidth
-                            },
+                            plotHeight,
+                            plotWidth,
                             (1 / (rowsize || 1)),
                             (1 / (colsize || 1))
                         ] : [
-                            {
-                                width: plotWidth,
-                                height: plotHeight
-                            },
+                            plotWidth,
+                            plotHeight,
                             (1 / (colsize || 1)),
                             (1 / (rowsize || 1))
                         ]
                 ),
-                xPad = (plotWidth / (xFactor || 1) / 2) / 2,
-                [yAdjustedMin, yAdjustedMax] = [
-                    (yMinPadding || 0), (yMaxPadding || 0)
-                ],
+
+                xPad = (baseWidth / (xFactor || 1) / 2) / 2,
+                yPad = (baseHeight / (yFactor || 1) / 2) / 2,
+
                 [xAdjustedMin, xAdjustedMax] = (
                     [xMinPadding, xMaxPadding]
                 ).map(
                     (pad): number => (
                         (isNumber(pad) && pad || xAxis.minPixelPadding / 2)
                     ) + xPad
-                );
+                ),
+
+                [yAdjustedMin, yAdjustedMax] = [
+                    (yMinPadding || 0) + yPad, (yMaxPadding || 0) + yPad
+                ],
+
+                [xExtremeEnd, yExtremeEnd] = [
+                    (xAxis.reversed ? xAdjustedMax : xAdjustedMin),
+                    (yAxis.reversed ? yAdjustedMax : yAdjustedMin)
+                ],
+
+                dims = {
+                    width: baseWidth - (xAdjustedMin / xPad),
+                    height: baseHeight - (yAdjustedMin / yPad),
+                    x: xAdjustedMax / xPad,
+                    y: yAdjustedMax / yPad
+                };
 
             if (!image) {
                 const
@@ -507,62 +521,32 @@ class HeatmapSeries extends ScatterSeries {
                         { boost: seriesBoost, points } = series,
                         { width, height } = canvas,
                         pixelData = new Uint8ClampedArray(width * height * 4),
+
                         pixelIndex = ((): Function => {
-                            const [xScale, yScale] = [
-                                {
-                                    extreme: xAxis,
-                                    dimension: width,
-                                    factor: xFactor,
-                                    inv: inverted,
-                                    rev: xAxis.reversed
-                                }, {
-                                    extreme: yAxis,
-                                    dimension: height,
-                                    factor: yFactor,
-                                    inv: !inverted,
-                                    rev: yAxis.reversed
-                                }
-                            ].map((o): Function => {
-                                const
-                                    {
-                                        extreme,
-                                        dimension,
-                                        factor,
-                                        inv,
-                                        rev
-                                    } = o,
-                                    { max, min } = extreme.getExtremes(),
-                                    pixelFactor = (
-                                        (dimension - factor) /
-                                        (max - min)
-                                    ),
-                                    invFunc = (
-                                        (inv ?
-                                            (n: number): number => ~~(
-                                                ((max - n) - min) * pixelFactor
-                                            ) :
-                                            (n: number): number => ~~(
-                                                (n - min) * pixelFactor
-                                            )
-                                        )
-                                    );
-                                return (
-                                    rev ? (
-                                        inv ?
-                                            (n: number): number =>
-                                                (dimension - 1) -
-                                                invFunc(n) :
-                                            (n: number): number => (
-                                                (
-                                                    (dimension - 1) +
-                                                    invFunc(n)
-                                                ) -
-                                                (dimension - 1)
-                                            )
+                            const
+                                { min: yMin, max: yMax } = yAxis.getExtremes(),
+                                { min: xMin, max: xMax } = xAxis.getExtremes(),
+
+                                xPlotFac = (width - xFactor) / (xMax - xMin),
+                                yPlotFac = (height - yFactor) / (yMax - yMin),
+
+                                xScale = (xAxis.reversed ?
+                                    (x: number): number => (
+                                        ~~(((xMax - x) - xMin) * xPlotFac)
                                     ) :
-                                        invFunc
+                                    (x: number): number => ~~(
+                                        (x - xMin) * xPlotFac
+                                    )
+                                ),
+
+                                yScale = (yAxis.reversed ?
+                                    (y: number): number => ~~(
+                                        (y - yMin) * yPlotFac
+                                    ) :
+                                    (y: number): number => ~~(
+                                        ((yMax - y) - yMin) * yPlotFac
+                                    )
                                 );
-                            });
 
                             return (x: number, y: number): number => (
                                 4 * (yScale(y) * (width) + xScale(x))
@@ -581,7 +565,9 @@ class HeatmapSeries extends ScatterSeries {
                                     parseInt(s, 10)
                                 ));
 
-                            rgba[3] = (rgba.length === 4 ? rgba[3] : 1.0) * 255;
+                            rgba[3] = (
+                                rgba.length === 4 ? rgba[3] : 1.0
+                            ) * 255;
 
                             return rgba;
                         };
@@ -609,7 +595,9 @@ class HeatmapSeries extends ScatterSeries {
                     );
 
                     series.image = chart.renderer.image(
-                        canvas.toDataURL(), 0, 0
+                        canvas.toDataURL(),
+                        0,
+                        0
                     )
                         .attr(dims)
                         .add(series.group);
