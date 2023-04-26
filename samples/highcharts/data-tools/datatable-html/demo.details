@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: DataTable demo with HTML table
  authors:
    - Sophie Bremer
  js_wrap: b

@@ -27,8 +27,7 @@ export interface AroonOscillatorOptions
     params?: AroonOscillatorParamsOptions;
 }
 
-export interface AroonOscillatorParamsOptions
-    extends AroonParamsOptions {
+export interface AroonOscillatorParamsOptions extends AroonParamsOptions {
     // for inheritance
 }
 

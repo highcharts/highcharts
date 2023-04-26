@@ -1,0 +1,14 @@
+---
+name: Geo heatmap of Europe
+authors:
+  - Piotr Madej, Magdalena Gut
+js_wrap: b
+tags:
+  - Highcharts Maps demo
+new_until: 2023-06-30
+categories:
+  - Series types
+alt_text: >-
+  Highcharts geoheatmap chart JavaScript example visualizes
+  European Train Stations Near Airports.
+...

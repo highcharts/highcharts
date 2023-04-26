@@ -27,11 +27,11 @@ form {
 fieldset {
     flex-grow: 1;
     text-align: center;
+    border: 1px solid silver;
 }
 
 fieldset:last-child {
     flex-grow: 0;
-    text-align: left;
 }
 
 input[type="text"] {
@@ -41,6 +41,12 @@ input[type="text"] {
 
 table {
     min-width: 50%;
+}
+
+@media screen and (max-width: 800px) {
+    form {
+        flex-direction: column;
+    }
 }
 
 table td,

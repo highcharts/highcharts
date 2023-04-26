@@ -105,7 +105,7 @@ class HeatmapSeries extends ScatterSeries {
      *               dashStyle, findNearestPointBy, getExtremesFromAll, jitter,
      *               linecap, lineWidth, pointInterval, pointIntervalUnit,
      *               pointRange, pointStart, shadow, softThreshold, stacking,
-     *               step, threshold, cluster
+     *               step, threshold, cluster, dragDrop
      * @product      highcharts highmaps
      * @optionparent plotOptions.heatmap
      */
@@ -519,7 +519,7 @@ class HeatmapSeries extends ScatterSeries {
         // top left corner like other symbols are. This should be refactored,
         // then we could save ourselves some tests for .hasImage etc. And the
         // evaluation of borderRadius would be moved to `markerAttribs`.
-        if (options.marker) {
+        if (options.marker && isNumber(options.borderRadius)) {
             options.marker.r = options.borderRadius;
         }
     }
@@ -661,7 +661,8 @@ class HeatmapSeries extends ScatterSeries {
     public translate(): void {
         const series = this,
             options = series.options,
-            symbol = options.marker && options.marker.symbol || 'rect',
+            { borderRadius, marker } = options,
+            symbol = marker && marker.symbol || 'rect',
             shape = symbols[symbol] ? symbol : 'rect',
             hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
 
@@ -707,7 +708,7 @@ class HeatmapSeries extends ScatterSeries {
                         y,
                         width,
                         height,
-                        { r: options.borderRadius }
+                        { r: isNumber(borderRadius) ? borderRadius : 0 }
                     )
                 }
             );
@@ -834,7 +835,7 @@ export default HeatmapSeries;
  * Requires `modules/heatmap`.
  *
  * @extends   series,plotOptions.heatmap
- * @excluding cropThreshold, dataParser, dataURL, pointRange, stack,
+ * @excluding cropThreshold, dataParser, dataURL, dragDrop ,pointRange, stack,
  * @product   highcharts highmaps
  * @apioption series.heatmap
  */

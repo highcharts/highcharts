@@ -419,7 +419,7 @@ QUnit.test('General tests', function (assert) {
 QUnit.test(
     '#6433 - axis.update leaves empty plotbands\' groups',
     function (assert) {
-        var chart = new Highcharts.chart('container', {
+        var chart = new Highcharts.Chart('container', {
             chart: {
                 width: 600
             },

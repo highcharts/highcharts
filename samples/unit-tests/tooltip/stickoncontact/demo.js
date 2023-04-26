@@ -61,7 +61,7 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
 
                 assert.deepEqual(
                     tooltip.label.text.element.textContent.split('\u200B'),
-                    ['0', '● Series 1: 1', ''],
+                    ['0', '\u25CF Series 1: 1', ''],
                     'Tooltip should have label text of first series.'
                 );
 
@@ -81,7 +81,7 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
                     assert.deepEqual(
                         tooltip.label && tooltip.label.text.element.textContent
                             .split('\u200B'),
-                        ['0', '● Series 1: 1', ''],
+                        ['0', '\u25CF Series 1: 1', ''],
                         'Tooltip should have label text of first series. (2)'
                     );
                 }
@@ -101,7 +101,7 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
                 assert.deepEqual(
                     tooltip.label && tooltip.label.text.element.textContent
                         .split('\u200B'),
-                    ['0', '● Series 2: 1.1', ''],
+                    ['0', '\u25CF Series 2: 1.1', ''],
                     'Tooltip should have label text of second series.'
                 );
             }
@@ -157,6 +157,50 @@ QUnit.test(
                     tooltipPosition2,
                     { x: tooltipPosition1.x + 1, y: tooltipPosition1.y + 1 },
                     'Tooltip should move with pointer movement.'
+                );
+
+                chart.update({
+                    tooltip: {
+                        followPointer: false
+                    }
+                }, false);
+
+                chart.series[0].update({
+                    type: 'column',
+                    tooltip: {
+                        followPointer: true
+                    }
+                }, false);
+
+                chart.addSeries({
+                    type: 'scatter',
+                    data: [0]
+                });
+
+                const columnBox = chart.series[0].points[0].graphic.getBBox(),
+                    pointBox2 = chart.series[1].points[0].graphic.getBBox();
+
+                controller.moveTo(
+                    columnBox.x + chart.plotLeft + (columnBox.width / 2),
+                    columnBox.y + chart.plotTop + (columnBox.height / 2)
+                );
+
+                controller.moveTo(
+                    pointBox2.x + chart.plotLeft + (pointBox2.width / 2),
+                    pointBox2.y + chart.plotTop + (pointBox2.height / 2)
+                );
+
+                controller.moveTo(
+                    columnBox.x + chart.plotLeft + (columnBox.width / 2),
+                    columnBox.y + chart.plotTop + (columnBox.height / 2)
+                );
+                assert.notEqual(
+                    tooltip.label.visibility,
+                    'hidden',
+                    `There should be no errors in the console and tooltip should
+                    be visible, when moving mouse between one series with
+                    followPointer set to true and second series set to false
+                    (#18693).`
                 );
             }
         );

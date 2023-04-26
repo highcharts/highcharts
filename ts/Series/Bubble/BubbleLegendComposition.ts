@@ -285,7 +285,12 @@ function onLegendAfterGetAllItems(
 /**
  * Toggle bubble legend depending on the visible status of bubble series.
  */
-function onSeriesLegendItemClick(this: Series): void {
+function onSeriesLegendItemClick(this: Series, e: any): void | boolean {
+    // #14080 don't fire this code if click function is prevented
+    if (e.defaultPrevented) {
+        return false;
+    }
+
     const series = this,
         chart = series.chart,
         visible = series.visible,

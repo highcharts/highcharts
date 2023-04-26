@@ -90,4 +90,14 @@ QUnit.test('MapBubble', function (assert) {
         `When hovering over mapbubble series with shared tooltip,
         there should be no errors in the console.`
     );
+
+    // Remove one point from the mapbubble series (#17297).
+    const origLength = chart.series[1].points.length;
+    chart.series[1].points[1].remove();
+    const newLength = chart.series[1].points.length;
+    assert.strictEqual(
+        newLength,
+        origLength - 1,
+        'The length of the points array should be shorter by 1 after poit.remove() (#17297)'
+    );
 });

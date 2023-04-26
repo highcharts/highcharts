@@ -51,6 +51,7 @@ const {
 
 
 /**
+ * Do we want date input navigation
  * @private
  */
 function shouldRunInputNavigation(
@@ -223,8 +224,8 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Set attrs for a range button
      * @private
-     * @param {Highcharts.SVGElement} button
      */
     public setRangeButtonAttrs(
         button: SVGElement
@@ -237,6 +238,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Set attrs for a date input
      * @private
      */
     public setRangeInputAttrs(
@@ -253,10 +255,8 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Handle arrow key nav
      * @private
-     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
-     * @param {number} keyCode
-     * @return {number} Response code
      */
     public onButtonNavKbdArrowKey(
         keyboardNavigationHandler: KeyboardNavigationHandler,
@@ -287,6 +287,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Handle keyboard click
      * @private
      */
     public onButtonNavKbdClick(
@@ -328,11 +329,12 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Handle move between input elements with Tab key
      * @private
      */
     public onInputKbdMove(
         direction: number
-    ): void {
+    ): boolean {
         const chart = this.chart;
         const rangeSel = chart.rangeSelector;
         const newIx = chart.highlightedInputRangeIx = (
@@ -342,9 +344,12 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
         if (newIxOutOfRange) {
             if (chart.accessibility) {
+                // Ignore focus
+                chart.accessibility.keyboardNavigation.exiting = true;
                 chart.accessibility.keyboardNavigation.tabindexContainer
                     .focus();
-                chart.accessibility.keyboardNavigation.move(direction);
+
+                return chart.accessibility.keyboardNavigation.move(direction);
             }
         } else if (rangeSel) {
             const svgEl = rangeSel[newIx ? 'maxDateBox' : 'minDateBox'];
@@ -353,12 +358,13 @@ class RangeSelectorComponent extends AccessibilityComponent {
                 chart.setFocusToElement(svgEl, inputEl);
             }
         }
+        return true;
     }
 
 
     /**
+     * Init date input navigation
      * @private
-     * @param {number} direction
      */
     public onInputNavInit(
         direction: number
@@ -386,10 +392,12 @@ class RangeSelectorComponent extends AccessibilityComponent {
             }
             const keydownHandler = (e: KeyboardEvent): void => {
                 const isTab = (e.which || e.keyCode) === this.keyCodes.tab;
-                if (isTab) {
+                if (
+                    isTab &&
+                    component.onInputKbdMove(e.shiftKey ? -1 : 1)
+                ) {
                     e.preventDefault();
                     e.stopPropagation();
-                    component.onInputKbdMove(e.shiftKey ? -1 : 1);
                 }
             };
             const minRemover = addEvent(minInput, 'keydown', keydownHandler);
@@ -404,6 +412,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Terminate date input nav
      * @private
      */
     public onInputNavTerminate(): void {
@@ -426,6 +435,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
 
     /**
+     * Init range selector dropdown nav
      * @private
      */
     public initDropdownNav(): void {
@@ -686,6 +696,7 @@ namespace RangeSelectorComponent {
 
 
     /**
+     * Build compositions
      * @private
      */
     export function compose(

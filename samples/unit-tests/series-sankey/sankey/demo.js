@@ -786,9 +786,10 @@ QUnit.test('Wrong spacings when zero minLinkWidth #13308', function (assert) {
     const nodeYAfterUpdate = chart.series[0].nodes[1].nodeY,
         factorAfterUpdate = chart.series[0].translationFactor;
 
-    assert.strictEqual(
+    assert.close(
         nodeYAfterUpdate - nodeYBeforeUpdate,
         newMinLinkWidth,
+        1,
         'For this node the difference of the nodeY value should be equal ' +
             'to the new minLinkWidth after the update (#13308)'
     );

@@ -31,18 +31,18 @@ const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "12",      0.0005,   0.014,   0.050,1.30,2025`;
 
 test('CSVConnector from string', function (assert) {
-    const connector = new CSVConnector(undefined, { csv });
+    const connector = new CSVConnector({ csv });
     connector.load();
 
     assert.strictEqual(
         // names are not loaded as data unless firstRowAsNames = false
         connector.table.getRowCount(), csv.split('\n').length - 1,
-        'Datastore has correct amount of rows'
+        'DataTable has correct amount of rows.'
     );
     assert.strictEqual(
         connector.table.getColumnNames().length,
         csv.split('\n')[0].split(',').length,
-        'Datastore has correct amount of columns'
+        'DataTable has correct amount of columns.'
     );
 
     // const dataConnectorFromJSON = CSVConnector.fromJSON(connector.toJSON());
@@ -58,32 +58,29 @@ test('CSVConnector from string', function (assert) {
 
 test('CSVConnector from string, with decimalpoint option', function(assert){
     const csv = 'Date;Value\n2016-01-01;1,100\n2016-01-02;2,000\n2016-01-03;3,000';
-    let store = new CSVConnector(undefined, {
-        csv
-    });
 
-    store.load();
+    let connector = new CSVConnector({ csv });
+
+    connector.load();
     assert.strictEqual(
-        store.table.getRowCount(),
+        connector.table.getRowCount(),
         3
     );
     assert.strictEqual(
-        typeof store.table.getCell('Value', 2),
+        typeof connector.table.getCell('Value', 2),
         'number',
         'The converter should be able to guess this decimalpoint'
     )
 
-    store = new CSVConnector(undefined,
-        {
-            csv,
-            decimalPoint: '.'
-        }
-    );
-    store.load()
+    connector = new CSVConnector({
+        csv,
+        decimalPoint: '.'
+    });
+    connector.load();
     assert.strictEqual(
-        typeof store.table.getCell('Value', 2),
+        typeof connector.table.getCell('Value', 2),
         'string',
-        'respects the given decimal point in options (result not a number because of the decimal point)'
+        'Converter should respect given decimal point in options and not convert to number.'
     );
 });
 
@@ -91,14 +88,14 @@ test('CSVConnector, negative values', function (assert) {
     // If the final value is undefined it will be trimmed
     const array = [-3, -3.1, -.2, 2.1, undefined, 1];
 
-    let store = new CSVConnector(undefined, {
+    let connector = new CSVConnector({
         csv: ['Values', ...array].join('\n')
     });
 
-    store.load();
+    connector.load();
 
     assert.deepEqual(
-        store.table.getColumns(['Values'])['Values'],
+        connector.table.getColumns(['Values'])['Values'],
         array
     );
 
@@ -111,7 +108,7 @@ test('CSV with ""s', (assert) => {
 "s",5
 12,"5"
 `
-    const connector = new CSVConnector(undefined, { csv });
+    const connector = new CSVConnector({ csv });
 
     connector.load();
 
@@ -142,7 +139,7 @@ test('CSV with ""s', (assert) => {
 test('CSVConnector from URL', function (assert) {
     const registeredEvents = [];
 
-    const connector = new CSVConnector(undefined, {
+    const connector = new CSVConnector({
         csvURL: '/data/sine-data.csv',
         enablePolling: true
     });
@@ -155,9 +152,12 @@ test('CSVConnector from URL', function (assert) {
     const doneLoading = assert.async(3);
 
     connector.on('afterLoad', (e) => {
-        assert.ok(e.table.getRowCount() > 1, 'Datastore got rows')
+        assert.ok(
+            e.table.getRowCount() > 1,
+            'DataConnector should have rows.'
+        );
 
-        // Check that the store is updated
+        // Check that the connector is updated
         // with the new dataset when polling
         states[pollNumber] = e.table.clone();
 
@@ -218,7 +218,7 @@ test('CSVConnector from URL', function (assert) {
 
 // TODO: test amount of retries, event orders
 test('CSVConnector error', function(assert){
-    const connector = new CSVConnector(undefined, {
+    const connector = new CSVConnector({
         csvURL: ''
     });
 

@@ -19,7 +19,7 @@ const sign = (Math as any).sign ||
     eps10 = 1e-6,
     tany = (y: number): number => Math.tan((halfPI + y) / 2);
 
-export default class LambertConformalConic implements ProjectionDefinition {
+class LambertConformalConic implements ProjectionDefinition {
 
     private c: number;
     private n: number;
@@ -99,3 +99,5 @@ export default class LambertConformalConic implements ProjectionDefinition {
         ];
     }
 }
+
+export default LambertConformalConic;

@@ -49,7 +49,7 @@ class SortModifier extends DataModifier {
      * Default options to group table rows.
      */
     public static readonly defaultOptions: SortModifier.Options = {
-        modifier: 'Order',
+        modifier: 'Sort',
         direction: 'desc',
         orderByColumn: 'y'
     };
@@ -94,7 +94,9 @@ class SortModifier extends DataModifier {
      * @param {RangeDataModifier.Options} [options]
      * Options to configure the range modifier.
      */
-    public constructor(options?: DeepPartial<SortModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<SortModifier.Options>
+    ) {
         super();
 
         this.options = merge(SortModifier.defaultOptions, options);
@@ -358,8 +360,8 @@ class SortModifier extends DataModifier {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace SortModifier {
 
@@ -409,13 +411,13 @@ namespace SortModifier {
  *
  * */
 
-DataModifier.registerType(SortModifier);
-
 declare module './DataModifierType' {
     interface DataModifierTypes {
         Sort: typeof SortModifier;
     }
 }
+
+DataModifier.registerType('Sort', SortModifier);
 
 /* *
  *

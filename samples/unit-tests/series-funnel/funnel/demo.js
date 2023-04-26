@@ -35,49 +35,58 @@ QUnit.test('Funnel selected state (#5156)', function (assert) {
 });
 
 QUnit.test('Funnel size relative to center(#4738)', function (assert) {
-    var chart = $('#container')
-        .highcharts({
-            chart: {
-                type: 'funnel',
-                marginRight: 100
-            },
-            title: {
-                text: 'Sales funnel',
-                x: -50
-            },
-            plotOptions: {
-                series: {
-                    center: [110, 150],
-                    neckWidth: 50,
-                    neckHeight: 100,
-                    // reversed: true,
-                    // -- Other available options
-                    height: 200,
-                    width: 150
-                }
-            },
-            legend: {
-                enabled: false
-            },
-            series: [
-                {
-                    name: 'Unique users',
-                    data: [
-                        ['Website visits', 15654],
-                        ['Downloads', 4064],
-                        ['Requested price list', 1987],
-                        ['Invoice sent', 976],
-                        ['Finalized', 846]
-                    ]
-                }
-            ]
-        })
-        .highcharts();
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'funnel',
+            marginRight: 100,
+            animation: false
+        },
+        title: {
+            text: 'Sales funnel',
+            x: -50
+        },
+        plotOptions: {
+            series: {
+                center: [110, 150],
+                neckWidth: 50,
+                neckHeight: 100,
+                // reversed: true,
+                // -- Other available options
+                height: 200,
+                width: 150
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        series: [
+            {
+                name: 'Unique users',
+                data: [
+                    ['Website visits', 15654],
+                    ['Downloads', 4064],
+                    ['Requested price list', 1987],
+                    ['Invoice sent', 976],
+                    ['Finalized', 846]
+                ]
+            }
+        ]
+    });
 
-    var series = chart.series[0];
+    const series = chart.series[0];
     assert.equal(series.getWidthAt(250), 50, 'Bottom width');
     assert.equal(series.getWidthAt(150), 50, 'Center width');
     assert.equal(series.getWidthAt(50), 150, 'Top width');
+
+    const initialY = series.points[0].plotY;
+    series.addPoint({ name: 'Negative Point', y: -5000 });
+
+    assert.equal(
+        initialY,
+        series.points[0].plotY,
+        '#17514, Negative value should have no influence on the chart\'s layout.'
+    );
+
 });
 
 QUnit.test('Visible funnel items', function (assert) {

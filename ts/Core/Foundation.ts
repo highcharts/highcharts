@@ -83,7 +83,9 @@ namespace Foundation {
 
                     if (isFunction(event)) {
                         component.eventOptions[eventType] = event;
-                        addEvent(component, eventType, event);
+                        addEvent(component, eventType, event, {
+                            order: 0 // #14080 fire those events as firsts
+                        });
                     }
                 }
             }

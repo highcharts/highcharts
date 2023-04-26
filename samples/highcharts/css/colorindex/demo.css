@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 #container {
     height: 400px;
@@ -7,22 +7,8 @@
     margin: 0 auto;
 }
 
-.highcharts-color-0 {
-    fill: green;
-    stroke: green;
-}
-
-.highcharts-color-1 {
-    fill: orange;
-    stroke: orange;
-}
-
-.highcharts-color-2 {
-    fill: red;
-    stroke: red;
-}
-
-/* Reset side-effect of setting colored fill */
-.highcharts-data-label-connector {
-    fill: none !important;
+:root {
+    --highcharts-color-0: green;
+    --highcharts-color-1: orange;
+    --highcharts-color-2: red;
 }

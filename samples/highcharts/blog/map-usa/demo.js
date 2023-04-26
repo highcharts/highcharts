@@ -88,11 +88,6 @@ Highcharts.mapChart('container', {
     series: [{
         data: data,
         name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
-            }
-        },
         dataLabels: {
             enabled: true,
             format: '{point.name}'

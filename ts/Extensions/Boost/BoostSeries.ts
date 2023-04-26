@@ -98,6 +98,7 @@ interface BoostAlteredObject {
 }
 
 interface BoostPointMockup {
+    destroy(): void;
     x: (false|number);
     clientX: number;
     dist?: number;
@@ -973,6 +974,7 @@ function seriesRenderCanvas(this: Series): void {
                 }
 
                 points.push({
+                    destroy: noop,
                     x: xDataFull ? xDataFull[cropStart + i] : false,
                     clientX: clientX,
                     plotX: clientX,
@@ -1355,6 +1357,7 @@ function wrapSeriesSearchPoint(
 const BoostSeries = {
     compose,
     destroyGraphics,
+    eachAsync,
     getPoint
 };
 
