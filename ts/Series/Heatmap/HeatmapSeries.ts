@@ -482,23 +482,24 @@ class HeatmapSeries extends ScatterSeries {
                 xPad = (baseWidth / pick(xFactor, 1) / 2) / 2,
                 yPad = (baseHeight / pick(yFactor, 1) / 2) / 2,
 
-                [pinHeight, y, pinWidth, x] = [
+                [padHeight, y, padWidth, x] = [
                     (pick(yMinPadding, 0) + yPad) / yPad,
                     (pick(yMaxPadding, 0) + yPad) / yPad
                 ].concat([
-                    xMinPadding,
-                    xMaxPadding
-                ].map((pad): number => (
-                    (
-                        (isNumber(pad) && pad ||
-                        xAxis.minPixelPadding / 2) +
-                        xPad
-                    )) /
-                xPad
+                    xMaxPadding,
+                    xMinPadding
+                ].map(
+                    (pad): number => (
+                        ((pad || pad === 0) ?
+                            pad :
+                            xAxis.minPixelPadding / 2
+                        )
+                    )
                 )),
+
                 dims = {
-                    width: baseWidth - pinWidth,
-                    height: baseHeight - pinHeight,
+                    width: baseWidth - (padWidth * 2),
+                    height: baseHeight + padHeight,
                     x: x,
                     y: y
                 };
