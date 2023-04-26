@@ -31,6 +31,7 @@ import './Functions/AND.js';
 import './Functions/AVERAGE.js';
 import './Functions/AVERAGEA.js';
 import './Functions/COUNT.js';
+import './Functions/COUNTA.js';
 import './Functions/IF.js';
 import './Functions/ISNA.js';
 import './Functions/MAX.js';
