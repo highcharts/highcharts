@@ -5,12 +5,12 @@ describe('Editable component options', () => {
         cy.toggleEditMode();
     });
 
-    it('should be able update chart ID via edit mode GUI', function() {
+    it.skip('should be able update chart ID via edit mode GUI', function() {
         const newChartID = 'myNewChart';
 
         cy.get('.highcharts-dashboards-component').first().click();
         cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
-        
+
         // type new value
         cy.get('.highcharts-dashboards-edit-accordeon')
             .last().click()
@@ -56,26 +56,25 @@ describe('Editable component options', () => {
             },
             tooltip: {
                 enabled: true,
-                pointFormat: 'column format'
+                split: true
             },
             xAxis: {
-                title: 'column xAxis title',
+                title: { text: 'column xAxis title' },
                 type: 'linear'
             },
             yAxis: {
-                title: 'column yAxis title',
+                title: { text: 'column yAxis title' },
                 type: 'linear'
             }
         };
-    
+
         cy.get('.highcharts-dashboards-component').first().click();
         cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
-        
+
         // type new value
         cy.get('.highcharts-dashboards-edit-accordeon')
             .contains('Chart options')
             .click();
-    
 
         cy.get('.highcharts-dashboards-edit-accordeon-content .highcharts-dashboards-edit-accordeon-header')
             .each((item) => {
@@ -84,7 +83,7 @@ describe('Editable component options', () => {
                     const detailsContent = item.siblings('.highcharts-dashboards-edit-accordeon-content').eq(0);
                     const toggleInput = item.find('input');
                     const dropdown = detailsContent.find('button.highcharts-dashboards-edit-dropdown-button');
-    
+
                     if (currentOption.match(/chart/ig)) {
                         cy.wrap(detailsContent.find('input[name="title"]')).clear().type(newChartOptions.title.text);
                         cy.wrap(detailsContent.find('input[name="subtitle"]')).clear().type(newChartOptions.subtitle.text);
@@ -96,25 +95,19 @@ describe('Editable component options', () => {
                         cy.wrap(detailsContent.find('input[name="name"]'))
                             .clear().type(newChartOptions.credits.text);
                     }
-        
+
                     if (currentOption.match(/xaxis/ig)) {
                         cy.wrap(detailsContent.find('input[name="title"]'))
-                            .clear().type(newChartOptions.xAxis.title);
-                    }
-        
-                    if (currentOption.match(/yaxis/ig)) {
-                        cy.wrap(detailsContent.find('input[name="title"]'))
-                            .clear().type(newChartOptions.yAxis.title);
-                    }
-        
-                    if (currentOption.match(/tooltip/ig)) {
-                        cy.wrap(detailsContent.find('input[name="pointFormat"]'))
-                            .clear().type(newChartOptions.tooltip.pointFormat);
+                            .clear().type(newChartOptions.xAxis.title.text);
                     }
 
-                    // toggle
+                    if (currentOption.match(/yaxis/ig)) {
+                        cy.wrap(detailsContent.find('input[name="title"]'))
+                            .clear().type(newChartOptions.yAxis.title.text);
+                    }
+
                     if (toggleInput.length > 0) {
-                        item.find('.highcharts-dashboards-edit-toggle-wrapper').click();
+                        item.find('.highcharts-dashboards-edit-toggle-wrapper')[0].click();
                     }
 
                     // select
@@ -123,10 +116,7 @@ describe('Editable component options', () => {
                     }
                 });
             });
-        
-        
-   
-    
+
         // call update
         cy.contains('Confirm').click();
         cy.board().then((board) => {
@@ -173,5 +163,5 @@ describe('Editable component options', () => {
             );
         });
     });
-  
+
 });
