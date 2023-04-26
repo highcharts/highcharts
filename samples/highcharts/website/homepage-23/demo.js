@@ -84,6 +84,8 @@ const arc = {
         events: {
             load: function () {
                 loaded = true;
+                const chart = this;
+                console.log(chart.chartWidth);
                 setTimeout(function () {
                     const links = document.querySelectorAll('.highcharts-link');
                     [].forEach.call(
@@ -134,8 +136,8 @@ const arc = {
             marker: {
                 lineWidth: 1
             },
-            opacity: 0.8,
-            linkWeight: 1,
+            opacity: 0.9,
+            linkWeight: 2,
             centeredLinks: true,
             dataLabels: {
                 enabled: false
@@ -222,11 +224,11 @@ const arc = {
         rules: [
             {
                 condition: {
-                    maxWidth: 500
+                    maxWidth: 450
                 },
                 chartOptions: {
                     chart: {
-                        margin: [20, 20, 10, 80],
+                        margin: [20, 20, 10, 110],
                         inverted: true
                     },
                     series: [{
@@ -242,7 +244,49 @@ const arc = {
             },
             {
                 condition: {
-                    minWidth: 501
+                    minWidth: 451,
+                    maxWidth: 620
+                },
+                chartOptions: {
+                    chart: {
+                        margin: [20, 0, 10, 180],
+                        inverted: true
+                    },
+                    series: [{
+                        data: [
+                            ['Paris', 'Brest', 1],
+                            ['Paris', 'Nantes', 1],
+                            ['Paris', 'Bayonne', 1],
+                            ['Paris', 'Bordeaux', 1],
+                            ['Paris', 'Toulouse', 1]
+                        ]
+                    }]
+                }
+            },
+            {
+                condition: {
+                    minWidth: 621,
+                    maxWidth: 800
+                },
+                chartOptions: {
+                    chart: {
+                        margin: [20, 50, 10, 50],
+                        inverted: false
+                    },
+                    series: [{
+                        data: [
+                            ['Paris', 'Brest', 1],
+                            ['Paris', 'Nantes', 1],
+                            ['Paris', 'Bayonne', 1],
+                            ['Paris', 'Bordeaux', 1],
+                            ['Paris', 'Toulouse', 1]
+                        ]
+                    }]
+                }
+            },
+            {
+                condition: {
+                    minWidth: 801
                 },
                 chartOptions: {
                     chart: {
@@ -516,7 +560,7 @@ const rc = {
     chart: {
         type: 'column',
         backgroundColor: 'transparent',
-        margin: [80, 30, 30, 30],
+        margin: [30, 30, 30, 30],
         animation: {
             duration: 3000,
             easing: 'easeOutQuint'
@@ -524,18 +568,32 @@ const rc = {
         events: {
             load: function () {
                 const chart = this;
+                const chartWidth = chart.chartWidth;
                 const gridLines = document.querySelectorAll('.highcharts-grid-line');
-                let pointWidth;
-
-                if (chart.chartWidth < 350) {
-                    pointWidth = 10;
-                } else if (chart.chartWidth > 570 && chart.chartWidth < 960) {
-                    pointWidth = 50;
-                } else if (chart.chartWidth >= 960) {
-                    pointWidth = 80;
+                let pointWidthStart;
+                let pointWidthEnd;
+                // console.log(chartWidth);
+                if (chartWidth <= 360) {
+                    pointWidthStart = 80;
+                    pointWidthEnd = 20;
+                } else if (chartWidth > 360 && chartWidth < 800) {
+                    pointWidthStart = 200;
+                    pointWidthEnd = 30;
+                } else if (chartWidth >= 800 && chartWidth <= 1400) {
+                    pointWidthStart = 300;
+                    pointWidthEnd = 60;
                 } else {
-                    pointWidth = 30;
+                    pointWidthStart = 400;
+                    pointWidthEnd = 100;
                 }
+
+                chart.update({
+                    plotOptions: {
+                        series: {
+                            pointWidth: pointWidthStart
+                        }
+                    }
+                });
 
                 [].forEach.call(
                     gridLines,
@@ -547,7 +605,7 @@ const rc = {
                     chart.update({
                         plotOptions: {
                             series: {
-                                pointWidth: pointWidth,
+                                pointWidth: pointWidthEnd,
                                 borderRadius: 4,
                                 opacity: 0.9,
                                 dataLabels: {
@@ -613,7 +671,6 @@ const rc = {
             opacity: 0.8,
             groupPadding: 0,
             pointPadding: 0,
-            pointWidth: 100,
             borderColor: 'transparent',
             borderWidth: 2,
             dataLabels: {
@@ -649,7 +706,6 @@ const rc = {
 const str = {
     chart: {
         type: 'streamgraph',
-        marginBottom: 30,
         height: 430,
         zoomType: 'x',
         backgroundColor: 'transparent',
@@ -661,6 +717,7 @@ const str = {
             load: function () {
                 const chart = this;
                 let count = 0;
+                console.log(chart.chartWidth);
                 setTimeout(function () {
                     setInterval(function () {
                         if (count < chart.series.length) {
@@ -672,9 +729,9 @@ const str = {
                     }, 300);
                 }, 500);
 
-                setTimeout(function () {
-                    chart.series[0].points[132].onMouseOver();
-                }, 4000);
+                // setTimeout(function () {
+                //     chart.series[0].points[132].onMouseOver();
+                // }, 4000);
             }
         }
     },
@@ -696,8 +753,6 @@ const str = {
     },
 
     xAxis: {
-        min: Date.UTC(2011, 1, 1),
-        max: Date.UTC(2020, 1, 1),
         visible: false,
         reversed: false,
         maxPadding: 0,
@@ -720,8 +775,6 @@ const str = {
         title: {
             text: ''
         },
-        min: -40,
-        max: 40,
         startOnTick: false,
         endOnTick: false,
         gridLineColor: 'transparent',
@@ -1870,7 +1923,47 @@ const str = {
                 [Date.UTC(2020, 3, 1), -2.50],
                 [Date.UTC(2020, 4, 1), -6.90]]
         }
-    ]
+    ],
+    responsive: {
+        rules: [
+            {
+                condition: {
+                    maxWidth: 800
+                },
+                chartOptions: {
+                    chart: {
+                        margin: [0, 0, 0, 0]
+                    },
+                    xAxis: {
+                        min: Date.UTC(2018, 1, 1),
+                        max: Date.UTC(2020, 1, 1)
+                    },
+                    yAxis: {
+                        min: -20,
+                        max: 20
+                    }
+                }
+            },
+            {
+                condition: {
+                    minWidth: 801
+                },
+                chartOptions: {
+                    chart: {
+                        margin: [30, 30, 30, 30]
+                    },
+                    xAxis: {
+                        min: Date.UTC(2011, 1, 1),
+                        max: Date.UTC(2020, 1, 1)
+                    },
+                    yAxis: {
+                        min: -40,
+                        max: 40
+                    }
+                }
+            }
+        ]
+    }
 
 };
 
