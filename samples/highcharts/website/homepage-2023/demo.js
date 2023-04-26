@@ -71,8 +71,8 @@ function randomNumber(min, max) {
     return Math.random() * (max - min) + min;
 }
 // arc
+let loaded = false;
 const arc = {
-
     chart: {
         type: 'arcdiagram',
         backgroundColor: 'transparent',
@@ -83,18 +83,7 @@ const arc = {
         },
         events: {
             load: function () {
-                const chart = this;
-                if (chart.chartWidth < 500) {
-                    chart.series[0].update({
-                        data: [
-                            ['Paris', 'Brest', 1],
-                            ['Paris', 'Nantes', 1],
-                            ['Paris', 'Bayonne', 1],
-                            ['Paris', 'Bordeaux', 1],
-                            ['Paris', 'Toulouse', 1]
-                        ]
-                    });
-                }
+                loaded = true;
                 setTimeout(function () {
                     const links = document.querySelectorAll('.highcharts-link');
                     [].forEach.call(
@@ -106,6 +95,19 @@ const arc = {
                     );
                 }, 1900);
 
+            },
+            redraw: function () {
+                if (loaded) {
+                    const links = document.querySelectorAll('.highcharts-link');
+                    [].forEach.call(
+                        links,
+                        function (element) {
+                            element.style.opacity = 1;
+                            element.style.transition = 'none';
+                        }
+                    );
+                }
+
             }
         }
     },
@@ -113,18 +115,15 @@ const arc = {
         enabled: false
     },
     colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1'],
-
     title: {
         text: ''
     },
-
     accessibility: {
         description: 'Arc diagram chart with circles of different sizes along the X axis, and connections drawn as arcs between them. From the chart we can see that Paris is the city with the most connections to other cities.',
         point: {
             valueDescriptionFormat: 'Connection from {point.from} to {point.to}.'
         }
     },
-
     plotOptions: {
         series: {
             animation: {
@@ -143,24 +142,11 @@ const arc = {
             }
         }
     },
-
     series: [
-        // 1 desktop
         {
             keys: ['from', 'to', 'weight'],
             visible: true,
-            name: 'Train connections',
-            data: [
-                ['Hamburg', 'Stuttgart', 1],
-                ['Hamburg', 'Frankfurt', 1],
-                ['Hamburg', 'München', 1],
-                ['Paris', 'Brest', 1],
-                ['Paris', 'Nantes', 1],
-                ['Paris', 'Bayonne', 1],
-                ['Paris', 'Bordeaux', 1],
-                ['Paris', 'Toulouse', 1]
-            // ['Paris', 'Montpellier', 1]
-            ]
+            name: 'Train connections'
         },
         {
             // when I remove this series, my css changes stop working
@@ -240,9 +226,18 @@ const arc = {
                 },
                 chartOptions: {
                     chart: {
-                        margin: [20, 0, 10, 80],
+                        margin: [20, 20, 10, 80],
                         inverted: true
-                    }
+                    },
+                    series: [{
+                        data: [
+                            ['Paris', 'Brest', 1],
+                            ['Paris', 'Nantes', 1],
+                            ['Paris', 'Bayonne', 1],
+                            ['Paris', 'Bordeaux', 1],
+                            ['Paris', 'Toulouse', 1]
+                        ]
+                    }]
                 }
             },
             {
@@ -251,9 +246,62 @@ const arc = {
                 },
                 chartOptions: {
                     chart: {
-                        margin: [80, 60, 0, 60],
+                        margin: [40, 20, 40, 20],
                         inverted: false
-                    }
+                    },
+                    series: [{
+                        data: [
+                            ['Hamburg', 'Stuttgart', 1],
+                            ['Hamburg', 'Frankfurt', 1],
+                            ['Hamburg', 'München', 1],
+                            ['Hannover', 'Wien', 1],
+                            ['Hannover', 'München', 1],
+                            ['Berlin', 'Wien', 1],
+                            ['Berlin', 'München', 1],
+                            ['Berlin', 'Stuttgart', 1],
+                            ['Berlin', 'Frankfurt', 1],
+                            ['Berlin', 'Köln', 1],
+                            ['Berlin', 'Düsseldorf', 1],
+                            ['München', 'Düsseldorf', 1],
+                            ['München', 'Wien', 1],
+                            ['München', 'Frankfurt', 1],
+                            ['München', 'Köln', 1],
+                            ['München', 'Amsterdam', 1],
+                            ['Stuttgart', 'Wien', 1],
+                            ['Frankfurt', 'Wien', 1],
+                            ['Frankfurt', 'Amsterdam', 1],
+                            ['Frankfurt', 'Paris', 1],
+                            ['Frankfurt', 'Budapest', 1],
+                            ['Düsseldorf', 'Wien', 1],
+                            ['Düsseldorf', 'Hamburg', 1],
+                            ['Amsterdam', 'Paris', 1],
+                            ['Paris', 'Brest', 1],
+                            ['Paris', 'Nantes', 1],
+                            ['Paris', 'Bayonne', 1],
+                            ['Paris', 'Bordeaux', 1],
+                            ['Paris', 'Toulouse', 1],
+                            ['Paris', 'Montpellier', 1],
+                            ['Paris', 'Marseille', 1],
+                            ['Paris', 'Nice', 1],
+                            ['Paris', 'Milano', 1],
+                            ['Nantes', 'Nice', 1],
+                            ['Bordeaux', 'Lyon', 1],
+                            ['Nantes', 'Lyon', 1],
+                            ['Milano', 'München', 1],
+                            ['Milano', 'Roma', 1],
+                            ['Milano', 'Bari', 1],
+                            ['Milano', 'Napoli', 1],
+                            ['Milano', 'Brindisi', 1],
+                            ['Milano', 'Lamezia Terme', 1],
+                            ['Torino', 'Roma', 1],
+                            ['Venezia', 'Napoli', 1],
+                            ['Roma', 'Bari', 1],
+                            ['Roma', 'Catania', 1],
+                            ['Roma', 'Brindisi', 1],
+                            ['Catania', 'Milano', 1]
+                        // ['Paris', 'Montpellier', 1]
+                        ]
+                    }]
                 }
             }]
     }
