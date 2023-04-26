@@ -115,15 +115,15 @@ function basicOperation(
 
     switch (operator) {
         case '=':
-            return x == y ? 1 : 0; // eslint-disable-line eqeqeq
+            return x == y; // eslint-disable-line eqeqeq
         case '<':
-            return x < y ? 1 : 0;
+            return x < y;
         case '<=':
-            return x <= y ? 1 : 0;
+            return x <= y;
         case '>':
-            return x > y ? 1 : 0;
+            return x > y;
         case '>=':
-            return x >= y ? 1 : 0;
+            return x >= y;
     }
 
     x = asNumber(x);

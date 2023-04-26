@@ -64,12 +64,14 @@ const booleanRegExp = /^(?:FALSE|TRUE)/;
 
 
 /**
+ * `.`-separated decimal.
  * @private
  */
 const decimal1RegExp = /^[+-]?\d+(?:\.\d+)?(?:e[+-]\d+)?/;
 
 
 /**
+ * `,`-separated decimal.
  * @private
  */
 const decimal2RegExp = /^[+-]?\d+(?:,\d+)?(?:e[+-]\d+)?/;

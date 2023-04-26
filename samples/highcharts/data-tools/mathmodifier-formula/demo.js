@@ -28,7 +28,6 @@ renderTable(container2, table.modified);
 // Add Change Listener
 
 function onChange(e) {
-    console.log(e);
     if (e.key === 'Enter') {
         const td = e.target;
         const column = Array
@@ -101,10 +100,11 @@ cursor.addListener(table.id, 'table.mouseover', synchronizeCursor);
 
 function synchronizeHighlight(container, cursor) {
     const tbody = container.querySelector('tbody');
-    const trHighlight = tbody.querySelectorAll('tr')[cursor.row];
+    const trs = tbody.querySelectorAll('tr');
+    const trHighlight = trs[cursor.row];
     const tdHighlight = trHighlight.querySelectorAll('td')[cursor.column];
 
-    for (const tr of tbody.querySelectorAll('tr')) {
+    for (const tr of trs) {
         // We search for the correct HTML row
         if (tr === trHighlight) {
             tr.classList.add('highlight');
@@ -113,11 +113,7 @@ function synchronizeHighlight(container, cursor) {
         }
         for (const td of tr.querySelectorAll('td')) {
             // We search for the correct HTML cell
-            if (td === tdHighlight) {
-                td.classList.add('highlight');
-            } else {
-                td.classList.remove('highlight');
-            }
+            td.classList.toggle('highlight', td === tdHighlight);
         }
     }
 }
