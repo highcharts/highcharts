@@ -72,7 +72,7 @@ class FlowMapSeries extends MapLineSeries {
      * display route paths (e.g. flight or ship routes) or flows on a map. It
      * creates a link between two points on a map chart.
      *
-     * @since        next
+     * @since 11.0.0
      * @extends      plotOptions.mapline
      * @excluding    affectsMapView, allAreas, allowPointSelect, boostBlending,
      * boostThreshold, borderColor, borderWidth, dashStyle, dataLabels,

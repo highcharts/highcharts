@@ -4,8 +4,10 @@ authors:
   - Øystein Moseng
 js_wrap: b
 requiresManualTesting: true
+new_until: 2023-06-30
 tags:
   - Highcharts Maps demo
 categories:
-  - General
+  - General:
+    - priority: 10
 ...

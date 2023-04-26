@@ -403,7 +403,7 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                 !(this.chart.is3d && this.chart.is3d())
             ) {
                 const { options, yAxis } = this,
-                    inverted = this.chart.inverted,
+                    percent = options.stacking === 'percent',
                     seriesDefault = defaultOptions.plotOptions
                         ?.[this.type]
                         ?.borderRadius,
@@ -436,7 +436,11 @@ if (SVGElement.symbolCustomAttribs.indexOf('borderRadius') === -1) {
                             point.stackTotal
                         ) {
                             const stackEnd = yAxis.translate(
-                                    point.stackTotal, false, true, false, true
+                                    percent ? 100 : point.stackTotal,
+                                    false,
+                                    true,
+                                    false,
+                                    true
                                 ),
                                 stackThreshold = yAxis.translate(
                                     options.threshold || 0,

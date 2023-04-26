@@ -83,7 +83,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
     /**
      * Enable or disable the buttons at the end of the scrollbar.
      *
-     * @since next
+     * @since 11.0.0
      */
     buttonsEnabled: false,
 
