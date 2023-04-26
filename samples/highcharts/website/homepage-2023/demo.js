@@ -58,7 +58,6 @@ Math.easeOutQuint = function (pos) {
 };
 
 function changeOpacity(elements, opacity, transition) {
-    console.log(elements);
     [].forEach.call(
         elements,
         function (element) {
@@ -75,8 +74,8 @@ function randomNumber(min, max) {
 const arc = {
 
     chart: {
+        type: 'arcdiagram',
         backgroundColor: 'transparent',
-        // margin: [60, 60, 0, 60],
         height: 400,
         animation: {
             duration: 2000,
@@ -84,11 +83,28 @@ const arc = {
         },
         events: {
             load: function () {
-                const links = document.querySelectorAll('.highcharts-link');
-
+                const chart = this;
+                if (chart.chartWidth < 500) {
+                    chart.series[0].update({
+                        data: [
+                            ['Paris', 'Brest', 1],
+                            ['Paris', 'Nantes', 1],
+                            ['Paris', 'Bayonne', 1],
+                            ['Paris', 'Bordeaux', 1],
+                            ['Paris', 'Toulouse', 1]
+                        ]
+                    });
+                }
                 setTimeout(function () {
-                    changeOpacity(links, 1, 2);
-                }, 700);
+                    const links = document.querySelectorAll('.highcharts-link');
+                    [].forEach.call(
+                        links,
+                        function (element) {
+                            element.style.opacity = 1;
+                            element.style.transition = 'all 2s';
+                        }
+                    );
+                }, 1900);
 
             }
         }
@@ -109,129 +125,113 @@ const arc = {
         }
     },
 
-    series: [{
-        keys: ['from', 'to', 'weight'],
-        animation: {
-            duration: 3000,
-            easing: 'easeOutQuint'
-        },
-        equalNodes: false,
-        marker: {
-            lineWidth: 1
-        },
-        opacity: 0.8,
-        type: 'arcdiagram',
-        name: 'Train connections',
-        linkWeight: 1,
-        centeredLinks: true,
-        dataLabels: {
-            enabled: false
-        },
-        data: [
-            ['Hamburg', 'Stuttgart', 1],
-            ['Hamburg', 'Frankfurt', 1],
-            ['Hamburg', 'München', 1],
-            ['Hannover', 'Wien', 1],
-            ['Hannover', 'München', 1],
-            ['Berlin', 'Wien', 1],
-            ['Berlin', 'München', 1],
-            ['Berlin', 'Stuttgart', 1],
-            ['Berlin', 'Frankfurt', 1],
-            ['Berlin', 'Köln', 1],
-            ['Berlin', 'Düsseldorf', 1],
-            ['München', 'Düsseldorf', 1],
-            ['München', 'Wien', 1],
-            ['München', 'Frankfurt', 1],
-            ['München', 'Köln', 1],
-            ['München', 'Amsterdam', 1],
-            ['Stuttgart', 'Wien', 1],
-            ['Frankfurt', 'Wien', 1],
-            ['Frankfurt', 'Amsterdam', 1],
-            ['Frankfurt', 'Paris', 1],
-            ['Frankfurt', 'Budapest', 1],
-            ['Düsseldorf', 'Wien', 1],
-            ['Düsseldorf', 'Hamburg', 1],
-            ['Amsterdam', 'Paris', 1],
-            ['Paris', 'Brest', 1],
-            ['Paris', 'Nantes', 1],
-            ['Paris', 'Bayonne', 1],
-            ['Paris', 'Bordeaux', 1],
-            ['Paris', 'Toulouse', 1],
-            ['Paris', 'Montpellier', 1],
-            ['Paris', 'Marseille', 1],
-            ['Paris', 'Nice', 1]
-        ]
-
+    plotOptions: {
+        series: {
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuint'
+            },
+            equalNodes: false,
+            marker: {
+                lineWidth: 1
+            },
+            opacity: 0.8,
+            linkWeight: 1,
+            centeredLinks: true,
+            dataLabels: {
+                enabled: false
+            }
+        }
     },
-    {
-        // when I remove this series, my css changes stop working
-        keys: ['from', 'to', 'weight'],
-        visible: false,
-        equalNodes: true,
-        type: 'arcdiagram',
-        name: 'Train connections',
-        linkWeight: 1,
-        reversed: false,
-        centeredLinks: true,
-        dataLabels: {
-            enabled: false,
-            rotation: 90,
-            y: 30,
-            align: 'left',
-            color: 'black'
+
+    series: [
+        // 1 desktop
+        {
+            keys: ['from', 'to', 'weight'],
+            visible: true,
+            name: 'Train connections',
+            data: [
+                ['Hamburg', 'Stuttgart', 1],
+                ['Hamburg', 'Frankfurt', 1],
+                ['Hamburg', 'München', 1],
+                ['Paris', 'Brest', 1],
+                ['Paris', 'Nantes', 1],
+                ['Paris', 'Bayonne', 1],
+                ['Paris', 'Bordeaux', 1],
+                ['Paris', 'Toulouse', 1]
+            // ['Paris', 'Montpellier', 1]
+            ]
         },
-        offset: '50%',
-        data: [
-            ['Hamburg', 'Stuttgart', 1],
-            ['Hamburg', 'Frankfurt', 1],
-            ['Hamburg', 'München', 1],
-            ['Hannover', 'Wien', 1],
-            ['Hannover', 'München', 1],
-            ['Berlin', 'Wien', 1],
-            ['Berlin', 'München', 1],
-            ['Berlin', 'Stuttgart', 1],
-            ['Berlin', 'Frankfurt', 1],
-            ['Berlin', 'Köln', 1],
-            ['Berlin', 'Düsseldorf', 1],
-            ['München', 'Düsseldorf', 1],
-            ['München', 'Wien', 1],
-            ['München', 'Frankfurt', 1],
-            ['München', 'Köln', 1],
-            ['München', 'Amsterdam', 1],
-            ['Stuttgart', 'Wien', 1],
-            ['Frankfurt', 'Wien', 1],
-            ['Frankfurt', 'Amsterdam', 1],
-            ['Frankfurt', 'Paris', 1],
-            ['Frankfurt', 'Budapest', 1],
-            ['Düsseldorf', 'Wien', 1],
-            ['Düsseldorf', 'Hamburg', 1],
-            ['Amsterdam', 'Paris', 1],
-            ['Paris', 'Brest', 1],
-            ['Paris', 'Nantes', 1],
-            ['Paris', 'Bayonne', 1],
-            ['Paris', 'Bordeaux', 1],
-            ['Paris', 'Toulouse', 1],
-            ['Paris', 'Montpellier', 1],
-            ['Paris', 'Marseille', 1],
-            ['Paris', 'Nice', 1],
-            ['Paris', 'Milano', 1],
-            ['Nantes', 'Nice', 1],
-            ['Bordeaux', 'Lyon', 1],
-            ['Nantes', 'Lyon', 1],
-            ['Milano', 'München', 1],
-            ['Milano', 'Roma', 1],
-            ['Milano', 'Bari', 1],
-            ['Milano', 'Napoli', 1],
-            ['Milano', 'Brindisi', 1],
-            ['Milano', 'Lamezia Terme', 1],
-            ['Torino', 'Roma', 1],
-            ['Venezia', 'Napoli', 1],
-            ['Roma', 'Bari', 1],
-            ['Roma', 'Catania', 1],
-            ['Roma', 'Brindisi', 1],
-            ['Catania', 'Milano', 1]
-        ]
-    }],
+        {
+            // when I remove this series, my css changes stop working
+            keys: ['from', 'to', 'weight'],
+            visible: false,
+            equalNodes: true,
+            type: 'arcdiagram',
+            name: 'Train connections',
+            linkWeight: 1,
+            reversed: false,
+            centeredLinks: true,
+            dataLabels: {
+                enabled: false,
+                rotation: 90,
+                y: 30,
+                align: 'left',
+                color: 'black'
+            },
+            offset: '50%',
+            data: [
+                ['Hamburg', 'Stuttgart', 1],
+                ['Hamburg', 'Frankfurt', 1],
+                ['Hamburg', 'München', 1],
+                ['Hannover', 'Wien', 1],
+                ['Hannover', 'München', 1],
+                ['Berlin', 'Wien', 1],
+                ['Berlin', 'München', 1],
+                ['Berlin', 'Stuttgart', 1],
+                ['Berlin', 'Frankfurt', 1],
+                ['Berlin', 'Köln', 1],
+                ['Berlin', 'Düsseldorf', 1],
+                ['München', 'Düsseldorf', 1],
+                ['München', 'Wien', 1],
+                ['München', 'Frankfurt', 1],
+                ['München', 'Köln', 1],
+                ['München', 'Amsterdam', 1],
+                ['Stuttgart', 'Wien', 1],
+                ['Frankfurt', 'Wien', 1],
+                ['Frankfurt', 'Amsterdam', 1],
+                ['Frankfurt', 'Paris', 1],
+                ['Frankfurt', 'Budapest', 1],
+                ['Düsseldorf', 'Wien', 1],
+                ['Düsseldorf', 'Hamburg', 1],
+                ['Amsterdam', 'Paris', 1],
+                ['Paris', 'Brest', 1],
+                ['Paris', 'Nantes', 1],
+                ['Paris', 'Bayonne', 1],
+                ['Paris', 'Bordeaux', 1],
+                ['Paris', 'Toulouse', 1],
+                ['Paris', 'Montpellier', 1],
+                ['Paris', 'Marseille', 1],
+                ['Paris', 'Nice', 1],
+                ['Paris', 'Milano', 1],
+                ['Nantes', 'Nice', 1],
+                ['Bordeaux', 'Lyon', 1],
+                ['Nantes', 'Lyon', 1],
+                ['Milano', 'München', 1],
+                ['Milano', 'Roma', 1],
+                ['Milano', 'Bari', 1],
+                ['Milano', 'Napoli', 1],
+                ['Milano', 'Brindisi', 1],
+                ['Milano', 'Lamezia Terme', 1],
+                ['Torino', 'Roma', 1],
+                ['Venezia', 'Napoli', 1],
+                ['Roma', 'Bari', 1],
+                ['Roma', 'Catania', 1],
+                ['Roma', 'Brindisi', 1],
+                ['Catania', 'Milano', 1]
+            ]
+        }
+    ],
     responsive: {
         rules: [
             {
@@ -240,7 +240,8 @@ const arc = {
                 },
                 chartOptions: {
                     chart: {
-                        margin: [0, 0, 0, 0]
+                        margin: [20, 0, 10, 80],
+                        inverted: true
                     }
                 }
             },
@@ -250,7 +251,8 @@ const arc = {
                 },
                 chartOptions: {
                     chart: {
-                        margin: [60, 60, 0, 60]
+                        margin: [80, 60, 0, 60],
+                        inverted: false
                     }
                 }
             }]
@@ -701,11 +703,10 @@ const str = {
             }
         }
     },
-
-    // Data parsed with olympic-medals.node.js
     series: [
+        // 1 export all
         {
-            name: 'West Germany',
+            name: 'Export All',
             visible: true,
             fillOpacity: 0,
             data: [
@@ -927,8 +928,9 @@ const str = {
                 [Date.UTC(2020, 3, 1), -8.10],
                 [Date.UTC(2020, 4, 1), -14.10]]
         },
+        // 2 import airfreight europe
         {
-            name: 'Germany',
+            name: 'Import Europe',
             fillOpacity: 0,
             visible: true,
             data:
@@ -1152,8 +1154,9 @@ const str = {
                 [Date.UTC(2020, 4, 1), -26.30]
             ]
         },
+        // 3 export asia
         {
-            name: 'Soviet Union',
+            name: 'Export Asia',
             fillOpacity: 0,
             data: [
                 [Date.UTC(2002, 4, 1), -8.00],
@@ -1374,8 +1377,9 @@ const str = {
                 [Date.UTC(2020, 3, 1), -7.90],
                 [Date.UTC(2020, 4, 1), -9.70]]
         },
+        // 4 export europe
         {
-            name: 'Unified Team',
+            name: 'Export Europe',
             fillOpacity: 0,
             data: [
                 [Date.UTC(2002, 4, 1), 5.00],
@@ -1597,7 +1601,7 @@ const str = {
                 [Date.UTC(2020, 4, 1), -24.30]]
         },
         {
-            name: 'Hungary',
+            name: 'Export All Air Passenger Fares',
             fillOpacity: 0,
             data: [
                 [Date.UTC(2002, 4, 1), -0.20],
