@@ -5,7 +5,7 @@ describe('Editable component options', () => {
         cy.toggleEditMode();
     });
 
-    it.skip('should be able update chart ID via edit mode GUI', function() {
+    it('should be able update chart ID via edit mode GUI', function() {
         const newChartID = 'myNewChart';
 
         cy.get('.highcharts-dashboards-component').first().click();
@@ -107,7 +107,12 @@ describe('Editable component options', () => {
                     }
 
                     if (toggleInput.length > 0) {
-                        item.find('.highcharts-dashboards-edit-toggle-wrapper')[0].click();
+                        item.find('.highcharts-dashboards-edit-toggle-wrapper').click();
+                    }
+
+                    // tooltip
+                    if (currentOption.match(/tooltip/ig)) {
+                        detailsContent.find('.highcharts-dashboards-edit-toggle-wrapper').click()
                     }
 
                     // select
@@ -160,6 +165,11 @@ describe('Editable component options', () => {
                 board.mountedComponents[0].component.chart.userOptions.plotOptions,
                 newChartOptions.plotOptions,
                 'New data labels options are applied on chart.'
+            );
+            assert.deepEqual(
+                board.mountedComponents[0].component.chart.userOptions.tooltip,
+                newChartOptions.tooltip,
+                'New tooltip options are applied on chart.'
             );
         });
     });
