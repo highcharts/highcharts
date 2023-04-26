@@ -128,9 +128,14 @@ class DataPool {
      * Names of all connectors.
      */
     public getConnectorsNames(): Array<string> {
-        return this.options.connectors.map(
-            (connector): string => connector.name
-        );
+        const connectors = this.options.connectors,
+            connectorsNames: Array<string> = [];
+
+        for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
+            connectorsNames.push(connectors[i].name);
+        }
+
+        return connectorsNames;
     }
 
     /**
