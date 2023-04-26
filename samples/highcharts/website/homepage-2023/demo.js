@@ -649,7 +649,6 @@ const rc = {
 const str = {
     chart: {
         type: 'streamgraph',
-        marginBottom: 30,
         height: 430,
         zoomType: 'x',
         backgroundColor: 'transparent',
@@ -661,6 +660,7 @@ const str = {
             load: function () {
                 const chart = this;
                 let count = 0;
+                //console.log(chart.chartWidth);
                 setTimeout(function () {
                     setInterval(function () {
                         if (count < chart.series.length) {
@@ -672,9 +672,9 @@ const str = {
                     }, 300);
                 }, 500);
 
-                setTimeout(function () {
-                    chart.series[0].points[132].onMouseOver();
-                }, 4000);
+                // setTimeout(function () {
+                //     chart.series[0].points[132].onMouseOver();
+                // }, 4000);
             }
         }
     },
@@ -696,8 +696,6 @@ const str = {
     },
 
     xAxis: {
-        min: Date.UTC(2011, 1, 1),
-        max: Date.UTC(2020, 1, 1),
         visible: false,
         reversed: false,
         maxPadding: 0,
@@ -720,8 +718,6 @@ const str = {
         title: {
             text: ''
         },
-        min: -40,
-        max: 40,
         startOnTick: false,
         endOnTick: false,
         gridLineColor: 'transparent',
@@ -1870,11 +1866,51 @@ const str = {
                 [Date.UTC(2020, 3, 1), -2.50],
                 [Date.UTC(2020, 4, 1), -6.90]]
         }
-    ]
+    ],
+    responsive: {
+        rules: [
+            {
+                condition: {
+                    maxWidth: 800
+                },
+                chartOptions: {
+                    chart: {
+                        margin: [0, 0, 0, 0]
+                    },
+                    xAxis: {
+                        min: Date.UTC(2018, 1, 1),
+                        max: Date.UTC(2020, 1, 1)
+                    },
+                    yAxis: {
+                        min: -20,
+                        max: 20
+                    }
+                }
+            },
+            {
+                condition: {
+                    minWidth: 801
+                },
+                chartOptions: {
+                    chart: {
+                        margin: [30, 30, 30, 30]
+                    },
+                    xAxis: {
+                        min: Date.UTC(2011, 1, 1),
+                        max: Date.UTC(2020, 1, 1)
+                    },
+                    yAxis: {
+                        min: -40,
+                        max: 40
+                    }
+                }
+            }
+        ]
+    }
 
 };
 
-const charts = [arc, str, cr, sk, rc];
+const charts = [str, cr, sk, rc];
 
 function makeChart() {
     const chartNum = Math.round(randomNumber(0, 4));
