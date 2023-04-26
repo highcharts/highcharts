@@ -775,7 +775,7 @@ class RangeSelector {
                 width: isTextInput ?
                     ((dateBox.width + (inputBoxWidth ? -2 : 20)) + 'px') :
                     'auto',
-                height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
+                height: (dateBox.height - 2) + 'px',
                 border: '2px solid silver'
             });
 

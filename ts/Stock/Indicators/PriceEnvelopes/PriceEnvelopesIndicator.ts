@@ -129,7 +129,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
          *      Background fill between lines.
          *
          * @type      {Highcharts.Color}
-         * @since     next
+         * @since 11.0.0
          * @apioption plotOptions.priceenvelopes.fillColor
          *
          */

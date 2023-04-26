@@ -71,7 +71,7 @@ class GeoHeatmapSeries extends MapSeries {
      *         GeoHeatmap Chart on the Equal Earth Projection
      *
      * @extends      plotOptions.map
-     * @since        next
+     * @since 11.0.0
      * @product      highmaps
      * @excluding    allAreas, dragDrop, findNearestPointBy, geometry, joinBy, negativeColor, onPoint,
      * @requires     modules/geoheatmap
@@ -112,7 +112,7 @@ class GeoHeatmapSeries extends MapSeries {
              *
              * @type      {number}
              * @default   1
-             * @since     next
+             * @since 11.0.0
              * @product   highmaps
              * @apioption plotOptions.geoheatmap.colsize
              */
@@ -125,7 +125,7 @@ class GeoHeatmapSeries extends MapSeries {
              * default value is pulled from the [options.colors](#colors) array.
              *
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     next
+             * @since 11.0.0
              * @product   highmaps
              * @apioption plotOptions.geoheatmap.color
              */
@@ -139,7 +139,7 @@ class GeoHeatmapSeries extends MapSeries {
              *
              * @type      {number}
              * @default   1
-             * @since     next
+             * @since 11.0.0
              * @product   highmaps
              * @apioption plotOptions.geoheatmap.rowsize
              */

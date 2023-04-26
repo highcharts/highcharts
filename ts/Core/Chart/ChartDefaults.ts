@@ -944,7 +944,7 @@ const ChartDefaults: ChartOptions = {
      *         `.highcharts-root` class.
      * @sample {highcharts} highcharts/chart/style-serif-font/
      *         Using a serif type font
-     * @sample {highcharts} highcharts/members/relative-font-sizes/
+     * @sample {highcharts} highcharts/members/relative-font-size/
      *         Relative font sizes
      * @sample {highcharts} highcharts/css/em/
      *         Styled mode with relative font sizes

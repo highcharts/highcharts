@@ -96,7 +96,7 @@ class PictorialSeries extends ColumnSeries {
      *               Pictorial chart
      *
      * @extends      plotOptions.column
-     * @since        next
+     * @since 11.0.0
      * @product      highcharts
      * @excluding    allAreas, borderRadius,
      *               centerInCategory, colorAxis, colorKey, connectEnds,
@@ -576,7 +576,7 @@ export default PictorialSeries;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pictorial
- * @since     next
+ * @since 11.0.0
  * @product   highcharts
  * @excluding dataParser, borderRadius, boostBlending, boostThreshold,
  *            borderColor, borderWidth, centerInCategory, connectEnds,
@@ -637,7 +637,7 @@ export default PictorialSeries;
  *         Pictorial max option
  *
  * @excluding borderColor, borderWidth, dashStyle, dragDrop
- * @since     next
+ * @since 11.0.0
  * @product   highcharts
  * @apioption series.pictorial.data
  */
@@ -651,7 +651,7 @@ export default PictorialSeries;
  * @sample    {highcharts} highcharts/demo/pictorial/
  *            Pictorial chart
  *
- * @since     next
+ * @since 11.0.0
  * @product   highcharts
  * @apioption series.pictorial.paths
  */
@@ -690,7 +690,7 @@ export default PictorialSeries;
  *
  * @declare   Highcharts.YAxisOptions
  * @type      {*}
- * @since     next
+ * @since 11.0.0
  * @product   highcharts
  * @requires  modules/pictorial
  * @apioption yAxis.stackShadow

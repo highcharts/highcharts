@@ -46,8 +46,8 @@ figure {
 
 #focus label {
     display: inline-block;
-    background-color: #E6E6EB;
-    border: 4px solid #E6E6EB;
+    background-color: #e6e6eb;
+    border: 4px solid #e6e6eb;
     border-left-width: 0;
     border-right-width: 0;
     padding: 5px 20px;
@@ -55,11 +55,12 @@ figure {
     width: 6rem;
     text-align: center;
     border-radius: 4px;
+    box-sizing: content-box;
 }
 
 #focus label:hover,
 #focus input[type="radio"]:focus + label {
-    border-bottom-color: #47475A;
+    border-bottom-color: #47475a;
 }
 
 #focus input[type="radio"]:focus + label {
@@ -67,8 +68,8 @@ figure {
 }
 
 #focus input[type="radio"]:checked + label {
-    background-color: #353A47;
-    border-color: #353A47;
+    background-color: #353a47;
+    border-color: #353a47;
     color: #fff;
     font-weight: bold;
 }
@@ -87,8 +88,8 @@ figure {
     border: none;
     border-radius: 7px;
     text-decoration: none;
-    background: #0059DD;
-    color: #ffffff;
+    background: #0059dd;
+    color: #fff;
     cursor: pointer;
 }
 

@@ -224,7 +224,7 @@ const Options: DeepPartial<OptionsType> = {
      * @sample  highcharts/demo/sonification-music
      *          Musical chart
      *
-     * @since        next
+     * @since 11.0.0
      * @requires     modules/sonification
      * @optionparent sonification
      */
@@ -1137,13 +1137,13 @@ const Options: DeepPartial<OptionsType> = {
         /**
          * The text for the MIDI download menu item in the export menu.
          * @requires modules/sonification
-         * @since next
+         * @since 11.0.0
          */
         downloadMIDI: 'Download MIDI',
         /**
          * The text for the Play as sound menu item in the export menu.
          * @requires modules/sonification
-         * @since next
+         * @since 11.0.0
          */
         playAsSound: 'Play as sound'
     }
@@ -1161,7 +1161,7 @@ export default Options;
 /**
  * Sonification/audio chart options for a series.
  *
- * @since      next
+ * @since 11.0.0
  * @requires   modules/sonification
  * @apioption  plotOptions.series.sonification
  */

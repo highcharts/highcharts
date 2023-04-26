@@ -636,7 +636,7 @@ defaultOptions.drilldown = {
      *
      * @type      {boolean}
      * @default   true
-     * @since     next
+     * @since 11.0.0
      * @product   highmaps
      * @apioption drilldown.mapZooming
      */
