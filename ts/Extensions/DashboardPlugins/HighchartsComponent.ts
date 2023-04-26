@@ -393,10 +393,12 @@ class HighchartsComponent extends Component {
             this.syncHandlers
         );
 
-        this.chartOptions = (
+        this.chartOptions = merge((
             this.options.chartOptions ||
             { chart: {} } as Partial<ChartOptions>
-        );
+        ), {
+            tooltip: {} // Temporary fix for #18876
+        });
 
         if (this.connector) {
             this.on('tableChanged', (): void => this.updateSeries());

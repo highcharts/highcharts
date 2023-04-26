@@ -343,7 +343,7 @@ async function setupDashboard() {
                     enabled: false
                 },
                 legend: {
-                    enabled: true
+                    enabled: false
                 },
                 colorAxis: buildColorAxis(),
                 series: [{
@@ -376,8 +376,8 @@ async function setupDashboard() {
                 },
                 xAxis: {
                     type: 'datetime',
-                    labels: {
-                        format: '{value:%e. %b}'
+                    dateTimeLabelFormats: {
+                        month: '%e. %b'
                     }
                 },
                 yAxis: {
@@ -808,7 +808,6 @@ function buildColorAxis() {
     // temperature
     if (dataScope[0] === 'T') {
         return {
-            visible: false,
             startOnTick: false,
             endOnTick: false,
             max: dataScope[2] === 'C' ? 50 : 122,
@@ -821,7 +820,6 @@ function buildColorAxis() {
     return {
         max: 10,
         min: 0,
-        visible: false,
         stops: buildColorStops(dataScope)
     };
 }

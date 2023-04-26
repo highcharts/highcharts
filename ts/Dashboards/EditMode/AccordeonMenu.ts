@@ -304,13 +304,26 @@ class AccordeonMenu {
         const componentOptions = component.options;
         const chart = (component as HighchartsComponent).chart;
         const chartOptions = chart && chart.options;
+        const chartType = chartOptions && chartOptions.chart.type || 'line';
         let value = merge(componentOptions, {
             chartOptions
+        }, {
+            chartOptions: {
+                yAxis: U.splat(chart && chart.yAxis[0].options),
+                xAxis: U.splat(chart && chart.xAxis[0].options),
+                plotOptions: {
+                    series: (chartOptions?.plotOptions || {})[chartType]
+                }
+            }
         }) as any;
 
         for (let i = 0, end = propertyPath.length; i < end; i++) {
             if (!value) {
                 return;
+            }
+
+            if (U.isArray(value)) {
+                value = value[0];
             }
 
             value = value[propertyPath[i]];
