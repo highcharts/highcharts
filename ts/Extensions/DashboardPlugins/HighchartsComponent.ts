@@ -837,22 +837,18 @@ class HighchartsComponent extends Component {
         const chartOptions = chart && chart.options;
         const chartType = chartOptions && chartOptions.chart.type || 'line';
 
-        return merge(
-            componentOptions,
-            {
-                chartOptions
-            },
-            {
-                chartOptions: {
-                    yAxis: splat(chart && chart.yAxis[0].options),
-                    xAxis: splat(chart && chart.xAxis[0].options),
-                    plotOptions: {
-                        series: ((chartOptions && chartOptions.plotOptions) ||
-                            {})[chartType]
-                    }
+        return merge(componentOptions, {
+            chartOptions
+        }, {
+            chartOptions: {
+                yAxis: splat(chart && chart.yAxis[0].options),
+                xAxis: splat(chart && chart.xAxis[0].options),
+                plotOptions: {
+                    series: ((chartOptions && chartOptions.plotOptions) ||
+                        {})[chartType]
                 }
             }
-        );
+        });
     }
 
 
