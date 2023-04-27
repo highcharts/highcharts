@@ -830,7 +830,8 @@ class Series {
         const typeOptions = (e.plotOptions as any)[this.type],
             userPlotOptions = (
                 userOptions.plotOptions || {} as SeriesTypePlotOptions
-            );
+            ),
+            typeUserPlotOptions = userPlotOptions && userPlotOptions[this.type];
 
         // use copy to prevent undetected changes (#9762)
         /**
@@ -841,14 +842,16 @@ class Series {
         this.userOptions = e.userOptions;
 
         const options: SeriesTypeOptions = merge(
-            typeOptions,
-            (plotOptions as any).series,
-            // #3881, chart instance plotOptions[type] should trump
-            // plotOptions.series
-            userOptions.plotOptions &&
-            (userOptions.plotOptions as any)[this.type],
-            seriesUserOptions
-        );
+                typeOptions,
+                plotOptions && plotOptions.series,
+                // #3881, chart instance plotOptions[type] should trump
+                // plotOptions.series
+                typeUserPlotOptions,
+                seriesUserOptions
+            ),
+            defaultTypePlotOptions = defaultOptions.plotOptions &&
+                defaultOptions.plotOptions[this.type],
+            typePlotOptions = plotOptions && plotOptions[this.type];
 
         // The tooltip options are merged between global and series specific
         // options. Importance order asscendingly:
@@ -858,22 +861,31 @@ class Series {
         // (7)this series options
         this.tooltipOptions = merge(
             defaultOptions.tooltip, // 1
-            (defaultOptions.plotOptions as any).series &&
-                (defaultOptions.plotOptions as any).series.tooltip, // 2
-            (defaultOptions.plotOptions as any)[this.type].tooltip, // 3
-            (chartOptions.tooltip as any).userOptions, // 4
-            (plotOptions as any).series &&
-            (plotOptions as any).series.tooltip, // 5
-            (plotOptions as any)[this.type].tooltip, // 6
-            (seriesUserOptions.tooltip as any) // 7
-        ) as any;
+            (
+                defaultOptions.plotOptions &&
+                defaultOptions.plotOptions.series &&
+                defaultOptions.plotOptions.series.tooltip
+            ), // 2
+            defaultTypePlotOptions && defaultTypePlotOptions.tooltip, // 3
+            (
+                defaultOptions.tooltip &&
+                chartOptions.tooltip &&
+                cleanRecursively(chartOptions.tooltip, defaultOptions.tooltip)
+            ), // 4 - #18876 take only "userOptions" (calculate them)
+            (
+                plotOptions &&
+                plotOptions.series &&
+                plotOptions.series.tooltip
+            ), // 5
+            typePlotOptions && typePlotOptions.tooltip, // 6
+            seriesUserOptions.tooltip // 7
+        );
 
         // When shared tooltip, stickyTracking is true by default,
         // unless user says otherwise.
         this.stickyTracking = pick(
             seriesUserOptions.stickyTracking,
-            (userPlotOptions as any)[this.type] &&
-            (userPlotOptions as any)[this.type].stickyTracking,
+            typeUserPlotOptions && typeUserPlotOptions.stickyTracking,
             userPlotOptions.series && userPlotOptions.series.stickyTracking,
             (
                 this.tooltipOptions.shared && !this.noSharedTooltip ?
