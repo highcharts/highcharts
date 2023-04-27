@@ -258,11 +258,6 @@ class VBPIndicator extends SMAIndicator {
 
         super.init.apply(indicator, arguments);
 
-        // Fire recalculateValues() after indicator update, #17007
-        addEvent(this, 'afterUpdate', function (): void {
-            this.recalculateValues();
-        });
-
         // Only after series are linked add some additional logic/properties.
         const unbinder = addEvent(
             StockChart,
@@ -305,6 +300,13 @@ class VBPIndicator extends SMAIndicator {
                     indicator.zoneLinesSVG = indicator.zoneLinesSVG.destroy();
                 }
             };
+
+        // Fire recalculateValues() after the indicator is updated, #17007
+        indicator.dataEventsToUnbind.push(
+            addEvent(indicator, 'afterUpdate', function (): void {
+                this.recalculateValues();
+            })
+        );
 
         // If base series is deleted, indicator series data is filled with
         // an empty array
