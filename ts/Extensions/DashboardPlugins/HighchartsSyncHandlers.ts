@@ -23,7 +23,6 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis.js';
-import type Chart from '../../Core/Chart/Chart';
 import type RangeModifier from '../../Data/Modifiers/RangeModifier';
 import type Series from '../../Core/Series/Series';
 import type SharedState from '../../Dashboards/Components/SharedComponentState';
@@ -193,13 +192,17 @@ const configs: {
                                     axis.update({
                                         events: {
                                             afterSetExtremes: (e): void => {
+                                                // TODO: should emit cursor, but not update chart, when custom-reset trigger
                                                 if ((!e.trigger || (e.trigger && e.trigger !== 'custom-reset')) && !(e as any).resetSelection) {
+                                                    // TODO: investigate this type?
                                                     const axis = e.target as unknown as Axis;
 
                                                     // Prefer a series that's in a related table,
                                                     // but allow for other data
                                                     const seriesInTable = axis.series
-                                                        .filter((series): boolean => store.table.getColumnNames()[0] === series.name);
+                                                        .filter((series): boolean =>
+                                                            store.table.hasColumns([series.name]));
+
                                                     const [series] = seriesInTable.length ?
                                                         seriesInTable :
                                                         axis.series;
