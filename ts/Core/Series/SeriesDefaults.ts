@@ -276,6 +276,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Whether to connect a graph line across null points, or render a gap
      * between the two points on either side of the null.
      *
+     * In stacked area chart, if connectNulls is set to true,
+     * null points are interpreted as 0.
+     *
      * @sample {highcharts} highcharts/plotoptions/series-connectnulls-false/
      *         False by default
      * @sample {highcharts} highcharts/plotoptions/series-connectnulls-true/
