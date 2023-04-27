@@ -20,8 +20,6 @@ QUnit.test('DataPool', function (assert) {
         }
     });
 
-    console.log(dataPool.getConnectorsNames());
-
     assert.deepEqual(
         dataPool.getConnectorsNames(),
         ['A', 'B'],

@@ -47,13 +47,13 @@ const {
 
 class Sidebar {
     public static tabs: Array<Sidebar.TabOptions> = [{
-    // {
-    //     type: 'design',
-    //     icon: '',
-    //     items: {
-    //         cell: ['cellWidth']
-    //     }
-    // },
+        // {
+        //     type: 'design',
+        //     icon: '',
+        //     items: {
+        //         cell: ['cellWidth']
+        //     }
+        // },
         type: 'component',
         icon: '',
         items: {
@@ -218,12 +218,12 @@ class Sidebar {
                 dropContext: Cell | Row
             ): Cell|void {
                 const headers = ['Apples', 'Pears', 'Plums'];
-                const columns = ((): Record<string, Array<string>> => {
+                const columns = ((): DataTable.ColumnCollection => {
                     const makeRandomRows = (): Array<string> =>
                         new Array(40).map(
                             (): string => (10 * Math.random()).toFixed(2)
                         );
-                    const cols: Record<string, Array<string>> = {};
+                    const cols: DataTable.ColumnCollection = {};
                     for (let i = 0; i < headers.length; ++i) {
                         cols[headers[i]] = makeRandomRows();
                     }
@@ -234,7 +234,7 @@ class Sidebar {
                     return sidebar.onDropNewComponent(dropContext, {
                         cell: '',
                         type: 'DataGrid',
-                        connector: new CSVConnector(new DataTable(columns))
+                        connector: new CSVConnector({ dataTable: { columns } })
                     } as any); // necessary for now
                 }
             }

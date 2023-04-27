@@ -377,10 +377,12 @@ namespace DataModifier {
      * Options to configure the modifier.
      */
     export interface Options {
+
         /**
          * Name of the related modifier for these options.
          */
         modifier: keyof DataModifierTypes;
+
     }
 
     /* *

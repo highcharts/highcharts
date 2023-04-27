@@ -20,9 +20,9 @@
  * */
 
 import type CoreJSON from '../../Core/JSON';
-import type Serializable from '../Serializable';
 
 import DataCursor from '../../Data/DataCursor.js';
+import Serializable from '../Serializable.js';
 
 /* *
  *
@@ -151,10 +151,9 @@ namespace DataCursorHelper {
 
 /* *
  *
- *  Default Export
+ *  Registry
  *
  * */
-
 
 const DataCursorHelper: Serializable.Helper<DataCursor, DataCursorHelper.JSON> = {
     $class: 'Data.DataCursor',
@@ -162,5 +161,13 @@ const DataCursorHelper: Serializable.Helper<DataCursor, DataCursorHelper.JSON> =
     jsonSupportFor,
     toJSON
 };
+
+Serializable.registerHelper(DataCursorHelper);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default DataCursorHelper;
