@@ -1868,6 +1868,50 @@ class Axis {
                 series.processData(hasExtremesChanged);
             });
 
+            // #17791
+            const singleSeries = this.series.filter((s): boolean =>
+                (s.options.data ? s.options.data.length <= 1 : false));
+
+            // All "single-data" series
+            if (
+                !defined(this.closestPointRange) &&
+                this.series.length &&
+                this.series.length === singleSeries.length
+            ) {
+                let distance,
+                    closestPointRange: number | undefined;
+
+                const xData: number[] = [];
+                this.series.forEach((s): void => {
+                    if (s.xData) {
+                        xData.push(s.xData[0]);
+                    }
+                });
+                xData.sort((a, b): number => a - b);
+
+                let i = xData.length;
+
+                while (--i) {
+                    distance = xData[i] - xData[i - 1];
+                    if (
+                        distance > 0 &&
+                        (
+                            !defined(closestPointRange) ||
+                            distance < closestPointRange
+                        )
+                    ) {
+                        closestPointRange = distance;
+                    }
+                }
+
+                if (closestPointRange) {
+                    this.series.forEach(function (s): void {
+                        s.closestPointRange = closestPointRange;
+                    });
+                    this.closestPointRange = closestPointRange;
+                }
+            }
+
             // Then apply grouping if needed. The hasExtremesChanged helps to
             // decide if the data grouping should be skipped in the further
             // calculations #16319.
