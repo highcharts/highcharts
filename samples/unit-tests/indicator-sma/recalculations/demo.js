@@ -40,7 +40,11 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                     type: 'sma',
                     linkedTo: 'main'
                 }
-            ]
+            ],
+            scrollbar: {
+                buttonsEnabled: true,
+                height: 14
+            }
         }),
         pointsValue = [],
         secondChart,
@@ -192,6 +196,22 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         xAxis: {
             minRange: 1
         },
+        scrollbar: {
+            buttonsEnabled: true,
+            height: 14
+        },
+        rangeSelector: {
+            buttons: [{
+                type: 'hour',
+                count: 1,
+                text: '1h',
+                dataGrouping: {
+                    units: [
+                        ['hour', [1]]
+                    ]
+                }
+            }]
+        },
         series: [
             {
                 id: 'aapl',
@@ -298,12 +318,42 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         ],
         'Correct last point position after addPoint() with shift parameter and cropped data (#8572)'
     );
+
+    const lineSeriesPoints = secondChart.series[2].points;
+
+    secondChart.addSeries({
+        id: 'volume',
+        data: [
+            [lineSeriesPoints[0].x, 1500],
+            [lineSeriesPoints[1].x, 2000]
+        ]
+    });
+
+    secondChart.addSeries({
+        linkedTo: 'aapl',
+        type: 'obv',
+        params: {
+            volumeSeriesID: 'volume'
+        },
+        yAxis: 0
+    });
+
+    secondChart.rangeSelector.clickButton(0);
+
+    assert.ok(
+        true,
+        'No volumeSeriesID error when cliked rangeSelector button, #18643'
+    );
 });
 
 QUnit.test('Order of series and indicators, #15892.', function (assert) {
     const chart = Highcharts.stockChart('container', {
         navigator: {
             enabled: false
+        },
+        scrollbar: {
+            buttonsEnabled: true,
+            height: 14
         },
         series: [{
             type: 'sma',

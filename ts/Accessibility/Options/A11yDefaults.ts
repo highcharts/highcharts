@@ -821,7 +821,7 @@ const Options: DeepPartial<A11yOptions> = {
      *
      * @see [series.descriptionFormat](#accessibility.series.descriptionFormat)
      * @type       {string}
-     * @since      next
+     * @since 11.0.0
      * @apioption  plotOptions.series.accessibility.descriptionFormat
      */
 

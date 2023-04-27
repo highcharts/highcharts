@@ -476,6 +476,8 @@ function erase(arr: Array<unknown>, item: unknown): void {
 /**
  * Adds an item to an array, if it is not present in the array.
  *
+ * @function Highcharts.pushUnique
+ *
  * @param {Array<unknown>} array
  * The array to add the item to.
  *
@@ -799,6 +801,7 @@ function createElement(
 /**
  * Extend a prototyped class by new members.
  *
+ * @deprecated
  * @function Highcharts.extendClass<T>
  *
  * @param {Highcharts.Class<T>} parent
@@ -1305,10 +1308,7 @@ function getStyle(
     prop: string,
     toInt?: boolean
 ): (number|string|undefined) {
-    const customGetStyle: typeof getStyle = (
-        (H as any).getStyle || // oldie getStyle
-        getStyle
-    );
+    const customGetStyle: typeof getStyle = (H as any).getStyle;
 
     let style: (number|string|undefined);
 
@@ -1350,11 +1350,6 @@ function getStyle(
                 (customGetStyle(el, 'padding-bottom', true) || 0)
             )
         );
-    }
-
-    if (!win.getComputedStyle) {
-        // SVG not supported, forgot to load oldie.js?
-        error(27, true);
     }
 
     // Otherwise, get the computed style
@@ -1671,9 +1666,7 @@ function addEvent<T>(
     // Handle DOM events
     // If the browser supports passive events, add it to improve performance
     // on touch events (#11353).
-    const addEventListener = (
-        (el as any).addEventListener || H.addEventListenerPolyfill
-    );
+    const addEventListener = (el as any).addEventListener;
     if (addEventListener) {
         addEventListener.call(
             el,
@@ -1742,9 +1735,7 @@ function removeEvent<T>(
         type: string,
         fn: (EventCallback<T>|Function)
     ): void {
-        const removeEventListener = (
-            (el as any).removeEventListener || H.removeEventListenerPolyfill
-        );
+        const removeEventListener = (el as any).removeEventListener;
 
         if (removeEventListener) {
             removeEventListener.call(el, type, fn, false);
@@ -1878,8 +1869,7 @@ function fireEvent<T>(
                 // the zoom-out button in Chrome.
                 target: el,
                 // If the type is not set, we're running a custom event
-                // (#2297). If it is set, we're running a browser event,
-                // and setting it will cause en error in IE8 (#2465).
+                // (#2297). If it is set, we're running a browser event.
                 type: type
             });
         }

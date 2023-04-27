@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: CSS theming
  authors:
    - Torstein Hønsi
  js_wrap: b

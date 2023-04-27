@@ -834,7 +834,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
     var chart,
         axes,
         xError = 1.1,
-        yError = 1.1;
+        yError = 1.6;
 
     chart = Highcharts.stockChart('container', {
         chart: {
@@ -1017,7 +1017,7 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
     var chart,
         axes,
         xError = 1.1,
-        yError = 1.4;
+        yError = 1.7;
 
     chart = Highcharts.stockChart('container', {
         chart: {

@@ -2,7 +2,6 @@ Frequently asked questions
 ===
 
 *   [Does Highcharts refer to files outside our domain?](#does-highcharts-refer-to-files-outside-our-domain)
-*   [My charts are not showing in Internet Explorer 7 or 8](#my-charts-are-not-showing-in-internet-explorer-7-or-8)
 *   [Can I use Highcharts with a ... server?](#can-i-use-highcharts-with-a-server)
 *   [Can I use features from Highcharts Stock in Highcharts?](#can-i-use-features-from-highcharts-stock-in-highcharts)
 *   [Can I add a data table to the exported chart?](#can-i-add-a-data-table-to-the-exported-chart)
@@ -23,34 +22,6 @@ For basic usage, Highcharts doesn't refer to any files other than highcharts.js/
 
 *   The exporting module. Since not all browsers are able to convert the chart to an image format, this operation is by default done on our web service, https://export.highcharts.com. The generated SVG is sent from your browser to the export server, and an image is sent back. If you're concerned about your data content being passed over the internet, you should consider our alternative solutions. The simplest alternative is to use our [module for client-side export](https://highcharts.com/docs/export-module/client-side-export). Check out the features and compatibility table if it meets your requirements. If you have access to a node server, you can also [set up your own export server](https://highcharts.com/docs/export-module/setting-up-the-server). 
 *   Certain features, including client side exporting, may require third-party dependencies. Some of these are loaded on demand from our servers, but in these cases the loading location is configurable. Details on all external dependencies, including licensing and security details, can be found in the [optional dependencies](https://highcharts.com/docs/getting-started/optional-dependencies) documentation article.
-
-* * *
-
-My charts are not showing in Internet Explorer 7 or 8
------------------------------------------------------
-
-The most common reason why a chart works in modern browsers but fails in IE6, 7 and 8, is stray commas in the configuration options. Stray commas are commas after the last item of an object or an array in JavaScript. These will pass silently in modern browsers, but cause a JavaScript error in legacy IE.
-
-```js
-var chart = new Highcharts.Chart({
-    chart: {
-        renderTo: 'container'
-    },
-    xAxis: {
-        type: 'datetime'
-    },
-    series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
-                216.4, 194.1, 95.6, 54.4],
-        pointStart: Date.UTC(2012, 0, 1),
-        pointInterval: 24 * 3600 * 1000,
-    }]
-});
-```
-
-[Try it live](https://jsfiddle.net/highcharts/DXnPa/).
-
-Another case where legacy IE fails to show charts, is when the security setting "ActiveX controls and plug-ins" => "Binary and script behavious" is disabled. This happens very rarely on user computers, but we have seen it from time to time on company networks. In this case, IE fails to draw any of the vector graphics, only the the text is shown. 
 
 * * *
 
@@ -99,7 +70,6 @@ When working with series with a high number of data points, there are a few thin
 1.  First of all, consider using the [Boost module](https://www.highcharts.com/blog/tutorials/highcharts-high-performance-boost-module/).
 2.  Otherwise, for line plots, it is recommended that you disable point markers, as these will add a performance overhead. See [https://highcharts.com/demo/line-time-series](https://highcharts.com/demo/line-time-series).
 3.  Disabling shadows increases performance, as three shadow elements are created for each shape that includes a shadow.
-4.  For large column series, it is recommended that you disable the initial animation, [plotOptions.column.animation](https://api.highcharts.com/highcharts#plotOptions.column.animation), at least for VML based browsers. The best way to distinguish between fast SVG browsers and slower VML browsers is to use the Highcharts.svg boolean property.
 
 * * *
 

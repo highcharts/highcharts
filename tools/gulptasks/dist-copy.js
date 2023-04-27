@@ -187,7 +187,7 @@ const VENDOR_FILTER = [
  * Distribution copy
  *
  * @return {Promise<void>}
- *         Promise to keep
+ * Promise to keep
  */
 function distCopy() {
 

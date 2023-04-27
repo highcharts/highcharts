@@ -168,7 +168,7 @@ function onHighchartsDisplayError(
         msg = msg
             .replace(
                 /<h1>(.*)<\/h1>/g,
-                '<br><span style="font-size: 24px">$1</span><br>'
+                '<br><span style="font-size: 2em">$1</span><br>'
             )
             .replace(/<p>/g, '')
             .replace(/<\/p>/g, '<br>');
@@ -198,6 +198,7 @@ function onHighchartsDisplayError(
             'debugger'
         ).css({
             color: '#ffffff',
+            fontSize: '0.8em',
             width: (chartWidth - 16) + 'px',
             padding: 0
         }).attr({

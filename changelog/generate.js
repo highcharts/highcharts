@@ -81,7 +81,8 @@ const getFile = url => new Promise((resolve, reject) => {
     async function getLog(callback) {
         var log = await prLog(
             params.since,
-            params.fromCache
+            params.fromCache,
+            params.branches
         ).catch(e => console.error(e));
 
         callback(log);
@@ -189,10 +190,14 @@ const getFile = url => new Promise((resolve, reject) => {
 
         log = washPRLog(name, log);
 
-        const upgradeNotes = log
-            .filter(change => typeof change.upgradeNote === 'string')
-            .map(change => addLinks(`- ${change.upgradeNote}`, apiFolder))
-            .join('\n');
+        const upgradeNotes = [];
+        log
+            .filter(change => Array.isArray(change.upgradeNotes))
+            .forEach(change => {
+                change.upgradeNotes.forEach(note => {
+                    upgradeNotes.push(addLinks(`- ${note}`, apiFolder));
+                });
+            });
 
         // Start the output string
         outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
@@ -211,8 +216,13 @@ const getFile = url => new Promise((resolve, reject) => {
             // Start fixes
             if (i === log.startFixes) {
 
-                if (upgradeNotes) {
-                    outputString += `\n## Upgrade notes\n${upgradeNotes}\n`;
+                if (upgradeNotes.length) {
+                    outputString += [
+                        '',
+                        '## Upgrade notes',
+                        ...upgradeNotes,
+                        ''
+                    ].join('\n');
                 }
 
                 outputString += '\n## Bug fixes\n';

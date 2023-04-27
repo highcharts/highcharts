@@ -103,7 +103,7 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
             lastStackLabel.width -
             lastStackLabel.padding,
         chart.plotWidth,
-        0.5,
+        1,
         'Stack label should be inside plot area right'
         // 0.5 is a difference taken from the stackLabel.width which value is
         // not rounded

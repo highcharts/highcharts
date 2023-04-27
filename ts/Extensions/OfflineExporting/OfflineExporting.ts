@@ -345,14 +345,19 @@ namespace OfflineExporting {
                 // chart container.
                 setStylePropertyFromParents = function (
                     el: DOMElementType,
-                    propName: string
+                    propName: 'fontFamily'|'fontSize'
                 ): void {
                     let curParent = el;
 
                     while (curParent && curParent !== dummySVGContainer) {
-                        if (curParent.style[propName as any]) {
-                            el.style[propName as any] =
-                                curParent.style[propName as any];
+                        if (curParent.style[propName]) {
+                            let value = curParent.style[propName];
+                            if (propName === 'fontSize' && /em$/.test(value)) {
+                                value = Math.round(
+                                    parseFloat(value) * 16
+                                ) + 'px';
+                            }
+                            el.style[propName] = value;
                             break;
                         }
                         curParent = curParent.parentNode as any;
@@ -365,11 +370,10 @@ namespace OfflineExporting {
             [].forEach.call(textElements, function (el: SVGDOMElement): void {
                 // Workaround for the text styling. making sure it does pick up
                 // the root element
-                ['font-family', 'font-size'].forEach(function (
-                    property: string
-                ): void {
-                    setStylePropertyFromParents(el, property);
-                });
+                (['fontFamily', 'fontSize'] as ['fontFamily', 'fontSize'])
+                    .forEach((property): void => {
+                        setStylePropertyFromParents(el, property);
+                    });
 
                 el.style.fontFamily = pdfFont && pdfFont.normal ?
                     // Custom PDF font
@@ -417,8 +421,8 @@ namespace OfflineExporting {
             // SVG download. In this case, we want to use Microsoft specific
             // Blob if available
             try {
-                if (typeof win.navigator.msSaveOrOpenBlob !== 'undefined') {
-                    blob = new MSBlobBuilder();
+                if (typeof win.MSBlobBuilder !== 'undefined') {
+                    blob = new win.MSBlobBuilder();
                     blob.append(svg);
                     svgurl = blob.getBlob('image/svg+xml') as any;
                 } else {

@@ -9,7 +9,7 @@ Highcharts.getOptions().colors = Highcharts.getOptions().colors.map(
             },
             stops: [
                 [0, color],
-                [1, Highcharts.Color(color).brighten(-0.2).get('rgb')]
+                [1, new Highcharts.Color(color).brighten(-0.2).get('rgb')]
             ]
         };
     });

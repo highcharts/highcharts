@@ -55,7 +55,7 @@ add_gh_user_config: &add_gh_user_config
 executors:
   node_image:
     docker:
-      - image: cimg/node:16.3.0-browsers
+      - image: cimg/node:18.16.0-browsers
 
 commands:
   generate_references_command:
@@ -69,6 +69,14 @@ commands:
       - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
 jobs:
+  security_scan:
+    docker:
+      - image: returntocorp/semgrep #semgrep reccomends this docker image
+    steps:
+      - run:
+          name: Scan ts-folder for OWASP top-ten vulnerabilities
+          command: semgrep ci --config "p/owasp-top-ten" ts/
+
   checkout_and_install:
     <<: *defaults
     environment:
@@ -149,36 +157,6 @@ jobs:
       - run:
           command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
           no_output_timeout: 20m
-      - when:
-          condition: << parameters.notify_on_failure >>
-          steps:
-            - slack/status:
-                fail_only: true
-
-  test_oldies:
-    <<: *defaults
-    description: Run tests with old browser configs at BrowserStack
-    parameters:
-      browsers:
-        description: "Which browser to test?"
-        type: string
-        default: "Win.IE8"
-      notify_on_failure:
-        type: boolean
-        default: false
-    steps:
-      - << : *load_workspace
-      - run:
-          name: Downgrade karma
-          command: |
-            npm i --no-save karma@4.3.0
-      - run:
-          command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --oldie --browsercount 1"
-          no_output_timeout: 20m
-      - run:
-          name: Upgrade karma
-          command: |
-            npm i karma
       - when:
           condition: << parameters.notify_on_failure >>
           steps:
@@ -703,10 +681,6 @@ workflows:
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
           browsercount: 2
           requires: [lint]
-#      - test_oldies:
-#          name: "test-Win.IE8"
-#          requires: [lint]
-#          browsers: "Win.IE8"
       - test_browsers:
           name: "test-Mac.Safari"
           requires: ["filesize_comparison", "generate_ts_declarations"]
@@ -795,13 +769,8 @@ workflows:
 #          requires: ["test-Win.Chrome"]
 #          browsers: "Mac.Firefox"
 #          notify_on_failure: true
-#      - test_oldies:
-#          name: "test-Win.IE8"
-#          requires: ["test-Win.Chrome"]
-#          browsers: "Win.IE8"
-#          notify_on_failure: true
       - build_dist:
-          requires: [checkout_and_install]
+          requires: [checkout_and_install, "test-Mac.Safari"]
           context: highcharts-staging
       - deploy_code:
           requires: [build_dist]

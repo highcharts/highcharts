@@ -66,15 +66,17 @@ class CSVConverter extends DataConverter {
     /**
      * Constructs an instance of the CSV parser.
      *
-     * @param {CSVConverter.OptionsType} [options]
+     * @param {CSVConverter.UserOptions} [options]
      * Options for the CSV parser.
      */
     public constructor(
-        options?: CSVConverter.OptionsType
+        options?: CSVConverter.UserOptions
     ) {
-        super();
+        const mergedOptions = merge(CSVConverter.defaultOptions, options);
 
-        this.options = merge(CSVConverter.defaultOptions, options);
+        super(mergedOptions);
+
+        this.options = mergedOptions;
     }
 
     /* *
@@ -122,13 +124,15 @@ class CSVConverter extends DataConverter {
         let { decimalPoint, itemDelimiter } = options;
 
         if (!decimalPoint) {
-            decimalPoint = itemDelimiter !== ',' && useLocalDecimalPoint ?
-                (1.1).toLocaleString()[1] :
-                '.';
+            decimalPoint = (
+                itemDelimiter !== ',' && useLocalDecimalPoint ?
+                    (1.1).toLocaleString()[1] :
+                    '.'
+            );
         }
 
         if (!itemDelimiter) {
-            itemDelimiter = decimalPoint === ',' ? ';' : ',';
+            itemDelimiter = (decimalPoint === ',' ? ';' : ',');
         }
 
         const columns =
@@ -202,7 +206,7 @@ class CSVConverter extends DataConverter {
     /**
      * Initiates parsing of CSV
      *
-     * @param {CSVConverter.OptionsType}[options]
+     * @param {CSVConverter.UserOptions}[options]
      * Options for the parser
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -212,7 +216,7 @@ class CSVConverter extends DataConverter {
      * @emits CSVDataParser#afterParse
      */
     public parse(
-        options: CSVConverter.OptionsType,
+        options: CSVConverter.UserOptions,
         eventDetail?: DataEvent.Detail
     ): void {
         const converter = this,
@@ -619,11 +623,6 @@ namespace CSVConverter {
     }
 
     /**
-     * All available options for the parser
-     */
-    export type OptionsType = Partial<(Options&SpecialOptions)>;
-
-    /**
      * Options for the CSV parser that are compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
@@ -642,6 +641,11 @@ namespace CSVConverter {
         beforeParse?: DataBeforeParseCallbackFunction;
         decimalRegex?: RegExp;
     }
+
+    /**
+     * Avaliable options of the CSVConverter.
+     */
+    export type UserOptions = Partial<(Options&SpecialOptions)>;
 
 }
 

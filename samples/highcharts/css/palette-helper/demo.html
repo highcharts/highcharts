@@ -1,0 +1,38 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
+<div class="demo-content">
+    <h1>Highcharts Palette Helper</h1>
+
+    <p>This tool helps creating the variations of the neutral color and highlight color
+        for Highcharts. The results can be pasted into <code>highcharts.css</code>.</p>
+
+    <p>The general idea of the Highcharts neutral and highlight colors is that one color
+        of full contrast or weight is defined, then variations of this are generated
+        with decreasing contrast against the background color. Neutral color is used
+        for text and must have a good contrast against the background. The highlight color
+        is used for highlighted text and selections. The <a
+        href="https://code.highcharts.com/css/highcharts.js">highcharts.css</a> file
+        documents where the different variations are used.
+    </p>
+
+    <label>
+        <input type="color" value="#ffffff" name="background-color" />
+        Background color
+    </label>
+    <label>
+        <input type="color" value="#000000" name="neutral-color" />
+        Neutral color
+    </label>
+    <label>
+        <input type="color" value="#003399" name="highlight-color" />
+        Highlight color
+    </label>
+
+
+    <pre id="container"></pre>
+
+    <div id="preview">
+        <div id="neutral-preview"></div>
+        <div id="highlight-preview"></div>
+    </div>
+</div>
