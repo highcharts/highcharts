@@ -80,3 +80,72 @@ QUnit.test(
         );
     }
 );
+
+
+QUnit.test('Arearange series labels (#14602)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            series: [{
+                type: 'arearange',
+                label: {
+                    enabled: true,
+                    onArea: true
+                },
+                data: [
+                    [1, 2],
+                    [1, 2],
+                    [1, 2]
+                ]
+            }]
+        });
+
+        const series = chart.series[0];
+
+        const isLabelInsideArea = label => {
+            const {
+                x: areaX, y: areaY,
+                width: areaWidth, height: areaHeight
+            } = series.area.element.getBBox();
+
+            const { width: labelWidth, height: labelHeight } = label.getBBox();
+
+            return label.y > chart.plotTop + areaY &&
+                label.y + labelHeight < chart.plotTop + areaY + areaHeight &&
+                label.x > chart.plotLeft + areaX &&
+                label.x + labelWidth < chart.plotLeft + areaX + areaWidth;
+        };
+
+        assert.ok(
+            isLabelInsideArea(series.labelBySeries),
+            'Series label is inside the area when onArea: true'
+        );
+
+        series.update({
+            label: {
+                onArea: false
+            }
+        });
+
+        assert.ok(
+            !isLabelInsideArea(series.labelBySeries),
+            'Series label is not inside the area when onArea: false'
+        );
+
+        series.update({
+            data: [
+                [1, 1, 1],
+                [1.5, 1.40, 1.60],
+                [2, 2, 2],
+                [2.5, 2.40, 2.60],
+                [3, 3, 3]
+            ],
+            label: {
+                onArea: true
+            }
+        });
+
+        assert.ok(
+            !series.labelBySeries,
+            'Series label is destroyed when onArea: true and there is no place to render it'
+        );
+    });
