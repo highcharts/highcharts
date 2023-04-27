@@ -22,16 +22,14 @@
  *
  * */
 
-import type JSON from '../../Core/JSON';
 
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
 const {
+    isArray,
     merge
 } = U;
 import AST from '../../Core/Renderer/HTML/AST.js';
-import ComponentRegistry from './ComponentRegistry.js';
-import DataConnector from '../../Data/Connectors/DataConnector.js';
 
 // TODO: This may affect the AST parsing in Highcharts
 // should look into adding these as options if possible

@@ -230,29 +230,30 @@ namespace EditGlobals {
     }
 
     export interface LangOptions {
-        chartConfig?: string;
-        editMode?: string;
-        style?: string;
-        chartOptions?: string;
-        chartType?: string;
-        id?: string;
-        title?: string;
-        caption?: string;
-        chartClassName?: string;
-        chartID?: string;
-        pointFormat?: string;
-        scaleElements?: string;
-        confirmDestroyRow?: string;
-        confirmDestroyCell?: string;
-        confirmButton?: string;
-        cancelButton?: string;
-        viewFullscreen?: string;
-        exitFullscreen?: string;
+        chartConfig: string;
+        editMode: string;
+        style: string;
+        chartOptions: string;
+        chartType: string;
+        id: string;
+        title: string;
+        caption: string;
+        chartClassName: string;
+        chartID: string;
+        pointFormat: string;
+        scaleElements: string;
+        confirmDestroyRow: string;
+        confirmDestroyCell: string;
+        confirmButton: string;
+        cancelButton: string;
+        viewFullscreen: string;
+        exitFullscreen: string;
         on: string;
         off: string;
         settings: string;
         addComponent: string;
-        dataLabels?: string;
+        dataLabels: string;
+        [key: string]: string;
     }
 
     export type TLangKeys = 'editMode'|'verticalSeparator';
