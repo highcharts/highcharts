@@ -1075,6 +1075,8 @@
 
 .highcharts-dashboards-edit-accordeon-content {
     padding: 0 16px 16px;
+    display: flex;
+    flex-direction: column;
 }
 
 .highcharts-dashboards-edit-accordeon-content > .highcharts-dashboards-edit-label-text {
