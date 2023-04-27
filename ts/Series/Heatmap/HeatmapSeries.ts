@@ -27,7 +27,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import Color from '../../Core/Color/Color.js';
 import ColorMapComposition from '../ColorMapComposition.js';
 import HeatmapPoint from './HeatmapPoint.js';
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -390,7 +389,9 @@ class HeatmapSeries extends ScatterSeries {
                 brightness: 0.2
             }
 
-        }
+        },
+
+        legendSymbol: 'rectangle'
 
     } as HeatmapSeriesOptions);
 
@@ -731,7 +732,6 @@ interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getSymbol: typeof Series.prototype.getSymbol;
 }
 extend(HeatmapSeries.prototype, {
@@ -760,11 +760,6 @@ extend(HeatmapSeries.prototype, {
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
-
-    /**
-     * @private
-     */
-    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     getSymbol: Series.prototype.getSymbol
 

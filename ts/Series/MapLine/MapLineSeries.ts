@@ -84,7 +84,9 @@ class MapLineSeries extends MapSeries {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        fillColor: 'none'
+        fillColor: 'none',
+
+        legendSymbol: 'lineMarker'
     } as MapLineSeriesOptions);
 
     /* *
@@ -149,8 +151,6 @@ extend(MapLineSeries.prototype, {
     type: 'mapline',
 
     colorProp: 'stroke',
-
-    drawLegendSymbol: Series.prototype.drawLegendSymbol,
 
     pointAttrToOptions: {
         'stroke': 'color',
