@@ -2506,6 +2506,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
     findNearestPointBy: 'x'
 
+    /**
+     * What type of legend symbol to render for this series.
+     *
+     * @validvalue ["lineMarker", "rectangle"]
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol/
+     *         Change the legend symbol
+     */
+
 };
 
 /* *

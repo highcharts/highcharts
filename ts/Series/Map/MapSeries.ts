@@ -38,7 +38,6 @@ import ColorMapComposition from '../ColorMapComposition.js';
 import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import MapChart from '../../Core/Chart/MapChart.js';
 const {
     splitPath
@@ -411,7 +410,9 @@ class MapSeries extends ScatterSeries {
                  */
                 color: Palette.neutralColor20
             }
-        }
+        },
+
+        legendSymbol: 'rectangle'
     } as MapSeriesOptions);
 
     /* *
@@ -1304,7 +1305,6 @@ class MapSeries extends ScatterSeries {
  * */
 
 interface MapSeries extends ColorMapComposition.SeriesComposition {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
     pointArrayMap: ColorMapComposition.SeriesComposition['pointArrayMap'];
     pointClass: typeof MapPoint;
@@ -1340,8 +1340,6 @@ extend(MapSeries.prototype, {
 
     // No graph for the map series
     drawGraph: noop,
-
-    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     forceDL: true,
 
