@@ -41,6 +41,8 @@ const {
     addEvent,
     createElement,
     merge,
+    splat,
+    isArray,
     uniqueKey
 } = U;
 
@@ -825,6 +827,48 @@ class HighchartsComponent extends Component {
 
         this.emit({ type: 'toJSON', json });
         return json;
+    }
+
+
+    public getEditableOptions(): HighchartsComponent.Options {
+        const component = this;
+        const componentOptions = component.options;
+        const chart = component.chart;
+        const chartOptions = chart && chart.options;
+        const chartType = chartOptions && chartOptions.chart.type || 'line';
+
+        return merge(
+            componentOptions,
+            {
+                chartOptions
+            },
+            {
+                chartOptions: {
+                    yAxis: splat(chart && chart.yAxis[0].options),
+                    xAxis: splat(chart && chart.xAxis[0].options),
+                    plotOptions: {
+                        series: ((chartOptions && chartOptions.plotOptions) ||
+                            {})[chartType]
+                    }
+                }
+            }
+        );
+    }
+
+
+    public getEditableOptionValue(
+        propertyPath?: string[]
+    ): number | boolean | undefined | string {
+        const component = this;
+        if (!propertyPath) {
+            return;
+        }
+
+        if (propertyPath.length === 1 && propertyPath[0] === 'chartOptions') {
+            return JSON.stringify(component.options.chartOptions, null, 2);
+        }
+
+        return super.getEditableOptionValue.call(this, propertyPath);
     }
 }
 

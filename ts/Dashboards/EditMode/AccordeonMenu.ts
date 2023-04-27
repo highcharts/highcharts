@@ -163,7 +163,8 @@ class AccordeonMenu {
         propertyPath: Array<string>,
         value: boolean | string | number
     ): void {
-        let currentLevel = this.changedOptions as any;
+        let currentLevel = this
+            .changedOptions as DeepPartial<Component.ComponentOptions>;
         const pathLength = propertyPath.length - 1;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
@@ -171,7 +172,6 @@ class AccordeonMenu {
                 const parsedValue = JSON.parse(value as string);
                 this.chartOptionsJSON = parsedValue;
             } catch (e) {
-                // console.log('Invalid JSON passed to the chart chart config');
                 // TODO: Handle the wrong config passed from the user.
                 error(
                     'Dashboards Error: Wrong JSON config structure passed as' +
@@ -187,7 +187,8 @@ class AccordeonMenu {
                 currentLevel[key] = {};
             }
 
-            currentLevel = currentLevel[key];
+            currentLevel = currentLevel[key] as
+                DeepPartial<Component.ComponentOptions>;
         }
 
         currentLevel[propertyPath[pathLength]] = value;
@@ -223,7 +224,7 @@ class AccordeonMenu {
         renderFunction(parentNode, {
             ...options,
             iconsURLPrefix: this.iconsURLPrefix,
-            value: this.getValue(component, options.propertyPath),
+            value: component.getEditableOptionValue(options.propertyPath),
             onchange: (
                 value: boolean | string | number
             ): void => this.updateOptions(options.propertyPath || [], value)
@@ -260,7 +261,7 @@ class AccordeonMenu {
             const collapsedHeader = EditRenderer.renderCollapseHeader(
                 parentElement, {
                     name,
-                    isEnabled: !!this.getValue(component, propertyPath),
+                    isEnabled: !!component.getEditableOptionValue(propertyPath),
                     allowEnabled,
                     onchange: (value: boolean | string | number): void =>
                         this.updateOptions(propertyPath, value),
@@ -278,60 +279,6 @@ class AccordeonMenu {
 
         }
         return;
-    }
-
-    /**
-     * Gets the value from the component based on the provided propertyPath
-     * array.
-     *
-     * @param component
-     * The component for which the value should be returned.
-     * @param propertyPath
-     * Path to a value. Example:  ```['chartOptions', 'chart', 'type']```
-     * @returns
-     * The value retrieved from the component.
-     */
-    public getValue(
-        component: Component,
-        propertyPath?: Array<string>
-    ): number | string | boolean | undefined {
-        if (!propertyPath) {
-            return;
-        }
-
-        if (propertyPath.length === 1 && propertyPath[0] === 'chartOptions') {
-            return JSON.stringify(component.options.chartOptions, null, 2);
-        }
-
-        const componentOptions = component.options;
-        const chart = (component as HighchartsComponent).chart;
-        const chartOptions = chart && chart.options;
-        const chartType = chartOptions && chartOptions.chart.type || 'line';
-        let value = merge(componentOptions, {
-            chartOptions
-        }, {
-            chartOptions: {
-                yAxis: splat(chart && chart.yAxis[0].options),
-                xAxis: splat(chart && chart.xAxis[0].options),
-                plotOptions: {
-                    series: (chartOptions?.plotOptions || {})[chartType]
-                }
-            }
-        }) as any;
-
-        for (let i = 0, end = propertyPath.length; i < end; i++) {
-            if (!value) {
-                return;
-            }
-
-            if (isArray(value)) {
-                value = value[0];
-            }
-
-            value = value[propertyPath[i]];
-        }
-
-        return value;
     }
 }
 

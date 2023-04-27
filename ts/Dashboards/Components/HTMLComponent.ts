@@ -26,7 +26,6 @@
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
 const {
-    isArray,
     merge
 } = U;
 import AST from '../../Core/Renderer/HTML/AST.js';
