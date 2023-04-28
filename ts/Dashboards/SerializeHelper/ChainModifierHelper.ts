@@ -19,7 +19,7 @@
  *
  * */
 
-import type CoreJSON from '../../Core/JSON';
+import type JSON from '../JSON';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type { DataModifierTypeOptions } from '../../Data/Modifiers/DataModifierType';
 
@@ -138,7 +138,7 @@ namespace ChainModifierHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (CoreJSON.Object&ChainModifier.Options);
+    export type OptionsJSON = (JSON.Object&ChainModifier.Options);
 
 }
 

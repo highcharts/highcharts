@@ -24,7 +24,7 @@
 
 import type CSSJSONObject from '../CSSJSONObject';
 import type Component from '../Components/Component.js';
-import type JSON from '../../Core/JSON';
+import type JSON from '../JSON';
 import type LayoutType from './Layout';
 import type Row from './Row';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';

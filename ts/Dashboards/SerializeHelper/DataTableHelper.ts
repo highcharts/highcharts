@@ -19,7 +19,7 @@
  *
  * */
 
-import type CoreJSON from '../../Core/JSON';
+import type JSON from '../JSON';
 
 import DataTable from '../../Data/DataTable.js';
 import Serializable from '../Serializable.js';
@@ -83,7 +83,7 @@ function toJSON(
     // aliases
 
     if (aliasKeys.length) {
-        const jsonAliases: CoreJSON.Object = json.aliases = {};
+        const jsonAliases: JSON.Object = json.aliases = {};
 
         for (let i = 0, iEnd = aliasKeys.length; i < iEnd; ++i) {
             jsonAliases[aliasKeys[i]] = aliases[aliasKeys[i]];
@@ -115,7 +115,7 @@ namespace DataTableHelper {
      *
      * */
 
-    export type ColumnJSON = CoreJSON.Array<CoreJSON.Primitive>;
+    export type ColumnJSON = JSON.Array<JSON.Primitive>;
 
     export type JSON = (Serializable.JSON<'Data.DataTable'>&DataTable.Options);
 

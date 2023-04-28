@@ -19,7 +19,7 @@
  *
  * */
 
-import type CoreJSON from '../../Core/JSON';
+import type JSON from '../JSON';
 
 import DataCursor from '../../Data/DataCursor.js';
 import Serializable from '../Serializable.js';
@@ -78,7 +78,7 @@ function toJSON(
         tableIds = Object.keys(obj.stateMap);
 
     let cursors: Array<DataCursor.Type>,
-        cursorsJSON: CoreJSON.Array<DataCursorHelper.TypeJSON>,
+        cursorsJSON: JSON.Array<DataCursorHelper.TypeJSON>,
         tableId: DataCursor.TableId,
         state: DataCursor.State,
         states: Array<DataCursor.State>;
@@ -126,14 +126,14 @@ namespace DataCursorHelper {
         | RangeJSON
     );
 
-    export interface PositionJSON extends CoreJSON.Object {
+    export interface PositionJSON extends JSON.Object {
         column?: string;
         row?: number;
         state: DataCursor.State;
         type: 'position';
     }
 
-    export interface RangeJSON extends CoreJSON.Object {
+    export interface RangeJSON extends JSON.Object {
         columns?: Array<string>;
         firstRow: number;
         lastRow: number;
@@ -145,7 +145,7 @@ namespace DataCursorHelper {
         stateMap: StateMapJSON;
     }
 
-    export type StateMapJSON = CoreJSON.Object<CoreJSON.Object<CoreJSON.Array<TypeJSON>>>;
+    export type StateMapJSON = JSON.Object<JSON.Object<JSON.Array<TypeJSON>>>;
 
 }
 

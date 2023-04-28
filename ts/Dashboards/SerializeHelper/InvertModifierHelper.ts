@@ -19,7 +19,7 @@
  *
  * */
 
-import type CoreJSON from '../../Core/JSON';
+import type JSON from '../JSON';
 
 import InvertModifier from '../../Data/Modifiers/InvertModifier';
 import Serializable from '../Serializable.js';
@@ -97,7 +97,7 @@ namespace InvertModifierHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (CoreJSON.Object&InvertModifier.Options);
+    export type OptionsJSON = (JSON.Object&InvertModifier.Options);
 
 }
 

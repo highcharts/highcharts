@@ -17,7 +17,7 @@
 'use strict';
 
 import type CSSJSONObject from '../CSSJSONObject';
-import type JSON from '../../Core/JSON';
+import type JSON from '../JSON';
 import type Layout from './Layout.js';
 import type Serializable from '../Serializable';
 

@@ -19,7 +19,7 @@
  *
  * */
 
-import type CoreJSON from '../../Core/JSON';
+import type JSON from '../JSON';
 
 import CSVConnector from '../../Data/Connectors/CSVConnector.js';
 import DataTableHelper from './DataTableHelper.js';
@@ -104,7 +104,7 @@ namespace CSVConnectorHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (CoreJSON.Object&CSVConnector.Options);
+    export type OptionsJSON = (JSON.Object&CSVConnector.Options);
 
 }
 

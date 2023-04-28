@@ -22,7 +22,7 @@
 
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type ColorString from '../Core/Color/ColorString';
-import type JSON from '../Core/JSON';
+import type JSON from './JSON';
 
 /* *
  *

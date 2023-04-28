@@ -804,7 +804,7 @@ export interface NestedOptions {
 
 }
 
-export type RendererElement =
+export type RendererElement = (
     | 'select'
     | 'toggle'
     | 'text'
@@ -814,4 +814,5 @@ export type RendererElement =
     | 'input'
     | 'textarea'
     | 'checkbox'
-    | 'button';
+    | 'button'
+);

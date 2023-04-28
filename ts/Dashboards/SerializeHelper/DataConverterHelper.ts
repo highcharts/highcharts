@@ -19,7 +19,7 @@
  *
  * */
 
-import CoreJSON from '../../Core/JSON';
+import JSON from '../JSON';
 
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import Serializable from '../Serializable.js';
@@ -80,7 +80,7 @@ namespace DataConverterHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (CoreJSON.Object&DataConverter.Options);
+    export type OptionsJSON = (JSON.Object&DataConverter.Options);
 
 }
 

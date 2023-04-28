@@ -19,7 +19,7 @@
  *
  * */
 
-import type CoreJSON from '../../Core/JSON';
+import type JSON from '../JSON';
 
 import DataTableHelper from './DataTableHelper.js';
 import HTMLTableConnector from '../../Data/Connectors/HTMLTableConnector.js';
@@ -104,7 +104,7 @@ namespace HTMLTableConnectorHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (CoreJSON.Object&HTMLTableConnector.Options);
+    export type OptionsJSON = (JSON.Object&HTMLTableConnector.Options);
 
 }
 
