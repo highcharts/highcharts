@@ -11,7 +11,7 @@ There can be strong accessibility benefits to providing sonification with large 
 
 In Highcharts, we provide a sonification module to allow you full control of playing your data using sound. The sonification module supports a wide range of different use cases, and is designed with flexibility in mind.
 
-<iframe style="width: 100%; height: 755px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/soundscape allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 760px; border: none;" src=https://www.highcharts.com/samples/embed/stock/demo/soundscape allow="fullscreen"></iframe>
 
 Installation
 ------------

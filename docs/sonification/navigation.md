@@ -1,7 +1,7 @@
 Navigation for Audio Charts
 ===
 
-<iframe style="width: 100%; height: 610px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sonification-navigation allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 635px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sonification-navigation allow="fullscreen"></iframe>
 
 There is various functionality available for dealing with navigation of audio charts in Highcharts.
 
