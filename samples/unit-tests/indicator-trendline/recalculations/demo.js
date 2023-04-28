@@ -29,9 +29,10 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     chart.series[0].points[3].remove();
 
+    // Values corrected for #18710 fix
     assert.deepEqual(
-        correctFloat(tr[0], 2) === 1.1 &&
-            correctFloat(tr[tr.length - 1], 2) === 4.5,
+        correctFloat(tr[0], 2) === 0.92 &&
+            correctFloat(tr[tr.length - 1], 2) === 4.4,
         true,
         'Correct values after point.remove()'
     );

@@ -163,12 +163,6 @@ namespace HighContrastDarkTheme {
             }
         },
 
-        labels: {
-            style: {
-                color: '#707073'
-            }
-        },
-
         drilldown: {
             activeAxisLabelStyle: {
                 color: textBright

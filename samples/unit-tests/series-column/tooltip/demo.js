@@ -67,7 +67,7 @@ QUnit.test(
 QUnit.test(
     'Tooltip should stay inside plotArea even when columns are outside axis extremes.',
     function (assert) {
-        var chart = new Highcharts.chart('container', {
+        var chart = new Highcharts.Chart('container', {
             chart: {
                 type: 'column',
                 marginTop: 150

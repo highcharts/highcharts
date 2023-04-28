@@ -10,8 +10,7 @@ module.exports = {
         'export-module/legacy-export-servers',
         'maps/latlon',
         'stock/compare',
-        'stock/cumulative-sum',
-        'chart-and-series-types/pictorial'
+        'stock/cumulative-sum'
     ],
     /* List of old paths that should be redirected */
     redirects: [
@@ -26,6 +25,7 @@ module.exports = {
         { from: 'chart-and-series-types/packed-bubble-charts', to: 'chart-and-series-types/packed-bubble' },
         { from: 'chart-concepts/navigator', to: 'stock/navigator' },
         { from: 'chart-concepts/range-selector', to: 'stock/range-selector' },
-        { from: 'chart-concepts/accessibility', to: 'accessibility/accessibility-module' }
+        { from: 'chart-concepts/accessibility', to: 'accessibility/accessibility-module' },
+        { from: 'accessibility/sonification', to: 'sonification/getting-started' }
     ]
 };

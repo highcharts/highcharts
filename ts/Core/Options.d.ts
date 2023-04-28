@@ -69,6 +69,7 @@ export interface Options {
     loading?: LoadingOptions;
     plotOptions?: SeriesTypePlotOptions;
     symbols?: Array<SymbolKey>;
+    global: GlobalOptions;
 }
 
 export type OptionsOverflowValue = ('allow'|'justify');

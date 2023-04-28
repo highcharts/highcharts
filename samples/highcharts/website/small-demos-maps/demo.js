@@ -1748,12 +1748,6 @@ function projection() {
                     data,
                     joinBy: 'name',
                     name: 'Airports per million km²',
-                    states: {
-                        hover: {
-                            color: '#a4edba',
-                            borderColor: '#333333'
-                        }
-                    },
                     dataLabels: {
                         enabled: false,
                         format: '{point.name}'

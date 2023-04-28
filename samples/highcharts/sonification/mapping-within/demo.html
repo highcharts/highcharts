@@ -1,0 +1,24 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <div class="highcharts-description">
+        <p>
+            By default, pitch is mapped within each Y-axis. Here, with pitch mapped within Y-axis, the first series will get its own pitch mapping, while Series 2 and Series 3 will be mapped onto the same pitch range relative to each other.
+        </p>
+        <p>
+            If the pitch range goes from the notes C2 to C5, Series 1 will be mapped with its lowest value to C2, and its highest to C5 - taking up the whole pitch range. For the other series, C2 will be mapped to whichever value is lowest among Series 2 and Series 3, and C5 will be mapped to whichever value is highest within both series, so that both series share the same pitch range.
+        </p>
+        <p>
+            Any mapping parameter, not just pitch, can be mapped within the chart, an axis, or the series.
+        </p>
+    </div>
+</figure>
+
+<div id="buttons">
+    <button id="withinChart">Within chart</button>
+    <button id="withinYAxis">Within yAxis</button>
+    <button id="withinSeries">Within series</button>
+</div>

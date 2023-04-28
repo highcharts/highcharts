@@ -1,0 +1,12 @@
+---
+name: Audio boxplot
+authors:
+  - Øystein Moseng
+js_wrap: b
+skipTest: true
+new_until: 2023-06-30
+tags:
+  - Highcharts demo
+categories:
+  - Audio charts
+...

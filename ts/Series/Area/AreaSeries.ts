@@ -23,10 +23,11 @@ import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type Legend from '../../Core/Legend/Legend';
+import type Series from '../../Core/Series/Series';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -215,7 +216,10 @@ class AreaSeries extends LineSeries {
          * @since   2.0
          * @product highcharts highstock
          */
-        threshold: 0
+        threshold: 0,
+
+        legendSymbol: 'rectangle'
+
     });
 
     /* *
@@ -629,12 +633,10 @@ class AreaSeries extends LineSeries {
  * */
 
 interface AreaSeries {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
-    singleStacks: false,
-    drawLegendSymbol: LegendSymbol.drawRectangle
+    singleStacks: false
 });
 
 /* *
