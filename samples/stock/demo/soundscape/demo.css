@@ -77,8 +77,8 @@ figure {
 #play {
     display: block;
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 15px;
+    right: 10px;
     z-index: 10;
     width: 10rem;
     padding: 0.5rem 1.5rem;
