@@ -48,7 +48,6 @@ add_gh_user_config: &add_gh_user_config
       command: |
         git config --global user.name "CircleCI"
         git config --global user.email "technical+circleci_mu@highsoft.com"
-
 #######################################
 
 executors:
@@ -69,12 +68,24 @@ commands:
       - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
 jobs:
   security_scan:
+    environment
+      EXTENDED_CONF=(
+        --config "https://raw.githubusercontent.com/returntocorp/semgrep-rules/release/javascript/lang/security/audit/prototype-pollution/prototype-pollution-loop.yaml"
+        --config "https://raw.githubusercontent.com/returntocorp/semgrep-rules/release/javascript/lang/security/audit/detect-non-literal-regexp.yaml"
+        --config "https://raw.githubusercontent.com/returntocorp/semgrep-rules/release/javascript/browser/security/insecure-document-method.yaml"
+        --config "auto"
+        --config "p/cwe-top-25"
+        --config "p/owasp-top-ten"
+        --config "p/secrets"
+        --config "p/gitleaks"
+      )
     docker:
       - image: returntocorp/semgrep # semgrep reccomends this docker image
     steps:
       - run:
-          name: Scan ts-folder for OWASP top-ten vulnerabilities
-          command: semgrep ci --config "auto" --config "p/cwe-top-25" --config "p/owasp-top-ten" --config "p/secrets" --config "p/gitleaks" --max-target-bytes 2000000 ts/
+          name: Scan ts-folder
+          command: |
+            semgrep ci --config "auto" --config "p/cwe-top-25" --config "p/owasp-top-ten" --config "p/secrets" --config "p/gitleaks" --max-target-bytes 2000000 ts/
 
   checkout_and_install:
     <<: *defaults
