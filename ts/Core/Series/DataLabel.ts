@@ -549,6 +549,8 @@ namespace DataLabel {
             // Make the labels for each point
             points.forEach((point): void => {
 
+                const dataLabels = point.dataLabels || [];
+
                 // Merge in series options for the point.
                 // @note dataLabelAttribs (like pointAttribs) would eradicate
                 // the need for dlOptions, and simplify the section below.
@@ -582,8 +584,7 @@ namespace DataLabel {
                         style,
                         rotation,
                         attr: any,
-                        dataLabel: SVGLabel | undefined = point.dataLabels ?
-                            point.dataLabels[i] : point.dataLabel,
+                        dataLabel: SVGLabel|undefined = dataLabels[i],
                         isNew = !dataLabel;
 
                     const labelDistance = pick(
@@ -597,16 +598,14 @@ namespace DataLabel {
                         labelConfig = point.getLabelConfig();
 
                         formatString = pick(
-                            (labelOptions as any)[
-                                point.formatPrefix + 'Format'
-                            ],
+                            labelOptions[point.formatPrefix + 'Format'],
                             labelOptions.format
                         );
 
                         labelText = defined(formatString) ?
                             format(formatString, labelConfig, chart) :
                             (
-                                (labelOptions as any)[
+                                labelOptions[
                                     point.formatPrefix + 'Formatter'
                                 ] ||
                                 labelOptions.formatter
@@ -677,8 +676,9 @@ namespace DataLabel {
                         });
                     }
 
-                    // If the point is outside the plot area, destroy it. #678,
-                    // #820
+                    // If the point is outside the plot area, or the label
+                    // changes properties that we cannot change, destroy it and
+                    // build a new one below. #678, #820.
                     if (
                         dataLabel && (
                             !labelEnabled ||
@@ -696,21 +696,8 @@ namespace DataLabel {
                             )
                         )
                     ) {
+                        dataLabel = void 0;
                         isNew = true;
-                        if (!i) {
-                            point.dataLabel = dataLabel =
-                            point.dataLabel && point.dataLabel.destroy();
-                            delete point.dataLabel;
-                        }
-                        if (point.dataLabels) {
-                            // Remove point.dataLabels if this was the last one
-                            if (point.dataLabels.length === 1) {
-                                delete point.dataLabels;
-                            } else {
-                                dataLabel = point.dataLabels[i].destroy();
-                                delete point.dataLabels[i];
-                            }
-                        }
                         if (connector && point.connector) {
                             point.connector = point.connector.destroy();
                             if (point.connectors) {
@@ -732,8 +719,7 @@ namespace DataLabel {
 
                         if (!dataLabel) {
                             // Create new label element
-                            point.dataLabels = point.dataLabels || [];
-                            dataLabel = point.dataLabels[i] = rotation ?
+                            dataLabel = rotation ?
 
                                 // Labels don't rotate, use text element
                                 renderer.text(
@@ -755,11 +741,6 @@ namespace DataLabel {
                                     null as any,
                                     'data-label'
                                 );
-
-                            // Store for backwards compatibility
-                            if (!i) {
-                                point.dataLabel = dataLabel;
-                            }
 
                             if (dataLabel) {
                                 dataLabel.addClass(
@@ -828,11 +809,31 @@ namespace DataLabel {
                                 null as any,
                                 isNew
                             );
+
+                            dataLabel.isActive = true;
+                            if (dataLabels[i] && dataLabels[i] !== dataLabel) {
+                                dataLabels[i].destroy();
+                            }
+                            dataLabels[i] = dataLabel;
                         }
-                    } else if (dataLabel) {
-                        dataLabel.hide();
                     }
                 });
+
+
+                // Destroy and remove the inactive ones
+                let j = dataLabels.length;
+                while (j--) {
+                    if (dataLabels[j].isActive) {
+                        dataLabels[j].isActive = false;
+                    } else {
+                        dataLabels[j].destroy();
+                        dataLabels.splice(j, 1);
+                    }
+                }
+
+                // Write back
+                point.dataLabel = dataLabels[0];
+                point.dataLabels = dataLabels;
             });
         }
 
