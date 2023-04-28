@@ -25,6 +25,7 @@ const chart = Highcharts.chart('container', {
         type: 'spline',
         marginTop: 70
     },
+    colors: ['#3d3f51', '#42858C', '#AD343E'],
     accessibility: {
         screenReaderSection: {
             axisRangeDateFormat: '%B %Y',
