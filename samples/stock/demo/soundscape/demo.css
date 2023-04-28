@@ -21,6 +21,7 @@ figure {
     display: flex;
     gap: 15px;
     flex-direction: column;
+    padding-top: 0.5rem;
 }
 
 #legend label {
