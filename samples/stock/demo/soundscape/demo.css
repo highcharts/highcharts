@@ -16,8 +16,7 @@ figure {
 
 #legend {
     max-width: 1300px;
-    margin: 0 auto;
-    margin-bottom: 40px;
+    margin: 5px auto 40px auto;
     display: flex;
     gap: 15px;
     flex-direction: column;
