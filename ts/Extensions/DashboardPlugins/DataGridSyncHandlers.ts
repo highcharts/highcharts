@@ -128,10 +128,12 @@ const configs: {
                 if (cursor) {
                     cursor.addListener(table.id, 'xAxis.extremes.min', (e): void => {
                         if (e.cursor.type === 'position' && this.dataGrid && e.cursors.length) {
-                            // Lasting cursor
+                            // Lasting cursor, so get last cursor
                             const lastCursor = e.cursors[e.cursors.length - 1];
-                            const { row } = lastCursor as any; // TODO: why Type no good?
-                            this.dataGrid.scrollToRow(row);
+                            if ('row' in lastCursor && typeof lastCursor.row === 'number') {
+                                const { row } = lastCursor;
+                                this.dataGrid.scrollToRow(row);
+                            }
                         }
                     });
                 }
