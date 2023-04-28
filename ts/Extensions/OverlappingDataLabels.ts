@@ -321,18 +321,20 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                 ]('highcharts-data-label-hidden');
                 complete = function (): void {
                     if (!chart.styledMode) {
-                        label.css({
-                            pointerEvents: newOpacity ? 'auto' : 'none'
-                        });
+                        const pointerEvents = newOpacity ? 'auto' : 'none';
+                        label.css({ pointerEvents });
+                        // For useHTML (#18821). Ideally, for a future
+                        // improvement, the HTMLRenderer should update the div
+                        // automatically. The html has logic to deal with the
+                        // pointer-events style initially on adding the element,
+                        // but not for updating dynamically. It has logic to
+                        // deal with updating opacity and visibility attributes,
+                        // but not the style counterparts.
+                        if (label.div) {
+                            label.div.style['pointer-events'] = pointerEvents;
+                        }
                     }
                 };
-
-                // Disable catching mouse events for html mode when hidden
-                // (#18821)
-                if (label.div) {
-                    label.div.style['pointer-events'] = newOpacity ?
-                        'auto' : 'none';
-                }
 
                 isLabelAffected = true;
 
