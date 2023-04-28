@@ -1297,7 +1297,7 @@ function getStyle(
     prop: string,
     toInt?: boolean
 ): (number|string|undefined) {
-    const customGetStyle: typeof getStyle = (H as any).getStyle;
+    const customGetStyle: typeof getStyle = (H as any).getStyle || getStyle;
 
     let style: (number|string|undefined);
 
