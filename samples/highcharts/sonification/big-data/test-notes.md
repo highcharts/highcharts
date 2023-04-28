@@ -1,1 +1,0 @@
-1. Click on series to sonify. Verify that the series plays the points without issues.

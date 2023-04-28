@@ -575,7 +575,7 @@ class Point {
         kinds = kinds || { graphic: 1, dataLabel: 1 };
 
         if (kinds.graphic) {
-            props.push('graphic', 'shadowGroup');
+            props.push('graphic');
         }
         if (kinds.dataLabel) {
             props.push(
@@ -827,19 +827,25 @@ class Point {
         chartCoordinates?: boolean,
         plotY: number|undefined = this.plotY
     ): [number, number]|undefined {
-        const { plotX, series } = this,
-            { chart, xAxis, yAxis } = series;
-        let posX = 0,
-            posY = 0;
-        if (isNumber(plotX) && isNumber(plotY)) {
-            if (chartCoordinates) {
-                posX = xAxis ? xAxis.pos : chart.plotLeft;
-                posY = yAxis ? yAxis.pos : chart.plotTop;
+
+        if (!this.destroyed) {
+            const { plotX, series } = this,
+                { chart, xAxis, yAxis } = series;
+
+            let posX = 0,
+                posY = 0;
+
+            if (isNumber(plotX) && isNumber(plotY)) {
+                if (chartCoordinates) {
+                    posX = xAxis ? xAxis.pos : chart.plotLeft;
+                    posY = yAxis ? yAxis.pos : chart.plotTop;
+                }
+                return chart.inverted && xAxis && yAxis ?
+                    [yAxis.len - plotY + posY, xAxis.len - plotX + posX] :
+                    [plotX + posX, plotY + posY];
             }
-            return chart.inverted && xAxis && yAxis ?
-                [yAxis.len - plotY + posY, xAxis.len - plotX + posX] :
-                [plotX + posX, plotY + posY];
         }
+
     }
 
     /**

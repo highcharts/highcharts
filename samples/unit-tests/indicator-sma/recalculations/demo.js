@@ -40,7 +40,11 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                     type: 'sma',
                     linkedTo: 'main'
                 }
-            ]
+            ],
+            scrollbar: {
+                buttonsEnabled: true,
+                height: 14
+            }
         }),
         pointsValue = [],
         secondChart,
@@ -192,6 +196,10 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         xAxis: {
             minRange: 1
         },
+        scrollbar: {
+            buttonsEnabled: true,
+            height: 14
+        },
         rangeSelector: {
             buttons: [{
                 type: 'hour',
@@ -342,6 +350,10 @@ QUnit.test('Order of series and indicators, #15892.', function (assert) {
     const chart = Highcharts.stockChart('container', {
         navigator: {
             enabled: false
+        },
+        scrollbar: {
+            buttonsEnabled: true,
+            height: 14
         },
         series: [{
             type: 'sma',

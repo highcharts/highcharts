@@ -27,10 +27,10 @@ QUnit.test('Reversed axis range(#1457)', function (assert) {
     });
 
     var point = chart.series[0].points[0];
-    assert.strictEqual(
-        parseInt(point.graphic.element.getAttribute('height'), 10) > 25,
-        true,
-        'First element has a height'
+    assert.greaterThan(
+        point.graphic.height,
+        25,
+        'First element should have a height'
     );
 
     assert.strictEqual(
@@ -74,10 +74,10 @@ QUnit.test('Reversed axis range - inverted', function (assert) {
     });
 
     var point = chart.series[0].points[0];
-    assert.strictEqual(
-        parseInt(point.graphic.element.getAttribute('height'), 10) > 25,
-        true,
-        'First element has a height'
+    assert.greaterThan(
+        point.graphic.height,
+        25,
+        'First element should have a height'
     );
 });
 

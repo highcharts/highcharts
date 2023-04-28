@@ -608,7 +608,7 @@ const initCanvasBoost = function (): void {
             }
 
             // Loop over the points
-            (H as any).eachAsync(sdata, function (d: any, i: number): boolean {
+            BoostSeries.eachAsync(sdata, function (d: any, i: number): boolean {
                 let x: number,
                     y: number,
                     clientX: number,

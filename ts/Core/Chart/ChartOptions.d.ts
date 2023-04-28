@@ -122,6 +122,7 @@ export interface ChartOptions {
     resetZoomButton?: ChartResetZoomButtonOptions;
     shadow?: (boolean|Partial<ShadowOptionsObject>);
     selectionMarkerFill?: ColorType;
+    seriesGroupShadow?: (boolean|Partial<ShadowOptionsObject>);
     showAxes?: boolean;
     spacing?: Array<number>;
     spacingBottom?: number;

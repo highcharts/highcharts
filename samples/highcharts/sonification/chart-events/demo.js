@@ -3,66 +3,49 @@ var chart = Highcharts.chart('container', {
         type: 'spline'
     },
     title: {
-        text: 'Sonify series in order'
+        text: 'Sonify series in order',
+        align: 'left',
+        margin: 25
     },
     subtitle: {
-        text: 'Earcons played on series begin and end'
+        text: 'Earcons/announcements played on begin/end events',
+        align: 'left'
     },
     sonification: {
-        duration: 7000,
-        defaultInstrumentOptions: {
-            minFrequency: 220,
-            maxFrequency: 2200,
-            mapping: {
-                duration: 200
-            }
-        },
+        duration: 7500,
         events: {
-            // Play a quick triangle tone on series start
-            onSeriesStart: function () {
-                (new Highcharts.sonification.Earcon({
-                    instruments: [{
-                        instrument: 'triangleMajor',
-                        playOptions: {
-                            // Play a quick rising frequency
-                            frequency: function (time) {
-                                return time * 1760 + 440;
-                            },
-                            volume: 0.3,
-                            duration: 120
-                        }
-                    }]
-                })).sonify();
+            // Speak series name on start
+            onSeriesStart: function (e) {
+                e.series.chart.sonification.speak(e.series.name, {
+                    rate: 2.5,
+                    volume: 0.3
+                });
             },
-            // Play a quick sawtooth tone on series end
-            onSeriesEnd: function () {
-                (new Highcharts.sonification.Earcon({
-                    instruments: [{
-                        instrument: 'sawtoothMajor',
-                        playOptions: {
-                            // Play a quick falling frequency
-                            frequency: function (time) {
-                                return (1 - time) * 1760;
-                            },
-                            volume: 0.3,
-                            duration: 120
-                        }
-                    }]
-                })).sonify();
+            // Play a noise on series end
+            onSeriesEnd: function (e) {
+                e.series.chart.sonification.playNote('chop', {
+                    note: 0,
+                    pan: 1,
+                    volume: 1.2
+                }, 80);
             },
-            // Play a low tone on chart end
-            onEnd: function () {
-                (new Highcharts.sonification.Earcon({
-                    instruments: [{
-                        instrument: 'squareMajor',
-                        playOptions: {
-                            // Play a longer low frequency
-                            frequency: 55,
-                            volume: 0.2,
-                            duration: 320
-                        }
-                    }]
-                })).sonify();
+            // Play notes and then announce end
+            onEnd: function (e) {
+                var playNote = function (note, time) {
+                    e.chart.sonification.playNote('vibraphone', {
+                        note: note,
+                        noteDuration: 400,
+                        pan: 0,
+                        volume: 0.4
+                    }, time);
+                };
+                playNote('c6', 40);
+                playNote('g6', 200);
+
+                e.chart.sonification.speak('End', {
+                    rate: 2,
+                    volume: 0.3
+                }, 400);
             }
         }
     },
@@ -77,5 +60,5 @@ var chart = Highcharts.chart('container', {
 
 
 document.getElementById('sonify').onclick = function () {
-    chart.sonify();
+    chart.toggleSonify();
 };

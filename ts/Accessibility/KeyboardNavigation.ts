@@ -260,14 +260,18 @@ class KeyboardNavigation {
      * @param {global.FocusEvent} e Browser focus event.
      */
     private onFocus(e: FocusEvent): void {
-        const chart = this.chart;
-        const focusComesFromChart = (
-            e.relatedTarget &&
-            chart.container.contains(e.relatedTarget as any)
-        );
+        const chart = this.chart,
+            focusComesFromChart = (
+                e.relatedTarget &&
+                chart.container.contains(e.relatedTarget as any)
+            ),
+            a11yOptions = chart.options.accessibility,
+            keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
+            enabled = keyboardOptions && keyboardOptions.enabled;
 
         // Init keyboard nav if tabbing into chart
         if (
+            enabled &&
             !this.exiting &&
             !this.tabbingInBackwards &&
             !this.isClickingChart &&

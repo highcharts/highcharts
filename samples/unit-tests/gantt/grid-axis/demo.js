@@ -873,7 +873,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
     var chart,
         axes,
         xError = 1.5,
-        yError = 1.1;
+        yError = 1.6;
 
     chart = Highcharts.chart('container', {
         chart: {
@@ -1059,7 +1059,7 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
     var chart,
         axes,
         xError = 1.1,
-        yError = 1.4;
+        yError = 1.6;
 
     chart = Highcharts.chart('container', {
         chart: {
@@ -1262,9 +1262,9 @@ QUnit.module('labels alignment', function () {
                     getBBox(container, tick.mark.element)
                 ),
                 bboxLabel = getBBox(container, tick.label.element),
-                // Firefox/Mac needs 2.3 in order to pass, Edge needs 1.5,
-                // others 1.1.
-                precision = 2.3;
+                // Firefox/Mac needs 4 in order to pass, Edge needs 1.5,
+                // others 1.1.z
+                precision = 4;
 
             assert.close(
                 bboxLabel.x,

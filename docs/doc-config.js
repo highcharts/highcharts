@@ -25,6 +25,7 @@ module.exports = {
         { from: 'chart-and-series-types/packed-bubble-charts', to: 'chart-and-series-types/packed-bubble' },
         { from: 'chart-concepts/navigator', to: 'stock/navigator' },
         { from: 'chart-concepts/range-selector', to: 'stock/range-selector' },
-        { from: 'chart-concepts/accessibility', to: 'accessibility/accessibility-module' }
+        { from: 'chart-concepts/accessibility', to: 'accessibility/accessibility-module' },
+        { from: 'accessibility/sonification', to: 'sonification/getting-started' }
     ]
 };

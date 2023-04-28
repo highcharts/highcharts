@@ -38,9 +38,24 @@ function rescalePatternFill(
         const patternPath =
             document.querySelector(`${match[1]} path`) as unknown as SVGElement;
         if (patternPath) {
-            const bBox = patternPath.getBBox();
-            let scaleX = 1 / (bBox.width + borderWidth),
-                scaleY = stackHeight / height / bBox.height,
+            let bBox = patternPath.getBBox();
+
+            // Firefox (v108/Mac) is unable to detect the bounding box within
+            // defs. Without this block, the pictorial is not rendered.
+            if (bBox.width === 0) {
+                const parent = patternPath.parentElement;
+
+                // Temporarily append it to the root
+                element.renderer.box.appendChild(
+                    patternPath as unknown as Element
+                );
+                bBox = patternPath.getBBox();
+                parent.appendChild(patternPath);
+            }
+
+            let scaleX = 1 / (bBox.width + borderWidth);
+
+            const scaleY = stackHeight / height / bBox.height,
                 aspectRatio = bBox.width / bBox.height,
                 pointAspectRatio = width / stackHeight,
                 x = -bBox.width / 2;
