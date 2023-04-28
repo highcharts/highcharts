@@ -82,7 +82,7 @@ jobs:
       - run:
           name: Scan ts-folder
           command: |
-            semgrep ci --config "auto" --config "p/cwe-top-25" --config "p/owasp-top-ten" --config "p/secrets" --config "p/gitleaks" --max-target-bytes 2000000 ts/
+            semgrep $EXTENDED_CONF --max-target-bytes 2000000 ts/
 
   checkout_and_install:
     <<: *defaults
