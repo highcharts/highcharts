@@ -1,22 +1,22 @@
 :root {
     --color-background: #fff;
-    --color-foreground: #000;
     --color-tbody-background: #eee;
+    --color-text: #000;
     --color-thead-background: #ddd;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
         --color-background: #111;
-        --color-foreground: #eee;
         --color-tbody-background: #222;
+        --color-text: #eee;
         --color-thead-background: #333;
     }
 }
 
 html {
     background-color: var(--color-background);
-    color: var(--color-foreground);
+    color: var(--color-text);
 }
 
 fieldset {
