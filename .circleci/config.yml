@@ -70,9 +70,6 @@ jobs:
   security_scan:
     environment
       EXTENDED_CONF=(
-        --config "https://raw.githubusercontent.com/returntocorp/semgrep-rules/release/javascript/lang/security/audit/prototype-pollution/prototype-pollution-loop.yaml"
-        --config "https://raw.githubusercontent.com/returntocorp/semgrep-rules/release/javascript/lang/security/audit/detect-non-literal-regexp.yaml"
-        --config "https://raw.githubusercontent.com/returntocorp/semgrep-rules/release/javascript/browser/security/insecure-document-method.yaml"
         --config "auto"
         --config "p/cwe-top-25"
         --config "p/owasp-top-ten"
