@@ -51,7 +51,7 @@ declare module '../../Core/Chart/ChartLike' {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -107,9 +107,7 @@ class Fullscreen {
         ChartClass: typeof Chart
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             // Initialize fullscreen
             addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
         }
@@ -317,7 +315,6 @@ class Fullscreen {
                 ]();
 
                 if (promise) {
-                    // No dot notation because of IE8 compatibility
                     promise['catch'](function (): void { // eslint-disable-line dot-notation
                         alert( // eslint-disable-line no-alert
                             'Full screen is not supported inside a frame.'

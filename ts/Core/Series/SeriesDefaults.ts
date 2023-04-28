@@ -62,10 +62,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         On one single series
      *
      * @product highcharts highstock
-     *
-     * @private
      */
-    lineWidth: 2,
+    lineWidth: 1,
 
     /**
      * For some series, there is a limit that shuts down animation
@@ -262,8 +260,11 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Styled mode only. A specific color index to use for the series, so its
      * graphic representations are given the class name `highcharts-color-{n}`.
      *
-     * @sample    {highcharts} highcharts/css/colorindex/
-     *            Series and point color index
+     * Since v11, CSS variables on the form `--highcharts-color-{n}` make
+     * changing the color scheme very convenient.
+     *
+     * @sample    {highcharts} highcharts/css/colorindex/ Series and point color
+     *            index
      *
      * @type      {number}
      * @since     5.0.0
@@ -274,6 +275,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     /**
      * Whether to connect a graph line across null points, or render a gap
      * between the two points on either side of the null.
+     *
+     * In stacked area chart, if `connectNulls` is set to true,
+     * null points are interpreted as 0.
      *
      * @sample {highcharts} highcharts/plotoptions/series-connectnulls-false/
      *         False by default
@@ -706,6 +710,11 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Whether to apply a drop shadow to the graph line. Since 2.3 the
      * shadow can be an object configuration containing `color`, `offsetX`,
      * `offsetY`, `opacity` and `width`.
+     *
+     * Note that in some cases, like stacked columns or other dense layouts, the
+     * series may cast shadows on each other. In that case, the
+     * `chart.seriesGroupShadow` allows applying a common drop shadow to the
+     * whole series group.
      *
      * @sample {highcharts} highcharts/plotoptions/series-shadow/
      *         Shadow enabled
@@ -1169,7 +1178,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  */
                 animation: {
                     /** @internal */
-                    duration: 50
+                    duration: 150
                 },
 
                 /**
@@ -1653,13 +1662,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * series animation has finished. Setting to `false` renders the
          * data label immediately. If set to `true` inherits the defer
          * time set in [plotOptions.series.animation](#plotOptions.series.animation).
-         * If set to a number, a defer time is specified in milliseconds.
-         *
-         * @sample highcharts/plotoptions/animation-defer
-         *         Set defer time
          *
          * @since     4.0.0
-         * @type      {boolean|number}
+         * @type      {boolean}
          * @product   highcharts highstock gantt
          */
         defer: true,
@@ -1917,7 +1922,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
         style: {
             /** @internal */
-            fontSize: '11px',
+            fontSize: '0.7em',
             /** @internal */
             fontWeight: 'bold',
             /** @internal */
@@ -2130,7 +2135,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @internal
                  */
-                duration: 50
+                duration: 150
             },
 
             /**
@@ -2283,7 +2288,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              */
             animation: {
                 /** @internal */
-                duration: 50
+                duration: 150
             },
             /**
              * Opacity of series elements (dataLabels, line, area).
@@ -2503,6 +2508,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @private
      */
     findNearestPointBy: 'x'
+
+    /**
+     * What type of legend symbol to render for this series.
+     *
+     * @validvalue ["lineMarker", "rectangle"]
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol/
+     *         Change the legend symbol
+     */
 
 };
 

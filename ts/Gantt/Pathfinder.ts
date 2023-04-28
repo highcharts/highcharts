@@ -212,7 +212,6 @@ declare global {
 ''; // detach doclets above
 
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
-import '../Extensions/ArrowSymbols.js';
 
 const max = Math.max,
     min = Math.min;

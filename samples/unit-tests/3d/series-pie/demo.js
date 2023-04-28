@@ -487,7 +487,7 @@ QUnit.test('#13804: Inactive tab animation threw', assert => {
 QUnit.test('Pie 3d interations (clicks, hovers etc.)', assert => {
     let clicks = 0;
 
-    const chart = new Highcharts.chart('container', {
+    const chart = new Highcharts.Chart('container', {
             chart: {
                 type: 'pie',
                 options3d: {

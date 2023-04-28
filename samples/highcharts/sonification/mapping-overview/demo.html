@@ -1,0 +1,59 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<div id="block">
+    <fieldset>
+        <legend>Select how to map the Y-values to sound:</legend>
+        <div class="mapping-option">
+            <input type="radio" id="pitch" name="mapping" value="pitch" checked>
+            <label for="pitch">Pitch</label>
+        </div>
+        <div class="mapping-option">
+            <input type="radio" id="frequency" name="mapping" value="frequency">
+            <label for="frequency">Frequency</label>
+        </div>
+        <div class="mapping-option">
+            <input type="radio" id="volume" name="mapping" value="volume">
+            <label for="volume">Volume</label>
+        </div>
+        <div class="mapping-option">
+            <input type="radio" id="pan" name="mapping" value="pan">
+            <label for="pan">Stereo pan</label>
+        </div>
+        <div class="mapping-option">
+            <input type="radio" id="tremolo" name="mapping" value="tremolo">
+            <label for="tremolo">Tremolo</label>
+        </div>
+        <div class="mapping-option">
+            <input type="radio" id="lowpass" name="mapping" value="lowpass">
+            <label for="lowpass">Lowpass</label>
+        </div>
+        <div class="mapping-option">
+            <input type="radio" id="highpass" name="mapping" value="highpass">
+            <label for="highpass">Highpass</label>
+        </div>
+        <div class="mapping-option">
+            <input type="radio" id="noteDuration" name="mapping" value="noteDuration">
+            <label for="noteDuration">Note duration</label>
+        </div>
+        <div class="mapping-option">
+            <input type="radio" id="noteGap" name="mapping" value="gapBetweenNotes">
+            <label for="noteGap">Note gap</label>
+        </div>
+    </fieldset>
+
+    <div id="help">
+        <h2>Mapping notes:</h2>
+        <p id="helptext"></p>
+    </div>
+
+    <button id="play">
+        <span class="icon" aria-hidden="true">♬</span>
+        Play chart
+    </button>
+
+    <figure class="highcharts-figure">
+        <div id="container"></div>
+    </figure>
+</div>

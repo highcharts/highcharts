@@ -316,16 +316,16 @@ class ItemSeries extends PieSeries {
                     if (typeof r !== 'undefined') {
                         attr.r = r;
                     }
+                    // Circles attributes update (#17257)
+                    if (pointAttr) {
+                        extend(attr, pointAttr);
+                    }
 
                     let graphic = graphics[val];
 
                     if (graphic) {
                         graphic.animate(attr);
                     } else {
-                        if (pointAttr) {
-                            extend(attr, pointAttr);
-                        }
-
                         graphic = renderer
                             .symbol(
                                 symbol,

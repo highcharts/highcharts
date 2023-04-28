@@ -29,6 +29,7 @@ import type {
 import type EventCallback from '../../../Core/EventCallback';
 import type FontMetricsObject from '../FontMetricsObject';
 import type PositionObject from '../PositionObject';
+import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRendererLike from './SVGRendererLike';
@@ -95,8 +96,7 @@ let hasInternalReferenceBug: (boolean|undefined);
  * Allows direct access to the Highcharts rendering layer in order to draw
  * primitive shapes like circles, rectangles, paths or text directly on a chart,
  * or independent from any chart. The SVGRenderer represents a wrapper object
- * for SVG in modern browsers. Through the VMLRenderer, part of the `oldie.js`
- * module, it also brings vector graphics to IE <= 8.
+ * for SVG in modern browsers.
  *
  * An existing chart's renderer can be accessed through {@link Chart.renderer}.
  * The renderer can also be used completely decoupled from a chart.
@@ -210,7 +210,7 @@ class SVGRenderer implements SVGRendererLike {
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
-    public isSVG: boolean = void 0 as any;
+    public rootFontSize: string|undefined;
     public style: CSSObject = void 0 as any;
     public styledMode?: boolean;
     public unSubPixelFix?: Function;
@@ -294,9 +294,6 @@ class SVGRenderer implements SVGRendererLike {
             attr(element, 'xmlns', this.SVG_NS);
         }
 
-        // object properties
-        renderer.isSVG = true;
-
         this.box = element as any;
         this.boxWrapper = boxWrapper;
         renderer.alignedObjects = [];
@@ -318,9 +315,9 @@ class SVGRenderer implements SVGRendererLike {
         renderer.cache = {}; // Cache for numerical bounding boxes
         renderer.cacheKeys = [];
         renderer.imgCount = 0;
+        renderer.rootFontSize = boxWrapper.getStyle('font-size');
 
         renderer.setSize(width, height, false);
-
 
         // Issue 110 workaround:
         // In Firefox, if a div is positioned by percentage, its pixel position
@@ -482,9 +479,8 @@ class SVGRenderer implements SVGRendererLike {
     public getStyle(style: CSSObject): CSSObject {
         this.style = extend<CSSObject>({
 
-            fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
-                'Arial, Helvetica, sans-serif',
-            fontSize: '12px'
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontSize: '1rem'
 
         }, style);
         return this.style;
@@ -536,11 +532,8 @@ class SVGRenderer implements SVGRendererLike {
         destroyObjectProperties(renderer.gradients || {});
         renderer.gradients = null as any;
 
-        // Defs are null in VMLRenderer
-        // Otherwise, destroy them here.
-        if (rendererDefs) {
-            renderer.defs = rendererDefs.destroy() as any;
-        }
+
+        renderer.defs = rendererDefs.destroy() as any;
 
         // Remove sub pixel fix handler (#982)
         if (renderer.unSubPixelFix) {
@@ -592,6 +585,58 @@ class SVGRenderer implements SVGRendererLike {
                 (gradAttr.cy || 0) * radialReference[2],
             r: (gradAttr.r || 0) * radialReference[2]
         };
+    }
+
+    /**
+     * Create a drop shadow definition and return its id
+     *
+     * @private
+     * @function Highcharts.SVGRenderer#shadowDefinition
+     *
+     * @param {boolean|Highcharts.ShadowOptionsObject} [shadowOptions] The
+     *        shadow options. If `true`, the default options are applied
+     */
+    public shadowDefinition(
+        shadowOptions: Partial<ShadowOptionsObject>
+    ): string {
+        const
+            id = [
+                'drop-shadow',
+                ...Object.keys(shadowOptions)
+                    .map((key: string): number|string =>
+                        (shadowOptions as any)[key]
+                    )
+            ].join('-').replace(/[^a-z0-9\-]/g, ''),
+            options: ShadowOptionsObject = merge({
+                color: '#000000',
+                offsetX: 1,
+                offsetY: 1,
+                opacity: 0.15,
+                width: 5
+            }, shadowOptions);
+
+        if (!this.defs.element.querySelector(`#${id}`)) {
+            this.definition({
+                tagName: 'filter',
+                attributes: {
+                    id
+                },
+                children: [{
+                    tagName: 'feDropShadow',
+                    attributes: {
+                        dx: options.offsetX,
+                        dy: options.offsetY,
+                        'flood-color': options.color,
+                        // Tuned and modified to keep a preserve compatibility
+                        // with the old settings
+                        'flood-opacity': Math.min(options.opacity * 5, 1),
+                        stdDeviation: options.width / 2
+                    }
+                }]
+            });
+        }
+
+        return id;
     }
 
     /**
@@ -712,6 +757,7 @@ class SVGRenderer implements SVGRendererLike {
         const normalStyle = merge({
             color: Palette.neutralColor80,
             cursor: 'pointer',
+            fontSize: '0.8em',
             fontWeight: 'normal'
         }, theme.style);
         delete theme.style;
@@ -1124,33 +1170,27 @@ class SVGRenderer implements SVGRendererLike {
         strokeWidth?: number
     ): SVGElement {
 
-        r = isObject(x) ? (x as any).r : r;
-
-        const wrapper = this.createElement('rect');
-
-        let attribs = (
-            isObject(x) ?
-                x as SVGAttributes :
-                typeof x === 'undefined' ?
-                    {} :
-                    {
-                        x: x,
-                        y: y,
-                        width: Math.max(width as any, 0),
-                        height: Math.max(height as any, 0)
-                    }
-        );
+        const attribs = (
+                isObject(x) ?
+                    x :
+                    typeof x === 'undefined' ?
+                        {} :
+                        {
+                            x,
+                            y,
+                            r,
+                            width: Math.max(width || 0, 0),
+                            height: Math.max(height || 0, 0)
+                        }
+            ),
+            wrapper = this.createElement('rect');
 
         if (!this.styledMode) {
             if (typeof strokeWidth !== 'undefined') {
                 attribs['stroke-width'] = strokeWidth;
-                attribs = wrapper.crisp(attribs as any);
+                extend(attribs, wrapper.crisp(attribs as any));
             }
             attribs.fill = 'none';
-        }
-
-        if (r) {
-            attribs.r = r;
         }
 
         wrapper.rSetter = function (
@@ -1169,6 +1209,22 @@ class SVGRenderer implements SVGRendererLike {
         };
 
         return wrapper.attr(attribs);
+    }
+
+    /**
+     * Draw and return a rectangle with advanced corner rounding options.
+     *
+     * @function Highcharts.SVGRenderer#roundedRect
+     *
+     * @param {Highcharts.SVGAttributes} attribs
+     *      Attributes
+     * @return {Highcharts.SVGElement}
+     * The generated wrapper element.
+     */
+    public roundedRect(
+        attribs?: SVGAttributes
+    ): SVGElement {
+        return this.symbol('roundedRect').attr(attribs);
     }
 
     /**
@@ -1497,8 +1553,8 @@ class SVGRenderer implements SVGRendererLike {
 
                         if (!alignByTranslate) {
                             this.translate(
-                                ((width || 0) - (imgSize * scale)) / 2,
-                                ((height || 0) - (imgSize * scale)) / 2
+                                ((width || 0) - (imgwidth * scale)) / 2,
+                                ((height || 0) - (imgheight * scale)) / 2
                             );
                         }
                     }
@@ -1715,57 +1771,33 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @function Highcharts.SVGRenderer#fontMetrics
      *
-     * @param {number|string} [fontSize]
-     *        The current font size to inspect. If not given, the font size
-     *        will be found from the DOM element.
-     *
-     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement} [elem]
-     *        The element to inspect for a current font size.
+     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number} [element]
+     *        The element to inspect for a current font size. If a number is
+     *        given, it's used as a fall back for direct font size in pixels.
      *
      * @return {Highcharts.FontMetricsObject}
      *         The font metrics.
      */
     public fontMetrics(
-        fontSize?: (number|string),
-        elem?: (DOMElementType|SVGElement)
+        element: (DOMElementType|SVGElement)
     ): FontMetricsObject {
-        if (
-            (this.styledMode || !/px/.test(fontSize as any)) &&
-            (win.getComputedStyle) // old IE doesn't support it
-        ) {
-            fontSize = elem && SVGElement.prototype.getStyle.call(
-                elem,
-                'font-size'
-            );
-        } else {
-            fontSize = fontSize ||
-                // When the elem is a DOM element (#5932)
-                (elem && elem.style && elem.style.fontSize) ||
-                // Fall back on the renderer style default
-                (this.style && this.style.fontSize);
-        }
-
-        // Handle different units
-        if (/px/.test(fontSize as any)) {
-            fontSize = pInt(fontSize);
-        } else {
-            fontSize = 12;
-        }
+        const f = pInt(
+            SVGElement.prototype.getStyle.call(element, 'font-size') || 0
+        );
 
         // Empirical values found by comparing font size and bounding box
         // height. Applies to the default font family.
         // https://jsfiddle.net/highcharts/7xvn7/
-        const lineHeight = (
-                fontSize < 24 ?
-                    fontSize + 3 :
-                    Math.round(fontSize * 1.2)
-            ),
-            baseline = Math.round(lineHeight * 0.8);
+        const h = f < 24 ? f + 3 : Math.round(f * 1.2),
+            b = Math.round(h * 0.8);
 
         return {
-            h: lineHeight,
-            b: baseline,
-            f: fontSize
+            // Line height
+            h,
+            // Baseline
+            b,
+            // Font size
+            f
         };
     }
 
@@ -2139,8 +2171,7 @@ interface SVGRenderer extends SVGRendererLike {
 extend(SVGRenderer.prototype, {
 
     /**
-     * A pointer to the renderer's associated Element class. The VMLRenderer
-     * will have a pointer to VMLElement here.
+     * A pointer to the renderer's associated Element class.
      *
      * @name Highcharts.SVGRenderer#Element
      * @type {Highcharts.SVGElement}

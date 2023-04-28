@@ -8,8 +8,10 @@ QUnit.test('InvertModifier.modify', function (assert) {
 
     modifier
         .modify(new DataTable({
-            x: [ 0, 1, 2, 3, 4 ],
-            y: [ 'a', 'b', 'c', 'd', 'e' ]
+            columns: {
+                x: [ 0, 1, 2, 3, 4 ],
+                y: [ 'a', 'b', 'c', 'd', 'e' ]
+            }
         }))
         .then((table) => {
 
@@ -58,8 +60,10 @@ QUnit.test('InvertModifier.modifyCell', function (assert) {
     const done = assert.async(),
         modifier = new InvertModifier(),
         table = new DataTable({
-            x: [4, 3, 2, 1, 0],
-            y: ['a', 'b', 'c', 'd', 'e']
+            columns: {
+                x: [4, 3, 2, 1, 0],
+                y: ['a', 'b', 'c', 'd', 'e']
+            }
         });
 
     table
@@ -107,8 +111,10 @@ QUnit.test('InvertModifier.modifyColumns', function (assert) {
     const done = assert.async(),
         modifier = new InvertModifier(),
         table = new DataTable({
-            x: [4, 3, 2, 1, 0],
-            y: ['a', 'b', 'c', 'd', 'e']
+            columns: {
+                x: [4, 3, 2, 1, 0],
+                y: ['a', 'b', 'c', 'd', 'e']
+            }
         });
 
     table
@@ -160,8 +166,10 @@ QUnit.test('InvertModifier.modifyRows', function (assert) {
     const done = assert.async(),
         modifier = new InvertModifier(),
         table = new DataTable({
-            x: [4, 3, 2, 1, 0],
-            y: ['a', 'b', 'c', 'd', 'e']
+            columns: {
+                x: [4, 3, 2, 1, 0],
+                y: ['a', 'b', 'c', 'd', 'e']
+            }
         });
 
     table

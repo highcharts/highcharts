@@ -458,7 +458,7 @@ const clusterDefaultOptions = {
          *         Custom algorithm
          *
          * @type {string|Function}
-         * @see [cluster.minimumClusterSize](#plotOptions.scatter.marker.cluster.minimumClusterSize)
+         * @see [cluster.minimumClusterSize](#plotOptions.scatter.cluster.minimumClusterSize)
          * @apioption plotOptions.scatter.cluster.layoutAlgorithm.type
          */
         /**
@@ -498,9 +498,9 @@ const clusterDefaultOptions = {
     },
     /**
      * Options for the cluster marker.
+     * @type      {Highcharts.PointMarkerOptionsObject}
      * @extends   plotOptions.series.marker
      * @excluding enabledThreshold, states
-     * @type      {Highcharts.PointMarkerOptionsObject}
      */
     marker: {
         /** @internal */
@@ -520,7 +520,7 @@ const clusterDefaultOptions = {
      *
      * @type      {Highcharts.MarkerClusterDrillCallbackFunction}
      * @product   highcharts highmaps
-     * @see [cluster.drillToCluster](#plotOptions.scatter.marker.cluster.drillToCluster)
+     * @see [cluster.drillToCluster](#plotOptions.scatter.cluster.drillToCluster)
      * @apioption plotOptions.scatter.cluster.events.drillToCluster
      */
 

@@ -1,6 +1,6 @@
 Treegraph chart
 ===
-A Tree graph is a way of visualizing a tree or hierarchy data structure. You can read more about this data scructure [on Wikipedia](https://en.wikipedia.org/wiki/Tree_(data_structure)). The best examples of a tree data structure are: 
+A Tree graph is a way of visualizing a tree or hierarchy data structure. You can read more about this data scructure [on Wikipedia](https://en.wikipedia.org/wiki/Tree_(data_structure)). The best examples of a tree data structure are:
 
 * genealogy trees
 * directories in computer science
@@ -32,7 +32,7 @@ The following is an example of how the tree is built in Highcharts:
 
 ### Algorithms
 
-Algorithms decide the positoning of the points. Currently there is one algorithm available, which is the [Walker](http://dirk.jivas.de/papers/buchheim02improving.pdf) algorithm for calculating the nodes position in the tree graph.
+Algorithms decide the positoning of the points. Currently there is one algorithm available, which is the [Walker](https://link.springer.com/chapter/10.1007/3-540-36151-0_32) algorithm for calculating the nodes position in the tree graph.
 
 API options
 -----------
@@ -85,8 +85,8 @@ For an overview over the options for the treegraph, see the [API](https://api.h
 
 ### More demos
 
-*   [Phylogenetic Treegraph](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treegraph-phylogenetic)
+*   [Phylogenetic Treegraph](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treegraph-chart)
 *   [Treegraph chart with different link types](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/link-types)
 *   [Treegraph chart with text path on dataLabels for links](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/link-text-path)
 *   [Treegraph chart with different node level for nodes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/node-level)
-*   [Treegraph chart with reversed order of nodes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/reversed)
+*   [Inverted treegraph](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treegraph-inverted)

@@ -41,7 +41,6 @@ const { parse: color } = Color;
 import ColorMapComposition from '../ColorMapComposition.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -594,7 +593,9 @@ class TreemapSeries extends ScatterSeries {
                  */
                 shadow: false
             }
-        }
+        },
+
+        legendSymbol: 'rectangle'
     } as TreemapSeriesOptions);
 
     /* *
@@ -1927,7 +1928,6 @@ interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series
     colorAttribs: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getExtremesFromAll: boolean;
     optionalAxis: string;
     parallelArrays: Array<string>;
@@ -1944,7 +1944,6 @@ extend(TreemapSeries.prototype, {
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
     colorKey: 'colorValue', // Point color option key
     directTouch: true,
-    drawLegendSymbol: LegendSymbol.drawRectangle,
     getExtremesFromAll: true,
     getSymbol: noop,
     optionalAxis: 'colorAxis',

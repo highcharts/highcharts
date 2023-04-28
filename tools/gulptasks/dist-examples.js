@@ -76,6 +76,13 @@ function indexTemplate(options) {
                 padding-left: 1.25em;
                 font-size: 1.15em;
             }
+            li button.sidebar-category {
+                border: none;
+                background: none;
+                padding: 0;
+                margin: 1rem 0 0.5rem 0;
+                font-size: 1.4rem;
+            }
             li a {
                 text-decoration: none;
                 color: #6065c8;

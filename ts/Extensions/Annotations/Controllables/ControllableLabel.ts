@@ -16,9 +16,9 @@ import type { AlignObject } from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotation';
 import type AnnotationChart from '../AnnotationChart';
 import type { AnnotationPointType } from '../AnnotationSeries';
-import type { ControllableAnchorObject } from './Controllable';
 import type BBoxObject from '../../../Core/Renderer/BBoxObject';
 import type { ControllableLabelOptions } from './ControllableOptions';
+import type ControlTarget from '../ControlTarget';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
@@ -30,7 +30,6 @@ import Controllable from './Controllable.js';
 import F from '../../../Core/FormatUtilities.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
-import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -62,7 +61,7 @@ interface ControllableAlignObject extends AlignObject {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -232,9 +231,7 @@ class ControllableLabel extends Controllable {
         SVGRendererClass: typeof SVGRenderer
     ): void {
 
-        if (composedClasses.indexOf(SVGRendererClass) === -1) {
-            composedClasses.push(SVGRendererClass);
-
+        if (U.pushUnique(composedMembers, SVGRendererClass)) {
             const svgRendererProto = SVGRendererClass.prototype;
 
             svgRendererProto.symbols.connector = symbolConnector;
@@ -480,7 +477,7 @@ class ControllableLabel extends Controllable {
      */
     public anchor(
         _point: AnnotationPointType
-    ): ControllableAnchorObject {
+    ): ControlTarget.Anchor {
         const anchor = super.anchor.apply(this, arguments),
             x = this.options.x || 0,
             y = this.options.y || 0;
@@ -498,10 +495,11 @@ class ControllableLabel extends Controllable {
      * Returns the label position relative to its anchor.
      */
     public position(
-        anchor: ControllableAnchorObject
+        anchor: ControlTarget.Anchor
     ): (PositionObject|null|undefined) {
         const item = this.graphic,
             chart = this.annotation.chart,
+            tooltip = chart.tooltip,
             point = this.points[0],
             itemOptions = this.options,
             anchorAbsolutePosition = anchor.absolutePosition,
@@ -519,11 +517,12 @@ class ControllableLabel extends Controllable {
         if (item && showItem) {
             const { width = 0, height = 0 } = item;
 
-            if (itemOptions.distance) {
-                itemPosition = Tooltip.prototype.getPosition.call(
+            if (itemOptions.distance && tooltip) {
+                itemPosition = tooltip.getPosition.call(
                     {
-                        chart: chart,
-                        distance: pick(itemOptions.distance, 16)
+                        chart,
+                        distance: pick(itemOptions.distance, 16),
+                        getPlayingField: tooltip.getPlayingField
                     },
                     width,
                     height,

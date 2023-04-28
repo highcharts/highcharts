@@ -15,6 +15,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import ColorType from '../Core/Color/ColorType';
+import type Point from '../Core/Series/Point';
 const {
     addEvent,
     isArray,
@@ -308,7 +309,6 @@ declare global {
 addEvent(Series, 'afterRender', function (): void {
     const series = this,
         seriesOptions = series.options,
-        pointRange = seriesOptions.pointRange,
         lastVisiblePrice = seriesOptions.lastVisiblePrice,
         lastPrice = seriesOptions.lastPrice;
 
@@ -326,9 +326,7 @@ addEvent(Series, 'afterRender', function (): void {
             pLength = points.length,
             x = (series.xData as any)[(series.xData as any).length - 1],
             y = (series.yData as any)[yLength - 1],
-            lastPoint,
-            yValue,
-            crop;
+            yValue;
 
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
@@ -372,14 +370,13 @@ addEvent(Series, 'afterRender', function (): void {
         }
 
         if (lastVisiblePrice && lastVisiblePrice.enabled && pLength > 0) {
-            crop = (points[pLength - 1].x === x) || pointRange === null ? 1 : 2;
-
             yAxis.crosshair = yAxis.options.crosshair = merge({
                 color: 'transparent' // line invisible by default
             }, seriesOptions.lastVisiblePrice);
 
             yAxis.cross = series.lastVisiblePrice;
-            lastPoint = points[pLength - crop];
+            const lastPoint = points[pLength - 1].isInside ?
+                points[pLength - 1] : points[pLength - 2];
 
             if (series.lastVisiblePriceLabel) {
                 series.lastVisiblePriceLabel.destroy();
@@ -394,7 +391,7 @@ addEvent(Series, 'afterRender', function (): void {
 
             if (yAxis.cross) {
                 series.lastVisiblePrice = yAxis.cross;
-                if (typeof lastPoint.y === 'number') {
+                if (lastPoint && typeof lastPoint.y === 'number') {
                     series.lastVisiblePrice.y = lastPoint.y;
                 }
             }

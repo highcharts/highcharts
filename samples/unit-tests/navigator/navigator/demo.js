@@ -316,9 +316,10 @@ QUnit.test('General Navigator tests', function (assert) {
     });
 
     chart.setSize(400, 500);
-    assert.strictEqual(
+    assert.close(
         chart.navigator.xAxis.top,
         chart.navigator.navigatorGroup.getBBox().y,
+        1, // Crisping
         'Navigator position should be updated when scrollbar ' +
             'disabled and navigator.baseSeries not set (#13114).'
     );
@@ -646,6 +647,10 @@ QUnit.test('Add point and disabled navigator (#3452)', function (assert) {
 
         exporting: {
             enabled: false
+        },
+
+        scrollbar: {
+            buttonsEnabled: true
         },
 
         series: [

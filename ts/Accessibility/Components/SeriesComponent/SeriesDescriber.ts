@@ -262,8 +262,8 @@ function shouldDescribeSeriesElement(
  */
 function pointNumberToString(
     point: Accessibility.PointComposition,
-    value: number
-): string {
+    value: number|undefined
+): string|undefined {
     const series = point.series,
         chart = series.chart,
         a11yPointOptions = chart.options.accessibility.point || {},
@@ -386,17 +386,22 @@ function getPointArrayMapValueDescription(
 ): string {
     const pre = prefix || '',
         suf = suffix || '',
-        keyToValStr = function (key: string): string {
+        keyToValStr = function (key: string): string|undefined {
             const num = pointNumberToString(
                 point,
                 pick((point as any)[key], (point.options as any)[key])
             );
-            return key + ': ' + pre + num + suf;
+            return num !== void 0 ?
+                key + ': ' + pre + num + suf :
+                num;
         },
         pointArrayMap: Array<string> = point.series.pointArrayMap as any;
 
     return pointArrayMap.reduce(function (desc: string, key: string): string {
-        return desc + (desc.length ? ', ' : '') + keyToValStr(key);
+        const propDesc = keyToValStr(key);
+        return propDesc ?
+            (desc + (desc.length ? ', ' : '') + propDesc) :
+            desc;
     }, '');
 }
 
@@ -483,7 +488,7 @@ function getPointValueDescription(
             series.xAxis &&
             series.xAxis.options.accessibility &&
             series.xAxis.options.accessibility.enabled,
-            !chart.angular
+            !chart.angular && series.type !== 'flowmap'
         ),
         xDesc = showXDescription ? getPointXDescription(point) : '',
         context = {
@@ -634,7 +639,12 @@ function defaultSeriesDescriptionFormatter(
         ) + (
             shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo + '.' : ''
         ),
-        formatStr = chart.options.accessibility.series.descriptionFormat || '';
+        formatStr = pick(
+            series.options.accessibility &&
+                series.options.accessibility.descriptionFormat,
+            chart.options.accessibility.series.descriptionFormat,
+            ''
+        );
 
     return format(formatStr, {
         seriesDescription: summary,

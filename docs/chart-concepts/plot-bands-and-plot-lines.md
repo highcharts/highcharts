@@ -46,8 +46,8 @@ To create labels for plot bands or lines you can add the object "label":
       ...,
       label: { 
         text: 'I am a label', // Content of the label. 
-        align: 'left', // Positioning of the label. 
-        Default to center. x: +10 // Amount of pixels the label will be repositioned according to the alignment. 
+        align: 'left', // Positioning of the label. Default to center.
+        x: +10 // Amount of pixels the label will be repositioned according to the alignment. 
       }
     }
 

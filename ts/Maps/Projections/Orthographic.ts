@@ -9,7 +9,7 @@ import type ProjectionDefinition from '../ProjectionDefinition';
 const deg2rad = Math.PI / 180,
     scale = 63.78460826781007;
 
-export default class Orthographic implements ProjectionDefinition {
+class Orthographic implements ProjectionDefinition {
 
     antimeridianCutting = false;
 
@@ -50,3 +50,5 @@ export default class Orthographic implements ProjectionDefinition {
         ];
     }
 }
+
+export default Orthographic;

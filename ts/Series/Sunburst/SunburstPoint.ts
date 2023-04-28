@@ -104,11 +104,17 @@ class SunburstPoint extends TreemapPoint {
             end = -Math.PI / 360;
             upperHalf = true;
         }
-        // Check if dataLabels should be render in the
-        // upper half of the circle
+        // Check if dataLabels should be render in the upper half of the circle
         if (end - start > Math.PI) {
             upperHalf = false;
             moreThanHalf = true;
+
+            // Close to the full circle, add some padding so that the SVG
+            // renderer treats it as separate points (#18884).
+            if ((end - start) > 2 * Math.PI - 0.01) {
+                start += 0.01;
+                end -= 0.01;
+            }
         }
 
         if (this.dataLabelPath) {

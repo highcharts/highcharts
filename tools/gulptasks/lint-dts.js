@@ -37,21 +37,26 @@ function task() {
 
         logLib.message('Linting ...');
 
-        const promises = [];
+        let promiseChain = Promise.resolve();
 
-        promises.push(
-            processLib
-                .exec('cd ' + LINT_FOLDER + ' && npx dtslint --localTs ../../node_modules/typescript/lib')
+        promiseChain = promiseChain.then(
+            processLib.exec(
+                'npx dtslint --localTs ../../node_modules/typescript/lib',
+                {
+                    cwd: path.join(process.cwd(), LINT_FOLDER)
+                }
+            )
         );
 
-        promises.push(
-            ...fsLib
-                .getDirectoryPaths(TEST_FOLDER, false)
-                .map(folder => processLib.exec('npx tsc -p ' + folder))
-        );
+        fsLib
+            .getDirectoryPaths(TEST_FOLDER, false)
+            .forEach(folder => {
+                promiseChain = promiseChain.then(
+                    () => processLib.exec('npx tsc -p ' + folder)
+                );
+            });
 
-        Promise
-            .all(promises)
+        promiseChain
             .then(() => logLib.success('Finished linting'))
             .then(resolve)
             .catch(reject);

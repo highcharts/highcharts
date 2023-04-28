@@ -172,12 +172,6 @@
                     mapData: topology,
                     joinBy: null,
                     name: 'Random data',
-                    states: {
-                        hover: {
-                            color: '#a4edba',
-                            borderColor: '#333333'
-                        }
-                    },
                     dataLabels: {
                         enabled: false,
                         format: '{point.name}'

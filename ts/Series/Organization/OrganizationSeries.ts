@@ -42,6 +42,7 @@ import U from '../../Core/Utilities.js';
 const {
     css,
     extend,
+    isNumber,
     merge,
     pick
 } = U;
@@ -229,7 +230,7 @@ class OrganizationSeries extends SankeySeries {
 
             delete attribs.fill;
         } else {
-            if (borderRadius) {
+            if (isNumber(borderRadius)) {
                 attribs.r = borderRadius;
             }
         }
@@ -408,6 +409,19 @@ class OrganizationSeries extends SankeySeries {
         node.nodeHeight = this.chart.inverted ?
             shapeArgs.width :
             shapeArgs.height;
+    }
+
+    public drawDataLabels(): void {
+        const dlOptions = this.options.dataLabels;
+
+        if (dlOptions.linkTextPath && dlOptions.linkTextPath.enabled) {
+            for (const link of this.points) {
+                link.options.dataLabels = merge(link.options.dataLabels,
+                    { useHTML: false });
+            }
+        }
+
+        super.drawDataLabels();
     }
 
     /* eslint-enable valid-jsdoc */

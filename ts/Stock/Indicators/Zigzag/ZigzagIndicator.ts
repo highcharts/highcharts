@@ -25,9 +25,7 @@ import type {
 import type ZigzagPoint from './ZigzagPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -127,7 +125,7 @@ class ZigzagIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ZigzagParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let lowIndex: number = params.lowIndex as any,
+        const lowIndex: number = params.lowIndex as any,
             highIndex: number = params.highIndex as any,
             deviation = (params.deviation as any) / 100,
             deviations = {
@@ -139,14 +137,12 @@ class ZigzagIndicator extends SMAIndicator {
             yValLen = yVal ? yVal.length : 0,
             zigzag: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            i: number,
+            yData: Array<number> = [];
+
+        let i: number,
             j: (number|undefined),
             zigzagPoint: (Array<number>|undefined),
-            firstZigzagLow: number,
-            firstZigzagHigh: number,
             directionUp: (boolean|undefined),
-            zigzagLen: (number|undefined),
             exitLoop = false,
             yIndex: (boolean|number) = false;
 
@@ -165,8 +161,8 @@ class ZigzagIndicator extends SMAIndicator {
         }
 
         // Set first zigzag point candidate
-        firstZigzagLow = yVal[0][lowIndex];
-        firstZigzagHigh = yVal[0][highIndex];
+        const firstZigzagLow = yVal[0][lowIndex],
+            firstZigzagHigh = yVal[0][highIndex];
 
         // Search for a second zigzag point candidate,
         // this will also set first zigzag point
@@ -245,7 +241,7 @@ class ZigzagIndicator extends SMAIndicator {
             }
         }
 
-        zigzagLen = zigzag.length;
+        const zigzagLen = zigzag.length;
 
         // no zigzag for last point
         if (
@@ -295,7 +291,6 @@ declare module '../../../Core/Series/SeriesType' {
         zigzag: typeof ZigzagIndicator;
     }
 }
-
 
 SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
 

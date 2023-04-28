@@ -42,6 +42,7 @@ const {
     destroyObjectProperties,
     fireEvent,
     isNumber,
+    merge,
     pick
 } = U;
 
@@ -265,7 +266,7 @@ class StackItem {
             }
 
             if (isJustify) {
-                // Justify stackLabel into the stackBox
+                // Justify stackLabel into the alignBox
                 Series.prototype.justifyDataLabel.call(
                     axis,
                     label,
@@ -354,8 +355,16 @@ class StackItem {
                 pick(boxTop, this.total, 0),
             y = axis.toPixels(totalStackValue),
             xAxis = stackBoxProps.xAxis || chart.xAxis[0],
-            x = pick(defaultX, xAxis.toPixels(this.x)) + xOffset,
-            yZero = axis.toPixels(boxBottom ? boxBottom : 0),
+            x = pick(defaultX, xAxis.translate(this.x)) + xOffset,
+            yZero = axis.toPixels(
+                boxBottom ||
+                (
+                    isNumber(axis.min) &&
+                    axis.logarithmic &&
+                    axis.logarithmic.lin2log(axis.min)
+                ) ||
+                0
+            ),
             height = Math.abs(y - yZero),
             inverted = chart.inverted,
             neg = stackItem.isNegative;
@@ -363,11 +372,11 @@ class StackItem {
         return inverted ?
             {
                 x: (neg ? y : y - height) - chart.plotLeft,
-                y: x - chart.plotTop,
+                y: xAxis.height - x - width,
                 width: height,
                 height: width
             } : {
-                x: x - chart.plotLeft,
+                x: x + xAxis.transB - chart.plotLeft,
                 y: (neg ? y - height : y) - chart.plotTop,
                 width: width,
                 height: height
