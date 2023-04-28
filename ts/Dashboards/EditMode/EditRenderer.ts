@@ -103,12 +103,12 @@ function renderCollapseHeader(
         isNested
     } = options;
 
-    const accordeon = createElement(
+    const accordion = createElement(
         'div',
         {
             className:
                 EditGlobals.classNames[
-                    isNested ? 'accordeonNestedWrapper' : 'accordeonContainer'
+                    isNested ? 'accordionNestedWrapper' : 'accordionContainer'
                 ] + ' ' + EditGlobals.classNames.collapsableContentHeader
         },
         {},
@@ -117,15 +117,15 @@ function renderCollapseHeader(
     const header = createElement(
         'div',
         {
-            className: EditGlobals.classNames.accordeonHeader
+            className: EditGlobals.classNames.accordionHeader
         },
         {},
-        accordeon
+        accordion
     );
 
     const headerBtn = createElement(
         'button',
-        { className: EditGlobals.classNames.accordeonHeaderBtn },
+        { className: EditGlobals.classNames.accordionHeaderBtn },
         {},
         header
     );
@@ -153,7 +153,7 @@ function renderCollapseHeader(
         'img',
         {
             className:
-                EditGlobals.classNames.accordeonHeaderIcon + ' ' +
+                EditGlobals.classNames.accordionHeaderIcon + ' ' +
                 EditGlobals.classNames.rotateElement,
             src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
@@ -165,11 +165,11 @@ function renderCollapseHeader(
         'div',
         {
             className:
-                EditGlobals.classNames.accordeonContent + ' ' +
+                EditGlobals.classNames.accordionContent + ' ' +
                 EditGlobals.classNames.hiddenElement
         },
         {},
-        accordeon
+        accordion
     );
 
     headerBtn.addEventListener('click', function (): void {
@@ -177,7 +177,7 @@ function renderCollapseHeader(
         headerIcon.classList.toggle(EditGlobals.classNames.rotateElement);
     });
 
-    return { outerElement: accordeon, content: content };
+    return { outerElement: accordion, content: content };
 }
 
 /**

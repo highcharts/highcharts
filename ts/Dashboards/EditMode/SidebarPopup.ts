@@ -28,7 +28,7 @@ import EditGlobals from './EditGlobals.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
 import Layout from '../Layout/Layout.js';
-import AccordeonMenu from './AccordeonMenu.js';
+import AccordionMenu from './AccordionMenu.js';
 import EditRenderer from './EditRenderer.js';
 import Component from '../Components/Component';
 
@@ -205,7 +205,7 @@ class SidebarPopup extends BaseForm {
     constructor(parentDiv: HTMLElement, iconsURL: string, editMode: EditMode) {
         super(parentDiv, iconsURL);
         this.editMode = editMode;
-        this.accordeonMenu = new AccordeonMenu(
+        this.accordionMenu = new AccordionMenu(
             this.iconsURL,
             this.hide.bind(this)
         );
@@ -226,7 +226,7 @@ class SidebarPopup extends BaseForm {
      */
     public isVisible = false;
 
-    public accordeonMenu: AccordeonMenu;
+    public accordionMenu: AccordionMenu;
 
     /* *
      *
@@ -338,7 +338,7 @@ class SidebarPopup extends BaseForm {
             if (!component) {
                 return;
             }
-            this.accordeonMenu.renderContent(this.container, component);
+            this.accordionMenu.renderContent(this.container, component);
         }
     }
 

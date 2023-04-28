@@ -42,9 +42,9 @@ const {
  * */
 
 /**
- * Accordeon menu class.
+ * Accordion menu class.
  */
-class AccordeonMenu {
+class AccordionMenu {
 
     /* *
      *
@@ -87,10 +87,10 @@ class AccordeonMenu {
         const editableOptions = component.editableOptions.getOptions();
         let option, content;
 
-        const accordeonContainer = createElement(
+        const accordionContainer = createElement(
             'div',
             {
-                className: EditGlobals.classNames.accordeonMenu
+                className: EditGlobals.classNames.accordionMenu
             },
             {},
             container
@@ -99,20 +99,20 @@ class AccordeonMenu {
         for (let i = 0, end = editableOptions.length; i < end; i++) {
             option = editableOptions[i];
             content = EditRenderer.renderCollapseHeader(
-                accordeonContainer,
+                accordionContainer,
                 { name: option.name }
             ).content;
 
-            this.renderAccordeon(option, content, component);
+            this.renderAccordion(option, content, component);
         }
 
         const buttonContainer = createElement(
             'div',
             {
-                className: EditGlobals.classNames.accordeonMenuButtonsContainer
+                className: EditGlobals.classNames.accordionMenuButtonsContainer
             },
             {},
-            accordeonContainer
+            accordionContainer
         );
 
         EditRenderer.renderButton(
@@ -205,7 +205,7 @@ class AccordeonMenu {
      * @param component
      * the component for which the menu should be rendered.
      */
-    public renderAccordeon(
+    public renderAccordion(
         options: EditableOptions.Configuration,
         parentNode: HTMLElement,
         component: Component
@@ -270,7 +270,7 @@ class AccordeonMenu {
             );
 
             for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
-                this.renderAccordeon(
+                this.renderAccordion(
                     nestedOptions[j] as EditableOptions.Configuration,
                     collapsedHeader.content,
                     component
@@ -287,4 +287,4 @@ class AccordeonMenu {
  *  Default Export
  *
  * */
-export default AccordeonMenu;
+export default AccordionMenu;

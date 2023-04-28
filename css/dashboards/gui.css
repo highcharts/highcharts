@@ -73,7 +73,7 @@
 
     .highcharts-dashboards-edit-popup-close,
     .highcharts-dashboards-edit-pointer,
-    .highcharts-dashboards-edit-accordeon-header-icon {
+    .highcharts-dashboards-edit-accordion-header-icon {
         filter: invert(1);
     }
 
@@ -390,7 +390,7 @@
 }
 
 .highcharts-dashboards-edit-toggle-wrapper,
-.highcharts-dashboards-edit-accordeon-content label.highcharts-dashboards-edit-toggle-wrapper {
+.highcharts-dashboards-edit-accordion-content label.highcharts-dashboards-edit-toggle-wrapper {
     position: relative;
     display: inline-block;
     width: 43px;
@@ -987,7 +987,7 @@
 /* End of Dropdown */
 
 /* Nested options dropdown */
-.highcharts-dashboards-edit-accordeon-nested {
+.highcharts-dashboards-edit-accordion-nested {
     display: flex;
     margin: 10px 0;
     flex-direction: column;
@@ -995,7 +995,7 @@
     border-radius: 2px;
 }
 
-.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-header {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -1003,7 +1003,7 @@
     padding: 10px 5px;
 }
 
-.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-header-btn {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-header-btn {
     flex-direction: row-reverse;
     justify-content: left;
     align-items: center;
@@ -1017,7 +1017,7 @@
     text-transform: capitalize;
 }
 
-.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-content {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-content {
     margin: 0 10px 10px;
     padding: 10px;
     flex-direction: column;
@@ -1025,7 +1025,7 @@
     display: flex;
 }
 
-.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-custom-option-button {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-custom-option-button {
     height: 40px;
     width: 100%;
     display: flex;
@@ -1035,11 +1035,11 @@
     cursor: pointer;
 }
 
-.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-custom-option-button:hover {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-custom-option-button:hover {
     background-color: var(--highcharts-dashboards-neutral-color-10);
 }
 
-.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-custom-option-button > img {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-custom-option-button > img {
     width: 24px;
     height: 24px;
     margin-right: 10px;
@@ -1047,8 +1047,8 @@
 
 /* end of nested options dropdown */
 
-/* outer Accordeon */
-.highcharts-dashboards-edit-accordeon-header-btn {
+/* outer Accordion */
+.highcharts-dashboards-edit-accordion-header-btn {
     border: none;
     font: inherit;
     color: inherit;
@@ -1062,7 +1062,7 @@
     align-items: center;
 }
 
-.highcharts-dashboards-edit-accordeon {
+.highcharts-dashboards-edit-accordion {
     padding: 0;
     background: var(--highcharts-neutral-color-10);
     margin: 8px 0;
@@ -1073,22 +1073,22 @@
     line-height: 16px;
 }
 
-.highcharts-dashboards-edit-accordeon-content {
+.highcharts-dashboards-edit-accordion-content {
     padding: 0 16px 16px;
     display: flex;
     flex-direction: column;
 }
 
-.highcharts-dashboards-edit-accordeon-content > .highcharts-dashboards-edit-label-text {
+.highcharts-dashboards-edit-accordion-content > .highcharts-dashboards-edit-label-text {
     display: none;
 }
 
-.highcharts-dashboards-edit-accordeon-content textarea {
+.highcharts-dashboards-edit-accordion-content textarea {
     min-height: 300px;
     overflow-y: auto;
 }
 
-.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-content > label {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-content > label {
     display: inline-block;
     font-weight: normal;
     font-size: 12px;
@@ -1097,22 +1097,22 @@
     text-transform: capitalize;
 }
 
-.highcharts-dashboards-edit-accordeon-nested label:first-child {
+.highcharts-dashboards-edit-accordion-nested label:first-child {
     margin-top: 5px;
 }
 
-.highcharts-dashboards-edit-accordeon-menu {
+.highcharts-dashboards-edit-accordion-menu {
     margin-bottom: 20px;
 }
 
-.highcharts-dashboards-edit-accordeon-menu-buttons-container {
+.highcharts-dashboards-edit-accordion-menu-buttons-container {
     display: flex;
     gap: 10px;
 }
 
-/* End of outer accordeon */
+/* End of outer accordion */
 
 /* stylelint-disable-next-line max-line-length */
-.highcharts-dashboards-edit-accordeon-nested .highcharts-dashboards-edit-accordeon-content.highcharts-dashboards-edit-hidden-element {
+.highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-accordion-content.highcharts-dashboards-edit-hidden-element {
     display: none;
 }

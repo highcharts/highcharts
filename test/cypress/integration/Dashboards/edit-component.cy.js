@@ -12,7 +12,7 @@ describe('Editable component options', () => {
         cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
 
         // type new value
-        cy.get('.highcharts-dashboards-edit-accordeon')
+        cy.get('.highcharts-dashboards-edit-accordion')
             .last().click()
             .find('input[name="chartID"]').clear().type(newChartID);
 
@@ -72,15 +72,15 @@ describe('Editable component options', () => {
         cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
 
         // type new value
-        cy.get('.highcharts-dashboards-edit-accordeon')
+        cy.get('.highcharts-dashboards-edit-accordion')
             .contains('Chart options')
             .click();
 
-        cy.get('.highcharts-dashboards-edit-accordeon-content .highcharts-dashboards-edit-accordeon-header')
+        cy.get('.highcharts-dashboards-edit-accordion-content .highcharts-dashboards-edit-accordion-header')
             .each((item) => {
                 cy.wrap(item).click().then(() => {
                     const currentOption = item.find('span').text();
-                    const detailsContent = item.siblings('.highcharts-dashboards-edit-accordeon-content').eq(0);
+                    const detailsContent = item.siblings('.highcharts-dashboards-edit-accordion-content').eq(0);
                     const toggleInput = item.find('input');
                     const dropdown = detailsContent.find('button.highcharts-dashboards-edit-dropdown-button');
 

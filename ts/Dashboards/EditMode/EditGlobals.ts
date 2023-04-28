@@ -89,17 +89,17 @@ const EditGlobals: EditGlobals = {
         editSidebarRightShow: PREFIX + 'sidebar-right-show',
         viewFullscreen: PREFIX + 'view-fullscreen',
 
-        // Accordeon
-        accordeonMenu: PREFIX + 'accordeon-menu',
-        accordeonContainer: PREFIX + 'accordeon',
-        accordeonHeader: PREFIX + 'accordeon-header',
-        accordeonHeaderBtn: PREFIX + 'accordeon-header-btn',
-        accordeonHeaderIcon: PREFIX + 'accordeon-header-icon',
-        accordeonContent: PREFIX + 'accordeon-content',
-        accordeonNestedWrapper: PREFIX + 'accordeon-nested',
-        accordeonMenuButtonsContainer:
-            PREFIX + 'accordeon-menu-buttons-container',
-        accordeonMenuButton: PREFIX + 'accordeon-menu-button',
+        // Accordion
+        accordionMenu: PREFIX + 'accordion-menu',
+        accordionContainer: PREFIX + 'accordion',
+        accordionHeader: PREFIX + 'accordion-header',
+        accordionHeaderBtn: PREFIX + 'accordion-header-btn',
+        accordionHeaderIcon: PREFIX + 'accordion-header-icon',
+        accordionContent: PREFIX + 'accordion-content',
+        accordionNestedWrapper: PREFIX + 'accordion-nested',
+        accordionMenuButtonsContainer:
+            PREFIX + 'accordion-menu-buttons-container',
+        accordionMenuButton: PREFIX + 'accordion-menu-button',
         hiddenElement: PREFIX + 'hidden-element',
         collapsableContentHeader: PREFIX + 'collapsable-content-header',
 
@@ -149,15 +149,15 @@ interface EditGlobals {
 
 namespace EditGlobals {
     export interface ClassNamesOptions {
-        accordeonContainer: string;
-        accordeonContent: string;
-        accordeonHeader: string;
-        accordeonHeaderBtn: string;
-        accordeonHeaderIcon: string;
-        accordeonMenu: string;
-        accordeonMenuButton: string;
-        accordeonMenuButtonsContainer: string;
-        accordeonNestedWrapper: string;
+        accordionContainer: string;
+        accordionContent: string;
+        accordionHeader: string;
+        accordionHeaderBtn: string;
+        accordionHeaderIcon: string;
+        accordionMenu: string;
+        accordionMenuButton: string;
+        accordionMenuButtonsContainer: string;
+        accordionNestedWrapper: string;
         button: string;
         cellEditHighlight: string;
         collapsableContentHeader: string;
