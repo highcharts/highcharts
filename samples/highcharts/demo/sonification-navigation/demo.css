@@ -62,9 +62,10 @@
     color: #25386f;
     font-size: 0.9rem;
     max-height: 1.8rem;
+    line-height: 1rem;
     font-weight: 500;
     border-radius: 4px;
-    padding: 0.375rem 0;
+    padding: 0;
     width: 7rem;
     margin-bottom: 0.25rem;
     margin-top: 0.5rem;
