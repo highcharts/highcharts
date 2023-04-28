@@ -77,7 +77,8 @@ function draw(
             point.series.options.animation
         );
 
-    let graphic = point.graphic;
+    let graphic = point.graphic,
+        dataLabel = point.dataLabel;
 
     params.attribs = {
         ...params.attribs,
@@ -119,6 +120,10 @@ function draw(
         } else {
             destroy();
         }
+    }
+
+    if (dataLabel) {
+        dataLabel.css({ pointerEvents: point.visible ? 'auto' : 'none' });
     }
 }
 
