@@ -1398,6 +1398,7 @@ Highcharts.chart('container', {
         data: data,
         name: 'Root',
         allowDrillToNode: true,
+        borderRadius: 3,
         cursor: 'pointer',
         dataLabels: {
             format: '{point.name}',

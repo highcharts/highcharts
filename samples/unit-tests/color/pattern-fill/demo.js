@@ -36,10 +36,9 @@ QUnit.test('SVGRenderer used directly', function (assert) {
             .add(),
         pattern = doc.getElementById('custom-id');
 
-    assert.strictEqual(
-        renderer.defs.element.firstChild,
-        pattern,
-        'Pattern is in defs'
+    assert.ok(
+        renderer.defs.element.contains(pattern),
+        'Pattern should be in defs'
     );
 
     assert.strictEqual(

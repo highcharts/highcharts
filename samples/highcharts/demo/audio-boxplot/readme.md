@@ -1,0 +1,2 @@
+# Audio boxplot
+This chart demonstrates how playDelay can be used to easily arrange multiple tracks to play one after the other for each data point. Here we are using this technique to first speak the box plot name, and then play each data item for a box plot in sequence.

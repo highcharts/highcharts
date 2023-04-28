@@ -6,53 +6,40 @@ var chart = Highcharts.chart('container', {
         text: 'Sonify series in order'
     },
     subtitle: {
-        text: 'Earcon on highest point in series'
+        text: 'An earcon notification plays on the highest point in each series'
     },
     sonification: {
-        duration: 7000,
-        masterVolume: 0.3,
-        defaultInstrumentOptions: {
-            minFrequency: 220,
-            maxFrequency: 2200,
-            mapping: {
-                duration: 200
+        duration: 11000,
+        afterSeriesWait: 1100,
+        events: {
+            onEnd: function () {
+                document.getElementById('sonify').style.visibility = 'visible';
+                document.getElementById('overlay').style.visibility = 'visible';
+                document.getElementById('stop').style.visibility = 'hidden';
             }
         },
-        earcons: [{
-            // Define the earcon we want to play
-            earcon: new Highcharts.sonification.Earcon({
-                instruments: [{
-                    instrument: 'triangleMajor',
-                    playOptions: {
-                        // Play a quick rising frequency
-                        frequency: function (time) {
-                            return time * 1760 + 440;
-                        },
-                        volume: 0.3,
-                        duration: 200
-                    }
-                }]
-            }),
-            // Play this earcon if this point is the highest in the series.
-            condition: function (point) {
-                var series = point.series;
+        // A global track that always applies - we use this one for the Earcon
+        // notifications by activating it when we want it.
+        globalTracks: [{
+            type: 'instrument',
+            instrument: 'vibraphone',
+            showPlayMarker: false,
+            mapping: {
+                pitch: ['g6', 'g6'],
+                playDelay: 60,
+                gapBetweenNotes: 100
+            },
+            activeWhen: function (context) {
+                var point = context.point,
+                    series = point.series;
+                // Return true when this point is the max point in its series
                 return point.y === Math.max.apply(Math, series.points.map(
                     function (p) {
                         return p.y;
                     }
                 ));
             }
-        }],
-        events: {
-            onPointStart: function (e, point) {
-                point.onMouseOver();
-            },
-            onEnd: function () {
-                document.getElementById('sonify').style.visibility = 'visible';
-                document.getElementById('overlay').style.visibility = 'visible';
-                document.getElementById('stop').style.visibility = 'hidden';
-            }
-        }
+        }]
     },
     accessibility: {
         landmarkVerbosity: 'one'
@@ -92,7 +79,7 @@ document.getElementById('sonify').onclick = function () {
 };
 
 document.getElementById('stop').onclick = function () {
-    chart.cancelSonify();
+    chart.sonification.cancel();
     document.getElementById('sonify').style.visibility = 'visible';
     document.getElementById('overlay').style.visibility = 'visible';
     document.getElementById('stop').style.visibility = 'hidden';

@@ -631,12 +631,12 @@ defaultOptions.drilldown = {
      * drill into. If mapZooming is set to false the drilldown/drillup
      * animations only fade in/fade out without zooming to a specific map point.
      *
-     * @sample    maps/demo/map-drilldown-without-async/
+     * @sample    maps/demo/map-drilldown-preloaded/
      *            Map drilldown without async maps loading
      *
      * @type      {boolean}
      * @default   true
-     * @since     next
+     * @since 11.0.0
      * @product   highmaps
      * @apioption drilldown.mapZooming
      */

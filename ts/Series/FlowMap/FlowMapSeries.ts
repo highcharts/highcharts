@@ -72,7 +72,7 @@ class FlowMapSeries extends MapLineSeries {
      * display route paths (e.g. flight or ship routes) or flows on a map. It
      * creates a link between two points on a map chart.
      *
-     * @since        next
+     * @since 11.0.0
      * @extends      plotOptions.mapline
      * @excluding    affectsMapView, allAreas, allowPointSelect, boostBlending,
      * boostThreshold, borderColor, borderWidth, dashStyle, dataLabels,
@@ -234,9 +234,10 @@ class FlowMapSeries extends MapLineSeries {
              *
              * @product   highmaps
              */
-            headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
+            headerFormat: '<span style="font-size: 0.8em">{series.name}</span><br/>',
             pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.options.weight}</b>'
         }
+
     } as FlowMapSeriesOptions);
 
     /* *
@@ -383,7 +384,11 @@ class FlowMapSeries extends MapLineSeries {
                         const start: SVGPath = [];
 
                         for (let i = 0; i < path.length; i++) {
-                            start.push([...path[i]]);
+                            // Added any when merging master into another branch
+                            // :((. The spread looks correct, but TS complains
+                            // about possible number in the first position,
+                            // which is the segment type.
+                            (start as any).push([...path[i]]);
                             for (let j = 1; j < path[i].length; j++) {
                                 start[i][j] = j % 2 ? x : y;
                             }

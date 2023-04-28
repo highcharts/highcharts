@@ -175,10 +175,20 @@ module.exports = {
             'accessibility/accessibility-module-feature-overview',
             'accessibility/configure-the-accessibility-module',
             'accessibility/accessible-dynamic-data',
-            'accessibility/sonification',
             'accessibility/patterns-and-contrast',
             'accessibility/tables',
             'accessibility/compliance'
+        ],
+        'Audio charts': [
+            'sonification/getting-started',
+            'sonification/mapping',
+            'sonification/advanced-mapping',
+            'sonification/instruments',
+            'sonification/speech',
+            'sonification/conditional-tracks',
+            'sonification/notifications',
+            'sonification/context-cues',
+            'sonification/navigation'
         ],
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'

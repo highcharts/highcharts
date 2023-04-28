@@ -25,8 +25,7 @@ Highcharts.chart('container', {
             inactiveColor: '#CCC',
             style: {
                 fontWeight: 'bold',
-                color: '#333',
-                fontSize: '12px'
+                color: '#333'
             }
         }
     },

@@ -280,6 +280,7 @@ class XRangeSeries extends ColumnSeries {
             yAxis = this.yAxis,
             metrics = this.columnMetrics,
             options = this.options,
+            { borderRadius } = options,
             minPointLength = options.minPointLength || 0,
             oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2,
             seriesXOffset = this.pointXOffset = metrics.offset,
@@ -354,10 +355,14 @@ class XRangeSeries extends ColumnSeries {
             x,
             y: Math.floor((point.plotY as any) + yOffset) + crisper,
             width: x2 - x,
-            height: pointHeight,
-            r: this.options.borderRadius
+            height: pointHeight
         };
+
         point.shapeArgs = shapeArgs;
+
+        if (isNumber(borderRadius)) {
+            point.shapeArgs.r = borderRadius;
+        }
 
         // Move tooltip to default position
         if (!inverted) {
@@ -428,9 +433,12 @@ class XRangeSeries extends ColumnSeries {
             if (!isNumber(partialFill)) {
                 partialFill = 0 as any;
             }
-            point.partShapeArgs = merge(shapeArgs, {
-                r: this.options.borderRadius
-            });
+
+            if (isNumber(borderRadius)) {
+                point.partShapeArgs = merge(shapeArgs, {
+                    r: borderRadius
+                });
+            }
 
             clipRectWidth = Math.max(
                 Math.round(
@@ -553,7 +561,7 @@ class XRangeSeries extends ColumnSeries {
                         pointAttr,
                         animation
                     )
-                    .shadow(seriesOpts.shadow, null, cutOff);
+                    .shadow(seriesOpts.shadow);
 
                 if (partShapeArgs) {
                     // Ensure pfOptions is an object
@@ -579,7 +587,7 @@ class XRangeSeries extends ColumnSeries {
                             pointAttr,
                             animation
                         )
-                        .shadow(seriesOpts.shadow, null, cutOff);
+                        .shadow(seriesOpts.shadow);
                 }
             }
 

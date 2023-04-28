@@ -162,23 +162,15 @@
         points = chart.series[0].points;
         for (i = 0; i < points.length; i++) {
             point = points[i];
-            $graphic = $(point.graphic.element);
-            $graphOrig = $($graphic.find('.highcharts-partfill-original'));
-            $graphOver = $($graphic.find('.highcharts-partfill-overlay'));
-            graphOverBox = $graphOver[0].getBBox();
-            clipRectID = $graphOver.attr('clip-path').replace(/url\(|\)/g, '');
-            $clipRect = $(clipRectID + ' rect');
-            origX = parseFloat($graphOrig.attr('x'));
-            overX = parseFloat(graphOverBox.x);
-            origY = parseFloat($graphOrig.attr('y'));
-            overY = parseFloat(graphOverBox.y);
-            origWidth = parseFloat($graphOrig.attr('width'));
-            overWidth = parseFloat(graphOverBox.width);
-            clipWidth = parseFloat($clipRect.attr('width'));
-            origHeight = parseFloat($graphOrig.attr('height'));
-            overHeight = parseFloat(graphOverBox.height);
-            clipHeight = parseFloat($clipRect.attr('height'));
-            partialFill = point.partialFill;
+            const { rect, partRect } = point.graphic;
+            origX = rect.x;
+            overX = partRect.x;
+            origY = rect.y;
+            overY = partRect.y;
+            origWidth = rect.width;
+            overWidth = partRect.width;
+            origHeight = rect.height;
+            overHeight = partRect.height;
 
             // partShapeArgs
             assert.close(
@@ -207,21 +199,6 @@
                 origWidth,
                 error,
                 'point ' + i + ' partShapeArgs has correct rendered width'
-            );
-
-            // clipRectArgs
-            assert.close(
-                clipHeight,
-                origHeight,
-                error,
-                'point ' + i + ' clipRectArgs height is rendered correctly'
-            );
-
-            assert.close(
-                clipWidth,
-                origWidth * partialFill,
-                error,
-                'point ' + i + ' clipRectArgs has correct rendered width'
             );
         }
     });
