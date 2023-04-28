@@ -2,7 +2,6 @@ Highcharts.chart('container', {
 
     chart: {
         zooming: {
-            type: 'x',
             mouseWheel: {
                 sensitivity: 1.03
             }

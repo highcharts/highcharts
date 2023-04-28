@@ -56,7 +56,9 @@ const optionsToObject = (
     options?: boolean|MouseWheelZoomOptions
 ): MouseWheelZoomOptions => {
     if (!isObject(options)) {
-        return merge(defaultOptions, { enabled: options });
+        return merge(defaultOptions,
+            { enabled: defined(options) ? options : true }
+        );
     }
     return merge(defaultOptions, options);
 };
@@ -285,17 +287,24 @@ export default MouseWheelZoomComposition;
  * */
 
 /**
- * Zooming with the mousewheel can be enabled by setting this option to `true`.
- * More detailed options can be assigned.
+ * The mousewheel zoom is a feature included in Highcharts Stock, but is
+ * also available for Highcharts Core as a module. Zooming with the mousewheel
+ * is enabled by default. It can be disabled by setting this option to
+ * `false`.
  *
  * @type      {boolean|object}
  * @since     next
  * @requires  modules/mouse-wheel-zoom
+ * @sample    {highcharts} highcharts/mouse-wheel-zoom/enabled
+ *            Enable or disable
+ * @sample    {highstock} stock/mouse-wheel-zoom/enabled
+ *            Enable or disable
  * @apioption chart.zooming.mouseWheel
  */
 
 /**
- * Zooming with the mousewheel can be enabled by setting this option to `true`.
+ * Zooming with the mousewheel can be disabled by setting this option to
+ * `false`.
  *
  * @type      {boolean}
  * @default   true
@@ -305,13 +314,17 @@ export default MouseWheelZoomComposition;
  */
 
 /**
- * Adjust the sensitivity of the zoom. Should be a number above `1.0`.
+ * Adjust the sensitivity of the zoom. Sensitivity of mouse wheel or trackpad
+ * scrolling. `1` is no sensitivity, while with `2`, one mousewheel delta will
+ * zoom in `50%`.
  *
  * @type      {number}
  * @default   1.1
  * @since     next
  * @requires  modules/mouse-wheel-zoom
  * @sample    {highcharts} highcharts/mouse-wheel-zoom/sensitivity
+ *            Change mousewheel zoom sensitivity
+ * @sample    {highstock} stock/mouse-wheel-zoom/sensitivity
  *            Change mousewheel zoom sensitivity
  * @apioption chart.zooming.mouseWheel.sensitivity
  */
