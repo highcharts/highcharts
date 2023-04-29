@@ -156,7 +156,7 @@ export interface AxisOptions {
     minPadding: number;
     minRange?: number;
     minTickInterval?: number;
-    offset?: number;
+    offset?: number|string;
     offsets?: [number, number, number, number];
     opposite: boolean;
     ordinal?: boolean;

@@ -248,7 +248,7 @@ class Axis {
     public minPointOffset?: number;
     public minRange?: (null|number);
     public names: Array<string> = void 0 as any;
-    public offset: number = void 0 as any;
+    public offset: number = 0;
     public old?: { // @todo create a type
         len: number;
         max: number|null;
@@ -483,7 +483,6 @@ class Axis {
         axis.len = 0;
         axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
         axis.range = options.range;
-        axis.offset = options.offset || 0;
 
 
         /**
@@ -3532,11 +3531,11 @@ class Axis {
         // Render the axis line
         axis.renderLine();
 
-        // handle automatic or user set offset
-        axis.offset = directionFactor * pick(
-            options.offset,
-            axisOffset[side] ? axisOffset[side] + (options.margin || 0) : 0
-        );
+        // Handle automatic offset. The offset _option_ is handled in the render
+        // function when plot size is known.
+        axis.offset = !defined(options.offset) && axisOffset[side] ?
+            directionFactor * (axisOffset[side] + (options.margin || 0)) :
+            0;
 
         axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
         if (side === 0) {
@@ -3834,7 +3833,8 @@ class Axis {
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,
             showAxis = axis.showAxis,
-            animation = animObject(renderer.globalAnimation);
+            animation = animObject(renderer.globalAnimation),
+            directionFactor = [-1, 1, 1, -1][axis.side];
 
         let from: number,
             to: number;
@@ -3842,6 +3842,16 @@ class Axis {
         // Reset
         axis.labelEdge.length = 0;
         axis.overlap = false;
+
+        // Handle the offset option
+        if (defined(options.offset)) {
+            axis.offset = directionFactor * (
+                relativeLength(
+                    options.offset,
+                    this.horiz ? chart.plotHeight : chart.plotWidth
+                )
+            );
+        }
 
         // Mark all elements inActive before we go over and mark the active ones
         [ticks, minorTicks, alternateBands].forEach(function (

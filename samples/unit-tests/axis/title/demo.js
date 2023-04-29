@@ -306,12 +306,9 @@ QUnit.test('title.reserveSpace', function (assert) {
                 reserveSpaceTrue < reserveSpaceFalse :
                 reserveSpaceTrue > reserveSpaceFalse,
             axisName +
-                ': reserveSpaceTrue ' +
-                dir +
-                ' ' +
+                `: reserveSpaceTrue (${dir} = ${reserveSpaceTrue}) ` +
                 (lessThan ? '<' : '>') +
-                ' reserveSpaceFalse ' +
-                dir
+                ` reserveSpaceFalse (${dir} = ${reserveSpaceFalse})`
         );
         assert.equal(
             reserveSpaceFalse,

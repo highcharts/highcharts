@@ -978,7 +978,8 @@ namespace RadialAxis {
             // Gauges
             this.startAngleRad = start;
             this.endAngleRad = end;
-            this.offset = options.offset || 0;
+            this.offset = typeof options.offset === 'number' ?
+                options.offset : 0;
 
             // Normalize Start and End to <0, 2*PI> range
             // (in degrees: <0,360>)

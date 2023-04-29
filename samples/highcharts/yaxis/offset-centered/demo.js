@@ -1,10 +1,14 @@
 Highcharts.chart('container', {
 
-    chart: {
+    _chart: {
         marginTop: 50,
         marginBottom: 50,
         marginLeft: 50,
         marginRight: 50
+    },
+
+    title: {
+        text: 'Centered axes'
     },
 
     xAxis: {
@@ -13,7 +17,10 @@ Highcharts.chart('container', {
         max: 5,
         tickInterval: 1,
         lineColor: 'black',
-        offset: -150
+        offset: '-50%',
+        labels: {
+            reserveSpace: false
+        }
     },
     yAxis: {
         min: -5,
@@ -21,7 +28,10 @@ Highcharts.chart('container', {
         tickInterval: 1,
         lineWidth: 1,
         lineColor: 'black',
-        offset: -150,
+        offset: '-50%',
+        labels: {
+            reserveSpace: false
+        },
         title: {
             text: null
         }

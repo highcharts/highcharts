@@ -1375,8 +1375,12 @@ namespace AxisDefaults {
          */
 
         /**
-         * The distance in pixels from the plot area to the axis line.
-         * A positive offset moves the axis with it's line, labels and ticks
+         * The distance from the plot area to the axis line. A numeric value
+         * means pixels. A percentage string offsets the axis by a percentage
+         * of the plot area size, so `-50%` will render it in the middle of the
+         * plot.
+         *
+         * A positive offset moves the axis with its line, labels and ticks
          * away from the plot area. This is typically used when two or more
          * axes are displayed on the same side of the plot. With multiple
          * axes the offset is dynamically adjusted to avoid collision, this
@@ -1385,11 +1389,11 @@ namespace AxisDefaults {
          * @sample {highcharts} highcharts/yaxis/offset/
          *         Y axis offset of 70
          * @sample {highcharts} highcharts/yaxis/offset-centered/
-         *         Axes positioned in the center of the plot
+         *         Percentage offset
          * @sample {highstock} stock/xaxis/offset/
          *         Y axis offset by 70 px
          *
-         * @type {number}
+         * @type {number|string}
          */
         offset: void 0,
 
