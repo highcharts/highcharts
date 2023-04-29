@@ -188,7 +188,6 @@ class CellEditToolbar extends EditToolbar {
 
         if (toolbar.editMode.sidebar) {
             toolbar.editMode.sidebar.show(toolbar.cell);
-            // toolbar.editMode.sidebar.updateTitle('CELL OPTIONS');
 
             if (this.cell) {
                 this.cell.setHighlight();

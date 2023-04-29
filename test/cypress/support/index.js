@@ -70,7 +70,7 @@ Cypress.Commands.add('boardRendered', () =>
 );
 
 Cypress.Commands.add('hideSidebar', () =>
-    cy.get('.highcharts-dashboards-edit-sidebar-button-nav.highcharts-dashboards-edit-close-btn').click()
+    cy.get('.highcharts-dashboards-edit-popup-close:visible').click()
 );
 
 Cypress.Commands.add('chart', () =>

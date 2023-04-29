@@ -13,7 +13,6 @@
  *  - Sophie Bremer
  *
  * */
-import type MenuItem from './Menu/MenuItem.js';
 
 'use strict';
 
@@ -23,14 +22,14 @@ import type MenuItem from './Menu/MenuItem.js';
  *
  * */
 
+import type MenuItem from './Menu/MenuItem.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type EditMode from './EditMode.js';
 
-import EditMode from './EditMode.js';
 import EditGlobals from './EditGlobals.js';
-import Globals from '../Globals.js';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import U from '../../Core/Utilities.js';
 const {
+    merge,
     createElement
 } = U;
 
@@ -55,9 +54,9 @@ const {
  * Context button element.
  */
 function renderContextButton(
-    parentNode: HTMLDOMElement,
+    parentNode: HTMLElement,
     editMode: EditMode
-): HTMLDOMElement|undefined {
+): HTMLElement|undefined {
 
     let ctxBtnElement;
 
@@ -68,57 +67,95 @@ function renderContextButton(
                 onclick: function (): void {
                     editMode.onContextBtnClick(editMode);
                 }
-            }, {}, parentNode
+            }, {
+                background: 'url(' +
+                    editMode.options.contextMenu.icon +
+                ') no-repeat 50% 50%'
+            }, parentNode
         );
-        ctxBtnElement.style.background = 'url(' +
-            editMode.options.contextMenu.icon +
-        ') no-repeat 50% 50%';
     }
 
     return ctxBtnElement;
 }
 
-function renderCollapse(
-    parentElement: HTMLDOMElement,
-    title: string
-): { outerElement: HTMLDOMElement; content: HTMLDOMElement } | undefined {
-    if (!parentElement) {
-        return;
-    }
+/**
+ * Creates the collapsable header element.
+ * @internal
+ *
+ * @param parentElement
+ * The HTMLElement to which the element should be rendered to.
+ *
+ * @param options
+ * Nested header options.
+ *
+ * @returns the outer element and content in the collapsable div.
+ */
+function renderCollapseHeader(
+    parentElement: HTMLElement,
+    options: NestedHeaderFormFieldOptions
+): { outerElement: HTMLElement; content: HTMLElement } {
 
-    const accordeon = createElement(
+    const {
+        name,
+        allowEnabled,
+        onchange,
+        isEnabled,
+        isNested
+    } = options;
+
+    const accordion = createElement(
         'div',
-        { className: 'highcharts-dashboards-outer-accordeon' },
+        {
+            className:
+                EditGlobals.classNames[
+                    isNested ? 'accordionNestedWrapper' : 'accordionContainer'
+                ] + ' ' + EditGlobals.classNames.collapsableContentHeader
+        },
         {},
         parentElement
     );
     const header = createElement(
         'div',
         {
-            className: 'highcharts-dashboards-outer-accordeon-header'
+            className: EditGlobals.classNames.accordionHeader
         },
         {},
-        accordeon
+        accordion
     );
 
     const headerBtn = createElement(
         'button',
-        { className: 'highcharts-dashboards-outer-accordeon-header-btn' },
+        { className: EditGlobals.classNames.accordionHeaderBtn },
         {},
         header
     );
-    const titleElement = createElement(
+
+    createElement(
         'span',
-        { textContent: title },
+        {
+            textContent: (EditGlobals.lang)[name] || name
+        },
         {},
         headerBtn
     );
 
+    if (allowEnabled) {
+        renderToggle(header, {
+            enabledOnOffLabels: true,
+            id: name,
+            name: name,
+            onchange,
+            value: isEnabled || false
+        });
+    }
+
     const headerIcon = createElement(
         'img',
         {
-            className: 'highcharts-dashboards-outer-accordeon-header-icon',
-            src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
+            className:
+                EditGlobals.classNames.accordionHeaderIcon + ' ' +
+                EditGlobals.classNames.rotateElement,
+            src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
         headerBtn
@@ -126,19 +163,21 @@ function renderCollapse(
 
     const content = createElement(
         'div',
-        { className: 'highcharts-dashboards-outer-accordeon-content' },
-        { display: 'none' },
-        accordeon
+        {
+            className:
+                EditGlobals.classNames.accordionContent + ' ' +
+                EditGlobals.classNames.hiddenElement
+        },
+        {},
+        accordion
     );
 
     headerBtn.addEventListener('click', function (): void {
-        const display = content.style.display;
-        content.style.display = display === 'none' ? 'block' : 'none';
-        headerIcon.style.transform =
-            display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
+        content.classList.toggle(EditGlobals.classNames.hiddenElement);
+        headerIcon.classList.toggle(EditGlobals.classNames.rotateElement);
     });
 
-    return { outerElement: accordeon, content: content };
+    return { outerElement: accordion, content: content };
 }
 
 /**
@@ -154,17 +193,24 @@ function renderCollapse(
  * Select element
  */
 function renderSelect(
-    parentElement: HTMLDOMElement,
-    options: SelectFormField
-): HTMLDOMElement|undefined {
+    parentElement: HTMLElement,
+    options: SelectFormFieldOptions
+): HTMLElement|undefined {
     if (!parentElement) {
         return;
     }
 
+    if (options.name) {
+        renderText(parentElement, { title: options.name, isLabel: true });
+    }
+
+    const iconsURLPrefix = options.iconsURLPrefix || '';
     const customSelect = createElement(
         'div',
         {
-            className: 'highcharts-dashboards-dropdown'
+            className: EditGlobals.classNames.dropdown +
+                ' ' +
+                EditGlobals.classNames.collapsableContentHeader
         },
         {},
         parentElement
@@ -173,19 +219,21 @@ function renderSelect(
     const btn = createElement(
         'button',
         {
-            className: 'highcharts-dashboards-dropdown-button'
+            className: EditGlobals.classNames.dropdownButton
         },
-        {
-            margin: 0
-        },
+        {},
         customSelect
     );
+
     const btnContent = createElement(
         'div',
+        {
+            className: EditGlobals.classNames.dropdownButtonContent
+        },
         {},
-        { display: 'flex', 'align-items': 'center' },
         btn
     );
+
     const iconURL = (
         U.find(options.items, (item): boolean => item.name === options.value) ||
         {}
@@ -197,8 +245,8 @@ function renderSelect(
         headerIcon = createElement(
             'img',
             {
-                src: iconURL,
-                className: 'highcharts-dashboards-icon'
+                src: iconsURLPrefix + iconURL,
+                className: EditGlobals.classNames.icon
             },
             {},
             btnContent
@@ -208,46 +256,52 @@ function renderSelect(
         'span',
         {
             textContent: options.value,
-            id: options.id
+            id: options.id || ''
         },
         {},
         btnContent
     );
-    createElement(
+    const dropdownPointer = createElement(
         'img',
         {
-            className: 'highcharts-dashboards-dropdown-pointer',
-            src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
+            className:
+                EditGlobals.classNames.dropdownIcon +
+                ' ' +
+                EditGlobals.classNames.rotateElement,
+            src: iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
         btn
     );
 
-    let dropdown = createElement(
+    const dropdown = createElement(
         'ul',
         {
-            className: 'highcharts-dashboards-dropdown-content'
+            className:
+                EditGlobals.classNames.dropdownContent +
+                ' ' +
+                EditGlobals.classNames.hiddenElement
         },
-        {
-            display: 'none'
-        },
+        {},
         customSelect
     );
     btn.addEventListener('click', function (): void {
-        dropdown.style.display =
-            dropdown.style.display === 'none' ? 'flex' : 'none';
+        dropdown.classList.toggle(EditGlobals.classNames.hiddenElement);
+        dropdownPointer.classList.toggle(EditGlobals.classNames.rotateElement);
     });
 
     for (let i = 0, iEnd = options.items.length; i < iEnd; ++i) {
         renderSelectElement(
-            options.items[i] || {},
+            merge(options.items[i] || {}, { iconsURLPrefix }),
             dropdown,
             placeholder,
             options.id,
+            dropdownPointer,
             headerIcon,
             options.onchange
         );
     }
+
     return customSelect;
 }
 
@@ -255,28 +309,32 @@ function renderSelect(
  * @internal
  */
 function renderSelectElement(
-    option: SelectFormFieldItem,
+    option: SelectFormFieldItemOptions,
     dropdown: HTMLElement,
     placeholder: HTMLElement,
     id: string,
+    dropdownPointer: HTMLElement,
     headerIcon?: HTMLElement,
     callback?: Function
 ): void {
-    const selectOption = createElement('li', {}, { margin: 0 }, dropdown);
+    const iconURL = option.iconsURLPrefix + option.iconURL;
+    const selectOption = createElement('li', {}, {}, dropdown);
     const selectOptionBtn = createElement(
         'button',
-        { className: 'highcharts-dashboards-select-option-button' },
-        { height: '40px', width: '100%' },
+        { className: EditGlobals.classNames.customSelectButton },
+        {},
         selectOption
     );
+
     let icon: HTMLElement|undefined;
+
     if (option.iconURL) {
         icon = createElement(
             'img',
             {
-                src: option.iconURL
+                src: iconURL
             },
-            { width: '24px', height: '24px' },
+            {},
             selectOptionBtn
         );
     }
@@ -288,15 +346,16 @@ function renderSelectElement(
     );
 
     selectOptionBtn.addEventListener('click', function (): void {
-        dropdown.style.display = 'none';
+        dropdown.classList.add(EditGlobals.classNames.hiddenElement);
+        dropdownPointer.classList.toggle(EditGlobals.classNames.rotateElement);
         placeholder.textContent = option.name || '';
 
         if (headerIcon && option.iconURL) {
-            (headerIcon as HTMLImageElement).src = option.iconURL;
+            (headerIcon as HTMLImageElement).src = iconURL;
         }
 
         if (callback) {
-            return callback(id, option.name);
+            return callback(option.name);
         }
     });
 }
@@ -314,28 +373,30 @@ function renderSelectElement(
  * Toggle element
  */
 function renderToggle(
-    parentElement: HTMLDOMElement,
-    options: FormField
-): HTMLDOMElement|undefined {
+    parentElement: HTMLElement,
+    options: ToggleFormFieldOptions
+): HTMLElement|undefined {
 
     if (!parentElement) {
         return;
     }
 
-    if (options.title) {
-        renderText(
-            parentElement,
-            options.title
-        );
+    const { value, title } = options;
+    const toggleContainer = createElement(
+        'div',
+        { className: EditGlobals.classNames.toggleContainer },
+        {},
+        parentElement
+    );
+    if (title) {
+        renderText(toggleContainer, { title });
     }
 
     if (options.enabledOnOffLabels) {
-        EditRenderer.renderText(
-            parentElement,
-            EditGlobals.lang.on,
-            void 0,
-            EditGlobals.classNames.toggleLabels
-        );
+        EditRenderer.renderText(toggleContainer, {
+            title: EditGlobals.lang.off,
+            className: EditGlobals.classNames.toggleLabels
+        });
     }
 
     const toggle = createElement(
@@ -345,10 +406,23 @@ function renderToggle(
             ' ' + (options.className || '')
         },
         {},
-        parentElement
+        toggleContainer
     );
 
-    renderCheckbox(toggle);
+    const input = renderCheckbox(toggle, value);
+    const onchange = options.onchange;
+    if (input && onchange) {
+        input.addEventListener('change', (e: any): void => {
+            onchange(e.target.checked);
+        });
+
+        toggleContainer.addEventListener('click', (e: any): void => {
+            onchange((input as HTMLInputElement).checked);
+            (input as HTMLInputElement).checked = !(input as HTMLInputElement)
+                .checked;
+        });
+    }
+
 
     createElement(
         'span',
@@ -361,15 +435,14 @@ function renderToggle(
     );
 
     if (options.enabledOnOffLabels) {
-        EditRenderer.renderText(
-            parentElement,
-            EditGlobals.lang.off,
-            void 0,
-            EditGlobals.classNames.toggleLabels
-        );
+        EditRenderer.renderText(toggleContainer, {
+            title: EditGlobals.lang.on,
+            className: EditGlobals.classNames.toggleLabels
+        });
     }
 
-    return toggle;
+
+    return toggleContainer;
 }
 
 /**
@@ -387,139 +460,28 @@ function renderToggle(
  * @returns text Element
  */
 function renderText(
-    parentElement: HTMLDOMElement,
-    text: string,
-    callback?: Function,
-    className?: string
-): HTMLDOMElement|undefined {
+    parentElement: HTMLElement,
+    options: TextOptions
+): HTMLElement | undefined {
     let textElem;
 
+    const { title: text, className, isLabel } = options;
     if (parentElement) {
+        const labelFor = isLabel ? { htmlFor: text } : {};
         textElem = createElement(
-            'div', {
-                className: EditGlobals.classNames.labelText +
-                        ' ' + (className || ''),
+            isLabel ? 'label' : 'div',
+            {
+                className:
+                    EditGlobals.classNames.labelText + ' ' + (className || ''),
                 textContent: text,
-                onclick: callback
-            }, {},
+                ...labelFor
+            },
+            {},
             parentElement
         );
     }
 
     return textElem;
-}
-
-function renderNested(
-    parentElement: HTMLDOMElement,
-    options: any
-): HTMLDOMElement|undefined {
-
-    if (!parentElement) {
-        return;
-    }
-    const keys = Object.keys(options.nestedOptions);
-    for (let i = 0, iEnd = keys.length; i < iEnd; ++i) {
-        const name = keys[i];
-        const nestedOptions = options.nestedOptions[name];
-
-
-        const nested = createElement(
-            'div',
-            {
-                className: 'highcharts-dashboards-nested'
-            },
-            {},
-            parentElement
-        );
-
-        const header = createElement(
-            'div',
-            {
-                className: 'highcharts-dashboards-nested-header'
-            },
-            {},
-            nested
-        );
-        const headerBtn = createElement(
-            'button',
-            { className: 'highcharts-dashboards-nested-header-btn' },
-            {
-                border: 'none',
-                font: 'inherit',
-                color: 'inherit',
-                background: 'none',
-                margin: 0,
-                width: '100%',
-                display: 'flex'
-            },
-            header
-        );
-
-        const headerIcon = createElement(
-            'img',
-            {
-                className: 'highcharts-dashboards-nested-header-icon',
-                src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
-            },
-            {},
-            headerBtn
-        );
-
-
-        createElement(
-            'span',
-            { textContent: name },
-            {},
-            headerBtn
-        );
-
-        const switchElement = createElement(
-            'img',
-            {
-                className: 'highcharts-dashboards-nested-switch',
-                src: Globals.iconsURLPrefix + 'dropdown-pointer.svg'
-            },
-            {},
-            header
-        );
-
-        const content = createElement(
-            'div',
-            {
-                className: 'highcharts-dashboards-nested-content'
-            },
-            { display: 'none' },
-            nested
-        );
-
-        headerBtn.addEventListener('click', function (): void {
-            const display = content.style.display;
-            content.style.display = display === 'none' ? 'flex' : 'none';
-            headerIcon.style.transform =
-                display === 'none' ? 'rotate(90deg)' : 'rotate(0deg)';
-        });
-        const nestedKeys = Object.keys(nestedOptions);
-
-        for (let j = 0, jEnd = nestedKeys.length; j < jEnd; ++j) {
-            const nestedKey = nestedKeys[j];
-            const nestedOption = nestedOptions[nestedKey];
-            const rendererFunction = getRendererFunction(nestedOption.type);
-            if (!rendererFunction) {
-                continue;
-            }
-
-            const element = rendererFunction(
-                content,
-                {
-                    title: nestedKey,
-                    value: '',
-                    name: nestedKey,
-                    id: nestedKey
-                }
-            );
-        }
-    }
-    return;
 }
 
 /**
@@ -538,9 +500,9 @@ function renderNested(
  * Icon Element
  */
 function renderIcon(
-    parentElement: HTMLDOMElement,
-    options: IconFormField
-): HTMLDOMElement|undefined {
+    parentElement: HTMLElement,
+    options: IconFormFieldOptions
+): HTMLElement|undefined {
     const { icon, callback } = options;
 
     if (!parentElement) {
@@ -549,7 +511,8 @@ function renderIcon(
 
     const iconElem = createElement(
         'div', {
-            onclick: callback
+            onclick: callback,
+            className: options.className || ''
         }, {},
         parentElement
     );
@@ -557,12 +520,18 @@ function renderIcon(
     (iconElem.style as any)['background-image'] = 'url(' + icon + ')';
 
     const mousedown = options.mousedown;
+    const click = options.click;
     if (mousedown) {
         iconElem.onmousedown = function (): void {
-            mousedown.apply(options.menuItem, arguments);
+            mousedown.apply(options.item, arguments);
         };
     }
 
+    if (click) {
+        iconElem.onclick = function (): void {
+            click.apply(options.item, arguments);
+        };
+    }
     return iconElem;
 }
 
@@ -579,19 +548,16 @@ function renderIcon(
  * Input Element
  */
 function renderInput(
-    parentElement: HTMLDOMElement,
-    options: FormField
-): HTMLDOMElement|undefined {
+    parentElement: HTMLElement,
+    options: FormFieldOptions
+): HTMLElement | undefined {
 
     if (!parentElement) {
         return;
     }
 
-    if (options.title) {
-        renderText(
-            parentElement,
-            options.title
-        );
+    if (options.name) {
+        renderText(parentElement, { title: options.name, isLabel: true });
     }
 
     const input = createElement(
@@ -610,9 +576,10 @@ function renderInput(
     );
 
     const onchange = options.onchange;
+
     if (onchange) {
         input.addEventListener('change', function (e: any): void {
-            onchange(options.id, e.target.value);
+            onchange(e.target.value);
         });
     }
     return input;
@@ -631,19 +598,16 @@ function renderInput(
  * textarea Element
  */
 function renderTextarea(
-    parentElement: HTMLDOMElement,
-    options: FormField
-): HTMLDOMElement|undefined {
+    parentElement: HTMLElement,
+    options: FormFieldOptions
+): HTMLElement|undefined {
 
     if (!parentElement) {
         return;
     }
 
-    if (options.title) {
-        renderText(
-            parentElement,
-            options.title
-        );
+    if (options.name) {
+        renderText(parentElement, { title: options.name, isLabel: true });
     }
 
     const textarea = createElement(
@@ -658,24 +622,39 @@ function renderTextarea(
     );
 
     const onchange = options.onchange;
+
     if (onchange) {
         textarea.addEventListener('change', function (e: any): void {
-            onchange(options.id, e.target.value);
+            onchange(e.target.value);
         });
     }
 
     return textarea;
 }
 
+/**
+ * Function to render the input of type checkbox.
+ *
+ * @param parentElement
+ * An element to which render the checkbox to
+ *
+ * @param checked
+ * Whether the checkbox should be checked or not.
+ *
+ * @returns
+ * The checkbox element
+ */
 function renderCheckbox(
-    parentElement: HTMLDOMElement
-): HTMLDOMElement|undefined {
+    parentElement: HTMLElement,
+    checked?: boolean
+): HTMLElement|undefined {
     let input;
 
     if (parentElement) {
         input = createElement(
             'input', {
-                type: 'checkbox'
+                type: 'checkbox',
+                checked: !!checked
             }, {
 
             },
@@ -699,44 +678,55 @@ function renderCheckbox(
  * Button Element
  */
 function renderButton(
-    parentElement: HTMLDOMElement,
+    parentElement: HTMLElement,
     options: ButtonOptions
-): HTMLDOMElement|undefined {
+): HTMLElement|undefined {
     let button;
 
-    if (parentElement) {
-        button = createElement(
-            'button', {
-                className: (
-                    EditGlobals.classNames.button + ' ' +
-                    (options.className || '')
-                ),
-                onclick: options.callback,
-                textContent: options.value
-            }, options.style || {},
-            parentElement
-        );
+    if (!parentElement) {
+        return;
+    }
 
-        if (options.icon) {
-            (button.style as any)['background-image'] =
-                'url(' + options.icon + ')';
-        }
+    button = createElement(
+        'button', {
+            className: (
+                EditGlobals.classNames.button + ' ' +
+                (options.className || '')
+            ),
+            onclick: options.callback,
+            textContent: options.value
+        }, options.style || {},
+        parentElement
+    );
+
+    if (options.icon) {
+        (button.style as any)['background-image'] =
+            'url(' + options.icon + ')';
     }
 
     return button;
 }
+
+/**
+ * Get the renderer function based on the type of the element to render.
+ *
+ * @param type
+ * Type of the element to render
+ *
+ * @returns
+ * function to render a specific element
+ */
 function getRendererFunction(type: RendererElement): Function|undefined {
     return {
         select: renderSelect,
         toggle: renderToggle,
         text: renderText,
-        collapse: renderCollapse,
+        collapse: renderCollapseHeader,
         icon: renderIcon,
         contextButton: renderContextButton,
         input: renderInput,
         textarea: renderTextarea,
         checkbox: renderCheckbox,
-        nested: renderNested,
         button: renderButton
     }[type];
 }
@@ -746,14 +736,13 @@ const EditRenderer = {
     renderSelect,
     renderToggle,
     renderText,
-    renderCollapse,
+    renderCollapseHeader,
     renderIcon,
     renderContextButton,
     renderInput,
     renderTextarea,
     renderCheckbox,
     renderButton,
-    renderNested,
     getRendererFunction
 };
 
@@ -768,13 +757,17 @@ export interface ButtonOptions {
     style?: CSSObject;
 }
 
-export interface IconFormField {
+export interface IconFormFieldOptions {
+    className?: string;
     icon: string;
+    click?: Function;
     mousedown?: Function;
-    menuItem?: MenuItem;
+    item?: MenuItem;
     callback?: Function;
 }
-export interface FormField {
+export interface FormFieldOptions {
+    propertyPath?: Array<string>;
+    iconsURLPrefix?: string;
     icon?: string;
     id: string;
     name: string;
@@ -786,22 +779,41 @@ export interface FormField {
     enabledOnOffLabels?: boolean;
 }
 
-export interface SelectFormField extends FormField {
+export interface SelectFormFieldOptions extends FormFieldOptions {
     title: string;
     value: string;
-    items: Array<SelectFormFieldItem>;
+    items: Array<SelectFormFieldItemOptions>;
 }
 
-export interface SelectFormFieldItem {
-    name: 'string';
-    iconURL: 'string';
+export interface SelectFormFieldItemOptions {
+    iconsURLPrefix: string
+    name: string;
+    iconURL: string;
 }
 
-export interface NestedFormField {
-    nestedOptions: Record<string, NestedOptions>;
+export interface TextOptions {
+    title: string;
+    className?: string;
+    isLabel?: boolean;
 }
-export interface NestedOptions {
 
+export interface ToggleFormFieldOptions {
+    title?: string;
+    value: boolean;
+    enabledOnOffLabels?: boolean;
+    className?: string;
+    callback?: Function;
+    onchange?: (value: boolean) => void;
+    id: string;
+    name: string;
+}
+
+export interface NestedHeaderFormFieldOptions {
+    name: string;
+    allowEnabled?: boolean;
+    onchange?: (value: boolean) => void;
+    isEnabled?: boolean;
+    isNested?: boolean;
 }
 
 export type RendererElement =

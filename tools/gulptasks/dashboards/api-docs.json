@@ -10,6 +10,7 @@
         "../../../ts/Dashboards/Components/KPIComponent.ts",
         "../../../ts/Dashboards/Layout/Layout.ts",
         "../../../ts/Dashboards/Layout/Row.ts",
+        "../../../ts/Dashboards/EditMode/AccordionMenu.ts",
         "../../../ts/Dashboards/Layout/Cell.ts",
         "../../../ts/Dashboards/Components/Sync/*.ts",
         "../../../ts/Dashboards/PluginHandler.ts",

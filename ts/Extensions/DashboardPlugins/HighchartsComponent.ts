@@ -41,6 +41,8 @@ const {
     addEvent,
     createElement,
     merge,
+    splat,
+    isArray,
     uniqueKey
 } = U;
 
@@ -103,31 +105,174 @@ class HighchartsComponent extends Component {
             },
             chartConstructor: '',
             editableOptions:
-                (Component.defaultOptions.editableOptions || []).concat(
-                    [
-                        'chartOptions',
-                        'chartType',
-                        'chartConfig',
-                        'chartClassName',
-                        'chartID'
-                    ]
-                ),
+            (Component.defaultOptions.editableOptions || []).concat([
+                {
+                    name: 'chartOptions',
+                    type: 'nested',
+                    detailedOptions: [{
+                        name: 'chart',
+                        options: [{
+                            name: 'title',
+                            propertyPath: ['chartOptions', 'title', 'text'],
+                            type: 'input'
+                        }, {
+                            name: 'subtitle',
+                            propertyPath: ['chartOptions', 'subtitle', 'text'],
+                            type: 'input'
+                        }, {
+                            name: 'type',
+                            propertyPath: ['chartOptions', 'chart', 'type'],
+                            type: 'select',
+                            items: [{
+                                name: 'column',
+                                iconURL: 'series-types/icon-column.svg'
+                            }, {
+                                name: 'line',
+                                iconURL: 'series-types/icon-line.svg'
+                            }, {
+                                name: 'scatter',
+                                iconURL: 'series-types/icon-scatter.svg'
+                            }, {
+                                name: 'pie',
+                                iconURL: 'series-types/icon-pie.svg'
+                            }]
+                        }]
+                    }, {
+                        name: 'xAxis',
+                        options: [{
+                            name: 'title',
+                            propertyPath:
+                                ['chartOptions', 'xAxis', 'title', 'text'],
+                            type: 'input'
+                        }, {
+                            name: 'type',
+                            propertyPath: ['chartOptions', 'xAxis', 'type'],
+                            type: 'select',
+                            items: [{
+                                name: 'linear'
+                            }, {
+                                name: 'datetime'
+                            }, {
+                                name: 'logarithmic'
+                            }]
+                        }]
+                    }, {
+                        name: 'yAxis',
+                        options: [{
+                            name: 'title',
+                            propertyPath:
+                                ['chartOptions', 'yAxis', 'title', 'text'],
+                            type: 'input'
+                        }, {
+                            name: 'type',
+                            propertyPath: ['chartOptions', 'yAxis', 'type'],
+                            type: 'select',
+                            items: [{
+                                name: 'linear'
+                            }, {
+                                name: 'datetime'
+                            }, {
+                                name: 'logarithmic'
+                            }]
+                        }]
+                    }, {
+                        name: 'legend',
+                        allowEnabled: true,
+                        propertyPath: ['chartOptions', 'legend', 'enabled'],
+                        options: [{
+                            name: 'align',
+                            propertyPath: ['chartOptions', 'legend', 'align'],
+                            type: 'select',
+                            items: [{
+                                name: 'left'
+                            }, {
+                                name: 'center'
+                            }, {
+                                name: 'right'
+                            }]
+                        }]
+                    }, {
+                        name: 'tooltip',
+                        allowEnabled: true,
+                        propertyPath: ['chartOptions', 'tooltip', 'enabled'],
+                        options: [{
+                            title: 'split',
+                            propertyPath: ['chartOptions', 'tooltip', 'split'],
+                            type: 'toggle'
+                        }]
+                    }, {
+                        name: 'dataLabels',
+                        propertyPath: [
+                            'chartOptions',
+                            'plotOptions',
+                            'series',
+                            'dataLabels',
+                            'enabled'
+                        ],
+                        allowEnabled: true,
+                        options: [{
+                            name: 'align',
+                            propertyPath: [
+                                'chartOptions',
+                                'plotOptions',
+                                'series',
+                                'dataLabels',
+                                'align'
+                            ],
+                            type: 'select',
+                            items: [{
+                                name: 'left'
+                            }, {
+                                name: 'center'
+                            }, {
+                                name: 'right'
+                            }]
+                        }]
+                    }, {
+                        name: 'credits',
+                        allowEnabled: true,
+                        propertyPath: ['chartOptions', 'credits', 'enabled'],
+                        options: [{
+                            name: 'name',
+                            propertyPath: [
+                                'chartOptions',
+                                'credits',
+                                'text'
+                            ],
+                            type: 'input'
+                        }, {
+                            name: 'url',
+                            propertyPath: [
+                                'chartOptions',
+                                'credits',
+                                'href'
+                            ],
+                            type: 'input'
+                        }]
+                    }]
+                }, {
+                    name: 'chartConfig',
+                    propertyPath: ['chartOptions'],
+                    type: 'textarea'
+                }, {
+                    name: 'chartClassName',
+                    propertyPath: ['chartClassName'],
+                    type: 'input'
+                }, {
+                    name: 'chartID',
+                    propertyPath: ['chartID'],
+                    type: 'input'
+                }
+            ]),
+            syncHandlers: HighchartsSyncHandlers,
             editableOptionsBindings: merge(
                 Component.defaultOptions.editableOptionsBindings,
                 {
                     skipRedraw: [
                         'chartOptions',
-                        'chartConfig',
-                        'chartType'
-                    ],
-                    keyMap: {
-                        chartOptions: 'textarea',
-                        chartConfig: 'nested',
-                        chartType: 'select'
-                    }
-                }
-            ),
-            syncHandlers: HighchartsSyncHandlers,
+                        'chartConfig'
+                    ]
+                }),
             columnKeyMap: {}
         }
     );
@@ -250,10 +395,12 @@ class HighchartsComponent extends Component {
             this.syncHandlers
         );
 
-        this.chartOptions = (
+        this.chartOptions = merge((
             this.options.chartOptions ||
             { chart: {} } as Partial<ChartOptions>
-        );
+        ), {
+            tooltip: {} // Temporary fix for #18876
+        });
 
         if (this.connector) {
             this.on('tableChanged', (): void => this.updateSeries());
@@ -305,7 +452,7 @@ class HighchartsComponent extends Component {
         hcComponent.setupConnectorUpdate();
 
         addEvent(hcComponent.chart, 'afterUpdate', function ():void {
-            const options = this.options;
+            const options = this.userOptions;
 
             if (hcComponent.hasLoaded) {
                 hcComponent.updateComponentOptions({
@@ -427,7 +574,7 @@ class HighchartsComponent extends Component {
         this.setOptions();
 
         if (this.chart) {
-            this.chart.update(this.options.chartOptions || {});
+            this.chart.update(merge(this.options.chartOptions) || {});
         }
         this.emit({ type: 'afterUpdate' });
         return this;
@@ -680,6 +827,44 @@ class HighchartsComponent extends Component {
 
         this.emit({ type: 'toJSON', json });
         return json;
+    }
+
+
+    public getEditableOptions(): HighchartsComponent.Options {
+        const component = this;
+        const componentOptions = component.options;
+        const chart = component.chart;
+        const chartOptions = chart && chart.options;
+        const chartType = chartOptions && chartOptions.chart.type || 'line';
+
+        return merge(componentOptions, {
+            chartOptions
+        }, {
+            chartOptions: {
+                yAxis: splat(chart && chart.yAxis[0].options),
+                xAxis: splat(chart && chart.xAxis[0].options),
+                plotOptions: {
+                    series: ((chartOptions && chartOptions.plotOptions) ||
+                        {})[chartType]
+                }
+            }
+        });
+    }
+
+
+    public getEditableOptionValue(
+        propertyPath?: string[]
+    ): number | boolean | undefined | string {
+        const component = this;
+        if (!propertyPath) {
+            return;
+        }
+
+        if (propertyPath.length === 1 && propertyPath[0] === 'chartOptions') {
+            return JSON.stringify(component.options.chartOptions, null, 2);
+        }
+
+        return super.getEditableOptionValue.call(this, propertyPath);
     }
 }
 

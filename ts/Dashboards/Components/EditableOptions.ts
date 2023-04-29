@@ -14,13 +14,35 @@
  *
  * */
 
-import Component from './Component.js';
-import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
+import type { RendererElement } from '../EditMode/EditRenderer.js';
+import type Component from './Component.js';
 
 namespace EditableOptions {
+
+    export interface Configuration {
+        name: string;
+        type: ElementType;
+        detailedOptions?: Array<DetailedOptions>
+        propertyPath?: Array<string>
+        value?: any;
+    }
+
+    export type ElementType =
+        | 'input'
+        | 'text'
+        | 'textarea'
+        | 'toggle'
+        | 'select'
+        | 'nested';
+
+    export interface DetailedOptions {
+        name: string;
+        allowEnabled?: boolean;
+        propertyPath?: Array<string>;
+        options: Array<Record<string, any>>;
+    }
+
+
     export interface OptionsBindings {
         keyMap: Record<string, string>;
         typeMap: Record<string, string>;
@@ -72,69 +94,8 @@ class EditableOptions {
         this.bindings = bindings;
     }
 
-    public getEditableOptions(): (EditableOptions.getOptionsType | undefined) {
-        const { options } = this.component;
-        const { keyMap, typeMap } =
-            merge(EditableOptions.defaultBindings, this.bindings);
-
-        /**
-         *
-         */
-        function getType(
-            nodeName: string,
-            branch: Record<string, any>
-        ): EditableOptions.getTypesType | undefined {
-            const node = branch[nodeName];
-
-            if (keyMap[nodeName]) {
-                return {
-                    type: keyMap[nodeName],
-                    value: node ? JSON.stringify(node) : void 0
-                };
-            }
-
-            const type = typeof node;
-            if (typeMap[type]) {
-                return {
-                    type: typeMap[type],
-                    value: node ? JSON.stringify(node) : void 0
-                };
-            }
-
-            if (type === 'object') {
-                if (Array.isArray(node)) {
-                    return {
-                        type: 'array',
-                        value: node ? JSON.stringify(node) : void 0
-                    };
-                }
-                // dive deeper
-                const childNodes = Object.keys(node).reduce(
-                    (
-                        obj: Record<string, EditableOptions.getTypesType>,
-                        childNodeName: string
-                    ): Record<string, any> => {
-                        const type = getType(childNodeName, node);
-                        if (type) {
-                            obj[childNodeName] = type;
-                        }
-                        return obj;
-                    }, {});
-
-                return { children: childNodes };
-            }
-        }
-
-        const record: EditableOptions.getOptionsType = {};
-
-        (options.editableOptions || []).forEach((optionName: string): void => {
-            const type = getType(optionName, options);
-            if (type) {
-                record[optionName] = type;
-            }
-        });
-
-        return record;
+    public getOptions(): (Array<EditableOptions.Configuration>) {
+        return this.component.options.editableOptions;
     }
 }
 

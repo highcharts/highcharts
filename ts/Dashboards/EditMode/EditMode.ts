@@ -14,17 +14,23 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+import type Layout from '../Layout/Layout';
+import type Cell from '../Layout/Cell';
+import type Row from '../Layout/Row';
+import type Board from '../Board';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+
 import U from '../../Core/Utilities.js';
-import Board from '../Board.js';
 import EditGlobals from './EditGlobals.js';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
-import type Layout from '../Layout/Layout.js';
-import type Cell from '../Layout/Cell.js';
-import type Row from '../Layout/Row.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
 import RowEditToolbar from './Toolbar/RowEditToolbar.js';
-import Sidebar from './Sidebar.js';
+import SidebarPopup from './SidebarPopup.js';
 import EditContextMenu from './EditContextMenu.js';
 import DragDrop from '../Actions/DragDrop.js';
 import Resizer from '../Actions/Resizer.js';
@@ -39,6 +45,11 @@ const {
     css
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
 class EditMode {
     /* *
     *
@@ -123,12 +134,12 @@ class EditMode {
 
     private active: boolean = false;
     public options: EditMode.Options;
-    public iconsURLPrefix: string = 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/';
+    public iconsURLPrefix: string = EditGlobals.iconsURLPrefix;
     public board: Board;
     public lang: EditGlobals.LangOptions;
     public cellToolbar?: CellEditToolbar;
     public rowToolbar?: RowEditToolbar;
-    public sidebar?: Sidebar;
+    public sidebar?: SidebarPopup;
     public dragDrop?: DragDrop;
     public resizer?: Resizer;
     public isInitialized: boolean;
@@ -181,9 +192,9 @@ class EditMode {
         const editMode = this;
 
         if (editMode.active) {
-            editMode.deactivateEditMode();
+            editMode.deactivate();
         } else {
-            editMode.activateEditMode();
+            editMode.activate();
         }
     }
 
@@ -217,7 +228,11 @@ class EditMode {
 
         // Init Sidebar.
         if (!editMode.sidebar) {
-            editMode.sidebar = new Sidebar(editMode);
+            editMode.sidebar = new SidebarPopup(
+                this.board.container,
+                this.iconsURLPrefix,
+                editMode
+            );
         }
 
         editMode.isInitialized = true;
@@ -393,7 +408,7 @@ class EditMode {
         }
     }
 
-    public activateEditMode(): void {
+    public activate(): void {
         const editMode = this;
 
         // Init edit mode.
@@ -422,7 +437,7 @@ class EditMode {
         editMode.isContextDetectionActive = true;
     }
 
-    public deactivateEditMode(): void {
+    public deactivate(): void {
         const editMode = this,
             dashboardCnt = editMode.board.container;
 
@@ -797,6 +812,12 @@ class EditMode {
         }
     }
 }
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
 namespace EditMode {
     export interface Options {
         enabled: boolean;
@@ -819,7 +840,7 @@ namespace EditMode {
     export interface Toolbars {
         cell?: CellEditToolbar.Options;
         row?: RowEditToolbar.Options;
-        settings?: Sidebar.Options;
+        settings?: SidebarPopup.Options;
     }
 
     export interface Tools {
@@ -846,4 +867,9 @@ namespace EditMode {
     }
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default EditMode;

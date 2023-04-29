@@ -1,4 +1,5 @@
-import Board from  '../../../../code/es-modules/Dashboards/Board.js';
+import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
+import Board from '../../../../code/es-modules/masters/dashboards.src.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
@@ -22,7 +23,7 @@ const chartDemo = {
     }
 };
 
-let board = new Board('container-nested-layout', {
+let board = Dashboards.board('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -115,10 +116,19 @@ let board = new Board('container-nested-layout', {
             chart: {
                 animation: false
             },
+            legend: {
+                enabled: false
+            },
+            tooltip: {
+                enabled: false
+            },
             series: [{
                 name: 'Series from options',
                 data: [1, 2, 3, 4]
-            }]
+            }],
+            credits: {
+                enabled: false
+            }
         }
     }, {
         cell: 'dashboard-col-layout-0',

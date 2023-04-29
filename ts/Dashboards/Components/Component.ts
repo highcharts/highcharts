@@ -54,6 +54,7 @@ import EditableOptions from './EditableOptions.js';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
+    isArray,
     merge,
     fireEvent,
     addEvent,
@@ -165,12 +166,15 @@ abstract class Component {
             'flex-direction': 'column'
         },
         sync: Sync.defaultHandlers,
-        editableOptions: [
-            'style',
-            'title',
-            'caption'
-        ],
-        editableOptionsBindings: EditableOptions.defaultBindings
+        editableOptions: [{
+            name: 'title',
+            propertyPath: ['title'],
+            type: 'input'
+        }, {
+            name: 'caption',
+            propertyPath: ['caption'],
+            type: 'input'
+        }]
     };
     /**
      * The HTML element or id of HTML element that is used for appending
@@ -1103,6 +1107,36 @@ abstract class Component {
         return json;
     }
 
+    public getEditableOptions(): Component.ComponentOptions {
+        const component = this;
+        return merge(component.options);
+    }
+
+
+    public getEditableOptionValue(
+        propertyPath?: string[]
+    ): number | boolean | undefined | string {
+        const component = this;
+        if (!propertyPath) {
+            return;
+        }
+
+        let result = component.getEditableOptions() as any;
+
+        for (let i = 0, end = propertyPath.length; i < end; i++) {
+            if (!result) {
+                return;
+            }
+
+            if (isArray(result)) {
+                result = result[0];
+            }
+
+            result = result[propertyPath[i]];
+        }
+
+        return result;
+    }
 }
 
 /* *
@@ -1237,7 +1271,7 @@ namespace Component {
          */
         events?: Record<string, Function>;
         /** @internal */
-        editableOptions: Array<string>;
+        editableOptions: Array<EditableOptions.Configuration>;
         /** @internal */
         editableOptionsBindings: EditableOptions.OptionsBindings;
         /** @internal */
