@@ -3414,6 +3414,7 @@ class Axis {
             hasData = axis.hasData(),
             axisTitleOptions = options.title,
             labelOptions = options.labels,
+            hasCrossing = isNumber(options.crossing),
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
             directionFactor = [-1, 1, 1, -1][side],
@@ -3485,6 +3486,7 @@ class Axis {
             );
             if (pick(
                 labelOptions.reserveSpace,
+                hasCrossing ? false : null,
                 axis.labelAlign === 'center' ? true : null,
                 axis.reserveSpaceDefault
             )) {
@@ -3517,7 +3519,11 @@ class Axis {
         ) {
             axis.addTitle(showAxis);
 
-            if (showAxis && axisTitleOptions.reserveSpace !== false) {
+            if (
+                showAxis &&
+                !hasCrossing &&
+                axisTitleOptions.reserveSpace !== false
+            ) {
                 axis.titleOffset = titleOffset =
                     (axis.axisTitle as any).getBBox()[
                         horiz ? 'height' : 'width'
@@ -3831,6 +3837,7 @@ class Axis {
             alternateBands = axis.alternateBands,
             stackLabelOptions = options.stackLabels,
             alternateGridColor = options.alternateGridColor,
+            crossing = options.crossing,
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,
             showAxis = axis.showAxis,
@@ -3851,6 +3858,18 @@ class Axis {
                 tick.isActive = false;
             });
         });
+
+        // Crossing
+        if (isNumber(crossing)) {
+            const otherAxis = this.isXAxis ? chart.yAxis[0] : chart.xAxis[0],
+                directionFactor = [1, -1, -1, 1][this.side];
+            if (otherAxis) {
+                this.offset = directionFactor * otherAxis.toPixels(
+                    crossing,
+                    true
+                );
+            }
+        }
 
         // If the series has data draw the ticks. Else only the line and title
         if (axis.hasData() || isLinked) {
