@@ -1744,7 +1744,7 @@ class Chart {
 
     /**
      * Reflows the chart to its container. By default, the Resize Observer is
-     * attached to the chart's div which allows to reflows the he chart
+     * attached to the chart's div which allows to reflows the chart
      * automatically to its container, as per the
      * [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
      * option.
