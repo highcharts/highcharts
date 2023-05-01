@@ -84,7 +84,9 @@ class Cell extends GUIElement {
                         options.parentContainerId,
                     mountedComponentJSON: options.mountedComponentJSON,
                     style: options.style,
-                    layoutJSON: options.layoutJSON
+                    layoutJSON: options.layoutJSON,
+                    width: options.width,
+                    height: options.height
                 }
             );
         }
@@ -339,6 +341,8 @@ class Cell extends GUIElement {
             options: {
                 containerId: (cell.container as HTMLElement).id,
                 parentContainerId: rowContainerId,
+                width: cell.options.width,
+                height: cell.options.height,
                 mountedComponentJSON:
                     cell.mountedComponent && cell.mountedComponent.toJSON(),
                 style: cell.options.style,
@@ -662,6 +666,8 @@ namespace Cell {
      * @internal
      **/
     export interface OptionsJSON extends JSON.Object {
+        width?: string|number;
+        height?: string|number;
         containerId: string;
         parentContainerId: string;
         mountedComponentJSON?: Component.JSON;

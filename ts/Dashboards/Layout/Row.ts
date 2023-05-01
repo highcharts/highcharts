@@ -224,6 +224,8 @@ class Row extends GUIElement {
                 options: {
                     containerId: cellJSON.options.containerId,
                     parentContainerId: cellJSON.options.parentContainerId,
+                    width: cellJSON.options.width,
+                    height: cellJSON.options.height,
                     style: cellJSON.options.style,
                     layoutJSON: cellJSON.options.layoutJSON,
                     mountedComponentJSON: void 0 // Will be mounted later.
