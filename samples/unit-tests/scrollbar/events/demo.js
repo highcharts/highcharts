@@ -145,7 +145,7 @@ QUnit.test('Scrollbar.liveRedraw option', function (assert) {
     );
 });
 
-QUnit.test('#14193: Scrollbar touch', assert => {
+QUnit.test('#14193: Scrollbar touch, #18922: Scrollbar track click', assert => {
     const { hasTouch, isTouchDevice } = Highcharts;
     Highcharts.hasTouch = Highcharts.isTouchDevice = true;
 
@@ -219,4 +219,7 @@ QUnit.test('#14193: Scrollbar touch', assert => {
 
     Highcharts.hasTouch = hasTouch;
     Highcharts.isTouchDevice = isTouchDevice;
+
+    controller.click(bar.translateX + 5, bar.translateY + 5);
+    assert.ok(axis.min === min, 'Extremes should change on track click');
 });
