@@ -69,6 +69,28 @@
         --highcharts-highlight-color-20: rgb(65, 74, 92);
         --highcharts-highlight-color-10: rgb(58, 63, 71);
     }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn {
+        background-color: var(--highcharts-neutral-color-80);
+        filter: invert(1) brightness(1);
+    }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn:hover {
+        background-color: var(--highcharts-neutral-color-0);
+    }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn {
+        background-color: var(--highcharts-neutral-color-80);
+        filter: invert(1) brightness(1);
+        border: 1px solid var(--highcharts-neutral-color-0);
+    }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover,
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
+        color: var(--highcharts-neutral-color-0);
+        background-color: var(--highcharts-neutral-color-80);
+        filter: none;
+    }
 }
 
 .highcharts-dark {
@@ -96,6 +118,30 @@
     --highcharts-highlight-color-20: rgb(65, 74, 92);
     --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
+
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn {
+    background-color: var(--highcharts-neutral-color-80);
+    filter: invert(1) brightness(1);
+}
+
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn:hover {
+    background-color: var(--highcharts-neutral-color-0);
+}
+
+/* stylelint-disable max-line-length */
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn {
+    background-color: var(--highcharts-neutral-color-80);
+    filter: invert(1) brightness(1);
+    border: 1px solid var(--highcharts-neutral-color-0);
+}
+
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover,
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
+    color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-neutral-color-80);
+    filter: none;
+}
+/* stylelint-enable max-line-length */
 
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
