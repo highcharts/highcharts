@@ -88,7 +88,7 @@ test('Components in layout with no row style', function (assert) {
 
 });
 
-skip('Components in rows with set height', function (assert) {
+test('Components in rows with set height', function (assert) {
     const container = setupContainer();
 
     layouts[0].rows[0].style = {
@@ -256,9 +256,9 @@ test('Nested layouts serialization.', function (assert) {
     assert.equal(numberOfMountedComponents, importedLayout.board.mountedComponents.length, 'The number of mounted components should be the same after importing the layout.')
     assert.true(importedLayout.rows[0].cells[1] !== undefined, 'The imported cell has a nested layout.')
 });
+
 test('Reserialized cell width', function (assert) {
     const container = setupContainer();
-
     const chartComponentOptions = {
         type: 'Highcharts',
         chartOptions: {
@@ -330,9 +330,11 @@ test('Reserialized cell width', function (assert) {
     layoutToExport.exportLocal();
     layoutToExport.destroy();
     board.importLayoutLocal(exportedLayoutId);
+
     const widthAfterExport = board.layouts[0].rows[0].cells.map(
         (cell) => cell.options.width
     );
+
     assert.deepEqual(
         widthBeforeExport,
         widthAfterExport,
