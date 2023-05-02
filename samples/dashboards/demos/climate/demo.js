@@ -400,7 +400,39 @@ async function setupDashboard() {
             },
             dataGridOptions: {
                 cellHeight: 38,
-                editable: false
+                editable: false,
+                columns: {
+                    time: {
+                        show: false
+                    },
+                    FD: {
+                        headerFormat: 'Days with Frost'
+                    },
+                    ID: {
+                        headerFormat: 'Days with Ice'
+                    },
+                    RR1: {
+                        headerFormat: 'Days with Rain'
+                    },
+                    TN: {
+                        show: false
+                    },
+                    TX: {
+                        show: false
+                    },
+                    TNC: {
+                        headerFormat: 'Average Temperature °C'
+                    },
+                    TNF: {
+                        headerFormat: 'Average Temperature °F'
+                    },
+                    TXC: {
+                        headerFormat: 'Maximal Temperature °C'
+                    },
+                    TXF: {
+                        headerFormat: 'Maximal Temperature °F'
+                    }
+                }
             },
             editable: true,
             events: {

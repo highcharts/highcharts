@@ -366,6 +366,7 @@ div.highcharts-dashboards-wrapper .highcharts-dashboards-edit-context-menu-btn {
     border-color: var(--color-header-border);
     color: var(--color-header-text);
     padding: 0 12px;
+    font-size: 12px;
 }
 
 #selection-grid .hc-dg-outer-container {
