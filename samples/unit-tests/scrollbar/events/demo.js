@@ -220,6 +220,7 @@ QUnit.test('#14193: Scrollbar touch, #18922: Scrollbar track click', assert => {
     Highcharts.hasTouch = hasTouch;
     Highcharts.isTouchDevice = isTouchDevice;
 
+    // #18922, scrollbar track did not catch click events
     controller.click(bar.translateX + 5, bar.translateY + 5);
     assert.ok(axis.min === min, 'Extremes should change on track click');
 });
