@@ -666,6 +666,7 @@ class Scrollbar {
         const scroller = this,
             renderer = scroller.renderer,
             options = scroller.options,
+            chartOptions = scroller.chart.options,
             size = scroller.size,
             styledMode = scroller.chart.styledMode,
             group = renderer.g('scrollbar')
@@ -689,7 +690,10 @@ class Scrollbar {
 
         if (!styledMode) {
             scroller.track.attr({
-                fill: options.trackBackgroundColor,
+                // #18922 Transparent track doesn't catch click events
+                fill: options.trackBackgroundColor === 'none' ?
+                    chartOptions.chart.backgroundColor :
+                    options.trackBackgroundColor,
                 stroke: options.trackBorderColor,
                 'stroke-width': options.trackBorderWidth
             });
