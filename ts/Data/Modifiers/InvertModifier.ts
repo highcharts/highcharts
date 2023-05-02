@@ -392,8 +392,14 @@ namespace InvertModifier {
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
-        // nothing here yet
+
+        /**
+         * Name of the related modifier for these options.
+         */
+        modifier: 'Invert';
+
     }
+
 }
 
 /* *

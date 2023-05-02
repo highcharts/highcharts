@@ -85,7 +85,7 @@ class RangeModifier extends DataModifier {
     /**
      * Options of the range modifier.
      */
-    public readonly options: Readonly<RangeModifier.Options>;
+    public readonly options: RangeModifier.Options;
 
     /* *
      *
@@ -262,18 +262,27 @@ namespace RangeModifier {
      * Options to configure a range.
      */
     export interface RangeOptions {
+
+        /**
+         * Name of the related modifier for these options.
+         */
+        modifier: 'Range';
+
         /**
          * Column containing the values to filter.
          */
         column: string;
+
         /**
          * Maximum including value (`<=` operator).
          */
         maxValue: (boolean|number|string);
+
         /**
          * Minimum including value (`>=` operator).
          */
         minValue: (boolean|number|string);
+
     }
 
 }

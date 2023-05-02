@@ -816,7 +816,7 @@ export interface NestedHeaderFormFieldOptions {
     isNested?: boolean;
 }
 
-export type RendererElement =
+export type RendererElement = (
     | 'select'
     | 'toggle'
     | 'text'
@@ -826,4 +826,5 @@ export type RendererElement =
     | 'input'
     | 'textarea'
     | 'checkbox'
-    | 'button';
+    | 'button'
+);
