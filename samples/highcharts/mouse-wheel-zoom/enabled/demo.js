@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
     chart: {
         zooming: {
-            // mouseWheel: false
+            mouseWheel: false
         }
     },
 
