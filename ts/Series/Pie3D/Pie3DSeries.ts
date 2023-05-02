@@ -23,8 +23,7 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import H from '../../Core/Globals.js';
 const {
-    deg2rad,
-    svg
+    deg2rad
 } = H;
 import Pie3DPoint from './Pie3DPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -97,50 +96,48 @@ class Pie3DSeries extends PieSeries {
                 group = this.group,
                 markerGroup = this.markerGroup;
 
-            if (svg) { // VML is too slow anyway
-
-                if (animation === true) {
-                    animation = {};
-                }
-                // Initialize the animation
-                if (init) {
-
-                    // Scale down the group and place it in the center
-                    (group as any).oldtranslateX = pick(
-                        (group as any).oldtranslateX,
-                        (group as any).translateX);
-                    (group as any).oldtranslateY = pick(
-                        (group as any).oldtranslateY,
-                        (group as any).translateY);
-                    attribs = {
-                        translateX: center[0],
-                        translateY: center[1],
-                        scaleX: 0.001, // #1499
-                        scaleY: 0.001
-                    };
-
-                    (group as any).attr(attribs);
-                    if (markerGroup) {
-                        markerGroup.attrSetters = (group as any).attrSetters;
-                        markerGroup.attr(attribs);
-                    }
-
-                // Run the animation
-                } else {
-                    attribs = {
-                        translateX: (group as any).oldtranslateX,
-                        translateY: (group as any).oldtranslateY,
-                        scaleX: 1,
-                        scaleY: 1
-                    };
-                    (group as any).animate(attribs, animation);
-
-                    if (markerGroup) {
-                        markerGroup.animate(attribs, animation);
-                    }
-                }
-
+            if (animation === true) {
+                animation = {};
             }
+            // Initialize the animation
+            if (init) {
+
+                // Scale down the group and place it in the center
+                (group as any).oldtranslateX = pick(
+                    (group as any).oldtranslateX,
+                    (group as any).translateX);
+                (group as any).oldtranslateY = pick(
+                    (group as any).oldtranslateY,
+                    (group as any).translateY);
+                attribs = {
+                    translateX: center[0],
+                    translateY: center[1],
+                    scaleX: 0.001, // #1499
+                    scaleY: 0.001
+                };
+
+                (group as any).attr(attribs);
+                if (markerGroup) {
+                    markerGroup.attrSetters = (group as any).attrSetters;
+                    markerGroup.attr(attribs);
+                }
+
+            // Run the animation
+            } else {
+                attribs = {
+                    translateX: (group as any).oldtranslateX,
+                    translateY: (group as any).oldtranslateY,
+                    scaleX: 1,
+                    scaleY: 1
+                };
+                (group as any).animate(attribs, animation);
+
+                if (markerGroup) {
+                    markerGroup.animate(attribs, animation);
+                }
+            }
+
+
         }
     }
 

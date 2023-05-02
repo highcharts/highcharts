@@ -100,7 +100,8 @@ class MapPointSeries extends ScatterSeries {
                 /** @internal */
                 color: Palette.neutralColor100
             }
-        }
+        },
+        legendSymbol: 'lineMarker'
     } as MapPointSeriesOptions);
 
     /* *
@@ -425,8 +426,8 @@ export default MapPointSeries;
  * features of geoJSON can be passed directly into the `data`, optionally
  * after first filtering and processing it.
  *
- * @sample maps/series/data-geometry/
- *         geometry defined in data
+ * @sample maps/series/mappoint-line-geometry/
+ *         Map point and line geometry
  *
  * @type      {Object}
  * @since 9.3.0

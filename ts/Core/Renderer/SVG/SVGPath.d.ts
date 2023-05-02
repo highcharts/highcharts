@@ -31,8 +31,13 @@ export namespace SVGPath {
      *  Declarations
      *
      * */
-
-    export type Arc = [
+    type ArcParams = {
+        cx: number,
+        cy: number,
+        start: number,
+        end: number
+    };
+    type ArcArray = [
         'A'|'a',
         number,
         number,
@@ -42,6 +47,10 @@ export namespace SVGPath {
         number,
         number
     ];
+    export interface Arc extends ArcArray {
+        params?: ArcParams
+    }
+
     export type Close = ['Z'|'z'];
     export type CurveTo = [
         'C'|'c',

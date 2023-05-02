@@ -18,6 +18,7 @@
 
 import type MapNavigationOptions from './MapNavigationOptions';
 import D from '../Core/Defaults.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
 const { extend } = U;
 
@@ -95,11 +96,13 @@ const MapNavigationDefaults: MapNavigationOptions = {
          * Text styles for the map navigation buttons.
          *
          * @type    {Highcharts.CSSObject}
-         * @default {"fontSize": "15px", "fontWeight": "bold"}
+         * @default {"fontSize": "1em", "fontWeight": "bold"}
          */
         style: {
             /** @ignore */
-            fontSize: '15px',
+            color: Palette.neutralColor60,
+            /** @ignore */
+            fontSize: '1em',
             /** @ignore */
             fontWeight: 'bold'
         },
@@ -117,6 +120,10 @@ const MapNavigationDefaults: MapNavigationOptions = {
          * @default {"stroke-width": 1, "text-align": "center"}
          */
         theme: {
+            /** @ignore */
+            fill: Palette.backgroundColor,
+            /** @ignore */
+            stroke: Palette.neutralColor10,
             /** @ignore */
             'stroke-width': 1,
             /** @ignore */

@@ -96,7 +96,7 @@ export interface AxisLabelOptions {
     allowOverlap?: boolean;
     autoRotation?: Array<number>;
     autoRotationLimit: number;
-    distance?: number;
+    distance: number;
     enabled: boolean;
     format?: string;
     formatter?: FormatterCallback<AxisLabelFormatterContextObject, AxisLabelFormatterContextObject>;
@@ -109,7 +109,7 @@ export interface AxisLabelOptions {
     step: number;
     style: CSSObject;
     useHTML: boolean;
-    x: number;
+    x?: number;
     y?: number;
     zIndex: number;
 }
@@ -122,6 +122,7 @@ export interface AxisOptions {
     ceiling?: number;
     className?: string;
     crosshair?: (boolean|AxisCrosshairOptions);
+    crossing?: number;
     endOnTick: boolean;
     events?: AxisEventsOptions;
     floor?: number;

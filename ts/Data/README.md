@@ -38,7 +38,7 @@ const table = new DataTable({
         title: ['Gremlins', 'Gremlins 2: The New Batch']
     },
     id: 'gremlins_movies'
-);
+});
 table.id === 'gremlins_movies';
 table.autoId === false;
 ```
@@ -263,7 +263,7 @@ to load data. Continue with our example we can provide an URL to a CSV and then
 wait for loading to fulfill.
 
 ```TypeScript
-const connector = new CSVConnector(void 0, {
+const connector = new CSVConnector({
     csvURL: 'https://domain.example/source.csv'
 });
 try {
@@ -284,7 +284,7 @@ server-less situation, instead of the save function you usually use the
 related converter.
 
 ```TypeScript
-const connector = new CSVConnector(void 0, {
+const connector = new CSVConnector({
     csv: 'column\n1\n2\n3\n'
 });
 connector.converter.export(connector) === 'column\n1\n2\n3\n';
@@ -296,7 +296,7 @@ thrown, if this is not supported by the connector type, or if permissions do now
 allow this.
 
 ```TypeScript
-const connector = new HTMLTableConnector(void 0, {
+const connector = new HTMLTableConnector({
     tableElement: document.getElementById('the_table')
 });
 try {
@@ -315,26 +315,29 @@ DataPool
 With DataPool one can "lazy" load connectors besides the initial phase. After
 adding connector name, connector type and connector options to DataPool, one can
 request (later on) the connector or table under their given name and the class
-will give a promise with the connector or table as soon as it has been loaded.
+will give a promise that resolves to the connector or table as soon as it has
+been loaded.
 
 ```TypeScript
-const onDemand = new DataPool([{
-    name: 'My Google Spreadsheet',
-    connectorType: 'GoogleSheetsConnector',
-    connectorOptions: {
-        googleAPIKey: 'XXXXX',
-        googleSpreadsheetKey: 'XXXXX',
-    }
-}]);
-onDemand.setConnectorOptions({
+const dataPool = new DataPool({
+    connectors: [{
+        name: 'My Google Spreadsheet',
+        type: 'GoogleSheets',
+        options: {
+            googleAPIKey: 'XXXXX',
+            googleSpreadsheetKey: 'XXXXX',
+        }
+    }]
+});
+dataPool.setConnectorOptions({
     name: 'My CSV',
-    connectorType: 'CSVConnector',
-    connectorOptions: {
+    type: 'CSV',
+    options: {
         csvURL: 'https://domain.example/data.csv'
     }
 });
-const googleConnector = await onDemand.getConnector('My Google Spreadsheet');
-const csvTable = await onDemand.getConnectorTable('My CSV');
+const googleConnector = await dataPool.getConnector('My Google Spreadsheet');
+const csvTable = await dataPool.getConnectorTable('My CSV');
 ```
 
 DataPool is one of possible way to coordinate and share connectors and their
@@ -342,7 +345,7 @@ data between multiple modules. You can request the connector multiple times,
 while the class will load each connector only ones.
 
 ```TypeScript
-const googleConnector1 = await onDemand.getConnector('My Google Spreadsheet');
-const googleConnector2 = await onDemand.getConnector('My Google Spreadsheet');
-const googleConnector3 = await onDemand.getConnector('My Google Spreadsheet');
+const googleConnector1 = await dataPool.getConnector('My Google Spreadsheet');
+const googleConnector2 = await dataPool.getConnector('My Google Spreadsheet');
+const googleConnector3 = await dataPool.getConnector('My Google Spreadsheet');
 ```

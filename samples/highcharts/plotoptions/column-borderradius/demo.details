@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Highcharts column border radius
  authors:
    - Torstein Hønsi
  js_wrap: b
