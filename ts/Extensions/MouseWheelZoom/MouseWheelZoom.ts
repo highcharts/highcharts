@@ -287,8 +287,8 @@ export default MouseWheelZoomComposition;
  * */
 
 /**
- * The mousewheel zoom is a feature included in Highcharts Stock, but is
- * also available for Highcharts Core as a module. Zooming with the mousewheel
+ * The mouse wheel zoom is a feature included in Highcharts Stock, but is
+ * also available for Highcharts Core as a module. Zooming with the mouse wheel
  * is enabled by default. It can be disabled by setting this option to
  * `false`.
  *
@@ -303,7 +303,7 @@ export default MouseWheelZoomComposition;
  */
 
 /**
- * Zooming with the mousewheel can be disabled by setting this option to
+ * Zooming with the mouse wheel can be disabled by setting this option to
  * `false`.
  *
  * @type      {boolean}
@@ -315,7 +315,7 @@ export default MouseWheelZoomComposition;
 
 /**
  * Adjust the sensitivity of the zoom. Sensitivity of mouse wheel or trackpad
- * scrolling. `1` is no sensitivity, while with `2`, one mousewheel delta will
+ * scrolling. `1` is no sensitivity, while with `2`, one mouse wheel delta will
  * zoom in `50%`.
  *
  * @type      {number}
@@ -323,9 +323,9 @@ export default MouseWheelZoomComposition;
  * @since     next
  * @requires  modules/mouse-wheel-zoom
  * @sample    {highcharts} highcharts/mouse-wheel-zoom/sensitivity
- *            Change mousewheel zoom sensitivity
+ *            Change mouse wheel zoom sensitivity
  * @sample    {highstock} stock/mouse-wheel-zoom/sensitivity
- *            Change mousewheel zoom sensitivity
+ *            Change mouse wheel zoom sensitivity
  * @apioption chart.zooming.mouseWheel.sensitivity
  */
 
