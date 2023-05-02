@@ -196,7 +196,7 @@ class HighchartsComponent extends Component {
                         allowEnabled: true,
                         propertyPath: ['chartOptions', 'tooltip', 'enabled'],
                         options: [{
-                            title: 'split',
+                            name: 'split',
                             propertyPath: ['chartOptions', 'tooltip', 'split'],
                             type: 'toggle'
                         }]

@@ -1270,7 +1270,9 @@ namespace Component {
          * Events attached to the component : `mount`, `unmount`.
          */
         events?: Record<string, Function>;
-        /** @internal */
+        /**
+         * Set of options that are available for editing through sidebar.
+         */
         editableOptions: Array<EditableOptions.Configuration>;
         /** @internal */
         editableOptionsBindings: EditableOptions.OptionsBindings;

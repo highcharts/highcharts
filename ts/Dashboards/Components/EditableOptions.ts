@@ -14,17 +14,35 @@
  *
  * */
 
-import type { RendererElement } from '../EditMode/EditRenderer.js';
 import type Component from './Component.js';
 
 namespace EditableOptions {
 
+    /**
+     * Configuration for a single option in editable options.
+     */
     export interface Configuration {
+        /**
+         * Name of the option which will be displayed on the label.
+         */
         name: string;
+        /**
+         * Type of the editable element.
+         */
         type: ElementType;
+        /**
+         * Detailed options that should be included in the accorion menu.
+         * Available for `nested` type.
+         */
         detailedOptions?: Array<DetailedOptions>
+        /**
+         * Relative path to the option, that should be changed in the component.
+         */
         propertyPath?: Array<string>
-        value?: any;
+        /**
+         * Items that should be included in the select element.
+         */
+        items?: Array<{name?: string, iconURL?: string}>;
     }
 
     export type ElementType =
@@ -35,11 +53,26 @@ namespace EditableOptions {
         | 'select'
         | 'nested';
 
+    /**
+     * Configuration for a single option in detailed options.
+     */
     export interface DetailedOptions {
+        /**
+         * Name of the option that should be displayed.
+         */
         name: string;
+        /**
+         * whether the option should have a toggle to be enabled or disabled.
+         */
         allowEnabled?: boolean;
+        /**
+         * Relative path to the option, that should be changed in the component.
+         */
         propertyPath?: Array<string>;
-        options: Array<Record<string, any>>;
+        /**
+         * Options that should be included in the folded menu.
+         */
+        options: Array<Configuration>;
     }
 
 
@@ -49,13 +82,6 @@ namespace EditableOptions {
         skipRedraw: string[]; // keys of options that should not trigger redraw
     }
 
-    export interface getTypesType {
-        type?: string;
-        value?: string;
-        children?: Record<string, getTypesType>
-    }
-
-    export type getOptionsType = Record<string, getTypesType>;
 }
 
 class EditableOptions {
