@@ -1025,6 +1025,7 @@
     display: flex;
 }
 
+.highcharts-dashboards-edit-dropdown-content .highcharts-dashboards-edit-custom-option-button,
 .highcharts-dashboards-edit-accordion-nested .highcharts-dashboards-edit-custom-option-button {
     height: 40px;
     width: 100%;
