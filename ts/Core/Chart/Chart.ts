@@ -841,6 +841,8 @@ class Chart {
             redrawLegend = chart.isDirtyLegend,
             serie: Series;
 
+        renderer.rootFontSize = renderer.boxWrapper.getStyle('font-size');
+
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
             chart.setResponsive(false);
@@ -1186,9 +1188,12 @@ class Chart {
         // Default style
         const style = name === 'title' ? {
             color: Palette.neutralColor80,
-            fontSize: this.options.isStock ? '16px' : '18px' // #2944
+            fontSize: this.options.isStock ? '1em' : '1.2em', // #2944
+            fontWeight: 'bold'
         } : {
-            color: Palette.neutralColor60
+            // Subtitle or caption
+            color: Palette.neutralColor60,
+            fontSize: '0.8em'
         };
 
         // Merge default options with explicit options
@@ -1290,18 +1295,8 @@ class Chart {
                     // Floating subtitle (#6574)
                     verticalAlign === 'top' ? titleOffset[0] + 2 : 0;
 
-            let titleSize,
-                height;
-
             if (title) {
 
-                if (!this.styledMode) {
-                    titleSize = (
-                        titleOptions.style &&
-                        titleOptions.style.fontSize
-                    );
-                }
-                titleSize = renderer.fontMetrics(titleSize, title).b;
                 title
                     .css({
                         width: (
@@ -1310,13 +1305,16 @@ class Chart {
                         ) + 'px'
                     });
 
-                // Skip the cache for HTML (#3481, #11666)
-                height = Math.round(title.getBBox(titleOptions.useHTML).height);
+                const baseline = renderer.fontMetrics(title).b,
+                    // Skip the cache for HTML (#3481, #11666)
+                    height = Math.round(
+                        title.getBBox(titleOptions.useHTML).height
+                    );
 
                 title.align(extend({
                     y: verticalAlign === 'bottom' ?
-                        titleSize :
-                        offset + titleSize,
+                        baseline :
+                        offset + baseline,
                     height
                 }, titleOptions), false, 'spacingBox');
 
@@ -1746,7 +1744,7 @@ class Chart {
 
     /**
      * Reflows the chart to its container. By default, the Resize Observer is
-     * attached to the chart's div which allows to reflows the he chart
+     * attached to the chart's div which allows to reflows the chart
      * automatically to its container, as per the
      * [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
      * option.
@@ -2456,6 +2454,7 @@ class Chart {
         if (!chart.seriesGroup) {
             chart.seriesGroup = renderer.g('series-group')
                 .attr({ zIndex: 3 })
+                .shadow(chart.options.chart.seriesGroupShadow)
                 .add();
         }
         chart.renderSeries();

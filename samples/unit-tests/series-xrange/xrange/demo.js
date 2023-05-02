@@ -132,11 +132,12 @@ QUnit.test('X-Range', function (assert) {
 
     var point = chart.series[0].points[0],
         clipRect = point.graphic.partialClipRect;
-    assert.strictEqual(
+    assert.close(
         Math.floor(
             chart.xAxis[0].toValue(clipRect.attr('width') - clipRect.attr('x'))
         ),
         (point.x2 - point.x) * point.partialFill,
+        1,
         'Clip rect ends at correct position after zoom (#7617).'
     );
 
@@ -173,7 +174,7 @@ QUnit.test('X-Range', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].points[0].graphic.getBBox().width,
+        Math.round(chart.series[0].points[0].graphic.getBBox().width),
         10,
         'Correct width for minPointLength on a reversed xAxis (#8933).'
     );

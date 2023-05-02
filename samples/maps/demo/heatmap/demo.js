@@ -38,6 +38,7 @@ Highcharts.chart('container', {
         labels: {
             format: '{value}:00'
         },
+        lineWidth: 1,
         minPadding: 0,
         maxPadding: 0,
         startOnTick: false,

@@ -16,7 +16,6 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -80,7 +79,8 @@ class PolygonSeries extends ScatterSeries {
             followPointer: true,
             pointFormat: ''
         },
-        trackByArea: true
+        trackByArea: true,
+        legendSymbol: 'rectangle'
     }) as PolygonSeriesOptions;
 
     /* *
@@ -119,14 +119,12 @@ class PolygonSeries extends ScatterSeries {
 }
 
 interface PolygonSeries {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointClass: typeof PolygonPoint;
     type: string;
 }
 
 extend(PolygonSeries.prototype, {
     type: 'polygon',
-    drawLegendSymbol: LegendSymbol.drawRectangle,
     drawTracker: Series.prototype.drawTracker,
     setStackedPoints: noop // No stacking points on polygons (#5310)
 });

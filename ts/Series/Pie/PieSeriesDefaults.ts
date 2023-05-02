@@ -51,6 +51,20 @@ import { Palette } from '../../Core/Color/Palettes.js';
 const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
 
     /**
+     * The corner radius of the border surrounding each slice. A number
+     * signifies pixels. A percentage string, like for example `50%`, signifies
+     * a size relative to the radius and the inner radius.
+     *
+     * @sample  highcharts/plotoptions/series-border-radius
+     *          Column and pie with rounded border
+     *
+     * @since   11.0.0
+     *
+     * @type      {number|string|Highcharts.BorderRadiusOptionsObject}
+     */
+    borderRadius: 3,
+
+    /**
      * @excluding legendItemClick
      * @apioption plotOptions.pie.events
      */
@@ -218,41 +232,40 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
 
         /**
          * Specifies the method that is used to generate the connector path.
-         * Highcharts provides 3 built-in connector shapes: `'fixedOffset'`
-         * (default), `'straight'` and `'crookedLine'`. Using
-         * `'crookedLine'` has the most sense (in most of the cases) when
-         * `'alignTo'` is set.
+         * Highcharts provides 3 built-in connector shapes: `'crookedLine'`
+         * (default since v11), `'fixedOffset'` and `'straight'`.
          *
-         * Users can provide their own method by passing a function instead
-         * of a String. 3 arguments are passed to the callback:
+         * Users can provide their own method by passing a function instead of a
+         * string. Three arguments are passed to the callback:
          *
-         * - Object that holds the information about the coordinates of the
+         * - An object that holds the information about the coordinates of the
          *   label (`x` & `y` properties) and how the label is located in
-         *   relation to the pie (`alignment` property). `alignment` can by
-         *   one of the following:
-         *   `'left'` (pie on the left side of the data label),
-         *   `'right'` (pie on the right side of the data label) or
+         *   relation to the pie (`alignment` property). `alignment` can by one
+         *   of the following: `'left'` (pie on the left side of the data
+         *   label), `'right'` (pie on the right side of the data label) or
          *   `'center'` (data label overlaps the pie).
          *
-         * - Object that holds the information about the position of the
-         *   connector. Its `touchingSliceAt`  porperty tells the position
-         *   of the place where the connector touches the slice.
+         * - An object that holds the information about the position of the
+         *   connector. Its `touchingSliceAt`  porperty tells the position of
+         *   the place where the connector touches the slice.
          *
          * - Data label options
          *
-         * The function has to return an SVG path definition in array form
-         * (see the example).
+         * The function has to return an SVG path definition in array form (see
+         * the example).
          *
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-string/
+         * @sample {highcharts}
+         *         highcharts/plotoptions/pie-datalabels-connectorshape-string/
          *         connectorShape is a String
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-function/
+         * @sample {highcharts}
+         *         highcharts/plotoptions/pie-datalabels-connectorshape-function/
          *         connectorShape is a function
          *
          * @type    {string|Function}
          * @since   7.0.0
          * @product highcharts highmaps
          */
-        connectorShape: 'fixedOffset',
+        connectorShape: 'crookedLine',
 
         /**
          * The width of the line connecting the data label to the pie slice.
@@ -275,7 +288,9 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
         /**
          * Works only if `connectorShape` is `'crookedLine'`. It defines how
          * far from the vertical plot edge the coonnector path should be
-         * crooked.
+         * crooked. With the default, `undefined`, the crook is placed so that
+         * the horizontal line from the label intersects with the radial line
+         * extending through the center of the pie slice.
          *
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-crookdistance/
          *         crookDistance set to 90%
@@ -283,7 +298,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
          * @since   7.0.0
          * @product highcharts highmaps
          */
-        crookDistance: '70%',
+        crookDistance: void 0,
 
         /**
          * The distance of the data label from the pie's edge. Negative
@@ -333,13 +348,14 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
         },
 
         /**
-         * Whether to render the connector as a soft arc or a line with
-         * sharp break. Works only if `connectorShape` equals to
-         * `fixedOffset`.
+         * Whether to render the connector as a soft arc or a line with a sharp
+         * break. Works only if `connectorShape` equals to `fixedOffset`.
          *
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-true/
+         * @sample {highcharts}
+         *         highcharts/plotoptions/pie-datalabels-softconnector-true/
          *         Soft
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-false/
+         * @sample {highcharts}
+         *         highcharts/plotoptions/pie-datalabels-softconnector-false/
          *         Non soft
          *
          * @since   2.1.7

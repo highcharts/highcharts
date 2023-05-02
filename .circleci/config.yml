@@ -54,7 +54,7 @@ add_gh_user_config: &add_gh_user_config
 executors:
   node_image:
     docker:
-      - image: cimg/node:16.3.0-browsers
+      - image: cimg/node:18.16.0-browsers
 
 commands:
   generate_references_command:

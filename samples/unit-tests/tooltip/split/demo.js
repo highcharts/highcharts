@@ -59,15 +59,6 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
     el = chart.tooltip.tt.element;
     value = window.getComputedStyle(el);
 
-    assert.notEqual(
-        document
-            .getElementsByClassName('highcharts-label-box')[4]
-            .getAttribute('class')
-            .indexOf('highcharts-shadow'),
-        -1,
-        'Shadow should be applied'
-    );
-
     chart.update({
         tooltip: {
             style: {

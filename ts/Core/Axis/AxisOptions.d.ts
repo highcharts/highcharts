@@ -122,6 +122,7 @@ export interface AxisOptions {
     ceiling?: number;
     className?: string;
     crosshair?: (boolean|AxisCrosshairOptions);
+    crossing?: number;
     endOnTick: boolean;
     events?: AxisEventsOptions;
     floor?: number;

@@ -13,6 +13,15 @@
                 text: 'Zoom in on country by double click'
             },
 
+            navigation: {
+                buttonOptions: {
+                    align: 'left',
+                    theme: {
+                        stroke: '#e6e6e6'
+                    }
+                }
+            },
+
             mapNavigation: {
                 enabled: true,
                 enableDoubleClickZoomTo: true
@@ -29,11 +38,6 @@
                 mapData: topology,
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
                 tooltip: {
                     valueSuffix: '/km²'
                 }
