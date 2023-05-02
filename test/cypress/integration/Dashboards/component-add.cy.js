@@ -1,7 +1,6 @@
 function grabComponent(name) {
     cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click();
-    cy.get('.highcharts-dashboards-edit-sidebar-tab').contains('components').click();
-    cy.get('.highcharts-dashboards-edit-sidebar-tab-content')
+    cy.get('.highcharts-dashboards-edit-grid-items')
         .children()
         .contains(name)
         .trigger('mousedown');

@@ -342,6 +342,9 @@ async function setupDashboard() {
                 credits: {
                     enabled: false
                 },
+                legend: {
+                    enabled: false
+                },
                 colorAxis: buildColorAxis(),
                 series: [{
                     // type: 'spline',
@@ -350,9 +353,6 @@ async function setupDashboard() {
                     animationLimit: 0,
                     events: {
                         afterAnimate: () => resolve()
-                    },
-                    legend: {
-                        enabled: false
                     },
                     marker: {
                         enabledThreshold: 0.5
@@ -376,8 +376,8 @@ async function setupDashboard() {
                 },
                 xAxis: {
                     type: 'datetime',
-                    labels: {
-                        format: '{value:%e. %b}'
+                    dateTimeLabelFormats: {
+                        month: '%e. %b'
                     }
                 },
                 yAxis: {
@@ -400,7 +400,39 @@ async function setupDashboard() {
             },
             dataGridOptions: {
                 cellHeight: 38,
-                editable: false
+                editable: false,
+                columns: {
+                    time: {
+                        show: false
+                    },
+                    FD: {
+                        headerFormat: 'Days with Frost'
+                    },
+                    ID: {
+                        headerFormat: 'Days with Ice'
+                    },
+                    RR1: {
+                        headerFormat: 'Days with Rain'
+                    },
+                    TN: {
+                        show: false
+                    },
+                    TX: {
+                        show: false
+                    },
+                    TNC: {
+                        headerFormat: 'Average Temperature °C'
+                    },
+                    TNF: {
+                        headerFormat: 'Average Temperature °F'
+                    },
+                    TXC: {
+                        headerFormat: 'Maximal Temperature °C'
+                    },
+                    TXF: {
+                        headerFormat: 'Maximal Temperature °F'
+                    }
+                }
             },
             editable: true,
             events: {
@@ -808,7 +840,6 @@ function buildColorAxis() {
     // temperature
     if (dataScope[0] === 'T') {
         return {
-            visible: false,
             startOnTick: false,
             endOnTick: false,
             max: dataScope[2] === 'C' ? 50 : 122,
@@ -821,7 +852,6 @@ function buildColorAxis() {
     return {
         max: 10,
         min: 0,
-        visible: false,
         stops: buildColorStops(dataScope)
     };
 }

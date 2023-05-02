@@ -120,6 +120,25 @@ class DataPool {
     }
 
     /**
+     * Returns the names of all connectors.
+     *
+     * @private
+     *
+     * @return {Array<string>}
+     * Names of all connectors.
+     */
+    public getConnectorsNames(): Array<string> {
+        const connectors = this.options.connectors,
+            connectorsNames: Array<string> = [];
+
+        for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
+            connectorsNames.push(connectors[i].name);
+        }
+
+        return connectorsNames;
+    }
+
+    /**
      * Loads the options of the connector.
      *
      * @private
