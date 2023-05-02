@@ -96,7 +96,20 @@ class EditableOptions {
     }
 
     public getOptions(): (Array<EditableOptions.Configuration>) {
-        return this.component.options.editableOptions;
+        const options = this.component.options.editableOptions;
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (option.name === 'store') {
+                const board = this.component.board;
+                const items = !board ?
+                    [] :
+                    board.dataPool
+                        .getConnectorsNames()
+                        .map((name): { name: string } => ({ name }));
+                option.items = items;
+            }
+        }
+        return options;
     }
 }
 
