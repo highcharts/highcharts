@@ -180,20 +180,22 @@ class MathModifier extends DataModifier {
                 typeof cell === 'string' &&
                 cell[0] === '='
             ) {
-
-                // use cache while formula string is repetitive
-                cacheFormula = (
-                    cacheString === cell ?
-                        cacheFormula :
-                        FormulaParser.parseFormula(
-                            cell.substring(1),
-                            alternativeSeparators
-                        )
-                );
-
-                // process parsed formula string
-                column[i] =
-                    FormulaProcessor.processFormula(cacheFormula, table);
+                try {
+                    // use cache while formula string is repetitive
+                    cacheFormula = (
+                        cacheString === cell ?
+                            cacheFormula :
+                            FormulaParser.parseFormula(
+                                cell.substring(1),
+                                alternativeSeparators
+                            )
+                    );
+                    // process parsed formula string
+                    column[i] =
+                        FormulaProcessor.processFormula(cacheFormula, table);
+                } catch {
+                    column[i] = NaN;
+                }
             }
         }
 
@@ -234,14 +236,13 @@ class MathModifier extends DataModifier {
 
         rowIndex = rowIndex > 0 ? rowIndex : 0;
 
-        for (
-            let i = 0,
-                iEnd = column.length;
-            i < iEnd;
-            ++i
-        ) {
-            // @todo pass some form of row index for references/ranges
-            column[i] = FormulaProcessor.processFormula(formula, modified);
+        for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
+            try {
+                // @todo pass some form of row index for references/ranges
+                column[i] = FormulaProcessor.processFormula(formula, modified);
+            } catch {
+                column[i] = NaN;
+            }
         }
 
         return column;
