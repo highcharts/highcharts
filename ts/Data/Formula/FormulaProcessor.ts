@@ -66,7 +66,11 @@ export interface FormulaProcessError extends Error {
 
 
 export interface ProcessorFunction {
-    (args: Arguments, table?: DataTable): (Value|Array<Value>);
+    (
+        args: Arguments,
+        table?: DataTable,
+        reference?: Reference
+    ): (Value|Array<Value>);
 }
 
 
@@ -402,12 +406,16 @@ function processFormula(
  * @param {Highcharts.DataTable} [table]
  * Table to use for references and ranges.
  *
+ * @param {Highcharts.FormulaReference} [reference]
+ * Table cell reference to use for relative references and ranges.
+ *
  * @return {Highcharts.FormulaValue|Array<Highcharts.FormulaValue>}
  * Result value (or values) of the process. `NaN` indicates an error.
  */
 function processFunction(
     formulaFunction: Function,
-    table?: DataTable
+    table?: DataTable,
+    reference?: Reference // @todo
 ): (Value|Array<Value>) {
     const processor = processorFunctions[formulaFunction.name];
 

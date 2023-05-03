@@ -57,27 +57,27 @@ export type Operator = ('+'|'-'|'*'|'/'|'^'|'='|'<'|'<='|'>'|'>=');
 
 
 /**
- * Represents an A1:A1 range to cells of a table.
- *
- * **Note:** Ranges with formulas are only supported as back references.
+ * Represents a range to cells of a table.
  */
 export interface Range {
     beginColumn: number;
     beginRow: number;
+    columnsRelative?: true;
     endColumn: number;
     endRow: number;
+    rowsRelative?: true;
     type: 'range';
 }
 
 
 /**
- * Represents an A1 reference to a table cell.
- *
- * **Note:** References to a formula are only supported as a back reference.
+ * Represents a reference to a table cell.
  */
 export interface Reference {
     column: number;
+    columnRelative?: true;
     row: number;
+    rowRelative?: true;
     type: 'reference';
 }
 
