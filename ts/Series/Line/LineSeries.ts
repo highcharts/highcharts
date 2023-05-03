@@ -18,7 +18,7 @@
 
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
-import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
+import type { PlotOptionsOf, SeriesStepValue } from '../../Core/Series/SeriesOptions';
 import type SplineSeries from '../Spline/SplineSeries';
 import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -205,10 +205,11 @@ class LineSeries extends Series {
     ): SVGPath {
         const series = this,
             options = series.options,
+            stepOption = options.step,
             graphPath = [] as SVGPath,
             xMap = [] as Array<(number|null)>;
         let gap: boolean,
-            step = options.step as any;
+            step = 0;
 
         points = points || series.points;
 
@@ -218,12 +219,14 @@ class LineSeries extends Series {
             points.reverse();
         }
         // Reverse the steps (#5004)
-        step = ({
-            right: 1,
-            center: 2
-        } as Record<string, number>)[step as any] || (step && 3);
-        if (step && reversed) {
-            step = 4 - step;
+        if (stepOption) {
+            step = ({
+                right: 1,
+                center: 2
+            } as Record<SeriesStepValue, number>)[stepOption] || 3;
+            if (step && reversed) {
+                step = 4 - step;
+            }
         }
 
         // Remove invalid points, especially in spline (#5015)
