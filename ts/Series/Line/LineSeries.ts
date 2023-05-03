@@ -206,8 +206,8 @@ class LineSeries extends Series {
         const series = this,
             options = series.options,
             stepOption = options.step,
-            graphPath = [] as SVGPath,
-            xMap = [] as Array<(number|null)>,
+            graphPath: SVGPath = [],
+            xMap: number[] = [],
             risers = true,
             pointRange = (
                 stepOption === 'center' && series.closestPointRangePx
@@ -235,18 +235,18 @@ class LineSeries extends Series {
         }
 
         // Remove invalid points, especially in spline (#5015)
-        points = this.getValidPoints(
+        const vPoints = this.getValidPoints(
             points,
             false,
             !(options.connectNulls && !nullsAsZeroes && !connectCliffs)
         ) as Array<LinePoint>;
 
         // Build the line
-        points.forEach(function (point, i): void {
+        vPoints.forEach((point, i): void => {
 
             const { plotX, plotY } = point,
-                lastPoint = (points as any)[i - 1],
-                nextPoint = (points as any)[i + 1],
+                lastPoint = vPoints[i - 1],
+                nextPoint = vPoints[i + 1],
                 isNull = point.isNull || typeof plotY !== 'number';
 
             // The path from last point to this point
@@ -271,10 +271,10 @@ class LineSeries extends Series {
 
                 if (step) {
                     const lastX = lastPoint && !lastPoint.isNull ?
-                            lastPoint.plotX :
+                            lastPoint.plotX || 0 :
                             plotX - pointRange,
                         nextX = nextPoint && !nextPoint.isNull ?
-                            nextPoint.plotX :
+                            nextPoint.plotX || 0 :
                             plotX + pointRange,
 
                         // Defaults for step left
@@ -315,7 +315,7 @@ class LineSeries extends Series {
                     pathToPoint = [(
                         series as unknown as SplineSeries
                     ).getPointSpline(
-                        points as Array<SplinePoint>,
+                        vPoints as Array<SplinePoint>,
                         point as SplinePoint,
                         i
                     )];
@@ -337,7 +337,7 @@ class LineSeries extends Series {
             }
         });
 
-        (graphPath as any).xMap = xMap;
+        graphPath.xMap = xMap;
         series.graphPath = graphPath;
 
         return graphPath;
