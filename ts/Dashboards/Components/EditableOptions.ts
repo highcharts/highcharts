@@ -42,9 +42,20 @@ namespace EditableOptions {
         /**
          * Items that should be included in the select element.
          */
-        items?: Array<{name?: string, iconURL?: string}>;
+        items?: Array<ItemOptions>;
     }
 
+    export interface ItemOptions {
+        /**
+         * Name of the item that should be displayed.
+         */
+        name: string;
+        /**
+         * URL of the icon that should be displayed. It is concatenated with
+         * `iconURLPrefix` option.
+         */
+        iconURL?: string;
+    }
     export type ElementType =
         | 'input'
         | 'text'
