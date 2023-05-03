@@ -283,7 +283,10 @@ class AreaRangeSeries extends AreaSeries {
             options = this.options,
             polar = this.chart.polar,
             connectEnds = polar && options.connectEnds !== false,
-            connectNulls = options.connectNulls;
+            connectNulls = options.connectNulls,
+            stepOption = typeof options.step === 'object' ?
+                options.step :
+                { type: options.step, risers: true };
 
         let i,
             point: AreaRangePoint,
@@ -345,15 +348,16 @@ class AreaRangeSeries extends AreaSeries {
 
         // Get the paths
         const lowerPath = getGraphPath.call(this, points);
-        if (step) {
-            if ((step as any) === true) {
-                step = 'left';
+        if (stepOption.type) {
+            if (stepOption.type as any === true) {
+                stepOption.type = 'left';
             }
-            options.step = {
+            stepOption.type = {
                 left: 'right',
                 center: 'center',
                 right: 'left'
-            }[step] as any; // swap for reading in getGraphPath
+            }[stepOption.type] as any; // swap for reading in getGraphPath
+            options.step = stepOption;
         }
         const higherPath = getGraphPath.call(this, highPoints);
         const higherAreaPath = getGraphPath.call(this, highAreaPoints);

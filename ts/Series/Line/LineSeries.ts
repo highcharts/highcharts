@@ -18,7 +18,7 @@
 
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
-import type { PlotOptionsOf, SeriesStepValue } from '../../Core/Series/SeriesOptions';
+import type { PlotOptionsOf, SeriesStepOptionsObject, SeriesStepType } from '../../Core/Series/SeriesOptions';
 import type SplineSeries from '../Spline/SplineSeries';
 import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -205,16 +205,17 @@ class LineSeries extends Series {
     ): SVGPath {
         const series = this,
             options = series.options,
-            stepOption = options.step,
+            stepOption = typeof options.step === 'object' ?
+                options.step :
+                { type: options.step },
             graphPath: SVGPath = [],
-            xMap: number[] = [],
-            risers = true,
-            pointRange = (
-                stepOption === 'center' && series.closestPointRangePx
-            ) || 0;
+            xMap: number[] = [];
 
         let gap: boolean,
-            step = 0;
+            step = 0,
+            pointRange = (
+                stepOption.type === 'center' && series.closestPointRangePx
+            ) || 0;
 
         points = points || series.points;
 
@@ -222,15 +223,20 @@ class LineSeries extends Series {
         const reversed = (points as any).reversed;
         if (reversed) {
             points.reverse();
+            pointRange *= -1;
         }
+
         // Reverse the steps (#5004)
-        if (stepOption) {
+        if (stepOption.type) {
             step = ({
                 right: 1,
                 center: 2
-            } as Record<SeriesStepValue, number>)[stepOption] || 3;
+            } as Record<SeriesStepType, number>)[stepOption.type] || 3;
             if (step && reversed) {
                 step = 4 - step;
+            }
+            if (series.xAxis.reversed) {
+                pointRange *= -1;
             }
         }
 
@@ -279,7 +285,10 @@ class LineSeries extends Series {
 
                         // Defaults for step left
                         a: SVGPath.Segment = [
-                            i === 0 || gap || !risers ? 'M' : 'L',
+                            i === 0 || gap || (
+                                stepOption.risers === false && !connectCliffs
+                            ) ?
+                                'M' : 'L',
                             plotX,
                             plotY
                         ],
