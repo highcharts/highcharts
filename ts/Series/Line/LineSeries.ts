@@ -207,7 +207,12 @@ class LineSeries extends Series {
             options = series.options,
             stepOption = options.step,
             graphPath = [] as SVGPath,
-            xMap = [] as Array<(number|null)>;
+            xMap = [] as Array<(number|null)>,
+            risers = true,
+            pointRange = (
+                stepOption === 'center' && series.closestPointRangePx
+            ) || 0;
+
         let gap: boolean,
             step = 0;
 
@@ -239,11 +244,12 @@ class LineSeries extends Series {
         // Build the line
         points.forEach(function (point, i): void {
 
-            const plotX = point.plotX,
-                plotY = point.plotY,
+            const { plotX, plotY } = point,
                 lastPoint = (points as any)[i - 1],
+                nextPoint = (points as any)[i + 1],
                 isNull = point.isNull || typeof plotY !== 'number';
-            // the path to this point from the previous
+
+            // The path from last point to this point
             let pathToPoint: SVGPath;
 
             if (
@@ -261,14 +267,45 @@ class LineSeries extends Series {
             } else if (isNull && !nullsAsZeroes) {
                 gap = true;
 
-            } else {
+            } else if (typeof plotX === 'number' && typeof plotY === 'number') {
 
-                if (i === 0 || gap) {
-                    pathToPoint = [[
-                        'M',
-                        point.plotX as any,
-                        point.plotY as any
-                    ]];
+                if (step) {
+                    const lastX = lastPoint && !lastPoint.isNull ?
+                            lastPoint.plotX :
+                            plotX - pointRange,
+                        nextX = nextPoint && !nextPoint.isNull ?
+                            nextPoint.plotX :
+                            plotX + pointRange,
+
+                        // Defaults for step left
+                        a: SVGPath.Segment = [
+                            i === 0 || gap || !risers ? 'M' : 'L',
+                            plotX,
+                            plotY
+                        ],
+                        b: SVGPath.Segment = [
+                            'L',
+                            nextX,
+                            plotY
+                        ];
+
+                    // Step right
+                    if (step === 1) {
+                        a[1] = lastX;
+                        b[1] = plotX;
+
+                    // Step center
+                    } else if (step === 2) {
+                        a[1] = (lastX + plotX) / 2;
+                        b[1] = (nextX + plotX) / 2;
+                    }
+
+                    pathToPoint = [a, b];
+
+
+                } else if (i === 0 || gap) {
+
+                    pathToPoint = [['M', plotX, plotY]];
 
                 // Generate the spline as defined in the SplineSeries object
                 } else if (
@@ -283,46 +320,9 @@ class LineSeries extends Series {
                         i
                     )];
 
-                } else if (step) {
-
-                    if (step === 1) { // right
-                        pathToPoint = [[
-                            'L',
-                            lastPoint.plotX as any,
-                            plotY as any
-                        ]];
-
-                    } else if (step === 2) { // center
-                        pathToPoint = [[
-                            'L',
-                            ((lastPoint.plotX as any) + plotX) / 2,
-                            lastPoint.plotY as any
-                        ], [
-                            'L',
-                            ((lastPoint.plotX as any) + plotX) / 2,
-                            plotY as any
-                        ]];
-
-                    } else {
-                        pathToPoint = [[
-                            'L',
-                            plotX as any,
-                            lastPoint.plotY as any
-                        ]];
-                    }
-                    pathToPoint.push([
-                        'L',
-                        plotX as any,
-                        plotY as any
-                    ]);
-
                 } else {
                     // normal line to next point
-                    pathToPoint = [[
-                        'L',
-                        plotX as any,
-                        plotY as any
-                    ]];
+                    pathToPoint = [['L', plotX, plotY]];
                 }
 
                 // Prepare for animation. When step is enabled, there are
@@ -330,9 +330,6 @@ class LineSeries extends Series {
                 xMap.push(point.x);
                 if (step) {
                     xMap.push(point.x);
-                    if (step === 2) { // step = center (#8073)
-                        xMap.push(point.x);
-                    }
                 }
 
                 graphPath.push.apply(graphPath, pathToPoint);
