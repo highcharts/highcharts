@@ -582,18 +582,6 @@ div.highcharts-dashboards-wrapper .highcharts-dashboards-edit-context-menu-btn {
  *
  * */
 
-.highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn {
-    background-position: top left;
-    background-color: #e7e7ec;
-    border-radius: 4px;
-    margin: 10px;
-}
-
-.highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover {
-    background-color: #646479;
-    color: #fff;
-}
-
 .highcharts-dashboards-edit-enabled.highcharts-dashboards-wrapper {
     background-color: rgba(36, 29, 58, 0.2);
 }

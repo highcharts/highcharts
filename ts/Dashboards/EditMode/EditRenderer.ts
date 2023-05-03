@@ -67,11 +67,13 @@ function renderContextButton(
                 onclick: function (): void {
                     editMode.onContextBtnClick(editMode);
                 }
-            }, {
-                background: 'url(' +
+            },
+            {
+                'background-image': 'url(' +
                     editMode.options.contextMenu.icon +
-                ') no-repeat 50% 50%'
-            }, parentNode
+                ')'
+            } as any,
+            parentNode
         );
     }
 

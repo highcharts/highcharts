@@ -71,6 +71,28 @@
         --highcharts-highlight-color-10: rgb(58, 63, 71);
     }
 
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn {
+        background-color: var(--highcharts-neutral-color-80);
+        filter: invert(1) brightness(1);
+    }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn:hover {
+        background-color: var(--highcharts-neutral-color-0);
+    }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn {
+        background-color: var(--highcharts-neutral-color-80);
+        filter: invert(1) brightness(1);
+        border: 1px solid var(--highcharts-neutral-color-0);
+    }
+
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover,
+    .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
+        color: var(--highcharts-neutral-color-0);
+        background-color: var(--highcharts-neutral-color-80);
+        filter: none;
+    }
+
     .highcharts-dashboards-edit-popup-close,
     .highcharts-dashboards-edit-pointer,
     .highcharts-dashboards-edit-accordion-header-icon {
@@ -107,6 +129,30 @@
     --highcharts-highlight-color-20: rgb(65, 74, 92);
     --highcharts-highlight-color-10: rgb(58, 63, 71);
 }
+
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn {
+    background-color: var(--highcharts-neutral-color-80);
+    filter: invert(1) brightness(1);
+}
+
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-context-menu-btn:hover {
+    background-color: var(--highcharts-neutral-color-0);
+}
+
+/* stylelint-disable max-line-length */
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn {
+    background-color: var(--highcharts-neutral-color-80);
+    filter: invert(1) brightness(1);
+    border: 1px solid var(--highcharts-neutral-color-0);
+}
+
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn:hover,
+.highcharts-dark .highcharts-dashboards-edit-tools .highcharts-dashboards-edit-button.highcharts-dashboards-edit-tools-btn.selected {
+    color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-neutral-color-80);
+    filter: none;
+}
+/* stylelint-enable max-line-length */
 
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
@@ -474,21 +520,20 @@
 .highcharts-dashboards-edit-context-menu-btn {
     width: 32px;
     height: 32px;
-    margin-left: auto;
+    margin-left: 16px;
+    border-radius: 4px;
     padding: 5px;
-    border-color: transparent;
-    border-radius: 3px;
+    border: none;
     float: right;
-}
-
-.highcharts-dashboards-edit-context-menu-btn div {
-    height: 4px;
-    background-color: var(--highcharts-neutral-color-60);
-    margin: 0 0 4px;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-color: var(--highcharts-neutral-color-0);
+    background-position: 50% 50%;
 }
 
 .highcharts-dashboards-edit-context-menu-btn:hover {
-    border: 1px solid var(--highcharts-neutral-color-80);
+    background-color: var(--highcharts-neutral-color-60);
+    filter: invert(100%);
 }
 
 .highcharts-dashboards-edit-menu-item {
@@ -629,18 +674,22 @@
 }
 
 .highcharts-dashboards-edit-tools-btn {
-    display: inline-block;
-    padding: 4px 10px 4px 30px;
-    background-color: transparent;
-    border: 1px solid transparent;
+    padding: 6px 10px 6px 40px;
+    margin-left: 16px;
+    background-color: var(--highcharts-neutral-color-0);
+    border: none;
     background-repeat: no-repeat;
-    background-size: 22px;
-    background-position-y: 4px;
+    background-size: 20px;
+    background-position: 10px center;
+    border-radius: 4px;
     float: right;
+    cursor: pointer;
 }
 
+.highcharts-dashboards-edit-tools-btn.selected,
 .highcharts-dashboards-edit-tools-btn:hover {
-    border: 1px solid var(--highcharts-neutral-color-20);
+    background-color: var(--highcharts-neutral-color-60);
+    filter: invert(100%);
 }
 
 .highcharts-dashboards-edit-sidebar-item {
