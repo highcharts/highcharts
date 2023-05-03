@@ -601,7 +601,7 @@ class SVGRenderer implements SVGRendererLike {
     ): string {
         const
             id = [
-                `drop-shadow-${this.chartIndex}`,
+                `highcharts-drop-shadow-${this.chartIndex}`,
                 ...Object.keys(shadowOptions)
                     .map((key: string): number|string =>
                         (shadowOptions as any)[key]

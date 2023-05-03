@@ -40,7 +40,7 @@ QUnit.test('Series shadows', function (assert) {
 
     assert.strictEqual(
         chart.series[0].graph.attr('filter'),
-        'url(#drop-shadow-0)',
+        `url(#highcharts-drop-shadow-${chart.index})`,
         'Shadows should be updated when old options defined as object and new as boolean (#12091).'
     );
 
