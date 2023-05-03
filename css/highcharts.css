@@ -829,7 +829,7 @@ circle.highcharts-legend-nav-inactive { /* tracker */
 }
 
 .highcharts-scrollbar-track {
-    fill: none;
+    fill: rgba(255, 255, 255, 0.001);
     stroke: var(--highcharts-neutral-color-20);
     stroke-width: 1px;
 }
