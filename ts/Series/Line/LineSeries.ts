@@ -30,6 +30,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     defined,
+    isNumber,
     merge
 } = U;
 
@@ -209,6 +210,8 @@ class LineSeries extends Series {
                 options.step :
                 { type: options.step },
             graphPath: SVGPath = [],
+            isSpline = !!(series as unknown as Partial<SplineSeries>)
+                .getPointSpline,
             xMap: number[] = [];
 
         let gap: boolean,
@@ -227,7 +230,7 @@ class LineSeries extends Series {
         }
 
         // Reverse the steps (#5004)
-        if (stepOption.type) {
+        if (stepOption.type && !isSpline) {
             step = ({
                 right: 1,
                 center: 2
@@ -253,7 +256,7 @@ class LineSeries extends Series {
             const { plotX, plotY } = point,
                 lastPoint = vPoints[i - 1],
                 nextPoint = vPoints[i + 1],
-                isNull = point.isNull || typeof plotY !== 'number';
+                isNull = point.isNull || !isNumber(plotY);
 
             // The path from last point to this point
             let pathToPoint: SVGPath;
@@ -273,7 +276,7 @@ class LineSeries extends Series {
             } else if (isNull && !nullsAsZeroes) {
                 gap = true;
 
-            } else if (typeof plotX === 'number' && typeof plotY === 'number') {
+            } else if (isNumber(plotX) && isNumber(plotY)) {
 
                 if (step) {
                     const lastX = lastPoint && !lastPoint.isNull ?
@@ -317,9 +320,7 @@ class LineSeries extends Series {
                     pathToPoint = [['M', plotX, plotY]];
 
                 // Generate the spline as defined in the SplineSeries object
-                } else if (
-                    (series as unknown as Partial<SplineSeries>).getPointSpline
-                ) {
+                } else if (isSpline) {
 
                     pathToPoint = [(
                         series as unknown as SplineSeries
