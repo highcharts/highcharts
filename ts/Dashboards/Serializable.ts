@@ -19,7 +19,7 @@
  *
  * */
 
-import type CoreJSON from '../Core/JSON';
+import type JSON from './JSON';
 
 /* *
  *
@@ -136,7 +136,7 @@ namespace Serializable {
     /**
      * JSON of a serializable class.
      */
-    export interface JSON<T extends string> extends CoreJSON.Object {
+    export interface JSON<T extends string> extends JSON.Object {
         $class: T;
     }
 

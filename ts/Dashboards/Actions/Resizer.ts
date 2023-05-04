@@ -16,7 +16,7 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
-import type JSON from '../../Core/JSON';
+import type JSON from '../JSON';
 import type Cell from '../Layout/Cell.js';
 import type Serializable from '../Serializable';
 import EditGlobals from '../EditMode/EditGlobals.js';

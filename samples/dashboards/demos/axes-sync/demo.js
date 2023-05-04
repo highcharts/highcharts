@@ -1,4 +1,4 @@
-const { CSVConnector } = Dashboards.DataConnector.registry;
+const CSVConnector = Dashboards.DataConnector.types.CSV;
 
 // Set global chart options.
 Highcharts.setOptions({
@@ -43,11 +43,11 @@ Highcharts.setOptions({
 });
 
 const csvData = document.getElementById('csv').innerText,
-    connector1 = new CSVConnector(void 0, {
+    connector1 = new CSVConnector({
         csv: csvData,
         firstRowAsNames: true
     }),
-    connector2 = new CSVConnector(void 0, {
+    connector2 = new CSVConnector({
         csv: csvData,
         firstRowAsNames: true
     });
