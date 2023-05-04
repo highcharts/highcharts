@@ -1,5 +1,1 @@
-#container {
-    max-width: 800px;
-    height: 400px;
-    margin: 1em auto;
-}
+@import url("https://code.highcharts.com/css/dashboards/gui.css")
