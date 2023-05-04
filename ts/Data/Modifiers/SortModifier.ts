@@ -377,6 +377,11 @@ namespace SortModifier {
     export interface Options extends DataModifier.Options {
 
         /**
+         * Name of the related modifier for these options.
+         */
+        modifier: 'Sort';
+
+        /**
          * Direction of sorting.
          *
          * @default "desc"

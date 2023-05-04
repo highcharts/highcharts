@@ -8,7 +8,7 @@ import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlug
 Highcharts.win.Highcharts = Highcharts;
 
 const { PluginHandler } = Dashboards;
-const { CSVConnector } = Dashboards.DataConnector.registry;
+const CSVConnector = Dashboards.DataConnector.types.CSV;
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
@@ -18,7 +18,7 @@ PluginHandler.addPlugin(DataGridPlugin);
 
 const csvData = document.getElementById('csv').innerText;
 
-const connector = new CSVConnector(void 0, {
+const connector = new CSVConnector({
     csv: csvData,
     firstRowAsNames: true
 });

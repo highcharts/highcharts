@@ -14,14 +14,28 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ComponentType from '../ComponentType';
 import type SharedState from '../SharedComponentState';
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Class responsible for storing handler callbacks used in component sync.
  * @internal
  */
-export default class SyncHandler {
+class SyncHandler {
 
     /**
      * Registry for reusable handlers.
@@ -139,3 +153,11 @@ export default class SyncHandler {
         }
     }
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default SyncHandler;
