@@ -1,0 +1,6 @@
+---
+ name: rowDropOffset and celldropOffset
+ authors:
+   - Askel Eirik Johansson
+ js_wrap: b
+...
