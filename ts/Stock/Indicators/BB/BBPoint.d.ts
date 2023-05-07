@@ -22,6 +22,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  * */
 
 declare class BBPoint extends SMAPoint {
+    public middle?: number;
     public series: BBIndicator;
 }
 

@@ -31,7 +31,7 @@ interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

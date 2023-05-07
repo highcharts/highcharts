@@ -2,16 +2,16 @@
 Highcharts.wrap(Highcharts.Series.prototype, 'drawLegendSymbol', function (proceed, legend) {
     proceed.call(this, legend);
 
-    this.legendLine.attr({
+    this.legendItem.line.attr({
         d: ['M', 0, 10, 'L', 5, 5, 8, 10]
     });
-    this.negativeLine = this.chart.renderer.path(
-        ['M', 8, 10, 'L', 11, 15, 16, 10]
-    ).attr({
-        stroke: this.options.negativeColor,
-        'stroke-width': this.options.lineWidth
-    })
-        .add(this.legendGroup);
+    this.negativeLine = this.chart.renderer
+        .path(['M', 8, 10, 'L', 11, 15, 16, 10])
+        .attr({
+            stroke: this.options.negativeColor,
+            'stroke-width': this.options.lineWidth
+        })
+        .add(this.legendItem.group);
 });
 
 // Create the chart

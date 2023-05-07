@@ -49,11 +49,6 @@ const chart = Highcharts.mapChart('container', {
         mapData: Highcharts.maps['countries/au/au-all'],
         joinBy: null,
         name: 'Random data',
-        states: {
-            hover: {
-                color: '#a4edba'
-            }
-        },
         dataLabels: {
             enabled: true,
             format: '{point.name}'

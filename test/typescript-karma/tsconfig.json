@@ -20,7 +20,7 @@
             "es5"
         ],
         "paths": {
-            "/base/js/*": [
+            "/base/code/es-modules/*": [
                 "ts/*"
             ],
             "/base/*": [

@@ -20,6 +20,10 @@
                 text: 'Demo of Highcharts map with bubbles'
             },
 
+            accessibility: {
+                description: 'We see how China and India by far are the countries with the largest population.'
+            },
+
             legend: {
                 enabled: false
             },
@@ -28,6 +32,22 @@
                 enabled: true,
                 buttonOptions: {
                     verticalAlign: 'bottom'
+                }
+            },
+
+            mapView: {
+                fitToGeometry: {
+                    type: 'MultiPoint',
+                    coordinates: [
+                        // Alaska west
+                        [-164, 54],
+                        // Greenland north
+                        [-35, 84],
+                        // New Zealand east
+                        [179, -38],
+                        // Chile south
+                        [-68, -55]
+                    ]
                 }
             },
 

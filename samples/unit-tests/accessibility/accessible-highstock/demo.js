@@ -19,9 +19,7 @@ QUnit.test('Basic stock chart', function (assert) {
 
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute(
-                'aria-label'
-            ),
+            .element.textContent.length,
         'There be screen reader region'
     );
 });

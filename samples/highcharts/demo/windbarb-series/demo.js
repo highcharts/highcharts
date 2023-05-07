@@ -1,7 +1,41 @@
+const data = [
+    [4.9, 246],
+    [4.1, 242],
+    [3.2, 262],
+    [1.5, 284],
+    [1.1, 294],
+    [0.4, 192],
+    [0.2, 30],
+    [1.1, 110],
+    [1.4, 112],
+    [2.1, 132],
+    [1.6, 134],
+    [1.5, 128],
+    [0.7, 91],
+    [0.7, 275],
+    [0.6, 341],
+    [4.5, 236],
+    [4.9, 241],
+    [3.4, 234],
+    [0.7, 260],
+    [1.1, 274],
+    [0.9, 327],
+    [0.5, 336],
+    [0.4, 331],
+    [1.4, 157]];
+
 Highcharts.chart('container', {
 
     title: {
-        text: 'Highcharts Wind Barbs'
+        text: 'Observed wind in Vik, 30. July 2022',
+        align: 'left'
+    },
+
+    subtitle: {
+        text: 'Source: ' +
+            '<a href="https://www.yr.no/nb/historikk/graf/1-137598/Norge/Vestland/Vik/Vik%C3%B8yri?q=2022-07-30"' +
+            'target="_blank">YR</a>',
+        align: 'left'
     },
 
     xAxis: {
@@ -9,41 +43,23 @@ Highcharts.chart('container', {
         offset: 40
     },
 
+    yAxis: {
+        title: {
+            text: 'Wind speed (m/s)'
+        }
+    },
+
+
     plotOptions: {
         series: {
-            pointStart: Date.UTC(2017, 0, 29),
+            pointStart: Date.UTC(2022, 6, 30),
             pointInterval: 36e5
         }
     },
 
     series: [{
         type: 'windbarb',
-        data: [
-            [9.8, 177.9],
-            [10.1, 177.2],
-            [11.3, 179.7],
-            [10.9, 175.5],
-            [9.3, 159.9],
-            [8.8, 159.6],
-            [7.8, 162.6],
-            [5.6, 186.2],
-            [6.8, 146.0],
-            [6.4, 139.9],
-            [3.1, 180.2],
-            [4.3, 177.6],
-            [5.3, 191.8],
-            [6.3, 173.1],
-            [7.7, 140.2],
-            [8.5, 136.1],
-            [9.4, 142.9],
-            [10.0, 140.4],
-            [5.3, 142.1],
-            [3.8, 141.0],
-            [3.3, 116.5],
-            [1.5, 327.5],
-            [0.1, 1.1],
-            [1.2, 11.1]
-        ],
+        data: data,
         name: 'Wind',
         color: Highcharts.getOptions().colors[1],
         showInLegend: false,
@@ -52,33 +68,8 @@ Highcharts.chart('container', {
         }
     }, {
         type: 'area',
-        keys: ['y', 'rotation'], // rotation is not used here
-        data: [
-            [9.8, 177.9],
-            [10.1, 177.2],
-            [11.3, 179.7],
-            [10.9, 175.5],
-            [9.3, 159.9],
-            [8.8, 159.6],
-            [7.8, 162.6],
-            [5.6, 186.2],
-            [6.8, 146.0],
-            [6.4, 139.9],
-            [3.1, 180.2],
-            [4.3, 177.6],
-            [5.3, 191.8],
-            [6.3, 173.1],
-            [7.7, 140.2],
-            [8.5, 136.1],
-            [9.4, 142.9],
-            [10.0, 140.4],
-            [5.3, 142.1],
-            [3.8, 141.0],
-            [3.3, 116.5],
-            [1.5, 327.5],
-            [0.1, 1.1],
-            [1.2, 11.1]
-        ],
+        keys: ['y'], // wind direction is not used here
+        data: data,
         color: Highcharts.getOptions().colors[0],
         fillColor: {
             linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },

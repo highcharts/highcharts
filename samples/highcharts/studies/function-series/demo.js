@@ -1,9 +1,9 @@
+// FUNCTION SERIES DEFINITION
 (function (Highcharts) {
-    /// FUNCTION SERIES DEFINITION
     // create shortcuts
     var defaultOptions = Highcharts.getOptions(),
         defaultPlotOptions = defaultOptions.plotOptions,
-        seriesTypes = Highcharts.seriesTypes,
+        seriesTypes = Highcharts.Series.types,
         merge = Highcharts.merge,
         each = Highcharts.each;
 
@@ -14,7 +14,7 @@
     });
 
     seriesTypes.functionseries = Highcharts.extendClass(
-        Highcharts.seriesTypes.line,
+        Highcharts.Series.types.line,
         {
             type: 'functionseries',
 
@@ -66,7 +66,7 @@
 
     });
 }(Highcharts));
-/// END OF FUNCTION SERIES
+// END OF FUNCTION SERIES
 
 var scatterData = [],
     i;

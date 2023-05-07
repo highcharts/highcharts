@@ -24,11 +24,12 @@ import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
+import type Legend from '../../Legend/Legend';
+import type { LegendItemObject } from '../../Legend/LegendItem';
 import type LegendOptions from '../../Legend/LegendOptions';
 import type Point from '../../Series/Point.js';
 import type PointerEvent from '../../PointerEvent';
 import type { StatesOptionsKey } from '../../Series/StatesOptions';
-import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis.js';
@@ -36,9 +37,6 @@ import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
-import H from '../../Globals.js';
-const { noop } = H;
-import Legend from '../../Legend/Legend.js';
 import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
@@ -106,8 +104,6 @@ declare module '../../Series/SeriesOptions' {
  *
  * */
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
-
 /**
  * The ColorAxis object for inclusion in gradient legends.
  *
@@ -137,11 +133,7 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public static keepProps: Array<string> = [
-        'legendGroup',
-        'legendItemHeight',
-        'legendItemWidth',
-        'legendItem',
-        'legendSymbol'
+        'legendItem'
     ];
 
     /* *
@@ -192,16 +184,11 @@ class ColorAxis extends Axis implements AxisLike {
     // Prevents unnecessary padding with `hc-more`
     public beforePadding = false as any;
     public chart: Chart = void 0 as any;
-    public coll: 'colorAxis' = 'colorAxis';
+    public coll = 'colorAxis' as const;
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
     public legendColor?: GradientColor;
-    public legendGroup?: SVGElement;
-    public legendItemHeight?: number;
-    public legendItem: ColorAxis.LegendItemObject = void 0 as any;
-    public legendItems: Array<ColorAxis.LegendItemObject> = void 0 as any;
-    public legendItemWidth?: number;
-    public legendSymbol?: SVGElement;
-    public name: string = ''; // Prevents 'undefined' in legend in IE8
+    public legendItem?: LegendItemObject;
+    public name?: string;
     public options: ColorAxis.Options = void 0 as any;
     public stops: GradientColor['stops'] = void 0 as any;
     public visible: boolean = true;
@@ -275,15 +262,16 @@ class ColorAxis extends Axis implements AxisLike {
     public initDataClasses(userOptions: DeepPartial<ColorAxis.Options>): void {
         const axis = this,
             chart = axis.chart,
-            options = axis.options,
-            len = (userOptions.dataClasses as any).length;
+            legendItem = axis.legendItem = axis.legendItem || {},
+            len = (userOptions.dataClasses as any).length,
+            options = axis.options;
 
         let dataClasses,
             colorCounter = 0,
             colorCount = chart.options.chart.colorCount;
 
         axis.dataClasses = dataClasses = [] as Array<ColorAxis.DataClassesOptions>;
-        axis.legendItems = [] as Array<ColorAxis.LegendItemObject>;
+        legendItem.labels = [] as Array<ColorAxis.LegendItemObject>;
 
         (userOptions.dataClasses || []).forEach(function (dataClass, i): void {
             let colors: any;
@@ -374,7 +362,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public setAxisSize(): void {
         const axis = this;
-        const symbol = axis.legendSymbol;
+        const symbol = axis.legendItem && axis.legendItem.symbol;
         const chart = axis.chart;
         const legendOptions = chart.options.legend || {};
 
@@ -487,7 +475,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public getOffset(): void {
         const axis = this;
-        const group = axis.legendGroup;
+        const group = axis.legendItem && axis.legendItem.group;
         const sideOffset = axis.chart.axisOffset[axis.side];
 
         if (group) {
@@ -556,51 +544,56 @@ class ColorAxis extends Axis implements AxisLike {
         legend: Legend,
         item: ColorAxis
     ): void {
-        const axis = this;
-        const padding = legend.padding;
-        const legendOptions = legend.options;
-        const horiz = axis.horiz;
-        const width = pick(
-            legendOptions.symbolWidth,
-            horiz ? ColorAxis.defaultLegendLength : 12
-        );
-        const height = pick(
-            legendOptions.symbolHeight,
-            horiz ? 12 : ColorAxis.defaultLegendLength
-        );
-        const labelPadding = pick(
-            // @todo: This option is not documented, nor implemented when
-            // vertical
-            (legendOptions as any).labelPadding,
-            horiz ? 16 : 30
-        );
-        const itemDistance = pick(legendOptions.itemDistance, 10);
+        const axis = this,
+            legendItem = item.legendItem || {},
+            padding = legend.padding,
+            legendOptions = legend.options,
+            labelOptions = axis.options.labels,
+            itemDistance = pick(legendOptions.itemDistance, 10),
+            horiz = axis.horiz,
+            width = pick(
+                legendOptions.symbolWidth,
+                horiz ? ColorAxis.defaultLegendLength : 12
+            ),
+            height = pick(
+                legendOptions.symbolHeight,
+                horiz ? 12 : ColorAxis.defaultLegendLength
+            ),
+            labelPadding = pick(
+                // @todo: This option is not documented, nor implemented when
+                // vertical
+                (legendOptions as any).labelPadding,
+                horiz ? 16 : 30
+            );
 
         this.setLegendColor();
 
         // Create the gradient
-        if (!item.legendSymbol) {
-            item.legendSymbol = this.chart.renderer.rect(
+        if (!legendItem.symbol) {
+            legendItem.symbol = this.chart.renderer.symbol(
+                'roundedRect',
                 0,
                 (legend.baseline as any) - 11,
                 width,
-                height
+                height,
+                { r: legendOptions.symbolRadius ?? 3 }
             ).attr({
                 zIndex: 1
-            }).add(item.legendGroup);
+            }).add(legendItem.group);
         }
 
         // Set how much space this legend item takes up
-        axis.legendItemWidth = (
+        legendItem.labelWidth = (
             width +
             padding +
             (
                 horiz ?
                     itemDistance :
-                    this.options.labels.x + this.maxLabelLength
+                    pick(labelOptions.x, labelOptions.distance) +
+                        this.maxLabelLength
             )
         );
-        axis.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
+        legendItem.labelHeight = height + padding + (horiz ? labelPadding : 0);
     }
 
     /**
@@ -724,11 +717,12 @@ class ColorAxis extends Axis implements AxisLike {
         e?: PointerEvent,
         point?: ColorAxisComposition.PointComposition
     ): void {
-        const axis = this;
-        const plotX = point && point.plotX;
-        const plotY = point && point.plotY;
-        const axisPos = axis.pos;
-        const axisLen = axis.len;
+        const axis = this,
+            legendItem = axis.legendItem || {},
+            plotX = point && point.plotX,
+            plotY = point && point.plotY,
+            axisPos = axis.pos,
+            axisLen = axis.len;
 
         let crossPos;
 
@@ -753,11 +747,11 @@ class ColorAxis extends Axis implements AxisLike {
             if (
                 axis.cross &&
                 !axis.cross.addedToColorAxis &&
-                axis.legendGroup
+                legendItem.group
             ) {
                 axis.cross
                     .addClass('highcharts-coloraxis-marker')
-                    .add(axis.legendGroup);
+                    .add(legendItem.group);
 
                 axis.cross.addedToColorAxis = true;
 
@@ -825,7 +819,7 @@ class ColorAxis extends Axis implements AxisLike {
             chart = axis.chart,
             legend = chart.legend;
 
-        this.series.forEach(function (series): void {
+        this.series.forEach((series): void => {
             // Needed for Axis.update when choropleth colors change
             series.isDirtyData = true;
         });
@@ -838,7 +832,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         super.update(newOptions, redraw);
 
-        if (axis.legendItem) {
+        if (axis.legendItem && axis.legendItem.label) {
             axis.setLegendColor();
             legend.colorizeItem(this as any, true);
         }
@@ -849,16 +843,17 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public destroyItems(): void {
-        const axis = this;
-        const chart = axis.chart;
+        const axis = this,
+            chart = axis.chart,
+            legendItem = axis.legendItem || {};
 
-        if (axis.legendItem) {
+        if (legendItem.label) {
             chart.legend.destroyItem(axis);
 
-        } else if (axis.legendItems) {
-            axis.legendItems.forEach(function (item): void {
+        } else if (legendItem.labels) {
+            for (const item of legendItem.labels) {
                 chart.legend.destroyItem(item as any);
-            });
+            }
         }
 
         chart.isDirtyLegend = true;
@@ -890,12 +885,24 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public getDataClassLegendSymbols(): Array<ColorAxis.LegendItemObject> {
-        const axis = this;
-        const chart = axis.chart;
-        const legendItems = axis.legendItems;
-        const legendOptions = chart.options.legend;
-        const valueDecimals = (legendOptions as any).valueDecimals;
-        const valueSuffix = (legendOptions as any).valueSuffix || '';
+        const axis = this,
+            chart = axis.chart,
+            legendItems = (
+                axis.legendItem &&
+                axis.legendItem.labels as Array<ColorAxis.LegendItemObject> ||
+                []
+            ),
+            legendOptions = chart.options.legend,
+            valueDecimals = pick(legendOptions.valueDecimals, -1),
+            valueSuffix = pick(legendOptions.valueSuffix, '');
+
+        const getPointsInDataClass = (i: number): Array<Point> =>
+            axis.series.reduce((points, s): Point[] => {
+                points.push(...s.points.filter((point): boolean =>
+                    point.dataClass === i
+                ));
+                return points;
+            }, [] as Point[]);
 
         let name;
 
@@ -925,28 +932,32 @@ class ColorAxis extends Axis implements AxisLike {
                     name += numberFormatter(to, valueDecimals) + valueSuffix;
                 }
                 // Add a mock object to the legend items
-                legendItems.push(extend(
+                legendItems.push(extend<ColorAxis.LegendItemObject>(
                     {
-                        chart: chart,
-                        name: name,
+                        chart,
+                        name,
                         options: {},
-                        drawLegendSymbol: LegendSymbol.drawRectangle,
+                        drawLegendSymbol: LegendSymbol.rectangle,
                         visible: true,
-                        setState: noop,
                         isDataClass: true,
+
+                        // Override setState to set either normal or inactive
+                        // state to all points in this data class
+                        setState: (state?: (StatesOptionsKey|'')): void => {
+                            for (const point of getPointsInDataClass(i)) {
+                                point.setState(state);
+                            }
+                        },
+
+                        // Override setState to show or hide all points in this
+                        // data class
                         setVisible: function (
                             this: ColorAxis.LegendItemObject
                         ): void {
-                            vis = axis.visible = !vis;
-                            axis.series.forEach(function (series): void {
-                                series.points.forEach(function (
-                                    point: Point
-                                ): void {
-                                    if (point.dataClass === i) {
-                                        (point as any).setVisible(vis);
-                                    }
-                                });
-                            });
+                            this.visible = vis = axis.visible = !vis;
+                            for (const point of getPointsInDataClass(i)) {
+                                point.setVisible(vis);
+                            }
                             chart.legend.colorizeItem(this as any, vis);
                         }
                     },
@@ -986,11 +997,11 @@ namespace ColorAxis {
         chart: Chart;
         name: string;
         options: object;
-        drawLegendSymbol: typeof LegendSymbol['drawRectangle'];
+        drawLegendSymbol: typeof LegendSymbol['rectangle'];
         visible: boolean;
-        setState: Function;
+        setState: Point['setState'];
         isDataClass: true;
-        setVisible: () => void;
+        setVisible: Function;
     }
 
     export interface MarkerOptions {

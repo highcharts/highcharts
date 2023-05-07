@@ -2,6 +2,7 @@
 name: Spiderweb
 authors:
   - Torstein Hønsi
+compareTooltips: true
 js_wrap: b
 tags:
   - Highcharts demo

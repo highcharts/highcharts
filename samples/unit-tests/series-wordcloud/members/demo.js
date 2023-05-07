@@ -1,5 +1,5 @@
 QUnit.test('pointArrayMap', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype;
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype;
     assert.deepEqual(
         wordcloudPrototype.pointArrayMap,
         ['weight'],
@@ -8,7 +8,7 @@ QUnit.test('pointArrayMap', function (assert) {
 });
 
 QUnit.test('hasData', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         hasData = wordcloudPrototype.hasData;
     assert.strictEqual(
         hasData.call(),
@@ -50,7 +50,7 @@ QUnit.test('hasData', function (assert) {
 });
 
 QUnit.test('extendPlayingField', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         extendPlayingField = wordcloudPrototype.utils.extendPlayingField,
         field = {
             width: 20,
@@ -95,7 +95,7 @@ QUnit.test('extendPlayingField', function (assert) {
 });
 
 QUnit.test('getRotation', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         getRotation = wordcloudPrototype.utils.getRotation;
     assert.strictEqual(
         getRotation(undefined, 0, -60, 60),
@@ -155,7 +155,7 @@ QUnit.test('getRotation', function (assert) {
 });
 
 QUnit.test('deriveFontSize', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         deriveFontSize = wordcloudPrototype.deriveFontSize;
 
     assert.strictEqual(
@@ -220,7 +220,7 @@ QUnit.test('deriveFontSize', function (assert) {
  */
 QUnit.test('isPolygonsColliding', function (assert) {
     console.clear(); // eslint-disable-line
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         isPolygonsColliding = wordcloudPrototype.utils.isPolygonsColliding,
         polygonA = [
             [10, 10],
@@ -289,7 +289,7 @@ QUnit.test('isPolygonsColliding', function (assert) {
 });
 
 QUnit.test('rotate2DToOrigin', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         rotate2DToOrigin = wordcloudPrototype.utils.rotate2DToOrigin;
 
     assert.deepEqual(
@@ -312,7 +312,7 @@ QUnit.test('rotate2DToOrigin', function (assert) {
 });
 
 QUnit.test('rotate2DToPoint', function (assert) {
-    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+    var wordcloudPrototype = Highcharts.Series.types.wordcloud.prototype,
         rotate2DToPoint = wordcloudPrototype.utils.rotate2DToPoint;
 
     assert.deepEqual(

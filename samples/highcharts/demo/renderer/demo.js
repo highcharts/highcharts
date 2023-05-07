@@ -1,6 +1,9 @@
 Highcharts.chart('container', {
     chart: {
         backgroundColor: 'white',
+        style: {
+            fontSize: '12px'
+        },
         events: {
             load: function () {
 
@@ -244,8 +247,10 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts export server overview',
         style: {
-            color: 'black'
-        }
+            color: 'black',
+            fontSize: '16px'
+        },
+        align: 'left'
     },
     accessibility: {
         typeDescription: 'Flowchart'

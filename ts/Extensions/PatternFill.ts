@@ -32,7 +32,7 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
@@ -40,6 +40,7 @@ import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     erase,
     merge,
     pick,
@@ -223,6 +224,15 @@ Point.prototype.calculatePatternDimensions = function (
         if (!bBox.width || !bBox.height) {
             pattern._width = 'defer';
             pattern._height = 'defer';
+
+            // Mark the pattern to be flipped later if upside down (#16810)
+            const scaleY = this.series.chart.mapView &&
+                this.series.chart.mapView.getSVGTransform().scaleY;
+
+            if (defined(scaleY) && scaleY < 0) {
+                pattern._inverted = true;
+            }
+
             return;
         }
 
@@ -341,6 +351,14 @@ SVGRenderer.prototype.addPattern = function (
         x: options._x || options.x || 0,
         y: options._y || options.y || 0
     };
+
+    if (options._inverted) {
+        attrs.patternTransform = 'scale(1, -1)'; // (#16810)
+        if (options.patternTransform) {
+            options.patternTransform += ' scale(1, -1)';
+        }
+    }
+
     if (options.patternTransform) {
         attrs.patternTransform = options.patternTransform;
     }
@@ -617,19 +635,22 @@ addEvent(Chart, 'endResize', function (): void {
         // We have non-default patterns to fix. Find them by looping through
         // all points.
         this.series.forEach(function (series: Series): void {
-            series.points.forEach(function (point: Point): void {
-                const colorOptions = point.options && point.options.color;
 
-                if (
-                    colorOptions &&
-                    (colorOptions as PatternFill.PatternObject).pattern
-                ) {
-                    (colorOptions as PatternFill.PatternObject).pattern
-                        ._width = 'defer';
-                    (colorOptions as PatternFill.PatternObject).pattern
-                        ._height = 'defer';
-                }
-            });
+            if (series.visible) {
+                series.points.forEach(function (point: Point): void {
+                    const colorOptions = point.options && point.options.color;
+
+                    if (
+                        colorOptions &&
+                        (colorOptions as PatternFill.PatternObject).pattern
+                    ) {
+                        (colorOptions as PatternFill.PatternObject).pattern
+                            ._width = 'defer';
+                        (colorOptions as PatternFill.PatternObject).pattern
+                            ._height = 'defer';
+                    }
+                });
+            }
         });
         // Redraw without animation
         this.redraw(false);
@@ -704,6 +725,7 @@ namespace PatternFill {
     }
 
     export interface PatternOptionsObject {
+        _inverted?: (Boolean);
         _height?: (number|string);
         _width?: (number|string);
         _x?: number;
@@ -757,11 +779,11 @@ export default PatternFill;
  *//**
  * Background color for the pattern if a `path` is set (not images).
  * @name Highcharts.PatternOptionsObject#backgroundColor
- * @type {Highcharts.ColorString}
+ * @type {Highcharts.ColorString|undefined}
  *//**
  * URL to an image to use as the pattern.
  * @name Highcharts.PatternOptionsObject#image
- * @type {string}
+ * @type {string|undefined}
  *//**
  * Width of the pattern. For images this is automatically set to the width of
  * the element bounding box if not supplied. For non-image patterns the default
@@ -769,17 +791,17 @@ export default PatternFill;
  * box dynamically is only supported for patterns with an automatically
  * calculated ID.
  * @name Highcharts.PatternOptionsObject#width
- * @type {number}
+ * @type {number|undefined}
  *//**
  * Analogous to pattern.width.
  * @name Highcharts.PatternOptionsObject#height
- * @type {number}
+ * @type {number|undefined}
  *//**
  * For automatically calculated width and height on images, it is possible to
  * set an aspect ratio. The image will be zoomed to fill the bounding box,
  * maintaining the aspect ratio defined.
  * @name Highcharts.PatternOptionsObject#aspectRatio
- * @type {number}
+ * @type {number|undefined}
  *//**
  * Horizontal offset of the pattern. Defaults to 0.
  * @name Highcharts.PatternOptionsObject#x
@@ -794,20 +816,20 @@ export default PatternFill;
  * attributes like `path.stroke` and `path.fill`. If a path is supplied for the
  * pattern, the `image` property is ignored.
  * @name Highcharts.PatternOptionsObject#path
- * @type {string|Highcharts.SVGAttributes}
+ * @type {string|Highcharts.SVGAttributes|undefined}
  *//**
  * SVG `patternTransform` to apply to the entire pattern.
  * @name Highcharts.PatternOptionsObject#patternTransform
- * @type {string}
+ * @type {string|undefined}
  * @see [patternTransform demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/pattern-fill-transform)
  *//**
  * Pattern color, used as default path stroke.
  * @name Highcharts.PatternOptionsObject#color
- * @type {Highcharts.ColorString}
+ * @type {Highcharts.ColorString|undefined}
  *//**
  * Opacity of the pattern as a float value from 0 to 1.
  * @name Highcharts.PatternOptionsObject#opacity
- * @type {number}
+ * @type {number|undefined}
  *//**
  * ID to assign to the pattern. This is automatically computed if not added, and
  * identical patterns are reused. To refer to an existing pattern for a

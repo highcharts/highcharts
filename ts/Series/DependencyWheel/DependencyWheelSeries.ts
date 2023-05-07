@@ -19,13 +19,14 @@
  * */
 
 import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
-import type SankeySeriesType from '../Sankey/SankeySeries';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import DependencyWheelPoint from './DependencyWheelPoint.js';
-import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
+import DependencyWheelSeriesDefaults from './DependencyWheelSeriesDefaults.js';
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
+import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -60,38 +61,10 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
-    /**
-     * A dependency wheel chart is a type of flow diagram, where all nodes are
-     * laid out in a circle, and the flow between the are drawn as link bands.
-     *
-     * @sample highcharts/demo/dependency-wheel/
-     *         Dependency wheel
-     *
-     * @extends      plotOptions.sankey
-     * @exclude      dataSorting
-     * @since        7.1.0
-     * @product      highcharts
-     * @requires     modules/dependency-wheel
-     * @optionparent plotOptions.dependencywheel
-     */
-    public static defaultOptions: DependencyWheelSeriesOptions = merge(SankeySeries.defaultOptions, {
-        /**
-         * The center of the wheel relative to the plot area. Can be
-         * percentages or pixel values. The default behaviour is to
-         * center the wheel inside the plot area.
-         *
-         * @type    {Array<number|string|null>}
-         * @default [null, null]
-         * @product highcharts
-         */
-        center: [null, null],
-        curveFactor: 0.6,
-
-        /**
-         * The start angle of the dependency wheel, in degrees where 0 is up.
-         */
-        startAngle: 0
-    } as DependencyWheelSeriesOptions);
+    public static defaultOptions: DependencyWheelSeriesOptions = merge(
+        SankeySeries.defaultOptions,
+        DependencyWheelSeriesDefaults
+    );
 
     /* *
      *
@@ -259,7 +232,10 @@ class DependencyWheelSeries extends SankeySeries {
             factor = 2 * Math.PI /
                 (this.chart.plotHeight + this.getNodePadding()),
             center = this.getCenter(),
-            startAngle = ((options.startAngle as any) - 90) * deg2rad;
+            startAngle = ((options.startAngle as any) - 90) * deg2rad,
+            brOption = options.borderRadius,
+            borderRadius = typeof brOption === 'object' ?
+                brOption.radius : brOption;
 
         SankeySeries.prototype.translate.call(this);
 
@@ -285,7 +261,8 @@ class DependencyWheelSeries extends SankeySeries {
                     r: r,
                     innerR: innerR,
                     start: start,
-                    end: end
+                    end: end,
+                    borderRadius
                 };
 
                 node.dlBox = {
@@ -410,70 +387,3 @@ SeriesRegistry.registerSeriesType('dependencywheel', DependencyWheelSeries);
  * */
 
 export default DependencyWheelSeries;
-
-/* *
- *
- *  API Options
- *
- * */
-
-/**
- * A `dependencywheel` series. If the [type](#series.dependencywheel.type)
- * option is not specified, it is inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.dependencywheel
- * @exclude   dataSorting
- * @product   highcharts
- * @requires  modules/sankey
- * @requires  modules/dependency-wheel
- * @apioption series.dependencywheel
- */
-
-/**
- * A collection of options for the individual nodes. The nodes in a dependency
- * diagram are auto-generated instances of `Highcharts.Point`, but options can
- * be applied here and linked by the `id`.
- *
- * @extends   series.sankey.nodes
- * @type      {Array<*>}
- * @product   highcharts
- * @excluding offset
- * @apioption series.dependencywheel.nodes
- */
-
-/**
- * An array of data points for the series. For the `dependencywheel` series
- * type, points can be given in the following way:
- *
- * An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         from: 'Category1',
- *         to: 'Category2',
- *         weight: 2
- *     }, {
- *         from: 'Category1',
- *         to: 'Category3',
- *         weight: 5
- *     }]
- *  ```
- *
- * @type      {Array<*>}
- * @extends   series.sankey.data
- * @product   highcharts
- * @excluding outgoing, dataLabels
- * @apioption series.dependencywheel.data
- */
-
-/**
- * Individual data label for each node. The options are the same as
- * the ones for [series.dependencywheel.dataLabels](#series.dependencywheel.dataLabels).
- *
- * @apioption series.dependencywheel.nodes.dataLabels
- */
-
-''; // adds doclets above to the transpiled file

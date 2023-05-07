@@ -28,8 +28,8 @@ QUnit.test('Candlestick series colors tests.', function (assert) {
 
             points.forEach(function (p) {
                 p.onMouseOver();
-                stroke = split ? chart.tooltip.label.element.lastChild.childNodes[3].getAttribute('stroke') :
-                    chart.tooltip.label.stroke;
+                stroke = split ? chart.tooltip.label.element.lastChild.childNodes[0].getAttribute('stroke') :
+                    chart.tooltip.label.attr('stroke');
                 strokes.push(stroke);
             });
 

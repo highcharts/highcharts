@@ -14,7 +14,9 @@
  *
  * */
 
-import type DumbbellPointOptions from '../Dumbbell/DumbbellPointOptions';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
+import type ColorType from '../../Core/Color/ColorType';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 
 /* *
  *
@@ -22,12 +24,17 @@ import type DumbbellPointOptions from '../Dumbbell/DumbbellPointOptions';
  *
  * */
 
-export interface LollipopPointOptions extends DumbbellPointOptions {
+export interface LollipopPointOptions extends ScatterPointOptions {
+    connectorColor?: ColorType;
+    connectorWidth?: number;
+    dashStyle?: DashStyleValue;
+    /** @deprecated */
+    lowColor?: ColorType;
 }
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

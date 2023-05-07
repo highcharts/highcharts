@@ -1,0 +1,7 @@
+---
+ name:  Animated flow final chart
+ authors:
+   - Hubert Kozik
+ js_wrap: b
+ skipTest: true
+...

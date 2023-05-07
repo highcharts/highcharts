@@ -1,4 +1,6 @@
-# JSON comments
+# Sample data folder
+
+## JSON comments
 
  * `aapl-c.json`, `aapl-ohlc.json`, `aapl-ohlcv.json` and `aapl-v.json`,
    `goog-c.json` and `msft-c.json`: Generated from Google Finance API.

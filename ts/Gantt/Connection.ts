@@ -16,8 +16,21 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
 import Chart from '../Core/Chart/Chart.js';
+import D from '../Core/Defaults.js';
+const { defaultOptions } = D;
 import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    defined,
+    error,
+    extend,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -86,24 +99,7 @@ declare global {
 
 ''; // detach doclets above
 
-import D from '../Core/DefaultOptions.js';
-const { defaultOptions } = D;
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    error,
-    extend,
-    merge,
-    objectEach,
-    pick,
-    splat
-} = U;
-
-import type Pathfinder from './Pathfinder.js';
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
-import '../Extensions/ArrowSymbols.js';
 
 const deg2rad = H.deg2rad,
     max = Math.max,
@@ -909,7 +905,7 @@ class Connection {
             ): void {
                 val.destroy();
             });
-            delete this.graphics;
+            delete (this as Partial<this>).graphics;
         }
     }
 }

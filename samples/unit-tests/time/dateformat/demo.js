@@ -146,3 +146,16 @@ QUnit.test(
         );
     }
 );
+
+QUnit[TestUtilities.isCET ? 'test' : 'skip'](
+    'Week dateTime in local timezone, #16550.',
+    function (assert) {
+        const t = new Highcharts.Time({ useUTC: false });
+
+        assert.strictEqual(
+            t.dateFormat('%W', new Date('2015-04-12T01:00:00').getTime()),
+            '14',
+            'Week dateFormat for local timezone should return 14.'
+        );
+    }
+);

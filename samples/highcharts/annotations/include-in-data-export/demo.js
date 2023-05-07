@@ -12,7 +12,7 @@ Highcharts.chart('container', {
 
     annotations: [{
         labelOptions: {
-            includeInDataExport: true //default
+            includeInDataExport: true // default
         },
         labels: [{
             point: 'pointI',

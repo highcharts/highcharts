@@ -1,4 +1,3 @@
-const mkdirp = require('mkdirp');
 const { join } = require('path');
 const argv = require('yargs').argv;
 const fs = require('fs');
@@ -24,13 +23,20 @@ const files = argv.files ? argv.files.split(',') : [
 ];
 
 /**
- * @param {string} outputFolder output path
- * @param {string} outputFileName output path
- * @return {promise} Writes file size as json doc
+ * Writes file size.
+ *
+ * @param {string} outputFolder
+ *        Output path.
+ *
+ * @param {string} outputFileName
+ *        Output path.
+ *
+ * @return {Promise<void>}
+ *         Writes file size as json doc.
  */
 async function writeFileSize(outputFolder, outputFileName) {
     try {
-        await mkdirp(outputFolder);
+        await fs.promises.mkdir(outputFolder, { recursive: true });
         await getFileSizes(files, join(outputFolder, outputFileName)).catch(err => log.failure(err));
         log.success(`Wrote to ${join(outputFolder, outputFileName)}`);
     } catch (error) {
@@ -134,7 +140,7 @@ async function comment() {
                 await createPRComment(pr, commentBody);
             }
         } else {
-            log.error('Please specify a a PR id with \'--pr\' and a user with \'--user\' ');
+            log.failure('Please specify a a PR id with \'--pr\' and a user with \'--user\' ');
         }
     } catch (error) {
         log.failure(error);

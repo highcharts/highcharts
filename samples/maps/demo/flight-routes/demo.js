@@ -8,13 +8,20 @@
     const chart = Highcharts.mapChart('container', {
 
         title: {
-            text: 'Highmaps simple flight routes demo'
+            text: 'Highmaps simple flight routes demo',
+            align: 'left'
         },
 
         legend: {
             align: 'left',
             layout: 'vertical',
             floating: true
+        },
+
+        accessibility: {
+            point: {
+                valueDescriptionFormat: '{xDescription}.'
+            }
         },
 
         mapNavigation: {
@@ -43,7 +50,7 @@
         series: [{
             // Use the gb-all map with no data as a basemap
             mapData,
-            name: 'Basemap',
+            name: 'Great Britain',
             borderColor: '#707070',
             nullColor: 'rgba(200, 200, 200, 0.3)',
             showInLegend: false

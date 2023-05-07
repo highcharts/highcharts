@@ -20,6 +20,11 @@ export interface GeoJSONGeometryPoint extends BaseGeometry {
     coordinates: LonLatArray;
 }
 
+export interface MultiPoint extends BaseGeometry{
+    type: 'MultiPoint';
+    coordinates: LonLatArray[];
+}
+
 export interface LineString extends BaseGeometry{
     type: 'LineString';
     coordinates: LonLatArray[];
@@ -42,6 +47,7 @@ export interface MultiPolygon extends BaseGeometry {
 
 export interface GeoJSONGeometryMultiPointRegistry {
     LineString: LineString;
+    MultiPoint: MultiPoint;
     Polygon: Polygon;
     MultiLineString: MultiLineString;
     MultiPolygon: MultiPolygon;
@@ -55,7 +61,9 @@ interface GeoJSONGeometryRegistry extends GeoJSONGeometryMultiPointRegistry {
     Point: GeoJSONGeometryPoint;
 }
 
-type GeoJSONGeometry = GeoJSONGeometryRegistry[keyof GeoJSONGeometryRegistry];
+export type GeoJSONGeometry = GeoJSONGeometryRegistry[
+    keyof GeoJSONGeometryRegistry
+];
 
 export interface GeoJSON {
     bbox: [number, number, number, number];
@@ -96,6 +104,7 @@ export interface TopoJSON {
     copyrightShort?: string;
     copyrightUrl?: string;
     objects: TopoJSONObjects;
+    title?: string;
     transform: TopoJSONTransform;
     type: 'Topology';
 }

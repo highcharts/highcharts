@@ -25,10 +25,8 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -42,8 +40,6 @@ const {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
-
 // Utils:
 /**
  * @private
@@ -54,11 +50,11 @@ function getStandardDeviation(
     isOHLC: boolean,
     mean: number
 ): number {
-    let variance = 0,
-        arrLen = arr.length,
+    const arrLen = arr.length;
+    let i = 0,
         std = 0,
-        i = 0,
-        value: number;
+        value: number,
+        variance = 0;
 
     for (; i < arrLen; i++) {
         value = ((isOHLC ? arr[i][index] : arr[i]) as any) - mean;
@@ -115,12 +111,14 @@ class BBIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/indicator-area-fill
          *      Background fill between lines.
          *
-         * @type      {Highcharts.Color}
-         * @since 9.3.2
+         * @type      {Highcharts.ColorType}
+         * @since     9.3.2
          * @apioption plotOptions.bb.fillColor
-         *
          */
 
+        /**
+         * Parameters used in calculation of the regression points.
+         */
         params: {
             period: 20,
             /**
@@ -134,7 +132,7 @@ class BBIndicator extends SMAIndicator {
          */
         bottomLine: {
             /**
-             * Styles for a bottom line.
+             * Styles for the bottom line.
              */
             styles: {
                 /**
@@ -156,9 +154,18 @@ class BBIndicator extends SMAIndicator {
          * @extends plotOptions.bb.bottomLine
          */
         topLine: {
+            /**
+             * Styles for the top line.
+             */
             styles: {
+                /**
+                 * Pixel width of the line.
+                 */
                 lineWidth: 1,
                 /**
+                 * Color of the line. If not set, it's inherited from
+                 * [plotOptions.bb.color](#plotOptions.bb.color).
+                 *
                  * @type {Highcharts.ColorString}
                  */
                 lineColor: void 0
@@ -215,24 +222,23 @@ class BBIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: BBParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             standardDeviation: number = (params.standardDeviation as any),
+            xData: Array<number> = [],
+            yData: Array<Array<number>> = [],
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-middle line, 2-top line, 3-bottom line
-            BB: Array<Array<number>> = [],
+            BB: Array<Array<number>> = [];
             // middle line, top line and bottom line
-            ML: number,
+        let ML: number,
             TL: number,
             BL: number,
             date: number,
-            xData: Array<number> = [],
-            yData: Array<Array<number>> = [],
             slicedX: (Array<number>|undefined),
             slicedY: Array<Array<number>>,
             stdDev: number,
-            isOHLC: boolean,
             point: (
                 IndicatorValuesObject<TLinkedSeries>|
                 undefined
@@ -243,7 +249,7 @@ class BBIndicator extends SMAIndicator {
             return;
         }
 
-        isOHLC = isArray(yVal[0]);
+        const isOHLC = isArray(yVal[0]);
 
         for (i = period; i <= yValLen; i++) {
             slicedX = xVal.slice(i - period, i);
@@ -288,20 +294,19 @@ class BBIndicator extends SMAIndicator {
  *
  * */
 
-interface BBIndicator extends MultipleLinesComposition.Composition {
-    pointArrayMap: Array<string>;
-    pointValKey: string;
-    nameComponents: Array<string>;
+interface BBIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
+    nameComponents: Array<string>;
+    pointArrayMap: Array<keyof BBPoint>;
     pointClass: typeof BBPoint;
-    toYData: MultipleLinesComposition.Composition['toYData'];
+    pointValKey: string;
 }
 extend(BBIndicator.prototype, {
     areaLinesNames: ['top', 'bottom'],
-    pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
+    linesApiNames: ['topLine', 'bottomLine'],
     nameComponents: ['period', 'standardDeviation'],
-    linesApiNames: ['topLine', 'bottomLine']
+    pointArrayMap: ['top', 'middle', 'bottom'],
+    pointValKey: 'middle'
 });
 MultipleLinesComposition.compose(BBIndicator);
 
@@ -325,6 +330,12 @@ SeriesRegistry.registerSeriesType('bb', BBIndicator);
  * */
 
 export default BBIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A bollinger bands indicator. If the [type](#series.bb.type) option is not

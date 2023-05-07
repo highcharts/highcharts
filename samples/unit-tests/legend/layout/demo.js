@@ -38,7 +38,7 @@ QUnit.test('Legend layout', function (assert) {
         var y = s.points[2].plotY || s.yAxis.height;
 
         assert.close(
-            s.legendGroup.translateY,
+            s.legendItem.group.translateY,
             s.yAxis.top - chart.spacing[0] + y,
             20,
             'Label should be next to last point'
@@ -48,20 +48,35 @@ QUnit.test('Legend layout', function (assert) {
     chart.series[1].setData([1, 1, 1]);
     assert.ok(
         Math.abs(
-            chart.series[0].legendGroup.translateY -
-                chart.series[1].legendGroup.translateY
+            chart.series[0].legendItem.group.translateY -
+                chart.series[1].legendItem.group.translateY
         ) > 12,
         'The overlapping items should have sufficient distance'
     );
 
     chart.legend.update({
-        useHTML: true
+        layout: 'vertical'
+    });
+
+    assert.ok(
+        chart.legend.group.getBBox().height < 200,
+        'The legend items should be laid out succesively (#18362)'
+    );
+    assert.ok(
+        chart.legend.group.translateY + chart.legend.group.getBBox().height <
+            chart.chartHeight,
+        'The legend items should not spill out of the chart (#18362)'
+    );
+
+    chart.legend.update({
+        useHTML: true,
+        layout: 'proximate'
     });
 
     assert.ok(
         Math.abs(
-            chart.series[0].legendGroup.translateY -
-                chart.series[1].legendGroup.translateY
+            chart.series[0].legendItem.group.translateY -
+                chart.series[1].legendItem.group.translateY
         ) > 12,
         'The overlapping items should have sufficient distance with useHTML (#12055)'
     );
@@ -74,15 +89,15 @@ QUnit.test('Legend layout', function (assert) {
 
     assert.ok(
         Math.abs(
-            chart.series[0].legendGroup.translateY -
-                chart.series[1].legendGroup.translateY
+            chart.series[0].legendItem.group.translateY -
+                chart.series[1].legendItem.group.translateY
         ) > 30,
         'The overlapping items should have sufficient distance when an item margin is applied'
     );
 });
 
 QUnit.test('Proximate layout and dataGrouping', assert => {
-    const chart = new Highcharts.chart('container', {
+    const chart = new Highcharts.Chart('container', {
         chart: {
             animation: false
         },
@@ -124,7 +139,7 @@ QUnit.test('Proximate layout and dataGrouping', assert => {
 
     // Avoid using strict position as it may vary between browsers
     assert.ok(
-        chart.series[1].legendGroup.translateY > chart.plotHeight / 2,
+        chart.series[1].legendItem.group.translateY > chart.plotHeight / 2,
         `Legend item for a hidden series should be placed at the bottom
             of chart even when dataGrouping is enabled (#13813).`
     );

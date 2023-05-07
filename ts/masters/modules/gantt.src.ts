@@ -11,16 +11,25 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import '../../Series/XRange/XRangeSeries.js';
+import Navigator from '../../Stock/Navigator/Navigator.js';
+import Scrollbar from '../../Stock/Scrollbar/Scrollbar.js';
+import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
+import XRangeSeries from '../../Series/XRange/XRangeSeries.js';
 import '../../Series/Gantt/GanttSeries.js';
 import GanttChart from '../../Core/Chart/GanttChart.js';
-import Scrollbar from '../../Core/Scrollbar.js';
-import '../../Extensions/RangeSelector.js';
-import '../../Core/Navigator.js';
+import ArrowSymbols from '../../Extensions/ArrowSymbols.js';
+import CurrentDateIndication from '../../Extensions/CurrentDateIndication.js';
 const G: AnyRecord = Highcharts;
 // Classes
-G.Scrollbar = Scrollbar;
 G.GanttChart = GanttChart;
 G.ganttChart = GanttChart.ganttChart;
+G.Navigator = Navigator;
+G.RangeSelector = RangeSelector;
+G.Scrollbar = Scrollbar;
 // Compositions
+ArrowSymbols.compose(G.SVGRenderer);
+CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);
+Navigator.compose(G.Axis, G.Chart, G.Series);
+RangeSelector.compose(G.Axis, G.Chart);
 Scrollbar.compose(G.Axis);
+XRangeSeries.compose(G.Axis);

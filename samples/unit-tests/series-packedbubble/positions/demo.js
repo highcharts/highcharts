@@ -172,10 +172,10 @@ QUnit.test('PackedBubble hover and dehover (#12537)', function (assert) {
     bubbleOne.onMouseOver();
     bubbleTwo.onMouseOver();
 
-    const lineWidth = bubbleOne.graphic["stroke-width"];
+    const lineWidth = bubbleOne.graphic['stroke-width'];
     assert.strictEqual(
         lineWidth,
         10,
-        "Linewidth should go back to 10 after de-hovering."
+        'Linewidth should go back to 10 after de-hovering.'
     );
 });

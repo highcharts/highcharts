@@ -25,7 +25,7 @@ import type {
  *
  * */
 
-export interface DMIOptions extends SMAOptions, MultipleLinesComposition.Options {
+export interface DMIOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     params?: DMIParamsOptions;
     plusDILine?: DMILineOptions;
     minusDILine?: DMILineOptions;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2023 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,8 +17,9 @@
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
 import type F from './FormatUtilities';
-import type Point from '../Core/Series/Point';
+import type Point from './Series/Point';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
+import type Time from './Time';
 import type Tooltip from './Tooltip';
 
 /* *
@@ -33,17 +34,24 @@ declare module './Options' {
     }
 }
 
+declare module './Series/SeriesOptions' {
+    interface SeriesOptions {
+        tooltip?: DeepPartial<TooltipOptions>;
+    }
+}
+
 export interface TooltipOptions {
     animation: boolean;
     backgroundColor: ColorType;
     borderColor?: ColorType;
     borderRadius: number;
-    borderWidth: number;
+    borderWidth: number|undefined;
     className?: string;
     changeDecimals?: number;
     /** @deprecated */
     crosshairs?: any;
-    dateTimeLabelFormats: Record<string, string>;
+    dateTimeLabelFormats: Time.DateTimeLabelFormatsOption;
+    distance?: number;
     enabled: boolean;
     followPointer?: boolean;
     followTouchMove?: boolean;
@@ -67,6 +75,8 @@ export interface TooltipOptions {
     stickOnContact: boolean;
     style: CSSObject;
     useHTML: boolean;
+    /** @deprecated */
+    userOptions?: TooltipOptions;
     valueDecimals?: number;
     valuePrefix?: string;
     valueSuffix?: string;

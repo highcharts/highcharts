@@ -20,7 +20,7 @@ import type LineSeries from '../../Series/Line/LineSeries';
  *
  * */
 
-export interface IndicatorValuesObject<TLinkedSeries extends typeof LineSeries.prototype> {
+export interface IndicatorValuesObject<TLinkedSeries extends LineSeries> {
     values: Array<Array<(
         ExtractArrayType<TLinkedSeries['xData']>|
         ExtractArrayType<TLinkedSeries['yData']>

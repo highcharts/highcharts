@@ -14,7 +14,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Observed in Vik i Sogn, Norway, 2017'
+        text: 'Observed in Vik i Sogn, Norway, 2021 | ' +
+            'Source: <a href="https://www.vikjavev.no/ver/" target="_blank">Vikjavev</a>'
     },
 
     xAxis: {
@@ -34,6 +35,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         columnrange: {
+            borderRadius: '50%',
             dataLabels: {
                 enabled: true,
                 format: '{y}°C'
@@ -48,18 +50,18 @@ Highcharts.chart('container', {
     series: [{
         name: 'Temperatures',
         data: [
-            [-9.9, 10.3],
-            [-8.6, 8.5],
-            [-10.2, 11.8],
-            [-1.7, 12.2],
-            [-0.6, 23.1],
-            [3.7, 25.4],
-            [6.0, 26.2],
-            [6.7, 21.4],
-            [3.5, 19.5],
-            [-1.3, 16.0],
-            [-8.7, 9.4],
-            [-9.0, 8.6]
+            [-13.9, 5.2],
+            [-16.7, 10.6],
+            [-4.7, 11.6],
+            [-4.4, 16.8],
+            [-2.1, 27.2],
+            [5.9, 29.4],
+            [6.5, 29.1],
+            [4.7, 25.4],
+            [4.3, 21.6],
+            [-3.5, 15.1],
+            [-9.8, 12.5],
+            [-11.5, 8.4]
         ]
     }]
 

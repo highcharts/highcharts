@@ -29,7 +29,7 @@ import Funnel3DComposition from './Funnel3DComposition.js';
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Math3D from '../../Extensions/Math3D.js';
+import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -510,7 +510,7 @@ export default Funnel3DSeries;
  *         Funnel3d demo
  *
  * @since     7.1.0
- * @extends   series.funnel,plotOptions.funnel3d
+ * @extends   series,plotOptions.funnel3d
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
  * @product   highcharts
  * @requires  highcharts-3d

@@ -41,8 +41,8 @@ QUnit.test('Bubble legend ranges', function (assert) {
         'Bubble legend was properly positioned'
     );
 
-    bubbleLegendItem = chart.legend.bubbleLegend.legendGroup;
-    seriesItem = chart.legend.allItems[0].legendGroup;
+    bubbleLegendItem = chart.legend.bubbleLegend.legendItem.group;
+    seriesItem = chart.legend.allItems[0].legendItem.group;
 
     assert.strictEqual(
         bubbleLegendItem.translateY > seriesItem.translateY &&
@@ -76,9 +76,51 @@ QUnit.test('Bubble legend ranges', function (assert) {
     });
 
     assert.strictEqual(
-        !chart.legend.bubbleLegend.legendGroup,
+        !chart.legend.bubbleLegend.legendItem,
         true,
         'Bubble legend was properly disabled with the legend'
+    );
+
+    chart.addSeries({
+        type: 'bubble',
+        data: [
+            [1, 4, 4],
+            [2, 5, 5]
+        ],
+        events: {
+            legendItemClick(e) {
+                e.preventDefault();
+            }
+        }
+    }, false);
+
+    chart.legend.update({
+        enabled: true,
+        floating: false
+    });
+
+    chart.series[1].legendItem.group.element.dispatchEvent(new Event('click'));
+    chart.series[0].legendItem.group.element.dispatchEvent(new Event('click'));
+
+    assert.ok(
+        true,
+        `There shouldn't be any error in the console, when one series
+        legendItemClick has prevented the event and we click both legend
+        items (#14080).`
+    );
+
+    assert.notOk(
+        isNaN(chart.legend.bubbleLegend.legendItem.labelHeight),
+        `Bubble legend should work correctly, when one series
+        legendItemClick has prevented the event and we click both legend
+        items (#14080).`
+    );
+
+    assert.notOk(
+        isNaN(chart.legend.bubbleLegend.legendItem.labelWidth),
+        `Bubble legend should work correctly, when one series
+        legendItemClick has prevented the event and we click both legend
+        items (#14080).`
     );
 });
 

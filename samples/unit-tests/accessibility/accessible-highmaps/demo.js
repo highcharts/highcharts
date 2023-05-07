@@ -1,28 +1,37 @@
 QUnit.test('Basic map', function (assert) {
-    var chart = Highcharts.mapChart('container', {
-        chart: {
-            map: 'custom/europe'
-        },
-        series: [
-            {
-                data: [
-                    ['no', 1],
-                    ['se', 2],
-                    ['fi', 3],
-                    ['gb', 4],
-                    ['fr', 5],
-                    ['it', 6]
-                ]
-            }
-        ]
-    });
+    const url =
+        'https://upload.wikimedia.org/wikipedia/en/1/12/Flag_of_Poland.svg';
+    const chart = Highcharts.mapChart('container', {
+            chart: {
+                map: 'custom/europe'
+            },
+            series: [
+                {
+                    keys: ['hc-key', 'val', 'color.pattern.image'],
+                    data: [
+                        ['no', 1],
+                        ['pl', 2, url],
+                        ['fi', 3],
+                        ['gb', 4],
+                        ['fr', 5],
+                        ['it', 6]
+                    ]
+                }
+            ]
+        }),
+        description = chart.accessibility.components.infoRegions
+            .screenReaderSections.before.element.textContent;
 
     assert.ok(
-        chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute(
-                'aria-label'
-            ),
-        'There be screen reader region'
+        description.indexOf('Europe') > 0,
+        'There is a screen reader region, and it contains "Europe"'
+    );
+
+    assert.strictEqual(
+        chart.series[0].transformGroups[0].scaleY < 0,
+        // eslint-disable-next-line no-underscore-dangle
+        chart.series[0].points[1].options.color.pattern._inverted,
+        'Point with pattern should be marked as inverted (#16810).'
     );
 });
 
@@ -59,9 +68,7 @@ QUnit.test('Map with series info', function (assert) {
 
     assert.ok(
         chart.accessibility.components.infoRegions.screenReaderSections.before
-            .element.getAttribute(
-                'aria-label'
-            ),
+            .element.textContent.length,
         'There be screen reader region'
     );
 });

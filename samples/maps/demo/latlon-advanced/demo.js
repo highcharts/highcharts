@@ -47,6 +47,9 @@
         series: [{
             name: 'Basemap',
             mapData: topology,
+            accessibility: {
+                exposeAsGroupOnly: true
+            },
             borderColor: '#606060',
             nullColor: 'rgba(200, 200, 200, 0.2)',
             showInLegend: false
@@ -56,7 +59,12 @@
                 enabled: true,
                 format: '{point.capital}'
             },
-            name: 'Cities',
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: '{point.capital}, {point.parentState}. Population {point.population}. Latitude {point.lat:.2f}, longitude {point.lon:.2f}.'
+                }
+            },
+            name: 'State capital cities',
             data: data,
             maxSize: '12%',
             color: H.getOptions().colors[0]

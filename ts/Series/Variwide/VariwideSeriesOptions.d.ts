@@ -12,25 +12,28 @@
 
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
+
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type VariwideSeries from './VariwideSeries';
 
 /* *
  *
- * Declaration
+ *  Declarations
  *
  * */
+
 interface VariwideSeriesOptions extends ColumnSeriesOptions {
     states?: SeriesStatesOptions<VariwideSeries>;
 }
 
 /* *
  *
- * Export
+ *  Default Export
  *
  * */
+
 export default VariwideSeriesOptions;

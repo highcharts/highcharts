@@ -18,7 +18,7 @@ Highcharts.chart('container', {
             point: '5',
             text: 'Max'
         }],
-        draggable: 'xy' //set by default
+        draggable: 'xy' // set by default
     }]
 
 });

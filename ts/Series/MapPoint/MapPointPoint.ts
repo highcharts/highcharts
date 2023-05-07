@@ -27,7 +27,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const { isNumber, merge } = U;
+const { isNumber } = U;
 
 /* *
  *
@@ -42,8 +42,11 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
      *  Properties
      *
      * */
+    public insetIndex?: number;
 
     public options: MapPointPointOptions = void 0 as any;
+
+    public properties?: AnyRecord;
 
     public series: MapPointSeries = void 0 as any;
 

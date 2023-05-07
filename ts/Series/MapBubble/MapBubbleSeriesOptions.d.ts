@@ -28,4 +28,10 @@ export interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
     states?: SeriesStatesOptions<MapBubbleSeries>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default MapBubbleSeriesOptions;

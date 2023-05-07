@@ -16,6 +16,29 @@ QUnit.test('Null points are described to screen readers', function (assert) {
     assert.ok(getPointAttr(nullPoint, 'aria-label'));
 });
 
+QUnit.test('Null points are not described to screen readers', function (assert) {
+    const chart = Highcharts.chart('container', {
+            accessibility: {
+                point: {
+                    describeNull: false
+                }
+            },
+            series: [
+                {
+                    data: [1, null, null, 2, 3, 4, 5, 6]
+                }
+            ]
+        }),
+        series = chart.series[0],
+        regularPoint = series.points[0],
+        nullPoint = series.points[1],
+        getPointAttr = (point, attr) =>
+            point.graphic && point.graphic.element.getAttribute(attr);
+
+    assert.ok(getPointAttr(regularPoint, 'aria-label'));
+    assert.notOk(getPointAttr(nullPoint, 'aria-label'));
+});
+
 QUnit.test('Dynamic null points', function (assert) {
     const chart = Highcharts.chart('container', {
             series: [
@@ -59,7 +82,7 @@ QUnit.test('Dynamic null points', function (assert) {
 
     assert.notStrictEqual(
         nullPoint.graphic.attr('y'),
-        "NaN",
+        'NaN',
         'Point graphic y shouldn\'t be NaN.'
     );
 });

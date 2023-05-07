@@ -26,4 +26,10 @@ export interface PackedBubblePointOptions extends BubblePointOptions {
     mass?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default PackedBubblePointOptions;

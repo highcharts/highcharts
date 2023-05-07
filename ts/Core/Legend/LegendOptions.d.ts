@@ -51,8 +51,8 @@ export interface LegendOptions {
     itemDistance?: number;
     itemHiddenStyle: CSSObject;
     itemHoverStyle: CSSObject;
-    itemMarginBottom?: number;
-    itemMarginTop?: number;
+    itemMarginBottom: number;
+    itemMarginTop: number;
     itemStyle: CSSObject;
     itemWidth?: number;
     layout: ('horizontal'|'vertical'|'proximate');
@@ -76,6 +76,8 @@ export interface LegendOptions {
     symbolWidth?: number;
     title: LegendTitleOptions;
     useHTML?: boolean;
+    valueDecimals?: number;
+    valueSuffix?: string;
     verticalAlign: VerticalAlignValue;
     width?: (number|string);
     x: number;

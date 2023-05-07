@@ -3,7 +3,7 @@ Cross domain data
 
 It is not possible to use the jQuery .getJSON() function on JSON files outside of your own domain. It is however possible to use JSONP.
 
-The difference between JSON and JSONP is that in a regular JSON file you would just use the ordinary JSON syntax. This can not be returned cross domain. With JSONP what is done is wrapping the JSON content with a callback function in PHP which returns a json object. This can come in handy if the data you wish to display is on another domain than your own. A great number of data providers have JSONP services, for example Google and Twitter.
+The difference between JSON and JSONP is that in a regular JSON file you would just use the ordinary JSON syntax. This cannot be returned cross domain. With JSONP what is done is wrapping the JSON content with a callback function in PHP which returns a json object. This can come in handy if the data you wish to display is on another domain than your own. A great number of data providers have JSONP services, for example Google and Twitter.
 
 Here is an example:
 

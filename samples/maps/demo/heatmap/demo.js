@@ -4,6 +4,10 @@ Highcharts.chart('container', {
         inverted: true
     },
 
+    accessibility: {
+        description: 'We see how temperatures are warmer during the day, especially from around 9am to 9pm. May 8th through 11th are also overall colder days compared to the rest. Overall the temperatures range from around -1 degrees C to around 23 degrees C.'
+    },
+
     data: {
         csv: document.getElementById('csv').innerHTML
     },
@@ -25,12 +29,16 @@ Highcharts.chart('container', {
     },
 
     yAxis: {
+        accessibility: {
+            description: 'Hours in the day'
+        },
         title: {
             text: null
         },
         labels: {
             format: '{value}:00'
         },
+        lineWidth: 1,
         minPadding: 0,
         maxPadding: 0,
         startOnTick: false,
@@ -56,6 +64,9 @@ Highcharts.chart('container', {
         tooltip: {
             headerFormat: 'Temperature<br/>',
             pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
+        },
+        accessibility: {
+            enabled: false
         }
     }]
 });

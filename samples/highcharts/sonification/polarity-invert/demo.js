@@ -1,50 +1,31 @@
-Highcharts.chart('container', {
+var chart = Highcharts.chart('container', {
     title: {
-        text: 'Click on series to sonify'
+        text: 'Inverted pitch polarity',
+        align: 'left',
+        margin: 25
     },
     legend: {
         enabled: false
     },
     sonification: {
+        duration: 4000,
         defaultInstrumentOptions: {
-            instrument: 'triangleMajor',
-            minFrequency: 523, // C5
-            maxFrequency: 1047, // C6
             mapping: {
-                pan: 'x'
-            }
-        },
-        events: {
-            onPointStart: function (e, point) {
-                point.onMouseOver();
-            }
-        }
-    },
-    plotOptions: {
-        series: {
-            marker: {
-                radius: 8
-            },
-            cursor: 'pointer',
-            events: {
-                click: function () {
-                    this.sonify();
+                pitch: {
+                    mapTo: '-y',
+                    min: 'c2',
+                    max: 'c7'
                 }
             }
         }
     },
     series: [{
-        data: [523, 587, 659, 696, 784, 880, 988, 1046]
+        data: [4, 5, 6, 5, 7, 9, 11, 13]
     }, {
-        // Frequencies such that when played with inverse polarity,
-        // the intervals correspond to the C5-C6 major scale
-        data: [1046, 1569 - 587, 1569 - 659, 1569 - 696, 1569 - 784, 1569 - 880, 1569 - 988, 1569 - 1046],
-        sonification: {
-            instruments: [{
-                mapping: {
-                    frequency: '-y'
-                }
-            }]
-        }
+        data: [1, 3, 4, 2]
     }]
 });
+
+document.getElementById('sonify').onclick = function () {
+    chart.toggleSonify();
+};

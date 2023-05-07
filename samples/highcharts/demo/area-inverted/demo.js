@@ -1,10 +1,12 @@
+// Data retrieved from https://companiesmarketcap.com/
 Highcharts.chart('container', {
     chart: {
         type: 'area',
         inverted: true
     },
     title: {
-        text: 'Average fruit consumption during one week'
+        text: 'Alibaba and Meta (Facebook) revenue',
+        align: 'left'
     },
     accessibility: {
         keyboardNavigation: {
@@ -12,6 +14,9 @@ Highcharts.chart('container', {
                 mode: 'serialize'
             }
         }
+    },
+    tooltip: {
+        pointFormat: '&#8226; {series.name}: <b>${point.y} B</b>'
     },
     legend: {
         layout: 'vertical',
@@ -24,34 +29,27 @@ Highcharts.chart('container', {
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
     },
-    xAxis: {
-        categories: [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday'
-        ]
-    },
     yAxis: {
-        title: {
-            text: 'Number of units'
+        labels: {
+            format: '${text}'
         },
-        allowDecimals: false,
-        min: 0
+        title: {
+            text: 'Revenue (billions USD)'
+        }
     },
     plotOptions: {
+        series: {
+            pointStart: 2014
+        },
         area: {
             fillOpacity: 0.5
         }
     },
     series: [{
-        name: 'John',
-        data: [3, 4, 3, 5, 4, 10, 12]
+        name: 'Alibaba',
+        data: [11.44, 14.89, 21.40, 34.03, 51.52, 70.49, 94.46, 129.44]
     }, {
-        name: 'Jane',
-        data: [1, 3, 4, 3, 3, 5, 4]
+        name: 'Meta (Facebook)',
+        data: [11.49, 17.08, 26.88, 39.94, 55.01, 69.65, 84.17, 117.93]
     }]
 });

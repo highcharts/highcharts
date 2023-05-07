@@ -3,6 +3,7 @@
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
 
 /* *
@@ -19,11 +20,12 @@ import type {
 } from '../SMA/SMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
-export interface PCOptions extends SMAOptions, MultipleLinesComposition.Options {
+ *
+ *  Declarations
+ *
+ * */
+
+export interface PCOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     params?: PCParamsOptions;
     bottomLine: Record<string, CSSObject>;
     topLine: Record<string, CSSObject>;
@@ -38,4 +40,5 @@ export interface PCParamsOptions extends SMAParamsOptions {
  *  Default Export
  *
  * */
+
 export default PCOptions;

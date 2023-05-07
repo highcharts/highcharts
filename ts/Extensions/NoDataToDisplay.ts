@@ -19,7 +19,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import { Palette } from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
@@ -40,13 +40,10 @@ declare module '../Core/Chart/ChartLike' {
     }
 }
 
-declare module '../Core/LangOptions'{
+declare module '../Core/Options'{
     interface LangOptions {
         noData?: string;
     }
-}
-
-declare module '../Core/Options'{
     interface Options {
         noData?: Highcharts.NoDataOptions;
     }
@@ -179,7 +176,7 @@ defaultOptions.noData = {
         /** @ignore */
         fontWeight: 'bold',
         /** @ignore */
-        fontSize: '12px',
+        fontSize: '0.8em',
         /** @ignore */
         color: Palette.neutralColor60
     }

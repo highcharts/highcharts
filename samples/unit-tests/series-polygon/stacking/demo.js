@@ -3,7 +3,7 @@ QUnit.test('Stacking should not take effect', function (assert) {
         series: [
             {
                 type: 'polygon',
-                //stacking: 'normal',
+                // stacking: 'normal',
                 data: [
                     [1, 4],
                     [1, 5],
@@ -36,6 +36,6 @@ QUnit.test('Stacking should not take effect', function (assert) {
     assert.deepEqual(
         nonStackedExtremes,
         stackedExtremes,
-        "Stacking doesn't affect Y axis"
+        'Stacking doesn\'t affect Y axis'
     );
 });

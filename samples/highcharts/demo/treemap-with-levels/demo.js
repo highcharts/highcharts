@@ -1,8 +1,16 @@
 Highcharts.chart('container', {
     series: [{
-        type: "treemap",
+        type: 'treemap',
         layoutAlgorithm: 'stripes',
         alternateStartingDirection: true,
+        borderColor: '#fff',
+        borderRadius: 6,
+        borderWidth: 2,
+        dataLabels: {
+            style: {
+                textOutline: 'none'
+            }
+        },
         levels: [{
             level: 1,
             layoutAlgorithm: 'sliceAndDice',
@@ -18,60 +26,85 @@ Highcharts.chart('container', {
         }],
         data: [{
             id: 'A',
-            name: 'Apples',
-            color: "#EC2500"
+            name: 'Nord-Norge',
+            color: '#50FFB1'
         }, {
             id: 'B',
-            name: 'Bananas',
-            color: "#ECE100"
+            name: 'Trøndelag',
+            color: '#F5FBEF'
         }, {
-            id: 'O',
-            name: 'Oranges',
-            color: '#EC9800'
+            id: 'C',
+            name: 'Vestlandet',
+            color: '#A09FA8'
         }, {
-            name: 'Anne',
+            id: 'D',
+            name: 'Østlandet',
+            color: '#E7ECEF'
+        }, {
+            id: 'E',
+            name: 'Sørlandet',
+            color: '#A9B4C2'
+        }, {
+            name: 'Troms og Finnmark',
             parent: 'A',
-            value: 5
+            value: 70923
         }, {
-            name: 'Rick',
+            name: 'Nordland',
             parent: 'A',
-            value: 3
+            value: 35759
         }, {
-            name: 'Peter',
-            parent: 'A',
-            value: 4
-        }, {
-            name: 'Anne',
+            name: 'Trøndelag',
             parent: 'B',
-            value: 4
+            value: 39494
         }, {
-            name: 'Rick',
-            parent: 'B',
-            value: 10
+            name: 'Møre og Romsdal',
+            parent: 'C',
+            value: 13840
         }, {
-            name: 'Peter',
-            parent: 'B',
-            value: 1
+            name: 'Vestland',
+            parent: 'C',
+            value: 31969
         }, {
-            name: 'Anne',
-            parent: 'O',
-            value: 1
+            name: 'Rogaland',
+            parent: 'C',
+            value: 8576
         }, {
-            name: 'Rick',
-            parent: 'O',
-            value: 3
+            name: 'Viken',
+            parent: 'D',
+            value: 22768
         }, {
-            name: 'Peter',
-            parent: 'O',
-            value: 3
-        }, {
-            name: 'Susanne',
-            parent: 'Kiwi',
-            value: 2,
-            color: '#9EDE00'
+            name: 'Innlandet',
+            parent: 'D',
+            value: 49391
+        },
+        {
+            name: 'Oslo',
+            parent: 'D',
+            value: 454
+        },
+        {
+            name: 'Vestfold og Telemark',
+            parent: 'D',
+            value: 15925
+        },
+        {
+            name: 'Agder',
+            parent: 'E',
+            value: 14981
         }]
     }],
     title: {
-        text: 'Fruit consumption'
+        text: 'Norwegian regions and counties by area',
+        align: 'left'
+    },
+    subtitle: {
+        text:
+            'Source: <a href="https://snl.no/Norge" target="_blank">SNL</a>',
+        align: 'left'
+    },
+    tooltip: {
+        useHTML: true,
+        pointFormat:
+            'The area of <b>{point.name}</b> is <b>{point.value} km<sup>2</sup></b>'
     }
 });

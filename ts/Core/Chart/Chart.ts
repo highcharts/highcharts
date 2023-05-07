@@ -39,7 +39,6 @@ import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
 import type { ChartPanningOptions } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
-import type Oldie from '../../Extensions/Oldie/Oldie';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type Series from '../Series/Series';
@@ -59,6 +58,11 @@ const {
     setAnimation
 } = A;
 import Axis from '../Axis/Axis.js';
+import D from '../Defaults.js';
+const {
+    defaultOptions,
+    defaultTime
+} = D;
 import FormatUtilities from '../FormatUtilities.js';
 const { numberFormat } = FormatUtilities;
 import Foundation from '../Foundation.js';
@@ -71,13 +75,6 @@ const {
     svg,
     win
 } = H;
-import Legend from '../Legend/Legend.js';
-import MSPointer from '../MSPointer.js';
-import D from '../DefaultOptions.js';
-const {
-    defaultOptions,
-    defaultTime
-} = D;
 import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
@@ -312,8 +309,7 @@ class Chart {
     public clipRect?: SVGElement;
     public colorCounter: number = void 0 as any;
     public container: globalThis.HTMLElement = void 0 as any;
-    public containerHeight?: string;
-    public containerWidth?: string;
+    public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
     public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
@@ -325,7 +321,6 @@ class Chart {
     public isDirtyLegend?: boolean;
     public isResizing: number = void 0 as any;
     public labelCollectors: Array<Chart.LabelCollectorFunction> = void 0 as any;
-    public legend: Legend = void 0 as any;
     public loadingDiv?: HTMLDOMElement;
     public loadingShown?: boolean;
     public loadingSpan?: HTMLDOMElement;
@@ -362,7 +357,6 @@ class Chart {
     public time: Time = void 0 as any;
     public title?: SVGElement;
     public titleOffset: Array<number> = void 0 as any;
-    public unbindReflow?: Function;
     public userOptions: Partial<Options> = void 0 as any;
     public xAxis: Array<AxisType> = void 0 as any;
     public yAxis: Array<AxisType> = void 0 as any;
@@ -477,6 +471,29 @@ class Chart {
             this.callback = callback;
             this.isResizing = 0;
 
+            const zooming = optionsChart.zooming = optionsChart.zooming || {};
+
+            // Other options have no default so just pick
+            if (userOptions.chart && !userOptions.chart.zooming) {
+                zooming.resetButton = optionsChart.resetZoomButton;
+            }
+            zooming.key = pick(
+                zooming.key,
+                optionsChart.zoomKey
+            );
+            zooming.pinchType = pick(
+                zooming.pinchType,
+                optionsChart.pinchType
+            );
+            zooming.singleTouch = pick(
+                zooming.singleTouch,
+                optionsChart.zoomBySingleTouch
+            );
+            zooming.type = pick(
+                zooming.type,
+                optionsChart.zoomType
+            );
+
             /**
              * The options structure for the chart after merging
              * {@link #defaultOptions} and {@link #userOptions}. It contains
@@ -531,7 +548,7 @@ class Chart {
             this.numberFormatter = optionsChart.numberFormatter || numberFormat;
 
             /**
-             * Whether the chart is in styled mode, meaning all presentatinoal
+             * Whether the chart is in styled mode, meaning all presentational
              * attributes are avoided.
              *
              * @name Highcharts.Chart#styledMode
@@ -598,8 +615,7 @@ class Chart {
             optionsChart = chart.options.chart,
             type = (
                 options.type ||
-                optionsChart.type ||
-                optionsChart.defaultSeriesType
+                optionsChart.type
             ) as string,
             SeriesClass = seriesTypes[type];
 
@@ -719,12 +735,14 @@ class Chart {
             e = {
                 x,
                 y,
-                isInsidePlot: true
+                isInsidePlot: true,
+                options
             };
 
         if (!options.ignoreX) {
             const xAxis = (
-                series && (inverted ? series.yAxis : series.xAxis)
+                series &&
+                (inverted && !this.polar ? series.yAxis : series.xAxis)
             ) || {
                 pos: plotLeft,
                 len: Infinity
@@ -749,6 +767,9 @@ class Chart {
 
         if (!options.ignoreY && e.isInsidePlot) {
             const yAxis = (
+                !inverted && options.axis &&
+                !options.axis.isXAxis && options.axis
+            ) || (
                 series && (inverted ? series.xAxis : series.yAxis)
             ) || {
                 pos: plotTop,
@@ -789,7 +810,8 @@ class Chart {
      * @function Highcharts.Chart#redraw
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
-     * If or how to apply animation to the redraw.
+     * If or how to apply animation to the redraw. When `undefined`, it applies
+     * the animation that is set in the `chart.animation` option.
      *
      * @emits Highcharts.Chart#event:afterSetExtremes
      * @emits Highcharts.Chart#event:beforeRedraw
@@ -818,6 +840,8 @@ class Chart {
             isDirtyBox = chart.isDirtyBox,
             redrawLegend = chart.isDirtyLegend,
             serie: Series;
+
+        renderer.rootFontSize = renderer.boxWrapper.getStyle('font-size');
 
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
@@ -1164,9 +1188,12 @@ class Chart {
         // Default style
         const style = name === 'title' ? {
             color: Palette.neutralColor80,
-            fontSize: this.options.isStock ? '16px' : '18px' // #2944
+            fontSize: this.options.isStock ? '1em' : '1.2em', // #2944
+            fontWeight: 'bold'
         } : {
-            color: Palette.neutralColor60
+            // Subtitle or caption
+            color: Palette.neutralColor60,
+            fontSize: '0.8em'
         };
 
         // Merge default options with explicit options
@@ -1268,18 +1295,8 @@ class Chart {
                     // Floating subtitle (#6574)
                     verticalAlign === 'top' ? titleOffset[0] + 2 : 0;
 
-            let titleSize,
-                height;
-
             if (title) {
 
-                if (!this.styledMode) {
-                    titleSize = (
-                        titleOptions.style &&
-                        titleOptions.style.fontSize
-                    );
-                }
-                titleSize = renderer.fontMetrics(titleSize, title).b;
                 title
                     .css({
                         width: (
@@ -1288,13 +1305,16 @@ class Chart {
                         ) + 'px'
                     });
 
-                // Skip the cache for HTML (#3481, #11666)
-                height = Math.round(title.getBBox(titleOptions.useHTML).height);
+                const baseline = renderer.fontMetrics(title).b,
+                    // Skip the cache for HTML (#3481, #11666)
+                    height = Math.round(
+                        title.getBBox(titleOptions.useHTML).height
+                    );
 
                 title.align(extend({
                     y: verticalAlign === 'bottom' ?
-                        titleSize :
-                        offset + titleSize,
+                        baseline :
+                        offset + baseline,
                     height
                 }, titleOptions), false, 'spacingBox');
 
@@ -1348,6 +1368,19 @@ class Chart {
     }
 
     /**
+     * Internal function to get the available size of the container element
+     *
+     * @private
+     * @function Highcharts.Chart#getContainerBox
+     */
+    public getContainerBox(): { width: number, height: number } {
+        return {
+            width: getStyle(this.renderTo, 'width', true) || 0,
+            height: getStyle(this.renderTo, 'height', true) || 0
+        };
+    }
+
+    /**
      * Internal function to get the chart width and height according to options
      * and container size. Sets {@link Chart.chartWidth} and
      * {@link Chart.chartHeight}.
@@ -1360,15 +1393,7 @@ class Chart {
             optionsChart = chart.options.chart,
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
-            renderTo = chart.renderTo;
-
-        // Get inner width and height
-        if (!defined(widthOption)) {
-            chart.containerWidth = getStyle(renderTo, 'width') as any;
-        }
-        if (!defined(heightOption)) {
-            chart.containerHeight = getStyle(renderTo, 'height') as any;
-        }
+            containerBox = chart.getContainerBox();
 
         /**
          * The current pixel width of the chart.
@@ -1378,7 +1403,7 @@ class Chart {
          */
         chart.chartWidth = Math.max( // #1393
             0,
-            widthOption || (chart.containerWidth as any) || 600 // #1460
+            widthOption || containerBox.width || 600 // #1460
         );
         /**
          * The current pixel height of the chart.
@@ -1392,12 +1417,10 @@ class Chart {
                 heightOption as any,
                 chart.chartWidth
             ) ||
-            (
-                (chart.containerHeight as any) > 1 ?
-                    (chart.containerHeight as any) :
-                    400
-            )
+            (containerBox.height > 1 ? containerBox.height : 400)
         );
+
+        chart.containerBox = containerBox;
     }
 
     /**
@@ -1618,6 +1641,9 @@ class Chart {
             options.exporting && options.exporting.allowHTML,
             chart.styledMode
         ) as Chart.Renderer;
+
+        chart.containerBox = chart.getContainerBox();
+
         // Set the initial animation from the options
         setAnimation(void 0, chart);
 
@@ -1717,15 +1743,12 @@ class Chart {
     }
 
     /**
-     * Reflows the chart to its container. By default, the chart reflows
-     * automatically to its container following a `window.resize` event, as per
-     * the [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
-     * option. However, there are no reliable events for div resize, so if the
-     * container is resized without a window resize event, this must be called
-     * explicitly.
+     * Reflows the chart to its container. By default, the Resize Observer is
+     * attached to the chart's div which allows to reflows the chart
+     * automatically to its container, as per the
+     * [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
+     * option.
      *
-     * @sample highcharts/members/chart-reflow/
-     *         Resize div and reflow
      * @sample highcharts/chart/events-container/
      *         Pop up and reflow
      *
@@ -1738,29 +1761,27 @@ class Chart {
     public reflow(e?: Event): void {
         const chart = this,
             optionsChart = chart.options.chart,
-            renderTo = chart.renderTo,
             hasUserSize = (
                 defined(optionsChart.width) &&
                 defined(optionsChart.height)
             ),
-            width = optionsChart.width || getStyle(renderTo, 'width'),
-            height = optionsChart.height || getStyle(renderTo, 'height'),
-            target = e ? e.target : win;
+            oldBox = chart.containerBox,
+            containerBox = chart.getContainerBox();
 
         delete chart.pointer.chartPosition;
 
-        // Width and height checks for display:none. Target is doc in IE8 and
-        // Opera, win in Firefox, Chrome and IE9.
+        // Width and height checks for display:none. Target is doc in Opera
+        // and win in Firefox, Chrome and IE9.
         if (
             !hasUserSize &&
             !chart.isPrinting &&
-            width &&
-            height &&
-            (target === win || target === doc)
+            oldBox &&
+            // When fired by resize observer inside hidden container
+            containerBox.width
         ) {
             if (
-                width !== chart.containerWidth ||
-                height !== chart.containerHeight
+                containerBox.width !== oldBox.width ||
+                containerBox.height !== oldBox.height
             ) {
                 U.clearTimeout(chart.reflowTimeout as any);
                 // When called from window.resize, e is set, else it's called
@@ -1773,8 +1794,7 @@ class Chart {
                     }
                 }, e ? 100 : 0);
             }
-            chart.containerWidth = width as any;
-            chart.containerHeight = height as any;
+            chart.containerBox = containerBox;
         }
     }
 
@@ -1785,38 +1805,23 @@ class Chart {
      * @private
      * @function Highcharts.Chart#setReflow
      */
-    public setReflow(reflow?: boolean): void {
+    public setReflow(): void {
         const chart = this;
 
-        if (reflow !== false && !this.unbindReflow) {
-            this.unbindReflow = addEvent(win, 'resize', function (
-                e: Event
-            ): void {
-                // a removed event listener still runs in Edge and IE if the
-                // listener was removed while the event runs, so check if the
-                // chart is not destroyed (#11609)
-                if (chart.options) {
-                    chart.reflow(e);
-                }
-            });
-            addEvent(this, 'destroy', this.unbindReflow);
+        const runReflow = (e: any): void => {
+            if (chart.options?.chart.reflow && chart.hasLoaded) {
+                chart.reflow(e);
+            }
+        };
 
-        } else if (reflow === false && this.unbindReflow) {
+        if (typeof ResizeObserver === 'function') {
+            (new ResizeObserver(runReflow)).observe(chart.renderTo);
 
-            // Unbind and unset
-            this.unbindReflow = this.unbindReflow();
+        // Fallback for more legacy browser versions.
+        } else {
+            const unbind = addEvent(win, 'resize', runReflow);
+            addEvent(this, 'destroy', unbind);
         }
-
-        // The following will add listeners to re-fit the chart before and after
-        // printing (#2284). However it only works in WebKit. Should have worked
-        // in Firefox, but not supported in IE.
-        /*
-        if (win.matchMedia) {
-            win.matchMedia('print').addListener(function reflow() {
-                chart.reflow();
-            });
-        }
-        //*/
     }
 
     /**
@@ -1844,8 +1849,9 @@ class Chart {
      *        be `undefined` in order to preserve the current value, or `null`
      *        in order to adapt to the height of the containing element.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
-     *        Whether and how to apply animation.
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether and how to apply animation. When `undefined`, it applies
+     *        the animation that is set in the `chart.animation` option.
      *
      *
      * @emits Highcharts.Chart#event:endResize
@@ -2261,7 +2267,7 @@ class Chart {
 
             // The default series type's class
             klass = seriesTypes[
-                (optionsChart.type || optionsChart.defaultSeriesType) as any
+                optionsChart.type as any
             ];
 
             // Get the value from available chart-wide properties
@@ -2296,7 +2302,7 @@ class Chart {
      * @function Highcharts.Chart#linkSeries
      * @emits Highcharts.Chart#event:afterLinkSeries
      */
-    public linkSeries(): void {
+    public linkSeries(isUpdating?:boolean): void {
         const chart = this,
             chartSeries = chart.series;
 
@@ -2333,7 +2339,7 @@ class Chart {
             }
         });
 
-        fireEvent(this, 'afterLinkSeries');
+        fireEvent(this, 'afterLinkSeries', { isUpdating });
     }
 
     /**
@@ -2350,41 +2356,6 @@ class Chart {
     }
 
     /**
-     * Render labels for the chart.
-     *
-     * @private
-     * @function Highcharts.Chart#renderLabels
-     */
-    public renderLabels(): void {
-        const chart = this,
-            labels = chart.options.labels as Oldie.LabelsOptions;
-
-        if (labels.items) {
-            labels.items.forEach(function (
-                label: LabelsItemsOptions
-            ): void {
-                const style = extend(labels.style as any, label.style as any),
-                    x = pInt(style.left) + chart.plotLeft,
-                    y = pInt(style.top) + chart.plotTop + 12;
-
-                // delete to prevent rewriting in IE
-                delete style.left;
-                delete style.top;
-
-                chart.renderer.text(
-                    label.html as any,
-                    x,
-                    y
-                )
-                    .attr({ zIndex: 2 })
-                    .css(style)
-                    .add();
-
-            });
-        }
-    }
-
-    /**
      * Render all graphics for the chart. Runs internally on initialization.
      *
      * @private
@@ -2395,7 +2366,6 @@ class Chart {
             axes = chart.axes,
             colorAxis = chart.colorAxis,
             renderer = chart.renderer,
-            options = chart.options,
             renderAxes = function (axes: Array<Axis>): void {
                 axes.forEach(function (axis): void {
                     if (axis.visible) {
@@ -2409,13 +2379,9 @@ class Chart {
         // Title
         chart.setTitle();
 
-        /**
-         * The overview of the chart's series.
-         *
-         * @name Highcharts.Chart#legend
-         * @type {Highcharts.Legend}
-         */
-        chart.legend = new Legend(chart, options.legend as any);
+        // Fire an event before the margins are computed. This is where the
+        // legend is assigned.
+        fireEvent(chart, 'beforeMargins');
 
         // Get stacks
         if (chart.getStacks) {
@@ -2488,12 +2454,10 @@ class Chart {
         if (!chart.seriesGroup) {
             chart.seriesGroup = renderer.g('series-group')
                 .attr({ zIndex: 3 })
+                .shadow(chart.options.chart.seriesGroupShadow)
                 .add();
         }
         chart.renderSeries();
-
-        // Labels
-        chart.renderLabels();
 
         // Credits
         chart.addCredits();
@@ -2505,7 +2469,6 @@ class Chart {
 
         // Set flag
         chart.hasRendered = true;
-
     }
 
     /**
@@ -2668,11 +2631,6 @@ class Chart {
         const chart = this,
             options = chart.options;
 
-        // Hook for oldIE to check whether the chart is ready to render
-        if (chart.isReadyToRender && !chart.isReadyToRender()) {
-            return;
-        }
-
         // Create the container
         chart.getContainer();
 
@@ -2701,23 +2659,6 @@ class Chart {
         // xData and yData arrays, so we can access those before rendering. Used
         // in Highcharts Stock.
         fireEvent(chart, 'beforeRender');
-
-        // depends on inverted and on margins being set
-        if (Pointer) {
-            if (MSPointer.isRequired()) {
-                chart.pointer = new MSPointer(chart, options);
-            } else {
-                /**
-                 * The Pointer that keeps track of mouse and touch interaction.
-                 *
-                 * @memberof Highcharts.Chart
-                 * @name pointer
-                 * @type {Highcharts.Pointer}
-                 * @instance
-                 */
-                chart.pointer = new Pointer(chart, options);
-            }
-        }
 
         chart.render();
         chart.pointer.getChartPosition(); // #14973
@@ -2759,15 +2700,48 @@ class Chart {
         fireEvent(this, 'load');
         fireEvent(this, 'render');
 
-
         // Set up auto resize, check for not destroyed (#6068)
         if (defined(this.index)) {
-            this.setReflow(this.options.chart.reflow);
+            this.setReflow();
         }
+
+        this.warnIfA11yModuleNotLoaded();
 
         // Don't run again
         this.hasLoaded = true;
     }
+
+
+    /**
+     * Emit console warning if the a11y module is not loaded.
+     */
+    public warnIfA11yModuleNotLoaded():void {
+        const { options, title } = this;
+        if (options && !this.accessibility) {
+            // Make chart behave as an image with the title as alt text
+            this.renderer.boxWrapper.attr({
+                role: 'img',
+                'aria-label': (
+                    (title && title.element.textContent) || ''
+                // #17753, < is not allowed in SVG attributes
+                ).replace(/</g, '&lt;')
+            });
+
+            if (!(
+                options.accessibility && options.accessibility.enabled === false
+            )) {
+                error(
+                    'Highcharts warning: Consider including the ' +
+                    '"accessibility.js" module to make your chart more ' +
+                    'usable for people with disabilities. Set the ' +
+                    '"accessibility.enabled" option to false to remove this ' +
+                    'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
+                    false, this
+                );
+            }
+        }
+    }
+
 
     /**
      * Add a series to the chart after render time. Note that this method should
@@ -2791,7 +2765,8 @@ class Chart {
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
-     *        configuration.
+     *        configuration. When `undefined`, it applies the animation that is
+     *        set in the `chart.animation` option.
      *
      * @return {Highcharts.Series}
      *         The newly created series object.
@@ -2859,8 +2834,10 @@ class Chart {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
-     *        Whether and how to apply animation in the redraw.
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether and how to apply animation in the redraw. When
+     *        `undefined`, it applies the animation that is set in the
+     *        `chart.animation` option.
      *
      * @return {Highcharts.Axis}
      *         The newly generated Axis object.
@@ -2895,10 +2872,12 @@ class Chart {
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart after adding.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
-     *        Whether and how to apply animation in the redraw.
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether and how to apply animation in the redraw. When
+     *        `undefined`, it applies the animation that is set in the
+     *        `chart.animation` option.
      *
-     * @return {Highcharts.ColorAxis}
+     * @return {Highcharts.Axis}
      *         The newly generated Axis object.
      */
     public addColorAxis(
@@ -2924,7 +2903,7 @@ class Chart {
      * @param {...Array<*>} arguments
      *        All arguments for the constructor.
      *
-     * @return {Highcharts.Axis | Highcharts.ColorAxis}
+     * @return {Highcharts.Axis}
      *         The newly generated Axis object.
      */
     public createAxis(
@@ -3113,9 +3092,10 @@ class Chart {
      *        series have id's, the new series options will be matched by id,
      *        and the remaining ones removed.
      *
-     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether to apply animation, and optionally animation
-     *        configuration.
+     *        configuration. When `undefined`, it applies the animation that is
+     *        set in the `chart.animation` option.
      *
      * @emits Highcharts.Chart#event:update
      * @emits Highcharts.Chart#event:afterUpdate
@@ -3164,10 +3144,6 @@ class Chart {
             // Setter function
             if ('className' in optionsChart) {
                 chart.setClassName(optionsChart.className);
-            }
-
-            if ('reflow' in optionsChart) {
-                chart.setReflow(optionsChart.reflow);
             }
 
             if (
@@ -3468,9 +3444,10 @@ class Chart {
      * @emits Highcharts.Chart#event:beforeShowResetZoom
      */
     public showResetZoom(): void {
+
         const chart = this,
             lang = defaultOptions.lang,
-            btnOptions = chart.options.chart.resetZoomButton as any,
+            btnOptions = chart.options.chart.zooming.resetButton as any,
             theme = btnOptions.theme,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
@@ -3528,15 +3505,13 @@ class Chart {
      */
     public zoom(event: Pointer.SelectEventObject): void {
         const chart = this,
-            pointer = chart.pointer,
-            mouseDownPos = chart.inverted ?
-                pointer.mouseDownX : pointer.mouseDownY;
+            pointer = chart.pointer;
 
         let displayButton = false,
             hasZoomed;
 
         // If zoom is called with no arguments, reset the axes
-        if (!event || (event as any).resetSelection) {
+        if (!event || event.resetSelection) {
             chart.axes.forEach(function (axis): void {
                 hasZoomed = (axis.zoom as any)();
             });
@@ -3547,29 +3522,24 @@ class Chart {
                 axisData: Pointer.SelectDataObject
             ): void {
                 const axis = axisData.axis,
-                    axisStartPos = chart.inverted ? axis.left : axis.top,
-                    axisEndPos = chart.inverted ?
-                        axisStartPos + axis.width : axisStartPos + axis.height,
                     isXAxis = axis.isXAxis;
 
-                let isWithinPane = false;
-
-                // Check if zoomed area is within the pane (#1289).
-                // In case of multiple panes only one pane should be zoomed.
-                if (
-                    (
-                        !isXAxis &&
-                        (mouseDownPos as any) >= axisStartPos &&
-                        (mouseDownPos as any) <= axisEndPos
-                    ) ||
-                    isXAxis ||
-                    !defined(mouseDownPos)
-                ) {
-                    isWithinPane = true;
-                }
 
                 // don't zoom more than minRange
-                if (pointer[isXAxis ? 'zoomX' : 'zoomY'] && isWithinPane) {
+                if (
+                    pointer[isXAxis ? 'zoomX' : 'zoomY'] &&
+                    (
+                        defined(pointer.mouseDownX) &&
+                        defined(pointer.mouseDownY) &&
+                        chart.isInsidePlot(
+                            pointer.mouseDownX - chart.plotLeft,
+                            pointer.mouseDownY - chart.plotTop,
+                            { axis }
+                        )
+                    ) || !defined(
+                        chart.inverted ? pointer.mouseDownX : pointer.mouseDownY
+                    )
+                ) {
                     hasZoomed = axis.zoom(axisData.min, axisData.max);
                     if (axis.displayBtn) {
                         displayButton = true;
@@ -3623,9 +3593,7 @@ class Chart {
                         type: 'x'
                     }
             ),
-            chartOptions = chart.options.chart,
-            hasMapNavigation = chart.options.mapNavigation &&
-                chart.options.mapNavigation.enabled;
+            chartOptions = chart.options.chart;
 
         if (chartOptions && chartOptions.panning) {
             chartOptions.panning = panningOptions;
@@ -3793,7 +3761,6 @@ class Chart {
 
                         if (
                             !chart.resetZoomButton &&
-                            !hasMapNavigation &&
                             // Show reset zoom button only when both newMin and
                             // newMax values are between padded axis range.
                             newMin !== paddedMin &&
@@ -3850,6 +3817,8 @@ extend(Chart.prototype, {
      *
      * Note: We need to define these references after initializers are bound to
      * chart's prototype.
+     *
+     * @private
      */
     collectionsWithInit: {
         // collectionName: [ initializingMethod, [extraArguments] ]
@@ -3861,6 +3830,7 @@ extend(Chart.prototype, {
     /**
      * These collections (arrays) implement update() methods with support for
      * one-to-one option.
+     * @private
      */
     collectionsWithUpdate: [
         'xAxis',
@@ -3871,6 +3841,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause isDirtyBox to be set to true when updating. Can be
      * extended from plugins.
+     * @private
      */
     propsRequireDirtyBox: [
         'backgroundColor',
@@ -3888,7 +3859,7 @@ extend(Chart.prototype, {
     /**
      * These properties require a full reflow of chart elements, best
      * implemented through running `Chart.setSize` internally (#8190).
-     * @type {Array}
+     * @private
      */
     propsRequireReflow: [
         'margin',
@@ -3906,6 +3877,7 @@ extend(Chart.prototype, {
     /**
      * These properties cause all series to be updated when updating. Can be
      * extended from plugins.
+     * @private
      */
     propsRequireUpdateSeries: [
         'chart.inverted',
@@ -3971,6 +3943,7 @@ namespace Chart {
     );
 
     export interface IsInsideOptionsObject {
+        axis?: Axis;
         ignoreX?: boolean;
         ignoreY?: boolean;
         inverted?: boolean;
@@ -4124,6 +4097,9 @@ export default Chart;
 
 /**
  * @interface Highcharts.ChartIsInsideOptionsObject
+ *//**
+ * @name Highcharts.ChartIsInsideOptionsObject#axis
+ * @type {Highcharts.Axis|undefined}
  *//**
  * @name Highcharts.ChartIsInsideOptionsObject#ignoreX
  * @type {boolean|undefined}

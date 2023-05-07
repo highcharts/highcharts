@@ -1,4 +1,4 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json', function (data) {
 
     var startDate = new Date(data[data.length - 1][0]),
         minRate = 1,
@@ -9,7 +9,11 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         index;
 
     startDate.setMonth(startDate.getMonth() - 3); // a quarter of a year before last data point
-    startPeriod = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    startPeriod = Date.UTC(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate()
+    );
 
     for (index = data.length - 1; index >= 0; index = index - 1) {
         date = data[index][0]; // data[i][0] is date

@@ -10,7 +10,7 @@ module.exports = {
             'getting-started/your-first-chart',
             'getting-started/how-to-set-options',
             'getting-started/frequently-asked-questions',
-            'getting-started/how-to-create-custom-highcharts-files',
+            'getting-started/how-to-create-custom-highcharts-packages',
             'getting-started/optional-dependencies'
         ],
         'Chart concepts': [
@@ -31,6 +31,7 @@ module.exports = {
             'chart-concepts/security'
         ],
         'Stock': [
+            'stock/getting-started-stock',
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
             'stock/candlestick-chart',
@@ -61,9 +62,11 @@ module.exports = {
             'maps/map-series',
             'maps/mapline-series',
             'maps/mappoint-series',
+            'maps/flowmap-series',
             'maps/mapbubble-series',
             'maps/marker-clusters',
-            'maps/tilemap-series'
+            'maps/tilemap-series',
+            'maps/geoheatmap-series'
         ],
         'Gantt': [
             'gantt/getting-started-gantt',
@@ -103,6 +106,7 @@ module.exports = {
             'chart-and-series-types/packed-bubble',
             'chart-and-series-types/parallel-coordinates-chart',
             'chart-and-series-types/pareto-chart',
+            'chart-and-series-types/pictorial',
             'chart-and-series-types/pie-chart',
             'chart-and-series-types/polar-chart',
             'chart-and-series-types/radial-bar-chart',
@@ -113,6 +117,7 @@ module.exports = {
             'chart-and-series-types/stream-graph',
             'chart-and-series-types/sunburst-series',
             'chart-and-series-types/timeline-series',
+            'chart-and-series-types/treegraph-chart',
             'chart-and-series-types/treemap',
             'chart-and-series-types/variable-radius-pie-chart',
             'chart-and-series-types/variwide-chart',
@@ -170,10 +175,20 @@ module.exports = {
             'accessibility/accessibility-module-feature-overview',
             'accessibility/configure-the-accessibility-module',
             'accessibility/accessible-dynamic-data',
-            'accessibility/sonification',
             'accessibility/patterns-and-contrast',
             'accessibility/tables',
             'accessibility/compliance'
+        ],
+        'Audio charts': [
+            'sonification/getting-started',
+            'sonification/mapping',
+            'sonification/advanced-mapping',
+            'sonification/instruments',
+            'sonification/speech',
+            'sonification/conditional-tracks',
+            'sonification/notifications',
+            'sonification/context-cues',
+            'sonification/navigation'
         ],
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'

@@ -44,6 +44,15 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *
  * */
 
+export type NonPlotOptions = (
+    'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|'treemap'|'type'|
+    'xAxis'|'yAxis'|'zIndex'
+);
+
+export type PlotOptionsOf<T extends Series = Series> = (
+    Omit<T['options'], NonPlotOptions>
+);
+
 export interface SeriesAfterAnimateEvent {
     target: Series;
     type: 'afterAnimate';
@@ -77,7 +86,9 @@ export interface SeriesEventsOptions {
 
 export type SeriesFindNearestPointByValue = ('x'|'xy');
 
-export type SeriesLinecapValue = ('butt'|'round'|'square'|string);
+export type SeriesLinecapValue = ('butt'|'round'|'square');
+
+export type LegendSymbolType = ('lineMarker' | 'rectangle');
 
 /**
  * Helper interface for series types to add options to all series options.
@@ -95,7 +106,7 @@ export interface SeriesOptions {
     colorIndex?: number;
     colors?: Array<ColorType>;
     connectNulls?: boolean;
-    crisp?: (boolean|number);
+    crisp?: boolean;
     cursor?: CursorValue;
     dashStyle?: DashStyleValue;
     data?: Array<(PointOptions|PointShortOptions)>;
@@ -138,6 +149,7 @@ export interface SeriesOptions {
     zIndex?: number;
     zoneAxis?: string;
     zones?: Array<SeriesZonesOptions>;
+    legendSymbol?: LegendSymbolType;
 }
 
 export interface SeriesPointOptions {

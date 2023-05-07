@@ -1,12 +1,13 @@
+// Data retrieved from https://www.ssb.no/statbank/table/10467/
 Highcharts.chart('container', {
     chart: {
         type: 'area'
     },
     title: {
-        text: 'Fruit consumption *'
+        text: 'Born persons, by boys\' name'
     },
     subtitle: {
-        text: '* Jane\'s banana consumption is unknown',
+        text: '* Missing data for Yasin in 2019',
         align: 'right',
         verticalAlign: 'bottom'
     },
@@ -14,22 +15,22 @@ Highcharts.chart('container', {
         layout: 'vertical',
         align: 'left',
         verticalAlign: 'top',
-        x: 100,
-        y: 70,
+        x: 150,
+        y: 60,
         floating: true,
         borderWidth: 1,
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
     },
-    xAxis: {
-        categories: ['Apples', 'Pears', 'Oranges', 'Bananas', 'Grapes', 'Plums', 'Strawberries', 'Raspberries']
-    },
     yAxis: {
         title: {
-            text: 'Y-Axis'
+            text: 'Amount'
         }
     },
     plotOptions: {
+        series: {
+            pointStart: 2014
+        },
         area: {
             fillOpacity: 0.5
         }
@@ -38,10 +39,10 @@ Highcharts.chart('container', {
         enabled: false
     },
     series: [{
-        name: 'John',
-        data: [0, 1, 4, 4, 5, 2, 3, 7]
+        name: 'Arvid',
+        data: [10, 9, 11, 11, 8, 13, 12, 14]
     }, {
-        name: 'Jane',
-        data: [1, 0, 3, null, 3, 1, 2, 1]
+        name: 'Yasin',
+        data: [13, 9, 10, 10, 8, null, 8, 6]
     }]
 });

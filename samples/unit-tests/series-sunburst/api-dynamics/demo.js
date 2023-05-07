@@ -31,7 +31,7 @@ QUnit.test('Chart.setSize.', function (assert) {
         });
     chart.setSize(200, 200);
     // TODO find something to tests against.
-    // This only tests wether setSize is executed without errors
+    // This only tests whether setSize is executed without errors
     assert.strictEqual('todo', 'todo', 'todo');
 });
 
@@ -318,8 +318,8 @@ QUnit.test('Series.update.', function (assert) {
         controller = new TestController(chart);
     assert.strictEqual(
         series.color,
-        '#7cb5ec',
-        'series.color should equal #7cb5ec before update.'
+        Highcharts.getOptions().colors[0],
+        'series.color should equal default `colors[0]` before update.'
     );
     series.update({
         color: '#ff0000'

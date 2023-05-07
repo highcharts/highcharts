@@ -9,7 +9,7 @@ Highcharts.chart('container', {
         maxColor: '#FF0000'
     },
     series: [{
-        type: "treemap",
+        type: 'treemap',
         data: [{
             name: 'A',
             value: 6,

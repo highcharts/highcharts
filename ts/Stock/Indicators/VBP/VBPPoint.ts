@@ -6,22 +6,31 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
  *
  * */
 
-import Point from '../../../Core/Series/Point.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
+    sma: {
+        prototype: {
+            pointClass: SMAPoint
+        }
     }
-} = SeriesRegistry;
+} = SeriesRegistry.seriesTypes;
 import VBPIndicator from './VBPIndicator';
 
-class VBPPoint extends SMAIndicator.prototype.pointClass {
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class VBPPoint extends SMAPoint {
 
     // Required for destroying negative part of volume
     public destroy(): void {
@@ -29,9 +38,16 @@ class VBPPoint extends SMAIndicator.prototype.pointClass {
         if (this.negativeGraphic) {
             this.negativeGraphic = (this.negativeGraphic as any).destroy();
         }
-        return Point.prototype.destroy.apply(this, arguments);
+        super.destroy.apply(this, arguments);
     }
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface VBPPoint {
     barX: number;
     negativeGraphic: unknown;

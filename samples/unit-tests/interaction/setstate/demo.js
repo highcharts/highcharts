@@ -56,7 +56,7 @@ QUnit.test('Inactive state and legend', function (assert) {
         }),
         series = chart.series,
         legend = chart.legend,
-        legendItemBox = legend.allItems[0].legendItem.getBBox(),
+        legendItemBox = legend.allItems[0].legendItem.label.getBBox(),
         controller = new TestController(chart),
         xPosition =
             legend.group.translateX + legendItemBox.x + legendItemBox.width / 2,

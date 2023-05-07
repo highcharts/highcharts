@@ -25,6 +25,7 @@ import type {
 import type EventCallback from './EventCallback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type Time from './Time';
 
 import H from './Globals.js';
 const {
@@ -411,7 +412,7 @@ function isDOMElement(obj: unknown): obj is HTMLDOMElement {
  * @return {boolean}
  *         True if the argument is a class.
  */
-function isClass(obj: (object|undefined)): obj is Utilities.Class<any> {
+function isClass<T>(obj: (object|undefined)): obj is Class<T> {
     const c: (Function|undefined) = obj && obj.constructor;
 
     return !!(
@@ -459,6 +460,27 @@ function erase(arr: Array<unknown>, item: unknown): void {
             break;
         }
     }
+}
+
+/**
+ * Adds an item to an array, if it is not present in the array.
+ *
+ * @function Highcharts.pushUnique
+ *
+ * @param {Array<unknown>} array
+ * The array to add the item to.
+ *
+ * @param {unknown} item
+ * The item to add.
+ *
+ * @return {boolean}
+ * Returns true, if the item was not present and has been added.
+ */
+function pushUnique(
+    array: Array<unknown>,
+    item: unknown
+): boolean {
+    return array.indexOf(item) < 0 && !!array.push(item);
 }
 
 /**
@@ -768,6 +790,7 @@ function createElement(
 /**
  * Extend a prototyped class by new members.
  *
+ * @deprecated
  * @function Highcharts.extendClass<T>
  *
  * @param {Highcharts.Class<T>} parent
@@ -781,10 +804,10 @@ function createElement(
  *         A new prototype.
  */
 function extendClass <T, TReturn = T>(
-    parent: Utilities.Class<T>,
+    parent: Class<T>,
     members: any
-): Utilities.Class<TReturn> {
-    const obj: Utilities.Class<TReturn> = (function (): void {}) as any;
+): Class<TReturn> {
+    const obj: Class<TReturn> = (function (): void {}) as any;
 
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
@@ -863,26 +886,28 @@ function relativeLength(
  *        arguments as the original function, except that the original function
  *        is unshifted and passed as the first argument.
  */
-function wrap(
-    obj: any,
-    method: string,
-    func: Utilities.WrapProceedFunction
+function wrap<T, K extends FunctionNamesOf<T>>(
+    obj: T,
+    method: K,
+    func: Utilities.WrapProceedFunction<T[K]&ArrowFunction>
 ): void {
-    const proceed = obj[method];
+    const proceed = obj[method] as T[K]&ArrowFunction;
 
-    obj[method] = function (): any {
-        const args = Array.prototype.slice.call(arguments),
-            outerArgs = arguments,
-            ctx = this;
+    obj[method] = function (this: T): ReturnType<typeof func> {
+        const outerArgs = arguments,
+            scope = this;
 
-        ctx.proceed = function (): void {
-            proceed.apply(ctx, arguments.length ? arguments : outerArgs);
-        };
-        args.unshift(proceed);
-        const ret = func.apply(this, args);
-        ctx.proceed = null;
-        return ret;
-    };
+        return func.apply(this, [
+            function (): ReturnType<typeof proceed> {
+                return proceed.apply(
+                    scope,
+                    arguments.length ? arguments : outerArgs
+                );
+            }
+        ].concat(
+            [].slice.call(arguments)
+        ) as Parameters<typeof func>);
+    } as T[K];
 }
 
 /**
@@ -1161,7 +1186,7 @@ function correctFloat(num: number, prec?: number): number {
  * @ignore
  */
 
-const timeUnits: Record<string, number> = {
+const timeUnits: Record<Time.TimeUnit, number> = {
     millisecond: 1,
     second: 1000,
     minute: 60000,
@@ -1272,11 +1297,6 @@ function getStyle(
     prop: string,
     toInt?: boolean
 ): (number|string|undefined) {
-    const customGetStyle: typeof getStyle = (
-        (H as any).getStyle || // oldie getStyle
-        getStyle
-    );
-
     let style: (number|string|undefined);
 
     // For width and height, return the actual inner pixel size (#4913)
@@ -1302,8 +1322,8 @@ function getStyle(
             0, // #8377
             (
                 offsetWidth -
-                (customGetStyle(el, 'padding-left', true) || 0) -
-                (customGetStyle(el, 'padding-right', true) || 0)
+                (getStyle(el, 'padding-left', true) || 0) -
+                (getStyle(el, 'padding-right', true) || 0)
             )
         );
     }
@@ -1313,19 +1333,14 @@ function getStyle(
             0, // #8377
             (
                 Math.min(el.offsetHeight, el.scrollHeight) -
-                (customGetStyle(el, 'padding-top', true) || 0) -
-                (customGetStyle(el, 'padding-bottom', true) || 0)
+                (getStyle(el, 'padding-top', true) || 0) -
+                (getStyle(el, 'padding-bottom', true) || 0)
             )
         );
     }
 
-    if (!win.getComputedStyle) {
-        // SVG not supported, forgot to load oldie.js?
-        error(27, true);
-    }
-
     // Otherwise, get the computed style
-    const css = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
+    const css = win.getComputedStyle(el, void 0); // eslint-disable-line no-undefined
     if (css) {
         style = css.getPropertyValue(prop);
         if (pick(toInt, prop !== 'opacity')) {
@@ -1460,8 +1475,6 @@ function offset(el: Element): Utilities.OffsetObject {
  *
  * @param {T} [ctx]
  *        The context.
- *
- * @return {void}
  */
 function objectEach<TObject, TContext>(
     obj: TObject,
@@ -1609,7 +1622,7 @@ objectEach({
  *         A callback function to remove the added event.
  */
 function addEvent<T>(
-    el: (Utilities.Class<T>|T),
+    el: (Class<T>|T),
     type: string,
     fn: (EventCallback<T>|Function),
     options: Utilities.EventOptions = {}
@@ -1640,9 +1653,7 @@ function addEvent<T>(
     // Handle DOM events
     // If the browser supports passive events, add it to improve performance
     // on touch events (#11353).
-    const addEventListener = (
-        (el as any).addEventListener || H.addEventListenerPolyfill
-    );
+    const addEventListener = (el as any).addEventListener;
     if (addEventListener) {
         addEventListener.call(
             el,
@@ -1698,7 +1709,7 @@ function addEvent<T>(
  * @return {void}
  */
 function removeEvent<T>(
-    el: (Utilities.Class<T>|T),
+    el: (Class<T>|T),
     type?: string,
     fn?: (EventCallback<T>|Function)
 ): void {
@@ -1711,9 +1722,7 @@ function removeEvent<T>(
         type: string,
         fn: (EventCallback<T>|Function)
     ): void {
-        const removeEventListener = (
-            (el as any).removeEventListener || H.removeEventListenerPolyfill
-        );
+        const removeEventListener = (el as any).removeEventListener;
 
         if (removeEventListener) {
             removeEventListener.call(el, type, fn, false);
@@ -1847,8 +1856,7 @@ function fireEvent<T>(
                 // the zoom-out button in Chrome.
                 target: el,
                 // If the type is not set, we're running a custom event
-                // (#2297). If it is set, we're running a browser event,
-                // and setting it will cause en error in IE8 (#2465).
+                // (#2297). If it is set, we're running a browser event.
                 type: type
             });
         }
@@ -2024,9 +2032,6 @@ if ((win as any).jQuery) {
 
 namespace Utilities {
     export type RelativeSize = (number|string);
-    export interface Class<T = any> extends Function {
-        new(...args: Array<any>): T;
-    }
     export interface ErrorMessageEventObject {
         chart?: Chart;
         code: number;
@@ -2061,8 +2066,8 @@ namespace Utilities {
         top: number;
         width: number;
     }
-    export interface WrapProceedFunction {
-        (...args: Array<any>): any;
+    export interface WrapProceedFunction<T extends ArrowFunction> {
+        (proceed: (T&ArrowFunction), ...args: Array<any>): ReturnType<T>;
     }
 }
 
@@ -2112,6 +2117,7 @@ const Utilities = {
     pad,
     pick,
     pInt,
+    pushUnique,
     relativeLength,
     removeEvent,
     splat,

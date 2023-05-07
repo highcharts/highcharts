@@ -1,0 +1,6 @@
+---
+ name: Polar zoom
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

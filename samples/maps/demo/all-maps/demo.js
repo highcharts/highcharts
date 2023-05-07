@@ -5,8 +5,7 @@
  * https://www.highcharts.com/maps/demo/geojson instead.
  *
  * @todo
- * - Remove jQuery where not necessary (the combobox is probably still best
- *   implemented with jQuery UI)
+ * - Remove jQuery where not necessary
  */
 
 // Base path to maps
@@ -29,10 +28,10 @@ $.each(Highcharts.mapDataIndex, (mapGroup, maps) => {
 const searchText = `Search ${mapCount} maps`;
 mapOptions =
     `<option value="custom/world.js">${searchText}</option>${mapOptions}`;
-$("#mapDropdown").append(mapOptions).combobox();
+$('#mapDropdown').append(mapOptions).combobox();
 
 // Change map when item selected in dropdown
-$("#mapDropdown").on('change', async function () {
+$('#mapDropdown').on('change', async function () {
     const $selectedItem = $('option:selected', this),
         mapDesc = $selectedItem.text(),
         mapKey = this.value.slice(0, -3),
@@ -85,7 +84,7 @@ $("#mapDropdown").on('change', async function () {
     }
 
     // Update info box download links
-    $("#download").html(
+    $('#download').html(
         '<small>' + filesize + '</small> <br><br>' +
         '<a class="button" target="_blank" href="https://jsfiddle.net/gh/get/jquery/1.11.0/' +
             'highcharts/highcharts/tree/master/samples/mapdata/' + mapKey + '">' +
@@ -157,6 +156,20 @@ $("#mapDropdown").on('change', async function () {
         });
     };
 
+    const fitToGeometry = (mapKey === 'custom/world') ? {
+        type: 'MultiPoint',
+        coordinates: [
+            // Alaska west
+            [-164, 54],
+            // Greenland north
+            [-35, 84],
+            // New Zealand east
+            [179, -38],
+            // Chile south
+            [-68, -55]
+        ]
+    } : undefined;
+
     // Instantiate chart
     console.time('map');
     Highcharts.mapChart('container', {
@@ -169,12 +182,23 @@ $("#mapDropdown").on('change', async function () {
             text: null
         },
 
+        accessibility: {
+            series: {
+                descriptionFormat: '{series.name}, map with {series.points.length} areas.',
+                pointDescriptionEnabledThreshold: 50
+            }
+        },
+
         mapNavigation: {
             enabled: true,
             buttonOptions: {
                 alignTo: 'spacingBox',
                 x: 10
             }
+        },
+
+        mapView: {
+            fitToGeometry
         },
 
         colorAxis: {
@@ -200,11 +224,6 @@ $("#mapDropdown").on('change', async function () {
             data,
             joinBy: ['hc-key', 'key'],
             name: 'Random data',
-            states: {
-                hover: {
-                    color: Highcharts.getOptions().colors[2]
-                }
-            },
             dataLabels: {
                 enabled: showDataLabels,
                 formatter,
@@ -221,7 +240,10 @@ $("#mapDropdown").on('change', async function () {
             }
         }, {
             type: 'mapline',
-            name: "Lines",
+            name: 'Lines',
+            accessibility: {
+                enabled: false
+            },
             data: Highcharts.geojson(mapData, 'mapline'),
             /*
             data: [{
@@ -235,28 +257,28 @@ $("#mapDropdown").on('change', async function () {
     });
     console.timeEnd('map');
 
-    showDataLabels = $("#chkDataLabels").prop('checked');
+    showDataLabels = $('#chkDataLabels').prop('checked');
 });
 
 // Toggle data labels - Note: Reloads map with new random data
-$("#chkDataLabels").on('change', function () {
-    showDataLabels = $("#chkDataLabels").prop('checked');
-    $("#mapDropdown").trigger('change');
+$('#chkDataLabels').on('change', function () {
+    showDataLabels = $('#chkDataLabels').prop('checked');
+    $('#mapDropdown').trigger('change');
 });
 
 // Switch to previous map on button click
-$("#btn-prev-map").on('click', function () {
-    $("#mapDropdown option:selected")
-        .prev("option")
-        .prop("selected", true)
+$('#btn-prev-map').on('click', function () {
+    $('#mapDropdown option:selected')
+        .prev('option')
+        .prop('selected', true)
         .trigger('change');
 });
 
 // Switch to next map on button click
-$("#btn-next-map").on('click', function () {
-    $("#mapDropdown option:selected")
-        .next("option")
-        .prop("selected", true)
+$('#btn-next-map').on('click', function () {
+    $('#mapDropdown option:selected')
+        .next('option')
+        .prop('selected', true)
         .trigger('change');
 });
 

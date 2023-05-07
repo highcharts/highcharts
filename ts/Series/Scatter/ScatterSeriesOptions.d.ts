@@ -34,4 +34,10 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
     states?: SeriesStatesOptions<ScatterSeries>;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default ScatterSeriesOptions;

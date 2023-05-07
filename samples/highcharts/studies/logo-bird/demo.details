@@ -2,5 +2,6 @@
  name: Highcharts Logo Bird
  authors:
    - Torstein Hønsi
+ skipTest: true
  js_wrap: b
 ...

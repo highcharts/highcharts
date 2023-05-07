@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2021 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -49,7 +49,7 @@ class SortModifier extends DataModifier {
      * Default options to group table rows.
      */
     public static readonly defaultOptions: SortModifier.Options = {
-        modifier: 'Order',
+        modifier: 'Sort',
         direction: 'desc',
         orderByColumn: 'y'
     };
@@ -94,7 +94,9 @@ class SortModifier extends DataModifier {
      * @param {RangeDataModifier.Options} [options]
      * Options to configure the range modifier.
      */
-    public constructor(options?: DeepPartial<SortModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<SortModifier.Options>
+    ) {
         super();
 
         this.options = merge(SortModifier.defaultOptions, options);
@@ -141,7 +143,7 @@ class SortModifier extends DataModifier {
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifier = this,
             {
@@ -155,9 +157,10 @@ class SortModifier extends DataModifier {
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
+                        .modifyTable(new DataTable({
+                            columns: table
+                                .getColumns([orderByColumn, orderInColumn])
+                        }))
                         .modified
                         .getColumn(orderInColumn)
                 );
@@ -192,7 +195,7 @@ class SortModifier extends DataModifier {
         table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
 
         const modifier = this,
@@ -211,9 +214,10 @@ class SortModifier extends DataModifier {
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
+                        .modifyTable(new DataTable({
+                            columns: table
+                                .getColumns([orderByColumn, orderInColumn])
+                        }))
                         .modified
                         .getColumn(orderInColumn)
                 );
@@ -249,7 +253,7 @@ class SortModifier extends DataModifier {
         table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
 
         const modifier = this,
@@ -266,9 +270,10 @@ class SortModifier extends DataModifier {
             table.modified.setColumn(
                 orderInColumn,
                 modifier
-                    .modifyTable(new DataTable(
-                        table.getColumns([orderByColumn, orderInColumn])
-                    ))
+                    .modifyTable(new DataTable({
+                        columns: table
+                            .getColumns([orderByColumn, orderInColumn])
+                    }))
                     .modified
                     .getColumn(orderInColumn)
             );
@@ -285,7 +290,7 @@ class SortModifier extends DataModifier {
      * @param {DataTable} table
      * Table to sort in.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -293,7 +298,7 @@ class SortModifier extends DataModifier {
      */
     public modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifier = this;
 
@@ -350,15 +355,21 @@ class SortModifier extends DataModifier {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace SortModifier {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Options to configure the modifier.
@@ -393,6 +404,20 @@ namespace SortModifier {
     }
 
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './DataModifierType' {
+    interface DataModifierTypes {
+        Sort: typeof SortModifier;
+    }
+}
+
+DataModifier.registerType('Sort', SortModifier);
 
 /* *
  *

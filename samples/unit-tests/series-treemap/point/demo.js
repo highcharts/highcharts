@@ -156,7 +156,7 @@ QUnit.test('Treemap', assert => {
 
 QUnit.test('point.isValid', function (assert) {
     var isValid =
-            Highcharts.seriesTypes.treemap.prototype.pointClass.prototype
+            Highcharts.Series.types.treemap.prototype.pointClass.prototype
                 .isValid,
         context = {};
     assert.strictEqual(typeof isValid, 'function', 'point.isValid exists');

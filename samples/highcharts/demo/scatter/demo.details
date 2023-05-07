@@ -4,8 +4,8 @@ authors:
   - Torstein Hønsi
 js_wrap: b
 alt_text: >-
-  Highcharts basic scatter plot JavaScript example graph compares male female
-  gender type height and weight variables.
+  Highcharts basic scatter plot JavaScript example graph compares width and
+  height of athletes across different sports
 tags:
   - Highcharts demo
 categories:

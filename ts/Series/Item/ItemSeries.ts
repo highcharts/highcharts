@@ -27,7 +27,7 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import H from '../../Core/Globals.js';
 import ItemPoint from './ItemPoint.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -246,7 +246,7 @@ class ItemSeries extends PieSeries {
 
         this.points.forEach(function (point): void {
             let attr: SVGAttributes,
-                graphics: Record<string, SVGElement>,
+                graphics: Array<SVGElement|undefined>,
                 pointAttr: (SVGAttributes|undefined),
                 pointMarkerOptions = point.marker || {},
                 symbol: SymbolKey = (
@@ -264,7 +264,7 @@ class ItemSeries extends PieSeries {
                 width: number,
                 height: number;
 
-            point.graphics = graphics = point.graphics || {};
+            point.graphics = graphics = point.graphics || [];
 
             if (!series.chart.styledMode) {
                 pointAttr = series.pointAttribs(
@@ -280,7 +280,7 @@ class ItemSeries extends PieSeries {
                         .add(series.group);
                 }
 
-                for (let val = 0; val < (point.y as any); val++) {
+                for (let val = 0; val < (point.y || 0); val++) {
 
                     // Semi-circle
                     if (series.center && series.slots) {
@@ -316,38 +316,43 @@ class ItemSeries extends PieSeries {
                     if (typeof r !== 'undefined') {
                         attr.r = r;
                     }
+                    // Circles attributes update (#17257)
+                    if (pointAttr) {
+                        extend(attr, pointAttr);
+                    }
 
+                    let graphic = graphics[val];
 
-                    if (graphics[val]) {
-                        graphics[val].animate(attr);
+                    if (graphic) {
+                        graphic.animate(attr);
                     } else {
-                        graphics[val] = renderer
+                        graphic = renderer
                             .symbol(
                                 symbol,
-                                null as any,
-                                null as any,
-                                null as any,
-                                null as any,
+                                void 0,
+                                void 0,
+                                void 0,
+                                void 0,
                                 {
                                     backgroundSize: 'within'
                                 }
                             )
-                            .attr(extend(attr, pointAttr as any))
+                            .attr(attr)
                             .add(point.graphic);
                     }
-                    graphics[val].isActive = true;
-
-
+                    graphic.isActive = true;
+                    graphics[val] = graphic;
                     i++;
                 }
             }
-            objectEach(graphics, function (
-                graphic: SVGElement,
-                key: string
-            ): void {
+            graphics.forEach((graphic, i): void => {
+                if (!graphic) {
+                    return;
+                }
+
                 if (!graphic.isActive) {
                     graphic.destroy();
-                    delete graphics[key];
+                    graphics.splice(i, 1);
                 } else {
                     graphic.isActive = false;
                 }
@@ -547,7 +552,11 @@ class ItemSeries extends PieSeries {
     public translate(_positions?: Array<number>): void {
 
         // Initialize chart without setting data, #13379.
-        if (this.total === 0) {
+        if (
+            this.total === 0 && // check if that is a (semi-)circle
+            isNumber(this.options.startAngle) &&
+            isNumber(this.options.endAngle)
+        ) {
             this.center = this.getCenter();
         }
         if (!this.slots) {

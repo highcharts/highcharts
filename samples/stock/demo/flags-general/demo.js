@@ -1,8 +1,7 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json', function (data) {
 
     // Create the chart
     Highcharts.stockChart('container', {
-
 
         rangeSelector: {
             selected: 0
@@ -34,16 +33,20 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         // the event marker flags
         }, {
             type: 'flags',
+            accessibility: {
+                exposeAsGroupOnly: true,
+                description: 'Flagged events.'
+            },
             data: [{
-                x: Date.UTC(2017, 11, 1),
+                x: Date.UTC(2021, 11, 2),
                 title: 'A',
                 text: 'Some event with a description'
             }, {
-                x: Date.UTC(2017, 11, 12),
+                x: Date.UTC(2021, 11, 15),
                 title: 'B',
                 text: 'Some event with a description'
             }, {
-                x: Date.UTC(2017, 11, 22),
+                x: Date.UTC(2021, 11, 22),
                 title: 'C',
                 text: 'Some event with a description'
             }],

@@ -17,10 +17,10 @@ import type {
 } from '../SMA/SMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface PivotPointsOptions extends SMAOptions {
     params?: PivotPointsParamsOptions;

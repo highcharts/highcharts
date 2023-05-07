@@ -23,6 +23,7 @@ const { deg2rad } = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
+    fireEvent,
     isNumber,
     pick,
     relativeLength
@@ -138,6 +139,9 @@ namespace CenteredUtilities {
         ) {
             positions[3] = positions[2] - thickness * 2;
         }
+
+        fireEvent(this, 'afterGetCenter', { positions });
+
         return positions;
     }
 

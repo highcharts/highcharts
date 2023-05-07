@@ -45,8 +45,6 @@ class ItemPoint extends PieSeries.prototype.pointClass {
      *
      * */
 
-    public graphics: Record<string, SVGElement> = void 0 as any;
-
     public options: ItemPointOptions = void 0 as any;
 
     public series: ItemSeries = void 0 as any;

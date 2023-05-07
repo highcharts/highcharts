@@ -20,7 +20,7 @@
                 "properties": "always"
             }
         ],
-        "class-methods-use-this": 1, // @todo
+        "class-methods-use-this": 0,
         "comma-dangle": [
             2,
             "never"
@@ -57,6 +57,7 @@
         "prefer-const": 1, // @todo
         "prefer-spread": 0, // @todo
         "prefer-rest-params": 0, // @todo
+        "require-unicode-regexp": 0, // incompatible with ES2017- targets
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "semi": 0,
         "valid-jsdoc": 0,
@@ -94,10 +95,11 @@
         "@typescript-eslint/no-unused-vars": 0, // @todo
         "@typescript-eslint/no-use-before-define": 0,
         "@typescript-eslint/no-useless-constructor": 2,
+        "@typescript-eslint/prefer-as-const": 1, // @todo
         "@typescript-eslint/prefer-includes": 0, // @todo
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
-        "@typescript-eslint/restrict-plus-operands": 1, // @todo
+        "@typescript-eslint/restrict-plus-operands": 0,
         "@typescript-eslint/restrict-template-expressions": 1, // @todo
         "@typescript-eslint/semi": 2,
         "@typescript-eslint/unbound-method": 0, // @todo
@@ -105,11 +107,10 @@
         "highcharts/no-highcharts-namespace": 1, // @todo
         "highcharts/no-highcharts-object": 2,
         "highcharts/no-mixin": 1, // @todo
-        "highcharts/no-optional-chaining": 2,
         "highcharts/no-private-constructor-doclet": 0,
         "highcharts/no-wrap": 1, // @todo
         "highcharts/quote-members": 2,
-        "jsdoc/check-alignment": 1,
+        "jsdoc/check-alignment": 0,
         "jsdoc/check-param-names": 1,
         "jsdoc/check-tag-names": [
             "error",

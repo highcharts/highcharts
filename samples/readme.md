@@ -6,7 +6,6 @@ tests and unit tests. See the [highcharts-utils](https://github.com/highcharts/h
 repo on how to set up the _Sample viewer_.
 
 
-
 Tests
 -----
 
@@ -50,13 +49,21 @@ Run `gulp test` on the root to pre-check. Read more at
 Useful Tips for Setting Up Tests
 --------------------------------
 
+**Using data from `/samples/data`***
+If you have a large data set, it is better to put it in `/samples/data` than to
+paste it inline in demo.js or demo.html. These files must be loaded via `cdn.jsdelivr.net` in order to work both on our website, locally and on jsFiddle.
+1. Add your file to `/samples/data`.
+2. Perform a commit and take note of the commit hash.
+3. Now in your sample (`demo.js`), load the data from jsdelivr.net, for example 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/aapl.json', where the part after 'highcharts@' is the commit hash from last point. Note that this now works in the utils because the utils are rewriting the URL and loading locally.
+4. Next time you push your commits, this will work online as well.
+
 **Mouse events** are emulated using the
 [TestController](https://github.com/highcharts/highcharts/blob/master/test/test-controller.js)
 that is available in the test environment.
 
 ```js
 // Instanciate
-var controller = new TestController(chart);
+const controller = new TestController(chart);
 
 // Simulate panning with the shift key pressed. X and Y are chart coordinates.
 controller.pan([200, 100], [150, 100], { shiftKey: true });
@@ -88,7 +95,7 @@ unit tests task. The chart and its container are shared between multiple tests
 and test-specific options get reverted after each test.
 
 The limitations of the underlying `Chart.update` function applies, so that
-callback functions are not supported as they can not be reverted. Additionally
+callback functions are not supported as they cannot be reverted. Additionally
 the `Chart.update` function is not wrapped in a template and therefor has to be
 avoided as well. If you need to test with callback functions or multiple
 updates, test templates are not for you.
@@ -179,3 +186,15 @@ Use the `tags` property to set the product tag, and `categories` to set the cate
 If you want the demo to appear higher (or lower) within the category you can also set a `priority`.
 
 If you want to commit the demo without it appearing on the website, the category can be set to `unlisted`.
+
+## How to set up sample data and graphics
+
+Our samples serve different purposes. They must run on jsFiddle, in our local test utils, on CircleCI and on our website. The best way to achieve this currently is by storing data and graphic files in the `/samples/data` and `/samples/graphics` folders respectively, then serving it through jsDelivr. In order to do that, we must first commit the data or graphic file, then use the latest commit hash in the reference to jsDelivr, which will load it from GitHub and cache it.
+
+1. Add your data file to the `/samples/data/` folder, or image to `/samples/graphics`.
+2. Now in `http(s)://utils.highcharts.local/samples`, test that your sample works with the file, by using a file URL like this: `https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/{filename}`. For graphics, replace `data` with `graphics`.
+3. If it works like expected, commit the changes. Now this works in the utils because it dynamically rewrites the URL to load the local file. If we try to run this on jsFiddle or our website, however, this will fail. So what we need to do is to replace the `sha` part of the URL with the real sha or commit hash.
+4. To find the abbreviated commit hash of step 3, run this command: `git log --format="%h" -n 1`. The result may look like `0002e9cd00`.
+5. Copy this commit hash and replace the `sha` part of step 2 in your sample or multiple samples using the same data. The result may look like this: `https://cdn.jsdelivr.net/gh/highcharts/highcharts@0002e9cd00/samples/data/{filename}`.
+6. Commit again. Now your sample should work in all scenarios.
+

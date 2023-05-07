@@ -6,7 +6,7 @@ Highcharts.addEvent(
             i = 0,
             nodes = {};
         if (
-            this instanceof Highcharts.seriesTypes.networkgraph &&
+            this instanceof Highcharts.Series.types.networkgraph &&
             e.options.id === 'language-tree'
         ) {
             e.options.data.forEach(function (link) {

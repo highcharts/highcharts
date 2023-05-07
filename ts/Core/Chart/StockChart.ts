@@ -29,18 +29,18 @@ import type { SeriesTypePlotOptions } from '../Series/SeriesType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
-    animObject
-} = A;
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { getOptions } = D;
+import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
+import RangeSelectorDefaults from
+    '../../Stock/RangeSelector/RangeSelectorDefaults.js';
+import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
 import Series from '../Series/Series.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
@@ -58,15 +58,6 @@ const {
 } = U;
 
 import '../Pointer.js';
-// Has a dependency on Navigator due to the use of
-// defaultOptions.navigator
-import '../Navigator.js';
-// Has a dependency on Scrollbar due to the use of
-// defaultOptions.scrollbar
-import '../Scrollbar.js';
-// Has a dependency on RangeSelector due to the use of
-// defaultOptions.rangeSelector
-import '../../Extensions/RangeSelector.js';
 
 /* *
  *
@@ -149,7 +140,7 @@ class StockChart extends Chart {
             // navigator is enabled (#1090)
             navigatorEnabled = pick(
                 userOptions.navigator && userOptions.navigator.enabled,
-                (defaultOptions.navigator as any).enabled,
+                NavigatorDefaults.enabled,
                 true
             );
 
@@ -163,7 +154,9 @@ class StockChart extends Chart {
                         enabled: true,
                         type: 'x'
                     },
-                    pinchType: 'x'
+                    zooming: {
+                        pinchType: 'x'
+                    }
                 },
                 navigator: {
                     enabled: navigatorEnabled
@@ -171,17 +164,14 @@ class StockChart extends Chart {
                 scrollbar: {
                     // #4988 - check if setOptions was called
                     enabled: pick(
-                        (
-                            defaultOptions.scrollbar &&
-                            defaultOptions.scrollbar.enabled
-                        ),
+                        ScrollbarDefaults.enabled,
                         true
                     )
                 },
                 rangeSelector: {
                     // #4988 - check if setOptions was called
                     enabled: pick(
-                        (defaultOptions.rangeSelector as any).enabled,
+                        RangeSelectorDefaults.rangeSelector.enabled,
                         true
                     )
                 },
@@ -290,13 +280,9 @@ namespace StockChart {
      *        [options reference](https://api.highcharts.com/highstock).
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
-     *        A function to execute when the chart object is finished loading
-     *        and rendering. In most cases the chart is built in one thread,
-     *        but in Internet Explorer version 8 or less the chart is sometimes
-     *        initialized before the document is ready, and in these cases the
-     *        chart object will not be finished synchronously. As a
-     *        consequence, code that relies on the newly built Chart object
-     *        should always run in the callback. Defining a
+     *        A function to execute when the chart object is finished
+     *        rendering and all external image files (`chart.backgroundImage`,
+     *        `chart.plotBackgroundImage` etc) are loaded. Defining a
      *        [chart.events.load](https://api.highcharts.com/highstock/chart.events.load)
      *        handler is equivalent.
      *
@@ -343,20 +329,11 @@ function getDefaultAxisOptions(
                 y: -2
             },
             opposite: pick(options.opposite, true),
-
-            /**
-             * @default {highcharts} true
-             * @default {highstock} false
-             * @apioption yAxis.showLastLabel
-             *
-             * @private
-             */
             showLastLabel: !!(
                 // #6104, show last label by default for category axes
                 options.categories ||
                 options.type === 'category'
             ),
-
             title: {
                 text: null
             }
@@ -376,14 +353,13 @@ function getForcedAxisOptions(
     chartOptions: Partial<Options>
 ): DeepPartial<AxisOptions> {
     if (type === 'xAxis') {
-        const defaultOptions = getOptions(),
-            // Always disable startOnTick:true on the main axis when the
-            // navigator is enabled (#1090)
-            navigatorEnabled = pick(
-                chartOptions.navigator && chartOptions.navigator.enabled,
-                (defaultOptions.navigator as any).enabled,
-                true
-            );
+        // Always disable startOnTick:true on the main axis when the navigator
+        // is enabled (#1090)
+        const navigatorEnabled = pick(
+            chartOptions.navigator && chartOptions.navigator.enabled,
+            NavigatorDefaults.enabled,
+            true
+        );
 
         const axisOptions: DeepPartial<AxisOptions> = {
             type: 'datetime',
@@ -436,21 +412,22 @@ addEvent(Series, 'setOptions', function (
     }
 });
 
-// Override the automatic label alignment so that the first Y axis' labels
-// are drawn on top of the grid line, and subsequent axes are drawn outside
+// Override the automatic label alignment so that the first Y axis' labels are
+// drawn on top of the grid line, and subsequent axes are drawn outside
 addEvent(Axis, 'autoLabelAlign', function (e: Event): void {
-    let chart = this.chart,
-        options = this.options,
+    const { chart, options } = this,
         panes = chart._labelPanes = chart._labelPanes || {},
-        key,
-        labelOptions = this.options.labels;
+        labelOptions = options.labels;
 
-    if (this.chart.options.isStock && this.coll === 'yAxis') {
-        key = options.top + ',' + options.height;
-        // do it only for the first Y axis of each pane
+    if (chart.options.isStock && this.coll === 'yAxis') {
+        const key = options.top + ',' + options.height;
+        // Do it only for the first Y axis of each pane
         if (!panes[key] && labelOptions.enabled) {
-            if (labelOptions.x === 15) { // default
-                labelOptions.x = 0;
+            if (
+                labelOptions.distance === 15 && // default
+                this.side === 1
+            ) {
+                labelOptions.distance = 0;
             }
             if (typeof labelOptions.align === 'undefined') {
                 labelOptions.align = 'right';
@@ -579,7 +556,7 @@ addEvent(Axis, 'getPlotLinePath', function (
 
         transVal = pick(
             translatedValue,
-            axis.translate(value as any, null, null, (e as any).old) as any
+            axis.translate(value as any, void 0, void 0, (e as any).old)
         );
         if (isNumber(transVal)) {
             if (axis.horiz) {
@@ -707,6 +684,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         opposite = this.opposite, // axis position
         left = this.left, // left position
         top = this.top, // top position
+        width = this.width,
         crossLabel = this.crossLabel, // the svgElement
         posx,
         posy,
@@ -744,7 +722,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
             )
             .addClass(
                 'highcharts-crosshair-label highcharts-color-' + (
-                    point ?
+                    point && point.series ?
                         point.series.colorIndex :
                         this.series[0] && this.series[0].colorIndex
                 )
@@ -770,7 +748,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 .css(extend<CSSObject>({
                     color: Palette.backgroundColor,
                     fontWeight: 'normal',
-                    fontSize: '11px',
+                    fontSize: '0.7em',
                     textAlign: 'center'
                 }, options.style || {}));
         }
@@ -780,7 +758,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         posx = snap ? (point.plotX || 0) + left : e.chartX;
         posy = top + (opposite ? 0 : this.height);
     } else {
-        posx = opposite ? this.width + left : 0;
+        posx = left + this.offset + (opposite ? width : 0);
         posy = snap ? (point.plotY || 0) + top : e.chartY;
     }
 
@@ -799,7 +777,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
     // Crosshair should be rendered within Axis range (#7219). Also, the point
     // of currentPriceIndicator should be inside the plot area, #14879.
-    const isInside = point ?
+    const isInside = point && point.series ?
         point.series.isPointInside(point) :
         (isNumber(value) && value > min && value < max);
 
@@ -820,6 +798,10 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     crossBox = crossLabel.getBBox();
 
     // now it is placed we can correct its position
+    if (isNumber(crossLabel.x) && !horiz && !opposite) {
+        posx = crossLabel.x - (crossBox.width / 2);
+    }
+
     if (isNumber(crossLabel.y)) {
         if (horiz) {
             if ((tickInside && !opposite) || (!tickInside && opposite)) {
@@ -897,7 +879,7 @@ addEvent(Chart, 'update', function (
     // case (#6615)
     if ('scrollbar' in options && this.navigator) {
         merge(true, this.options.scrollbar, options.scrollbar);
-        (this.navigator.update as any)({}, false);
+        this.navigator.update({});
         delete options.scrollbar;
     }
 });

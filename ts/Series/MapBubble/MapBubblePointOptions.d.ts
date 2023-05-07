@@ -26,4 +26,10 @@ export interface MapBubblePointOptions extends BubblePointOptions {
     z?: (number|null);
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default MapBubblePointOptions;

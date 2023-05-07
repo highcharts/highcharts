@@ -16,15 +16,13 @@
  *
  * */
 
+import type Chart from '../../Core/Chart/Chart';
+import type GlobalsLike from '../../Core/GlobalsLike';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import Chart from '../../Core/Chart/Chart.js';
 import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
-const {
-    charts
-} = H;
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
 const {
@@ -51,23 +49,15 @@ declare module '../../Core/Chart/ChartOptions'{
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        let errorMessages: typeof ErrorMessages;
-    }
-}
-
 /* *
  *
- *  Compositions
+ *  Constants
  *
  * */
 
-setOptions({
+const composedMembers: Array<unknown> = [];
+
+const defaultOptions = {
     /**
      * @optionparent chart
      */
@@ -84,33 +74,83 @@ setOptions({
          */
         displayErrors: true
     }
-});
+};
 
-/* eslint-disable no-invalid-this */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-addEvent(H, 'displayError', function (
+/**
+ * @private
+ */
+function compose(
+    ChartClass: typeof Chart
+): void {
+
+    if (U.pushUnique(composedMembers, ChartClass)) {
+        addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
+    }
+
+    if (U.pushUnique(composedMembers, H)) {
+        addEvent(H, 'displayError', onHighchartsDisplayError);
+    }
+
+    if (U.pushUnique(composedMembers, setOptions)) {
+        setOptions(defaultOptions);
+    }
+
+}
+
+/**
+ * @private
+ */
+function onChartBeforeRedraw(
+    this: Chart
+): void {
+    const errorElements = this.errorElements;
+
+    if (errorElements && errorElements.length) {
+        for (const el of errorElements) {
+            el.destroy();
+        }
+    }
+
+    delete this.errorElements;
+}
+
+/**
+ * @private
+ */
+function onHighchartsDisplayError(
+    this: GlobalsLike,
     e: U.ErrorMessageEventObject
 ): void {
     // Display error on the chart causing the error or the last created chart.
-    const chart = e.chart ||
-            find(charts.slice().reverse(), (c?: Chart): boolean => !!c);
+    const chart = (
+        e.chart ||
+        find(this.charts.slice().reverse(), (c?: Chart): boolean => !!c)
+    );
+
     if (!chart) {
         return;
     }
 
-    let code = e.code,
-        msg,
+    const code = e.code,
         options = chart.options.chart,
-        renderer = chart.renderer,
+        renderer = chart.renderer;
+
+    let msg,
         chartWidth,
         chartHeight;
 
     if (chart.errorElements) {
-        chart.errorElements.forEach(function (el: SVGElement): void {
+        for (const el of chart.errorElements) {
             if (el) {
                 el.destroy();
             }
-        });
+        }
     }
 
     if (options && options.displayErrors && renderer) {
@@ -128,7 +168,7 @@ addEvent(H, 'displayError', function (
         msg = msg
             .replace(
                 /<h1>(.*)<\/h1>/g,
-                '<br><span style="font-size: 24px">$1</span><br>'
+                '<br><span style="font-size: 2em">$1</span><br>'
             )
             .replace(/<p>/g, '')
             .replace(/<\/p>/g, '<br>');
@@ -158,6 +198,7 @@ addEvent(H, 'displayError', function (
             'debugger'
         ).css({
             color: '#ffffff',
+            fontSize: '0.8em',
             width: (chartWidth - 16) + 'px',
             padding: 0
         }).attr({
@@ -171,17 +212,16 @@ addEvent(H, 'displayError', function (
             y: chartHeight - chart.errorElements[1].getBBox().height
         });
     }
-});
+}
 
-addEvent(Chart, 'beforeRedraw', function (): void {
-    const errorElements = this.errorElements;
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
-    if (errorElements && errorElements.length) {
-        errorElements.forEach(function (el: SVGElement): void {
-            el.destroy();
-        });
-    }
-    delete this.errorElements;
-});
+const Debugger = {
+    compose
+};
 
-/* eslint-enable no-invalid-this */
+export default Debugger;

@@ -34,6 +34,7 @@ Highcharts.chart('container', {
         pointFormat: '{point.longDescription}<br><span style="font-size: 10px">Source: Wikipedia</span>'
     },
     title: {
-        text: 'Relationship between Euler and Venn diagrams'
+        text: 'Relationship between Euler and Venn diagrams',
+        align: 'left'
     }
 });

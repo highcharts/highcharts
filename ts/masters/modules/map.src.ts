@@ -31,4 +31,4 @@ G.MapView = MapView;
 G.maps = MapChart.maps;
 G.Projection = Projection;
 ColorAxis.compose(G.Chart, G.Fx, G.Legend, G.Series);
-MapBubbleSeries.compose(G.Chart, G.Legend, G.Series);
+MapBubbleSeries.compose(G.Axis, G.Chart, G.Legend, G.Series);

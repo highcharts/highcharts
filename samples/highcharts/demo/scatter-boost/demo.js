@@ -26,6 +26,12 @@ Highcharts.chart('container', {
         usePreAllocated: true
     },
 
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>{chartLongdesc}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+        }
+    },
+
     xAxis: {
         min: 0,
         max: 100,

@@ -6,16 +6,30 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type { AnnotationEventObject } from '../EventEmitter';
+import type Controllable from '../Controllables/Controllable';
+import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type MockPointOptions from '../MockPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import Annotation from '../Annotations.js';
+
+import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * @private
@@ -28,20 +42,13 @@ function getSecondCoordinate(
     return (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 class Tunnel extends CrookedLine {
-
-    /* *
-     *
-     * Constructors
-     *
-     * */
-
-    public constructor(
-        chart: Highcharts.AnnotationChart,
-        options: Tunnel.Options
-    ) {
-        super(chart, options);
-    }
 
     /* *
      *
@@ -80,7 +87,7 @@ class Tunnel extends CrookedLine {
             typeOptions = options.typeOptions as Tunnel.TypeOptions,
             controlPoint = new ControlPoint(
                 this.chart,
-                this,
+                this as any,
                 merge(
                     options.controlPointOptions,
                     typeOptions.heightControlPoint
@@ -171,13 +178,17 @@ class Tunnel extends CrookedLine {
 
         this.options.typeOptions.height = (this.points[3].y as any) -
             (this.points[0].y as any);
+        this.userOptions.typeOptions.height = this.options.typeOptions.height;
     }
 
 }
 
-/**
- * @private
- */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Tunnel {
     defaultOptions: CrookedLine['defaultOptions'];
 }
@@ -224,8 +235,8 @@ Tunnel.prototype.defaultOptions = merge(
              */
             heightControlPoint: {
                 positioner: function (
-                    this: Highcharts.AnnotationControlPoint,
-                    target: Highcharts.AnnotationControllable
+                    this: ControlPoint,
+                    target: Controllable
                 ): PositionObject {
                     const startXY = MockPoint.pointToPixels(target.points[2]),
                         endXY = MockPoint.pointToPixels(target.points[3]),
@@ -240,7 +251,7 @@ Tunnel.prototype.defaultOptions = merge(
                 events: {
                     drag: function (
                         this: Tunnel,
-                        e: Highcharts.AnnotationEventObject,
+                        e: AnnotationEventObject,
                         target: Tunnel
                     ): void {
                         if (
@@ -271,7 +282,7 @@ Tunnel.prototype.defaultOptions = merge(
             events: {
                 drag: function (
                     this: Tunnel,
-                    e: Highcharts.AnnotationEventObject,
+                    e: AnnotationEventObject,
                     target: Tunnel
                 ): void {
                     if (
@@ -299,13 +310,19 @@ Tunnel.prototype.defaultOptions = merge(
     }
 );
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace Tunnel {
     export interface Options extends CrookedLine.Options {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
         height: number;
-        heightControlPoint: Highcharts.AnnotationControlPointOptionsObject;
+        heightControlPoint: ControlPointOptionsObject;
     }
 }
 
@@ -314,16 +331,19 @@ namespace Tunnel {
  *  Registry
  *
  * */
-Annotation.types.tunnel = Tunnel;
+
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         tunnel: typeof Tunnel;
     }
 }
 
+Annotation.types.tunnel = Tunnel;
+
 /* *
  *
  *  Default Export
  *
  * */
+
 export default Tunnel;

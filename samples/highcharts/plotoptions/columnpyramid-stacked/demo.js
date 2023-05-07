@@ -17,7 +17,8 @@ Highcharts.chart('container', {
             enabled: true,
             style: {
                 fontWeight: 'bold',
-                color: 'gray'
+                color: 'gray',
+                textOutline: 'none'
             }
         }
     },

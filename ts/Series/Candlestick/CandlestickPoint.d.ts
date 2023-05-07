@@ -13,16 +13,17 @@
  *  Imports
  *
  * */
+
 import type CandlestickPointOptions from './CandlestickPointOptions';
 import type CandlestickSeries from './CandlestickSeries';
 import type OHLCPoint from '../OHLC/OHLCPoint';
-
 
 /* *
  *
  *  Declarations
  *
  * */
+
 declare class CandlestickPoint extends OHLCPoint {
     public close: number;
     public open: number;
@@ -32,7 +33,8 @@ declare class CandlestickPoint extends OHLCPoint {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default CandlestickPoint;

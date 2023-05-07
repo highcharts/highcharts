@@ -35,4 +35,10 @@ export interface PSARParamsOptions extends SMAParamsOptions {
     decimals?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default PSAROptions;

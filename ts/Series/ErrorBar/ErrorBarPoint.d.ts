@@ -32,7 +32,7 @@ declare class ErrorBarPoint extends BoxPlotPoint {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

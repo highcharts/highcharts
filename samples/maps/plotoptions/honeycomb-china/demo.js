@@ -225,7 +225,7 @@ Highcharts.chart('container', {
             x: 1,
             y: 2,
             abbreviation: '陕(秦)',
-            capital: "Xi'an",
+            capital: 'Xi\'an',
             province: 'Shaanxi',
             region: 'Northwest China'
         }, {

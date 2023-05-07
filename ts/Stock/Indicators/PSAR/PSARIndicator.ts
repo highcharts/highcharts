@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -19,19 +25,21 @@ import type {
     PSARParamsOptions
 } from './PSAROptions';
 import type PSARPoint from './PSARPoint';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
-    merge,
-    extend
+    merge
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 // Utils:
 
@@ -142,11 +150,9 @@ function getPSAR(
     return pEP;
 }
 
-/* eslint-enable require-jsdoc */
-
 /* *
  *
- * Class
+ *  Class
  *
  * */
 
@@ -160,6 +166,13 @@ function getPSAR(
  * @augments Highcharts.Series
  */
 class PSARIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Parabolic SAR. This series requires `linkedTo`
      * option to be set and should be loaded
@@ -234,25 +247,22 @@ class PSARIndicator extends SMAIndicator {
      * */
 
     public data: Array<PSARPoint> = void 0 as any;
+    public nameComponents: Array<string> = void 0 as any;
     public points: Array<PSARPoint> = void 0 as any;
     public options: PSAROptions = void 0 as any;
+
     /* *
      *
      *  Functions
      *
      * */
+
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PSARParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let xVal: Array<number> = (series.xData as any),
+        const xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
-            // Extreme point is the lowest low for falling and highest high
-            // for rising psar - and we are starting with falling
-            extremePoint: number = yVal[0][1],
-            accelerationFactor: number = (
-                params.initialAccelerationFactor as any
-            ),
             maxAccelerationFactor: number = (
                 params.maxAccelerationFactor as any
             ),
@@ -261,21 +271,27 @@ class PSARIndicator extends SMAIndicator {
             initialAccelerationFactor: number = (
                 params.initialAccelerationFactor as any
             ),
-            PSAR: number = yVal[0][2],
             decimals: number = (params.decimals as any),
             index: number = (params.index as any),
             PSARArr: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            previousDirection = 1,
+            yData: Array<number> = [];
+        let accelerationFactor: number = (
+                params.initialAccelerationFactor as any
+            ),
             direction: number,
+            // Extreme point is the lowest low for falling and highest high
+            // for rising psar - and we are starting with falling
+            extremePoint: number = yVal[0][1],
             EPMinusPSAR: number,
             accelerationFactorMultiply: number,
             newDirection: number,
+            previousDirection = 1,
             prevLow: number,
             prevPrevLow: number,
             prevHigh: number,
             prevPrevHigh: number,
+            PSAR: number = yVal[0][2],
             newExtremePoint: number,
             high: number,
             low: number,
@@ -389,10 +405,6 @@ interface PSARIndicator {
     nameComponents: Array<string>;
 }
 
-extend(PSARIndicator.prototype, {
-    nameComponents: void 0
-});
-
 /* *
  *
  *  Registry
@@ -414,6 +426,12 @@ SeriesRegistry.registerSeriesType('psar', PSARIndicator);
  * */
 
 export default PSARIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `PSAR` series. If the [type](#series.psar.type) option is not specified, it

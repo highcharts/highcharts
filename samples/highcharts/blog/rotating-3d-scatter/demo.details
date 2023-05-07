@@ -1,0 +1,6 @@
+---
+ name: Rotating 3D Scatter
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

@@ -30,7 +30,7 @@ import type Tick from './Tick';
 import type { YAxisOptions } from './AxisOptions';
 
 import AxisDefaults from './AxisDefaults.js';
-import D from '../DefaultOptions.js';
+import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
 const { noop } = H;
@@ -124,6 +124,8 @@ namespace RadialAxis {
         max: number;
         min: number;
         minPointOffset: number;
+        normalizedEndAngleRad: number;
+        normalizedStartAngleRad: number;
         offset: number;
         options: Options;
         pane: Pane;
@@ -182,7 +184,7 @@ namespace RadialAxis {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /**
      * Circular axis around the perimeter of a polar chart.
@@ -192,7 +194,6 @@ namespace RadialAxis {
         gridLineWidth: 1, // spokes
         labels: {
             align: void 0, // auto
-            distance: 15,
             x: 0,
             y: void 0, // auto
             style: {
@@ -212,6 +213,7 @@ namespace RadialAxis {
     const defaultRadialGaugeOptions: DeepPartial<Options> = {
         labels: {
             align: 'center',
+            distance: -25,
             x: 0,
             y: void 0 // auto
         },
@@ -349,9 +351,7 @@ namespace RadialAxis {
         TickClass: typeof Tick
     ): (T&typeof AxisComposition) {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
                 'afterInit',
@@ -379,9 +379,7 @@ namespace RadialAxis {
             );
         }
 
-        if (composedClasses.indexOf(TickClass) === -1) {
-            composedClasses.push(TickClass);
-
+        if (U.pushUnique(composedMembers, TickClass)) {
             addEvent(
                 TickClass as typeof TickComposition,
                 'afterGetLabelPosition',
@@ -867,7 +865,7 @@ namespace RadialAxis {
         value: number,
         length?: number
     ): PositionObject {
-        const translatedVal = this.translate(value) as any;
+        const translatedVal = this.translate(value);
 
         return this.postTranslate(
             this.isCircular ? translatedVal : this.angleRad, // #2848
@@ -965,21 +963,41 @@ namespace RadialAxis {
             paneOptions = pane && pane.options;
 
         if (!isHidden && pane && (chart.angular || chart.polar)) {
-
-            // Start and end angle options are given in degrees relative to
-            // top, while internal computations are in radians relative to
-            // right (like SVG).
+            const fullCircle = Math.PI * 2,
+                // Start and end angle options are given in degrees relative to
+                // top, while internal computations are in radians relative to
+                // right (like SVG).
+                start = (pick(paneOptions.startAngle, 0) - 90) * Math.PI / 180,
+                end = (pick(
+                    paneOptions.endAngle,
+                    pick(paneOptions.startAngle, 0) + 360
+                ) - 90) * Math.PI / 180;
 
             // Y axis in polar charts
             this.angleRad = (options.angle || 0) * Math.PI / 180;
             // Gauges
-            this.startAngleRad =
-                ((paneOptions.startAngle as any) - 90) * Math.PI / 180;
-            this.endAngleRad = (pick(
-                paneOptions.endAngle, (paneOptions.startAngle as any) + 360
-            ) - 90) * Math.PI / 180; // Gauges
+            this.startAngleRad = start;
+            this.endAngleRad = end;
             this.offset = options.offset || 0;
 
+            // Normalize Start and End to <0, 2*PI> range
+            // (in degrees: <0,360>)
+            let normalizedStart = (start % fullCircle + fullCircle) %
+                    fullCircle,
+                normalizedEnd = (end % fullCircle + fullCircle) % fullCircle;
+
+            // Move normalized angles to <-PI, PI> range (<-180, 180>)
+            // to match values returned by Math.atan2()
+            if (normalizedStart > Math.PI) {
+                normalizedStart -= fullCircle;
+            }
+
+            if (normalizedEnd > Math.PI) {
+                normalizedEnd -= fullCircle;
+            }
+
+            this.normalizedStartAngleRad = normalizedStart;
+            this.normalizedEndAngleRad = normalizedEnd;
         }
     }
 
@@ -1086,7 +1104,6 @@ namespace RadialAxis {
         // Disable certain features on angular and polar axes
         if (angular || polar) {
             this.isRadial = true;
-            (chartOptions.chart as any).zoomType = null as any;
 
             if (!this.labelCollector) {
                 this.labelCollector = this.createLabelCollector();
@@ -1139,7 +1156,7 @@ namespace RadialAxis {
             labelOptions = axis.options.labels as any,
             angle = (
                 (
-                    (axis.translate(this.pos) as any) + axis.startAngleRad +
+                    axis.translate(this.pos) + axis.startAngleRad +
                     Math.PI / 2
                 ) / Math.PI * 180
             ) % 360,
@@ -1178,9 +1195,8 @@ namespace RadialAxis {
             // Vertically centered
             } else if (!defined(optionsY)) {
                 optionsY = (
-                    axis.chart.renderer
-                        .fontMetrics(label.styles && label.styles.fontSize).b -
-                        labelBBox.height / 2
+                    axis.chart.renderer.fontMetrics(label).b -
+                    labelBBox.height / 2
                 );
             }
 

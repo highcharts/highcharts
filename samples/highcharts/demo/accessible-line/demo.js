@@ -10,11 +10,13 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Most common desktop screen readers'
+        text: 'Most common desktop screen readers',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Source: WebAIM. Click on points to visit official screen reader website'
+        text: 'Source: WebAIM. Click on points to visit official screen reader website',
+        align: 'left'
     },
 
     yAxis: {
@@ -37,7 +39,8 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        valueSuffix: '%'
+        valueSuffix: '%',
+        stickOnContact: true
     },
 
     plotOptions: {
@@ -49,7 +52,8 @@ Highcharts.chart('container', {
                     }
                 }
             },
-            cursor: 'pointer'
+            cursor: 'pointer',
+            lineWidth: 2
         }
     },
 
@@ -60,7 +64,7 @@ Highcharts.chart('container', {
             website: 'https://www.nvaccess.org',
             color: colors[2],
             accessibility: {
-                description: 'This is the most used screen reader in 2019'
+                description: 'This is the most used screen reader in 2019.'
             }
         }, {
             name: 'JAWS',

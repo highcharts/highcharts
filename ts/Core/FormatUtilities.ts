@@ -18,7 +18,7 @@
 
 import type Chart from './Chart/Chart';
 
-import D from './DefaultOptions.js';
+import D from './Defaults.js';
 const {
     defaultOptions,
     defaultTime

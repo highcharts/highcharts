@@ -23,7 +23,7 @@ Highcharts.chart('container', {
     }],
 
     annotations: [{
-        //undefined - delayed value is inherited from plotOptions
+        // undefined - delayed value is inherited from plotOptions
         labels: [{
             point: 'max',
             text: 'Max'

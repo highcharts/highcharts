@@ -1,0 +1,38 @@
+.gridMap {
+    float: left;
+    height: 110px;
+    width: 100px;
+}
+
+@media screen and (max-width: 600px) {
+    .gridMap {
+        width: 100px !important;
+    }
+}
+
+ul li {
+    display: inline;
+}
+
+ul {
+    text-align: center;
+    font-size: 12px;
+}
+
+.text {
+    text-align: center;
+    margin: 0 auto;
+    width: 80%;
+}
+
+.reduce {
+    width: 100%;
+}
+
+h1 {
+    font-size: 16px;
+}
+
+p {
+    font-size: 12px;
+}

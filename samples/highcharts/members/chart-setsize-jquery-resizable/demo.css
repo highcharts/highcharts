@@ -2,6 +2,8 @@
 
 #resizer {
     border: 1px solid silver;
+    min-width: 350px;
+    min-height: 200px;
 }
 
 #inner-resizer { /* make room for the resize handle */

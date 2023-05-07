@@ -1,16 +1,12 @@
+// Data retrieved from https://netmarketshare.com/
 // Make monochrome colors
-var pieColors = (function () {
-    var colors = [],
-        base = Highcharts.getOptions().colors[0],
-        i;
-
-    for (i = 0; i < 10; i += 1) {
-        // Start out with a darkened base color (negative brighten), and end
-        // up with a much brighter color
-        colors.push(Highcharts.color(base).brighten((i - 3) / 7).get());
-    }
-    return colors;
-}());
+const colors = Highcharts.getOptions().colors.map((c, i) =>
+    // Start out with a darkened base color (negative brighten), and end
+    // up with a much brighter color
+    Highcharts.color(Highcharts.getOptions().colors[0])
+        .brighten((i - 3) / 7)
+        .get()
+);
 
 // Build the chart
 Highcharts.chart('container', {
@@ -21,7 +17,8 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares at a specific website, 2014'
+        text: 'Browser market shares in February, 2022',
+        align: 'left'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -35,7 +32,8 @@ Highcharts.chart('container', {
         pie: {
             allowPointSelect: true,
             cursor: 'pointer',
-            colors: pieColors,
+            colors,
+            borderRadius: 5,
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b><br>{point.percentage:.1f} %',
@@ -51,12 +49,12 @@ Highcharts.chart('container', {
     series: [{
         name: 'Share',
         data: [
-            { name: 'Chrome', y: 61.41 },
-            { name: 'Internet Explorer', y: 11.84 },
-            { name: 'Firefox', y: 10.85 },
-            { name: 'Edge', y: 4.67 },
-            { name: 'Safari', y: 4.18 },
-            { name: 'Other', y: 7.05 }
+            { name: 'Chrome', y: 74.03 },
+            { name: 'Edge', y: 12.66 },
+            { name: 'Firefox', y: 4.96 },
+            { name: 'Safari', y: 2.49 },
+            { name: 'Internet Explorer', y: 2.31 },
+            { name: 'Other', y: 3.398 }
         ]
     }]
 });

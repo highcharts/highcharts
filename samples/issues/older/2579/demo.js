@@ -7,12 +7,12 @@ $(function () {
 
 
         series: [{
-            type: "column",
+            type: 'column',
             data: [{
-                color: "#99cc00",
+                color: '#99cc00',
                 y: 1
             }, {
-                color: "#99cc00",
+                color: '#99cc00',
                 y: 1
             }]
         }]

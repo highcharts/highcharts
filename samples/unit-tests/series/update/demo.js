@@ -62,7 +62,7 @@ QUnit.test('Series.update', function (assert) {
 
     // Text content
     assert.strictEqual(
-        chart.series[0].legendItem.element.textContent,
+        chart.series[0].legendItem.label.element.textContent,
         'Series 1',
         'Text content enitial'
     );
@@ -71,7 +71,7 @@ QUnit.test('Series.update', function (assert) {
     });
     chart.name = !chart.name;
     assert.strictEqual(
-        chart.series[0].legendItem.element.textContent,
+        chart.series[0].legendItem.label.element.textContent,
         'First',
         'Text content should change'
     );
@@ -170,14 +170,14 @@ QUnit.test('Series.update', function (assert) {
 
     if (Object.setPrototypeOf) {
         assert.ok(
-            chart.series[0] instanceof Highcharts.seriesTypes.column,
+            chart.series[0] instanceof Highcharts.Series.types.column,
             'The series should be an instance of the ColumnSeries'
         );
     }
 
     assert.strictEqual(
-        chart.series[0].points[0].graphic.element.nodeName,
-        'rect',
+        chart.series[0].points[0].graphic.symbolName,
+        'roundedRect',
         'Column point'
     );
 
@@ -193,11 +193,11 @@ QUnit.test('Series.update', function (assert) {
     );
     if (Object.setPrototypeOf) {
         assert.ok(
-            chart.series[0] instanceof Highcharts.seriesTypes.line,
+            chart.series[0] instanceof Highcharts.Series.types.line,
             'The series should be an instance of the LineSeries'
         );
         assert.notOk(
-            chart.series[0] instanceof Highcharts.seriesTypes.column,
+            chart.series[0] instanceof Highcharts.Series.types.column,
             'The series should not be an instance of the ColumnSeries'
         );
     }
@@ -208,7 +208,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'spline', 'Spline type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.spline,
+        chart.series[0] instanceof Highcharts.Series.types.spline,
         'The series should be an instance of the SplineSeries'
     );
 
@@ -224,7 +224,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'area', 'Area type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.area,
+        chart.series[0] instanceof Highcharts.Series.types.area,
         'The series should be an instance of the AreaSeries'
     );
 
@@ -240,7 +240,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'areaspline', 'Areaspline type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.areaspline,
+        chart.series[0] instanceof Highcharts.Series.types.areaspline,
         'The series should be an instance of the AreaSpline'
     );
 
@@ -261,7 +261,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'scatter', 'Scatter type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.scatter,
+        chart.series[0] instanceof Highcharts.Series.types.scatter,
         'The series should be an instance of the ScatterSeries'
     );
 
@@ -277,7 +277,7 @@ QUnit.test('Series.update', function (assert) {
     });
     assert.strictEqual(chart.series[0].type, 'pie', 'Pie type');
     assert.ok(
-        chart.series[0] instanceof Highcharts.seriesTypes.pie,
+        chart.series[0] instanceof Highcharts.Series.types.pie,
         'The series should be an instance of the PieSeries'
     );
 
@@ -577,9 +577,7 @@ QUnit.test('Series.update showInLegend dynamically', function (assert) {
     });
 
     assert.deepEqual(
-        s.points.map(function (p) {
-            return p.x;
-        }),
+        s.points.map(p => p.x),
         [100, 101, 102, 103],
         'Points should start from 100 (#7933)'
     );
@@ -592,7 +590,7 @@ QUnit.test('Series.update showInLegend dynamically', function (assert) {
     s = chart.series[1];
 
     assert.deepEqual(
-        s.points.map(p => typeof p.legendItem),
+        s.points.map(p => typeof p.legendItem.label),
         ['object', 'object', 'object'],
         'Pie points should show in legend'
     );

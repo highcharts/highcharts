@@ -585,7 +585,7 @@ QUnit.test('Boosted series with updatePoints', function (assert) {
 });
 
 QUnit.test(
-    "Hidden series after setData should call 'updatedData' callback just once. #6012",
+    'Hidden series after setData should call \'updatedData\' callback just once. #6012',
     function (assert) {
         var iterator = 0,
             chart = Highcharts.chart(
@@ -619,7 +619,7 @@ QUnit.test(
         chart.series[1].hide();
         chart.series[1].show();
 
-        assert.deepEqual(iterator, 1, "Just one 'updatedData' call");
+        assert.deepEqual(iterator, 1, 'Just one \'updatedData\' call');
     }
 );
 
@@ -686,21 +686,21 @@ QUnit.test(
         assert.deepEqual(
             oriData,
             referenceArray,
-            `Original data array should not be modified after initial render.`
+            'Original data array should not be modified after initial render.'
         );
 
         chart.series[0].setData(newData);
         assert.deepEqual(
             oriData,
             referenceArray,
-            `The setData should not mutate the original data array.`
+            'The setData should not mutate the original data array.'
         );
 
         chart.series[0].points[0].remove();
         assert.deepEqual(
             oriData,
             referenceArray,
-            `Removing point should not mutate the original data array.`
+            'Removing point should not mutate the original data array.'
         );
 
         chart.series[0].points[0].update({
@@ -710,7 +710,7 @@ QUnit.test(
         assert.deepEqual(
             oriData,
             referenceArray,
-            `Updating point should not mutate the original data array.`
+            'Updating point should not mutate the original data array.'
         );
 
         chart.series[0].addPoint({
@@ -720,7 +720,7 @@ QUnit.test(
         assert.deepEqual(
             oriData,
             referenceArray,
-            `Adding point should not mutate the original data array.`
+            'Adding point should not mutate the original data array.'
         );
 
         chart.series[0].update({
@@ -729,7 +729,7 @@ QUnit.test(
         assert.deepEqual(
             oriData,
             referenceArray,
-            `Updating series should not mutate the original data array.`
+            'Updating series should not mutate the original data array.'
         );
 
         chart.update({
@@ -740,14 +740,14 @@ QUnit.test(
         assert.deepEqual(
             oriData,
             referenceArray,
-            `Updating chart should not mutate the original data array.`
+            'Updating chart should not mutate the original data array.'
         );
 
         chart.series[0].remove();
         assert.deepEqual(
             oriData,
             referenceArray,
-            `Removing series should not mutate the original data array.`
+            'Removing series should not mutate the original data array.'
         );
     }
 );
@@ -786,7 +786,7 @@ QUnit.test(
         assert.deepEqual(
             oriData,
             referenceArray,
-            `Original data array should not be modified after initial render.`
+            'Original data array should not be modified after initial render.'
         );
 
         chart.update({

@@ -24,15 +24,30 @@ import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
+import D from '../Core/Defaults.js';
+const { defaultOptions } = D;
 import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    defined,
+    error,
+    extend,
+    merge,
+    pick,
+    splat
+} = U;
 
 /* *
  *
- * Declarations
+ *  Declarations
  *
  * */
+
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         pathfinder?: Pathfinder;
@@ -196,26 +211,9 @@ declare global {
 
 ''; // detach doclets above
 
-import D from '../Core/DefaultOptions.js';
-const { defaultOptions } = D;
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    error,
-    extend,
-    merge,
-    objectEach,
-    pick,
-    splat
-} = U;
-
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
-import '../Extensions/ArrowSymbols.js';
 
-const deg2rad = H.deg2rad,
-    max = Math.max,
+const max = Math.max,
     min = Math.min;
 
 /*
@@ -748,29 +746,32 @@ class Pathfinder {
             ++j
         ) {
             found = false;
+            const oldCon = oldConnections[j];
+
             for (k = 0; k < lenNew; ++k) {
+                const newCon = pathfinder.connections[k];
+
                 if (
-                    oldConnections[j].fromPoint ===
-                        pathfinder.connections[k].fromPoint &&
-                    oldConnections[j].toPoint ===
-                        pathfinder.connections[k].toPoint
+                    (oldCon.options && oldCon.options.type) ===
+                    (newCon.options && newCon.options.type) &&
+                    oldCon.fromPoint === newCon.fromPoint &&
+                    oldCon.toPoint === newCon.toPoint
                 ) {
-                    pathfinder.connections[k].graphics =
-                        oldConnections[j].graphics;
+                    newCon.graphics = oldCon.graphics;
                     found = true;
                     break;
                 }
             }
             if (!found) {
-                oldConnections[j].destroy();
+                oldCon.destroy();
             }
         }
 
         // Clear obstacles to force recalculation. This must be done on every
         // redraw in case positions have changed. Recalculation is handled in
         // Connection.getPath on demand.
-        delete this.chartObstacles;
-        delete this.lineObstacles;
+        delete (this as Partial<this>).chartObstacles;
+        delete (this as Partial<this>).lineObstacles;
 
         // Draw the pending connections
         pathfinder.renderConnections(deferRender);

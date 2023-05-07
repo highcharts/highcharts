@@ -26,6 +26,7 @@ import type Series from './Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
+import type AnimationOptions from '../Animation/AnimationOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
@@ -39,6 +40,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isString,
     merge,
     objectEach,
     pick,
@@ -64,7 +66,6 @@ declare module './PointLike' {
         distributeBox?: R.BoxObject;
         dlBox?: BBoxObject;
         dlOptions?: DataLabelOptions;
-        graphic?: SVGElement;
         /** @deprecated */
         positionIndex?: unknown;
         top?: number;
@@ -82,9 +83,12 @@ declare module './PointOptions' {
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointLabels?: boolean;
-        /** @deprecated */
         dataLabelsGroup?: SVGElement;
         dataLabelPositioners?: DataLabel.PositionersObject;
+        initDataLabelsGroup(): SVGElement;
+        initDataLabels(
+            animationConfig?: Partial<AnimationOptions>
+        ): SVGElement;
         alignDataLabel(
             point: Point,
             dataLabel: SVGElement,
@@ -92,7 +96,7 @@ declare module './SeriesLike' {
             alignTo: BBoxObject,
             isNew?: boolean
         ): void;
-        drawDataLabels(): void;
+        drawDataLabels(points?:Array<Point>): void;
         justifyDataLabel(
             dataLabel: SVGElement,
             options: DataLabelOptions,
@@ -168,7 +172,7 @@ namespace DataLabel {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -194,10 +198,7 @@ namespace DataLabel {
             chart = this.chart,
             inverted = this.isCartesian && chart.inverted,
             enabledDataSorting = this.enabledDataSorting,
-            plotX = pick(
-                point.dlBox && (point.dlBox as any).centerX,
-                point.plotX
-            ),
+            plotX = point.plotX,
             plotY = point.plotY,
             rotation = options.rotation,
             align = options.align,
@@ -236,6 +237,7 @@ namespace DataLabel {
             visible =
                 this.visible &&
                 point.visible !== false &&
+                defined(plotX) &&
                 (
                     point.series.forceDL ||
                     (enabledDataSorting && !justify) ||
@@ -261,7 +263,8 @@ namespace DataLabel {
                     )
                 );
 
-        if (visible && defined(plotX) && defined(plotY)) {
+        const pos = point.pos();
+        if (visible && pos) {
 
             if (rotation) {
                 dataLabel.attr({ align });
@@ -269,15 +272,12 @@ namespace DataLabel {
             let bBox = dataLabel.getBBox(true),
                 bBoxCorrection = [0, 0];
 
-            baseline = chart.renderer.fontMetrics(
-                chart.styledMode ? void 0 : (options.style as any).fontSize,
-                dataLabel
-            ).b;
+            baseline = chart.renderer.fontMetrics(dataLabel).b;
 
             // The alignment box is a singular point
             alignTo = extend({
-                x: inverted ? this.yAxis.len - plotY : plotX,
-                y: Math.round(inverted ? this.xAxis.len - plotX : plotY),
+                x: pos[0],
+                y: Math.round(pos[1]),
                 width: 0,
                 height: 0
             }, alignTo);
@@ -386,12 +386,8 @@ namespace DataLabel {
             // arrow pointing to thie point
             if (options.shape && !rotation) {
                 dataLabel[isNew ? 'attr' : 'animate']({
-                    anchorX: inverted ?
-                        chart.plotWidth - (point.plotY as any) :
-                        point.plotX,
-                    anchorY: inverted ?
-                        chart.plotHeight - (point.plotX as any) :
-                        point.plotY
+                    anchorX: pos[0],
+                    anchorY: pos[1]
                 });
             }
         }
@@ -441,16 +437,60 @@ namespace DataLabel {
      * @private
      */
     export function compose(SeriesClass: typeof Series): void {
-        if (composedClasses.indexOf(SeriesClass) === -1) {
+
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
-            composedClasses.push(SeriesClass);
-
+            seriesProto.initDataLabelsGroup = initDataLabelsGroup;
+            seriesProto.initDataLabels = initDataLabels;
             seriesProto.alignDataLabel = alignDataLabel;
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
             seriesProto.setDataLabelStartPos = setDataLabelStartPos;
         }
+
+    }
+
+    /**
+     * Create the SVGElement group for dataLabels
+     * @private
+     */
+    function initDataLabelsGroup(this: Series): SVGElement {
+        return this.plotGroup(
+            'dataLabelsGroup',
+            'data-labels',
+            this.hasRendered ? 'inherit' : 'hidden', // #5133, #10220
+            (this.options.dataLabels as any).zIndex || 6
+        );
+    }
+
+    /**
+     * Init the data labels with the correct animation
+     * @private
+     */
+    function initDataLabels(
+        this: Series,
+        animationConfig: Partial<AnimationOptions>
+    ): SVGElement {
+        const series = this,
+            hasRendered = series.hasRendered || 0;
+
+        // Create a separate group for the data labels to avoid rotation
+        const dataLabelsGroup = this.initDataLabelsGroup()
+            .attr({ opacity: +hasRendered }); // #3300
+
+        if (!hasRendered && dataLabelsGroup) {
+            if (series.visible) { // #2597, #3023, #3024
+                dataLabelsGroup.show();
+            }
+            if (series.options.animation) {
+                dataLabelsGroup.animate({ opacity: 1 }, animationConfig);
+            } else {
+                dataLabelsGroup.attr({ opacity: 1 });
+            }
+        }
+
+        return dataLabelsGroup;
     }
 
     /**
@@ -458,21 +498,27 @@ namespace DataLabel {
      * @private
      */
     function drawDataLabels(
-        this: Series
+        this: Series,
+        points: Array<Point> = this.points
     ): void {
         const series = this,
             chart = series.chart,
             seriesOptions = series.options,
-            points = series.points,
-            hasRendered = series.hasRendered || 0,
-            renderer = chart.renderer;
+            renderer = chart.renderer,
+            { backgroundColor, plotBackgroundColor } = chart.options.chart,
+            contrastColor = renderer.getContrast(
+                (isString(plotBackgroundColor) && plotBackgroundColor) ||
+                (isString(backgroundColor) && backgroundColor) ||
+                Palette.neutralColor100
+            );
 
         let seriesDlOptions = seriesOptions.dataLabels,
-            pointOptions,
+            pointOptions: Array<DataLabelOptions&AnyRecord>,
             dataLabelsGroup: SVGElement;
 
-        const dataLabelAnim = (seriesDlOptions as any).animation,
-            animationConfig = (seriesDlOptions as any).defer ?
+        const firstDLOptions = splat(seriesDlOptions)[0],
+            dataLabelAnim = firstDLOptions.animation,
+            animationConfig = firstDLOptions.defer ?
                 getDeferredAnimation(chart, dataLabelAnim, series) :
                 { defer: 0, duration: 0 };
 
@@ -498,30 +544,7 @@ namespace DataLabel {
             (seriesDlOptions as any).enabled ||
             series._hasPointLabels
         ) {
-
-            // Create a separate group for the data labels to avoid rotation
-            dataLabelsGroup = series.plotGroup(
-                'dataLabelsGroup',
-                'data-labels',
-                !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
-                (seriesDlOptions as any).zIndex || 6
-            );
-
-            dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
-            if (!hasRendered) {
-                const group = series.dataLabelsGroup;
-                if (group) {
-                    if (series.visible) { // #2597, #3023, #3024
-                        dataLabelsGroup.show();
-                    }
-                    (group[
-                        seriesOptions.animation ? 'animate' : 'attr'
-                    ] as any)(
-                        { opacity: 1 },
-                        animationConfig
-                    );
-                }
-            }
+            dataLabelsGroup = this.initDataLabels(animationConfig);
 
             // Make the labels for each point
             points.forEach((point): void => {
@@ -541,10 +564,7 @@ namespace DataLabel {
                 );
 
                 // Handle each individual data label for this point
-                pointOptions.forEach((
-                    labelOptions: DataLabelOptions,
-                    i: number
-                ): void => {
+                pointOptions.forEach((labelOptions, i): void => {
                     // Options for one datalabel
                     const labelEnabled = (
                             labelOptions.enabled &&
@@ -567,7 +587,7 @@ namespace DataLabel {
                         isNew = !dataLabel;
 
                     const labelDistance = pick(
-                        (labelOptions as any).distance,
+                        labelOptions.distance,
                         point.labelDistance
                     );
 
@@ -608,6 +628,7 @@ namespace DataLabel {
                                 point.contrastColor = renderer.getContrast(
                                     (point.color || series.color) as any
                                 );
+
                                 (style as any).color = (
                                     !defined(labelDistance) &&
                                         labelOptions.inside
@@ -615,7 +636,7 @@ namespace DataLabel {
                                     labelDistance < 0 ||
                                     !!seriesOptions.stacking ?
                                     point.contrastColor :
-                                    Palette.neutralColor100;
+                                    contrastColor;
                             } else {
                                 delete point.contrastColor;
                             }
@@ -632,8 +653,16 @@ namespace DataLabel {
                         };
 
                         if (!chart.styledMode) {
-                            attr.fill = labelOptions.backgroundColor;
-                            attr.stroke = labelOptions.borderColor;
+                            const {
+                                backgroundColor,
+                                borderColor
+                            } = labelOptions;
+                            attr.fill = backgroundColor === 'auto' ?
+                                point.color :
+                                backgroundColor;
+                            attr.stroke = borderColor === 'auto' ?
+                                point.color :
+                                borderColor;
                             attr['stroke-width'] = labelOptions.borderWidth;
                         }
 
@@ -761,28 +790,32 @@ namespace DataLabel {
                             );
                         }
 
-                        if (!dataLabel.added) {
-                            dataLabel.add(dataLabelsGroup);
-                        }
+                        const textPathOptions =
+                            labelOptions[point.formatPrefix + 'TextPath'] ||
+                            labelOptions.textPath;
 
-                        if (labelOptions.textPath && !labelOptions.useHTML) {
+                        if (textPathOptions && !labelOptions.useHTML) {
                             dataLabel.setTextPath(
                                 (
                                     point.getDataLabelPath &&
                                     point.getDataLabelPath(dataLabel)
                                 ) || point.graphic,
-                                labelOptions.textPath
+                                textPathOptions
                             );
 
                             if (
                                 point.dataLabelPath &&
-                                !labelOptions.textPath.enabled
+                                !textPathOptions.enabled
                             ) {
                                 // clean the DOM
                                 point.dataLabelPath = (
                                     point.dataLabelPath.destroy()
                                 );
                             }
+                        }
+
+                        if (!dataLabel.added) {
+                            dataLabel.add(dataLabelsGroup);
                         }
 
                         // Now the data label is created and placed at 0,0, so

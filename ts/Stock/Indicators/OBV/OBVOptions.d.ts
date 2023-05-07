@@ -17,7 +17,6 @@ import type {
     SMAParamsOptions
 } from '../SMA/SMAOptions';
 import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
-import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
  *
@@ -31,8 +30,13 @@ export interface OBVOptions extends SMAOptions {
 }
 
 export interface OBVParamsOptions extends SMAParamsOptions {
-    // for inheritance
     volumeSeriesID?: string;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default OBVOptions;

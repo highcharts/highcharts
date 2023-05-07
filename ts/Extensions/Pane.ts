@@ -23,6 +23,8 @@ import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    correctFloat,
+    defined,
     extend,
     merge,
     pick,
@@ -521,17 +523,61 @@ class Pane {
  * Element's x coordinate
  * @param  {number} y
  * Element's y coordinate
+ * @param  {Array<number>} inverted
+ * `Chart.inverted` param
  * @param  {Array<number>} center
  * Pane's center (x, y) and diameter
+ * @param  {number} startAngle
+ * Pane's normalized start angle in radians (<-PI, PI>)
+ * @param  {number} endAngle
+ * Pane's normalized end angle in radians (<-PI, PI>)
  */
 function isInsidePane(
     x: number,
     y: number,
-    center: Array<number>
+    center: Array<number>,
+    startAngle?: number,
+    endAngle?: number
 ): boolean {
-    return Math.sqrt(
-        Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)
-    ) <= center[2] / 2;
+    let insideSlice = true;
+
+    const cx = center[0],
+        cy = center[1];
+
+    const distance = Math.sqrt(
+        Math.pow(x - cx, 2) + Math.pow(y - cy, 2)
+    );
+
+    if (defined(startAngle) && defined(endAngle)) {
+        // Round angle to N-decimals to avoid numeric errors
+        const angle = Math.atan2(
+            correctFloat(y - cy, 8),
+            correctFloat(x - cx, 8)
+        );
+
+        // Ignore full circle panes:
+        if (endAngle !== startAngle) {
+            // If normalized start angle is bigger than normalized end,
+            // it means angles have different signs. In such situation we
+            // check the <-PI, startAngle> and <endAngle, PI> ranges.
+            if (startAngle > endAngle) {
+                insideSlice = (
+                    angle >= startAngle &&
+                    angle <= Math.PI
+                ) || (
+                    angle <= endAngle &&
+                    angle >= -Math.PI
+                );
+            } else {
+                // In this case, we simple check if angle is within the
+                // <startAngle, endAngle> range
+                insideSlice = angle >= startAngle &&
+                    angle <= correctFloat(endAngle, 8);
+            }
+        }
+    }
+    // Round up radius because x and y values are rounded
+    return distance <= Math.ceil(center[2] / 2) && insideSlice;
 }
 
 Chart.prototype.getHoverPane = function (
@@ -547,10 +593,9 @@ Chart.prototype.getHoverPane = function (
     let hoverPane;
     if (eventArgs) {
         chart.pane.forEach((pane): void => {
-            const plotX = eventArgs.chartX - chart.plotLeft,
-                plotY = eventArgs.chartY - chart.plotTop,
-                x = chart.inverted ? plotY : plotX,
-                y = chart.inverted ? plotX : plotY;
+            const x = eventArgs.chartX - chart.plotLeft,
+                y = eventArgs.chartY - chart.plotTop;
+
             if (isInsidePane(x, y, pane.center)) {
                 hoverPane = pane;
             }
@@ -559,17 +604,30 @@ Chart.prototype.getHoverPane = function (
     return hoverPane;
 };
 
+// Check if (x, y) position is within pane for polar
 addEvent(Chart, 'afterIsInsidePlot', function (
     e: {
         x: number;
         y: number;
         isInsidePlot: boolean;
+        options: Chart.IsInsideOptionsObject;
     }
 ): void {
     const chart = this;
+
     if (chart.polar) {
+        if (e.options.inverted) {
+            [e.x, e.y] = [e.y, e.x];
+        }
+
         e.isInsidePlot = (chart as Highcharts.PaneChart).pane.some(
-            (pane): boolean => isInsidePane(e.x, e.y, pane.center)
+            (pane): boolean => isInsidePane(
+                e.x,
+                e.y,
+                pane.center,
+                pane.axis && pane.axis.normalizedStartAngleRad,
+                pane.axis && pane.axis.normalizedEndAngleRad
+            )
         );
     }
 });

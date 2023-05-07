@@ -16,27 +16,44 @@
  *
  * */
 
+import type Axis from '../../Core/Axis/Axis';
 import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions';
+import type BubbleSeriesType from '../Bubble/BubbleSeries';
+import type Chart from '../../Core/Chart/Chart';
+import type { DragNodesPoint, DragNodesSeries } from '../DragNodesComposition';
+import type Legend from '../../Core/Legend/Legend';
+import type NetworkgraphSeries from '../Networkgraph/NetworkgraphSeries';
 import type PackedBubbleChart from './PackedBubbleChart';
-import type { PackedBubbleDataLabelFormatterObject } from './PackedBubbleDataLabelOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type PackedBubbleLayout from './PackedBubbleLayout';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
-import type Point from '../../Core/Series/Point.js';
+import type SeriesType from '../../Core/Series/Series';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
+import DragNodesComposition from '../DragNodesComposition.js';
+import GraphLayout from '../GraphLayoutComposition.js';
 import H from '../../Core/Globals.js';
+const { noop } = H;
 import PackedBubblePoint from './PackedBubblePoint.js';
+import PackedBubbleSeriesDefaults from './PackedBubbleSeriesDefaults.js';
+import PackedBubbleLayout from './PackedBubbleLayout.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: Series,
+    series: {
+        prototype: seriesProto
+    },
     seriesTypes: {
         bubble: BubbleSeries
     }
 } = SeriesRegistry;
+import D from '../SimulationSeriesUtilities.js';
+const {
+    initDataLabels,
+    initDataLabelsDefer
+} = D;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -47,11 +64,11 @@ const {
     isArray,
     isNumber,
     merge,
-    pick
+    pick,
+    syncTimeout
 } = U;
-import '../../Series/Networkgraph/DraggableNodes.js';
-const dragNodesMixin = H.dragNodesMixin;
-import './PackedBubbleComposition.js';
+import A from '../../Core/Animation/AnimationUtilities.js';
+const { animObject } = A;
 
 /* *
  *
@@ -66,7 +83,7 @@ import './PackedBubbleComposition.js';
  *
  * @extends Highcharts.Series
  */
-class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSeries {
+class PackedBubbleSeries extends BubbleSeries {
 
     /* *
      *
@@ -74,341 +91,27 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      *
      * */
 
-    /**
-     * A packed bubble series is a two dimensional series type, where each point
-     * renders a value in X, Y position. Each point is drawn as a bubble
-     * where the bubbles don't overlap with each other and the radius
-     * of the bubble relates to the value.
+    public static defaultOptions: PackedBubbleSeriesOptions = merge(
+        BubbleSeries.defaultOptions,
+        PackedBubbleSeriesDefaults
+    );
+
+    /* *
      *
-     * @sample highcharts/demo/packed-bubble/
-     *         Packed bubble chart
-     * @sample highcharts/demo/packed-bubble-split/
-     *         Split packed bubble chart
+     *  Static Functions
+     *
+     * */
 
-     * @extends      plotOptions.bubble
-     * @excluding    connectEnds, connectNulls, cropThreshold, dragDrop, jitter,
-     *               keys, pointPlacement, sizeByAbsoluteValue, step, xAxis,
-     *               yAxis, zMax, zMin, dataSorting, boostThreshold,
-     *               boostBlending
-     * @product      highcharts
-     * @since        7.0.0
-     * @requires     highcharts-more
-     * @optionparent plotOptions.packedbubble
-     */
-    public static defaultOptions: PackedBubbleSeriesOptions = merge(BubbleSeries.defaultOptions, {
-        /**
-         * Minimum bubble size. Bubbles will automatically size between the
-         * `minSize` and `maxSize` to reflect the value of each bubble.
-         * Can be either pixels (when no unit is given), or a percentage of
-         * the smallest one of the plot width and height, divided by the square
-         * root of total number of points.
-         *
-         * @sample highcharts/plotoptions/bubble-size/
-         *         Bubble size
-         *
-         * @type {number|string}
-         *
-         * @private
-         */
-        minSize: '10%',
-        /**
-         * Maximum bubble size. Bubbles will automatically size between the
-         * `minSize` and `maxSize` to reflect the value of each bubble.
-         * Can be either pixels (when no unit is given), or a percentage of
-         * the smallest one of the plot width and height, divided by the square
-         * root of total number of points.
-         *
-         * @sample highcharts/plotoptions/bubble-size/
-         *         Bubble size
-         *
-         * @type {number|string}
-         *
-         * @private
-         */
-        maxSize: '50%',
-        sizeBy: 'area',
-        zoneAxis: 'y',
-        crisp: false,
-        tooltip: {
-            pointFormat: 'Value: {point.value}'
-        },
-        /**
-         * Flag to determine if nodes are draggable or not. Available for
-         * graph with useSimulation set to true only.
-         *
-         * @since 7.1.0
-         *
-         * @private
-         */
-        draggable: true,
-        /**
-         * An option is giving a possibility to choose between using simulation
-         * for calculating bubble positions. These reflects in both animation
-         * and final position of bubbles. Simulation is also adding options to
-         * the series graph based on used layout. In case of big data sets, with
-         * any performance issues, it is possible to disable animation and pack
-         * bubble in a simple circular way.
-         *
-         * @sample highcharts/series-packedbubble/spiral/
-         *         useSimulation set to false
-         *
-         * @since 7.1.0
-         *
-         * @private
-         */
-        useSimulation: true,
-        /**
-         * Series options for parent nodes.
-         *
-         * @since 8.1.1
-         *
-         * @private
-         */
-        parentNode: {
-            /**
-             * Allow this series' parent nodes to be selected
-             * by clicking on the graph.
-             *
-             * @since 8.1.1
-             */
-            allowPointSelect: false
-        },
-        /**
-        /**
-         *
-         * @declare Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
-         *
-         * @private
-         */
-        dataLabels: {
-
-            /**
-             * The
-             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-             * specifying what to show for _node_ in the networkgraph. In v7.0
-             * defaults to `{key}`, since v7.1 defaults to `undefined` and
-             * `formatter` is used instead.
-             *
-             * @type      {string}
-             * @since     7.0.0
-             * @apioption plotOptions.packedbubble.dataLabels.format
-             */
-
-            // eslint-disable-next-line valid-jsdoc
-            /**
-             * Callback JavaScript function to format the data label for a node.
-             * Note that if a `format` is defined, the format takes precedence
-             * and the formatter is ignored.
-             *
-             * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
-             * @since 7.0.0
-             */
-            formatter: function (
-                this: (
-                    Point.PointLabelObject|
-                    PackedBubbleDataLabelFormatterObject
-                )
-            ): string {
-                const { numberFormatter } = this.series.chart;
-                const { value } = this.point as PackedBubblePoint;
-
-                return isNumber(value) ? numberFormatter(value, -1) : '';
-            },
-
-            /**
-             * @type      {string}
-             * @since     7.1.0
-             * @apioption plotOptions.packedbubble.dataLabels.parentNodeFormat
-             */
-
-            // eslint-disable-next-line valid-jsdoc
-            /**
-             * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
-             * @since 7.1.0
-             */
-            parentNodeFormatter: function (
-                this: (
-                    Point.PointLabelObject|
-                    PackedBubbleDataLabelFormatterObject
-                )
-            ): string {
-                return (this as any).name;
-            },
-
-            /**
-             * @sample {highcharts} highcharts/series-packedbubble/packed-dashboard
-             *         Dashboard with dataLabels on parentNodes
-             *
-             * @declare Highcharts.SeriesPackedBubbleDataLabelsTextPathOptionsObject
-             * @since   7.1.0
-             */
-            parentNodeTextPath: {
-
-                /**
-                 * Presentation attributes for the text path.
-                 *
-                 * @type      {Highcharts.SVGAttributes}
-                 * @since     7.1.0
-                 * @apioption plotOptions.packedbubble.dataLabels.attributes
-                 */
-
-                /**
-                 * Enable or disable `textPath` option for link's or marker's
-                 * data labels.
-                 *
-                 * @since 7.1.0
-                 */
-                enabled: true
-
-            },
-
-            /**
-             * Options for a _node_ label text which should follow marker's
-             * shape.
-             *
-             * **Note:** Only SVG-based renderer supports this option.
-             *
-             * @extends   plotOptions.series.dataLabels.textPath
-             * @apioption plotOptions.packedbubble.dataLabels.textPath
-             */
-
-            padding: 0,
-            style: {
-                transition: 'opacity 2000ms'
-            }
-
-        },
-        /**
-         * Options for layout algorithm when simulation is enabled. Inside there
-         * are options to change the speed, padding, initial bubbles positions
-         * and more.
-         *
-         * @extends   plotOptions.networkgraph.layoutAlgorithm
-         * @excluding approximation, attractiveForce, repulsiveForce, theta
-         * @since     7.1.0
-         *
-         * @private
-         */
-        layoutAlgorithm: {
-            /**
-             * Initial layout algorithm for positioning nodes. Can be one of
-             * the built-in options ("circle", "random") or a function where
-             * positions should be set on each node (`this.nodes`) as
-             * `node.plotX` and `node.plotY`.
-             *
-             * @sample highcharts/series-networkgraph/initial-positions/
-             *         Initial positions with callback
-             *
-             * @type {"circle"|"random"|Function}
-             */
-            initialPositions: 'circle',
-            /**
-             * @sample highcharts/series-packedbubble/initial-radius/
-             *         Initial radius set to 200
-             *
-             * @extends   plotOptions.networkgraph.layoutAlgorithm.initialPositionRadius
-             * @excluding states
-             */
-            initialPositionRadius: 20,
-            /**
-             * The distance between two bubbles, when the algorithm starts to
-             * treat two bubbles as overlapping. The `bubblePadding` is also the
-             * expected distance between all the bubbles on simulation end.
-             */
-            bubblePadding: 5,
-            /**
-             * Whether bubbles should interact with their parentNode to keep
-             * them inside.
-             */
-            parentNodeLimit: false,
-            /**
-             * Whether series should interact with each other or not. When
-             * `parentNodeLimit` is set to true, thi option should be set to
-             * false to avoid sticking points in wrong series parentNode.
-             */
-            seriesInteraction: true,
-            /**
-             * In case of split series, this option allows user to drag and
-             * drop points between series, for changing point related series.
-             *
-             * @sample highcharts/series-packedbubble/packed-dashboard/
-             *         Example of drag'n drop bubbles for bubble kanban
-             */
-            dragBetweenSeries: false,
-            /**
-             * Layout algorithm options for parent nodes.
-             *
-             * @extends   plotOptions.networkgraph.layoutAlgorithm
-             * @excluding approximation, attractiveForce, enableSimulation,
-             *            repulsiveForce, theta
-             */
-            parentNodeOptions: {
-                maxIterations: 400,
-                gravitationalConstant: 0.03,
-                maxSpeed: 50,
-                initialPositionRadius: 100,
-                seriesInteraction: true,
-                /**
-                 * Styling options for parentNodes markers. Similar to
-                 * line.marker options.
-                 *
-                 * @sample highcharts/series-packedbubble/parentnode-style/
-                 *         Bubble size
-                 *
-                 * @extends   plotOptions.series.marker
-                 * @excluding states
-                 */
-                marker: {
-                    fillColor: null as any,
-                    fillOpacity: 1,
-                    lineWidth: null as any,
-                    lineColor: null as any,
-                    symbol: 'circle'
-                }
-            },
-            enableSimulation: true,
-            /**
-             * Type of the algorithm used when positioning bubbles.
-             * @ignore-option
-             */
-            type: 'packedbubble',
-            /**
-             * Integration type. Integration determines how forces are applied
-             * on particles. The `packedbubble` integration is based on
-             * the networkgraph `verlet` integration, where the new position
-             * is based on a previous position without velocity:
-             * `newPosition += previousPosition - newPosition`.
-             *
-             * @sample highcharts/series-networkgraph/forces/
-             *
-             * @ignore-option
-             */
-            integration: 'packedbubble',
-            maxIterations: 1000,
-            /**
-             * Whether to split series into individual groups or to mix all
-             * series together.
-             *
-             * @since   7.1.0
-             * @default false
-             */
-            splitSeries: false,
-            /**
-             * Max speed that node can get in one iteration. In terms of
-             * simulation, it's a maximum translation (in pixels) that a node
-             * can move (in both, x and y, dimensions). While `friction` is
-             * applied on all nodes, max speed is applied only for nodes that
-             * move very fast, for example small or disconnected ones.
-             *
-             * @see [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
-             *
-             * @see [layoutAlgorithm.friction](#series.networkgraph.layoutAlgorithm.friction)
-             */
-            maxSpeed: 5,
-            gravitationalConstant: 0.01,
-            friction: -0.981
-        }
-    } as PackedBubbleSeriesOptions);
+    public static compose(
+        AxisClass: typeof Axis,
+        ChartClass: typeof Chart,
+        LegendClass: typeof Legend,
+        SeriesClass: typeof SeriesType
+    ): void {
+        BubbleSeries.compose(AxisClass, ChartClass, LegendClass, SeriesClass);
+        DragNodesComposition.compose(ChartClass);
+        PackedBubbleLayout.compose(ChartClass);
+    }
 
     /* *
      *
@@ -432,13 +135,15 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
 
     public parentNodesGroup?: SVGElement;
 
-    public parentNodeMass?: number;
+    public parentNodeMass: number = 0;
 
     public parentNodeRadius?: number;
 
     public points: Array<PackedBubblePoint> = void 0 as any;
 
     public xData: Array<number> = void 0 as any;
+
+    public deferDataLabels: boolean = true;
 
     /* *
      *
@@ -452,27 +157,25 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * Create a single array of all points from all series
      * @private
      */
-    public accumulateAllPoints(series: PackedBubbleSeries): Array<PackedBubbleSeries.Data> {
+    public accumulateAllPoints(): Array<PackedBubbleSeries.Data> {
+        const chart = this.chart,
+            allDataPoints = [] as Array<PackedBubbleSeries.Data>;
 
-        let chart = series.chart,
-            allDataPoints = [] as Array<PackedBubbleSeries.Data>,
-            i: number, j: number;
+        let yData: SeriesType['yData'];
 
-        for (i = 0; i < chart.series.length; i++) {
-
-            series = chart.series[i] as any;
-
+        for (const series of chart.series) {
             if (
                 series.is('packedbubble') && // #13574
                 series.visible ||
                 !chart.options.chart.ignoreHiddenSeries
             ) {
+                yData = series.yData || [];
 
                 // add data to array only if series is visible
-                for (j = 0; j < (series.yData as any).length; j++) {
+                for (let j = 0; j < yData.length; j++) {
                     allDataPoints.push([
                         null, null,
-                        (series.yData as any)[j],
+                        yData[j] as (number|null),
                         series.index,
                         j,
                         {
@@ -494,47 +197,47 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public addLayout(): void {
-        let series = this,
-            layoutOptions = series.options.layoutAlgorithm,
-            graphLayoutsStorage = series.chart.graphLayoutsStorage,
-            graphLayoutsLookup = series.chart.graphLayoutsLookup,
-            chartOptions = series.chart.options.chart,
-            layout;
+        const layoutOptions = this.options.layoutAlgorithm =
+                this.options.layoutAlgorithm || {},
+            layoutType = layoutOptions.type || 'packedbubble',
+            chartOptions = this.chart.options.chart;
+
+        let graphLayoutsStorage = this.chart.graphLayoutsStorage,
+            graphLayoutsLookup = this.chart.graphLayoutsLookup,
+            layout: PackedBubbleLayout;
 
         if (!graphLayoutsStorage) {
-            series.chart.graphLayoutsStorage = graphLayoutsStorage = {};
-            series.chart.graphLayoutsLookup = graphLayoutsLookup = [];
+            this.chart.graphLayoutsStorage = graphLayoutsStorage = {};
+            this.chart.graphLayoutsLookup = graphLayoutsLookup = [];
         }
 
-        layout = graphLayoutsStorage[(layoutOptions as any).type];
+        layout = graphLayoutsStorage[layoutType] as PackedBubbleLayout;
 
         if (!layout) {
-            (layoutOptions as any).enableSimulation =
+            layoutOptions.enableSimulation =
                 !defined(chartOptions.forExport) ?
-                    (layoutOptions as any).enableSimulation :
+                    layoutOptions.enableSimulation :
                     !chartOptions.forExport;
 
-            graphLayoutsStorage[(layoutOptions as any).type] = layout =
-                new (H.layouts[(layoutOptions as any).type] as any)();
+            graphLayoutsStorage[layoutType] = layout =
+                new GraphLayout.layouts[layoutType]() as PackedBubbleLayout;
 
             layout.init(layoutOptions);
             graphLayoutsLookup.splice(layout.index, 0, layout);
 
         }
 
-        series.layout = layout;
+        this.layout = layout;
 
-        series.points.forEach(function (node): void {
+        this.points.forEach((node): void => {
             node.mass = 2;
             node.degree = 1;
             node.collisionNmb = 1;
         });
 
-        layout.setArea(
-            0, 0, series.chart.plotWidth, series.chart.plotHeight
-        );
-        layout.addElementsToCollection([series], layout.series);
-        layout.addElementsToCollection(series.points, layout.nodes);
+        layout.setArea(0, 0, this.chart.plotWidth, this.chart.plotHeight);
+        layout.addElementsToCollection([this], layout.series);
+        layout.addElementsToCollection(this.points, layout.nodes);
     }
 
     /**
@@ -542,36 +245,34 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public addSeriesLayout(): void {
-        let series = this,
-            layoutOptions = series.options.layoutAlgorithm,
-            graphLayoutsStorage = series.chart.graphLayoutsStorage,
-            graphLayoutsLookup = series.chart.graphLayoutsLookup,
+        const layoutOptions = this.options.layoutAlgorithm =
+                this.options.layoutAlgorithm || {},
+            layoutType = (layoutOptions.type || 'packedbubble'),
+            graphLayoutsStorage = this.chart.graphLayoutsStorage,
+            graphLayoutsLookup = this.chart.graphLayoutsLookup,
             parentNodeOptions = merge(
                 layoutOptions,
                 (layoutOptions as any).parentNodeOptions,
                 {
-                    enableSimulation: series.layout.options.enableSimulation
+                    enableSimulation: this.layout.options.enableSimulation
                 }
-            ),
-            parentNodeLayout;
+            );
 
-        parentNodeLayout = graphLayoutsStorage[
-            (layoutOptions as any).type + '-series'
-        ];
+        let seriesLayout =
+            graphLayoutsStorage[layoutType + '-series'] as PackedBubbleLayout;
 
-        if (!parentNodeLayout) {
+        if (!seriesLayout) {
 
-            graphLayoutsStorage[(layoutOptions as any).type + '-series'] =
-            parentNodeLayout =
-                new (H.layouts[(layoutOptions as any).type] as any)();
+            graphLayoutsStorage[layoutType + '-series'] = seriesLayout =
+                new GraphLayout.layouts[layoutType]() as PackedBubbleLayout;
 
-            parentNodeLayout.init(parentNodeOptions);
+            seriesLayout.init(parentNodeOptions);
 
             graphLayoutsLookup.splice(
-                parentNodeLayout.index, 0, parentNodeLayout
+                seriesLayout.index, 0, seriesLayout
             );
         }
-        series.parentNodeLayout = parentNodeLayout;
+        this.parentNodeLayout = seriesLayout;
         this.createParentNodes();
     }
 
@@ -581,15 +282,13 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public calculateParentRadius(): void {
-        let series = this,
-            bBox: (Array<number>|null),
+        const bBox = this.seriesBox(),
             parentPadding = 20,
             minParentRadius = 20;
 
-        bBox = series.seriesBox();
-        series.parentNodeRadius = clamp(
+        this.parentNodeRadius = clamp(
             Math.sqrt(
-                2 * (series.parentNodeMass as any) / Math.PI
+                2 * (this.parentNodeMass as any) / Math.PI
             ) + parentPadding,
             minParentRadius,
             bBox ?
@@ -601,13 +300,13 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     minParentRadius
                 ) :
                 Math.sqrt(
-                    2 * (series.parentNodeMass as any) / Math.PI
+                    2 * (this.parentNodeMass as any) / Math.PI
                 ) + parentPadding
         );
 
-        if (series.parentNode) {
-            (series.parentNode as any).marker.radius =
-                series.parentNode.radius = series.parentNodeRadius;
+        if (this.parentNode) {
+            (this.parentNode as any).marker.radius =
+                this.parentNode.radius = this.parentNodeRadius;
         }
     }
 
@@ -616,8 +315,10 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public calculateZExtremes(): Array<number> {
-        let chart = this.chart,
-            zMin = this.options.zMin,
+        const chart = this.chart,
+            allSeries = chart.series as Array<PackedBubbleSeries>;
+
+        let zMin = this.options.zMin,
             zMax = this.options.zMax,
             valMin = Infinity,
             valMax = -Infinity;
@@ -627,19 +328,17 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         }
         // it is needed to deal with null
         // and undefined values
-        chart.series.forEach(function (s): void {
-            ((s as PackedBubbleSeries).yData as any).forEach(
-                function (p: number): void {
-                    if (defined(p)) {
-                        if (p > valMax) {
-                            valMax = p;
-                        }
-                        if (p < valMin) {
-                            valMin = p;
-                        }
+        allSeries.forEach((series): void => {
+            series.yData.forEach((y): void => {
+                if (defined(y)) {
+                    if (y > valMax) {
+                        valMax = y;
+                    }
+                    if (y < valMin) {
+                        valMin = y;
                     }
                 }
-            );
+            });
         });
 
         zMin = pick(zMin, valMin);
@@ -672,19 +371,19 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public createParentNodes(): void {
-        let series = this,
-            chart = series.chart,
+        const PackedBubblePoint = this.pointClass,
+            chart = this.chart,
             parentNodeLayout: PackedBubbleLayout = (
-                series.parentNodeLayout as any
+                this.parentNodeLayout as any
             ),
-            nodeAdded,
-            parentNode = series.parentNode,
-            PackedBubblePoint = series.pointClass,
-            layoutOptions = series.layout.options,
+            layoutOptions = this.layout.options;
+
+        let nodeAdded,
+            parentNode = this.parentNode,
             parentMarkerOptions: BubblePointMarkerOptions = {
-                radius: series.parentNodeRadius,
-                lineColor: series.color,
-                fillColor: color(series.color).brighten(0.4).get()
+                radius: this.parentNodeRadius,
+                lineColor: this.color,
+                fillColor: color(this.color).brighten(0.4).get()
             };
 
         if (layoutOptions.parentNodeOptions) {
@@ -693,16 +392,16 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 parentMarkerOptions
             );
         }
-        series.parentNodeMass = 0;
+        this.parentNodeMass = 0;
 
-        series.points.forEach(function (p): void {
-            (series.parentNodeMass as any) +=
+        this.points.forEach((p): void => {
+            (this.parentNodeMass as any) +=
                 Math.PI * Math.pow((p.marker as any).radius, 2);
         });
 
-        series.calculateParentRadius();
-        parentNodeLayout.nodes.forEach(function (node): void {
-            if (node.seriesIndex === series.index) {
+        this.calculateParentRadius();
+        parentNodeLayout.nodes.forEach((node): void => {
+            if (node.seriesIndex === this.index) {
                 nodeAdded = true;
             }
         });
@@ -714,7 +413,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 ).init(
                     this,
                     {
-                        mass: (series.parentNodeRadius as any) / 2,
+                        mass: (this.parentNodeRadius as any) / 2,
                         marker: parentMarkerOptions,
                         dataLabels: {
                             inside: false
@@ -728,19 +427,19 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                             }
                         },
                         dataLabelOnNull: true,
-                        degree: series.parentNodeRadius,
+                        degree: this.parentNodeRadius,
                         isParentNode: true,
-                        seriesIndex: series.index
+                        seriesIndex: this.index
                     } as any
                 ) as any;
             }
-            if (series.parentNode) {
-                (parentNode as any).plotX = series.parentNode.plotX;
-                (parentNode as any).plotY = series.parentNode.plotY;
+            if (this.parentNode) {
+                (parentNode as any).plotX = this.parentNode.plotX;
+                (parentNode as any).plotY = this.parentNode.plotY;
             }
-            series.parentNode = parentNode;
+            this.parentNode = parentNode;
             parentNodeLayout.addElementsToCollection(
-                [series as any], parentNodeLayout.series
+                [this], parentNodeLayout.series
             );
             parentNodeLayout.addElementsToCollection(
                 [parentNode as any], parentNodeLayout.nodes
@@ -754,23 +453,23 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      */
     public deferLayout(): void {
         // TODO split layouts to independent methods
-        const series = this,
-            layoutOptions = series.options.layoutAlgorithm;
-        if (!series.visible) {
+        const layoutOptions = this.options.layoutAlgorithm;
+
+        if (!this.visible) {
             return;
         }
         // layout is using nodes for position calculation
-        series.addLayout();
+        this.addLayout();
 
         if ((layoutOptions as any).splitSeries) {
-            series.addSeriesLayout();
+            this.addSeriesLayout();
         }
     }
 
     public destroy(): void {
         // Remove the series from all layouts series collections #11469
         if (this.chart.graphLayoutsLookup) {
-            this.chart.graphLayoutsLookup.forEach(function (layout): void {
+            this.chart.graphLayoutsLookup.forEach((layout): void => {
                 layout.removeElementFromCollection(this, layout.series as any);
             }, this);
         }
@@ -787,7 +486,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     this.parentNode.dataLabel.destroy();
             }
         }
-        Series.prototype.destroy.apply(this, arguments as any);
+        seriesProto.destroy.apply(this, arguments as any);
     }
 
     /**
@@ -796,23 +495,18 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public drawDataLabels(): void {
-        const textPath = (this.options.dataLabels as any).textPath,
-            points = this.points;
+        // We defer drawing the dataLabels
+        // until dataLabels.animation.defer time passes
+        if (this.deferDataLabels) {
+            return;
+        }
 
-        // Render node labels:
-        Series.prototype.drawDataLabels.apply(this, arguments as any);
+        seriesProto.drawDataLabels.call(this, this.points);
 
         // Render parentNode labels:
         if (this.parentNode) {
             this.parentNode.formatPrefix = 'parentNode';
-            this.points = [this.parentNode];
-            (this.options.dataLabels as any).textPath =
-                (this.options.dataLabels as any).parentNodeTextPath;
-            Series.prototype.drawDataLabels.apply(this, arguments as any);
-
-            // Restore nodes
-            this.points = points;
-            (this.options.dataLabels as any).textPath = textPath;
+            seriesProto.drawDataLabels.call(this, [this.parentNode]);
         }
     }
 
@@ -827,68 +521,68 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             return;
         }
 
-        let series = this,
-            chart = series.chart,
-            parentAttribs: SVGAttributes = {},
+        const chart = this.chart,
             nodeMarker: BubblePointMarkerOptions =
                 (this.layout.options.parentNodeOptions as any).marker,
             parentOptions: SVGAttributes = {
                 fill: (
                     nodeMarker.fillColor ||
-                    color(series.color).brighten(0.4).get()
+                    color(this.color).brighten(0.4).get()
                 ),
                 opacity: nodeMarker.fillOpacity,
-                stroke: nodeMarker.lineColor || series.color,
+                stroke: nodeMarker.lineColor || this.color,
                 'stroke-width': pick(
                     nodeMarker.lineWidth,
-                    series.options.lineWidth
+                    this.options.lineWidth
                 )
             };
 
+        let parentAttribs: SVGAttributes = {};
+
         // create the group for parent Nodes if doesn't exist
         if (!this.parentNodesGroup) {
-            series.parentNodesGroup = series.plotGroup(
+            this.parentNodesGroup = this.plotGroup(
                 'parentNodesGroup',
                 'parentNode',
-                series.visible ? 'inherit' : 'hidden',
+                this.visible ? 'inherit' : 'hidden',
                 0.1, chart.seriesGroup
             );
-            (series.group as any).attr({
+            (this.group as any).attr({
                 zIndex: 2
             });
         }
 
         this.calculateParentRadius();
         parentAttribs = merge({
-            x: (series.parentNode as any).plotX -
-                (series.parentNodeRadius as any),
-            y: (series.parentNode as any).plotY -
-                (series.parentNodeRadius as any),
-            width: (series.parentNodeRadius as any) * 2,
-            height: (series.parentNodeRadius as any) * 2
+            x: (this.parentNode as any).plotX -
+                (this.parentNodeRadius as any),
+            y: (this.parentNode as any).plotY -
+                (this.parentNodeRadius as any),
+            width: (this.parentNodeRadius as any) * 2,
+            height: (this.parentNodeRadius as any) * 2
         }, parentOptions);
-        if (!(series.parentNode as any).graphic) {
-            series.graph = (series.parentNode as any).graphic =
+        if (!(this.parentNode as any).graphic) {
+            this.graph = (this.parentNode as any).graphic =
                 chart.renderer.symbol((parentOptions as any).symbol)
-                    .add(series.parentNodesGroup);
+                    .add(this.parentNodesGroup);
         }
-        (series.parentNode as any).graphic.attr(parentAttribs);
+        (this.parentNode as any).graphic.attr(parentAttribs);
 
     }
 
     public drawTracker(): void {
-        const series = this,
-            /* chart = series.chart,
-            pointer = chart.pointer,
-            onMouseOver = function (e: PointerEvent): void {
-                const point = pointer.getPointFromEvent(e);
-                // undefined on graph in scatterchart
-                if (typeof point !== 'undefined') {
-                    pointer.isDirectTouch = true;
-                    point.onMouseOver(e);
-                }
-            }, */
-            parentNode = series.parentNode;
+        const parentNode = this.parentNode;
+        // chart = series.chart,
+        // pointer = chart.pointer,
+        // onMouseOver = function (e: PointerEvent): void {
+        //     const point = pointer.getPointFromEvent(e);
+        //     // undefined on graph in scatterchart
+        //     if (typeof point !== 'undefined') {
+        //         pointer.isDirectTouch = true;
+        //         point.onMouseOver(e);
+        //     }
+        // };
+
         let dataLabels;
 
         super.drawTracker();
@@ -904,7 +598,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 (parentNode.graphic.element as any).point = parentNode;
             }
 
-            dataLabels.forEach(function (dataLabel): void {
+            dataLabels.forEach((dataLabel): void => {
                 if (dataLabel.div) {
                     dataLabel.div.point = parentNode;
                 } else {
@@ -919,40 +613,41 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public getPointRadius(): void {
-        let series = this,
-            chart = series.chart,
+        const chart = this.chart,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
-            seriesOptions = series.options,
+            seriesOptions = this.options,
             useSimulation = seriesOptions.useSimulation,
             smallestSize = Math.min(plotWidth, plotHeight),
             extremes = {} as Record<string, number>,
             radii = [] as Array<(number|null)>,
-            allDataPoints = chart.allDataPoints,
-            minSize: number,
+            allDataPoints = chart.allDataPoints || [],
+            allDataPointsLength = allDataPoints.length;
+
+        let minSize: number,
             maxSize: number,
             value: (number|null),
-            radius: (number|null),
-            zExtremes: Array<number>;
-        ['minSize', 'maxSize'].forEach(function (prop: string): void {
+            radius: (number|null);
+
+        ['minSize', 'maxSize'].forEach((prop: string): void => {
             const length = parseInt((seriesOptions as any)[prop], 10),
                 isPercent = /%$/.test((seriesOptions as any)[prop]);
 
             extremes[prop] = isPercent ?
                 smallestSize * length / 100 :
-                length * Math.sqrt(allDataPoints.length);
+                length * Math.sqrt(allDataPointsLength);
         });
 
         chart.minRadius = minSize = extremes.minSize /
-            Math.sqrt(allDataPoints.length);
+            Math.sqrt(allDataPointsLength);
         chart.maxRadius = maxSize = extremes.maxSize /
-            Math.sqrt(allDataPoints.length);
+            Math.sqrt(allDataPointsLength);
 
-        zExtremes = useSimulation ?
-            series.calculateZExtremes() :
+        const zExtremes = useSimulation ?
+            this.calculateZExtremes() :
             [minSize, maxSize];
 
-        (allDataPoints || []).forEach(function (point, i): void {
+        allDataPoints.forEach((point, i): void => {
 
             value = useSimulation ?
                 clamp(
@@ -962,7 +657,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 ) :
                 (point[2] as any);
 
-            radius = series.getRadius(
+            radius = this.getRadius(
                 zExtremes[0],
                 zExtremes[1],
                 minSize,
@@ -976,11 +671,12 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             radii.push(radius);
         });
 
-        series.radii = radii;
+        this.radii = radii;
     }
 
     public init(): PackedBubbleSeries {
-        Series.prototype.init.apply(this, arguments);
+        seriesProto.init.apply(this, arguments);
+        initDataLabelsDefer.call(this);
 
         /* eslint-disable no-invalid-this */
 
@@ -988,7 +684,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         this.eventsToUnbind.push(addEvent(this, 'updatedData', function (
             this: PackedBubbleSeries
         ): void {
-            this.chart.series.forEach(function (s): void {
+            this.chart.series.forEach((s): void => {
                 if (s.type === this.type) {
                     s.isDirty = true;
                 }
@@ -1005,15 +701,20 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      * @param {Highcharts.Point} point The point that event occured.
      */
-    public onMouseUp(point: PackedBubblePoint): void {
+    public onMouseUp(
+        dnPoint: DragNodesPoint
+    ): void {
+        const point = dnPoint as PackedBubblePoint;
+
         if (point.fixedPosition && !point.removed) {
-            let distanceXY,
-                distanceR,
-                layout = this.layout,
+            const layout = this.layout,
                 parentNodeLayout = this.parentNodeLayout;
 
+            let distanceXY,
+                distanceR;
+
             if (parentNodeLayout && layout.options.dragBetweenSeries) {
-                parentNodeLayout.nodes.forEach(function (node): void {
+                parentNodeLayout.nodes.forEach((node): void => {
                     if (
                         point && point.marker &&
                         node !== point.series.parentNode
@@ -1037,7 +738,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     }
                 });
             }
-            dragNodesMixin.onMouseUp.apply(this, arguments as any);
+            DragNodesComposition.onMouseUp.apply(this, arguments as any);
         }
     }
 
@@ -1054,23 +755,21 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     public placeBubbles(
         allDataPoints: Array<PackedBubbleSeries.Data>
     ): Array<PackedBubbleSeries.Data> {
+        const checkOverlap = this.checkOverlap,
+            positionBubble = this.positionBubble,
+            bubblePos = [] as Array<Array<Array<number>>>;
 
-        let series = this,
-            checkOverlap = series.checkOverlap,
-            positionBubble = series.positionBubble,
-            bubblePos = [] as Array<Array<Array<number>>>,
-            stage = 1,
+        let stage = 1,
             j = 0,
             k = 0,
             calculatedBubble,
-            sortedArr: Array<PackedBubbleSeries.Data>,
             arr = [] as Array<PackedBubbleSeries.Data>,
             i: number;
 
         // sort all points
-        sortedArr = allDataPoints.sort(function (a, b): number {
-            return (b[2] as any) - (a[2] as any);
-        });
+        const sortedArr = allDataPoints.sort((a, b): number =>
+            (b[2] as any) - (a[2] as any)
+        );
 
         if (sortedArr.length) {
             // create first bubble in the middle of the chart
@@ -1165,17 +864,17 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     }
                 }
             }
-            series.chart.stages = bubblePos;
+            this.chart.stages = bubblePos;
             // it may not be necessary but adding it just in case -
             // it is containing all of the bubble levels
 
-            series.chart.rawPositions =
+            this.chart.rawPositions =
                 ([] as Array<Array<number>>)
                     .concat.apply([], bubblePos);
             // bubble positions merged into one array
 
-            series.resizeRadius();
-            arr = series.chart.rawPositions as any;
+            this.resizeRadius();
+            arr = this.chart.rawPositions as any;
         }
         return arr;
     }
@@ -1198,9 +897,8 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     ): SVGAttributes {
         const options = this.options,
             hasParentMarker = point && point.isParentNode;
-        let attr,
-            fillOpacity,
-            markerOptions = options.marker;
+
+        let markerOptions = options.marker;
 
         if (
             hasParentMarker &&
@@ -1210,8 +908,9 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             markerOptions = options.layoutAlgorithm.parentNodeOptions.marker;
         }
 
-        fillOpacity = (markerOptions as BubblePointMarkerOptions).fillOpacity;
-        attr = Series.prototype.pointAttribs.call(this, point, state);
+        const fillOpacity =
+                (markerOptions as BubblePointMarkerOptions).fillOpacity,
+            attr = seriesProto.pointAttribs.call(this, point, state);
 
         if (fillOpacity !== 1) {
             attr['fill-opacity'] = fillOpacity;
@@ -1285,17 +984,14 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     }
 
     public render(): void {
-        const series = this,
-            dataLabels = [] as Array<SVGElement>;
-        Series.prototype.render.apply(this, arguments);
+        const dataLabels = [] as Array<SVGElement>;
+        seriesProto.render.apply(this, arguments);
         // #10823 - dataLabels should stay visible
         // when enabled allowOverlap.
-        if (!(series.options.dataLabels as any).allowOverlap) {
-            series.data.forEach(function (point): void {
+        if (!(this.options.dataLabels as any).allowOverlap) {
+            this.data.forEach((point): void => {
                 if (isArray(point.dataLabels)) {
-                    point.dataLabels.forEach(function (
-                        dataLabel: SVGElement
-                    ): void {
+                    point.dataLabels.forEach((dataLabel): void => {
                         dataLabels.push(dataLabel);
                     });
                 }
@@ -1304,8 +1000,8 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             // Only hide overlapping dataLabels for layouts that
             // use simulation. Spiral packedbubble don't need
             // additional dataLabel hiding on every simulation step
-            if (series.options.useSimulation) {
-                series.chart.hideOverlappingLabels(dataLabels);
+            if (this.options.useSimulation) {
+                this.chart.hideOverlappingLabels(dataLabels);
             }
         }
     }
@@ -1321,46 +1017,41 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public resizeRadius(): void {
-
-        let chart = this.chart,
+        const chart = this.chart,
             positions = chart.rawPositions,
             min = Math.min,
             max = Math.max,
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             chartHeight = chart.plotHeight,
-            chartWidth = chart.plotWidth,
-            minX, maxX, minY, maxY,
-            radius,
-            bBox,
-            spaceRatio,
-            smallerDimension,
-            i;
+            chartWidth = chart.plotWidth;
+
+        let minX, maxX, minY, maxY,
+            radius: number;
 
         minX = minY = Number.POSITIVE_INFINITY; // set initial values
         maxX = maxY = Number.NEGATIVE_INFINITY;
 
-        for (i = 0; i < positions.length; i++) {
-            radius = positions[i][2];
-            minX = min(minX, (positions[i][0] as any) - (radius as any));
+        for (const position of positions) {
+            radius = position[2];
+            minX = min(minX, position[0] - radius);
             // (x center-radius) is the min x value used by specific bubble
-            maxX = max(maxX, (positions[i][0] as any) + radius);
-            minY = min(minY, (positions[i][1] as any) - (radius as any));
-            maxY = max(maxY, (positions[i][1] as any) + radius);
+            maxX = max(maxX, position[0] + radius);
+            minY = min(minY, position[1] - radius);
+            maxY = max(maxY, position[1] + radius);
         }
 
-        bBox = [maxX - minX, maxY - minY];
-        spaceRatio = [
-            (chartWidth - plotLeft) / bBox[0],
-            (chartHeight - plotTop) / bBox[1]
-        ];
-
-        smallerDimension = min.apply([], spaceRatio);
+        const bBox = [maxX - minX, maxY - minY],
+            spaceRatio = [
+                (chartWidth - plotLeft) / bBox[0],
+                (chartHeight - plotTop) / bBox[1]
+            ],
+            smallerDimension = min.apply([], spaceRatio);
 
         if (Math.abs(smallerDimension - 1) > 1e-10) {
             // if bBox is considered not the same width as possible size
-            for (i = 0; i < positions.length; i++) {
-                (positions[i][2] as any) *= smallerDimension;
+            for (const position of positions) {
+                (position[2] as any) *= smallerDimension;
             }
             this.placeBubbles(positions as any);
         } else {
@@ -1384,12 +1075,10 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public seriesBox(): (Array<number>|null) {
-        let series = this,
-            chart = series.chart,
-            data = series.data,
+        const chart = this.chart,
+            data = this.data,
             max = Math.max,
             min = Math.min,
-            radius,
             // bBox = [xMin, xMax, yMin, yMax]
             bBox = [
                 chart.plotLeft,
@@ -1398,7 +1087,9 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 chart.plotTop + chart.plotHeight
             ];
 
-        data.forEach(function (p): void {
+        let radius: number;
+
+        data.forEach((p): void => {
             if (
                 defined(p.plotX) &&
                 defined(p.plotY) &&
@@ -1422,7 +1113,9 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      */
     public setVisible(): void {
         const series = this;
-        Series.prototype.setVisible.apply(series, arguments as any);
+
+        seriesProto.setVisible.apply(series, arguments);
+
         if (series.parentNodeLayout && series.graph) {
             if (series.visible) {
                 series.graph.show();
@@ -1445,7 +1138,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     series.points, series.layout.nodes
                 );
             } else {
-                series.points.forEach(function (node): void {
+                series.points.forEach((node): void => {
                     series.layout.removeElementFromCollection(
                         node, series.layout.nodes
                     );
@@ -1460,25 +1153,23 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @private
      */
     public translate(): void {
+        const chart = this.chart,
+            data = this.data,
+            index = this.index,
+            useSimulation = this.options.useSimulation;
 
-        let series = this,
-            chart = series.chart,
-            data = series.data,
-            index = series.index,
-            point,
+        let point,
             radius: number|undefined,
-            positions,
-            i,
-            useSimulation = series.options.useSimulation;
+            positions;
 
-        series.processedXData = series.xData;
-        series.generatePoints();
+        this.processedXData = this.xData;
+        this.generatePoints();
 
         // merged data is an array with all of the data from all series
         if (!defined(chart.allDataPoints)) {
-            chart.allDataPoints = series.accumulateAllPoints(series);
+            chart.allDataPoints = this.accumulateAllPoints();
             // calculate radius for all added data
-            series.getPointRadius();
+            this.getPointRadius();
         }
 
         // after getting initial radius, calculate bubble positions
@@ -1486,27 +1177,27 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         if (useSimulation) {
             positions = chart.allDataPoints;
         } else {
-            positions = series.placeBubbles(chart.allDataPoints);
-            series.options.draggable = false;
+            positions = this.placeBubbles(chart.allDataPoints);
+            this.options.draggable = false;
         }
 
         // Set the shape and arguments to be picked up in drawPoints
-        for (i = 0; i < positions.length; i++) {
+        for (const position of positions) {
 
-            if (positions[i][3] === index) {
+            if (position[3] === index) {
 
                 // update the series points with the val from positions
                 // array
-                point = data[positions[i][4] as any];
-                radius = pick(positions[i][2], void 0);
+                point = data[position[4] as any];
+                radius = pick(position[2], void 0);
 
                 if (!useSimulation) {
                     point.plotX = (
-                        (positions[i][0] as any) - chart.plotLeft +
+                        (position[0] as any) - chart.plotLeft +
                         chart.diffX
                     );
                     point.plotY = (
-                        (positions[i][1] as any) - chart.plotTop +
+                        (position[1] as any) - chart.plotTop +
                         chart.diffY
                     );
                 }
@@ -1522,10 +1213,10 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         }
 
         if (useSimulation) {
-            series.deferLayout();
+            this.deferLayout();
         }
 
-        fireEvent(series, 'afterTranslate');
+        fireEvent(this, 'afterTranslate');
     }
 
     /* eslint-enable valid-jsdoc */
@@ -1538,80 +1229,61 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
  *
  * */
 
-interface PackedBubbleSeries {
-    forces: Array<string>;
-    hasDraggableNodes: boolean;
-    isCartesian: boolean;
-    noSharedTooltip: boolean;
-    onMouseDown: Highcharts.DragNodesMixin['onMouseDown'];
-    onMouseMove: Highcharts.DragNodesMixin['onMouseMove'];
-    pointArrayMap: Array<string>;
+interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
     pointClass: typeof PackedBubblePoint;
-    pointValKey: string;
-    redrawHalo: Highcharts.DragNodesMixin['redrawHalo'];
-    trackerGroups: Array<string>;
-}
-extend(PackedBubbleSeries.prototype, {
-
-    alignDataLabel: Series.prototype.alignDataLabel,
-
-    axisTypes: [],
-
-    directTouch: true,
-
+    bubblePadding: BubbleSeriesType['bubblePadding'];
     /**
      * Array of internal forces. Each force should be later defined in
      * integrations.js.
      * @private
      */
-    forces: ['barycenter', 'repulsive'],
-
+    forces: Array<string>;
     /**
      * An internal option used for allowing nodes dragging.
      * @private
      */
-    hasDraggableNodes: true,
-
-    isCartesian: false,
-
-    noSharedTooltip: true,
-
-    /**
-     * Mouse down action, initializing drag&drop mode.
-     * @private
-     * @param {global.Event} event Browser event, before normalization.
-     * @param {Highcharts.Point} point The point that event occured.
-     */
-    onMouseDown: dragNodesMixin.onMouseDown,
-
-    /**
-     * Mouse move action during drag&drop.
-     * @private
-     * @param {global.Event} event Browser event, before normalization.
-     * @param {Highcharts.Point} point The point that event occured.
-     */
-    onMouseMove: dragNodesMixin.onMouseMove,
-
-    pointArrayMap: ['value'],
-
+    hasDraggableNodes: boolean;
+    isBubble: BubbleSeriesType['isBubble'];
+    isCartesian: boolean;
+    maxPxSize: BubbleSeriesType['maxPxSize'];
+    minPxSize: BubbleSeriesType['minPxSize'];
+    nodes: NetworkgraphSeries['nodes'];
+    noSharedTooltip: boolean;
+    pointArrayMap: Array<string>;
+    pointValKey: string;
+    radii: BubbleSeriesType['radii'];
+    specialGroup: BubbleSeriesType['specialGroup'];
+    trackerGroups: Array<string>;
+    yData: BubbleSeriesType['yData'];
+    zData: BubbleSeriesType['zData'];
+    zoneAxis: BubbleSeriesType['zoneAxis'];
+    getPointsCollection(): Array<PackedBubblePoint>;
+    indexateNodes: NetworkgraphSeries['indexateNodes'];
+    markerAttribs: BubbleSeriesType['markerAttribs'];
+    onMouseDown: typeof DragNodesComposition.onMouseDown;
+    onMouseMove: typeof DragNodesComposition.onMouseMove;
+    redrawHalo: typeof DragNodesComposition.redrawHalo;
+    setState: BubbleSeriesType['setState'];
+}
+extend(PackedBubbleSeries.prototype, {
     pointClass: PackedBubblePoint,
-
+    axisTypes: [],
+    directTouch: true,
+    forces: ['barycenter', 'repulsive'],
+    hasDraggableNodes: true,
+    isCartesian: false,
+    noSharedTooltip: true,
+    pointArrayMap: ['value'],
     pointValKey: 'value',
-
-    /**
-     * Redraw halo on mousemove during the drag&drop action.
-     * @private
-     * @param {Highcharts.Point} point The point that should show halo.
-     */
-    redrawHalo: dragNodesMixin.redrawHalo,
-
     requireSorting: false,
-
-    // solving #12287
-    searchPoint: H.noop as any,
-
-    trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup']
-
+    trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup'],
+    initDataLabels: initDataLabels,
+    alignDataLabel: seriesProto.alignDataLabel,
+    indexateNodes: noop as NetworkgraphSeries['indexateNodes'],
+    onMouseDown: DragNodesComposition.onMouseDown,
+    onMouseMove: DragNodesComposition.onMouseMove,
+    redrawHalo: DragNodesComposition.redrawHalo,
+    searchPoint: noop as NetworkgraphSeries['searchPoint'] // solving #12287
 });
 
 /* *
@@ -1698,72 +1370,3 @@ export default PackedBubbleSeries;
  */
 
 ''; // detach doclets above
-
-/* *
- *
- *  API Options
- *
- * */
-
-/**
- * A `packedbubble` series. If the [type](#series.packedbubble.type) option is
- * not specified, it is inherited from [chart.type](#chart.type).
- *
- * @type      {Object}
- * @extends   series,plotOptions.packedbubble
- * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack,
- *            boostThreshold, boostBlending
- * @product   highcharts
- * @requires  highcharts-more
- * @apioption series.packedbubble
- */
-
-/**
- * An array of data points for the series. For the `packedbubble` series type,
- * points can be given in the following ways:
- *
- * 1.  An array of `values`.
- *
- *  ```js
- *     data: [5, 1, 20]
- *  ```
- *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data points
- * exceeds the series' [turboThreshold](#series.packedbubble.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         value: 1,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         value: 5,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
- *
- * @type      {Array<Object|Array>}
- * @extends   series.line.data
- * @excluding marker, x, y
- * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
- * @product   highcharts
- * @apioption series.packedbubble.data
- */
-
-/**
- * @type      {Highcharts.SeriesPackedBubbleDataLabelsOptionsObject|Array<Highcharts.SeriesPackedBubbleDataLabelsOptionsObject>}
- * @product   highcharts
- * @apioption series.packedbubble.data.dataLabels
- */
-
-/**
- * @excluding enabled,enabledThreshold,height,radius,width
- * @product   highcharts
- * @apioption series.packedbubble.marker
- */
-
-''; // adds doclets above to transpiled file

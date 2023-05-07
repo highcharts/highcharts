@@ -5,7 +5,22 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Africa Real GDP Growth Forcasts for 2017'
+        text: 'Africa Real GDP Growth Forecasts for 2017',
+        align: 'left'
+    },
+
+    accessibility: {
+        point: {
+            valueDescriptionFormat: '{xDescription}, forecasted {point.value}% growth.'
+        }
+    },
+
+    lang: {
+        accessibility: {
+            chartTypes: {
+                defaultSingle: 'Map with fixed circle areas laid out in the shape of Africa. The map shows {numPoints} countries.'
+            }
+        }
     },
 
     xAxis: {
@@ -340,6 +355,9 @@ Highcharts.chart('container', {
             id: 'LY',
             name: 'Libya',
             subregion: 'Northern Africa',
+            accessibility: {
+                description: 'This is by far the highest forecasted growth.'
+            },
             'region-web': 'Middle East & North Africa',
             'iso-a3': 'LBY',
             'iso-a2': 'LY',

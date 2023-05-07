@@ -33,8 +33,9 @@
         mapNavigation: {
             enabled: true,
             buttonOptions: {
-                verticalAlign: 'bottom',
-                x: 10
+                align: 'right',
+                alignTo: 'spacingBox',
+                verticalAlign: 'top'
             }
         },
 
@@ -49,19 +50,27 @@
         },
 
         series: [{
-            // World map
+            name: 'World',
             data: [],
             affectsMapView: false,
             mapData: world,
             borderColor: 'white',
-            nullColor: '#ddeedd'
+            nullColor: '#ddeedd',
+            accessibility: {
+                exposeAsGroupOnly: true
+            }
         }, {
-            // Roman empire
+            name: 'Roman empire',
             nullColor: 'rgb(255 0 0 / 0.5)',
             borderColor: '#666',
             dataLabels: {
                 enabled: true,
                 nullFormat: '{point.name}'
+            },
+            accessibility: {
+                point: {
+                    valueDescriptionFormat: '{xDescription}.'
+                }
             }
         }]
     });

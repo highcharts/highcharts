@@ -20,6 +20,7 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type { AnnotationPoint } from '../../../Extensions/Annotations/AnnotationSeries';
 import type Axis from '../../../Core/Axis/Axis';
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
 import type Point from '../../../Core/Series/Point';
@@ -64,7 +65,7 @@ const {
 declare module '../../../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/accessibility */
-        hasDummyGraphic?: boolean;
+        hasMockGraphic?: boolean;
     }
 }
 
@@ -103,44 +104,51 @@ function findFirstPointWithGraphic(
 
 
 /**
+ * Whether or not we should add a mock point element in
+ * order to describe a point that has no graphic.
  * @private
  */
-function shouldAddDummyPoint(point: Point): boolean {
+function shouldAddMockPoint(point: Point): boolean {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
-    const isSunburst = point.series && point.series.is('sunburst'),
-        isNull = point.isNull;
+    const series = point.series,
+        chart = series && series.chart,
+        isSunburst = series && series.is('sunburst'),
+        isNull = point.isNull,
+        shouldDescribeNull = chart &&
+            (chart as Accessibility.ChartComposition)
+                .options.accessibility.point.describeNull;
 
-    return isNull && !isSunburst;
+    return isNull && !isSunburst && shouldDescribeNull;
 }
 
 
 /**
  * @private
  */
-function makeDummyElement(
+function makeMockElement(
     point: Point,
     pos: PositionObject
 ): SVGElement {
     const renderer = point.series.chart.renderer,
-        dummy = renderer.rect(pos.x, pos.y, 1, 1);
+        mock = renderer.rect(pos.x, pos.y, 1, 1);
 
-    dummy.attr({
-        'class': 'highcharts-a11y-dummy-point',
+    mock.attr({
+        'class': 'highcharts-a11y-mock-point',
         fill: 'none',
         opacity: 0,
         'fill-opacity': 0,
         'stroke-opacity': 0
     });
 
-    return dummy;
+    return mock;
 }
 
 
 /**
  * @private
  */
-function addDummyPointElement(
+function addMockPointElement(
     point: Accessibility.PointComposition
 ): (DOMElementType|undefined) {
     const series = point.series,
@@ -149,28 +157,28 @@ function addDummyPointElement(
         parentGroup = firstGraphic ?
             firstGraphic.parentGroup :
             series.graph || series.group,
-        dummyPos = firstPointWithGraphic ? {
+        mockPos = firstPointWithGraphic ? {
             x: pick(point.plotX, firstPointWithGraphic.plotX, 0),
             y: pick(point.plotY, firstPointWithGraphic.plotY, 0)
         } : {
             x: pick(point.plotX, 0),
             y: pick(point.plotY, 0)
         },
-        dummyElement = makeDummyElement(point, dummyPos);
+        mockElement = makeMockElement(point, mockPos);
 
     if (parentGroup && parentGroup.element) {
-        point.graphic = dummyElement;
-        point.hasDummyGraphic = true;
+        point.graphic = mockElement;
+        point.hasMockGraphic = true;
 
-        dummyElement.add(parentGroup);
+        mockElement.add(parentGroup);
 
         // Move to correct pos in DOM
         parentGroup.element.insertBefore(
-            dummyElement.element,
+            mockElement.element,
             firstGraphic ? firstGraphic.element : null
         );
 
-        return dummyElement.element;
+        return mockElement.element;
     }
 }
 
@@ -254,8 +262,8 @@ function shouldDescribeSeriesElement(
  */
 function pointNumberToString(
     point: Accessibility.PointComposition,
-    value: number
-): string {
+    value: number|undefined
+): string|undefined {
     const series = point.series,
         chart = series.chart,
         a11yPointOptions = chart.options.accessibility.point || {},
@@ -359,7 +367,8 @@ function getPointXDescription(
         xAxis = point.series.xAxis || {},
         pointCategory = xAxis.categories && defined(point.category) &&
             ('' + point.category).replace('<br/>', ' '),
-        canUseId = point.id && point.id.indexOf('highcharts-') < 0,
+        canUseId = defined(point.id) &&
+            ('' + point.id).indexOf('highcharts-') < 0,
         fallback = 'x, ' + point.x;
 
     return point.name || timeDesc || pointCategory ||
@@ -377,17 +386,22 @@ function getPointArrayMapValueDescription(
 ): string {
     const pre = prefix || '',
         suf = suffix || '',
-        keyToValStr = function (key: string): string {
+        keyToValStr = function (key: string): string|undefined {
             const num = pointNumberToString(
                 point,
                 pick((point as any)[key], (point.options as any)[key])
             );
-            return key + ': ' + pre + num + suf;
+            return num !== void 0 ?
+                key + ': ' + pre + num + suf :
+                num;
         },
         pointArrayMap: Array<string> = point.series.pointArrayMap as any;
 
     return pointArrayMap.reduce(function (desc: string, key: string): string {
-        return desc + (desc.length ? ', ' : '') + keyToValStr(key);
+        const propDesc = keyToValStr(key);
+        return propDesc ?
+            (desc + (desc.length ? ', ' : '') + propDesc) :
+            desc;
     }, '');
 }
 
@@ -448,7 +462,7 @@ function getPointAnnotationDescription(point: Point): string {
     const chart = point.series.chart;
     const langKey = 'accessibility.series.pointAnnotationsDescription';
     const annotations = getPointAnnotationTexts(
-        point as Highcharts.AnnotationPoint
+        point as AnnotationPoint
     );
     const context = { point, annotations };
 
@@ -474,7 +488,7 @@ function getPointValueDescription(
             series.xAxis &&
             series.xAxis.options.accessibility &&
             series.xAxis.options.accessibility.enabled,
-            !chart.angular
+            !chart.angular && series.type !== 'flowmap'
         ),
         xDesc = showXDescription ? getPointXDescription(point) : '',
         context = {
@@ -550,19 +564,26 @@ function describePointsInSeries(
     series: Accessibility.SeriesComposition
 ): void {
     const setScreenReaderProps = shouldSetScreenReaderPropsOnPoints(series),
-        setKeyboardProps = shouldSetKeyboardNavPropsOnPoints(series);
+        setKeyboardProps = shouldSetKeyboardNavPropsOnPoints(series),
+        shouldDescribeNullPoints = series.chart.options.accessibility
+            .point.describeNull;
 
     if (setScreenReaderProps || setKeyboardProps) {
         series.points.forEach((point): void => {
             const pointEl = point.graphic && point.graphic.element ||
-                    shouldAddDummyPoint(point) && addDummyPointElement(point);
-            const pointA11yDisabled = (
-                point.options &&
-                point.options.accessibility &&
-                point.options.accessibility.enabled === false
-            );
+                    shouldAddMockPoint(point) && addMockPointElement(point),
+                pointA11yDisabled = (
+                    point.options &&
+                    point.options.accessibility &&
+                    point.options.accessibility.enabled === false
+                );
 
             if (pointEl) {
+                if (point.isNull && !shouldDescribeNullPoints) {
+                    pointEl.setAttribute('aria-hidden', true);
+                    return;
+                }
+
                 // We always set tabindex, as long as we are setting props.
                 // When setting tabindex, also remove default outline to
                 // avoid ugly border on click.
@@ -597,14 +618,13 @@ function defaultSeriesDescriptionFormatter(
         ): (boolean|Axis) {
             return chart[coll] && chart[coll].length > 1 && series[coll];
         },
+        seriesNumber = series.index + 1,
         xAxisInfo = getSeriesAxisDescriptionText(series, 'xAxis'),
         yAxisInfo = getSeriesAxisDescriptionText(series, 'yAxis'),
         summaryContext = {
-            name: series.name || '',
-            ix: (series.index as any) + 1,
-            numSeries: chart.series && chart.series.length,
-            numPoints: series.points && series.points.length,
-            series: series
+            seriesNumber,
+            series,
+            chart
         },
         combinationSuffix = chartTypes.length > 1 ? 'Combination' : '',
         summary = chart.langFormat(
@@ -613,13 +633,27 @@ function defaultSeriesDescriptionFormatter(
         ) || chart.langFormat(
             'accessibility.series.summary.default' + combinationSuffix,
             summaryContext
+        ),
+        axisDescription = (
+            shouldDescribeAxis('yAxis') ? ' ' + yAxisInfo + '.' : ''
+        ) + (
+            shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo + '.' : ''
+        ),
+        formatStr = pick(
+            series.options.accessibility &&
+                series.options.accessibility.descriptionFormat,
+            chart.options.accessibility.series.descriptionFormat,
+            ''
         );
 
-    return summary + (description ? ' ' + description : '') + (
-        shouldDescribeAxis('yAxis') ? ' ' + yAxisInfo : ''
-    ) + (
-        shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo : ''
-    );
+    return format(formatStr, {
+        seriesDescription: summary,
+        authorDescription: (description ? ' ' + description : ''),
+        axisDescription,
+        series,
+        chart,
+        seriesNumber
+    }, void 0);
 }
 
 
@@ -678,7 +712,7 @@ function describeSeries(
         // For some series types the order of elements do not match the
         // order of points in series. In that case we have to reverse them
         // in order for AT to read them out in an understandable order.
-        // Due to z-index issues we can not do this for 3D charts.
+        // Due to z-index issues we cannot do this for 3D charts.
         if (seriesEl.lastChild === firstPointEl && !is3d) {
             reverseChildNodes(seriesEl);
         }
@@ -690,7 +724,7 @@ function describeSeries(
         if (shouldDescribeSeriesElement(series)) {
             describeSeriesElement(series, seriesEl);
         } else {
-            seriesEl.setAttribute('aria-label', '');
+            seriesEl.removeAttribute('aria-label');
         }
     }
 }

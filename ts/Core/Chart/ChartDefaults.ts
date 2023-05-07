@@ -148,7 +148,7 @@ const ChartDefaults: ChartOptions = {
      *         With a longer duration
      *
      * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
-     * @default   undefined
+     * @default   true
      * @apioption chart.animation
      */
 
@@ -235,6 +235,8 @@ const ChartDefaults: ChartOptions = {
      *
      * @sample {highcharts} highcharts/chart/events-load/
      *         Alert on chart load
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      * @sample {highstock} stock/chart/events-load/
      *         Alert on chart load
      * @sample {highmaps} maps/chart/events-load/
@@ -253,6 +255,8 @@ const ChartDefaults: ChartOptions = {
      *
      * @sample {highcharts} highcharts/chart/events-redraw/
      *         Alert on chart redraw
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      * @sample {highstock} stock/chart/events-redraw/
      *         Alert on chart redraw when adding a series or moving the
      *         zoomed range
@@ -268,6 +272,9 @@ const ChartDefaults: ChartOptions = {
     /**
      * Fires after initial load of the chart (directly after the `load`
      * event), and after each redraw (directly after the `redraw` event).
+     *
+     * @sample {highcharts} highcharts/chart/events-render/
+     *         Load vs Redraw vs Render
      *
      * @type      {Highcharts.ChartRenderCallbackFunction}
      * @since     5.0.7
@@ -459,13 +466,17 @@ const ChartDefaults: ChartOptions = {
          * Decides in what dimensions the user can pan the chart. Can be
          * one of `x`, `y`, or `xy`.
          *
+         * When this option is set to `y` or `xy`, [yAxis.startOnTick](#yAxis.startOnTick)
+         * and [yAxis.endOnTick](#yAxis.endOnTick) are overwritten to `false`.
+         *
          * @sample {highcharts} highcharts/chart/panning-type
          *         Zooming and xy panning
          *
+         * @declare    Highcharts.OptionsChartPanningTypeValue
          * @type       {string}
          * @validvalue ["x", "y", "xy"]
          * @default    {highcharts|highstock} x
-         * @default    {highmaps} xy
+         * @product    highcharts highstock gantt
          */
         type: 'x'
     },
@@ -484,6 +495,7 @@ const ChartDefaults: ChartOptions = {
      * @default    {highstock} x
      * @since      3.0
      * @product    highcharts highstock gantt
+     * @deprecated
      * @validvalue ["x", "y", "xy"]
      * @apioption  chart.pinchType
      */
@@ -495,6 +507,13 @@ const ChartDefaults: ChartOptions = {
      * are required to style the chart. The default style sheet is
      * available from `https://code.highcharts.com/css/highcharts.css`.
      *
+     * [Read more in the docs](https://www.highcharts.com/docs/chart-design-and-style/style-by-css)
+     * on what classes and variables are available.
+     *
+     * @sample highcharts/css/colors
+     *         Color theming with CSS
+     * @sample highcharts/css/prefers-color-scheme
+     *         Dynamic theme based on system settings
      * @type       {boolean}
      * @default    false
      * @since      7.0
@@ -518,7 +537,7 @@ const ChartDefaults: ChartOptions = {
     /**
      * In styled mode, this sets how many colors the class names
      * should rotate between. With ten colors, series (or points) are
-     * given class names like `highcharts-color-0`, `highcharts-color-0`
+     * given class names like `highcharts-color-0`, `highcharts-color-1`
      * [...] `highcharts-color-9`. The equivalent in non-styled mode
      * is to set colors using the [colors](#colors) setting.
      *
@@ -534,21 +553,9 @@ const ChartDefaults: ChartOptions = {
      * performance, especially with bigger sets of data.
      *
      * @type       {boolean}
-     * @since      next
+     * @since 10.1.0
      */
     allowMutatingData: true,
-
-    /**
-     * Alias of `type`.
-     *
-     * @sample {highcharts} highcharts/chart/defaultseriestype/
-     *         Bar
-     *
-     * @deprecated
-     *
-     * @product highcharts
-     */
-    defaultSeriesType: 'line',
 
     /**
      * If true, the axes will scale to the remaining visible series once
@@ -613,6 +620,9 @@ const ChartDefaults: ChartOptions = {
     /**
      * The button that appears after a selection zoom, allowing the user
      * to reset zoom.
+     *
+     * @since      2.2
+     * @deprecated 10.2.1
      */
     resetZoomButton: {
 
@@ -625,10 +635,9 @@ const ChartDefaults: ChartOptions = {
          * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/
          *         Relative to the chart
          *
-         * @type       {Highcharts.ButtonRelativeToValue}
-         * @default    plot
-         * @since      2.2
-         * @apioption  chart.resetZoomButton.relativeTo
+         * @type      {Highcharts.ButtonRelativeToValue}
+         * @default   plot
+         * @apioption chart.resetZoomButton.relativeTo
          */
 
         /**
@@ -644,10 +653,11 @@ const ChartDefaults: ChartOptions = {
          *         Theming the button
          *
          * @type {Highcharts.SVGAttributes}
-         * @since 2.2
          */
         theme: {
-            /** @internal */
+            /**
+             * @internal
+             */
             zIndex: 6
         },
 
@@ -661,8 +671,7 @@ const ChartDefaults: ChartOptions = {
          * @sample {highmaps} highcharts/chart/resetzoombutton-position/
          *         Above the plot area
          *
-         * @type  {Highcharts.AlignObject}
-         * @since 2.2
+         * @type {Highcharts.AlignObject}
          */
         position: {
 
@@ -679,9 +688,9 @@ const ChartDefaults: ChartOptions = {
             /**
              * The vertical alignment of the button.
              *
-             * @type       {Highcharts.VerticalAlignValue}
-             * @default    top
-             * @apioption  chart.resetZoomButton.position.verticalAlign
+             * @type      {Highcharts.VerticalAlignValue}
+             * @default   top
+             * @apioption chart.resetZoomButton.position.verticalAlign
              */
 
             /**
@@ -718,7 +727,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
      *
-     * @type      {boolean|Highcharts.CSSObject}
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @default   false
      * @apioption chart.plotShadow
      */
@@ -762,11 +771,9 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/reflow-false/
      *         False
      *
-     * @type      {boolean}
-     * @default   true
      * @since     2.1
-     * @apioption chart.reflow
      */
+    reflow: true,
 
     /**
      * The HTML element where the chart will be rendered. If it is a string,
@@ -801,6 +808,20 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
+     * Whether to apply a drop shadow to the global series group. This causes
+     * all the series to have the same shadow. Contrary to the `series.shadow`
+     * option, this prevents items from casting shadows on each other, like for
+     * others series in a stack. The shadow can be an object configuration
+     * containing `color`, `offsetX`, `offsetY`, `opacity` and `width`.
+     *
+     * @sample highcharts/chart/seriesgroupshadow/ Shadow
+     *
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
+     * @default   false
+     * @apioption chart.shadow
+     */
+
+    /**
      * Whether to apply a drop shadow to the outer chart area. Requires
      * that backgroundColor be set. The shadow can be an object
      * configuration containing `color`, `offsetX`, `offsetY`, `opacity` and
@@ -813,7 +834,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/border/
      *         Chart border and shadow
      *
-     * @type      {boolean|Highcharts.CSSObject}
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @default   false
      * @apioption chart.shadow
      */
@@ -912,14 +933,19 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
-     * Additional CSS styles to apply inline to the container `div`. Note
-     * that since the default font styles are applied in the renderer, it
-     * is ignorant of the individual chart options and must be set globally.
+     * Additional CSS styles to apply inline to the container `div` and the root
+     * SVG.
+     *
+     * Since v11, the root font size is 1rem by default, and all child element
+     * are given a relative `em` font size by default. This allows implementers
+     * to control all the chart's font sizes by only setting the root level.
      *
      * @see    In styled mode, general chart styles can be set with the
      *         `.highcharts-root` class.
      * @sample {highcharts} highcharts/chart/style-serif-font/
      *         Using a serif type font
+     * @sample {highcharts} highcharts/members/relative-font-size/
+     *         Relative font sizes
      * @sample {highcharts} highcharts/css/em/
      *         Styled mode with relative font sizes
      * @sample {highstock} stock/chart/style/
@@ -928,7 +954,7 @@ const ChartDefaults: ChartOptions = {
      *         Using a serif type font
      *
      * @type      {Highcharts.CSSObject}
-     * @default   {"fontFamily": "\"Lucida Grande\", \"Lucida Sans Unicode\", Verdana, Arial, Helvetica, sans-serif","fontSize":"12px"}
+     * @default   {"fontFamily": Helvetica, Arial, sans-serif","fontSize":"1rem"}
      * @apioption chart.style
      */
 
@@ -954,6 +980,7 @@ const ChartDefaults: ChartOptions = {
      * @since      2.1.0
      * @apioption  chart.type
      */
+    type: 'line',
 
     /**
      * Decides in what dimensions the user can zoom by dragging the mouse.
@@ -969,6 +996,8 @@ const ChartDefaults: ChartOptions = {
      *         Y
      * @sample {highcharts} highcharts/chart/zoomtype-xy/
      *         Xy
+     * @sample {highcharts} highcharts/chart/zoomtype-polar/
+     *         Zoom on polar chart
      * @sample {highstock} stock/demo/basic-line/
      *         None by default
      * @sample {highstock} stock/chart/zoomtype-x/
@@ -982,6 +1011,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type       {string}
      * @validvalue ["x", "y", "xy"]
+     * @deprecated
      * @apioption  chart.zoomType
      */
 
@@ -992,13 +1022,157 @@ const ChartDefaults: ChartOptions = {
      * However, `zoomBySingleTouch` will interfere with touch-dragging the
      * chart to read the tooltip. And especially when vertical zooming is
      * enabled, it will make it hard to scroll vertically on the page.
-     * @since 9.0.0
+     * @since      9.0.0
      * @sample     highcharts/chart/zoombysingletouch
      *             Zoom by single touch enabled, with buttons to toggle
      * @product    highcharts highstock gantt
+     * @deprecated
      */
     zoomBySingleTouch: false,
 
+    /**
+     * Chart zooming options.
+     * @since 10.2.1
+     */
+    zooming: {
+        /**
+         * Equivalent to [type](#chart.zooming.type), but for multitouch
+         * gestures only. By default, the `pinchType` is the same as the
+         * `type` setting. However, pinching can be enabled separately in
+         * some cases, for example in stock charts where a mouse drag pans the
+         * chart, while pinching is enabled. When [tooltip.followTouchMove](
+         * #tooltip.followTouchMove) is true, pinchType only applies to
+         * two-finger touches.
+         *
+         * @type       {string}
+         * @default    {highcharts} undefined
+         * @default    {highstock} x
+         * @product    highcharts highstock gantt
+         * @validvalue ["x", "y", "xy"]
+         * @apioption  chart.zooming.pinchType
+         */
+
+        /**
+         * Decides in what dimensions the user can zoom by dragging the mouse.
+         * Can be one of `x`, `y` or `xy`.
+         *
+         * @declare    Highcharts.OptionsChartZoomingTypeValue
+         * @type       {string}
+         * @default    {highcharts} undefined
+         * @product    highcharts highstock gantt
+         * @validvalue ["x", "y", "xy"]
+         * @apioption  chart.zooming.type
+         */
+
+        /**
+         * Set a key to hold when dragging to zoom the chart. This is useful to
+         * avoid zooming while moving points. Should be set different than
+         * [chart.panKey](#chart.panKey).
+         *
+         * @type       {string}
+         * @default    {highcharts} undefined
+         * @validvalue ["alt", "ctrl", "meta", "shift"]
+         * @requires   modules/draggable-points
+         * @apioption  chart.zooming.key
+         */
+
+        /**
+         * Enables zooming by a single touch, in combination with
+         * [chart.zooming.type](#chart.zooming.type). When enabled, two-finger
+         * pinch will still work as set up by [chart.zooming.pinchType]
+         * (#chart.zooming.pinchType). However, `singleTouch` will interfere
+         * with touch-dragging the chart to read the tooltip. And especially
+         * when vertical zooming is enabled, it will make it hard to scroll
+         * vertically on the page.
+         *
+         * @sample  highcharts/chart/zoombysingletouch
+         *          Zoom by single touch enabled, with buttons to toggle
+         *
+         * @product highcharts highstock gantt
+         */
+        singleTouch: false,
+
+        /**
+         * The button that appears after a selection zoom, allowing the user
+         * to reset zoom.
+         */
+        resetButton: {
+
+            /**
+             * What frame the button placement should be related to. Can be
+             * either `plotBox` or `spacingBox`.
+             *
+             * @sample {highcharts} highcharts/chart/resetzoombutton-relativeto/
+             *         Relative to the chart
+             * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/
+             *         Relative to the chart
+             *
+             * @type      {Highcharts.ButtonRelativeToValue}
+             * @default   plot
+             * @apioption chart.zooming.resetButton.relativeTo
+             */
+
+            /**
+             * A collection of attributes for the button. The object takes SVG
+             * attributes like `fill`, `stroke`, `stroke-width` or `r`, the
+             * border radius. The theme also supports `style`, a collection of
+             * CSS properties for the text. Equivalent attributes for the hover
+             * state are given in `theme.states.hover`.
+             *
+             * @sample {highcharts} highcharts/chart/resetzoombutton-theme/
+             *         Theming the button
+             * @sample {highstock} highcharts/chart/resetzoombutton-theme/
+             *         Theming the button
+             *
+             * @type  {Highcharts.SVGAttributes}
+             * @since 10.2.1
+             */
+            theme: {
+                /** @internal */
+                zIndex: 6
+            },
+
+            /**
+             * The position of the button.
+             *
+             * @sample {highcharts} highcharts/chart/resetzoombutton-position/
+             *         Above the plot area
+             * @sample {highstock} highcharts/chart/resetzoombutton-position/
+             *         Above the plot area
+             * @sample {highmaps} highcharts/chart/resetzoombutton-position/
+             *         Above the plot area
+             *
+             * @type  {Highcharts.AlignObject}
+             * @since 10.2.1
+             */
+            position: {
+
+                /**
+                 * The horizontal alignment of the button.
+                 */
+                align: 'right',
+
+                /**
+                 * The horizontal offset of the button.
+                 */
+                x: -10,
+
+                /**
+                 * The vertical alignment of the button.
+                 *
+                 * @type       {Highcharts.VerticalAlignValue}
+                 * @default    top
+                 * @apioption  chart.zooming.resetButton.position.verticalAlign
+                 */
+
+                /**
+                 * The vertical offset of the button.
+                 */
+                y: 10
+            }
+        }
+
+    },
     /**
      * An explicit width for the chart. By default (when `null`) the width
      * is calculated from the offset width of the containing element.
@@ -1127,8 +1301,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @see In styled mode, a plot background image can be set with the
      *      `.highcharts-plot-background` class and a [custom pattern](
-     *      https://www.highcharts.com/docs/chart-design-and-style/
-     *      gradients-shadows-and-patterns).
+     *      https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
      *
      * @sample {highcharts} highcharts/chart/plotbackgroundimage/
      *         Skies

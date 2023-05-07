@@ -46,8 +46,8 @@ To create labels for plot bands or lines you can add the object "label":
       ...,
       label: { 
         text: 'I am a label', // Content of the label. 
-        align: 'left', // Positioning of the label. 
-        Default to center. x: +10 // Amount of pixels the label will be repositioned according to the alignment. 
+        align: 'left', // Positioning of the label. Default to center.
+        x: +10 // Amount of pixels the label will be repositioned according to the alignment. 
       }
     }
 
@@ -81,7 +81,7 @@ Dynamically update
 
 After render time a chart can be updated with new plot bands or lines, or if you want some can be removed. This is done by using the functions addPlotBand(), addPlotLine(), removePlotBand() or removePlotLine(). With use of these functions the chart allows for interaction with the user. 
 
-When removing a plot band or line it is critical that the object which should be removed has been given an id. Without it the object can not be recognized and the function can not be executed.
+When removing a plot band or line it is critical that the object which should be removed has been given an id. Without it the object cannot be recognized and the function cannot be executed.
 
 Some simple examples of how a plot band can be [added](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/axis-addplotband/) to the chart and how it can be [removed](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/xaxis/plotbands-id/).
 

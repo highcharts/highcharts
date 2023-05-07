@@ -1,20 +1,20 @@
 /**
  * The MIT License (MIT)
- *
+ * 
  * Copyright (c) 2015-2021 yWorks GmbH
  * Copyright (c) 2013-2015 by Vitaly Puzrin
- *
- *
+ * 
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -933,8 +933,9 @@
     }
     // returns an attribute of a node, either from the node directly or from css
     function getAttribute(node, styleSheets, propertyNode, propertyCss) {
+        var _a;
         if (propertyCss === void 0) { propertyCss = propertyNode; }
-        var attribute = node.style.getPropertyValue(propertyCss);
+        var attribute = (_a = node.style) === null || _a === void 0 ? void 0 : _a.getPropertyValue(propertyCss);
         if (attribute) {
             return attribute;
         }
@@ -1334,7 +1335,7 @@
     // export
     // ======
 
-    var C__Users_hollaender_Documents_github_svg2pdf_node_modules_fontFamilyPapandreou = {
+    var C__VCS_svg2pdf_node_modules_fontFamilyPapandreou = {
       parse:     parse,
       stringify: stringify,
     };
@@ -2049,7 +2050,7 @@
         }
         var fontFamily = getAttribute(domNode, context.styleSheets, 'font-family');
         if (fontFamily) {
-            var fontFamilies = C__Users_hollaender_Documents_github_svg2pdf_node_modules_fontFamilyPapandreou.parse(fontFamily);
+            var fontFamilies = C__VCS_svg2pdf_node_modules_fontFamilyPapandreou.parse(fontFamily);
             context.attributeState.fontFamily = findFirstAvailableFontFamily(context.attributeState, fontFamilies, context);
         }
         var fontSize = getAttribute(domNode, context.styleSheets, 'font-size');
@@ -4261,26 +4262,42 @@
     // Convert processed SVG Path back to string
     //
     SvgPath.prototype.toString = function () {
-      var elements = [], skipCmd, cmd;
+      var result = '', prevCmd = '', cmdSkipped = false;
 
       this.__evaluateStack();
 
-      for (var i = 0; i < this.segments.length; i++) {
-        // remove repeating commands names
-        cmd = this.segments[i][0];
-        skipCmd = i > 0 && cmd !== 'm' && cmd !== 'M' && cmd === this.segments[i - 1][0];
-        elements = elements.concat(skipCmd ? this.segments[i].slice(1) : this.segments[i]);
+      for (var i = 0, len = this.segments.length; i < len; i++) {
+        var segment = this.segments[i];
+        var cmd = segment[0];
+
+        // Command not repeating => store
+        if (cmd !== prevCmd || cmd === 'm' || cmd === 'M') {
+          // workaround for FontForge SVG importing bug, keep space between "z m".
+          if (cmd === 'm' && prevCmd === 'z') result += ' ';
+          result += cmd;
+
+          cmdSkipped = false;
+        } else {
+          cmdSkipped = true;
+        }
+
+        // Store segment params
+        for (var pos = 1; pos < segment.length; pos++) {
+          var val = segment[pos];
+          // Space can be skipped
+          // 1. After command (always)
+          // 2. For negative value (with '-' at start)
+          if (pos === 1) {
+            if (cmdSkipped && val >= 0) result += ' ';
+          } else if (val >= 0) result += ' ';
+
+          result += val;
+        }
+
+        prevCmd = cmd;
       }
 
-      return elements.join(' ')
-        // Optimizations: remove spaces around commands & before `-`
-        //
-        // We could also remove leading zeros for `0.5`-like values,
-        // but their count is too small to spend time for.
-        .replace(/ ?([achlmqrstvz]) ?/gi, '$1')
-        .replace(/ \-/g, '-')
-        // workaround for FontForge SVG importing bug
-        .replace(/zm/g, 'z m');
+      return result;
     };
 
 
@@ -4744,8 +4761,7 @@
             var prevX;
             var prevY;
             svgPath.iterate(function (seg) {
-                var type = seg[0];
-                switch (type) {
+                switch (seg[0]) {
                     case 'M':
                         path.moveTo(seg[1], seg[2]);
                         break;
@@ -4770,7 +4786,7 @@
                         path.close();
                         break;
                 }
-                switch (type) {
+                switch (seg[0]) {
                     case 'M':
                     case 'L':
                         prevX = seg[1];

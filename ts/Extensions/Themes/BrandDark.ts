@@ -22,9 +22,9 @@
 
 import type Options from '../../Core/Options';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
-import D from '../../Core/DefaultOptions.js';
+
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { createElement } = U;
 
@@ -97,11 +97,6 @@ namespace BrandDarkTheme {
             itemHoverStyle: {
                 fontWeight: '700',
                 color: '#fff'
-            }
-        },
-        labels: {
-            style: {
-                color: '#707073'
             }
         },
         plotOptions: {

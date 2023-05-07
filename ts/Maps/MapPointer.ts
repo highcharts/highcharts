@@ -11,7 +11,9 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type MapPoint from '../Series/Map/MapPoint';
 import type PointerEvent from '../Core/PointerEvent';
+
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -175,7 +177,7 @@ wrap(Pointer.prototype, 'zoomOption', function (
         (mapNavigation as any).enableTouchZoom,
         (mapNavigation as any).enabled)
     ) {
-        this.chart.options.chart.pinchType = 'xy';
+        this.chart.options.chart.zooming.pinchType = 'xy';
     }
 
     proceed.apply(this, [].slice.call(arguments, 1));

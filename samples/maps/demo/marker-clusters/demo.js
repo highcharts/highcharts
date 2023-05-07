@@ -10,11 +10,13 @@
                 map: topology
             },
             title: {
-                text: 'European Train Stations Near Airports'
+                text: 'European Train Stations Near Airports',
+                align: 'left'
             },
             subtitle: {
                 text: 'Source: <a href="https://github.com/trainline-eu/stations">' +
-                    'github.com/trainline-eu/stations</a>'
+                    'github.com/trainline-eu/stations</a>',
+                align: 'left'
             },
             mapNavigation: {
                 enabled: true
@@ -74,16 +76,39 @@
                 }
             },
             series: [{
-                name: 'Basemap',
+                name: 'Europe',
+                accessibility: {
+                    exposeAsGroupOnly: true
+                },
                 borderColor: '#A0A0A0',
                 nullColor: 'rgba(177, 244, 177, 0.5)',
                 showInLegend: false
             }, {
                 type: 'mappoint',
                 enableMouseTracking: true,
+                accessibility: {
+                    point: {
+                        descriptionFormatter: function (point) {
+                            if (point.isCluster) {
+                                return 'Grouping of ' + point.clusterPointsAmount + ' points.';
+                            }
+                            return point.name + ', country code: ' + point.country + '.';
+                        }
+                    }
+                },
                 colorKey: 'clusterPointsAmount',
                 name: 'Cities',
-                data: data
+                data: data,
+                color: Highcharts.getOptions().colors[5],
+                marker: {
+                    lineWidth: 1,
+                    lineColor: '#fff',
+                    symbol: 'mapmarker',
+                    radius: 8
+                },
+                dataLabels: {
+                    verticalAlign: 'top'
+                }
             }]
         });
     });

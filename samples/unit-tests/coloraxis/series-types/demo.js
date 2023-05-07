@@ -1,5 +1,5 @@
 QUnit.module('Color axis for series types', function () {
-    Object.keys(Highcharts.seriesTypes)
+    Object.keys(Highcharts.Series.types)
         .sort()
         .forEach(function (type) {
             if (
@@ -16,9 +16,11 @@ QUnit.module('Color axis for series types', function () {
                     'sunburst',
                     'sankey',
                     'dependencywheel',
+                    'treegraph',
                     'arcdiagram',
                     'venn',
-                    'wordcloud'
+                    'wordcloud',
+                    'flowmap'
                 ].includes(type)
             ) {
                 QUnit.test('Color axis for ' + type, function (assert) {
@@ -54,6 +56,11 @@ QUnit.module('Color axis for series types', function () {
                         cfg.series[0].data = [
                             { start: 0, end: 4, y: 1 },
                             { start: 2, end: 5, y: 2 }
+                        ];
+                    } else if (type === 'geoheatmap') {
+                        cfg.series[0].data = [
+                            { lat: 0, lon: 10, value: 1 },
+                            { lat: 10, lon: 0, value: 2 }
                         ];
                     }
 

@@ -12,7 +12,7 @@ const gulp = require('gulp');
 
 const WATCH_GLOBS = [
     'js/**/*.js',
-    'css/**/*.scss'
+    'css/**/*.css'
 ];
 
 /* *
@@ -27,7 +27,7 @@ const WATCH_GLOBS = [
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+async function task() {
 
     const argv = require('yargs').argv;
     const fsLib = require('./lib/fs');
@@ -46,19 +46,22 @@ function task() {
     let cssHash;
 
     gulp
-        .watch(WATCH_GLOBS, done => {
+        .watch(WATCH_GLOBS, { queue: true }, done => {
 
             const buildTasks = [];
             const newJsHash = fsLib.getDirectoryHash('js', true);
 
-            if (newJsHash !== jsHash) {
+            if (newJsHash !== jsHash || argv.force || argv.dts) {
                 jsHash = newJsHash;
                 buildTasks.push('scripts-js');
+                if (argv.dts) {
+                    buildTasks.task('jsdoc-dts')();
+                }
             }
 
             const newCssHash = fsLib.getDirectoryHash('css', true);
 
-            if (newCssHash !== cssHash) {
+            if (newCssHash !== cssHash || argv.force) {
                 cssHash = newCssHash;
                 buildTasks.push('scripts-css');
             }
@@ -80,9 +83,13 @@ function task() {
 
     processLib.isRunning('scripts-watch', true);
 
-    processLib.exec('npx tsc --build ts --watch');
+    if (argv.dts) {
+        await gulp.task('jsdoc-dts')();
+    }
 
-    return Promise.resolve();
+    return processLib
+        .exec('npx tsc --build ts --watch')
+        .then(() => void 0);
 }
 
 require('./scripts-css.js');

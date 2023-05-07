@@ -15,6 +15,15 @@
             text: 'Europe time zones'
         },
 
+        accessibility: {
+            series: {
+                descriptionFormat: 'Timezone {series.name} with {series.points.length} countries.'
+            },
+            point: {
+                valueDescriptionFormat: '{point.name}.'
+            }
+        },
+
         legend: {
             enabled: true
         },

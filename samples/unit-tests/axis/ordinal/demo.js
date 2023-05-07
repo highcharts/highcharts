@@ -90,10 +90,10 @@ QUnit.test(
                 },
                 series: [
                     {
-                        data: usdeur
+                        data: [1, 2, 3, 4]
                     },
                     {
-                        data: usdeur
+                        data: [4, 3, 4, 5]
                     }
                 ]
             }),
@@ -382,7 +382,7 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     assert.strictEqual(
         lin2val(380 / axis.transA + axis.min),
         7,
-        `For the pixel value equal to last point, 
+        `For the pixel value equal to last point,
         the function should return the value for that point.`
     );
     assert.strictEqual(
@@ -493,7 +493,7 @@ QUnit.test('val2lin- unit tests', function (assert) {
     );
 });
 
-QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
+QUnit.test('Ordinal axis, data grouping and boost module, #14055.', assert => {
     const chart = Highcharts.stockChart('container', {
         series: [{
             data: [
@@ -519,7 +519,8 @@ QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
         the default options, the data should not be grouped.`
     );
     assert.notOk(
-        chart.series[0].boostClipRect,
+        chart.series[0].boost &&
+        chart.series[0].boost.clipRect,
         `When the boost module is present and the chart is initiated with
         the default options, the chart should not be boosted.`
     );
@@ -533,7 +534,9 @@ QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
         ordinal positions should be still calculated.`
     );
     assert.notOk(
-        chart.series[0].boostClipRect && chart.series[0].currentDataGrouping,
+        chart.series[0].boost &&
+        chart.series[0].boost.clipRect &&
+        chart.series[0].currentDataGrouping,
         `After updating the boostThreshold,
         the chart should not be boosted nor grouped.`
     );
@@ -554,11 +557,11 @@ QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
     );
     assert.notOk(
         (
-            chart.series[0].boostClipRect ||
-            chart.boostClipRect
+            (chart.series[0].boost && chart.series[0].boost.clipRect) ||
+            (chart.boost && chart.boost.clipRect)
         ) &&
         chart.series[0].currentDataGrouping,
-        `When data grouping is enabled (forced), chart should not be boosted.`
+        'When data grouping is enabled (forced), chart should not be boosted.'
     );
 
     chart.series[0].update({
@@ -569,10 +572,67 @@ QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
     assert.ok(
         chart.xAxis[0].ordinal.positions.length &&
         (
-            chart.series[0].boostClipRect ||
-            chart.boostClipRect
+            chart.series[0].boost.clipRect ||
+            chart.boost.clipRect
         ),
         `Only after explicitly disabling the data grouping
         chart should be boosted.`
+    );
+});
+
+QUnit.test('Circular translation, #17128.', assert => {
+    const chart = Highcharts.stockChart('container', {
+            series: [{
+                data: [
+                    [548935806499, 95.82],
+                    [1548936121889, 95.84],
+                    [1548936895949, 95.75],
+                    [1548937941785, 95.48],
+                    [1548938881593, 95.6],
+                    [1548939834796, 95.37],
+                    [1548940821273, 95.16],
+                    [1548941760541, 95.15],
+                    [1548942617180, 94.9],
+                    [1548943265472, 95.04],
+                    [1548943953574, 94.93],
+                    [1548944604420, 94.94],
+                    [1548945157396, 95.19],
+                    [1548945448867, 94.92],
+                    [1548946059662, 94.98],
+                    [1548946666809, 95.17],
+                    [1548947190658, 95.38]
+                ]
+            }, {
+                type: 'scatter',
+                data: [
+                    [1548936121889, 90],
+                    [1548938881593, 95]
+                ]
+            }]
+        }),
+        x = Date.UTC(2019, 0, 31, 14, 30);
+
+
+    assert.strictEqual(
+        Highcharts.dateFormat(undefined, x),
+        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
+            chart.xAxis[0].toPixels(x))
+        ),
+        `When two series (line and scatter) are visible, circular translation of
+        the date should return the same value.`
+    );
+
+    chart.xAxis[0].setExtremes(
+        Date.UTC(2019, 0, 31, 14),
+        Date.UTC(2019, 0, 31, 15)
+    );
+
+    assert.strictEqual(
+        Highcharts.dateFormat(undefined, x),
+        Highcharts.dateFormat(undefined, chart.xAxis[0].toValue(
+            chart.xAxis[0].toPixels(x))
+        ),
+        `After zooming, when the scatterer series is not visible, a circular
+        translation of the date should return the same value.`
     );
 });

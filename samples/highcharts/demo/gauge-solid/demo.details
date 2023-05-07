@@ -7,4 +7,5 @@ tags:
   - Highcharts demo
 categories:
   - Gauges
+use_png_thumbnail: true
 ...

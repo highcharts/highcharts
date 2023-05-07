@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type { CMOOptions, CMOParamsOptions } from './CMOOptions';
@@ -15,12 +21,16 @@ import type CMOPoint from './CMOPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: { sma: SMAIndicator }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const { isNumber, merge } = U;
 
-/* eslint-enable require-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The CMO series type.
@@ -32,6 +42,13 @@ const { isNumber, merge } = U;
  * @augments Highcharts.Series
  */
 class CMOIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Chande Momentum Oscilator (CMO) technical indicator. This series
      * requires the `linkedTo` option to be set and should be loaded after
@@ -182,6 +199,7 @@ interface CMOIndicator {
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmo: typeof CMOIndicator;
@@ -197,6 +215,12 @@ SeriesRegistry.registerSeriesType('cmo', CMOIndicator);
  * */
 
 export default CMOIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `CMO` series. If the [type](#series.cmo.type) option is not

@@ -1,6 +1,6 @@
 Highcharts.stockChart('container', {
     chart: {
-        type: "line"
+        type: 'line'
     },
     navigator: {
         xAxis: {

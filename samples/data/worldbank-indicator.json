@@ -1,0 +1,273 @@
+[
+  {
+    "page": 1,
+    "pages": 1,
+    "per_page": 20,
+    "total": 20,
+    "sourceid": "2",
+    "sourcename": "World Development Indicators",
+    "lastupdated": "2022-09-16"
+  },
+  [
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2021",
+      "value": 5.80205675748027,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2020",
+      "value": -3.27121883332505,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2019",
+      "value": 2.61488211866134,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2018",
+      "value": 3.27664633561841,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2017",
+      "value": 3.37948986402805,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2016",
+      "value": 2.79889611375958,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2015",
+      "value": 3.08105934971097,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2014",
+      "value": 3.05591987112651,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2013",
+      "value": 2.81983804269656,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2012",
+      "value": 2.70716192149985,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2011",
+      "value": 3.32102422120026,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2010",
+      "value": 4.5322791954228,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2009",
+      "value": -1.32583191395517,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2008",
+      "value": 2.06639525697196,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2007",
+      "value": 4.4774071410819,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2006",
+      "value": 4.47622798601941,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2005",
+      "value": 4.04314225074009,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2004",
+      "value": 4.49356217377881,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2003",
+      "value": 3.15084653658894,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    },
+    {
+      "indicator": {
+        "id": "NY.GDP.MKTP.KD.ZG",
+        "value": "GDP growth (annual %)"
+      },
+      "country": { "id": "1W", "value": "World" },
+      "countryiso3code": "WLD",
+      "date": "2002",
+      "value": 2.32890492148626,
+      "unit": "",
+      "obs_status": "",
+      "decimal": 1
+    }
+  ]
+]

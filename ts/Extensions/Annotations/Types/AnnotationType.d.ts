@@ -13,24 +13,27 @@
  *  Imports
  *
  * */
-import type Annotation from '../Annotations';
+
+import type Annotation from '../Annotation';
 
 /* *
  *
  *  Declarations
  *
  * */
+
 export type AnnotationType = AnnotationTypeRegistry[
     keyof AnnotationTypeRegistry
 ]['prototype'];
 
-/* *
- *
- *  Export
- *
- * */
 export interface AnnotationTypeRegistry {
     [key: string]: typeof Annotation;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default AnnotationType;

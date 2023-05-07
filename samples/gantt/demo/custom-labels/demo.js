@@ -21,6 +21,20 @@ Highcharts.ganttChart('container', {
         outside: true
     },
 
+    accessibility: {
+        point: {
+            valueDescriptionFormat: '{point.yCategory}, assigned to {point.assignee} from {point.x:%Y-%m-%d} to {point.x2:%Y-%m-%d}.'
+        }
+    },
+
+    lang: {
+        accessibility: {
+            axis: {
+                xAxisDescriptionPlural: 'The chart has a two-part X axis showing time in both week numbers and days.'
+            }
+        }
+    },
+
     series: [{
         name: 'Project 1',
         data: [{
@@ -33,7 +47,10 @@ Highcharts.ganttChart('container', {
             end: Date.UTC(2018, 11, 5),
             y: 1,
             assignee: 'oysteinmoseng',
-            fontSymbol: 'exclamation'
+            fontSymbol: 'exclamation',
+            accessibility: {
+                description: 'Exclamation symbol.'
+            }
         }, {
             start: Date.UTC(2018, 11, 8),
             end: Date.UTC(2018, 11, 9),
@@ -49,7 +66,10 @@ Highcharts.ganttChart('container', {
             end: Date.UTC(2018, 11, 23),
             y: 2,
             assignee: 'TorsteinHonsi',
-            fontSymbol: 'smile-o'
+            fontSymbol: 'smile-o',
+            accessibility: {
+                description: 'Smiling face symbol.'
+            }
         }],
         dataLabels: [{
             enabled: true,

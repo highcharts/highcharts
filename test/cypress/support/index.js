@@ -19,7 +19,7 @@ Cypress.Commands.add('chart', () =>
         const H = win.Highcharts;
         if (H) {
             if (H.charts[0]) {
-                resolve(H.charts[0]);
+                window.setTimeout(() => resolve(H.charts[0]), 100);
             } else {
                 const unbind = H.addEvent(H.Chart, 'load', function() {
                     unbind();
@@ -27,7 +27,7 @@ Cypress.Commands.add('chart', () =>
                 });
             }
         } else {
-            reject(new Error('No Highcharts :('));
+            reject(new Error('Global Highcharts namespace is missing.'));
         }
     }))
 );
@@ -66,11 +66,6 @@ Cypress.Commands.add(
         // Keep the dragged element as the subject
         cy.wrap(subject);
     }
-);
-
-Cypress.Commands.add('openIndicators', () =>
-    cy.get('.highcharts-indicators .highcharts-menu-item-btn')
-        .click()
 );
 
 Cypress.Commands.add('selectIndicator', (indicator) =>

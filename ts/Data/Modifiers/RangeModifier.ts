@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2021 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -19,8 +19,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
-import type JSON from '../../Core/JSON';
+import type DataEvent from '../DataEvent';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -69,7 +68,9 @@ class RangeModifier extends DataModifier {
      * @param {RangeModifier.Options} [options]
      * Options to configure the range modifier.
      */
-    public constructor(options?: DeepPartial<RangeModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<RangeModifier.Options>
+    ) {
         super();
 
         this.options = merge(RangeModifier.defaultOptions, options);
@@ -98,7 +99,7 @@ class RangeModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -106,7 +107,7 @@ class RangeModifier extends DataModifier {
      */
     public modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifier = this;
 
@@ -193,15 +194,21 @@ class RangeModifier extends DataModifier {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace RangeModifier {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Options to configure the modifier.
@@ -220,10 +227,9 @@ namespace RangeModifier {
     /**
      * Options to configure a range.
      */
-    export interface RangeOptions extends JSON.Object {
+    export interface RangeOptions {
         /**
-         * Column containing the filtered values. This can be an index or a
-         * name.
+         * Column containing the values to filter.
          */
         column: string;
         /**
@@ -240,21 +246,21 @@ namespace RangeModifier {
 
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
-DataModifier.addModifier(RangeModifier);
-
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Range: typeof RangeModifier;
     }
 }
 
+DataModifier.registerType('Range', RangeModifier);
+
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

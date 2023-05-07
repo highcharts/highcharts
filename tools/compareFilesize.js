@@ -1,9 +1,8 @@
 /* eslint-disable func-style, no-confusing-arrow */
-const { getBuildScripts } = require('./build.js');
 const { compile } = require('./compile.js');
 const { sync: gzipSize } = require('gzip-size');
 const { getFile, writeFilePromise: writeFile } =
-    require('highcharts-assembler/src/utilities.js');
+    require('@highcharts/highcharts-assembler/src/utilities.js');
 const { join, resolve } = require('path');
 
 // TODO: write JSDoc
@@ -113,7 +112,6 @@ const getFileSizes = (files, out) => {
     );
 
     return Promise.resolve()
-        .then(getBuildScripts({ files }).fnFirstBuild)
         .then(() => compile(files, sourceFolder))
         .then(() => getSizeOfSourceCompiledAndGzip(files))
         .then(result => outputResult(result, out));

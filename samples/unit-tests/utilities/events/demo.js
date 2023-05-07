@@ -487,7 +487,7 @@
      * The counter is stored as innerHTML in a div.
      */
     QUnit.test('DomElementEventRemoveHandler', function (assert) {
-        /*:DOC += <div id="o">0</div>*/
+        /* :DOC += <div id="o">0</div>*/
         $('<div id="o">0</div>').appendTo(document.body);
         var o = document.getElementById('o'),
             f = function () {

@@ -13,4 +13,16 @@
  * */
 
 'use strict';
-import '../../Extensions/Boost/Boost.js';
+
+import Highcharts from '../../Core/Globals.js';
+import Boost from '../../Extensions/Boost/Boost.js';
+
+const G: AnyRecord = Highcharts;
+G.hasWebGLSupport = Boost.hasWebGLSupport;
+
+Boost.compose(
+    G.Chart,
+    G.Series,
+    G.seriesTypes,
+    G.Color
+);

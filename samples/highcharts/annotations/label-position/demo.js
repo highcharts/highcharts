@@ -19,15 +19,15 @@ Highcharts.chart('container', {
 
     annotations: [{
         labels: [{
-            //verticalAlign: 'top', top by default
+            // verticalAlign: 'top', top by default
             align: 'left',
             point: '0'
         }, {
-            //verticalAlign: 'top', top by default
+            // verticalAlign: 'top', top by default
             align: 'right',
             point: '1'
         }, {
-            //align: 'center', center by default
+            // align: 'center', center by default
             verticalAlign: 'top',
             point: '2'
         }, {

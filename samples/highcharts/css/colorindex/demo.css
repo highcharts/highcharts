@@ -1,0 +1,14 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+#container {
+    height: 400px;
+    max-width: 800px;
+    min-width: 320px;
+    margin: 0 auto;
+}
+
+:root {
+    --highcharts-color-0: green;
+    --highcharts-color-1: orange;
+    --highcharts-color-2: red;
+}

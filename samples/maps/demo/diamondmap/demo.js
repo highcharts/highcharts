@@ -24,6 +24,13 @@ Highcharts.chart('container', {
         '#9f6a66'
     ],
 
+    accessibility: {
+        point: {
+            valueDescriptionFormat: '{point.name}. {point.desc}'
+        },
+        typeDescription: 'Idea map, laid out as tiles with the main idea in the centre. Steps related to the main idea are shown as additional tiles circling the centre tile.'
+    },
+
     xAxis: {
         visible: false
     },

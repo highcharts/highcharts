@@ -1,10 +1,9 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json', function (data) {
 
     var year = new Date(data[data.length - 1][0]).getFullYear(); // Get year of last data point
 
     // Create the chart
     Highcharts.stockChart('container', {
-
 
         rangeSelector: {
             selected: 4
@@ -17,6 +16,15 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         yAxis: {
             title: {
                 text: 'Exchange rate'
+            }
+        },
+
+        plotOptions: {
+            flags: {
+                accessibility: {
+                    exposeAsGroupOnly: true,
+                    description: 'Flagged events.'
+                }
             }
         },
 

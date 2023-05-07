@@ -17,10 +17,10 @@ import type {
 } from '../EMA/EMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 export interface APOOptions extends EMAOptions {
     params?: APOParamsOptions;
 }
@@ -30,9 +30,9 @@ export interface APOParamsOptions extends EMAParamsOptions {
 }
 
 /* *
-*
-*  Default Export
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default APOOptions;

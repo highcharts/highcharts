@@ -41,7 +41,8 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        valueSuffix: '%'
+        valueSuffix: '%',
+        stickOnContact: true
     },
 
     plotOptions: {
@@ -64,7 +65,7 @@ Highcharts.chart('container', {
             website: 'https://www.nvaccess.org',
             color: colors[2],
             accessibility: {
-                description: 'This is the most used screen reader in 2019'
+                description: 'This is the most used screen reader in 2019.'
             }
         }, {
             name: 'JAWS',
