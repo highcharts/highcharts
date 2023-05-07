@@ -309,19 +309,15 @@ class AreaSeries extends LineSeries {
                 area.isArea = true;
             }
 
-            if (!series.chart.styledMode) {
-                const colorWithOpacity = color(prop[2])
-                    .setOpacity(pick(options.fillOpacity, 0.75))
-                    .get();
-
-                attribs.fill = pick(prop[3], colorWithOpacity);
-
-                // if colorWithOpacity is the same as color
-                // it means that the color is "named" (ex. 'red', 'blue', etc.)
-                if (!prop[3] && colorWithOpacity === prop[2]) {
-                    attribs['fill-opacity'] = pick(options.fillOpacity, 0.75);
-                }
+            // if there is fillColor defined for the area, set it
+            if (!series.chart.styledMode && prop[3]) {
+                attribs.fill = prop[3];
+            } else if (!series.chart.styledMode) {
+                // otherwise, we set it to the series color & add fill-opacity
+                attribs.fill = prop[2];
+                attribs['fill-opacity'] = pick(options.fillOpacity, 0.75);
             }
+
             area[verb](attribs);
 
             area.startX = areaPath.xMap;
