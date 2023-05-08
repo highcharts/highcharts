@@ -52,11 +52,13 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Daily sessions at www.highcharts.com'
+        text: 'Daily sessions at www.highcharts.com',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Source: Google Analytics'
+        text: 'Source: Google Analytics',
+        align: 'left'
     },
 
     xAxis: {

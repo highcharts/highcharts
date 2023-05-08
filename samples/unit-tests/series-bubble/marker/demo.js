@@ -176,9 +176,9 @@ QUnit.test('Bubble animation and async redraws (#13494)', assert => {
 });
 
 QUnit.test('Bubble with custom symbol markers, #17281.', function (assert) {
-    Highcharts.chart("container", {
+    const chart = Highcharts.chart('container', {
         series: [{
-            type: "bubble",
+            type: 'bubble',
             data: [
                 [1, 1, 1],
                 [2, 2, 2],
@@ -191,8 +191,9 @@ QUnit.test('Bubble with custom symbol markers, #17281.', function (assert) {
         }]
     });
 
-    assert.ok(
-        true,
+    assert.strictEqual(
+        typeof chart.series[0].points[0].graphic,
+        'undefined',
         `When the custom marker is set and the point is out of zThreshold, the
         symbol should not be displayed and there should be no errors.`
     );

@@ -25,9 +25,7 @@ import type {
 import type WMAPoint from './WMAPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
@@ -162,20 +160,20 @@ class WMAIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: WMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = params.period as any,
+        const period: number = params.period as any,
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen = yVal ? yVal.length : 0,
-            range = 1,
             xValue: number = xVal[0],
-            yValue: (number|Array<number>) = yVal[0],
-            WMA: Array<Array<number>> = [],
+            wma: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
+            yData: Array<number> = [];
+
+        let range = 1,
             index = -1,
             i: (number|undefined),
-            points: Array<[number, (number|Array<number>)]>,
-            WMAPoint: (Array<number>|undefined);
+            wmaPoint: (Array<number>|undefined),
+            yValue: (number|Array<number>) = yVal[0];
 
         if (xVal.length < period) {
             return;
@@ -186,8 +184,10 @@ class WMAIndicator extends SMAIndicator {
             index = (params.index as any);
             yValue = yVal[0][index];
         }
+
         // Starting point
-        points = [[xValue, yValue]];
+        const points: Array<[number, (number|Array<number>)]> =
+            [[xValue, yValue]];
 
         // Accumulate first N-points
         while (range !== period) {
@@ -197,25 +197,26 @@ class WMAIndicator extends SMAIndicator {
 
         // Calculate value one-by-one for each period in visible data
         for (i = range; i < yValLen; i++) {
-            WMAPoint = populateAverage(points, xVal, yVal, i);
-            WMA.push(WMAPoint);
-            xData.push(WMAPoint[0]);
-            yData.push(WMAPoint[1]);
+            wmaPoint = populateAverage(points, xVal, yVal, i);
+            wma.push(wmaPoint);
+            xData.push(wmaPoint[0]);
+            yData.push(wmaPoint[1]);
 
             accumulateAverage(points, xVal, yVal, i, index);
         }
 
-        WMAPoint = populateAverage(points, xVal, yVal, i);
-        WMA.push(WMAPoint);
-        xData.push(WMAPoint[0]);
-        yData.push(WMAPoint[1]);
+        wmaPoint = populateAverage(points, xVal, yVal, i);
+        wma.push(wmaPoint);
+        xData.push(wmaPoint[0]);
+        yData.push(wmaPoint[1]);
 
         return {
-            values: WMA,
+            values: wma,
             xData: xData,
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+
 }
 
 /* *

@@ -1,5 +1,5 @@
 QUnit.test('addOverlapToRelations', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennPrototype = Highcharts.Series.types.venn.prototype,
         addOverlapToSets = vennPrototype.utils.addOverlapToSets,
         data,
         set;
@@ -80,7 +80,7 @@ QUnit.test('addOverlapToRelations', function (assert) {
 });
 
 QUnit.test('getLabelWidth', assert => {
-    const { getLabelWidth } = Highcharts.seriesTypes.venn.prototype.utils;
+    const { getLabelWidth } = Highcharts.Series.types.venn.prototype.utils;
 
     // Start with an internal circle, and no external circles.
     const internal = [{ x: 0, y: 0, r: 100 }];
@@ -120,7 +120,7 @@ QUnit.test('getLabelWidth', assert => {
 });
 
 QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
-    var { prototype: vennPrototype } = Highcharts.seriesTypes.venn,
+    var { prototype: vennPrototype } = Highcharts.Series.types.venn,
         { getDistanceBetweenCirclesByOverlap } = vennPrototype.utils;
 
     assert.strictEqual(
@@ -165,7 +165,7 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
  * of any unexpected changes.
  */
 QUnit.test('layoutGreedyVenn', assert => {
-    const { prototype: vennPrototype } = Highcharts.seriesTypes.venn;
+    const { prototype: vennPrototype } = Highcharts.Series.types.venn;
     const { layoutGreedyVenn } = vennPrototype.utils;
 
     // Data from #9844
@@ -263,7 +263,7 @@ QUnit.test('layoutGreedyVenn', assert => {
 });
 
 QUnit.test('loss', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennPrototype = Highcharts.Series.types.venn.prototype,
         loss = vennPrototype.utils.loss,
         map = {
             A: { x: 0, y: 0, r: 3 },
@@ -325,13 +325,15 @@ QUnit.test('loss', function (assert) {
 });
 
 QUnit.test('processVennData', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennSeries = Highcharts.Series.types.venn,
+        vennPrototype = vennSeries.prototype,
         processVennData = vennPrototype.utils.processVennData,
+        defaultSplitter = vennSeries.splitter,
         data;
 
     // data is undefined.
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [],
         'should return empty array when data is not an array.'
     );
@@ -339,7 +341,7 @@ QUnit.test('processVennData', function (assert) {
     // values in data should be objects.
     data = [2];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [],
         'should ignore values in data that are not of type object.'
     );
@@ -360,7 +362,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['C'],
@@ -386,7 +388,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['B'],
@@ -417,10 +419,14 @@ QUnit.test('processVennData', function (assert) {
         {
             sets: ['B', 'A'],
             value: 2
+        },
+        {
+            sets: ['D,E'],
+            value: 2
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['A'],
@@ -433,9 +439,22 @@ QUnit.test('processVennData', function (assert) {
             {
                 sets: ['A', 'B'],
                 value: 2
+            },
+            {
+                sets: ['D,E'],
+                value: 2
+            },
+            {
+                sets: ['A', 'D,E'],
+                value: 0
+            },
+            {
+                sets: ['B', 'D,E'],
+                value: 0
             }
         ],
-        'should remove duplicate sets and just update existing values for the set.'
+        `should remove duplicate sets and just update existing values for the 
+        set; everything should work when commas inside strings.`
     );
 
     // add missing relations between sets as value = 0.
@@ -454,7 +473,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['A'],
@@ -496,7 +515,7 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [
             {
                 sets: ['A'],
@@ -514,14 +533,14 @@ QUnit.test('processVennData', function (assert) {
         }
     ];
     assert.deepEqual(
-        processVennData(data),
+        processVennData(data, defaultSplitter),
         [],
         'should remove relations that has invalid values in sets.'
     );
 });
 
 QUnit.test('sortByTotalOverlap', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+    var vennPrototype = Highcharts.Series.types.venn.prototype,
         sortByTotalOverlap = vennPrototype.utils.sortByTotalOverlap;
 
     assert.deepEqual(
@@ -544,7 +563,7 @@ QUnit.test('sortByTotalOverlap', function (assert) {
 });
 
 QUnit.module('nelder-mead', () => {
-    const vennUtils = Highcharts.seriesTypes.venn.prototype.utils;
+    const vennUtils = Highcharts.Series.types.venn.prototype.utils;
 
     QUnit.test('getCentroid', assert => {
         const { getCentroid } = vennUtils;
@@ -574,7 +593,7 @@ QUnit.module('nelder-mead', () => {
 });
 
 QUnit.module('geometry', () => {
-    const { geometry } = Highcharts.seriesTypes.venn.prototype.utils;
+    const { geometry } = Highcharts.Series.types.venn.prototype.utils;
 
     QUnit.test('getCenterOfPoints', function (assert) {
         const { getCenterOfPoints } = geometry;
@@ -609,7 +628,7 @@ QUnit.module('geometry', () => {
 });
 
 QUnit.module('geometry-circles', () => {
-    const { geometryCircles } = Highcharts.seriesTypes.venn.prototype.utils;
+    const { geometryCircles } = Highcharts.Series.types.venn.prototype.utils;
 
     QUnit.test('getAreaOfCircle', assert => {
         const { getAreaOfCircle } = geometryCircles;

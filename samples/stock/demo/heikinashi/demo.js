@@ -1,7 +1,8 @@
 Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
     Highcharts.stockChart('container', {
         title: {
-            text: 'Candlestick and Heiken Ashi series comparison.'
+            text: 'Candlestick and Heiken Ashi series comparison.',
+            align: 'left'
         },
         rangeSelector: {
             selected: 1

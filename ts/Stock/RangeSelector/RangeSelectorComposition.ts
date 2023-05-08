@@ -22,11 +22,11 @@ import type RangeSelector from './RangeSelector';
 import type Time from '../../Core/Time';
 import type { VerticalAlignValue } from '../../Core/Renderer/AlignObject';
 
-import DO from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const {
     defaultOptions,
     setOptions
-} = DO;
+} = D;
 import RangeSelectorDefaults from './RangeSelectorDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -47,7 +47,7 @@ const {
 
 const chartDestroyEvents: Array<[Chart, Array<Function>]> = [];
 
-const composedMembers: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -153,15 +153,11 @@ function compose(
 
     RangeSelectorConstructor = RangeSelectorClass;
 
-    if (composedMembers.indexOf(AxisClass) === -1) {
-        composedMembers.push(AxisClass);
-
+    if (U.pushUnique(composedMembers, AxisClass)) {
         AxisClass.prototype.minFromRange = axisMinFromRange;
     }
 
-    if (composedMembers.indexOf(ChartClass) === -1) {
-        composedMembers.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
         addEvent(ChartClass, 'destroy', onChartDestroy);
@@ -174,7 +170,7 @@ function compose(
         chartProto.callbacks.push(onChartCallback);
     }
 
-    if (composedMembers.indexOf(setOptions) === -1) {
+    if (U.pushUnique(composedMembers, setOptions)) {
         extend(
             defaultOptions,
             { rangeSelector: RangeSelectorDefaults.rangeSelector }

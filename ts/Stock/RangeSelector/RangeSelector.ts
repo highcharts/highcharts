@@ -29,9 +29,9 @@ import type Time from '../../Core/Time';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
+import H from '../../Core/Globals.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
@@ -775,7 +775,7 @@ class RangeSelector {
                 width: isTextInput ?
                     ((dateBox.width + (inputBoxWidth ? -2 : 20)) + 'px') :
                     'auto',
-                height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
+                height: (dateBox.height - 2) + 'px',
                 border: '2px solid silver'
             });
 
@@ -849,7 +849,7 @@ class RangeSelector {
         let date = Date.parse(input);
 
         // If the value isn't parsed directly to a value by the
-        // browser's Date.parse method, like YYYY-MM-DD in IE8, try
+        // browser's Date.parse method, try
         // parsing it a different way
         if (!isNumber(date)) {
             const parts = inputDate.split('-');
@@ -991,7 +991,7 @@ class RangeSelector {
         // we need to use setAttribute instead
         input.setAttribute(
             'type',
-            preferredInputType(options.inputDateFormat || '%b %e, %Y')
+            preferredInputType(options.inputDateFormat || '%e %b %Y')
         );
 
         if (!chart.styledMode) {

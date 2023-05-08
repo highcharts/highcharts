@@ -18,7 +18,6 @@ import type { AlignValue } from '../AlignObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
-import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
@@ -73,7 +72,7 @@ class SVGLabel extends SVGElement {
     public static textProps: Array<keyof CSSObject> = [
         'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
         'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
-        'textOutline', 'textOverflow', 'width'
+        'textOutline', 'textOverflow', 'whiteSpace', 'width'
     ];
 
     /* *
@@ -224,16 +223,10 @@ class SVGLabel extends SVGElement {
             });
             this.text.css(textStyles);
 
-            const isWidth = 'width' in textStyles,
-                isFontStyle = (
-                    'fontSize' in textStyles ||
-                    'fontWeight' in textStyles
-                );
-
-            // Update existing text, box (#9400, #12163)
-            if (isFontStyle) {
+            // Update existing text, box (#9400, #12163, #18212)
+            if ('fontSize' in textStyles || 'fontWeight' in textStyles) {
                 this.updateTextPadding();
-            } else if (isWidth) {
+            } else if ('width' in textStyles || 'textOverflow' in textStyles) {
                 this.updateBoxSize();
             }
 
@@ -308,14 +301,13 @@ class SVGLabel extends SVGElement {
      * box and add it before the text in the DOM.
      */
     public onAdd(): void {
-        const str = this.textStr;
         this.text.add(this);
         this.attr({
             // Alignment is available now  (#3295, 0 not rendered if given
             // as a value)
-            text: (defined(str) ? str : ''),
-            x: this.x,
-            y: this.y
+            text: pick(this.textStr, ''),
+            x: this.x || 0,
+            y: this.y || 0
         });
 
         if (this.box && defined(this.anchorX)) {
@@ -343,18 +335,6 @@ class SVGLabel extends SVGElement {
         key: string
     ): void {
         this.boxAttr(key, value);
-    }
-
-    public shadow(
-        b?: (boolean|Partial<ShadowOptionsObject>)
-    ): this {
-        if (b && !this.renderer.styledMode) {
-            this.updateBoxSize();
-            if (this.box) {
-                this.box.shadow(b);
-            }
-        }
-        return this;
     }
 
     public strokeSetter(
@@ -396,7 +376,6 @@ class SVGLabel extends SVGElement {
      */
     private updateBoxSize(): void {
         const text = this.text,
-            style = text.element.style,
             attribs: SVGAttributes = {},
             padding = this.padding,
             // #12165 error when width is null (auto)
@@ -417,10 +396,7 @@ class SVGLabel extends SVGElement {
         this.width = this.getPaddedWidth();
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
 
-        const metrics = this.renderer.fontMetrics(
-            style && style.fontSize,
-            text
-        );
+        const metrics = this.renderer.fontMetrics(text);
 
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)

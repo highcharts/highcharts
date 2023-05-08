@@ -27,7 +27,7 @@ QUnit.test(
         ).add();
 
         ren.text(
-            "<span id='redText' style='color: red;'>red</span>",
+            '<span class=\'<\' id=\'redText\' style=\'color: red;\'>red</span>',
             200,
             100
         ).add();
@@ -46,6 +46,12 @@ QUnit.test(
                 .includes(('fill: red')),
             true,
             'Text element should be red (#17627).'
+        );
+
+        assert.strictEqual(
+            document.getElementById('redText').getAttribute('class'),
+            '&lt;',
+            '"<" symbol in attribute value should be replaced with &lt; #17753'
         );
     }
 );

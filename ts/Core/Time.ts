@@ -118,7 +118,7 @@ const hasOldSafariBug =
  * @class
  * @name Highcharts.Time
  *
- * @param {Highcharts.TimeOptions} options
+ * @param {Highcharts.TimeOptions} [options]
  * Time options as defined in [chart.options.time](/highcharts/time).
  */
 class Time {
@@ -130,7 +130,7 @@ class Time {
      * */
 
     public constructor(
-        options: Time.TimeOptions
+        options?: Time.TimeOptions
     ) {
         /**
          * Get the time zone offset based on the current timezone information as
@@ -282,13 +282,15 @@ class Time {
      * @private
      * @function Highcharts.Time#update
      *
-     * @param {Highcharts.TimeOptions} options
+     * @param {Highcharts.TimeOptions} [options]
      *
      */
-    public update(options: Time.TimeOptions): void {
-        const useUTC = pick(options && options.useUTC, true);
+    public update(
+        options: Time.TimeOptions = {}
+    ): void {
+        const useUTC = pick(options.useUTC, true);
 
-        this.options = options = merge(true, this.options || {}, options);
+        this.options = options = merge(true, this.options, options);
 
         // Allow using a different Date class
         this.Date = options.Date || win.Date || Date;
@@ -1024,7 +1026,7 @@ export default Time;
  * The count.
  *
  * @name Highcharts.TimeNormalizedObject#count
- * @type {number}
+ * @type {number|undefined}
  *//**
  * The interval in axis values (ms).
  *

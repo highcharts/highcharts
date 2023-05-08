@@ -816,6 +816,16 @@ const Options: DeepPartial<A11yOptions> = {
      */
 
     /**
+     * Format to use for describing the data series group to assistive
+     * technology - including screen readers.
+     *
+     * @see [series.descriptionFormat](#accessibility.series.descriptionFormat)
+     * @type       {string}
+     * @since 11.0.0
+     * @apioption  plotOptions.series.accessibility.descriptionFormat
+     */
+
+    /**
      * Expose only the series element to screen readers, not its points.
      *
      * @type       {boolean}

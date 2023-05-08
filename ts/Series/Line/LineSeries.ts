@@ -18,6 +18,7 @@
 
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
+import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type SplineSeries from '../Spline/SplineSeries';
 import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -51,14 +52,17 @@ class LineSeries extends Series {
      *
      * */
 
-    /**
-     * General options for all series types.
-     *
-     * @optionparent plotOptions.series
-     */
-    public static defaultOptions: LineSeriesOptions = merge(Series.defaultOptions, {
-        // nothing here yet
-    } as LineSeriesOptions);
+    public static defaultOptions = merge(
+        Series.defaultOptions,
+        /**
+         * General options for all series types.
+         *
+         * @optionparent plotOptions.series
+         */
+        {
+            legendSymbol: 'lineMarker'
+        } as PlotOptionsOf<LineSeries>
+    );
 
     /* *
      *
@@ -157,17 +161,23 @@ class LineSeries extends Series {
 
                 attribs = {
                     'stroke': prop[2],
-                    'stroke-width': options.lineWidth,
+                    'stroke-width': options.lineWidth || 0,
                     // Polygon series use filled graph
                     'fill': (series.fillGraph && series.color) || 'none'
                 };
 
+                // Apply dash style
                 if (prop[3]) {
                     attribs.dashstyle = prop[3] as any;
+
+                // The reason for the `else if` is that linecaps don't mix well
+                // with dashstyle. The gaps get partially filled by the
+                // linecap.
                 } else if (options.linecap !== 'square') {
                     attribs['stroke-linecap'] =
                         attribs['stroke-linejoin'] = 'round';
                 }
+
                 graph[verb](attribs)
                     // Add shadow to normal series (0) or to first
                     // zone (1) #3932
@@ -228,7 +238,8 @@ class LineSeries extends Series {
 
             const plotX = point.plotX,
                 plotY = point.plotY,
-                lastPoint = (points as any)[i - 1];
+                lastPoint = (points as any)[i - 1],
+                isNull = point.isNull || typeof plotY !== 'number';
             // the path to this point from the previous
             let pathToPoint: SVGPath;
 
@@ -240,11 +251,11 @@ class LineSeries extends Series {
             }
 
             // Line series, nullsAsZeroes is not handled
-            if (point.isNull && !defined(nullsAsZeroes) && i > 0) {
+            if (isNull && !defined(nullsAsZeroes) && i > 0) {
                 gap = !options.connectNulls;
 
             // Area series, nullsAsZeroes is set
-            } else if (point.isNull && !nullsAsZeroes) {
+            } else if (isNull && !nullsAsZeroes) {
                 gap = true;
 
             } else {
@@ -505,7 +516,10 @@ export default LineSeries;
 
 /**
  * An additional, individual class name for the data point's graphic
- * representation.
+ * representation. Changes to a point's color will also be reflected in a
+ * chart's legend and tooltip.
+ *
+ * @sample {highcharts} highcharts/css/point-series-classname
  *
  * @type      {string}
  * @since     5.0.0
@@ -531,9 +545,15 @@ export default LineSeries;
 /**
  * A specific color index to use for the point, so its graphic representations
  * are given the class name `highcharts-color-{n}`. In styled mode this will
- * change the color of the graphic. In non-styled mode, the color by is set by
- * the `fill` attribute, so the change in class name won't have a visual effect
- * by default.
+ * change the color of the graphic. In non-styled mode, the color is set by the
+ * `fill` attribute, so the change in class name won't have a visual effect by
+ * default.
+ *
+ * Since v11, CSS variables on the form `--highcharts-color-{n}` make changing
+ * the color scheme very convenient.
+ *
+ * @sample    {highcharts} highcharts/css/colorindex/
+ *            Series and point color index
  *
  * @type      {number}
  * @since     5.0.0

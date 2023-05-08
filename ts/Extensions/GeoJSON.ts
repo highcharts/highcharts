@@ -97,6 +97,12 @@ declare global {
             hType?: string,
             series?: Series
         ): Array<any>;
+
+        /** @requires modules/maps */
+        function topo2geo(
+            topology: TopoJSON,
+            objectName?: string
+        ): GeoJSON;
     }
     interface Window {
         d3: any;
@@ -592,8 +598,12 @@ function geojson(
             }
         }
         if (pointOptions) {
-            const name = properties && (properties.name || properties.NAME);
+            const name = properties && (properties.name || properties.NAME),
+                lon = properties && properties.lon,
+                lat = properties && properties.lat;
             mapData.push(extend(pointOptions, {
+                lat: typeof lat === 'number' ? lat : void 0,
+                lon: typeof lon === 'number' ? lon : void 0,
                 name: typeof name === 'string' ? name : void 0,
 
                 /**
@@ -652,6 +662,7 @@ wrap(Chart.prototype, 'addCredits', function (
 });
 
 H.geojson = geojson;
+H.topo2geo = topo2geo;
 
 const GeoJSONModule = {
     geojson,

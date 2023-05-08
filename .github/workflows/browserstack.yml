@@ -1,0 +1,74 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Browserstack CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "master" branch
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+   contents: read # to fetch code (actions/checkout)
+
+jobs:
+  browserstack_tests:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    environment: browserstack
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - name: 'BrowserStack Env Setup'  # Invokes the setup-env action
+        uses: browserstack/github-actions/setup-env@master
+        with:
+          username:  ${{ secrets.BROWSERSTACK_USER }}
+          access-key: ${{ secrets.BROWSERSTACK_KEY }}
+          
+      # set system env variables
+      - name: Set Browserstack system variables
+        run: |
+          echo "BROWSERSTACK_KEY=${{ secrets.BROWSERSTACK_KEY }}" >> $GITHUB_ENV
+          echo "BROWSERSTACK_USER=${{ secrets.BROWSERSTACK_USER }}" >> $GITHUB_ENV
+
+      - name: 'BrowserStack Local Tunnel Setup'  # Invokes the setup-local action
+        uses: browserstack/github-actions/setup-local@master
+        with:
+          local-testing: start
+          local-identifier: random
+      
+      - name: 'Checkout repository'
+        uses: actions/checkout@v3
+      
+      #- name: Use Node.js ${{ matrix.node-version }}
+      #  uses: actions/setup-node@v3
+      #  with:
+      #    node-version: ${{ matrix.node-version }}
+      #    cache: 'npm'
+          
+      - name: Install Dependencies
+        run: npm i
+        
+
+      
+      # tasks
+      - name: Build Highcharts
+        run: npx gulp scripts
+      - name: Run Safari Tests
+        run: npx gulp test --single-run --splitbrowsers Mac.Safari
+      - name: Run Firefox Tests
+        run: npx gulp test --single-run --splitbrowsers Mac.Firefox
+      - name: Run Chrome Tests
+        run: npx gulp test --single-run --splitbrowsers Win.Chrome
+        
+      # cleanup
+      - name: 'BrowserStackLocal Stop'  # Terminating the BrowserStackLocal tunnel connection
+        uses: browserstack/github-actions/setup-local@master
+        with:
+          local-testing: stop

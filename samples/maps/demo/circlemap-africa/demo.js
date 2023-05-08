@@ -5,7 +5,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Africa Real GDP Growth Forecasts for 2017'
+        text: 'Africa Real GDP Growth Forecasts for 2017',
+        align: 'left'
     },
 
     accessibility: {

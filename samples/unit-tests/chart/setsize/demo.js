@@ -129,7 +129,7 @@ QUnit.test('3D pies stay in place on redraw (#5350)', function (assert) {
             assert.notEqual(
                 newPath,
                 path,
-                "First point's path should be updated (#7437)"
+                'First point\'s path should be updated (#7437)'
             );
         }, 50);
 

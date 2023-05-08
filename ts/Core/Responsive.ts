@@ -117,7 +117,7 @@ namespace Responsive {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -134,148 +134,136 @@ namespace Responsive {
         ChartClass: T
     ): (T&typeof Composition) {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
-            extend(ChartClass.prototype, Additions.prototype as Composition);
+        if (U.pushUnique(composedMembers, ChartClass)) {
+            extend(
+                ChartClass.prototype as Composition,
+                {
+                    matchResponsiveRule,
+                    setResponsive
+                }
+            );
         }
 
         return ChartClass as (T&typeof Composition);
     }
 
-    /* *
+    /**
+     * Handle a single responsiveness rule.
      *
-     *  Class
+     * @private
+     * @function Highcharts.Chart#matchResponsiveRule
+     * @param {Highcharts.ResponsiveRulesOptions} rule
+     * @param {Array<string>} matches
+     */
+    function matchResponsiveRule(
+        this: Composition,
+        rule: RuleOptions,
+        matches: Array<string>
+    ): void {
+
+        const condition = rule.condition,
+            fn = condition.callback || function (this: Chart): boolean {
+                return (
+                    this.chartWidth <= pick(
+                        condition.maxWidth,
+                        Number.MAX_VALUE
+                    ) &&
+                    this.chartHeight <= pick(
+                        condition.maxHeight,
+                        Number.MAX_VALUE
+                    ) &&
+                    this.chartWidth >= pick(condition.minWidth, 0) &&
+                    this.chartHeight >= pick(condition.minHeight, 0)
+                );
+            };
+
+        if (fn.call(this)) {
+            matches.push(rule._id as any);
+        }
+    }
+
+    /**
+     * Update the chart based on the current chart/document size and options
+     * for responsiveness.
      *
-     * */
+     * @private
+     * @function Highcharts.Chart#setResponsive
+     * @param  {boolean} [redraw=true]
+     * @param  {boolean} [reset=false]
+     * Reset by un-applying all rules. Chart.update resets all rules before
+     * applying updated options.
+     */
+    function setResponsive(
+        this: Composition,
+        redraw?: boolean,
+        reset?: boolean
+    ): void {
+        const options = this.options.responsive,
+            currentResponsive = this.currentResponsive;
 
-    class Additions {
+        let ruleIds = [] as Array<string>,
+            undoOptions;
 
-        /* *
-         *
-         *  Functions
-         *
-         * */
+        if (!reset && options && options.rules) {
+            options.rules.forEach((rule): void => {
+                if (typeof rule._id === 'undefined') {
+                    rule._id = uniqueKey();
+                }
 
-
-        /**
-         * Handle a single responsiveness rule.
-         *
-         * @private
-         * @function Highcharts.Chart#matchResponsiveRule
-         * @param {Highcharts.ResponsiveRulesOptions} rule
-         * @param {Array<string>} matches
-         */
-        public matchResponsiveRule(
-            this: Composition,
-            rule: RuleOptions,
-            matches: Array<string>
-        ): void {
-
-            const condition = rule.condition,
-                fn = condition.callback || function (this: Chart): boolean {
-                    return (
-                        this.chartWidth <= pick(
-                            condition.maxWidth,
-                            Number.MAX_VALUE
-                        ) &&
-                        this.chartHeight <= pick(
-                            condition.maxHeight,
-                            Number.MAX_VALUE
-                        ) &&
-                        this.chartWidth >= pick(condition.minWidth, 0) &&
-                        this.chartHeight >= pick(condition.minHeight, 0)
-                    );
-                };
-
-            if (fn.call(this)) {
-                matches.push(rule._id as any);
-            }
+                this.matchResponsiveRule(rule, ruleIds/* , redraw */);
+            }, this);
         }
 
-        /**
-         * Update the chart based on the current chart/document size and options
-         * for responsiveness.
-         *
-         * @private
-         * @function Highcharts.Chart#setResponsive
-         * @param  {boolean} [redraw=true]
-         * @param  {boolean} [reset=false]
-         * Reset by un-applying all rules. Chart.update resets all rules before
-         * applying updated options.
-         */
-        public setResponsive(
-            this: Composition,
-            redraw?: boolean,
-            reset?: boolean
-        ): void {
-            const options = this.options.responsive,
-                currentResponsive = this.currentResponsive;
+        // Merge matching rules
+        const mergedOptions = merge(
+            ...ruleIds
+                .map((ruleId): (RuleOptions|undefined) => find(
+                    (options || {}).rules || [],
+                    (rule): boolean => (rule._id === ruleId)
+                ))
+                .map((rule): (GlobalOptions|undefined) => (
+                    rule && rule.chartOptions
+                ))
+        );
 
-            let ruleIds = [] as Array<string>,
-                undoOptions;
+        mergedOptions.isResponsiveOptions = true;
 
-            if (!reset && options && options.rules) {
-                options.rules.forEach((rule): void => {
-                    if (typeof rule._id === 'undefined') {
-                        rule._id = uniqueKey();
-                    }
+        // Stringified key for the rules that currently apply.
+        ruleIds = ((ruleIds.toString() as any) || void 0);
+        const currentRuleIds = (
+            currentResponsive && currentResponsive.ruleIds
+        );
 
-                    this.matchResponsiveRule(rule, ruleIds/* , redraw */);
-                }, this);
+        // Changes in what rules apply
+        if ((ruleIds as any) !== currentRuleIds) {
+
+            // Undo previous rules. Before we apply a new set of rules, we
+            // need to roll back completely to base options (#6291).
+            if (currentResponsive) {
+                this.update(currentResponsive.undoOptions, redraw, true);
             }
 
-            // Merge matching rules
-            const mergedOptions = merge(
-                ...ruleIds
-                    .map((ruleId): (RuleOptions|undefined) => find(
-                        (options || {}).rules || [],
-                        (rule): boolean => (rule._id === ruleId)
-                    ))
-                    .map((rule): (GlobalOptions|undefined) => (
-                        rule && rule.chartOptions
-                    ))
-            );
+            if (ruleIds) {
+                // Get undo-options for matching rules. The `undoOptions``
+                // hold the current values before they are changed by the
+                // `mergedOptions`.
+                undoOptions = diffObjects(
+                    mergedOptions,
+                    this.options,
+                    true,
+                    this.collectionsWithUpdate
+                );
+                undoOptions.isResponsiveOptions = true;
+                this.currentResponsive = {
+                    ruleIds: ruleIds as any,
+                    mergedOptions: mergedOptions,
+                    undoOptions: undoOptions
+                };
 
-            mergedOptions.isResponsiveOptions = true;
+                this.update(mergedOptions, redraw, true);
 
-            // Stringified key for the rules that currently apply.
-            ruleIds = ((ruleIds.toString() as any) || void 0);
-            const currentRuleIds = (
-                currentResponsive && currentResponsive.ruleIds
-            );
-
-            // Changes in what rules apply
-            if ((ruleIds as any) !== currentRuleIds) {
-
-                // Undo previous rules. Before we apply a new set of rules, we
-                // need to roll back completely to base options (#6291).
-                if (currentResponsive) {
-                    this.update(currentResponsive.undoOptions, redraw, true);
-                }
-
-                if (ruleIds) {
-                    // Get undo-options for matching rules. The `undoOptions``
-                    // hold the current values before they are changed by the
-                    // `mergedOptions`.
-                    undoOptions = diffObjects(
-                        mergedOptions,
-                        this.options,
-                        true,
-                        this.collectionsWithUpdate
-                    );
-                    undoOptions.isResponsiveOptions = true;
-                    this.currentResponsive = {
-                        ruleIds: ruleIds as any,
-                        mergedOptions: mergedOptions,
-                        undoOptions: undoOptions
-                    };
-
-                    this.update(mergedOptions, redraw, true);
-
-                } else {
-                    this.currentResponsive = void 0;
-                }
+            } else {
+                this.currentResponsive = void 0;
             }
         }
     }

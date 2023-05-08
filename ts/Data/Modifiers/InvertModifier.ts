@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2022 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -20,7 +20,7 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -50,7 +50,7 @@ class InvertModifier extends DataModifier {
      * Default options for the invert modifier.
      */
     public static readonly defaultOptions: InvertModifier.Options = {
-        modifier: 'InvertModifier'
+        modifier: 'Invert'
     };
 
     /* *
@@ -65,7 +65,9 @@ class InvertModifier extends DataModifier {
      * @param {InvertModifier.Options} [options]
      * Options to configure the invert modifier.
      */
-    public constructor(options?: DeepPartial<InvertModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<InvertModifier.Options>
+    ) {
         super();
 
         this.options = merge(InvertModifier.defaultOptions, options);
@@ -115,7 +117,7 @@ class InvertModifier extends DataModifier {
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modified = table.modified,
             modifiedRowIndex = modified.getRowIndexBy(
@@ -164,7 +166,7 @@ class InvertModifier extends DataModifier {
         table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modified = table.modified,
             modifiedColumnNames = (modified.getColumn('columnNames') || []);
@@ -245,7 +247,7 @@ class InvertModifier extends DataModifier {
         table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const columnNames = table.getColumnNames(),
             modified = table.modified,
@@ -299,7 +301,7 @@ class InvertModifier extends DataModifier {
      * @param {DataTable} table
      * Table to invert.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -307,7 +309,7 @@ class InvertModifier extends DataModifier {
      */
     public modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifier = this;
 
@@ -370,15 +372,21 @@ class InvertModifier extends DataModifier {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace InvertModifier {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Options to configure the modifier.
@@ -390,21 +398,21 @@ namespace InvertModifier {
 
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
-DataModifier.addModifier(InvertModifier);
-
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Invert: typeof InvertModifier;
     }
 }
 
+DataModifier.registerType('Invert', InvertModifier);
+
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

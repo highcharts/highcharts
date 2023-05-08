@@ -15,7 +15,7 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
-import HLCPointOptions from '../HLC/HLCPointOptions';
+import type HLCPointOptions from '../HLC/HLCPointOptions';
 
 /* *
  *

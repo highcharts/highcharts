@@ -12,10 +12,10 @@ Demo
 
 For live examples see our demo pages:
 
-*   [Highcharts demo](https://highcharts.com/demo/)
-*   [Highcharts Stock demo](https://highcharts.com/stock/demo/)
-*   [Highcharts Maps demo](https://highcharts.com/maps/demo/)
-*   [Highcharts Gantt demo](https://highcharts.com/gantt/demo/)
+*   [Highcharts demo](https://www.highcharts.com/demo/)
+*   [Highcharts Stock demo](https://www.highcharts.com/demo/stock)
+*   [Highcharts Maps demo](https://www.highcharts.com/demo/maps)
+*   [Highcharts Gantt demo](https://www.highcharts.com/demo/gantt)
 
 API
 ---

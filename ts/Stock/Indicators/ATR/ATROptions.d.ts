@@ -31,4 +31,10 @@ export interface ATRParamsOptions extends SMAParamsOptions {
     // for inheritance
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default ATROptions;

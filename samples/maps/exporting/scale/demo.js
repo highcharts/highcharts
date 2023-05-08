@@ -42,11 +42,6 @@
                 mapData: topology,
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
                 tooltip: {
                     valueSuffix: '/km²'
                 }
@@ -60,7 +55,7 @@
         });
     };
 
-    document.getElementById("scale-1").onclick = () => expScale(1);
-    document.getElementById("scale-2").onclick = () => expScale(2);
+    document.getElementById('scale-1').onclick = () => expScale(1);
+    document.getElementById('scale-2').onclick = () => expScale(2);
 
 })();

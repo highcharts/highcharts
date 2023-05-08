@@ -36,7 +36,7 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
 
             graphic.attr({
                 stroke: point.color || series.color,
-                "stroke-width": 1
+                'stroke-width': 1
             });
 
             graphic[verb]({
@@ -61,11 +61,13 @@ var chart = Highcharts.chart('container', {
         type: 'lowmedhigh'
     },
     title: {
-        text: 'Monthly earnings, by level of education in Norway'
+        text: 'Monthly earnings, by level of education in Norway',
+        align: 'left'
     },
     subtitle: {
         text: 'Source: ' +
-            '<a href="https://www.ssb.no/en/statbank/table/11420/" target="_blank">SSB</a>'
+            '<a href="https://www.ssb.no/en/statbank/table/11420/" target="_blank">SSB</a>',
+        align: 'left'
     },
     accessibility: {
         point: {
@@ -98,7 +100,8 @@ var chart = Highcharts.chart('container', {
         min: 0
     },
     tooltip: {
-        shared: true
+        shared: true,
+        stickOnContact: true
     },
     plotOptions: {
         series: {

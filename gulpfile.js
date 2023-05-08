@@ -22,6 +22,7 @@ Gulp.registry(new GulpForwardReference());
         gulpTask => require('./tools/gulptasks/' + gulpTask)
     );
 }([
+    'api-upload',
     'default',
     'dist',
     'dist-clean',
@@ -60,6 +61,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-code',
     'scripts-compile',
     'scripts-css',
+    'scripts-es5',
     'scripts-js',
     'scripts-messages',
     'scripts-ts',
@@ -71,7 +73,6 @@ Gulp.registry(new GulpForwardReference());
     'reset-visual-references',
     'tsdoc',
     'tsdoc-debug',
-    'tsdoc-next',
     'tsdoc-watch',
     'update',
     'unsorted/build-modules',

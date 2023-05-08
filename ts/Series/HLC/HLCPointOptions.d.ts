@@ -23,6 +23,7 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  * */
 
 export interface HLCPointOptions extends ColumnPointOptions {
+    // nothing to add
 }
 
 export default HLCPointOptions;

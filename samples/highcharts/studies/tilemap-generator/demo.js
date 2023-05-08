@@ -774,7 +774,7 @@
 /* UI below, partially based on all-maps demo */
 
 
-var baseMapPath = "https://code.highcharts.com/mapdata/",
+var baseMapPath = 'https://code.highcharts.com/mapdata/',
     showDataLabels = true,
     mapCount = 0,
     searchText,
@@ -792,9 +792,9 @@ function generateTileChart() {
     var shapeType = $('#shapeType').val(),
         xRes = $('#xRes').val(),
         yRes = $('#yRes').val(),
-        invert = $("#invert").prop('checked'),
-        reverseAlg = $("#reverse").prop('checked'),
-        labelCenter = $("#labelCenter").prop('checked'),
+        invert = $('#invert').prop('checked'),
+        reverseAlg = $('#reverse').prop('checked'),
+        labelCenter = $('#labelCenter').prop('checked'),
         excludeList = $('#exclude').val(),
         data,
         options,
@@ -808,7 +808,7 @@ function generateTileChart() {
                     filterProps.forEach(prop => delete point[prop]);
                     return point;
                 }), null,
-                $("#prettyprint").prop('checked') ? 2 : null
+                $('#prettyprint').prop('checked') ? 2 : null
             ));
         },
         swapPoints = function (a, b) {
@@ -864,7 +864,7 @@ function generateTileChart() {
         };
 
     if (excludeList) {
-        excludeList = excludeList.split(",").map(function (item) {
+        excludeList = excludeList.split(',').map(function (item) {
             return item.trim();
         });
     }
@@ -877,8 +877,8 @@ function generateTileChart() {
     }
 
     // Warn for huge maps
-    if (mapLen > 300 && !window.confirm("This map contains " + mapLen +
-        " areas. Converting this much data could take a while. Continue?")) {
+    if (mapLen > 300 && !window.confirm('This map contains ' + mapLen +
+        ' areas. Converting this much data could take a while. Continue?')) {
         return;
     }
 
@@ -981,7 +981,7 @@ function generateTileChart() {
 
 // Populate dropdown menu and turn into jQuery UI widgets
 $.each(Highcharts.mapDataIndex, function (mapGroup, maps) {
-    if (mapGroup !== "version") {
+    if (mapGroup !== 'version') {
         mapOptions += '<option class="option-header">' + mapGroup + '</option>';
         $.each(maps, function (desc, path) {
             mapOptions += '<option value="' + path + '">' + desc + '</option>';
@@ -991,12 +991,12 @@ $.each(Highcharts.mapDataIndex, function (mapGroup, maps) {
 });
 searchText = 'Search ' + mapCount + ' maps';
 mapOptions = '<option value="custom/world.js">' + searchText + '</option>' + mapOptions;
-$("#mapDropdown").append(mapOptions).combobox();
+$('#mapDropdown').append(mapOptions).combobox();
 
 
 // Change map when item selected in dropdown
-$("#mapDropdown").change(function () {
-    var $selectedItem = $("option:selected", this),
+$('#mapDropdown').change(function () {
+    var $selectedItem = $('option:selected', this),
         mapDesc = $selectedItem.text(),
         mapKey = this.value.slice(0, -3),
         javascriptPath = baseMapPath + this.value,
@@ -1106,7 +1106,7 @@ $("#mapDropdown").change(function () {
                 }
             }, {
                 type: 'mapline',
-                name: "Separators",
+                name: 'Separators',
                 data: Highcharts.geojson(mapGeoJSON, 'mapline'),
                 nullColor: 'gray',
                 showInLegend: false,
@@ -1128,9 +1128,9 @@ $("#mapDropdown").change(function () {
 
 
 // Toggle pretty print
-$("#prettyprint").change(function () {
+$('#prettyprint').change(function () {
     $('#outputData').val(JSON.stringify(
-        currentData, null, $("#prettyprint").prop('checked') ? 2 : null)
+        currentData, null, $('#prettyprint').prop('checked') ? 2 : null)
     );
 });
 
@@ -1189,7 +1189,7 @@ $('#yRes').on('input', function () {
 
 // Toggle enlarge charts
 $('#enlarge').change(function () {
-    if ($("#enlarge").prop('checked')) {
+    if ($('#enlarge').prop('checked')) {
         $('.verticalLine').hide();
         $('#mapContainer').addClass('container-expanded');
         $('#tileContainer').addClass('container-expanded');
@@ -1206,8 +1206,8 @@ $('#enlarge').change(function () {
 
 
 // Toggle data labels
-$("#dataLabels").change(function () {
-    showDataLabels = $("#dataLabels").prop('checked');
+$('#dataLabels').change(function () {
+    showDataLabels = $('#dataLabels').prop('checked');
     mapChart.series[0].update({
         dataLabels: {
             enabled: showDataLabels

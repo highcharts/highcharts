@@ -63,7 +63,7 @@ import XRangePoint from './XRangePoint.js';
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -136,9 +136,7 @@ class XRangeSeries extends ColumnSeries {
         AxisClass: typeof Axis
     ): void {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             addEvent(
                 AxisClass,
                 'afterGetSeriesExtremes',
@@ -267,6 +265,13 @@ class XRangeSeries extends ColumnSeries {
         return pointIndex;
     }
 
+    public alignDataLabel(point: XRangePoint): void {
+        const oldPlotX = point.plotX;
+        point.plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX);
+        super.alignDataLabel.apply(this, arguments);
+        point.plotX = oldPlotX;
+    }
+
     /**
      * @private
      */
@@ -275,6 +280,7 @@ class XRangeSeries extends ColumnSeries {
             yAxis = this.yAxis,
             metrics = this.columnMetrics,
             options = this.options,
+            { borderRadius } = options,
             minPointLength = options.minPointLength || 0,
             oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2,
             seriesXOffset = this.pointXOffset = metrics.offset,
@@ -349,10 +355,14 @@ class XRangeSeries extends ColumnSeries {
             x,
             y: Math.floor((point.plotY as any) + yOffset) + crisper,
             width: x2 - x,
-            height: pointHeight,
-            r: this.options.borderRadius
+            height: pointHeight
         };
+
         point.shapeArgs = shapeArgs;
+
+        if (isNumber(borderRadius)) {
+            point.shapeArgs.r = borderRadius;
+        }
 
         // Move tooltip to default position
         if (!inverted) {
@@ -395,7 +405,12 @@ class XRangeSeries extends ColumnSeries {
 
         // Centering tooltip position (#14147)
         if (!inverted) {
-            tooltipPos[xIndex] += (xAxis.reversed ? -1 : 0) * shapeArgs.width;
+            tooltipPos[xIndex] = clamp(
+                tooltipPos[xIndex] +
+                (xAxis.reversed ? -1 : 0) * shapeArgs.width,
+                0,
+                xAxis.len - 1
+            );
         } else {
             tooltipPos[xIndex] += shapeArgs.width / 2;
         }
@@ -418,9 +433,12 @@ class XRangeSeries extends ColumnSeries {
             if (!isNumber(partialFill)) {
                 partialFill = 0 as any;
             }
-            point.partShapeArgs = merge(shapeArgs, {
-                r: this.options.borderRadius
-            });
+
+            if (isNumber(borderRadius)) {
+                point.partShapeArgs = merge(shapeArgs, {
+                    r: borderRadius
+                });
+            }
 
             clipRectWidth = Math.max(
                 Math.round(
@@ -543,7 +561,7 @@ class XRangeSeries extends ColumnSeries {
                         pointAttr,
                         animation
                     )
-                    .shadow(seriesOpts.shadow, null, cutOff);
+                    .shadow(seriesOpts.shadow);
 
                 if (partShapeArgs) {
                     // Ensure pfOptions is an object
@@ -569,7 +587,7 @@ class XRangeSeries extends ColumnSeries {
                             pointAttr,
                             animation
                         )
-                        .shadow(seriesOpts.shadow, null, cutOff);
+                        .shadow(seriesOpts.shadow);
                 }
             }
 

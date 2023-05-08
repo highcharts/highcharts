@@ -15,8 +15,17 @@
  * */
 
 export interface FontMetricsObject {
+    /**
+     * Baseline height
+     */
     b: number;
+    /**
+     * Font size
+     */
     f: number;
+    /**
+     * Line height
+     */
     h: number;
 }
 

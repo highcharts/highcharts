@@ -1,7 +1,11 @@
 Highcharts.stockChart('container', {
 
     yAxis: {
-        crosshair: true
+        crosshair: {
+            label: {
+                enabled: true
+            }
+        }
     },
 
     rangeSelector: {

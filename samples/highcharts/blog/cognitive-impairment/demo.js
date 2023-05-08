@@ -34,7 +34,7 @@ Highcharts.chart('container', {
         tickInterval: 10 * 60 * 60 * 1000,
         labels: {
             formatter: function () {
-                return convertMsToHM(this.value).split(" ")[0];
+                return convertMsToHM(this.value).split(' ')[0];
             }
         }
     },
@@ -63,7 +63,7 @@ Highcharts.chart('container', {
     },
     series: [
         {
-            name: "Food",
+            name: 'Food',
             data: [
                 [828000, 3.19],
                 [1008000, 38.09],
@@ -77,7 +77,7 @@ Highcharts.chart('container', {
             ]
         },
         {
-            name: "Fatty Acid",
+            name: 'Fatty Acid',
             data: [
                 [3060000, 11.38],
                 [11844000, 14.19],
@@ -93,7 +93,7 @@ Highcharts.chart('container', {
             ]
         },
         {
-            name: "Glycogenolysis",
+            name: 'Glycogenolysis',
             data: [
                 [8172000, 2.65],
                 [9396000, 8.69],
@@ -113,7 +113,7 @@ Highcharts.chart('container', {
             ]
         },
         {
-            name: "Gluconeogenesis",
+            name: 'Gluconeogenesis',
             data: [
                 [11628000, 2.65],
                 [18360000, 5.34],
@@ -131,7 +131,7 @@ Highcharts.chart('container', {
             ]
         },
         {
-            name: "Ketones",
+            name: 'Ketones',
             data: [
                 [28980000, 2.11],
                 [36324000, 3.46],
@@ -146,7 +146,7 @@ Highcharts.chart('container', {
             ]
         },
         {
-            name: "Amino Acids",
+            name: 'Amino Acids',
             data: [
                 [2448000, 15.54],
                 [3672000, 18.36],

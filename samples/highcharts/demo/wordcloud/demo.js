@@ -36,10 +36,12 @@ Highcharts.chart('container', {
         name: 'Occurrences'
     }],
     title: {
-        text: 'Wordcloud of Alice\'s Adventures in Wonderland'
+        text: 'Wordcloud of Alice\'s Adventures in Wonderland',
+        align: 'left'
     },
     subtitle: {
-        text: 'An excerpt from chapter 1: Down the Rabbit-Hole  '
+        text: 'An excerpt from chapter 1: Down the Rabbit-Hole',
+        align: 'left'
     },
     tooltip: {
         headerFormat: '<span style="font-size: 16px"><b>{point.key}</b></span><br>'

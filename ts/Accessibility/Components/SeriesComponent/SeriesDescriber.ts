@@ -65,7 +65,7 @@ const {
 declare module '../../../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/accessibility */
-        hasDummyGraphic?: boolean;
+        hasMockGraphic?: boolean;
     }
 }
 
@@ -104,11 +104,11 @@ function findFirstPointWithGraphic(
 
 
 /**
- * Whether or not we should add a dummy point element in
+ * Whether or not we should add a mock point element in
  * order to describe a point that has no graphic.
  * @private
  */
-function shouldAddDummyPoint(point: Point): boolean {
+function shouldAddMockPoint(point: Point): boolean {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
     const series = point.series,
@@ -126,29 +126,29 @@ function shouldAddDummyPoint(point: Point): boolean {
 /**
  * @private
  */
-function makeDummyElement(
+function makeMockElement(
     point: Point,
     pos: PositionObject
 ): SVGElement {
     const renderer = point.series.chart.renderer,
-        dummy = renderer.rect(pos.x, pos.y, 1, 1);
+        mock = renderer.rect(pos.x, pos.y, 1, 1);
 
-    dummy.attr({
-        'class': 'highcharts-a11y-dummy-point',
+    mock.attr({
+        'class': 'highcharts-a11y-mock-point',
         fill: 'none',
         opacity: 0,
         'fill-opacity': 0,
         'stroke-opacity': 0
     });
 
-    return dummy;
+    return mock;
 }
 
 
 /**
  * @private
  */
-function addDummyPointElement(
+function addMockPointElement(
     point: Accessibility.PointComposition
 ): (DOMElementType|undefined) {
     const series = point.series,
@@ -157,28 +157,28 @@ function addDummyPointElement(
         parentGroup = firstGraphic ?
             firstGraphic.parentGroup :
             series.graph || series.group,
-        dummyPos = firstPointWithGraphic ? {
+        mockPos = firstPointWithGraphic ? {
             x: pick(point.plotX, firstPointWithGraphic.plotX, 0),
             y: pick(point.plotY, firstPointWithGraphic.plotY, 0)
         } : {
             x: pick(point.plotX, 0),
             y: pick(point.plotY, 0)
         },
-        dummyElement = makeDummyElement(point, dummyPos);
+        mockElement = makeMockElement(point, mockPos);
 
     if (parentGroup && parentGroup.element) {
-        point.graphic = dummyElement;
-        point.hasDummyGraphic = true;
+        point.graphic = mockElement;
+        point.hasMockGraphic = true;
 
-        dummyElement.add(parentGroup);
+        mockElement.add(parentGroup);
 
         // Move to correct pos in DOM
         parentGroup.element.insertBefore(
-            dummyElement.element,
+            mockElement.element,
             firstGraphic ? firstGraphic.element : null
         );
 
-        return dummyElement.element;
+        return mockElement.element;
     }
 }
 
@@ -262,8 +262,8 @@ function shouldDescribeSeriesElement(
  */
 function pointNumberToString(
     point: Accessibility.PointComposition,
-    value: number
-): string {
+    value: number|undefined
+): string|undefined {
     const series = point.series,
         chart = series.chart,
         a11yPointOptions = chart.options.accessibility.point || {},
@@ -386,17 +386,22 @@ function getPointArrayMapValueDescription(
 ): string {
     const pre = prefix || '',
         suf = suffix || '',
-        keyToValStr = function (key: string): string {
+        keyToValStr = function (key: string): string|undefined {
             const num = pointNumberToString(
                 point,
                 pick((point as any)[key], (point.options as any)[key])
             );
-            return key + ': ' + pre + num + suf;
+            return num !== void 0 ?
+                key + ': ' + pre + num + suf :
+                num;
         },
         pointArrayMap: Array<string> = point.series.pointArrayMap as any;
 
     return pointArrayMap.reduce(function (desc: string, key: string): string {
-        return desc + (desc.length ? ', ' : '') + keyToValStr(key);
+        const propDesc = keyToValStr(key);
+        return propDesc ?
+            (desc + (desc.length ? ', ' : '') + propDesc) :
+            desc;
     }, '');
 }
 
@@ -483,7 +488,7 @@ function getPointValueDescription(
             series.xAxis &&
             series.xAxis.options.accessibility &&
             series.xAxis.options.accessibility.enabled,
-            !chart.angular
+            !chart.angular && series.type !== 'flowmap'
         ),
         xDesc = showXDescription ? getPointXDescription(point) : '',
         context = {
@@ -566,7 +571,7 @@ function describePointsInSeries(
     if (setScreenReaderProps || setKeyboardProps) {
         series.points.forEach((point): void => {
             const pointEl = point.graphic && point.graphic.element ||
-                    shouldAddDummyPoint(point) && addDummyPointElement(point),
+                    shouldAddMockPoint(point) && addMockPointElement(point),
                 pointA11yDisabled = (
                     point.options &&
                     point.options.accessibility &&
@@ -634,7 +639,12 @@ function defaultSeriesDescriptionFormatter(
         ) + (
             shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo + '.' : ''
         ),
-        formatStr = chart.options.accessibility.series.descriptionFormat || '';
+        formatStr = pick(
+            series.options.accessibility &&
+                series.options.accessibility.descriptionFormat,
+            chart.options.accessibility.series.descriptionFormat,
+            ''
+        );
 
     return format(formatStr, {
         seriesDescription: summary,

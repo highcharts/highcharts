@@ -50,45 +50,45 @@ const {
 
 declare module '../Core/Axis/AxisOptions' {
     interface AxisOptions {
-        currentDateIndicator?: (boolean|Highcharts.CurrentDateIndicatorOptions);
+        currentDateIndicator?: (boolean|CurrentDateIndicatorOptions);
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface CurrentDateIndicatorLabelFormatterCallbackFunction {
-            (value: number, format: string): string;
-        }
-        interface CurrentDateIndicatorLabelOptions {
-            align?: AlignValue;
-            format?: string;
-            formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
-            rotation?: number;
-            style?: CSSObject;
-            text?: string;
-            textAlign?: AlignValue;
-            useHTML?: boolean;
-            verticalAlign?: VerticalAlignValue;
-            x?: number;
-            y?: number;
-        }
-        interface CurrentDateIndicatorOptions {
-            acrossPanes?: boolean;
-            className?: string;
-            color?: ColorString;
-            dashStyle?: DashStyleValue;
-            events?: any;
-            id?: string;
-            label?: CurrentDateIndicatorLabelOptions;
-            width?: number;
-            zIndex?: number;
-        }
-    }
+interface CurrentDateIndicatorLabelFormatterCallbackFunction {
+    (value: number, format: string): string;
 }
+interface CurrentDateIndicatorLabelOptions {
+    align?: AlignValue;
+    format?: string;
+    formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
+    rotation?: number;
+    style?: CSSObject;
+    text?: string;
+    textAlign?: AlignValue;
+    useHTML?: boolean;
+    verticalAlign?: VerticalAlignValue;
+    x?: number;
+    y?: number;
+}
+interface CurrentDateIndicatorOptions {
+    acrossPanes?: boolean;
+    className?: string;
+    color?: ColorString;
+    dashStyle?: DashStyleValue;
+    events?: any;
+    id?: string;
+    label?: CurrentDateIndicatorLabelOptions;
+    width?: number;
+    zIndex?: number;
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const composedMembers: Array<unknown> = [];
 
 /**
  * Show an indicator on the axis for the current date and time. Can be a
@@ -108,7 +108,7 @@ declare global {
  * @product   gantt
  * @apioption xAxis.currentDateIndicator
  */
-const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
+const defaultOptions: CurrentDateIndicatorOptions = {
     color: Palette.highlightColor20,
     width: 2,
     /**
@@ -138,14 +138,45 @@ const defaultOptions: Highcharts.CurrentDateIndicatorOptions = {
          */
         style: {
             /** @internal */
-            fontSize: '10px'
+            fontSize: '0.7em'
         }
     }
 };
 
-/* eslint-disable no-invalid-this */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-addEvent(Axis, 'afterSetOptions', function (): void {
+/**
+ * @private
+ */
+function compose(
+    AxisClass: typeof Axis,
+    PlotLineOrBandClass: typeof PlotLineOrBand
+): void {
+
+    if (U.pushUnique(composedMembers, AxisClass)) {
+        addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
+    }
+
+    if (U.pushUnique(composedMembers, PlotLineOrBandClass)) {
+        addEvent(PlotLineOrBandClass, 'render', onPlotLineOrBandRender);
+
+        wrap(
+            PlotLineOrBandClass.prototype,
+            'getLabelText',
+            wrapPlotLineOrBandGetLabelText
+        );
+    }
+
+}
+
+/**
+ * @private
+ */
+function onAxisAfterSetOptions(this: Axis): void {
     const options = this.options,
         cdiOptions = options.currentDateIndicator;
 
@@ -165,19 +196,24 @@ addEvent(Axis, 'afterSetOptions', function (): void {
 
         options.plotLines.push(plotLineOptions);
     }
+}
 
-});
-
-addEvent(PlotLineOrBand, 'render', function (): void {
+/**
+ * @private
+ */
+function onPlotLineOrBandRender(this: PlotLineOrBand): void {
     // If the label already exists, update its text
     if (this.label) {
         this.label.attr({
             text: this.getLabelText((this.options as any).label)
         });
     }
-});
+}
 
-wrap(PlotLineOrBand.prototype, 'getLabelText', function (
+/**
+ * @private
+ */
+function wrapPlotLineOrBandGetLabelText(
     this: PlotLineOrBand,
     defaultMethod: Function,
     defaultLabelOptions: (PlotBandLabelOptions|PlotLineLabelOptions)
@@ -197,4 +233,16 @@ wrap(PlotLineOrBand.prototype, 'getLabelText', function (
             .call(this, (options as any).value, (options as any).label.format);
     }
     return defaultMethod.call(this, defaultLabelOptions);
-});
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const CurrentDateIndication = {
+    compose
+};
+
+export default CurrentDateIndication;

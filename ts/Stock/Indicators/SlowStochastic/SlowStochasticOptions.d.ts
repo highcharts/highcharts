@@ -32,4 +32,10 @@ export interface SlowStochasticParamsOptions extends StochasticParamsOptions {
     // for inheritance
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default SlowStochasticOptions;

@@ -1,0 +1,7 @@
+---
+name: Export from config
+authors:
+  - Torstein Hønsi
+skipTest: true
+js_wrap: b
+...

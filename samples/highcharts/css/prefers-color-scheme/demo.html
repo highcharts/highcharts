@@ -1,0 +1,28 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<figure class="highcharts-figure">
+    <div id="container"></div>
+
+    <div class="highcharts-description">
+        This demo uses a tri-state theme selector, where the "Light" option
+        applies default colors, and the "Dark" option applies CSS variables for
+        dark colors. The "System default" option applies those color variables
+        only if <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme">
+        prefers-color-scheme</a> is <code>dark</code>.
+    </div>
+
+    <h4>Color theme</h4>
+    <label>
+        <input type="radio" name="color-mode" value="none" checked>
+        System default
+    </label>
+    <label>
+        <input type="radio" name="color-mode" value="light">
+        Light
+    </label>
+    <label>
+        <input type="radio" name="color-mode" value="dark">
+        Dark
+    </label>
+</figure>

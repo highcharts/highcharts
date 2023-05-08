@@ -5,13 +5,16 @@ name: Firefox CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "master" branch
-  push:
-    branches: [ $default-branch ]
-  pull_request:
-    branches: [ $default-branch ]
+  # push:
+  #   branches: [ $default-branch ]
+  # pull_request:
+  #   branches: [ $default-branch ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
 
 jobs:
 
@@ -19,6 +22,7 @@ jobs:
   test_browserstack:
     timeout-minutes: 10
     runs-on: ubuntu-latest
+    environment: browserstack
     strategy:
       matrix:
         node-version: [16.x]
@@ -30,8 +34,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm i
+      - name: Install Dependencies
+        run: npm i
       # tasks
+      - name: Build Highcharts
+        run: npx gulp scripts
       - name: Run Browserstack Tests (Firefox)
         run: npx gulp test --single-run --splitbrowsers Mac.Firefox
 
@@ -52,11 +59,15 @@ jobs:
           cache: 'npm'
       - uses: browser-actions/setup-firefox@latest
       - uses: browser-actions/setup-geckodriver@latest
-      - run: npm i cypress @highcharts/highcharts-utils
-      - run: npx cypress install && npx cypress info
+      - name: Install Dependencies
+        run: |
+          npm i cypress @highcharts/highcharts-utils
+          npx cypress install && npx cypress info
       # tasks
+      - name: Build Highcharts
+        run: npx gulp scripts
       - name: Run Highcharts-Utils
-        run: sudo npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly &
+        run: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly &
       - name: Check Firefox
         run: |
           firefox --version

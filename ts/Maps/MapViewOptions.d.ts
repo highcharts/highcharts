@@ -15,7 +15,7 @@
  * */
 import type ColorType from '../Core/Color/ColorType';
 import type ProjectionOptions from './ProjectionOptions';
-import type { MultiLineString, Polygon } from './GeoJSON';
+import type { GeoJSONGeometryMultiPoint, MultiLineString, Polygon } from './GeoJSON';
 
 /* *
  *
@@ -71,6 +71,7 @@ export interface MapViewInsetOptionsOptions {
 }
 
 export interface MapViewOptions {
+    fitToGeometry?: GeoJSONGeometryMultiPoint;
     center: LonLatArray;
     insetOptions?: MapViewInsetOptionsOptions;
     insets?: MapViewInsetsOptions[];

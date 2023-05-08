@@ -4,7 +4,7 @@ Highcharts.chart('container', {
     },
 
     caption: {
-        text: "Respondents' current level of employment. The results clearly reflect the significant unemployment and underemployment of individuals with disabilities, with only 40.7% of respondents being employed full time."
+        text: 'Respondents\' current level of employment. The results clearly reflect the significant unemployment and underemployment of individuals with disabilities, with only 40.7% of respondents being employed full time.'
     },
 
     accessibility: {

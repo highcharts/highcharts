@@ -314,6 +314,7 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
                     'Wierd Apricots'
                 ],
                 labels: {
+                    autoRotation: false,
                     step: 1
                 }
             },
@@ -365,6 +366,24 @@ QUnit.test('Labels should be wrapped(#4415)', function (assert) {
         box1 = xAxis.ticks[xAxis.tickPositions[1]].label.getBBox(true);
 
     assert.equal(box0.x + box0.width <= box1.x, true, 'No overlap');
+
+
+    chart.update({
+        chart: {
+            width: 250
+        },
+        xAxis: {
+            labels: {
+                autoRotation: [-45]
+            }
+        }
+    });
+
+    assert.deepEqual(
+        xAxis.tickPositions.map(pos => xAxis.ticks[pos].label.rotation),
+        [-45, -45, -45, -45, -45, -45, -45, -45, -45],
+        'step = 1 and default autoRotation: all ticks should be labeled and rotated (#14226)'
+    );
 });
 
 QUnit.test('X axis label rotation ignored step(#3971)', function (assert) {
@@ -621,13 +640,13 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
             },
             categories: [
                 'Not enough to choose from',
-                "Can't edit colors",
+                'Can\'t edit colors',
                 'I like it so far',
-                "Can't edit icons",
-                "Don't like the content/text",
-                "Don't like the colors",
+                'Can\'t edit icons',
+                'Don\'t like the content/text',
+                'Don\'t like the colors',
                 'It worked nicely.',
-                "Don't like the icons",
+                'Don\'t like the icons',
                 'If I had to make a suggestion. ' +
                     'For the most part they seem OK',
                 'For the text frames with images',
@@ -644,7 +663,7 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                     'Other than that',
                 'much more powerful than powerpoint.',
                 'I think it is great - so easy to use',
-                "I can't find these. Where are they?"
+                'I can\'t find these. Where are they?'
             ]
         },
         yAxis: [
@@ -664,13 +683,13 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                 },
                 data: [
                     ['Not enough to choose from', 21],
-                    ["Can't edit colors", 19],
+                    ['Can\'t edit colors', 19],
                     ['I like it so far', 14],
-                    ["Can't edit icons", 10],
-                    ["Don't like the content/text", 2],
-                    ["Don't like the colors", 2],
+                    ['Can\'t edit icons', 10],
+                    ['Don\'t like the content/text', 2],
+                    ['Don\'t like the colors', 2],
                     ['It worked nicely.', 1],
-                    ["Don't like the icons", 1],
+                    ['Don\'t like the icons', 1],
                     [
                         'If I had to make a suggestion. ' +
                             'For the most part they seem OK',
@@ -706,7 +725,7 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
                     ],
                     ['much more powerful than powerpoint.', 1],
                     ['I think it is great - so easy to use', 1],
-                    ["I can't find these. Where are they?", 1]
+                    ['I can\'t find these. Where are they?', 1]
                 ]
             }
         ]
@@ -1272,7 +1291,7 @@ QUnit.test('Long labels and ellipsis', function (assert) {
 });
 
 QUnit.test('Label ellipsis and expanding', function (assert) {
-    var chart = new Highcharts.chart('container', {
+    var chart = new Highcharts.Chart('container', {
         chart: {
             width: 300
         },
@@ -1306,7 +1325,7 @@ QUnit.test('Label ellipsis and expanding', function (assert) {
 });
 
 QUnit.test('Label ellipsis and resetting categories', assert => {
-    const chart = new Highcharts.chart('container', {
+    const chart = new Highcharts.Chart('container', {
         chart: {
             width: 600,
             height: 400
@@ -1420,9 +1439,12 @@ QUnit.test('Width set from label style (#7028)', function (assert) {
         ]
     });
 
+    const labelWidth = Math.floor(
+        chart.xAxis[0].ticks[3].label.getBBox().width
+    );
     assert.ok(
-        Math.floor(chart.xAxis[0].ticks[3].label.getBBox().width) <= 40,
-        'Label width set correctly'
+        labelWidth <= 41,
+        `Label width set correctly (is ${labelWidth})`
     );
 });
 
@@ -2133,12 +2155,12 @@ QUnit.test(
 
         assert.deepEqual(
             chart.xAxis[0].ticks[1].label.attr('y'),
-            // +3px because of a "bug" in default positioning
+            // -3px because of a "bug" in default positioning
             // If you read this comment and you are not sure if you can remove
             // this +3px, then yes, you can.
-            defaultY + 3,
-            `labels.y=0 for opposite xAxis should align label the same way as
-            labels.y=undefined (#12206)`
+            defaultY - 3,
+            'labels.y=0 for opposite xAxis should align label the same way ' +
+            'as labels.y=undefined (#12206)'
         );
     }
 );

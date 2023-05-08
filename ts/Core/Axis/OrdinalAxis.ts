@@ -87,7 +87,7 @@ declare module './AxisType' {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* eslint-disable valid-jsdoc */
 
@@ -154,9 +154,7 @@ namespace OrdinalAxis {
         ChartClass: typeof Chart
     ): (typeof Composition&T) {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             const axisProto = AxisClass.prototype as Composition;
 
             axisProto.getTimeTicks = getTimeTicks;
@@ -179,15 +177,14 @@ namespace OrdinalAxis {
                 onAxisInitialAxisTranslation
             );
         }
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
+
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'pan', onChartPan);
         }
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
         }
-        /* eslint-enable no-invalid-this */
+
         return AxisClass as (typeof Composition&T);
     }
     /**
@@ -960,7 +957,8 @@ namespace OrdinalAxis {
                     // between points is identical throughout all series.
                     if (
                         i > 0 &&
-                        series.options.id !== 'highcharts-navigator-series'
+                        series.options.id !== 'highcharts-navigator-series' &&
+                        series.processedXData.length > 1
                     ) {
                         adjustOrdinalExtremesPoints =
                             distanceBetweenPoint !== series.processedXData[1] -
@@ -1416,7 +1414,9 @@ namespace OrdinalAxis {
                         series.points &&
                         defined(series.points[0]) &&
                         defined(series.points[0].plotX) &&
-                        series.points[0].plotX < firstPointX
+                        series.points[0].plotX < firstPointX &&
+                        // #17128
+                        series.points[0].plotX >= pick(axis.min, -Infinity)
                     ) {
                         firstPointX = series.points[0].plotX;
                     }
@@ -1453,8 +1453,9 @@ namespace OrdinalAxis {
                 axis = ordinal.axis,
                 extraRange = axis.options.overscroll,
                 distance = ordinal.overscrollPointsRange,
-                positions = [],
-                max = axis.dataMax;
+                positions = [];
+
+            let max = axis.dataMax;
 
             if (defined(distance)) {
                 // Max + pointRange because we need to scroll to the last

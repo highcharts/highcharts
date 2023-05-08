@@ -28,8 +28,8 @@ import type {
     StockToolsOptions
 } from './StockToolsOptions';
 
-import O from '../../Core/DefaultOptions.js';
-const { setOptions } = O;
+import D from '../../Core/Defaults.js';
+const { setOptions } = D;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
 import U from '../../Core/Utilities.js';
@@ -54,13 +54,10 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/LangOptions'{
+declare module '../../Core/Options'{
     interface LangOptions {
         stockTools?: LangStockToolsOptions;
     }
-}
-
-declare module '../../Core/Options'{
     interface Options {
         stockTools?: StockToolsOptions;
     }
@@ -72,7 +69,7 @@ declare module '../../Core/Options'{
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -111,9 +108,7 @@ function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'afterGetContainer', onChartAfterGetContainer);
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRedraw);
@@ -125,9 +120,7 @@ function compose(
         ChartClass.prototype.setStockTools = chartSetStockTools;
     }
 
-    if (composedClasses.indexOf(NavigationBindingsClass) === -1) {
-        composedClasses.push(NavigationBindingsClass);
-
+    if (U.pushUnique(composedMembers, NavigationBindingsClass)) {
         addEvent(
             NavigationBindingsClass,
             'deselectButton',
@@ -140,9 +133,7 @@ function compose(
         );
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions(StockToolsDefaults);
     }
 }

@@ -36,4 +36,10 @@ export interface ABandsParamsOptions extends SMAParamsOptions {
     factor?: number;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default ABandsOptions;

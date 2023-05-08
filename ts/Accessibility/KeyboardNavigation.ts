@@ -40,7 +40,7 @@ const {
 
 import EventProvider from './Utils/EventProvider.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
-const { getElement } = HTMLUtilities;
+const { getElement, simulatedEventTarget } = HTMLUtilities;
 
 /* *
  *
@@ -92,7 +92,6 @@ class KeyboardNavigation {
     public isClickingChart?: boolean;
     public keyboardReset?: boolean;
     public modules: Array<KeyboardNavigationHandler> = [];
-    public pointerIsOverChart?: boolean;
     public tabindexContainer: HTMLDOMElement = void 0 as any;
     public tabbingInBackwards?: boolean;
 
@@ -133,7 +132,8 @@ class KeyboardNavigation {
             (e: FocusEvent): void => this.onFocus(e));
 
         ['mouseup', 'touchend'].forEach((eventName): Function =>
-            ep.addEvent(doc, eventName, (): void => this.onMouseUp())
+            ep.addEvent(doc, eventName,
+                (e): void => this.onMouseUp(e as MouseEvent))
         );
 
         ['mousedown', 'touchstart'].forEach((eventName): Function =>
@@ -141,14 +141,6 @@ class KeyboardNavigation {
                 this.isClickingChart = true;
             })
         );
-
-        ep.addEvent(chart.renderTo, 'mouseover', (): void => {
-            this.pointerIsOverChart = true;
-        });
-
-        ep.addEvent(chart.renderTo, 'mouseout', (): void => {
-            this.pointerIsOverChart = false;
-        });
     }
 
 
@@ -268,14 +260,18 @@ class KeyboardNavigation {
      * @param {global.FocusEvent} e Browser focus event.
      */
     private onFocus(e: FocusEvent): void {
-        const chart = this.chart;
-        const focusComesFromChart = (
-            e.relatedTarget &&
-            chart.container.contains(e.relatedTarget as any)
-        );
+        const chart = this.chart,
+            focusComesFromChart = (
+                e.relatedTarget &&
+                chart.container.contains(e.relatedTarget as any)
+            ),
+            a11yOptions = chart.options.accessibility,
+            keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
+            enabled = keyboardOptions && keyboardOptions.enabled;
 
         // Init keyboard nav if tabbing into chart
         if (
+            enabled &&
             !this.exiting &&
             !this.tabbingInBackwards &&
             !this.isClickingChart &&
@@ -298,13 +294,19 @@ class KeyboardNavigation {
      * indicator.
      * @private
      */
-    private onMouseUp(): void {
+    private onMouseUp(e: MouseEvent): void {
         delete this.isClickingChart;
 
-        if (!this.keyboardReset) {
+        if (
+            !this.keyboardReset &&
+            e.relatedTarget !== simulatedEventTarget
+        ) {
             const chart = this.chart;
 
-            if (!this.pointerIsOverChart) {
+            if (
+                !e.target ||
+                !chart.container.contains(e.target as HTMLElement)
+            ) {
                 const curMod = this.modules &&
                         this.modules[this.currentModuleIx || 0];
                 if (curMod && curMod.terminate) {
@@ -562,7 +564,7 @@ namespace KeyboardNavigation {
      *
      * */
 
-    const composedItems: Array<(Document|Function)> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -581,17 +583,13 @@ namespace KeyboardNavigation {
     ): (T&typeof ChartComposition) {
         MenuComponent.compose(ChartClass);
 
-        if (composedItems.indexOf(ChartClass) === -1) {
-            composedItems.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.dismissPopupContent = chartDismissPopupContent;
         }
 
-        if (composedItems.indexOf(doc) === -1) {
-            composedItems.push(doc);
-
+        if (U.pushUnique(composedMembers, doc)) {
             addEvent(doc, 'keydown', documentOnKeydown);
         }
 

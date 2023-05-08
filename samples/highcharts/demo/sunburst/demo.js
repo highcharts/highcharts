@@ -355,7 +355,7 @@ var data = [{
     value: 1367254
 },
 
-/***********/
+/** *********/
 
 /* America */
 {
@@ -654,7 +654,7 @@ var data = [{
     name: 'Montserrat',
     value: 5177
 },
-/***********/
+/** *********/
 
 /* Asia */
 {
@@ -947,7 +947,7 @@ var data = [{
     name: 'Turkmenistan',
     value: 5758075
 },
-/***********/
+/** *********/
 
 /* Europe */
 {
@@ -1226,7 +1226,7 @@ var data = [{
     name: 'Liechtenstein',
     value: 37922
 },
-/***********/
+/** *********/
 
 /* Oceania */
 {
@@ -1398,6 +1398,7 @@ Highcharts.chart('container', {
         data: data,
         name: 'Root',
         allowDrillToNode: true,
+        borderRadius: 3,
         cursor: 'pointer',
         dataLabels: {
             format: '{point.name}',
@@ -1405,8 +1406,7 @@ Highcharts.chart('container', {
                 property: 'innerArcLength',
                 operator: '>',
                 value: 16
-            },
-            rotationMode: 'circular'
+            }
         },
         levels: [{
             level: 1,

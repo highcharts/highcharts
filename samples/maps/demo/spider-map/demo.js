@@ -31,12 +31,30 @@
             }
         },
 
+        mapView: {
+            fitToGeometry: {
+                type: 'MultiPoint',
+                coordinates: [
+                    // Alaska west
+                    [-164, 54],
+                    // Greenland north
+                    [-35, 84],
+                    // New Zealand east
+                    [179, -38],
+                    // Chile south
+                    [-68, -55]
+                ]
+            }
+        },
+
         title: {
-            text: 'Norwegian medals in the Summer Olympics (1996 - 2020)'
+            text: 'Norwegian medals in the Summer Olympics (1996 - 2020)',
+            align: 'left'
         },
 
         subtitle: {
-            text: 'Source: <a href="https://en.wikipedia.org/wiki/Norway_at_the_Olympics">Wikipedia</a>'
+            text: 'Source: <a href="https://en.wikipedia.org/wiki/Norway_at_the_Olympics">Wikipedia</a>',
+            align: 'left'
         },
 
         tooltip: {

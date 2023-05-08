@@ -21,8 +21,7 @@
 import type Options from '../../Core/Options';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 
-import H from '../../Core/Globals.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 
 /* *
@@ -124,11 +123,6 @@ namespace GrayTheme {
                 style: {
                     color: '#E0E0E0'
                 }
-            }
-        },
-        labels: {
-            style: {
-                color: '#CCC'
             }
         },
         tooltip: {

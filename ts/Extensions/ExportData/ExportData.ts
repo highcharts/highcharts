@@ -31,7 +31,6 @@ import type {
 import type Exporting from '../Exporting/Exporting';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import type Point from '../../Core/Series/Point';
 import type {
     PointOptions,
     PointShortOptions
@@ -46,7 +45,7 @@ const {
     doc,
     win
 } = H;
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const {
     getOptions,
     setOptions
@@ -144,7 +143,7 @@ interface ExportDataSeries {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -1004,7 +1003,8 @@ function chartToggleDataTable(
     show = pick(show, !this.isDataTableVisible);
 
     // Create the div
-    if (show && !this.dataTableDiv) {
+    const createContainer = show && !this.dataTableDiv;
+    if (createContainer) {
         this.dataTableDiv = doc.createElement('div');
         this.dataTableDiv.className = 'highcharts-data-table';
         // Insert after the chart container
@@ -1016,15 +1016,20 @@ function chartToggleDataTable(
 
     // Toggle the visibility
     if (this.dataTableDiv) {
+        const style = this.dataTableDiv.style,
+            oldDisplay = style.display;
 
-        this.dataTableDiv.style.display = show ? 'block' : 'none';
+        style.display = show ? 'block' : 'none';
 
         // Generate the data table
         if (show) {
             this.dataTableDiv.innerHTML = AST.emptyHTML;
             const ast = new AST([this.getTableAST()]);
             ast.addToDOM(this.dataTableDiv);
-            fireEvent(this, 'afterViewData', this.dataTableDiv);
+            fireEvent(this, 'afterViewData', {
+                element: this.dataTableDiv,
+                wasHidden: createContainer || oldDisplay !== style.display
+            });
         }
     }
 
@@ -1081,9 +1086,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         // Add an event listener to handle the showTable option
         addEvent(ChartClass, 'afterViewData', onChartAfterViewData);
         addEvent(ChartClass, 'render', onChartRenderer);
@@ -1101,9 +1104,7 @@ function compose(
         chartProto.viewData = chartViewData;
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (U.pushUnique(composedMembers, setOptions)) {
         const exportingOptions = getOptions().exporting;
 
         // Add "Download CSV" to the exporting menu.
@@ -1147,34 +1148,29 @@ function compose(
         setOptions(ExportDataDefaults);
     }
 
-    if (AreaRangeSeries && composedClasses.indexOf(AreaRangeSeries) === -1) {
-        composedClasses.push(AreaRangeSeries);
+    if (AreaRangeSeries && U.pushUnique(composedMembers, AreaRangeSeries)) {
         AreaRangeSeries.prototype.keyToAxis = {
             low: 'y',
             high: 'y'
         };
     }
 
-    if (GanttSeries && composedClasses.indexOf(GanttSeries) === -1) {
-        composedClasses.push(GanttSeries);
+    if (GanttSeries && U.pushUnique(composedMembers, GanttSeries)) {
         GanttSeries.prototype.keyToAxis = {
             start: 'x',
             end: 'x'
         };
     }
 
-    if (MapSeries && composedClasses.indexOf(MapSeries) === -1) {
-        composedClasses.push(MapSeries);
+    if (MapSeries && U.pushUnique(composedMembers, MapSeries)) {
         MapSeries.prototype.exportKey = 'name';
     }
 
-    if (MapBubbleSeries && composedClasses.indexOf(MapBubbleSeries) === -1) {
-        composedClasses.push(MapBubbleSeries);
+    if (MapBubbleSeries && U.pushUnique(composedMembers, MapBubbleSeries)) {
         MapBubbleSeries.prototype.exportKey = 'name';
     }
 
-    if (TreemapSeries && composedClasses.indexOf(TreemapSeries) === -1) {
-        composedClasses.push(TreemapSeries);
+    if (TreemapSeries && U.pushUnique(composedMembers, TreemapSeries)) {
         TreemapSeries.prototype.exportKey = 'name';
     }
 
@@ -1231,7 +1227,6 @@ function onChartAfterViewData(
 ): void {
     const chart = this,
         dataTableDiv = chart.dataTableDiv,
-        row = document.querySelectorAll('thead')[0].querySelectorAll('tr')[0],
         getCellValue = (tr: HTMLDOMElement, index: number): string|null =>
             tr.children[index].textContent,
         comparer = (index: number, ascending: boolean) =>
@@ -1249,42 +1244,51 @@ function onChartAfterViewData(
             };
 
 
-    if (dataTableDiv) {
-        row.childNodes.forEach((th: any): void => {
-            const table = th.closest('table');
+    if (
+        dataTableDiv &&
+        chart.options.exporting &&
+        chart.options.exporting.allowTableSorting
+    ) {
+        const row = dataTableDiv.querySelector('thead tr');
+        if (row) {
+            row.childNodes.forEach((th: any): void => {
+                const table = th.closest('table');
 
-            th.addEventListener('click', function (): void {
-                const rows = [...dataTableDiv.querySelectorAll(
-                        'tr:not(thead tr)'
-                    ) as unknown as Array<HTMLElement>],
-                    headers = [...th.parentNode.children];
+                th.addEventListener('click', function (): void {
+                    const rows = [...dataTableDiv.querySelectorAll(
+                            'tr:not(thead tr)'
+                        ) as unknown as Array<HTMLElement>],
+                        headers = [...th.parentNode.children];
 
-                rows.sort(
-                    comparer(
-                        headers.indexOf(th),
-                        chart.ascendingOrderInTable =
-                            !chart.ascendingOrderInTable
-                    )
-                ).forEach((tr: HTMLDOMElement): void => {
-                    table.appendChild(tr);
-                });
+                    rows.sort(
+                        comparer(
+                            headers.indexOf(th),
+                            chart.ascendingOrderInTable =
+                                !chart.ascendingOrderInTable
+                        )
+                    ).forEach((tr: HTMLDOMElement): void => {
+                        table.appendChild(tr);
+                    });
 
-                headers.forEach((th): void => {
-                    ['highcharts-sort-ascending', 'highcharts-sort-descending']
-                        .forEach((className): void => {
+                    headers.forEach((th): void => {
+                        [
+                            'highcharts-sort-ascending',
+                            'highcharts-sort-descending'
+                        ].forEach((className): void => {
                             if (th.classList.contains(className)) {
                                 th.classList.remove(className);
                             }
                         });
-                });
+                    });
 
-                th.classList.add(
-                    chart.ascendingOrderInTable ?
-                        'highcharts-sort-ascending' :
-                        'highcharts-sort-descending'
-                );
+                    th.classList.add(
+                        chart.ascendingOrderInTable ?
+                            'highcharts-sort-ascending' :
+                            'highcharts-sort-descending'
+                    );
+                });
             });
-        });
+        }
     }
 }
 

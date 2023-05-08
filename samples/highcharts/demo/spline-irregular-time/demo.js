@@ -12,7 +12,7 @@ Highcharts.chart('container', {
     },
     xAxis: {
         type: 'datetime',
-        dateTimeLabelFormats: { // don't display the dummy year
+        dateTimeLabelFormats: { // don't display the year
             month: '%e. %b',
             year: '%b'
         },
@@ -42,12 +42,12 @@ Highcharts.chart('container', {
 
     colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
 
-    // Define the data points. All series have a dummy year of 1970/71 in order
+    // Define the data points. All series have a year of 1970/71 in order
     // to be compared on the same x axis. Note that in JavaScript, months start
     // at 0 for January, 1 for February etc.
     series: [
         {
-            name: "Winter 2019-2020",
+            name: 'Winter 2019-2020',
             data: [
                 [Date.UTC(1970, 9, 24), 0],
                 [Date.UTC(1970, 9, 27), 0.12],
@@ -127,7 +127,7 @@ Highcharts.chart('container', {
                 [Date.UTC(1971, 5, 23), 0]
             ]
         }, {
-            name: "Winter 2020-2021",
+            name: 'Winter 2020-2021',
             data: [
                 [Date.UTC(1970, 10, 14), 0],
                 [Date.UTC(1970, 11,  6), 0.35],
@@ -173,7 +173,7 @@ Highcharts.chart('container', {
                 [Date.UTC(1971, 4, 26), 0]
             ]
         }, {
-            name: "Winter 2021-2022",
+            name: 'Winter 2021-2022',
             data: [
                 [Date.UTC(1970, 10,  5), 0],
                 [Date.UTC(1970, 10, 12), 0.1],

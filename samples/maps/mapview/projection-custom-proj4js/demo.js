@@ -32,7 +32,7 @@ Highcharts.Projection.add('UTM', UTMProjectionDefinition);
         'https://code.highcharts.com/mapdata/custom/british-isles.topo.json'
     ).then(response => response.json());
 
-    // Random dummy data
+    // Add some data for each geometry
     const data = map.objects.default.geometries.map((g, i) => i);
 
     // Initialize the chart
@@ -74,12 +74,7 @@ Highcharts.Projection.add('UTM', UTMProjectionDefinition);
 
         series: [{
             data,
-            joinBy: null,
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            }
+            joinBy: null
         }]
     });
 })();

@@ -25,6 +25,12 @@ import HLCSeriesOptions from '../HLC/HLCSeriesOptions';
  *
  * */
 
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        useOhlcData?: boolean;
+    }
+}
+
 export interface OHLCSeriesOptions extends HLCSeriesOptions {
     upColor?: ColorType;
     states?: SeriesStatesOptions<OHLCSeries>;

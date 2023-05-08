@@ -135,7 +135,7 @@
                 assert.strictEqual(
                     this.container.querySelectorAll('image').length,
                     1,
-                    "callback: Image added after modules's callbacks"
+                    'callback: Image added after modules\'s callbacks'
                 );
 
                 done();

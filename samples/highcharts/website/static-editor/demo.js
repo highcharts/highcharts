@@ -9,7 +9,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-use-before-define */
 /* eslint-disable max-len */
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -32,11 +32,11 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
-//////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 
 
 var highed = {
@@ -173,7 +173,7 @@ var highed = {
             uuid;
 
         if (window.performance && typeof window.performance.now === 'function') {
-            d += window.performance.now(); //use high-precision timer if available
+            d += window.performance.now(); // use high-precision timer if available
         }
 
         uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -220,7 +220,7 @@ var highed = {
                 if (
                     (str[i + 1] && str[i + 1] === str[i + 1].toUpperCase()) ||
           (str[i - 1] && str[i - 1] === str[i - 1].toUpperCase())
-                ) { //nothing
+                ) { // nothing
                 } else {
                     s += ' ';
                 }
@@ -424,7 +424,7 @@ var highed = {
 
         Object.keys(b).forEach(function (bk) {
             if (excludeMap && excludeMap[bk]) {
-                //nothing
+                // nothing
             } else if (highed.isNull(b[bk]) || highed.isBasic(b[bk])) {
                 a[bk] = b[bk];
             } else if (highed.isArr(b[bk])) {
@@ -524,7 +524,7 @@ var highed = {
                 '\t': 0
             },
             rows;
-        //The only thing CSV formats have in common..
+        // The only thing CSV formats have in common..
         rows = (csv || '').replace(/\r\n/g, '\n').split('\n');
 
         // If there's no delimiter, look at the first few rows to guess it.
@@ -631,14 +631,14 @@ var highed = {
                         inStr = false;
                     }
 
-                    //Everything is allowed inside quotes
+                    // Everything is allowed inside quotes
                 } else if (inStr) {
                     token += c;
-                    //Check if we're done reading a token
+                    // Check if we're done reading a token
                 } else if (c === options.delimiter) {
                     pushToken();
 
-                    //Append to token
+                    // Append to token
                 } else {
                     token += c;
                 }
@@ -677,7 +677,7 @@ var highed = {
                 }
 
                 if (highed.isStr(v) && Date.parse(v) !== NaN) {
-                    //v = (new Date(v)).getTime();
+                    // v = (new Date(v)).getTime();
                 }
 
                 rarr.push(v);
@@ -722,7 +722,7 @@ var highed = {
             'https://code.highcharts.com/modules/exporting.js'
         ];
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     function pollForReady() {
         if (!isReady) {
@@ -739,7 +739,7 @@ var highed = {
 
     pollForReady();
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
 
     highed.exposeOption = function (option) {};
@@ -782,7 +782,7 @@ var highed = {
         things.splice(0, 1);
 
         if (level <= currentLogLevel) {
-            console.log.apply(undefined, [logLevels[level - 1] + ':'].concat(things)); //eslint-disable-line no-console
+            console.log.apply(undefined, [logLevels[level - 1] + ':'].concat(things)); // eslint-disable-line no-console
         }
     };
 
@@ -880,9 +880,9 @@ var highed = {
     isOnPhone = checkIfPhone();
     isOnTablet = checkIfTabletDimensions();
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
-    //Inject dependencies
+    // Inject dependencies
     highed.ready(function () {
         if (!options.autoIncludeDependencies) {
             return false;
@@ -900,7 +900,7 @@ var highed = {
 
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -923,7 +923,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -945,13 +945,13 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 return langTree[currentLang][id];
             }
         } else {
-            //The current language is invalid, fall back to 'en'
+            // The current language is invalid, fall back to 'en'
             if (langTree.en[id]) {
                 return langTree.en[id];
             }
         }
 
-        //404
+        // 404
         return 'bad localized string: ' + id;
     };
 
@@ -1002,7 +1002,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-//Install "en" translations
+// Install "en" translations
 highed.installLanguage({
     language: 'en',
     entries: {
@@ -1096,7 +1096,7 @@ highed.installLanguage({
         'option.tooltip.title.text': 'The main chart title.',
         'option.text.subtitle.text': 'Chart subtitle',
         'option.tooltip.subtitle.text':
-      "The chart's subtitle, normally displayed with smaller fonts below the main title.",
+      'The chart\'s subtitle, normally displayed with smaller fonts below the main title.',
         'option.text.yAxis.title.text': 'Y axis title',
         'option.tooltip.yAxis.title.text':
       'The Y axis title, normally displayed vertically along the Y axis.',
@@ -1105,7 +1105,7 @@ highed.installLanguage({
       'An explicit width for the chart. By default (when <code>null</code>) the width is calculated from the offset width of the containing element.',
         'option.text.chart.height': 'Chart height',
         'option.tooltip.chart.height':
-      "An explicit height for the chart. By default (when <code>null</code>) the height is calculated from the offset height of the containing element, or 400 pixels if the containing element's height is 0.",
+      'An explicit height for the chart. By default (when <code>null</code>) the height is calculated from the offset height of the containing element, or 400 pixels if the containing element\'s height is 0.',
         'option.text.chart.zoomType': 'Allow zooming',
         'option.tooltip.chart.zoomType':
       'Decides in what dimensions the user can zoom by dragging the mouse. Can be one of <code>x</code>, <code>y</code> or <code>xy</code>.',
@@ -1121,7 +1121,7 @@ highed.installLanguage({
         'option.tooltip.title.style': 'Styling for the main chart title',
         'option.text.subtitle.style': 'Subtitle style',
         'option.tooltip.subtitle.style':
-      "Styling for the chart's subtitle, normally displayed with smaller fonts below the main title",
+      'Styling for the chart\'s subtitle, normally displayed with smaller fonts below the main title',
         'option.text.colors': 'Colors',
         'option.tooltip.colors':
       'Default colors for the data series, or for individual points in a pie series or a column series with individual colors. Colors will be picked in succession. If a color is explicitly set for each series in the <em>Data series</em> view, that color will take precedence.',
@@ -1320,7 +1320,7 @@ highed.installLanguage({
     }
 });
 
-/*******************************************************************************
+/** *****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -1343,7 +1343,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -1386,7 +1386,7 @@ highed.dom = {
 
 
     options: function (select, options, selected) {
-        if (highed.isNull(options)) { //nothing
+        if (highed.isNull(options)) { // nothing
         } else if (highed.isArr(options)) {
             options.forEach(function (option) {
                 highed.dom.ap(select, highed.dom.cr('option', '', option, option));
@@ -1418,7 +1418,7 @@ highed.dom = {
 
         highed.dom.on(parent, 'mouseover', function () {
             highed.dom.style(child, {
-                //display: 'block',
+                // display: 'block',
                 opacity: 1,
                 //  background: 'rgba(46, 46, 46, 0.85)',
                 'pointer-events': 'auto'
@@ -1427,9 +1427,9 @@ highed.dom = {
 
         highed.dom.on(parent, 'mouseout', function () {
             highed.dom.style(child, {
-                //display: 'none',
+                // display: 'none',
                 opacity: 0,
-                //background: 'rgba(0, 0, 0, 0)',
+                // background: 'rgba(0, 0, 0, 0)',
                 'pointer-events': 'none'
             });
         });
@@ -1497,7 +1497,7 @@ highed.dom = {
         }
 
         if (target === document.body && event === 'resize') {
-            //Need some special magic here eventually.
+            // Need some special magic here eventually.
         }
 
         if (target && target.forEach) {
@@ -1616,7 +1616,7 @@ highed.dom = {
     }
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -1639,7 +1639,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -1695,7 +1695,7 @@ highed.events = function () {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -1718,7 +1718,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -1812,7 +1812,7 @@ highed.ready(function () {
     };
 });
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -1835,7 +1835,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -1995,7 +1995,7 @@ highed.templates = {};
     };
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -2018,7 +2018,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -2126,7 +2126,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     function extend(superset, node, trigger) {
         if (trigger === undefined) {
-            if (node.meta.ns && node.meta.ns === "plotOptions") {
+            if (node.meta.ns && node.meta.ns === 'plotOptions') {
                 trigger = 'plotOptions';
             }
         }
@@ -2266,7 +2266,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/*******************************************************************************
+/** *****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -2289,7 +2289,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -2335,7 +2335,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/*******************************************************************************
+/** *****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -2358,7 +2358,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -2386,7 +2386,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/*******************************************************************************
+/** *****************************************************************************
 
 Copyright (c) 2017-2018, Highsoft
 
@@ -2409,7 +2409,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-*******************************************************************************/
+ *******************************************************************************/
 
 // @format
 
@@ -2544,7 +2544,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -2567,7 +2567,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -2577,7 +2577,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     highed.emit = events.emit;
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -2600,7 +2600,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -2656,7 +2656,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -2679,7 +2679,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -2707,7 +2707,7 @@ highed.OverlayModal = function (contents, attributes) {
         container.classList += properties.class;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
 
     function resize(width, height) {
@@ -2793,7 +2793,7 @@ highed.OverlayModal = function (contents, attributes) {
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     highed.ready(function () {
         highed.dom.ap(document.body, container);
@@ -2810,9 +2810,9 @@ highed.OverlayModal = function (contents, attributes) {
 
     hide(true);
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
-    //Public interface
+    // Public interface
     return {
         on: events.on,
         show: show,
@@ -2823,7 +2823,7 @@ highed.OverlayModal = function (contents, attributes) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -2846,7 +2846,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -2889,7 +2889,7 @@ highed.HSplitter = function (parent, attributes) {
         left.className += ' highed-hsplitter-body-responsive';
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     function updateSizeFromMover(x) {
         var psize;
@@ -2918,7 +2918,7 @@ highed.HSplitter = function (parent, attributes) {
             st,
             ps;
 
-        //Check if the right side is visible
+        // Check if the right side is visible
         if (!highed.dom.isVisible(right)) {
             highed.dom.style(left, {
                 width: '100%'
@@ -2962,7 +2962,7 @@ highed.HSplitter = function (parent, attributes) {
             });
         }
 
-        //If we're at right max, we need to resize the left panel
+        // If we're at right max, we need to resize the left panel
         ps = highed.dom.size(left);
         if (ps.w === properties.leftMax) {
             highed.dom.style(right, {
@@ -2983,7 +2983,7 @@ highed.HSplitter = function (parent, attributes) {
         });
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     parent = highed.dom.get(parent);
 
@@ -3016,9 +3016,9 @@ highed.HSplitter = function (parent, attributes) {
         });
     }
 
-    //resize();
+    // resize();
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     // Public interface
     return {
@@ -3030,7 +3030,7 @@ highed.HSplitter = function (parent, attributes) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -3053,7 +3053,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -3072,7 +3072,7 @@ highed.VSplitter = function (parent, attributes) {
         topBody = highed.dom.cr('div', 'highed-vsplitter-body highed-scrollbar'),
         bottomBody = highed.dom.cr('div', 'highed-vsplitter-body highed-scrollbar');
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
 
     function resize(w, h) {
@@ -3118,12 +3118,12 @@ highed.VSplitter = function (parent, attributes) {
                 height: 100 - properties.topHeight + '%'
             });
         }
-    //highed.dom.style([top, bottom, container], {
+    // highed.dom.style([top, bottom, container], {
     //    width: (w || s.w) + 'px'
-    //});
+    // });
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     highed.dom.ap(
         highed.dom.get(parent),
@@ -3142,7 +3142,7 @@ highed.VSplitter = function (parent, attributes) {
 
     parent = highed.dom.get(parent);
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     // Public interface
     return {
@@ -3154,7 +3154,7 @@ highed.VSplitter = function (parent, attributes) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -3177,14 +3177,14 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
 
 highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
     var container = highed.dom.cr('div', 'highed-tab-control'),
-        paneBar = highed.dom.cr('div', (!skipTabs ? 'tabs' : '')), //Quck fix for now, will change once design finalised.
+        paneBar = highed.dom.cr('div', (!skipTabs ? 'tabs' : '')), // Quck fix for now, will change once design finalised.
         body = highed.dom.cr('div', 'body'),
         indicator = highed.dom.cr('div', 'indicator'),
         more = highed.dom.cr('div', (!skipTabs ? 'highed-tab-control-more fa fa-chevron-right' : '')),
@@ -3193,9 +3193,9 @@ highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
         tabs = [],
         ctx = highed.ContextMenu();
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
-    //Build ctx menu
+    // Build ctx menu
     function buildCTX() {
         ctx.build(
             tabs.map(function (tab) {
@@ -3227,16 +3227,16 @@ highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
         });
 
         highed.dom.style(body, {
-            height: (h || cs.h) /*- ps.h*/ + 'px'
+            height: (h || cs.h) /* - ps.h*/ + 'px'
         });
 
-        //Also re-focus the active tab
+        // Also re-focus the active tab
         if (selectedTab) {
             selectedTab.focus();
         }
 
-        //clientWidth/scrollWidth doesn't produce what we need,
-        //so let's check the accumulated width of the tabs.
+        // clientWidth/scrollWidth doesn't produce what we need,
+        // so let's check the accumulated width of the tabs.
 
         tabs.forEach(function (tab) {
             width += highed.dom.size(tab.node).w || 0;
@@ -3370,7 +3370,7 @@ highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
             }
 
             if (!tsize || !tpos || !tsize.w) {
-                //We're not ready yet..
+                // We're not ready yet..
             }
 
             highed.dom.style(indicator, {
@@ -3430,7 +3430,7 @@ highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
         return texports;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     if (!highed.isNull(parent)) {
         highed.ready(function () {
@@ -3445,7 +3445,7 @@ highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
         });
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     return {
         container: container,
@@ -3463,7 +3463,7 @@ highed.TabControl = function (parent, noOverflow, extraPadding, skipTabs) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -3486,11 +3486,11 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
-/*Create a table, append to body, add a color picker to it.
+/* Create a table, append to body, add a color picker to it.
  *  highed.dom.ap(document.body,
  *      highed.dom.ap(highed.dom.cr('table'),
  *          highed.InspectorField('color', '#FFF', {
@@ -3664,8 +3664,8 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
             col !== 'undefined' &&
             typeof col !== 'undefined'
                     ) {
-                        box.innerHTML = "";
-                        //box.innerHTML = col;
+                        box.innerHTML = '';
+                        // box.innerHTML = col;
                     } else {
                         box.innerHTML = 'auto';
                         col = '#FFFFFF';
@@ -3678,11 +3678,11 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 }
 
                 function fixVal() {
-                    //This is very ugly
+                    // This is very ugly
                     try {
                         val = JSON.parse(val);
                     } catch (e) {
-                        //nothing
+                        // nothing
                     }
 
                     if (highed.isArr(val)) {
@@ -3715,7 +3715,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
 
                 return highed.dom.ap(
                     highed.dom.cr('div', 'highed-field-container'),
-                    box/*,
+                    box/* ,
           reset*/
                 );
             },
@@ -3772,7 +3772,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                         errorBar.innerHTML = '';
                         highed.dom.style(errorBar, { display: 'none', opacity: 0 });
                     } catch (e) {
-                        //highed.snackBar('There\'s an error in your JSON: ' + e);
+                        // highed.snackBar('There\'s an error in your JSON: ' + e);
                         errorBar.innerHTML = 'Syntax error: ' + e;
                         highed.dom.style(errorBar, { display: 'block', opacity: 1 });
                     }
@@ -3817,7 +3817,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
 
                 return highed.dom.ap(
                     highed.dom.cr('div', 'highed-field-container'),
-                    /*reset,*/
+                    /* reset,*/
                     picker.container
                 );
             },
@@ -3848,12 +3848,12 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
 
                 return highed.dom.ap(
                     highed.dom.cr('div', 'highed-field-container'),
-                    ddown.container/*,
+                    ddown.container/* ,
           reset*/
                 );
             },
             object: function (val, callback) {
-                //Create a sub-table of options
+                // Create a sub-table of options
                 var stable = highed.dom.cr(
                         'table',
                         'highed-customizer-table',
@@ -3868,7 +3868,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                     try {
                         val = JSON.parse(val);
                     } catch (e) {
-                        //nothing
+                        // nothing
                     }
                 }
 
@@ -4031,7 +4031,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                 function addCompositeItem(val, suppressCallback) {
                     var item,
                         rem = highed.dom.cr('span', 'highed-icon fa fa-trash highed-trash-button'),
-                        row = highed.dom.cr('div', 'color-row'), //tr
+                        row = highed.dom.cr('div', 'color-row'), // tr
                         id = ++itemCounter;
 
                     function processChange(newVal) {
@@ -4072,8 +4072,8 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                         itemTable,
                         highed.dom.ap(
                             row,
-                            highed.dom.ap(highed.dom.cr('div'), item), //td
-                            highed.dom.ap(highed.dom.cr('div'), rem) //td
+                            highed.dom.ap(highed.dom.cr('div'), item), // td
+                            highed.dom.ap(highed.dom.cr('div'), rem) // td
                         )
                     );
 
@@ -4116,9 +4116,9 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
             'span',
             'highed-icon highed-field-help fa fa-question-circle'
         ),
-        helpTD = highed.dom.cr('div', 'highed-customizer-table-help'), //td
-        widgetTD = highed.dom.cr('div', 'highed-field-table-widget-column'), //td
-        titleCol = highed.dom.cr('div'), //td
+        helpTD = highed.dom.cr('div', 'highed-customizer-table-help'), // td
+        widgetTD = highed.dom.cr('div', 'highed-field-table-widget-column'), // td
+        titleCol = highed.dom.cr('div'), // td
         typeIndicator = highed.dom.cr('span', 'highed-customize-type');
 
     function tryCallback(cb, val) {
@@ -4135,9 +4135,9 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
         ) {
             properties.attributes = [];
 
-            //There's no attributes but it's an object.
-            //Check if there are default values we can use
-            //to figure out the structure.
+            // There's no attributes but it's an object.
+            // Check if there are default values we can use
+            // to figure out the structure.
             if (properties.defaults) {
                 try {
                     properties.defaults = JSON.parse(properties.defaults);
@@ -4147,7 +4147,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                             up = k.toUpperCase(),
                             vals;
 
-                        //This is hackish.
+                        // This is hackish.
                         if (highed.isNum(def)) {
                             tp = 'number';
                         }
@@ -4190,9 +4190,9 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
     }
 
     if (type === 'cssobject' || type === 'highcharts.cssobject') {
-    //So there are more than one version of this thing - one of them
-    //requires a font picker, the other is dynamic.
-    //Figure out which one we're dealing with here.
+    // So there are more than one version of this thing - one of them
+    // requires a font picker, the other is dynamic.
+    // Figure out which one we're dealing with here.
 
         // properties = properties || {};
         // properties.attributes = [
@@ -4202,7 +4202,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
         type = 'object';
     }
 
-    //Choose a type
+    // Choose a type
     if (type && type.indexOf('|') >= 0) {
         type = type.indexOf('object') >= 0 ? 'object' : type.split('|')[0];
     }
@@ -4272,7 +4272,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
 
         return highed.dom.ap(
             highed.dom.ap(
-                parent, //tr
+                parent, // tr
                 highed.dom.ap(widgetTD, fields[type] ? fields[type]() : fields.string())
             )
         );
@@ -4282,7 +4282,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
         titleCol.className = 'highed-customize-field-boolean';
         return highed.dom.ap(
             highed.dom.ap(
-                parent, //tr
+                parent, // tr
                 highed.dom.ap(widgetTD,
                     highed.dom.ap(fields[type] ? fields[type]() : fields.string(),
                         highed.dom.ap(
@@ -4291,7 +4291,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
                             !nohint ?
                                 highed.dom.ap(
                                     helpTD,
-                                    //highed.dom.cr('span', 'highed-field-tooltip', properties.tooltip)
+                                    // highed.dom.cr('span', 'highed-field-tooltip', properties.tooltip)
                                     help
                                 ) :
                                 false
@@ -4302,14 +4302,14 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
     }
     return highed.dom.ap(
         highed.dom.ap(
-            parent, //tr
+            parent, // tr
             highed.dom.ap(
                 titleCol,
                 highed.dom.cr('span', 'highed-customize-field-label', properties.title),
                 !nohint ?
                     highed.dom.ap(
                         helpTD,
-                        //highed.dom.cr('span', 'highed-field-tooltip', properties.tooltip)
+                        // highed.dom.cr('span', 'highed-field-tooltip', properties.tooltip)
                         help
                     ) :
                     false
@@ -4321,7 +4321,7 @@ highed.InspectorField = function (type, value, properties, fn, nohint, fieldID, 
 
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -4344,7 +4344,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -4359,7 +4359,7 @@ highed.List = function (parent, responsive, props, planCode) {
         dropdowns = {},
         properties = props;
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
 
     function addItem(item, children, chartPreview) {
@@ -4410,7 +4410,7 @@ highed.List = function (parent, responsive, props, planCode) {
 
 
         function applyFilter(detailIndex, filteredBy, filter) {
-            var selected = selectedItem, //list.selected(),
+            var selected = selectedItem, // list.selected(),
                 id = selected.id,
                 entry = highed.meta.optionsExtended.options[id];
 
@@ -4418,7 +4418,7 @@ highed.List = function (parent, responsive, props, planCode) {
                 return false;
             }
 
-            //body.innerHTML = '';
+            // body.innerHTML = '';
 
             entry.forEach(function (thing) {
                 selectGroup(thing, false, false, detailIndex, filteredBy, filter);
@@ -4426,7 +4426,7 @@ highed.List = function (parent, responsive, props, planCode) {
 
             highlighted = false;
         }
-        //This function has mutated into a proper mess. Needs refactoring.
+        // This function has mutated into a proper mess. Needs refactoring.
         function selectGroup(group, table, options, detailIndex, filteredBy, filter) {
             var master,
                 vals,
@@ -4435,7 +4435,7 @@ highed.List = function (parent, responsive, props, planCode) {
                 masterNode,
                 def;
 
-            options = chartPreview.options.getCustomized(); //userOptions;//chartPreview.options.getCustomized();
+            options = chartPreview.options.getCustomized(); // userOptions;//chartPreview.options.getCustomized();
 
             if (highed.isArr(group.options)) {
                 table = highed.dom.cr('div', 'highed-customizer-table');
@@ -4564,13 +4564,13 @@ highed.List = function (parent, responsive, props, planCode) {
                     }
                 }
 
-                //highed.dom.ap(body, table);
+                // highed.dom.ap(body, table);
 
                 group.options.forEach(function (sub) {
                     selectGroup(sub, table, options, detailIndex, group.filteredBy, filter);
                 });
             } else if (typeof group.id !== 'undefined') {
-                //Check if we should filter out this column
+                // Check if we should filter out this column
                 if (filter && group.subType && group.subType.length) {
                     if (!highed.arrToObj(group.subType)[filter]) {
                         return;
@@ -4592,7 +4592,7 @@ highed.List = function (parent, responsive, props, planCode) {
 
                 def = highed.getAttr(options, group.id, detailIndex);
 
-                //highed.dom.ap(sub, highed.dom.cr('span', '', referenced[0].returnType));
+                // highed.dom.ap(sub, highed.dom.cr('span', '', referenced[0].returnType));
 
                 highed.dom.ap(
                     table,
@@ -4634,9 +4634,9 @@ highed.List = function (parent, responsive, props, planCode) {
                             );
 
                             if (group.id === filteredBy) {
-                                //This is a master for the rest of the childs,
-                                //which means that we need to rebuild everything
-                                //here somehow and check their subType
+                                // This is a master for the rest of the childs,
+                                // which means that we need to rebuild everything
+                                // here somehow and check their subType
                                 nodeChildren.innerHTML = '';
                                 applyFilter(detailIndex, filteredBy, newValue);
                             }
@@ -4655,7 +4655,7 @@ highed.List = function (parent, responsive, props, planCode) {
                 selectedItem.node.className = 'item';
                 selectedItem.nodeArrow.innerHTML = '<i class="fa fa-angle-right" aria-hidden="true"></i>';
                 highed.dom.style(selectedItem.nodeChildren, {
-                    display: "none"
+                    display: 'none'
                 });
             }
             dropdowns = {};
@@ -4813,7 +4813,7 @@ highed.List = function (parent, responsive, props, planCode) {
     function selected() {
         return selectedItem;
     }
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     highed.dom.on(compactIndicator, 'click', function (e) {
         ctx.build(
@@ -4830,9 +4830,9 @@ highed.List = function (parent, responsive, props, planCode) {
 
     highed.dom.ap(parent, container, compactIndicator);
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
-    //Public interface
+    // Public interface
     return {
         on: events.on,
         addItem: addItem,
@@ -4851,7 +4851,7 @@ highed.List = function (parent, responsive, props, planCode) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -4874,7 +4874,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -4888,7 +4888,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         ctx = canvas.getContext('2d'),
         manualInput = highed.dom.cr('input', 'manual');
 
-    //Attach the container to the document when the document is ready
+    // Attach the container to the document when the document is ready
     highed.ready(function () {
         highed.dom.ap(document.body, container);
     });
@@ -4909,11 +4909,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             cbinder = false,
             dbinder = false;
 
-        ///////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////
 
         /* Draws the color picker itself */
         function drawPicker() {
-            //There's 14 hues per. color, 19 colors in total.
+            // There's 14 hues per. color, 19 colors in total.
             var x,
                 y,
                 tx = Math.floor(pickerSize.w / 14),
@@ -4923,13 +4923,13 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             canvas.width = pickerSize.w;
             canvas.height = pickerSize.h;
 
-            //To avoid picking null
+            // To avoid picking null
             ctx.fillStyle = '#FFF';
             ctx.fillRect(0, 0, pickerSize.w, pickerSize.h);
 
             for (y = 0; y < 19; y++) {
                 for (x = 0; x < 15; x++) {
-                    ctx.fillStyle = highed.meta.colors[++col]; //highed.meta.colors[x + y * tx];
+                    ctx.fillStyle = highed.meta.colors[++col]; // highed.meta.colors[x + y * tx];
                     ctx.fillRect(x * tx, y * ty, tx, ty);
                 }
             }
@@ -4980,9 +4980,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             return false;
         }
 
-        ///////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////
 
-        //Make sure we're not off screen
+        // Make sure we're not off screen
         if (x > windowSize.w - containerSize.w) {
             x = windowSize.w - containerSize.w - 10;
         }
@@ -5027,7 +5027,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         drawPicker();
 
-        ///////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////
 
         return {};
     };
@@ -5035,7 +5035,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     highed.dom.ap(container, canvas, manualInput, closeBtn);
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -5058,7 +5058,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -5078,7 +5078,7 @@ highed.Toolbar = function (parent, attributes) {
         center = highed.dom.cr('div', 'highed-toolbar-center'),
         iconsRight = highed.dom.cr('div', 'icons');
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
 
     function addIcon(icon, where) {
@@ -5121,11 +5121,11 @@ highed.Toolbar = function (parent, attributes) {
         );
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     highed.dom.ap(parent, highed.dom.ap(container, left, center, right));
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     return {
 
@@ -5142,7 +5142,7 @@ highed.Toolbar = function (parent, attributes) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -5165,7 +5165,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -5173,8 +5173,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     highed.FontPicker = function (fn, style) {
         var container = highed.dom.cr('div', 'highed-font-picker'),
-            fontFamily = highed.DropDown(), //highed.dom.cr('select', 'font-family'),
-            fontSize = highed.DropDown(null, 'highed-font-size'), //highed.dom.cr('select', 'font-size'),
+            fontFamily = highed.DropDown(), // highed.dom.cr('select', 'font-family'),
+            fontSize = highed.DropDown(null, 'highed-font-size'), // highed.dom.cr('select', 'font-size'),
             boldBtn = highed.PushButton(false, 'bold'),
             italicBtn = highed.PushButton(false, 'italic'),
             color = highed.dom.cr('span', 'font-color', '&nbsp;');
@@ -5183,11 +5183,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             try {
                 style = JSON.parse(style);
             } catch (e) {
-                //nothing
+                // nothing
             }
         }
 
-        ///////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////
 
         function callback() {
             if (highed.isFn(fn)) {
@@ -5206,7 +5206,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
         }
 
-        ///////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////
 
 
         function set(options) {
@@ -5221,7 +5221,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
             style = highed.merge(
                 {
-                    fontFamily: 'Default', //'"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif',
+                    fontFamily: 'Default', // '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif',
                     color: '#333',
                     fontSize: '18px',
                     fontWeight: 'normal',
@@ -5230,7 +5230,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 options
             );
 
-            //Set the current values
+            // Set the current values
             boldBtn.set(style.fontWeight === 'bold');
             italicBtn.set(style.fontStyle === 'italic');
             updateColor(style.color, true);
@@ -5238,14 +5238,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             fontSize.selectById(style.fontSize.replace('px', ''));
         }
 
-        //Add fonts to font selector
+        // Add fonts to font selector
         fontFamily.addItems(highed.meta.fonts);
-        //Add font sizes
+        // Add font sizes
         fontSize.addItems([8, 10, 12, 14, 16, 18, 20, 22, 25, 26, 28, 30, 32, 34]);
 
         set(style);
 
-        //Listen to font changes
+        // Listen to font changes
         fontFamily.on('Change', function (selected) {
 
             if (selected.id() === 'Default') {
@@ -5257,30 +5257,30 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             return callback();
         });
 
-        //Listen to font size changes
+        // Listen to font size changes
         fontSize.on('Change', function (selected) {
             style.fontSize = selected.id() + 'px';
             return callback();
         });
 
-        //Listen to bold changes
+        // Listen to bold changes
         boldBtn.on('Toggle', function (state) {
             style.fontWeight = state ? 'bold' : 'normal';
             callback();
         });
 
-        //Listen to italic changes
+        // Listen to italic changes
         italicBtn.on('Toggle', function (state) {
             style.fontStyle = state ? 'italic' : 'normal';
             callback();
         });
 
-        //Handle color picker
+        // Handle color picker
         highed.dom.on(color, 'click', function (e) {
             highed.pickColor(e.clientX, e.clientY, style.color, updateColor);
         });
 
-        //Create DOM
+        // Create DOM
         highed.dom.ap(
             container,
             fontFamily.container,
@@ -5296,7 +5296,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             )
         );
 
-        ///////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////
 
         return {
             set: set,
@@ -5305,7 +5305,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -5328,35 +5328,9 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
-/******************************************************************************
-
-Copyright (c) 2016-2018, Highsoft
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-******************************************************************************/
-
-
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -5379,7 +5353,33 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
+
+
+/** ****************************************************************************
+
+Copyright (c) 2016-2018, Highsoft
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ ******************************************************************************/
 
 // @format
 highed.PushButton = function (parent, icon, state) {
@@ -5423,7 +5423,7 @@ highed.PushButton = function (parent, icon, state) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -5446,7 +5446,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -5460,7 +5460,7 @@ highed.Tree = function (parent) {
         selectedPath = false,
         attachedData = {},
         filters = {
-            //Filter the series properties based on the series.type property
+            // Filter the series properties based on the series.type property
             series: {
                 controller: 'type',
                 state: false,
@@ -5473,7 +5473,7 @@ highed.Tree = function (parent) {
             }
         };
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     function createNode(child, pnode, instancedData, productFilter, myIndex) {
 
@@ -5500,11 +5500,11 @@ highed.Tree = function (parent) {
             index =
         (child.meta.ns ? child.meta.ns + '.' : '') +
         (myIndex ? '[' + myIndex + '].' : '') +
-        //(!isNaN(myIndex) ? '[' + myIndex + '].' : '') +
+        // (!isNaN(myIndex) ? '[' + myIndex + '].' : '') +
         child.meta.name,
             expanded = true;
 
-        //child.meta.fullname = index;
+        // child.meta.fullname = index;
         child.meta.fullname = (myIndex ? child.meta.name : index);
 
         function pushExpandState() {
@@ -5595,7 +5595,7 @@ highed.Tree = function (parent) {
         Object.keys(child.meta.products || {}).length > 0 &&
         !child.meta.products[productFilter]
             ) {
-                //return false;
+                // return false;
             }
 
             if (child.meta.isArrayElement) {
@@ -5724,7 +5724,7 @@ highed.Tree = function (parent) {
             }
         }
 
-        ////////////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////////////
 
         highed.dom.ap(pnode, highed.dom.ap(node, icon, title), body);
 
@@ -5778,7 +5778,7 @@ highed.Tree = function (parent) {
       Object.keys(tree.meta.products || {}).length > 0 &&
       !tree.meta.products[productFilter]
         ) {
-            //return;
+            // return;
         }
 
         if (highed.isArr(tree.children)) {
@@ -5830,11 +5830,11 @@ highed.Tree = function (parent) {
         return false;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     highed.dom.ap(parent, container);
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     return {
         on: events.on,
@@ -5849,7 +5849,7 @@ highed.Tree = function (parent) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -5872,11 +5872,11 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -5899,7 +5899,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -5913,7 +5913,7 @@ highed.ContextMenu = function (stuff) {
         visible = false,
         dimHide = false;
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
 
     function addEntry(entry) {
@@ -6028,7 +6028,7 @@ highed.ContextMenu = function (stuff) {
         });
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     if (stuff) {
         build(stuff);
@@ -6040,7 +6040,7 @@ highed.ContextMenu = function (stuff) {
         highed.dom.ap(document.body, container);
     });
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     return {
         addEntry: addEntry,
@@ -6050,7 +6050,7 @@ highed.ContextMenu = function (stuff) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -6073,7 +6073,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -6098,16 +6098,16 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             expanded = false,
             catcher = false;
 
-        ////////////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////////////
 
-        //Build the DOM
+        // Build the DOM
         function buildDOM() {
             dropdownItems.innerHTML = '';
 
             items.forEach(function (item) {
                 highed.dom.ap(dropdownItems, item.node);
-                //IE fix
-                item.node.innerHTML = ''; //item.title();
+                // IE fix
+                item.node.innerHTML = ''; // item.title();
 
                 const icon = highed.dom.cr('span', 'highed-icon-container');
                 if (icons) {
@@ -6117,8 +6117,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         height: '15px',
                         float: 'left',
                         display: 'inline-block',
-                        "margin-right": "5px",
-                        color: "rgb(66, 200, 192)",
+                        'margin-right': '5px',
+                        color: 'rgb(66, 200, 192)',
                         'background-position': 'left middle',
                         'background-size': 'auto 100%',
                         'background-repeat': 'no-repeat',
@@ -6133,14 +6133,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             });
         }
 
-        //Collapse the dropdown
+        // Collapse the dropdown
         function collapse() {
             if (highed.isFn(catcher)) {
                 catcher();
                 catcher = false;
             }
 
-            //Should update the container
+            // Should update the container
             if (selectedItem) {
                 body.innerHTML = '';
                 if (icons) {
@@ -6150,8 +6150,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         height: '15px',
                         float: 'left',
                         display: 'inline-block',
-                        "margin-right": "5px",
-                        color: "rgb(66, 200, 192)",
+                        'margin-right': '5px',
+                        color: 'rgb(66, 200, 192)',
                         'background-position': 'left middle',
                         'background-size': 'auto 100%',
                         'background-repeat': 'no-repeat',
@@ -6173,14 +6173,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             expanded = false;
         }
 
-        //Expand the dropdown
+        // Expand the dropdown
         function expand(e) {
             buildDOM();
 
             var pos = highed.dom.pos(container, true),
                 s = highed.dom.size(container);
 
-            //Quick hack for IE...
+            // Quick hack for IE...
             if (!pos || !pos.x) {
                 pos = {
                     x: 10,
@@ -6195,7 +6195,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 };
             }
 
-            //Need to check the height + y to see if we need to move it
+            // Need to check the height + y to see if we need to move it
 
             highed.dom.style(dropdownItems, {
                 opacity: 1,
@@ -6211,7 +6211,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             expanded = true;
         }
 
-        //Toggle expansion
+        // Toggle expansion
         function toggle(e) {
             expanded = !expanded;
             if (expanded) {
@@ -6249,15 +6249,15 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 id = highed.uuid(),
                 index = items.length,
                 itemInstance = {
-                    //The node
+                    // The node
                     node: node,
 
-                    //Get the index
+                    // Get the index
                     index: function () {
                         return index;
                     },
 
-                    //Get the ID
+                    // Get the ID
                     id: function () {
                         return id;
                     },
@@ -6266,17 +6266,17 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                         return item.icon;
                     },
 
-                    //Get the title
+                    // Get the title
                     title: function () {
                         return highed.isStr(item) ? item : item.title || '';
                     },
 
-                    //Unselect the item
+                    // Unselect the item
                     unselect: function () {
                         node.className = 'highed-dropdown-item';
                     },
 
-                    //Select the item
+                    // Select the item
                     select: function (dontEmit) {
                         if (selectedItem) {
                             selectedItem.unselect();
@@ -6320,8 +6320,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 const icon = highed.dom.cr('span', 'highed-icon-container', (item.icon ? '<i class="fa fa-' + item.icon + '" />' : ''));
 
                 highed.dom.style(icon, {
-                    "margin-right": "5px",
-                    color: "rgb(66, 200, 192)"
+                    'margin-right': '5px',
+                    color: 'rgb(66, 200, 192)'
                 });
 
                 highed.dom.ap(node, icon, highed.dom.cr('span', '', item.title || ''));
@@ -6361,7 +6361,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         function selectById(id, dontEmit) {
             items.some(function (item) {
-                //This is not a typo..
+                // This is not a typo..
                 if (item.id() === id) {
                     item.select(dontEmit);
                     return true;
@@ -6399,7 +6399,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             return selectedItem;
         }
 
-        ///////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////
 
         if (parent) {
             parent = highed.dom.get(parent);
@@ -6427,7 +6427,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -6450,7 +6450,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -6535,7 +6535,7 @@ highed.Movable = function (
                 upper = highed.dom.on(document.body, ['mouseup', 'touchend'], function (
                     upE
                 ) {
-                    //Detach the document listeners
+                    // Detach the document listeners
                     upper();
                     mover();
                     moving = false;
@@ -6565,14 +6565,14 @@ highed.Movable = function (
         });
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     return {
         on: events.on
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -6595,7 +6595,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -6622,11 +6622,11 @@ highed.Slider = function (parent, attributes) {
         numberInput = highed.dom.cr('input', 'highed-slider-input'),
         mover = highed.Movable(indicator, 'x', true, sliderBackground);
 
-    numberInput.type = "number";
+    numberInput.type = 'number';
     numberInput.value = value;
     numberInput.max = properties.max;
     numberInput.min = 0;
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     function updateText() {
         textIndicator.innerHTML = value;
@@ -6659,7 +6659,7 @@ highed.Slider = function (parent, attributes) {
         });
     }
 
-    //Waits until the slider is in the dom
+    // Waits until the slider is in the dom
     function tryUpdateIndicators() {
         updateText();
         if (container.parentNode) {
@@ -6680,7 +6680,7 @@ highed.Slider = function (parent, attributes) {
         var s = highed.dom.size(sliderBackground),
             ms = highed.dom.size(indicator);
 
-        //Set the value based on the new X
+        // Set the value based on the new X
         value =
       properties.min +
       Math.round(x / (s.w - ms.w) * (properties.max - properties.min));
@@ -6720,12 +6720,12 @@ highed.Slider = function (parent, attributes) {
     mover.on('EndMove', function () {
         if (highed.onPhone()) {
             textIndicator.className = 'highed-slider-text-indicator';
-            //We're not emitting changes until done on mobile
+            // We're not emitting changes until done on mobile
             events.emit('Change', value);
         }
     });
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     highed.dom.on(resetIcon, 'mouseover', function (e) {
     //  highed.Tooltip(e.clientX, e.clientY, 'Reset to initial value');
@@ -6769,7 +6769,7 @@ highed.Slider = function (parent, attributes) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -6792,7 +6792,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -6815,7 +6815,7 @@ function parseCSV(inData, delimiter) {
             ';': 0,
             '\t': 0
         };
-    //The only thing CSV formats have in common..
+    // The only thing CSV formats have in common..
     rows = (csv || '').replace(/\r\n/g, '\n').split('\n');
     // If there's no delimiter, look at the first few rows to guess it.
 
@@ -6926,14 +6926,14 @@ function parseCSV(inData, delimiter) {
                     inStr = false;
                 }
 
-                //Everything is allowed inside quotes
+                // Everything is allowed inside quotes
             } else if (inStr) {
                 token += c;
-                //Check if we're done reading a token
+                // Check if we're done reading a token
             } else if (c === options.delimiter) {
                 pushToken();
 
-                //Append to token
+                // Append to token
             } else {
                 token += c;
             }
@@ -6977,7 +6977,7 @@ highed.DataTable = function (parent, attributes) {
         topLetterBar = highed.dom.cr('div', 'highed-dtable-top-letter-bar'),
         topColumnBar = highed.dom.cr('div', 'highed-dtable-top-column-bar'),
         topLeftPanel = highed.dom.cr('div', 'highed-dtable-top-left-panel'),
-        //checkAll = highed.dom.cr('input'),
+        // checkAll = highed.dom.cr('input'),
         mainInput = highed.dom.cr('textarea', 'highed-dtable-input'),
         cornerPiece = highed.dom.cr('div', 'highed-dtable-corner-piece'),
         weirdDataModal = highed.OverlayModal(false, {
@@ -7117,9 +7117,9 @@ highed.DataTable = function (parent, attributes) {
             DEC: 12
         },
         selectedRowIndex = 0,
-        keyValue = "A",
-        tempKeyValue = "A",
-        //checkAll.type = 'checkbox',
+        keyValue = 'A',
+        tempKeyValue = 'A',
+        // checkAll.type = 'checkbox',
         selectedFirstCell = [],
         selectedEndCell = [],
         selectedCopyFirstCell = [],
@@ -7137,7 +7137,7 @@ highed.DataTable = function (parent, attributes) {
     dragHeaderMode = false,
     globalContextMenu = highed.ContextMenu([
         {
-            title: "Insert Row Above",
+            title: 'Insert Row Above',
             icon: 'plus',
             click: function () {
                 events.emit('ColumnMoving');
@@ -7147,7 +7147,7 @@ highed.DataTable = function (parent, attributes) {
             }
         },
         {
-            title: "Insert Row Below",
+            title: 'Insert Row Below',
             icon: 'plus',
             click: function () {
                 events.emit('ColumnMoving');
@@ -7170,12 +7170,12 @@ highed.DataTable = function (parent, attributes) {
                 highed.emit('UIAction', 'DeleteRowConfirm');
 
                 rows.forEach(function (row, index) {
-                    //if (row.isChecked()) {
+                    // if (row.isChecked()) {
                     if (row.number === selectedFirstCell[1]) {
                         row.destroy();
                         emitChanged();
                     }
-                    //}
+                    // }
                 });
                 rebuildRows();
             }
@@ -7261,7 +7261,7 @@ highed.DataTable = function (parent, attributes) {
 
 
     highed.dom.ap(frame, cornerPiece);
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     // Handle drag 'n drop of files
     function handleFileUpload(f, cb) {
@@ -7273,7 +7273,7 @@ highed.DataTable = function (parent, attributes) {
 
         reader.onload = function (e) {
             clear();
-            //events.emit('ClearSeriesForImport');
+            // events.emit('ClearSeriesForImport');
             loadCSV({ csv: e.target.result }, null, true, cb);
         };
 
@@ -7307,7 +7307,7 @@ highed.DataTable = function (parent, attributes) {
         e.preventDefault();
     };
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     function showDataImportError() {
         highed.dom.style(weirdDataContainer, {
@@ -7339,8 +7339,8 @@ highed.DataTable = function (parent, attributes) {
             return events.emit('Change', getHeaderTextArr(), toData());
         }
 
-        //We use an interval to stop a crazy amount of changes to be
-        //emitted in succession when e.g. loading sets.
+        // We use an interval to stop a crazy amount of changes to be
+        // emitted in succession when e.g. loading sets.
         changeTimeout = window.setTimeout(function () {
             if (!isInGSheetMode && !isInLiveDataMode) {
                 events.emit('Change', getHeaderTextArr());
@@ -7364,11 +7364,11 @@ highed.DataTable = function (parent, attributes) {
         mainInputCloseCb = close;
 
         mainInput.value = value;
-        //mainInput.setSelectionRange(0, mainInput.value.length);
+        // mainInput.setSelectionRange(0, mainInput.value.length);
 
         mainInputCb.push(
             highed.dom.on(mainInput, 'keydown', function (e) {
-                //(highed.isFn(fn) && fn(mainInput.value));
+                // (highed.isFn(fn) && fn(mainInput.value));
                 if (highed.isFn(keyup)) {
                     return keyup(e);
                 }
@@ -7379,7 +7379,7 @@ highed.DataTable = function (parent, attributes) {
             highed.dom.on(mainInput, 'keyup', function (e) {
                 // Super hack to allow pasting CSV into cells
                 var ps = highed.parseCSV(mainInput.value);
-                if (ps.length > 1) { //TODO: Need to fix this...
+                if (ps.length > 1) { // TODO: Need to fix this...
                     if (
                         confirm(
                             'You are about to load CSV data. This will overwrite your current data. Continue?'
@@ -7414,7 +7414,7 @@ highed.DataTable = function (parent, attributes) {
 
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
     function highlightLeft(colNumber) {
         columnsToHighlight.forEach(function (highlightedColumn) {
             highlightedColumn.element.classList.remove('highlight-right');
@@ -7443,10 +7443,10 @@ highed.DataTable = function (parent, attributes) {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
     function Column(row, colNumber, val, keyVal) {
 
-        var value = typeof val === 'undefined' || typeof val === 'object' || (val === 'null') ? null : val, //object check for ie11/edge
+        var value = typeof val === 'undefined' || typeof val === 'object' || (val === 'null') ? null : val, // object check for ie11/edge
             col = highed.dom.cr('td', 'highed-dtable-cell'),
             colVal = highed.dom.cr('div', 'highed-dtable-col-val', value),
             input = highed.dom.cr('input'),
@@ -7455,7 +7455,7 @@ highed.DataTable = function (parent, attributes) {
             if (colNumber >= 1) {
                 row.columns[colNumber - 1].focus();
             } else {
-                //Go up to the last column
+                // Go up to the last column
                 if (row.number - 1 >= 0) {
                     rows[row.number - 1].columns[
                         rows[row.number - 1].columns.length - 1
@@ -7468,7 +7468,7 @@ highed.DataTable = function (parent, attributes) {
             if (colNumber < row.columns.length - 1) {
                 row.columns[colNumber + 1].focus();
             } else {
-                //Go down on the first column
+                // Go down on the first column
                 if (row.number < rows.length - 1) {
                     rows[row.number + 1].columns[0].focus();
                 }
@@ -7491,30 +7491,30 @@ highed.DataTable = function (parent, attributes) {
         }
 
         function handleKeyup(e) {
-            //Go the the column to the left
+            // Go the the column to the left
             if (e.keyCode === 37) {
                 goLeft();
                 return highed.dom.nodefault(e);
 
-                //Go to the column above
+                // Go to the column above
             } if (e.keyCode === 38) {
                 goUp();
                 return highed.dom.nodefault(e);
 
-                //Go to the column to the right
+                // Go to the column to the right
             } if (e.keyCode === 39 || e.keyCode === 9) {
                 goRight();
                 return highed.dom.nodefault(e);
 
-                //Go to the column below
+                // Go to the column below
             } if (e.keyCode === 40) {
                 goBelow();
                 return highed.dom.nodefault(e);
 
-                //Go to next row
+                // Go to next row
             } if (e.keyCode === 13) {
-                //If we're standing in the last column of the last row,
-                //insert a new row.
+                // If we're standing in the last column of the last row,
+                // insert a new row.
                 if (row.number === rows.length - 1) {
                     // && colNumber === rows.columns.length - 1) {
                     events.emit('ColumnMoving');
@@ -7583,9 +7583,9 @@ highed.DataTable = function (parent, attributes) {
 
 
             highed.dom.style(cornerPiece, {
-                top: ((highed.dom.pos(col).y + highed.dom.size(col).h - 3)) + "px",
-                left: ((highed.dom.pos(col).x + highed.dom.size(col).w - 3)) + "px",
-                display: "block"
+                top: ((highed.dom.pos(col).y + highed.dom.size(col).h - 3)) + 'px',
+                left: ((highed.dom.pos(col).x + highed.dom.size(col).w - 3)) + 'px',
+                display: 'block'
             });
 
             row.select();
@@ -7653,7 +7653,7 @@ highed.DataTable = function (parent, attributes) {
 
             } else if (selectedFirstCell[0] === selectedEndCell[0] &&
           selectedFirstCell[1] === selectedEndCell[1]) {
-            //Have not dragged anywhere else on the grid. So the user has just clicked on a cell.
+            // Have not dragged anywhere else on the grid. So the user has just clicked on a cell.
 
                 lastSelectedCell[0] = colNumber;
                 lastSelectedCell[1] = row.number;
@@ -7693,8 +7693,8 @@ highed.DataTable = function (parent, attributes) {
                 focus();
             }
 
-            selectedFirstCell[0] = colNumber;//keyVal;
-            selectedEndCell[0] = colNumber;//keyVal;
+            selectedFirstCell[0] = colNumber;// keyVal;
+            selectedEndCell[0] = colNumber;// keyVal;
             selectedFirstCell[1] = row.number;
             selectedEndCell[1] = row.number;
 
@@ -7784,7 +7784,7 @@ highed.DataTable = function (parent, attributes) {
 
     }
 
-    function selectNewCells(firstCell, endCell) { //firstCell, endCell
+    function selectNewCells(firstCell, endCell) { // firstCell, endCell
 
         if (firstCell.length === 0 || endCell.length === 0 ||   // Weird bug when opening the console and hovering over cells
       (firstCell[0] === null || firstCell[1] === null)
@@ -7827,7 +7827,7 @@ highed.DataTable = function (parent, attributes) {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     function Row(skipAdd) {
         var columns = [],
@@ -7846,7 +7846,7 @@ highed.DataTable = function (parent, attributes) {
         });
 
         highed.dom.on(leftItem, 'mousedown', function (e) {
-            //if (e.button === 2 && selectedFirstCell.length > 0 && selectedEndCell.length > 0 && selectedFirstCell[0] === 0 && selectedEndCell[0] === (rows[0].columns.length - 1)) {
+            // if (e.button === 2 && selectedFirstCell.length > 0 && selectedEndCell.length > 0 && selectedFirstCell[0] === 0 && selectedEndCell[0] === (rows[0].columns.length - 1)) {
             deselectAllCells();
 
             selectedFirstCell[0] = 0;
@@ -7963,7 +7963,7 @@ highed.DataTable = function (parent, attributes) {
         return exports;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     function rebuildRows() {
         rows.forEach(function (row, i) {
@@ -8007,7 +8007,7 @@ highed.DataTable = function (parent, attributes) {
             var r = Row(false, keyValue);
         }
 
-        tempKeyValue = "A";
+        tempKeyValue = 'A';
         for (var j = 0; j < DEFAULT_COLUMN; j++) {
             addCol('Column ' + (j + 1));
         }
@@ -8053,7 +8053,7 @@ highed.DataTable = function (parent, attributes) {
     }
 
     function addCol(value, where) {
-    //The header columns control the colgroup
+    // The header columns control the colgroup
         var col = highed.dom.cr('col'),
             colNumber = gcolumns.length,
             header = highed.dom.cr('span', 'highed-dtable-top-bar-col'),
@@ -8151,13 +8151,13 @@ highed.DataTable = function (parent, attributes) {
             ox,
             keyCell = highed.dom.cr('span', 'highed-dtable-cell-value', keyValue);
 
-        //letter.innerHTML = keyValue;
+        // letter.innerHTML = keyValue;
         letter.value = highed.getLetterIndex(keyValue);
 
         exports.setLetter = function (str) {
             keyCell.innerHTML = str;
             letter.value = highed.getLetterIndex(str);
-            //exports.colNumber = highed.getLetterIndex(str);
+            // exports.colNumber = highed.getLetterIndex(str);
         };
 
         exports.hideColumns = function () {
@@ -8183,7 +8183,7 @@ highed.DataTable = function (parent, attributes) {
                         movementBar.className += ' active';
                         highed.dom.style(movementBar, {
                             width: 140 * ((selectedHeaders[0] < selectedHeaders[1] ? selectedHeaders[1] - selectedHeaders[0]  : selectedHeaders[0] - selectedHeaders[1]) + 1) + 'px'
-                            //width: 140 * selectedHeaders.length + 'px'
+                            // width: 140 * selectedHeaders.length + 'px'
                         });
                     }
                     highlightLeft(letter.value);
@@ -8204,10 +8204,10 @@ highed.DataTable = function (parent, attributes) {
             deselectAllCells();
 
             if (selectedHeaders.length > 0 && (e.target.value >= selectedHeaders[0] && e.target.value <= selectedHeaders[1])) {
-                //User is trying to drag headers left and right.
+                // User is trying to drag headers left and right.
                 dragHeaderMode = true;
             } else {
-                //deselectAllCells();
+                // deselectAllCells();
                 if (e.target !== options && e.target !== moveHandle) {
                     selectedHeaders = [];
 
@@ -8242,7 +8242,7 @@ highed.DataTable = function (parent, attributes) {
             if (moveToColumn !== null) {
                 events.emit('ColumnMoving');
 
-                const min = selectedHeaders[0/*(moveToColumn < selectedHeaders[0] ? 1 : 0)*/],
+                const min = selectedHeaders[0/* (moveToColumn < selectedHeaders[0] ? 1 : 0)*/],
                     max = (selectedHeaders[0] < selectedHeaders[1] ? selectedHeaders[1] - selectedHeaders[0]  : selectedHeaders[0] - selectedHeaders[1]) + 1,
                     total = (selectedHeaders[0] < selectedHeaders[1] ? selectedHeaders[1] - selectedHeaders[0]  : selectedHeaders[0] - selectedHeaders[1]);
 
@@ -8287,7 +8287,7 @@ highed.DataTable = function (parent, attributes) {
 
 
         keyValue = getNextLetter(keyValue);
-        ////////////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////////////
         exports.addToDOM = function () {
 
             highed.dom.ap(colgroup, col);
@@ -8313,7 +8313,7 @@ highed.DataTable = function (parent, attributes) {
 
         };
 
-        ////////////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////////////
 
         exports.addToDOM();
 
@@ -8387,12 +8387,12 @@ highed.DataTable = function (parent, attributes) {
 
         highed.dom.on(header, 'click', function (e) {
 
-            //Ugly.
+            // Ugly.
             mainInput.className = 'highed-dtable-input highed-dtable-input-header';
-            //Spawn an edit box in the node
+            // Spawn an edit box in the node
 
             highed.dom.style(cornerPiece, {
-                display: "none"
+                display: 'none'
             });
             deselectAllCells();
 
@@ -8443,7 +8443,7 @@ highed.DataTable = function (parent, attributes) {
         });
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
     // PUBLIC FUNCTIONS FOLLOW
 
 
@@ -8508,7 +8508,7 @@ highed.DataTable = function (parent, attributes) {
         });
 
         gcolumns = gcolumns.filter(function (row) {
-            //Destroy col here
+            // Destroy col here
             return false;
         });
 
@@ -8517,7 +8517,7 @@ highed.DataTable = function (parent, attributes) {
         topColumnBar.innerHTML = '';
         topLetterBar.innerHTML = '';
         colgroup.innerHTML = '';
-        keyValue = "A";
+        keyValue = 'A';
 
         highed.dom.style(tableTail, {
             display: ''
@@ -8558,7 +8558,7 @@ highed.DataTable = function (parent, attributes) {
         if (where >= gcolumns.length) {
             where = gcolumns.length;
         }
-        //Insert into gcolumns and on each row, then call updateColumns()
+        // Insert into gcolumns and on each row, then call updateColumns()
         addCol(highed.L('dgNewCol'), where);
 
         updateColumns();
@@ -8582,14 +8582,14 @@ highed.DataTable = function (parent, attributes) {
     function resize() {
         var ps = highed.dom.size(parent),
             hs = highed.dom.size(topBar);
-        //tb = highed.dom.size(toolbar.container);
+        // tb = highed.dom.size(toolbar.container);
 
         highed.dom.style(frame, {
-            height: ps.h - hs.h - 55 - 17 + 'px' //55 is padding from top for data column and letter
+            height: ps.h - hs.h - 55 - 17 + 'px' // 55 is padding from top for data column and letter
         });
 
         highed.dom.style([container, gsheetFrame, liveDataFrame], {
-            height: ps.h - hs.h - 22 /*- tb.h*/ + 'px'
+            height: ps.h - hs.h - 22 /* - tb.h*/ + 'px'
         });
 
 
@@ -8618,8 +8618,8 @@ highed.DataTable = function (parent, attributes) {
         }
 
         if (section) {
-            //Add in label data first
-            //cleanData(gcolumns[section.labelColumn]);
+            // Add in label data first
+            // cleanData(gcolumns[section.labelColumn]);
         }
 
         gcolumns.reduce(function (result, item, index) {
@@ -8660,7 +8660,7 @@ highed.DataTable = function (parent, attributes) {
             }
 
             if (highed.isStr(column) && Date.parse(column) !== NaN) {
-                //v = (new Date(v)).getTime();
+                // v = (new Date(v)).getTime();
             }
 
             arr.push(column);
@@ -8671,8 +8671,8 @@ highed.DataTable = function (parent, attributes) {
                 hasData = false;
 
             if (section) {
-                //Add in label data first
-                //addData(row.columns[section[0].labelColumn].value(), rarr);
+                // Add in label data first
+                // addData(row.columns[section[0].labelColumn].value(), rarr);
             }
 
             row.columns.forEach(function (col, index) {
@@ -8824,7 +8824,7 @@ highed.DataTable = function (parent, attributes) {
                 if (i) {
                     row = Row();
                 }
-                tempKeyValue = "A";
+                tempKeyValue = 'A';
                 cols.forEach(function (c) {
                     if (i === 0) {
                         addCol(c);
@@ -8854,7 +8854,7 @@ highed.DataTable = function (parent, attributes) {
     }
 
     function loadLiveDataPanel(params) {
-        //loadRows(params.csv);
+        // loadRows(params.csv);
 
         isInLiveDataMode = true;
         highed.dom.style(gsheetFrame, {
@@ -9157,7 +9157,7 @@ highed.DataTable = function (parent, attributes) {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
     importer.on('ExportComma', function (data) {
         highed.emit('UIAction', 'ExportComma');
         highed.download('data.csv', toCSV(','), 'application/csv');
@@ -9188,7 +9188,7 @@ highed.DataTable = function (parent, attributes) {
         isInLiveDataMode = true;
         events.emit('DisableAssignDataPanel');
         showLiveData();
-    //loadLiveDataFromURL(data.url);
+    // loadLiveDataFromURL(data.url);
     });
 
     importer.on('ImportChartSettings', function (settings, format) {
@@ -9306,7 +9306,7 @@ highed.DataTable = function (parent, attributes) {
         });
     });
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     dropZone.innerHTML =
     // 'Drop CSV files here.<br/>' +
@@ -9337,7 +9337,7 @@ highed.DataTable = function (parent, attributes) {
             hideCellsDiv,
             leftBar,
             highed.dom.ap(topBar, topLetterBar, topColumnBar)
-            //highed.dom.ap(topLeftPanel, checkAll)
+            // highed.dom.ap(topLeftPanel, checkAll)
         ),
         highed.dom.ap(
             weirdDataContainer,
@@ -9443,16 +9443,16 @@ highed.DataTable = function (parent, attributes) {
     );
 
     liveDataTypeSelect.addItems([
-        { id: 'columnsURL', title: "JSON (Column Ordered)" },
-        { id: 'rowsURL', title: "JSON (Row Ordered)" },
-        { id: 'csvURL', title: "CSV" }
+        { id: 'columnsURL', title: 'JSON (Column Ordered)' },
+        { id: 'rowsURL', title: 'JSON (Row Ordered)' },
+        { id: 'csvURL', title: 'CSV' }
     ]
     );
 
     liveDataTypeSelect.on('Change', function (selected) {
-    //detailIndex = selected.index();
+    // detailIndex = selected.index();
         detailValue = selected.id();
-    //liveDataTypeSelect.selectById(detailValue || 'json');
+    // liveDataTypeSelect.selectById(detailValue || 'json');
     });
 
     highed.dom.ap(liveDataTypeMasterNode, liveDataTypeSelect.container);
@@ -9569,17 +9569,17 @@ highed.DataTable = function (parent, attributes) {
             while (tempValue <= values[values.length - 1]) {
                 if (gcolumns[tempValue]) {
                     highed.dom.style(gcolumns[tempValue].letter, {
-                        "background-color": color.light,
-                        "border-left": "1px double " + color.dark,
-                        "border-top": "1px double " + color.dark,
-                        "border-bottom": "1px double " + color.dark,
-                        "border-right": "1px double " + color.dark
+                        'background-color': color.light,
+                        'border-left': '1px double ' + color.dark,
+                        'border-top': '1px double ' + color.dark,
+                        'border-bottom': '1px double ' + color.dark,
+                        'border-right': '1px double ' + color.dark
                     });
                     highed.dom.style(gcolumns[tempValue].header, {
-                        "background-color": color.light,
-                        "border-left": "1px double " + color.dark,
-                        "border-right": "1px double " + color.dark,
-                        "border-bottom": "1px double " + color.dark
+                        'background-color': color.light,
+                        'border-left': '1px double ' + color.dark,
+                        'border-right': '1px double ' + color.dark,
+                        'border-bottom': '1px double ' + color.dark
                     });
                 }
                 tempValue++;
@@ -9594,7 +9594,7 @@ highed.DataTable = function (parent, attributes) {
                 while (tempValue <= values[values.length - 1]) {
                     if (row.columns[tempValue]) {
                         highed.dom.style(row.columns[tempValue].element, {
-                            "background-color": color.light
+                            'background-color': color.light
                         });
                     }
                     tempValue++;
@@ -9608,8 +9608,8 @@ highed.DataTable = function (parent, attributes) {
             rows.forEach(function (row) {
                 if (row.columns[value]) {
                     highed.dom.style(row.columns[value].element, {
-                        "border-right": (index === (values.length - 1) ? '1px double ' + color.dark : ''),
-                        "border-left": (index === 0 ? '1px double ' + color.dark : '')
+                        'border-right': (index === (values.length - 1) ? '1px double ' + color.dark : ''),
+                        'border-left': (index === 0 ? '1px double ' + color.dark : '')
                     });
                 }
             });
@@ -9625,10 +9625,10 @@ highed.DataTable = function (parent, attributes) {
                     while (tempValue <= previousValues[previousValues.length - 1]) {
                         if (row.columns[tempValue]) {
                             highed.dom.style(row.columns[tempValue].element, {
-                                "background-color": ''
+                                'background-color': ''
                             });
                         }
-                        tempValue++; //= getNextLetter(tempValue);
+                        tempValue++; // = getNextLetter(tempValue);
                     }
                 }
             });
@@ -9642,11 +9642,11 @@ highed.DataTable = function (parent, attributes) {
                 while (tempValue <= previousValues[previousValues.length - 1]) {
                     if (gcolumns[tempValue]) {
                         highed.dom.style([gcolumns[tempValue].letter, gcolumns[tempValue].header], {
-                            "background-color": '',
+                            'background-color': '',
                             border: ''
                         });
                     }
-                    tempValue++; //= getNextLetter(tempValue);
+                    tempValue++; // = getNextLetter(tempValue);
                 }
             }
         }
@@ -9655,10 +9655,10 @@ highed.DataTable = function (parent, attributes) {
     function removeOutlineFromCell(values) {
         (values || []).forEach(function (value) {
             (rows || []).forEach(function (row) {
-                if (row.columns[value]) { //May have been deleted on startup
+                if (row.columns[value]) { // May have been deleted on startup
                     highed.dom.style(row.columns[value].element, {
-                        "border-right": '',
-                        "border-left": ''
+                        'border-right': '',
+                        'border-left': ''
                     });
                 }
             });
@@ -9680,7 +9680,7 @@ highed.DataTable = function (parent, attributes) {
     function highlightCells(previousValues, values, input, newOptions) {
         removeCellColoring(previousValues);
         colorFields(values, input.colors);
-    //events.emit('AssignDataChanged', input, newOptions);
+    // events.emit('AssignDataChanged', input, newOptions);
     }
 
     function removeAllCellsHighlight(previousValues, values, input, newOptions) {
@@ -9753,9 +9753,9 @@ highed.DataTable = function (parent, attributes) {
             if (input.type && input.type === 'select') {
                 input.element.dropdown = highed.DropDown(null, 'highed-wizard-dropdown-container');
                 input.element.dropdown.addItems([
-                    { id: 'columnsURL', title: "JSON (Column Ordered)" },
-                    { id: 'rowsURL', title: "JSON (Row Ordered)" },
-                    { id: 'csvURL', title: "CSV" }
+                    { id: 'columnsURL', title: 'JSON (Column Ordered)' },
+                    { id: 'rowsURL', title: 'JSON (Row Ordered)' },
+                    { id: 'csvURL', title: 'CSV' }
                 ]);
                 input.element.dropdown.selectByIndex(0);
                 input.element.dropdown.on('Change', function (selected) {
@@ -9916,8 +9916,8 @@ highed.DataTable = function (parent, attributes) {
 
             highed.dom.ap(
                 buttonsContainer,
-                //highed.dom.cr('div', '', name),
-                //highed.dom.cr('br'),
+                // highed.dom.cr('div', '', name),
+                // highed.dom.cr('br'),
                 loadBtn,
                 highed.dom.cr('br')
             );
@@ -9962,7 +9962,7 @@ highed.DataTable = function (parent, attributes) {
                 success: function (info) {
                     highed.snackBar('File uploaded');
                     importer.emitCSVImport(info.data);
-                    //events.emit("AssignDataForFileUpload", info.data); - Does this later in loadCSV
+                    // events.emit("AssignDataForFileUpload", info.data); - Does this later in loadCSV
                     toNextPage();
                 }
             });
@@ -10007,8 +10007,8 @@ highed.DataTable = function (parent, attributes) {
                 }
             }
 
-            //events.emit('AssignDataForFileUpload');
-            //toNextPage();
+            // events.emit('AssignDataForFileUpload');
+            // toNextPage();
         };
 
         highed.dom.ap(container,
@@ -10028,13 +10028,13 @@ highed.DataTable = function (parent, attributes) {
         return container;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     highed.ready(function () {
         init();
     });
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
 
     return {
         toolbar: toolbar,
@@ -10058,7 +10058,7 @@ highed.DataTable = function (parent, attributes) {
         loadLiveDataFromURL: loadLiveDataFromURL,
         loadLiveDataPanel: loadLiveDataPanel,
         isInCSVMode: isInCSVMode,
-        //highlightSelectedFields: highlightSelectedFields,
+        // highlightSelectedFields: highlightSelectedFields,
         highlightCells: highlightCells,
         removeAllCellsHighlight: removeAllCellsHighlight,
         toggleUnwantedCells: toggleUnwantedCells,
@@ -10073,7 +10073,7 @@ highed.DataTable = function (parent, attributes) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -10096,7 +10096,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -10265,7 +10265,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
             setTimeout(function () {
                 expand();
             }, 100);
-        //expand();
+        // expand();
         }
     }
 
@@ -10279,7 +10279,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     }
 
     function expand() {
-        //var bsize = highed.dom.size(bar);
+        // var bsize = highed.dom.size(bar);
 
         var newWidth = props.widths.desktop;
         if (highed.onTablet() && props.widths.tablet) {
@@ -10292,17 +10292,17 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
             return;
         }
 
-        //console.log(bsize.h);
+        // console.log(bsize.h);
         highed.dom.style(body, {
             width: 100 + '%',
-            //height: //(bsize.h - 55) + 'px',
+            // height: //(bsize.h - 55) + 'px',
             opacity: 1
         });
 
         if (!highed.onPhone()) {
-        //(highed.dom.pos(assignDataPanel.getElement(), true).x - highed.dom.pos(dataTableContainer, true).x) - 10
+        // (highed.dom.pos(assignDataPanel.getElement(), true).x - highed.dom.pos(dataTableContainer, true).x) - 10
             highed.dom.style(container, {
-                //width: newWidth + '%'
+                // width: newWidth + '%'
                 width: ((highed.dom.pos(assignDataPanel.getElement(), true).x - highed.dom.pos(dataTableContainer, true).x) + 14) + 'px'
             });
         }
@@ -10435,7 +10435,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
             chartPreview.loadTemplate(newTemplate);
         }
 
-    //assignDataPanel.getFieldsToHighlight(dataTable.highlightCells, true);
+    // assignDataPanel.getFieldsToHighlight(dataTable.highlightCells, true);
     }
 
     function getIcons() {
@@ -10483,7 +10483,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
             Object.keys(allOptions[i]).forEach(function (key) {
                 const option = allOptions[i][key];
                 if (option.value !== '') {
-                    if (option.isData) { //(highed.isArr(option)) { // Data assigndata
+                    if (option.isData) { // (highed.isArr(option)) { // Data assigndata
                         if (dataTableFields.indexOf(option.rawValue[0]) > -1) {
                             serieOption[option.linkedTo] = dataTableFields.indexOf(option.rawValue[0]);
                         }
@@ -10494,7 +10494,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
                         if (dataTableFields.indexOf(option.rawValue[0]) > -1) {
                             serieOption[option.linkedTo] = dataTableFields.indexOf(option.rawValue[0]);
                         }
-                        //serieOption[option.linkedTo] = option.rawValue[0];
+                        // serieOption[option.linkedTo] = option.rawValue[0];
                     }
                 }
             });
@@ -10559,14 +10559,14 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
                 chartPreview.data.setDataTableCSV(dataTable.toCSV(';', true, assignDataPanel.getAllMergedLabelAndData()));
             });
 
-            //chartPreview.data.setAssignDataFields(assignDataPanel.getAssignDataFields());
+            // chartPreview.data.setAssignDataFields(assignDataPanel.getAssignDataFields());
         }
     }
 
-    //////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////////////
 
     assignDataPanel.on('GoToTemplatePage', function () {
-        events.emit("GoToTemplatePage");
+        events.emit('GoToTemplatePage');
     });
 
     assignDataPanel.on('AddSeries', function (index, type) {
@@ -10642,7 +10642,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
         assignDataPanel.getFieldsToHighlight(dataTable.highlightCells);
         chartPreview.data.setAssignDataFields(assignDataPanel.getAssignDataFields());
 
-    //dataTable.highlightSelectedFields(input);
+    // dataTable.highlightSelectedFields(input);
     });
 
     assignDataPanel.on('RedrawGrid', function (clearGridFirst) {
@@ -10650,7 +10650,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     });
 
     assignDataPanel.on('ChangeData', function (allOptions) {
-    //Series map all of the "linkedTo" options
+    // Series map all of the "linkedTo" options
         const data = dataTable.toCSV(';', true, assignDataPanel.getAllMergedLabelAndData());
         chartPreview.data.setAssignDataFields(assignDataPanel.getAssignDataFields());
 
@@ -10670,18 +10670,18 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     });
 
     dataTable.on('ColumnMoving', function () {
-    //assignDataPanel.resetValues();
+    // assignDataPanel.resetValues();
         assignDataPanel.getFieldsToHighlight(dataTable.removeAllCellsHighlight, true);
     });
 
     dataTable.on('ColumnMoved', function () {
-    //assignDataPanel.resetValues();
+    // assignDataPanel.resetValues();
         assignDataPanel.getFieldsToHighlight(dataTable.highlightCells, true);
     });
 
     dataTable.on('InitLoaded', function () {
         assignDataPanel.getFieldsToHighlight(dataTable.highlightCells, true);
-    //dataTable.highlightSelectedFields(assignDataPanel.getOptions());
+    // dataTable.highlightSelectedFields(assignDataPanel.getOptions());
     });
 
     dataTable.on('initExporter', function (exporter) {
@@ -10697,7 +10697,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
 
         if (!rowsLength) {
             rowsLength = dataTable.getColumnLength();
-        } //Remove first column for the categories, and second as its already added
+        } // Remove first column for the categories, and second as its already added
         assignDataPanel.setColumnLength(rowsLength);
         rowsLength -= 2;
 
@@ -10724,7 +10724,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     });
 
     dataTable.on('LoadLiveData', function (settings) {
-    //chartPreview.data.live(settings);
+    // chartPreview.data.live(settings);
 
         const liveDataSetting = {};
 
@@ -10803,7 +10803,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
 
     function resizeChart(newWidth) {
         highed.dom.style(chartFrame, {
-            /*left: newWidth + 'px',*/
+            /* left: newWidth + 'px',*/
             width: '99%',
             height: '45%',
             right: 0,
@@ -10817,7 +10817,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
         }, 200);
     }
     chartPreview.on('SetResizeData', function () {
-    //setToActualSize();
+    // setToActualSize();
     });
 
 
@@ -10830,8 +10830,8 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
         resize: resize,
         data: {
             on: dataTable.on,
-            showLiveStatus: function () {}, //toolbox.showLiveStatus,
-            hideLiveStatus: function () {}//toolbox.hideLiveStatus
+            showLiveStatus: function () {}, // toolbox.showLiveStatus,
+            hideLiveStatus: function () {}// toolbox.hideLiveStatus
         },
         hide: hide,
         show: show,
@@ -10852,7 +10852,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -10875,7 +10875,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -11040,7 +11040,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
             setTimeout(function () {
                 expand();
             }, 100);
-        //expand();
+        // expand();
         }
     }
 
@@ -11054,14 +11054,14 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     }
 
     function expand() {
-        //var bsize = highed.dom.size(bar);
+        // var bsize = highed.dom.size(bar);
 
         var newWidth = 100;
 
         if (!highed.onPhone()) {
-        //(highed.dom.pos(assignDataPanel.getElement(), true).x - highed.dom.pos(dataTableContainer, true).x) - 10
+        // (highed.dom.pos(assignDataPanel.getElement(), true).x - highed.dom.pos(dataTableContainer, true).x) - 10
             highed.dom.style(container, {
-                //width: newWidth + '%'
+                // width: newWidth + '%'
                 width: '100%'
             });
         }
@@ -11193,7 +11193,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
             chartPreview.loadTemplate(newTemplate);
         }
 
-    //assignDataPanel.getFieldsToHighlight(dataTable.highlightCells, true);
+    // assignDataPanel.getFieldsToHighlight(dataTable.highlightCells, true);
     }
 
     function getIcons() {
@@ -11241,7 +11241,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
             Object.keys(allOptions[i]).forEach(function (key) {
                 const option = allOptions[i][key];
                 if (option.value !== '') {
-                    if (option.isData) { //(highed.isArr(option)) { // Data assigndata
+                    if (option.isData) { // (highed.isArr(option)) { // Data assigndata
                         if (dataTableFields.indexOf(option.rawValue[0]) > -1) {
                             serieOption[option.linkedTo] = dataTableFields.indexOf(option.rawValue[0]);
                         }
@@ -11252,7 +11252,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
                         if (dataTableFields.indexOf(option.rawValue[0]) > -1) {
                             serieOption[option.linkedTo] = dataTableFields.indexOf(option.rawValue[0]);
                         }
-                        //serieOption[option.linkedTo] = option.rawValue[0];
+                        // serieOption[option.linkedTo] = option.rawValue[0];
                     }
                 }
             });
@@ -11315,14 +11315,14 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
                 chartPreview.data.setDataTableCSV(dataTable.toCSV(';', true, assignDataPanel.getAllMergedLabelAndData()));
             });
 
-            //chartPreview.data.setAssignDataFields(assignDataPanel.getAssignDataFields());
+            // chartPreview.data.setAssignDataFields(assignDataPanel.getAssignDataFields());
         }
     }
 
-    //////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////////////
 
     assignDataPanel.on('GoToTemplatePage', function () {
-        events.emit("GoToTemplatePage");
+        events.emit('GoToTemplatePage');
     });
 
     assignDataPanel.on('AddSeries', function (index, type) {
@@ -11402,7 +11402,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
         assignDataPanel.getFieldsToHighlight(dataTable.highlightCells);
         chartPreview.data.setAssignDataFields(assignDataPanel.getAssignDataFields());
 
-    //dataTable.highlightSelectedFields(input);
+    // dataTable.highlightSelectedFields(input);
     });
 
     assignDataPanel.on('RedrawGrid', function (clearGridFirst) {
@@ -11410,7 +11410,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     });
 
     assignDataPanel.on('ChangeData', function (allOptions) {
-    //Series map all of the "linkedTo" options
+    // Series map all of the "linkedTo" options
         const data = dataTable.toCSV(';', true, assignDataPanel.getAllMergedLabelAndData());
         chartPreview.data.setAssignDataFields(assignDataPanel.getAssignDataFields());
 
@@ -11430,18 +11430,18 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     });
 
     dataTable.on('ColumnMoving', function () {
-    //assignDataPanel.resetValues();
+    // assignDataPanel.resetValues();
         assignDataPanel.getFieldsToHighlight(dataTable.removeAllCellsHighlight, true);
     });
 
     dataTable.on('ColumnMoved', function () {
-    //assignDataPanel.resetValues();
+    // assignDataPanel.resetValues();
         assignDataPanel.getFieldsToHighlight(dataTable.highlightCells, true);
     });
 
     dataTable.on('InitLoaded', function () {
         assignDataPanel.getFieldsToHighlight(dataTable.highlightCells, true);
-    //dataTable.highlightSelectedFields(assignDataPanel.getOptions());
+    // dataTable.highlightSelectedFields(assignDataPanel.getOptions());
     });
 
     dataTable.on('initExporter', function (exporter) {
@@ -11457,7 +11457,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
 
         if (!rowsLength) {
             rowsLength = dataTable.getColumnLength();
-        } //Remove first column for the categories, and second as its already added
+        } // Remove first column for the categories, and second as its already added
         assignDataPanel.setColumnLength(rowsLength);
         rowsLength -= 2;
 
@@ -11484,7 +11484,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     });
 
     dataTable.on('LoadLiveData', function (settings) {
-    //chartPreview.data.live(settings);
+    // chartPreview.data.live(settings);
 
         const liveDataSetting = {};
 
@@ -11562,7 +11562,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
 
     function resizeChart(newWidth) {
         highed.dom.style(chartFrame, {
-            /*left: newWidth + 'px',*/
+            /* left: newWidth + 'px',*/
             width: '28%',
             height: '38%'
         });
@@ -11573,7 +11573,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
         }, 200);
     }
     chartPreview.on('SetResizeData', function () {
-    //setToActualSize();
+    // setToActualSize();
     });
 
 
@@ -11586,8 +11586,8 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
         resize: resize,
         data: {
             on: dataTable.on,
-            showLiveStatus: function () {}, //toolbox.showLiveStatus,
-            hideLiveStatus: function () {}//toolbox.hideLiveStatus
+            showLiveStatus: function () {}, // toolbox.showLiveStatus,
+            hideLiveStatus: function () {}// toolbox.hideLiveStatus
         },
         hide: hide,
         show: show,
@@ -11608,7 +11608,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -11631,7 +11631,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -11694,7 +11694,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
         titleContainer = highed.dom.cr('div', 'highed-toolbox-title'),
         templateContainer = highed.dom.cr('div', 'highed-toolbox-template'),
         dataTableContainer = highed.dom.cr('div', 'highed-toolbox-data'),
-        //toolbox = highed.Toolbox(userContents),
+        // toolbox = highed.Toolbox(userContents),
         options = [];
 
     function init(dataPage, templatePage, customizePage) {
@@ -11708,7 +11708,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
 
             var o = toolbox.addEntry({
                 title: option.title,
-                number: counter, //option.id,
+                number: counter, // option.id,
                 onClick: manualSelection,
                 hideTitle: option.hideTitle
             });
@@ -11731,7 +11731,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
         highed.dom.ap(contents, userContents);
         highed.dom.ap(body, contents);
 
-        //highed.dom.ap(userContents, listContainer);
+        // highed.dom.ap(userContents, listContainer);
 
         highed.dom.ap(parent, highed.dom.ap(container, body));
 
@@ -11763,14 +11763,14 @@ highed.CreateChartPage = function (parent, userOptions, props) {
             } else {
                 options[2].expand();
             }
-            events.emit("SimpleCreateChangeTitle", {
+            events.emit('SimpleCreateChangeTitle', {
                 title: titleInput.value,
                 subtitle: subtitleInput.value
             });
         });
 
         highed.dom.on(skipAll, 'click', function () {
-            events.emit("SimpleCreateChartDone", true);
+            events.emit('SimpleCreateChartDone', true);
         });
 
         highed.dom.ap(titleContainer,
@@ -11819,7 +11819,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
                 if (userOptions && (userOptions.indexOf('templates') === -1)) {
                     options[2].expand();
                 } else if (userOptions && (userOptions.indexOf('customize') === -1)) {
-                    events.emit("SimpleCreateChartDone", true);
+                    events.emit('SimpleCreateChartDone', true);
                 } else {
                     options[3].expand();
                 }
@@ -11836,7 +11836,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
             if (userOptions && (userOptions.indexOf('templates') === -1)) {
                 options[2].expand();
             } else if (userOptions && (userOptions.indexOf('customize') === -1)) {
-                events.emit("SimpleCreateChartDone", true);
+                events.emit('SimpleCreateChartDone', true);
             } else {
                 options[3].expand();
             }
@@ -11874,7 +11874,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
         });
 
         highed.dom.on(skipAll, 'click', function () {
-            events.emit("SimpleCreateChartDone", true);
+            events.emit('SimpleCreateChartDone', true);
         });
 
         highed.dom.on(nextButton, 'click', function () {
@@ -11886,7 +11886,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
                 highed.dom.ap(
                     highed.dom.cr('div', 'highed-toolbox-text'),
                     highed.dom.cr('div', 'highed-toolbox-template-text', 'Pick a basic starter template. You can change it later.'),
-                    highed.dom.cr('div', 'highed-toolbox-template-text', "If you're not sure, just hit Choose A Template Later.")
+                    highed.dom.cr('div', 'highed-toolbox-template-text', 'If you\'re not sure, just hit Choose A Template Later.')
                 ),
                 highed.dom.ap(
                     highed.dom.cr('div', 'highed-toolbox-extras'),
@@ -11907,15 +11907,15 @@ highed.CreateChartPage = function (parent, userOptions, props) {
             'button',
             'highed-ok-button highed-import-button negative',
             'Customize Your Chart'
-        );//,
+        );// ,
         // dataTableDropzoneContainer = dataPage.createSimpleDataTable();
 
         highed.dom.on(nextButton, 'click', function () {
-            events.emit("SimpleCreateChartDone");
+            events.emit('SimpleCreateChartDone');
         });
 
         highed.dom.ap(customizerContainer,
-            highed.dom.cr('div', 'highed-toolbox-customize-header', "You're Done!"),
+            highed.dom.cr('div', 'highed-toolbox-customize-header', 'You\'re Done!'),
             highed.dom.ap(
                 highed.dom.cr('div', 'highed-toolbox-button-container'),
                 nextButton
@@ -11942,7 +11942,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
     highed.dom.on(window, 'resize', resize);
 
     function expand() {
-        //var bsize = highed.dom.size(bar);
+        // var bsize = highed.dom.size(bar);
 
         var newWidth = props.widths.desktop;
         if (highed.onTablet() && props.widths.tablet) {
@@ -11953,7 +11953,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
 
         highed.dom.style(body, {
             width: 100 + '%',
-            //height: //(bsize.h - 55) + 'px',
+            // height: //(bsize.h - 55) + 'px',
             opacity: 1
         });
 
@@ -11989,7 +11989,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
             display: 'block'
         });
         isVisible = true;
-        //expand();
+        // expand();
 
     }
     function hide() {
@@ -12005,7 +12005,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
         return null;
     }
 
-    //////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////////////
 
     return {
         on: events.on,
@@ -12020,7 +12020,7 @@ highed.CreateChartPage = function (parent, userOptions, props) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -12043,9 +12043,9 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -12068,7 +12068,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -12311,8 +12311,8 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
         col !== 'undefined' &&
         typeof col !== 'undefined'
         ) {
-            box.innerHTML = "";
-        //box.innerHTML = col;
+            box.innerHTML = '';
+        // box.innerHTML = col;
         } else {
             box.innerHTML = 'auto';
             col = '#FFFFFF';
@@ -12353,7 +12353,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
             highed.dom.cr('div', 'highed-add-text-label', 'Type:'),
             typeDropdownParent,
             highed.dom.cr('div', 'highed-add-text-label', 'Color:'),
-            //colorDropdownParent,
+            // colorDropdownParent,
             highed.dom.ap(addTextModalColorContainer, box, addTextModalColorInput),
             highed.dom.ap(addTextModalBtnContainer,
                 addTextModalSubmit,
@@ -12376,7 +12376,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
     function init() {
 
         width = props.width,
-        customizeTitle = highed.dom.cr('div', 'highed-customize-title'/*, props.title*/),
+        customizeTitle = highed.dom.cr('div', 'highed-customize-title'/* , props.title*/),
         iconClass = 'highed-box-size highed-toolbox-bar-icon fa ' + props.icon;
 
         customizerContainer.innerHTML = '';
@@ -12421,7 +12421,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
 
             chartWidth = 28;
             highed.dom.style(backIcon, {
-                display: "inline-block"
+                display: 'inline-block'
             });
 
             expand();
@@ -12551,7 +12551,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
         highed.dom.ap(userContents, customizerContainer);
         highed.dom.ap(parent, highed.dom.ap(container, body));
 
-        //customizer.resize();
+        // customizer.resize();
 
         expand();
         hide();
@@ -12601,7 +12601,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
           document.documentElement.clientHeight ||
           document.body.clientHeight) - highed.dom.pos(body, true).y) - 16));
             }, 500);
-            //expand();
+            // expand();
         }
     }
 
@@ -12634,7 +12634,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
 
 
     highed.dom.style(backIcon, {
-        display: "none"
+        display: 'none'
     });
 
 
@@ -12650,7 +12650,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
         chartWidth = 68;
 
         highed.dom.style(backIcon, {
-            display: "none"
+            display: 'none'
         });
         searchAdvancedOptions.hide();
 
@@ -12664,7 +12664,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
 
     function expand() {
 
-        var newWidth = width; //props.width;
+        var newWidth = width; // props.width;
 
         highed.dom.style(body, {
             width: 100 + '%',
@@ -12682,7 +12682,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
                 containerMargin = parseFloat(containerStyles.marginLeft) + parseFloat(containerStyles.marginRight);
 
             highed.dom.style(container, {
-                width: ((windowWidth * percentage) - (chartMargin + containerMargin + 35) - 3 /*padding*/) + 'px'
+                width: ((windowWidth * percentage) - (chartMargin + containerMargin + 35) - 3 /* padding*/) + 'px'
             });
         }
 
@@ -12699,7 +12699,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
                 };
 
             highed.dom.style(contents, {
-                width: "100%",
+                width: '100%',
                 height: ((size.h - 16)) + 'px'
             });
 
@@ -12750,7 +12750,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
         chartWidth = 68;
 
         highed.dom.style(backIcon, {
-            display: "none"
+            display: 'none'
         });
         searchAdvancedOptions.hide();
 
@@ -12834,7 +12834,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
                 height: h + 'px'
             });
 
-            //chartPreview.chart.setWidth();
+            // chartPreview.chart.setWidth();
 
             chartPreview.resize(w, h);
         }
@@ -12865,8 +12865,8 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
     function resizeChart(newHeight) {
 
         highed.dom.style(chartFrame, {
-            /*left: newWidth + 'px',*/
-            width: '60%', //'68%',
+            /* left: newWidth + 'px',*/
+            width: '60%', // '68%',
             height: 440 + 'px' || '100%',
             top: 55 + 'px',
             left: '39%'
@@ -12882,7 +12882,7 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
 
 
     chartPreview.on('SetResizeData', function () {
-    //setToActualSize();
+    // setToActualSize();
     });
 
     return {
@@ -12899,11 +12899,11 @@ highed.CustomizePage = function (parent, options, chartPreview, chartFrame, prop
         selectOption: selectOption,
         getResolutionContainer: getResolutionContainer,
         setTabBehaviour: setTabBehaviour
-    //toolbar: toolbar
+    // toolbar: toolbar
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -12926,7 +12926,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -13090,7 +13090,7 @@ highed.Toolbox = function (parent, attr) {
             }, 50);
         }
 
-        //highed.dom.on(icon, 'click', toggle);
+        // highed.dom.on(icon, 'click', toggle);
         highed.dom.ap(bar, icon);
         highed.dom.ap(contents, title, userContents);
 
@@ -13140,7 +13140,7 @@ highed.Toolbox = function (parent, attr) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -13163,7 +13163,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -13239,7 +13239,7 @@ highed.OptionsPanel = function (parent, attr) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -13262,7 +13262,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -13270,7 +13270,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
 
     var defaultOptions = {
             labels: {
-                name: "Categories",
+                name: 'Categories',
                 desc: 'Choose a column for the category types. Can be names or a date.',
                 default: 'A',
                 value: 'A',
@@ -13284,7 +13284,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
                 }
             },
             values: {
-                name: "Values",
+                name: 'Values',
                 desc: 'Enter column with the values you want to chart.',
                 default: 'B',
                 linkedTo: 'y',
@@ -13299,7 +13299,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
                 }
             },
             label: {
-                name: "Label",
+                name: 'Label',
                 desc: 'The name of the point as shown in the legend, tooltip, data label etc.',
                 default: '',
                 value: '',
@@ -13429,7 +13429,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
         Object.keys(options[index]).forEach(function (optionKeys) {
             if (optionKeys === 'labels') {
                 arr.labelColumn = highed.getLetterIndex(options[index][optionKeys].value.charAt(0));
-            } else if (options[index][optionKeys].isData) { //(highed.isArr(options[index][optionKeys])) {
+            } else if (options[index][optionKeys].isData) { // (highed.isArr(options[index][optionKeys])) {
 
                 const allData = options[index][optionKeys];
                 values.push(allData.rawValue[0]);
@@ -13446,7 +13446,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
 
         arr.extraColumns = extraColumns.sort();
 
-        return arr; //arr.concat(values);
+        return arr; // arr.concat(values);
     }
 
     function getAllMergedLabelAndData() {
@@ -13458,7 +13458,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             Object.keys(serie).forEach(function (optionKeys) {
                 if (optionKeys === 'labels') {
                     arr.labelColumn = highed.getLetterIndex(options[i][optionKeys].value.charAt(0));
-                } else if (options[i][optionKeys].isData) { //(highed.isArr(options[i][optionKeys])) {
+                } else if (options[i][optionKeys].isData) { // (highed.isArr(options[i][optionKeys])) {
                     const allData = options[i][optionKeys];
                     /*
             allData.forEach(function(data) {
@@ -13518,7 +13518,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
         }
 
         newOptions = getMergedLabelAndData();
-        //else newOptions.push(highed.getLetterIndex(input.value.charAt(0)));
+        // else newOptions.push(highed.getLetterIndex(input.value.charAt(0)));
 
         input.previousValue = input.value.toUpperCase();
         input.rawValue = values.map(function (x) {
@@ -13540,7 +13540,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             processField(input, overrideCheck, cb);
         });
         if (!disabled && !dontEmit) {
-            events.emit("ChangeData", options);
+            events.emit('ChangeData', options);
         }
     }
 
@@ -13551,14 +13551,14 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             alpha = 0.5;
 
         return {
-            light: "hsla(" + hue + ", " + saturation + "%, " + (lightness + 20) + "%, " + alpha + ")",
-            dark: "hsl(" + hue + ", " + saturation + "%, " + lightness + "%)"
+            light: 'hsla(' + hue + ', ' + saturation + '%, ' + (lightness + 20) + '%, ' + alpha + ')',
+            dark: 'hsl(' + hue + ', ' + saturation + '%, ' + lightness + '%)'
         };
     }
 
     function addSeries(length, type) {
         if (length + 1 < options.length) {
-            //Need to do some culling
+            // Need to do some culling
             options = options.slice(0, length + 1);
             events.emit('RemoveSeries', length + 1);
             seriesTypeSelect.sliceList(length + 1);
@@ -13606,7 +13606,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
         highed.merge(newOptions, highed.meta.charttype[type]);
         clean(newOptions);
         if (newOptions.values) {
-            newOptions.values.rawValue = [maxColumnLength]; //TODO: Change later
+            newOptions.values.rawValue = [maxColumnLength]; // TODO: Change later
             newOptions.values.value = getLetterFromIndex(maxColumnLength);
         }
 
@@ -13770,7 +13770,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
                     }
 
                     options[i].labels.rawValue = [0];
-                    options[i].labels.value = "A";
+                    options[i].labels.value = 'A';
                     options[i].values.rawValue[0] = i + 1;
                     options[i].values.value = getLetterFromIndex(i + 1);
                 }
@@ -13816,7 +13816,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             if (found) {
                 return false;
             }
-            //}
+            // }
         });
         return found;
 
@@ -13844,13 +13844,13 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
         labelInput.selectById(option.value);
 
         labelInput.on('Change', function (selected) {
-            //detailIndex = selected.index();
+            // detailIndex = selected.index();
             detailValue = selected.id();
 
             if (valuesMatch(detailValue, key)) {
                 option.value = option.previousValue;
                 labelInput.selectById(option.previousValue, true);
-                alert("This column has already been assigned a value. Please select a different column");
+                alert('This column has already been assigned a value. Please select a different column');
                 return;
             }
 
@@ -13858,7 +13858,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
                 if (dataTable.areColumnsEmpty(getLetterIndex(detailValue))) {
                     option.value = option.previousValue;
                     labelInput.selectById(option.previousValue, true);
-                    alert("This column does not have any data. Please select a column with data in it");
+                    alert('This column does not have any data. Please select a column with data in it');
                     return;
                 }
             }
@@ -13876,7 +13876,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             if (!disabled) {
                 events.emit('AssignDataChanged', options[index], option, getLetterIndex(detailValue.toUpperCase()), key);
             }
-            //liveDataTypeSelect.selectById(detailValue || 'json');
+            // liveDataTypeSelect.selectById(detailValue || 'json');
         });
 
         var colors = option.colors || generateColors();
@@ -13886,7 +13886,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
         const colorDiv = highed.dom.cr('div', 'highed-assigndatapanel-color');
 
         highed.dom.style(colorDiv, {
-            "background-color": option.colors.light,
+            'background-color': option.colors.light,
             border: '1px solid ' + option.colors.dark
         });
 
@@ -13944,7 +13944,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
         columnLength = length;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////////
 
     highed.dom.ap(selectContainer, addNewSeriesBtn, deleteSeriesBtn, toggleHideCellsBtn);
     highed.dom.ap(changeSeriesTypeContainer, changeSeriesTypeLink);
@@ -13960,11 +13960,11 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
     highed.dom.on(deleteSeriesBtn, 'click', function () {
 
         if (index === 0) {
-            highed.snackBar("Cannot delete this series");
+            highed.snackBar('Cannot delete this series');
             return;
         }
 
-        if (confirm("Are you sure you want to delete this series?")) {
+        if (confirm('Are you sure you want to delete this series?')) {
             options.splice(index, 1);
             seriesTypeSelect.deleteByIndex(index);
             const allSeries = seriesTypeSelect.selectAll();
@@ -13981,7 +13981,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
             }
 
             seriesTypeSelect.selectByIndex(index - 1);
-            highed.snackBar("Series " + (index + 2) + " Deleted");
+            highed.snackBar('Series ' + (index + 2) + ' Deleted');
         }
 
     });
@@ -14057,7 +14057,7 @@ highed.AssignDataPanel = function (parent, dataTable, extraClass) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -14080,7 +14080,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -14123,7 +14123,7 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
             width = options.widths.phone;
         }
 
-        customizeTitle = highed.dom.cr('div', 'highed-customize-title'/*, options.title*/),
+        customizeTitle = highed.dom.cr('div', 'highed-customize-title'/* , options.title*/),
         iconClass = 'highed-box-size highed-toolbox-bar-icon fa ' + options.icon;
 
         title.innerHTML = '';
@@ -14132,7 +14132,7 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
             options.create(userContents, chartPreview, iconsContainer);
         }
 
-        highed.dom.ap(contents, /*highed.dom.ap(title,backIcon, customizeTitle, highed.dom.ap(iconsContainer,helpIcon)),*/ userContents);
+        highed.dom.ap(contents, /* highed.dom.ap(title,backIcon, customizeTitle, highed.dom.ap(iconsContainer,helpIcon)),*/ userContents);
         highed.dom.ap(body, contents);
 
         highed.dom.ap(parent, highed.dom.ap(container, body));
@@ -14160,7 +14160,7 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
           document.documentElement.clientHeight ||
           document.body.clientHeight) - highed.dom.pos(body, true).y) - 16));
             }, 1000);
-            //expand();
+            // expand();
         }
     }
 
@@ -14176,7 +14176,7 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
 
     function expand() {
 
-        var newWidth = width; //props.width;
+        var newWidth = width; // props.width;
 
         highed.dom.style(body, {
             width: 100 + '%',
@@ -14194,7 +14194,7 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
                 containerMargin = parseFloat(containerStyles.marginLeft) + parseFloat(containerStyles.marginRight);
 
             highed.dom.style(container, {
-                width: ((windowWidth * percentage) - (chartMargin + containerMargin + 35) - 3/*margin*/ /*padding*/) + 'px'
+                width: ((windowWidth * percentage) - (chartMargin + containerMargin + 35) - 3/* margin*/ /* padding*/) + 'px'
             });
         }
         events.emit('BeforeResize', newWidth);
@@ -14212,7 +14212,7 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
                 };
 
             highed.dom.style(contents, {
-                width: "100%",
+                width: '100%',
                 height: ((size.h - 16)) + 'px'
             });
 
@@ -14221,7 +14221,7 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
                 height: ((size.h - 16)) + 'px'
             });
 
-            //customizer.resize(newWidth, (size.h - 17) - tsize.h);
+            // customizer.resize(newWidth, (size.h - 17) - tsize.h);
 
             return size;
         }
@@ -14247,7 +14247,7 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
 
     function hide() {
 
-        //customizer.showSimpleEditor();
+        // customizer.showSimpleEditor();
 
         width = options.widths.desktop;
         if (highed.onTablet() && options.widths.tablet) {
@@ -14255,12 +14255,12 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
         } else if (highed.onPhone() && options.widths.phone) {
             width = options.widths.phone;
         }
-        chartWidth = "68%";
+        chartWidth = '68%';
 
         highed.dom.style(backIcon, {
-            display: "none"
+            display: 'none'
         });
-        //searchAdvancedOptions.hide();
+        // searchAdvancedOptions.hide();
 
         expand();
 
@@ -14278,12 +14278,12 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
     });
 
 
-    //////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////////////
 
     function resizeChart(newHeight) {
         highed.dom.style(chartFrame, {
-            /*left: newWidth + 'px',*/
-            width: chartWidth, //'68%',
+            /* left: newWidth + 'px',*/
+            width: chartWidth, // '68%',
             height: newHeight + 'px' || '100%'
         });
         /*
@@ -14307,11 +14307,11 @@ highed.DefaultPage = function (parent, options, chartPreview, chartFrame) {
         },
         init: init,
         getIcons: getIcons
-    //toolbar: toolbar
+    // toolbar: toolbar
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -14334,7 +14334,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -14343,7 +14343,7 @@ highed.SearchAdvancedOptions = function (parent, attr) {
     var timeout = null,
         advancedOptions = null,
         filters = {
-        //Filter the series properties based on the series.type property
+        // Filter the series properties based on the series.type property
             series: {
                 controller: 'type',
                 state: false,
@@ -14536,7 +14536,7 @@ highed.SearchAdvancedOptions = function (parent, attr) {
                 for (var i = 0; i < parents.length; i++) {
                     // eslint-disable-next-line no-loop-func
                     setTimeout(function (parent) {
-                        link += (link !== '' ? "." : '') + firstToLowerCase(parent).replace(' ', '');
+                        link += (link !== '' ? '.' : '') + firstToLowerCase(parent).replace(' ', '');
                         var element = document.getElementById(link);
                         if (element) {
                             element.click();
@@ -14552,7 +14552,7 @@ highed.SearchAdvancedOptions = function (parent, attr) {
                         });
                         highlight(input);
                     } else {
-                        //Probably a menu option
+                        // Probably a menu option
                         input = document.getElementById(link + '.' + parent.rawName);
                         if (input) {
                             highlight(input);
@@ -14587,7 +14587,7 @@ highed.SearchAdvancedOptions = function (parent, attr) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -14610,7 +14610,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -15706,7 +15706,7 @@ highed.meta.optionsExtended = {
     }
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -15729,14 +15729,14 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
 highed.meta.charttype = {
     arearange: {
         low: {
-            name: "Low",
+            name: 'Low',
             desc: 'The low or minimum value for each data point.',
             default: 'B',
             value: 'B',
@@ -15746,7 +15746,7 @@ highed.meta.charttype = {
         },
         values: null,
         high: {
-            name: "High",
+            name: 'High',
             desc: 'The high or maximum value for each data point.',
             default: 'C',
             value: 'C',
@@ -15758,7 +15758,7 @@ highed.meta.charttype = {
     },
     boxplot: {
         low: {
-            name: "Low",
+            name: 'Low',
             desc: 'The low value for each data point, signifying the lowest value in the sample set. The bottom whisker is drawn here.',
             default: 'B',
             value: 'B',
@@ -15769,7 +15769,7 @@ highed.meta.charttype = {
         },
         values: null,
         high: {
-            name: "High",
+            name: 'High',
             desc: 'The rank for this points data label in case of collision. If two data labels are about to overlap, only the one with the highest labelrank will be drawn.',
             default: 'C',
             value: 'C',
@@ -15779,7 +15779,7 @@ highed.meta.charttype = {
             rawValue: [2]
         },
         median: {
-            name: "Median",
+            name: 'Median',
             desc: 'The median for each data point. This is drawn as a line through the middle area of the box.',
             default: 'D',
             value: 'D',
@@ -15789,7 +15789,7 @@ highed.meta.charttype = {
             rawValue: [3]
         },
         q1: {
-            name: "Q1",
+            name: 'Q1',
             desc: 'The lower quartile for each data point. This is the bottom of the box.',
             default: 'E',
             value: 'E',
@@ -15801,7 +15801,7 @@ highed.meta.charttype = {
             rawValue: [4]
         },
         q3: {
-            name: "Q3",
+            name: 'Q3',
             desc: 'The higher quartile for each data point. This is the top of the box.',
             default: 'F',
             value: 'F',
@@ -15814,7 +15814,7 @@ highed.meta.charttype = {
     candlestick: {
         values: null,
         close: {
-            name: "Close",
+            name: 'Close',
             desc: 'The closing value of each data point.',
             default: 'B',
             value: 'B',
@@ -15824,7 +15824,7 @@ highed.meta.charttype = {
             rawValue: [1]
         },
         open: {
-            name: "Open",
+            name: 'Open',
             desc: 'The opening value of each data point.',
             default: 'C',
             value: 'C',
@@ -15834,7 +15834,7 @@ highed.meta.charttype = {
             rawValue: [2]
         },
         low: {
-            name: "Low",
+            name: 'Low',
             desc: 'The low or minimum value for each data point.',
             default: 'D',
             value: 'D',
@@ -15846,7 +15846,7 @@ highed.meta.charttype = {
             rawValue: [3]
         },
         high: {
-            name: "High",
+            name: 'High',
             desc: 'The high or maximum value for each data point.',
             default: 'E',
             value: 'E',
@@ -15859,7 +15859,7 @@ highed.meta.charttype = {
     bubble: {
         values: null,
         y: {
-            name: "Y",
+            name: 'Y',
             desc: 'Y Position',
             default: 'B',
             value: 'B',
@@ -15869,7 +15869,7 @@ highed.meta.charttype = {
             rawValue: [1]
         },
         z: {
-            name: "Z",
+            name: 'Z',
             desc: 'Z Position.',
             default: 'C',
             value: 'C',
@@ -15882,7 +15882,7 @@ highed.meta.charttype = {
     columnrange: {
         values: null,
         low: {
-            name: "Low",
+            name: 'Low',
             desc: 'The low or minimum value for each data point.',
             default: 'B',
             value: 'B',
@@ -15892,7 +15892,7 @@ highed.meta.charttype = {
             rawValue: [1]
         },
         high: {
-            name: "High",
+            name: 'High',
             desc: 'The high or maximum value for each data point.',
             default: 'C',
             value: 'C',
@@ -15904,7 +15904,7 @@ highed.meta.charttype = {
     }
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -15927,12 +15927,12 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
 highed.meta.colors = [
-    //Red
+    // Red
     '#F44336',
     '#FFEBEE',
     '#FFCDD2',
@@ -15948,7 +15948,7 @@ highed.meta.colors = [
     '#FF5252',
     '#FF1744',
     '#D50000',
-    //Pink
+    // Pink
     '#E91E63',
     '#FCE4EC',
     '#F8BBD0',
@@ -15964,7 +15964,7 @@ highed.meta.colors = [
     '#FF4081',
     '#F50057',
     '#C51162',
-    //Purple
+    // Purple
     '#9C27B0',
     '#F3E5F5',
     '#E1BEE7',
@@ -15980,7 +15980,7 @@ highed.meta.colors = [
     '#E040FB',
     '#D500F9',
     '#AA00FF',
-    //Deep Purple
+    // Deep Purple
     '#673AB7',
     '#EDE7F6',
     '#D1C4E9',
@@ -15996,7 +15996,7 @@ highed.meta.colors = [
     '#7C4DFF',
     '#651FFF',
     '#6200EA',
-    //Indigo
+    // Indigo
     '#3F51B5',
     '#E8EAF6',
     '#C5CAE9',
@@ -16012,7 +16012,7 @@ highed.meta.colors = [
     '#536DFE',
     '#3D5AFE',
     '#304FFE',
-    //Blue
+    // Blue
     '#2196F3',
     '#E3F2FD',
     '#BBDEFB',
@@ -16028,7 +16028,7 @@ highed.meta.colors = [
     '#448AFF',
     '#2979FF',
     '#2962FF',
-    //Light Blue
+    // Light Blue
     '#03A9F4',
     '#E1F5FE',
     '#B3E5FC',
@@ -16044,7 +16044,7 @@ highed.meta.colors = [
     '#40C4FF',
     '#00B0FF',
     '#0091EA',
-    //Cyan
+    // Cyan
     '#00BCD4',
     '#E0F7FA',
     '#B2EBF2',
@@ -16060,7 +16060,7 @@ highed.meta.colors = [
     '#18FFFF',
     '#00E5FF',
     '#00B8D4',
-    //Teal
+    // Teal
     '#009688',
     '#E0F2F1',
     '#B2DFDB',
@@ -16076,7 +16076,7 @@ highed.meta.colors = [
     '#64FFDA',
     '#1DE9B6',
     '#00BFA5',
-    //Green
+    // Green
     '#4CAF50',
     '#E8F5E9',
     '#C8E6C9',
@@ -16092,7 +16092,7 @@ highed.meta.colors = [
     '#69F0AE',
     '#00E676',
     '#00C853',
-    //Light Green
+    // Light Green
     '#8BC34A',
     '#F1F8E9',
     '#DCEDC8',
@@ -16108,7 +16108,7 @@ highed.meta.colors = [
     '#B2FF59',
     '#76FF03',
     '#64DD17',
-    //Lime
+    // Lime
     '#CDDC39',
     '#F9FBE7',
     '#F0F4C3',
@@ -16124,7 +16124,7 @@ highed.meta.colors = [
     '#EEFF41',
     '#C6FF00',
     '#AEEA00',
-    //Yellow
+    // Yellow
     '#FFEB3B',
     '#FFFDE7',
     '#FFF9C4',
@@ -16140,7 +16140,7 @@ highed.meta.colors = [
     '#FFFF00',
     '#FFEA00',
     '#FFD600',
-    //Amber
+    // Amber
     '#FFC107',
     '#FFF8E1',
     '#FFECB3',
@@ -16156,7 +16156,7 @@ highed.meta.colors = [
     '#FFD740',
     '#FFC400',
     '#FFAB00',
-    //Orange
+    // Orange
     '#FF9800',
     '#FFF3E0',
     '#FFE0B2',
@@ -16172,7 +16172,7 @@ highed.meta.colors = [
     '#FFAB40',
     '#FF9100',
     '#FF6D00',
-    //Deep Orange
+    // Deep Orange
     '#FF5722',
     '#FBE9E7',
     '#FFCCBC',
@@ -16188,7 +16188,7 @@ highed.meta.colors = [
     '#FF6E40',
     '#FF3D00',
     '#DD2C00',
-    //Brown
+    // Brown
     '#795548',
     '#EFEBE9',
     '#D7CCC8',
@@ -16204,7 +16204,7 @@ highed.meta.colors = [
     '#3E2723',
     '#3E2723',
     '#3E2723',
-    //Grey
+    // Grey
     '#9E9E9E',
     '#FAFAFA',
     '#F5F5F5',
@@ -16219,7 +16219,7 @@ highed.meta.colors = [
     '#212121',
     '#212121',
     '#212121',
-    //Blue Grey
+    // Blue Grey
     '#607D8B',
     '#ECEFF1',
     '#CFD8DC',
@@ -16236,7 +16236,7 @@ highed.meta.colors = [
     '#263238'
 ];
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -16259,13 +16259,13 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
 highed.meta.fonts = [
     'Default',
-    //'"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif',
+    // '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif',
     'Courier',
     'Arial',
     'Verdana',
@@ -16282,7 +16282,7 @@ highed.meta.fonts = [
     'Monospace'
 ];
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -16305,17 +16305,17 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 highed.highchartsErrors = {
     // Plotting zero or subzero value on a log axis
     10: {
-        title: "Can't plot zero or subzero values on a logarithmic axis",
+        title: 'Can\'t plot zero or subzero values on a logarithmic axis',
         text:
       'This error occurs in the following situations:<ul><li>If a zero or subzero data value is added to a logarithmic axis</li><li>If the minimum of a logarithimic axis is set to 0 or less</li><li>If the threshold is set to 0 or less</li></ul>As of Highcharts 5.0.8 it is possible to bypass this error message by setting <code>Axis.prototype.allowNegativeLog</code> to<code>true</code> and add custom conversion functions. <ahref="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/samples/highcharts/yaxis/type-log-negative/">View live demo</a>.'
     },
     // Can't link axes of different types
-    11: { title: "Can't link axes of different type", text: 'This error occurs if you are using the linkedTo option to link two axes of different types, for example a logarithmic axis to a linear axis.' },
+    11: { title: 'Can\'t link axes of different type', text: 'This error occurs if you are using the linkedTo option to link two axes of different types, for example a logarithmic axis to a linear axis.' },
     // series.data needs to be arrays or numbers when in turbo mode
     12: {
         title:
@@ -16345,11 +16345,11 @@ highed.highchartsErrors = {
     19: { title: 'Too many ticks', text: 'This error happens when you try to apply too many ticks to an axis, specifically when you add more ticks than the axis pixel length.' },
     // Can't add point config to a long data series
     20: {
-        title: "Can't add object point configuration to a long data series",
+        title: 'Can\'t add object point configuration to a long data series',
         text: 'In Highstock, if you try to add a point using the object literal configuration syntax, it works only when the number of data points is below the series turboThreshold. Instead of the object syntax, use the Array syntax.'
     },
     // Can't find Proj4js library
-    21: { title: "Can't find Proj4js library", text: 'Using latitude/longitude functionality in Highmaps requires the Proj4js library to be loaded.' },
+    21: { title: 'Can\'t find Proj4js library', text: 'Using latitude/longitude functionality with pre-projected GeoJSON in Highcharts Maps requires the Proj4js library to be loaded. It is recommended to utilize TopoJSON for Highcharts v10 and above, as built-in projection support is included and no third-party library is required. For more information, see the <a href=\"https://www.highcharts.com/blog/tutorials/highcharts-now-prefers-topojson-maps\">Highcharts now prefers topojson maps</a>.' },
     // Map does not support lat/long
     22: { title: 'Map does not support latitude/longitude', text: 'The loaded map does not support latitude/longitude functionality. This is only supported with maps from the official Highmaps map collection from version 1.1.0 onwards. If you are using a custom map, consider using the Proj4js library to convert between projections.' },
     // Unsupported color format used for color
@@ -16360,7 +16360,7 @@ highed.highchartsErrors = {
     // Cannot run Point.update on a grouped point
     24: { title: 'Cannot run Point.update on a grouped point', text: 'This happens in Highstock when a point is grouped by data grouping, so there is no reference to the raw points.' },
     // Can't find moment.js
-    25: { title: "Can't find Moment.js library", text: 'Using the global.timezone option requires the Moment.js library to be loaded.' },
+    25: { title: 'Can\'t find Moment.js library', text: 'Using the global.timezone option requires the Moment.js library to be loaded.' },
     // WebGL not supported
     26: {
         title: 'WebGL not supported, and no fallback module included',
@@ -16370,7 +16370,7 @@ highed.highchartsErrors = {
     27: { title: 'This browser does not support SVG.', text: 'This happens in old IE when the oldie.js module is not loaded.' }
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -16393,11 +16393,11 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -16420,7 +16420,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -16524,7 +16524,7 @@ highed.DefaultContextMenu = function (chartPreview) {
                 click: function () {
                     window.open(highed.option('helpURL'));
                 }
-            } //,
+            } // ,
             // {
             //     title: highed.getLocalizedStr('licenseInfo'),
             //     icon: 'key',
@@ -16540,7 +16540,7 @@ highed.DefaultContextMenu = function (chartPreview) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2017, Highsoft
 
@@ -16563,7 +16563,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -16584,7 +16584,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
             'highed-customizer-adv-loader',
             '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> Loading'
         ),
-        tabs = highed.TabControl(parent, false, null, true), //Quck fix for now, will change once design finalised.
+        tabs = highed.TabControl(parent, false, null, true), // Quck fix for now, will change once design finalised.
         simpleTab = tabs.createTab({
             title: highed.getLocalizedStr('customizeSimple')
         }),
@@ -16612,7 +16612,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
     }),
     */
         list = highed.List(splitter, true, properties, planCode),
-        body = highed.dom.cr('div'), //splitter.right,
+        body = highed.dom.cr('div'), // splitter.right,
         advSplitter = highed.HSplitter(advancedTab.body, {
             leftWidth: 30
         }),
@@ -16631,7 +16631,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
         ),
         highlighted = false;
 
-    //If we're on mobile, completely disable the advanced view
+    // If we're on mobile, completely disable the advanced view
     if (highed.onPhone()) {
         properties.noAdvanced = true;
         properties.noCustomCode = true;
@@ -16645,7 +16645,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
     highed.dom.ap(parent, advancedLoader);
     highed.dom.ap(outputPreviewTab.body, previewEditor);
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     advancedTab.on('Focus', function () {
         buildTree();
@@ -16762,9 +16762,9 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
         bsize = tabs.barSize();
 
         list.resize(w, h - bsize.h);
-        //splitter.resize(w, h - bsize.h - 10);
+        // splitter.resize(w, h - bsize.h - 10);
 
-        //The customize body needs to have a min-height of the list height
+        // The customize body needs to have a min-height of the list height
         lsize = highed.dom.size(list.container);
 
         highed.dom.style(body, {
@@ -16840,7 +16840,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
                 );
 
                 const series = chartPreview.options.all().series;
-                allOptions = highed.merge({}, chartPreview.options.full);//highed.merge({}, chartPreview.options.getCustomized());
+                allOptions = highed.merge({}, chartPreview.options.full);// highed.merge({}, chartPreview.options.getCustomized());
                 if (series && series.length > 0) {
                     series.forEach(function (serie, i) {
                         if (allOptions.series && allOptions.series[i]) {
@@ -16857,7 +16857,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
                     highed.dom.style(advancedLoader, {
                         opacity: 0
                     });
-                    events.emit("AdvancedBuilt");
+                    events.emit('AdvancedBuilt');
                 }
 
             }, 10);
@@ -16889,7 +16889,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
     // buildTree();
     }
 
-    //Highlight a node
+    // Highlight a node
     function highlightNode(n, x, y) {
         if (!n) {
             return;
@@ -16950,7 +16950,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
         }, 350);
     }
 
-    //////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////////////
     // P U B L I C  F U N S
 
 
@@ -16981,21 +16981,21 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
         highlightField(thing.id, x, y);
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     list.on('PropertyChange', function (groupId, newValue, detailIndex) {
-        events.emit("PropertyChange", groupId, newValue, detailIndex);
+        events.emit('PropertyChange', groupId, newValue, detailIndex);
     });
 
     list.on('TogglePlugins', function (groupId, newValue) {
-        events.emit("TogglePlugins", groupId, newValue);
+        events.emit('TogglePlugins', groupId, newValue);
     });
 
     list.on('Select', function (id) {
         var entry = highed.meta.optionsExtended.options[id];
         body.innerHTML = '';
         entry.forEach(function (thing) {
-            //selectGroup(thing);
+            // selectGroup(thing);
         });
         highlighted = false;
         highed.emit('UIAction', 'SimplePropCatChoose', id);
@@ -17047,7 +17047,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
                         Object.keys(entry.meta.types)[0] || 'string',
                     typeof instancedData[entry.meta.name] !== 'undefined' ?
                         instancedData[entry.meta.name] :
-                        entry.meta.default, //(highed.getAttr(chartOptions, entry.id)  || entry.defaults),
+                        entry.meta.default, // (highed.getAttr(chartOptions, entry.id)  || entry.defaults),
                     {
                         title: highed.uncamelize(entry.meta.name),
                         tooltip: entry.meta.description,
@@ -17059,7 +17059,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
                     function (newValue) {
                         if (typeof newValue === 'string') {
                             newValue = newValue.replace('<\/script>', '<\\/script>');
-                        } //Bug in cloud
+                        } // Bug in cloud
                         highed.emit(
                             'UIAction',
                             'AdvancedPropSet',
@@ -17139,7 +17139,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
     }
 
     function showAdvancedEditor() {
-        events.emit("AdvanceClicked");
+        events.emit('AdvanceClicked');
         advancedTab.focus();
     }
 
@@ -17162,7 +17162,7 @@ highed.ChartCustomizer = function (parent, attributes, chartPreview, planCode) {
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -17185,12 +17185,12 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -17213,7 +17213,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -17313,14 +17313,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         jsonPasteArea.value = JSON.stringify({}, undefined, 2);
 
         setDefaultTabSize(600, 600, [csvTab, exportTab, jsonTab, webTab, samplesTab]);
-        ///////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////
 
         highed.dom.style(samplesTab.body, { overflow: 'hidden' });
 
         properties.options = highed.arrToObj(properties.options);
         properties.plugins = highed.arrToObj(properties.plugins);
 
-        //Remove referenced un-installed plugins.
+        // Remove referenced un-installed plugins.
         Object.keys(properties.plugins).forEach(function (plugin) {
             if (highed.isNull(webImports[plugin])) {
                 delete properties.plugins[plugin];
@@ -17345,7 +17345,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 exportTab.hide();
             }
 
-            //Always disable json options..
+            // Always disable json options..
 
             // eslint-disable-next-line no-self-compare
             if (1 === 1 || !properties.options.json) {
@@ -17516,8 +17516,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
                 highed.dom.ap(
                     samplesTab.body,
-                    //highed.dom.cr('div', '', name),
-                    //highed.dom.cr('br'),
+                    // highed.dom.cr('div', '', name),
+                    // highed.dom.cr('br'),
                     loadBtn,
                     highed.dom.cr('br')
                 );
@@ -17593,7 +17593,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         function selectTab(index) {
             tabs.select(index);
         }
-        ///////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////
 
         highed.dom.ap(
             exportTab.body,
@@ -17710,16 +17710,16 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         updateOptions();
 
         delimiter.value = ',';
-        //dateFormat.value = 'YYYY-mm-dd';
+        // dateFormat.value = 'YYYY-mm-dd';
         firstAsNames.type = 'checkbox';
         decimalPoint.value = '.';
         firstAsNames.checked = true;
 
-        //Should hide the web tab if running where cross-origin is an issue
+        // Should hide the web tab if running where cross-origin is an issue
 
         resize();
 
-        ///////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////
 
         return {
             on: events.on,
@@ -17735,7 +17735,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -17758,7 +17758,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -17794,7 +17794,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
     highed.Exporter = function (parent, attributes) {
-        var //splitter = highed.HSplitter(parent, {leftWidth: 50, noOverflow: true}),
+        var // splitter = highed.HSplitter(parent, {leftWidth: 50, noOverflow: true}),
             properties = highed.merge(
                 {
                     options: 'svg html json plugins',
@@ -17809,7 +17809,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             pluginTab = tctrl.createTab({ title: 'Plugins' }),
             pluginSplitter = highed.HSplitter(pluginTab.body, { leftWidth: 30 }),
             pluginList = highed.List(pluginSplitter.left),
-            exportJSON = highed.dom.cr('a', 'highed-imp-button highed-imp-pasted-button', 'Download'), //highed.dom.cr('a', '', 'Download'),
+            exportJSON = highed.dom.cr('a', 'highed-imp-button highed-imp-pasted-button', 'Download'), // highed.dom.cr('a', '', 'Download'),
             exportHTML = highed.dom.cr('a', 'highed-imp-button highed-imp-pasted-button', 'Download'),
             exportSVG = highed.dom.cr('a', 'highed-imp-button highed-imp-pasted-button', 'Download'),
             jsonValue = highed.dom.cr(
@@ -17834,9 +17834,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         properties.options = highed.arrToObj(properties.options);
         properties.plugins = highed.arrToObj(properties.plugins);
 
-        ///////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////
 
-        //Hides unwanted stuff
+        // Hides unwanted stuff
         function updateOptions() {
             if (!properties.options.html) {
                 htmlTab.hide();
@@ -17857,7 +17857,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             tctrl.selectFirst();
         }
 
-        //Build plugin panel
+        // Build plugin panel
         function buildPlugins() {
             if (hasBuiltPlugins) {
                 return;
@@ -18043,7 +18043,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         function resize(w, h) {
             var bsize;
 
-            //splitter.resize(w, h);
+            // splitter.resize(w, h);
             tctrl.resize(w, h);
             bsize = tctrl.barSize();
 
@@ -18059,7 +18059,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             });
         }
 
-        ///////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////
 
         highed.dom.ap(
             htmlTab.body,
@@ -18089,7 +18089,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         doSelectOnClick(htmlValue, 'HTML');
         doSelectOnClick(svgValue, 'SVG');
 
-        ///////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////
 
         return {
             init: init,
@@ -18099,7 +18099,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -18122,7 +18122,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -18228,7 +18228,7 @@ highed.ChartPreview = function (parent, attributes) {
         isAnnotating = false,
         annotationType = false;
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     function attachWYSIWYG() {
 
@@ -18276,9 +18276,9 @@ highed.ChartPreview = function (parent, attributes) {
     function emitChange() {
         events.emit('ChartChange', aggregatedOptions);
 
-        //Throttled event - we use this when doing server stuff in the handler
-        //since e.g. using the color picker can result in quite a lot of updates
-        //within a short amount of time
+        // Throttled event - we use this when doing server stuff in the handler
+        // since e.g. using the color picker can result in quite a lot of updates
+        // within a short amount of time
         window.clearTimeout(throttleTimeout);
         throttleTimeout = window.setTimeout(function () {
             events.emit('ChartChangeLately', aggregatedOptions);
@@ -18287,7 +18287,7 @@ highed.ChartPreview = function (parent, attributes) {
 
     function addShape(chart, type, x, y) {
         var options = {
-            id: "shape_" + customizedOptions.annotations.length, //customizedOptions.annotations[0].shapes.length,
+            id: 'shape_' + customizedOptions.annotations.length, // customizedOptions.annotations[0].shapes.length,
             type: type,
             point: {
                 x: x,
@@ -18310,30 +18310,30 @@ highed.ChartPreview = function (parent, attributes) {
 
 
         var annotation = chart.addAnnotation({
-            id: "shape_" + customizedOptions.annotations.length, //customizedOptions.annotations[0].shapes.length,
+            id: 'shape_' + customizedOptions.annotations.length, // customizedOptions.annotations[0].shapes.length,
             shapes: [options],
             type: type
         });
 
         // eslint-disable-next-line no-redeclare
         var annotation = chart.addAnnotation({
-            id: "shape_" + customizedOptions.annotations.length, //customizedOptions.annotations[0].shapes.length,
+            id: 'shape_' + customizedOptions.annotations.length, // customizedOptions.annotations[0].shapes.length,
             shapes: [options],
             type: type
         });
 
         customizedOptions.annotations.push({
-            id: "shape_" + customizedOptions.annotations.length,
+            id: 'shape_' + customizedOptions.annotations.length,
             shapes: [annotation.options.shapes[0]]
         });
-    //customizedOptions.annotations[0].shapes.push(annotation.options.shapes[0]);
+    // customizedOptions.annotations[0].shapes.push(annotation.options.shapes[0]);
     }
 
     /* Init the chart */
     function init(options, pnode, noAnimation) {
         var i;
 
-        //We want to work on a copy..
+        // We want to work on a copy..
         options = options || aggregatedOptions;
 
         if (highed.isArr(constr)) {
@@ -18388,11 +18388,11 @@ highed.ChartPreview = function (parent, attributes) {
 
             chart = new Highcharts[chartConstr](pnode || parent, options);
 
-            //This is super ugly.
+            // This is super ugly.
             // customizedOptions.series = customizedOptions.series || [];
             //  customizedOptions.series = chart.options.series || [];
             // highed.merge(customizedOptions.series, chart.options.series);
-            //updateAggregated();
+            // updateAggregated();
 
             if (chart && chart.options) {
                 highed.clearObj(chartOptions);
@@ -18402,7 +18402,7 @@ highed.ChartPreview = function (parent, attributes) {
             attachWYSIWYG();
 
             if (chart && chart.reflow) {
-                //chart.reflow();
+                // chart.reflow();
             }
 
             Highcharts.error = function (code, stopLoading) {
@@ -18551,17 +18551,17 @@ highed.ChartPreview = function (parent, attributes) {
 
             Highcharts.addEvent(chart, 'click', function (e) {
                 if (isAnnotating) {
-                    //events.emit('SetAnnotate', e);
+                    // events.emit('SetAnnotate', e);
 
                     if (!customizedOptions.annotations) {
                         customizedOptions.annotations = [];
-                    } //[{}];
-                    //if (!customizedOptions.annotations[0].shapes) customizedOptions.annotations[0].shapes = [];
+                    } // [{}];
+                    // if (!customizedOptions.annotations[0].shapes) customizedOptions.annotations[0].shapes = [];
 
                     if (annotationType === 'label') {
                         events.emit('ShowTextDialog', this, e.xAxis[0].value, e.yAxis[0].value);
                     } else if (annotationType === 'delete' || annotationType === 'drag') {
-                        //nothing
+                        // nothing
                     } else {
                         addShape(this, annotationType, e.xAxis[0].value, e.yAxis[0].value);
                     }
@@ -18695,7 +18695,7 @@ highed.ChartPreview = function (parent, attributes) {
         var aggregatedTemplate = {};
 
 
-        //Merge fest
+        // Merge fest
 
         highed.clearObj(aggregatedOptions);
 
@@ -18736,7 +18736,7 @@ highed.ChartPreview = function (parent, attributes) {
             aggregatedOptions.xAxis = customizedOptions.xAxis;
         }
 
-        //This needs to be cleaned up
+        // This needs to be cleaned up
         if (aggregatedOptions.yAxis && aggregatedTemplate.yAxis) {
             aggregatedOptions.yAxis.forEach(function (obj, i) {
                 if (i < aggregatedTemplate.yAxis.length) {
@@ -18781,8 +18781,8 @@ highed.ChartPreview = function (parent, attributes) {
             }
         }
 
-        //Temporary hack
-        //aggregatedOptions.series = customizedOptions.series;\
+        // Temporary hack
+        // aggregatedOptions.series = customizedOptions.series;\
         aggregatedOptions.series = [];
         if (highed.isArr(customizedOptions.series)) {
             customizedOptions.series.forEach(function (obj, i) {
@@ -18881,10 +18881,10 @@ highed.ChartPreview = function (parent, attributes) {
             templateSettings[index].templateHeader = template.header;
 
             if (customizedOptions.series[index]) {
-                customizedOptions.series[index].type = type; //template.config.chart.type;
+                customizedOptions.series[index].type = type; // template.config.chart.type;
             } else {
                 customizedOptions.series[index] = {
-                    type: type, //template.config.chart.type,
+                    type: type, // template.config.chart.type,
                     turboThreshold: 0,
                     _colorIndex: customizedOptions.series.length,
                     _symbolIndex: 0,
@@ -18893,12 +18893,12 @@ highed.ChartPreview = function (parent, attributes) {
             }
         });
 
-        //templateOptions = highed.merge({}, template.config || {});
+        // templateOptions = highed.merge({}, template.config || {});
         templateOptions[seriesIndex] = highed.merge({}, template.config || {});
 
         updateAggregated();
         init(aggregatedOptions);
-        //loadSeries();
+        // loadSeries();
         emitChange();
     }
 
@@ -18913,7 +18913,7 @@ highed.ChartPreview = function (parent, attributes) {
 
         constr = [template.constructor || 'Chart'];
 
-        //highed.clearObj(templateOptions);
+        // highed.clearObj(templateOptions);
 
         if (customizedOptions.xAxis) {
             delete customizedOptions.xAxis;
@@ -18925,7 +18925,7 @@ highed.ChartPreview = function (parent, attributes) {
 
         // highed.setAttr(customizedOptions, 'series', []);
         gc(function (chart) {
-            //templateOptions = highed.merge({}, template.config || {});
+            // templateOptions = highed.merge({}, template.config || {});
 
             templateOptions = [highed.merge({}, template.config || {})];
 
@@ -19358,7 +19358,7 @@ highed.ChartPreview = function (parent, attributes) {
         gc(function (chart) {
             var found = Highcharts.addEvent(chart, 'load', function () {
                 loadSeriesFromDataSource();
-                //loadSeries();
+                // loadSeries();
                 found();
             });
         });
@@ -19457,7 +19457,7 @@ highed.ChartPreview = function (parent, attributes) {
             settings: {
                 constructor: constr,
                 template: templateSettings,
-                plugins: chartPlugins, //getPlugins(),
+                plugins: chartPlugins, // getPlugins(),
                 dataProvider: {
                     csv: !gsheet && !livedata ? loadedCSVRaw || lastLoadedCSV : false,
                     googleSpreadsheet: gsheet,
@@ -19466,7 +19466,7 @@ highed.ChartPreview = function (parent, attributes) {
                     seriesMapping: seriesMapping
                 }
             }
-            //editorOptions: highed.serializeEditorOptions()
+            // editorOptions: highed.serializeEditorOptions()
         };
     }
 
@@ -19635,7 +19635,7 @@ highed.ChartPreview = function (parent, attributes) {
         }
 
         if (options && options.global) {
-            //nothing
+            // nothing
         }
 
         // This is nasty
@@ -19676,7 +19676,7 @@ highed.ChartPreview = function (parent, attributes) {
         customizedOptions.series = customizedOptions.series || [];
 
         if (seriesArr.length < customizedOptions.series.length) {
-            //Need to delete some series
+            // Need to delete some series
             customizedOptions.series.splice(
                 seriesArr.length,
                 customizedOptions.series.length - seriesArr.length
@@ -19696,7 +19696,7 @@ highed.ChartPreview = function (parent, attributes) {
 
     function set(id, value, index) {
         gc(function (chart) {
-            //highed.setAttr(chart.options, id, value, index);
+            // highed.setAttr(chart.options, id, value, index);
             highed.setAttr(
                 chart.options,
                 'plotOptions--series--animation',
@@ -19705,8 +19705,8 @@ highed.ChartPreview = function (parent, attributes) {
             );
         });
 
-        //We want to be able to set the customized options even if the chart
-        //doesn't exist
+        // We want to be able to set the customized options even if the chart
+        // doesn't exist
         highed.setAttr(customizedOptions, id, value, index);
 
         flatOptions[id] = value;
@@ -19733,13 +19733,13 @@ highed.ChartPreview = function (parent, attributes) {
         updateAggregated(noCustomCode);
         r = getCleanOptions(highed.merge({}, aggregatedOptions));
 
-        //This should be part of the series
+        // This should be part of the series
         if (!highed.isNull(r.data)) {
             // Don't delete spreadsheet stuff
             if (!r.data.googleSpreadsheetKey) {
                 r.data = undefined;
             }
-            //delete r['data'];
+            // delete r['data'];
         }
 
         if (r && highed.isArr(r.series)) {
@@ -19904,7 +19904,7 @@ highed.ChartPreview = function (parent, attributes) {
             cdnIncludesArr.join(''),
 
             ' function cl() {',
-            'if(typeof window["Highcharts"] !== "undefined"){', //' && Highcharts.Data ? ',
+            'if(typeof window["Highcharts"] !== "undefined"){', // ' && Highcharts.Data ? ',
 
             !customizedOptions.lang ?
                 '' :
@@ -20110,9 +20110,9 @@ highed.ChartPreview = function (parent, attributes) {
                 customizedOptions.annotations = [];
             }
             var annotation = chart.addAnnotation({
-                id: "label_" + customizedOptions.annotations.length,
+                id: 'label_' + customizedOptions.annotations.length,
                 labels: [{
-                    id: "label_" + customizedOptions.annotations.length,
+                    id: 'label_' + customizedOptions.annotations.length,
                     text: text,
                     point: {
                         x: x,
@@ -20129,7 +20129,7 @@ highed.ChartPreview = function (parent, attributes) {
             });
 
             customizedOptions.annotations.push({
-                id: "label_" + customizedOptions.annotations.length,
+                id: 'label_' + customizedOptions.annotations.length,
                 labels: [annotation.options.labels[0]]
             });
         }
@@ -20139,9 +20139,9 @@ highed.ChartPreview = function (parent, attributes) {
     function addAnnotationLabel(x, y, text, color, type) {
         addLabel(x, y, text, color, type);
     }
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
-    //Init the initial chart
+    // Init the initial chart
     updateAggregated();
     init();
 
@@ -20165,7 +20165,7 @@ highed.ChartPreview = function (parent, attributes) {
             customizedOptions.series[index].type = type;
         }
 
-        //Init the initial chart
+        // Init the initial chart
         updateAggregated();
         init();
     }
@@ -20181,17 +20181,17 @@ highed.ChartPreview = function (parent, attributes) {
 
         if (!customizedOptions.annotations) {
             customizedOptions.annotations = [];
-        } //[{}];
+        } // [{}];
 
         if (annotationType === 'label') {
             events.emit('ShowTextDialog', chart, xValue, yValue);
         } else if (annotationType === 'delete') {
-            //nothing
+            // nothing
         } else {
-            addShape(chart, annotationType, xValue, yValue/*e.chartX - this.plotLeft, e.chartY - this.plotTop*/);
+            addShape(chart, annotationType, xValue, yValue/* e.chartX - this.plotLeft, e.chartY - this.plotTop*/);
         }
     }
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
     exports = {
         assignTheme: assignTheme,
@@ -20268,7 +20268,7 @@ highed.ChartPreview = function (parent, attributes) {
     return exports;
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -20291,7 +20291,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -20314,7 +20314,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -20337,7 +20337,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -20386,7 +20386,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                 attributes
             );
 
-        ////////////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////////////
 
 
         function build(options) {
@@ -20456,7 +20456,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
         }
 
-        ////////////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////////////
 
         highed.ready(function () {
             highed.dom.ap(
@@ -20477,7 +20477,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -20531,7 +20531,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     var chartPreview = false,
         modal = highed.OverlayModal(document.body, {
-            //eslint-disable-line no-undef
+            // eslint-disable-line no-undef
             showOnInit: false,
             width: '90%',
             height: '90%',
@@ -20544,7 +20544,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         activeTeam,
         activeChart,
         saveNewModal = highed.OverlayModal(document.body, {
-            //eslint-disable-line no-undef
+            // eslint-disable-line no-undef
             showOnInt: false,
             width: 400,
             height: 300,
@@ -20786,7 +20786,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     };
 }());
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -20809,7 +20809,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -21195,7 +21195,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
 
                 option.nav.onClick.push(
                     function () {
-                        //document.querySelector('.highed-chart-container').classList.add('data');
+                        // document.querySelector('.highed-chart-container').classList.add('data');
                         document.querySelector('.highed-chart-container').classList.remove('data');
                         highed.dom.style([highedChartContainer, chartContainer, chartFrame], {
                             width: '100%',
@@ -21203,7 +21203,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
                         });
                     }
                 );
-                //highed.dom.ap(workspaceRes, customizePage.getResolutionContainer());
+                // highed.dom.ap(workspaceRes, customizePage.getResolutionContainer());
 
             } else {
                 // Create page
@@ -21248,7 +21248,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
 
         }
 
-        //toolbox.clear();
+        // toolbox.clear();
         resize();
 
         properties.features.forEach(function (feature) {
@@ -21345,7 +21345,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
         lastSetWidth = newWidth;
 
         highed.dom.style(highedChartContainer, {
-            /*left: newWidth + 'px',*/
+            /* left: newWidth + 'px',*/
             width: '28%',
             height: '37%'
         });
@@ -21403,7 +21403,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
     function resize() {
         splitter.resize();
         panel.getPrev().resize();
-    //resizeChart(toolbox.width());
+    // resizeChart(toolbox.width());
     }
 
     function setEnabledFeatures(feats) {
@@ -21413,14 +21413,14 @@ highed.DrawerEditor = function (parent, options, planCode) {
 
     function addFeature(name, feat) {
         customOptions[name] = feat;
-        //addPage(feat);
+        // addPage(feat);
         createFeatures();
     }
 
     function addToWorkspace(options) {
 
-        const btn = highed.dom.cr('button', 'highed-import-button green action-btn', "Action <i class='fa fa-chevron-down'/>");
-        const btn2 = highed.dom.cr('button', 'highed-import-button green action-btn', "Action <i class='fa fa-chevron-down'/>");
+        const btn = highed.dom.cr('button', 'highed-import-button green action-btn', 'Action <i class=\'fa fa-chevron-down\'/>');
+        const btn2 = highed.dom.cr('button', 'highed-import-button green action-btn', 'Action <i class=\'fa fa-chevron-down\'/>');
 
         highed.dom.on(btn, 'click', function () {
             highed.dom.style(workspaceButtons, {
@@ -21462,7 +21462,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
     }
 
     function hideImportModal() {
-    //dataTable.hideImportModal();
+    // dataTable.hideImportModal();
     }
 
     function showError(title, message, warning, code) {
@@ -21507,7 +21507,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
         dataPage.hideDataTableError();
     }
 
-    //////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////////////
     // Event attachments
 
     dataPage.on('GoToTemplatePage', function () {
@@ -21519,7 +21519,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
 
     dataPage.on('SeriesChanged', function (index) {
         if ((!options && !options.features) || (options.features && options.features.indexOf('templates') > -1)) {
-            //templatePage.selectSeriesTemplate(index, chartPreview.options.getTemplateSettings());
+            // templatePage.selectSeriesTemplate(index, chartPreview.options.getTemplateSettings());
         }
     });
 
@@ -21560,21 +21560,21 @@ highed.DrawerEditor = function (parent, options, planCode) {
             }
 
             return showError(
-                (item.title || "There's a problem with your chart") + '!',
+                (item.title || 'There\'s a problem with your chart') + '!',
                 (item.text) + url,
                 e.warning,
                 e.code
             );
         }
 
-        showError("There's a problem with your chart!", e);
+        showError('There\'s a problem with your chart!', e);
     });
 
     chartPreview.on('ChartRecreated', hideError);
 
     highed.dom.on(window, 'resize', resize);
 
-    //////////////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////////////
 
     highed.dom.ap(
         toolbar.left,
@@ -21641,7 +21641,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
 
     chartPreview.on('AttrChange', function (option) {
         if (option.id === 'chart.height' || option.id === 'chart.width') {
-            //resQuickSel.selectByIndex(0);
+            // resQuickSel.selectByIndex(0);
             // setToActualSize();
         }
     });
@@ -21670,15 +21670,15 @@ highed.DrawerEditor = function (parent, options, planCode) {
         showCreateChartPage: showCreateChartPage,
         addToWorkspace: addToWorkspace,
         data: {
-            on: function () {}, //dataTable.on,
-            showLiveStatus: function () {}, //toolbox.showLiveStatus,
-            hideLiveStatus: function () {} //toolbox.hideLiveStatus
+            on: function () {}, // dataTable.on,
+            showLiveStatus: function () {}, // toolbox.showLiveStatus,
+            hideLiveStatus: function () {} // toolbox.hideLiveStatus
         }
-        //dataTable: dataTable,
+        // dataTable: dataTable,
     };
 };
 
-/******************************************************************************
+/** ****************************************************************************
 
 Copyright (c) 2016-2018, Highsoft
 
@@ -21701,7 +21701,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-******************************************************************************/
+ ******************************************************************************/
 
 // @format
 
@@ -21715,7 +21715,7 @@ highed.Editor = highed.DrawerEditor;
         pluginEvents = highed.events(),
         stepPlugins = {};
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
 
 
     function install(name, definition) {
@@ -21754,7 +21754,7 @@ highed.Editor = highed.DrawerEditor;
                 return highed.log(2, 'plugin -', name, 'is already active');
             }
 
-            //Verify options
+            // Verify options
             Object.keys(plugin.options).forEach(function (key) {
                 var option = plugin.options[key];
                 if (highed.isBasic(option) || highed.isArr(option)) {
@@ -21792,13 +21792,13 @@ highed.Editor = highed.DrawerEditor;
         }
     }
 
-    //Public interface
+    // Public interface
     highed.plugins.editor = {
         install: install,
         use: use
     };
 
-    //UI plugin interface
+    // UI plugin interface
     highed.plugins.step = {
         install: function (def) {
             stepPlugins[def.title] = def;

@@ -1,0 +1,9 @@
+#container {
+    height: 400px;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.highcharts-button span {
+    transition: color 250ms;
+}

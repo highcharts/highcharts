@@ -22,7 +22,7 @@ Math.easeOutBounce = pos => {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
-const big = window.matchMedia("(min-width: 500px)").matches;
+const big = window.matchMedia('(min-width: 500px)').matches;
 
 // Create the chart
 Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
@@ -64,7 +64,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 duration: 2000,
                 easing: 'easeOutQuint'
             },
-            styledMode: (true),
+            styledMode: true,
             margin: 0,
             spacing: 0,
             alignTicks: false,
@@ -151,7 +151,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             y: 50
         },
         xAxis: [
-            //0
+            // 0
             {
                 min: Date.UTC(2021, 5, 2),
                 max: Date.UTC(2021, 8, 4),
@@ -160,7 +160,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         ],
         yAxis: [
-            ///0
+            // /0
             {
                 labels: {
                     align: 'right',
@@ -180,7 +180,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 visible: true,
                 zIndex: 300
             },
-            ///1
+            // /1
             {
                 labels: {
                     align: 'right',
@@ -198,7 +198,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 lineWidth: 2,
                 visible: false
             },
-            //2
+            // 2
             {
                 min: -2,
                 max: 18,
@@ -209,7 +209,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 endOnTick: false,
                 visible: false
             },
-            ///3
+            // /3
             {
                 min: -2,
                 max: 18,
@@ -265,7 +265,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         },
         series: [
-            //0 -- candlestick
+            // 0 -- candlestick
             {
                 type: 'candlestick',
                 name: 'AAPL',
@@ -278,7 +278,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 visible: true
 
             },
-            //1 --column
+            // 1 --column
             {
                 type: 'column',
                 className: 'column',

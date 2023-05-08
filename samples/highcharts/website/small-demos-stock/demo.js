@@ -317,7 +317,7 @@ function compare() {
                 rules: [
                     {
                         condition: {
-                            ///up tp this
+                            // /up tp this
                             maxWidth: 219
                         },
                         chartOptions: {
@@ -397,15 +397,15 @@ function compare() {
     }
 
     Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/msft-c.json',
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/msft-c.json',
         success
     );
     Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/aapl-c.json',
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/aapl-c.json',
         success
     );
     Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/goog-c.json',
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/goog-c.json',
         success
     );
 }
@@ -415,8 +415,8 @@ function ao() {
 
         Highcharts.stockChart('container', {
             chart: {
-                //height: 270
-                //backgroundColor: 'brown'
+                // height: 270
+                // backgroundColor: 'brown'
                 height: '100%'
             },
             rangeSelector: {
@@ -528,10 +528,10 @@ function ao() {
             }],
             responsive: {
                 rules: [
-                    ///up to 219
+                    // /up to 219
                     {
                         condition: {
-                            ///up tp this
+                            // /up tp this
                             maxWidth: 219
                         },
                         chartOptions: {
@@ -624,7 +624,7 @@ function dynamic() {
 
                 }
             }
-            //backgroundColor: 'black'
+            // backgroundColor: 'black'
         },
         title: {
             // text: 'Dynamic stock data'
@@ -693,7 +693,7 @@ function dynamic() {
             height: 30
         },
         subtitle: {
-            //text: 'Click button to add candle to chart'
+            // text: 'Click button to add candle to chart'
             text: ''
         },
         accessibility: {
@@ -708,10 +708,10 @@ function dynamic() {
         }],
         responsive: {
             rules: [
-                ///up to 219
+                // /up to 219
                 {
                     condition: {
-                        ///up tp this
+                        // /up tp this
                         maxWidth: 219
                     },
                     chartOptions: {
@@ -863,10 +863,10 @@ function ab() {
             }],
             responsive: {
                 rules: [
-                    ///up to 219
+                    // /up to 219
                     {
                         condition: {
-                            ///up tp this
+                            // /up tp this
                             maxWidth: 219
                         },
                         chartOptions: {
@@ -931,7 +931,7 @@ function ab() {
 }
 
 function flags() {
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json', function (data) {
 
         var lastDate = data[data.length - 1][0],  // Get year of last data point
             days = 24 * 36e5; // Milliseconds in a day

@@ -49,7 +49,7 @@ import { Palette } from '../../Core/Color/Palettes';
  *               zones
  *
  * @product      highcharts
- * @since        next
+ * @since 10.3.0
  * @requires     modules/treemap.js
  * @requires     modules/treegraph.js
  * @optionparent plotOptions.treegraph
@@ -65,7 +65,7 @@ const TreegraphSeriesDefaults = {
      * @type    {boolean}
      * @default false
      * @product highcharts
-     * @since   next
+     * @since 10.3.0
      */
     reversed: false,
     /**
@@ -88,7 +88,7 @@ const TreegraphSeriesDefaults = {
          * @type      {number}
          * @default   0.5
          * @product   highcharts
-         * @since     next
+         * @since 10.3.0
          * @apioption series.treegraph.link.curveFactor
          */
 
@@ -142,6 +142,10 @@ const TreegraphSeriesDefaults = {
          */
         enabled: true,
         /**
+         * The line width of the button in pixels
+         */
+        lineWidth: 1,
+        /**
          * Offset of the button in the x direction.
          */
         x: 0,
@@ -152,25 +156,26 @@ const TreegraphSeriesDefaults = {
         /**
          * Height of the button.
          */
-        height: 10,
+        height: 18,
         /**
          * Width of the button.
          */
-        width: 10,
+        width: 18,
         /**
          * The symbol of the collapse button.
          */
-        shape: 'circle'
+        shape: 'circle',
         /**
          * CSS styles for the collapse button.
          *
          * In styled mode, the collapse button style is given in the
          * `.highcharts-collapse-button` class.
-         *
-         *
-         * @type      {Highcharts.CSSObject}
-         * @apioption series.treegraph.collapseButton.style
          */
+        style: {
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            fontSize: '1em'
+        }
     },
     /**
      * @extends plotOptions.series.tooltip
@@ -187,7 +192,7 @@ const TreegraphSeriesDefaults = {
          * the point color.
          *
          * @type {string}
-         * @since next
+         * @since 10.3.0
          * @product highcharts
          */
         linkFormat: '{point.fromNode.id} \u2192 {point.toNode.id}',
@@ -212,6 +217,7 @@ const TreegraphSeriesDefaults = {
      * @declare Highcharts.SeriesTreegraphDataLabelsOptionsObject
      */
     dataLabels: {
+        defer: true,
         /**
          * Options for a _link_ label text which should follow link
          * connection. Border and background are disabled for a label
@@ -223,8 +229,8 @@ const TreegraphSeriesDefaults = {
          * @sample highcharts/series-treegraph/link-text-path
          *         Treegraph series with link text path dataLabels.
          *
-         * @extends plotOptions.treegraph.dataLabels.linkTextPath
-         * @since   next
+         * @extends plotOptions.treegraph.dataLabels.textPath
+         * @since 10.3.0
          */
         linkTextPath: {
             attributes: {
@@ -233,8 +239,8 @@ const TreegraphSeriesDefaults = {
         },
         enabled: true,
         linkFormatter: (): string => '',
-        formatter: function (this: Point.PointLabelObject): string {
-            return this.point.id;
+        style: {
+            textOverflow: 'none'
         }
     }
 } as TreegraphSeriesOptions;

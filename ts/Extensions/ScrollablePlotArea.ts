@@ -232,9 +232,14 @@ Chart.prototype.setUpScrolling = function (): void {
 
     // On scroll, reset the chart position because it applies to the scrolled
     // container
+    let lastHoverPoint: typeof this.hoverPoint;
     addEvent(this.scrollingContainer, 'scroll', (): void => {
         if (this.pointer) {
             delete this.pointer.chartPosition;
+            if (this.hoverPoint) {
+                lastHoverPoint = this.hoverPoint;
+            }
+            this.pointer.runPointActions(void 0, lastHoverPoint, true);
         }
     });
 
@@ -258,6 +263,7 @@ Chart.prototype.moveFixedElements = function (): void {
     let container = this.container,
         fixedRenderer = this.fixedRenderer,
         fixedSelectors = [
+            '.highcharts-breadcrumbs-group',
             '.highcharts-contextbutton',
             '.highcharts-credits',
             '.highcharts-legend',

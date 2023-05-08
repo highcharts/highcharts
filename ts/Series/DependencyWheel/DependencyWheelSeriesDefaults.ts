@@ -107,7 +107,34 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
     /**
      * The start angle of the dependency wheel, in degrees where 0 is up.
      */
-    startAngle: 0
+    startAngle: 0,
+
+    dataLabels: {
+        textPath: {
+            /**
+             * Enable or disable `textPath` option for link's or marker's data
+             * labels.
+             *
+             * @type      {boolean}
+             * @default   false
+             * @since     7.1.0
+             * @apioption plotOptions.series.dataLabels.textPath.enabled
+             */
+            enabled: false,
+
+            attributes: {
+                /**
+                * Text path shift along its y-axis.
+                *
+                * @type      {Highcharts.SVGAttributes}
+                * @default   5
+                * @since     7.1.0
+                * @apioption plotOptions.dependencywheel.dataLabels.textPath.attributes.dy
+                */
+                dy: 5
+            }
+        }
+    }
 
 };
 

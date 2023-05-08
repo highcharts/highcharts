@@ -18,8 +18,8 @@ QUnit.test(
 
         assert.strictEqual(
             chart.title.styles.fontSize,
-            '16px',
-            'Font size is default 16px'
+            '1em',
+            'Font size should be Stock specific default'
         );
 
         Highcharts.setOptions({
@@ -77,7 +77,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('useHTML and title alignment', function (assert) {
+QUnit.test('Title alignment', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             width: 500,
@@ -90,7 +90,8 @@ QUnit.test('useHTML and title alignment', function (assert) {
         title: {
             useHTML: true,
             align: 'right',
-            text: 'Here is a title that helps show the issue, it is pretty long'
+            text: `Here is a title that helps show the issue, < it is pretty
+                long`
         }
     });
 
@@ -98,5 +99,39 @@ QUnit.test('useHTML and title alignment', function (assert) {
         chart.title.element.offsetLeft + chart.title.element.offsetWidth <
             chart.chartWidth,
         'The title should not spill out of the chart area (#7787)'
+    );
+
+    const ariaValue = document.getElementById('container')
+        .getAttribute('aria-label');
+
+    assert.ok(
+        !/\</g.test(ariaValue),
+        '"<" should not be included in aria-label#17753'
+    );
+
+    chart.update({
+        title: {
+            align: 'center',
+            useHTML: false
+        }
+    });
+
+    assert.strictEqual(
+        chart.title.element.querySelectorAll('tspan').length,
+        1,
+        'The text should contain one break'
+    );
+
+    chart.update({
+        chart: {
+            style: {
+                fontSize: '0.5rem'
+            }
+        }
+    });
+    assert.strictEqual(
+        chart.title.element.querySelectorAll('tspan').length,
+        0,
+        'The text should reflow and contain no breaks'
     );
 });

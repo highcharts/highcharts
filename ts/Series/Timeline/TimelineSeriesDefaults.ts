@@ -72,7 +72,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
 
     tooltip: {
         headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<span style="font-size: 10px"> {point.key}</span><br/>',
+            '<span style="font-size: 0.8em"> {point.key}</span><br/>',
         pointFormat: '{point.description}'
     },
     states: {
@@ -151,7 +151,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
          *       format = '<span style="color:' + this.point.color +
          *           '">● </span>';
          *   } else {
-         *       format = '<span>● </span>';
+         *       format = '<span class="highcharts-color-' +
+         *          this.point.colorIndex + '">● </span>';
          *   }
          *   format += '<span>' + (this.key || '') + '</span><br/>' +
          *       (this.point.label || '');
@@ -167,7 +168,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
                 format = '<span style="color:' + this.point.color +
                     '">● </span>';
             } else {
-                format = '<span>● </span>';
+                format = '<span class="highcharts-color-' +
+                    this.point.colorIndex + '">● </span>';
             }
             format += '<span class="highcharts-strong">' +
                 ((this as any).key || '') + '</span><br/>' +
@@ -181,7 +183,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
             /** @internal */
             fontWeight: 'normal',
             /** @internal */
-            fontSize: '12px'
+            fontSize: '0.8em'
         },
 
         /**
@@ -207,7 +209,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
         height: 15
     },
     showInLegend: false,
-    colorKey: 'x'
+    colorKey: 'x',
+    legendSymbol: 'rectangle'
 };
 
 /**

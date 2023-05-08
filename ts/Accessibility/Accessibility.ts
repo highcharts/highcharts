@@ -19,7 +19,6 @@
  * */
 
 import type AccessibilityComponent from './AccessibilityComponent';
-import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type Legend from '../Core/Legend/Legend';
 import type { Options } from '../Core/Options';
@@ -29,7 +28,7 @@ import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { doc } = H;
@@ -148,7 +147,7 @@ class Accessibility {
         this.chart = chart as Accessibility.ChartComposition;
 
         // Abort on old browsers
-        if (!doc.addEventListener || !chart.renderer.isSVG) {
+        if (!doc.addEventListener) {
             this.zombie = true;
             this.components = {} as Accessibility.ComponentsObject;
             chart.renderTo.setAttribute('aria-hidden', true);
@@ -375,7 +374,7 @@ namespace Accessibility {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     export const i18nFormat = A11yI18n.i18nFormat;
 
@@ -486,7 +485,6 @@ namespace Accessibility {
      * @private
      */
     export function compose(
-        AxisClass: typeof Axis,
         ChartClass: typeof Chart,
         LegendClass: typeof Legend,
         PointClass: typeof Point,
@@ -508,12 +506,11 @@ namespace Accessibility {
             RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
         }
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
+
             addEvent(
                 ChartClass as typeof ChartComposition,
                 'destroy',
@@ -555,9 +552,7 @@ namespace Accessibility {
             });
         }
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
+        if (U.pushUnique(composedMembers, PointClass)) {
             addEvent(
                 PointClass as typeof PointComposition,
                 'update',
@@ -565,9 +560,7 @@ namespace Accessibility {
             );
         }
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             // Mark dirty for update
             ['update', 'updatedData', 'remove'].forEach((event): void => {
                 addEvent(
@@ -581,6 +574,7 @@ namespace Accessibility {
                 );
             });
         }
+
     }
 
     /**

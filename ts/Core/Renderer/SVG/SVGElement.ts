@@ -66,13 +66,12 @@ const {
     fireEvent,
     isArray,
     isFunction,
-    isNumber,
+    isObject,
     isString,
     merge,
     objectEach,
     pick,
     pInt,
-    removeEvent,
     syncTimeout,
     uniqueKey
 } = U;
@@ -88,7 +87,6 @@ const {
  */
 declare module '../CSSObject' {
     interface CSSObject {
-        stroke?: ColorString;
         strokeWidth?: (number|string);
     }
 }
@@ -136,6 +134,22 @@ class SVGElement implements SVGElementLike {
      *
      * */
 
+    // Custom attributes used for symbols, these should be filtered out when
+    // setting SVGElement attributes (#9375).
+    public static symbolCustomAttribs: Array<string> = [
+        'anchorX',
+        'anchorY',
+        'clockwise',
+        'end',
+        'height',
+        'innerR',
+        'r',
+        'start',
+        'width',
+        'x',
+        'y'
+    ];
+
     public added?: boolean;
     // @todo public alignAttr?: SVGAttributes;
     public alignByTranslate?: boolean;
@@ -151,15 +165,12 @@ class SVGElement implements SVGElementLike {
     public firstLineMetrics?: FontMetricsObject;
     public handleZ?: boolean;
     public hasBoxWidthChanged?: boolean;
-    public hasStroke?: boolean;
     // @todo public height?: number;
-    public inverted?: boolean;
+    public inverted: undefined;
     public matrix?: Array<number>;
-    public oldShadowOptions?: ShadowOptionsObject;
     public onEvents: Record<string, Function> = {};
     public opacity = 1; // Default base for animation
     // @todo public options?: AnyRecord;
-    public parentInverted?: boolean;
     public parentGroup?: SVGElement;
     public pathArray?: SVGPath;
     public placed?: boolean;
@@ -171,28 +182,12 @@ class SVGElement implements SVGElementLike {
     public rotationOriginY?: number;
     public scaleX?: number;
     public scaleY?: number;
-    public shadows?: Array<SVGDOMElement>;
     public stops?: Array<SVGElement>;
     public stroke?: ColorType;
     // @todo public 'stroke-width'?: number;
     public styledMode?: boolean;
     public styles?: CSSObject;
     public SVG_NS = SVG_NS;
-    // Custom attributes used for symbols, these should be filtered out when
-    // setting SVGElement attributes (#9375).
-    public symbolCustomAttribs: Array<string> = [
-        'x',
-        'y',
-        'width',
-        'height',
-        'r',
-        'start',
-        'end',
-        'innerR',
-        'anchorX',
-        'anchorY',
-        'rounded'
-    ];
     public symbolName?: string;
     public text?: SVGElement;
     public textStr?: string;
@@ -284,9 +279,6 @@ class SVGElement implements SVGElementLike {
         if (parent) {
             this.parentGroup = parent;
         }
-
-        // Mark as inverted
-        this.parentInverted = parent && parent.inverted;
 
         // Build formatted text
         if (
@@ -537,7 +529,7 @@ class SVGElement implements SVGElementLike {
 
         // When the page is hidden save resources in the background by not
         // running animation at all (#9749).
-        if (pick(doc.hidden, doc.msHidden, doc.webkitHidden, false)) {
+        if (doc.hidden) {
             animOptions.duration = 0;
         }
 
@@ -764,7 +756,7 @@ class SVGElement implements SVGElementLike {
         continueAnimation?: boolean
     ): (number|string|this) {
         const element = this.element,
-            symbolCustomAttribs = this.symbolCustomAttribs;
+            symbolCustomAttribs = SVGElement.symbolCustomAttribs;
 
         let key,
             hasSetSymbolSize: boolean,
@@ -827,16 +819,6 @@ class SVGElement implements SVGElementLike {
                         (this as AnyRecord)._defaultSetter
                     );
                     setter.call(this, val, key, element);
-
-                    // Let the shadow follow the main element
-                    if (
-                        !this.styledMode &&
-                        this.shadows &&
-                        /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/
-                            .test(key)
-                    ) {
-                        this.updateShadows(key, val, setter);
-                    }
                 }
             }, this);
 
@@ -1092,6 +1074,7 @@ class SVGElement implements SVGElementLike {
                 }
             });
         }
+
         if (hasNew) {
 
             // Merge the new styles with the old ones
@@ -1145,19 +1128,19 @@ class SVGElement implements SVGElementLike {
                 }
             }
             css(elem, stylesToApply);
+        }
 
-            if (this.added) {
+        if (this.added) {
 
-                // Rebuild text after added. Cache mechanisms in the buildText
-                // will prevent building if there are no significant changes.
-                if (this.element.nodeName === 'text') {
-                    this.renderer.buildText(this);
-                }
+            // Rebuild text after added. Cache mechanisms in the buildText will
+            // prevent building if there are no significant changes.
+            if (this.element.nodeName === 'text') {
+                this.renderer.buildText(this);
+            }
 
-                // Apply text outline after added
-                if (styles.textOutline) {
-                    this.applyTextOutline(styles.textOutline);
-                }
+            // Apply text outline after added
+            if (styles.textOutline) {
+                this.applyTextOutline(styles.textOutline);
             }
         }
 
@@ -1213,7 +1196,6 @@ class SVGElement implements SVGElementLike {
             ownerSVGElement = (element as SVGDOMElement).ownerSVGElement;
 
         let parentToClean: (SVGElement|undefined) = (
-                renderer.isSVG &&
                 element.nodeName === 'SPAN' &&
                 wrapper.parentGroup ||
                 void 0
@@ -1256,10 +1238,6 @@ class SVGElement implements SVGElementLike {
         // remove element
         wrapper.safeRemoveChild(element);
 
-        if (!renderer.styledMode) {
-            wrapper.destroyShadows();
-        }
-
         // In case of useHTML, clean up empty containers emulating SVG groups
         // (#1960, #2393, #2697).
         while (
@@ -1294,22 +1272,6 @@ class SVGElement implements SVGElementLike {
         });
 
         return;
-    }
-
-    /**
-     * Destroy shadows on the element.
-     *
-     * @private
-     * @function Highcharts.SVGElement#destroyShadows
-     *
-     */
-    public destroyShadows(): void {
-        (this.shadows || []).forEach(function (
-            shadow: DOMElementType
-        ): void {
-            this.safeRemoveChild(shadow);
-        }, this);
-        this.shadows = void 0;
     }
 
     /**
@@ -1466,8 +1428,9 @@ class SVGElement implements SVGElementLike {
             // Properties that affect bounding box
             cacheKey += [
                 '',
-                rotation,
+                renderer.rootFontSize,
                 fontSize,
+                rotation,
                 wrapper.textWidth, // #7874, also useHTML
                 alignValue,
                 styles && styles.textOverflow, // #5968
@@ -1535,8 +1498,7 @@ class SVGElement implements SVGElementLike {
                     bBox = { x: 0, y: 0, width: 0, height: 0 };
                 }
 
-
-            // VML Renderer or useHTML within SVG
+            // useHTML within SVG
             } else {
 
                 bBox = wrapper.htmlGetBBox();
@@ -1545,85 +1507,83 @@ class SVGElement implements SVGElementLike {
 
             // True SVG elements as well as HTML elements in modern browsers
             // using the .useHTML option need to compensated for rotation
-            if (renderer.isSVG) {
-                width = bBox.width;
-                height = bBox.height;
+            width = bBox.width;
+            height = bBox.height;
 
-                // Workaround for wrong bounding box in IE, Edge and Chrome on
-                // Windows. With Highcharts' default font, IE and Edge report
-                // a box height of 16.899 and Chrome rounds it to 17. If this
-                // stands uncorrected, it results in more padding added below
-                // the text than above when adding a label border or background.
-                // Also vertical positioning is affected.
-                // https://jsfiddle.net/highcharts/em37nvuj/
-                // (#1101, #1505, #1669, #2568, #6213).
-                if (isSVG) {
-                    bBox.height = height = (
-                        ({
-                            '11px,17': 14,
-                            '13px,20': 16
-                        } as Record<string, number>)[
-                            `${fontSize || ''},${Math.round(height)}`
-                        ] ||
-                        height
-                    );
-                }
-
-                // Adjust for rotated text
-                if (rotation) {
-
-                    const baseline = Number(
-                            element.getAttribute('y') || 0
-                        ) - bBox.y,
-                        alignFactor = ({
-                            'right': 1,
-                            'center': 0.5
-                        } as Record<string, number>)[alignValue || 0] || 0,
-                        rad = rotation * deg2rad,
-                        rad90 = (rotation - 90) * deg2rad,
-                        wCosRad = width * Math.cos(rad),
-                        wSinRad = width * Math.sin(rad),
-                        cosRad90 = Math.cos(rad90),
-                        sinRad90 = Math.sin(rad90),
-
-                        // Find the starting point on the left side baseline of
-                        // the text
-                        pX = bBox.x + alignFactor * (width - wCosRad),
-                        pY = bBox.y + baseline - alignFactor * wSinRad,
-
-                        // Find all corners
-                        aX = pX + baseline * cosRad90,
-                        bX = aX + wCosRad,
-                        cX = bX - height * cosRad90,
-                        dX = cX - wCosRad,
-
-                        aY = pY + baseline * sinRad90,
-                        bY = aY + wSinRad,
-                        cY = bY - height * sinRad90,
-                        dY = cY - wSinRad;
-
-                    // Deduct the bounding box from the corners
-                    bBox.x = Math.min(aX, bX, cX, dX);
-                    bBox.y = Math.min(aY, bY, cY, dY);
-                    bBox.width = Math.max(aX, bX, cX, dX) - bBox.x;
-                    bBox.height = Math.max(aY, bY, cY, dY) - bBox.y;
-                }
+            // Workaround for wrong bounding box in IE, Edge and Chrome on
+            // Windows. With Highcharts' default font, IE and Edge report
+            // a box height of 16.899 and Chrome rounds it to 17. If this
+            // stands uncorrected, it results in more padding added below
+            // the text than above when adding a label border or background.
+            // Also vertical positioning is affected.
+            // https://jsfiddle.net/highcharts/em37nvuj/
+            // (#1101, #1505, #1669, #2568, #6213).
+            if (isSVG) {
+                bBox.height = height = (
+                    ({
+                        '11px,17': 14,
+                        '13px,20': 16
+                    } as Record<string, number>)[
+                        `${fontSize || ''},${Math.round(height)}`
+                    ] ||
+                    height
+                );
             }
 
-            // Cache it. When loading a chart in a hidden iframe in Firefox and
-            // IE/Edge, the bounding box height is 0, so don't cache it (#5620).
-            if (cacheKey && (textStr === '' || bBox.height > 0)) {
+            // Adjust for rotated text
+            if (rotation) {
 
-                // Rotate (#4681)
-                while (cacheKeys.length > 250) {
-                    delete cache[cacheKeys.shift() as any];
-                }
+                const baseline = Number(
+                        element.getAttribute('y') || 0
+                    ) - bBox.y,
+                    alignFactor = ({
+                        'right': 1,
+                        'center': 0.5
+                    } as Record<string, number>)[alignValue || 0] || 0,
+                    rad = rotation * deg2rad,
+                    rad90 = (rotation - 90) * deg2rad,
+                    wCosRad = width * Math.cos(rad),
+                    wSinRad = width * Math.sin(rad),
+                    cosRad90 = Math.cos(rad90),
+                    sinRad90 = Math.sin(rad90),
 
-                if (!cache[cacheKey]) {
-                    cacheKeys.push(cacheKey);
-                }
-                cache[cacheKey] = bBox;
+                    // Find the starting point on the left side baseline of
+                    // the text
+                    pX = bBox.x + alignFactor * (width - wCosRad),
+                    pY = bBox.y + baseline - alignFactor * wSinRad,
+
+                    // Find all corners
+                    aX = pX + baseline * cosRad90,
+                    bX = aX + wCosRad,
+                    cX = bX - height * cosRad90,
+                    dX = cX - wCosRad,
+
+                    aY = pY + baseline * sinRad90,
+                    bY = aY + wSinRad,
+                    cY = bY - height * sinRad90,
+                    dY = cY - wSinRad;
+
+                // Deduct the bounding box from the corners
+                bBox.x = Math.min(aX, bX, cX, dX);
+                bBox.y = Math.min(aY, bY, cY, dY);
+                bBox.width = Math.max(aX, bX, cX, dX) - bBox.x;
+                bBox.height = Math.max(aY, bY, cY, dY) - bBox.y;
             }
+        }
+
+        // Cache it. When loading a chart in a hidden iframe in Firefox and
+        // IE/Edge, the bounding box height is 0, so don't cache it (#5620).
+        if (cacheKey && (textStr === '' || bBox.height > 0)) {
+
+            // Rotate (#4681)
+            while (cacheKeys.length > 250) {
+                delete cache[cacheKeys.shift() as any];
+            }
+
+            if (!cache[cacheKey]) {
+                cacheKeys.push(cacheKey);
+            }
+            cache[cacheKey] = bBox;
         }
         return bBox;
     }
@@ -1722,26 +1682,6 @@ class SVGElement implements SVGElementLike {
         this.renderer = renderer;
 
         fireEvent(this, 'afterInit');
-    }
-
-    /**
-     * Invert a group, rotate and flip. This is used internally on inverted
-     * charts, where the points and graphs are drawn as if not inverted, then
-     * the series group elements are inverted.
-     *
-     * @function Highcharts.SVGElement#invert
-     *
-     * @param {boolean} inverted
-     *        Whether to invert or not. An inverted shape can be un-inverted by
-     *        setting it to false.
-     *
-     * @return {Highcharts.SVGElement}
-     *         Return the SVGElement for chaining.
-     */
-    public invert(inverted: boolean): this {
-        this.inverted = inverted;
-        this.updateTransform();
-        return this;
     }
 
     /**
@@ -2008,9 +1948,8 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * Add a shadow to the element. Must be called after the element is added to
-     * the DOM. In styled mode, this method is not used, instead use `defs` and
-     * filters.
+     * Add a shadow to the element. In styled mode, this method is not used,
+     * instead use `defs` and filters.
      *
      * @example
      * renderer.rect(10, 100, 100, 100)
@@ -2019,121 +1958,27 @@ class SVGElement implements SVGElementLike {
      *
      * @function Highcharts.SVGElement#shadow
      *
-     * @param {boolean|Highcharts.ShadowOptionsObject} [shadowOptions]
-     *        The shadow options. If `true`, the default options are applied. If
+     * @param {boolean|Highcharts.ShadowOptionsObject} [shadowOptions] The
+     *        shadow options. If `true`, the default options are applied. If
      *        `false`, the current shadow will be removed.
      *
-     * @param {Highcharts.SVGElement} [group]
-     *        The SVG group element where the shadows will be applied. The
-     *        default is to add it to the same parent as the current element.
-     *        Internally, this is ised for pie slices, where all the shadows are
-     *        added to an element behind all the slices.
-     *
-     * @param {boolean} [cutOff]
-     *        Used internally for column shadows.
-     *
-     * @return {Highcharts.SVGElement}
-     *         Returns the SVGElement for chaining.
+     * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
      */
     public shadow(
-        shadowOptions?: (boolean|Partial<ShadowOptionsObject>),
-        group?: SVGElement,
-        cutOff?: boolean
+        shadowOptions?: (boolean|Partial<ShadowOptionsObject>)
     ): this {
-        const shadows = [],
-            element = this.element,
-            oldShadowOptions = this.oldShadowOptions,
-            defaultShadowOptions: ShadowOptionsObject = {
-                color: Palette.neutralColor100,
-                offsetX: this.parentInverted ? -1 : 1,
-                offsetY: this.parentInverted ? -1 : 1,
-                opacity: 0.15,
-                width: 3
-            };
+        const { renderer } = this,
+            options = merge(this.parentGroup?.rotation === 90 ? {
+                offsetX: -1,
+                offsetY: -1
+            } : {}, isObject(shadowOptions) ? shadowOptions : {}),
+            id = renderer.shadowDefinition(options);
 
-        let i,
-            shadow: SVGDOMElement,
-            strokeWidth,
-            shadowElementOpacity,
-            update = false,
-            // compensate for inverted plot area
-            transform,
-            options: ShadowOptionsObject|undefined;
-
-        if (shadowOptions === true) {
-            options = defaultShadowOptions;
-        } else if (typeof shadowOptions === 'object') {
-            options = extend(defaultShadowOptions, shadowOptions);
-        }
-
-        // Update shadow when options change (#12091).
-        if (options) {
-            // Go over each key to look for change
-            if (options && oldShadowOptions) {
-                objectEach(options, (value, key): void => {
-                    if (value !== (oldShadowOptions as any)[key]) {
-                        update = true;
-                    }
-                });
-            }
-
-            if (update) {
-                this.destroyShadows();
-            }
-
-            this.oldShadowOptions = options;
-        }
-
-        if (!options) {
-            this.destroyShadows();
-
-        } else if (!this.shadows) {
-            shadowElementOpacity = options.opacity / options.width;
-            transform = this.parentInverted ?
-                `translate(${options.offsetY}, ${options.offsetX})` :
-                `translate(${options.offsetX}, ${options.offsetY})`;
-            for (i = 1; i <= options.width; i++) {
-                shadow = element.cloneNode(false) as any;
-                strokeWidth = (options.width * 2) + 1 - (2 * i);
-                attr(shadow, {
-                    stroke: (
-                        (shadowOptions as any).color ||
-                        Palette.neutralColor100
-                    ),
-                    'stroke-opacity': shadowElementOpacity * i,
-                    'stroke-width': strokeWidth,
-                    transform,
-                    fill: 'none'
-                });
-                shadow.setAttribute(
-                    'class',
-                    (shadow.getAttribute('class') || '') + ' highcharts-shadow'
-                );
-                if (cutOff) {
-                    attr(
-                        shadow,
-                        'height',
-                        Math.max(
-                            (attr(shadow, 'height') as any) - strokeWidth,
-                            0
-                        )
-                    );
-                    shadow.cutHeight = strokeWidth;
-                }
-
-                if (group) {
-                    group.element.appendChild(shadow);
-                } else if (element.parentNode) {
-                    element.parentNode.insertBefore(shadow, element);
-                }
-
-                shadows.push(shadow);
-            }
-
-            this.shadows = shadows;
-        }
-
-        return this;
+        return this.attr({
+            filter: shadowOptions ?
+                `url(${renderer.url}#${id})` :
+                'none'
+        });
     }
 
     /**
@@ -2156,9 +2001,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * WebKit and Batik have problems with a stroke-width of zero, so in this
-     * case we remove the stroke attribute altogether. #1270, #1369, #3065,
-     * #3072.
+     * Set the stroke-width and record it on the SVGElement
      *
      * @private
      * @function Highcharts.SVGElement#strokeSetter
@@ -2166,32 +2009,14 @@ class SVGElement implements SVGElementLike {
      * @param {string} key
      * @param {Highcharts.SVGDOMElement} element
      */
-    public strokeSetter(
-        value: (number|string|ColorType),
-        key: string,
+    public 'stroke-widthSetter'(
+        value: (number|string),
+        key: 'stroke-width',
         element: SVGDOMElement
     ): void {
-        (this as AnyRecord)[key] = value;
-        // Only apply the stroke attribute if the stroke width is defined and
-        // larger than 0
-        if (this.stroke && this['stroke-width']) {
-            // Use prototype as instance may be overridden
-            SVGElement.prototype.fillSetter.call(
-                this,
-                this.stroke,
-                'stroke',
-                element
-            );
-
-            element.setAttribute('stroke-width', this['stroke-width']);
-            this.hasStroke = true;
-        } else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
-            element.removeAttribute('stroke');
-            this.hasStroke = false;
-        } else if (this.renderer.styledMode && this['stroke-width']) {
-            element.setAttribute('stroke-width', this['stroke-width']);
-            this.hasStroke = true;
-        }
+        // Record it for quick access in getter
+        this[key] = value;
+        element.setAttribute(key, value);
     }
 
     /**
@@ -2260,19 +2085,7 @@ class SVGElement implements SVGElementLike {
     public symbolAttr(hash: SVGAttributes): void {
         const wrapper = this as AnyRecord;
 
-        [
-            'x',
-            'y',
-            'r',
-            'start',
-            'end',
-            'width',
-            'height',
-            'innerR',
-            'anchorX',
-            'anchorY',
-            'clockwise'
-        ].forEach(function (key: string): void {
+        SVGElement.symbolCustomAttribs.forEach(function (key: string): void {
             wrapper[key] = pick((hash as any)[key], wrapper[key]);
         });
 
@@ -2374,45 +2187,6 @@ class SVGElement implements SVGElementLike {
         }) as any;
     }
 
-    /**
-     * Update the shadow elements with new attributes.
-     *
-     * @private
-     * @function Highcharts.SVGElement#updateShadows
-     *
-     * @param {string} key
-     * The attribute name.
-     *
-     * @param {number} value
-     * The value of the attribute.
-     *
-     * @param {Function} setter
-     * The setter function, inherited from the parent wrapper.
-     */
-    public updateShadows(
-        key: string,
-        value: number,
-        setter: Function
-    ): void {
-        const shadows = this.shadows;
-
-        if (shadows) {
-            let i = shadows.length;
-            while (i--) {
-                setter.call(
-                    shadows[i],
-                    key === 'height' ?
-                        Math.max(
-                            value - (shadows[i].cutHeight || 0),
-                            0
-                        ) :
-                        key === 'd' ? this.d : value,
-                    key,
-                    shadows[i]
-                );
-            }
-        }
-    }
 
     /**
      * Update the transform attribute based on internal properties. Deals with
@@ -2423,23 +2197,15 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#updateTransform
      */
     public updateTransform(): void {
-        const wrapper = this,
-            scaleX = wrapper.scaleX,
-            scaleY = wrapper.scaleY,
-            inverted = wrapper.inverted,
-            rotation = wrapper.rotation,
-            matrix = wrapper.matrix,
-            element = wrapper.element;
-
-        let translateX = wrapper.translateX || 0,
-            translateY = wrapper.translateY || 0;
-
-        // Flipping affects translate as adjustment for flipping around the
-        // group's axis
-        if (inverted) {
-            translateX += wrapper.width;
-            translateY += wrapper.height;
-        }
+        const {
+            element,
+            matrix,
+            rotation = 0,
+            scaleX,
+            scaleY,
+            translateX = 0,
+            translateY = 0
+        } = this;
 
         // Apply translate. Nearly all transformed elements have translation,
         // so instead of checking for translate = 0, do it always (#1767,
@@ -2453,10 +2219,8 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        // apply rotation
-        if (inverted) {
-            transform.push('rotate(90) scale(-1,1)');
-        } else if (rotation) { // text rotation
+        // Apply rotation
+        if (rotation) { // text rotation or inverted chart
             transform.push(
                 'rotate(' + rotation + ' ' +
                 pick(this.rotationOriginX, element.getAttribute('x'), 0) +
@@ -2472,7 +2236,7 @@ class SVGElement implements SVGElementLike {
             );
         }
 
-        if (transform.length && !(wrapper.text || wrapper).textPath) {
+        if (transform.length && !(this.text || this).textPath) {
             element.setAttribute('transform', transform.join(' '));
         }
     }
@@ -2597,7 +2361,7 @@ class SVGElement implements SVGElementLike {
                     ) {
                         parentNode.insertBefore(
                             element,
-                            childNodes[i + 1] || null // null for oldIE export
+                            childNodes[i + 1]
                         );
                         inserted = true;
                     }
@@ -2607,7 +2371,7 @@ class SVGElement implements SVGElementLike {
             if (!inserted) {
                 parentNode.insertBefore(
                     element,
-                    childNodes[svgParent ? 3 : 0] || null // null for oldIE
+                    childNodes[svgParent ? 3 : 0]
                 );
                 inserted = true;
             }
@@ -2643,7 +2407,7 @@ interface SVGElement extends SVGElementLike {
 }
 
 // Some shared setters and getters
-SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter;
+SVGElement.prototype.strokeSetter = SVGElement.prototype.fillSetter;
 SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
 SVGElement.prototype.matrixSetter =
 SVGElement.prototype.rotationOriginXSetter =

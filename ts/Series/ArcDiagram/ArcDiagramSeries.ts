@@ -32,6 +32,7 @@ import U from '../../Core/Utilities.js';
 const { prototype: { symbols } } = SVGRenderer;
 const {
     seriesTypes: {
+        column: ColumnSeries,
         sankey: SankeySeries
     }
 } = SeriesRegistry;
@@ -194,6 +195,7 @@ class ArcDiagramSeries extends SankeySeries {
         marker: {
             symbol: 'circle',
             fillOpacity: 1,
+            lineWidth: 0,
             states: {}
         }
     } as ArcDiagramSeriesOptions);
@@ -614,16 +616,16 @@ class ArcDiagramSeries extends SankeySeries {
             const textPath = this.options.dataLabels.textPath;
 
             // Render node labels:
-            SankeySeries.prototype.drawDataLabels.apply(this, arguments);
+            ColumnSeries.prototype.drawDataLabels.call(this, this.nodes);
 
             // Render link labels:
-            this.points = this.data;
+
             this.options.dataLabels.textPath =
                 this.options.dataLabels.linkTextPath;
-            super.drawDataLabels.apply(this, arguments);
+            ColumnSeries.prototype.drawDataLabels.call(this, this.data);
 
             // Restore nodes
-            this.points = this.points.concat(this.nodes || []);
+
             this.options.dataLabels.textPath = textPath;
         }
     }
@@ -633,10 +635,8 @@ class ArcDiagramSeries extends SankeySeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         if (point && point.isNode) {
-            const { opacity, ...attrs } = Series.prototype.pointAttribs.apply(
-                this,
-                arguments
-            );
+            const { opacity, ...attrs } = Series.prototype.pointAttribs
+                .apply(this, arguments);
             return attrs;
         }
         return super.pointAttribs.apply(this, arguments);

@@ -18,7 +18,6 @@
 
 import type {
     LinearRegressionOptions,
-    LinearRegressionParamsOptions,
     RegressionLineParametersObject
 } from '../LinearRegression/LinearRegressionOptions';
 import type LinearRegressionSlopesPoint from './LinearRegressionSlopesPoint';
@@ -70,7 +69,7 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      * @requires  stock/indicators/regressions
      * @optionparent plotOptions.linearregressionslope
      */
-    public static defaultOptions: LinearRegressionParamsOptions = merge(
+    public static defaultOptions: LinearRegressionOptions = merge(
         LinearRegressionIndicator.defaultOptions
     );
 

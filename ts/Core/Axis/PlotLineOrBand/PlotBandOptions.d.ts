@@ -32,6 +32,7 @@ import type PlotLineOrBand from './PlotLineOrBand';
 
 export interface PlotBandLabelOptions {
     align?: AlignValue;
+    clip?: boolean;
     formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
     rotation?: number;
     style?: CSSObject;

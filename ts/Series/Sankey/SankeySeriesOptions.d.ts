@@ -71,7 +71,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
     width?: number;
 }
 
-export interface SankeySeriesTooltipOptions extends TooltipOptions {
+export interface SankeySeriesTooltipOptions extends Partial<TooltipOptions> {
     nodeFormat?: string;
     nodeFormatter?: FormatUtilities.FormatterCallback<SankeyPoint>;
 }

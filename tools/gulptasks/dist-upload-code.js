@@ -5,7 +5,7 @@
 /* eslint func-style: 0, no-console: 0, max-len: 0 */
 const gulp = require('gulp');
 const glob = require('glob');
-const fs = require('fs-extra');
+const fs = require('fs');
 const log = require('./lib/log');
 const {
     uploadFiles,

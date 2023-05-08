@@ -126,8 +126,15 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      */
     style: {
         /** @internal */
+        fontSize: '0.8em',
+        /** @internal */
         fontWeight: 'bold'
     },
+
+    /**
+     * Whether to use HTML to render the series label.
+     */
+    useHTML: false,
 
     /**
      * An array of boxes to avoid when laying out the labels. Each

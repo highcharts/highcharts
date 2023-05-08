@@ -60,8 +60,8 @@ const {
  * */
 
 
-declare module '../../Core/Legend/LegendItemObject' {
-    interface LegendItemObject {
+declare module '../../Core/Legend/LegendItem' {
+    interface LegendItem {
         a11yProxyElement?: ProxyElement;
     }
 }
@@ -90,7 +90,7 @@ declare module '../../Core/Series/SeriesLike' {
  * @private
  */
 function scrollLegendToItem(legend: Legend, itemIx: number): void {
-    const itemPage = legend.allItems[itemIx].pageIx,
+    const itemPage = (legend.allItems[itemIx].legendItem || {}).pageIx,
         curPage: number = legend.currentPage as any;
 
     if (typeof itemPage !== 'undefined' && itemPage + 1 !== curPage) {
@@ -123,16 +123,19 @@ function shouldDoLegendA11y(chart: Chart): boolean {
  */
 function setLegendItemHoverState(
     hoverActive: boolean,
-    legendItem: Legend.Item
+    item: Legend.Item
 ): void {
-    legendItem.setState(hoverActive ? 'hover' : '', true);
-    ['legendGroup', 'legendItem', 'legendSymbol'].forEach((i): void => {
-        const obj = (legendItem as any)[i];
-        const el = obj && obj.element || obj;
-        if (el) {
-            fireEvent(el, hoverActive ? 'mouseover' : 'mouseout');
+    const legendItem = item.legendItem || {};
+
+    item.setState(hoverActive ? 'hover' : '', true);
+
+    for (const key of ['group', 'label', 'symbol'] as const) {
+        const svgElement = legendItem[key];
+        const element = svgElement && svgElement.element || svgElement;
+        if (element) {
+            fireEvent(element, hoverActive ? 'mouseover' : 'mouseout');
         }
-    });
+    }
 }
 
 
@@ -235,17 +238,22 @@ class LegendComponent extends AccessibilityComponent {
         const curPage = legend.currentPage || 1;
         const clipHeight = legend.clipHeight || 0;
 
+        let legendItem;
+
         items.forEach((item): void => {
             if (item.a11yProxyElement) {
                 const hasPages = legend.pages && legend.pages.length;
                 const proxyEl = item.a11yProxyElement.element;
+
                 let hide = false;
 
+                legendItem = item.legendItem || {};
+
                 if (hasPages) {
-                    const itemPage = item.pageIx || 0;
-                    const y = item._legendItemPos ? item._legendItemPos[1] : 0;
-                    const h = item.legendItem ?
-                        Math.round(item.legendItem.getBBox().height) :
+                    const itemPage = legendItem.pageIx || 0;
+                    const y = legendItem.y || 0;
+                    const h = legendItem.label ?
+                        Math.round(legendItem.label.getBBox().height) :
                         0;
                     hide = y + h - legend.pages[itemPage] > clipHeight ||
                         itemPage !== curPage - 1;
@@ -287,15 +295,16 @@ class LegendComponent extends AccessibilityComponent {
         const pages = legend.pages || [];
 
         if (newPageIx > 0 && newPageIx <= pages.length) {
-            const len = legend.allItems.length;
-            for (let i = 0; i < len; ++i) {
-                if ((legend.allItems[i].pageIx as number) + 1 === newPageIx) {
-                    const res = chart.highlightLegendItem(i);
+            let i = 0,
+                res;
+            for (const item of legend.allItems) {
+                if (((item.legendItem || {}).pageIx || 0) + 1 === newPageIx) {
+                    res = chart.highlightLegendItem(i);
                     if (res) {
                         this.highlightedLegendItemIx = i;
                     }
-                    return;
                 }
+                ++i;
             }
         }
     }
@@ -399,13 +408,13 @@ class LegendComponent extends AccessibilityComponent {
      */
     public proxyLegendItems(): void {
         const component = this,
-            items = (
-                this.chart.legend &&
-                this.chart.legend.allItems || []
-            );
+            items = (this.chart.legend || {}).allItems || [];
+
+        let legendItem;
 
         items.forEach((item): void => {
-            if (item.legendItem && item.legendItem.element) {
+            legendItem = item.legendItem || {};
+            if (legendItem.label && legendItem.label.element) {
                 component.proxyLegendItem(item);
             }
         });
@@ -419,7 +428,9 @@ class LegendComponent extends AccessibilityComponent {
     public proxyLegendItem(
         item: Legend.Item
     ): void {
-        if (!item.legendItem || !item.legendGroup) {
+        const legendItem = item.legendItem || {};
+
+        if (!legendItem.label || !legendItem.group) {
             return;
         }
 
@@ -437,12 +448,12 @@ class LegendComponent extends AccessibilityComponent {
             'aria-label': itemLabel
         };
         // Considers useHTML
-        const proxyPositioningElement = item.legendGroup.div ?
-            item.legendItem :
-            item.legendGroup;
+        const proxyPositioningElement = legendItem.group.div ?
+            legendItem.label :
+            legendItem.group;
 
         item.a11yProxyElement = this.proxyProvider.addProxyElement('legend', {
-            click: item.legendItem as SVGElement,
+            click: legendItem.label as SVGElement,
             visual: proxyPositioningElement.element
         }, attribs);
     }
@@ -471,12 +482,8 @@ class LegendComponent extends AccessibilityComponent {
                 [
                     [keys.enter, keys.space],
                     function (
-                        this: KeyboardNavigationHandler,
-                        keyCode: number
+                        this: KeyboardNavigationHandler
                     ): number {
-                        if (H.isFirefox && keyCode === keys.space) { // #15520
-                            return this.response.success;
-                        }
                         return component.onKbdClick(this);
                     }
                 ],
@@ -639,7 +646,7 @@ namespace LegendComponent {
      * */
 
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
 
     /* *
@@ -662,7 +669,8 @@ namespace LegendComponent {
         const items = this.legend.allItems;
         const oldIx = this.accessibility &&
                 this.accessibility.components.legend.highlightedLegendItemIx;
-        const itemToHighlight = items[ix];
+        const itemToHighlight = items[ix],
+            legendItem = itemToHighlight.legendItem || {};
 
         if (itemToHighlight) {
             if (isNumber(oldIx) && items[oldIx]) {
@@ -671,7 +679,7 @@ namespace LegendComponent {
 
             scrollLegendToItem(this.legend, ix);
 
-            const legendItemProp = itemToHighlight.legendItem;
+            const legendItemProp = legendItem.label;
             const proxyBtn = itemToHighlight.a11yProxyElement &&
                 itemToHighlight.a11yProxyElement.buttonElement;
             if (legendItemProp && legendItemProp.element && proxyBtn) {
@@ -694,23 +702,20 @@ namespace LegendComponent {
         LegendClass: typeof Legend
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightLegendItem = chartHighlightLegendItem;
         }
 
-        if (composedClasses.indexOf(LegendClass) === -1) {
-            composedClasses.push(LegendClass);
-
+        if (U.pushUnique(composedMembers, LegendClass)) {
             addEvent(
                 LegendClass as typeof LegendComposition,
                 'afterColorizeItem',
                 legendOnAfterColorizeItem
             );
         }
+
     }
 
 

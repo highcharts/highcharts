@@ -102,7 +102,16 @@ class OrganizationPoint extends SankeyPointClass {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
+    init(): OrganizationPoint {
+        SankeyPointClass.prototype.init.apply(this, arguments);
+
+        if (!this.isNode) {
+            this.dataLabelOnNull = true;
+            this.formatPrefix = 'link';
+        }
+
+        return this;
+    }
 
     /**
      * All nodes in an org chart are equal width.
@@ -167,7 +176,6 @@ class OrganizationPoint extends SankeyPointClass {
         }
 
     }
-    /* eslint-enable valid-jsdoc */
 
 }
 

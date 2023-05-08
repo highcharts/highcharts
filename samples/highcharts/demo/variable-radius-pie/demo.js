@@ -4,7 +4,8 @@ Highcharts.chart('container', {
         type: 'variablepie'
     },
     title: {
-        text: 'Countries compared by population density and total area, 2022.'
+        text: 'Countries compared by population density and total area, 2022.',
+        align: 'left'
     },
     tooltip: {
         headerFormat: '',
@@ -17,6 +18,7 @@ Highcharts.chart('container', {
         innerSize: '20%',
         zMin: 0,
         name: 'countries',
+        borderRadius: 5,
         data: [{
             name: 'Spain',
             y: 505992,
@@ -45,6 +47,15 @@ Highcharts.chart('container', {
             name: 'Germany',
             y: 357114,
             z: 235
-        }]
+        }],
+        colors: [
+            '#4caefe',
+            '#3dc3e8',
+            '#2dd9db',
+            '#1feeaf',
+            '#0ff3a0',
+            '#00e887',
+            '#23e274'
+        ]
     }]
 });

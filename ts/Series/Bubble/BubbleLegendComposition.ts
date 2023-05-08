@@ -26,7 +26,7 @@ import type Series from '../../Core/Series/Series';
 
 import BubbleLegendDefaults from './BubbleLegendDefaults.js';
 import BubbleLegendItem from './BubbleLegendItem.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
 const {
@@ -41,7 +41,7 @@ const {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -63,7 +63,8 @@ function chartDrawChartBox(
         legend = chart.legend,
         bubbleSeries = getVisibleBubbleSeriesIndex(chart) >= 0;
     let bubbleLegendOptions: BubbleLegendItem.Options,
-        bubbleSizes;
+        bubbleSizes,
+        legendItem;
 
     if (
         legend && legend.options.enabled && legend.bubbleLegend &&
@@ -77,8 +78,11 @@ function chartDrawChartBox(
         if (!bubbleLegendOptions.placed) {
             legend.group.placed = false;
 
-            legend.allItems.forEach(function (item): void {
-                (item.legendGroup as any).translateY = null;
+            legend.allItems.forEach((item): void => {
+                legendItem = item.legendItem || {};
+                if (legendItem.group) {
+                    legendItem.group.translateY = null;
+                }
             });
         }
 
@@ -145,9 +149,7 @@ function compose(
     SeriesClass: typeof Series
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         setOptions({
             // Set default bubble legend options
             legend: {
@@ -158,15 +160,11 @@ function compose(
         wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
     }
 
-    if (composedClasses.indexOf(LegendClass) === -1) {
-        composedClasses.push(LegendClass);
-
+    if (U.pushUnique(composedMembers, LegendClass)) {
         addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
     }
 
-    if (composedClasses.indexOf(SeriesClass) === -1) {
-        composedClasses.push(SeriesClass);
-
+    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
     }
 
@@ -218,20 +216,23 @@ function getLinesHeights(
     const items = legend.allItems,
         lines = [] as Array<Record<string, number>>,
         length = items.length;
+
     let lastLine,
+        legendItem,
+        legendItem2,
         i = 0,
         j = 0;
 
     for (i = 0; i < length; i++) {
-        if (items[i].legendItemHeight) {
+        legendItem = items[i].legendItem || {};
+        legendItem2 = (items[i + 1] || {}).legendItem || {};
+        if (legendItem.labelHeight) {
             // for bubbleLegend
-            (items[i] as any).itemHeight = items[i].legendItemHeight;
+            (items[i] as any).itemHeight = legendItem.labelHeight;
         }
         if ( // Line break
             items[i] === items[length - 1] ||
-            items[i + 1] &&
-            (items[i]._legendItemPos as any)[1] !==
-            (items[i + 1]._legendItemPos as any)[1]
+            legendItem.y !== legendItem2.y
         ) {
             lines.push({ height: 0 });
             lastLine = lines[lines.length - 1];
@@ -284,7 +285,12 @@ function onLegendAfterGetAllItems(
 /**
  * Toggle bubble legend depending on the visible status of bubble series.
  */
-function onSeriesLegendItemClick(this: Series): void {
+function onSeriesLegendItemClick(this: Series, e: any): void | boolean {
+    // #14080 don't fire this code if click function is prevented
+    if (e.defaultPrevented) {
+        return false;
+    }
+
     const series = this,
         chart = series.chart,
         visible = series.visible,
@@ -330,17 +336,25 @@ function retranslateItems(
 ): void {
     const items = legend.allItems,
         rtl = legend.options.rtl;
+
     let orgTranslateX,
         orgTranslateY,
         movementX,
+        legendItem,
         actualLine = 0;
 
-    items.forEach(function (
+    items.forEach((
         item: (BubbleLegendItem|Series|Point),
         index: number
-    ): void {
-        orgTranslateX = (item.legendGroup as any).translateX;
-        orgTranslateY = (item._legendItemPos as any)[1];
+    ): void => {
+        legendItem = item.legendItem || {};
+
+        if (!legendItem.group) {
+            return;
+        }
+
+        orgTranslateX = legendItem.group.translateX || 0;
+        orgTranslateY = legendItem.y || 0;
 
         movementX = (item as any).movementX;
 
@@ -349,19 +363,18 @@ function retranslateItems(
                 orgTranslateX - (item as any).options.maxSize / 2 :
                 orgTranslateX + movementX;
 
-            (item.legendGroup as any).attr({ translateX: movementX });
+            legendItem.group.attr({ translateX: movementX });
         }
         if (index > lines[actualLine].step) {
             actualLine++;
         }
 
-        (item.legendGroup as any).attr({
+        legendItem.group.attr({
             translateY: Math.round(
                 orgTranslateY + lines[actualLine].height / 2
             )
         });
-        (item._legendItemPos as any)[1] = orgTranslateY +
-            lines[actualLine].height / 2;
+        legendItem.y = orgTranslateY + lines[actualLine].height / 2;
     });
 }
 

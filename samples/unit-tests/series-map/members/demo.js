@@ -34,7 +34,7 @@ QUnit.test('seriesTypes.map.pointClass.setState', function (assert) {
             }]
         }),
         point = chart.series[0].points[0],
-        setState = Highcharts.seriesTypes.map.prototype
+        setState = Highcharts.Series.types.map.prototype
             .pointClass.prototype.setState;
 
     setState.call(point, '');

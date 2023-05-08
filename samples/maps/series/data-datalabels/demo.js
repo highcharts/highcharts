@@ -25,43 +25,43 @@
             mapData: topology,
             joinBy: 'name',
             data: [{
-                name: "Northern Territory",
+                name: 'Northern Territory',
                 value: 1
             }, {
-                name: "Tasmania",
+                name: 'Tasmania',
                 value: 4
             }, {
-                name: "Queensland",
+                name: 'Queensland',
                 value: 2
             }, {
-                name: "South Australia",
+                name: 'South Australia',
                 value: 7
             }, {
-                name: "Western Australia",
+                name: 'Western Australia',
                 value: 3
             }, {
-                name: "New South Wales",
+                name: 'New South Wales',
                 value: 9
             }, {
-                name: "Australian Capital Territory",
+                name: 'Australian Capital Territory',
                 value: 2,
                 dataLabels: {
                     enabled: false
                 }
             }, {
-                name: "Victoria",
+                name: 'Victoria',
                 value: 3,
                 dataLabels: {
                     enabled: false
                 }
             }, {
-                name: "Norfolk Island",
+                name: 'Norfolk Island',
                 value: 2,
                 dataLabels: {
                     enabled: false
                 }
             }, {
-                name: "Jervis Bay Territory",
+                name: 'Jervis Bay Territory',
                 value: 2,
                 dataLabels: {
                     enabled: false
@@ -71,11 +71,6 @@
             dataLabels: {
                 enabled: true,
                 format: '{point.name}:<br>{point.value} items'
-            },
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
             }
         }]
     });

@@ -18,12 +18,14 @@
  *
  * */
 
-import type DataConverter from '../Data/DataConverter';
+import type DataConverter from '../Data/Converters/DataConverter';
 import type JSON from '../Core/JSON';
 import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import Chart from '../Core/Chart/Chart.js';
+import D from '../Core/Defaults.js';
+const { getOptions } = D;
 import G from '../Core/Globals.js';
 const { doc } = G;
 import HU from '../Core/HttpUtilities.js';
@@ -32,8 +34,6 @@ import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
-import D from '../Core/DefaultOptions.js';
-const { getOptions } = D;
 const {
     addEvent,
     defined,
@@ -2184,8 +2184,6 @@ class SeriesBuilder {
             pointIsArray = builder.pointIsArray,
             point = pointIsArray ? [] as Array<T> : {} as Record<string, T>;
 
-        let columnIndexes;
-
         // Loop each reader and ask it to read its value.
         // Then, build an array or point based on the readers names.
         builder.readers.forEach((reader): void => {
@@ -2207,7 +2205,20 @@ class SeriesBuilder {
 
         // The name comes from the first column (excluding the x column)
         if (typeof this.name === 'undefined' && builder.readers.length >= 2) {
-            columnIndexes = builder.getReferencedColumnIndexes();
+            const columnIndexes: number[] = [];
+
+            builder.readers.forEach(function (reader): void {
+                if (
+                    reader.configName === 'x' ||
+                    reader.configName === 'name' ||
+                    reader.configName === 'y'
+                ) {
+                    if (typeof reader.columnIndex !== 'undefined') {
+                        columnIndexes.push(reader.columnIndex);
+                    }
+                }
+            });
+
             if (columnIndexes.length >= 2) {
                 // remove the first one (x col)
                 columnIndexes.shift();

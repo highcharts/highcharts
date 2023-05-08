@@ -122,32 +122,17 @@ class ChaikinIndicator extends EMAIndicator {
      *
      * */
 
-    getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ChaikinParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let periods: Array<number> = (params.periods as any),
+        const periods: Array<number> = (params.periods as any),
             period: number = (params.period as any),
-            // Accumulation Distribution Line data
-            ADL: (
-                IndicatorValuesObject<TLinkedSeries>|undefined
-            ),
             // 0- date, 1- Chaikin Oscillator
             CHA: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            periodsOffset: number,
-            // Shorter Period EMA
-            SPE: (
-                IndicatorValuesObject<TLinkedSeries>|
-                undefined
-            ),
-            // Longer Period EMA
-            LPE: (
-                IndicatorValuesObject<TLinkedSeries>|
-                undefined
-            ),
-            oscillator: number,
+            yData: Array<number> = [];
+        let oscillator: number,
             i: number;
 
         // Check if periods are correct
@@ -159,30 +144,35 @@ class ChaikinIndicator extends EMAIndicator {
             return;
         }
 
-        ADL = AD.prototype.getValues.call(this, series, {
-            volumeSeriesID: params.volumeSeriesID,
-            period: period
-        }) as IndicatorValuesObject<TLinkedSeries>;
+        // Accumulation Distribution Line data
+        const ADL: (IndicatorValuesObject<TLinkedSeries>|undefined) =
+            AD.prototype.getValues.call(this, series, {
+                volumeSeriesID: params.volumeSeriesID,
+                period: period
+            }) as IndicatorValuesObject<TLinkedSeries>;
 
         // Check if adl is calculated properly, if not skip
         if (!ADL) {
             return;
         }
 
-        SPE = EMAIndicator.prototype.getValues.call(this, (ADL as any), {
-            period: periods[0]
-        }) as IndicatorValuesObject<TLinkedSeries>;
-
-        LPE = EMAIndicator.prototype.getValues.call(this, (ADL as any), {
-            period: periods[1]
-        }) as IndicatorValuesObject<TLinkedSeries>;
+        // Shorter Period EMA
+        const SPE: (IndicatorValuesObject<TLinkedSeries>|undefined) =
+            super.getValues.call(this, (ADL as any), {
+                period: periods[0]
+            }) as IndicatorValuesObject<TLinkedSeries>;
+        // Longer Period EMA
+        const LPE: (IndicatorValuesObject<TLinkedSeries>|undefined) =
+            super.getValues.call(this, (ADL as any), {
+                period: periods[1]
+            }) as IndicatorValuesObject<TLinkedSeries>;
 
         // Check if ema is calculated properly, if not skip
         if (!SPE || !LPE) {
             return;
         }
 
-        periodsOffset = periods[1] - periods[0];
+        const periodsOffset: number = periods[1] - periods[0];
 
         for (i = 0; i < LPE.yData.length; i++) {
             oscillator = correctFloat(

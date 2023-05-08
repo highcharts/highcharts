@@ -66,7 +66,7 @@ export interface OrganizationSeriesNodeOptions extends SankeySeriesNodeOptions {
 }
 
 export interface OrganizationSeriesOptions extends SankeySeriesOptions {
-    dataLabels?: OrganizationDataLabelOptions;
+    dataLabels: OrganizationDataLabelOptions;
     hangingIndent?: number;
     hangingIndentTranslation?: OrganizationHangingIndentTranslationValue;
     levels?: Array<OrganizationSeriesLevelOptions>;

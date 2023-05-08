@@ -64,7 +64,7 @@ namespace ForcedMarkersComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
 
     /* *
@@ -83,9 +83,7 @@ namespace ForcedMarkersComposition {
         SeriesClass: T
     ): void {
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(
                 SeriesClass as typeof SeriesComposition,
                 'afterSetOptions',

@@ -6,7 +6,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Olympic Games all-time medal table, grouped by continent'
+        text: 'Olympic Games all-time medal table, grouped by continent',
+        align: 'left'
     },
 
     xAxis: {

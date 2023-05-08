@@ -117,7 +117,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     }
 );
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
-    'Combination with non-boostable series types (#7634)',
+    'Combination with non-boostable series types and null values (#7634)',
     function (assert) {
         var chart = Highcharts.chart('container', {
             boost: {
@@ -158,6 +158,16 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.series[2].points.length,
             5,
             '5 points should be generated for flags series'
+        );
+
+        chart.addSeries({
+            data: [null, 9, 4, null]
+        });
+
+        assert.strictEqual(
+            chart.series[3].points.length,
+            4,
+            'array length should include values with null'
         );
     }
 );

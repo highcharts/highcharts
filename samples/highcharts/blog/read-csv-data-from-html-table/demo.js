@@ -1,12 +1,12 @@
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     data: {
-        table: "datatable"
+        table: 'datatable'
     },
     chart: {
-        type: "column"
+        type: 'column'
     },
     title: {
-        text: "Vitamins purchased by men vs. women"
+        text: 'Vitamins purchased by men vs. women'
     },
     subtitle: {
         text:
@@ -16,19 +16,19 @@ Highcharts.chart("container", {
         series: {
             dataLabels: {
                 enabled: true,
-                format: "{y} %"
+                format: '{y} %'
             }
         }
     },
     yAxis: {
-        labels: { format: "{text}%" },
+        labels: { format: '{text}%' },
 
         title: {
             text: null
         }
     },
-    colors: ["#058DC7", "#c7058d"],
+    colors: ['#058DC7', '#c7058d'],
     tooltip: {
-        valueSuffix: " %"
+        valueSuffix: ' %'
     }
 });

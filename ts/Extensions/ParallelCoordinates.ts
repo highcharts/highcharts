@@ -32,7 +32,7 @@ import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { setOptions } = D;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';

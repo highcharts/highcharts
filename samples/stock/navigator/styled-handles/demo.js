@@ -13,9 +13,6 @@ Highcharts.SVGRenderer.prototype.symbols.doublearrow = function (x, y, w, h) {
         'Z'
     ];
 };
-if (Highcharts.VMLRenderer) {
-    Highcharts.VMLRenderer.prototype.symbols.doublearrow = Highcharts.SVGRenderer.prototype.symbols.doublearrow;
-}
 
 Highcharts.stockChart('container', {
 

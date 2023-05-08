@@ -1,6 +1,6 @@
 const log = require('./log');
 const AWSS3 = require('aws-sdk').S3;
-const fs = require('fs-extra');
+const fs = require('fs');
 const S3 = new AWSS3({
     region: process.env.AWS_REGION || 'eu-west-1'
 });

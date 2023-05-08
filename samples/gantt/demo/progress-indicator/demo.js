@@ -1,7 +1,8 @@
 // THE CHART
 Highcharts.ganttChart('container', {
     title: {
-        text: 'Gantt Chart with Progress Indicators'
+        text: 'Gantt Chart with Progress Indicators',
+        align: 'left'
     },
 
     xAxis: {

@@ -276,11 +276,11 @@ class Tick {
         const ctx: AxisLabelFormatterContextObject = {
             axis,
             chart,
-            dateTimeLabelFormat: dateTimeLabelFormat as any,
+            dateTimeLabelFormat: dateTimeLabelFormat,
             isFirst,
             isLast,
             pos,
-            tick: tick as any,
+            tick: tick,
             tickPositionInfo,
             value
         };
@@ -300,7 +300,7 @@ class Tick {
                 return labelOptions.formatter.call(ctx, ctx);
             }
             if (labelOptions.format) {
-                ctx.text = axis.defaultLabelFormatter.call(ctx);
+                ctx.text = axis.defaultLabelFormatter.call(ctx, ctx);
                 return F.format(labelOptions.format, ctx, chart);
             }
             return axis.defaultLabelFormatter.call(ctx, ctx);
@@ -512,7 +512,7 @@ class Tick {
         y: number,
         label: SVGElement,
         horiz: boolean,
-        labelOptions: PositionObject,
+        labelOptions: AxisLabelOptions,
         tickmarkOffset: number,
         index: number,
         step: number
@@ -535,15 +535,16 @@ class Tick {
                     ) :
                     0
             ),
+            distance = labelOptions.distance,
             pos = {} as PositionObject;
 
         let yOffset: number,
             line: number;
 
         if (axis.side === 0) {
-            yOffset = label.rotation ? -8 : -label.getBBox().height;
+            yOffset = label.rotation ? -distance : -label.getBBox().height;
         } else if (axis.side === 2) {
-            yOffset = rotCorr.y + 8;
+            yOffset = rotCorr.y + distance;
         } else {
             // #3140, #3140
             yOffset = Math.cos((label.rotation as any) * deg2rad) *
@@ -557,7 +558,10 @@ class Tick {
         }
 
         x = x +
-            labelOptions.x +
+            pick(
+                labelOptions.x,
+                [0, 1, 0, -1][axis.side] * distance
+            ) +
             labelOffsetCorrection +
             rotCorr.x -
             (
@@ -750,13 +754,10 @@ class Tick {
     public moveLabel(str: string, labelOptions: AxisLabelOptions): void {
         const tick = this,
             label = tick.label,
-            axis = tick.axis,
-            reversed = axis.reversed;
+            axis = tick.axis;
 
         let moved = false,
-            labelPos,
-            xPos,
-            yPos;
+            labelPos;
 
         if (label && label.textStr === str) {
             tick.movedLabel = label;
@@ -783,13 +784,9 @@ class Tick {
         // Create new label if the actual one is moved
         if (!moved && (tick.labelPos || label)) {
             labelPos = tick.labelPos || (label as any).xy;
-            xPos = axis.horiz ?
-                (reversed ? 0 : axis.width + axis.left) : labelPos.x;
-            yPos = axis.horiz ?
-                labelPos.y : (reversed ? (axis.width + axis.left) : 0);
 
             tick.movedLabel = tick.createLabel(
-                { x: xPos, y: yPos },
+                labelPos,
                 str,
                 labelOptions
             );
@@ -916,7 +913,8 @@ class Tick {
                     value: pos + tickmarkOffset,
                     lineWidth: gridLine.strokeWidth() * reverseCrisp,
                     force: 'pass',
-                    old: old
+                    old: old,
+                    acrossPanes: false // #18025
                 }
             );
 
@@ -1103,23 +1101,13 @@ class Tick {
     public replaceMovedLabel(): void {
         const tick = this,
             label = tick.label,
-            axis = tick.axis,
-            reversed = axis.reversed;
-
-        let x,
-            y;
+            axis = tick.axis;
 
         // Animate and destroy
         if (label && !tick.isNew) {
-            x = axis.horiz ? (
-                reversed ? axis.left : axis.width + axis.left
-            ) : label.xy.x;
-            y = axis.horiz ?
-                label.xy.y :
-                (reversed ? axis.width + axis.top : axis.top);
 
             label.animate(
-                { x: x, y: y, opacity: 0 },
+                { opacity: 0 },
                 void 0,
                 label.destroy
             );

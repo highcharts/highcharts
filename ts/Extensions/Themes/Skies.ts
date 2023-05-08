@@ -20,9 +20,8 @@
 
 import type Options from '../../Core/Options';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import H from '../../Core/Globals.js';
 
 /* *
  *
@@ -116,11 +115,6 @@ namespace SkiesTheme {
             },
             itemHiddenStyle: {
                 color: 'silver'
-            }
-        },
-        labels: {
-            style: {
-                color: '#3E576F'
             }
         }
     };

@@ -22,11 +22,11 @@ import type Navigator from './Navigator';
 import type Scrollbar from '../Scrollbar/Scrollbar';
 import type Series from '../../Core/Series/Series';
 
-import DO from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const {
     defaultOptions,
     setOptions
-} = DO;
+} = D;
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
@@ -75,7 +75,7 @@ declare module '../../Core/Series/SeriesLike' {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -100,13 +100,10 @@ function compose(
     NavigatorClass: typeof Navigator,
     SeriesClass: typeof Series
 ): void {
-
     NavigatorAxisAdditions.compose(AxisClass);
     NavigatorConstructor = NavigatorClass;
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         const chartProto = ChartClass.prototype;
 
         chartProto.callbacks.push(onChartCallback);
@@ -119,21 +116,15 @@ function compose(
         addEvent(ChartClass, 'update', onChartUpdate);
     }
 
-    if (composedClasses.indexOf(SeriesClass) === -1) {
-        composedClasses.push(SeriesClass);
-
+    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
     }
 
-    if (composedClasses.indexOf(getRendererType) === -1) {
-        composedClasses.push(getRendererType);
-
+    if (U.pushUnique(composedMembers, getRendererType)) {
         extend(getRendererType().prototype.symbols, NavigatorSymbols);
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (U.pushUnique(composedMembers, setOptions)) {
         extend(defaultOptions, { navigator: NavigatorDefaults });
     }
 
@@ -165,8 +156,7 @@ function onChartAfterSetChartSize(
     const legend = this.legend,
         navigator = this.navigator;
 
-    let scrollbarHeight,
-        legendOptions,
+    let legendOptions,
         xAxis,
         yAxis;
 
@@ -174,24 +164,28 @@ function onChartAfterSetChartSize(
         legendOptions = legend && legend.options;
         xAxis = navigator.xAxis;
         yAxis = navigator.yAxis;
-        scrollbarHeight = navigator.scrollbarHeight;
+        const {
+            scrollbarHeight,
+            scrollButtonSize
+        } = navigator;
 
         // Compute the top position
         if (this.inverted) {
             navigator.left = navigator.opposite ?
-                this.chartWidth - (scrollbarHeight as any) -
-                navigator.height :
-                this.spacing[3] + (scrollbarHeight as any);
-            navigator.top = this.plotTop + (scrollbarHeight as any);
+                this.chartWidth - scrollbarHeight -
+                    navigator.height :
+                this.spacing[3] + scrollbarHeight;
+            navigator.top = this.plotTop + scrollButtonSize;
         } else {
             navigator.left = pick(
                 xAxis.left,
-                this.plotLeft + (scrollbarHeight as any)
+                this.plotLeft + scrollButtonSize
             );
             navigator.top = (navigator.navigatorOptions.top as any) ||
                 this.chartHeight -
                 navigator.height -
-                (scrollbarHeight as any) -
+                scrollbarHeight -
+                (this.scrollbar?.options.margin || 0) -
                 this.spacing[2] -
                 (
                     this.rangeSelector && this.extraBottomMargin ?

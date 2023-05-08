@@ -81,6 +81,10 @@ Highcharts.chart('container', {
         enabled: false
     },
 
+    tooltip: {
+        stickOnContact: true
+    },
+
     plotOptions: {
         column: {
             keys: ['name', 'y'],

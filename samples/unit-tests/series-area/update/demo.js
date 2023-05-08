@@ -68,7 +68,7 @@ QUnit.test('Updating series stacked property', assert => {
 
     // Issue #13572
     assert.ok(
-        chart.series[0].areaPath.slice(-1)[0].includes("Z"),
+        chart.series[0].areaPath.slice(-1)[0].includes('Z'),
         'The last index of the path array contains the closure'
     );
 

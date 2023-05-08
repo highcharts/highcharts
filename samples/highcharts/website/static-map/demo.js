@@ -29,7 +29,7 @@ const finalMap = function () {
             // Initialize the chart
             Highcharts.mapChart('maps', {
                 chart: {
-                    styledMode: (true),
+                    styledMode: true,
                     animation: {
 
                         duration: 1000
@@ -126,7 +126,7 @@ const finalMap = function () {
                 },
                 accessibility: {
                     screenReaderSection: {
-                        beforeChartFormat: "<h1>Population density</h1><p>Interactive map showing population density of the world's countries.</p>"
+                        beforeChartFormat: '<h1>Population density</h1><p>Interactive map showing population density of the world\'s countries.</p>'
                     }
                 },
                 series: [{

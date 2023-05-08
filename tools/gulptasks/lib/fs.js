@@ -95,11 +95,7 @@ function copyAllFiles(
  * @return {void}
  */
 function copyFile(fileSourcePath, fileTargetPath) {
-
-    const mkDirP = require('mkdirp');
-
-    mkDirP.sync(Path.dirname(fileTargetPath));
-
+    FS.mkdirSync(Path.dirname(fileTargetPath), { recursive: true });
     FS.writeFileSync(fileTargetPath, FS.readFileSync(fileSourcePath));
 }
 

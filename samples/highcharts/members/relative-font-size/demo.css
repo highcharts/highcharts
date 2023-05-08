@@ -1,0 +1,32 @@
+#main {
+    width: 600px;
+    margin: 0 auto;
+}
+
+#container {
+    height: 400px;
+    margin: 1rem -10px;
+}
+
+.btn-group button.btn-outline-secondary {
+    color: black;
+    border-color: #6c757d;
+}
+
+.btn-group button#font-smaller {
+    font-size: 0.6rem;
+}
+
+.btn-group button#font-larger {
+    font-size: 1.2rem;
+}
+
+.btn-group #font-100 {
+    width: 5rem;
+}
+
+.btn-group button:disabled {
+    border-color: #6c757d;
+    opacity: 1;
+    color: #888;
+}

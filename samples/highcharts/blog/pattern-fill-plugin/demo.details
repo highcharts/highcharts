@@ -1,0 +1,6 @@
+---
+ name: Pattern fill demo plugin
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

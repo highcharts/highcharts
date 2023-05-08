@@ -16,7 +16,7 @@
  *
  * */
 
-import type LangOptions from '../../Core/LangOptions';
+import type { LangOptions } from '../../Core/Options';
 
 /* *
  *
@@ -192,7 +192,7 @@ export interface LangAccessibilityZoomOptions {
     resetZoomButton: string;
 }
 
-declare module '../../Core/LangOptions'{
+declare module '../../Core/Options'{
     interface LangOptions {
         accessibility?: LangAccessibilityOptions;
     }

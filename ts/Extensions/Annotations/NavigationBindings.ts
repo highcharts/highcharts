@@ -31,7 +31,7 @@ import type {
 } from './Popup/Popup';
 
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import F from '../../Core/FormatUtilities.js';
 const { format } = F;
@@ -89,7 +89,7 @@ interface NavigationBindingsButtonEventsObject {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -325,11 +325,33 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
         eventArguments.activeAnnotation = true;
     }
 
+    // #18276, show popup on touchend, but not on touchmove
+    let touchStartX: number,
+        touchStartY: number;
+
+    function saveCoords(this: Annotation, e: AnyRecord): void {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }
+
+    function checkForTouchmove(this: Annotation, e: AnyRecord): void {
+        const hasMoved = touchStartX ? Math.sqrt(
+            Math.pow(touchStartX - e.changedTouches[0].clientX, 2) +
+            Math.pow(touchStartY - e.changedTouches[0].clientY, 2)
+        ) >= 4 : false;
+
+        if (!hasMoved) {
+            selectAndShowPopup.call(this, e);
+        }
+    }
+
     merge(
         true,
         annotationType.prototype.defaultOptions.events,
         {
-            click: selectAndShowPopup
+            click: selectAndShowPopup,
+            touchstart: saveCoords,
+            touchend: checkForTouchmove
         }
     );
 }
@@ -407,9 +429,7 @@ class NavigationBindings {
         ChartClass: typeof Chart
     ): void {
 
-        if (composedClasses.indexOf(AnnotationClass) === -1) {
-            composedClasses.push(AnnotationClass);
-
+        if (U.pushUnique(composedMembers, AnnotationClass)) {
             addEvent(AnnotationClass, 'remove', onAnnotationRemove);
 
             // Basic shapes:
@@ -423,17 +443,13 @@ class NavigationBindings {
             });
         }
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'destroy', onChartDestroy);
             addEvent(ChartClass, 'load', onChartLoad);
             addEvent(ChartClass, 'render', onChartRender);
         }
 
-        if (composedClasses.indexOf(NavigationBindings) === -1) {
-            composedClasses.push(NavigationBindings);
-
+        if (U.pushUnique(composedMembers, NavigationBindings)) {
             addEvent(
                 NavigationBindings,
                 'closePopup',
@@ -446,9 +462,7 @@ class NavigationBindings {
             );
         }
 
-        if (composedClasses.indexOf(setOptions) === -1) {
-            composedClasses.push(setOptions);
-
+        if (U.pushUnique(composedMembers, setOptions)) {
             setOptions(NavigationBindingDefaults);
         }
 
@@ -467,12 +481,15 @@ class NavigationBindings {
         this.chart = chart;
         this.options = options;
         this.eventsToUnbind = [];
-        this.container = this.chart.container
-            .querySelectorAll('.' + this.options.bindingsClassName);
+        this.container =
+            this.chart.container.getElementsByClassName(
+                this.options.bindingsClassName || ''
+            ) as HTMLCollectionOf<HTMLElement>;
 
         if (!this.container.length) {
-            this.container = doc
-                .querySelectorAll('.' + this.options.bindingsClassName);
+            this.container = doc.getElementsByClassName(
+                this.options.bindingsClassName || ''
+            ) as HTMLCollectionOf<HTMLElement>;
         }
     }
 
@@ -486,7 +503,7 @@ class NavigationBindings {
     public boundClassNames: Record<string, NavigationBindingsOptions> =
         void 0 as any;
     public chart: AnnotationChart;
-    public container: NodeListOf<HTMLDOMElement>;
+    public container: HTMLCollectionOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
     public eventsToUnbind: Array<Function>;
     public mouseMoveEvent?: (false|Function);
@@ -538,8 +555,8 @@ class NavigationBindings {
 
                         if (
                             bindings &&
-                            bindings.button.className
-                                .indexOf('highcharts-disabled-btn') === -1
+                            (!bindings.button.classList
+                                .contains('highcharts-disabled-btn'))
                         ) {
                             navigation.bindingsButtonClick(
                                 bindings.button,
@@ -1106,7 +1123,7 @@ class NavigationBindings {
             classNames: Array<[string, HTMLDOMElement]> = [],
             elemClassName: (string|null|undefined);
 
-        while (element) {
+        while (element && element.tagName) {
             elemClassName = attr(element, 'class');
             if (elemClassName) {
                 classNames = classNames.concat(

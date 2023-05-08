@@ -41,34 +41,34 @@ Highcharts.chart('container', {
         name: 'Population',
         data: [{
             name: 'China',
-            low: 1444216107
+            y: 1444216107
         }, {
             name: 'India',
-            low: 1393409038
+            y: 1393409038
         }, {
             name: 'United States',
-            low: 332915073
+            y: 332915073
         }, {
             name: 'Indonesia',
-            low: 276361783
+            y: 276361783
         }, {
             name: 'Pakistan',
-            low: 225199937
+            y: 225199937
         }, {
             name: 'Brazil',
-            low: 213993437
+            y: 213993437
         }, {
             name: 'Nigeria',
-            low: 211400708
+            y: 211400708
         }, {
             name: 'Bangladesh',
-            low: 166303498
+            y: 166303498
         }, {
             name: 'Russia',
-            low: 145912025
+            y: 145912025
         }, {
             name: 'Mexico',
-            low: 130262216
+            y: 130262216
         }]
     }]
 

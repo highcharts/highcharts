@@ -63,7 +63,7 @@ namespace OnSeriesComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -80,9 +80,7 @@ namespace OnSeriesComposition {
         SeriesClass: T
     ): (T&SeriesComposition) {
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.getPlotBox = getPlotBox;
@@ -99,13 +97,15 @@ namespace OnSeriesComposition {
      * @private
      */
     export function getPlotBox(
-        this: SeriesComposition
-    ): Series.PlotBoxObject {
+        this: SeriesComposition,
+        name?: string
+    ): Series.PlotBoxTransform {
         return seriesProto.getPlotBox.call(
             (
                 this.options.onSeries &&
                 this.chart.get(this.options.onSeries)
-            ) || this
+            ) || this,
+            name
         );
     }
 

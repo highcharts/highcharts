@@ -32,7 +32,7 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
@@ -635,19 +635,22 @@ addEvent(Chart, 'endResize', function (): void {
         // We have non-default patterns to fix. Find them by looping through
         // all points.
         this.series.forEach(function (series: Series): void {
-            series.points.forEach(function (point: Point): void {
-                const colorOptions = point.options && point.options.color;
 
-                if (
-                    colorOptions &&
-                    (colorOptions as PatternFill.PatternObject).pattern
-                ) {
-                    (colorOptions as PatternFill.PatternObject).pattern
-                        ._width = 'defer';
-                    (colorOptions as PatternFill.PatternObject).pattern
-                        ._height = 'defer';
-                }
-            });
+            if (series.visible) {
+                series.points.forEach(function (point: Point): void {
+                    const colorOptions = point.options && point.options.color;
+
+                    if (
+                        colorOptions &&
+                        (colorOptions as PatternFill.PatternObject).pattern
+                    ) {
+                        (colorOptions as PatternFill.PatternObject).pattern
+                            ._width = 'defer';
+                        (colorOptions as PatternFill.PatternObject).pattern
+                            ._height = 'defer';
+                    }
+                });
+            }
         });
         // Redraw without animation
         this.redraw(false);

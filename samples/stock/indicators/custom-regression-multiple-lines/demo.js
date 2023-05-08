@@ -113,7 +113,7 @@ var multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
 
 if (multipleLinesMixin) {
     Highcharts.extend(
-        Highcharts.seriesTypes.linearregressionzones.prototype,
+        Highcharts.Series.types.linearregressionzones.prototype,
         {
             drawGraph: multipleLinesMixin.drawGraph,
             getTranslatedLinesNames: multipleLinesMixin.getTranslatedLinesNames,
@@ -123,7 +123,7 @@ if (multipleLinesMixin) {
     );
 } else { // Highcharts v9.2.3+
     Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js'].compose(
-        Highcharts.seriesTypes.linearregressionzones
+        Highcharts.Series.types.linearregressionzones
     );
 }
 /* eslint-enable no-underscore-dangle */

@@ -20,7 +20,7 @@
 
 import type AxisType from '../../Core/Axis/AxisType';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
 import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';
@@ -97,7 +97,7 @@ export interface YAxisPositions {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -112,9 +112,7 @@ function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
 
-    if (composedClasses.indexOf(NavigationBindingsClass) === -1) {
-        composedClasses.push(NavigationBindingsClass);
-
+    if (U.pushUnique(composedMembers, NavigationBindingsClass)) {
         const navigationProto = NavigationBindingsClass.prototype;
 
         // Extends NavigationBindings to support indicators and resizers:
@@ -132,9 +130,7 @@ function compose(
         };
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions(StockToolsDefaults);
         setOptions({
             navigation: {

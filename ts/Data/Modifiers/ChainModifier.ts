@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2022 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,8 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
+import type DataEvent from '../DataEvent';
+import type DataModifierType from './DataModifierType';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -39,7 +40,7 @@ const {
  *
  * @private
  */
-class ChainModifier extends DataModifier<ChainModifier.Event> {
+class ChainModifier extends DataModifier {
 
     /* *
      *
@@ -51,13 +52,12 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * Default option for the ordered modifier chain.
      */
     public static readonly defaultOptions: ChainModifier.Options = {
-        modifier: 'Chain',
-        reverse: false
+        modifier: 'Chain'
     };
 
     /* *
      *
-     *  Constructors
+     *  Constructor
      *
      * */
 
@@ -67,17 +67,33 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * @param {DeepPartial<ChainModifier.Options>} [options]
      * Options to configure the modifier chain.
      *
-     * @param {...DataModifier} [modifiers]
-     * Modifiers in order for the modifier chain.
+     * @param {...DataModifier} [chain]
+     * Ordered chain of modifiers.
      */
     public constructor(
         options?: DeepPartial<ChainModifier.Options>,
-        ...modifiers: Array<DataModifier>
+        ...chain: Array<DataModifier>
     ) {
         super();
 
-        this.modifiers = modifiers;
+        this.chain = chain;
         this.options = merge(ChainModifier.defaultOptions, options);
+
+        const optionsChain = this.options.chain || [];
+
+        for (
+            let i = 0,
+                iEnd = optionsChain.length,
+                ModifierClass: (DataModifierType|undefined);
+            i < iEnd;
+            ++i
+        ) {
+            ModifierClass = DataModifier.types[optionsChain[i].modifier];
+
+            if (ModifierClass) {
+                chain.unshift(new ModifierClass(optionsChain[i]));
+            }
+        }
     }
 
     /* *
@@ -87,9 +103,9 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * */
 
     /**
-     * Ordered modifiers.
+     * Ordered chain of modifiers.
      */
-    public readonly modifiers: Array<DataModifier>;
+    public readonly chain: Array<DataModifier>;
 
     /**
      * Options of the modifier chain.
@@ -109,22 +125,22 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * @param {DataModifier} modifier
      * Configured modifier to add.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      */
     public add(
         modifier: DataModifier,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): void {
-        this.emit({
+        this.emit<ChainModifier.Event>({
             type: 'addModifier',
             detail: eventDetail,
             modifier
         });
 
-        this.modifiers.push(modifier);
+        this.chain.push(modifier);
 
-        this.emit({
+        this.emit<ChainModifier.Event>({
             type: 'addModifier',
             detail: eventDetail,
             modifier
@@ -134,21 +150,70 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
     /**
      * Clears all modifiers from the chain.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      */
-    public clear(eventDetail?: DataEventEmitter.EventDetail): void {
-        this.emit({
+    public clear(eventDetail?: DataEvent.Detail): void {
+        this.emit<ChainModifier.Event>({
             type: 'clearChain',
             detail: eventDetail
         });
 
-        this.modifiers.length = 0;
+        this.chain.length = 0;
 
-        this.emit({
+        this.emit<ChainModifier.Event>({
             type: 'afterClearChain',
             detail: eventDetail
         });
+    }
+
+    /**
+     * Applies several modifications to the table and returns a modified copy of
+     * the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Table to modify.
+     *
+     * @param {DataEvent.Detail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Promise<Highcharts.DataTable>}
+     * Table with `modified` property as a reference.
+     */
+    public modify<T extends DataTable>(
+        table: T,
+        eventDetail?: DataEvent.Detail
+    ): Promise<T> {
+        const modifiers = (
+            this.options.reverse ?
+                this.chain.slice().reverse() :
+                this.chain.slice()
+        );
+
+        let promiseChain: Promise<T> = Promise.resolve(table);
+
+        for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
+            const modifier = modifiers[i];
+            promiseChain = promiseChain.then((chainTable): Promise<T> =>
+                modifier.modify(chainTable.modified as T, eventDetail)
+            );
+        }
+
+        promiseChain = promiseChain.then((chainTable): T => {
+            table.modified = chainTable.modified;
+            return table;
+        });
+
+        promiseChain = promiseChain['catch']((error): Promise<T> => {
+            this.emit<DataModifier.Event>({
+                type: 'error',
+                detail: eventDetail,
+                table
+            });
+            throw error;
+        });
+
+        return promiseChain;
     }
 
     /**
@@ -180,12 +245,12 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         columnName: string,
         rowIndex: number,
         cellValue: DataTable.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifiers = (
             this.options.reverse ?
-                this.modifiers.reverse() :
-                this.modifiers
+                this.chain.reverse() :
+                this.chain
         );
 
         if (modifiers.length) {
@@ -233,12 +298,12 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         table: T,
         columns: DataTable.ColumnCollection,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifiers = (
             this.options.reverse ?
-                this.modifiers.reverse() :
-                this.modifiers.slice()
+                this.chain.reverse() :
+                this.chain.slice()
         );
 
         if (modifiers.length) {
@@ -285,12 +350,12 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
         table: T,
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifiers = (
             this.options.reverse ?
-                this.modifiers.reverse() :
-                this.modifiers.slice()
+                this.chain.reverse() :
+                this.chain.slice()
         );
 
         if (modifiers.length) {
@@ -320,7 +385,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -331,16 +396,20 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
      */
     public modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const chain = this;
 
-        chain.emit({ type: 'modify', detail: eventDetail, table });
+        chain.emit<ChainModifier.Event>({
+            type: 'modify',
+            detail: eventDetail,
+            table
+        });
 
         const modifiers = (
             chain.options.reverse ?
-                chain.modifiers.reverse() :
-                chain.modifiers.slice()
+                chain.chain.reverse() :
+                chain.chain.slice()
         );
 
         let modified = table.modified;
@@ -353,32 +422,36 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
             ++i
         ) {
             modifier = modifiers[i];
-            modified = modifier.modifyTable(modified).modified;
+            modified = modifier.modifyTable(modified, eventDetail).modified;
         }
 
         table.modified = modified;
 
-        chain.emit({ type: 'afterModify', detail: eventDetail, table });
+        chain.emit<ChainModifier.Event>({
+            type: 'afterModify',
+            detail: eventDetail,
+            table
+        });
 
         return table;
     }
 
     /**
-     * Removes a configured modifier from all positions of the modifier chain.
+     * Removes a configured modifier from all positions in the modifier chain.
      *
      * @param {DataModifier} modifier
      * Configured modifier to remove.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      */
     public remove(
         modifier: DataModifier,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): void {
-        const modifiers = this.modifiers;
+        const modifiers = this.chain;
 
-        this.emit({
+        this.emit<ChainModifier.Event>({
             type: 'removeModifier',
             detail: eventDetail,
             modifier
@@ -386,7 +459,7 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
 
         modifiers.splice(modifiers.indexOf(modifier), 1);
 
-        this.emit({
+        this.emit<ChainModifier.Event>({
             type: 'afterRemoveModifier',
             detail: eventDetail,
             modifier
@@ -397,20 +470,26 @@ class ChainModifier extends DataModifier<ChainModifier.Event> {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace ChainModifier {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     /**
      * Event object
      */
-    export interface ChainEvent extends DataEventEmitter.Event {
+    export interface ChainEvent extends DataEvent {
         readonly type: (
             'clearChain'|'afterClearChain'|
             DataModifier.Event['type']
@@ -426,7 +505,7 @@ namespace ChainModifier {
     /**
      * Event information for modifier operations.
      */
-    export interface ModifierEvent extends DataEventEmitter.Event {
+    export interface ModifierEvent extends DataEvent {
         readonly type: (
             'addModifier'|'afterAddModifier'|
             'removeModifier'|'afterRemoveModifier'
@@ -435,34 +514,38 @@ namespace ChainModifier {
     }
 
     /**
-     * Options to configure the modifier.
+     * Options to configure the chain modifier.
      */
     export interface Options extends DataModifier.Options {
         /**
+         * Array of options of the chain modifiers.
+         */
+        chain?: Array<DataModifierType['prototype']['options']>;
+        /**
          * Whether to revert the order before execution.
          */
-        reverse: boolean;
+        reverse?: boolean;
     }
 
 }
 
 /* *
  *
- *  Register
+ *  Registry
  *
  * */
 
-DataModifier.addModifier(ChainModifier);
-
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Chain: typeof ChainModifier;
     }
 }
 
+DataModifier.registerType('Chain', ChainModifier);
+
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

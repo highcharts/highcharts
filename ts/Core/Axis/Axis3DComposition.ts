@@ -22,6 +22,7 @@ import type Axis from './Axis';
 import type { OptionsPosition3dValue } from '../Options';
 import type Point from '../Series/Point';
 import type Position3DObject from '../Renderer/Position3DObject';
+import type RadialAxis from './RadialAxis';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type Tick from './Tick.js';
 
@@ -85,7 +86,7 @@ declare module '../Series/PointLike' {
  * Axis instance with 3D support.
  * @private
  */
-export declare class Axis3DComposition extends Axis {
+export declare class Axis3DComposition extends RadialAxis.AxisComposition {
     axis3D: Axis3DAdditions;
 }
 
@@ -95,7 +96,7 @@ export declare class Axis3DComposition extends Axis {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -445,10 +446,9 @@ class Axis3DAdditions {
     ): void {
         Tick3D.compose(TickClass);
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             merge(true, AxisClass.defaultOptions, Axis3DDefaults);
+
             AxisClass.keepProps.push('axis3D');
 
             addEvent(AxisClass, 'init', onAxisInit);

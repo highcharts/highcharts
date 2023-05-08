@@ -34,7 +34,6 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -420,7 +419,13 @@ class TimelineSeries extends LineSeries {
             height: height + radius
         };
 
-        return attribs;
+        return (series.chart.inverted) ? {
+            y: (attribs.x && attribs.width) &&
+                series.xAxis.len - attribs.x - attribs.width,
+            x: attribs.y && attribs.y,
+            width: attribs.height,
+            height: attribs.width
+        } : attribs;
 
     }
 
@@ -460,13 +465,10 @@ class TimelineSeries extends LineSeries {
  * */
 
 interface TimelineSeries {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointClass: typeof TimelinePoint;
     trackerGroups: Array<string>;
 }
 extend(TimelineSeries.prototype, {
-    // Use a simple symbol from LegendSymbolMixin
-    drawLegendSymbol: LegendSymbol.drawRectangle,
     // Use a group of trackers from TrackerMixin
     drawTracker: ColumnSeries.prototype.drawTracker,
     pointClass: TimelinePoint,

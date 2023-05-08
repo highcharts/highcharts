@@ -186,7 +186,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: KeltnerChannelsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period = (params.period as any),
+        const period = (params.period as any),
             periodATR: number = (params.periodATR as any),
             multiplierATR: number = (params.multiplierATR as any),
             index: number = (params.index as any),
@@ -195,11 +195,6 @@ class KeltnerChannelsIndicator extends SMAIndicator {
             // Keltner Channels array structure:
             // 0-date, 1-top line, 2-middle line, 3-bottom line
             KC: Array<Array<number>> = [],
-            // middle line, top line and bottom lineI
-            ML: number,
-            TL: number,
-            BL: number,
-            date: number,
             seriesEMA: (
                 IndicatorValuesObject<TLinkedSeries>|
                 undefined
@@ -210,15 +205,19 @@ class KeltnerChannelsIndicator extends SMAIndicator {
                 }),
             seriesATR: (
                 IndicatorValuesObject<TLinkedSeries>|undefined
-            ) =
-            SeriesRegistry.seriesTypes.atr.prototype.getValues(series,
+            ) = SeriesRegistry.seriesTypes.atr.prototype.getValues(series,
                 {
                     period: periodATR
                 }),
+            xData: Array<number> = [],
+            yData: Array<Array<number>> = [];
+            // middle line, top line and bottom lineI
+        let ML: number,
+            TL: number,
+            BL: number,
+            date: number,
             pointEMA: Array<number>,
             pointATR: Array<number>,
-            xData: Array<number> = [],
-            yData: Array<Array<number>> = [],
             i: number;
 
         if (yValLen < period) {

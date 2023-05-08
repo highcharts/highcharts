@@ -60,7 +60,12 @@
                     plotOptions: {
                         mapline: {
                             showInLegend: false,
-                            enableMouseTracking: false
+                            enableMouseTracking: false,
+                            states: {
+                                inactive: {
+                                    opacity: 1
+                                }
+                            }
                         }
                     },
 
@@ -71,13 +76,7 @@
                         tooltip: {
                             valueSuffix: '%'
                         },
-                        borderWidth: 0.5,
-                        states: {
-                            hover: {
-                                color: '#a4edba'
-                            }
-                        },
-                        shadow: false
+                        borderWidth: 0.5
                     }, {
                         type: 'mapline',
                         name: 'State borders',

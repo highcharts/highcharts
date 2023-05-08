@@ -72,7 +72,7 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
     assert.strictEqual(
         correct,
         true,
-        "Appropriate tooltip appears when hovering both point's data labels."
+        'Appropriate tooltip appears when hovering both point\'s data labels.'
     );
 
     assert.strictEqual(

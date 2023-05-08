@@ -215,7 +215,7 @@ class VectorSeries extends ScatterSeries {
             }, {
                 length: 1
             });
-        item.legendLine = this.chart.renderer.path(path)
+        legendItem.line = this.chart.renderer.path(path)
         .addClass('highcharts-point')
         .attr({
             zIndex: 3,
@@ -223,7 +223,7 @@ class VectorSeries extends ScatterSeries {
             rotation: 270,
             'stroke-width': 1,
             'stroke': 'black'
-        }).add(item.legendGroup);
+        }).add(item.legendItem.group);
     },
     */
 

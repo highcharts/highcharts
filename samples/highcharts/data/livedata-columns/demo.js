@@ -88,7 +88,7 @@ Highcharts.chart('container', {
         }, {
             from: 70,
             to: 100,
-            color: "#FFEBEE"
+            color: '#FFEBEE'
         }]
     }
 });

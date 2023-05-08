@@ -21,6 +21,7 @@
 import type Point from '../../Core/Series/Point';
 import type RectangleObject from '../../Core/Renderer/RectangleObject';
 import type Series from '../../Core/Series/Series';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type {
     XRangePointOptions,
     XRangePointPartialFillOptions
@@ -52,6 +53,10 @@ import XRangeSeries from './XRangeSeries.js';
  *  Declarations
  *
  * */
+
+interface BBoxObjectWithCenter extends BBoxObject {
+    centerX?: number;
+}
 
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
@@ -113,6 +118,7 @@ class XRangePoint extends ColumnPoint {
 
     public options: XRangePointOptions = void 0 as any;
     public series: XRangeSeries = void 0 as any;
+    public dlBox?: BBoxObjectWithCenter;
 
     /* *
      *

@@ -64,7 +64,7 @@ QUnit.test('3d pie with zeroes (#4584)', function (assert) {
 });
 
 QUnit.test(
-    "Pie points' graphic should have visibility=hidden when slices are hidden (#4891)",
+    'Pie points\' graphic should have visibility=hidden when slices are hidden (#4891)',
     function (assert) {
         var chart = $('#container')
                 .highcharts({
@@ -151,13 +151,13 @@ QUnit.test(
         assert.strictEqual(
             points[1].graphic.side2.zIndex < points[3].graphic.out.zIndex,
             true,
-            "Correct sequence of pie's parts - 1/2"
+            'Correct sequence of pie\'s parts - 1/2'
         );
 
         assert.strictEqual(
             points[0].graphic.side2.zIndex < points[4].graphic.out.zIndex,
             true,
-            "Correct sequence of pie's parts - 2/2"
+            'Correct sequence of pie\'s parts - 2/2'
         );
     }
 );
@@ -411,19 +411,19 @@ QUnit.test('3D pie updates', assert => {
 
     assert.ok(
         height < point.graphic.out.getBBox(true).height,
-        "Updating series.depth should change slice's depth (#12515)."
+        'Updating series.depth should change slice\'s depth (#12515).'
     );
 
     assert.strictEqual(
         chart.series[0].group.oldtranslateX,
         chart.plotLeft,
-        "Updating series shouldn't change pie x position (#11928)."
+        'Updating series shouldn\'t change pie x position (#11928).'
     );
 
     assert.strictEqual(
         chart.series[0].group.oldtranslateY,
         chart.plotTop,
-        "Updating series shouldn't change pie y position (#11928)."
+        'Updating series shouldn\'t change pie y position (#11928).'
     );
 });
 
@@ -487,7 +487,7 @@ QUnit.test('#13804: Inactive tab animation threw', assert => {
 QUnit.test('Pie 3d interations (clicks, hovers etc.)', assert => {
     let clicks = 0;
 
-    const chart = new Highcharts.chart('container', {
+    const chart = new Highcharts.Chart('container', {
             chart: {
                 type: 'pie',
                 options3d: {

@@ -54,7 +54,7 @@ add_gh_user_config: &add_gh_user_config
 executors:
   node_image:
     docker:
-      - image: cimg/node:16.3.0-browsers
+      - image: cimg/node:18.16.0-browsers
 
 commands:
   generate_references_command:
@@ -68,6 +68,14 @@ commands:
       - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
 jobs:
+  security_scan:
+    docker:
+      - image: returntocorp/semgrep #semgrep reccomends this docker image
+    steps:
+      - run:
+          name: Scan ts-folder for OWASP top-ten vulnerabilities
+          command: semgrep ci --config "p/owasp-top-ten" ts/
+
   checkout_and_install:
     <<: *defaults
     environment:
@@ -94,7 +102,9 @@ jobs:
           keys:
             - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
             - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
-      - run: npm ci --quiet --cache .npm --prefer-offline
+      - run: |
+          npm ci --quiet --cache .npm --prefer-offline &&
+          npm i --no-save cross-env pixelmatch
       - save_cache:
           paths:
             - /home/circleci/repo/highcharts/.npm
@@ -152,36 +162,6 @@ jobs:
             - slack/status:
                 fail_only: true
 
-  test_oldies:
-    <<: *defaults
-    description: Run tests with old browser configs at BrowserStack
-    parameters:
-      browsers:
-        description: "Which browser to test?"
-        type: string
-        default: "Win.IE8"
-      notify_on_failure:
-        type: boolean
-        default: false
-    steps:
-      - << : *load_workspace
-      - run:
-          name: Downgrade karma
-          command: |
-            npm i --no-save karma@4.3.0
-      - run:
-          command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --oldie --browsercount 1"
-          no_output_timeout: 20m
-      - run:
-          name: Upgrade karma
-          command: |
-            npm i karma
-      - when:
-          condition: << parameters.notify_on_failure >>
-          steps:
-            - slack/status:
-                fail_only: true
-
   test_timezones:
     <<: *defaults
     description: Run tests with different browser configs at BrowserStack
@@ -218,7 +198,7 @@ jobs:
           key: cypress-cache-{{ checksum "package-lock.json" }}
           paths:
             - /home/circleci/repo/highcharts/.cache
-      - run: npm i @highcharts/highcharts-utils
+      - run: npm i --no-save @highcharts/highcharts-utils cross-env
       - run:
           name: Run utils in background
           command: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
@@ -349,7 +329,7 @@ jobs:
           name: Check Chrome
       - run: sudo apt-get update -y
       - run: sudo apt-get install -y rsync
-      - run: > # checkout master at diverge point of current branch and install
+      - run: | # checkout master at diverge point of current branch and install
           git checkout master && git fetch origin master && git reset --hard origin/master &&
           git checkout $(git merge-base master ${CIRCLE_BRANCH}) && git log --oneline -5 &&
           npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
@@ -358,7 +338,9 @@ jobs:
           command: npx gulp write-file-sizes --filename master.json
       - generate_references_command:
           browsercount: 2
-      - run: git checkout ${CIRCLE_BRANCH}  && git log --oneline -5 && npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force
+      - run: |
+          git checkout ${CIRCLE_BRANCH} && git log --oneline -5 &&
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force
       - run:
           name: File size comparison
           command: |
@@ -585,13 +567,9 @@ workflows:
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
           browsercount: 2
           requires: [lint]
-      - test_oldies:
-          name: "test-Win.IE8"
-          requires: [lint]
-          browsers: "Win.IE8"
       - test_browsers:
           name: "test-Mac.Safari"
-          requires: ["test-Win.IE8", "generate_ts_declarations"]
+          requires: ["generate_ts_declarations"]
           browsers: "Mac.Safari"
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
@@ -677,13 +655,8 @@ workflows:
 #          requires: ["test-Win.Chrome"]
 #          browsers: "Mac.Firefox"
 #          notify_on_failure: true
-      - test_oldies:
-          name: "test-Win.IE8"
-          requires: ["test-Win.Chrome"]
-          browsers: "Win.IE8"
-          notify_on_failure: true
       - build_dist:
-          requires: [checkout_and_install, "test-Win.IE8"]
+          requires: [checkout_and_install, "test-Mac.Safari"]
           context: highcharts-staging
       - deploy_code:
           requires: [build_dist]

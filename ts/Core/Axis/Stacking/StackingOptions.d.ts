@@ -24,6 +24,7 @@ import type CSSObject from '../../Renderer/CSSObject';
 import type { DataLabelOverflowValue } from '../../Series/DataLabelOptions';
 import type FormatUtilities from '../../FormatUtilities';
 import type StackItem from './StackItem';
+import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -57,7 +58,9 @@ export interface StackLabelOptions {
     format?: string;
     formatter?: FormatUtilities.FormatterCallback<StackItem>;
     overflow?: DataLabelOverflowValue;
+    padding?: number;
     rotation?: number;
+    shape?: SymbolKey;
     style?: CSSObject;
     textAlign?: AlignValue;
     useHTML?: boolean;

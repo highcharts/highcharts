@@ -35,11 +35,11 @@ const {
  *
  * */
 
-interface AjaxErrorCallbackFunction {
+export interface AjaxErrorCallbackFunction {
     (request: XMLHttpRequest, error: (string|Error)): void;
 }
 
-interface AjaxSettingsObject {
+export interface AjaxSettingsObject {
     data?: (string|JSON.Type|JSON.Builder|JSON);
     dataType?: ('json'|'text'|'xml'|'octet'|string);
     error?: AjaxErrorCallbackFunction;
@@ -50,7 +50,7 @@ interface AjaxSettingsObject {
     url: string;
 }
 
-interface AjaxSuccessCallbackFunction {
+export interface AjaxSuccessCallbackFunction {
     (response: (string|JSON.Type), xhr: XMLHttpRequest): void;
 }
 

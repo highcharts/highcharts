@@ -1,4 +1,3 @@
-const mkdirp = require('mkdirp');
 const { join } = require('path');
 const argv = require('yargs').argv;
 const fs = require('fs');
@@ -37,7 +36,7 @@ const files = argv.files ? argv.files.split(',') : [
  */
 async function writeFileSize(outputFolder, outputFileName) {
     try {
-        await mkdirp(outputFolder);
+        await fs.promises.mkdir(outputFolder, { recursive: true });
         await getFileSizes(files, join(outputFolder, outputFileName)).catch(err => log.failure(err));
         log.success(`Wrote to ${join(outputFolder, outputFileName)}`);
     } catch (error) {

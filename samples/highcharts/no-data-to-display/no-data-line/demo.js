@@ -8,7 +8,7 @@ const chart = Highcharts.chart('container', {
         data: []
     }],
     lang: {
-        noData: "Nichts zu anzeigen"
+        noData: 'Nichts zu anzeigen'
     },
     noData: {
         style: {
@@ -32,6 +32,6 @@ document.getElementById('remove').addEventListener('click', () => {
 document.getElementById('showCustom').addEventListener('click', () => {
     if (!chart.hasData()) {
         chart.hideNoData();
-        chart.showNoData("Your custom error message");
+        chart.showNoData('Your custom error message');
     }
 });

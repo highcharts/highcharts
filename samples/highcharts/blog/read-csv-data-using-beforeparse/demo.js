@@ -19,7 +19,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        valueSuffix: " mg"
+        valueSuffix: ' mg'
     },
     data: {
         csv: document.getElementById('csv').innerHTML,
@@ -27,12 +27,12 @@ Highcharts.chart('container', {
             return csv.replace(/mg/g, '');
         }
     },
-    colors: ["#058DC7", "#c7058d"],
+    colors: ['#058DC7', '#c7058d'],
     plotOptions: {
         series: {
             dataLabels: {
                 enabled: true,
-                format: "{y} mg"
+                format: '{y} mg'
             }
         }
     }

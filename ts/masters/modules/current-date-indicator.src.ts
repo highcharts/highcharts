@@ -10,4 +10,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/CurrentDateIndication.js';
+import Highcharts from '../../Core/Globals.js';
+import CurrentDateIndication from '../../Extensions/CurrentDateIndication.js';
+
+const G: AnyRecord = Highcharts;
+CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);

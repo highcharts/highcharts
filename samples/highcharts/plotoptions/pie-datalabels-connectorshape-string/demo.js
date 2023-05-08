@@ -58,7 +58,7 @@ Highcharts.chart('container', {
         center: [180, 480],
         data: data.slice(), // clone the data
         dataLabels: {
-            //connectorShape: 'fixedOffset' // default
+            // connectorShape: 'fixedOffset' // default
         }
     }],
     plotOptions: {

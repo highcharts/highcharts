@@ -16,10 +16,12 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'User supplied data'
+        text: 'User supplied data',
+        align: 'left'
     },
     subtitle: {
-        text: 'Click the plot area to add a point. Click a point to remove it.'
+        text: 'Click the plot area to add a point. Click a point to remove it.',
+        align: 'left'
     },
     accessibility: {
         announceNewData: {

@@ -1,0 +1,1204 @@
+/**
+ * @license Highcharts
+ *
+ * (c) 2009-2022 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+
+:root,
+.highcharts-light {
+    /* Colors for data series and points */
+    --highcharts-color-0: #2caffe;
+    --highcharts-color-1: #544fc5;
+    --highcharts-color-2: #00e272;
+    --highcharts-color-3: #fe6a35;
+    --highcharts-color-4: #6b8abc;
+    --highcharts-color-5: #d568fb;
+    --highcharts-color-6: #2ee0ca;
+    --highcharts-color-7: #fa4b42;
+    --highcharts-color-8: #feb56a;
+    --highcharts-color-9: #91e8e1;
+
+    /* Chart background, point stroke for markers and columns etc */
+    --highcharts-background-color: #ffffff;
+
+    /*
+    Neutral colors, grayscale by default. The default colors are defined by
+    mixing the background-color with neutral, with a weight corresponding to
+    the number in the name.
+
+    https://www.highcharts.com/samples/highcharts/css/palette-helper
+    */
+
+    /* Strong text. */
+    --highcharts-neutral-color-100: #000000;
+
+    /* Main text, axis labels and some strokes. */
+    --highcharts-neutral-color-80: #333333;
+
+    /* Axis title, connector fallback. */
+    --highcharts-neutral-color-60: #666666;
+
+    /* Credits text, export menu stroke. */
+    --highcharts-neutral-color-40: #999999;
+
+    /* Disabled texts, button strokes, crosshair etc. */
+    --highcharts-neutral-color-20: #cccccc;
+
+    /* Grid lines etc. */
+    --highcharts-neutral-color-10: #e6e6e6;
+
+    /* Minor grid lines etc. */
+    --highcharts-neutral-color-5: #f2f2f2;
+
+    /* Tooltip backgroud, button fills, map null points. */
+    --highcharts-neutral-color-3: #f7f7f7;
+
+    /*
+    Highlights, shades of blue by default
+    */
+
+    /* Drilldown clickable labels, color axis max color. */
+    --highcharts-highlight-color-100: #0022ff;
+
+    /* Selection marker, menu hover, button hover, chart border, navigator
+    series. */
+    --highcharts-highlight-color-80: #334eff;
+
+    /* Navigator mask fill. */
+    --highcharts-highlight-color-60: #667aff;
+
+    /* Ticks and axis line. */
+    --highcharts-highlight-color-20: #ccd3ff;
+
+    /* Pressed button, color axis min color. */
+    --highcharts-highlight-color-10: #e6e9ff;
+
+    /* Indicators */
+    --highcharts-positive-color: #06b535;
+    --highcharts-negative-color: #f21313;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* UI colors */
+        --highcharts-background-color: rgb(48, 48, 48);
+
+        /*
+            Neutral color variations
+            https://www.highcharts.com/samples/highcharts/css/palette-helper
+        */
+        --highcharts-neutral-color-100: rgb(255, 255, 255);
+        --highcharts-neutral-color-80: rgb(214, 214, 214);
+        --highcharts-neutral-color-60: rgb(173, 173, 173);
+        --highcharts-neutral-color-40: rgb(133, 133, 133);
+        --highcharts-neutral-color-20: rgb(92, 92, 92);
+        --highcharts-neutral-color-10: rgb(71, 71, 71);
+        --highcharts-neutral-color-5: rgb(61, 61, 61);
+        --highcharts-neutral-color-3: rgb(57, 57, 57);
+
+        /* Highlight color variations */
+        --highcharts-highlight-color-100: rgb(122, 167, 255);
+        --highcharts-highlight-color-80: rgb(108, 144, 214);
+        --highcharts-highlight-color-60: rgb(94, 121, 173);
+        --highcharts-highlight-color-20: rgb(65, 74, 92);
+        --highcharts-highlight-color-10: rgb(58, 63, 71);
+    }
+}
+
+.highcharts-dark {
+    /* UI colors */
+    --highcharts-background-color: rgb(48, 48, 48);
+
+    /* Neutral color variations */
+    --highcharts-neutral-color-100: rgb(255, 255, 255);
+    --highcharts-neutral-color-80: rgb(214, 214, 214);
+    --highcharts-neutral-color-60: rgb(173, 173, 173);
+    --highcharts-neutral-color-40: rgb(133, 133, 133);
+    --highcharts-neutral-color-20: rgb(92, 92, 92);
+    --highcharts-neutral-color-10: rgb(71, 71, 71);
+    --highcharts-neutral-color-5: rgb(61, 61, 61);
+    --highcharts-neutral-color-3: rgb(57, 57, 57);
+
+    /* Highlight color variations */
+    --highcharts-highlight-color-100: rgb(122, 167, 255);
+    --highcharts-highlight-color-80: rgb(108, 144, 214);
+    --highcharts-highlight-color-60: rgb(94, 121, 173);
+    --highcharts-highlight-color-20: rgb(65, 74, 92);
+    --highcharts-highlight-color-10: rgb(58, 63, 71);
+}
+
+.highcharts-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    line-height: normal;
+    z-index: 0; /* #1072 */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    user-select: none;
+    touch-action: manipulation;
+    outline: none;
+}
+
+.highcharts-root {
+    display: block;
+}
+
+.highcharts-root text {
+    stroke-width: 0;
+}
+
+.highcharts-strong {
+    font-weight: bold;
+}
+
+.highcharts-emphasized {
+    font-style: italic;
+}
+
+.highcharts-anchor {
+    cursor: pointer;
+}
+
+.highcharts-background {
+    fill: var(--highcharts-background-color);
+}
+
+.highcharts-plot-border,
+.highcharts-plot-background {
+    fill: none;
+}
+
+.highcharts-label-box {
+    fill: none;
+}
+
+.highcharts-label text {
+    fill: var(--highcharts-neutral-color-80);
+    font-size: 0.8em;
+}
+
+.highcharts-button-box {
+    fill: inherit;
+}
+
+.highcharts-tracker-line {
+    stroke-linejoin: round;
+    stroke: rgba(192, 192, 192, 0.0001);
+    stroke-width: 22;
+    fill: none;
+}
+
+.highcharts-tracker-area {
+    fill: rgba(192, 192, 192, 0.0001);
+    stroke-width: 0;
+}
+
+/* Titles */
+.highcharts-title {
+    fill: var(--highcharts-neutral-color-80);
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.highcharts-subtitle {
+    fill: var(--highcharts-neutral-color-60);
+    font-size: 0.8em;
+}
+
+/* Axes */
+.highcharts-axis-line {
+    fill: none;
+    stroke: var(--highcharts-neutral-color-80);
+}
+
+.highcharts-yaxis .highcharts-axis-line {
+    stroke-width: 0;
+}
+
+.highcharts-axis-title {
+    fill: var(--highcharts-neutral-color-60);
+    font-size: 0.8em;
+}
+
+.highcharts-axis-labels {
+    fill: var(--highcharts-neutral-color-80);
+    cursor: default;
+    font-size: 0.8em;
+}
+
+.highcharts-grid-line {
+    fill: none;
+    stroke: var(--highcharts-neutral-color-10);
+}
+
+.highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 0;
+}
+
+.highcharts-tick {
+    stroke: var(--highcharts-neutral-color-80);
+}
+
+.highcharts-yaxis .highcharts-tick {
+    stroke-width: 0;
+}
+
+.highcharts-minor-grid-line {
+    stroke: var(--highcharts-neutral-color-5);
+}
+
+.highcharts-crosshair-thin {
+    stroke-width: 1px;
+    stroke: var(--highcharts-neutral-color-20);
+}
+
+.highcharts-crosshair-category {
+    stroke: var(--highcharts-highlight-color-20);
+    stroke-opacity: 0.25;
+}
+
+/* Credits */
+.highcharts-credits {
+    cursor: pointer;
+    fill: var(--highcharts-neutral-color-40);
+    font-size: 0.6em;
+    transition: fill 250ms, font-size 250ms;
+}
+
+.highcharts-credits:hover {
+    fill: var(--highcharts-neutral-color-100);
+    font-size: 0.7em;
+}
+
+/* Tooltip */
+.highcharts-tooltip {
+    cursor: default;
+    pointer-events: none;
+    white-space: nowrap;
+    transition: stroke 150ms;
+}
+
+.highcharts-tooltip text {
+    fill: var(--highcharts-neutral-color-80);
+    font-size: 0.8em;
+}
+
+.highcharts-tooltip .highcharts-header {
+    font-size: 0.8em;
+}
+
+.highcharts-tooltip-box {
+    stroke-width: 1px;
+    fill: var(--highcharts-background-color);
+}
+
+.highcharts-tooltip-box {
+    stroke-width: 0;
+    fill: var(--highcharts-background-color);
+}
+
+.highcharts-tooltip-box .highcharts-label-box {
+    fill: var(--highcharts-background-color);
+}
+
+div.highcharts-tooltip {
+    filter: none;
+    font-size: 0.8em;
+}
+
+.highcharts-selection-marker {
+    fill: var(--highcharts-highlight-color-80);
+    fill-opacity: 0.25;
+}
+
+.highcharts-graph {
+    fill: none;
+    stroke-width: 1px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.highcharts-empty-series {
+    stroke-width: 1px;
+    fill: none;
+    stroke: var(--highcharts-neutral-color-20);
+}
+
+.highcharts-state-hover .highcharts-graph {
+    stroke-width: 3;
+}
+
+.highcharts-point-inactive {
+    opacity: 0.2;
+    transition: opacity 50ms; /* quick in */
+}
+
+.highcharts-series-inactive {
+    opacity: 0.2;
+    transition: opacity 50ms; /* quick in */
+}
+
+.highcharts-state-hover path {
+    transition: stroke-width 50ms; /* quick in */
+}
+
+.highcharts-state-normal path {
+    transition: stroke-width 250ms; /* slow out */
+}
+
+/* Legend hover affects points and series */
+g.highcharts-series,
+.highcharts-point,
+.highcharts-markers,
+.highcharts-data-labels {
+    transition: opacity 250ms;
+}
+
+.highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
+.highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
+.highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
+.highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
+    opacity: 0.2;
+}
+
+/* Series options */
+
+/* Default colors */
+.highcharts-color-0 {
+    fill: var(--highcharts-color-0);
+    stroke: var(--highcharts-color-0);
+}
+
+.highcharts-color-1 {
+    fill: var(--highcharts-color-1);
+    stroke: var(--highcharts-color-1);
+}
+
+.highcharts-color-2 {
+    fill: var(--highcharts-color-2);
+    stroke: var(--highcharts-color-2);
+}
+
+.highcharts-color-3 {
+    fill: var(--highcharts-color-3);
+    stroke: var(--highcharts-color-3);
+}
+
+.highcharts-color-4 {
+    fill: var(--highcharts-color-4);
+    stroke: var(--highcharts-color-4);
+}
+
+.highcharts-color-5 {
+    fill: var(--highcharts-color-5);
+    stroke: var(--highcharts-color-5);
+}
+
+.highcharts-color-6 {
+    fill: var(--highcharts-color-6);
+    stroke: var(--highcharts-color-6);
+}
+
+.highcharts-color-7 {
+    fill: var(--highcharts-color-7);
+    stroke: var(--highcharts-color-7);
+}
+
+.highcharts-color-8 {
+    fill: var(--highcharts-color-8);
+    stroke: var(--highcharts-color-8);
+}
+
+.highcharts-color-9 {
+    fill: var(--highcharts-color-9);
+    stroke: var(--highcharts-color-9);
+}
+
+/* Various series-specific */
+.highcharts-area {
+    fill-opacity: 0.75;
+    stroke-width: 0;
+}
+
+.highcharts-markers {
+    stroke-width: 1px;
+    stroke: var(--highcharts-background-color);
+}
+
+.highcharts-a11y-markers-hidden .highcharts-point:not(.highcharts-point-hover, .highcharts-a11y-marker-visible),
+.highcharts-a11y-marker-hidden {
+    opacity: 0;
+}
+
+.highcharts-point {
+    stroke-width: 1px;
+}
+
+.highcharts-dense-data .highcharts-point {
+    stroke-width: 0;
+}
+
+.highcharts-data-label text,
+text.highcharts-data-label {
+    font-size: 0.7em;
+    font-weight: bold;
+}
+
+.highcharts-data-label-box {
+    fill: none;
+    stroke-width: 0;
+}
+
+.highcharts-data-label text,
+text.highcharts-data-label {
+    fill: var(--highcharts-neutral-color-80);
+}
+
+.highcharts-data-label-connector {
+    fill: none;
+}
+
+.highcharts-data-label-hidden {
+    pointer-events: none;
+}
+
+.highcharts-halo {
+    fill-opacity: 0.25;
+    stroke-width: 0;
+}
+
+.highcharts-series-label text {
+    fill: inherit;
+    font-weight: bold;
+}
+
+.highcharts-series:not(.highcharts-pie-series) .highcharts-point-select,
+.highcharts-markers .highcharts-point-select {
+    fill: var(--highcharts-neutral-color-20);
+    stroke: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-column-series rect.highcharts-point {
+    /* rect to prevent stroke on 3D columns */
+    stroke: var(--highcharts-background-color);
+}
+
+.highcharts-column-series .highcharts-point {
+    transition: fill-opacity 250ms;
+}
+
+.highcharts-column-series .highcharts-point-hover {
+    fill-opacity: 0.75;
+    transition: fill-opacity 50ms;
+}
+
+.highcharts-pie-series .highcharts-point {
+    stroke-linejoin: round;
+    stroke: var(--highcharts-background-color);
+}
+
+.highcharts-pie-series .highcharts-point-hover {
+    fill-opacity: 0.75;
+    transition: fill-opacity 50ms;
+}
+
+.highcharts-funnel-series .highcharts-point {
+    stroke-linejoin: round;
+    stroke: var(--highcharts-background-color);
+}
+
+.highcharts-funnel-series .highcharts-point-hover {
+    fill-opacity: 0.75;
+    transition: fill-opacity 50ms;
+}
+
+.highcharts-funnel-series .highcharts-point-select {
+    fill: inherit;
+    stroke: inherit;
+}
+
+.highcharts-pyramid-series .highcharts-point {
+    stroke-linejoin: round;
+    stroke: var(--highcharts-background-color);
+}
+
+.highcharts-pyramid-series .highcharts-point-hover {
+    fill-opacity: 0.75;
+    transition: fill-opacity 50ms;
+}
+
+.highcharts-pyramid-series .highcharts-point-select {
+    fill: inherit;
+    stroke: inherit;
+}
+
+.highcharts-solidgauge-series .highcharts-point {
+    stroke-width: 0;
+}
+
+.highcharts-treemap-series .highcharts-point {
+    stroke-width: 1px;
+    stroke: var(--highcharts-neutral-color-10);
+    transition: stroke 250ms, fill 250ms, fill-opacity 250ms;
+}
+
+.highcharts-treemap-series .highcharts-point-hover {
+    stroke: var(--highcharts-neutral-color-40);
+    transition: stroke 25ms, fill 25ms, fill-opacity 25ms;
+}
+
+.highcharts-treemap-series .highcharts-above-level {
+    display: none;
+}
+
+.highcharts-treemap-series .highcharts-internal-node {
+    fill: none;
+}
+
+.highcharts-treemap-series .highcharts-internal-node-interactive {
+    fill-opacity: 0.15;
+    cursor: pointer;
+}
+
+.highcharts-treemap-series .highcharts-internal-node-interactive:hover {
+    fill-opacity: 0.75;
+}
+
+.highcharts-vector-series .highcharts-point {
+    fill: none;
+    stroke-width: 2px;
+}
+
+.highcharts-windbarb-series .highcharts-point {
+    fill: none;
+    stroke-width: 2px;
+}
+
+.highcharts-lollipop-stem {
+    stroke: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-focus-border {
+    fill: none;
+    stroke-width: 2px;
+}
+
+.highcharts-legend-item-hidden .highcharts-focus-border {
+    fill: none !important;
+}
+
+/* Legend */
+.highcharts-legend-box {
+    fill: none;
+    stroke-width: 0;
+}
+
+.highcharts-legend-item > text {
+    fill: var(--highcharts-neutral-color-80);
+    font-weight: bold;
+    font-size: 0.8em;
+    cursor: pointer;
+    stroke-width: 0;
+}
+
+.highcharts-legend-item:hover text {
+    fill: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-legend-item-hidden * {
+    fill: var(--highcharts-neutral-color-60) !important;
+    stroke: var(--highcharts-neutral-color-60) !important;
+    transition: fill 250ms;
+    text-decoration: line-through;
+}
+
+.highcharts-legend-nav-active {
+    fill: var(--highcharts-highlight-color-100);
+    cursor: pointer;
+}
+
+.highcharts-legend-nav-inactive {
+    fill: var(--highcharts-neutral-color-20);
+}
+
+circle.highcharts-legend-nav-active,
+circle.highcharts-legend-nav-inactive { /* tracker */
+    fill: rgba(192, 192, 192, 0.0001);
+}
+
+.highcharts-legend-title-box {
+    fill: none;
+    stroke-width: 0;
+}
+
+/* Bubble legend */
+.highcharts-bubble-legend-symbol {
+    stroke-width: 2;
+    fill-opacity: 0.5;
+}
+
+.highcharts-bubble-legend-connectors {
+    stroke-width: 1;
+}
+
+.highcharts-bubble-legend-labels {
+    fill: var(--highcharts-neutral-color-80);
+    font-size: 0.7em;
+}
+
+/* Loading */
+.highcharts-loading {
+    position: absolute;
+    background-color: var(--highcharts-background-color);
+    opacity: 0.5;
+    text-align: center;
+    z-index: 10;
+    transition: opacity 250ms;
+}
+
+.highcharts-loading-hidden {
+    height: 0 !important;
+    opacity: 0;
+    overflow: hidden;
+    transition: opacity 250ms, height 250ms step-end;
+}
+
+.highcharts-loading-inner {
+    font-weight: bold;
+    position: relative;
+    top: 45%;
+}
+
+/* Plot bands and polar pane backgrounds */
+.highcharts-plot-band,
+.highcharts-pane {
+    fill: var(--highcharts-neutral-color-100);
+    fill-opacity: 0.05;
+}
+
+.highcharts-plot-line {
+    fill: none;
+    stroke: var(--highcharts-neutral-color-40);
+    stroke-width: 1px;
+}
+
+.highcharts-plot-line-label {
+    font-size: 0.8em;
+}
+
+/* Highcharts More and modules */
+.highcharts-boxplot-box {
+    fill: var(--highcharts-background-color);
+}
+
+.highcharts-boxplot-median {
+    stroke-width: 2px;
+}
+
+.highcharts-bubble-series .highcharts-point {
+    fill-opacity: 0.5;
+}
+
+.highcharts-errorbar-series .highcharts-point {
+    stroke: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-gauge-series .highcharts-data-label-box {
+    stroke: var(--highcharts-neutral-color-20);
+    stroke-width: 1px;
+}
+
+.highcharts-gauge-series .highcharts-dial {
+    fill: var(--highcharts-neutral-color-100);
+    stroke-width: 0;
+}
+
+.highcharts-polygon-series .highcharts-graph {
+    fill: inherit;
+    stroke-width: 0;
+}
+
+.highcharts-waterfall-series .highcharts-graph {
+    stroke: var(--highcharts-neutral-color-80);
+    stroke-dasharray: 1, 3;
+}
+
+.highcharts-sankey-series .highcharts-point {
+    stroke-width: 0;
+}
+
+.highcharts-sankey-series .highcharts-link {
+    transition: fill 250ms, fill-opacity 250ms;
+    fill-opacity: 0.5;
+}
+
+.highcharts-sankey-series .highcharts-point-hover.highcharts-link {
+    transition: fill 50ms, fill-opacity 50ms;
+    fill-opacity: 1;
+}
+
+.highcharts-venn-series .highcharts-point {
+    fill-opacity: 0.75;
+    stroke: var(--highcharts-neutral-color-20);
+    transition: stroke 250ms, fill-opacity 250ms;
+}
+
+.highcharts-venn-series .highcharts-point-hover {
+    fill-opacity: 1;
+    stroke: var(--highcharts-neutral-color-20);
+}
+
+.highcharts-timeline-series .highcharts-graph {
+    stroke: var(--highcharts-neutral-color-20);
+}
+
+/* Highstock */
+.highcharts-navigator-mask-outside {
+    fill-opacity: 0;
+}
+
+.highcharts-navigator-mask-inside {
+    fill: var(--highcharts-highlight-color-60); /* navigator.maskFill option */
+    fill-opacity: 0.25;
+    cursor: ew-resize;
+}
+
+.highcharts-navigator-outline {
+    stroke: var(--highcharts-neutral-color-40);
+    fill: none;
+}
+
+.highcharts-navigator-handle {
+    stroke: var(--highcharts-neutral-color-40);
+    fill: var(--highcharts-neutral-color-5);
+    cursor: ew-resize;
+}
+
+.highcharts-navigator-series {
+    fill: var(--highcharts-highlight-color-80);
+    stroke: var(--highcharts-highlight-color-80);
+}
+
+.highcharts-navigator-series .highcharts-graph {
+    stroke-width: 1px;
+}
+
+.highcharts-navigator-series .highcharts-area {
+    fill-opacity: 0.05;
+}
+
+.highcharts-navigator-xaxis .highcharts-axis-line {
+    stroke-width: 0;
+}
+
+.highcharts-navigator-xaxis .highcharts-grid-line {
+    stroke-width: 1px;
+    stroke: var(--highcharts-neutral-color-10);
+}
+
+.highcharts-navigator-xaxis.highcharts-axis-labels {
+    fill: var(--highcharts-neutral-color-100);
+    font-size: 0.7em;
+    opacity: 0.6;
+}
+
+.highcharts-navigator-yaxis .highcharts-grid-line {
+    stroke-width: 0;
+}
+
+.highcharts-scrollbar-thumb {
+    fill: var(--highcharts-neutral-color-20);
+    stroke: var(--highcharts-neutral-color-20);
+    stroke-width: 0;
+}
+
+.highcharts-scrollbar-button {
+    fill: var(--highcharts-neutral-color-10);
+    stroke: var(--highcharts-neutral-color-20);
+    stroke-width: 1px;
+}
+
+.highcharts-scrollbar-arrow {
+    fill: var(--highcharts-neutral-color-60);
+}
+
+.highcharts-scrollbar-rifles {
+    stroke: none;
+    stroke-width: 1px;
+}
+
+.highcharts-scrollbar-track {
+    fill: rgba(255, 255, 255, 0.001);
+    stroke: var(--highcharts-neutral-color-20);
+    stroke-width: 1px;
+}
+
+.highcharts-button {
+    fill: var(--highcharts-neutral-color-3);
+    stroke: var(--highcharts-neutral-color-20);
+    cursor: default;
+    stroke-width: 1px;
+    transition: fill 250ms;
+}
+
+.highcharts-button text {
+    fill: var(--highcharts-neutral-color-80);
+    font-size: 0.8em;
+}
+
+.highcharts-button-hover {
+    transition: fill 0ms;
+    fill: var(--highcharts-neutral-color-10);
+    stroke: var(--highcharts-neutral-color-20);
+}
+
+.highcharts-button-hover text {
+    fill: var(--highcharts-neutral-color-80);
+}
+
+.highcharts-button-pressed {
+    font-weight: bold;
+    fill: var(--highcharts-highlight-color-10);
+    stroke: var(--highcharts-neutral-color-20);
+}
+
+.highcharts-button-pressed text {
+    fill: var(--highcharts-neutral-color-80);
+    font-weight: bold;
+}
+
+.highcharts-button-disabled text {
+    fill: var(--highcharts-neutral-color-80);
+}
+
+.highcharts-range-selector-buttons .highcharts-button {
+    stroke-width: 0;
+}
+
+.highcharts-range-label rect {
+    fill: none;
+}
+
+.highcharts-range-label text {
+    fill: var(--highcharts-neutral-color-60);
+}
+
+.highcharts-range-input rect {
+    fill: none;
+}
+
+.highcharts-range-input text {
+    fill: var(--highcharts-neutral-color-80);
+    font-size: 0.8em;
+}
+
+.highcharts-range-input {
+    stroke-width: 1px;
+    stroke: var(--highcharts-neutral-color-20);
+}
+
+input.highcharts-range-selector {
+    position: absolute;
+    border: 0;
+    width: 1px; /* Chrome needs a pixel to see it */
+    height: 1px;
+    padding: 0;
+    text-align: center;
+    left: -9em; /* #4798 */
+}
+
+.highcharts-crosshair-label text {
+    fill: var(--highcharts-background-color);
+    font-size: 1.7em;
+}
+
+.highcharts-crosshair-label .highcharts-label-box {
+    fill: inherit;
+}
+
+.highcharts-candlestick-series .highcharts-point {
+    stroke: var(--highcharts-neutral-color-100);
+    stroke-width: 1px;
+}
+
+.highcharts-candlestick-series .highcharts-point-up {
+    fill: var(--highcharts-background-color);
+}
+
+.highcharts-hollowcandlestick-series .highcharts-point-down {
+    fill: var(--highcharts-negative-color);
+    stroke: var(--highcharts-negative-color);
+}
+
+.highcharts-hollowcandlestick-series .highcharts-point-down-bearish-up {
+    fill: var(--highcharts-positive-color);
+    stroke: var(--highcharts-positive-color);
+}
+
+.highcharts-hollowcandlestick-series .highcharts-point-up {
+    fill: transparent;
+    stroke: var(--highcharts-positive-color);
+}
+
+.highcharts-ohlc-series .highcharts-point-hover {
+    stroke-width: 3px;
+}
+
+.highcharts-flags-series .highcharts-point .highcharts-label-box {
+    stroke: var(--highcharts-neutral-color-40);
+    fill: var(--highcharts-background-color);
+    transition: fill 250ms;
+}
+
+.highcharts-flags-series .highcharts-point-hover .highcharts-label-box {
+    stroke: var(--highcharts-neutral-color-100);
+    fill: var(--highcharts-highlight-color-20);
+}
+
+.highcharts-flags-series .highcharts-point text {
+    fill: var(--highcharts-neutral-color-100);
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+/* Highcharts Maps */
+.highcharts-map-series .highcharts-point {
+    transition: fill 500ms, fill-opacity 500ms, stroke-width 250ms;
+    stroke: var(--highcharts-neutral-color-20);
+    stroke-width: inherit;
+}
+
+.highcharts-map-series .highcharts-point-hover {
+    transition: fill 0ms, fill-opacity 0ms;
+    fill-opacity: 0.5;
+}
+
+.highcharts-mapline-series .highcharts-point {
+    fill: none;
+}
+
+.highcharts-heatmap-series .highcharts-point {
+    stroke-width: 0;
+}
+
+.highcharts-map-navigation {
+    font-size: 1.3em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.highcharts-map-navigation.highcharts-button {
+    fill: var(--highcharts-background-color);
+    stroke: var(--highcharts-neutral-color-10);
+}
+
+.highcharts-map-navigation.highcharts-button:hover {
+    fill: var(--highcharts-neutral-color-10);
+}
+
+.highcharts-map-navigation.highcharts-button .highcharts-button-symbol {
+    stroke-width: 2px;
+}
+
+.highcharts-mapview-inset-border {
+    stroke: var(--highcharts-neutral-color-20);
+    stroke-width: 1px;
+    fill: none;
+}
+
+.highcharts-coloraxis {
+    stroke-width: 0;
+}
+
+.highcharts-coloraxis-marker {
+    fill: var(--highcharts-neutral-color-40);
+}
+
+.highcharts-null-point {
+    fill: var(--highcharts-neutral-color-3);
+}
+
+/* 3d charts */
+.highcharts-3d-frame {
+    fill: transparent;
+}
+
+/* Exporting module */
+.highcharts-contextbutton {
+    /* Fill is needed to capture hover */
+    fill: var(--highcharts-background-color);
+    stroke: none;
+    stroke-linecap: round;
+}
+
+.highcharts-contextbutton:hover {
+    fill: var(--highcharts-neutral-color-10);
+    stroke: var(--highcharts-neutral-color-10);
+}
+
+.highcharts-button-symbol {
+    stroke: var(--highcharts-neutral-color-60);
+    stroke-width: 3px;
+}
+
+.highcharts-menu {
+    border: none;
+    background: var(--highcharts-background-color);
+    border-radius: 3px;
+    padding: 0.5em;
+    box-shadow: 3px 3px 10px #888888;
+}
+
+.highcharts-menu-item {
+    background: none;
+    border-radius: 3px;
+    color: var(--highcharts-neutral-color-80);
+    cursor: pointer;
+    font-size: 0.8em;
+    list-style-type: none;
+    padding: 0.5em;
+    transition: background 250ms, color 250ms;
+}
+
+.highcharts-menu-item:hover {
+    background: var(--highcharts-neutral-color-5);
+}
+
+/* Breadcrumbs */
+.highcharts-breadcrumbs-button {
+    fill: none;
+    stroke-width: 0;
+    cursor: pointer;
+}
+
+.highcharts-breadcrumbs-separator {
+    fill: var(--highcharts-neutral-color-60);
+}
+
+/* Drilldown module */
+.highcharts-drilldown-point {
+    cursor: pointer;
+}
+
+.highcharts-drilldown-data-label text,
+text.highcharts-drilldown-data-label,
+.highcharts-drilldown-axis-label {
+    cursor: pointer;
+    fill: var(--highcharts-highlight-color-100);
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* No-data module */
+.highcharts-no-data text {
+    font-weight: bold;
+    font-size: 0.8em;
+    fill: var(--highcharts-neutral-color-60);
+}
+
+/* Drag-panes module */
+.highcharts-axis-resizer {
+    cursor: ns-resize;
+    stroke: var(--highcharts-neutral-color-100);
+    stroke-width: 2px;
+}
+
+/* Bullet type series */
+.highcharts-bullet-target {
+    stroke-width: 0;
+}
+
+/* Lineargauge type series */
+.highcharts-lineargauge-target {
+    stroke-width: 1px;
+    stroke: var(--highcharts-neutral-color-80);
+}
+
+.highcharts-lineargauge-target-line {
+    stroke-width: 1px;
+    stroke: var(--highcharts-neutral-color-80);
+}
+
+/* Annotations module */
+.highcharts-annotation-label-box {
+    stroke-width: 1px;
+    stroke: var(--highcharts-neutral-color-100);
+    fill: var(--highcharts-neutral-color-100);
+    fill-opacity: 0.75;
+}
+
+.highcharts-annotation-label text {
+    fill: var(--highcharts-neutral-color-10);
+    font-size: 0.8em;
+}
+
+/* A11y module */
+.highcharts-a11y-proxy-button {
+    border-width: 0;
+    background-color: transparent;
+    cursor: pointer;
+    outline: none;
+    opacity: 0.001;
+    z-index: 999;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    display: block;
+    position: absolute;
+}
+
+.highcharts-a11y-proxy-group li {
+    list-style: none;
+}
+
+.highcharts-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip: rect(1px, 1px, 1px, 1px);
+    margin-top: -3px;
+    opacity: 0.01;
+}
+
+.highcharts-a11y-invisible {
+    visibility: hidden;
+}
+
+.highcharts-a11y-proxy-container,
+.highcharts-a11y-proxy-container-before,
+.highcharts-a11y-proxy-container-after {
+    position: absolute;
+    white-space: nowrap;
+}
+
+g.highcharts-series,
+.highcharts-markers,
+.highcharts-point {
+    outline: none;
+}
+
+/* Gantt */
+.highcharts-treegrid-node-collapsed,
+.highcharts-treegrid-node-expanded {
+    cursor: pointer;
+}
+
+.highcharts-point-connecting-path {
+    fill: none;
+}
+
+.highcharts-grid-axis .highcharts-tick {
+    stroke-width: 1px;
+}
+
+.highcharts-grid-axis .highcharts-axis-line {
+    stroke-width: 1px;
+}

@@ -1,7 +1,4 @@
 Highcharts.stockChart('container', {
-    mapNavigation: {
-        enabled: true
-    },
     stockTools: {
         gui: {
             enabled: true,

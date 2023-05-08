@@ -59,7 +59,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         },
 
         subtitle: {
-            text: 'Built chart in ...', // dummy text to reserve space for dynamic subtitle
+            text: 'Built chart in ...', // placeholder text to reserve space for dynamic subtitle
             align: 'left'
         },
 

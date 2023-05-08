@@ -1,5 +1,5 @@
 QUnit.test(
-    "JS error when stack ID's are strings in Highcharts 3D.(#4532)",
+    'JS error when stack ID\'s are strings in Highcharts 3D.(#4532)',
     function (assert) {
         var chart = $('#container')
             .highcharts({

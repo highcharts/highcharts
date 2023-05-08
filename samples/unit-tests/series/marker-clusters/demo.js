@@ -449,7 +449,7 @@ QUnit.test('General marker-clusters', function (assert) {
 
                     // Check points position before animation.
                     Highcharts.wrap(
-                        Highcharts.seriesTypes.scatter.prototype,
+                        Highcharts.Series.types.scatter.prototype,
                         'animateClusterPoint',
                         function (proceed) {
                             var p = arguments[1].point;

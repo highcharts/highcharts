@@ -268,6 +268,8 @@ class MapBubbleSeries extends BubbleSeries {
 
     public points: Array<MapBubblePoint> = void 0 as any;
 
+    public clearBounds = mapProto.clearBounds;
+
     public searchPoint(
         e: PointerEvent,
         compareX?: boolean
@@ -282,6 +284,26 @@ class MapBubbleSeries extends BubbleSeries {
         mapPointProto.translate.call(this);
         this.getRadii();
         this.translateBubble();
+    }
+
+    updateParallelArrays(
+        point: Point,
+        i: (number|string),
+        iArgs?: Array<any>
+    ): void {
+        super.updateParallelArrays.call(
+            this,
+            point,
+            i,
+            iArgs
+        );
+
+        let processedXData = this.processedXData,
+            xData = this.xData;
+
+        if (processedXData && xData) {
+            processedXData.length = xData.length;
+        }
     }
 }
 
@@ -420,6 +442,8 @@ export default MapBubbleSeries;
 
 /**
  * @excluding enabled, enabledThreshold, height, radius, width
+ * @sample {highmaps} maps/plotoptions/mapbubble-symbol
+ *         Map bubble with mapmarker symbol
  * @apioption series.mapbubble.marker
  */
 

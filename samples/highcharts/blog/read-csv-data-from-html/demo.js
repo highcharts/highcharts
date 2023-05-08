@@ -35,7 +35,7 @@ Highcharts.chart('container', {
             },
             dataLabels: {
                 enabled: true,
-                format: "{y} mcg"
+                format: '{y} mcg'
             }
         }
     }

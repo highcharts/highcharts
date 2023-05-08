@@ -89,10 +89,12 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             data: points
         }],
         subtitle: {
-            text: 'Click points to drill down. Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">WHO</a>.'
+            text: 'Click points to drill down. Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">WHO</a>.',
+            align: 'left'
         },
         title: {
-            text: 'Global Mortality Rate 2012, per 100 000 population'
+            text: 'Global Mortality Rate 2012, per 100 000 population',
+            align: 'left'
         }
     });
 

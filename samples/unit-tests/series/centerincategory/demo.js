@@ -61,7 +61,7 @@ QUnit.test('series.centerInCategory', function (assert) {
     assert.strictEqual(
         chart.series[3].points[0].shapeArgs.width,
         13,
-        "(centerInCategory: false) - point's width"
+        '(centerInCategory: false) - point\'s width'
     );
 
     chart.update({
@@ -75,7 +75,7 @@ QUnit.test('series.centerInCategory', function (assert) {
     assert.strictEqual(
         chart.series[3].points[0].shapeArgs.width,
         13,
-        "(centerInCategory: true) - point's width should be unchanged"
+        '(centerInCategory: true) - point\'s width should be unchanged'
     );
 
     assert.ok(
