@@ -257,6 +257,8 @@ class VBPIndicator extends SMAIndicator {
     ): VBPIndicator {
         const indicator = this;
 
+        // series.update() sends data that is not necessary
+        // as everything is calculated in getValues(), #17007
         delete options.data;
 
         super.init.apply(indicator, arguments);
