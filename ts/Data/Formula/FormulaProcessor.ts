@@ -227,20 +227,34 @@ function basicOperation(
     x = asNumber(x);
     y = asNumber(y);
 
+    let result: number;
+
     switch (operator) {
         case '+':
-            return x + y;
+            result = x + y;
+            break;
         case '-':
-            return x - y;
+            result = x - y;
+            break;
         case '*':
-            return x * y;
+            result = x * y;
+            break;
         case '/':
-            return x / y;
+            result = x / y;
+            break;
         case '^':
-            return Math.pow(x, y);
+            result = Math.pow(x, y);
+            break;
         default:
             return NaN;
     }
+
+    // limit decimal to 9 digits
+    return (
+        result % 1 ?
+            Math.round(result * 1000000000) / 1000000000 :
+            result
+    );
 }
 
 
@@ -415,13 +429,13 @@ function getReferenceValue(
  * @private
  * @function Highcharts.processFormula
  *
- * @param {Formula.Formula} formula
+ * @param {Highcharts.Formula} formula
  * Formula array to process.
  *
  * @param {Highcharts.DataTable} [table]
  * Table to use for references and ranges.
  *
- * @return {Formula.Value}
+ * @return {Highcharts.FormulaValue}
  * Result value of the process. `NaN` indicates an error.
  */
 function processFormula(
@@ -552,6 +566,61 @@ function registerProcessorFunction(
 }
 
 
+/**
+ * Translates relative references and ranges in-place.
+ *
+ * @param {Highcharts.Formula} formula
+ * Formula to translate references and ranges in.
+ *
+ * @param {number} [columnDelta=0]
+ * Column delta to translate to. Negative translate back.
+ *
+ * @param {number} [rowDelta=0]
+ * Row delta to translate to. Negative numbers translate back.
+ *
+ * @return {Highcharts.Formula}
+ * Formula with translated reference and ranges. This formula is equal to the
+ * first argument.
+ */
+function translateReferences<T extends Arguments|Formula>(
+    formula: T,
+    columnDelta: number = 0,
+    rowDelta: number = 0
+): T {
+
+    for (let i = 0, iEnd = formula.length, item: Item; i < iEnd; ++i) {
+        item = formula[i];
+        if (item instanceof Array) {
+            translateReferences(item);
+        } else if (isFunction(item)) {
+            translateReferences(item.args);
+        } else if (isRange(item)) {
+            if (item.beginColumnRelative) {
+                item.beginColumn += columnDelta;
+            }
+            if (item.beginRowRelative) {
+                item.beginRow += rowDelta;
+            }
+            if (item.endColumnRelative) {
+                item.endColumn += columnDelta;
+            }
+            if (item.endRowRelative) {
+                item.endRow += rowDelta;
+            }
+        } else if (isReference(item)) {
+            if (item.columnRelative) {
+                item.column += columnDelta;
+            }
+            if (item.rowRelative) {
+                item.row += rowDelta;
+            }
+        }
+    }
+
+    return formula;
+}
+
+
 /* *
  *
  *  Default Export
@@ -567,7 +636,8 @@ const FormulaProcessor = {
     getReferenceValue,
     processFormula,
     processorFunctions,
-    registerProcessorFunction
+    registerProcessorFunction,
+    translateReferences
 };
 
 export default FormulaProcessor;
