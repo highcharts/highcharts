@@ -6,16 +6,6 @@
  *
  * */
 
-.highcharts-dashboards-wrapper {
-    --button-filter: none;
-    --color-background: none;
-}
-
-.highcharts-dashboards-wrapper.highcharts-dark {
-    --button-filter: invert(1);
-    --color-background: #46475d;
-}
-
 #city-chart {
     --color-axis: #f7f7f7;
     --color-axis-labels: #e7e7ec;
@@ -34,14 +24,6 @@
     --color-pane: #eee;
     --color-pane-line: #ccc;
     --color-text: #2f2b38;
-}
-
-.highcharts-dashboards-wrapper.highcharts-dark #kpi-layout {
-    --color-axis-labels: #838394;
-    --color-background: #0d0d0d;
-    --color-pane: #20202c;
-    --color-pane-line: #838394;
-    --color-text: #dadae2;
 }
 
 #selection-grid {
@@ -125,11 +107,6 @@
 @media (prefers-color-scheme: dark) {
     /* dark mode */
 
-    .highcharts-dashboards-wrapper {
-        --button-filter: invert(1);
-        --color-background: #46475d;
-    }
-
     #kpi-layout {
         --color-axis-labels: #838394;
         --color-background: #0d0d0d;
@@ -168,20 +145,6 @@
         --color-navigation-line: #646478;
         --color-navigation-text: #838393;
     }
-}
-
-/* *
- *
- *  Dashboard
- *
- * */
-
-div.highcharts-dashboards-wrapper {
-    background-color: var(--color-background);
-}
-
-div.highcharts-dashboards-wrapper .highcharts-dashboards-edit-context-menu-btn {
-    filter: var(--button-filter);
 }
 
 /* *
@@ -362,16 +325,8 @@ div.highcharts-dashboards-wrapper .highcharts-dashboards-edit-context-menu-btn {
 }
 
 #selection-grid .hc-dg-column-header {
-    background-color: var(--color-header-background);
-    border-color: var(--color-header-border);
-    color: var(--color-header-text);
     padding: 0 12px;
     font-size: 12px;
-}
-
-#selection-grid .hc-dg-outer-container {
-    background-color: var(--color-background);
-    color: var(--color-row-text);
 }
 
 #selection-grid .hc-dg-cell {
@@ -581,10 +536,6 @@ div.highcharts-dashboards-wrapper .highcharts-dashboards-edit-context-menu-btn {
  *  Edit mode
  *
  * */
-
-.highcharts-dashboards-edit-enabled.highcharts-dashboards-wrapper {
-    background-color: rgba(36, 29, 58, 0.2);
-}
 
 /* stylelint-disable-next-line max-line-length */
 .highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-menu-item.highcharts-dashboards-edit-toolbar-item {
