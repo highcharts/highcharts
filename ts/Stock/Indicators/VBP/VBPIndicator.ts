@@ -252,9 +252,12 @@ class VBPIndicator extends SMAIndicator {
      * */
 
     public init(
-        chart: Chart
+        chart: Chart,
+        options: VBPOptions
     ): VBPIndicator {
         const indicator = this;
+
+        delete options.data;
 
         super.init.apply(indicator, arguments);
 
@@ -300,13 +303,6 @@ class VBPIndicator extends SMAIndicator {
                     indicator.zoneLinesSVG = indicator.zoneLinesSVG.destroy();
                 }
             };
-
-        // Fire recalculateValues() after the indicator is updated, #17007
-        indicator.dataEventsToUnbind.push(
-            addEvent(indicator, 'afterUpdate', function (): void {
-                this.recalculateValues();
-            })
-        );
 
         // If base series is deleted, indicator series data is filled with
         // an empty array
