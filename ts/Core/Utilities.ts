@@ -1243,6 +1243,10 @@ function getNestedProperty(path: string, parent: unknown): unknown {
             return; // undefined
         }
 
+        if (pathElement === 'this') {
+            break;
+        }
+
         const child = (parent as Record<string, unknown>)[
             pathElement
         ] as Record<string, unknown>;

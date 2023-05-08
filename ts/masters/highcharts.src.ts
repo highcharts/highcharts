@@ -72,6 +72,7 @@ G.Series = Series;
 G.StackItem = StackItem;
 G.SVGElement = SVGElement;
 G.SVGRenderer = SVGRenderer;
+G.Templating = FormatUtilities;
 G.Tick = Tick;
 G.Time = Time;
 G.Tooltip = Tooltip;
