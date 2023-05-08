@@ -28,32 +28,13 @@
 
 #selection-grid {
     --color-background: #fff;
-    --color-border: #e0e0e0;
-    --color-header-background: #dadae2;
-    --color-header-border: #f7f7f7;
-    --color-header-text: #20202c;
     --color-hover-background: #5352be;
     --color-hover-border: #e7e7ec;
     --color-hover-text: #e7e7ec;
-    --color-input-background: #fff;
-    --color-input-border: #5352be;
-    --color-input-text: #20202c;
-    --color-row-border: #e7e7ec;
-    --color-row-text: #20202c;
-    --color-row1-background: #fff;
-    --color-row2-background: #f7f7f7;
 }
 
 .highcharts-dashboards-wrapper.highcharts-dark #selection-grid {
     --color-background: #20202c;
-    --color-border: #4a4a53;
-    --color-header-background: #0d0d0d;
-    --color-header-border: #20202c;
-    --color-header-text: #dadae2;
-    --color-row-border: #838394;
-    --color-row-text: #e7e7ec;
-    --color-row1-background: #0d0d0d;
-    --color-row2-background: #20202c;
 }
 
 #time-range-selector {
@@ -117,14 +98,6 @@
 
     #selection-grid {
         --color-background: #20202c;
-        --color-border: #4a4a53;
-        --color-header-background: #0d0d0d;
-        --color-header-border: #20202c;
-        --color-header-text: #dadae2;
-        --color-row-border: #838394;
-        --color-row-text: #e7e7ec;
-        --color-row1-background: #0d0d0d;
-        --color-row2-background: #20202c;
     }
 
     #time-range-selector {
@@ -329,29 +302,10 @@
     font-size: 12px;
 }
 
-#selection-grid .hc-dg-cell {
-    border-color: inherit;
-}
-
-#selection-grid .hc-dg-row {
-    background-color: var(--color-row1-background);
-    border-color: var(--color-row-border);
-}
-
-#selection-grid .hc-dg-row:nth-child(even) {
-    background-color: var(--color-row2-background);
-}
-
 #selection-grid .hc-dg-row.hovered {
     background-color: var(--color-hover-background);
     border-color: var(--color-hover-border);
     color: var(--color-hover-text);
-}
-
-#selection-grid .hc-dg-cell-input {
-    background: var(--color-input-background);
-    border: 2px solid var(--color-input-border);
-    color: var(--color-input-text);
 }
 
 /* *

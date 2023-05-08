@@ -144,6 +144,10 @@
     width: 100%;
 }
 
+.hc-dg-row:nth-child(even) {
+    background-color: var(--highcharts-neutral-color-10);
+}
+
 .hc-dg-row.hovered {
     background-color: var(--highcharts-highlight-color-20);
 }
