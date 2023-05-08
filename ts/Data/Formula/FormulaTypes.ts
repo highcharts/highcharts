@@ -61,11 +61,13 @@ export type Operator = ('+'|'-'|'*'|'/'|'^'|'='|'<'|'<='|'>'|'>=');
  */
 export interface Range {
     beginColumn: number;
+    beginColumnRelative?: true;
     beginRow: number;
-    columnsRelative?: true;
+    beginRowRelative?: true;
     endColumn: number;
+    endColumnRelative?: true;
     endRow: number;
-    rowsRelative?: true;
+    endRowRelative?: true;
     type: 'range';
 }
 

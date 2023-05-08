@@ -110,7 +110,8 @@ class MathModifier extends DataModifier {
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
 
-        const formulaColumns = (
+        const alternativeSeparators = modifier.options.alternativeSeparators,
+            formulaColumns = (
                 modifier.options.formulaColumns ||
                 table.getColumnNames()
             ),
@@ -131,6 +132,32 @@ class MathModifier extends DataModifier {
                     modifier.processColumn(table, columnName)
                 );
             }
+        }
+
+        const columnFormulas = (modifier.options.columnFormulas || []);
+
+        for (
+            let i = 0,
+                iEnd = columnFormulas.length,
+                columnFormula: MathModifier.ColumnFormula,
+                formula: Formula;
+            i < iEnd;
+            ++i
+        ) {
+            columnFormula = columnFormulas[i];
+            formula = FormulaParser.parseFormula(
+                columnFormula.formula,
+                alternativeSeparators
+            );
+            modified.setColumn(
+                columnFormula.column,
+                modifier.processColumnFormula(
+                    formula,
+                    table,
+                    columnFormula.rowStart,
+                    columnFormula.rowEnd
+                )
+            );
         }
 
         modifier.emit({ type: 'afterModify', detail: eventDetail, table });
@@ -215,33 +242,35 @@ class MathModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Table to extract column from and use as reference.
      *
-     * @param {string} columnNameOrAlias
-     * Name or alias of column to process.
-     *
-     * @param {number} rowIndex
+     * @param {number} rowStart
      * Row index to start the replacing process from.
+     *
+     * @param {number} rowEnd
+     * Row index to end the replacing process.
      *
      * @return {Highcharts.DataTableColumn}
      * Returns the processed table column.
      */
-    protected processFormula(
+    protected processColumnFormula(
         formula: Formula,
         table: DataTable,
-        columnNameOrAlias: string,
-        rowIndex: number = 0
+        rowStart: number = 0,
+        rowEnd: number = table.getRowCount()
     ): DataTable.Column {
-        const column = (table.getColumn(columnNameOrAlias, true) || [])
-                .slice(rowIndex > 0 ? rowIndex : 0),
+        rowStart = rowStart >= 0 ? rowStart : 0;
+        rowEnd = rowEnd >= 0 ? rowEnd : table.getRowCount() + rowEnd;
+
+        const column = [],
             modified = table.modified;
 
-        rowIndex = rowIndex > 0 ? rowIndex : 0;
 
-        for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = (rowEnd - rowStart); i < iEnd; ++i) {
             try {
-                // @todo pass some form of row index for references/ranges
                 column[i] = FormulaProcessor.processFormula(formula, modified);
             } catch {
                 column[i] = NaN;
+            } finally {
+                formula = FormulaProcessor.translateReferences(formula, 0, 1);
             }
         }
 
@@ -286,9 +315,14 @@ namespace MathModifier {
         formula: string;
 
         /**
+         * Row index to end the replacing process.
+         */
+        rowEnd?: number;
+
+        /**
          * Row index to start the replacing process from.
          */
-        rowIndex?: number;
+        rowStart?: number;
 
     }
 

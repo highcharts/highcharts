@@ -45,3 +45,34 @@ QUnit.test('MathModifier back references', function (assert) {
         'Fifth formula should have expected value.'
     );
 });
+
+QUnit.test('MathModifier column formula', function (assert) {
+    const table = new DataTable({
+        columns: {
+            Kelvin: [273.15, 283.15, 293.15, 303.15, 313.15]
+        }
+    });
+
+    table.setModifier(new MathModifier({
+        columnFormulas: [{
+            column: 'Celsius',
+            formula: 'A1 - 273.15'
+        }, {
+            column: 'Fahrenheit',
+            formula: '= A1 * 1.8 - 459.67'
+        }]
+    }));
+
+    assert.strictEqual(
+        table.modified.getCell('Celsius', 1),
+        10,
+        'Celsius should be calculated.'
+    );
+
+    assert.deepEqual(
+        table.modified.getColumn('Fahrenheit'),
+        [32, 50, 68, 86, 104],
+        'Fahrenheit should be calculated without endless decimals.'
+    );
+
+});

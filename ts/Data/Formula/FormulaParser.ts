@@ -97,7 +97,7 @@ const operatorRegExp = /^(?:[+\-*\/^<=>]|<=|=>)/;
  * - Group 4: End row
  * @private
  */
-const rangeA1RegExp = /^\$?([A-Z]+)\$?(\d+)\:\$?([A-Z]+)\$?(\d+)/;
+const rangeA1RegExp = /^(\$?[A-Z]+)(\$?\d+)\:(\$?[A-Z]+)(\$?\d+)/;
 
 
 /**
@@ -116,7 +116,7 @@ const rangeR1C1RegExp =
  * - Group 2: Row
  * @private
  */
-const referenceA1RegExp = /^\$?([A-Z]+)\$?(\d+)(?![\:C])/;
+const referenceA1RegExp = /^(\$?[A-Z]+)(\$?\d+)(?![\:C])/;
 
 
 /**
@@ -259,56 +259,108 @@ function parseArgument(
     text: string,
     alternativeSeparators: boolean
 ): (Formula|Function|Range|Reference|Value) {
+    let match: (RegExpMatchArray|null);
 
     // Check for a R1C1:R1C1 range notation
-    let match = text.match(rangeR1C1RegExp);
+    match = text.match(rangeR1C1RegExp);
     if (match) {
-        const columnsRelative = (match[2] === '' || match[2][0] === '[');
-        const rowsRelative = (match[1] === '' || match[1][0] === '[');
+        const beginColumnRelative = (match[2] === '' || match[2][0] === '[');
+        const beginRowRelative = (match[1] === '' || match[1][0] === '[');
+        const endColumnRelative = (match[4] === '' || match[4][0] === '[');
+        const endRowRelative = (match[3] === '' || match[3][0] === '[');
         const range: Range = {
             type: 'range',
             beginColumn: (
-                columnsRelative ?
+                beginColumnRelative ?
                     parseInt(match[2].substring(1, -1) || '0', 10) :
-                    parseInt(match[2], 10)
+                    parseInt(match[2], 10) - 1
             ),
             beginRow: (
-                rowsRelative ?
+                beginRowRelative ?
                     parseInt(match[1].substring(1, -1) || '0', 10) :
-                    parseInt(match[1], 10)
+                    parseInt(match[1], 10) - 1
             ),
             endColumn: (
-                columnsRelative ?
+                endColumnRelative ?
                     parseInt(match[4].substring(1, -1) || '0', 10) :
-                    parseInt(match[4], 10)
+                    parseInt(match[4], 10) - 1
             ),
             endRow: (
-                rowsRelative ?
+                endRowRelative ?
                     parseInt(match[3].substring(1, -1) || '0', 10) :
-                    parseInt(match[3], 10)
+                    parseInt(match[3], 10) - 1
             )
         };
 
-        if (columnsRelative) {
-            range.columnsRelative = true;
+        if (beginColumnRelative) {
+            range.beginColumnRelative = true;
         }
 
-        if (rowsRelative) {
-            range.rowsRelative = true;
+        if (beginRowRelative) {
+            range.beginRowRelative = true;
         }
 
+        if (endColumnRelative) {
+            range.endColumnRelative = true;
+        }
+
+        if (endRowRelative) {
+            range.endRowRelative = true;
+        }
+
+        return range;
     }
 
     // Check for a A1:A1 range notation
     match = text.match(rangeA1RegExp);
     if (match) {
-        return {
+        const beginColumnRelative = match[1][0] !== '$';
+        const beginRowRelative = match[2][0] !== '$';
+        const endColumnRelative = match[3][0] !== '$';
+        const endRowRelative = match[4][0] !== '$';
+        const range: Range = {
             type: 'range',
-            beginColumn: (parseReferenceColumn(match[1]) - 1),
-            beginRow: (parseInt(match[2], 10) - 1),
-            endColumn: (parseReferenceColumn(match[3]) - 1),
-            endRow: (parseInt(match[4], 10) - 1)
+            beginColumn: parseReferenceColumn(
+                beginColumnRelative ?
+                    match[1] :
+                    match[1].substring(1)
+            ) - 1,
+            beginRow: parseInt(
+                beginRowRelative ?
+                    match[2] :
+                    match[2].substring(1),
+                10
+            ) - 1,
+            endColumn: parseReferenceColumn(
+                endColumnRelative ?
+                    match[3] :
+                    match[3].substring(1)
+            ) - 1,
+            endRow: parseInt(
+                endRowRelative ?
+                    match[4] :
+                    match[4].substring(1),
+                10
+            ) - 1
         };
+
+        if (beginColumnRelative) {
+            range.beginColumnRelative = true;
+        }
+
+        if (beginRowRelative) {
+            range.beginRowRelative = true;
+        }
+
+        if (endColumnRelative) {
+            range.endColumnRelative = true;
+        }
+
+        if (endRowRelative) {
+            range.endRowRelative = true;
+        }
+
+        return range;
     }
 
     // Fallback to formula processing for other pattern types
@@ -422,7 +474,7 @@ function parseFormula(
         formula: Formula = [];
 
     let match: (RegExpMatchArray|null),
-        next = text.trim();
+        next = (text[0] === '=' ? text.substring(1) : text).trim();
 
     while (next) {
 
@@ -472,6 +524,8 @@ function parseFormula(
                 reference.rowRelative = true;
             }
 
+            formula.push(reference);
+
             next = next.substring(match[0].length).trim();
 
             continue;
@@ -480,11 +534,33 @@ function parseFormula(
         // Check for an A1 reference notation
         match = next.match(referenceA1RegExp);
         if (match) {
-            formula.push({
+            const columnRelative = match[1][0] !== '$';
+            const rowRelative = match[2][0] !== '$';
+
+            const reference: Reference = {
                 type: 'reference',
-                column: (parseReferenceColumn(match[1]) - 1),
-                row: (parseInt(match[2], 10) - 1)
-            });
+                column: parseReferenceColumn(
+                    columnRelative ?
+                        match[1] :
+                        match[1].substring(1)
+                ) - 1,
+                row: parseInt(
+                    rowRelative ?
+                        match[2] :
+                        match[2].substring(1),
+                    10
+                ) - 1
+            };
+
+            if (columnRelative) {
+                reference.columnRelative = true;
+            }
+
+            if (rowRelative) {
+                reference.rowRelative = true;
+            }
+
+            formula.push(reference);
 
             next = next.substring(match[0].length).trim();
 
