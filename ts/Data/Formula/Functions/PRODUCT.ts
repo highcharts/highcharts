@@ -33,8 +33,6 @@ import type DataTable from '../../DataTable';
 
 import FormulaProcessor from '../FormulaProcessor.js';
 const { getArgumentsValues } = FormulaProcessor;
-import FormulaTypes from '../FormulaTypes.js';
-const { asNumber } = FormulaTypes;
 
 
 /* *

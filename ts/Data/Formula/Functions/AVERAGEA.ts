@@ -31,8 +31,6 @@ import type DataTable from '../../DataTable';
 
 import FormulaProcessor from '../FormulaProcessor.js';
 const { getArgumentValue } = FormulaProcessor;
-import FormulaTypes from '../FormulaTypes.js';
-const { asNumber } = FormulaTypes;
 
 
 /* *
@@ -74,21 +72,47 @@ function AVERAGEA(
     ) {
         value = getArgumentValue(args[i], table);
 
-        if (typeof value !== 'object') {
-            value = asNumber(value);
-            if (!isNaN(value)) {
+        switch (typeof value) {
+            case 'boolean':
                 ++count;
-                result += value;
-            }
-            continue;
-        }
+                result += (value ? 1 : 0);
+                continue;
+            case 'number':
+                if (!isNaN(value)) {
+                    ++count;
+                    result += value;
+                }
+                continue;
+            case 'string':
+                ++count;
+                continue;
+            default:
+                for (
+                    let j = 0,
+                        jEnd = value.length,
+                        value2: Value;
+                    j < jEnd;
+                    ++j
+                ) {
+                    value2 = value[j];
 
-        for (let j = 0, jEnd = value.length, value2: number; j < jEnd; ++j) {
-            value2 = asNumber(value[j]);
-            if (!isNaN(value2)) {
-                ++count;
-                result += value2;
-            }
+                    switch (typeof value2) {
+                        case 'boolean':
+                            ++count;
+                            result += (value2 ? 1 : 0);
+                            continue;
+                        case 'number':
+                            if (!isNaN(value2)) {
+                                ++count;
+                                result += value2;
+                            }
+                            continue;
+                        case 'string':
+                            ++count;
+                            continue;
+                    }
+                }
+                continue;
         }
     }
 
