@@ -71,8 +71,6 @@ const fitToBox = function (
     outer: BBoxObject
 ): BBoxObject {
 
-    // Fit zoomed window to view.
-    // x and width
     if (inner.x + inner.width > outer.x + outer.width) {
         if (inner.width > outer.width) {
             inner.width = outer.width;
@@ -127,7 +125,6 @@ const zoomBy = function (
         defined(xAxis.dataMax) && defined(xAxis.dataMin) &&
         defined(yAxis.dataMax) && defined(yAxis.dataMin)) {
 
-
         if (chart.inverted) {
             const emulateRoof = yAxis.pos + yAxis.len;
 
@@ -138,7 +135,7 @@ const zoomBy = function (
             // Swapping x and y for simplicity when chart is inverted.
             const tmp = mouseX;
             mouseX = mouseY;
-            mouseY = emulateRoof - tmp;
+            mouseY = emulateRoof - tmp + yAxis.pos;
         }
 
         let fixToX = mouseX ? ((mouseX - xAxis.pos) / xAxis.len) : 0.5;
@@ -149,13 +146,17 @@ const zoomBy = function (
             fixToX = 1 - fixToX;
         }
 
+        let fixToY = 1 - (mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5);
+        if (yAxis.reversed) {
+            fixToY = 1 - fixToY;
+        }
+
         const xRange = xAxis.max - xAxis.min,
             centerX = pick(centerXArg, xAxis.min + xRange / 2),
             newXRange = xRange * howMuch,
             yRange = yAxis.max - yAxis.min,
             centerY = pick(centerYArg, yAxis.min + yRange / 2),
             newYRange = yRange * howMuch,
-            fixToY = mouseY ? ((mouseY - yAxis.pos) / yAxis.len) : 0.5,
             newXMin = centerX - newXRange * fixToX,
             newYMin = centerY - newYRange * fixToY,
             newExt = fitToBox({
