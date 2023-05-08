@@ -105,6 +105,7 @@ const fitToBox = function (
     return inner;
 };
 
+let wheelTimer: number;
 
 /**
  * @private
@@ -124,6 +125,20 @@ const zoomBy = function (
         defined(yAxis.max) && defined(yAxis.min) &&
         defined(xAxis.dataMax) && defined(xAxis.dataMin) &&
         defined(yAxis.dataMax) && defined(yAxis.dataMin)) {
+
+        // Options interfering with yAxis zoom by
+        // setExtremes() returning integers by default.
+        if (defined(wheelTimer)) {
+            clearTimeout(wheelTimer);
+        }
+
+        if (yAxis.options.startOnTick || yAxis.options.endOnTick) {
+            yAxis.setOptions({ startOnTick: false, endOnTick: false });
+        }
+        wheelTimer = setTimeout((): void => {
+            yAxis.setOptions(merge({ startOnTick: true, endOnTick: true },
+                yAxis.userOptions));
+        }, 400);
 
         if (chart.inverted) {
             const emulateRoof = yAxis.pos + yAxis.len;
