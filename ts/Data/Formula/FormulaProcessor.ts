@@ -38,7 +38,6 @@ import type {
 
 import FormulaTypes from './FormulaTypes.js';
 const {
-    asNumber,
     isFormula,
     isFunction,
     isOperator,
@@ -81,6 +80,18 @@ export interface ProcessorFunction {
  * */
 
 
+const asLogicalStringRegExp = / */;
+
+
+const MAX_FALSE = Number.MAX_VALUE / 1.000000000001;
+
+
+const MAX_STRING = Number.MAX_VALUE / 1.000000000002;
+
+
+const MAX_TRUE = Number.MAX_VALUE;
+
+
 const processorFunctions: Record<string, ProcessorFunction> = {};
 
 
@@ -92,6 +103,77 @@ const processorFunctionNameRegExp = /^[A-Z][A-Z\.]*$/;
  *  Functions
  *
  * */
+
+
+/**
+ * Converts non-number types to logical numbers.
+ *
+ * @param {Highcharts.FormulaValue} value
+ * Value to convert.
+ *
+ * @return {number}
+ * Logical number value. `NaN` if not convertable.
+ */
+function asLogicalNumber(
+    value: Value
+): number {
+    switch (typeof value) {
+        case 'boolean':
+            return value ? MAX_TRUE : MAX_FALSE;
+        case 'string':
+            return MAX_STRING;
+        case 'number':
+            return value;
+        default:
+            return NaN;
+    }
+}
+
+
+/**
+ * Converts strings to logical strings, while other types get passed through. In
+ * logical strings the space character is the lowest value and letters are case
+ * insensitive.
+ *
+ * @param {Highcharts.FormulaValue} value
+ * Value to convert.
+ *
+ * @return {Highcharts.FormulaValue}
+ * Logical string value or passed through value.
+ */
+function asLogicalString(
+    value: Value
+): Value {
+    if (typeof value === 'string') {
+        return value.toLowerCase().replace(asLogicalStringRegExp, '\0');
+    }
+    return value;
+}
+
+
+/**
+ * Converts non-number types to a logic number.
+ *
+ * @param {Highcharts.FormulaValue} value
+ * Value to convert.
+ *
+ * @return {number}
+ * Number value. `NaN` if not convertable.
+ */
+function asNumber(
+    value: Value
+): number {
+    switch (typeof value) {
+        case 'boolean':
+            return value ? 1 : 0;
+        case 'string':
+            return parseFloat(value.replace(',', '.'));
+        case 'number':
+            return value;
+        default:
+            return NaN;
+    }
+}
 
 
 /**
@@ -119,15 +201,27 @@ function basicOperation(
 
     switch (operator) {
         case '=':
-            return x == y; // eslint-disable-line eqeqeq
+            return asLogicalString(x) === asLogicalString(y);
         case '<':
-            return x < y;
+            if (typeof x === typeof y) {
+                return asLogicalString(x) < asLogicalString(y);
+            }
+            return asLogicalNumber(x) < asLogicalNumber(y);
         case '<=':
-            return x <= y;
+            if (typeof x === typeof y) {
+                return asLogicalString(x) <= asLogicalString(y);
+            }
+            return asLogicalNumber(x) <= asLogicalNumber(y);
         case '>':
-            return x > y;
+            if (typeof x === typeof y) {
+                return asLogicalString(x) > asLogicalString(y);
+            }
+            return asLogicalNumber(x) > asLogicalNumber(y);
         case '>=':
-            return x >= y;
+            if (typeof x === typeof y) {
+                return asLogicalString(x) >= asLogicalString(y);
+            }
+            return asLogicalNumber(x) >= asLogicalNumber(y);
     }
 
     x = asNumber(x);
@@ -466,6 +560,7 @@ function registerProcessorFunction(
 
 
 const FormulaProcessor = {
+    asNumber,
     getArgumentValue,
     getArgumentsValues,
     getRangeValues,

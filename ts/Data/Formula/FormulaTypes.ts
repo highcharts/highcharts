@@ -117,29 +117,6 @@ const operators: Array<string> =
 
 
 /**
- * Converts non-number types to number.
- *
- * @param {Highcharts.FormulaValue} value
- * Value to convert.
- *
- * @return {number}
- * Number value. `NaN` if not convertable.
- */
-function asNumber(
-    value: Value
-): number {
-    switch (typeof value) {
-        case 'boolean':
-            return value ? 1 : 0;
-        case 'string':
-            return 0;
-        default:
-            return value;
-    }
-}
-
-
-/**
  * Tests an item for a Formula array.
  *
  * @private
@@ -274,7 +251,6 @@ function isValue(
 
 
 const MathFormula = {
-    asNumber,
     isFormula,
     isFunction,
     isOperator,
