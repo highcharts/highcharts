@@ -190,6 +190,57 @@ function extractParantheses(
 
 
 /**
+ * Extracts the inner string value.
+ *
+ * @private
+ *
+ * @param {string} text
+ * Text string to extract from.
+ *
+ * @return {string}
+ * Extracted string. If not found an exception will be thrown.
+ */
+function extractString(
+    text: string
+): string {
+    let start = -1;
+
+    for (
+        let i = 0,
+            iEnd = text.length,
+            char: string,
+            escaping = false;
+        i < iEnd;
+        ++i
+    ) {
+        char = text[i];
+
+        if (char === '\\') {
+            escaping = !escaping;
+            continue;
+        }
+
+        if (escaping) {
+            escaping = false;
+            continue;
+        }
+
+        if (char === '"') {
+            if (start < 0) {
+                start = i;
+            } else {
+                return text.substring(start + 1, i); // i is excluding
+            }
+        }
+    }
+
+    const error = new Error('Incomplete string.');
+    error.name = 'FormulaParseError';
+    throw error;
+}
+
+
+/**
  * Parses an argument string. Formula arrays with a single term will be
  * simplified to the term.
  *
@@ -260,7 +311,7 @@ function parseArgument(
         };
     }
 
-    // Fallback to formula processing for A1 reference and operations
+    // Fallback to formula processing for other pattern types
     const formula = parseFormula(text, alternativeSeparators);
     return (
         formula.length === 1 && typeof formula[0] !== 'string' ?
@@ -303,6 +354,7 @@ function parseArguments(
     ) {
         char = text[i];
 
+        // Check for separator
         if (
             char === argumentsSeparator &&
             !parantheseLevel &&
@@ -310,9 +362,20 @@ function parseArguments(
         ) {
             args.push(parseArgument(term, alternativeSeparators));
             term = '';
+
+        // Check for a quoted string before skip logic
+        } else if (
+            char === '"' &&
+            !parantheseLevel &&
+            !term
+        ) {
+            const string = extractString(text.substring(i));
+            args.push(string);
+            i += string.length + 1; // only +1 to cover ++i in for-loop
+
+        // Skip space and check paranthesis nesting
         } else if (char !== ' ') {
             term += char;
-
             if (char === '(') {
                 ++parantheseLevel;
             } else if (char === ')') {
@@ -321,7 +384,7 @@ function parseArguments(
         }
     }
 
-    // look for left-overs
+    // look for left-overs from last argument
     if (!parantheseLevel && term) {
         args.push(parseArgument(term, alternativeSeparators));
     }
@@ -470,6 +533,17 @@ function parseFormula(
 
                 continue;
             }
+        }
+
+        // Check for a quoted string
+        if (next[0] === '"') {
+            const string = extractString(next);
+
+            formula.push(string.substring(1, -1));
+
+            next = next.substring(string.length + 2).trim();
+
+            continue;
         }
 
         // Something is not right
