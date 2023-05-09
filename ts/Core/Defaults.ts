@@ -614,7 +614,8 @@ const defaultOptions: Options = {
          * @default   {highstock} { "color": "#333333", "fontSize": "16px" }
          */
         style: {
-            color: Palette.neutralColor80
+            color: Palette.neutralColor80,
+            fontWeight: 'bold'
         },
 
         /**
@@ -799,7 +800,8 @@ const defaultOptions: Options = {
          * @default   {"color": "#666666"}
          */
         style: {
-            color: Palette.neutralColor60
+            color: Palette.neutralColor60,
+            fontSize: '0.8em'
         },
 
         /**
@@ -905,7 +907,8 @@ const defaultOptions: Options = {
          * @default   {"color": "#666666"}
          */
         style: {
-            color: Palette.neutralColor60
+            color: Palette.neutralColor60,
+            fontSize: '0.8em'
         },
 
         /**
