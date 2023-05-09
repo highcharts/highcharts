@@ -644,7 +644,7 @@ class Chart {
      * @function Highcharts.Chart#insertItem
      * @param  {Highcharts.Series|Highcharts.Axis} item
      *         The item to insert
-     * @param  {Array<Highcharts.Series>|Array<Highcharts.Axis} collection
+     * @param  {Array<Highcharts.Series>|Array<Highcharts.Axis>} collection
      *         A collection of items, like `chart.series` or `xAxis.series`.
      * @return {number} The index of the series in the collection.
      */
