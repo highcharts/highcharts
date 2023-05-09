@@ -88,6 +88,9 @@ namespace EditableOptions {
         selectOptions?: Array<SelectOptions>;
     }
 
+    /**
+     * Options of the single option in the select dropdown.
+     */
     export interface SelectOptions {
         /**
          * Name of the item that should be displayed.
@@ -101,7 +104,7 @@ namespace EditableOptions {
     }
 
     /**
-     * type of the input to be displayed.
+     * Type of the input to be displayed.
      */
     export type ElementType =
         | 'input'
