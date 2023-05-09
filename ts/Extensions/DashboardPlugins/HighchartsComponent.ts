@@ -123,7 +123,7 @@ class HighchartsComponent extends Component {
                             name: 'type',
                             propertyPath: ['chartOptions', 'chart', 'type'],
                             type: 'select',
-                            items: [{
+                            selectOptions: [{
                                 name: 'column',
                                 iconURL: 'series-types/icon-column.svg'
                             }, {
@@ -148,7 +148,7 @@ class HighchartsComponent extends Component {
                             name: 'type',
                             propertyPath: ['chartOptions', 'xAxis', 'type'],
                             type: 'select',
-                            items: [{
+                            selectOptions: [{
                                 name: 'linear'
                             }, {
                                 name: 'datetime'
@@ -167,7 +167,7 @@ class HighchartsComponent extends Component {
                             name: 'type',
                             propertyPath: ['chartOptions', 'yAxis', 'type'],
                             type: 'select',
-                            items: [{
+                            selectOptions: [{
                                 name: 'linear'
                             }, {
                                 name: 'datetime'
@@ -183,7 +183,7 @@ class HighchartsComponent extends Component {
                             name: 'align',
                             propertyPath: ['chartOptions', 'legend', 'align'],
                             type: 'select',
-                            items: [{
+                            selectOptions: [{
                                 name: 'left'
                             }, {
                                 name: 'center'
@@ -220,7 +220,7 @@ class HighchartsComponent extends Component {
                                 'align'
                             ],
                             type: 'select',
-                            items: [{
+                            selectOptions: [{
                                 name: 'left'
                             }, {
                                 name: 'center'
