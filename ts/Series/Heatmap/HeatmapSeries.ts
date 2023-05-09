@@ -31,7 +31,6 @@ const {
     doc
 } = H;
 import HeatmapPoint from './HeatmapPoint.js';
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -405,8 +404,10 @@ class HeatmapSeries extends ScatterSeries {
                  */
                 brightness: 0.2
             }
+        },
 
-        }
+        legendSymbol: 'rectangle'
+
     } as HeatmapSeriesOptions);
 
     /* *
@@ -712,7 +713,7 @@ class HeatmapSeries extends ScatterSeries {
         // then we could save ourselves some tests for .hasImage etc. And the
         // evaluation of borderRadius would be moved to `markerAttribs`.
 
-        if (options.marker) {
+        if (options.marker && isNumber(options.borderRadius)) {
             options.marker.r = options.borderRadius;
         }
     }
@@ -854,7 +855,8 @@ class HeatmapSeries extends ScatterSeries {
     public translate(): void {
         const series = this,
             options = series.options,
-            symbol = options.marker && options.marker.symbol || 'rect',
+            { borderRadius, marker } = options,
+            symbol = marker && marker.symbol || 'rect',
             shape = symbols[symbol] ? symbol : 'rect',
             hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
 
@@ -900,7 +902,7 @@ class HeatmapSeries extends ScatterSeries {
                         y,
                         width,
                         height,
-                        { r: options.borderRadius }
+                        { r: isNumber(borderRadius) ? borderRadius : 0 }
                     )
                 }
             );
@@ -924,7 +926,6 @@ interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getSymbol: typeof Series.prototype.getSymbol;
     image?: SVGElement;
 }
@@ -954,11 +955,6 @@ extend(HeatmapSeries.prototype, {
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
-
-    /**
-     * @private
-     */
-    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     getSymbol: Series.prototype.getSymbol
 
