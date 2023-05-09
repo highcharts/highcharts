@@ -136,7 +136,7 @@
         },
 
         title: {
-            text: 'Highcharts Maps basic demo'
+            text: 'Highcharts Maps tiled web map'
         },
 
         subtitle: {

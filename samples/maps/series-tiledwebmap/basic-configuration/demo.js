@@ -14,16 +14,8 @@ Highcharts.mapChart('container', {
     navigation: {
         buttonOptions: {
             align: 'left',
-            x: -1,
-            height: 28,
-            width: 28,
-            symbolSize: 14,
-            symbolX: 14.5,
-            symbolY: 13.5,
             theme: {
-                'stroke-width': 1,
-                stroke: 'silver',
-                padding: 10
+                stroke: '#e6e6e6'
             }
         }
     },

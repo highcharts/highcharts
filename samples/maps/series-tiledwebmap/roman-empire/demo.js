@@ -18,11 +18,6 @@
             align: 'right'
         },
 
-        subtitle: {
-            text: 'An example of shapes crossing current borders',
-            align: 'right'
-        },
-
         credits: {
             mapText: '\u00a9 <a href="https://github.com/klokantech/roman-empire">klokantech</a>'
         },
@@ -30,16 +25,8 @@
         navigation: {
             buttonOptions: {
                 align: 'left',
-                x: -1,
-                height: 28,
-                width: 28,
-                symbolSize: 14,
-                symbolX: 14.5,
-                symbolY: 13.5,
                 theme: {
-                    'stroke-width': 1,
-                    stroke: 'silver',
-                    padding: 10
+                    stroke: '#e6e6e6'
                 }
             }
         },
