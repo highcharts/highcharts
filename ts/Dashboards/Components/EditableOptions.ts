@@ -99,7 +99,7 @@ class EditableOptions {
         const options = this.component.options.editableOptions;
         for (let i = 0; i < options.length; i++) {
             const option = options[i];
-            if (option.name === 'store') {
+            if (option.name === 'connectorName') {
                 const board = this.component.board;
                 const items = !board ?
                     [] :

@@ -1,29 +1,17 @@
-const csvData = document.getElementById('csv').innerText,
-    dataPool = new Dashboards.DataPool();
+const csvData = document.getElementById('csv').innerText;
 
 async function setupDashboard() {
-    await dataPool.loadConnector({
-        name: 'Vitamin',
-        type: 'CSVConnector',
-        options: {
-            csv: csvData,
-            firstRowAsNames: true
-        }
-    });
-    dataPool.setConnectorOptions({
-        name: 'Vitamin',
-        type: 'CSVConnector',
-        options: {
-            csv: csvData,
-            firstRowAsNames: true
-        }
-    });
-
-    console.log(dataPool.getConnectorsNames());
-
-    const dataConnector = await dataPool.getConnector('Vitamin');
-
-    Dashboards.board('container', {
+    const board = Dashboards.board('container', {
+        dataPool: {
+            connectors: [{
+                name: 'Vitamin',
+                type: 'CSVConnector',
+                options: {
+                    csv: csvData,
+                    firstRowAsNames: true
+                }
+            }]
+        },
         editMode: {
             enabled: true,
             contextMenu: {
@@ -64,84 +52,90 @@ async function setupDashboard() {
                     ]
                 }
             ]
-        },
-        components: [
-            {
-                connector: dataConnector,
-                sync: {
-                    visibility: true,
-                    highlight: true,
-                    selection: true
-                },
-                cell: 'dashboard-col-0',
-                type: 'Highcharts',
-                columnKeyMap: {
-                    Food: 'x',
-                    'Vitamin A': 'value'
-                },
-                chartOptions: {
-                    chart: {
-                        type: 'pie'
-                    }
-                }
-            },
-            {
-                cell: 'dashboard-col-1',
-                connector: dataConnector,
-                sync: {
-                    visibility: true,
-                    highlight: true,
-                    selection: true
-                },
-                type: 'Highcharts',
-                columnKeyMap: {
-                    Food: 'x',
-                    'Vitamin A': 'y'
-                },
-                chartOptions: {
-                    xAxis: {
-                        type: 'category'
-                    },
-                    chart: {
-                        animation: false,
-                        type: 'column'
-                    }
-                }
-            },
-            {
-                cell: 'dashboard-col-12',
-                connector: dataConnector,
-                sync: {
-                    visibility: true,
-                    highlight: true,
-                    selection: true
-                },
-                type: 'Highcharts',
-                columnKeyMap: {
-                    Food: 'x',
-                    'Vitamin A': 'y'
-                },
-                chartOptions: {
-                    xAxis: {
-                        type: 'category'
-                    },
-                    chart: {
-                        animation: false,
-                        type: 'scatter'
-                    }
-                }
-            },
-            {
-                cell: 'dashboard-col-2',
-                type: 'DataGrid',
-                connector: dataConnector,
-                editable: true,
-                sync: {
-                    highlight: true
-                }
-            }
-        ]
+        }
     });
+
+    const connector = await board.dataPool.getConnector('Vitamin');
+
+    board.setComponents([{
+        sync: {
+            visibility: true,
+            highlight: true,
+            selection: true
+        },
+        cell: 'dashboard-col-0',
+        type: 'Highcharts',
+        connector,
+        connectorName: 'Vitamin',
+        columnKeyMap: {
+            Food: 'x',
+            'Vitamin A': 'value'
+        },
+        chartOptions: {
+            chart: {
+                type: 'pie'
+            }
+        }
+    },
+    {
+        cell: 'dashboard-col-1',
+        sync: {
+            visibility: true,
+            highlight: true,
+            selection: true
+        },
+        type: 'Highcharts',
+        connector,
+        connectorName: 'Vitamin',
+        columnKeyMap: {
+            Food: 'x',
+            'Vitamin A': 'y'
+        },
+        chartOptions: {
+            xAxis: {
+                type: 'category'
+            },
+            chart: {
+                animation: false,
+                type: 'column'
+            }
+        }
+    },
+    {
+        cell: 'dashboard-col-12',
+        sync: {
+            visibility: true,
+            highlight: true,
+            selection: true
+        },
+        type: 'Highcharts',
+        connector,
+        connectorName: 'Vitamin',
+        columnKeyMap: {
+            Food: 'x',
+            'Vitamin A': 'y'
+        },
+        chartOptions: {
+            xAxis: {
+                type: 'category'
+            },
+            chart: {
+                animation: false,
+                type: 'scatter'
+            }
+        }
+    },
+    {
+        cell: 'dashboard-col-2',
+        type: 'DataGrid',
+        connector,
+        connectorName: 'Vitamin',
+        editable: true,
+        sync: {
+            highlight: true
+        }
+    }]);
+
 }
 
 setupDashboard();
