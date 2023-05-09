@@ -1,5 +1,5 @@
 ---
- name: rowDropOffset and celldropOffset
+ name: Change contextMenu icon
  authors:
    - Askel Eirik Johansson
  js_wrap: b

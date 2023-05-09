@@ -1,13 +1,9 @@
-Dashboards.board('container', {
+const dash = Dashboards.board('container', {
     editMode: {
         enabled: true,
-        dragDrop: {
-            enabled: true,
-            rowDropOffset: 50,
-            cellDropOffset: 70
-        },
         contextMenu: {
-            enabled: true
+            enabled: true,
+            icon: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@381ddd81b2100b6f4851a05cdbcd38658b662c18/gfx/dashboard-icons/series-types/icon-gauge.svg'
         }
     },
     gui: {
@@ -43,3 +39,4 @@ Dashboards.board('container', {
         }
     }]
 });
+
