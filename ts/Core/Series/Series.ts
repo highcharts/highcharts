@@ -809,11 +809,10 @@ class Series {
         // (7)this series options
         this.tooltipOptions = merge(
             defaultOptions.tooltip, // 1
-            defaultOptions.plotOptions.series &&
-                defaultOptions.plotOptions.series.tooltip, // 2
-            defaultPlotOptionsType && defaultPlotOptionsType.tooltip, // 3
+            defaultOptions.plotOptions.series?.tooltip, // 2
+            defaultPlotOptionsType?.tooltip, // 3
             chart.userOptions.tooltip, // 4
-            userPlotOptions.series && userPlotOptions.series.tooltip, // 5
+            userPlotOptions.series?.tooltip, // 5
             userPlotOptionsType.tooltip, // 6
             seriesUserOptions.tooltip // 7
         );
