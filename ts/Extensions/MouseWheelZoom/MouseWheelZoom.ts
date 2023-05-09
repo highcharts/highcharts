@@ -360,6 +360,12 @@ export default MouseWheelZoomComposition;
  * Can be one of `x`, `y` or `xy`. If not specified here, it will inherit the
  * type from [chart.zooming.type](chart.zooming.type).
  *
+ * Note that particularly with mouse wheel in the y direction, the zoom is
+ * affected by the default [yAxis.startOnTick](#yAxis.startOnTick) and
+ * [endOnTick]((#yAxis.endOnTick)) settings. In order to respect these settings,
+ * the zoom level will adjust after the user has stopped zooming. To prevent
+ * this, consider setting `startOnTick` and `endOnTick` to `false`.
+ *
  * @type      {string}
  * @default   x
  * @validvalue ["x", "y", "xy"]
