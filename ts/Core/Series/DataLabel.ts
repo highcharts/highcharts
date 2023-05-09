@@ -790,7 +790,7 @@ namespace DataLabel {
                             );
 
                             // Disable pointer events for dataLabels that belong
-                            // to hidden points (#18905)
+                            // to hidden points (#18891)
                             dataLabel.css({
                                 pointerEvents: point.visible ? 'auto' : 'none'
                             });
