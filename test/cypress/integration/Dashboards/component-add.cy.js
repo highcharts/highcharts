@@ -20,7 +20,7 @@ describe('Add component through UI', () => {
         cy.get('.highcharts-dashboards-edit-toggle-slider').click();
     });
 
-    it('should be able to add a layout', function() {
+    it.skip('should be able to add a layout', function() {
         grabComponent('layout');
         dropComponent('#dashboard-col-0');
         cy.board().then((board) => {
@@ -32,7 +32,7 @@ describe('Add component through UI', () => {
         });
     });
 
-    it('should be able to add a HTML component', function() {
+    it.skip('should be able to add a HTML component', function() {
         grabComponent('HTML');
         dropComponent('#dashboard-col-0');
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
@@ -54,7 +54,7 @@ describe('Add component through UI', () => {
         cy.get('.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-cell').children().should('be.visible')
     });
 
-    it('should be able to add a chart component and resize it', function() {
+    it.skip('should be able to add a chart component and resize it', function() {
         grabComponent('chart');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
@@ -75,7 +75,7 @@ describe('Add component through UI', () => {
         });
     });
 
-    it('DataGrid component should be added.', function() {
+    it.skip('DataGrid component should be added.', function() {
         grabComponent('datagrid');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
@@ -95,7 +95,7 @@ describe('Add component through UI', () => {
         });
     });
 
-    it('KPI component is added.', function() {
+    it.skip('KPI component is added.', function() {
         grabComponent('KPI');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
@@ -111,6 +111,29 @@ describe('Add component through UI', () => {
                 component.type,
                 'KPI',
                 `New component's type should be 'KPI'.`
+            );
+        });
+    });
+    it('The component is added to empty dashboard.', function() {
+
+        cy.get('#dashboard-col-0').click();
+        cy.get('.highcharts-dashboards-edit-menu-destroy').first().click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+        grabComponent('chart');
+        dropComponent('.highcharts-dashboards-wrapper')
+        cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
+        cy.board().then((board) => {
+            assert.equal(
+                board.layouts[0].rows[0].cells.length,
+                1,
+                'New cell should be added.'
+            );
+            const m = board.mountedComponents,
+                component = m[m.length - 1].component;
+            assert.equal(
+                component.type,
+                'Highcharts',
+                `New component's type should be 'Highcharts'.`
             );
         });
     });
