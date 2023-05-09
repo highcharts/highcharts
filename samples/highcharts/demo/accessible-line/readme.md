@@ -1,2 +1,2 @@
-# Accessible line chart
-This line chart includes our accessibility module. This enables support for screen readers, keyboard navigation, as well as voice input software.
+# Line styles
+This line chart demonstrates some accessibility features of Highcharts. The accessibility module enables support for screen readers, keyboard navigation, as well as voice input software.

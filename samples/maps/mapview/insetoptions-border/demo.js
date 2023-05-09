@@ -37,11 +37,6 @@
             data,
             joinBy: null,
             name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
             dataLabels: {
                 enabled: true,
                 format: '{point.properties.postal-code}'

@@ -71,7 +71,7 @@ function checkJSWrap() {
     }
 }
 
-/**
+/* *
  * @return {void}
  */
 function checkDemosConsistency() {
@@ -174,12 +174,13 @@ function checkDemosConsistency() {
     }
 }
 
-/**
+/* *
  * @async
  * @return {void}
  */
 function checkDocsConsistency() {
     const FS = require('fs');
+    const glob = require('glob');
     const LogLib = require('./lib/log');
 
     const sidebar = require('../../docs/sidebars.js');
@@ -218,9 +219,35 @@ function checkDocsConsistency() {
         docsNotAdded.forEach(file => LogLib.warn(`   '${file}'`));
         throw new Error('Docs not added to sidebar');
     }
+
+    // Check links and references to samples
+    glob.sync(process.cwd() + '/docs/**/*.md').forEach(file => {
+        const md = FS.readFileSync(file),
+            regex = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu;
+
+        const error404s = [];
+
+        let match;
+        while ((match = regex.exec(md))) {
+            const sample = match[2].replace(/\/$/u, '');
+            try {
+                FS.statSync(`samples/${sample}/demo.js`);
+            } catch (error) {
+                error404s.push({ file, sample });
+            }
+        }
+
+        if (error404s.length) {
+            throw new Error(
+                'Rotten links\n' + JSON.stringify(error404s, null, '  ')
+            );
+        }
+
+    });
+
 }
 
-/**
+/* *
  * @return {void}
  */
 function saveRun() {
@@ -248,7 +275,7 @@ function saveRun() {
     FS.writeFileSync(CONFIGURATION_FILE, JSON.stringify(configuration));
 }
 
-/**
+/* *
  * @return {boolean}
  *         True if outdated
  */

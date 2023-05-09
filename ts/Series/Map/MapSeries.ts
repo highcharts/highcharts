@@ -38,7 +38,6 @@ import ColorMapComposition from '../ColorMapComposition.js';
 import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import MapChart from '../../Core/Chart/MapChart.js';
 const {
     splitPath
@@ -176,7 +175,7 @@ class MapSeries extends ScatterSeries {
          * @type   {Highcharts.SeriesLinecapValue}
          * @since  10.3.3
          */
-        linecap: 'butt',
+        linecap: 'round',
 
         /**
          * @ignore-option
@@ -258,7 +257,7 @@ class MapSeries extends ScatterSeries {
          *
          * @private
          */
-        borderColor: Palette.neutralColor20,
+        borderColor: Palette.neutralColor10,
 
         /**
          * The border width of each map area.
@@ -337,7 +336,7 @@ class MapSeries extends ScatterSeries {
             hover: {
 
                 /** @ignore-option */
-                halo: null as any,
+                halo: void 0,
 
                 /**
                  * The color of the shape in this state.
@@ -357,6 +356,7 @@ class MapSeries extends ScatterSeries {
                  * @product   highmaps
                  * @apioption plotOptions.series.states.hover.borderColor
                  */
+                borderColor: Palette.neutralColor60,
 
                 /**
                  * The border width of the point in this state
@@ -365,6 +365,7 @@ class MapSeries extends ScatterSeries {
                  * @product   highmaps
                  * @apioption plotOptions.series.states.hover.borderWidth
                  */
+                borderWidth: 2
 
                 /**
                  * The relative brightness of the point when hovered, relative
@@ -372,10 +373,9 @@ class MapSeries extends ScatterSeries {
                  *
                  * @type      {number}
                  * @product   highmaps
-                 * @default   0.2
+                 * @default   0
                  * @apioption plotOptions.series.states.hover.brightness
                  */
-                brightness: 0.2
             },
 
             /**
@@ -410,7 +410,9 @@ class MapSeries extends ScatterSeries {
                  */
                 color: Palette.neutralColor20
             }
-        }
+        },
+
+        legendSymbol: 'rectangle'
     } as MapSeriesOptions);
 
     /* *
@@ -940,6 +942,7 @@ class MapSeries extends ScatterSeries {
             if (defined(stateStrokeWidth)) {
                 pointStrokeWidth = stateStrokeWidth;
             }
+            attr.stroke = stateOptions.borderColor ?? point.color;
         }
 
         if (pointStrokeWidth && mapView) {
@@ -1302,7 +1305,6 @@ class MapSeries extends ScatterSeries {
  * */
 
 interface MapSeries extends ColorMapComposition.SeriesComposition {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
     pointArrayMap: ColorMapComposition.SeriesComposition['pointArrayMap'];
     pointClass: typeof MapPoint;
@@ -1338,8 +1340,6 @@ extend(MapSeries.prototype, {
 
     // No graph for the map series
     drawGraph: noop,
-
-    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     forceDL: true,
 

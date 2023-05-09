@@ -32,12 +32,7 @@ Highcharts.getJSON(
             series: [{
                 data,
                 joinBy: null,
-                name: 'Random data',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                }
+                name: 'Random data'
             }, {
                 type: 'mapline',
                 data: [{

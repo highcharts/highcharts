@@ -575,7 +575,7 @@ class Point {
         kinds = kinds || { graphic: 1, dataLabel: 1 };
 
         if (kinds.graphic) {
-            props.push('graphic', 'shadowGroup');
+            props.push('graphic');
         }
         if (kinds.dataLabel) {
             props.push(

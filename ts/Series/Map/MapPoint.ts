@@ -23,6 +23,7 @@ import type { MapBounds } from '../../Maps/MapViewOptions';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type Projection from '../../Maps/Projection';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
@@ -161,15 +162,11 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
                 propMiddleLat = properties && properties['hc-middle-lat'];
 
             if (mapView && isNumber(propMiddleLon) && isNumber(propMiddleLat)) {
-                const newPos = mapView.lonLatToProjectedUnits({
-                    lon: propMiddleLon,
-                    lat: propMiddleLat
-                });
-
-                if (newPos) {
-                    bounds.midX = newPos.x;
-                    bounds.midY = newPos.y;
-                }
+                const projectedPoint = projection.forward(
+                    [propMiddleLon, propMiddleLat]
+                );
+                bounds.midX = projectedPoint[0];
+                bounds.midY = projectedPoint[1];
             } else {
                 const propMiddleX = properties && properties['hc-middle-x'],
                     propMiddleY = properties && properties['hc-middle-y'];

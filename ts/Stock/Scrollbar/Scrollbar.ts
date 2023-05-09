@@ -682,7 +682,6 @@ class Scrollbar {
         scroller.track = renderer.rect()
             .addClass('highcharts-scrollbar-track')
             .attr({
-                x: 0,
                 r: options.trackBorderRadius || 0,
                 height: size,
                 width: size
@@ -696,9 +695,11 @@ class Scrollbar {
             });
         }
 
-        scroller.trackBorderWidth = scroller.track.strokeWidth();
+        const trackBorderWidth = scroller.trackBorderWidth =
+            scroller.track.strokeWidth();
         scroller.track.attr({
-            y: -this.trackBorderWidth % 2 / 2
+            x: -trackBorderWidth % 2 / 2,
+            y: -trackBorderWidth % 2 / 2
         });
 
 
@@ -708,8 +709,8 @@ class Scrollbar {
         scroller.scrollbar = renderer.rect()
             .addClass('highcharts-scrollbar-thumb')
             .attr({
-                height: size,
-                width: size,
+                height: size - trackBorderWidth,
+                width: size - trackBorderWidth,
                 r: options.barBorderRadius || 0
             }).add(scroller.scrollbarGroup);
 

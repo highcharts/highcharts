@@ -1297,8 +1297,6 @@ function getStyle(
     prop: string,
     toInt?: boolean
 ): (number|string|undefined) {
-    const customGetStyle: typeof getStyle = (H as any).getStyle;
-
     let style: (number|string|undefined);
 
     // For width and height, return the actual inner pixel size (#4913)
@@ -1324,8 +1322,8 @@ function getStyle(
             0, // #8377
             (
                 offsetWidth -
-                (customGetStyle(el, 'padding-left', true) || 0) -
-                (customGetStyle(el, 'padding-right', true) || 0)
+                (getStyle(el, 'padding-left', true) || 0) -
+                (getStyle(el, 'padding-right', true) || 0)
             )
         );
     }
@@ -1335,8 +1333,8 @@ function getStyle(
             0, // #8377
             (
                 Math.min(el.offsetHeight, el.scrollHeight) -
-                (customGetStyle(el, 'padding-top', true) || 0) -
-                (customGetStyle(el, 'padding-bottom', true) || 0)
+                (getStyle(el, 'padding-top', true) || 0) -
+                (getStyle(el, 'padding-bottom', true) || 0)
             )
         );
     }

@@ -1,0 +1,2 @@
+# Sonified function
+This is a simple demo showing how a continuous line can be sonified. In this case we are sonifying the equation y = 1 / x. The graph has a vertical asymptote at x = 0, and a horizontal asymptote at y = 0, creating a hyperbolic shape with the function approaching, but never touching, the X and Y axes.

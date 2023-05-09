@@ -570,11 +570,13 @@ class ColorAxis extends Axis implements AxisLike {
 
         // Create the gradient
         if (!legendItem.symbol) {
-            legendItem.symbol = this.chart.renderer.rect(
+            legendItem.symbol = this.chart.renderer.symbol(
+                'roundedRect',
                 0,
                 (legend.baseline as any) - 11,
                 width,
-                height
+                height,
+                { r: legendOptions.symbolRadius ?? 3 }
             ).attr({
                 zIndex: 1
             }).add(legendItem.group);
@@ -935,7 +937,7 @@ class ColorAxis extends Axis implements AxisLike {
                         chart,
                         name,
                         options: {},
-                        drawLegendSymbol: LegendSymbol.drawRectangle,
+                        drawLegendSymbol: LegendSymbol.rectangle,
                         visible: true,
                         isDataClass: true,
 
@@ -995,7 +997,7 @@ namespace ColorAxis {
         chart: Chart;
         name: string;
         options: object;
-        drawLegendSymbol: typeof LegendSymbol['drawRectangle'];
+        drawLegendSymbol: typeof LegendSymbol['rectangle'];
         visible: boolean;
         setState: Point['setState'];
         isDataClass: true;

@@ -1,8 +1,9 @@
 ---
-name: Density of Cities in the World 
+name: Geo heatmap, orthographic
 authors:
   - Piotr Madej, Magdalena Gut
 js_wrap: b
+new_until: 2023-06-30
 tags:
   - Highcharts Maps demo
 categories:

@@ -101,6 +101,9 @@ getData().then(data => {
                             enabled: false
                         }
                     }
+                },
+                jitter: {
+                    x: 0.005
                 }
             }
         },
