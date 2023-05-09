@@ -21,6 +21,8 @@ import type GlobalsLike from '../../Core/GlobalsLike';
 import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
+
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -105,7 +107,8 @@ const fitToBox = function (
     return inner;
 };
 
-let wheelTimer: number;
+let wheelTimer: number,
+    originalOptions: Partial<YAxisOptions>|undefined;
 
 /**
  * @private
@@ -126,18 +129,25 @@ const zoomBy = function (
         defined(xAxis.dataMax) && defined(xAxis.dataMin) &&
         defined(yAxis.dataMax) && defined(yAxis.dataMin)) {
 
-        // Options interfering with yAxis zoom by
-        // setExtremes() returning integers by default.
+        // Options interfering with yAxis zoom by setExtremes() returning
+        // integers by default.
         if (defined(wheelTimer)) {
             clearTimeout(wheelTimer);
         }
 
-        if (yAxis.options.startOnTick || yAxis.options.endOnTick) {
+        const { startOnTick, endOnTick } = yAxis.options;
+        if (!originalOptions) {
+            originalOptions = { startOnTick, endOnTick };
+        }
+
+        if (startOnTick || endOnTick) {
             yAxis.setOptions({ startOnTick: false, endOnTick: false });
         }
         wheelTimer = setTimeout((): void => {
-            yAxis.setOptions(merge({ startOnTick: true, endOnTick: true },
-                yAxis.userOptions));
+            if (originalOptions) {
+                yAxis.update(originalOptions);
+                originalOptions = void 0;
+            }
         }, 400);
 
         if (chart.inverted) {
