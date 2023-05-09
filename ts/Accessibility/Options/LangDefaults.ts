@@ -35,6 +35,10 @@ const langOptions: DeepPartial<LangOptions> = {
      * features, see
      * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
      *
+     * The lang options use [Format Strings](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#format-strings)
+     * with variables that are replaced at run time. These variables should be
+     * used when available, to avoid duplicating text that is defined elsewhere.
+     *
      * For more dynamic control over the accessibility functionality, see
      * [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter),
      * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
@@ -51,10 +55,34 @@ const langOptions: DeepPartial<LangOptions> = {
          * @apioption  lang.accessibility.resetZoomButton
          */
 
+        /**
+         * Default title of the chart for assistive technology, for charts
+         * without a chart title.
+         */
         defaultChartTitle: 'Chart',
+
+        /**
+         * Accessible label for the chart container HTML element.
+         * `{title}` refers to the chart title.
+         */
         chartContainerLabel: '{title}. Highcharts interactive chart.',
+
+        /**
+         * Accessible label for the chart SVG element.
+         * `{chartTitle}` refers to the chart title.
+         */
         svgContainerLabel: 'Interactive chart',
+
+        /**
+         * Accessible label for the drill-up button.
+         * `{buttonText}` refers to the visual text on the button.
+         */
         drillUpButton: '{buttonText}',
+
+        /**
+         * Accessible label for the chart credits.
+         * `{creditsStr}` refers to the visual text in the credits.
+         */
         credits: 'Chart credits: {creditsStr}',
 
         /**
@@ -139,8 +167,23 @@ const langOptions: DeepPartial<LangOptions> = {
          * @since 8.0.0
          */
         legend: {
+            /**
+             * Accessible label for the legend, for charts where there is no
+             * legend title defined.
+             */
             legendLabelNoTitle: 'Toggle series visibility, {chartTitle}',
+
+            /**
+             * Accessible label for the legend, for charts where there is a
+             * legend title defined. `{legendTitle}` refers to the visual text
+             * in the legend title.
+             */
             legendLabel: 'Chart legend: {legendTitle}',
+
+            /**
+             * Accessible label for individual legend items. `{itemName}` refers
+             * to the visual text in the legend for that item.
+             */
             legendItem: 'Show {itemName}'
         },
 
@@ -354,6 +397,9 @@ const langOptions: DeepPartial<LangOptions> = {
             /**
              * User supplied description text. This is added in the point
              * comment description by default if present.
+             *
+             * `{description}` refers to the value given in
+             * [point.accessibility.description](#series.line.data.accessibility.description).
              *
              * @since 6.0.6
              */

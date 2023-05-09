@@ -50,7 +50,7 @@ class InvertModifier extends DataModifier {
      * Default options for the invert modifier.
      */
     public static readonly defaultOptions: InvertModifier.Options = {
-        modifier: 'InvertModifier'
+        modifier: 'Invert'
     };
 
     /* *
@@ -377,8 +377,8 @@ class InvertModifier extends DataModifier {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace InvertModifier {
 
@@ -392,8 +392,14 @@ namespace InvertModifier {
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
-        // nothing here yet
+
+        /**
+         * Name of the related modifier for these options.
+         */
+        modifier: 'Invert';
+
     }
+
 }
 
 /* *
@@ -402,13 +408,13 @@ namespace InvertModifier {
  *
  * */
 
-DataModifier.registerType(InvertModifier);
-
 declare module './DataModifierType' {
     interface DataModifierTypes {
         Invert: typeof InvertModifier;
     }
 }
+
+DataModifier.registerType('Invert', InvertModifier);
 
 /* *
  *

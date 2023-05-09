@@ -1,0 +1,13 @@
+---
+name: Soundscape
+authors:
+  - Øystein Moseng
+js_wrap: b
+requiresManualTesting: true
+new_until: 2023-06-30
+tags:
+  - Highcharts Stock demo
+categories:
+  - General:
+      priority: 6
+...

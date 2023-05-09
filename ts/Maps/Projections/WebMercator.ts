@@ -11,7 +11,7 @@ const maxLatitude = 85.0511287798, // The latitude that defines a square
     r = 63.78137,
     deg2rad = Math.PI / 180;
 
-export default class WebMercator implements ProjectionDefinition {
+class WebMercator implements ProjectionDefinition {
 
     bounds = {
         x1: -200.37508342789243,
@@ -45,3 +45,5 @@ export default class WebMercator implements ProjectionDefinition {
 
     maxLatitude = maxLatitude;
 }
+
+export default WebMercator;

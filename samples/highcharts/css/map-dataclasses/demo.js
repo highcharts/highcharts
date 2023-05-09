@@ -1,4 +1,4 @@
-function drawChart(data) {
+function drawChart(mapData, data) {
     return Highcharts.mapChart('container', {
 
         chart: {
@@ -42,8 +42,8 @@ function drawChart(data) {
         },
 
         series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
+            data,
+            mapData,
             joinBy: ['iso-a2', 'code'],
             name: 'Population density',
             tooltip: {
@@ -53,30 +53,36 @@ function drawChart(data) {
     });
 }
 
-// Load the data from a Google Spreadsheet
-// https://docs.google.com/spreadsheets/d/1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78
-Highcharts.data({
-    googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-    googleSpreadsheetKey: '1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78',
+(async () => {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
 
-    // custom handler when the spreadsheet is parsed
-    parsed: function (columns) {
+    // Load the data from a Google Spreadsheet
+    // https://docs.google.com/spreadsheets/d/1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78
+    Highcharts.data({
+        googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+        googleSpreadsheetKey: '1eSoQeilFp0HI-qgqr9-oXdCh5G_trQR2HBaWt_U_n78',
 
-        // Read the columns into the data array
-        var data = [];
-        columns[0].forEach((code, i) => {
-            data.push({
-                code: code.toUpperCase(),
-                value: parseFloat(columns[2][i]),
-                name: columns[1][i]
+        // custom handler when the spreadsheet is parsed
+        parsed: function (columns) {
+
+            // Read the columns into the data array
+            var data = [];
+            columns[0].forEach((code, i) => {
+                data.push({
+                    code: code.toUpperCase(),
+                    value: parseFloat(columns[2][i]),
+                    name: columns[1][i]
+                });
             });
-        });
 
-        drawChart(data);
-    },
+            drawChart(topology, data);
+        },
 
-    error: function (html, xhr) {
-        const chart = drawChart();
-        chart.showLoading('Error loading sample data: ' + xhr.status);
-    }
-});
+        error: function (html, xhr) {
+            const chart = drawChart();
+            chart.showLoading('Error loading sample data: ' + xhr.status);
+        }
+    });
+})();

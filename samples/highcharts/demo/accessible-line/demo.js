@@ -52,7 +52,8 @@ Highcharts.chart('container', {
                     }
                 }
             },
-            cursor: 'pointer'
+            cursor: 'pointer',
+            lineWidth: 2
         }
     },
 

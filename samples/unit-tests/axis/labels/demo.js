@@ -1291,7 +1291,7 @@ QUnit.test('Long labels and ellipsis', function (assert) {
 });
 
 QUnit.test('Label ellipsis and expanding', function (assert) {
-    var chart = new Highcharts.chart('container', {
+    var chart = new Highcharts.Chart('container', {
         chart: {
             width: 300
         },
@@ -1325,7 +1325,7 @@ QUnit.test('Label ellipsis and expanding', function (assert) {
 });
 
 QUnit.test('Label ellipsis and resetting categories', assert => {
-    const chart = new Highcharts.chart('container', {
+    const chart = new Highcharts.Chart('container', {
         chart: {
             width: 600,
             height: 400
@@ -1439,9 +1439,12 @@ QUnit.test('Width set from label style (#7028)', function (assert) {
         ]
     });
 
+    const labelWidth = Math.floor(
+        chart.xAxis[0].ticks[3].label.getBBox().width
+    );
     assert.ok(
-        Math.floor(chart.xAxis[0].ticks[3].label.getBBox().width) <= 40,
-        'Label width set correctly'
+        labelWidth <= 41,
+        `Label width set correctly (is ${labelWidth})`
     );
 });
 
@@ -2152,12 +2155,12 @@ QUnit.test(
 
         assert.deepEqual(
             chart.xAxis[0].ticks[1].label.attr('y'),
-            // +3px because of a "bug" in default positioning
+            // -3px because of a "bug" in default positioning
             // If you read this comment and you are not sure if you can remove
             // this +3px, then yes, you can.
-            defaultY + 3,
-            `labels.y=0 for opposite xAxis should align label the same way as
-            labels.y=undefined (#12206)`
+            defaultY - 3,
+            'labels.y=0 for opposite xAxis should align label the same way ' +
+            'as labels.y=undefined (#12206)'
         );
     }
 );

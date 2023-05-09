@@ -216,6 +216,11 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
         },
         style: {
             transition: 'opacity 2000ms'
+        },
+
+        defer: true,
+        animation: {
+            defer: 1000
         }
 
     },
@@ -456,6 +461,14 @@ export default NetworkgraphSeriesDefaults;
  *  API Options
  *
  * */
+
+/**
+ * Fires after the simulation is ended and the layout is stable.
+ *
+ * @type      {Highcharts.NetworkgraphAfterSimulationCallbackFunction}
+ * @product   highcharts
+ * @apioption series.networkgraph.events.afterSimulation
+ */
 
 /**
  * A `networkgraph` series. If the [type](#series.networkgraph.type) option is

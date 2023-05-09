@@ -22,13 +22,10 @@
  *
  * */
 
-
+import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
-import AST from '../../Core/Renderer/HTML/AST.js';
+const { merge } = U;
 
 // TODO: This may affect the AST parsing in Highcharts
 // should look into adding these as options if possible

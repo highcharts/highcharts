@@ -23,6 +23,7 @@ import type { MapBounds } from '../../Maps/MapViewOptions';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type Projection from '../../Maps/Projection';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
@@ -150,32 +151,49 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
     public getProjectedBounds(projection: Projection): MapBounds|undefined {
         const path = MapPoint.getProjectedPath(this, projection),
             bounds = boundsFromPath(path),
-            properties = this.properties;
+            properties = this.properties,
+            mapView = this.series.chart.mapView;
 
         if (bounds) {
 
             // Cache point bounding box for use to position data labels, bubbles
             // etc
-            const propMiddleX = properties && properties['hc-middle-x'],
-                propMiddleY = properties && properties['hc-middle-y'];
+            const propMiddleLon = properties && properties['hc-middle-lon'],
+                propMiddleLat = properties && properties['hc-middle-lat'];
 
-            bounds.midX = (
-                bounds.x1 + (bounds.x2 - bounds.x1) * pick(
-                    this.middleX,
-                    isNumber(propMiddleX) ? propMiddleX : 0.5
-                )
-            );
+            if (mapView && isNumber(propMiddleLon) && isNumber(propMiddleLat)) {
+                const newPos = mapView.lonLatToProjectedUnits({
+                    lon: propMiddleLon,
+                    lat: propMiddleLat
+                });
 
-            let middleYFraction = pick(
-                this.middleY,
-                isNumber(propMiddleY) ? propMiddleY : 0.5
-            );
-            // No geographic geometry, only path given => flip
-            if (!this.geometry) {
-                middleYFraction = 1 - middleYFraction;
+                if (newPos) {
+                    bounds.midX = newPos.x;
+                    bounds.midY = newPos.y;
+                }
+            } else {
+                const propMiddleX = properties && properties['hc-middle-x'],
+                    propMiddleY = properties && properties['hc-middle-y'];
+
+                bounds.midX = (
+                    bounds.x1 + (bounds.x2 - bounds.x1) * pick(
+                        this.middleX,
+                        isNumber(propMiddleX) ? propMiddleX : 0.5
+                    )
+                );
+
+                let middleYFraction = pick(
+                    this.middleY,
+                    isNumber(propMiddleY) ? propMiddleY : 0.5
+                );
+                // No geographic geometry, only path given => flip
+                if (!this.geometry) {
+                    middleYFraction = 1 - middleYFraction;
+                }
+
+                bounds.midY =
+                    bounds.y2 - (bounds.y2 - bounds.y1) * middleYFraction;
             }
-
-            bounds.midY = bounds.y2 - (bounds.y2 - bounds.y1) * middleYFraction;
             return bounds;
         }
     }

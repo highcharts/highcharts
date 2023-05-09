@@ -16,7 +16,7 @@
 
 import type CSSJSONObject from '../CSSJSONObject';
 import type Board from '../Board.js';
-import type JSON from '../../Core/JSON';
+import type JSON from '../JSON';
 import type Serializable from '../Serializable';
 
 import DU from '../Utilities.js';

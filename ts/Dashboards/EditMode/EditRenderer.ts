@@ -67,11 +67,13 @@ function renderContextButton(
                 onclick: function (): void {
                     editMode.onContextBtnClick(editMode);
                 }
-            }, {
-                background: 'url(' +
+            },
+            {
+                'background-image': 'url(' +
                     editMode.options.contextMenu.icon +
-                ') no-repeat 50% 50%'
-            }, parentNode
+                ')'
+            } as any,
+            parentNode
         );
     }
 
@@ -816,7 +818,7 @@ export interface NestedHeaderFormFieldOptions {
     isNested?: boolean;
 }
 
-export type RendererElement =
+export type RendererElement = (
     | 'select'
     | 'toggle'
     | 'text'
@@ -826,4 +828,5 @@ export type RendererElement =
     | 'input'
     | 'textarea'
     | 'checkbox'
-    | 'button';
+    | 'button'
+);

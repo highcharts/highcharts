@@ -59,6 +59,8 @@ export interface SVGAttributes {
     fill?: ColorType;
     'fill-opacity'?: number;
     filter?: string;
+    'flood-color'?: string;
+    'flood-opacity'?: number;
     gradientUnits?: 'userSpaceOnUse';
     height?: number;
     href?: string;
@@ -89,7 +91,6 @@ export interface SVGAttributes {
     rotation?: number;
     rotationOriginX?: number;
     rotationOriginY?: number;
-    rounded?: boolean;
     scaleX?: number;
     scaleY?: number;
     slope?: number;

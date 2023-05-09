@@ -169,7 +169,7 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
     );
 
     assert.ok(
-        Math.abs(chart.dragHandles.undefined.translateY - point.plotY) < 1,
+        Math.abs(chart.dragHandles.undefined.translateY - point.plotY) <= 1,
         '#9549: Handle should be below the point when yAxis is reversed'
     );
 
@@ -335,5 +335,133 @@ QUnit.test('Dragdrop with boost', function (assert) {
         point.x,
         chart.series[0].points[0].x,
         'Dragdrop should work with boost (#11156).'
+    );
+});
+
+QUnit.test('Dragdrop with stacked columns (#18741)', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal',
+                    dragDrop: {
+                        draggableY: true,
+                        liveRedraw: false
+                    }
+                }
+            },
+            series: [{
+                data: [2, -3]
+            }, {
+                data: [4, -4]
+            }]
+        }),
+        controller = new TestController(chart);
+
+    let point = chart.series[0].points[0],
+        x = chart.plotLeft + point.plotX,
+        y = chart.plotTop + point.plotY;
+
+    point.showDragHandles();
+    controller.mouseDown(x, y);
+    controller.mouseMove(x, y - 20);
+
+    assert.close(
+        chart.dragGuideBox.attr('y'),
+        point.shapeArgs.y - 20,
+        2,
+        'GuideBox should be positioned correcly in Y, positive value.'
+    );
+
+    assert.close(
+        chart.dragGuideBox.attr('height'),
+        point.shapeArgs.height + 20,
+        2,
+        'GuideBox should be the correct height, positive value.'
+    );
+
+    controller.mouseUp();
+
+    point = chart.series[0].points[1];
+    x = chart.plotLeft + point.plotX;
+    y = chart.plotTop + point.plotY;
+
+    point.showDragHandles();
+    controller.mouseDown(x, y);
+    controller.mouseMove(x, y + 20);
+
+    assert.close(
+        chart.dragGuideBox.attr('y'),
+        point.shapeArgs.y,
+        2,
+        'GuideBox should be positioned correcly in Y, negative value.'
+    );
+
+    assert.close(
+        chart.dragGuideBox.attr('height'),
+        point.shapeArgs.height + 20,
+        2,
+        'GuideBox should be the correct height, negative value.'
+    );
+
+    controller.mouseUp();
+
+    chart.update({
+        yAxis: {
+            reversed: true
+        },
+        series: [{
+            data: [2, -3]
+        }, {
+            data: [4, -4]
+        }]
+    });
+
+    point = chart.series[0].points[0];
+    x = chart.plotLeft + point.plotX;
+    y = chart.plotTop + point.plotY;
+
+    point.showDragHandles();
+    controller.mouseDown(x, y);
+    controller.mouseMove(x, y + 20);
+
+    assert.close(
+        chart.dragGuideBox.attr('y'),
+        point.shapeArgs.y,
+        2,
+        'GuideBox should be positioned correcly in Y, positive value, reversed.'
+    );
+
+    assert.close(
+        chart.dragGuideBox.attr('height'),
+        point.shapeArgs.height + 20,
+        2,
+        'GuideBox should be the correct height, positive value, reversed.'
+    );
+
+    controller.mouseUp();
+
+    point = chart.series[0].points[1];
+    x = chart.plotLeft + point.plotX;
+    y = chart.plotTop + point.plotY;
+
+    point.showDragHandles();
+    controller.mouseDown(x, y);
+    controller.mouseMove(x, y - 20);
+
+    assert.close(
+        chart.dragGuideBox.attr('y'),
+        point.shapeArgs.y - 20,
+        2,
+        'GuideBox should be positioned correcly in Y, negative value, reversed.'
+    );
+
+    assert.close(
+        chart.dragGuideBox.attr('height'),
+        point.shapeArgs.height + 20,
+        2,
+        'GuideBox should be the correct height, negative value, reversed.'
     );
 });

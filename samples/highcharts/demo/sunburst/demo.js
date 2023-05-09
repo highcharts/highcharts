@@ -1398,6 +1398,7 @@ Highcharts.chart('container', {
         data: data,
         name: 'Root',
         allowDrillToNode: true,
+        borderRadius: 3,
         cursor: 'pointer',
         dataLabels: {
             format: '{point.name}',
@@ -1405,8 +1406,7 @@ Highcharts.chart('container', {
                 property: 'innerArcLength',
                 operator: '>',
                 value: 16
-            },
-            rotationMode: 'circular'
+            }
         },
         levels: [{
             level: 1,

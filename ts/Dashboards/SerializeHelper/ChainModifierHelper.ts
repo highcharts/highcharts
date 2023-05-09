@@ -19,11 +19,11 @@
  *
  * */
 
-import type CoreJSON from '../../Core/JSON';
+import type JSON from '../JSON';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
+import type { DataModifierTypeOptions } from '../../Data/Modifiers/DataModifierType';
 
 import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
-import InvertModifierHelper from './InvertModifierHelper.js';
 import Serializable from '../Serializable.js';
 
 /* *
@@ -44,35 +44,27 @@ import Serializable from '../Serializable.js';
 function fromJSON(
     json: ChainModifierHelper.JSON
 ): ChainModifier {
-    const jsonModifiers = json.modifiers,
-        modifiers: Array<DataModifier> = [],
-        iEnd = jsonModifiers.length;
+    const chainOptions = json.options.chain,
+        jsonChain = json.chain,
+        modifiers: Array<DataModifier> = [];
 
     // modifiers
 
-    for (
-        let i = 0,
-            modifier: DataModifier,
-            modifierJSON: Serializable.JSON<string>;
-        i < iEnd;
-        ++i
-    ) {
-        modifierJSON = jsonModifiers[i];
-        switch (modifierJSON.$class) {
-            case InvertModifierHelper.$class:
-                modifier = InvertModifierHelper
-                    .fromJSON(modifierJSON as InvertModifierHelper.JSON);
-                break;
-            default:
-                modifier = Serializable.fromJSON(modifierJSON) as DataModifier;
-                break;
-        }
-        modifiers.push(modifier);
+    for (let i = 0, iEnd = jsonChain.length; i < iEnd; ++i) {
+        modifiers.push(Serializable.fromJSON(jsonChain[i]) as DataModifier);
     }
+
+    // apply chain options later
+
+    delete json.options.chain;
+
+    const chainModifier = new ChainModifier(json.options, ...modifiers);
+
+    chainModifier.options.chain = chainOptions;
 
     // done
 
-    return new ChainModifier(json.options, ...modifiers);
+    return chainModifier;
 }
 
 /**
@@ -103,37 +95,26 @@ function jsonSupportFor(
 function toJSON(
     obj: ChainModifier
 ): ChainModifierHelper.JSON {
-    const json: ChainModifierHelper.JSON = {
-        $class: 'Data.ChainModifier',
-        modifiers: [],
-        options: obj.options
-    };
+    const chain: Array<ChainModifierHelper.ChainJSON> = [],
+        options = obj.options as ChainModifierHelper.OptionsJSON;
 
     // modifiers
 
-    const jsonModifiers = json.modifiers,
-        modifiers = obj.modifiers,
-        iEnd = modifiers.length;
+    const objChain = obj.chain;
 
-    for (
-        let i = 0,
-            modifier: DataModifier,
-            modifierJSON: Serializable.JSON<string>;
-        i < iEnd;
-        ++i
-    ) {
-        modifier = modifiers[i];
-        if (InvertModifierHelper.jsonSupportFor(modifier)) {
-            modifierJSON = InvertModifierHelper.toJSON(modifier);
-        } else {
-            modifierJSON = Serializable.toJSON(modifiers[i]);
-        }
-        jsonModifiers.push(modifierJSON);
+    for (let i = 0, iEnd = objChain.length; i < iEnd; ++i) {
+        chain.push(
+            Serializable.toJSON(objChain[i]) as ChainModifierHelper.ChainJSON
+        );
     }
 
     // done
 
-    return json;
+    return {
+        $class: 'Data.ChainModifier',
+        chain: [],
+        options
+    };
 }
 
 /* *
@@ -150,16 +131,20 @@ namespace ChainModifierHelper {
      *
      * */
 
+    export type ChainJSON = (Serializable.JSON<string>&DataModifierTypeOptions);
+
     export interface JSON extends Serializable.JSON<'Data.ChainModifier'> {
-        modifiers: CoreJSON.Array<Serializable.JSON<string>>;
-        options: ChainModifier.Options;
+        chain: Array<ChainJSON>
+        options: OptionsJSON;
     }
+
+    export type OptionsJSON = (JSON.Object&ChainModifier.Options);
 
 }
 
 /* *
  *
- *  Default Export
+ *  Registry
  *
  * */
 
@@ -169,5 +154,13 @@ const ChainModifierHelper: Serializable.Helper<ChainModifier, ChainModifierHelpe
     jsonSupportFor,
     toJSON
 };
+
+Serializable.registerHelper(ChainModifierHelper);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default ChainModifierHelper;

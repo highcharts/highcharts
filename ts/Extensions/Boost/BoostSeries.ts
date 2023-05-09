@@ -98,6 +98,7 @@ interface BoostAlteredObject {
 }
 
 interface BoostPointMockup {
+    destroy(): void;
     x: (false|number);
     clientX: number;
     dist?: number;
@@ -952,6 +953,23 @@ function seriesRenderCanvas(this: Series): void {
             i: number,
             percentage: number
         ): void => {
+            const x = xDataFull ? xDataFull[cropStart + i] : false,
+                pushPoint = (plotX: number): void => {
+                    if (chart.inverted) {
+                        plotX = xAxis.len - plotX;
+                        plotY = yAxis.len - plotY;
+                    }
+
+                    points.push({
+                        destroy: noop,
+                        x: x,
+                        clientX: plotX,
+                        plotX: plotX,
+                        plotY: plotY,
+                        i: cropStart + i,
+                        percentage: percentage
+                    });
+                };
 
             // We need to do ceil on the clientX to make things
             // snap to pixel values. The renderer will frequently
@@ -964,22 +982,16 @@ function seriesRenderCanvas(this: Series): void {
             // The k-d tree requires series points.
             // Reduce the amount of points, since the time to build the
             // tree increases exponentially.
-            if (enableMouseTracking && !pointTaken[index]) {
-                pointTaken[index] = true;
-
-                if (chart.inverted) {
-                    clientX = xAxis.len - clientX;
-                    plotY = yAxis.len - plotY;
+            if (enableMouseTracking) {
+                if (!pointTaken[index]) {
+                    pointTaken[index] = true;
+                    pushPoint(clientX);
+                } else if (x === xDataFull[xDataFull.length - 1]) {
+                    // If the last point is on the same pixel as the last
+                    // tracked point, swap them. (#18856)
+                    points.length--;
+                    pushPoint(clientX);
                 }
-
-                points.push({
-                    x: xDataFull ? xDataFull[cropStart + i] : false,
-                    clientX: clientX,
-                    plotX: clientX,
-                    plotY: plotY,
-                    i: cropStart + i,
-                    percentage: percentage
-                });
             }
         };
 
@@ -1355,6 +1367,7 @@ function wrapSeriesSearchPoint(
 const BoostSeries = {
     compose,
     destroyGraphics,
+    eachAsync,
     getPoint
 };
 
