@@ -5,7 +5,7 @@ async function setupDashboard() {
         dataPool: {
             connectors: [{
                 name: 'Vitamin',
-                type: 'CSVConnector',
+                type: 'CSV',
                 options: {
                     csv: csvData,
                     firstRowAsNames: true
