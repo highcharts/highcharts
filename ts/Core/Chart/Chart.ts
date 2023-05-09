@@ -1777,6 +1777,20 @@ class Chart {
     }
 
     /**
+     * Return the current options of the chart, but only those that differ from
+     * default options. Items that can be either an object or an array of
+     * objects, like `series`, `xAxis` and `yAxis`, are always returned as
+     * array.
+     *
+     * @function Highcharts.Chart#getOptions
+     *
+     * @since next
+     */
+    public getOptions(): DeepPartial<Options> {
+        return diffObjects(this.userOptions, defaultOptions);
+    }
+
+    /**
      * Reflows the chart to its container. By default, the Resize Observer is
      * attached to the chart's div which allows to reflows the chart
      * automatically to its container, as per the
