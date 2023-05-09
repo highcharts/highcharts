@@ -20,7 +20,7 @@ describe('Add component through UI', () => {
         cy.get('.highcharts-dashboards-edit-toggle-slider').click();
     });
 
-    it.skip('should be able to add a layout', function() {
+    it('should be able to add a layout', function() {
         grabComponent('layout');
         dropComponent('#dashboard-col-0');
         cy.board().then((board) => {
@@ -32,7 +32,7 @@ describe('Add component through UI', () => {
         });
     });
 
-    it.skip('should be able to add a HTML component', function() {
+    it('should be able to add a HTML component', function() {
         grabComponent('HTML');
         dropComponent('#dashboard-col-0');
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
@@ -54,7 +54,7 @@ describe('Add component through UI', () => {
         cy.get('.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-cell').children().should('be.visible')
     });
 
-    it.skip('should be able to add a chart component and resize it', function() {
+    it('should be able to add a chart component and resize it', function() {
         grabComponent('chart');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
@@ -75,7 +75,7 @@ describe('Add component through UI', () => {
         });
     });
 
-    it.skip('DataGrid component should be added.', function() {
+    it('DataGrid component should be added.', function() {
         grabComponent('datagrid');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
@@ -95,7 +95,7 @@ describe('Add component through UI', () => {
         });
     });
 
-    it.skip('KPI component is added.', function() {
+    it('KPI component is added.', function() {
         grabComponent('KPI');
         dropComponent('#dashboard-col-0')
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
