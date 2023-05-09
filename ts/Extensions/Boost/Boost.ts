@@ -92,8 +92,14 @@ function compose(
 }
 
 /**
- * Returns true if the current browser supports webgl
- * @private
+ * Returns true if the current browser supports WebGL.
+ *
+ * @requires module:modules/boost
+ *
+ * @function Highcharts.hasWebGLSupport
+ *
+ * @return {boolean}
+ * `true` if the browser supports WebGL.
  */
 function hasWebGLSupport(): boolean {
     let canvas,

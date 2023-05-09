@@ -2376,7 +2376,7 @@ Point.prototype.getDropValues = function (
         // If we are updating a single prop, and it has a validation function
         // for the prop, run it. If it fails, don't update the value.
         if (
-            newVal &&
+            isNumber(newVal) &&
             !(
                 updateSingleProp &&
                 val.propValidate &&
