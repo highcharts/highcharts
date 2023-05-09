@@ -125,8 +125,6 @@ namespace Responsive {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * @private
      */
