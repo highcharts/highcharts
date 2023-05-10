@@ -355,6 +355,8 @@ class Series {
 
     public symbol?: SymbolKey;
 
+    public symbolIndex?: number;
+
     public tooltipOptions: TooltipOptions = void 0 as any;
 
     public tracker?: SVGElement;
@@ -892,38 +894,38 @@ class Series {
      * @function Highcharts.Series#getCyclic
      */
     public getCyclic(
-        prop: string,
+        prop: 'color'|'symbol',
         value?: any,
         defaults?: AnyRecord
     ): void {
         const chart = this.chart,
-            userOptions = this.userOptions,
-            indexName = prop + 'Index',
-            counterName = prop + 'Counter',
-            len = defaults ? defaults.length : pick(
-                (chart.options.chart as any)[prop + 'Count'],
-                (chart as any)[prop + 'Count']
+            indexName: 'colorIndex'|'symbolIndex' = `${prop}Index`,
+            counterName: 'colorCounter'|'symbolCounter' = `${prop}Counter`,
+            len = (
+                // Symbol count
+                defaults?.length ||
+                // Color count
+                chart.options.chart.colorCount
             );
-        let i,
-            setting;
+        let i: number|undefined,
+            setting: number|undefined;
 
         if (!value) {
-            // Pick up either the colorIndex option, or the _colorIndex
+            // Pick up either the colorIndex option, or the series.colorIndex
             // after Series.update()
             setting = pick(
-                (userOptions as any)[indexName],
-                (userOptions as any)['_' + indexName]
+                prop === 'color' ? this.options.colorIndex : void 0,
+                this[indexName]
             );
             if (defined(setting)) { // after Series.update()
                 i = setting;
             } else {
                 // #6138
                 if (!chart.series.length) {
-                    (chart as any)[counterName] = 0;
+                    chart[counterName] = 0;
                 }
-                (userOptions as any)['_' + indexName] = i =
-                    (chart as any)[counterName] % len;
-                (chart as any)[counterName] += 1;
+                i = chart[counterName] % len;
+                chart[counterName] += 1;
             }
             if (defaults) {
                 value = defaults[i];
@@ -931,9 +933,9 @@ class Series {
         }
         // Set the colorIndex
         if (typeof i !== 'undefined') {
-            (this as any)[indexName] = i;
+            this[indexName] = i;
         }
-        (this as any)[prop] = value;
+        this[prop] = value;
     }
 
     /**
@@ -4083,8 +4085,10 @@ class Series {
         let seriesOptions: SeriesOptions,
             n,
             preserve = [
+                'colorIndex',
                 'eventOptions',
                 'navigatorSeries',
+                'symbolIndex',
                 'baseSeries'
             ],
             newType = (

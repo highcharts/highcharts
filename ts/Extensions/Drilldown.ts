@@ -160,7 +160,6 @@ declare module '../Core/Series/SeriesLike' {
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
-        _colorIndex?: number;
         _ddSeriesId?: number;
         _levelNumber?: number;
         drilldown?: string;
@@ -876,7 +875,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         if (series.xAxis === xAxis) {
             series.options._ddSeriesId =
                 series.options._ddSeriesId || ddSeriesId++;
-            series.options._colorIndex = series.userOptions._colorIndex;
+            series.options.colorIndex = series.colorIndex;
             series.options._levelNumber =
                 series.options._levelNumber || levelNumber; // #3182
 
