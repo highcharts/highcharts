@@ -707,7 +707,8 @@ class Chart {
 
             // Item options should be reflected in chart.options.series,
             // chart.options.yAxis etc
-            optionsArray = this.options[coll] = splat(this.options[coll]),
+            optionsArray = this.options[coll] = splat(this.options[coll])
+                .slice(),
             userOptionsArray = this.userOptions[coll] = this.userOptions[coll] ?
                 splat(this.userOptions[coll]).slice() :
                 [];

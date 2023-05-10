@@ -19,7 +19,7 @@ document.getElementById('add-series').addEventListener('click', () => {
 document.getElementById('getoptions').addEventListener('click', () => {
     const options = chart.getOptions();
     document.getElementById('outputs').style.display = 'block';
-    Highcharts.chart('container-output', JSON.parse(JSON.stringify(options)));
+    Highcharts.chart('container-output', options);
 
     document.getElementById('code-output').innerText = JSON.stringify(
         options, null, '  '
