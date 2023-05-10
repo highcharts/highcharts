@@ -169,12 +169,107 @@ const configs: {
                         board,
                         connector: store
                     } = this as HighchartsComponent;
-
                     const callbacks: Function[] = [];
 
                     if (store && chart && board) {
+
+
                         this.on('afterRender', (): void => {
+
                             const { dataCursor: cursor } = board;
+
+                            const extremesEventHandler = (e: any): void => {
+                                const reset = !!(e as any).resetSelection;
+                                if ((!e.trigger || (e.trigger && e.trigger !== 'dashboards-sync')) && !reset) {
+                                    // TODO: investigate this type?
+                                    const axis = e.target as unknown as Axis;
+
+                                    // Prefer a series that's in a related table,
+                                    // but allow for other data
+                                    const seriesInTable = axis.series
+                                        .filter((series): boolean =>
+                                            store.table.hasColumns([series.name]));
+
+                                    const [series] = seriesInTable.length ?
+                                        seriesInTable :
+                                        axis.series;
+
+                                    if (series) {
+                                        // Get the indexes of the first and last drawn points
+                                        const visiblePoints = series.points
+                                            .filter((point): boolean => point.isInside || false);
+
+                                        const minCursorData: DataCursor.Type = {
+                                            type: 'position',
+                                            state: `${axis.coll}.extremes.min`
+                                        };
+
+                                        const maxCursorData: DataCursor.Type = {
+                                            type: 'position',
+                                            state: `${axis.coll}.extremes.max`
+                                        };
+
+                                        if (seriesInTable.length && axis.coll === 'xAxis' && visiblePoints.length) {
+                                            minCursorData.row = visiblePoints[0].index;
+                                            minCursorData.column = axis.dateTime ? 'x' : series.name;
+
+                                            maxCursorData.row = visiblePoints[visiblePoints.length - 1].index;
+                                            maxCursorData.column = axis.dateTime ? 'x' : series.name;
+                                        }
+
+                                        // Emit as lasting cursors
+                                        cursor.emitCursor(store.table,
+                                            minCursorData,
+                                            e as any,
+                                            true
+                                        ).emitCursor(store.table,
+                                            maxCursorData,
+                                            e as any,
+                                            true
+                                        );
+                                    }
+
+                                }
+
+                            };
+
+
+                            const addExtremesEvent = (): Function[] =>
+                                chart.axes.map((axis): Function =>
+                                    addEvent(
+                                        axis,
+                                        'afterSetExtremes',
+                                        extremesEventHandler
+                                    ));
+
+                            let addExtremesEventCallbacks: Function[] =
+                                addExtremesEvent();
+
+                            const resetExtremesEvent = (): void => {
+                                addExtremesEventCallbacks.forEach((callback): void => {
+                                    callback();
+                                });
+                                addExtremesEventCallbacks = [];
+                            };
+
+
+                            const handleChartResetSelection = (e: any): void => {
+                                if ((e as any).resetSelection) {
+                                    resetExtremesEvent();
+
+                                    cursor.emitCursor(store.table, {
+                                        type: 'position',
+                                        state: 'chart.zoomOut'
+                                    });
+
+                                    addExtremesEventCallbacks.push(...addExtremesEvent());
+                                }
+
+
+                            };
+
+                            callbacks.push(addEvent(chart, 'selection', handleChartResetSelection));
+
 
                             callbacks.push((): void => {
                                 cursor.remitCursor(store.table.id, {
@@ -185,94 +280,9 @@ const configs: {
                                     type: 'position',
                                     state: 'xAxis.extremes.max'
                                 });
+
+                                resetExtremesEvent();
                             });
-
-                            if (chart.axes) {
-                                chart.axes.forEach((axis): void => {
-                                    axis.update({
-                                        events: {
-                                            afterSetExtremes: (e): void => {
-                                                // TODO: should emit cursor, but not update chart, when custom-reset trigger
-                                                if ((!e.trigger || (e.trigger && e.trigger !== 'custom-reset')) && !(e as any).resetSelection) {
-                                                    // TODO: investigate this type?
-                                                    const axis = e.target as unknown as Axis;
-
-                                                    // Prefer a series that's in a related table,
-                                                    // but allow for other data
-                                                    const seriesInTable = axis.series
-                                                        .filter((series): boolean =>
-                                                            store.table.hasColumns([series.name]));
-
-                                                    const [series] = seriesInTable.length ?
-                                                        seriesInTable :
-                                                        axis.series;
-
-                                                    if (series) {
-                                                        // Get the indexes of the first and last drawn points
-                                                        const visiblePoints = series.points
-                                                            .filter((point): boolean => point.isInside || false);
-
-                                                        const minCursorData: DataCursor.Type = {
-                                                            type: 'position',
-                                                            state: `${axis.coll}.extremes.min`
-                                                        };
-
-                                                        const maxCursorData: DataCursor.Type = {
-                                                            type: 'position',
-                                                            state: `${axis.coll}.extremes.max`
-                                                        };
-
-                                                        if (seriesInTable.length && axis.coll === 'xAxis' && visiblePoints.length) {
-                                                            minCursorData.row = visiblePoints[0].index;
-                                                            minCursorData.column = axis.dateTime ? 'x' : series.name;
-
-                                                            maxCursorData.row = visiblePoints[visiblePoints.length - 1].index;
-                                                            maxCursorData.column = axis.dateTime ? 'x' : series.name;
-                                                        }
-
-                                                        // Emit as lasting cursors
-                                                        cursor.emitCursor(store.table,
-                                                            minCursorData,
-                                                            e as any,
-                                                            true
-                                                        ).emitCursor(store.table,
-                                                            maxCursorData,
-                                                            e as any,
-                                                            true
-                                                        );
-                                                    }
-
-                                                }
-                                            }
-                                        }
-
-                                    },
-                                    false
-                                    );
-                                });
-
-                                callbacks.push(
-                                    addEvent(chart, 'selection', function (e): void {
-                                        if ('resetSelection' in e && e.resetSelection) {
-                                            e.preventDefault();
-
-                                            chart.axes.forEach((axis): void => {
-                                                axis.setExtremes(void 0, void 0, false, false, {
-                                                    trigger: 'custom-reset'
-                                                });
-
-                                                axis.displayBtn = false;
-                                            });
-
-                                            if (chart.resetZoomButton) {
-                                                chart.resetZoomButton = chart.resetZoomButton.destroy();
-                                            }
-
-                                            chart.redraw();
-                                        }
-                                    })
-                                );
-                            }
                         });
 
                         // Return cleanup
@@ -280,16 +290,6 @@ const configs: {
                             // Call back the cleanup callbacks
                             callbacks.forEach((callback): void => callback());
 
-                            chart.axes.forEach((axis): void => {
-                                axis.update(
-                                    {
-                                        events: {
-                                            afterSetExtremes: void 0
-                                        }
-                                    },
-                                    false
-                                );
-                            });
                         };
                     }
                 }
@@ -407,31 +407,48 @@ const configs: {
                                                         .setExtremes(
                                                             eventTarget.min,
                                                             eventTarget.max,
-                                                            true,
                                                             false,
+                                                            void 0,
                                                             {
                                                                 trigger: 'dashboards-sync'
                                                             }
                                                         );
 
-                                                    chart.showResetZoom();
-
                                                 }
                                             }
                                         }
+
                                     });
+
+                                    chart.showResetZoom();
+                                    chart.redraw();
                                 }
                             }
-
                         };
 
                         cursor.addListener(store.table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
                         cursor.addListener(store.table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
 
+                        const handleChartZoomOut = (): void => {
+                            chart.zoomOut();
+
+                            // Workaround for zoom button not being removed
+                            const resetZoomButtons = document
+                                .querySelectorAll<HTMLButtonElement>(`#${chart.container.id} .highcharts-reset-zoom`);
+
+                            resetZoomButtons.forEach((button): void => {
+                                button.remove();
+                            });
+
+                        };
+
+                        cursor.addListener(store.table.id, 'chart.zoomOut', handleChartZoomOut);
+
                         callbacks.push(
                             (): void => {
                                 cursor.removeListener(store.table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
                                 cursor.removeListener(store.table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
+                                cursor.removeListener(store.table.id, 'chart.zoomOut', handleChartZoomOut);
                             }
                         );
                     });
