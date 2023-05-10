@@ -1782,6 +1782,8 @@ class Chart {
      * objects, like `series`, `xAxis` and `yAxis`, are always returned as
      * array.
      *
+     * @sample highcharts/members/chart-getoptions
+     *
      * @function Highcharts.Chart#getOptions
      *
      * @since next

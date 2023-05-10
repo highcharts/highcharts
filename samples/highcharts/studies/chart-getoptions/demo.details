@@ -1,6 +1,0 @@
----
- name: Chart.getOptions - Highcharts
- authors:
-   - Torstein Hønsi
- js_wrap: b
-...
