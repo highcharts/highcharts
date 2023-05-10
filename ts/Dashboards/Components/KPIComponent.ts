@@ -115,7 +115,8 @@ class KPIComponent extends Component {
             ].join(' '),
             style: {
                 boxSizing: 'border-box',
-                textAlign: 'center'
+                textAlign: 'center',
+                'min-height': '150px'
             },
             thresholdColors: ['#f45b5b', '#90ed7d']
         }
