@@ -27,11 +27,28 @@ QUnit.test('getOptions', assert => {
         'The results should be the same as ingoing options'
     );
 
-    assert.strictEqual(
-        chart.userOptions.colorAxis[0],
-        chart.colorAxis[0].userOptions,
-        'Color axis user options should be shared by reference (remove this if we refactor out userOptions)'
-    );
+    Highcharts.Chart.prototype.collectionsWithUpdate.forEach(coll => {
+        if (chart.userOptions[coll]) {
+            assert.strictEqual(
+                chart.userOptions[coll].length,
+                chart[coll].length,
+                `User options of ${coll} should reflect the collection length`
+            );
+            assert.strictEqual(
+                chart.options[coll].length,
+                chart[coll].length,
+                `Full options of ${coll} should reflect the collection length`
+            );
+            chart[coll].forEach((item, i) => {
+                assert.strictEqual(
+                    chart.userOptions[coll][i],
+                    chart[coll][i].userOptions,
+                    'Item user options should be reflected in chart user options ' +
+                    `(${coll})`
+                );
+            });
+        }
+    });
 
     chart.update({
         legend: {
