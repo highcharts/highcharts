@@ -225,6 +225,10 @@
     color: var(--highcharts-neutral-color-100);
 }
 
+.highcharts-dashboards-component {
+    overflow: hidden;
+}
+
 .highcharts-dashboards-component-kpi-value-wrap {
     display: flex;
     flex-direction: column;

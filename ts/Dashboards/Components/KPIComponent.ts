@@ -327,7 +327,7 @@ class KPIComponent extends Component {
             this.titleElement.style.fontSize = this.getFontSize(
                 width,
                 height,
-                0.1 * (this.chart ? 1 : 2)
+                0.08 * (this.chart ? 1 : 1.7)
             );
         }
     }
@@ -340,7 +340,7 @@ class KPIComponent extends Component {
         return (
             Math.max(
                 this.options.minFontSize,
-                multiplier * Math.min(width, height)
+                Math.round(multiplier * Math.min(width, height))
             ) + 'px'
         );
     }
@@ -358,12 +358,12 @@ class KPIComponent extends Component {
     private updateSize(width: number, height: number): void {
         this.updateTitleSize(width, height);
         // If there is no chart, make the font size  bigger.
-        const noChartMultiplier = (this.chart ? 1 : 2);
+        const noChartMultiplier = (this.chart ? 1 : 1.8);
         const noTitleMultiplier = (this.options.title ? 0.7 : 1);
         this.value.style.fontSize = this.getFontSize(
             width,
             height,
-            0.2 * noChartMultiplier * noTitleMultiplier
+            0.15 * noChartMultiplier * noTitleMultiplier
         );
         this.subtitle.style.fontSize = this.getFontSize(
             width,
