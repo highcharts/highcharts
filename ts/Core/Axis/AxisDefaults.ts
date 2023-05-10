@@ -244,6 +244,20 @@ namespace AxisDefaults {
          */
 
         /**
+         * The value on a perpendicular axis where this axis should cross. This
+         * is typically used on mathematical plots where the axes cross at 0.
+         * When `crossing` is set, space will not be reserved at the sides of
+         * the chart for axis labels and title, so those may be clipped. In this
+         * case it is better to place the axes without the `crossing` option.
+         *
+         * @type      {number}
+         * @sample    highcharts/xaxis/crossing
+         *            Function plot with axes crossing at 0
+         * @since     next
+         * @apioption xAxis.crossing
+         */
+
+        /**
          * A class name for the crosshair, especially as a hook for styling.
          *
          * @type      {string}
@@ -543,14 +557,14 @@ namespace AxisDefaults {
              * @type {string|*}
              */
             day: {
-                main: '%e. %b'
+                main: '%e %b'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              * @type {string|*}
              */
             week: {
-                main: '%e. %b'
+                main: '%e %b'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
@@ -814,14 +828,21 @@ namespace AxisDefaults {
             autoRotationLimit: 80,
 
             /**
-             * Polar charts only. The label's pixel distance from the perimeter
-             * of the plot area.
+             * The label's pixel distance from the perimeter of the plot area.
+             * On cartesian charts, this is overridden if the `labels.y` setting
+             * is set.
+             *
+             * * On polar charts, if it's a percentage string, it is interpreted
+             * the same as [series.radius](#plotOptions.gauge.radius), so the
+             * label can be aligned under the gauge's shape.
+             *
+             * @sample {highcharts} highcharts/yaxis/labels-distance/
+             *         Polar chart, labels centered under the arc
              *
              * @type      {number}
-             * @default   undefined
              * @product   highcharts gantt
              */
-            distance: void 0,
+            distance: 15,
 
             /**
              * Enable or disable the axis labels.
@@ -831,8 +852,6 @@ namespace AxisDefaults {
              * @sample {highstock} stock/xaxis/labels-enabled/
              *         X axis labels disabled
              *
-             * @default {highcharts|highstock|gantt} true
-             * @default {highmaps} false
              */
             enabled: true,
 
@@ -1013,20 +1032,18 @@ namespace AxisDefaults {
 
             /**
              * The x position offset of all labels relative to the tick
-             * positions on the axis.
+             * positions on the axis. Overrides the `labels.distance` option.
              *
-             * @sample {highcharts} highcharts/xaxis/labels-x/
-             *         Y axis labels placed on grid lines
+             * @type      {number}
+             * @apioption xAxis.labels.x
              */
-            x: 0,
 
             /**
              * The y position offset of all labels relative to the tick
-             * positions on the axis. The default makes it adapt to the font
-             * size of the bottom axis.
+             * positions on the axis. Overrides the `labels.distance` option.
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
-             *         Y axis labels placed on grid lines
+             *         X axis labels placed on grid lines
              *
              * @type      {number}
              * @apioption xAxis.labels.y
@@ -1052,11 +1069,11 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: Palette.neutralColor60,
+                color: Palette.neutralColor80,
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
-                fontSize: '11px'
+                fontSize: '0.8em'
             }
         },
 
@@ -1067,6 +1084,9 @@ namespace AxisDefaults {
          * Since Highcharts v5.0.13: If it's a percentage string, it is
          * interpreted as percentages of the plot width, offset from plot area
          * left.
+         *
+         * @sample {highcharts} highcharts/xaxis/axis-position-properties
+         *         Different axis position properties
          *
          * @type      {number|string}
          * @product   highcharts highstock
@@ -1079,6 +1099,9 @@ namespace AxisDefaults {
          *
          * Since Highcharts 2: If it's a percentage string, it is interpreted
          * as percentages of the plot height, offset from plot area top.
+         *
+         * @sample {highcharts} highcharts/xaxis/axis-position-properties
+         *         Different axis position properties
          *
          * @type      {number|string}
          * @product   highcharts highstock
@@ -1957,7 +1980,9 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: Palette.neutralColor60
+                color: Palette.neutralColor60,
+                /** @internal */
+                fontSize: '0.8em'
             }
         },
 
@@ -2119,10 +2144,6 @@ namespace AxisDefaults {
          * In styled mode, the line stroke is given in the
          * `.highcharts-axis-line` or `.highcharts-xaxis-line` class.
          *
-         * @productdesc {highmaps}
-         * In Highmaps, the axis line is hidden by default, because the axis is
-         * not visible by default.
-         *
          * @sample {highcharts} highcharts/yaxis/linecolor/
          *         A red line on Y axis
          * @sample {highcharts|highstock} highcharts/css/axis/
@@ -2131,9 +2152,8 @@ namespace AxisDefaults {
          *         A red line on X axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #ccd6eb
          */
-        lineColor: Palette.highlightColor20,
+        lineColor: Palette.neutralColor80,
 
         /**
          * The width of the line marking the axis itself.
@@ -2201,6 +2221,9 @@ namespace AxisDefaults {
          * Since Highcharts 2: If it's a percentage string, it is interpreted
          * as percentages of the total plot height.
          *
+         * @sample {highcharts} highcharts/xaxis/axis-position-properties
+         *         Different axis position properties
+         *
          * @type      {number|string}
          * @product   highcharts highstock
          * @apioption xAxis.height
@@ -2212,6 +2235,9 @@ namespace AxisDefaults {
          *
          * Since Highcharts v5.0.13: If it's a percentage string, it is
          * interpreted as percentages of the total plot width.
+         *
+         * @sample {highcharts} highcharts/xaxis/axis-position-properties
+         *         Different axis position properties
          *
          * @type      {number|string}
          * @product   highcharts highstock
@@ -2232,9 +2258,8 @@ namespace AxisDefaults {
          *         Formatted ticks on X axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #ccd6eb
          */
-        tickColor: Palette.highlightColor20
+        tickColor: Palette.neutralColor80
 
         // tickWidth: 1
     };
@@ -2503,23 +2528,6 @@ namespace AxisDefaults {
          */
         labels: {
             /**
-             * Angular gauges and solid gauges only.
-             * The label's pixel distance from the perimeter of the plot area.
-             *
-             * Since v7.1.2: If it's a percentage string, it is interpreted the
-             * same as [series.radius](#plotOptions.gauge.radius), so label can be
-             * aligned under the gauge's shape.
-             *
-             * @sample {highcharts} highcharts/yaxis/labels-distance/
-             *         Labels centered under the arc
-             *
-             * @type      {number|string}
-             * @default   -25
-             * @product   highcharts
-             * @apioption yAxis.labels.distance
-             */
-
-            /**
              * The y position offset of all labels relative to the tick
              * positions on the axis. For polar and radial axis consider the use
              * of the [distance](#yAxis.labels.distance) option.
@@ -2560,18 +2568,11 @@ namespace AxisDefaults {
              *
              * @sample {highcharts} highcharts/xaxis/labels-x/
              *         Y axis labels placed on grid lines
+             *
+             * @type {number}
              */
-            x: -8
+            x: void 0
         },
-
-        /**
-         * @productdesc {highmaps}
-         * In Highmaps, the axis line is hidden by default, because the axis is
-         * not visible by default.
-         *
-         * @type      {Highcharts.ColorType}
-         * @apioption yAxis.lineColor
-         */
 
         /**
          * @sample {highcharts} highcharts/yaxis/max-200/
@@ -3093,7 +3094,7 @@ namespace AxisDefaults {
                 /** @internal */
                 color: Palette.neutralColor100,
                 /** @internal */
-                fontSize: '11px',
+                fontSize: '0.7em',
                 /** @internal */
                 fontWeight: 'bold',
                 /** @internal */
@@ -3129,9 +3130,6 @@ namespace AxisDefaults {
 
     // This variable extends the defaultOptions for left axes.
     export const defaultLeftAxisOptions: DeepPartial<AxisOptions> = {
-        labels: {
-            x: -15
-        },
         title: {
             rotation: 270
         }
@@ -3139,9 +3137,6 @@ namespace AxisDefaults {
 
     // This variable extends the defaultOptions for right axes.
     export const defaultRightAxisOptions: DeepPartial<AxisOptions> = {
-        labels: {
-            x: 15
-        },
         title: {
             rotation: 90
         }
@@ -3150,8 +3145,7 @@ namespace AxisDefaults {
     // This variable extends the defaultOptions for bottom axes.
     export const defaultBottomAxisOptions: DeepPartial<AxisOptions> = {
         labels: {
-            autoRotation: [-45],
-            x: 0
+            autoRotation: [-45]
             // overflow: undefined,
             // staggerLines: null
         },
@@ -3164,8 +3158,7 @@ namespace AxisDefaults {
     // This variable extends the defaultOptions for top axes.
     export const defaultTopAxisOptions: DeepPartial<AxisOptions> = {
         labels: {
-            autoRotation: [-45],
-            x: 0
+            autoRotation: [-45]
             // overflow: undefined
             // staggerLines: null
         },

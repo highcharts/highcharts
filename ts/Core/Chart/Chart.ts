@@ -39,7 +39,6 @@ import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
 import type { ChartPanningOptions } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
-import type Oldie from '../../Extensions/Oldie/Oldie';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type Series from '../Series/Series';
@@ -76,7 +75,6 @@ const {
     svg,
     win
 } = H;
-import MSPointer from '../MSPointer.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
@@ -617,8 +615,7 @@ class Chart {
             optionsChart = chart.options.chart,
             type = (
                 options.type ||
-                optionsChart.type ||
-                optionsChart.defaultSeriesType
+                optionsChart.type
             ) as string,
             SeriesClass = seriesTypes[type];
 
@@ -770,7 +767,8 @@ class Chart {
 
         if (!options.ignoreY && e.isInsidePlot) {
             const yAxis = (
-                options.axis && !options.axis.isXAxis && options.axis
+                !inverted && options.axis &&
+                !options.axis.isXAxis && options.axis
             ) || (
                 series && (inverted ? series.xAxis : series.yAxis)
             ) || {
@@ -842,6 +840,8 @@ class Chart {
             isDirtyBox = chart.isDirtyBox,
             redrawLegend = chart.isDirtyLegend,
             serie: Series;
+
+        renderer.rootFontSize = renderer.boxWrapper.getStyle('font-size');
 
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
@@ -1188,9 +1188,12 @@ class Chart {
         // Default style
         const style = name === 'title' ? {
             color: Palette.neutralColor80,
-            fontSize: this.options.isStock ? '16px' : '18px' // #2944
+            fontSize: this.options.isStock ? '1em' : '1.2em', // #2944
+            fontWeight: 'bold'
         } : {
-            color: Palette.neutralColor60
+            // Subtitle or caption
+            color: Palette.neutralColor60,
+            fontSize: '0.8em'
         };
 
         // Merge default options with explicit options
@@ -1292,18 +1295,8 @@ class Chart {
                     // Floating subtitle (#6574)
                     verticalAlign === 'top' ? titleOffset[0] + 2 : 0;
 
-            let titleSize,
-                height;
-
             if (title) {
 
-                if (!this.styledMode) {
-                    titleSize = (
-                        titleOptions.style &&
-                        titleOptions.style.fontSize
-                    );
-                }
-                titleSize = renderer.fontMetrics(titleSize, title).b;
                 title
                     .css({
                         width: (
@@ -1312,13 +1305,16 @@ class Chart {
                         ) + 'px'
                     });
 
-                // Skip the cache for HTML (#3481, #11666)
-                height = Math.round(title.getBBox(titleOptions.useHTML).height);
+                const baseline = renderer.fontMetrics(title).b,
+                    // Skip the cache for HTML (#3481, #11666)
+                    height = Math.round(
+                        title.getBBox(titleOptions.useHTML).height
+                    );
 
                 title.align(extend({
                     y: verticalAlign === 'bottom' ?
-                        titleSize :
-                        offset + titleSize,
+                        baseline :
+                        offset + baseline,
                     height
                 }, titleOptions), false, 'spacingBox');
 
@@ -1748,7 +1744,7 @@ class Chart {
 
     /**
      * Reflows the chart to its container. By default, the Resize Observer is
-     * attached to the chart's div which allows to reflows the he chart
+     * attached to the chart's div which allows to reflows the chart
      * automatically to its container, as per the
      * [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
      * option.
@@ -1774,6 +1770,8 @@ class Chart {
 
         delete chart.pointer.chartPosition;
 
+        // Width and height checks for display:none. Target is doc in Opera
+        // and win in Firefox, Chrome and IE9.
         if (
             !hasUserSize &&
             !chart.isPrinting &&
@@ -2269,7 +2267,7 @@ class Chart {
 
             // The default series type's class
             klass = seriesTypes[
-                (optionsChart.type || optionsChart.defaultSeriesType) as any
+                optionsChart.type as any
             ];
 
             // Get the value from available chart-wide properties
@@ -2304,7 +2302,7 @@ class Chart {
      * @function Highcharts.Chart#linkSeries
      * @emits Highcharts.Chart#event:afterLinkSeries
      */
-    public linkSeries(): void {
+    public linkSeries(isUpdating?:boolean): void {
         const chart = this,
             chartSeries = chart.series;
 
@@ -2341,7 +2339,7 @@ class Chart {
             }
         });
 
-        fireEvent(this, 'afterLinkSeries');
+        fireEvent(this, 'afterLinkSeries', { isUpdating });
     }
 
     /**
@@ -2355,41 +2353,6 @@ class Chart {
             serie.translate();
             serie.render();
         });
-    }
-
-    /**
-     * Render labels for the chart.
-     *
-     * @private
-     * @function Highcharts.Chart#renderLabels
-     */
-    public renderLabels(): void {
-        const chart = this,
-            labels = chart.options.labels as Oldie.LabelsOptions;
-
-        if (labels.items) {
-            labels.items.forEach(function (
-                label: LabelsItemsOptions
-            ): void {
-                const style = extend(labels.style as any, label.style as any),
-                    x = pInt(style.left) + chart.plotLeft,
-                    y = pInt(style.top) + chart.plotTop + 12;
-
-                // delete to prevent rewriting in IE
-                delete style.left;
-                delete style.top;
-
-                chart.renderer.text(
-                    label.html as any,
-                    x,
-                    y
-                )
-                    .attr({ zIndex: 2 })
-                    .css(style)
-                    .add();
-
-            });
-        }
     }
 
     /**
@@ -2491,12 +2454,10 @@ class Chart {
         if (!chart.seriesGroup) {
             chart.seriesGroup = renderer.g('series-group')
                 .attr({ zIndex: 3 })
+                .shadow(chart.options.chart.seriesGroupShadow)
                 .add();
         }
         chart.renderSeries();
-
-        // Labels
-        chart.renderLabels();
 
         // Credits
         chart.addCredits();
@@ -2669,11 +2630,6 @@ class Chart {
     public firstRender(): void {
         const chart = this,
             options = chart.options;
-
-        // Hook for oldIE to check whether the chart is ready to render
-        if (chart.isReadyToRender && !chart.isReadyToRender()) {
-            return;
-        }
 
         // Create the container
         chart.getContainer();

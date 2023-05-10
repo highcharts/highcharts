@@ -67,7 +67,7 @@ class Pie3DPoint extends PiePoint {
      * @private
      */
     public haloPath(): SVGPath {
-        return this.series.chart.is3d() ?
+        return this.series?.chart.is3d() ?
             [] : superHaloPath.apply(this, arguments);
     }
 

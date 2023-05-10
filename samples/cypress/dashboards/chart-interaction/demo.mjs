@@ -8,11 +8,11 @@ HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
 // A shared connector
-const connector = new CSVConnector(undefined, {
+const connector = new CSVConnector({
     csv: `$GME,$AMC,$NOK
- 4,5,6
- 1,5,2
- 41,23,2`,
+        4,5,6
+        1,5,2
+        41,23,2`,
     firstRowAsNames: true
 });
 connector.load();
@@ -70,8 +70,8 @@ const board = new Board('container', {
         events: {},
         connector,
         sync: {
-          'visibility' : true, 
-          'highlight': true
+            visibility: true,
+            highlight: true
         }
     }, {
         cell: 'dashboard-col-1',
@@ -89,8 +89,8 @@ const board = new Board('container', {
         events: {},
         connector,
         sync: {
-          'visibility' : true, 
-          'highlight': true
+            visibility: true,
+            highlight: true
         }
     }]
 });

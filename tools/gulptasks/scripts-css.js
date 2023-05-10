@@ -15,8 +15,6 @@ const COPY_DIRECTORIES = [
     'gfx'
 ];
 
-const SOURCE_DIRECTORY = 'css';
-
 const TARGET_DIRECTORY = 'code';
 
 /* *
@@ -33,11 +31,9 @@ const TARGET_DIRECTORY = 'code';
  */
 function task() {
 
-    const fs = require('fs');
     const fslib = require('./lib/fs');
     const log = require('./lib/log');
     const path = require('path');
-    const sass = require('sass');
 
     return new Promise(resolve => {
 
@@ -47,36 +43,11 @@ function task() {
             copyPath => fslib.copyAllFiles(
                 copyPath,
                 path.join(TARGET_DIRECTORY, copyPath),
-                true,
-                sourcePath => !sourcePath.endsWith('.scss')
+                true
             )
         );
 
-        let targetPath;
-
-        fslib
-            .getFilePaths(SOURCE_DIRECTORY, true)
-            .filter(sourcePath => sourcePath.endsWith('.scss'))
-            .forEach(sourcePath => {
-
-                targetPath = path.join(
-                    TARGET_DIRECTORY, sourcePath.replace('.scss', '.css')
-                );
-
-                fs.mkdirSync(path.dirname(targetPath), { recursive: true });
-
-                fs.writeFileSync(
-                    targetPath,
-                    sass.compile(
-                        sourcePath,
-                        {
-                            outputStyle: 'expanded'
-                        }
-                    ).css
-                );
-            });
-
-        log.success('Created CSS');
+        log.success('Copied CSS');
 
         resolve();
     });

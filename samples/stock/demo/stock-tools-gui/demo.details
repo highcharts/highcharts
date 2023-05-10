@@ -8,6 +8,6 @@ tags:
   - Highcharts Stock demo
 categories:
   - General:
-      priority: 11
+      priority: 1
 use_png_thumbnail: true
 ...

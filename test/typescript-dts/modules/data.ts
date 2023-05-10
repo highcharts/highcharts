@@ -4,7 +4,7 @@ import DataModule from 'highcharts/modules/data';
 DataModule(Highcharts);
 
 function test_beforeParse() {
-    Highcharts.chart('container', {
+    const options: Highcharts.Options = {
         chart: {
             scrollablePlotArea: {
                 minWidth: 700
@@ -102,5 +102,7 @@ function test_beforeParse() {
             type: 'line',
             name: 'New users'
         }]
-    });
+    };
+
+    Highcharts.chart('container', options);
 }

@@ -18,13 +18,18 @@
  * */
 
 /**
- * Contains all possible types of the class registry.
+ * Contains all possible types of the modifier registry.
  */
 export type DataModifierType = DataModifierTypes[keyof DataModifierTypes];
 
 /**
- * Describes the class registry as a record object with class name and their
- * class types (aka class constructor).
+ * Contains all possible options of the modifier registry.
+ */
+export type DataModifierTypeOptions = DataModifierType['prototype']['options'];
+
+/**
+ * Describes the modifier registry as a record object with key and class
+ * constructor.
  */
 export interface DataModifierTypes {
     // nothing here yet

@@ -19,6 +19,7 @@
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import { type EventCallback } from '../../Core/Callback';
 import type {
     DataLabelOptions,
     DataLabelTextPathOptions
@@ -31,6 +32,7 @@ import type Point from '../../Core/Series/Point';
 import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
 import type {
     SeriesOptions,
+    SeriesEventsOptions,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -81,11 +83,16 @@ export interface NetworkgraphLinkOptions {
     width?: number;
 }
 
+export interface NetworkgraphEventsOptions extends SeriesEventsOptions {
+    afterSimulation?: EventCallback<NetworkgraphSeries, Event>
+}
+
 export interface NetworkgraphSeriesOptions
     extends SeriesOptions, NodesComposition.SeriesCompositionOptions {
 
     dataLabels?: NetworkgraphDataLabelsOptionsObject;
     draggable?: boolean;
+    events?: NetworkgraphEventsOptions;
     inactiveOtherPoints?: boolean;
     layoutAlgorithm?: ReingoldFruchtermanLayout.Options;
     link?: NetworkgraphLinkOptions;

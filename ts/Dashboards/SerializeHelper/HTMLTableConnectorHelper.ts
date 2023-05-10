@@ -19,14 +19,12 @@
  *
  * */
 
-import type DataConnector from '../../Data/Connectors/DataConnector';
-import type JSON from '../../Core/JSON';
-import type Serializable from '../Serializable';
+import type JSON from '../JSON';
 
 import DataTableHelper from './DataTableHelper.js';
 import HTMLTableConnector from '../../Data/Connectors/HTMLTableConnector.js';
+import Serializable from '../Serializable.js';
 import U from '../../Core/Utilities.js';
-import HTMLTableConverterHelper from './HTMLTableConverterHelper';
 const { merge } = U;
 
 /* *
@@ -47,13 +45,7 @@ const { merge } = U;
 function fromJSON(
     json: HTMLTableConnectorHelper.JSON
 ): HTMLTableConnector {
-    const converter = HTMLTableConverterHelper.fromJSON(json.converter),
-        table = DataTableHelper.fromJSON(json.table),
-        connector = new HTMLTableConnector(table, json.options, converter);
-
-    merge(true, connector.metadata, json.metadata);
-
-    return connector;
+    return new HTMLTableConnector(json.options);
 }
 
 /**
@@ -84,34 +76,14 @@ function jsonSupportFor(
 function toJSON(
     obj: HTMLTableConnector
 ): HTMLTableConnectorHelper.JSON {
-    const json: HTMLTableConnectorHelper.JSON = {
-            $class: 'Data.HTMLTableConnector',
-            converter: HTMLTableConverterHelper.toJSON(obj.converter),
-            metadata: obj.metadata,
-            options: {},
-            table: DataTableHelper.toJSON(obj.table)
-        },
-        jsonOptions: HTMLTableConnectorHelper.OptionsJSON = json.options,
-        options = obj.options;
+    const options = merge(obj.options) as HTMLTableConnectorHelper.OptionsJSON;
 
-    // options
+    options.dataTable = DataTableHelper.toJSON(obj.table);
 
-    jsonOptions.endColumn = options.endColumn;
-    jsonOptions.endRow = options.endRow;
-    jsonOptions.firstRowAsNames = options.firstRowAsNames;
-    jsonOptions.startColumn = options.startColumn;
-    jsonOptions.startRow = options.startRow;
-    jsonOptions.switchRowsAndColumns = options.switchRowsAndColumns;
-
-    if (typeof options.table === 'string') {
-        jsonOptions.table = options.table;
-    } else {
-        jsonOptions.table = options.table.id;
-    }
-
-    // done
-
-    return json;
+    return {
+        $class: 'Data.HTMLTableConnector',
+        options
+    };
 }
 
 /* *
@@ -129,15 +101,10 @@ namespace HTMLTableConnectorHelper {
      * */
 
     export interface JSON extends Serializable.JSON<'Data.HTMLTableConnector'> {
-        converter: HTMLTableConverterHelper.JSON;
-        metadata: DataConnector.Metadata;
         options: OptionsJSON;
-        table: DataTableHelper.JSON;
     }
 
-    export interface OptionsJSON extends JSON.Object, Partial<HTMLTableConnector.Options> {
-        table?: string;
-    }
+    export type OptionsJSON = (JSON.Object&HTMLTableConnector.Options);
 
 }
 
@@ -153,5 +120,13 @@ const HTMLTableConnectorHelper: Serializable.Helper<HTMLTableConnector, HTMLTabl
     jsonSupportFor,
     toJSON
 };
+
+Serializable.registerHelper(HTMLTableConnectorHelper);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default HTMLTableConnectorHelper;

@@ -401,7 +401,7 @@ const rangeSelector: RangeSelectorOptions = {
 
     /**
      * The date format in the input boxes when not selected for editing.
-     * Defaults to `%b %e, %Y`.
+     * Defaults to `%e %b %Y`.
      *
      * This is used to determine which type of input to show,
      * `datetime-local`, `date` or `time` and falling back to `text` when
@@ -414,7 +414,7 @@ const rangeSelector: RangeSelectorOptions = {
      *         Milliseconds in the range selector
      *
      */
-    inputDateFormat: '%b %e, %Y',
+    inputDateFormat: '%e %b %Y',
 
     /**
      * A custom callback function to parse values entered in the input boxes
@@ -547,7 +547,9 @@ const rangeSelector: RangeSelectorOptions = {
         /** @ignore */
         color: Palette.highlightColor80,
         /** @ignore */
-        cursor: 'pointer'
+        cursor: 'pointer',
+        /** @ignore */
+        fontSize: '0.8em'
     },
 
     /**
@@ -563,7 +565,9 @@ const rangeSelector: RangeSelectorOptions = {
      */
     labelStyle: {
         /** @ignore */
-        color: Palette.neutralColor60
+        color: Palette.neutralColor60,
+        /** @ignore */
+        fontSize: '0.8em'
     }
 };
 

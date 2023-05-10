@@ -34,7 +34,7 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
-import type JSON from '../../Core/JSON';
+import type JSON from '../JSON';
 import type NavigationBindingsOptionsObject from
     '../../Extensions/Annotations/NavigationBindingsOptions';
 import type Serializable from '../Serializable';

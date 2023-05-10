@@ -196,11 +196,6 @@ const initCanvasBoost = function (): void {
                     'Your browser doesn\'t support HTML5 canvas, <br>' +
                     'please use a modern browser'
                 );
-
-                // Uncomment this to provide low-level (slow) support in oldIE.
-                // It will cause script errors on charts with more than a few
-                // thousand points.
-                // arguments[0].call(this);
             }
         });
     }
@@ -613,7 +608,7 @@ const initCanvasBoost = function (): void {
             }
 
             // Loop over the points
-            (H as any).eachAsync(sdata, function (d: any, i: number): boolean {
+            BoostSeries.eachAsync(sdata, function (d: any, i: number): boolean {
                 let x: number,
                     y: number,
                     clientX: number,

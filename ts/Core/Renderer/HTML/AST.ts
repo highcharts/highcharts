@@ -62,7 +62,7 @@ const emptyHTML = trustedTypesPolicy ?
     '';
 
 
-// In IE8, DOMParser is undefined. IE9 and PhantomJS are only able to parse XML.
+// IE9 and PhantomJS are only able to parse XML.
 const hasValidDOMParser = (function (): boolean {
     try {
         return Boolean(new DOMParser().parseFromString(
@@ -115,6 +115,7 @@ class AST {
      * @type {Array<string>}
      */
     public static allowedAttributes = [
+        'alt',
         'aria-controls',
         'aria-describedby',
         'aria-expanded',
@@ -138,6 +139,8 @@ class AST {
         'dy',
         'disabled',
         'fill',
+        'flood-color',
+        'flood-opacity',
         'height',
         'href',
         'id',
@@ -244,6 +247,7 @@ class AST {
         'dt',
         'em',
         'feComponentTransfer',
+        'feDropShadow',
         'feFuncA',
         'feFuncB',
         'feFuncG',

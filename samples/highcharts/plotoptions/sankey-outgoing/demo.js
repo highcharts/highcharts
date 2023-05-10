@@ -30,7 +30,7 @@ Highcharts.chart('container', {
             nodeFormat: '{point.name}: {point.sum}%',
             padding: 20,
             style: {
-                fontSize: '1.5em'
+                fontSize: '1em'
             }
         },
         nodes: [{

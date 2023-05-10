@@ -39,6 +39,7 @@
 	"code/modules/bullet.src.js",
 	"code/modules/funnel.src.js",
 	"code/modules/funnel3d.src.js",
+	"code/modules/geoheatmap.src.js",
 	"code/modules/pyramid3d.src.js",
 	"code/modules/networkgraph.src.js",
 	"code/modules/pareto.src.js",

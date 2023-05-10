@@ -22,7 +22,6 @@
 
 import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
-import type JSON from '../Core/JSON';
 
 import U from '../Core/Utilities.js';
 const {
@@ -142,7 +141,7 @@ class DataTable implements DataEvent.Emitter {
         options: DataTable.Options = {}
     ) {
 
-        this.aliasMap = {};
+        this.aliases = {};
 
         /**
          * Whether the ID was automatic generated or given in the constructor.
@@ -190,19 +189,19 @@ class DataTable implements DataEvent.Emitter {
 
         this.rowCount = rowCount;
 
-        const aliasMap = options.aliasMap || {},
-            aliases = Object.keys(aliasMap),
-            thisAliasMap = this.aliasMap;
+        const aliases = options.aliases || {},
+            aliasKeys = Object.keys(aliases),
+            thisAliases = this.aliases;
 
         for (
             let i = 0,
-                iEnd = aliases.length,
+                iEnd = aliasKeys.length,
                 alias: string;
             i < iEnd;
             ++i
         ) {
-            alias = aliases[i];
-            thisAliasMap[alias] = aliasMap[alias];
+            alias = aliasKeys[i];
+            thisAliases[alias] = aliases[alias];
         }
     }
 
@@ -216,7 +215,7 @@ class DataTable implements DataEvent.Emitter {
      * Mapping aliases to column names.
      * @private
      */
-    private readonly aliasMap: DataTable.ColumnAliasMap;
+    private readonly aliases: DataTable.ColumnAliases;
 
     public readonly autoId: boolean;
 
@@ -267,7 +266,7 @@ class DataTable implements DataEvent.Emitter {
         table.emit({ type: 'cloneTable', detail: eventDetail });
 
         if (!skipColumns) {
-            tableOptions.aliasMap = table.aliasMap;
+            tableOptions.aliases = table.aliases;
             tableOptions.columns = table.columns;
         }
 
@@ -305,12 +304,12 @@ class DataTable implements DataEvent.Emitter {
      */
     public deleteColumnAlias(alias: string): (string|undefined) {
         const table = this,
-            aliasMap = table.aliasMap,
-            deletedAlias = aliasMap[alias],
+            aliases = table.aliases,
+            deletedAlias = aliases[alias],
             modifier = table.modifier;
 
         if (deletedAlias) {
-            delete table.aliasMap[alias];
+            delete table.aliases[alias];
             if (modifier) {
                 modifier.modifyColumns(
                     table,
@@ -534,7 +533,7 @@ class DataTable implements DataEvent.Emitter {
         const table = this;
 
         columnNameOrAlias = (
-            table.aliasMap[columnNameOrAlias] ||
+            table.aliases[columnNameOrAlias] ||
             columnNameOrAlias
         );
 
@@ -566,7 +565,7 @@ class DataTable implements DataEvent.Emitter {
         const table = this;
 
         columnNameOrAlias = (
-            table.aliasMap[columnNameOrAlias] ||
+            table.aliases[columnNameOrAlias] ||
             columnNameOrAlias
         );
 
@@ -610,7 +609,7 @@ class DataTable implements DataEvent.Emitter {
         const table = this;
 
         columnNameOrAlias = (
-            table.aliasMap[columnNameOrAlias] ||
+            table.aliases[columnNameOrAlias] ||
             columnNameOrAlias
         );
 
@@ -651,7 +650,7 @@ class DataTable implements DataEvent.Emitter {
         const table = this;
 
         columnNameOrAlias = (
-            table.aliasMap[columnNameOrAlias] ||
+            table.aliases[columnNameOrAlias] ||
             columnNameOrAlias
         );
 
@@ -694,16 +693,21 @@ class DataTable implements DataEvent.Emitter {
     }
 
     /**
-     * Fetches all column aliases.
+     * Fetches all column aliases and their mapped columns.
      *
      * @function Highcharts.DataTable#getColumnAliases
      *
-     * @return {Array<string>}
+     * @return {Highcharts.Dictionary<string>}
      * Returns all column aliases.
      */
-    public getColumnAliases(): Array<string> {
-        const table = this,
-            columnAliases = Object.keys(table.aliasMap);
+    public getColumnAliases(): DataTable.ColumnAliases {
+        const aliases = this.aliases,
+            aliasKeys = Object.keys(aliases),
+            columnAliases: DataTable.ColumnAliases = {};
+
+        for (let i = 0, iEnd = aliasKeys.length; i < iEnd; ++i) {
+            columnAliases[aliases[i]] = aliases[aliasKeys[i]];
+        }
 
         return columnAliases;
     }
@@ -742,7 +746,7 @@ class DataTable implements DataEvent.Emitter {
             columns = table.columns;
 
         columnNameOrAlias = (
-            table.aliasMap[columnNameOrAlias] ||
+            table.aliases[columnNameOrAlias] ||
             columnNameOrAlias
         );
 
@@ -832,7 +836,7 @@ class DataTable implements DataEvent.Emitter {
         asReference?: boolean
     ): DataTable.ColumnCollection {
         const table = this,
-            tableAliasMap = table.aliasMap,
+            tableAliasMap = table.aliases,
             tableColumns = table.columns,
             columns: DataTable.ColumnCollection = {};
 
@@ -930,7 +934,7 @@ class DataTable implements DataEvent.Emitter {
         const table = this;
 
         columnNameOrAlias = (
-            table.aliasMap[columnNameOrAlias] ||
+            table.aliases[columnNameOrAlias] ||
             columnNameOrAlias
         );
 
@@ -990,7 +994,7 @@ class DataTable implements DataEvent.Emitter {
         columnNamesOrAliases?: Array<string>
     ): (Array<DataTable.RowObject>) {
         const table = this,
-            aliasMap = table.aliasMap,
+            aliases = table.aliases,
             columns = table.columns,
             rows: Array<DataTable.RowObject> = new Array(rowCount);
 
@@ -1011,7 +1015,7 @@ class DataTable implements DataEvent.Emitter {
             row = rows[i2] = {};
 
             for (const columnName of columnNamesOrAliases) {
-                column = columns[(aliasMap[columnName] || columnName)];
+                column = columns[(aliases[columnName] || columnName)];
                 row[columnName] = (column ? column[i] : void 0);
             }
         }
@@ -1042,7 +1046,7 @@ class DataTable implements DataEvent.Emitter {
         columnNamesOrAliases?: Array<string>
     ): (Array<DataTable.Row>) {
         const table = this,
-            aliasMap = table.aliasMap,
+            aliases = table.aliases,
             columns = table.columns,
             rows: Array<DataTable.Row> = new Array(rowCount);
 
@@ -1063,7 +1067,7 @@ class DataTable implements DataEvent.Emitter {
             row = rows[i2] = [];
 
             for (const columnName of columnNamesOrAliases) {
-                column = columns[(aliasMap[columnName] || columnName)];
+                column = columns[(aliases[columnName] || columnName)];
                 row.push(column ? column[i] : void 0);
             }
         }
@@ -1096,7 +1100,7 @@ class DataTable implements DataEvent.Emitter {
      */
     public hasColumns(columnNamesOrAliases: Array<string>): boolean {
         const table = this,
-            aliasMap = table.aliasMap,
+            aliases = table.aliases,
             columns = table.columns;
 
         for (
@@ -1107,7 +1111,7 @@ class DataTable implements DataEvent.Emitter {
             ++i
         ) {
             columnName = columnNamesOrAliases[i];
-            if (!columns[columnName] && !aliasMap[columnName]) {
+            if (!columns[columnName] && !aliases[columnName]) {
                 return false;
             }
         }
@@ -1136,7 +1140,7 @@ class DataTable implements DataEvent.Emitter {
         const table = this;
 
         columnNameOrAlias = (
-            table.aliasMap[columnNameOrAlias] ||
+            table.aliases[columnNameOrAlias] ||
             columnNameOrAlias
         );
 
@@ -1194,10 +1198,10 @@ class DataTable implements DataEvent.Emitter {
 
         if (columns[columnName]) {
             if (columnName !== newColumnName) {
-                const aliasMap = table.aliasMap;
+                const aliases = table.aliases;
 
-                if (aliasMap[newColumnName]) {
-                    delete aliasMap[newColumnName];
+                if (aliases[newColumnName]) {
+                    delete aliases[newColumnName];
                 }
 
                 columns[newColumnName] = columns[columnName];
@@ -1242,7 +1246,7 @@ class DataTable implements DataEvent.Emitter {
             modifier = table.modifier;
 
         columnNameOrAlias = (
-            table.aliasMap[columnNameOrAlias] ||
+            table.aliases[columnNameOrAlias] ||
             columnNameOrAlias
         );
 
@@ -1332,10 +1336,10 @@ class DataTable implements DataEvent.Emitter {
         columnAlias: string,
         columnName: string
     ): boolean {
-        const aliasMap = this.aliasMap;
+        const aliases = this.aliases;
 
-        if (!aliasMap[columnAlias]) {
-            aliasMap[columnAlias] = columnName;
+        if (!aliases[columnAlias]) {
+            aliases[columnAlias] = columnName;
             return true;
         }
 
@@ -1391,7 +1395,7 @@ class DataTable implements DataEvent.Emitter {
             columnName = columnNames[i];
             column = columns[columnName];
             columnName = (
-                table.aliasMap[columnName] ||
+                table.aliases[columnName] ||
                 columnName
             );
 
@@ -1551,7 +1555,7 @@ class DataTable implements DataEvent.Emitter {
         eventDetail?: DataEvent.Detail
     ): void {
         const table = this,
-            aliasMap = table.aliasMap,
+            aliases = table.aliases,
             columns = table.columns,
             columnNames = Object.keys(columns),
             modifier = table.modifier,
@@ -1591,7 +1595,7 @@ class DataTable implements DataEvent.Emitter {
                     ++j
                 ) {
                     rowColumnName = rowColumnNames[j];
-                    rowColumnName = (aliasMap[rowColumnName] || rowColumnName);
+                    rowColumnName = (aliases[rowColumnName] || rowColumnName);
                     if (!columns[rowColumnName]) {
                         columns[rowColumnName] = new Array(i2 + 1);
                     }
@@ -1630,7 +1634,7 @@ class DataTable implements DataEvent.Emitter {
  * */
 
 /**
- * Additionally it provides necessary types for events and JSON conversion.
+ * Additionally it provides necessary types for events.
  */
 namespace DataTable {
 
@@ -1655,7 +1659,7 @@ namespace DataTable {
     /**
      * Possible value types for a table cell.
      */
-    export type CellType = JSON.Primitive;
+    export type CellType = (boolean|number|null|string|undefined);
 
     /**
      * Event object for clone-related events.
@@ -1677,7 +1681,7 @@ namespace DataTable {
     /**
      * Map of column alias to column name.
      */
-    export type ColumnAliasMap = Record<string, string>;
+    export type ColumnAliases = Record<string, string>;
 
     /**
      * Collection of columns, where the key is the column name (or alias) and
@@ -1729,7 +1733,7 @@ namespace DataTable {
         /**
          * Initial map of column aliases to original column names.
          */
-        aliasMap?: ColumnAliasMap;
+        aliases?: ColumnAliases;
 
         /**
          * Initial columns with their values.
@@ -1829,7 +1833,7 @@ export default DataTable;
  * @readonly
  *//**
  * Initial map of column aliases to original column names.
- * @name Highcharts.DataTableOptions#aliasMap
+ * @name Highcharts.DataTableOptions#aliases
  * @type {Highcharts.Dictionary<string>|undefined}
  *//**
  * Initial columns with their values.

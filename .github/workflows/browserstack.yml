@@ -60,8 +60,6 @@ jobs:
       # tasks
       - name: Build Highcharts
         run: npx gulp scripts
-      - name: Run IE8 Tests
-        run: npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers Win.IE8 --oldie --browsercount 1
       - name: Run Safari Tests
         run: npx gulp test --single-run --splitbrowsers Mac.Safari
       - name: Run Firefox Tests

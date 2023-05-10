@@ -195,8 +195,7 @@ class DataPool {
         connectorOptions: DataPoolConnectorOptions
     ): Promise<DataConnector> {
         return new Promise((resolve, reject): void => {
-            const ConnectorClass: (Class|undefined) =
-                DataConnector.getConnector(connectorOptions.type);
+            const ConnectorClass = DataConnector.types[connectorOptions.type];
 
             if (!ConnectorClass) {
                 throw new Error(
@@ -205,13 +204,12 @@ class DataPool {
             }
 
             const connector =
-                new ConnectorClass(void 0, connectorOptions.options);
+                new ConnectorClass(connectorOptions.options);
 
             this.connectors[connectorOptions.name] = connector;
 
-            connector.on('afterLoad', (): void => resolve(connector));
-            connector.on('loadError', reject);
-            connector.load();
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            connector.load().then(resolve)['catch'](reject);
         });
     }
 

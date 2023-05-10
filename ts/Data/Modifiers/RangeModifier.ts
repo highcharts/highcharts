@@ -20,7 +20,6 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type JSON from '../../Core/JSON';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -86,7 +85,7 @@ class RangeModifier extends DataModifier {
     /**
      * Options of the range modifier.
      */
-    public readonly options: Readonly<RangeModifier.Options>;
+    public readonly options: RangeModifier.Options;
 
     /* *
      *
@@ -234,8 +233,8 @@ class RangeModifier extends DataModifier {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace RangeModifier {
 
@@ -262,19 +261,28 @@ namespace RangeModifier {
     /**
      * Options to configure a range.
      */
-    export interface RangeOptions extends JSON.Object {
+    export interface RangeOptions {
+
+        /**
+         * Name of the related modifier for these options.
+         */
+        modifier: 'Range';
+
         /**
          * Column containing the values to filter.
          */
         column: string;
+
         /**
          * Maximum including value (`<=` operator).
          */
         maxValue: (boolean|number|string);
+
         /**
          * Minimum including value (`>=` operator).
          */
         minValue: (boolean|number|string);
+
     }
 
 }
@@ -285,13 +293,13 @@ namespace RangeModifier {
  *
  * */
 
-DataModifier.registerType(RangeModifier);
-
 declare module './DataModifierType' {
     interface DataModifierTypes {
         Range: typeof RangeModifier;
     }
 }
+
+DataModifier.registerType('Range', RangeModifier);
 
 /* *
  *

@@ -88,7 +88,7 @@ test('Components in layout with no row style', function (assert) {
 
 });
 
-skip('Components in rows with set height', function (assert) {
+test('Components in rows with set height', function (assert) {
     const container = setupContainer();
 
     layouts[0].rows[0].style = {
@@ -255,4 +255,90 @@ test('Nested layouts serialization.', function (assert) {
     assert.equal(importedLayout.rows[0].cells.length, exportedCellsLength, 'The imported layout has an equal number of cells as exported one.')
     assert.equal(numberOfMountedComponents, importedLayout.board.mountedComponents.length, 'The number of mounted components should be the same after importing the layout.')
     assert.true(importedLayout.rows[0].cells[1] !== undefined, 'The imported cell has a nested layout.')
+});
+
+test('Reserialized cell width', function (assert) {
+    const container = setupContainer();
+    const chartComponentOptions = {
+        type: 'Highcharts',
+        chartOptions: {
+            type: 'line',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }],
+            chart: {
+                animation: false
+            }
+        }
+    };
+    const board = new Board(container.id, {
+        editMode: {
+            enabled: true,
+            contextMenu: {
+                enabled: true,
+                items: ['editMode']
+            }
+        },
+        gui: {
+            layouts: [
+                {
+                    id: 'layout-in-1',
+                    rows: [
+                        {
+                            cells: [
+                                {
+                                    id: 'cell-1',
+                                    width: '1/2'
+                                },
+                                {
+                                    id: 'cell-2',
+                                    width: '1/4'
+                                },
+                                {
+                                    id: 'cell-3',
+                                    width: '1/4'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        components: [
+            {
+                cell: 'cell-1',
+                ...chartComponentOptions
+            },
+            {
+                cell: 'cell-2',
+                ...chartComponentOptions
+            },
+            {
+                cell: 'cell-3',
+                ...chartComponentOptions
+            }
+        ]
+    });
+
+    const layoutToExport = board.layouts[0];
+    const exportedLayoutId = layoutToExport.options.id;
+    const widthBeforeExport = board.layouts[0].rows[0].cells.map(
+        (cell) => cell.options.width
+    );
+
+    layoutToExport.exportLocal();
+    layoutToExport.destroy();
+    board.importLayoutLocal(exportedLayoutId);
+
+    const widthAfterExport = board.layouts[0].rows[0].cells.map(
+        (cell) => cell.options.width
+    );
+
+    assert.deepEqual(
+        widthBeforeExport,
+        widthAfterExport,
+        'Widths of cells are the same after export/import'
+    );
+
 });
