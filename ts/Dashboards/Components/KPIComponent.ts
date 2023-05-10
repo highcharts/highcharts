@@ -118,6 +118,7 @@ class KPIComponent extends Component {
                 textAlign: 'center',
                 'min-height': '150px'
             },
+            minFontSize: 30,
             thresholdColors: ['#f45b5b', '#90ed7d']
         }
     );
@@ -323,9 +324,25 @@ class KPIComponent extends Component {
      */
     private updateTitleSize(width: number, height: number): void {
         if (this.titleElement) {
-            this.titleElement.style.fontSize =
-                0.1 * Math.min(width, height) + 'px';
+            this.titleElement.style.fontSize = this.getFontSize(
+                width,
+                height,
+                0.1 * (this.chart ? 1 : 2)
+            );
         }
+    }
+
+    private getFontSize(
+        width: number,
+        height: number,
+        multiplier: number
+    ): string {
+        return (
+            Math.max(
+                this.options.minFontSize,
+                multiplier * Math.min(width, height)
+            ) + 'px'
+        );
     }
 
     /**
@@ -340,8 +357,19 @@ class KPIComponent extends Component {
      */
     private updateSize(width: number, height: number): void {
         this.updateTitleSize(width, height);
-        this.value.style.fontSize = 0.2 * Math.min(width, height) + 'px';
-        this.subtitle.style.fontSize = 0.08 * Math.min(width, height) + 'px';
+        // If there is no chart, make the font size  bigger.
+        const noChartMultiplier = (this.chart ? 1 : 2);
+        const noTitleMultiplier = (this.options.title ? 0.7 : 1);
+        this.value.style.fontSize = this.getFontSize(
+            width,
+            height,
+            0.2 * noChartMultiplier * noTitleMultiplier
+        );
+        this.subtitle.style.fontSize = this.getFontSize(
+            width,
+            height,
+            0.08 * noChartMultiplier
+        );
 
         this.updatingSize = true;
         super.resize(
@@ -642,6 +670,10 @@ namespace KPIComponent {
          * The value that is displayed in KPI component.
          */
         value?: number|string;
+        /**
+         * The minimal value of the font size, that KPI component should have.
+         */
+        minFontSize: number;
         /**
          * The KPI's component subtitle. This can be used both to display
          * a subtitle below the main title.
