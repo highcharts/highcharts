@@ -307,7 +307,7 @@ class SidebarPopup extends BaseForm {
         }
 
         // Remove highlight from the row.
-        if (editMode.editCellContext) {
+        if (editMode.editCellContext && editMode.editCellContext.row) {
             editMode.editCellContext.row.setHighlight(true);
         }
 
@@ -367,6 +367,25 @@ class SidebarPopup extends BaseForm {
                         e as PointerEvent,
                         void 0,
                         (dropContext: Cell|Row): void => {
+                            // Add component if there is no layout yet.
+                            if (this.editMode.board.layouts.length === 0) {
+                                const board = this.editMode.board,
+                                    newLayoutName =
+                                        GUIElement.createElementId('layout'),
+                                    layout = new Layout(board, {
+                                        id: newLayoutName,
+                                        copyId: '',
+                                        parentContainerId: board.container.id,
+                                        rows: [{}],
+                                        style: {}
+                                    });
+                                if (layout) {
+                                    board.layouts.push(layout);
+                                }
+
+                                dropContext = layout.rows[0];
+                            }
+
                             const newCell =
                                 components[i].onDrop(sidebar, dropContext);
 
@@ -426,7 +445,7 @@ class SidebarPopup extends BaseForm {
             editMode.setEditOverlay(true);
         }
 
-        if (editCellContext) {
+        if (editCellContext && editCellContext.row) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight();
 
