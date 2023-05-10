@@ -1,23 +1,28 @@
-const factory = 'chart';
-const chart = Highcharts[factory]('container', {
+const chart = Highcharts.chart('container', {
     series: [{
         data: [1, 4, 3, 5],
         type: 'column',
-        colorByPoint: true
-    }]
+        colorByPoint: true,
+        name: 'Animals'
+    }],
+    xAxis: {
+        categories: ['Cats', 'Dogs', 'Sheep', 'Cows']
+    }
 });
 
-/* eslint-disable-next-line no-underscore-dangle */
-const diffObjects = Highcharts._modules[
-    'Core/Utilities.js'
-].diffObjects;
+document.getElementById('add-series').addEventListener('click', () => {
+    chart.addSeries({
+        data: [4, 2, 3, 1]
+    });
+});
 
-const getOptions = chart => diffObjects(
-    chart.userOptions,
-    Highcharts.defaultOptions
-);
+document.getElementById('getoptions').addEventListener('click', () => {
+    const options = chart.getOptions();
+    document.getElementById('outputs').style.display = 'block';
+    Highcharts.chart('container-output', JSON.parse(JSON.stringify(options)));
 
+    document.getElementById('code-output').innerText = JSON.stringify(
+        options, null, '  '
+    );
 
-const o = getOptions(chart);
-// Highcharts[factory]('container-out', o);
-console.log(o);
+});
