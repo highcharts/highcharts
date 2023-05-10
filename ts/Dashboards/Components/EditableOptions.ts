@@ -80,6 +80,7 @@ namespace EditableOptions {
         detailedOptions?: Array<DetailedOptions>
         /**
          * Relative path to the option, that should be changed in the component.
+         * eg: `['chart', 'title', 'text']`
          */
         propertyPath?: Array<string>
         /**
