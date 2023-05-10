@@ -22,15 +22,15 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis.js';
+import type Axis from '../../Core/Axis/Axis';
+import type DataCursor from '../../Data/DataCursor';
 import type RangeModifier from '../../Data/Modifiers/RangeModifier';
 import type Series from '../../Core/Series/Series';
 import type SharedState from '../../Dashboards/Components/SharedComponentState';
 import type Sync from '../../Dashboards/Components/Sync/Sync';
-import type DataCursor from '../../Data/DataCursor';
 
 import ComponentType from '../../Dashboards/Components/ComponentType';
-import HighchartsComponent from './HighchartsComponent.js';
+import HighchartsComponent from './HighchartsComponent';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
@@ -48,7 +48,7 @@ const configs: {
     emitters: {
         highlightEmitter: [
             'highlightEmitter',
-            function(this: ComponentType): Function | void {
+            function (this: ComponentType): Function | void {
                 if (this.type === 'Highcharts') {
                     const { chart, board } = this as HighchartsComponent;
                     const table = this.connector && this.connector.table;
@@ -63,7 +63,7 @@ const configs: {
                                         point: {
                                             events: {
                                                 // emit table cursor
-                                                mouseOver: function(): void {
+                                                mouseOver: function (): void {
                                                     let offset = 0;
                                                     const modifier = table.getModifier();
                                                     if (modifier && 'getModifiedTableOffset' in modifier) {
@@ -76,7 +76,7 @@ const configs: {
                                                         state: 'point.mouseOver'
                                                     });
                                                 },
-                                                mouseOut: function(): void {
+                                                mouseOut: function (): void {
                                                     let offset = 0;
                                                     const modifier = table.getModifier();
                                                     if (modifier && 'getModifiedTableOffset' in modifier) {
@@ -98,7 +98,7 @@ const configs: {
 
 
                         // Return function that handles cleanup
-                        return function(): void {
+                        return function (): void {
                             if (chart && chart.series) {
                                 chart.series.forEach((series): void => {
                                     series.update({
@@ -118,7 +118,7 @@ const configs: {
             }
         ],
         seriesVisibilityEmitter:
-            function(this: ComponentType): Function | void {
+            function (this: ComponentType): Function | void {
                 if (this.type === 'Highcharts') {
                     const component = this as HighchartsComponent;
                     return this.on('afterRender', (): void => {
@@ -134,7 +134,7 @@ const configs: {
                             series.forEach((series): void => {
                                 series.update({
                                     events: {
-                                        show: function(): void {
+                                        show: function (): void {
                                             cursor.emitCursor(
                                                 store.table,
                                                 {
@@ -144,7 +144,7 @@ const configs: {
                                                 }
                                             );
                                         },
-                                        hide: function(): void {
+                                        hide: function (): void {
                                             cursor.emitCursor(
                                                 store.table,
                                                 {
@@ -162,7 +162,7 @@ const configs: {
                 }
             },
         extremesEmitter:
-            function(this: ComponentType): Function | void {
+            function (this: ComponentType): Function | void {
                 if (this.type === 'Highcharts') {
                     const {
                         chart,
@@ -290,7 +290,7 @@ const configs: {
                         });
 
                         // Return cleanup
-                        return function(): void {
+                        return function (): void {
                             // Call back the cleanup callbacks
                             callbacks.forEach((callback): void => callback());
 
@@ -301,7 +301,7 @@ const configs: {
     },
     handlers: {
         seriesVisibilityHandler:
-            function(this: HighchartsComponent): void {
+            function (this: HighchartsComponent): void {
                 const { chart, connector: store, board } = this;
                 if (store && chart && board) {
                     const { dataCursor } = board;
@@ -332,7 +332,7 @@ const configs: {
                 }
             },
         highlightHandler:
-            function(this: HighchartsComponent): void {
+            function (this: HighchartsComponent): void {
                 const { chart, board } = this;
                 const table = this.connector && this.connector.table;
                 if (board && table) {
@@ -380,7 +380,7 @@ const configs: {
                 }
             },
         extremesHandler:
-            function(this: HighchartsComponent): Function | void {
+            function (this: HighchartsComponent): Function | void {
 
                 const callbacks: Function[] = [];
 
@@ -436,17 +436,16 @@ const configs: {
                         const handleChartZoomOut = (): void => {
                             chart.zoomOut();
 
-                            setTimeout(() => {
-
+                            setTimeout((): void => {
                                 // Workaround for zoom button not being removed
-                                const resetZoomButtons = document
-                                    .querySelectorAll<HTMLButtonElement>(`#${chart.container.id} .highcharts-reset-zoom`);
+                                const resetZoomButtons = this.element
+                                    .querySelectorAll<SVGElement>('.highcharts-reset-zoom');
 
                                 resetZoomButtons.forEach((button): void => {
                                     button.remove();
                                 });
 
-                            })
+                            });
 
 
                         };
