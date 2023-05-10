@@ -9,7 +9,7 @@
     // Instantiate the map
     Highcharts.mapChart('container', {
         chart: {
-            map: topology,
+            type: 'mapline',
             margin: 0,
             marginBottom: 45,
             borderColor: '#ccc',
@@ -26,18 +26,6 @@
             },
             point: {
                 valueDescriptionFormat: '{point.name}.'
-            }
-        },
-
-        legend: {
-            enabled: true,
-            symbolHeight: 0.001,
-            itemDistance: 0,
-            labelFormatter() {
-                const name = this.name,
-                    borderColor = this.userOptions.borderColor;
-
-                return `<span style='color: ${borderColor}'>⬤</span> ${name}`;
             }
         },
 
@@ -58,10 +46,9 @@
         },
 
         plotOptions: {
-            map: {
-                allAreas: false,
+            mapline: {
                 joinBy: ['iso-a2', 'code'],
-                color: 'transparent',
+                fillColor: 'transparent',
                 dataLabels: {
                     enabled: true,
                     color: '#FFFFFF',
@@ -69,7 +56,6 @@
                         fontWeight: 'bold'
                     },
                     // Only show dataLabels for areas with high label rank
-                    format: null,
                     formatter: function () {
                         if (
                             this.point.properties &&
@@ -85,7 +71,7 @@
                 },
                 states: {
                     hover: {
-                        borderWidth: 5,
+                        lineWidth: 5,
                         linecap: 'round'
                     }
                 }
@@ -100,30 +86,25 @@
                 theme: 'USImagery'
             }
         }, {
-            borderColor: colors[0],
+            color: colors[0],
             name: 'UTC',
-            data: ['IE', 'IS', 'GB', 'PT'].map(code => ({
-                code
-            }))
+            data: Highcharts.geojson(topology).filter(el =>
+                ['IE', 'IS', 'GB', 'PT'].includes(el.properties['iso-a2']))
         }, {
             name: 'UTC + 1',
-            borderColor: colors[2],
-            data: [
+            color: colors[2],
+            data: Highcharts.geojson(topology).filter(el => [
                 'NO', 'SE', 'DK', 'DE', 'NL', 'BE', 'LU', 'ES', 'FR', 'PL',
                 'CZ', 'AT', 'CH', 'LI', 'SK', 'HU', 'SI', 'IT', 'SM', 'HR',
                 'BA', 'YF', 'ME', 'AL', 'MK'
-            ].map(code => ({
-                code
-            }))
+            ].includes(el.properties['iso-a2']))
         }, {
             name: 'UTC + 2',
-            borderColor: colors[3],
-            data: [
+            color: colors[3],
+            data: Highcharts.geojson(topology).filter(el => [
                 'FI', 'EE', 'LV', 'LT', 'BY', 'UA', 'MD', 'RO', 'BG', 'GR',
                 'TR', 'CY'
-            ].map(code => ({
-                code
-            }))
+            ].includes(el.properties['iso-a2']))
         }]
     });
 
