@@ -221,6 +221,15 @@
     overflow: auto;
 }
 
+.highcharts-dashboards-component {
+    color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-dashboards-component-kpi-value-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
 .highcharts-dashboards-component-title {
     color: var(--highcharts-neutral-color-100);
     margin: 0.5em 10px;
