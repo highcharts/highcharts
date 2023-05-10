@@ -788,16 +788,6 @@ namespace DataLabel {
                             dataLabel.css(style as any).shadow(
                                 labelOptions.shadow
                             );
-
-                            // Disable pointer events for dataLabels that belong
-                            // to hidden points (#18891)
-                            dataLabel.css({
-                                pointerEvents: point.visible ? 'auto' : 'none'
-                            });
-                        } else {
-                            dataLabel[
-                                point.visible ? 'removeClass' : 'addClass'
-                            ]('highcharts-data-label-hidden');
                         }
 
                         const textPathOptions =
