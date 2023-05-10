@@ -6,11 +6,17 @@ QUnit.test('getOptions', assert => {
             data: [1, 4, 3, 5],
             type: 'column',
             colorByPoint: true
-        }]
+        }],
+        colorAxis: {
+            minColor: '#ff0000'
+        }
     };
     const chart = Highcharts[factory]('container', options);
 
     const result = chart.getOptions();
+
+    // Because `getOptions` splats all collections
+    options.colorAxis = [options.colorAxis];
 
     delete result.xAxis;
     delete result.yAxis;
@@ -19,6 +25,12 @@ QUnit.test('getOptions', assert => {
         result,
         options,
         'The results should be the same as ingoing options'
+    );
+
+    assert.strictEqual(
+        chart.userOptions.colorAxis[0],
+        chart.colorAxis[0].userOptions,
+        'Color axis user options should be shared by reference (remove this if we refactor out userOptions)'
     );
 
     chart.update({
