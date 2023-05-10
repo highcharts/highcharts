@@ -37,7 +37,10 @@ import type {
 } from '../Options';
 import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
-import type { ChartPanningOptions } from './ChartOptions';
+import type {
+    ChartPanningOptions,
+    ChartResetZoomButtonOptions
+} from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
@@ -395,6 +398,67 @@ class Chart {
     }
 
     /**
+     * Function setting zoom options after chart init and after chart update.
+     * Offers support for deprecated options.
+     *
+     * @private
+     * @function Highcharts.Chart#setZoomOptions
+     */
+    public setZoomOptions(optionsChart: ChartOptions): void {
+        const zooming = optionsChart.zooming = optionsChart.zooming || {},
+            userOptions = this.userOptions.chart,
+            defaultZoomButton: ChartResetZoomButtonOptions = {
+                theme: {
+                    zIndex: 6
+                },
+                position: {
+                    align: 'right',
+                    x: -10,
+                    y: 10
+                }
+            };
+
+        zooming.type = pick(
+            userOptions?.zooming?.type,
+            userOptions?.zoomType,
+            zooming.type,
+            optionsChart.zoomType
+        );
+        zooming.key = pick(
+            userOptions?.zooming?.key,
+            userOptions?.zoomKey,
+            zooming.key,
+            optionsChart.zoomKey
+        );
+        zooming.pinchType = pick(
+            userOptions?.zooming?.pinchType,
+            userOptions?.pinchType,
+            zooming.pinchType,
+            optionsChart.pinchType
+        );
+        zooming.singleTouch = pick(
+            userOptions?.zooming?.singleTouch,
+            userOptions?.zoomBySingleTouch,
+            zooming.singleTouch,
+            optionsChart.zoomBySingleTouch
+        );
+
+        if (userOptions?.zooming?.resetButton) {
+            zooming.resetButton = merge(
+                defaultZoomButton,
+                userOptions?.zooming?.resetButton
+            );
+        } else if (userOptions?.resetZoomButton) {
+            zooming.resetButton = merge(
+                defaultZoomButton,
+                userOptions?.resetZoomButton
+            );
+        } else {
+            zooming.resetButton = defaultZoomButton;
+        }
+    }
+
+    /**
      * Overridable function that initializes the chart. The constructor's
      * arguments are passed on directly.
      *
@@ -471,28 +535,7 @@ class Chart {
             this.callback = callback;
             this.isResizing = 0;
 
-            const zooming = optionsChart.zooming = optionsChart.zooming || {};
-
-            // Other options have no default so just pick
-            if (userOptions.chart && !userOptions.chart.zooming) {
-                zooming.resetButton = optionsChart.resetZoomButton;
-            }
-            zooming.key = pick(
-                zooming.key,
-                optionsChart.zoomKey
-            );
-            zooming.pinchType = pick(
-                zooming.pinchType,
-                optionsChart.pinchType
-            );
-            zooming.singleTouch = pick(
-                zooming.singleTouch,
-                optionsChart.zoomBySingleTouch
-            );
-            zooming.type = pick(
-                zooming.type,
-                optionsChart.zoomType
-            );
+            this.setZoomOptions(optionsChart);
 
             /**
              * The options structure for the chart after merging
@@ -3134,8 +3177,10 @@ class Chart {
         const optionsChart = options.chart;
 
         if (optionsChart) {
-
             merge(true, chart.options.chart, optionsChart);
+
+            // Add support for deprecated zooming options like zoomType, #17861
+            this.setZoomOptions(chart.options.chart);
 
             // Setter function
             if ('className' in optionsChart) {
