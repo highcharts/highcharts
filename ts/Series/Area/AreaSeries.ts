@@ -309,13 +309,16 @@ class AreaSeries extends LineSeries {
                 area.isArea = true;
             }
 
-            // if there is fillColor defined for the area, set it
-            if (!series.chart.styledMode && prop[3]) {
-                attribs.fill = prop[3];
-            } else if (!series.chart.styledMode) {
-                // otherwise, we set it to the series color & add fill-opacity
-                attribs.fill = prop[2];
-                attribs['fill-opacity'] = pick(options.fillOpacity, 0.75);
+            if (!series.chart.styledMode) {
+                // If there is fillColor defined for the area, set it
+                if (prop[3]) {
+                    attribs.fill = prop[3];
+                } else {
+                    // Otherwise, we set it to the series color and add
+                    // fill-opacity (#18939)
+                    attribs.fill = prop[2];
+                    attribs['fill-opacity'] = pick(options.fillOpacity, 0.75);
+                }
             }
 
             area[verb](attribs);
