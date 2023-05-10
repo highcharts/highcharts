@@ -483,6 +483,16 @@ class DumbbellSeries extends AreaRangeSeries {
 
         return pointAttribs;
     }
+
+    /**
+     * Set the shape arguments for dummbells.
+     * @private
+     */
+    public setShapeArgs(): void {
+        colProto.translate.apply(this);
+        columnRangeProto.afterColumnTranslate.apply(this);
+    }
+
 }
 
 /* *
@@ -496,7 +506,6 @@ interface DumbbellSeries {
     crispCol: typeof colProto.crispCol;
     trackerGroups: Array<string>;
     translatePoint: typeof AreaRangeSeries.prototype['translate'];
-    setShapeArgs: typeof columnRangeProto['translate'];
     seriesDrawPoints: typeof AreaRangeSeries.prototype['drawPoints'];
 }
 extend(DumbbellSeries.prototype, {
@@ -504,7 +513,6 @@ extend(DumbbellSeries.prototype, {
     drawGraph: noop,
     drawTracker: ColumnSeries.prototype.drawTracker,
     pointClass: DumbbellPoint,
-    setShapeArgs: columnRangeProto.translate,
     seriesDrawPoints: areaRangeProto.drawPoints,
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     translatePoint: areaRangeProto.translate
