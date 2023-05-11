@@ -65,7 +65,7 @@ function renderContextButton(
             'button', {
                 className: EditGlobals.classNames.contextMenuBtn,
                 onclick: function (): void {
-                    editMode.onContextBtnClick(editMode);
+                    editMode.onContextBtnClick();
                 }
             },
             {

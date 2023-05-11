@@ -33,6 +33,7 @@ const {
 
 /**
  * Class providing a drag and drop functionality.
+ * @intenal
  */
 class DragDrop {
 
@@ -57,6 +58,7 @@ class DragDrop {
 
     /**
      * Constructor for the DragDrop class.
+     * @intenral
      *
      * @param {EditMode} editMode
      * The parent editMode reference.
@@ -779,10 +781,25 @@ namespace DragDrop {
      *
      * */
 
+    /**
+     * Options for Drag and Drop
+     */
     export interface Options {
+        /**
+         * Whether the Drag&Drop is enabled.
+         */
         enabled: boolean;
+        /**
+         * Offest how far from the row edge the context should be detectable.
+         */
         rowDropOffset: number;
+        /**
+         * Offest how far from the cell edge the context should be detectable.
+         */
         cellDropOffset: number;
+        /**
+         * Size of the drop pointer in pixels.
+         */
         dropPointerSize: number;
     }
 

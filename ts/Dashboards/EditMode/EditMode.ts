@@ -50,16 +50,24 @@ const {
  *  Class
  *
  * */
+/**
+ * Edit mode class.
+ */
 class EditMode {
     /* *
-    *
-    *  Constructor
-    *
-    * */
-    constructor(
-        board: Board,
-        options?: EditMode.Options
-    ) {
+     *
+     *  Constructor
+     *
+     * */
+    /**
+     * Edit mode constructor.
+     *
+     * @param board
+     * Board instance
+     * @param options
+     * Edit mode options
+     */
+    constructor(board: Board, options?: EditMode.Options) {
         this.iconsURLPrefix =
             (options && options.iconsURLPrefix) || this.iconsURLPrefix;
 
@@ -86,7 +94,8 @@ class EditMode {
                     }
                 }
             },
-            options || {});
+            options || {}
+        );
 
         this.board = board;
         this.lang = merge({}, EditGlobals.lang, this.options.lang);
@@ -118,55 +127,131 @@ class EditMode {
 
         // Create edit overlay.
         this.editOverlay = createElement(
-            'div', {
+            'div',
+            {
                 className: EditGlobals.classNames.editOverlay
-            }, {},
+            },
+            {},
             board.container
         );
         this.isEditOverlayActive = false;
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
+    /** @internal */
     private active: boolean = false;
+    /**
+     * Edit mode options.
+     */
     public options: EditMode.Options;
+    /**
+     * Url from which the icons will be fetched.
+     */
     public iconsURLPrefix: string = EditGlobals.iconsURLPrefix;
+    /**
+     * Dashboards' board instance.
+     */
     public board: Board;
+    /**
+     * Language dictionary.
+     */
     public lang: EditGlobals.LangOptions;
+    /**
+     * Instance of the toolbar, which is displayed for the cell.
+     */
     public cellToolbar?: CellEditToolbar;
+    /**
+     * Instance of the toolbar, which is displayed for the row.
+     */
     public rowToolbar?: RowEditToolbar;
+    /**
+     * Intance of the sidebar.
+     */
     public sidebar?: SidebarPopup;
+    /**
+     * @internal
+     */
     public dragDrop?: DragDrop;
+    /**
+     * @internal
+     */
     public resizer?: Resizer;
+    /**
+     * Whether the instance of edit mode was initialized.
+     */
     public isInitialized: boolean;
+    /**
+     * HTML Element responsible for adding the component.
+     */
     public addComponentBtn?: HTMLDOMElement;
+    /**
+     * Current selected mode, for emulating different screen width for
+     * responsive web design.
+     */
     public rwdMode: string;
+    /**
+     * HTML elements responsible for changing the container width.
+     */
     public rwdMenu: Array<HTMLDOMElement>;
+    /**
+     * @internal
+     */
     public tools: EditMode.Tools;
+    /**
+     * Instance of the confirmation popup
+     */
     public confirmationPopup?: ConfirmationPopup;
+    /**
+     * @internal
+     * Whether the context detection is active.
+     */
     public isContextDetectionActive: boolean;
+    /**
+     * @internal
+     */
     public mouseCellContext?: Cell;
+    /**
+     * @internal
+     */
     public mouseRowContext?: Row;
+    /**
+     * @internal
+     */
     public potentialCellContext?: Cell;
+    /**
+     * @internal
+     */
     public editCellContext?: Cell;
+    /**
+     * @internal
+     */
     public contextPointer: EditMode.ContextPointer;
+    /**
+     * @internal
+     */
     public editOverlay: HTMLDOMElement;
+    /**
+     * @internal
+     */
     public isEditOverlayActive: boolean;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
-    public onContextBtnClick(
-        editMode: EditMode
-    ): void {
+    /**
+     * Event to fire on click of the context button.
+     */
+    public onContextBtnClick(): void {
         // Init contextMenu if doesn't exist.
+        const editMode = this;
         if (!editMode.tools.contextMenu) {
             editMode.tools.contextMenu = new EditContextMenu(
                 editMode.board.container,
@@ -178,8 +263,9 @@ class EditMode {
         // Show context menu.
         if (editMode.tools.contextMenu) {
             if (!editMode.tools.contextMenu.isVisible) {
-                editMode.tools.contextMenu
-                    .updatePosition(editMode.tools.contextButtonElement);
+                editMode.tools.contextMenu.updatePosition(
+                    editMode.tools.contextButtonElement
+                );
             }
 
             editMode.tools.contextMenu.setVisible(
@@ -188,6 +274,9 @@ class EditMode {
         }
     }
 
+    /**
+     * Activate/Deactivate edit mode.
+     */
     public onEditModeToggle(): void {
         const editMode = this;
 
@@ -198,20 +287,19 @@ class EditMode {
         }
     }
 
-    public initEditMode(): void {
+    /**
+     * Init the instance of edit mode.
+     */
+    public init(): void {
         const editMode = this;
 
-        if (
-            !(editMode.options.resize &&
-                !editMode.options.resize.enabled)
-        ) {
+        if (!(editMode.options.resize && !editMode.options.resize.enabled)) {
             editMode.resizer = new Resizer(editMode);
         }
 
         // Init dragDrop.
         if (
-            !(editMode.options.dragDrop &&
-                !editMode.options.dragDrop.enabled)
+            !(editMode.options.dragDrop && !editMode.options.dragDrop.enabled)
         ) {
             editMode.dragDrop = new DragDrop(editMode);
         }
@@ -238,6 +326,9 @@ class EditMode {
         editMode.isInitialized = true;
     }
 
+    /**
+     * @intenal
+     */
     private initEvents(): void {
         const editMode = this,
             board = editMode.board;
@@ -299,9 +390,10 @@ class EditMode {
         });
     }
 
-    private setLayoutEvents(
-        layout: Layout
-    ): void {
+    /**
+     * @internal
+     */
+    private setLayoutEvents(layout: Layout): void {
         const editMode = this;
 
         for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
@@ -314,9 +406,7 @@ class EditMode {
         }
     }
 
-    public setRowEvents(
-        row: Row
-    ): void {
+    public setRowEvents(row: Row): void {
         const editMode = this;
 
         // Init dragDrop row events.
@@ -354,9 +444,7 @@ class EditMode {
         }
     }
 
-    public setCellEvents(
-        cell: Cell
-    ): void {
+    public setCellEvents(cell: Cell): void {
         const editMode = this;
 
         if (cell.nestedLayout) {
@@ -408,12 +496,15 @@ class EditMode {
         }
     }
 
+    /**
+     * Activate the edit mode.
+     */
     public activate(): void {
         const editMode = this;
 
         // Init edit mode.
         if (!editMode.isInitialized) {
-            editMode.initEditMode();
+            editMode.init();
             editMode.initEvents();
         }
 
@@ -441,9 +532,7 @@ class EditMode {
         const editMode = this,
             dashboardCnt = editMode.board.container;
 
-        dashboardCnt.classList.remove(
-            EditGlobals.classNames.editModeEnabled
-        );
+        dashboardCnt.classList.remove(EditGlobals.classNames.editModeEnabled);
 
         // Hide toolbars.
         editMode.hideToolbars();
@@ -477,6 +566,12 @@ class EditMode {
         this.potentialCellContext = void 0;
     }
 
+    /**
+     * Function to check whether the edit mode is activated.
+     *
+     * @returns
+     * Whether the edit mode is activated.
+     */
     public isActive(): boolean {
         return this.active;
     }
@@ -487,9 +582,7 @@ class EditMode {
      * @param {Array<string>} toolbarTypes
      * The array of toolbar names to hide ('cell', 'row', 'sidebar').
      */
-    public hideToolbars(
-        toolbarTypes?: Array<string>
-    ): void {
+    public hideToolbars(toolbarTypes?: Array<string>): void {
         const editMode = this,
             toolbarsToHide = toolbarTypes || ['cell', 'row', 'sidebar'];
 
@@ -571,6 +664,10 @@ class EditMode {
         }
     }
 
+    /**
+     * Creates the buttons such as `addComponent` button, rwd buttons and
+     * context menu button.
+     */
     public createTools(): void {
         const editMode = this;
         const options = this.options;
@@ -585,10 +682,7 @@ class EditMode {
         );
 
         // create context menu button
-        if (
-            options.contextMenu &&
-            options.contextMenu.enabled
-        ) {
+        if (options.contextMenu && options.contextMenu.enabled) {
             this.tools.contextButtonElement = EditRenderer.renderContextButton(
                 this.tools.container,
                 editMode
@@ -599,29 +693,32 @@ class EditMode {
         this.createRwdMenu();
 
         // create add button
-        const addIconURL = options && options.tools &&
-        options.tools.addComponentBtn && options.tools.addComponentBtn.icon;
+        const addIconURL =
+            options &&
+            options.tools &&
+            options.tools.addComponentBtn &&
+            options.tools.addComponentBtn.icon;
 
-        this.addComponentBtn = EditRenderer.renderButton(
-            this.tools.container,
-            {
-                className: EditGlobals.classNames.editToolsBtn,
-                icon: addIconURL,
-                value: 'Add Component',
-                callback: (): void => {
-                    // sidebar trigger
-                    if (editMode.sidebar) {
-                        editMode.sidebar.show();
-                        editMode.setEditOverlay();
-                    }
-                },
-                style: {
-                    display: 'none'
+        this.addComponentBtn = EditRenderer.renderButton(this.tools.container, {
+            className: EditGlobals.classNames.editToolsBtn,
+            icon: addIconURL,
+            value: 'Add Component',
+            callback: (): void => {
+                // sidebar trigger
+                if (editMode.sidebar) {
+                    editMode.sidebar.show();
+                    editMode.setEditOverlay();
                 }
+            },
+            style: {
+                display: 'none'
             }
-        );
+        });
     }
 
+    /**
+     * @internal
+     */
     private createRwdMenu(): void {
         const rwdBreakingPoints = this.board.options.responsiveBreakpoints;
         const toolsContainer = this.tools.container;
@@ -631,44 +728,39 @@ class EditMode {
 
         for (const key in rwdBreakingPoints) {
             if (toolsContainer) {
-                const btn = EditRenderer.renderButton(
-                    toolsContainer,
-                    {
-                        className: EditGlobals.classNames.editToolsBtn,
-                        icon: (rwdIcons as any)[key] || '',
-                        value: key,
-                        callback: (e: PointerEvent): void => {
-                            const button = e.target as HTMLElement,
-                                isSelected =
-                                    button.classList.contains('selected');
+                const btn = EditRenderer.renderButton(toolsContainer, {
+                    className: EditGlobals.classNames.editToolsBtn,
+                    icon: (rwdIcons as any)[key] || '',
+                    value: key,
+                    callback: (e: PointerEvent): void => {
+                        const button = e.target as HTMLElement,
+                            isSelected = button.classList.contains('selected');
 
-                            // Deselect given button and reset board width.
-                            if (isSelected) {
-                                button.classList.remove('selected');
-                                this.board.layoutsWrapper.style.width = '';
-                                this.rwdMode = '';
-                            } else {
-                                // Deselect all buttons.
-                                this.rwdMenu.forEach(
-                                    (btn: HTMLElement): void => {
-                                        btn.classList.remove('selected');
-                                    });
+                        // Deselect given button and reset board width.
+                        if (isSelected) {
+                            button.classList.remove('selected');
+                            this.board.layoutsWrapper.style.width = '';
+                            this.rwdMode = '';
+                        } else {
+                            // Deselect all buttons.
+                            this.rwdMenu.forEach((btn: HTMLElement): void => {
+                                btn.classList.remove('selected');
+                            });
 
-                                // Select given button and change board width.
-                                button.classList.add('selected');
-                                this.board.layoutsWrapper.style.width =
-                                    rwdBreakingPoints[key] + 'px';
-                                this.rwdMode = key;
-                            }
-
-                            // Reflow elements.
-                            this.board.reflow();
-                        },
-                        style: {
-                            display: 'none'
+                            // Select given button and change board width.
+                            button.classList.add('selected');
+                            this.board.layoutsWrapper.style.width =
+                                rwdBreakingPoints[key] + 'px';
+                            this.rwdMode = key;
                         }
+
+                        // Reflow elements.
+                        this.board.reflow();
+                    },
+                    style: {
+                        display: 'none'
                     }
-                );
+                });
 
                 if (btn) {
                     this.rwdMenu.push(btn);
@@ -677,18 +769,30 @@ class EditMode {
         }
     }
 
+    /**
+     * Shows the rwdButtons
+     */
     public showRwdButtons(): void {
         for (let i = 0, iEnd = this.rwdMenu.length; i < iEnd; ++i) {
             (this.rwdMenu[i] as HTMLDOMElement).style.display = 'block';
         }
     }
 
+    /**
+     * hides the rwdButtons
+     */
     public hideRwdButtons(): void {
         for (let i = 0, iEnd = this.rwdMenu.length; i < iEnd; ++i) {
             (this.rwdMenu[i] as HTMLDOMElement).style.display = 'none';
         }
     }
 
+    /**
+     * Event fired when detecting context on drag&drop
+     *
+     * @param e
+     * Mouse pointer event
+     */
     public onDetectContext(e: PointerEvent): void {
         const editMode = this,
             offset = 50; // TODO - add it from options.
@@ -699,12 +803,14 @@ class EditMode {
             (editMode.mouseCellContext || editMode.mouseRowContext) &&
             !(editMode.dragDrop || {}).isActive
         ) {
-            let cellContext,
-                rowContext;
+            let cellContext, rowContext;
 
             if (editMode.mouseCellContext) {
-                cellContext = ContextDetection
-                    .getContext(editMode.mouseCellContext, e, offset).cell;
+                cellContext = ContextDetection.getContext(
+                    editMode.mouseCellContext,
+                    e,
+                    offset
+                ).cell;
             } else if (editMode.mouseRowContext) {
                 rowContext = editMode.mouseRowContext;
                 cellContext = rowContext.layout.parentCell;
@@ -713,10 +819,12 @@ class EditMode {
             this.potentialCellContext = cellContext;
 
             if (cellContext) {
-                const cellContextOffsets = GUIElement
-                    .getOffsets(cellContext, editMode.board.container);
-                const { width, height } = GUIElement
-                    .getDimFromOffsets(cellContextOffsets);
+                const cellContextOffsets = GUIElement.getOffsets(
+                    cellContext,
+                    editMode.board.container
+                );
+                const { width, height } =
+                    GUIElement.getDimFromOffsets(cellContextOffsets);
 
                 editMode.showContextPointer(
                     cellContextOffsets.left,
@@ -728,11 +836,17 @@ class EditMode {
         }
     }
 
+    /**
+     * Stops the context detection.
+     */
     public stopContextDetection(): void {
         this.isContextDetectionActive = false;
         this.hideContextPointer();
     }
 
+    /**
+     * Confirms the selected context.
+     */
     public onContextConfirm(): void {
         if (
             this.isContextDetectionActive &&
@@ -746,6 +860,9 @@ class EditMode {
         }
     }
 
+    /**
+     * @internal
+     */
     public setEditCellContext(
         editCellContext: Cell,
         oldEditCellContext?: Cell
@@ -813,9 +930,13 @@ class EditMode {
         }
     }
 
-    public setEditOverlay(
-        remove?: boolean
-    ): void {
+    /**
+     * Adds/Removes the edit mode overlay.
+     *
+     * @param remove
+     * Whether the edit overlay should be removed.
+     */
+    public setEditOverlay(remove?: boolean): void {
         const editMode = this,
             cnt = editMode.editOverlay,
             isSet = cnt.classList.contains(
@@ -838,7 +959,13 @@ class EditMode {
  *
  * */
 namespace EditMode {
+    /**
+     * Edit mode options.
+     */
     export interface Options {
+        /**
+         * Whether the edit mode should be enabled for the dashboards.
+         */
         enabled: boolean;
         /**
          * The URL prefix for the icons used in the edit mode like the context
@@ -847,21 +974,57 @@ namespace EditMode {
          * @default 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/'
          */
         iconsURLPrefix?: string;
+        /**
+         * Additional Language options.
+         */
         lang?: EditGlobals.LangOptions|string;
-        toolbars?: EditMode.Toolbars;
+        /**
+         * Toolbar options.
+         */
+        toolbars?: Toolbars;
+        /**
+         * Drag&Drop options.
+         */
         dragDrop?: DragDrop.Options;
+        /**
+         * Resize options.
+         */
         resize?: Resizer.Options;
+        /**
+         * @internal
+         */
         tools: Tools;
+        /**
+         * Context menu options.
+         */
         contextMenu?: EditContextMenu.Options;
+        /**
+         * Confirmation popup options.
+         */
         confirmationPopup: ConfirmationPopup.Options;
     }
 
+    /**
+     * Toolbar options.
+     */
     export interface Toolbars {
+        /**
+         * Options of the cell toolbar.
+         */
         cell?: CellEditToolbar.Options;
+        /**
+         * Options of the row toolbar.
+         */
         row?: RowEditToolbar.Options;
-        settings?: SidebarPopup.Options;
+        /**
+         * options of the sidebar.
+         */
+        sidebar?: SidebarPopup.Options;
     }
 
+    /**
+     * @Internal
+     */
     export interface Tools {
         contextMenu?: EditContextMenu;
         contextButtonElement?: HTMLDOMElement;

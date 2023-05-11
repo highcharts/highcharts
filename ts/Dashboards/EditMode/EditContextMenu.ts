@@ -40,6 +40,9 @@ class EditContextMenu extends Menu {
         items: ['editMode']
     };
 
+    /**
+     * Default Context menu items.
+     */
     public static items = merge(Menu.items, {
         editMode: {
             id: 'editMode',
@@ -174,9 +177,12 @@ class EditContextMenu extends Menu {
 }
 
 namespace EditContextMenu {
+    /**
+     * Options for the context menu.
+     */
     export interface Options extends Menu.Options {
         width?: number;
-        enabled?: true;
+        enabled?: boolean;
         icon?: string;
     }
 }
