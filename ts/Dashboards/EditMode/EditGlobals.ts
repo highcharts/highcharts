@@ -129,6 +129,7 @@ const EditGlobals: EditGlobals = {
         confirmDestroyRow: 'Do you want to destroy the row?',
         confirmDestroyCell: 'Do you want to destroy the cell?',
         confirmButton: 'Confirm',
+        connectorName: 'Connector name',
         cancelButton: 'Cancel',
         viewFullscreen: 'View in full screen',
         exitFullscreen: 'Exit full screen',
