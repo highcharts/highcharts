@@ -237,8 +237,10 @@ function renderSelect(
     );
 
     const iconURL = (
-        U.find(options.items, (item): boolean => item.name === options.value) ||
-        {}
+        U.find(
+            options.selectOptions,
+            (item): boolean => item.name === options.value
+        ) || {}
     ).iconURL;
 
     let headerIcon;
@@ -292,9 +294,9 @@ function renderSelect(
         dropdownPointer.classList.toggle(EditGlobals.classNames.rotateElement);
     });
 
-    for (let i = 0, iEnd = options.items.length; i < iEnd; ++i) {
+    for (let i = 0, iEnd = options.selectOptions.length; i < iEnd; ++i) {
         renderSelectElement(
-            merge(options.items[i] || {}, { iconsURLPrefix }),
+            merge(options.selectOptions[i] || {}, { iconsURLPrefix }),
             dropdown,
             placeholder,
             options.id,
@@ -784,7 +786,7 @@ export interface FormFieldOptions {
 export interface SelectFormFieldOptions extends FormFieldOptions {
     title: string;
     value: string;
-    items: Array<SelectFormFieldItemOptions>;
+    selectOptions: Array<SelectFormFieldItemOptions>;
 }
 
 export interface SelectFormFieldItemOptions {

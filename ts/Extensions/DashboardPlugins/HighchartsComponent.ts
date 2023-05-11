@@ -109,7 +109,7 @@ class HighchartsComponent extends Component {
                 {
                     name: 'chartOptions',
                     type: 'nested',
-                    detailedOptions: [{
+                    nestedOptions: [{
                         name: 'chart',
                         options: [{
                             name: 'title',

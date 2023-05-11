@@ -247,17 +247,17 @@ class AccordionMenu {
         options: EditableOptions.Configuration,
         component: Component
     ): void {
-        if (!parentElement || !options.detailedOptions) {
+        if (!parentElement || !options.nestedOptions) {
             return;
         }
 
-        const detailedOptions = options.detailedOptions;
+        const nestedOptions = options.nestedOptions;
 
-        for (let i = 0, iEnd = detailedOptions.length; i < iEnd; ++i) {
-            const name = detailedOptions[i].name;
-            const nestedOptions = detailedOptions[i].options;
-            const allowEnabled = !!detailedOptions[i].allowEnabled;
-            const propertyPath = detailedOptions[i].propertyPath || [];
+        for (let i = 0, iEnd = nestedOptions.length; i < iEnd; ++i) {
+            const name = nestedOptions[i].name;
+            const accordionOptions = nestedOptions[i].options;
+            const allowEnabled = !!nestedOptions[i].allowEnabled;
+            const propertyPath = nestedOptions[i].propertyPath || [];
             const collapsedHeader = EditRenderer.renderCollapseHeader(
                 parentElement, {
                     name,
@@ -269,9 +269,9 @@ class AccordionMenu {
                 }
             );
 
-            for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
+            for (let j = 0, jEnd = accordionOptions.length; j < jEnd; ++j) {
                 this.renderAccordion(
-                    nestedOptions[j] as EditableOptions.Configuration,
+                    accordionOptions[j] as EditableOptions.Configuration,
                     collapsedHeader.content,
                     component
                 );

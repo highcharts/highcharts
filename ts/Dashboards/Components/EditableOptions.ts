@@ -77,7 +77,7 @@ namespace EditableOptions {
          * Detailed options that should be included in the accordion menu.
          * Available for `nested` type.
          */
-        detailedOptions?: Array<DetailedOptions>
+        nestedOptions?: Array<NestedOptions>
         /**
          * Relative path to the option, that should be changed in the component.
          * eg: `['chart', 'title', 'text']`
@@ -118,7 +118,7 @@ namespace EditableOptions {
     /**
      * Configuration for a single option in detailed options.
      */
-    export interface DetailedOptions {
+    export interface NestedOptions {
         /**
          * Name of the option that should be displayed.
          */
