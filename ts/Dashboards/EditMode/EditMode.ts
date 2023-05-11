@@ -134,7 +134,7 @@ class EditMode {
 
     private active: boolean = false;
     public options: EditMode.Options;
-    public iconsURLPrefix: string = EditGlobals.iconsURLPrefix;
+    public iconsURLPrefix: string = 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/';
     public board: Board;
     public lang: EditGlobals.LangOptions;
     public cellToolbar?: CellEditToolbar;
