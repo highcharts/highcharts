@@ -1,5 +1,5 @@
 ---
-name: Europe time zones on TiledWebMap
+name: Tiled web map providers
 authors:
   - Hubert Kozik
 js_wrap: b

@@ -1,5 +1,5 @@
 ---
-name: Best attractions in Oslo
+name: Tiled web map with points of interest
 authors:
   - Hubert Kozik
 js_wrap: b
