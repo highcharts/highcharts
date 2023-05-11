@@ -97,6 +97,11 @@ class FunnelSeries extends PieSeries {
         animation: false,
 
         /**
+         * The border radius is by default set to 0 for the funnel chart.
+         */
+        borderRadius: 0,
+
+        /**
          * The center of the series. By default, it is centered in the middle
          * of the plot area, so it fills the plot area height.
          *
@@ -404,6 +409,7 @@ class FunnelSeries extends PieSeries {
             options = series.options,
             reversed = options.reversed,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
+            borderRadius = options.borderRadius,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
             cumulative = 0, // start at top
@@ -545,16 +551,72 @@ class FunnelSeries extends PieSeries {
                 }
             }
 
-            // save the path
-            path = [
-                ['M', x1, y1],
-                ['L', x2, y1],
-                ['L', x4, y3]
-            ];
-            if (y5 !== null) {
-                path.push(['L', x4, y5], ['L', x3, y5]);
+            if (borderRadius) {
+                // Creating the path of funnel points with rounded corners
+                // (#18839)
+                const h = Math.abs(y3 - y1),
+                    xSide = x2 - x4,
+                    lBase = x4 - x3,
+                    lSide = Math.sqrt(xSide * xSide + h * h);
+                let r = Math.min(borderRadius, lSide / 2),
+                    rdX: number,
+                    rdY: number,
+                    rY: number;
+
+                if (y5 !== null) {
+                    r = Math.min(r, Math.abs(y5 - y3) / 2);
+                }
+
+                if (lBase >= 1) {
+                    r = Math.min(r, lBase / 2);
+                }
+
+                rY = reversed ? -r : r;
+                rdX = r / lSide * xSide;
+                rdY = rY / lSide * h;
+
+                path = [
+                    ['M', x1 + rdX, y1 + rdY],
+                    ['Q', x1, y1, x1 + r, y1],
+                    ['L', x2 - r, y1],
+                    ['Q', x2, y1, x2 - rdX, y1 + rdY],
+                    ['L', x4 + rdX, y3 - rdY]
+                ];
+
+                if (y5 !== null) {
+                    path.push(
+                        ['Q', x4, y3, x4, y3 + rY],
+                        ['L', x4, y5 - rY],
+                        ['Q', x4, y5, x4 - r, y5],
+                        ['L', x3 + r, y5],
+                        ['Q', x3, y5, x3, y5 - rY],
+                        ['L', x3, y3 + rY]
+                    );
+                } else if (lBase >= 1) {
+                    path.push(
+                        ['L', x4 + rdX, y3 - rdY],
+                        ['Q', x4, y3, x4 - r, y3],
+                        ['L', x3 + r, y3]
+                    );
+                }
+
+                path.push(
+                    ['Q', x3, y3, x3 - rdX, y3 - rdY],
+                    ['Z']
+                );
+            } else {
+                // Creating the path of funnel points without rounded corners
+                path = [
+                    ['M', x1, y1],
+                    ['L', x2, y1],
+                    ['L', x4, y3]
+                ];
+                if (y5 !== null) {
+                    path.push(['L', x4, y5], ['L', x3, y5]);
+                }
+                path.push(['L', x3, y3], ['Z']);
             }
-            path.push(['L', x3, y3], ['Z']);
+
 
             // prepare for using shared dr
             point.shapeType = 'path';
