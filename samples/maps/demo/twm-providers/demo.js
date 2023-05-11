@@ -75,10 +75,11 @@
         },
 
         legend: {
-            backgroundColor: '#ffffffdd',
+            backgroundColor: 'rgba(255,255,255,0.85)',
             align: 'left',
             layout: 'vertical',
             symbolRadius: 0,
+            borderRadius: 2,
             itemHiddenStyle: {
                 color: 'rgba(128,128,128,0.3)'
             }

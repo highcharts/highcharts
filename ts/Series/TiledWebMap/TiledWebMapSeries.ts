@@ -221,7 +221,7 @@ class TiledWebMapSeries extends MapSeries {
             ),
             worldSize = 400.979322,
             tileSize = 256,
-            duration = 200,
+            duration = chart.renderer.forExport ? 0 : 200,
             animateTiles = (duration: number): void => {
                 Object.keys(tiles).forEach((zoomKey): void => {
                     if (
