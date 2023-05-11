@@ -3,6 +3,7 @@ name: Best attractions in Oslo
 authors:
   - Hubert Kozik
 js_wrap: b
+new_until: 2023-07-31
 tags:
   - Highcharts Maps demo
 categories:

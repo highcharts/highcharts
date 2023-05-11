@@ -96,7 +96,7 @@ class TiledWebMapSeries extends MapSeries {
      * enableMouseTracking, findNearestPointBy, joinBy, keys, marker,
      * negativeColor, nullColor, nullInteraction, onPoint, point,
      * pointDescriptionFormatter, selected, shadow, showCheckbox,
-     * stickyTracking, tooltip, type
+     * sonification, stickyTracking, tooltip, type
      * @product      highmaps
      * @optionparent plotOptions.tiledwebmap
      */

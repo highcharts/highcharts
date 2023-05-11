@@ -9,11 +9,11 @@ The `tiledwebmap` series, in short TWM, allows users to dynamically create maps 
 Configuration
 --------------------------
 
-In order to use the `tiledwebmap` series as a base map, firstly import the tiledwebmap.js module.
+In order to use the `tiledwebmap` series as a base map, firstly import the `tiledwebmap.js` module.
 
     <script src="https://code.highcharts.com/maps/modules/tiledwebmap.js"></script>
 
-Secondly, set the series type to `tiledwebmap`. Tiled web map series by default is a series that does not need any data to run. The user only has to specify which provider should be used to fetch the tiles from. This series doesn’t have information about what region we want to focus at, so in most cases the implementer wants to set either `mapView.center` and `mapView.zoom` or `mapView.fitToGeometry` or add another series, which will calculate the proper bounds for map view. There are additional options such as a theme for the tiles, a subdomain for the provider’s URL and an API key if needed.
+Secondly, set the series type to `tiledwebmap`. Tiled web map series by default is a series that does not need any data to run. The user only has to specify which provider should be used to fetch the tiles from. This series doesn’t have information about what region we want to focus at, so in most cases the implementer wants to set either `mapView.center` and `mapView.zoom` or `mapView.fitToGeometry` or add another series with geometry data, which will calculate the proper bounds for map view. There are additional options such as a theme for the tiles, a subdomain for the provider’s URL and an API key if needed.
 
 Sample code:
 
@@ -38,15 +38,16 @@ Alternatively, you can enter your own URL template, and omit all of the aforemen
 
 Providers properties
 ------------
-Highcharts by default supports the following tile providers: `OpenStreetMap`, `Thunderforest`, `Esri`, `Stamen`, `USGS` and `LimaLabs`. Each provider has their own themes and possible subdomains. Tiles are provided in a specific map projection, usually it is a WebMercator projection. 
-Providers supported natively by Highcharts force map chart configuration to set an appropriate map projection. If the user sets his own projection, which is not supported, there will be a warning in the console and tiles might not load properly. Other providers can be added by using a custom url in provider.url property or another provider can be [custom built and plugged in](https://jsfiddle.net/BlackLabel/hmkatnz7/).
+Highcharts by default supports the following tile providers: `OpenStreetMap`, `Thunderforest`, `Esri`, `Stamen`, `USGS` and `LimaLabs`. Each provider has their own themes and possible subdomains. Tiles are provided in a specific map projection, usually it is a WebMercator projection.
+
+Providers supported natively by Highcharts force map chart configuration to set an appropriate map projection. If the user sets their own projection, which is not supported, there will be a warning in the console and tiles might not load properly. Other providers can be added by using a custom URL in the `provider.url` property or another provider can be [custom built and plugged in](https://highcharts.com/samples/maps/series-tiledwebmaps/human-anatomy).
 
 Available providers
 ------------
 * `OpenStreetMap`
 
     OpenStreetMap (OSM) is a free, open geographic database updated and maintained by a community of volunteers via open collaboration. URL: https://www.openstreetmap.org/
-    
+
     Available properties:
 
         theme: 'Standard’, ‘Hot’, ‘Mapnik’, ‘OpenTopoMap’
@@ -54,7 +55,7 @@ Available providers
 
 * `Thunderforest`
 
-    Thunderforest is a global provider of thoughtfully-created activity maps. URL: https://www.thunderforest.com/ 
+    Thunderforest is a global provider of thoughtfully-created activity maps. URL: https://www.thunderforest.com/
 
     Available properties:
 
@@ -63,7 +64,7 @@ Available providers
 
 * `Esri`
 
-    Esri is the global market leader in geographic information system (GIS) software, location intelligence, and mapping. URL: https://www.esri.com/ 
+    Esri is the global market leader in geographic information system (GIS) software, location intelligence, and mapping. URL: https://www.esri.com/
 
     Available properties:
 
@@ -71,7 +72,7 @@ Available providers
 
 * `Stamen`
 
-    Stamen is a San Francisco design and development studio focused on data visualization and map-making. Stamen heavily uses OpenStreetMap data in many of their map visualizations, and their developers have worked on many important tools and product offerings around OpenStreetMap. URL: http://maps.stamen.com/ 
+    Stamen is a San Francisco design and development studio focused on data visualization and map-making. Stamen heavily uses OpenStreetMap data in many of their map visualizations, and their developers have worked on many important tools and product offerings around OpenStreetMap. URL: http://maps.stamen.com/
 
     Available properties:
 
@@ -80,7 +81,7 @@ Available providers
 
 * `USGS`
 
-    The United States Geological Survey (USGS), formerly simply known as the Geological Survey, is a scientific agency of the United States government. URL: https://www.usgs.gov/ 
+    The United States Geological Survey (USGS), formerly simply known as the Geological Survey, is a scientific agency of the United States government. URL: https://www.usgs.gov/
 
     Available properties:
 
@@ -88,7 +89,7 @@ Available providers
 
 * `LimaLabs`
 
-    LimaLabs provides tiles as free for any user needing < 20,000,000 tiles yearly. URL: https://maps.lima-labs.com/ 
+    LimaLabs provides tiles as free for any user needing < 20,000,000 tiles yearly. URL: https://maps.lima-labs.com/
 
 
     Available properties:

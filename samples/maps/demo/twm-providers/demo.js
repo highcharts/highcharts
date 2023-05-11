@@ -77,7 +77,11 @@
         legend: {
             backgroundColor: '#ffffffdd',
             align: 'left',
-            layout: 'vertical'
+            layout: 'vertical',
+            symbolRadius: 0,
+            itemHiddenStyle: {
+                color: 'rgba(128,128,128,0.3)'
+            }
         },
 
         series: [{
@@ -87,7 +91,8 @@
                 type: 'OpenStreetMap',
                 subdomain: 'a',
                 theme: 'Standard'
-            }
+            },
+            color: 'rgba(128,128,128,0.3)'
         }, {
             type: 'mappoint',
             name: 'Mappoints',

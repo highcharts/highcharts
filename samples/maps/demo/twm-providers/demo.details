@@ -4,6 +4,7 @@ authors:
   - Hubert Kozik
 js_wrap: b
 requiresManualTesting: true
+new_until: 2023-07-31
 resources:
    - https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css
 tags:

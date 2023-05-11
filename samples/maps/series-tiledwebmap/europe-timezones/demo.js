@@ -10,10 +10,7 @@
     Highcharts.mapChart('container', {
         chart: {
             type: 'mapline',
-            margin: 0,
-            marginBottom: 45,
-            borderColor: '#ccc',
-            borderWidth: 2
+            margin: 0
         },
 
         title: {
@@ -38,6 +35,13 @@
             }
         },
 
+        legend: {
+            align: 'left',
+            layout: 'vertical',
+            backgroundColor: '#ffffffdd',
+            borderRadius: 2
+        },
+
         mapNavigation: {
             enabled: true,
             buttonOptions: {
@@ -55,15 +59,7 @@
                     style: {
                         fontWeight: 'bold'
                     },
-                    // Only show dataLabels for areas with high label rank
-                    formatter: function () {
-                        if (
-                            this.point.properties &&
-                            this.point.properties.labelrank < 5
-                        ) {
-                            return this.point.properties['iso-a2'];
-                        }
-                    }
+                    format: '{point.properties.iso-a2}'
                 },
                 tooltip: {
                     headerFormat: '',
@@ -71,8 +67,7 @@
                 },
                 states: {
                     hover: {
-                        lineWidth: 5,
-                        linecap: 'round'
+                        lineWidth: 5
                     }
                 }
             }
