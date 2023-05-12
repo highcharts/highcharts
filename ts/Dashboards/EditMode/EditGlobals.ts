@@ -22,8 +22,6 @@ const PREFIX = DG.classNamePrefix + 'edit-';
 
 const EditGlobals: EditGlobals = {
     prefix: PREFIX,
-    iconsURLPrefix:
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@381ddd8/gfx/dashboard-icons/',
     classNames: {
         resizeSnap: PREFIX + 'resize-snap',
         resizeSnapX: PREFIX + 'resize-snap-x',
@@ -143,7 +141,6 @@ const EditGlobals: EditGlobals = {
 
 interface EditGlobals {
     prefix: string;
-    iconsURLPrefix: string;
     classNames: EditGlobals.ClassNamesOptions;
     lang: EditGlobals.LangOptions;
 }

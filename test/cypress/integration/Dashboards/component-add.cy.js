@@ -114,4 +114,27 @@ describe('Add component through UI', () => {
             );
         });
     });
+    it('The component is added to empty dashboard.', function() {
+
+        cy.get('#dashboard-col-0').click();
+        cy.get('.highcharts-dashboards-edit-menu-destroy').first().click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+        grabComponent('chart');
+        dropComponent('.highcharts-dashboards-wrapper')
+        cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
+        cy.board().then((board) => {
+            assert.equal(
+                board.layouts[0].rows[0].cells.length,
+                1,
+                'New cell should be added.'
+            );
+            const m = board.mountedComponents,
+                component = m[m.length - 1].component;
+            assert.equal(
+                component.type,
+                'Highcharts',
+                `New component's type should be 'Highcharts'.`
+            );
+        });
+    });
 });

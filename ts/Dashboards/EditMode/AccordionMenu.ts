@@ -100,7 +100,10 @@ class AccordionMenu {
             option = editableOptions[i];
             content = EditRenderer.renderCollapseHeader(
                 accordionContainer,
-                { name: option.name }
+                {
+                    name: option.name,
+                    iconsURLPrefix: menu.iconsURLPrefix
+                }
             ).content;
 
             this.renderAccordion(option, content, component);
@@ -262,6 +265,7 @@ class AccordionMenu {
                 parentElement, {
                     name,
                     isEnabled: !!component.getEditableOptionValue(propertyPath),
+                    iconsURLPrefix: this.iconsURLPrefix,
                     allowEnabled,
                     onchange: (value: boolean | string | number): void =>
                         this.updateOptions(propertyPath, value),
