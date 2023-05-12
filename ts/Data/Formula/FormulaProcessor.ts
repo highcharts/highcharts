@@ -92,6 +92,20 @@ const MAX_STRING = Number.MAX_VALUE / 1.000000000002;
 const MAX_TRUE = Number.MAX_VALUE;
 
 
+const operatorPriority: Record<string, number> = {
+    '^': 3,
+    '*': 2,
+    '/': 2,
+    '+': 1,
+    '-': 1,
+    '=': 0,
+    '<': 0,
+    '<=': 0,
+    '>': 0,
+    '>=': 0
+};
+
+
 const processorFunctions: Record<string, ProcessorFunction> = {};
 
 
@@ -488,9 +502,27 @@ function processFormula(
             if (typeof x === 'undefined') {
                 x = y;
 
+            // Fail fast if no operator available
+            } else if (!operator) {
+                return NaN;
+
             // Regular next value
             } else {
-                x = basicOperation((operator || '+'), x, y);
+                const operator2 = formula[i + 1];
+
+                if (
+                    isOperator(operator2) &&
+                    operatorPriority[operator2] > operatorPriority[operator]
+                ) {
+                    y = basicOperation(
+                        operator2,
+                        y,
+                        processFormula(formula.slice(i + 2))
+                    );
+                    i = iEnd;
+                }
+
+                x = basicOperation(operator, x, y);
             }
 
             operator = void 0;
