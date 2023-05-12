@@ -305,11 +305,12 @@ class TiledWebMapSeries extends MapSeries {
                     theme = def.themes[provider.theme];
                 } else {
                     // if nothing set take first theme
-                    theme = def.themes[Object.keys(def.themes)[0]];
+                    const firstTheme = Object.keys(def.themes)[0];
+                    theme = def.themes[firstTheme];
                     error(
                         'Highcharts warning: The Tiles Provider\'s Theme \'' +
                         provider.theme + '\' is not defined in the Provider ' +
-                        'definition - falling back to ' + theme + '\'.',
+                        'definition - falling back to \'' + firstTheme + '\'.',
                         false
                     );
                 }
@@ -321,14 +322,14 @@ class TiledWebMapSeries extends MapSeries {
                 ) {
                     subdomain = provider.subdomain;
                 } else if (defined(def.subdomains)) {
+                    subdomain = pick(def.subdomains && def.subdomains[0], '');
                     error(
                         'Highcharts warning: The Tiles Provider\'s Subdomain ' +
                         '\'' + provider.subdomain + '\' is not defined in ' +
-                        'the Provider definition - falling back to \'' + theme +
-                        '\'.',
+                        'the Provider definition - falling back to \'' +
+                        subdomain + '\'.',
                         false
                     );
-                    subdomain = pick(def.subdomains && def.subdomains[0], '');
                 }
 
                 if (def.requiresApiKey) {
