@@ -1723,7 +1723,7 @@ class Axis {
             axis.beforePadding();
         }
 
-        // adjust min and max for the minimum range
+        // Adjust min and max for the minimum range
         axis.adjustForMinRange();
 
         // Handle options for floor, ceiling, softMin and softMax (#6359)
