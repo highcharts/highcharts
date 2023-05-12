@@ -424,6 +424,12 @@ class Chart {
              * copy, `chart.userOptions`, may later be mutated to reflect
              * updated options throughout the lifetime of the chart.
              *
+             * For collections, like `series`, `xAxis` and `yAxis`, the chart
+             * user options should always be reflected by the item user option,
+             * so for example the following should always be true:
+             *
+             * `chart.xAxis[0].userOptions === chart.userOptions.xAxis[0]`
+             *
              * @name Highcharts.Chart#userOptions
              * @type {Highcharts.Options}
              */
