@@ -376,15 +376,9 @@ class Legend {
                 markerOptions = item.options && (item.options as any).marker;
             let symbolAttr: SVGAttributes = { fill: symbolColor };
 
-            if (label) {
-                label.css(
-                    merge(visible ? this.itemStyle : itemHiddenStyle)
-                );
-            }
+            label?.css(merge(visible ? this.itemStyle : itemHiddenStyle));
 
-            if (line) {
-                line.attr({ stroke: symbolColor });
-            }
+            line?.attr({ stroke: symbolColor });
 
             if (symbol) {
 
