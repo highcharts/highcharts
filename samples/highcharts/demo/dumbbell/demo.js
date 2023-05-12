@@ -93,10 +93,7 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'Life expectancy change',
-        data: data,
-        dataLabels: {
-            enabled: true
-        }
+        data: data
     }]
 
 });
