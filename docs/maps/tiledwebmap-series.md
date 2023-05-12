@@ -13,7 +13,7 @@ In order to use the `tiledwebmap` series as a base map, firstly import the `tile
 
     <script src="https://code.highcharts.com/maps/modules/tiledwebmap.js"></script>
 
-Secondly, set the series type to `tiledwebmap`. Tiled web map series by default is a series that does not need any data to run. The user only has to specify which provider should be used to fetch the tiles from. This series doesn’t have information about what region we want to focus at, so in most cases the implementer wants to set either `mapView.center` and `mapView.zoom` or `mapView.fitToGeometry` or add another series with geometry data, which will calculate the proper bounds for map view. There are additional options such as a theme for the tiles, a subdomain for the provider’s URL and an API key if needed.
+Secondly, set the series type to `tiledwebmap`. The tiled web map series can be considered a map layer. It does not require any data or GeoJSON geometry to run. The implementer only has to specify which provider should be used to fetch the tiles from. This series doesn’t have information about what region we want to focus at, so in most cases the implementer wants to set either [mapView.center](https://api.highcharts.com/highmaps/mapView.center) and [mapView.zoom](https://api.highcharts.com/highmaps/mapView.zoom) or [mapView.fitToGeometry](https://api.highcharts.com/highmaps/mapView.fitToGeometry) or add another series with geometry data, which will calculate the proper bounds for the map view. There are additional options such as a theme for the tiles, a subdomain for the provider’s URL and an API key if needed.
 
 Sample code:
 
@@ -34,7 +34,7 @@ Alternatively, you can enter your own URL template, and omit all of the aforemen
         url: 'https://yourcustomprovider.com/{x}/{y}/{z}.png'
     }]
 
-The series array can be thought of as layers that are stacked on top of each other, and the ordering of the layers is determined by source order and can be overridden through the `index` option and the `zIndex` option.
+Generally in Highcharts Maps, the [series](https://api.highcharts.com/highmaps/series) array can be thought of as layers that are stacked on top of each other, and the ordering of the layers is determined by source order and can be overridden through the [index](https://api.highcharts.com/highmaps/series.tiledwebmap.index) option or the [zIndex](https://api.highcharts.com/highmaps/series.map.zIndex) option.
 
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/twm-providers" allow="fullscreen"></iframe>
 
