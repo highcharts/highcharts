@@ -106,8 +106,7 @@ class TiledWebMapSeries extends MapSeries {
             inactive: {
                 enabled: false
             }
-        },
-        zIndex: -1
+        }
     });
 
     /* *

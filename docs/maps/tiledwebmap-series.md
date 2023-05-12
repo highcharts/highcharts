@@ -34,6 +34,8 @@ Alternatively, you can enter your own URL template, and omit all of the aforemen
         url: 'https://yourcustomprovider.com/{x}/{y}/{z}.png'
     }]
 
+The series array can be thought of as layers that are stacked on top of each other, and the ordering of the layers is determined by source order and can be overridden through the `index` option and the `zIndex` option.
+
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/twm-providers" allow="fullscreen"></iframe>
 
 Providers properties

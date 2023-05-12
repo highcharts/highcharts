@@ -82,7 +82,8 @@
             borderRadius: 2,
             itemHiddenStyle: {
                 color: 'rgba(128,128,128,0.3)'
-            }
+            },
+            reversed: true
         },
 
         series: [{
