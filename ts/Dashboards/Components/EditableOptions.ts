@@ -97,7 +97,7 @@ class EditableOptions {
 
     public getOptions(): (Array<EditableOptions.Configuration>) {
         const options = this.component.options.editableOptions;
-        for (let i = 0; i < options.length; i++) {
+        for (let i = 0, iEnd = options.length; i < iEnd; i++) {
             const option = options[i];
             if (option.name === 'connectorName') {
                 const board = this.component.board;
