@@ -214,7 +214,7 @@ function newFormat(str = '', ctx: any, chart?: Chart): string {
         time = chart && chart.time || defaultTime,
         numberFormatter = chart && chart.numberFormatter || numberFormat;
 
-    let match,
+    let match: RegExpExecArray|null,
         currentMatch: MatchObject|undefined,
         depth = 0;
 
@@ -291,15 +291,21 @@ function newFormat(str = '', ctx: any, chart?: Chart): string {
     matches.forEach((match): void => {
         const { elseBody, expression, fn } = match;
         let replacement;
+
+        // Helper function
         if (fn) {
             // Pass the helpers the amount of arguments given in the template,
             // then the match as the last argument.
-            const args: (string|MatchObject)[] = match.expression.split(' ')
+            const args: (unknown)[] = expression.split(' ')
                 .splice(1)
-                .map((key): string => pick(ctx[key], key));
+                .map((key): unknown => pick(getNestedProperty(key, ctx), key));
+
             args.push(match);
-            replacement = helpers[fn].apply(ctx, args) ||
-                (elseBody && format(elseBody, ctx));
+
+            replacement = (
+                helpers[fn].apply(ctx, args) ||
+                (elseBody && format(elseBody, ctx))
+            );
 
         // Simple variable replacement
         } else {

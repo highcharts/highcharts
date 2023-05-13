@@ -16,6 +16,13 @@ output.innerHTML = Highcharts.format(input, {
         firstName: 'Keith',
         lastName: 'Richards'
     }],
+    point: {
+        isNull: false,
+        y: Math.PI
+    },
+    nullPoint: {
+        isNull: true
+    },
     value: 2000,
     condition: true,
     innerCondition: true,
