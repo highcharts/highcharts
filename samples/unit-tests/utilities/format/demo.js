@@ -242,10 +242,8 @@ QUnit.module('Format', () => {
     QUnit.test('Custom helper function', assert => {
         // Custom, non-block  helper
         const divide = Highcharts.Templating.helpers.divide;
-        Highcharts.Templating.helpers.divide = (value, divisor) => {
-            console.log('@divide', value, divisor);
-            return value / divisor;
-        };
+        Highcharts.Templating.helpers.divide = (value, divisor) =>
+            value / divisor;
 
         assert.strictEqual(
             format(
