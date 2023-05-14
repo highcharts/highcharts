@@ -56,6 +56,7 @@ export interface TooltipOptions {
     followPointer?: boolean;
     followTouchMove?: boolean;
     footerFormat: string;
+    format?: string;
     formatter?: Tooltip.FormatterCallbackFunction;
     headerFormat: string;
     headerShape: Tooltip.ShapeValue;

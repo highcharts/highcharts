@@ -997,10 +997,11 @@ class Tooltip {
             points: Array<Point> = splat(pointOrPoints),
             point = points[0],
             pointConfig = [] as Array<Tooltip.FormatterContextObject>,
+            formatString = options.format,
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             styledMode = chart.styledMode;
-        let textConfig = {} as Tooltip.FormatterContextObject;
+        let formatterContext = {} as Tooltip.FormatterContextObject;
 
         if (!options.enabled || !point.series) { // #16820
             return;
@@ -1034,21 +1035,20 @@ class Tooltip {
                 pointConfig.push(item.getLabelConfig());
             });
 
-            textConfig = {
+            formatterContext = {
                 x: point.category,
                 y: point.y
             } as any;
-            textConfig.points = pointConfig;
+            formatterContext.points = pointConfig;
 
         // single point tooltip
         } else {
-            textConfig = point.getLabelConfig();
+            formatterContext = point.getLabelConfig();
         }
         this.len = pointConfig.length; // #6128
-        const text = formatter.call(
-            textConfig,
-            tooltip
-        );
+        const text = isString(formatString) ?
+            format(formatString, formatterContext, chart) :
+            formatter.call(formatterContext, tooltip);
 
         // register the current series
         const currentSeries = point.series;

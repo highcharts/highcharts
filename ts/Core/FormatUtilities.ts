@@ -203,6 +203,23 @@ function format(str: string, ctx: any, chart?: Chart): string {
     return ret.join('');
 }
 
+/*
+ * Get a literal value inside a template expression. May be extended with other
+ * types like string or null if needed, but keep it small for now.
+ */
+const getLiteral = (s: string): boolean|number|undefined => {
+    let literal: boolean|number|undefined,
+        n: number;
+    if (s === 'true') {
+        literal = true;
+    } else if (s === 'false') {
+        literal = false;
+    } else if ((n = Number(s)).toString() === s) {
+        literal = n;
+    }
+    return literal;
+};
+
 
 function newFormat(str = '', ctx: any, chart?: Chart): string {
 
@@ -298,8 +315,10 @@ function newFormat(str = '', ctx: any, chart?: Chart): string {
             // then the match as the last argument.
             const args: (unknown)[] = expression.split(' ')
                 .splice(1)
-                .map((key): unknown => pick(getNestedProperty(key, ctx), key));
-
+                .map((key): unknown => pick(
+                    getNestedProperty(key, ctx),
+                    getLiteral(key)
+                ));
             args.push(match);
 
             replacement = (

@@ -19,10 +19,22 @@ QUnit.module('Format', () => {
         fn: function () {
             return 'Hello';
         },
-        proto: new Date()
+        proto: new Date(),
+        items: ['Ein', 'To', 'Tre'],
+        persons: [{
+            firstName: 'Mick',
+            lastName: 'Jagger'
+        }, {
+            firstName: 'Keith',
+            lastName: 'Richards'
+        }]
     };
 
-    QUnit.test('Format', function (assert) {
+    const nullPoint = {
+        isNull: true
+    };
+
+    QUnit.test('Replacement', function (assert) {
 
         assert.strictEqual(
             Math.PI.toString(),
@@ -164,5 +176,89 @@ QUnit.module('Format', () => {
             }
         });
     });
+
+    QUnit.test('if helper', assert => {
+        assert.strictEqual(
+            format(
+                'Value: {#if point.isNull}null{else}{point.value:.2f}{/if}',
+                { point }
+            ),
+            'Value: 3.14',
+            'Condition with falsy argument and else block'
+        );
+
+        assert.strictEqual(
+            format(
+                'Value: {#if nullPoint.isNull}null{else}{point.value:.2f}{/if}',
+                { nullPoint }
+            ),
+            'Value: null',
+            'Condition with true argument and else block'
+        );
+
+        assert.strictEqual(
+            format(
+                `
+                Value: {#if point.key}
+                Deep,
+                {#if point.deep}
+                deeper: {point.deep.deeper}
+                {/if}
+                {/if}
+                `,
+                { point }
+            ).replace(/\s\s+/g, ' ').trim(),
+            'Value: Deep, deeper: 123',
+            'Nested conditions'
+        );
+
+    });
+
+    QUnit.test('foreach helper', assert => {
+        assert.strictEqual(
+            format(
+                `{#foreach point.items}
+                - {this}
+                {/foreach}`,
+                { point }
+            ).replace(/\s\s+/g, ' ').trim(),
+            '- Ein - To - Tre',
+            'Looping an array of strings'
+        );
+
+        assert.strictEqual(
+            format(
+                `{#foreach point.persons}
+                - {firstName} {lastName}
+                {/foreach}`,
+                { point }
+            ).replace(/\s\s+/g, ' ').trim(),
+            '- Mick Jagger - Keith Richards',
+            'Looping an array of objects'
+        );
+
+    });
+
+    QUnit.test('Custom helper function', assert => {
+        // Custom, non-block  helper
+        const divide = Highcharts.Templating.helpers.divide;
+        Highcharts.Templating.helpers.divide = (value, divisor) => {
+            console.log('@divide', value, divisor);
+            return value / divisor;
+        };
+
+        assert.strictEqual(
+            format(
+                '{divide point.long 1000}',
+                { point }
+            ),
+            '12.345678900000001',
+            'Custom divide helper'
+        );
+
+        // Reset
+        Highcharts.Templating.helpers.divide = divide;
+    });
+
 
 });
