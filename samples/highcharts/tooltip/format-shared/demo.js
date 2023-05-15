@@ -15,8 +15,8 @@ Highcharts.chart('container', {
     tooltip: {
         format: `<span style="font-size: 0.8em">{key}</span><br/>
             {#foreach points}
-            <span style="color:{point.color}">\u25CF</span>
-                {series.name}: <b>{point.y}</b><br/>
+            <span style="color:{color}">\u25CF</span>
+                {series.name}: <b>{y}</b><br/>
             {/foreach}`,
         shared: true
     },
