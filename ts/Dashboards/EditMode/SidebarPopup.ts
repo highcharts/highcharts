@@ -20,18 +20,18 @@
  * */
 import type EditMode from './EditMode';
 import type Cell from '../Layout/Cell';
+import type ComponentType from '../Components/ComponentType';
 import type Row from '../Layout/Row';
-import U from '../../Core/Utilities.js';
 
-import BaseForm from '../../Shared/BaseForm.js';
-import EditGlobals from './EditGlobals.js';
-import GUIElement from '../Layout/GUIElement.js';
-import Bindings from '../Actions/Bindings.js';
-import Layout from '../Layout/Layout.js';
 import AccordionMenu from './AccordionMenu.js';
-import EditRenderer from './EditRenderer.js';
+import BaseForm from '../../Shared/BaseForm.js';
+import Bindings from '../Actions/Bindings.js';
 import Component from '../Components/Component';
-
+import EditGlobals from './EditGlobals.js';
+import EditRenderer from './EditRenderer.js';
+import GUIElement from '../Layout/GUIElement.js';
+import Layout from '../Layout/Layout.js';
+import U from '../../Core/Utilities.js';
 const {
     createElement,
     merge
@@ -116,7 +116,8 @@ class SidebarPopup extends BaseForm {
                             ],
                             chart: {
                                 animation: false,
-                                type: 'pie'
+                                type: 'pie',
+                                zooming: {}
                             }
                         }
                     });
@@ -406,7 +407,7 @@ class SidebarPopup extends BaseForm {
 
     public onDropNewComponent(
         dropContext: Cell|Row,
-        componentOptions: Partial<Component.ComponentOptions>
+        componentOptions: Partial<ComponentType['options']>
     ): Cell | void {
         const sidebar = this,
             dragDrop = sidebar.editMode.dragDrop;

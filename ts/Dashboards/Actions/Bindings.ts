@@ -83,7 +83,7 @@ namespace Bindings {
     }
 
     export function addComponent(
-        options: Partial<Component.ComponentOptions>,
+        options: Partial<ComponentType['options']>,
         cell?: Cell
     ): (Component|undefined) {
         // TODO: Check if there are states in the options, and if so, add them

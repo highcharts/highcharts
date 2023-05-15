@@ -1236,7 +1236,6 @@ namespace Component {
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions extends EditableOptions {
-        [key: string]: unknown;
         /**
          * @internal
          * The Board the component belongs to
