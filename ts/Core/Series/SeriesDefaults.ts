@@ -276,6 +276,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Whether to connect a graph line across null points, or render a gap
      * between the two points on either side of the null.
      *
+     * In stacked area chart, if `connectNulls` is set to true,
+     * null points are interpreted as 0.
+     *
      * @sample {highcharts} highcharts/plotoptions/series-connectnulls-false/
      *         False by default
      * @sample {highcharts} highcharts/plotoptions/series-connectnulls-true/
@@ -2480,6 +2483,21 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since     7.2.0
      * @product   highcharts highstock highmaps
      * @apioption plotOptions.series.colorKey
+     */
+
+    /**
+     * What type of legend symbol to render for this series. Can be one of
+     * `lineMarker` or `rectangle`.
+     *
+     * @validvalue ["lineMarker", "rectangle"]
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol/
+     *         Change the legend symbol
+     *
+     * @type      {string}
+     * @default   rectangle
+     * @since     11.0.1
+     * @apioption plotOptions.series.legendSymbol
      */
 
     /**

@@ -35,7 +35,7 @@ Both the [Highcharts.sonification.SynthPatch](https://api.highcharts.com/class-r
 
 The below demo shows a use case with `SynthPatch` where we create a simple sonification manually.
 
-<iframe style="width: 100%; height: 490px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/manual-using-synth allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 520px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/manual-using-synth allow="fullscreen"></iframe>
 
 Next Steps
 ----------

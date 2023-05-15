@@ -49,6 +49,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
+import type { LegendSymbolType } from './SeriesOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -65,6 +66,7 @@ const {
     svg,
     win
 } = H;
+import type Legend from '../Legend/Legend';
 import LegendSymbol from '../Legend/LegendSymbol.js';
 import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
@@ -842,11 +844,10 @@ class Series {
 
         const options: SeriesTypeOptions = merge(
             typeOptions,
-            (plotOptions as any).series,
+            plotOptions?.series,
             // #3881, chart instance plotOptions[type] should trump
             // plotOptions.series
-            userOptions.plotOptions &&
-            (userOptions.plotOptions as any)[this.type],
+            userPlotOptions?.[this.type],
             seriesUserOptions
         );
 
@@ -858,23 +859,24 @@ class Series {
         // (7)this series options
         this.tooltipOptions = merge(
             defaultOptions.tooltip, // 1
-            (defaultOptions.plotOptions as any).series &&
-                (defaultOptions.plotOptions as any).series.tooltip, // 2
-            (defaultOptions.plotOptions as any)[this.type].tooltip, // 3
-            (chartOptions.tooltip as any).userOptions, // 4
-            (plotOptions as any).series &&
-            (plotOptions as any).series.tooltip, // 5
-            (plotOptions as any)[this.type].tooltip, // 6
-            (seriesUserOptions.tooltip as any) // 7
-        ) as any;
+            defaultOptions.plotOptions?.series?.tooltip, // 2
+            defaultOptions.plotOptions?.[this.type]?.tooltip, // 3
+            (
+                defaultOptions.tooltip &&
+                chartOptions.tooltip &&
+                cleanRecursively(chartOptions.tooltip, defaultOptions.tooltip)
+            ), // 4 - #18876 take only "userOptions" (calculate them)
+            plotOptions?.series?.tooltip, // 5
+            plotOptions?.[this.type]?.tooltip, // 6
+            seriesUserOptions.tooltip // 7
+        );
 
         // When shared tooltip, stickyTracking is true by default,
         // unless user says otherwise.
         this.stickyTracking = pick(
             seriesUserOptions.stickyTracking,
-            (userPlotOptions as any)[this.type] &&
-            (userPlotOptions as any)[this.type].stickyTracking,
-            userPlotOptions.series && userPlotOptions.series.stickyTracking,
+            userPlotOptions?.[this.type]?.stickyTracking,
+            userPlotOptions?.series?.stickyTracking,
             (
                 this.tooltipOptions.shared && !this.noSharedTooltip ?
                     true :
@@ -4814,6 +4816,16 @@ class Series {
         return this.chart.isInsidePlot(plotX, plotY, options);
     }
 
+    /**
+     * Draws the legend symbol based on the legendSymbol user option.
+     *
+     * @private
+     */
+    public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
+        LegendSymbol[this.options.legendSymbol || 'rectangle']
+            ?.call(this, legend, item);
+    }
+
     /** eslint-enable valid-jsdoc */
 
 }
@@ -4845,7 +4857,6 @@ extend(Series.prototype, {
     colorCounter: 0,
     cropShoulder: 1,
     directTouch: false,
-    drawLegendSymbol: LegendSymbol.drawLineMarker,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
     // each point's x and y values are stored in this.xData and this.yData:

@@ -875,6 +875,7 @@ export default SynthPatch;
  * width of 0.5 is roughly equal to a square wave. This is the default.
  * @name Highcharts.SynthPatchOscillatorOptionsObject#pulseWidth
  * @type {number|undefined}
+ *//**
  * Index of another oscillator to use as carrier, with this oscillator being
  * used as a volume modulator. The first oscillator in the array has index 0,
  * and so on. This option can be used to produce tremolo effects.

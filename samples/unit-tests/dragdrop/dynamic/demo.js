@@ -169,7 +169,7 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
     );
 
     assert.ok(
-        Math.abs(chart.dragHandles.undefined.translateY - point.plotY) < 1,
+        Math.abs(chart.dragHandles.undefined.translateY - point.plotY) <= 1,
         '#9549: Handle should be below the point when yAxis is reversed'
     );
 

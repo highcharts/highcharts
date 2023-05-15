@@ -101,6 +101,7 @@ class SonificationTimeline {
     private options: SonificationTimelineOptions;
     private playTimestamp = 0;
     private resumeFromTime = 0;
+    private onEndArgument?: Sonification.ChartCallback;
 
 
     constructor(options?: SonificationTimelineOptions, private chart?: Chart) {
@@ -149,6 +150,7 @@ class SonificationTimeline {
         } else {
             this.clearScheduledCallbacks();
         }
+        this.onEndArgument = onEnd;
         this.playTimestamp = Date.now();
         this.resumeFromTime = 0;
         this.isPaused = false;
@@ -332,10 +334,13 @@ class SonificationTimeline {
     resume(): void {
         if (this.playingChannels) {
             const resumeFrom = this.resumeFromTime - 50;
-            this.play((e): boolean => e.time > resumeFrom, false, false);
+            this.play(
+                (e): boolean => e.time > resumeFrom,
+                false, false, this.onEndArgument
+            );
             this.playTimestamp -= resumeFrom;
         } else {
-            this.play(void 0, false, false);
+            this.play(void 0, false, false, this.onEndArgument);
         }
     }
 
@@ -653,6 +658,7 @@ class SonificationTimeline {
 
     private resetPlayState(): void {
         delete this.playingChannels;
+        delete this.onEndArgument;
         this.playTimestamp = this.resumeFromTime = 0;
         this.isPaused = false;
     }

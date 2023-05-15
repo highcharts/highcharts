@@ -209,7 +209,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
         height: 15
     },
     showInLegend: false,
-    colorKey: 'x'
+    colorKey: 'x',
+    legendSymbol: 'rectangle'
 };
 
 /**

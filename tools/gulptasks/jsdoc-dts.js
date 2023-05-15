@@ -66,9 +66,7 @@ function jsDocESMDTS() {
                     ''
                 ].join('\n') :
                 [
-                    `import factory from '${source}';`,
-                    `export * from '${source}';`,
-                    'export default factory;',
+                    `import '${source}';`,
                     ''
                 ].join('\n')
         ));

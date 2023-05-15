@@ -16,11 +16,11 @@ figure {
 
 #legend {
     max-width: 1300px;
-    margin: 0 auto;
-    margin-bottom: 40px;
+    margin: 5px auto 40px auto;
     display: flex;
     gap: 15px;
     flex-direction: column;
+    padding-top: 0.5rem;
 }
 
 #legend label {
@@ -77,8 +77,8 @@ figure {
 #play {
     display: block;
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 15px;
+    right: 10px;
     z-index: 10;
     width: 10rem;
     padding: 0.5rem 1.5rem;

@@ -105,8 +105,8 @@ class SMAIndicator extends LineSeries {
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
      */
-
     public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
+
         /**
          * The name of the series as shown in the legend, tooltip etc. If not
          * set, it will be based on a technical indicator type and default
@@ -115,12 +115,14 @@ class SMAIndicator extends LineSeries {
          * @type {string}
          */
         name: void 0,
+
         tooltip: {
             /**
              * Number of decimals in indicator series.
              */
             valueDecimals: 4
         },
+
         /**
          * The main series ID that indicator will be based on. Required for this
          * indicator.
@@ -128,6 +130,7 @@ class SMAIndicator extends LineSeries {
          * @type {string}
          */
         linkedTo: void 0,
+
         /**
          * Whether to compare indicator to the main series values
          * or indicator values.
@@ -139,23 +142,28 @@ class SMAIndicator extends LineSeries {
          * @type {boolean}
          */
         compareToMain: false,
+
         /**
          * Paramters used in calculation of regression series' points.
          */
         params: {
+
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
              */
             index: 3,
+
             /**
              * The base period for indicator calculations. This is the number of
              * data points which are taken into account for the indicator
              * calculations.
              */
             period: 14
+
         }
+
     } as SMAOptions);
 
     /* *

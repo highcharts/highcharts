@@ -34,7 +34,7 @@ The mapping function can be set for any mapping parameter using the [mapFunction
     mapping: {
         volume: 0.7,
         pitch: {
-            mapTo: 'y,
+            mapTo: 'y',
             mapFunction: 'logarithmic'
         }
     }
@@ -73,12 +73,12 @@ For instrument tracks, pitch mapping has a few extra features compared to the ot
 
 **Human readable note names:**
 
-Note pitches can be declared both as numbers or as human readable strings. As numbers, they denote a semitone offset from the "c0" note. As strings, they take the form "<note><octave>", for example `a5`, `Eb4`, or `g#7`.
+Note pitches can be declared both as numbers or as human readable strings. As numbers, they denote a semitone offset from the "c0" note. As strings, they take the form `<note><octave>`, for example `a5`, `Eb4`, or `g#7`.
 
     mapping: {
         volume: 0.7,
         pitch: {
-            mapTo: 'y,
+            mapTo: 'y',
             min: 'c3',
             max: 'g7'
         }
@@ -106,7 +106,7 @@ The scale is defined as an array of note offsets from the root note, or alternat
     mapping: {
         volume: 0.7,
         pitch: {
-            mapTo: 'y,
+            mapTo: 'y',
             min: 'c3',
             max: 'g7',
             scale: Highcharts.sonification.Scales.minor

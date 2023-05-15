@@ -249,8 +249,25 @@ interface TimeCycles {
 
 TimeCycles.prototype.defaultOptions = merge(
     CrookedLine.prototype.defaultOptions,
+    /**
+     * The TimeCycles Annotation
+     *
+     * @sample highcharts/annotations-advanced/time-cycles/
+     *         Time Cycles annotation
+     *
+     * @extends      annotations.crookedLine
+     * @product      highstock
+     * @exclude      labelOptions
+     * @optionparent annotations.timeCycles
+     */
     {
         typeOptions: {
+            /**
+             * @exclude   y
+             * @product   highstock
+             * @apioption annotations.timeCycles.typeOptions.points
+             */
+
             controlPointOptions: [{
                 positioner: function (
                     this: ControlPoint,
@@ -345,28 +362,3 @@ Annotation.types.timeCycles = TimeCycles;
  * */
 
 export default TimeCycles;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * The TimeCycles Annotation
- * @sample highcharts/annotations-advanced/time-cycles/
- *     Time Cycles annotation
- *
- * @extends   annotations.crookedLine
- * @product   highstock
- * @exclude  labelOptions
- * @apioption annotations.timeCycles
- */
-
-/**
- * @exclude   y
- * @product   highstock
- * @apioption annotations.timeCycles.typeOptions.points
- */
-
-(''); // keeps doclets above in transpiled file

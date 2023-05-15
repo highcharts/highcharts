@@ -138,7 +138,7 @@ Highcharts.chart('container', {
         }
     },
     subtitle: {
-        text: 'Using the builtin Highcharts Synthesizer',
+        text: 'Using the built-in Highcharts Synthesizer',
         align: 'left'
     },
     sonification: {
