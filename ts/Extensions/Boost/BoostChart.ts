@@ -128,14 +128,11 @@ function getBoostClipRect(
 
 /**
  * Returns true if the chart is in series boost mode.
- *
- * @function Highcharts.Chart#isChartSeriesBoosting
- *
+ * @private
  * @param {Highcharts.Chart} chart
- *        the chart to check
- *
+ * Chart to check.
  * @return {boolean}
- *         true if the chart is in series boost mode
+ * `true` if the chart is in series boost mode.
  */
 function isChartSeriesBoosting(
     chart: Chart

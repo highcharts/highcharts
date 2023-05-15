@@ -52,6 +52,7 @@ const langOptions: DeepPartial<LangOptions> = {
 
         /**
          * @deprecated 10.2.1
+         * @type       {string}
          * @apioption  lang.accessibility.resetZoomButton
          */
 
