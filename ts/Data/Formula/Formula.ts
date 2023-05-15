@@ -27,6 +27,7 @@ import FormulaProcessor from './FormulaProcessor.js';
 import FormulaType from './FormulaTypes.js';
 
 
+import './Functions/ABS.js';
 import './Functions/AND.js';
 import './Functions/AVERAGE.js';
 import './Functions/AVERAGEA.js';

@@ -43,8 +43,7 @@ const { getArgumentValue } = FormulaProcessor;
 
 
 /**
- * Processor for the `AND(...tests)` implementation. Returns `TRUE`, if all test
- * results are not `0` or `FALSE`.
+ * Processor for the `ABS(value)` implementation. Returns positive numbers.
  *
  * @private
  * @function Formula.processorFunctions.AND
@@ -55,35 +54,32 @@ const { getArgumentValue } = FormulaProcessor;
  * @param {Highcharts.DataTable} [table]
  * Table to use for references and ranges.
  *
- * @return {boolean}
+ * @return {Array<number>}
  * Result value of the process.
  */
-function AND(
+function ABS(
     args: Arguments,
     table?: DataTable
-): boolean {
+): (number|Array<number>) {
+    const value = getArgumentValue(args[0], table);
 
-    for (
-        let i = 0,
-            iEnd = args.length,
-            value: (Value|Array<Value>);
-        i < iEnd;
-        ++i
-    ) {
-        value = getArgumentValue(args[i], table);
-
-        if (
-            !value ||
-            (
-                typeof value === 'object' &&
-                !AND(value, table)
-            )
-        ) {
-            return false;
+    switch (typeof value) {
+        case 'number':
+            return Math.abs(value);
+        case 'object': {
+            const values: Array<number> = [];
+            for (let i = 0, iEnd = value.length, value2: Value; i < iEnd; ++i) {
+                value2 = value[i];
+                if (typeof value2 !== 'number') {
+                    return NaN;
+                }
+                values.push(Math.abs(value2));
+            }
+            return values;
         }
+        default:
+            return NaN;
     }
-
-    return true;
 }
 
 
@@ -94,7 +90,7 @@ function AND(
  * */
 
 
-FormulaProcessor.registerProcessorFunction('AND', AND);
+FormulaProcessor.registerProcessorFunction('ABS', ABS);
 
 
 /* *
@@ -104,4 +100,4 @@ FormulaProcessor.registerProcessorFunction('AND', AND);
  * */
 
 
-export default AND;
+export default ABS;

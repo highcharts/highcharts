@@ -1,4 +1,5 @@
 * Common use-cases:
+  - ABS ✅
   - AND ✅
   - AVERAGE ✅
   - AVERAGEA ✅
