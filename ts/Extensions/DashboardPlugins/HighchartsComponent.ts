@@ -899,7 +899,7 @@ namespace HighchartsComponent {
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: ClassJSON;
     }>;
-    export interface Options extends Component.ComponentOptions, EditableOptions {
+    export interface Options extends Component.ComponentOptions {
 
         /**
          * Whether to allow the component to edit the store to which it is
@@ -918,9 +918,6 @@ namespace HighchartsComponent {
          * Type of the component.
          */
         type: 'Highcharts';
-    }
-    /** @internal */
-    export interface EditableOptions extends Component.EditableOptions {
         /**
          * A full set of chart options used by the chart.
          * [Highcharts API](https://api.highcharts.com/highcharts/)
