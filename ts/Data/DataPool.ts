@@ -181,31 +181,40 @@ class DataPool implements DataEvent.Emitter {
      *
      * @private
      *
-     * @param {Data.DataPoolConnectorOptions} connectorOptions
+     * @param {Data.DataPoolConnectorOptions} options
      * Options of connector.
      *
      * @return {Promise<Data.DataConnector>}
      * Returns the connector.
      */
     protected loadConnector(
-        connectorOptions: DataPoolConnectorOptions
+        options: DataPoolConnectorOptions
     ): Promise<DataConnector> {
         return new Promise((resolve, reject): void => {
-            const ConnectorClass = DataConnector.types[connectorOptions.type];
+
+            this.emit<DataPool.Event>({
+                type: 'load',
+                options
+            });
+
+            const ConnectorClass = DataConnector.types[options.type];
 
             if (!ConnectorClass) {
-                throw new Error(
-                    `Connector type not found. (${connectorOptions.type})`
-                );
+                throw new Error(`Connector type not found. (${options.type})`);
             }
 
-            const connector =
-                new ConnectorClass(connectorOptions.options);
+            const connector = new ConnectorClass(options.options);
 
-            this.connectors[connectorOptions.name] = connector;
+            this.connectors[options.name] = connector;
 
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            connector.load().then(resolve)['catch'](reject);
+            connector.load().then((connector): void => {
+                this.emit<DataPool.Event>({
+                    type: 'afterLoad',
+                    options
+                });
+                resolve(connector);
+            })['catch'](reject);
         });
     }
 
@@ -233,31 +242,31 @@ class DataPool implements DataEvent.Emitter {
     /**
      * Sets connector options with a specific name.
      *
-     * @param {Data.DataPoolConnectorOptions} connectorOptions
+     * @param {Data.DataPoolConnectorOptions} options
      * Connector options to set.
      */
     public setConnectorOptions(
-        connectorOptions: DataPoolConnectorOptions
+        options: DataPoolConnectorOptions
     ): void {
         const connectors = this.options.connectors;
 
-        this.emit<DataPool.SetConnectorEvent>({
-            type: 'setConnector',
-            options: connectorOptions
+        this.emit<DataPool.Event>({
+            type: 'setConnectorOptions',
+            options
         });
 
         for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
-            if (connectors[i].name === connectorOptions.name) {
-                connectors.splice(i, 1, connectorOptions);
-                return;
+            if (connectors[i].name === options.name) {
+                connectors.splice(i, 1);
+                break;
             }
         }
 
-        connectors.push(connectorOptions);
+        connectors.push(options);
 
-        this.emit<DataPool.SetConnectorEvent>({
-            type: 'afterSetConnector',
-            options: connectorOptions
+        this.emit<DataPool.Event>({
+            type: 'afterSetConnectorOptions',
+            options
         });
     }
 
@@ -277,10 +286,14 @@ namespace DataPool {
      *
      * */
 
-    export interface SetConnectorEvent {
-        type: ('setConnector'|'afterSetConnector');
+    export interface Event {
+        type: (
+            |'load'|'afterLoad'
+            |'setConnectorOptions'|'afterSetConnectorOptions'
+        );
         options: DataPoolConnectorOptions;
     }
+
 }
 
 /* *
