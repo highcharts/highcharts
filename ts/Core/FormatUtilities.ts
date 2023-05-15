@@ -203,27 +203,13 @@ function format(str: string, ctx: any, chart?: Chart): string {
     return ret.join('');
 }
 
-/*
- * Get a literal value inside a template expression. May be extended with other
- * types like string or null if needed, but keep it small for now.
- */
-const getLiteral = (s: string): boolean|number|undefined => {
-    let literal: boolean|number|undefined,
-        n: number;
-    if (s === 'true') {
-        literal = true;
-    } else if (s === 'false') {
-        literal = false;
-    } else if ((n = Number(s)).toString() === s) {
-        literal = n;
-    }
-    return literal;
-};
-
-
 function newFormat(str = '', ctx: any, chart?: Chart): string {
 
-    const regex = /\{([a-zA-Z0-9\:\.\,\-\/<>#%_ ]+)\}/g,
+    const regex = /\{([a-zA-Z0-9\:\.\,\-\/<>%_ #\(\)]+)\}/g,
+        // The sub expression regex is the same as the top expression regex,
+        // but except parens and block helpers (#), and surrounded by parens
+        // instead of curly brackets.
+        subRegex = /\(([a-zA-Z0-9\:\.\,\-\/<>%_ ]+)\)/g,
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.([0-9])/,
@@ -231,12 +217,41 @@ function newFormat(str = '', ctx: any, chart?: Chart): string {
         time = chart && chart.time || defaultTime,
         numberFormatter = chart && chart.numberFormatter || numberFormat;
 
+    /*
+     * Get a literal or variable value inside a template expression. May be
+     * extended with other types like string or null if needed, but keep it
+     * small for now.
+     */
+    const resolveProperty = (key: string): unknown => {
+        let n: number;
+
+        if (key === 'true') {
+            return true;
+        }
+        if (key === 'false') {
+            return false;
+        }
+        if ((n = Number(key)).toString() === key) {
+            return n;
+        }
+
+        return getNestedProperty(key, ctx);
+    };
+
     let match: RegExpExecArray|null,
         currentMatch: MatchObject|undefined,
-        depth = 0;
+        depth = 0,
+        hasSub: boolean|undefined;
 
     // Parse and create tree
     while ((match = regex.exec(str)) !== null) {
+        // When a sub expression is found, it is evaluated first, and the
+        // results recursively evaluated until no subexpression exists.
+        const subMatch = subRegex.exec(str);
+        if (subMatch) {
+            match = subMatch;
+            hasSub = true;
+        }
         if (!currentMatch || !currentMatch.isBlock) {
             currentMatch = {
                 expression: match[1],
@@ -315,10 +330,7 @@ function newFormat(str = '', ctx: any, chart?: Chart): string {
             // then the match as the last argument.
             const args: (unknown)[] = expression.split(' ')
                 .splice(1)
-                .map((key): unknown => pick(
-                    getNestedProperty(key, ctx),
-                    getLiteral(key)
-                ));
+                .map(resolveProperty);
             args.push(match);
 
             replacement = (
@@ -330,7 +342,7 @@ function newFormat(str = '', ctx: any, chart?: Chart): string {
         } else {
             const valueAndFormat = expression.split(':');
 
-            replacement = getNestedProperty(valueAndFormat.shift() || '', ctx);
+            replacement = resolveProperty(valueAndFormat.shift() || '');
 
             // Format the replacement
             if (valueAndFormat.length && typeof replacement === 'number') {
@@ -357,7 +369,7 @@ function newFormat(str = '', ctx: any, chart?: Chart): string {
         }
         str = str.replace(match.find, pick(replacement, ''));
     });
-    return str;
+    return hasSub ? newFormat(str, ctx, chart) : str;
 }
 
 /**

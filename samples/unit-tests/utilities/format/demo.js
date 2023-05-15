@@ -247,15 +247,50 @@ QUnit.module('Format', () => {
 
         assert.strictEqual(
             format(
-                '{divide point.long 1000}',
+                '{divide point.deep.deeper 1000}',
                 { point }
             ),
-            '12.345678900000001',
+            '0.123',
             'Custom divide helper'
         );
 
         // Reset
         Highcharts.Templating.helpers.divide = divide;
+    });
+
+    QUnit.test('Subexpressions', assert => {
+        // Custom, non-block  helper
+        const {
+            add,
+            divide,
+            multiply
+        } = Highcharts.Templating.helpers;
+        Highcharts.Templating.helpers.add = (a, b) => a + b;
+        Highcharts.Templating.helpers.divide = (a, b) => a / b;
+        Highcharts.Templating.helpers.multiply = (a, b) => a * b;
+
+        assert.strictEqual(
+            format(
+                '{celsius}℃ == {add (multiply celsius (divide 9 5)) 32}℉',
+                { celsius: 20 }
+            ),
+            '20℃ == 68℉',
+            'Nested subexpressions'
+        );
+
+        assert.strictEqual(
+            format(
+                '{(divide 22 7):.2f}',
+                {}
+            ),
+            '3.14',
+            'Number formatting on expression result'
+        );
+
+        // Reset
+        Highcharts.Templating.helpers.add = add;
+        Highcharts.Templating.helpers.add = divide;
+        Highcharts.Templating.helpers.multiply = multiply;
     });
 
 
