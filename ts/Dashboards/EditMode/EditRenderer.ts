@@ -99,7 +99,7 @@ function renderCollapseHeader(
 
     const {
         name,
-        allowEnabled,
+        showToggle,
         onchange,
         isEnabled,
         isNested,
@@ -142,7 +142,7 @@ function renderCollapseHeader(
         headerBtn
     );
 
-    if (allowEnabled) {
+    if (showToggle) {
         renderToggle(header, {
             enabledOnOffLabels: true,
             id: name,
@@ -815,7 +815,7 @@ export interface ToggleFormFieldOptions {
 
 export interface NestedHeaderFormFieldOptions {
     name: string;
-    allowEnabled?: boolean;
+    showToggle?: boolean;
     onchange?: (value: boolean) => void;
     isEnabled?: boolean;
     isNested?: boolean;

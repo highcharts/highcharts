@@ -259,14 +259,14 @@ class AccordionMenu {
         for (let i = 0, iEnd = nestedOptions.length; i < iEnd; ++i) {
             const name = nestedOptions[i].name;
             const accordionOptions = nestedOptions[i].options;
-            const allowEnabled = !!nestedOptions[i].allowEnabled;
+            const showToggle = !!nestedOptions[i].showToggle;
             const propertyPath = nestedOptions[i].propertyPath || [];
             const collapsedHeader = EditRenderer.renderCollapseHeader(
                 parentElement, {
                     name,
                     isEnabled: !!component.getEditableOptionValue(propertyPath),
                     iconsURLPrefix: this.iconsURLPrefix,
-                    allowEnabled,
+                    showToggle: showToggle,
                     onchange: (value: boolean | string | number): void =>
                         this.updateOptions(propertyPath, value),
                     isNested: true

@@ -177,7 +177,7 @@ class HighchartsComponent extends Component {
                         }]
                     }, {
                         name: 'legend',
-                        allowEnabled: true,
+                        showToggle: true,
                         propertyPath: ['chartOptions', 'legend', 'enabled'],
                         options: [{
                             name: 'align',
@@ -193,7 +193,7 @@ class HighchartsComponent extends Component {
                         }]
                     }, {
                         name: 'tooltip',
-                        allowEnabled: true,
+                        showToggle: true,
                         propertyPath: ['chartOptions', 'tooltip', 'enabled'],
                         options: [{
                             name: 'split',
@@ -209,7 +209,7 @@ class HighchartsComponent extends Component {
                             'dataLabels',
                             'enabled'
                         ],
-                        allowEnabled: true,
+                        showToggle: true,
                         options: [{
                             name: 'align',
                             propertyPath: [
@@ -230,7 +230,7 @@ class HighchartsComponent extends Component {
                         }]
                     }, {
                         name: 'credits',
-                        allowEnabled: true,
+                        showToggle: true,
                         propertyPath: ['chartOptions', 'credits', 'enabled'],
                         options: [{
                             name: 'name',

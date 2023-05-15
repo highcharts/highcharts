@@ -16,8 +16,6 @@
 
 import type Component from './Component.js';
 
-        items?: Array<Record<string, string>>
-
 class EditableOptions {
 
     public static defaultBindings: EditableOptions.OptionsBindings = {
@@ -60,12 +58,12 @@ class EditableOptions {
             const option = options[i];
             if (option.name === 'connectorName') {
                 const board = this.component.board;
-                const items = !board ?
+                const selectOptions = !board ?
                     [] :
                     board.dataPool
                         .getConnectorsNames()
                         .map((name): { name: string } => ({ name }));
-                option.items = items;
+                option.selectOptions = selectOptions;
             }
         }
         return options;
@@ -140,7 +138,7 @@ namespace EditableOptions {
         /**
          * whether the option should have a toggle to be enabled or disabled.
          */
-        allowEnabled?: boolean;
+        showToggle?: boolean;
         /**
          * Relative path to the option, that should be changed in the component.
          */
