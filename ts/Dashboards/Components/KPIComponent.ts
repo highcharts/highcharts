@@ -29,7 +29,6 @@ import type TextOptions from './TextOptions';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
-import ComponentRegistry from './ComponentRegistry.js';
 import F from '../../Core/FormatUtilities.js';
 const {
     format
@@ -173,12 +172,6 @@ class KPIComponent extends Component {
      */
     public options: KPIComponent.ComponentOptions;
     /**
-     * HTML element value's wrapper.
-     *
-     * @internal
-     */
-    public valueWrap: HTMLElement;
-    /**
      * HTML element where the value is created.
      *
      * @internal
@@ -243,20 +236,32 @@ class KPIComponent extends Component {
             this.syncHandlers
         );
 
-        this.valueWrap = createElement('div', {
-            className: `${Component.defaultOptions.className}-kpi-value-wrap`
-        });
-        this.value = createElement('span', {
-            className: `${Component.defaultOptions.className}-kpi-value`
-        });
-        this.subtitle = createElement('span', {
-            className: this.getSubtitleClassName()
-        });
+        this.value = createElement(
+            'span',
+            {
+                className: `${Component.defaultOptions.className}-kpi-value`
+            },
+            {},
+            this.contentElement
+        );
+        this.subtitle = createElement(
+            'span',
+            {
+                className: this.getSubtitleClassName()
+            },
+            {},
+            this.contentElement
+        );
 
         if (this.options.chartOptions) {
-            this.chartContainer = createElement('figure', {
-                className: `${Component.defaultOptions.className}-kpi-chart-container`
-            });
+            this.chartContainer = createElement(
+                'figure',
+                {
+                    className: `${Component.defaultOptions.className}-kpi-chart-container`
+                },
+                {},
+                this.contentElement
+            );
         }
     }
 
@@ -272,12 +277,6 @@ class KPIComponent extends Component {
 
         this.contentElement.style.display = 'flex';
         this.contentElement.style.flexDirection = 'column';
-        this.contentElement.appendChild(this.valueWrap);
-        this.valueWrap.appendChild(this.value);
-        this.valueWrap.appendChild(this.subtitle);
-        if (this.chartContainer) {
-            this.contentElement.appendChild(this.chartContainer);
-        }
         this.parentElement.appendChild(this.element);
 
         this.updateElements();
