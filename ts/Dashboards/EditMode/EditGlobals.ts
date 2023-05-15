@@ -22,8 +22,6 @@ const PREFIX = DG.classNamePrefix + 'edit-';
 
 const EditGlobals: EditGlobals = {
     prefix: PREFIX,
-    iconsURLPrefix:
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@381ddd8/gfx/dashboard-icons/',
     classNames: {
         resizeSnap: PREFIX + 'resize-snap',
         resizeSnapX: PREFIX + 'resize-snap-x',
@@ -129,6 +127,7 @@ const EditGlobals: EditGlobals = {
         confirmDestroyRow: 'Do you want to destroy the row?',
         confirmDestroyCell: 'Do you want to destroy the cell?',
         confirmButton: 'Confirm',
+        connectorName: 'Connector name',
         cancelButton: 'Cancel',
         viewFullscreen: 'View in full screen',
         exitFullscreen: 'Exit full screen',
@@ -142,7 +141,6 @@ const EditGlobals: EditGlobals = {
 
 interface EditGlobals {
     prefix: string;
-    iconsURLPrefix: string;
     classNames: EditGlobals.ClassNamesOptions;
     lang: EditGlobals.LangOptions;
 }
@@ -255,6 +253,7 @@ namespace EditGlobals {
         dataLabels: string;
         [key: string]: string;
     }
+
 
     export type TLangKeys = 'editMode'|'verticalSeparator';
 }
