@@ -385,12 +385,12 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
         `For the pixel value equal to last point,
         the function should return the value for that point.`
     );
-    // assert.strictEqual(
-    //     lin2val(420 / axis.transA + axis.min),
-    //     7.4,
-    //     `For the pixel value higher than the first visible point, the function
-    //     should calculate value between that point and next using EOP array.`
-    // );
+    assert.strictEqual(
+        lin2val(420 / axis.transA + axis.min),
+        7.4,
+        `For the pixel value higher than the first visible point, the function
+        should calculate value between that point and next using EOP array.`
+    );
     assert.strictEqual(
         lin2val(1000 / axis.transA + axis.min),
         12.2,
