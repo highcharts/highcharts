@@ -496,7 +496,7 @@ class DataTable implements DataEvent.Emitter {
      * Event object with event information.
      */
     public emit<E extends DataEvent>(e: E): void {
-        const frame = this;
+        const table = this;
 
         switch (e.type) {
             case 'afterDeleteColumns':
@@ -504,12 +504,12 @@ class DataTable implements DataEvent.Emitter {
             case 'afterSetCell':
             case 'afterSetColumns':
             case 'afterSetRows':
-                frame.versionTag = uniqueKey();
+                table.versionTag = uniqueKey();
                 break;
             default:
         }
 
-        fireEvent(frame, e.type, e);
+        fireEvent(table, e.type, e);
     }
 
     /**
