@@ -106,11 +106,7 @@ function synchronizeHighlight(container, cursor) {
 
     for (const tr of trs) {
         // We search for the correct HTML row
-        if (tr === trHighlight) {
-            tr.classList.add('highlight');
-        } else {
-            tr.classList.remove('highlight');
-        }
+        tr.classList.toggle('highlight', tr === trHighlight);
         for (const td of tr.querySelectorAll('td')) {
             // We search for the correct HTML cell
             td.classList.toggle('highlight', td === tdHighlight);
