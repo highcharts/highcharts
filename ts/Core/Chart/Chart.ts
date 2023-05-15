@@ -1224,17 +1224,13 @@ class Chart {
                 })
                 .add();
 
-            // Update methods, shortcut to Chart.setTitle, Chart.setSubtitle and
-            // Chart.setCaption
+            // Update methods, relay to `applyDescription`
             elem.update = function (
-                updateOptions: (Chart.DescriptionOptionsType)
+                updateOptions: (Chart.DescriptionOptionsType),
+                redraw?: boolean
             ): void {
-                const fn = {
-                    title: 'setTitle',
-                    subtitle: 'setSubtitle',
-                    caption: 'setCaption'
-                }[name];
-                (chart as any)[fn](updateOptions);
+                chart.applyDescription(name, updateOptions);
+                chart.layOutTitles(redraw);
             };
 
             // Presentational

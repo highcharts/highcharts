@@ -149,7 +149,28 @@ QUnit.test('Title alignment', function (assert) {
     assert.strictEqual(
         redraws,
         1,
-        'There should be only one redraw call for changing font size'
+        'There should be only one redraw call for changing generic font size'
+    );
+
+    redraws = 0;
+    chart.update({
+        title: {
+            style: {
+                fontSize: '30px'
+            }
+        },
+        subtitle: {
+            text: 'New title',
+            style: {
+                fontSize: '30px'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        redraws,
+        1,
+        'There should be only one redraw call for changing title font size'
     );
 
 });
