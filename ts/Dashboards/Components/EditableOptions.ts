@@ -25,6 +25,7 @@ namespace EditableOptions {
         detailedOptions?: Array<DetailedOptions>
         propertyPath?: Array<string>
         value?: any;
+        items?: Array<Record<string, string>>
     }
 
     export type ElementType =
@@ -95,7 +96,20 @@ class EditableOptions {
     }
 
     public getOptions(): (Array<EditableOptions.Configuration>) {
-        return this.component.options.editableOptions;
+        const options = this.component.options.editableOptions;
+        for (let i = 0, iEnd = options.length; i < iEnd; i++) {
+            const option = options[i];
+            if (option.name === 'connectorName') {
+                const board = this.component.board;
+                const items = !board ?
+                    [] :
+                    board.dataPool
+                        .getConnectorsNames()
+                        .map((name): { name: string } => ({ name }));
+                option.items = items;
+            }
+        }
+        return options;
     }
 }
 

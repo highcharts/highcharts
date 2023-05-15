@@ -167,6 +167,10 @@ abstract class Component {
         },
         sync: Sync.defaultHandlers,
         editableOptions: [{
+            name: 'connectorName',
+            propertyPath: ['connectorName'],
+            type: 'select'
+        }, {
             name: 'title',
             propertyPath: ['title'],
             type: 'input'
@@ -1315,6 +1319,7 @@ namespace Component {
     /** @internal */
     export interface EditableOptions {
         connector?: ConnectorTypes;
+        connectorName?: string;
         /**
          * Sets an ID for the component's container.
          */

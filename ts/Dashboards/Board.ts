@@ -373,7 +373,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * An array of component options.
      *
      */
-    private setComponents(
+    public setComponents(
         components: Array<Component.ComponentOptions>
     ): void {
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
