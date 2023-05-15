@@ -113,12 +113,7 @@ class KPIComponent extends Component {
                 Component.defaultOptions.className,
                 `${Component.defaultOptions.className}-kpi`
             ].join(' '),
-            style: {
-                boxSizing: 'border-box',
-                textAlign: 'center',
-                'min-height': '150px'
-            },
-            minFontSize: 30,
+            minFontSize: 20,
             thresholdColors: ['#f45b5b', '#90ed7d']
         }
     );
@@ -358,7 +353,7 @@ class KPIComponent extends Component {
     private updateSize(width: number, height: number): void {
         this.updateTitleSize(width, height);
         // If there is no chart, make the font size  bigger.
-        const noChartMultiplier = (this.chart ? 1 : 1.8);
+        const noChartMultiplier = (this.chart ? 1 : 1.7);
         const noTitleMultiplier = (this.options.title ? 0.7 : 1);
         this.value.style.fontSize = this.getFontSize(
             width,
