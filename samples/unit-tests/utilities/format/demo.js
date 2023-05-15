@@ -237,6 +237,19 @@ QUnit.module('Format', () => {
             'Looping an array of objects'
         );
 
+        assert.strictEqual(
+            format(
+                `{#foreach nonexisting}
+                - {firstName} {lastName}
+                {else}
+                Else-block
+                {/foreach}`,
+                { point }
+            ).replace(/\s\s+/g, ' ').trim(),
+            'Else-block',
+            'An else-block for a loop'
+        );
+
     });
 
     QUnit.test('Custom helper function', assert => {

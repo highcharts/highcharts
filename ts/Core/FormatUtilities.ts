@@ -45,11 +45,13 @@ interface MatchObject {
 
 const helpers: Record<string, Function> = {
     // Built-in helpers
-    foreach: function (arg: string[], match: MatchObject): string {
-        return arg.map((item): string => newFormat(match.body, item)).join('');
+    foreach: function (arg: string[]|undefined, match: MatchObject): string {
+        return arg?.map((item): string =>
+            format(match.body, item)
+        ).join('') || '';
     },
-    'if': function (arg: string[], match: MatchObject): string {
-        return arg ? newFormat(match.body, this) : '';
+    'if': function (arg: string[]|undefined, match: MatchObject): string {
+        return arg ? format(match.body, this) : '';
     }
 };
 
@@ -139,7 +141,7 @@ function dateFormat(
  *
  * @return {string}
  *         The formatted string.
- */
+ * /
 function format(str: string, ctx: any, chart?: Chart): string {
     let splitter = '{',
         isInside = false,
@@ -202,8 +204,8 @@ function format(str: string, ctx: any, chart?: Chart): string {
     ret.push(str);
     return ret.join('');
 }
-
-function newFormat(str = '', ctx: any, chart?: Chart): string {
+*/
+function format(str = '', ctx: any, chart?: Chart): string {
 
     const regex = /\{([a-zA-Z0-9\:\.\,\-\/<>%_ #\(\)]+)\}/g,
         // The sub expression regex is the same as the top expression regex,
@@ -369,7 +371,7 @@ function newFormat(str = '', ctx: any, chart?: Chart): string {
         }
         str = str.replace(match.find, pick(replacement, ''));
     });
-    return hasSub ? newFormat(str, ctx, chart) : str;
+    return hasSub ? format(str, ctx, chart) : str;
 }
 
 /**
@@ -498,7 +500,7 @@ function numberFormat(
 
 const FormatUtilities = {
     dateFormat,
-    format: newFormat,
+    format,
     helpers,
     numberFormat
 };
