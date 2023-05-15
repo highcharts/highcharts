@@ -1035,10 +1035,7 @@ class Tooltip {
                 pointConfig.push(item.getLabelConfig());
             });
 
-            formatterContext = {
-                x: point.category,
-                y: point.y
-            } as any;
+            formatterContext = point.getLabelConfig();
             formatterContext.points = pointConfig;
 
         // single point tooltip

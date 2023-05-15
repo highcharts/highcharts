@@ -13,7 +13,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        format: `<span style="font-size: 0.8em">{x}</span><br/>
+        format: `<span style="font-size: 0.8em">{key}</span><br/>
             {#foreach points}
             <span style="color:{point.color}">\u25CF</span>
                 {series.name}: <b>{point.y}</b><br/>
