@@ -27,14 +27,38 @@ import type { DataConnectorTypes } from './Connectors/DataConnectorType.js';
  *
  * */
 
+/**
+ * Options to initialize a data pool.
+ */
 export interface DataPoolOptions {
+
+    /**
+     * Connector options to add to the data pool.
+     */
     connectors: Array<DataPoolConnectorOptions>;
+
 }
 
+/**
+ * Options for a connector in the data pool. Available options depend on the
+ * type of the `DataConnector.types` registry.
+ */
 export interface DataPoolConnectorOptions
 <T extends keyof DataConnectorTypes = keyof DataConnectorTypes> {
+
+    /**
+     * Name of the connector in the data pool.
+     */
     name: string;
+
+    /**
+     * Connector options to use.
+     */
     options: DataConnectorTypes[T]['prototype']['options'];
+
+    /**
+     * Connector type in the `DataConnector.types` registry, like `CSV`.
+     */
     type: T;
 }
 
