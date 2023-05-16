@@ -145,6 +145,6 @@ function setValues() {
 }
 
 // Update the data every second
-// setInterval(() => {
-//     setValues();
-// }, 1000);
+setInterval(() => {
+    setValues();
+}, 1000);
