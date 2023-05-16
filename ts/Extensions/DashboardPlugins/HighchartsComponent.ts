@@ -28,6 +28,7 @@ import type ChartOptions from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
+import type Cell from '../../Dashboards/Layout/Cell';
 
 import Component from '../../Dashboards/Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -295,13 +296,15 @@ class HighchartsComponent extends Component {
      * @internal
      */
     public static fromJSON(
-        json: HighchartsComponent.ClassJSON
+        json: HighchartsComponent.ClassJSON,
+        cell: Cell
     ): HighchartsComponent {
         const options = json.options;
         const chartOptions = JSON.parse(json.options.chartOptions || '{}');
         // const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
 
         const component = new HighchartsComponent(
+            cell,
             merge<HighchartsComponent.Options>(
                 options as any,
                 {
@@ -370,12 +373,12 @@ class HighchartsComponent extends Component {
      * @param options
      * The options for the component.
      */
-    constructor(options: Partial<HighchartsComponent.Options>) {
+    constructor(cell: Cell, options: Partial<HighchartsComponent.Options>) {
         options = merge(
             HighchartsComponent.defaultOptions,
             options
         );
-        super(options);
+        super(cell, options);
         this.options = options as HighchartsComponent.Options;
 
         this.chartConstructor = this.options.chartConstructor;
@@ -567,9 +570,9 @@ class HighchartsComponent extends Component {
      * @returns
      * The component for chaining
      */
-    public update(
+    public async update(
         options: Partial<HighchartsComponent.Options>
-    ): this {
+    ): Promise<void> {
         this.updateComponentOptions(options, false);
         this.setOptions();
 
@@ -577,7 +580,6 @@ class HighchartsComponent extends Component {
             this.chart.update(merge(this.options.chartOptions) || {});
         }
         this.emit({ type: 'afterUpdate' });
-        return this;
     }
 
     /**

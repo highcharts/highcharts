@@ -14,6 +14,16 @@
  *
  * */
 
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Cell from '../Layout/Cell';
+
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
@@ -28,7 +38,21 @@ const {
     splat
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+
 class ThresholdComponent extends Component {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -36,17 +60,36 @@ class ThresholdComponent extends Component {
         }
     );
 
-    public options: ThresholdComponent.ComponentOptions;
-    public component?: Component;
-    public sync: Component['sync'];
-    private undoOptions?: AnyRecord;
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
-    constructor(options: Partial<ThresholdComponent.ComponentOptions>) {
+    public static fromJSON(
+        json: ThresholdComponent.ComponentOptions,
+        cell: Cell
+    ): ThresholdComponent {
+
+        const options = json;
+        return new ThresholdComponent(cell, options);
+    }
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    constructor(
+        cell: Cell,
+        options: Partial<ThresholdComponent.ComponentOptions>
+    ) {
         options = merge(
             ThresholdComponent.defaultOptions,
             options
         );
-        super(options);
+        super(cell, options);
 
         this.options = options as ThresholdComponent.ComponentOptions;
 
@@ -56,6 +99,23 @@ class ThresholdComponent extends Component {
             this.syncHandlers
         );
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public options: ThresholdComponent.ComponentOptions;
+    public component?: Component;
+    public sync: Component['sync'];
+    private undoOptions?: AnyRecord;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public render(): this {
         super.render();
@@ -155,22 +215,11 @@ class ThresholdComponent extends Component {
         return this;
     }
 
-    public static fromJSON(
-        json: ThresholdComponent.ComponentOptions
-    ): ThresholdComponent {
-
-        const options = json;
-        return new ThresholdComponent(options);
-    }
     public redraw(): this {
         super.redraw();
         return this.render();
     }
 
-    public update(options: Partial<ThresholdComponent.ComponentOptions>): this {
-        super.update(options);
-        return this.redraw();
-    }
 }
 
 namespace ThresholdComponent {

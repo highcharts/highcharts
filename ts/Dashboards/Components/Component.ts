@@ -147,7 +147,6 @@ abstract class Component {
     public static defaultOptions: Partial<Component.ComponentOptions> = {
         className: `${classNamePrefix}component`,
         parentElement: document.body,
-        parentCell: void 0,
         id: '',
         title: false,
         caption: false,
@@ -182,16 +181,20 @@ abstract class Component {
      *
      * @internal
      */
-    public parentCell?: Cell;
+    public cell: Cell;
     /**
      * Connector that allows you to load data via URL or from a local source.
      */
     public connector?: Component.ConnectorTypes;
     /**
-    * @internal
-    * The board the component belongs to
-    * */
-    public board?: Board;
+     * The name of the connector in the data pool to use.
+     */
+    private connectorName?: string;
+    /**
+     * @internal
+     * The board the component belongs to
+     * */
+    public board: Board;
     /**
      * Size of the component (width and height).
      */
@@ -320,10 +323,23 @@ abstract class Component {
     /**
      * Creates a component in the cell.
      *
+     * @param cell
+     * Instance of cell, where component is attached.
+     *
      * @param options
      * The options for the component.
      */
-    constructor(options: Partial<Component.ComponentOptions>) {
+    constructor(
+        cell: Cell,
+        options: Partial<Component.ComponentOptions>
+    ) {
+        this.board = cell.row.layout.board;
+
+        this.cell = cell;
+        this.parentElement = cell.container !;
+        this.attachCellListeneres();
+
+
         this.options = merge(
             Component.defaultOptions as Required<Component.ComponentOptions>,
             options
@@ -333,45 +349,6 @@ abstract class Component {
             uniqueKey();
 
         // Todo: we might want to handle this later
-        if (typeof this.options.parentElement === 'string') {
-            const el = document.getElementById(this.options.parentElement);
-            if (!el) {
-                throw new Error(
-                    'Could not find element with id: ' +
-                    this.options.parentElement
-                );
-            }
-            this.parentElement = el;
-
-        } else {
-            this.parentElement = (
-                this.options.parentElement as any ||
-                document.createElement('div')
-            );
-        }
-
-        if (this.options.parentCell) {
-            this.parentCell = this.options.parentCell;
-            if (this.parentCell.container) {
-                this.parentElement = this.parentCell.container;
-            }
-            this.attachCellListeneres();
-        }
-
-        const board = this.board = this.options.board;
-
-        if (this.options.connector instanceof DataConnector) {
-            this.connector = this.options.connector;
-        } else if (
-            board &&
-            this.options.connector?.name
-        ) {
-            void board.dataPool
-                .getConnector(this.options.connector.name)
-                .then((connector): void => {
-                    this.connector = connector;
-                });
-        }
 
         this.hasLoaded = false;
         this.shouldRedraw = true;
@@ -460,8 +437,8 @@ abstract class Component {
             }
         }
 
-        if (this.parentCell && Object.keys(this.parentCell).length) {
-            const board = this.parentCell.row.layout.board;
+        if (this.cell && Object.keys(this.cell).length) {
+            const board = this.cell.row.layout.board;
             this.cellListeners.push(
                 // Listen for resize on dashboard
                 addEvent(board, 'cellResize', (): void => {
@@ -469,16 +446,16 @@ abstract class Component {
                 }),
                 // Listen for changed parent
                 addEvent(
-                    this.parentCell.row,
+                    this.cell.row,
                     'cellChange',
                     (e: { row: Row }): void => {
                         const { row } = e;
-                        if (row && this.parentCell) {
+                        if (row && this.cell) {
                             const hasLeftTheRow =
-                                row.getCellIndex(this.parentCell) === void 0;
+                                row.getCellIndex(this.cell) === void 0;
                             if (hasLeftTheRow) {
-                                if (this.parentCell) {
-                                    this.setCell(this.parentCell);
+                                if (this.cell) {
+                                    this.setCell(this.cell);
                                 }
                             }
                         }
@@ -499,7 +476,7 @@ abstract class Component {
      * @internal
      */
     public setCell(cell: Cell, resize = false): void {
-        this.parentCell = cell;
+        this.cell = cell;
         if (cell.container) {
             this.parentElement = cell.container;
         }
@@ -770,16 +747,23 @@ abstract class Component {
      * @param redraw
      * Set to true if the update should redraw the component.
      * If `false` the component will be redrawn only if options are changed.
-     *
-     * @returns
-     * The component for chaining.
      */
-    public update(
+    public async update(
         newOptions: Partial<Component.ComponentOptions>,
         redraw: boolean = false
-    ): this {
+    ): Promise<void> {
         // Update options
         let shouldForceRedraw = false;
+
+        if (
+            newOptions.connector?.name &&
+            this.connectorName !== newOptions.connector.name
+        ) {
+            const connector = await this.board.dataPool
+                .getConnector(newOptions.connector.name);
+
+            this.setConnector(connector);
+        }
 
         if (!redraw) {
             const currentOptions = this.options;
@@ -789,6 +773,7 @@ abstract class Component {
                 [];
 
             const newOptionKeys = Object.keys(newOptions);
+
             for (let i = 0; i < newOptionKeys.length; i++) {
                 const optionName = newOptionKeys[i];
                 if (
@@ -839,7 +824,6 @@ abstract class Component {
             this.redraw();
         }
 
-        return this;
     }
 
     /**
@@ -1241,22 +1225,9 @@ namespace Component {
     export interface ComponentOptions extends EditableOptions {
 
         /**
-         * @internal
-         * The Board the component belongs to
-         * */
-        board?: Board;
-
-        /**
          * Cell id, where component is attached.
          */
         cell?: string;
-
-        /**
-         * Instance of cell, where component is attached.
-         *
-         * @internal
-         */
-        parentCell?: Cell;
 
         /**
          * The HTML element or id of HTML element that is used for appending
@@ -1329,7 +1300,7 @@ namespace Component {
         /**
          * Connector to use from the data pool of the dashboard.
          */
-        connector?: (ConnectorTypes|ComponentConnectorOptions);
+        connector?: (ComponentConnectorOptions);
         /**
          * Sets an ID for the component's container.
          */

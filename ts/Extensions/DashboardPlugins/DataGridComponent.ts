@@ -19,6 +19,7 @@
  *
  * */
 
+import type Cell from '../../Dashboards/Layout/Cell';
 import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
@@ -135,12 +136,14 @@ class DataGridComponent extends Component {
 
     /** @internal */
     public static fromJSON(
-        json: DataGridComponent.ClassJSON
+        json: DataGridComponent.ClassJSON,
+        cell: Cell
     ): DataGridComponent {
         const options = json.options;
         const dataGridOptions = JSON.parse(json.options.dataGridOptions || '');
 
         const component = new DataGridComponent(
+            cell,
             merge<DataGridComponent.ComponentOptions>(options as any, {
                 dataGridOptions,
                 syncHandlers: DataGridComponent.syncHandlers
@@ -178,10 +181,13 @@ class DataGridComponent extends Component {
      *
      * */
 
-    constructor(options: Partial<DataGridComponent.ComponentOptions>) {
+    constructor(
+        cell: Cell,
+        options: Partial<DataGridComponent.ComponentOptions>
+    ) {
         options = merge(DataGridComponent.defaultOptions, options);
 
-        super(options);
+        super(cell, options);
 
         this.options = options as DataGridComponent.ComponentOptions;
         this.type = 'DataGrid';
@@ -307,13 +313,14 @@ class DataGridComponent extends Component {
         }
     }
 
-    public update(options: Partial<DataGridComponent.ComponentOptions>): this {
+    public async update(
+        options: Partial<DataGridComponent.ComponentOptions>
+    ): Promise<void> {
         super.update(options);
         if (this.dataGrid) {
             this.dataGrid.update(this.options.dataGridOptions || ({} as any));
         }
         this.emit({ type: 'afterUpdate' });
-        return this;
     }
 
     /** @internal */
