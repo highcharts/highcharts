@@ -24,12 +24,7 @@
 
 import type Board from '../Board';
 import type Cell from '../Layout/Cell';
-/* *
- *
- *  Imports
- *
- * */
-
+import type { ComponentConnectorOptions } from './ComponentOptions';
 import type {
     ComponentType,
     ComponentTypeRegistry
@@ -39,12 +34,13 @@ import type NavigationBindingsOptionsObject from
     '../../Extensions/Annotations/NavigationBindingsOptions';
 import type Serializable from '../Serializable';
 
-import type DataConnector from '../../Data/Connectors/DataConnector';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
+
 import CallbackRegistry from '../CallbackRegistry.js';
+import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DG from '../Globals.js';
 const {
     classNamePrefix
@@ -94,12 +90,6 @@ import ComponentRegistry from './ComponentRegistry.js';
  * @internal
  */
 abstract class Component {
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
 
     /* *
      *
@@ -368,8 +358,21 @@ abstract class Component {
             this.attachCellListeneres();
         }
 
-        this.connector = this.options.connector;
-        this.board = this.options.board;
+        const board = this.board = this.options.board;
+
+        if (this.options.connector instanceof DataConnector) {
+            this.connector = this.options.connector;
+        } else if (
+            board &&
+            this.options.connector?.name
+        ) {
+            void board.dataPool
+                .getConnector(this.options.connector.name)
+                .then((connector): void => {
+                    this.connector = connector;
+                });
+        }
+
         this.hasLoaded = false;
         this.shouldRedraw = true;
         this.editableOptions =
@@ -1236,22 +1239,25 @@ namespace Component {
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions extends EditableOptions {
-        [key: string]: unknown;
+
         /**
          * @internal
          * The Board the component belongs to
          * */
         board?: Board;
+
         /**
          * Cell id, where component is attached.
          */
         cell?: string;
+
         /**
          * Instance of cell, where component is attached.
          *
          * @internal
          */
         parentCell?: Cell;
+
         /**
          * The HTML element or id of HTML element that is used for appending
          * a component.
@@ -1259,10 +1265,12 @@ namespace Component {
          * @internal
          */
         parentElement: HTMLElement | string;
+
         /**
          * The name of class that is applied to the component's container.
          */
         className?: string;
+
         /**
          * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
          */
@@ -1318,8 +1326,10 @@ namespace Component {
     export type ConnectorTypes = DataConnector;
     /** @internal */
     export interface EditableOptions {
-        connector?: ConnectorTypes;
-        connectorName?: string;
+        /**
+         * Connector to use from the data pool of the dashboard.
+         */
+        connector?: (ConnectorTypes|ComponentConnectorOptions);
         /**
          * Sets an ID for the component's container.
          */
