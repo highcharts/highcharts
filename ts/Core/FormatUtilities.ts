@@ -33,6 +33,7 @@ const {
 
 interface MatchObject {
     body?: string;
+    ctx: any;
     elseBody?: string;
     expression: string;
     find: string;
@@ -45,14 +46,14 @@ interface MatchObject {
 
 const helpers: Record<string, Function> = {
     // Built-in helpers
-    foreach: function (arg: string[]|undefined, match: MatchObject): string {
-        return arg?.map((item): string =>
-            format(match.body, item)
-        ).join('') || '';
-    },
-    'if': function (arg: string[]|undefined, match: MatchObject): string {
-        return arg ? format(match.body, this) : '';
-    }
+    add: (a: number, b: number): number => a + b,
+    divide: (a: number, b: number): number|string => (b !== 0 ? a / b : ''),
+    foreach: (arg: string[]|undefined, match: MatchObject): string|undefined =>
+        arg?.map((item): string => format(match.body, item)).join(''),
+    'if': (arg: string[]|undefined, match: MatchObject): string|undefined =>
+        (arg ? format(match.body, match.ctx) : void 0),
+    multiply: (a: number, b: number): number => a * b,
+    subtract: (a: number, b: number): number => a - b
 };
 
 /* *
@@ -256,6 +257,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
         }
         if (!currentMatch || !currentMatch.isBlock) {
             currentMatch = {
+                ctx,
                 expression: match[1],
                 find: match[0],
                 isBlock: match[1].charAt(0) === '#',
@@ -297,7 +299,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
 
                 // Either closing without an else section, or when encountering
                 // an else section
-                if (!currentMatch.body) {
+                if (currentMatch.body === void 0) {
                     currentMatch.body = body;
                     currentMatch.startInner = match.index + match[0].length;
 
@@ -335,10 +337,8 @@ function format(str = '', ctx: any, chart?: Chart): string {
                 .map(resolveProperty);
             args.push(match);
 
-            replacement = (
-                helpers[fn].apply(ctx, args) ||
-                (elseBody && format(elseBody, ctx))
-            );
+            replacement = helpers[fn].apply(ctx, args) ??
+                (elseBody ? format(elseBody, ctx) : '');
 
         // Simple variable replacement
         } else {

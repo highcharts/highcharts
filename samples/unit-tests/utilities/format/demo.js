@@ -198,6 +198,15 @@ QUnit.module('Format', () => {
 
         assert.strictEqual(
             format(
+                '{#if point.isNull}{else}{point.value:.2f}{/if}',
+                { point }
+            ),
+            '3.14',
+            'Condition with empty block'
+        );
+
+        assert.strictEqual(
+            format(
                 `
                 Value: {#if point.key}
                 Deep,
@@ -254,13 +263,12 @@ QUnit.module('Format', () => {
 
     QUnit.test('Custom helper function', assert => {
         // Custom, non-block  helper
-        const divide = Highcharts.Templating.helpers.divide;
-        Highcharts.Templating.helpers.divide = (value, divisor) =>
+        Highcharts.Templating.helpers.custom = (value, divisor) =>
             value / divisor;
 
         assert.strictEqual(
             format(
-                '{divide point.deep.deeper 1000}',
+                '{custom point.deep.deeper 1000}',
                 { point }
             ),
             '0.123',
@@ -268,20 +276,32 @@ QUnit.module('Format', () => {
         );
 
         // Reset
-        Highcharts.Templating.helpers.divide = divide;
+        delete Highcharts.Templating.helpers.custom;
+    });
+
+    QUnit.test('Arithmetic helpers', assert => {
+        assert.strictEqual(
+            format(
+                '{add meat potatoes}',
+                {
+                    meat: 'meat',
+                    potatoes: 'potatoes'
+                }
+            ),
+            'meatpotatoes',
+            'Invalid types addition'
+        );
+        assert.strictEqual(
+            format(
+                '{divide 1 0}',
+                {}
+            ),
+            '',
+            'Division by zero'
+        );
     });
 
     QUnit.test('Subexpressions', assert => {
-        // Custom, non-block  helper
-        const {
-            add,
-            divide,
-            multiply
-        } = Highcharts.Templating.helpers;
-        Highcharts.Templating.helpers.add = (a, b) => a + b;
-        Highcharts.Templating.helpers.divide = (a, b) => a / b;
-        Highcharts.Templating.helpers.multiply = (a, b) => a * b;
-
         assert.strictEqual(
             format(
                 '{celsius}℃ == {add (multiply celsius (divide 9 5)) 32}℉',
@@ -300,11 +320,22 @@ QUnit.module('Format', () => {
             'Number formatting on expression result'
         );
 
-        // Reset
-        Highcharts.Templating.helpers.add = add;
-        Highcharts.Templating.helpers.add = divide;
-        Highcharts.Templating.helpers.multiply = multiply;
+        assert.strictEqual(
+            format(
+                '{(divide 0 22):.2f}',
+                {}
+            ),
+            '0.00',
+            'Division of zero'
+        );
+
+        assert.strictEqual(
+            format(
+                '{(divide 22 0):.2f}',
+                {}
+            ),
+            '',
+            'Division by zero'
+        );
     });
-
-
 });
