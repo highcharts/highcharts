@@ -189,7 +189,7 @@ abstract class Component {
     /**
      * The name of the connector in the data pool to use.
      */
-    private connectorName?: string;
+    protected connectorName?: string;
     /**
      * @internal
      * The board the component belongs to
@@ -746,81 +746,35 @@ abstract class Component {
      *
      * @param redraw
      * Set to true if the update should redraw the component.
-     * If `false` the component will be redrawn only if options are changed.
      */
     public async update(
         newOptions: Partial<Component.ComponentOptions>,
-        redraw: boolean = false
+        redraw: boolean = true
     ): Promise<void> {
+        const eventObject = {
+            options: newOptions,
+            shouldForceRedraw: false
+        };
+
         // Update options
-        let shouldForceRedraw = false;
+        fireEvent(this, 'update', eventObject);
+
+        this.options = merge(this.options, newOptions);
 
         if (
-            newOptions.connector?.name &&
-            this.connectorName !== newOptions.connector.name
+            this.options.connector?.name &&
+            this.connectorName !== this.options.connector.name
         ) {
             const connector = await this.board.dataPool
-                .getConnector(newOptions.connector.name);
+                .getConnector( this.options.connector.name);
 
             this.setConnector(connector);
-        }
-
-        if (!redraw) {
-            const currentOptions = this.options;
-
-            const optionNamesToSkip = this.editableOptions.bindings ?
-                this.editableOptions.bindings.skipRedraw :
-                [];
-
-            const newOptionKeys = Object.keys(newOptions);
-
-            for (let i = 0; i < newOptionKeys.length; i++) {
-                const optionName = newOptionKeys[i];
-                if (
-                    optionNamesToSkip.indexOf(optionName) > -1
-                ) {
-                    continue;
-                }
-
-                if (optionName in currentOptions) {
-                    const oldOptionValue =
-                        (currentOptions as AnyRecord)[optionName];
-                    const newOptionValue =
-                        (newOptions as AnyRecord)[optionName];
-
-                    // If the type has changed, redraw
-                    if (typeof oldOptionValue !== typeof newOptionValue) {
-                        shouldForceRedraw = true;
-                        break;
-                    }
-
-                    // If both are objects, do a quick comparison
-                    // TODO: order should not really matter in a config
-                    // so might want to do a deeper comparison
-                    if (
-                        typeof oldOptionValue === 'object' &&
-                        JSON.stringify(oldOptionValue) !==
-                        JSON.stringify(newOptionValue)
-                    ) {
-                        shouldForceRedraw = true;
-                        break;
-                    }
-
-                    if (oldOptionValue !== newOptionValue) {
-                        shouldForceRedraw = true;
-                        break;
-                    }
-                }
-            }
+            this.shouldRedraw = true;
         }
 
         this.options = merge(this.options, newOptions);
-        fireEvent(this, 'update', {
-            options: newOptions,
-            shouldForceRedraw
-        });
 
-        if (redraw || shouldForceRedraw) {
+        if (redraw || eventObject.shouldForceRedraw) {
             this.redraw();
         }
 

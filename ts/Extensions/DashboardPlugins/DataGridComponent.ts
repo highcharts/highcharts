@@ -174,6 +174,8 @@ class DataGridComponent extends Component {
     public options: DataGridComponent.ComponentOptions;
     /** @internal */
     public sync: Component['sync'];
+    /** @internal */
+    private connectorListeners: Array<Function>;
 
     /* *
      *
@@ -189,6 +191,7 @@ class DataGridComponent extends Component {
 
         super(cell, options);
 
+        this.connectorListeners = [];
         this.options = options as DataGridComponent.ComponentOptions;
         this.type = 'DataGrid';
         this.dataGridContainer = createElement(
@@ -215,47 +218,6 @@ class DataGridComponent extends Component {
 
         this.dataGridOptions = this.options.dataGridOptions || ({} as any);
 
-        if (this.connector) {
-            // this.on('tableChanged', (): void => this.updateSeries());
-
-            // Reload the store when polling.
-            this.connector.on('afterLoad', (e: DataConnector.Event): void => {
-                if (e.table && this.connector) {
-                    this.connector.table.setColumns(e.table.getColumns());
-                }
-            });
-
-            // Update the DataGrid when store changed.
-            this.connector.table.on('afterSetCell', (e: any): void => {
-                const dataGrid = this.dataGrid;
-                let shouldUpdateTheGrid = true;
-
-                if (dataGrid) {
-                    const row = dataGrid.rowElements[e.rowIndex],
-                        cells = Array.prototype.slice.call(row.childNodes);
-
-                    cells.forEach((cell: HTMLElement): void => {
-                        if (cell.childElementCount > 0) {
-                            const input =
-                                cell.childNodes[0] as HTMLInputElement,
-                                convertedInputValue =
-                                    typeof e.cellValue === 'string' ?
-                                        input.value :
-                                        +input.value;
-
-                            if (cell.dataset.columnName === e.columnName &&
-                                convertedInputValue === e.cellValue
-                            ) {
-                                shouldUpdateTheGrid = false;
-                            }
-                        }
-                    });
-                }
-
-                shouldUpdateTheGrid ? this.update({}) : void 0;
-            });
-        }
-
         this.innerResizeTimeouts = [];
 
         // Add the component instance to the registry
@@ -276,6 +238,55 @@ class DataGridComponent extends Component {
         this.contentElement.appendChild(this.dataGridContainer);
         this.hasLoaded = true;
 
+        if (
+            this.connector &&
+            !this.connectorListeners.length
+        ) {
+            const connectorListeners = this.connectorListeners;
+            // this.on('tableChanged', (): void => this.updateSeries());
+
+            // Reload the store when polling.
+            connectorListeners.push(this.connector
+                .on('afterLoad', (e: DataConnector.Event): void => {
+                    if (e.table && this.connector) {
+                        this.connector.table.setColumns(e.table.getColumns());
+                    }
+                })
+            );
+
+            // Update the DataGrid when store changed.
+            connectorListeners.push(this.connector.table
+                .on('afterSetCell', (e: any): void => {
+                    const dataGrid = this.dataGrid;
+                    let shouldUpdateTheGrid = true;
+
+                    if (dataGrid) {
+                        const row = dataGrid.rowElements[e.rowIndex],
+                            cells = Array.prototype.slice.call(row.childNodes);
+
+                        cells.forEach((cell: HTMLElement): void => {
+                            if (cell.childElementCount > 0) {
+                                const input =
+                                    cell.childNodes[0] as HTMLInputElement,
+                                    convertedInputValue =
+                                        typeof e.cellValue === 'string' ?
+                                            input.value :
+                                            +input.value;
+
+                                if (cell.dataset.columnName === e.columnName &&
+                                    convertedInputValue === e.cellValue
+                                ) {
+                                    shouldUpdateTheGrid = false;
+                                }
+                            }
+                        });
+                    }
+
+                    shouldUpdateTheGrid ? this.update({}) : void 0;
+                })
+            );
+        }
+
         this.emit({ type: 'afterLoad' });
 
         return this;
@@ -288,6 +299,14 @@ class DataGridComponent extends Component {
         if (!this.dataGrid) {
             this.dataGrid = this.constructDataGrid();
         }
+        if (
+            this.connector &&
+            this.dataGrid &&
+            this.dataGrid.dataTable.modified !== this.connector.table.modified
+        ) {
+            this.dataGrid.update({ dataTable: this.connector.table.modified });
+        }
+
         this.sync.start();
         this.emit({ type: 'afterRender' });
 
@@ -316,7 +335,14 @@ class DataGridComponent extends Component {
     public async update(
         options: Partial<DataGridComponent.ComponentOptions>
     ): Promise<void> {
-        super.update(options);
+        if (options.connector?.name !== this.connectorName) {
+            const connectorListeners = this.connectorListeners;
+            for (let i = 0, iEnd = connectorListeners.length; i < iEnd; ++i) {
+                connectorListeners[i]();
+            }
+            connectorListeners.length = 0;
+        }
+        await super.update(options);
         if (this.dataGrid) {
             this.dataGrid.update(this.options.dataGridOptions || ({} as any));
         }

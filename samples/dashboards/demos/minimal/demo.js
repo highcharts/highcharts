@@ -124,10 +124,15 @@ const board = Dashboards.board('container', {
     }]
 }, true);
 
-board.mountedComponents.forEach(mountedComponent => {
-    mountedComponent.component.update({
+for (let i = 0, iEnd = board.mountedComponents.length - 1; i < iEnd; i++) {
+    board.mountedComponents[i].component.update({
         connector: {
             name: 'Vitamin'
         }
     });
+}
+board.mountedComponents[3].component.update({
+    connector: {
+        name: 'Vitamin'
+    }
 });

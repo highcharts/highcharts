@@ -454,15 +454,15 @@ class HighchartsComponent extends Component {
         hcComponent.emit({ type: 'afterRender' });
         hcComponent.setupConnectorUpdate();
 
-        addEvent(hcComponent.chart, 'afterUpdate', function ():void {
-            const options = this.userOptions;
+        // addEvent(hcComponent.chart, 'afterUpdate', function ():void {
+        //     const options = this.userOptions;
 
-            if (hcComponent.hasLoaded) {
-                hcComponent.updateComponentOptions({
-                    chartOptions: options
-                }, false);
-            }
-        });
+        //     if (hcComponent.hasLoaded) {
+        //         hcComponent.updateComponentOptions({
+        //             chartOptions: options
+        //         }, false);
+        //     }
+        // });
         return this;
     }
 
@@ -555,25 +555,24 @@ class HighchartsComponent extends Component {
      *
      * @internal
      */
-    private updateComponentOptions(
-        options: Partial<HighchartsComponent.Options>,
-        redraw = true
-    ): void {
-        super.update(options, redraw);
-    }
+    // private updateComponentOptions(
+    //     options: Partial<HighchartsComponent.Options>,
+    //     redraw = true
+    // ): void {
+    //     super.update(options, true);
+    // }
 
     /**
      * Handles updating via options.
      * @param options
      * The options to apply.
      *
-     * @returns
-     * The component for chaining
      */
     public async update(
         options: Partial<HighchartsComponent.Options>
     ): Promise<void> {
-        this.updateComponentOptions(options, false);
+        super.update(options, true);
+        // this.updateComponentOptions(options, false);
         this.setOptions();
 
         if (this.chart) {
