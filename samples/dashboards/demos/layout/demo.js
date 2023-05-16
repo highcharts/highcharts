@@ -13,14 +13,6 @@ let board = new Dashboards.Board('container', {
                     }
                 }
             }, {
-                id: 'delete-dashboard',
-                text: 'Delete current dashboard',
-                events: {
-                    click: function () {
-                        board.destroy();
-                    }
-                }
-            }, {
                 id: 'import-dashboard',
                 text: 'Import saved dashboard',
                 events: {

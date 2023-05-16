@@ -643,14 +643,6 @@ const editMode = {
                 }
             }
         }, {
-            id: 'delete-dashboard',
-            text: 'Delete current dashboard',
-            events: {
-                click: function () {
-                    dashboard.destroy();
-                }
-            }
-        }, {
             id: 'import-dashboard',
             text: 'Import saved dashboard',
             events: {
