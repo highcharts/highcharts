@@ -347,7 +347,9 @@ const options = {
     },
     tooltip: {
         outside: true,
-        className: 'tip'
+        useHTML: true,
+        pointFormat: '<p class="tip">{point.text}</p>',
+        headerFormat: '<p class="tipheader">{point.key}</p>'
     },
     yAxis: [{
         max: 100,
@@ -416,9 +418,10 @@ const options = {
         type: 'area',
         step: 'left',
         tooltip: {
-            headerFormat: '<span style="font-size: 11px;color:#f0f0f0">{point.x:%B %e, %Y}</span>',
-            pointFormat: '{point.name}<br><b>{point.y}</b>',
-            valueSuffix: ' employees'
+            valueSuffix: ' employees',
+            useHTML: true,
+            pointFormat: '<p class="tip"><b>{point.y}</b></p>',
+            headerFormat: '<p class="tipheader">{point.x:%B %e, %Y}</p>'
         },
         data: employees
 
