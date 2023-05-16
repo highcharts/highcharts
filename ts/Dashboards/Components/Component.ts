@@ -387,7 +387,7 @@ abstract class Component {
         this.syncHandlers = this.handleSyncOptions();
         this.element = createElement('div', {
             className: this.options.className
-        }, this.options.style);
+        });
 
         this.contentElement = createElement('div', {
             className: `${this.options.className}-content`
@@ -1324,10 +1324,6 @@ namespace Component {
          * Sets an ID for the component's container.
          */
         id?: string;
-        /**
-         * Additional CSS styles to apply inline to the component's container.
-         */
-        style?: CSSObject;
         /**
          * The component's title, which will render at the top.
          */

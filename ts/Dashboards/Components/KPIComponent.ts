@@ -82,14 +82,12 @@ class KPIComponent extends Component {
             options.chartOptions && JSON.parse(options.chartOptions);
         const subtitle = JSON.parse(options.subtitle || '{}');
         const title = options.title && JSON.parse(options.title);
-        const style = JSON.parse(options.style || '{}');
 
         return new KPIComponent(
             merge(options as any, {
                 chartOptions,
                 title,
-                subtitle,
-                style
+                subtitle
             })
         );
     }
@@ -572,7 +570,6 @@ class KPIComponent extends Component {
                 subtitle: JSON.stringify(this.options.subtitle),
                 title: JSON.stringify(this.options.title),
                 threshold: this.options.threshold,
-                style: JSON.stringify(this.options.style),
                 thresholdColors: this.options.thresholdColors,
                 chartOptions: JSON.stringify(this.options.chartOptions),
                 valueFormat: this.options.valueFormat
@@ -609,7 +606,6 @@ namespace KPIComponent {
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
         title?: string;
         chartOptions?: string;
-        style?: string;
         threshold?: number|Array<number>;
         thresholdColors?: Array<string>;
         type: 'KPI';
