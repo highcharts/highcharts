@@ -5,6 +5,9 @@ function getPointCategoryName(point, dimension) {
     return axis.categories[point[isY ? 'y' : 'x']];
 }
 
+Highcharts.Templating.helpers.substr = (s, from, length) =>
+    s.substr(from, length);
+
 Highcharts.chart('container', {
 
     chart: {
@@ -35,6 +38,11 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
+            /*
+            valueDescriptionFormat: '{index}. ' +
+                '{point.series.xAxis.categories.(point.x)} sales ' +
+                '{point.series.yAxis.categories.(point.y)}, {point.value}.',
+            */
             descriptionFormatter: function (point) {
                 var ix = point.index + 1,
                     xName = getPointCategoryName(point, 'x'),
@@ -61,12 +69,9 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        formatter: function () {
-            return '<b>' + getPointCategoryName(this.point, 'x') +
-                '</b> sold <br><b>' + this.point.value +
-                '</b> items on <br><b>' +
-                getPointCategoryName(this.point, 'y') + '</b>';
-        }
+        format: '<b>{series.xAxis.categories.(point.x)}</b> sold<br>' +
+            '<b>{point.value}</b> items on <br>' +
+            '<b>{series.yAxis.categories.(point.y)}</b>'
     },
 
     series: [{
@@ -96,9 +101,7 @@ Highcharts.chart('container', {
             chartOptions: {
                 yAxis: {
                     labels: {
-                        formatter: function () {
-                            return this.value.charAt(0);
-                        }
+                        format: '{substr value 0 1}'
                     }
                 }
             }

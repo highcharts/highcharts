@@ -26,9 +26,7 @@ Highcharts.chart('container', {
             text: 'Billions'
         },
         labels: {
-            formatter: function () {
-                return this.value / 1000;
-            }
+            format: '{divide value 1000}'
         }
     },
     tooltip: {

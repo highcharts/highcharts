@@ -44,11 +44,8 @@
             dataLabels: {
                 enabled: true,
                 color: '#FFFFFF',
-                formatter: function () {
-                    if (this.point.value) {
-                        return this.point.name;
-                    }
-                }
+                format: '{point.name}',
+                nullFormat: ''
             },
             tooltip: {
                 headerFormat: '',
