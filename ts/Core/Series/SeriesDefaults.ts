@@ -2486,6 +2486,21 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * What type of legend symbol to render for this series. Can be one of
+     * `lineMarker` or `rectangle`.
+     *
+     * @validvalue ["lineMarker", "rectangle"]
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol/
+     *         Change the legend symbol
+     *
+     * @type      {string}
+     * @default   rectangle
+     * @since     11.0.1
+     * @apioption plotOptions.series.legendSymbol
+     */
+
+    /**
      * Determines whether the series should look for the nearest point
      * in both dimensions or just the x-dimension when hovering the series.
      * Defaults to `'xy'` for scatter series and `'x'` for most other
@@ -2508,15 +2523,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @private
      */
     findNearestPointBy: 'x'
-
-    /**
-     * What type of legend symbol to render for this series.
-     *
-     * @validvalue ["lineMarker", "rectangle"]
-     *
-     * @sample {highcharts} highcharts/series/legend-symbol/
-     *         Change the legend symbol
-     */
 
 };
 
