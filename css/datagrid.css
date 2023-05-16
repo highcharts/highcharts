@@ -45,6 +45,7 @@
         --highcharts-neutral-color-10: rgb(71, 71, 71);
         --highcharts-neutral-color-5: rgb(61, 61, 61);
         --highcharts-neutral-color-3: rgb(57, 57, 57);
+        --highcharts-neutral-color-0: rgb(0, 0, 0);
 
         /* Highlight color variations */
         --highcharts-highlight-color-100: rgb(122, 167, 255);
@@ -95,6 +96,8 @@
     bottom: 0;
     overflow: scroll;
     z-index: 0;
+    background-color: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .hc-dg-scroll-container {
@@ -141,6 +144,10 @@
     width: 100%;
 }
 
+.hc-dg-row:nth-child(even) {
+    background-color: var(--highcharts-neutral-color-10);
+}
+
 .hc-dg-row.hovered {
     background-color: var(--highcharts-highlight-color-20);
 }
@@ -154,6 +161,7 @@
     align-items: center;
     border-left: 1px solid var(--highcharts-neutral-color-20);
     border-bottom: 1px solid var(--highcharts-neutral-color-20);
+    color: var(--highcharts-neutral-color-100);
     overflow: hidden;
     padding: 0 8px;
     flex: 1;

@@ -102,7 +102,8 @@ function renderCollapseHeader(
         allowEnabled,
         onchange,
         isEnabled,
-        isNested
+        isNested,
+        iconsURLPrefix
     } = options;
 
     const accordion = createElement(
@@ -157,7 +158,7 @@ function renderCollapseHeader(
             className:
                 EditGlobals.classNames.accordionHeaderIcon + ' ' +
                 EditGlobals.classNames.rotateElement,
-            src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
+            src: iconsURLPrefix + 'drowdown-pointer.svg'
         },
         {},
         headerBtn
@@ -270,7 +271,7 @@ function renderSelect(
                 EditGlobals.classNames.dropdownIcon +
                 ' ' +
                 EditGlobals.classNames.rotateElement,
-            src: iconsURLPrefix + 'dropdown-pointer.svg'
+            src: iconsURLPrefix + 'drowdown-pointer.svg'
         },
         {},
         btn
@@ -816,6 +817,7 @@ export interface NestedHeaderFormFieldOptions {
     onchange?: (value: boolean) => void;
     isEnabled?: boolean;
     isNested?: boolean;
+    iconsURLPrefix?: string;
 }
 
 export type RendererElement = (
