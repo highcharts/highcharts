@@ -48,10 +48,16 @@ const helpers: Record<string, Function> = {
     // Built-in helpers
     add: (a: number, b: number): number => a + b,
     divide: (a: number, b: number): number|string => (b !== 0 ? a / b : ''),
-    foreach: (arg: string[]|undefined, match: MatchObject): string|undefined =>
-        arg?.map((item): string => format(match.body, item)).join(''),
-    'if': (arg: string[]|undefined, match: MatchObject): string|undefined =>
-        (arg ? format(match.body, match.ctx) : void 0),
+    foreach: function (arr: string[]|undefined): string|undefined {
+        const match = arguments[arguments.length - 1];
+        return arr?.map((item): string =>
+            format(match.body, item)
+        ).join('');
+    },
+    'if': function (condition: string[]|undefined): string|undefined {
+        const match = arguments[arguments.length - 1];
+        return (condition ? format(match.body, match.ctx) : void 0);
+    },
     multiply: (a: number, b: number): number => a * b,
     subtract: (a: number, b: number): number => a - b
 };
@@ -225,7 +231,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
      * extended with other types like string or null if needed, but keep it
      * small for now.
      */
-    const resolveProperty = (key: string): unknown => {
+    const resolveProperty = (key = ''): unknown => {
         let n: number;
 
         if (key === 'true') {
@@ -326,19 +332,28 @@ function format(str = '', ctx: any, chart?: Chart): string {
     // Execute
     matches.forEach((match): void => {
         const { elseBody, expression, fn } = match;
-        let replacement;
+        let replacement: any,
+            i: number;
 
         // Helper function
         if (fn) {
-            // Pass the helpers the amount of arguments given in the template,
+            // Pass the helpers the amount of arguments defined by the function,
             // then the match as the last argument.
-            const args: (unknown)[] = expression.split(' ')
-                .splice(1)
-                .map(resolveProperty);
-            args.push(match);
+            const args: unknown[] = [match],
+                parts = expression.split(' ');
 
-            replacement = helpers[fn].apply(ctx, args) ??
-                (elseBody ? format(elseBody, ctx) : '');
+            i = helpers[fn].length;
+            while (i--) {
+                args.unshift(resolveProperty(parts[i + 1]));
+            }
+
+            try {
+                replacement = helpers[fn].apply(ctx, args) ??
+                    (elseBody ? format(elseBody, ctx) : '');
+            } catch (e) {
+                replacement = '';
+            }
+
 
         // Simple variable replacement
         } else {

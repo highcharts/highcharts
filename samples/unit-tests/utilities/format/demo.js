@@ -338,4 +338,49 @@ QUnit.module('Format', () => {
             'Division by zero'
         );
     });
+
+    QUnit.test('Error handling', assert => {
+        assert.strictEqual(
+            format(
+                `{#foreach}
+                - Item
+                {/foreach}`,
+                { point }
+            ).replace(/\s\s+/g, ' ').trim(),
+            '',
+            'Looping nothing'
+        );
+        assert.strictEqual(
+            format(
+                `{#foreach 122}
+                - Item
+                {/foreach}`,
+                { point }
+            ).replace(/\s\s+/g, ' ').trim(),
+            '',
+            'Looping number'
+        );
+        assert.strictEqual(
+            format(
+                `{#foreach false}
+                - Item
+                {/foreach}`,
+                { point }
+            ).replace(/\s\s+/g, ' ').trim(),
+            '',
+            'Looping bool'
+        );
+        assert.strictEqual(
+            format(
+                `{#foreach point.persons true}
+                - Item
+                {/foreach}`,
+                { point }
+            ).replace(/\s\s+/g, ' ').trim(),
+            '- Item - Item',
+            'Looping excess arguments'
+        );
+    });
+
+
 });
