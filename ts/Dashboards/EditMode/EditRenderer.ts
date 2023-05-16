@@ -158,7 +158,7 @@ function renderCollapseHeader(
             className:
                 EditGlobals.classNames.accordionHeaderIcon + ' ' +
                 EditGlobals.classNames.rotateElement,
-            src: iconsURLPrefix + 'drowdown-pointer.svg'
+            src: iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
         headerBtn
@@ -271,7 +271,7 @@ function renderSelect(
                 EditGlobals.classNames.dropdownIcon +
                 ' ' +
                 EditGlobals.classNames.rotateElement,
-            src: iconsURLPrefix + 'drowdown-pointer.svg'
+            src: iconsURLPrefix + 'dropdown-pointer.svg'
         },
         {},
         btn
