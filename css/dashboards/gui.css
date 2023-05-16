@@ -218,7 +218,16 @@
         0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
     background-clip: border-box;
     border-radius: 3px;
-    overflow: auto;
+    overflow: hidden;
+}
+
+.highcharts-dashboards-component {
+    color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-dashboards-component-kpi {
+    min-height: 150px;
+    text-align: center;
 }
 
 .highcharts-dashboards-component-title {
