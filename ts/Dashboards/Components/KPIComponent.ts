@@ -255,7 +255,7 @@ class KPIComponent extends Component {
 
         if (this.options.chartOptions) {
             this.chartContainer = createElement(
-                'figure',
+                'div',
                 {
                     className: `${Component.defaultOptions.className}-kpi-chart-container`
                 },
