@@ -25,8 +25,10 @@ const {
 } = D;
 import U from './Utilities.js';
 const {
+    extend,
     getNestedProperty,
     isNumber,
+    isObject,
     pick,
     pInt
 } = U;
@@ -48,11 +50,15 @@ const helpers: Record<string, Function> = {
     // Built-in helpers
     add: (a: number, b: number): number => a + b,
     divide: (a: number, b: number): number|string => (b !== 0 ? a / b : ''),
-    foreach: function (arr: string[]|undefined): string|undefined {
+    foreach: function (arr: string[]|object[]|undefined): string|undefined {
         const match = arguments[arguments.length - 1];
-        return arr?.map((item): string =>
-            format(match.body, item)
-        ).join('');
+        return arr?.map((item, i): string => format(match.body, extend(
+            isObject(item) ? item : { '@this': item }, {
+                '@index': i,
+                '@first': i === 0,
+                '@last': i === arr.length - 1
+            }
+        ))).join('');
     },
     'if': function (condition: string[]|undefined): string|undefined {
         const match = arguments[arguments.length - 1];
@@ -214,11 +220,11 @@ function format(str: string, ctx: any, chart?: Chart): string {
 */
 function format(str = '', ctx: any, chart?: Chart): string {
 
-    const regex = /\{([a-zA-Z0-9\:\.\,\-\/<>%_ #\(\)]+)\}/g,
+    const regex = /\{([a-zA-Z0-9\:\.\,\-\/<>%_@ #\(\)]+)\}/g,
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        subRegex = /\(([a-zA-Z0-9\:\.\,\-\/<>%_ ]+)\)/g,
+        subRegex = /\(([a-zA-Z0-9\:\.\,\-\/<>%_@ ]+)\)/g,
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.([0-9])/,
@@ -234,6 +240,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
     const resolveProperty = (key = ''): unknown => {
         let n: number;
 
+        // Literals
         if (key === 'true') {
             return true;
         }
@@ -244,6 +251,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
             return n;
         }
 
+        // Variables and constants
         return getNestedProperty(key, ctx);
     };
 

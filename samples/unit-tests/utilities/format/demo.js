@@ -227,22 +227,23 @@ QUnit.module('Format', () => {
         assert.strictEqual(
             format(
                 `{#foreach point.items}
-                - {this}
+                {@index}. {this}
+                {#if @last}...{/if}
                 {/foreach}`,
                 { point }
             ).replace(/\s\s+/g, ' ').trim(),
-            '- Ein - To - Tre',
+            '0. Ein 1. To 2. Tre ...',
             'Looping an array of strings'
         );
 
         assert.strictEqual(
             format(
                 `{#foreach point.persons}
-                - {firstName} {lastName}
+                {add @index 1}) {firstName} {lastName}
                 {/foreach}`,
                 { point }
             ).replace(/\s\s+/g, ' ').trim(),
-            '- Mick Jagger - Keith Richards',
+            '1) Mick Jagger 2) Keith Richards',
             'Looping an array of objects'
         );
 
