@@ -253,7 +253,7 @@ namespace AxisDefaults {
          * @type      {number}
          * @sample    highcharts/xaxis/crossing
          *            Function plot with axes crossing at 0
-         * @since     next
+         * @since 11.0.1
          * @apioption xAxis.crossing
          */
 

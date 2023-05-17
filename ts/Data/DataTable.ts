@@ -69,7 +69,7 @@ class DataTable implements DataEvent.Emitter {
      * @example
      * table.setRows([DataTable.NULL, DataTable.NULL], 10);
      */
-    public static readonly NULL: Readonly<DataTable.RowObject> = {};
+    public static readonly NULL: DataTable.RowObject = {};
 
     /* *
      *
@@ -666,7 +666,7 @@ class DataTable implements DataEvent.Emitter {
     public getColumn(
         columnNameOrAlias: string,
         asReference: true
-    ): (Readonly<DataTable.Column>|undefined);
+    ): (DataTable.Column|undefined);
     /**
      * Fetches the given column by the canonical column name or by an alias.
      * This function is a simplified wrap of {@link getColumns}.
@@ -705,8 +705,15 @@ class DataTable implements DataEvent.Emitter {
             aliasKeys = Object.keys(aliases),
             columnAliases: DataTable.ColumnAliases = {};
 
-        for (let i = 0, iEnd = aliasKeys.length; i < iEnd; ++i) {
-            columnAliases[aliases[i]] = aliases[aliasKeys[i]];
+        for (
+            let i = 0,
+                iEnd = aliasKeys.length,
+                alias: string;
+            i < iEnd;
+            ++i
+        ) {
+            alias = aliasKeys[i];
+            columnAliases[alias] = aliases[alias];
         }
 
         return columnAliases;
@@ -815,7 +822,7 @@ class DataTable implements DataEvent.Emitter {
     public getColumns(
         columnNamesOrAliases: (Array<string>|undefined),
         asReference: true
-    ): Record<string, Readonly<DataTable.Column>>;
+    ): Record<string, DataTable.Column>;
     /**
      * Retrieves all or the given columns.
      *
@@ -1699,7 +1706,7 @@ namespace DataTable {
             'deleteColumns'|'afterDeleteColumns'|
             'setColumns'|'afterSetColumns'
         );
-        readonly columns?: Readonly<ColumnCollection>;
+        readonly columns?: ColumnCollection;
         readonly columnNames: Array<string>;
         readonly rowIndex?: number;
     }
@@ -1764,7 +1771,7 @@ namespace DataTable {
         );
         readonly rowCount: number;
         readonly rowIndex: number;
-        readonly rows?: ReadonlyArray<(Readonly<Row>|Readonly<RowObject>)>;
+        readonly rows?: Array<(Row|RowObject)>;
     }
 
     /**

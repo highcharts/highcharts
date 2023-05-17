@@ -64,6 +64,8 @@ import Breadcrumbs from './Breadcrumbs/Breadcrumbs.js';
 
 const {
     addEvent,
+    cleanRecursively,
+    defined,
     extend,
     fireEvent,
     merge,
@@ -768,18 +770,34 @@ Chart.prototype.addSeriesAsDrilldown = function (
         point.series.isDrilling = true;
         // stop duplicating and overriding animations
         point.series.options.inactiveOtherPoints = true;
+        // hide and disable dataLabels
+        if (point.series.dataLabelsGroup) {
+            point.series.dataLabelsGroup.destroy();
+            delete point.series.dataLabelsGroup;
+        }
+
+        // #18925 map zooming is not working with geoJSON maps
+        if (
+            chart.options.drilldown &&
+            !chart.mapView.projection.hasGeoProjection &&
+            defaultOptions.drilldown
+        ) {
+            const userDrilldown = cleanRecursively(
+                chart.options.drilldown,
+                defaultOptions.drilldown
+            );
+
+            // set mapZooming to false if user didn't set any in chart config
+            if (!defined(userDrilldown.mapZooming)) {
+                chart.options.drilldown.mapZooming = false;
+            }
+        }
 
         if (
             chart.options.drilldown &&
             chart.options.drilldown.animation &&
             chart.options.drilldown.mapZooming
         ) {
-            // hide and disable dataLabels
-            if (point.series.dataLabelsGroup) {
-                point.series.dataLabelsGroup.destroy();
-                delete point.series.dataLabelsGroup;
-            }
-
             // first zoomTo then crossfade series
             chart.mapView.allowTransformAnimation = true;
 
@@ -1003,13 +1021,10 @@ Chart.prototype.applyDrilldown = function (): void {
                                 if (chart.mapView) {
                                     chart.series.forEach((series): void => {
                                         series.isDirtyData = true;
-                                        // series.isDrilling = false;
+                                        series.isDrilling = false;
                                     });
-                                    chart.mapView.setView(void 0, 1);
+                                    chart.mapView.fitToBounds(void 0, void 0);
                                 }
-                                chart.series.forEach((series): void => {
-                                    series.isDrilling = false;
-                                });
                                 fireEvent(chart, 'afterApplyDrilldown');
                             });
                         }
@@ -1778,6 +1793,8 @@ if (MapSeries) {
                                     ),
                                     true
                                 );
+                            series.isDirty = true;
+                            chart.redraw();
                         }
                     });
 

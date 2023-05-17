@@ -38,14 +38,6 @@ let board = Dashboards.board('container-nested-layout', {
                     }
                 }
             }, {
-                id: 'delete-dashboard',
-                text: 'Delete current dashboard',
-                events: {
-                    click: function () {
-                        board.destroy();
-                    }
-                }
-            }, {
                 id: 'import-dashboard',
                 text: 'Import saved dashboard',
                 events: {

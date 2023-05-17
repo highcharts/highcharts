@@ -1723,8 +1723,24 @@ class Axis {
             axis.beforePadding();
         }
 
-        // adjust min and max for the minimum range
+        // Adjust min and max for the minimum range
         axis.adjustForMinRange();
+
+        // Handle options for floor, ceiling, softMin and softMax (#6359)
+        if (!isNumber(axis.userMin)) {
+            if (
+                isNumber(options.softMin) && options.softMin < (axis.min as any)
+            ) {
+                axis.min = hardMin = options.softMin; // #6894
+            }
+        }
+        if (!isNumber(axis.userMax)) {
+            if (
+                isNumber(options.softMax) && options.softMax > (axis.max as any)
+            ) {
+                axis.max = hardMax = options.softMax; // #6894
+            }
+        }
 
         // Pad the values to get clear of the chart's edges. To avoid
         // tickInterval taking the padding into account, we do this after
@@ -1748,26 +1764,11 @@ class Axis {
             }
         }
 
-        // Handle options for floor, ceiling, softMin and softMax (#6359)
-        if (!isNumber(axis.userMin)) {
-            if (
-                isNumber(options.softMin) && options.softMin < (axis.min as any)
-            ) {
-                axis.min = hardMin = options.softMin; // #6894
-            }
-            if (isNumber(options.floor)) {
-                axis.min = Math.max(axis.min as any, options.floor);
-            }
+        if (!isNumber(axis.userMin) && isNumber(options.floor)) {
+            axis.min = Math.max(axis.min as any, options.floor);
         }
-        if (!isNumber(axis.userMax)) {
-            if (
-                isNumber(options.softMax) && options.softMax > (axis.max as any)
-            ) {
-                axis.max = hardMax = options.softMax; // #6894
-            }
-            if (isNumber(options.ceiling)) {
-                axis.max = Math.min(axis.max as any, options.ceiling);
-            }
+        if (!isNumber(axis.userMax) && isNumber(options.ceiling)) {
+            axis.max = Math.min(axis.max as any, options.ceiling);
         }
 
         // When the threshold is soft, adjust the extreme value only if the data

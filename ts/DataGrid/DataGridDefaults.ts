@@ -32,7 +32,7 @@ import type DataGridOptions from './DataGridOptions';
 /** @internal */
 const DataGridDefaults = {
     /** @internal */
-    cellHeight: 25,
+    cellHeight: 49,
     /** @internal */
     columnHeaders: {
         /** @internal */

@@ -387,7 +387,7 @@ abstract class Component {
         this.syncHandlers = this.handleSyncOptions();
         this.element = createElement('div', {
             className: this.options.className
-        }, this.options.style);
+        });
 
         this.contentElement = createElement('div', {
             className: `${this.options.className}-content`
