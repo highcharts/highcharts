@@ -57,10 +57,7 @@ Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'allowConnectorUpdate: true',
-                style: {
-                    textAlign: 'center'
-                }
+                text: 'allowConnectorUpdate: true'
             },
             chartOptions
         }, {
@@ -75,10 +72,7 @@ Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'allowConnectorUpdate: false',
-                style: {
-                    textAlign: 'center'
-                }
+                text: 'allowConnectorUpdate: false'
             },
             allowConnectorUpdate: false,
             chartOptions

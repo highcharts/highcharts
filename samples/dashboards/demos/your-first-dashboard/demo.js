@@ -17,10 +17,6 @@ Dashboards.board('container', {
         elements: [
             {
                 tagName: 'h1',
-                style: {
-                    height: '400px',
-                    'text-align': 'center'
-                },
                 textContent: 'Your first dashboard'
             }
         ]
