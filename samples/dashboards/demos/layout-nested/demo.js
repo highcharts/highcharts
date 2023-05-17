@@ -1,3 +1,11 @@
+// Necessary to enable styled mode in order to properly style the
+// chart depending on the theme.
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
+
 const chartComponentOptions = {
     type: 'Highcharts',
     chartOptions: {
