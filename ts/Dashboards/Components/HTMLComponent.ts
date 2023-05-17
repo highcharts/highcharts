@@ -331,16 +331,18 @@ class HTMLComponent extends Component {
      * @internal
      */
     public toJSON(): HTMLComponent.ClassJSON {
+        const base = super.toJSON();
         const elements = (this.options.elements || [])
             .map((el): string => JSON.stringify(el));
 
-        const json = merge(
-            super.toJSON() as HTMLComponent.ClassJSON,
-            {
-                elements,
-                options: this.options
+        const json: HTMLComponent.ClassJSON = {
+            ...base,
+            elements: elements,
+            options: {
+                ...base.options,
+                type: 'HTML'
             }
-        );
+        };
 
         this.emit({
             type: 'toJSON',
