@@ -1441,7 +1441,8 @@ namespace OrdinalAxis {
 
             return Additions.findIndexOf(
                 ordinalArray,
-                firstPointVal
+                firstPointVal,
+                true
             ) + shiftIndex;
         }
 
