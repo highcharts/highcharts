@@ -1,13 +1,4 @@
-const CSVConnector = Dashboards.DataConnector.types.CSV;
 const csvData = document.getElementById('csv').innerText;
-
-const connector = new CSVConnector({
-    csv: csvData,
-    firstRowAsNames: true
-});
-
-connector.load();
-
 
 // Necessary to enable styled mode in order to properly style the
 // chart depending on the theme.
@@ -18,8 +9,17 @@ Highcharts.setOptions({
 });
 
 
-Dashboards.board('container', {
-    connector,
+Dashboards.boardAsync('container', {
+    dataPool: {
+        connectors: [{
+            name: 'sample',
+            type: 'CSV',
+            options: {
+                csv: csvData,
+                firstRowAsNames: true
+            }
+        }]
+    },
     gui: {
         layouts: [{
             id: 'layout-1',
@@ -35,7 +35,9 @@ Dashboards.board('container', {
     components: [
         {
             cell: 'dashboard-col-0',
-            connector,
+            connector: {
+                name: 'sample'
+            },
             type: 'Highcharts',
             sync: {
                 highlight: true
@@ -67,7 +69,9 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-1',
             type: 'DataGrid',
-            connector,
+            connector: {
+                name: 'sample'
+            },
             editable: true,
             title: {
                 text: 'Grid component'
@@ -77,7 +81,7 @@ Dashboards.board('container', {
             }
         }
     ]
-});
+}, true);
 
 
 [...document.querySelectorAll('input[name="color-mode"]')]

@@ -42,20 +42,26 @@ Highcharts.setOptions({
     }
 });
 
-const csvData = document.getElementById('csv').innerText,
-    connector1 = new CSVConnector({
-        csv: csvData,
-        firstRowAsNames: true
-    }),
-    connector2 = new CSVConnector({
-        csv: csvData,
-        firstRowAsNames: true
-    });
+const csvData = document.getElementById('csv').innerText;
 
-connector1.load();
-connector2.load();
-
-Dashboards.board('container', {
+Dashboards.boardAsync('container', {
+    dataPool: {
+        connectors: [{
+            name: 'connector-1',
+            type: 'CSV',
+            options: {
+                csv: csvData,
+                firstRowAsNames: true
+            }
+        }, {
+            name: 'connector-2',
+            type: 'CSV',
+            options: {
+                csv: csvData,
+                firstRowAsNames: true
+            }
+        }]
+    },
     gui: {
         layouts: [{
             id: 'layout-1',
@@ -83,7 +89,9 @@ Dashboards.board('container', {
         {
             cell: 'dashboard-col-1',
             type: 'Highcharts',
-            connector: connector1,
+            connector: {
+                name: 'connector-1'
+            },
             sync: {
                 selection: true,
                 highlight: true
@@ -108,7 +116,9 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-2',
             type: 'Highcharts',
-            connector: connector1,
+            connector: {
+                name: 'connector-1'
+            },
             sync: {
                 selection: true,
                 highlight: true
@@ -130,7 +140,9 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-3',
             type: 'Highcharts',
-            connector: connector2,
+            connector: {
+                name: 'connector-2'
+            },
             sync: {
                 selection: true,
                 highlight: true
@@ -152,7 +164,9 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-4',
             type: 'Highcharts',
-            connector: connector2,
+            connector: {
+                name: 'connector-1'
+            },
             sync: {
                 selection: true,
                 highlight: true

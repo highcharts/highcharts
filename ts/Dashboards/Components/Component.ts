@@ -336,7 +336,8 @@ abstract class Component {
         this.board = cell.row.layout.board;
 
         this.cell = cell;
-        this.parentElement = cell.container !;
+        // TODO: Change the TS of cell.
+        this.parentElement = cell.container!;
         this.attachCellListeneres();
 
 
@@ -375,6 +376,21 @@ abstract class Component {
             height: '100%'
         }, void 0, true);
 
+    }
+
+    public async init(): Promise<this> {
+        if (
+            this.options.connector?.name &&
+            this.connectorName !== this.options.connector.name
+        ) {
+            const connector = await this.board.dataPool
+                .getConnector(this.options.connector.name);
+
+            this.setConnector(connector);
+            this.shouldRedraw = true;
+            this.redraw();
+        }
+        return this;
     }
 
     /* *

@@ -132,25 +132,8 @@ class Board implements Serializable<Board, Board.JSON> {
             this.editMode = new EditMode(this, this.options.editMode);
         }
 
-        // Init layouts from options.
-        if (options.gui && this.options.gui) {
-            this.setLayouts(this.options.gui);
-        }
-
-        // Init layouts from JSON.
-        if (options.layoutsJSON && !this.layouts.length) {
-            this.setLayoutsFromJSON(options.layoutsJSON);
-        }
-
         // Add table cursors support.
         this.dataCursor = new DataCursor();
-        // Init components from options.
-        if (options.components) {
-            this.setComponents(options.components);
-        }
-
-        // Init events.
-        this.initEvents();
 
         // Add fullscreen support.
         this.fullscreen = new Fullscreen(this);
@@ -160,6 +143,40 @@ class Board implements Serializable<Board, Board.JSON> {
 
         // a11y module
         this.a11y = new DashboardsAccessibility(this);
+    }
+
+    public async initAsync(): Promise<Board> {
+        this.init();
+
+        for (let i = 0, iEnd = this.mountedComponents.length; i < iEnd; ++i) {
+            const component = this.mountedComponents[i].component;
+            await component.init();
+        }
+
+        return this;
+    }
+
+    // Init layouts from options.
+    public init(): Board {
+        const options = this.options;
+        if (options.gui && this.options.gui) {
+            this.setLayouts(this.options.gui);
+        }
+
+        // Init layouts from JSON.
+        if (options.layoutsJSON && !this.layouts.length) {
+            this.setLayoutsFromJSON(options.layoutsJSON);
+        }
+
+        // Init components from options.
+        if (options.components) {
+            this.setComponents(options.components);
+        }
+
+        // Init events.
+        this.initEvents();
+
+        return this;
     }
 
     /* *
@@ -177,11 +194,35 @@ class Board implements Serializable<Board, Board.JSON> {
      * @param options
      * The options for the dashboard.
      */
-    public static board(
+    public static async boardAsync(
         renderTo: (string|globalThis.HTMLElement),
         options: Board.Options
+    ): Promise<Board> {
+        const board = new Board(renderTo, options);
+        await board.initAsync();
+
+        return board;
+    }
+
+    // public static board(
+    //     renderTo: (string|globalThis.HTMLElement),
+    //     options: Board.Options,
+    //     async?: false
+    // ): any;
+
+    // public static board(
+    //     renderTo: (string|globalThis.HTMLElement),
+    //     options: Board.Options,
+    //     async?: true
+    // ): Promise<Board>;
+
+    public static board(
+        renderTo: (string|globalThis.HTMLElement),
+        options: Board.Options,
+        async: boolean = false
     ): Board {
-        return new Board(renderTo, options);
+
+        return new Board(renderTo, options).init();
     }
 
     /* *

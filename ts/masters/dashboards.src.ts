@@ -63,6 +63,7 @@ const D = {
     ...Utilities,
     Board,
     board: Board.board,
+    boardAsync: Board.boardAsync,
     Component,
     ComponentRegistry,
     DataConnector,

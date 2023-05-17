@@ -1,6 +1,6 @@
 const csvData = document.getElementById('csv').innerText;
 
-const board = Dashboards.board('container', {
+Dashboards.boardAsync('container', {
     dataPool: {
         connectors: [{
             name: 'Vitamin',
@@ -58,6 +58,9 @@ const board = Dashboards.board('container', {
             highlight: true,
             selection: true
         },
+        connector: {
+            name: 'Vitamin'
+        },
         cell: 'dashboard-col-0',
         type: 'Highcharts',
         columnKeyMap: {
@@ -77,6 +80,9 @@ const board = Dashboards.board('container', {
             highlight: true,
             selection: true
         },
+        connector: {
+            name: 'Vitamin'
+        },
         type: 'Highcharts',
         columnKeyMap: {
             Food: 'x',
@@ -94,6 +100,9 @@ const board = Dashboards.board('container', {
     },
     {
         cell: 'dashboard-col-12',
+        connector: {
+            name: 'Vitamin'
+        },
         sync: {
             visibility: true,
             highlight: true,
@@ -116,18 +125,13 @@ const board = Dashboards.board('container', {
     },
     {
         cell: 'dashboard-col-2',
+        connector: {
+            name: 'Vitamin'
+        },
         type: 'DataGrid',
         editable: true,
         sync: {
             highlight: true
         }
     }]
-}, true);
-
-for (let i = 0, iEnd = board.mountedComponents.length; i < iEnd; i++) {
-    board.mountedComponents[i].component.update({
-        connector: {
-            name: 'Vitamin'
-        }
-    });
-}
+});

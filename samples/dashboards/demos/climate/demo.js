@@ -497,7 +497,7 @@ async function setupDashboard() {
                     );
                 },
                 afterLoad: function () {
-                    this.parentCell.setActiveState();
+                    this.cell.setActiveState();
                 }
             },
             states: {
