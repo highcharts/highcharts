@@ -52,7 +52,7 @@ class EditableOptions {
         this.bindings = bindings;
     }
 
-    public getOptions(): (Array<EditableOptions.Configuration>) {
+    public getOptions(): (Array<EditableOptions.Options>) {
         const options = this.component.options.editableOptions;
         for (let i = 0, iEnd = options.length; i < iEnd; i++) {
             const option = options[i];
@@ -76,7 +76,7 @@ namespace EditableOptions {
      * `nested` the options are rendered in the accordion menu, with rest of the
      * options defined in the detailed options.
      */
-    export interface Configuration {
+    export interface Options {
         /**
          * Name of the option which will be displayed on the label.
          */
@@ -146,7 +146,7 @@ namespace EditableOptions {
         /**
          * Options that should be included in the folded menu.
          */
-        options: Array<Configuration>;
+        options: Array<Options>;
     }
 
 

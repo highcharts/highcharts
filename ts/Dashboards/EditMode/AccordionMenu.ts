@@ -209,7 +209,7 @@ class AccordionMenu {
      * the component for which the menu should be rendered.
      */
     public renderAccordion(
-        options: EditableOptions.Configuration,
+        options: EditableOptions.Options,
         parentNode: HTMLElement,
         component: Component
     ): void {
@@ -247,7 +247,7 @@ class AccordionMenu {
      */
     public renderNested(
         parentElement: HTMLElement,
-        options: EditableOptions.Configuration,
+        options: EditableOptions.Options,
         component: Component
     ): void {
         if (!parentElement || !options.nestedOptions) {
@@ -275,7 +275,7 @@ class AccordionMenu {
 
             for (let j = 0, jEnd = accordionOptions.length; j < jEnd; ++j) {
                 this.renderAccordion(
-                    accordionOptions[j] as EditableOptions.Configuration,
+                    accordionOptions[j] as EditableOptions.Options,
                     collapsedHeader.content,
                     component
                 );

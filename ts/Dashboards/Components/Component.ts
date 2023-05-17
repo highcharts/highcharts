@@ -1277,7 +1277,7 @@ namespace Component {
         /**
          * Set of options that are available for editing through sidebar.
          */
-        editableOptions: Array<EditableOptions.Configuration>;
+        editableOptions: Array<EditableOptions.Options>;
         /** @internal */
         editableOptionsBindings: EditableOptions.OptionsBindings;
         /** @internal */
