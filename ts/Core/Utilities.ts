@@ -28,6 +28,7 @@ import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
 
 import H from './Globals.js';
+import Axis from './Axis/Axis';
 const {
     charts,
     doc,
@@ -1214,6 +1215,44 @@ Math.easeInOutSine = function (pos: number): number {
 };
 
 /**
+ * Find the closestPointRange across all series.
+ * @private
+ * @function Highcharts.getClosestDistance
+ *
+ * @param {axis} axis
+ *          Axis, which contains series to calculate the closestPointRange.
+ *
+ * @return {number | undefined}
+ *          Closest distance between points (closestPointRange).
+ */
+function getClosestDistance(axis: Axis): (number|undefined) {
+    let closestDataRange: number | undefined,
+        loopLength: number,
+        distance: number,
+        xData: Array<number>,
+        i: number;
+
+    axis.series.forEach(function (series): void {
+        if (series.xData && series.xData.length > 1) {
+            xData = series.xData;
+            loopLength = series.xIncrement ? 1 : xData.length - 1;
+
+            for (i = loopLength; i > 0; i--) {
+                distance = xData[i] - xData[i - 1];
+                if (
+                    typeof closestDataRange === 'undefined' ||
+                    distance < closestDataRange
+                ) {
+                    closestDataRange = distance;
+                }
+            }
+        }
+    });
+
+    return closestDataRange;
+}
+
+/**
  * Returns the value of a property path on a given object.
  *
  * @private
@@ -2100,6 +2139,7 @@ const Utilities = {
     extendClass,
     find,
     fireEvent,
+    getClosestDistance,
     getMagnitude,
     getNestedProperty,
     getStyle,

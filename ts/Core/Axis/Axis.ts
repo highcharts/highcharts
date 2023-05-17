@@ -70,6 +70,7 @@ const {
     error,
     extend,
     fireEvent,
+    getClosestDistance,
     isArray,
     isNumber,
     isString,
@@ -1228,11 +1229,7 @@ class Axis {
             max = axis.max,
             zoomOffset,
             spaceAvailable: boolean,
-            closestDataRange = 0,
-            i,
-            distance,
-            xData,
-            loopLength,
+            closestDataRange: number,
             minArgs: Array<(number|null|undefined)>,
             maxArgs: Array<(number|null|undefined)>,
             minRange;
@@ -1257,22 +1254,8 @@ class Axis {
                 // Find the closest distance between raw data points, as opposed
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
-                axis.series.forEach(function (series): void {
-                    xData = series.xData as any;
-                    loopLength = series.xIncrement ? 1 : xData.length - 1;
+                closestDataRange = pick(getClosestDistance(axis), 0);
 
-                    if (xData.length > 1) {
-                        for (i = loopLength; i > 0; i--) {
-                            distance = xData[i] - xData[i - 1];
-                            if (
-                                !closestDataRange ||
-                                distance < closestDataRange
-                            ) {
-                                closestDataRange = distance;
-                            }
-                        }
-                    }
-                });
                 axis.minRange = Math.min(
                     closestDataRange * 5,
                     (axis.dataMax as any) - (axis.dataMin as any)
@@ -1329,34 +1312,59 @@ class Axis {
     }
 
     /**
-     * Find the closestPointRange across all series.
+     * Find the closestPointRange across all series, including the single data
+     * series.
      *
      * @private
      * @function Highcharts.Axis#getClosest
      */
-    public getClosest(): number {
-        let ret: any;
+    public getClosest(): number | undefined {
+        let closestSingleDistance: number | undefined,
+            closestDistance: number | undefined;
 
         if (this.categories) {
-            ret = 1;
+            closestDistance = 1;
         } else {
+            const singleXs: number[] = [];
             this.series.forEach(function (series): void {
                 const seriesClosest = series.closestPointRange,
                     visible = series.visible ||
                         !series.chart.options.chart.ignoreHiddenSeries;
 
-                if (
+                if (series.xData?.length === 1) {
+                    singleXs.push(series.xData[0]);
+                } else if (
                     !series.noSharedTooltip &&
                     defined(seriesClosest) &&
                     visible
                 ) {
-                    ret = defined(ret) ?
-                        Math.min(ret, seriesClosest as any) :
+                    closestDistance = defined(closestDistance) ?
+                        Math.min(closestDistance, seriesClosest) :
                         seriesClosest;
                 }
             });
+            if (singleXs.length) {
+                singleXs.sort((a, b): number => a - b);
+                let i = singleXs.length;
+                while (--i) {
+                    const distance = singleXs[i] - singleXs[i - 1];
+                    if (
+                        distance > 0 &&
+                        (
+                            !defined(closestSingleDistance) ||
+                            distance < closestSingleDistance
+                        )
+                    ) {
+                        closestSingleDistance = distance;
+                    }
+                }
+            }
         }
-        return ret;
+
+        if (closestSingleDistance && closestDistance) {
+            return Math.min(closestSingleDistance, closestDistance);
+        }
+        return closestSingleDistance || closestDistance;
     }
 
     /**
@@ -1491,7 +1499,7 @@ class Axis {
             isXAxis = axis.isXAxis;
 
         let pointRange = axis.axisPointRange || 0,
-            closestPointRange: number,
+            closestPointRange: number | undefined,
             minPointOffset = 0,
             pointRangePadding = 0,
             ordinalCorrection,
@@ -1577,7 +1585,7 @@ class Axis {
             // closestPointRange means the closest distance between points. In
             // columns it is mostly equal to pointRange, but in lines pointRange
             // is 0 while closestPointRange is some other value
-            if (isXAxis) {
+            if (isXAxis && closestPointRange) {
                 axis.closestPointRange = closestPointRange;
             }
         }
@@ -1867,50 +1875,6 @@ class Axis {
                 );
                 series.processData(hasExtremesChanged);
             });
-
-            // #17791
-            const singleSeries = this.series.filter((s): boolean =>
-                (s.options.data ? s.options.data.length <= 1 : false));
-
-            // All "single-data" series
-            if (
-                !defined(this.closestPointRange) &&
-                this.series.length &&
-                this.series.length === singleSeries.length
-            ) {
-                let distance,
-                    closestPointRange: number | undefined;
-
-                const xData: number[] = [];
-                this.series.forEach((s): void => {
-                    if (s.xData) {
-                        xData.push(s.xData[0]);
-                    }
-                });
-                xData.sort((a, b): number => a - b);
-
-                let i = xData.length;
-
-                while (--i) {
-                    distance = xData[i] - xData[i - 1];
-                    if (
-                        distance > 0 &&
-                        (
-                            !defined(closestPointRange) ||
-                            distance < closestPointRange
-                        )
-                    ) {
-                        closestPointRange = distance;
-                    }
-                }
-
-                if (closestPointRange) {
-                    this.series.forEach(function (s): void {
-                        s.closestPointRange = closestPointRange;
-                    });
-                    this.closestPointRange = closestPointRange;
-                }
-            }
 
             // Then apply grouping if needed. The hasExtremesChanged helps to
             // decide if the data grouping should be skipped in the further
