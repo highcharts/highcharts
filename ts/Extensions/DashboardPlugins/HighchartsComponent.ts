@@ -571,8 +571,7 @@ class HighchartsComponent extends Component {
     public async update(
         options: Partial<HighchartsComponent.Options>
     ): Promise<void> {
-        super.update(options, true);
-        // this.updateComponentOptions(options, false);
+        await super.update(options, true);
         this.setOptions();
 
         if (this.chart) {

@@ -310,7 +310,7 @@ class HTMLComponent extends Component {
      * The component for chaining.
      */
     public async update(options: Partial<HTMLComponent.HTMLComponentOptions>): Promise<void> {
-        super.update(options);
+        await super.update(options);
         this.emit({ type: 'afterUpdate' });
     }
 

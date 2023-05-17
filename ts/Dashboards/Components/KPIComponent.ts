@@ -421,7 +421,7 @@ class KPIComponent extends Component {
     public async update(
         options: Partial<KPIComponent.ComponentOptions>
     ): Promise<void> {
-        super.update(options);
+        await super.update(options);
         if (options.chartOptions && this.chart) {
             this.chart.update(options.chartOptions);
         }

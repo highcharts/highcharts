@@ -766,7 +766,7 @@ abstract class Component {
             this.connectorName !== this.options.connector.name
         ) {
             const connector = await this.board.dataPool
-                .getConnector( this.options.connector.name);
+                .getConnector(this.options.connector.name);
 
             this.setConnector(connector);
             this.shouldRedraw = true;

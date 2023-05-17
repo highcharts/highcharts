@@ -41,6 +41,7 @@ import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
 import U from '../Core/Utilities.js';
 import HTMLComponent from './Components/HTMLComponent.js';
+import ComponentType from './Components/ComponentType';
 const {
     merge,
     addEvent,
@@ -374,7 +375,7 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      */
     public setComponents(
-        components: Array<Component.ComponentOptions>
+        components: Array<Partial<ComponentType['options']>>
     ): void {
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             Bindings.addComponent(components[i]);
@@ -581,7 +582,7 @@ namespace Board {
         /**
          * List of components to add to the board.
          **/
-        components?: Array<Component.ComponentOptions>;
+        components?: Array<Partial<ComponentType['options']>>;
         /**
          * General options for the components.
          **/
@@ -661,7 +662,7 @@ namespace Board {
         /**
          * General options for the layouts applied to all layouts.
          **/
-        layoutOptions: Partial<Layout.Options>;
+        layoutOptions?: Partial<Layout.Options>;
         /**
          * Allows to define graphical elements and its layout. The layout is
          * defined by the row and cells. The row is a horizontal container for
