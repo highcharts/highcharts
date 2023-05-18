@@ -103,17 +103,17 @@ class RowEditToolbar extends EditToolbar {
 
                         popup.show({
                             confirmButton: {
-                                value: EditGlobals.lang.confirmButton,
+                                value: editMode.lang.confirmButton,
                                 callback: parentNode.onRowDestroy,
                                 context: parentNode
                             },
                             cancelButton: {
-                                value: EditGlobals.lang.cancelButton,
+                                value: editMode.lang.cancelButton,
                                 callback: (): void => {
                                     popup.closePopup();
                                 }
                             },
-                            text: EditGlobals.lang.confirmDestroyRow
+                            text: editMode.lang.confirmDestroyRow
                         });
                     }
                 }

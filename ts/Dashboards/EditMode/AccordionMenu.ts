@@ -102,7 +102,8 @@ class AccordionMenu {
                 accordionContainer,
                 {
                     name: option.name,
-                    iconsURLPrefix: menu.iconsURLPrefix
+                    iconsURLPrefix: menu.iconsURLPrefix,
+                    lang: (component.board?.editMode || EditGlobals).lang
                 }
             ).content;
 
@@ -121,7 +122,8 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: EditGlobals.lang.confirmButton,
+                value: (component.board?.editMode || EditGlobals)
+                    .lang.confirmButton,
                 callback: (): void => {
                     const changedOptions = this
                         .changedOptions as Partial<Component.ComponentOptions>;
@@ -141,7 +143,8 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: EditGlobals.lang.cancelButton,
+                value: (component.board?.editMode || EditGlobals)
+                    .lang.cancelButton,
                 callback: (): void => {
                     menu.changedOptions = {};
                     menu.chartOptionsJSON = {};
@@ -220,10 +223,10 @@ class AccordionMenu {
 
         const renderFunction = EditRenderer.getRendererFunction(options.type);
 
-
         if (!renderFunction) {
             return;
         }
+
         renderFunction(parentNode, {
             ...options,
             iconsURLPrefix: this.iconsURLPrefix,
@@ -269,7 +272,8 @@ class AccordionMenu {
                     showToggle: showToggle,
                     onchange: (value: boolean | string | number): void =>
                         this.updateOptions(propertyPath, value),
-                    isNested: true
+                    isNested: true,
+                    lang: (component.board?.editMode || EditGlobals).lang
                 }
             );
 
