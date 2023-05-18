@@ -327,7 +327,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
                     matches.push(currentMatch);
                     currentMatch = void 0;
                 }
-            } else {
+            } else if (!startingElseSection) {
                 depth--;
             }
 

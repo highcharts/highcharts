@@ -212,6 +212,8 @@ QUnit.module('Format', () => {
                 Deep,
                 {#if point.deep}
                 deeper: {point.deep.deeper}
+                {else}
+                Nested else
                 {/if}
                 {/if}
                 `,
