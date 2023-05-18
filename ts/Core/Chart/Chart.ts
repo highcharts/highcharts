@@ -39,7 +39,8 @@ import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
 import type {
     ChartPanningOptions,
-    ChartResetZoomButtonOptions
+    ChartResetZoomButtonOptions,
+    ChartZoomingOptions
 } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
 import type Point from '../Series/Point';
@@ -363,6 +364,7 @@ class Chart {
     public userOptions: Partial<Options> = void 0 as any;
     public xAxis: Array<AxisType> = void 0 as any;
     public yAxis: Array<AxisType> = void 0 as any;
+    public zooming: ChartZoomingOptions = void 0 as any;
 
     /* *
      *
@@ -404,58 +406,24 @@ class Chart {
      * @private
      * @function Highcharts.Chart#setZoomOptions
      */
-    public setZoomOptions(optionsChart: ChartOptions): void {
-        const zooming = optionsChart.zooming = optionsChart.zooming || {},
-            userOptions = this.userOptions.chart,
-            defaultZoomButton: ChartResetZoomButtonOptions = {
-                theme: {
-                    zIndex: 6
-                },
-                position: {
-                    align: 'right',
-                    x: -10,
-                    y: 10
-                }
-            };
+    public setZoomOptions(chartOptions?: ChartOptions): void {
+        const chart = this,
+            options = chartOptions ? chartOptions : chart.options.chart;
 
-        zooming.type = pick(
-            userOptions?.zooming?.type,
-            userOptions?.zoomType,
-            zooming.type,
-            optionsChart.zoomType
-        );
-        zooming.key = pick(
-            userOptions?.zooming?.key,
-            userOptions?.zoomKey,
-            zooming.key,
-            optionsChart.zoomKey
-        );
-        zooming.pinchType = pick(
-            userOptions?.zooming?.pinchType,
-            userOptions?.pinchType,
-            zooming.pinchType,
-            optionsChart.pinchType
-        );
-        zooming.singleTouch = pick(
-            userOptions?.zooming?.singleTouch,
-            userOptions?.zoomBySingleTouch,
-            zooming.singleTouch,
-            optionsChart.zoomBySingleTouch
-        );
-
-        if (userOptions?.zooming?.resetButton) {
-            zooming.resetButton = merge(
-                defaultZoomButton,
-                userOptions?.zooming?.resetButton
-            );
-        } else if (userOptions?.resetZoomButton) {
-            zooming.resetButton = merge(
-                defaultZoomButton,
-                userOptions?.resetZoomButton
-            );
-        } else {
-            zooming.resetButton = defaultZoomButton;
-        }
+        chart.zooming = {
+            ...options.zooming,
+            type: pick(options.zoomType, options.zooming.type),
+            key: pick(options.zoomKey, options.zooming.key),
+            pinchType: pick(options.pinchType, options.zooming.pinchType),
+            singleTouch: pick(
+                options.zoomBySingleTouch,
+                options.zooming.singleTouch,
+                false),
+            resetButton: merge(
+                options.zooming.resetButton,
+                options.resetZoomButton
+            )
+        };
     }
 
     /**
@@ -491,6 +459,7 @@ class Chart {
 
             const optionsChart = options.chart;
 
+            this.setZoomOptions(optionsChart);
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
             objectEach(options.plotOptions, function (
@@ -534,8 +503,6 @@ class Chart {
 
             this.callback = callback;
             this.isResizing = 0;
-
-            this.setZoomOptions(optionsChart);
 
             /**
              * The options structure for the chart after merging
@@ -3184,7 +3151,7 @@ class Chart {
             merge(true, chart.options.chart, optionsChart);
 
             // Add support for deprecated zooming options like zoomType, #17861
-            this.setZoomOptions(chart.options.chart);
+            this.setZoomOptions();
 
             // Setter function
             if ('className' in optionsChart) {
@@ -3492,7 +3459,7 @@ class Chart {
 
         const chart = this,
             lang = defaultOptions.lang,
-            btnOptions = chart.options.chart.zooming.resetButton as any,
+            btnOptions = chart.zooming.resetButton as any,
             theme = btnOptions.theme,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
