@@ -181,9 +181,10 @@ QUnit.test('Positions of the stacked points.', function (assert) {
         endAngle: 270
     });
 
-    assert.strictEqual(
+    assert.close(
         yAxis.endAngleRad - yAxis.startAngleRad,
         yAxis.translate(firstSeries.stackedYData[6]),
+        0.00000001,
         'The point[0] of both series are correctly stacked.'
     );
 

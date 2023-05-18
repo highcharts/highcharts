@@ -860,7 +860,7 @@ class Axis {
             val = val * sign + cvsOffset;
             val -= minPixelPadding;
             // from chart pixel to value:
-            returnValue = correctFloat(val / localA + localMin);
+            returnValue = val / localA + localMin;
             if (doPostTranslate) { // log, ordinal and broken axis
                 returnValue = axis.lin2val(returnValue);
             }
@@ -878,7 +878,7 @@ class Axis {
                 (isNumber(pointPlacement) ? localA * pointPlacement : 0);
         }
 
-        return returnValue;
+        return correctFloat(returnValue);
     }
 
     /**
