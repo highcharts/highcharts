@@ -36,7 +36,8 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
     size?: undefined;
     dataLabels?: FunnelDataLabelOptions;
     states?: SeriesStatesOptions<FunnelSeries>;
-    borderRadius?: number;
+    borderRadius: number;
+    borderRadiusMode: 'points'|'series';
 }
 
 export default FunnelSeriesOptions;
