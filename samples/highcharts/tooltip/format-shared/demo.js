@@ -14,10 +14,10 @@ Highcharts.chart('container', {
 
     tooltip: {
         format: `<span style="font-size: 0.8em">{key}</span><br/>
-            {#foreach points}
+            {#each points}
             <span style="color:{color}">\u25CF</span>
                 {series.name}: <b>{y}</b><br/>
-            {/foreach}`,
+            {/each}`,
         shared: true
     },
 

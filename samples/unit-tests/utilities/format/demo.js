@@ -228,10 +228,10 @@ QUnit.module('Format', () => {
     QUnit.test('foreach helper', assert => {
         assert.strictEqual(
             format(
-                `{#foreach point.items}
+                `{#each point.items}
                 {@index}. {this}
                 {#if @last}...{/if}
-                {/foreach}`,
+                {/each}`,
                 { point }
             ).replace(/\s\s+/g, ' ').trim(),
             '0. Ein 1. To 2. Tre ...',
@@ -240,9 +240,9 @@ QUnit.module('Format', () => {
 
         assert.strictEqual(
             format(
-                `{#foreach point.persons}
+                `{#each point.persons}
                 {add @index 1}) {firstName} {lastName}
-                {/foreach}`,
+                {/each}`,
                 { point }
             ).replace(/\s\s+/g, ' ').trim(),
             '1) Mick Jagger 2) Keith Richards',
@@ -251,11 +251,11 @@ QUnit.module('Format', () => {
 
         assert.strictEqual(
             format(
-                `{#foreach nonexisting}
+                `{#each nonexisting}
                 - {firstName} {lastName}
                 {else}
                 Else-block
-                {/foreach}`,
+                {/each}`,
                 { point }
             ).replace(/\s\s+/g, ' ').trim(),
             'Else-block',
@@ -345,9 +345,9 @@ QUnit.module('Format', () => {
     QUnit.test('Error handling', assert => {
         assert.strictEqual(
             format(
-                `{#foreach}
+                `{#each}
                 - Item
-                {/foreach}`,
+                {/each}`,
                 { point }
             ).replace(/\s\s+/g, ' ').trim(),
             '',
@@ -355,9 +355,9 @@ QUnit.module('Format', () => {
         );
         assert.strictEqual(
             format(
-                `{#foreach 122}
+                `{#each 122}
                 - Item
-                {/foreach}`,
+                {/each}`,
                 { point }
             ).replace(/\s\s+/g, ' ').trim(),
             '',
@@ -365,9 +365,9 @@ QUnit.module('Format', () => {
         );
         assert.strictEqual(
             format(
-                `{#foreach false}
+                `{#each false}
                 - Item
-                {/foreach}`,
+                {/each}`,
                 { point }
             ).replace(/\s\s+/g, ' ').trim(),
             '',
@@ -375,9 +375,9 @@ QUnit.module('Format', () => {
         );
         assert.strictEqual(
             format(
-                `{#foreach point.persons true}
+                `{#each point.persons true}
                 - Item
-                {/foreach}`,
+                {/each}`,
                 { point }
             ).replace(/\s\s+/g, ' ').trim(),
             '- Item - Item',

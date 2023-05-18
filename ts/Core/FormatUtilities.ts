@@ -50,7 +50,7 @@ const helpers: Record<string, Function> = {
     // Built-in helpers
     add: (a: number, b: number): number => a + b,
     divide: (a: number, b: number): number|string => (b !== 0 ? a / b : ''),
-    foreach: function (arr: string[]|object[]|undefined): string|undefined {
+    each: function (arr: string[]|object[]|undefined): string|undefined {
         const match = arguments[arguments.length - 1];
         return arr?.map((item, i): string => format(match.body, extend(
             isObject(item) ? item : { '@this': item }, {
@@ -63,6 +63,10 @@ const helpers: Record<string, Function> = {
     'if': function (condition: string[]|undefined): string|undefined {
         const match = arguments[arguments.length - 1];
         return (condition ? format(match.body, match.ctx) : void 0);
+    },
+    'unless': function (condition: string[]|undefined): string|undefined {
+        const match = arguments[arguments.length - 1];
+        return (condition ? void 0 : format(match.body, match.ctx));
     },
     multiply: (a: number, b: number): number => a * b,
     subtract: (a: number, b: number): number => a - b
