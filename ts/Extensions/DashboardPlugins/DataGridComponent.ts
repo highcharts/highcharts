@@ -431,8 +431,7 @@ namespace DataGridComponent {
     /**
      * Options to control the DataGrid component.
      */
-    export interface ComponentOptions
-        extends Component.ComponentOptions, EditableOptions {
+    export interface ComponentOptions extends Component.ComponentOptions {
 
         /**
          * The style class to add to the rendered data grid container.
@@ -450,14 +449,6 @@ namespace DataGridComponent {
         onUpdate: typeof DataGridComponent.onUpdate
 
         type: 'DataGrid';
-    }
-
-    /**
-     * Options to control the DataGrid component. These options can be changed
-     * in edit mode of a dashboard.
-     */
-    export interface EditableOptions extends Component.EditableOptions {
-
         /**
          * Generic options to adjust behavor and styling of the rendered data
          * grid.
@@ -488,6 +479,7 @@ namespace DataGridComponent {
 
         /** @internal */
         tableAxisMap?: Record<string, string | null>;
+
     }
 
     /** @internal */

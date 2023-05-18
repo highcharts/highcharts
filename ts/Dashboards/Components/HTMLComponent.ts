@@ -377,7 +377,7 @@ namespace HTMLComponent {
     /** @internal */
     export type ComponentType = HTMLComponent;
 
-    export interface HTMLComponentOptions extends Component.ComponentOptions, EditableOptions {
+    export interface HTMLComponentOptions extends Component.ComponentOptions {
         /**
          * Array of HTML elements, declared as string or node.
          * ```
@@ -393,9 +393,6 @@ namespace HTMLComponent {
          */
         elements?: (AST.Node | string)[];
         type: 'HTML';
-    }
-    /** @internal */
-    export interface EditableOptions extends Component.EditableOptions {
         /**
          * Enables auto-scaling of the elements inside the component.
          *

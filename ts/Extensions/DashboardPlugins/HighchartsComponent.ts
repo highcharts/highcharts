@@ -110,7 +110,7 @@ class HighchartsComponent extends Component {
                 {
                     name: 'chartOptions',
                     type: 'nested',
-                    detailedOptions: [{
+                    nestedOptions: [{
                         name: 'chart',
                         options: [{
                             name: 'title',
@@ -124,7 +124,7 @@ class HighchartsComponent extends Component {
                             name: 'type',
                             propertyPath: ['chartOptions', 'chart', 'type'],
                             type: 'select',
-                            items: [{
+                            selectOptions: [{
                                 name: 'column',
                                 iconURL: 'series-types/icon-column.svg'
                             }, {
@@ -149,7 +149,7 @@ class HighchartsComponent extends Component {
                             name: 'type',
                             propertyPath: ['chartOptions', 'xAxis', 'type'],
                             type: 'select',
-                            items: [{
+                            selectOptions: [{
                                 name: 'linear'
                             }, {
                                 name: 'datetime'
@@ -168,7 +168,7 @@ class HighchartsComponent extends Component {
                             name: 'type',
                             propertyPath: ['chartOptions', 'yAxis', 'type'],
                             type: 'select',
-                            items: [{
+                            selectOptions: [{
                                 name: 'linear'
                             }, {
                                 name: 'datetime'
@@ -178,13 +178,13 @@ class HighchartsComponent extends Component {
                         }]
                     }, {
                         name: 'legend',
-                        allowEnabled: true,
+                        showToggle: true,
                         propertyPath: ['chartOptions', 'legend', 'enabled'],
                         options: [{
                             name: 'align',
                             propertyPath: ['chartOptions', 'legend', 'align'],
                             type: 'select',
-                            items: [{
+                            selectOptions: [{
                                 name: 'left'
                             }, {
                                 name: 'center'
@@ -194,10 +194,10 @@ class HighchartsComponent extends Component {
                         }]
                     }, {
                         name: 'tooltip',
-                        allowEnabled: true,
+                        showToggle: true,
                         propertyPath: ['chartOptions', 'tooltip', 'enabled'],
                         options: [{
-                            title: 'split',
+                            name: 'split',
                             propertyPath: ['chartOptions', 'tooltip', 'split'],
                             type: 'toggle'
                         }]
@@ -210,7 +210,7 @@ class HighchartsComponent extends Component {
                             'dataLabels',
                             'enabled'
                         ],
-                        allowEnabled: true,
+                        showToggle: true,
                         options: [{
                             name: 'align',
                             propertyPath: [
@@ -221,7 +221,7 @@ class HighchartsComponent extends Component {
                                 'align'
                             ],
                             type: 'select',
-                            items: [{
+                            selectOptions: [{
                                 name: 'left'
                             }, {
                                 name: 'center'
@@ -231,7 +231,7 @@ class HighchartsComponent extends Component {
                         }]
                     }, {
                         name: 'credits',
-                        allowEnabled: true,
+                        showToggle: true,
                         propertyPath: ['chartOptions', 'credits', 'enabled'],
                         options: [{
                             name: 'name',
@@ -899,7 +899,7 @@ namespace HighchartsComponent {
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: ClassJSON;
     }>;
-    export interface Options extends Component.ComponentOptions, EditableOptions {
+    export interface Options extends Component.ComponentOptions {
 
         /**
          * Whether to allow the component to edit the store to which it is
@@ -918,9 +918,6 @@ namespace HighchartsComponent {
          * Type of the component.
          */
         type: 'Highcharts';
-    }
-    /** @internal */
-    export interface EditableOptions extends Component.EditableOptions {
         /**
          * A full set of chart options used by the chart.
          * [Highcharts API](https://api.highcharts.com/highcharts/)

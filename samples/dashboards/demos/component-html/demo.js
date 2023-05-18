@@ -37,10 +37,6 @@ Dashboards.board('container', {
         cell: 'dashboard-3',
         elements: [{
             tagName: 'h1',
-            style: {
-                height: '400px',
-                'text-align': 'center'
-            },
             textContent: 'Placeholder text'
         }]
     }]

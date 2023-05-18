@@ -61,10 +61,7 @@ const board = Dashboards.boardAsync('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'allowConnectorUpdate: true',
-                style: {
-                    textAlign: 'center'
-                }
+                text: 'allowConnectorUpdate: true'
             },
             chartOptions
         }, {
@@ -81,10 +78,7 @@ const board = Dashboards.boardAsync('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'allowConnectorUpdate: false',
-                style: {
-                    textAlign: 'center'
-                }
+                text: 'allowConnectorUpdate: false'
             },
             allowConnectorUpdate: false,
             chartOptions
