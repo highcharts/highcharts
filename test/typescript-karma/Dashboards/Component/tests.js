@@ -7,14 +7,14 @@ import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js'
 import Board from '/base/code/es-modules/Dashboards/Board.js';
 
 import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
-import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
+import PluginHandler from '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 HighchartsComponent.charter = Highcharts;
 
-const { test, only,skip } = QUnit;
+const { test, only, skip } = QUnit;
 
 /** @type {Component.Event['type'][]} */
 const eventTypes = [
@@ -38,19 +38,17 @@ const registeredEvents = [];
 function registerEvent(e) {
     registeredEvents.push(e.type);
 }
-/**
- * @param {Array<any>} [array]
- */
+
+/** @param {Array<any>} [array] */
 function emptyArray(array) {
-    array.length = 0
+    array.length = 0;
 }
 /** @param {HighchartsComponent | HTMLComponent} component */
 function registerEvents(component) {
-    eventTypes.forEach(eventType => component.on(eventType, registerEvent))
+    eventTypes.forEach((eventType) => component.on(eventType, registerEvent));
 }
 
-
-skip('HighchartsComponent options update', function (assert) {
+test('HighchartsComponent options update', function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
@@ -59,86 +57,80 @@ skip('HighchartsComponent options update', function (assert) {
     const board = Dashboards.board(parentElement, {
         gui: {
             enabled: true,
-            layouts: [{
-                rows: [{
-                    cells: [{
-                        id: 'cell-1',
-                    }]
-                }]
-            }],
+            layouts: [
+                {
+                    rows: [
+                        {
+                            cells: [
+                                {
+                                    id: 'cell-1'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
-        components: [{
-            cell: 'cell-1',
-            type: 'Highcharts',
-            chartOptions: {
-                title : {
-                    text: void 0
+        components: [
+            {
+                cell: 'cell-1',
+                type: 'Highcharts',
+                chartOptions: {
+                    title: {
+                        text: void 0
+                    }
                 }
             }
-        }]
+        ]
     });
-    const connector = new CSVConnector(void 0, {
-        csv: '1,2,3',
-        firstRowAsNames: false
-    });
-
-    connector.load();
-
     const component = board.mountedComponents[0].component;
+    const eventsAfterRender = ['beforeRender', 'load', 'afterLoad', 'afterRender'];
 
-    const eventsAfterRender = [
-          "load",
-          "afterLoad",
-          "beforeRender",
-          "afterRender"
-    ];
-
-    // TODO: update with options that should not force a redraw
-    // Redraw event should not fire
+    registerEvents(component);
 
     component.update({
         chartOptions: {
-            title : {
+            title: {
                 text: 'Hello World'
             }
         }
     });
 
     const expectedEvents = eventsAfterRender;
-    expectedEvents.push(
-        'update', 
-        'update', // is triggered by the chart updating
-        'afterUpdate'
+    expectedEvents.unshift('update', 'redraw');
+
+    assert.deepEqual(
+        registeredEvents,
+        expectedEvents,
+        'After update the events should be fired in the correct order'
     );
-    assert.deepEqual(registeredEvents, expectedEvents ,'after unforced update');
 
-    // TODO: update with an option that should force a redraw
-    // Redraw event should fire
-    component.update({
-        chartOptions: {
-            title: {
-                text: 'This should fire a redraw'
-            }
-        }
-    });
+    // @TODO test update with the redraw flag set to false !!!!!!!!!!!!!!!!!!!
+    // component.update({
+    //     chartOptions: {
+    //         title: {
+    //             text: 'This should fire a redraw'
+    //         }
+    //     },
+    //     false
+    // });
 
-    expectedEvents.push(
-          "update",
-          "redraw",
-          "beforeRender",
-          "load",
-          "afterLoad",
-          "afterRender",
-          "update",
-          "afterUpdate"
+    // expectedEvents.push(
+    //       "update",
+    //       "redraw",
+    //       "beforeRender",
+    //       "load",
+    //       "afterLoad",
+    //       "afterRender",
+    //       "update",
+    //       "afterUpdate"
 
-    );
-    assert.deepEqual(registeredEvents, expectedEvents, 'events after forced update');
+    // );
+    // assert.deepEqual(registeredEvents, expectedEvents, 'events after forced update');
 
     Component.removeInstance(component);
     emptyArray(registeredEvents);
     emptyArray(expectedEvents);
-
 });
 
 skip('HighchartsComponent events', function (assert) {
@@ -154,21 +146,15 @@ skip('HighchartsComponent events', function (assert) {
         parentElement: 'container'
     });
 
-
     registerEvents(component);
 
-    component.load()
+    component.load();
     component.render();
-    const expectedEvents = [
-        'load', 
-        'afterLoad', 
-        'beforeRender', 
-        'afterRender'
-    ];
+    const expectedEvents = ['load', 'afterLoad', 'beforeRender', 'afterRender'];
 
     assert.deepEqual(registeredEvents, expectedEvents);
 
-    component.setConnector(connector)
+    component.setConnector(connector);
     expectedEvents.push('connectorAttached');
     assert.deepEqual(
         registeredEvents,
@@ -211,25 +197,14 @@ skip('HighchartsComponent events', function (assert) {
     //     expectedEvents
     // );
 
-
     // emptyArray(registeredEvents);
     // emptyArray(expectedEvents);
 
     // Redraws -> should also fire render
     component.redraw();
-    expectedEvents.push(
-      'redraw', 
-      'beforeRender', 
-      'load', 
-      'afterLoad', 
-      'afterRender'
-    );
+    expectedEvents.push('redraw', 'beforeRender', 'load', 'afterLoad', 'afterRender');
 
-
-    assert.deepEqual(
-        registeredEvents,
-        expectedEvents
-    );
+    assert.deepEqual(registeredEvents, expectedEvents);
 
     emptyArray(registeredEvents);
     emptyArray(expectedEvents);
@@ -242,10 +217,7 @@ skip('HighchartsComponent events', function (assert) {
 
     component.postMessage('hello');
 
-    assert.deepEqual(
-        registeredEvents,
-        expectedEvents
-    );
+    assert.deepEqual(registeredEvents, expectedEvents);
 
     // This should bounce a message back and forth
     component.postMessage({
@@ -256,19 +228,14 @@ skip('HighchartsComponent events', function (assert) {
 
     expectedEvents.push('message', 'message');
 
-    assert.deepEqual(
-        registeredEvents,
-        expectedEvents
-    );
+    assert.deepEqual(registeredEvents, expectedEvents);
 
     emptyArray(registeredEvents);
     emptyArray(expectedEvents);
 
     Component.removeInstance(component);
     Component.removeInstance(componentWithConnector);
-
 });
-
 
 skip('HTMLComponent events', function (assert) {
     const parentElement = document.createElement('div');
@@ -283,12 +250,11 @@ skip('HTMLComponent events', function (assert) {
         parentElement
     });
 
-
     registerEvents(component);
 
     component.load();
     component.render();
-    const expectedEvents = ['load', 'afterLoad', 'beforeRender', 'afterRender']
+    const expectedEvents = ['load', 'afterLoad', 'beforeRender', 'afterRender'];
     assert.deepEqual(registeredEvents, expectedEvents);
 
     component.setConnector(connector);
@@ -334,27 +300,21 @@ skip('HTMLComponent events', function (assert) {
     //     expectedEvents
     // );
 
-
     // emptyArray(registeredEvents);
     // emptyArray(expectedEvents);
 
     // Redraws -> should also fire render
     component.redraw();
     expectedEvents.push(
-       'redraw', 
-       'beforeRender', 
-       'load', 
-       'afterLoad', 
-       'afterRender',
-       'afterRedraw'
+        'redraw',
+        'beforeRender',
+        'load',
+        'afterLoad',
+        'afterRender',
+        'afterRedraw'
     );
 
-
-
-    assert.deepEqual(
-        registeredEvents,
-        expectedEvents
-    );
+    assert.deepEqual(registeredEvents, expectedEvents);
 
     emptyArray(registeredEvents);
     emptyArray(expectedEvents);
@@ -367,10 +327,7 @@ skip('HTMLComponent events', function (assert) {
 
     component.postMessage('hello');
 
-    assert.deepEqual(
-        registeredEvents,
-        expectedEvents
-    );
+    assert.deepEqual(registeredEvents, expectedEvents);
 
     // This should bounce a message back and forth
     component.postMessage({
@@ -380,10 +337,7 @@ skip('HTMLComponent events', function (assert) {
     });
 
     expectedEvents.push('message', 'message');
-    assert.deepEqual(
-        registeredEvents,
-        expectedEvents
-    );
+    assert.deepEqual(registeredEvents, expectedEvents);
 
     emptyArray(registeredEvents);
     emptyArray(expectedEvents);
@@ -392,8 +346,7 @@ skip('HTMLComponent events', function (assert) {
     Component.removeInstance(componentWithConnector);
 });
 
-skip('component resizing', function(assert) {
-
+skip('component resizing', function (assert) {
     const parent = document.createElement('div');
     parent.id = 'test';
 
@@ -401,20 +354,20 @@ skip('component resizing', function(assert) {
 
     const component = new HTMLComponent({
         parentElement: parent
-    }).render()
+    }).render();
     assert.deepEqual(
         {
             width: component.element.style.width,
             height: component.element.style.height
         },
         {
-            width: "",
-            height: ""
+            width: '',
+            height: ''
         },
         'Component with no dimensional options should have no internal styles set'
     );
 
-    component.resize(200)
+    component.resize(200);
     assert.deepEqual(
         {
             width: component.element.style.width,
@@ -422,12 +375,12 @@ skip('component resizing', function(assert) {
         },
         {
             width: '200px',
-            height: ""
+            height: ''
         },
         'Should be able to update just the width'
     );
 
-    component.resize(undefined, 300)
+    component.resize(undefined, 300);
 
     assert.deepEqual(
         {
@@ -468,35 +421,35 @@ skip('component resizing', function(assert) {
 
     // widthComponent.destroy()
 
-   //  const heightComponent = new HTMLComponent({
-   //      dimensions: {
-   //          height: '100'
-   //      }
-   //  }).render();
-   //  assert.strictEqual(heightComponent.dimensions.width, null)
-   //  assert.strictEqual(heightComponent.dimensions.height, 100)
-   //
-   //  heightComponent.destroy()
-   //
-   //  const emptyDimensions = new HTMLComponent({
-   //      dimensions: {}
-   // }).render();
-   //  assert.strictEqual(emptyDimensions.dimensions.width, null)
-   //  assert.strictEqual(emptyDimensions.element.style.height, "")
-   //
-   //  emptyDimensions.destroy();
-   //
-   //  const percentageDimensions = new HTMLComponent({
-   //      parentElement: parent,
-   //      dimensions: {
-   //          width: '50%',
-   //          height: '50%'
-   //      }
-   //  }).render();
-   //
-   //  let rect = percentageDimensions.element.getBoundingClientRect()
-   //  assert.strictEqual(rect.width, parent.scrollWidth / 2)
-   //  assert.strictEqual(rect.height, parent.scrollHeight / 2 )
+    //  const heightComponent = new HTMLComponent({
+    //      dimensions: {
+    //          height: '100'
+    //      }
+    //  }).render();
+    //  assert.strictEqual(heightComponent.dimensions.width, null)
+    //  assert.strictEqual(heightComponent.dimensions.height, 100)
+    //
+    //  heightComponent.destroy()
+    //
+    //  const emptyDimensions = new HTMLComponent({
+    //      dimensions: {}
+    // }).render();
+    //  assert.strictEqual(emptyDimensions.dimensions.width, null)
+    //  assert.strictEqual(emptyDimensions.element.style.height, "")
+    //
+    //  emptyDimensions.destroy();
+    //
+    //  const percentageDimensions = new HTMLComponent({
+    //      parentElement: parent,
+    //      dimensions: {
+    //          width: '50%',
+    //          height: '50%'
+    //      }
+    //  }).render();
+    //
+    //  let rect = percentageDimensions.element.getBoundingClientRect()
+    //  assert.strictEqual(rect.width, parent.scrollWidth / 2)
+    //  assert.strictEqual(rect.height, parent.scrollHeight / 2 )
     //
     //
     // // With padding
@@ -508,11 +461,9 @@ skip('component resizing', function(assert) {
     // assert.strictEqual(rect.height, parent.scrollHeight / 2)
     //
     // percentageDimensions.destroy();
-
-
 });
 
-skip('HighchartsComponent resizing', function(assert) {
+skip('HighchartsComponent resizing', function (assert) {
     const parent = document.createElement('div');
     parent.id = 'test';
     parent.style.width = '500px';
@@ -529,11 +480,11 @@ skip('HighchartsComponent resizing', function(assert) {
         }
     }).render();
 
-    const { width, height } = component.element.style
-    assert.ok(true)
+    const { width, height } = component.element.style;
+    assert.ok(true);
 });
 
-skip('Chart update in HighchartsComponent', function(assert) {
+skip('Chart update in HighchartsComponent', function (assert) {
     const parent = document.createElement('div');
     parent.id = 'test';
     parent.style.width = '500px';
@@ -545,9 +496,11 @@ skip('Chart update in HighchartsComponent', function(assert) {
             title: {
                 text: 'test'
             },
-            series: [{
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3]
+                }
+            ]
         }
     }).render();
 
@@ -560,7 +513,7 @@ skip('Chart update in HighchartsComponent', function(assert) {
     assert.strictEqual(component.options.chartOptions.title.text, 'updated');
 });
 
-skip('toJSON', function(assert) {
+skip('toJSON', function (assert) {
     const container = document.createElement('div');
     container.id = 'container';
 
@@ -570,16 +523,18 @@ skip('toJSON', function(assert) {
         parentElement: container,
         chartOptions: {
             chart: {},
-            series: [{
-                data: [1, 2, 3, 5, 15, 1, 5, 15, 1]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 5, 15, 1, 5, 15, 1]
+                }
+            ]
         }
     });
 
-    component.render()
-    const json = component.toJSON()
+    component.render();
+    const json = component.toJSON();
     const clone = HighchartsComponent.fromJSON(json);
     clone.render();
 
-    assert.deepEqual(json, clone.toJSON())
+    assert.deepEqual(json, clone.toJSON());
 });
