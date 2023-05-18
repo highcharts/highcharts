@@ -102,6 +102,15 @@ class FunnelSeries extends PieSeries {
         borderRadius: 0,
 
         /**
+         * The `points` mode specifies that all points should have rounded
+         * corners, the `series` mode that only the main corners of the whole
+         * series should be rounded.
+         *
+         * @type    {'points'|'series'}
+         */
+        borderRadiusMode: 'series',
+
+        /**
          * The center of the series. By default, it is centered in the middle
          * of the plot area, so it fills the plot area height.
          *
@@ -410,6 +419,7 @@ class FunnelSeries extends PieSeries {
             reversed = options.reversed,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
             borderRadius = options.borderRadius,
+            radiusMode = options.borderRadiusMode,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
             cumulative = 0, // start at top
@@ -425,20 +435,30 @@ class FunnelSeries extends PieSeries {
             data = series.data,
             path: SVGPath,
             fraction,
-            roundingFactors = (
-                angle: number,
-                r: number,
-                maxT: number
-            ): [number, number] => {
-                const tan = Math.tan(angle / 2);
-                let t = r / tan;
+            alpha: number, // the angle between top and left point's edges
+            maxT: number,
+            roundingFactors = (angle: number): {
+                dx: Array<number>,
+                dy: Array<number>
+            } => {
+                const tan = Math.tan(angle / 2),
+                    cosA = Math.cos(alpha),
+                    sinA = Math.sin(alpha);
+                let r = borderRadius,
+                    t = r / tan,
+                    k = Math.tan((Math.PI - angle) / 3.2104);
 
                 if (t > maxT) {
                     t = maxT;
                     r = t * tan;
                 }
+                k *= r;
 
-                return [t, Math.tan((Math.PI - angle) / 3.2104) * r];
+                return {
+                    dx: [t * cosA, (t - k) * cosA, t - k, t],
+                    dy: [t * sinA, (t - k) * sinA, t - k, t]
+                        .map((i): number => (reversed ? -i : i))
+                };
             },
             half = (
                 (options.dataLabels as any).position === 'left' ?
@@ -566,120 +586,125 @@ class FunnelSeries extends PieSeries {
                 }
             }
 
-            if (borderRadius) {
+            if (borderRadius && (
+                radiusMode !== 'series' ||
+                point.index === 0 ||
+                point.index === data.length - 1 ||
+                y5 !== null
+            )) {
                 // Creating the path of funnel points with rounded corners
                 // (#18839)
                 const h = Math.abs(y3 - y1),
                     xSide = x2 - x4,
                     lBase = x4 - x3,
-                    lSide = Math.sqrt(xSide * xSide + h * h),
-                    alpha = Math.atan(h / xSide),
-                    cosA = Math.cos(alpha),
-                    sinA = Math.sin(alpha),
-                    rev = reversed ? -1 : 1;
+                    lSide = Math.sqrt(xSide * xSide + h * h);
 
-                let maxT = lSide / 2,
-                    t: number,
-                    k: number;
-
+                alpha = Math.atan(h / xSide);
+                maxT = lSide / 2;
                 if (y5 !== null) {
                     maxT = Math.min(maxT, Math.abs(y5 - y3) / 2);
                 }
-
                 if (lBase >= 1) {
                     maxT = Math.min(maxT, lBase / 2);
                 }
 
                 // Creating a point base
-                [t, k] = roundingFactors(alpha, borderRadius, maxT);
-                path = [
-                    ['M', x1 + t * cosA, y1 + t * sinA * rev],
-                    ['C',
-                        x1 + (t - k) * cosA, y1 + (t - k) * sinA * rev,
-                        x1 + t - k, y1,
-                        x1 + t, y1
-                    ],
-                    ['L', x2 - t, y1],
-                    ['C',
-                        x2 - t + k, y1,
-                        x2 - (t - k) * cosA, y1 + (t - k) * sinA * rev,
-                        x2 - t * cosA, y1 + t * sinA * rev
-                    ]
-                ];
+                let f = roundingFactors(alpha);
+                if (radiusMode === 'series' && point.index !== 0) {
+                    path = [
+                        ['M', x1, y1],
+                        ['L', x2, y1]
+                    ];
+                } else {
+                    path = [
+                        ['M', x1 + f.dx[0], y1 + f.dy[0]],
+                        ['C',
+                            x1 + f.dx[1], y1 + f.dy[1],
+                            x1 + f.dx[2], y1,
+                            x1 + f.dx[3], y1
+                        ],
+                        ['L', x2 - f.dx[3], y1],
+                        ['C',
+                            x2 - f.dx[2], y1,
+                            x2 - f.dx[1], y1 + f.dy[1],
+                            x2 - f.dx[0], y1 + f.dy[0]
+                        ]
+                    ];
+                }
 
                 if (y5 !== null) {
                     // Closure of point with extension
-                    const [tr, kr] = roundingFactors(
-                        Math.PI / 2,
-                        borderRadius,
-                        maxT
-                    );
-                    [t, k] = roundingFactors(
-                        Math.PI / 2 + alpha,
-                        borderRadius,
-                        maxT
-                    );
+                    const fr = roundingFactors(Math.PI / 2);
+                    f = roundingFactors(Math.PI / 2 + alpha);
                     path.push(
-                        ['L', x4 + t * cosA, y3 - t * sinA * rev],
+                        ['L', x4 + f.dx[0], y3 - f.dy[0]],
                         ['C',
-                            x4 + t * cosA - k * cosA, y3 - (t - k) * sinA * rev,
-                            x4, y3 + (t - k) * rev,
-                            x4, y3 + t * rev
-                        ],
-                        ['L', x4, y5 - tr * rev],
+                            x4 + f.dx[1], y3 - f.dy[1],
+                            x4, y3 + f.dy[2],
+                            x4, y3 + f.dy[3]
+                        ]
+                    );
+
+                    if (
+                        radiusMode === 'series' &&
+                        point.index !== data.length - 1
+                    ) {
+                        path.push(['L', x4, y5], ['L', x3, y5]);
+                    } else {
+                        path.push(
+                            ['L', x4, y5 - fr.dy[3]],
+                            ['C',
+                                x4, y5 - fr.dy[2],
+                                x4 - fr.dx[2], y5,
+                                x4 - fr.dx[3], y5
+                            ],
+                            ['L', x3 + fr.dx[3], y5],
+                            ['C',
+                                x3 + fr.dx[2], y5,
+                                x3, y5 - fr.dy[2],
+                                x3, y5 - fr.dy[3]
+                            ]
+                        );
+                    }
+
+                    path.push(
+                        ['L', x3, y3 + f.dy[3]],
                         ['C',
-                            x4, y5 - (tr - kr) * rev,
-                            x4 - tr + kr, y5,
-                            x4 - tr, y5
-                        ],
-                        ['L', x3 + tr, y5],
-                        ['C',
-                            x3 + tr - kr, y5,
-                            x3, y5 - (tr - kr) * rev,
-                            x3, y5 - tr * rev
-                        ],
-                        ['L', x3, y3 + tr * rev],
-                        ['C',
-                            x3, y3 + (t - k) * rev,
-                            x3 - (t - k) * cosA, y3 - (t - k) * sinA * rev,
-                            x3 - t * cosA, y3 - t * sinA * rev
+                            x3, y3 + f.dy[2],
+                            x3 - f.dx[1], y3 - f.dy[1],
+                            x3 - f.dx[0], y3 - f.dy[0]
                         ]
                     );
                 } else if (lBase >= 1) {
                     // Closure of point without extension
-                    [t, k] = roundingFactors(
-                        Math.PI - alpha,
-                        borderRadius,
-                        maxT
-                    );
-                    path.push(
-                        ['L', x4 + t * cosA, y3 - t * sinA * rev],
-                        ['C',
-                            x4 + (t - k) * cosA, y3 - (t - k) * sinA * rev,
-                            x4 - t + k, y3,
-                            x4 - t, y3
-                        ],
-                        ['L', x3 + t, y3],
-                        ['C',
-                            x3 + t - k, y3,
-                            x3 - (t - k) * cosA, y3 - (t - k) * sinA * rev,
-                            x3 - t * cosA, y3 - t * sinA * rev
-                        ]
-                    );
+                    f = roundingFactors(Math.PI - alpha);
+                    if (radiusMode === 'series' && point.index === 0) {
+                        path.push(['L', x4, y3], ['L', x3, y3]);
+                    } else {
+                        path.push(
+                            ['L', x4 + f.dx[0], y3 - f.dy[0]],
+                            ['C',
+                                x4 + f.dx[1], y3 - f.dy[1],
+                                x4 - f.dx[2], y3,
+                                x4 - f.dx[3], y3
+                            ],
+                            ['L', x3 + f.dx[3], y3],
+                            ['C',
+                                x3 + f.dx[2], y3,
+                                x3 - f.dx[1], y3 - f.dy[1],
+                                x3 - f.dx[0], y3 - f.dy[0]
+                            ]
+                        );
+                    }
                 } else {
                     // Creating a rounded tip of the "pyramid"
-                    [t, k] = roundingFactors(
-                        Math.PI - alpha * 2,
-                        borderRadius,
-                        maxT
-                    );
-
+                    f = roundingFactors(Math.PI - alpha * 2);
                     path.push(
-                        ['L', x3 + t * cosA, y3 - t * sinA * rev],
+                        ['L', x3 + f.dx[0], y3 - f.dy[0]],
                         ['C',
-                            x3 + (t - k) * cosA, y3 - (t - k) * sinA * rev,
-                            x3 - (t - k) * cosA, y3 - (t - k) * sinA * rev,
-                            x3 - t * cosA, y3 - t * sinA * rev
+                            x3 + f.dx[1], y3 - f.dy[1],
+                            x3 - f.dx[1], y3 - f.dy[1],
+                            x3 - f.dx[0], y3 - f.dy[0]
                         ]
                     );
                 }
