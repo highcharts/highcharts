@@ -1,13 +1,5 @@
 const csvData = document.getElementById('csv').innerText;
 
-// Necessary to enable styled mode in order to properly style the
-// chart depending on the theme.
-Highcharts.setOptions({
-    chart: {
-        styledMode: true
-    }
-});
-
 async function setupDashboard() {
     const board = Dashboards.board('container', {
         dataPool: {

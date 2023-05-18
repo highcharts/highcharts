@@ -1,11 +1,3 @@
-// Necessary to enable styled mode in order to properly style the
-// chart depending on the theme.
-Highcharts.setOptions({
-    chart: {
-        styledMode: true
-    }
-});
-
 let exportedLayoutId;
 let board = new Dashboards.Board('container', {
     editMode: {

@@ -3,14 +3,6 @@ const DataTable = Dashboards.DataTable;
 const cursor = new DataCursor();
 const vegeTable = buildVegeTable();
 
-// Necessary to enable styled mode in order to properly style the
-// chart depending on the theme.
-Highcharts.setOptions({
-    chart: {
-        styledMode: true
-    }
-});
-
 // Create Dashboards.Board
 Dashboards.board('container', {
     gui: {
