@@ -372,7 +372,7 @@ QUnit.test('Zooming scatter charts', function (assert) {
     });
 
     assert.strictEqual(
-        chart.options.chart.zooming.type,
+        chart.zooming.type,
         'xy',
         'There should be support for updating the deprecated zoomType (#17861)'
     );
@@ -388,7 +388,7 @@ QUnit.test('Zooming scatter charts', function (assert) {
     });
 
     assert.strictEqual(
-        chart.options.chart.zooming.resetButton.theme.zIndex,
+        chart.zooming.resetButton.theme.zIndex,
         8,
         'Deprecated zooming properties should be updated (#17861)'
     );
