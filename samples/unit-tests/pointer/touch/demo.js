@@ -416,7 +416,6 @@ QUnit.test('Touch and panning', function (assert) {
             ]
         }),
         offset = Highcharts.offset(chart.container);
-    console.log('chart: ', chart);
 
     Array.prototype.item = function (i) {
         // eslint-disable-line no-extend-native
