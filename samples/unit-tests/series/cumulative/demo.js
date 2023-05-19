@@ -94,4 +94,11 @@ QUnit.test('Stock: general tests for the Cumulative Sum', function (assert) {
         1 + 4 should be equal to 5 (second point of the second series).`
     );
 
+    assert.strictEqual(
+        chart.series[0].getDGApproximation(),
+        'sum',
+        `Default approximation when dataGrouping
+        is enabled should be equal to sum, #18974.`
+    );
+
 });
