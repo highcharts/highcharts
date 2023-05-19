@@ -48,7 +48,7 @@ function registerEvents(component) {
     eventTypes.forEach((eventType) => component.on(eventType, registerEvent));
 }
 
-test('HighchartsComponent options update', function (assert) {
+test('Board without data connectors and HighchartsComponent update', function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
@@ -133,78 +133,73 @@ test('HighchartsComponent options update', function (assert) {
     emptyArray(expectedEvents);
 });
 
-skip('HighchartsComponent events', function (assert) {
+skip('Board with data connectors and HighchartsComponent update', function (assert) {
     const parentElement = document.getElementById('container');
-    const connector = new CSVConnector(void 0, {
-        csv: '1,2,3',
-        firstRowAsNames: false
+    if (!parentElement) {
+        return;
+    }
+
+    const board = Dashboards.board(parentElement, {
+        dataPool: {
+            connectors: [{
+                name: 'connector-1',
+                type: 'CSV',
+                options: {
+                    csv: '1,2,3',
+                    firstRowAsNames: false
+                }
+            }]
+        },
+        gui: {
+            enabled: true,
+            layouts: [
+                {
+                    rows: [
+                        {
+                            cells: [
+                                {
+                                    id: 'cell-1'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        components: [
+            {
+                cell: 'cell-1',
+                type: 'Highcharts',
+                connector: {
+                    name: 'connector-1'
+                },
+                chartOptions: {
+                    title: {
+                        text: void 0
+                    }
+                }
+            }
+        ]
     });
-
-    connector.load();
-
-    const component = new HighchartsComponent({
-        parentElement: 'container'
-    });
-
-    registerEvents(component);
-
-    component.load();
-    component.render();
+    const componentWithConnector = board.mountedComponents[0].component;
     const expectedEvents = ['load', 'afterLoad', 'beforeRender', 'afterRender'];
 
-    assert.deepEqual(registeredEvents, expectedEvents);
-
-    component.setConnector(connector);
-    expectedEvents.push('connectorAttached');
-    assert.deepEqual(
-        registeredEvents,
-        expectedEvents,
-        'Attaching a connector should fire an evnet'
-    );
-
-    emptyArray(registeredEvents);
-    emptyArray(expectedEvents);
-
-    // With a connector set in constructor
-    const componentWithConnector = new HighchartsComponent({
-        parentElement,
-        connector
-    });
     registerEvents(componentWithConnector);
-
-    componentWithConnector.load();
-    componentWithConnector.render();
+    componentWithConnector.update({
+        chartOptions: {
+            title: {
+                text: 'Hello World'
+            }
+        }
+    });
 
     expectedEvents.push('load', 'connectorAttached', 'afterLoad', 'beforeRender', 'afterRender');
+
     assert.deepEqual(
         registeredEvents,
         expectedEvents,
         'If connector is given in options, it will be attached during load'
     );
-
-    emptyArray(registeredEvents);
-    emptyArray(expectedEvents);
-
-    // Table updates
-    // This test doesn't work as there's a timeout going on
-
-    // connector.table.getRow(0).insertCell('test', 0);
-    // connector.table.insertRow(connector.table.getRow(0))
-    // expectedEvents.push('tableChanged', 'xxx');
-    //
-    // assert.deepEqual(
-    //     registeredEvents,
-    //     expectedEvents
-    // );
-
-    // emptyArray(registeredEvents);
-    // emptyArray(expectedEvents);
-
-    // Redraws -> should also fire render
-    component.redraw();
-    expectedEvents.push('redraw', 'beforeRender', 'load', 'afterLoad', 'afterRender');
-
-    assert.deepEqual(registeredEvents, expectedEvents);
 
     emptyArray(registeredEvents);
     emptyArray(expectedEvents);
