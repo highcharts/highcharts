@@ -554,9 +554,9 @@ class PackedBubbleSeries extends BubbleSeries {
         this.calculateParentRadius();
         if (
             this.parentNode &&
-            this.parentNode.plotX &&
-            this.parentNode.plotY &&
-            this.parentNodeRadius
+            defined(this.parentNode.plotX) &&
+            defined(this.parentNode.plotY) &&
+            defined(this.parentNodeRadius)
         ) {
             parentAttribs = merge({
                 x: this.parentNode.plotX -
