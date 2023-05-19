@@ -1,6 +1,6 @@
 import CSVConnector from '../../../../code/es-modules/Data/Connectors/CSVConnector.js';
-import Board from  '../../../../code/es-modules/Dashboards/Board.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
+import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 import Highcharts from  '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from  '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 
@@ -8,16 +8,20 @@ HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
 // A shared connector
-const connector = new CSVConnector({
-    csv: `$GME,$AMC,$NOK
- 4,5,6
- 1,5,2
- 41,23,2`,
-    firstRowAsNames: true
-});
-connector.load();
-
-const board = new Board('container', {
+const board = Dashboards.boardAsync('container', {
+    dataPool: {
+        connectors: [{
+            name: 'connector-1',
+            type: 'CSV',
+            options: {
+                csv: `$GME,$AMC,$NOK
+                    4,5,6
+                    1,5,2
+                    41,23,2`,
+                firstRowAsNames: true
+            }
+        }]
+    },
     gui: {
         enabled: true,
         layouts: [{
@@ -85,7 +89,9 @@ const board = new Board('container', {
             }
         },
         events: {},
-        connector,
+        connector: {
+            name: 'connector-1'
+        },
         sync: {
             selection: true,
             panning: true
@@ -109,7 +115,9 @@ const board = new Board('container', {
             }]
         },
         events: {},
-        connector,
+        connector: {
+            name: 'connector-1'
+        },
         sync: {
             selection: true,
             panning: true
