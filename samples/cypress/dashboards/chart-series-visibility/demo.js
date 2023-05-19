@@ -1,15 +1,3 @@
-const { board } = Dashboards;
-const CSVConnector = Dashboards.DataConnector.types.CSV;
-
-const connector = new CSVConnector({
-    csv: `$GME,$AMC,$NOK
- 4,5,6
- 1,5,2
- 41,23,2`,
-    firstRowAsNames: true
-});
-connector.load();
-
 /*
 * Scenarios:
 * one chart has an extra series from options
@@ -18,7 +6,20 @@ connector.load();
 *
 */
 
-board('container', {
+Dashboards.boardAsync('container', {
+    dataPool: {
+        connectors: [{
+            name: 'connector-1',
+            type: 'CSV',
+            options: {
+                csv: `$GME,$AMC,$NOK
+                4,5,6
+                1,5,2
+                41,23,2`,
+                firstRowAsNames: true
+            }
+        }]
+    },
     gui: {
         enabled: true,
         layouts: [{
@@ -53,7 +54,9 @@ board('container', {
             }
         },
         events: {},
-        connector,
+        connector: {
+            name: 'connector-1'
+        },
         sync: {
             visibility: true
         }
@@ -67,7 +70,9 @@ board('container', {
             }
         },
         events: {},
-        connector,
+        connector: {
+            name: 'connector-1'
+        },
         sync: {
             visibility: true
         }
@@ -82,7 +87,9 @@ board('container', {
             }
         },
         events: {},
-        connector,
+        connector: {
+            name: 'connector-1'
+        },
         sync: {
             visibility: true
         }
