@@ -378,7 +378,7 @@ abstract class Component {
 
     }
 
-    public async init(): Promise<this> {
+    public async initConnectors(): Promise<this> {
         if (
             this.options.connector?.name &&
             this.connectorName !== this.options.connector.name

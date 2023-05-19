@@ -150,7 +150,7 @@ class Board implements Serializable<Board, Board.JSON> {
 
         for (let i = 0, iEnd = this.mountedComponents.length; i < iEnd; ++i) {
             const component = this.mountedComponents[i].component;
-            await component.init();
+            await component.initConnectors();
         }
 
         return this;

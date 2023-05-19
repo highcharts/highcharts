@@ -447,7 +447,7 @@ class HighchartsComponent extends Component {
 
         hcComponent.emit({ type: 'beforeRender' });
         super.render();
-        hcComponent.chart = hcComponent.initChart();
+        hcComponent.chart = hcComponent.getChart();
         hcComponent.updateSeries();
 
         this.sync.start();
@@ -700,11 +700,8 @@ class HighchartsComponent extends Component {
      * @internal
      *
      */
-    private initChart(): Chart {
-        if (this.chart) {
-            this.chart.destroy();
-        }
-        return this.constructChart();
+    private getChart(): Chart {
+        return this.chart || this.createChart();
     }
 
     /**
@@ -716,7 +713,7 @@ class HighchartsComponent extends Component {
      * @internal
      *
      */
-    private constructChart(): Chart {
+    private createChart(): Chart {
         const charter = (HighchartsComponent.charter || G);
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor] || G.chart;
