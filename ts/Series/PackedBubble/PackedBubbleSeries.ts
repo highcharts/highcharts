@@ -539,18 +539,17 @@ class PackedBubbleSeries extends BubbleSeries {
 
         let parentAttribs: SVGAttributes = {};
 
-        // create the group for parent Nodes if doesn't exist
-        if (!this.parentNodesGroup) {
-            this.parentNodesGroup = this.plotGroup(
-                'parentNodesGroup',
-                'parentNode',
-                this.visible ? 'inherit' : 'hidden',
-                0.1, chart.seriesGroup
-            );
-            (this.group as any).attr({
-                zIndex: 2
-            });
-        }
+        // Create the group for parent Nodes if doesn't exist
+        // If exists it will only be adjusted to the updated plot size (#12063)
+        this.parentNodesGroup = this.plotGroup(
+            'parentNodesGroup',
+            'parentNode',
+            this.visible ? 'inherit' : 'hidden',
+            0.1, chart.seriesGroup
+        );
+        (this.group as any).attr({
+            zIndex: 2
+        });
 
         this.calculateParentRadius();
         parentAttribs = merge({
