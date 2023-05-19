@@ -97,14 +97,22 @@ class FunnelSeries extends PieSeries {
         animation: false,
 
         /**
-         * The border radius is by default set to 0 for the funnel chart.
+         * The corner radius of the border surrounding all points or series,
+         * depending on the [borderRadiusMode](#series.funnel.borderRadiusMode)
+         * set.
+         *
+         * @sample highcharts/plotoptions/funnel-border-radius
+         *         Funnel and pyramid with rounded border
          */
         borderRadius: 0,
 
         /**
          * The `points` mode specifies that all points should have rounded
-         * corners, the `series` mode that only the main corners of the whole
-         * series should be rounded.
+         * corners, the `series` mode that only the corners of the whole series
+         * should be rounded.
+         *
+         * @sample highcharts/plotoptions/funnel-border-radius
+         *         Funnel and pyramid with rounded border
          *
          * @type    {'points'|'series'}
          */
