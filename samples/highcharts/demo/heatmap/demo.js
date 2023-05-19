@@ -1,13 +1,8 @@
-function getPointCategoryName(point, dimension) {
-    var series = point.series,
-        isY = dimension === 'y',
-        axis = series[isY ? 'yAxis' : 'xAxis'];
-    return axis.categories[point[isY ? 'y' : 'x']];
-}
-
+// Substring template helper for the responsive labels
 Highcharts.Templating.helpers.substr = (s, from, length) =>
     s.substr(from, length);
 
+// Create the chart
 Highcharts.chart('container', {
 
     chart: {
@@ -38,18 +33,9 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            /*
-            valueDescriptionFormat: '{index}. ' +
-                '{point.series.xAxis.categories.(point.x)} sales ' +
-                '{point.series.yAxis.categories.(point.y)}, {point.value}.',
-            */
-            descriptionFormatter: function (point) {
-                var ix = point.index + 1,
-                    xName = getPointCategoryName(point, 'x'),
-                    yName = getPointCategoryName(point, 'y'),
-                    val = point.value;
-                return ix + '. ' + xName + ' sales ' + yName + ', ' + val + '.';
-            }
+            descriptionFormat: '{(add index 1)}. ' +
+                '{series.xAxis.categories.(x)} sales ' +
+                '{series.yAxis.categories.(y)}, {value}.'
         }
     },
 
