@@ -547,26 +547,32 @@ class PackedBubbleSeries extends BubbleSeries {
             this.visible ? 'inherit' : 'hidden',
             0.1, chart.seriesGroup
         );
-        (this.group as any).attr({
+        this.group?.attr({
             zIndex: 2
         });
 
         this.calculateParentRadius();
-        parentAttribs = merge({
-            x: (this.parentNode as any).plotX -
-                (this.parentNodeRadius as any),
-            y: (this.parentNode as any).plotY -
-                (this.parentNodeRadius as any),
-            width: (this.parentNodeRadius as any) * 2,
-            height: (this.parentNodeRadius as any) * 2
-        }, parentOptions);
-        if (!(this.parentNode as any).graphic) {
-            this.graph = (this.parentNode as any).graphic =
-                chart.renderer.symbol((parentOptions as any).symbol)
-                    .add(this.parentNodesGroup);
+        if (
+            this.parentNode &&
+            this.parentNode.plotX &&
+            this.parentNode.plotY &&
+            this.parentNodeRadius
+        ) {
+            parentAttribs = merge({
+                x: this.parentNode.plotX -
+                    this.parentNodeRadius,
+                y: this.parentNode.plotY -
+                    this.parentNodeRadius,
+                width: this.parentNodeRadius * 2,
+                height: this.parentNodeRadius * 2
+            }, parentOptions);
+            if (!this.parentNode.graphic) {
+                this.graph = this.parentNode.graphic =
+                    chart.renderer.symbol((parentOptions as any).symbol)
+                        .add(this.parentNodesGroup);
+            }
+            this.parentNode.graphic.attr(parentAttribs);
         }
-        (this.parentNode as any).graphic.attr(parentAttribs);
-
     }
 
     public drawTracker(): void {
