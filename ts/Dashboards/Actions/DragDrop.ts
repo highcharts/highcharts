@@ -71,8 +71,6 @@ class DragDrop {
         this.editMode = editMode;
         this.options = merge(DragDrop.defaultOptions, options);
 
-        this.enabled = this.options.enabled;
-
         this.mockElement = createElement(
             'div',
             { className: EditGlobals.classNames.dragMock },
@@ -105,11 +103,6 @@ class DragDrop {
      * The editMode reference.
      */
     public editMode: EditMode;
-
-    /**
-     * Whether the drag drop is enabled.
-     */
-    public enabled: boolean;
 
     /**
      * DragDrop options.
