@@ -135,7 +135,10 @@ const EditGlobals: EditGlobals = {
         off: 'off',
         settings: 'Settings',
         addComponent: 'Add component',
-        dataLabels: 'Data labels'
+        dataLabels: 'Data labels',
+        small: 'Small',
+        medium: 'Medium',
+        large: 'Large'
     }
 };
 

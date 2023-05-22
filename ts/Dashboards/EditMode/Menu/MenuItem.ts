@@ -102,7 +102,8 @@ class MenuItem {
     public setInnerElement(): HTMLDOMElement|undefined {
         const item = this,
             options = item.options,
-            container = item.container;
+            container = item.container,
+            langKey = options.langKey;
 
         const renderItem = EditRenderer.getRendererFunction(
             options.type as RendererElement
@@ -118,9 +119,20 @@ class MenuItem {
                 options.events.click.apply(item, arguments);
             }
         };
-        const element = renderItem(
+
+        renderItem(
             container,
-            this.getElementOptions(merge(options, { value }), callback)
+            this.getElementOptions(
+                merge(
+                    options,
+                    {
+                        value,
+                        text: langKey ?
+                            this.menu.editMode.lang[langKey] : options.text
+                    }
+                ),
+                callback
+            )
         );
 
     }
@@ -178,6 +190,7 @@ class MenuItem {
 
 namespace MenuItem {
     export interface Options {
+        langKey?: string;
         nestedOptions?: Record<string, Options>;
         callback?: () => void;
         click?: Function;

@@ -103,7 +103,8 @@ function renderCollapseHeader(
         onchange,
         isEnabled,
         isNested,
-        iconsURLPrefix
+        iconsURLPrefix,
+        lang
     } = options;
 
     const accordion = createElement(
@@ -136,7 +137,7 @@ function renderCollapseHeader(
     createElement(
         'span',
         {
-            textContent: (EditGlobals.lang)[name] || name
+            textContent: lang[name] || name
         },
         {},
         headerBtn
@@ -148,7 +149,8 @@ function renderCollapseHeader(
             id: name,
             name: name,
             onchange,
-            value: isEnabled || false
+            value: isEnabled || false,
+            lang
         });
     }
 
@@ -386,7 +388,7 @@ function renderToggle(
         return;
     }
 
-    const { value, title } = options;
+    const { value, title, lang } = options;
     const toggleContainer = createElement(
         'div',
         { className: EditGlobals.classNames.toggleContainer },
@@ -399,7 +401,7 @@ function renderToggle(
 
     if (options.enabledOnOffLabels) {
         EditRenderer.renderText(toggleContainer, {
-            title: EditGlobals.lang.off,
+            title: lang.off,
             className: EditGlobals.classNames.toggleLabels
         });
     }
@@ -441,7 +443,7 @@ function renderToggle(
 
     if (options.enabledOnOffLabels) {
         EditRenderer.renderText(toggleContainer, {
-            title: EditGlobals.lang.on,
+            title: lang.on,
             className: EditGlobals.classNames.toggleLabels
         });
     }
@@ -811,6 +813,7 @@ export interface ToggleFormFieldOptions {
     onchange?: (value: boolean) => void;
     id: string;
     name: string;
+    lang: EditGlobals.LangOptions;
 }
 
 export interface NestedHeaderFormFieldOptions {
@@ -820,6 +823,7 @@ export interface NestedHeaderFormFieldOptions {
     isEnabled?: boolean;
     isNested?: boolean;
     iconsURLPrefix?: string;
+    lang: EditGlobals.LangOptions;
 }
 
 export type RendererElement = (
