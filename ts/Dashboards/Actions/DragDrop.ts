@@ -71,7 +71,7 @@ class DragDrop {
         this.editMode = editMode;
         this.options = merge(DragDrop.defaultOptions, options);
 
-        this.enabled = !!this.options.enabled;
+        this.enabled = this.options.enabled;
 
         this.mockElement = createElement(
             'div',
