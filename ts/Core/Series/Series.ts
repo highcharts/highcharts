@@ -2164,8 +2164,7 @@ class Series {
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
             threshold = options.threshold,
-            stackThreshold = options.startFromThreshold ? threshold : 0,
-            zoneAxis = this.zoneAxis || 'y';
+            stackThreshold = options.startFromThreshold ? threshold : 0;
         let i,
             plotX,
             lastPlotX,
@@ -2317,13 +2316,8 @@ class Series {
                 )) :
                 plotX; // #1514, #5383, #5518
 
-            // Negative points. For bubble charts, this means negative z
-            // values (#9728)
-            point.negative = (point as any)[zoneAxis] < (
-                (options as any)[zoneAxis + 'Threshold'] ||
-                threshold ||
-                0
-            );
+            // Negative points #19028
+            point.negative = defined(point.y) && point.y < (threshold || 0);
 
             // some API data
             point.category = pick(
