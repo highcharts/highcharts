@@ -767,13 +767,15 @@ Chart.prototype.addSeriesAsDrilldown = function (
     if (chart.mapView) {
         // stop hovering while drilling down
         point.series.isDrilling = true;
-        // stop duplicating and overriding animations
-        point.series.options.inactiveOtherPoints = true;
-        // hide and disable dataLabels
-        if (point.series.dataLabelsGroup) {
-            point.series.dataLabelsGroup.destroy();
-            delete point.series.dataLabelsGroup;
-        }
+
+        chart.series.forEach((series): void => {
+            // stop duplicating and overriding animations
+            series.options.inactiveOtherPoints = true;
+
+            // hide and disable dataLabels
+            series.dataLabelsGroup?.destroy();
+            delete series.dataLabelsGroup;
+        });
 
         // #18925 map zooming is not working with geoJSON maps
         if (
@@ -1004,27 +1006,31 @@ Chart.prototype.applyDrilldown = function (): void {
                             animOptions,
                             function (): void {
                                 series.remove(false);
+                                // If it is the last series
+                                if (!(level.levelSeries.filter((el): number =>
+                                    Object.keys(el).length)).length) {
+                                    // We have a reset zoom button. Hide it and
+                                    // detatch it from the chart. It is
+                                    // preserved to the layer config above.
+                                    if (chart.resetZoomButton) {
+                                        chart.resetZoomButton.hide();
+                                        delete chart.resetZoomButton;
+                                    }
 
-                                // We have a reset zoom button. Hide it and
-                                // detatch it from the chart. It is preserved
-                                // to the layer config above.
-                                if (chart.resetZoomButton) {
-                                    chart.resetZoomButton.hide();
-                                    delete chart.resetZoomButton;
+                                    chart.pointer.reset();
+
+                                    fireEvent(chart, 'afterDrilldown');
+
+                                    if (chart.mapView) {
+                                        chart.series.forEach((series): void => {
+                                            series.isDirtyData = true;
+                                            series.isDrilling = false;
+                                        });
+                                        chart.mapView.fitToBounds(
+                                            void 0, void 0);
+                                    }
+                                    fireEvent(chart, 'afterApplyDrilldown');
                                 }
-
-                                chart.pointer.reset();
-
-                                fireEvent(chart, 'afterDrilldown');
-
-                                if (chart.mapView) {
-                                    chart.series.forEach((series): void => {
-                                        series.isDirtyData = true;
-                                        series.isDrilling = false;
-                                    });
-                                    chart.mapView.fitToBounds(void 0, void 0);
-                                }
-                                fireEvent(chart, 'afterApplyDrilldown');
                             });
                         }
                     }
@@ -1199,7 +1205,10 @@ Chart.prototype.drillUp = function (isMultipleDrillUp?: boolean): void {
             }
 
             level.levelSeriesOptions.forEach((el): void => {
-                newSeries = addSeries(el, oldSeries);
+                const addedSeries = addSeries(el, oldSeries);
+                if (addedSeries) {
+                    newSeries = addedSeries;
+                }
             });
 
             fireEvent(chart, 'drillup', {
