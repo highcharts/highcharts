@@ -60,6 +60,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-clean',
     'scripts-code',
     'scripts-compile',
+    'scripts-compile-old',
     'scripts-css',
     'scripts-es5',
     'scripts-js',

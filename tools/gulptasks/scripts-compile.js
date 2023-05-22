@@ -3,108 +3,71 @@
  */
 
 const gulp = require('gulp');
-const {
-    Worker, parentPort, workerData
-// eslint-disable-next-line node/no-unsupported-features/node-builtins
-} = require('worker_threads');
-const os = require('os');
-const argv = require('yargs').argv;
 
-const SOURCE_DIRECTORY = 'code';
-
+/* *
+ *
+ *  Tasks
+ *
+ * */
 
 /**
- * Split an array into multiple new arrays/chuncks
+ * Creates minified versions of `.src.js` bundles in `/code` folder.
  *
- * @param {Array} arr to split
- * @param {Number} numParts to split array in
- * @return {Array} Array of arrays/chunks
+ * @return {Promise}
+ * Promise to keep
  */
-function chunk(arr, numParts) {
-    const result = [];
-    for (let p = 0; p < numParts; p++) {
-        result[p] = [];
-    }
+function scriptsCompile() {
+    const fs = require('fs'),
+        fsLib = require('./lib/fs'),
+        logLib = require('./lib/log'),
+        path = require('path'),
+        processLib = require('./lib/process');
 
-    for (let i = arr.length - 1; i >= 0; i--) {
-        const arrIndex = Math.floor(i % numParts);
-        result[arrIndex].push(arr[i]);
-    }
-    return result;
-}
+    const promises = fsLib
+        .getFilePaths('code', true)
+        .filter(filePath => (
+            !filePath.startsWith('code/es-modules/') &&
+            filePath.endsWith('.src.js')
+        ))
+        .map(inputPath => {
+            const language = (
+                    inputPath.includes('/es5/') ?
+                        'ECMASCRIPT5_STRICT' :
+                        'ECMASCRIPT_2020'
+                ),
+                outputPath = inputPath.replace('.src.js', '.js'),
+                outputMapPath = outputPath + '.map';
 
-/**
- * Compile the JS files in the /code folder
- *
- * @return {Promise<void>}
- *         Promise to keep
- */
-async function task() {
-    const fsLib = require('./lib/fs');
-    const logLib = require('./lib/log');
+            // Compile file
+            // See github.com/google/closure-compiler/wiki/Flags-and-Options
+            return processLib.exec(
+                'google-closure-compiler' +
+                ' --compilation_level SIMPLE' +
+                ` --create_source_map "${outputMapPath}"` +
+                ` --js "${inputPath}"` +
+                ` --js_output_file "${outputPath}"` +
+                ` --language_in ${language}` +
+                ` --language_out ${language}` +
+                ' --platform native',
+                { silent: 2 }
 
-    const fileBatches = [];
+            // Fix source map reference
+            ).then(result => {
+                const outputMapFileName = path.basename(outputMapPath);
 
-    if (workerData) {
-        const compileTool = require('../compile');
-
-        fileBatches.push(
-            compileTool.compile(workerData.files, (SOURCE_DIRECTORY + '/'))
-        );
-
-        parentPort.postMessage({ done: true });
-
-        logLib.success(`Compilation of batch #${workerData.batchNum} complete`);
-    } else {
-        logLib.warn('Warning: This task may take a few minutes.');
-
-        const files = (
-            (argv.files) ?
-                argv.files.split(',') :
-                fsLib
-                    .getFilePaths(SOURCE_DIRECTORY, true)
-                    .filter(path => (
-                        path.endsWith('.src.js') &&
-                        !path.includes('es-modules')
-                    ))
-                    .map(path => path.substr(SOURCE_DIRECTORY.length + 1))
-        );
-
-        const numThreads = argv.numThreads ?
-            argv.numThreads :
-            Math.min(
-                files.length,
-                Math.max(2, os.cpus().length - 2)
-            );
-        const batches = chunk(files, numThreads);
-
-        logLib.message(`Splitting files to compile in ${batches.length} batches/threads..`);
-        logLib.message('Compiling', SOURCE_DIRECTORY + '...');
-
-        batches.forEach((batch, index) => {
-            fileBatches.push(new Promise((resolve, reject) => {
-
-                const worker = new Worker(
-                    __filename,
-                    { workerData: { files: batch, batchNum: (index + 1) } }
+                // Still no option for it
+                fs.appendFileSync(
+                    outputPath,
+                    `//# sourceMappingURL=${outputMapFileName}`
                 );
-                worker.on('message', resolve);
-                worker.on('error', reject);
-                worker.on('exit', code => {
-                    if (code !== 0) {
-                        reject(new Error(`Worker stopped with exit code ${code}`));
-                    }
-                });
 
-            }));
+                logLib.success(`Compiled ${inputPath} => ${outputPath}`);
+
+                return result;
+            });
         });
-    }
 
-    return Promise.all(fileBatches);
+    return Promise.all(promises);
 }
 
-gulp.task('scripts-compile', task);
-
-if (workerData) {
-    task();
-}
+gulp.task('scripts-compile', scriptsCompile);
