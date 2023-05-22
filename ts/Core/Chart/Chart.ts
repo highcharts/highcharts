@@ -406,21 +406,23 @@ class Chart {
      * @private
      * @function Highcharts.Chart#setZoomOptions
      */
-    public setZoomOptions(chartOptions?: ChartOptions): void {
+    public setZoomOptions(): void {
         const chart = this,
-            options = chartOptions ? chartOptions : chart.options.chart;
+            options = chart.options.chart,
+            zooming = options.zooming;
 
         chart.zooming = {
-            ...options.zooming,
-            type: pick(options.zoomType, options.zooming.type),
-            key: pick(options.zoomKey, options.zooming.key),
-            pinchType: pick(options.pinchType, options.zooming.pinchType),
+            ...zooming,
+            type: pick(options.zoomType, zooming.type),
+            key: pick(options.zoomKey, zooming.key),
+            pinchType: pick(options.pinchType, zooming.pinchType),
             singleTouch: pick(
                 options.zoomBySingleTouch,
-                options.zooming.singleTouch,
-                false),
+                zooming.singleTouch,
+                false
+            ),
             resetButton: merge(
-                options.zooming.resetButton,
+                zooming.resetButton,
                 options.resetZoomButton
             )
         };
@@ -459,7 +461,6 @@ class Chart {
 
             const optionsChart = options.chart;
 
-            this.setZoomOptions(optionsChart);
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
             objectEach(options.plotOptions, function (
@@ -605,6 +606,8 @@ class Chart {
             chart.yAxis = [];
 
             chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
+
+            this.setZoomOptions();
 
             // Fire after init but before first render, before axes and series
             // have been initialized.
