@@ -28,7 +28,6 @@ import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
 
 import H from './Globals.js';
-import Axis from './Axis/Axis';
 const {
     charts,
     doc,
@@ -1215,41 +1214,39 @@ Math.easeInOutSine = function (pos: number): number {
 };
 
 /**
- * Find the closestPointRange across all series.
+ * Find the closest distance between two values of a two-dimensional array
  * @private
  * @function Highcharts.getClosestDistance
  *
- * @param {axis} axis
- *          Axis, which contains series to calculate the closestPointRange.
+ * @param {Array<Array<number>>} arrays
+ *          An array of arrays of numbers
  *
  * @return {number | undefined}
- *          Closest distance between points (closestPointRange).
+ *          The closest distance between values
  */
-function getClosestDistance(axis: Axis): (number|undefined) {
-    let closestDataRange: number | undefined,
+function getClosestDistance(
+    arrays: number[][]
+): (number|undefined) {
+    let closest: number | undefined,
         loopLength: number,
         distance: number,
-        xData: Array<number>,
         i: number;
 
-    axis.series.forEach(function (series): void {
-        if (series.xData && series.xData.length > 1) {
-            xData = series.xData;
-            loopLength = series.xIncrement ? 1 : xData.length - 1;
-
+    arrays.forEach((xData): void => {
+        if (xData.length > 1) {
+            loopLength = xData.length - 1;
             for (i = loopLength; i > 0; i--) {
                 distance = xData[i] - xData[i - 1];
-                if (
-                    typeof closestDataRange === 'undefined' ||
-                    distance < closestDataRange
-                ) {
-                    closestDataRange = distance;
+                if (distance && (
+                    typeof closest === 'undefined' || distance < closest
+                )) {
+                    closest = distance;
                 }
             }
         }
     });
 
-    return closestDataRange;
+    return closest;
 }
 
 /**

@@ -809,7 +809,9 @@ class IKHIndicator extends SMAIndicator {
             yVal: Array<Array<number>> = series.yData as any,
             xAxis: Axis = series.xAxis,
             yValLen: number = (yVal && yVal.length) || 0,
-            closestPointRange: number = getClosestDistance(xAxis) as any,
+            closestPointRange: number = getClosestDistance(
+                xAxis.series.map((s): number[] => s.xData || [])
+            ) as any,
             IKH: Array<Array<number | undefined>> = [],
             xData: Array<number> = [];
 

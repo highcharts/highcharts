@@ -1223,7 +1223,7 @@ class Axis {
     public adjustForMinRange(): void {
         const axis = this,
             options = axis.options,
-            log = axis.logarithmic;
+            logarithmic = axis.logarithmic;
 
         let min = axis.min,
             max = axis.max,
@@ -1238,7 +1238,7 @@ class Axis {
         if (
             axis.isXAxis &&
             typeof axis.minRange === 'undefined' &&
-            !log
+            !logarithmic
         ) {
 
             if (
@@ -1254,7 +1254,13 @@ class Axis {
                 // Find the closest distance between raw data points, as opposed
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
-                closestDataRange = pick(getClosestDistance(axis), 0);
+                closestDataRange = getClosestDistance(
+                    axis.series.map((s): number[] =>
+                        // If xIncrement, we only need to measure the two first
+                        // points to get the distance. Saves processing time.
+                        (s.xIncrement ? s.xData?.slice(0, 2) : s.xData) || []
+                    )
+                ) || 0;
 
                 axis.minRange = Math.min(
                     closestDataRange * 5,
@@ -1279,8 +1285,8 @@ class Axis {
             ];
             // If space is available, stay within the data range
             if (spaceAvailable) {
-                minArgs[2] = axis.logarithmic ?
-                    axis.logarithmic.log2lin(axis.dataMin as any) :
+                minArgs[2] = logarithmic ?
+                    logarithmic.log2lin(axis.dataMin as any) :
                     axis.dataMin;
             }
             min = arrayMax(minArgs);
@@ -1291,8 +1297,8 @@ class Axis {
             ];
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
-                maxArgs[2] = log ?
-                    log.log2lin(axis.dataMax as any) :
+                maxArgs[2] = logarithmic ?
+                    logarithmic.log2lin(axis.dataMax as any) :
                     axis.dataMax;
             }
 
@@ -1345,19 +1351,7 @@ class Axis {
             });
             if (singleXs.length) {
                 singleXs.sort((a, b): number => a - b);
-                let i = singleXs.length;
-                while (--i) {
-                    const distance = singleXs[i] - singleXs[i - 1];
-                    if (
-                        distance > 0 &&
-                        (
-                            !defined(closestSingleDistance) ||
-                            distance < closestSingleDistance
-                        )
-                    ) {
-                        closestSingleDistance = distance;
-                    }
-                }
+                closestSingleDistance = getClosestDistance([singleXs]);
             }
         }
 
