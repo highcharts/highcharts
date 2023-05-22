@@ -1,13 +1,26 @@
 (async () => {
-
     // Import maps
     const world = await fetch(
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
-
     const italy = await fetch(
         'https://code.highcharts.com/mapdata/countries/it/it-all.topo.json'
     ).then(response => response.json());
+
+    // Generate locator div
+    const locatorDiv = document.createElement('div');
+    locatorDiv.id = 'locator';
+    document.getElementById('container').appendChild(locatorDiv);
+
+    /* Optional toggle
+    // Generate button
+    const btnButton = document.createElement('button');
+    btnButton.id = 'btn';
+    const btnIcon = document.createElement('i');
+    btnIcon.classList.add('fa', 'fa-map');
+    btnButton.appendChild(btnIcon);
+    document.getElementById('container').appendChild(btnButton);
+    */
 
     // Prepare demo data
     const data = [
@@ -122,34 +135,27 @@
         ['it-vi', 118],
         ['it-tv', 119]
     ];
-
     // Global settings
     Highcharts.setOptions({
         title: null,
-
         colorAxis: {
             visible: false
         },
-
         legend: {
             enabled: false
         },
-
         mapNavigation: {
             enabled: false
         },
-
         exporting: {
             enabled: false
         }
     });
-
     // Main chart
     const mainChart = Highcharts.mapChart('main', {
         chart: {
             margin: 0
         },
-
         series: [{
             states: {
                 inactive: {
@@ -167,13 +173,12 @@
             mapData: italy,
             data: data,
             color: Highcharts.getOptions().colors[0]
-        }]
+        }
+        ]
     });
-
     // Orthographic projection grid
     const getGraticule = () => {
         const data = [];
-
         // Meridians
         for (let x = -180; x <= 180; x += 15) {
             data.push({
@@ -190,7 +195,6 @@
                 }
             });
         }
-
         // Latitudes
         for (let y = -90; y <= 90; y += 10) {
             const coordinates = [];
@@ -205,56 +209,118 @@
                 lineWidth: y === 0 ? 2 : undefined
             });
         }
-
         return data;
     };
-
     // Locator map pointer logic
-    function getMapCorners(chart, plotLeft, plotHeight, plotWidth, plotTop) {
-        const corners = [{
-            x: plotLeft,
-            y: plotHeight
-        },
-        {
-            x: plotWidth,
-            y: plotHeight
-        },
-        {
-            x: plotWidth,
-            y: plotTop
-        },
-        {
-            x: plotLeft,
-            y: plotTop
-        },
-        {
-            x: plotLeft,
-            y: plotHeight
-        }];
+    function getMapFrame(chart, plotLeft, plotHeight, plotWidth, plotTop) {
+        const corners = [
+            { x: plotLeft, y: plotHeight },
+            { x: plotWidth, y: plotHeight },
+            { x: plotWidth, y: plotTop },
+            { x: plotLeft, y: plotTop }
+        ];
 
-        return corners.map(corner =>
-            Object.values(chart.mapView.pixelsToLonLat(corner)));
+        const points = corners.map(corner => {
+            // Adjust the rectangle to the projection
+            const [lon, lat] = Object.values(
+                chart.mapView.pixelsToLonLat(corner)
+            ).map((lonLat, i) =>
+                (i === 0 ? Math.min(179.9, Math.max(-179.9, lonLat)) :
+                    Math.min(90, Math.max(-90, lonLat)))
+            );
+            return [lon, lat];
+        });
+
+        function createPoints(startPoint, endPoint) {
+            const points = [];
+            // eslint-disable-next-line prefer-const
+            let [lon, lat] = startPoint;
+
+            while (lon <= endPoint[0]) {
+                points.push([lon, lat]);
+                lon += 5;
+            }
+
+            return points;
+        }
+
+        const [leftBottomPoint, rightBottomPoint, rightTopPoint, leftTopPoint] =
+            points,
+            bottomPoints = createPoints(leftBottomPoint, rightBottomPoint),
+            topPoints = createPoints(leftTopPoint, rightTopPoint);
+
+        const rect = [
+            leftBottomPoint,
+            ...bottomPoints,
+            rightBottomPoint,
+            rightTopPoint,
+            ...topPoints,
+            leftTopPoint,
+            leftBottomPoint
+        ];
+
+        return rect;
     }
-
     // Locator map
-    Highcharts.mapChart('locator', {
+    const locatorChart = Highcharts.mapChart('locator', {
         chart: {
             backgroundColor: '#ffffffB3',
             borderColor: '#e0e0e0',
             borderWidth: 1,
-            margin: 0
-        },
+            margin: 15
+            /* Optional toggle
+            events: {
+                load() {
+                    // Locator map toggle logic
+                    const chart = this;
+                    let i = 1;
 
+                    function toggleMap() {
+                        const icon = document.getElementById('btn').firstElementChild;
+                        icon.classList.toggle('fa-map');
+                        icon.classList.toggle('fa-globe');
+
+                        if (i === 1) {
+                            updateLocatorMap('Miller', 'none', 0);
+                            i++;
+                        } else if (i === 2) {
+                            updateLocatorMap('Orthographic', '#c4c4c422', 15);
+                            i = 1;
+                        }
+                    }
+
+                    function updateLocatorMap(
+                        projectionType,
+                        graticuleColor,
+                        margin
+                    ) {
+                        chart.get('Graticule').update({
+                            color: graticuleColor
+                        }, false);
+                        chart.redraw(false);
+                        chart.update({
+                            chart: {
+                                margin: margin
+                            },
+                            mapView: {
+                                projection: {
+                                    name: projectionType
+                                }
+                            }
+                        });
+                    }
+                    document.getElementById('btn').onclick = toggleMap;
+                }
+            } */
+        },
         credits: {
             enabled: false
         },
-
         mapView: {
             projection: {
-                name: 'Miller'
+                name: 'Orthographic'
             }
         },
-
         plotOptions: {
             series: {
                 accessibility: {
@@ -273,7 +339,6 @@
                 }
             }
         },
-
         series: [{
             name: 'Locator',
             mapData: world
@@ -281,7 +346,7 @@
             id: 'Graticule',
             type: 'mapline',
             data: getGraticule(),
-            color: 'none',
+            color: '#c4c4c422',
             zIndex: -1
         }, {
             name: 'Locator',
@@ -290,7 +355,7 @@
             data: [{
                 geometry: {
                     type: 'LineString',
-                    coordinates: getMapCorners(
+                    coordinates: getMapFrame(
                         mainChart,
                         mainChart.plotLeft,
                         mainChart.plotHeight,
@@ -300,42 +365,5 @@
                 }
             }]
         }]
-    }, function (chart) {
-
-        // Locator map toggle logic
-        let i = 1;
-
-        function toggleMap() {
-            const icon = document.getElementById('btn').firstElementChild;
-            icon.classList.toggle('fa-globe');
-            icon.classList.toggle('fa-map');
-
-            if (i === 1) {
-                updateLocatorMap('Orthographic', '#c4c4c422', 15);
-                i++;
-            } else if (i === 2) {
-                updateLocatorMap('Miller', 'none', 0);
-                i = 1;
-            }
-        }
-
-        function updateLocatorMap(projectionType, graticuleColor, margin) {
-            chart.get('Graticule').update({
-                color: graticuleColor
-            }, false);
-            chart.redraw(false);
-            chart.update({
-                chart: {
-                    margin: margin
-                },
-                mapView: {
-                    projection: {
-                        name: projectionType
-                    }
-                }
-            });
-        }
-
-        document.getElementById('btn').onclick = toggleMap;
     });
 })();
