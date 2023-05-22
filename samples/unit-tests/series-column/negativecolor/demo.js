@@ -38,7 +38,7 @@ QUnit.test(
             'Positive color'
         );
 
-        const negativeArrBefore =  chart.series[0].points.map(function (p) {
+        const negativeArrBefore = chart.series[0].points.map(function (p) {
             return p.negative;
         });
 
@@ -51,7 +51,8 @@ QUnit.test(
                 return p.negative;
             }),
             negativeArrBefore,
-            'Points below zThreshold should have point.negative set to false.'
+            `After changing the zonesAxis property point.negative properties
+            shouldn't be changed (#19028).`
         );
     }
 );
