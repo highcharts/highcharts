@@ -1,5 +1,5 @@
 const { board } = Dashboards;
-const CSVConnector = Dashboards.DataConnector.registry.CSVConnector;
+const CSVConnector = Dashboards.DataConnector.types.CSV;
 
 // A shared connector
 const connector = new CSVConnector(undefined, {
