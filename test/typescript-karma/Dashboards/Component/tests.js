@@ -64,6 +64,9 @@ test('Board without data connectors and HighchartsComponent update', function (a
                             cells: [
                                 {
                                     id: 'cell-1'
+                                },
+                                {
+                                    id: 'cell-2'
                                 }
                             ]
                         }
@@ -80,29 +83,61 @@ test('Board without data connectors and HighchartsComponent update', function (a
                         text: void 0
                     }
                 }
+            },
+            {
+                cell: 'cell-2',
+                type: 'HTML',
+                elements: [
+                    {
+                        tagName: 'h1',
+                        textContent: 'Some text'
+                    }
+                ]
             }
         ]
     });
-    const component = board.mountedComponents[0].component;
-    const eventsAfterRender = ['beforeRender', 'load', 'afterLoad', 'afterRender'];
+    // Test the HighchartsComponent
+    const highchartsComponent = board.mountedComponents[0].component;
 
-    registerEvents(component);
-
-    component.update({
+    registerEvents(highchartsComponent);
+    highchartsComponent.update({
         chartOptions: {
             title: {
                 text: 'Hello World'
             }
         }
     });
+    assert.deepEqual(
+        registeredEvents,
+        ['update', 'redraw', 'beforeRender', 'load', 'afterLoad', 'afterRender'],
+        'After updating the HighchartsComponent events should be fired in the correct order.'
+    );
 
-    const expectedEvents = eventsAfterRender;
-    expectedEvents.unshift('update', 'redraw');
+    emptyArray(registeredEvents);
+
+    assert.strictEqual(
+        highchartsComponent.options.chartOptions.title.text,
+        'Hello World',
+        'HighchartsComponent should have updated title'
+    );
+
+    // Test the HTMLComponent
+    const htmlComponent = board.mountedComponents[1].component;
+
+    registerEvents(htmlComponent);
+    htmlComponent.update({
+        elements: [
+            {
+                tagName: 'h1',
+                textContent: 'Hello World'
+            }
+        ]
+    });
 
     assert.deepEqual(
         registeredEvents,
-        expectedEvents,
-        'After update the events should be fired in the correct order'
+        ['update', 'redraw', 'beforeRender', 'load', 'afterLoad', 'afterRender', 'afterRedraw'],
+        'After updating HTMLComponent, the events should be fired in the correct order.'
     );
 
     // @TODO test update with the redraw flag set to false !!!!!!!!!!!!!!!!!!!
@@ -128,27 +163,27 @@ test('Board without data connectors and HighchartsComponent update', function (a
     // );
     // assert.deepEqual(registeredEvents, expectedEvents, 'events after forced update');
 
-    Component.removeInstance(component);
     emptyArray(registeredEvents);
-    emptyArray(expectedEvents);
 });
 
-skip('Board with data connectors and HighchartsComponent update', function (assert) {
+test('Board with data connectors and HighchartsComponent update', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
     }
 
-    const board = Dashboards.board(parentElement, {
+    const board = await Dashboards.boardAsync(parentElement, {
         dataPool: {
-            connectors: [{
-                name: 'connector-1',
-                type: 'CSV',
-                options: {
-                    csv: '1,2,3',
-                    firstRowAsNames: false
+            connectors: [
+                {
+                    name: 'connector-1',
+                    type: 'CSV',
+                    options: {
+                        csv: '1,2,3',
+                        firstRowAsNames: false
+                    }
                 }
-            }]
+            ]
         },
         gui: {
             enabled: true,
@@ -182,162 +217,55 @@ skip('Board with data connectors and HighchartsComponent update', function (asse
         ]
     });
     const componentWithConnector = board.mountedComponents[0].component;
-    const expectedEvents = ['load', 'afterLoad', 'beforeRender', 'afterRender'];
 
     registerEvents(componentWithConnector);
-    componentWithConnector.update({
+    await componentWithConnector.update({
         chartOptions: {
             title: {
                 text: 'Hello World'
             }
         }
     });
-
-    expectedEvents.push('load', 'connectorAttached', 'afterLoad', 'beforeRender', 'afterRender');
-
-    assert.deepEqual(
+    await assert.deepEqual(
         registeredEvents,
-        expectedEvents,
+        [
+            'afterUpdate',
+            'afterUpdate',
+            'update',
+            'connectorAttached',
+            'redraw',
+            'beforeRender',
+            'load',
+            'afterLoad',
+            'afterRender',
+            'afterUpdate'
+        ],
         'If connector is given in options, it will be attached during load'
     );
 
     emptyArray(registeredEvents);
-    emptyArray(expectedEvents);
 
-    // Message
-    expectedEvents.push('message');
+    // // Message
+    // expectedEvents.push('message');
 
-    // This should fire a 'message' event to all the other components
-    // We should expect N - 1 'message' events (in this case 1)
+    // // This should fire a 'message' event to all the other components
+    // // We should expect N - 1 'message' events (in this case 1)
 
-    component.postMessage('hello');
+    // componentWithConnector.postMessage('hello');
 
-    assert.deepEqual(registeredEvents, expectedEvents);
+    // assert.deepEqual(registeredEvents, expectedEvents);
 
-    // This should bounce a message back and forth
-    component.postMessage({
-        callback: function () {
-            this.postMessage('hello');
-        }
-    });
+    // // This should bounce a message back and forth
+    // componentWithConnector.postMessage({
+    //     callback: function () {
+    //         this.postMessage('hello');
+    //     }
+    // });
 
-    expectedEvents.push('message', 'message');
+    // expectedEvents.push('message', 'message');
 
-    assert.deepEqual(registeredEvents, expectedEvents);
+    // assert.deepEqual(registeredEvents, expectedEvents);
 
-    emptyArray(registeredEvents);
-    emptyArray(expectedEvents);
-
-    Component.removeInstance(component);
-    Component.removeInstance(componentWithConnector);
-});
-
-skip('HTMLComponent events', function (assert) {
-    const parentElement = document.createElement('div');
-    const connector = new CSVConnector(undefined, {
-        csv: '1,2,3',
-        firstRowAsNames: false
-    });
-
-    connector.load();
-
-    const component = new HTMLComponent({
-        parentElement
-    });
-
-    registerEvents(component);
-
-    component.load();
-    component.render();
-    const expectedEvents = ['load', 'afterLoad', 'beforeRender', 'afterRender'];
-    assert.deepEqual(registeredEvents, expectedEvents);
-
-    component.setConnector(connector);
-    expectedEvents.push('connectorAttached');
-    assert.deepEqual(
-        registeredEvents,
-        expectedEvents,
-        'Attaching a connector should fire an event'
-    );
-
-    emptyArray(registeredEvents);
-    emptyArray(expectedEvents);
-
-    // With a connector set in constructor
-    const componentWithConnector = new HTMLComponent({
-        parentElement,
-        connector: connector
-    });
-    registerEvents(componentWithConnector);
-
-    componentWithConnector.load();
-    componentWithConnector.render();
-
-    expectedEvents.push('load', 'connectorAttached', 'afterLoad', 'beforeRender', 'afterRender');
-    assert.deepEqual(
-        registeredEvents,
-        expectedEvents,
-        'If connector is given in options, it will be attached during load'
-    );
-
-    emptyArray(registeredEvents);
-    emptyArray(expectedEvents);
-
-    // Table updates
-    // This test doesn't work as there's a timeout going on
-
-    // connector.table.getRow(0).insertCell('test', 0);
-    // connector.table.insertRow(connector.table.getRow(0))
-    // expectedEvents.push('tableChanged', 'xxx');
-    //
-    // assert.deepEqual(
-    //     registeredEvents,
-    //     expectedEvents
-    // );
-
-    // emptyArray(registeredEvents);
-    // emptyArray(expectedEvents);
-
-    // Redraws -> should also fire render
-    component.redraw();
-    expectedEvents.push(
-        'redraw',
-        'beforeRender',
-        'load',
-        'afterLoad',
-        'afterRender',
-        'afterRedraw'
-    );
-
-    assert.deepEqual(registeredEvents, expectedEvents);
-
-    emptyArray(registeredEvents);
-    emptyArray(expectedEvents);
-
-    // Message
-    expectedEvents.push('message');
-
-    // This should fire a 'message' event to all the other components
-    // We should expect N - 1 'message' events (in this case 1)
-
-    component.postMessage('hello');
-
-    assert.deepEqual(registeredEvents, expectedEvents);
-
-    // This should bounce a message back and forth
-    component.postMessage({
-        callback: function () {
-            this.postMessage('hello');
-        }
-    });
-
-    expectedEvents.push('message', 'message');
-    assert.deepEqual(registeredEvents, expectedEvents);
-
-    emptyArray(registeredEvents);
-    emptyArray(expectedEvents);
-
-    Component.removeInstance(component);
     Component.removeInstance(componentWithConnector);
 });
 
@@ -477,35 +405,6 @@ skip('HighchartsComponent resizing', function (assert) {
 
     const { width, height } = component.element.style;
     assert.ok(true);
-});
-
-skip('Chart update in HighchartsComponent', function (assert) {
-    const parent = document.createElement('div');
-    parent.id = 'test';
-    parent.style.width = '500px';
-    document.getElementById('container').appendChild(parent);
-
-    const component = new HighchartsComponent({
-        parentElement: parent,
-        chartOptions: {
-            title: {
-                text: 'test'
-            },
-            series: [
-                {
-                    data: [1, 2, 3]
-                }
-            ]
-        }
-    }).render();
-
-    component.chart.update({
-        title: {
-            text: 'updated'
-        }
-    });
-
-    assert.strictEqual(component.options.chartOptions.title.text, 'updated');
 });
 
 skip('toJSON', function (assert) {
