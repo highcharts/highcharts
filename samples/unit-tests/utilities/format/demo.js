@@ -225,7 +225,7 @@ QUnit.module('Format', () => {
 
     });
 
-    QUnit.test('foreach helper', assert => {
+    QUnit.test('each helper', assert => {
         assert.strictEqual(
             format(
                 `{#each point.items}
@@ -301,6 +301,49 @@ QUnit.module('Format', () => {
             ),
             '',
             'Division by zero'
+        );
+    });
+
+    QUnit.test('Relational helpers', assert => {
+        assert.strictEqual(
+            format(
+                '{#if (lt one 2)}true{/if}',
+                {
+                    one: 1
+                }
+            ),
+            'true',
+            'Less than'
+        );
+        assert.strictEqual(
+            format(
+                '{#if (lt one 1)}true{/if}',
+                {
+                    one: 1
+                }
+            ),
+            '',
+            'Less than'
+        );
+        assert.strictEqual(
+            format(
+                '{#if (le one 1)}true{/if}',
+                {
+                    one: 1
+                }
+            ),
+            'true',
+            'Less than or equal'
+        );
+        assert.strictEqual(
+            format(
+                '{#if (le one 2)}true{/if}',
+                {
+                    one: 1
+                }
+            ),
+            'true',
+            'Less than or equal'
         );
     });
 

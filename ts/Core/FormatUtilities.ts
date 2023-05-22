@@ -50,6 +50,8 @@ const helpers: Record<string, Function> = {
     // Built-in helpers
     add: (a: number, b: number): number => a + b,
     divide: (a: number, b: number): number|string => (b !== 0 ? a / b : ''),
+    // eslint-disable-next-line eqeqeq
+    eq: (a: unknown, b: unknown): boolean => a == b,
     each: function (arr: string[]|object[]|undefined): string|undefined {
         const match = arguments[arguments.length - 1];
         return arr?.map((item, i): string => format(match.body, extend(
@@ -60,11 +62,17 @@ const helpers: Record<string, Function> = {
             }
         ))).join('');
     },
+    ge: (a: number, b: number): boolean => a >= b,
+    gt: (a: number, b: number): boolean => a > b,
     'if': function (condition: string[]|undefined): string|undefined {
         const match = arguments[arguments.length - 1];
         return (condition ? format(match.body, match.ctx) : void 0);
     },
+    le: (a: number, b: number): boolean => a <= b,
+    lt: (a: number, b: number): boolean => a < b,
     multiply: (a: number, b: number): number => a * b,
+    // eslint-disable-next-line eqeqeq
+    ne: (a: unknown, b: unknown): boolean => a != b,
     subtract: (a: number, b: number): number => a - b,
     unless: function (condition: string[]|undefined): string|undefined {
         const match = arguments[arguments.length - 1];
@@ -338,6 +346,11 @@ function format(str = '', ctx: any, chart?: Chart): string {
         // Common expression
         } else if (!currentMatch.isBlock) {
             matches.push(currentMatch);
+        }
+
+        // Evaluate sub-matches one by one to prevent orphaned block closers
+        if (subMatch) {
+            break;
         }
     }
 
