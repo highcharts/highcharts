@@ -1,11 +1,8 @@
 .highcharts-figure {
-    width: 550px;
+    max-width: 550px;
+    min-width: 360px;
     margin: 0 auto;
     position: relative;
-}
-
-#container {
-    height: 550px;
 }
 
 #sonify {
@@ -17,6 +14,7 @@
     border: 1px solid #25386f;
     color: #25386f;
     font-size: 0.9rem;
+    line-height: 1rem;
     min-height: 25px;
     font-weight: 500;
     border-radius: 4px;

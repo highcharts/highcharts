@@ -34,7 +34,7 @@ The mapping function can be set for any mapping parameter using the [mapFunction
     mapping: {
         volume: 0.7,
         pitch: {
-            mapTo: 'y,
+            mapTo: 'y',
             mapFunction: 'logarithmic'
         }
     }
@@ -78,7 +78,7 @@ Note pitches can be declared both as numbers or as human readable strings. As nu
     mapping: {
         volume: 0.7,
         pitch: {
-            mapTo: 'y,
+            mapTo: 'y',
             min: 'c3',
             max: 'g7'
         }
@@ -106,7 +106,7 @@ The scale is defined as an array of note offsets from the root note, or alternat
     mapping: {
         volume: 0.7,
         pitch: {
-            mapTo: 'y,
+            mapTo: 'y',
             min: 'c3',
             max: 'g7',
             scale: Highcharts.sonification.Scales.minor

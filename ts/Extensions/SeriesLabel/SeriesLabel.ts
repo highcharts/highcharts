@@ -864,7 +864,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
         for (i = 0; i < len; i += 1) {
 
             const point = points[i],
-                { plotX, plotY } = point;
+                { plotX, plotY, plotHigh } = point;
 
             if (isNumber(plotX) && isNumber(plotY)) {
 
@@ -878,8 +878,15 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
 
                 if (onArea) {
                     // Vertically centered inside area
+
+                    if (plotHigh) {
+                        ctlPoint.plotY = plotHigh;
+                        ctlPoint.chartY = paneTop + plotHigh;
+                    }
+
                     ctlPoint.chartCenterY = paneTop + (
-                        plotY + pick(point.yBottom, translatedThreshold)
+                        (plotHigh ? plotHigh : plotY) +
+                        pick(point.yBottom, translatedThreshold)
                     ) / 2;
                 }
 

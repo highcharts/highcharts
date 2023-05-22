@@ -40,7 +40,7 @@
     height: 0;
     transition: height 0.4s, border 0.2s, background-color 0.2s, outline 0.15s;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(100, 100, 150, 0.3) ;
+    box-shadow: 0 0 10px rgba(100, 100, 150, 0.3);
     visibility: hidden;
 }
 
@@ -62,9 +62,10 @@
     color: #25386f;
     font-size: 0.9rem;
     max-height: 1.8rem;
+    line-height: 1rem;
     font-weight: 500;
     border-radius: 4px;
-    padding: 0.375rem 0;
+    padding: 0;
     width: 7rem;
     margin-bottom: 0.25rem;
     margin-top: 0.5rem;

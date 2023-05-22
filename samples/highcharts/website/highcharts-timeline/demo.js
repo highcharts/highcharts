@@ -1,46 +1,33 @@
-// Get the turnover. Read the table from the HTML, sort by the joined/left
-// events and keep track of the number of employees.
-// function getTurnover() {
-//     let employees = 0;
-//     return [].reduce.call(
-//         document.getElementById('turnover').querySelectorAll('tr'),
-//         (turnover, tr) => {
-//             const dateJoined = Date.parse(tr.children[1].textContent);
-//             if (!isNaN(dateJoined)) {
-//                 turnover.push({
-//                     x: dateJoined,
-//                     name: `${tr.children[0].textContent} joined`,
-//                     accumulate: 1,
-//                     image: tr.children[3].textContent || null
-//                 });
-//             } else {
-//                 turnover.push({
-//                     x: Date.UTC(2023, 1, 28),
-//                     name: null,
-//                     accumulate: null,
-//                     image: null
-//                 });
-//             }
-//             const dateLeft = Date.parse(tr.children[2].textContent);
-//             if (!isNaN(dateLeft)) {
-//                 turnover.push({
-//                     x: dateLeft,
-//                     name: `${tr.children[0].textContent} left`,
-//                     accumulate: -1,
-//                     image: null
-//                 });
-//             }
+// Create a custom symbol for the event labels
+Highcharts.SVGRenderer.prototype.symbols.eventLabel = (
+    x,
+    y,
+    width,
+    height,
+    options
+) => {
+    const r = 3,
+        d = Highcharts.SVGRenderer.prototype.symbols
+            .callout(x, y, width, height, options),
+        { anchorX, anchorY } = options;
 
-//             return turnover;
-//         },
-//         [])
-//         .sort((a, b) => a.x - b.x)
-//         .map(event => Object.assign(
-//             event, {
-//                 y: (employees += event.accumulate)
-//             }
-//         ));
-// }
+    // Border radius
+    options.r = r;
+
+    // Replace the chevron with a riser and a circle at the anchor point
+    if (
+        typeof anchorY === 'number' &&
+        anchorY - height > 8 &&
+        d.length === 13
+    ) {
+        d[5][1] = anchorX + 1;
+        d[6] = ['L', anchorX + 1, anchorY - r + 1];
+        d.splice(7, 0, ['A', 3, 3, 1, 1, 1, anchorX - 1, anchorY - r + 1]);
+        d[8][1] = anchorX - 1;
+    }
+
+    return d;
+};
 
 const employees = [{ x: 1257033600000, y: 1 },
     { x: 1290211200000, y: 2 },
@@ -282,14 +269,13 @@ const revData = [
     [1672444800000, 0]
 ];
 
-const imgPath = 'https://cdn.rawgit.com/highcharts/highcharts/0b81a74ecd2fbd2e9b24489bf476f8baecc218e1/samples/graphics/homepage/';
 const options = {
     chart: {
         height: 600,
         styledMode: true,
         scrollablePlotArea: {
             minWidth: 700,
-            scrollPositionX: 0
+            scrollPositionX: 1
         }
     },
     credits: {
@@ -315,7 +301,6 @@ const options = {
                 className: 'time-1',
                 label: {
                     text: 'Torstein\'s<br>basement',
-                    useHTML: true,
                     style: {
                         color: '#000'
                     },
@@ -355,17 +340,6 @@ const options = {
                     y: 20
                 }
             }]
-        },
-        {
-            type: 'datetime',
-            minTickInterval: 365 * 24 * 36e5,
-            max: Date.UTC(2019, 11, 31),
-            labels: {
-                align: 'left',
-                style: {
-                    fontSize: '16px'
-                }
-            }
         }
     ],
     title: {
@@ -373,7 +347,9 @@ const options = {
     },
     tooltip: {
         outside: true,
-        className: 'tip'
+        useHTML: true,
+        pointFormat: '<p class="tip">{point.text}</p>',
+        headerFormat: '<p class="tipheader">{point.key}</p>'
     },
     yAxis: [{
         max: 100,
@@ -421,8 +397,7 @@ const options = {
             clip: false,
             tooltip: {
                 xDateFormat: '%B %e, %Y'
-            },
-            allowOverlapX: false
+            }
         }
     },
     series: [{
@@ -431,25 +406,24 @@ const options = {
         className: 'revenue',
         id: 'revenue',
         data: revData,
-        // xAxis: 1,
         tooltip: {
             xDateFormat: '%B %Y',
             valueSuffix: ' % of best month'
         }
     }, {
         yAxis: 1,
-        // xAxis: 1,
         name: 'Highsoft employees',
         id: 'employees',
         className: 'employees',
         type: 'area',
         step: 'left',
         tooltip: {
-            headerFormat: '<span style="font-size: 11px;color:#f0f0f0">{point.x:%B %e, %Y}</span>',
-            pointFormat: '{point.name}<br><b>{point.y}</b>',
-            valueSuffix: ' employees'
+            valueSuffix: ' employees',
+            useHTML: true,
+            pointFormat: '<p class="tip"><b>{point.y}</b></p>',
+            headerFormat: '<p class="tipheader">{point.x:%B %e, %Y}</p>'
         },
-        data: employees// getTurnover()
+        data: employees
 
     }
     ],
@@ -488,47 +462,34 @@ if (Highcharts.Series.types.flags) {
         // 0
         {
             type: 'flags',
-            name: 'Highmaps',
+            name: 'Products',
             className: 'product',
             color: '#333333',
-            shape: 'url(' + imgPath + 'product.png)',
-            tooltip: {
-                distance: 60
-            },
+            shape: 'eventLabel',
             data: [{
+                x: Date.UTC(2011, 9, 18),
+                text: 'Highcharts Stock version 1.0 released',
+                title: 'Stock'
+            },
+            {
                 x: Date.UTC(2014, 5, 13),
                 text: 'Highmaps version 1.0 released',
                 title: 'Maps'
+            }, {
+                x: Date.UTC(2018, 9, 17),
+                text: 'Gantt version 1.0 released',
+                title: 'Gantt'
             }],
+            y: -70,
             showInLegend: false
         },
         // 1
         {
             type: 'flags',
-            name: 'Highcharts',
+            name: 'Releases',
             color: '#333333',
-            shape: 'url(' + imgPath + 'version.png)',
-            className: 'product',
-            point: {
-                events: {
-                    mouseOver: function () {
-                        const chart = this.series.chart;
-                        if (this.title === 'Stock') {
-                            chart.update({
-                                tooltip: {
-                                    distance: 60
-                                }
-                            });
-                        } else {
-                            chart.update({
-                                tooltip: {
-                                    distance: 16
-                                }
-                            });
-                        }
-                    }
-                }
-            },
+            shape: 'eventLabel',
+            className: 'release',
             data: [{
                 x: Date.UTC(2009, 10, 27),
                 text: 'Highcharts version 1.0 released',
@@ -543,12 +504,6 @@ if (Highcharts.Series.types.flags) {
                 x: Date.UTC(2010, 10, 23),
                 text: 'Dynamically resize and scale to text labels',
                 title: '2.1'
-            },
-            {
-                x: Date.UTC(2011, 9, 18),
-                text: 'Highcharts Stock version 1.0 released',
-                title: 'Stock',
-                shape: 'url(' + imgPath + 'product.png)'
             },
             {
                 x: Date.UTC(2012, 7, 24),
@@ -596,6 +551,7 @@ if (Highcharts.Series.types.flags) {
                 title: '10.0'
             }
             ],
+            y: -32,
             showInLegend: false
         },
         // 2
@@ -615,10 +571,9 @@ if (Highcharts.Series.types.flags) {
         // 3
         {
             type: 'flags',
-            useHTML: true,
             name: 'Events',
             className: 'award',
-            shape: 'url(' + imgPath + 'award.png)',
+            shape: 'eventLabel',
             data: [{
                 x: Date.UTC(2012, 10, 1),
                 text: 'Highsoft won "Entrepeneur of the Year" in Sogn og Fjordane, Norway',
@@ -660,27 +615,10 @@ if (Highcharts.Series.types.flags) {
             },
             textAlign: 'center',
             onSeries: 'revenue',
-            allowOverlapX: false,
-            showInLegend: false
-        },
-        // 4
-        {
-            type: 'flags',
-            name: 'Gantt',
-            className: 'product',
-            color: '#333333',
-            shape: 'url(' + imgPath + 'product.png)',
-            tooltip: {
-                distance: 60
-            },
-            data: [{
-                x: Date.UTC(2018, 9, 17),
-                text: 'Gantt version 1.0 released',
-                title: 'Gantt'
-            }],
+            allowOverlapX: true,
             showInLegend: false
         }
 
     );
 }
-Highcharts.chart('timeline', options);
+Highcharts.chart('container', options);

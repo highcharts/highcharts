@@ -7,7 +7,7 @@ For example you may map Y-values to the instrument pitch, to result in a sound t
 
 The below chart demonstrates some of the different audio parameters you can map to with the sonification module, and what they do:
 
-<iframe style="width: 100%; height: 820px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/mapping-overview allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 822px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/mapping-overview allow="fullscreen"></iframe>
 
 Configuration
 ------------

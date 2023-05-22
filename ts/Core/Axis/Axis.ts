@@ -1725,8 +1725,24 @@ class Axis {
             axis.beforePadding();
         }
 
-        // adjust min and max for the minimum range
+        // Adjust min and max for the minimum range
         axis.adjustForMinRange();
+
+        // Handle options for floor, ceiling, softMin and softMax (#6359)
+        if (!isNumber(axis.userMin)) {
+            if (
+                isNumber(options.softMin) && options.softMin < (axis.min as any)
+            ) {
+                axis.min = hardMin = options.softMin; // #6894
+            }
+        }
+        if (!isNumber(axis.userMax)) {
+            if (
+                isNumber(options.softMax) && options.softMax > (axis.max as any)
+            ) {
+                axis.max = hardMax = options.softMax; // #6894
+            }
+        }
 
         // Pad the values to get clear of the chart's edges. To avoid
         // tickInterval taking the padding into account, we do this after
@@ -1750,26 +1766,11 @@ class Axis {
             }
         }
 
-        // Handle options for floor, ceiling, softMin and softMax (#6359)
-        if (!isNumber(axis.userMin)) {
-            if (
-                isNumber(options.softMin) && options.softMin < (axis.min as any)
-            ) {
-                axis.min = hardMin = options.softMin; // #6894
-            }
-            if (isNumber(options.floor)) {
-                axis.min = Math.max(axis.min as any, options.floor);
-            }
+        if (!isNumber(axis.userMin) && isNumber(options.floor)) {
+            axis.min = Math.max(axis.min as any, options.floor);
         }
-        if (!isNumber(axis.userMax)) {
-            if (
-                isNumber(options.softMax) && options.softMax > (axis.max as any)
-            ) {
-                axis.max = hardMax = options.softMax; // #6894
-            }
-            if (isNumber(options.ceiling)) {
-                axis.max = Math.min(axis.max as any, options.ceiling);
-            }
+        if (!isNumber(axis.userMax) && isNumber(options.ceiling)) {
+            axis.max = Math.min(axis.max as any, options.ceiling);
         }
 
         // When the threshold is soft, adjust the extreme value only if the data
@@ -3416,6 +3417,7 @@ class Axis {
             hasData = axis.hasData(),
             axisTitleOptions = options.title,
             labelOptions = options.labels,
+            hasCrossing = isNumber(options.crossing),
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
             directionFactor = [-1, 1, 1, -1][side],
@@ -3487,6 +3489,7 @@ class Axis {
             );
             if (pick(
                 labelOptions.reserveSpace,
+                hasCrossing ? false : null,
                 axis.labelAlign === 'center' ? true : null,
                 axis.reserveSpaceDefault
             )) {
@@ -3519,7 +3522,11 @@ class Axis {
         ) {
             axis.addTitle(showAxis);
 
-            if (showAxis && axisTitleOptions.reserveSpace !== false) {
+            if (
+                showAxis &&
+                !hasCrossing &&
+                axisTitleOptions.reserveSpace !== false
+            ) {
                 axis.titleOffset = titleOffset =
                     (axis.axisTitle as any).getBBox()[
                         horiz ? 'height' : 'width'
@@ -3833,6 +3840,7 @@ class Axis {
             alternateBands = axis.alternateBands,
             stackLabelOptions = options.stackLabels,
             alternateGridColor = options.alternateGridColor,
+            crossing = options.crossing,
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,
             showAxis = axis.showAxis,
@@ -3853,6 +3861,18 @@ class Axis {
                 tick.isActive = false;
             });
         });
+
+        // Crossing
+        if (isNumber(crossing)) {
+            const otherAxis = this.isXAxis ? chart.yAxis[0] : chart.xAxis[0],
+                directionFactor = [1, -1, -1, 1][this.side];
+            if (otherAxis) {
+                this.offset = directionFactor * otherAxis.toPixels(
+                    crossing,
+                    true
+                );
+            }
+        }
 
         // If the series has data draw the ticks. Else only the line and title
         if (axis.hasData() || isLinked) {

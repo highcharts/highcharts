@@ -310,13 +310,17 @@ class AreaSeries extends LineSeries {
             }
 
             if (!series.chart.styledMode) {
-                attribs.fill = pick(
-                    prop[3],
-                    color(prop[2])
-                        .setOpacity(pick(options.fillOpacity, 0.75))
-                        .get()
-                );
+                // If there is fillColor defined for the area, set it
+                if (prop[3]) {
+                    attribs.fill = prop[3];
+                } else {
+                    // Otherwise, we set it to the series color and add
+                    // fill-opacity (#18939)
+                    attribs.fill = prop[2];
+                    attribs['fill-opacity'] = pick(options.fillOpacity, 0.75);
+                }
             }
+
             area[verb](attribs);
 
             area.startX = areaPath.xMap;

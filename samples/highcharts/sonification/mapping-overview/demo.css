@@ -2,6 +2,7 @@
     max-width: 900px;
     min-width: 320px;
     margin: 0 auto;
+    margin-top: 5px;
 }
 
 .hc-crosshair {
@@ -64,8 +65,8 @@ input {
     border: none;
     border-radius: 7px;
     text-decoration: none;
-    background: #0059DD;
-    color: #ffffff;
+    background: #0059dd;
+    color: #fff;
     cursor: pointer;
 }
 
