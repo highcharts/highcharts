@@ -1,6 +1,6 @@
 ---
- name: Highcharts Demo
+ name: Options lang demo
  authors:
-   - Pawel Lysy
+   - Sebastian Bochan
  js_wrap: b
 ...
