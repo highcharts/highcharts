@@ -37,7 +37,11 @@ import type {
 } from '../Options';
 import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
-import type { ChartPanningOptions } from './ChartOptions';
+import type {
+    ChartPanningOptions,
+    ChartResetZoomButtonOptions,
+    ChartZoomingOptions
+} from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
@@ -360,6 +364,7 @@ class Chart {
     public userOptions: Partial<Options> = void 0 as any;
     public xAxis: Array<AxisType> = void 0 as any;
     public yAxis: Array<AxisType> = void 0 as any;
+    public zooming: ChartZoomingOptions = void 0 as any;
 
     /* *
      *
@@ -392,6 +397,35 @@ class Chart {
         } else {
             this.init(a as any, b as any);
         }
+    }
+
+    /**
+     * Function setting zoom options after chart init and after chart update.
+     * Offers support for deprecated options.
+     *
+     * @private
+     * @function Highcharts.Chart#setZoomOptions
+     */
+    public setZoomOptions(): void {
+        const chart = this,
+            options = chart.options.chart,
+            zooming = options.zooming;
+
+        chart.zooming = {
+            ...zooming,
+            type: pick(options.zoomType, zooming.type),
+            key: pick(options.zoomKey, zooming.key),
+            pinchType: pick(options.pinchType, zooming.pinchType),
+            singleTouch: pick(
+                options.zoomBySingleTouch,
+                zooming.singleTouch,
+                false
+            ),
+            resetButton: merge(
+                zooming.resetButton,
+                options.resetZoomButton
+            )
+        };
     }
 
     /**
@@ -470,29 +504,6 @@ class Chart {
 
             this.callback = callback;
             this.isResizing = 0;
-
-            const zooming = optionsChart.zooming = optionsChart.zooming || {};
-
-            // Other options have no default so just pick
-            if (userOptions.chart && !userOptions.chart.zooming) {
-                zooming.resetButton = optionsChart.resetZoomButton;
-            }
-            zooming.key = pick(
-                zooming.key,
-                optionsChart.zoomKey
-            );
-            zooming.pinchType = pick(
-                zooming.pinchType,
-                optionsChart.pinchType
-            );
-            zooming.singleTouch = pick(
-                zooming.singleTouch,
-                optionsChart.zoomBySingleTouch
-            );
-            zooming.type = pick(
-                zooming.type,
-                optionsChart.zoomType
-            );
 
             /**
              * The options structure for the chart after merging
@@ -595,6 +606,8 @@ class Chart {
             chart.yAxis = [];
 
             chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
+
+            this.setZoomOptions();
 
             // Fire after init but before first render, before axes and series
             // have been initialized.
@@ -858,7 +871,7 @@ class Chart {
         }
 
         // Adjust title layout (reflow multiline text)
-        chart.layOutTitles();
+        chart.layOutTitles(false);
 
         // link stacked series
         i = series.length;
@@ -1224,17 +1237,13 @@ class Chart {
                 })
                 .add();
 
-            // Update methods, shortcut to Chart.setTitle, Chart.setSubtitle and
-            // Chart.setCaption
+            // Update methods, relay to `applyDescription`
             elem.update = function (
-                updateOptions: (Chart.DescriptionOptionsType)
+                updateOptions: (Chart.DescriptionOptionsType),
+                redraw?: boolean
             ): void {
-                const fn = {
-                    title: 'setTitle',
-                    subtitle: 'setSubtitle',
-                    caption: 'setCaption'
-                }[name];
-                (chart as any)[fn](updateOptions);
+                chart.applyDescription(name, updateOptions);
+                chart.layOutTitles(redraw);
             };
 
             // Presentational
@@ -1278,7 +1287,7 @@ class Chart {
      * @param {boolean} [redraw=true]
      * @emits Highcharts.Chart#event:afterLayOutTitles
      */
-    public layOutTitles(redraw?: boolean): void {
+    public layOutTitles(redraw = true): void {
         const titleOffset = [0, 0, 0],
             renderer = this.renderer,
             spacingBox = this.spacingBox;
@@ -1361,7 +1370,7 @@ class Chart {
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
             // Redraw if necessary (#2719, #2744)
-            if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
+            if (this.hasRendered && redraw && this.isDirtyBox) {
                 this.redraw();
             }
         }
@@ -1744,7 +1753,7 @@ class Chart {
 
     /**
      * Reflows the chart to its container. By default, the Resize Observer is
-     * attached to the chart's div which allows to reflows the he chart
+     * attached to the chart's div which allows to reflows the chart
      * automatically to its container, as per the
      * [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
      * option.
@@ -3138,8 +3147,10 @@ class Chart {
         const optionsChart = options.chart;
 
         if (optionsChart) {
-
             merge(true, chart.options.chart, optionsChart);
+
+            // Add support for deprecated zooming options like zoomType, #17861
+            this.setZoomOptions();
 
             // Setter function
             if ('className' in optionsChart) {
@@ -3447,7 +3458,7 @@ class Chart {
 
         const chart = this,
             lang = defaultOptions.lang,
-            btnOptions = chart.options.chart.zooming.resetButton as any,
+            btnOptions = chart.zooming.resetButton as any,
             theme = btnOptions.theme,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||

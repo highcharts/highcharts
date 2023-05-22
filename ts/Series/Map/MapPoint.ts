@@ -162,15 +162,11 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
                 propMiddleLat = properties && properties['hc-middle-lat'];
 
             if (mapView && isNumber(propMiddleLon) && isNumber(propMiddleLat)) {
-                const newPos = mapView.lonLatToProjectedUnits({
-                    lon: propMiddleLon,
-                    lat: propMiddleLat
-                });
-
-                if (newPos) {
-                    bounds.midX = newPos.x;
-                    bounds.midY = newPos.y;
-                }
+                const projectedPoint = projection.forward(
+                    [propMiddleLon, propMiddleLat]
+                );
+                bounds.midX = projectedPoint[0];
+                bounds.midY = projectedPoint[1];
             } else {
                 const propMiddleX = properties && properties['hc-middle-x'],
                     propMiddleY = properties && properties['hc-middle-y'];

@@ -2492,6 +2492,8 @@ const defaultOptions: Options = {
          *         Background and border demo
          * @sample {highmaps} highcharts/css/tooltip-border-background/
          *         Tooltip in styled mode
+         *
+         * @type {number}
          */
         borderWidth: void 0,
 

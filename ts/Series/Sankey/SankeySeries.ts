@@ -46,6 +46,7 @@ import TU from '../TreeUtilities.js';
 const { getLevelOptions } = TU;
 import U from '../../Core/Utilities.js';
 const {
+    clamp,
     extend,
     isObject,
     merge,
@@ -656,11 +657,13 @@ class SankeySeries extends ColumnSeries {
                 width = node.options.width || options.width || nodeWidth,
                 height = node.options.height || options.height || nodeHeight;
 
-            const r = relativeLength((
+            // border radius should not greater than half the height of the node
+            // #18956
+            const r = clamp(relativeLength((
                 typeof borderRadius === 'object' ?
                     borderRadius.radius :
                     borderRadius || 0
-            ), width);
+            ), width), 0, nodeHeight / 2);
 
             if (chart.inverted) {
                 x = nodeLeft - nodeWidth;

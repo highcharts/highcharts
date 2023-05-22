@@ -1,0 +1,46 @@
+* Common use-cases:
+  - ABS ✅
+  - AND ✅
+  - AVERAGE ✅
+  - AVERAGEA ✅
+  - AVERAGEIF ⏳
+  - AVERAGEIFS ⏳
+  - COUNT ✅
+  - COUNTA ✅
+  - COUNTIF ⏳
+  - COUNTIFS ⏳
+  - IF ✅
+  - IFS ⏳
+  - ISNA ✅
+  - MAX ✅
+  - MAXIFS ⏳
+  - MEDIAN ✅
+  - MIN ✅
+  - MINIFS ⏳
+  - MOD ✅
+  - MODE ✅
+  - MODE.MULT ✅
+  - MODE.SNGL ✅
+  - NOT ✅
+  - OR ✅
+  - PRODUCT ✅
+  - STDEV ⏳
+  - STDEVP ⏳
+  - SUBTOTAL-1
+  - SUBTOTAL-2
+  - SUBTOTAL-3
+  - SUBTOTAL-4
+  - SUBTOTAL-5
+  - SUBTOTAL-6
+  - SUBTOTAL-7 ⏳
+  - SUBTOTAL-8 ⏳
+  - SUBTOTAL-9
+  - SUBTOTAL-10 ⏳
+  - SUBTOTAL-11 ⏳
+  - SUM ✅
+  - SUMIF ⏳
+  - SUMIFS ⏳
+  - SWITCH ⏳
+  - VAR ⏳
+  - VARP ⏳
+  - XOR ✅

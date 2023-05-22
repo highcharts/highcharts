@@ -2376,7 +2376,7 @@ Point.prototype.getDropValues = function (
         // If we are updating a single prop, and it has a validation function
         // for the prop, run it. If it fails, don't update the value.
         if (
-            newVal &&
+            isNumber(newVal) &&
             !(
                 updateSingleProp &&
                 val.propValidate &&
@@ -3044,7 +3044,7 @@ Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
     // Check whether the panKey and zoomKey are set in chart.userOptions
     const chartOptions = this.options.chart || {},
         panKey = chartOptions.panKey && chartOptions.panKey + 'Key',
-        zoomKey = chartOptions.zooming.key && chartOptions.zooming.key + 'Key';
+        zoomKey = this.zooming.key && this.zooming.key + 'Key';
 
     return ((e as any)[zoomKey as any] || (e as any)[panKey as any]);
 };

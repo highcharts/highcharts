@@ -16,6 +16,7 @@
  *
  * */
 
+import type CSSObject from '../CSSObject';
 import type HTMLElement from './HTMLElement';
 import type { HTMLDOMElement } from '../DOMElementType';
 
@@ -279,11 +280,6 @@ class HTMLRenderer extends SVGRenderer {
                                 top: (parentGroup.translateY || 0) + 'px',
                                 display: parentGroup.display,
                                 opacity: parentGroup.opacity, // #5075
-                                cursor: parentGroupStyles.cursor, // #6794
-                                pointerEvents: (
-                                    // #5595
-                                    parentGroupStyles.pointerEvents
-                                ),
                                 visibility: parentGroup.visibility
 
                             // the top group is appended to container
@@ -313,6 +309,27 @@ class HTMLRenderer extends SVGRenderer {
                                     htmlGroup.className = value;
                                 };
                             }(htmlGroup as any)),
+
+                            // Extend the parent group's css function by
+                            // updating the shadow div counterpart with the same
+                            // style.
+                            css: function (styles: CSSObject): HTMLElement {
+                                wrapper.css.call(parentGroup, styles);
+                                (
+                                    [
+                                        // #6794
+                                        'cursor',
+                                        // #5595, #18821
+                                        'pointerEvents'
+                                    ] as (keyof CSSObject)[]
+                                ).forEach((prop): void => {
+                                    if (styles[prop]) {
+                                        htmlGroupStyle[prop] = styles[prop];
+                                    }
+                                });
+                                return parentGroup;
+                            },
+
                             on: function (): HTMLElement {
                                 if (parents[0].div) { // #6418
                                     wrapper.on.apply({
@@ -328,6 +345,10 @@ class HTMLRenderer extends SVGRenderer {
                         if (!parentGroup.addedSetters) {
                             addSetters(parentGroup);
                         }
+
+                        // Apply pre-existing style
+                        parentGroup.css(parentGroupStyles);
+
                     });
 
                 }
