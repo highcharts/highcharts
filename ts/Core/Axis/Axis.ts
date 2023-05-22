@@ -889,7 +889,7 @@ class Axis {
                 (isNumber(pointPlacement) ? localA * pointPlacement : 0);
         }
 
-        return correctFloat(returnValue);
+        return returnValue;
     }
 
     /**
