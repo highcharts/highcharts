@@ -2,7 +2,7 @@ const { board } = Dashboards;
 const CSVConnector = Dashboards.DataConnector.types.CSV;
 
 // A shared connector
-const connector = new CSVConnector(undefined, {
+const connector = new CSVConnector({
     csv: `$GME,$AMC,$NOK
  4,5,6
  1,5,2

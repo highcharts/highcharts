@@ -256,7 +256,7 @@ test('HighchartsComponent events', function (assert) {
 
 test('HTMLComponent events', function (assert) {
     const parentElement = document.createElement('div');
-    const connector = new CSVConnector(undefined, {
+    const connector = new CSVConnector({
         csv: '1,2,3',
         firstRowAsNames: false
     });
