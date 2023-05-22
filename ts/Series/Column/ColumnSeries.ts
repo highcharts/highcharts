@@ -535,6 +535,9 @@ class ColumnSeries extends Series {
                 barX = plotX + seriesXOffset,
                 barW = seriesBarW;
 
+            point.negative = defined(point.y) &&
+                point.y < (series.options.threshold || 0);
+
             // Handle options.minPointLength
             if (minPointLength && Math.abs(barH) < minPointLength) {
                 barH = minPointLength;
@@ -556,6 +559,7 @@ class ColumnSeries extends Series {
                     (dataMin !== dataMax || (yAxis.max || 0) <= threshold)
                 ) {
                     up = !up;
+                    point.negative = !point.negative;
                 }
 
                 // If stacked...

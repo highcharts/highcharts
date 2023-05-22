@@ -1,20 +1,18 @@
 QUnit.test(
     'Negative color should be updated with point\'s value (#4267)',
     function (assert) {
-        var color = '#00ff00',
+        const color = '#00ff00',
             negativeColor = '#ff0000',
-            chart = $('#container')
-                .highcharts({
-                    series: [
-                        {
-                            type: 'column',
-                            data: [5, 10, -5, -10],
-                            color: color,
-                            negativeColor: negativeColor
-                        }
-                    ]
-                })
-                .highcharts(),
+            chart = Highcharts.chart('container', {
+                series: [
+                    {
+                        type: 'column',
+                        data: [5, 10, -5, -10],
+                        color: color,
+                        negativeColor: negativeColor
+                    }
+                ]
+            }),
             points = chart.series[0].points;
 
         chart.series[0].setData([5, -10, -5, 10]);
@@ -38,6 +36,22 @@ QUnit.test(
             points[3].graphic.attr('fill'),
             color,
             'Positive color'
+        );
+
+        const negativeArrBefore =  chart.series[0].points.map(function (p) {
+            return p.negative;
+        });
+
+        chart.series[0].update({
+            zoneAxis: 'x'
+        });
+
+        assert.deepEqual(
+            chart.series[0].points.map(function (p) {
+                return p.negative;
+            }),
+            negativeArrBefore,
+            'Points below zThreshold should have point.negative set to false.'
         );
     }
 );
