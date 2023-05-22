@@ -6,7 +6,7 @@
 *
 */
 
-Dashboards.boardAsync('container', {
+Dashboards.board('container', {
     dataPool: {
         connectors: [{
             name: 'connector-1',
@@ -96,7 +96,7 @@ Dashboards.boardAsync('container', {
     }
 
     ]
-});
+}, true);
 
 // window.addEventListener('resize', e => {
 //     board.mountedComponents.forEach(({ component }) => {

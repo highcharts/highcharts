@@ -53,7 +53,7 @@ namespace Bindings {
 
     export interface MountedComponent {
         cell: Cell;
-        component: Component;
+        component: ComponentType;
         options: Partial<Component.ComponentOptions>;
     }
 
@@ -99,7 +99,7 @@ namespace Bindings {
         const componentContainer = cell.container;
 
         const ComponentClass =
-            ComponentRegistry.getComponent(options.type) as Class<Component>;
+            ComponentRegistry.getComponent(options.type) as Class<ComponentType>;
 
         if (!ComponentClass) {
             return;

@@ -192,6 +192,7 @@ class Sync {
         this.registeredSyncHandlers = {};
         this.registeredSyncEmitters = {};
         this.isSyncing = false;
+        this.listeners = [];
     }
 
     /**
@@ -257,6 +258,8 @@ class Sync {
 
             });
         this.isSyncing = true;
+
+        this.listeners.push(component.on('update', (): void => this.stop()));
     }
 
     /**
@@ -264,6 +267,8 @@ class Sync {
      */
     public stop(): void {
         const {
+            component,
+            listeners,
             registeredSyncHandlers,
             registeredSyncEmitters
         } = this;
@@ -279,7 +284,18 @@ class Sync {
         });
 
         this.isSyncing = false;
+
+        for (let i = 0, iEnd = listeners.length; i < iEnd; ++i) {
+            listeners[i]();
+        }
+
+        this.listeners.length = 0;
+        this.listeners.push(component.on('afterUpdate', (): void => {
+            this.start();
+        }));
     }
+
+    private listeners: Array<Function>;
 
 }
 

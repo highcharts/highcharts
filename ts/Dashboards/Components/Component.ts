@@ -378,7 +378,7 @@ abstract class Component {
 
     }
 
-    public async initConnectors(): Promise<this> {
+    public async initConnector(): Promise<this> {
         if (
             this.options.connector?.name &&
             this.connectorName !== this.options.connector.name
@@ -585,6 +585,9 @@ abstract class Component {
      * @internal
      */
     public setConnector(connector: Component.ConnectorTypes | undefined): this {
+
+        fireEvent(this, 'setConnector', { connector });
+
         // Clean up old event listeners
         while (this.tableEvents.length) {
             const eventCallback = this.tableEvents.pop();
@@ -631,7 +634,8 @@ abstract class Component {
             }
         }
 
-        fireEvent(this, 'connectorAttached', { connector });
+        fireEvent(this, 'afterSetConnector', { connector });
+
         return this;
     }
 
@@ -1134,6 +1138,7 @@ namespace Component {
      */
     /** @internal */
     export type EventTypes =
+        SetConnectorEvent |
         ResizeEvent |
         UpdateEvent |
         TableChangedEvent |
@@ -1143,6 +1148,9 @@ namespace Component {
         JSONEvent |
         MessageEvent |
         PresentationModifierEvent;
+
+    export type SetConnectorEvent =
+        Event<'setConnector'|'afterSetConnector', {}>;
 
     /** @internal */
     export type ResizeEvent = Event<'resize', {

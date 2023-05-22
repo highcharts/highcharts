@@ -21,7 +21,7 @@ const chartOptions = {
     }
 };
 
-const board = Dashboards.boardAsync('container', {
+const board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
             type: 'CSV',
@@ -94,4 +94,4 @@ const board = Dashboards.boardAsync('container', {
             }
         }
     ]
-});
+}, true);

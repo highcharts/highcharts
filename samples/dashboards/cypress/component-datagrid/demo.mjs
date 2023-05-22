@@ -17,7 +17,7 @@ PluginHandler.addPlugin(DataGridPlugin);
 
 const csvData = document.getElementById('csv').innerText;
 
-Dashboards.boardAsync('container', {
+Dashboards.board('container', {
     dataPool: {
         connectors: [{
             name: 'connector-1',
@@ -87,4 +87,4 @@ Dashboards.boardAsync('container', {
             }
         }
     ]
-});
+}, true);

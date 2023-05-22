@@ -569,15 +569,18 @@ class HighchartsComponent extends Component {
      *
      */
     public async update(
-        options: Partial<HighchartsComponent.Options>
+        options: Partial<HighchartsComponent.Options>,
+        redraw: boolean = true
     ): Promise<void> {
-        await super.update(options, true);
+        await super.update(options, false);
         this.setOptions();
 
         if (this.chart) {
             this.chart.update(merge(this.options.chartOptions) || {});
         }
         this.emit({ type: 'afterUpdate' });
+
+        this.redraw();
     }
 
     /**

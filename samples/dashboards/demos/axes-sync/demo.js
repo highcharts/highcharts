@@ -44,7 +44,7 @@ Highcharts.setOptions({
 
 const csvData = document.getElementById('csv').innerText;
 
-Dashboards.boardAsync('container', {
+Dashboards.board('container', {
     dataPool: {
         connectors: [{
             name: 'connector-1',
@@ -66,17 +66,14 @@ Dashboards.boardAsync('container', {
         layouts: [{
             id: 'layout-1',
             rows: [{
-                id: 'dashboard-row-main',
                 cells: [{
                     id: 'dashboard-col-1'
                 }]
             }, {
-                id: 'dashboard-row-1',
                 cells: [{
                     id: 'dashboard-col-2'
                 }]
             }, {
-                id: 'dashboard-row-2',
                 cells: [{
                     id: 'dashboard-col-3'
                 }, {
@@ -165,7 +162,7 @@ Dashboards.boardAsync('container', {
             cell: 'dashboard-col-4',
             type: 'Highcharts',
             connector: {
-                name: 'connector-1'
+                name: 'connector-2'
             },
             sync: {
                 selection: true,
@@ -187,4 +184,4 @@ Dashboards.boardAsync('container', {
             }
         }
     ]
-});
+}, true);

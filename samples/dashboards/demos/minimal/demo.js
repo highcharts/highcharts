@@ -1,6 +1,6 @@
 const csvData = document.getElementById('csv').innerText;
 
-Dashboards.boardAsync('container', {
+Dashboards.board('container', {
     dataPool: {
         connectors: [{
             name: 'Vitamin',
@@ -134,4 +134,4 @@ Dashboards.boardAsync('container', {
             highlight: true
         }
     }]
-});
+}, true);

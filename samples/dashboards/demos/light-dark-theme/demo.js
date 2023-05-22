@@ -9,7 +9,7 @@ Highcharts.setOptions({
 });
 
 
-Dashboards.boardAsync('container', {
+Dashboards.board('container', {
     dataPool: {
         connectors: [{
             name: 'sample',

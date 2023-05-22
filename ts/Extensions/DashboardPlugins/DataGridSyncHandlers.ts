@@ -86,6 +86,9 @@ const configs: {
             function (this: DataGridComponent): void {
                 const { board } = this;
                 const table = this.connector && this.connector.table;
+
+                // @todo wrap in a listener on component.update with
+                // connector change
                 if (board && table) {
                     const { dataCursor: cursor } = board;
                     if (cursor) {

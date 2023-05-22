@@ -7,7 +7,7 @@ HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
 
-const board = Dashboards.boardAsync('container', {
+const board = Dashboards.board('container', {
     editMode: {
         enabled: true
     },
@@ -87,7 +87,7 @@ const board = Dashboards.boardAsync('container', {
             highlight: true
         }
     }]
-});
+}, true);
 
 window.addEventListener('resize', e => {
     board.mountedComponents.forEach(({ component }) => {

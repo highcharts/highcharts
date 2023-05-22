@@ -8,7 +8,7 @@ HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
 // A shared connector
-const board = Dashboards.boardAsync('container', {
+const board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
             name: 'connector-1',
@@ -123,7 +123,7 @@ const board = Dashboards.boardAsync('container', {
             panning: true
         }
     }]
-});
+}, true);
 
 window.addEventListener('resize', e => {
     board.mountedComponents.forEach(({ component }) => {

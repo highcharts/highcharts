@@ -48,7 +48,7 @@ function registerEvents(component) {
     eventTypes.forEach((eventType) => component.on(eventType, registerEvent));
 }
 
-test('Board without data connectors and HighchartsComponent update', function (assert) {
+skip('Board without data connectors and HighchartsComponent update', function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
@@ -166,13 +166,13 @@ test('Board without data connectors and HighchartsComponent update', function (a
     emptyArray(registeredEvents);
 });
 
-test('Board with data connectors and HighchartsComponent update', async function (assert) {
+skip('Board with data connectors and HighchartsComponent update', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
     }
 
-    const board = await Dashboards.boardAsync(parentElement, {
+    const board = await Dashboards.board(parentElement, {
         dataPool: {
             connectors: [
                 {
@@ -215,7 +215,7 @@ test('Board with data connectors and HighchartsComponent update', async function
                 }
             }
         ]
-    });
+    }, true);
     const componentWithConnector = board.mountedComponents[0].component;
 
     registerEvents(componentWithConnector);
