@@ -71,6 +71,7 @@ const {
     error,
     extend,
     fireEvent,
+    insertItem,
     isArray,
     isNumber,
     isString,
@@ -533,7 +534,7 @@ class Axis {
                 chart.axes.push(axis);
             }
 
-            chart.insertItem(this, chart[this.coll] as Array<AxisType>);
+            insertItem(this, chart[this.coll] as Array<AxisType>);
 
         }
         chart.orderItems(axis.coll);

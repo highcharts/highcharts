@@ -641,59 +641,6 @@ class Chart {
     }
 
     /**
-     * Insert a series or an axis in a collection with other items, either the
-     * chart series or yAxis series or axis collections, in the correct order
-     * according to the index option and whether it is internal. Used internally
-     * when adding series and axes.
-     *
-     * @private
-     * @function Highcharts.Chart#insertItem
-     * @param  {Highcharts.Series|Highcharts.Axis} item
-     *         The item to insert
-     * @param  {Array<Highcharts.Series>|Array<Highcharts.Axis>} collection
-     *         A collection of items, like `chart.series` or `xAxis.series`.
-     * @return {number} The index of the series in the collection.
-     */
-    public insertItem(
-        item: Series|AxisType,
-        collection: Array<Series|AxisType>
-    ): number {
-        const indexOption = (item as Series).options.index,
-            length = collection.length;
-        let i: number|undefined;
-
-        for (
-            // Internal item (navigator) should always be pushed to the end
-            i = item.options.isInternal ? length : 0;
-            i < length + 1;
-            i++
-        ) {
-            if (
-                // No index option, reached the end of the collection,
-                // equivalent to pushing
-                !collection[i] ||
-
-                // Handle index option, the element to insert has lower index
-                (
-                    isNumber(indexOption) &&
-                    indexOption < pick(
-                        (collection[i] as Series).options.index,
-                        (collection[i] as Series)._i
-                    )
-                ) ||
-
-                // Insert the new item before other internal items
-                // (navigator)
-                collection[i].options.isInternal
-            ) {
-                collection.splice(i, 0, item);
-                break;
-            }
-        }
-        return i;
-    }
-
-    /**
      * Order all series or axes above a given index. When series or axes are
      * added and ordered by configuration, only the last series is handled
      * (#248, #1123, #2456, #6112). This function is called on series and axis

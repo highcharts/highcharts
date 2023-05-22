@@ -89,6 +89,7 @@ const {
     find,
     fireEvent,
     getNestedProperty,
+    insertItem,
     isArray,
     isNumber,
     isString,
@@ -506,7 +507,7 @@ class Series {
 
         // Insert the series and re-order all series above the insertion
         // point.
-        chart.orderItems('series', chart.insertItem(this, chartSeries));
+        chart.orderItems('series', insertItem(this, chartSeries));
 
         // Set options for series with sorting and set data later.
         if (options.dataSorting && options.dataSorting.enabled) {
@@ -569,7 +570,7 @@ class Series {
                     ) {
 
                         // register this series in the axis.series lookup
-                        chart.insertItem(series, axis.series);
+                        insertItem(series, axis.series);
 
                         // set this series.xAxis or series.yAxis reference
                         /**
