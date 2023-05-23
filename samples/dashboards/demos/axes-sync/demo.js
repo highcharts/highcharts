@@ -85,7 +85,7 @@ Dashboards.board('container', {
             type: 'Highcharts',
             connector: connector1,
             sync: {
-                selection: true,
+                extremes: true,
                 highlight: true
             },
             columnKeyMap: {
@@ -110,7 +110,7 @@ Dashboards.board('container', {
             type: 'Highcharts',
             connector: connector1,
             sync: {
-                selection: true,
+                extremes: true,
                 highlight: true
             },
             columnKeyMap: {
@@ -132,7 +132,7 @@ Dashboards.board('container', {
             type: 'Highcharts',
             connector: connector2,
             sync: {
-                selection: true,
+                extremes: true,
                 highlight: true
             },
             columnKeyMap: {
@@ -154,7 +154,7 @@ Dashboards.board('container', {
             type: 'Highcharts',
             connector: connector2,
             sync: {
-                selection: true,
+                extremes: true,
                 highlight: true
             },
             columnKeyMap: {

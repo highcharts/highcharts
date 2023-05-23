@@ -199,7 +199,7 @@ jobs:
           key: cypress-cache-{{ checksum "package-lock.json" }}
           paths:
             - /home/circleci/repo/highcharts/.cache
-      - run: npm i --no-save @highcharts/highcharts-utils cross-env
+      - run: npm i --no-save github:highcharts/highcharts-utils cross-env
       - run:
           name: Run utils in background
           command: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
