@@ -30,6 +30,7 @@ import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import { Palette } from '../../Core/Color/Palettes.js';
+import BorderRadius from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -44,7 +45,8 @@ const {
     fireEvent,
     isArray,
     merge,
-    pick
+    pick,
+    relativeLength
 } = U;
 
 /* *
@@ -97,26 +99,14 @@ class FunnelSeries extends PieSeries {
         animation: false,
 
         /**
-         * The corner radius of the border surrounding all points or series,
-         * depending on the [borderRadiusMode](#series.funnel.borderRadiusMode)
-         * set.
+         * The corner radius of the border surrounding all points or series. A
+         * number signifies pixels. A percentage string, like for example `50%`,
+         * signifies a size relative to the series width.
          *
          * @sample highcharts/plotoptions/funnel-border-radius
          *         Funnel and pyramid with rounded border
          */
         borderRadius: 0,
-
-        /**
-         * The `points` mode specifies that all points should have rounded
-         * corners, the `series` mode that only the corners of the whole series
-         * should be rounded.
-         *
-         * @sample highcharts/plotoptions/funnel-border-radius
-         *         Funnel and pyramid with rounded border
-         *
-         * @type    {'points'|'series'}
-         */
-        borderRadiusMode: 'series',
 
         /**
          * The center of the series. By default, it is centered in the middle
@@ -426,8 +416,9 @@ class FunnelSeries extends PieSeries {
             options = series.options,
             reversed = options.reversed,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
-            borderRadius = options.borderRadius,
-            radiusMode = options.borderRadiusMode,
+            borderRadiusObject = BorderRadius.optionsToObject(
+                options.borderRadius
+            ),
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
             cumulative = 0, // start at top
@@ -443,6 +434,11 @@ class FunnelSeries extends PieSeries {
             data = series.data,
             path: SVGPath,
             fraction,
+            borderRadius = relativeLength(
+                borderRadiusObject.radius,
+                width
+            ),
+            radiusScope = borderRadiusObject.scope,
             alpha: number, // the angle between top and left point's edges
             maxT: number,
             roundingFactors = (angle: number): {
@@ -595,7 +591,7 @@ class FunnelSeries extends PieSeries {
             }
 
             if (borderRadius && (
-                radiusMode !== 'series' ||
+                radiusScope === 'point' ||
                 point.index === 0 ||
                 point.index === data.length - 1 ||
                 y5 !== null
@@ -618,7 +614,7 @@ class FunnelSeries extends PieSeries {
 
                 // Creating a point base
                 let f = roundingFactors(alpha);
-                if (radiusMode === 'series' && point.index !== 0) {
+                if (radiusScope === 'stack' && point.index !== 0) {
                     path = [
                         ['M', x1, y1],
                         ['L', x2, y1]
@@ -654,7 +650,7 @@ class FunnelSeries extends PieSeries {
                     );
 
                     if (
-                        radiusMode === 'series' &&
+                        radiusScope === 'stack' &&
                         point.index !== data.length - 1
                     ) {
                         path.push(['L', x4, y5], ['L', x3, y5]);
@@ -686,7 +682,7 @@ class FunnelSeries extends PieSeries {
                 } else if (lBase >= 1) {
                     // Closure of point without extension
                     f = roundingFactors(Math.PI - alpha);
-                    if (radiusMode === 'series' && point.index === 0) {
+                    if (radiusScope === 'stack' && point.index === 0) {
                         path.push(['L', x4, y3], ['L', x3, y3]);
                     } else {
                         path.push(
