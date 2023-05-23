@@ -95,7 +95,7 @@ const configs: {
                                 const { row } = cursor;
                                 const { dataGrid } = this;
 
-                                if (row && dataGrid) {
+                                if (row !== void 0 && dataGrid) {
                                     const highlightedDataRow = dataGrid.container
                                         .querySelector<HTMLElement>(`.hc-dg-row[data-row-index="${row}"]`);
 
