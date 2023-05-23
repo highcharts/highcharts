@@ -1,24 +1,24 @@
 
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsComponent from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsComponent.js';
-import HTMLComponent from '../../../../code/es-modules/Dashboards/Components/HTMLComponent.js';
-import Component from '../../../../code/es-modules/Dashboards/Components/Component.js';
-import CSVConnector from '../../../../code/es-modules/Data/Connectors/CSVConnector.js';
-
 import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 import PluginHandler from '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
 import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/DataGridPlugin.js';
+import DataGrid from '../../../../code/es-modules/masters/datagrid.src.js';
 
+
+PluginHandler.addPlugin(DataGridPlugin);
+PluginHandler.addPlugin(HighchartsPlugin);
+DataGridPlugin.custom.connectDataGrid(DataGrid.DataGrid);
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
-PluginHandler.addPlugin(HighchartsPlugin);
-PluginHandler.addPlugin(HighchartsPlugin);
 HighchartsComponent.charter = Highcharts;
 
 const { test } = QUnit;
 
 test('Components should be initialized with a connector', function(assert){
 
+    console.log('Components should be initialized with a connector');
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
@@ -63,7 +63,7 @@ test('Components should be initialized with a connector', function(assert){
                 name: 'connector-1'
             }
         }, {
-            type: 'Highcharts',
+            type: 'DataGrid',
             cell: 'cell-2',
             connector: {
                 name: 'connector-1'
@@ -71,9 +71,9 @@ test('Components should be initialized with a connector', function(assert){
         }]
     }, true).then(board => {
         const mountedComponents = board.mountedComponents;
-        // mountedComponents.forEach(mComponent => {
-        //     console.log(mComponent.component)
-        // });
+        mountedComponents.forEach(mComponent => {
+            assert.ok(mComponent.component.connector, 'Component should have a connector.');
+        });
         assert.strictEqual(board.mountedComponents.length, 2, 'There should be two mounted components.');
     });
 
