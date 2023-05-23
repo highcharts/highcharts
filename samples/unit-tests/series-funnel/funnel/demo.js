@@ -191,22 +191,19 @@ QUnit.test('Funnel path', function (assert) {
     assert.strictEqual(
         points[0].graphic.d.split(' ').filter(s => s === 'C').length,
         2,
-        `The first point should have 2 rounded corners,
-        borderRadiusMode: series (#18839)`
+        'The first point should have 2 rounded corners, scope: stack (#18839)'
     );
 
     assert.strictEqual(
         points[1].graphic.d.split(' ').filter(s => s === 'C').length,
         0,
-        `The second point should have 0 rounded corners,
-        borderRadiusMode: series (#18839)`
+        'The second point should have 0 rounded corners, scope: stack (#18839)'
     );
 
     assert.strictEqual(
         points[3].graphic.d.split(' ').filter(s => s === 'C').length,
         4,
-        `The last point should have 4 rounded corners,
-        borderRadiusMode: series (#18839)`
+        'The last point should have 4 rounded corners, scope: stack (#18839)'
     );
 
     series.update({
@@ -219,22 +216,19 @@ QUnit.test('Funnel path', function (assert) {
     assert.strictEqual(
         points[0].graphic.d.split(' ').filter(s => s === 'C').length,
         4,
-        `The first point should have 4 rounded corners,
-        borderRadiusMode: points (#18839)`
+        'The first point should have 4 rounded corners, scope: point (#18839)'
     );
 
     assert.strictEqual(
         points[1].graphic.d.split(' ').filter(s => s === 'C').length,
         4,
-        `The second point should have 4 rounded corners,
-        borderRadiusMode: points (#18839)`
+        'The second point should have 4 rounded corners, scope: point (#18839)'
     );
 
     assert.strictEqual(
         points[3].graphic.d.split(' ').filter(s => s === 'C').length,
         6,
-        `The last point should have 6 rounded corners,
-        borderRadiusMode: points (#18839)`
+        'The last point should have 6 rounded corners, scope: point (#18839)'
     );
 });
 
