@@ -1,6 +1,6 @@
 /**
- * @license Highcharts Dashboards v0.0.2 (@product.date@)
- * @module highsoft/dashboard
+ * @license Highcharts Dashboards Math v1.0.0 (@product.date@)
+ * @module highsoft/dashboard-math
  * @requires window
  *
  * (c) 2009-2023 Highsoft AS
@@ -20,7 +20,6 @@
 
 
 import Formula from '../Data/Formula/Formula.js';
-import Globals from '../Core/Globals.js';
 import MathModifier from '../Data/Modifiers/MathModifier.js';
 
 
@@ -31,25 +30,26 @@ import MathModifier from '../Data/Modifiers/MathModifier.js';
  * */
 
 
-const D: AnyRecord = Globals;
+const G: AnyRecord = window.Dashboards;
 
-D.Formula = Formula;
+if (G) {
+    G.Formula = Formula;
+    if (G.DataModifier) {
+        G.DataModifier.types.Math = MathModifier;
+    }
+}
 
 
 /* *
  *
- *  Classic Exports
+ *  Default Export
  *
  * */
 
 
-const Dashboards = D.win.Dashboards;
+const DashboardsMath = {
+    Formula,
+    MathModifier
+};
 
-
-if (Dashboards) {
-    Dashboards.DataModifier.types.Math = MathModifier;
-    Dashboards.Formula = Formula;
-}
-
-
-export default (Dashboards || D);
+export default DashboardsMath;
