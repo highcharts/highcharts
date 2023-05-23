@@ -27,8 +27,10 @@ import U from './Utilities.js';
 const {
     extend,
     getNestedProperty,
+    isArray,
     isNumber,
     isObject,
+    isString,
     pick,
     pInt
 } = U;
@@ -54,30 +56,26 @@ const helpers: Record<string, Function> = {
     eq: (a: unknown, b: unknown): boolean => a == b,
     each: function (arr: string[]|object[]|undefined): string|false {
         const match = arguments[arguments.length - 1];
-        return arr?.map((item, i): string => format(match.body, extend(
-            isObject(item) ? item : { '@this': item }, {
-                '@index': i,
-                '@first': i === 0,
-                '@last': i === arr.length - 1
-            }
-        ))).join('') || false;
+        return isArray(arr) ?
+            arr.map((item, i): string => format(match.body, extend(
+                isObject(item) ? item : { '@this': item }, {
+                    '@index': i,
+                    '@first': i === 0,
+                    '@last': i === arr.length - 1
+                }
+            ))).join('') :
+            false;
     },
     ge: (a: number, b: number): boolean => a >= b,
     gt: (a: number, b: number): boolean => a > b,
-    'if': function (condition: string[]|undefined): string|false {
-        const match = arguments[arguments.length - 1];
-        return condition ? format(match.body, match.ctx) : false;
-    },
+    'if': (condition: string[]|undefined): boolean => !!condition,
     le: (a: number, b: number): boolean => a <= b,
     lt: (a: number, b: number): boolean => a < b,
     multiply: (a: number, b: number): number => a * b,
     // eslint-disable-next-line eqeqeq
     ne: (a: unknown, b: unknown): boolean => a != b,
     subtract: (a: number, b: number): number => a - b,
-    unless: function (condition: string[]|undefined): string|false {
-        const match = arguments[arguments.length - 1];
-        return condition ? false : format(match.body, match.ctx);
-    }
+    unless: (condition: string[]|undefined): boolean => !condition
 };
 
 /* *
@@ -356,7 +354,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
 
     // Execute
     matches.forEach((match): void => {
-        const { elseBody, expression, fn } = match;
+        const { body, elseBody, expression, fn } = match;
         let replacement: any,
             i: number;
 
@@ -372,13 +370,12 @@ function format(str = '', ctx: any, chart?: Chart): string {
                 args.unshift(resolveProperty(parts[i + 1]));
             }
 
-            try {
-                replacement = helpers[fn].apply(ctx, args);
-                if (replacement === false) {
-                    replacement = elseBody ? format(elseBody, ctx) : '';
-                }
-            } catch (e) {
-                replacement = '';
+            replacement = helpers[fn].apply(ctx, args);
+
+            // Block helpers may return true or false. They may also return a
+            // string, like the `each` helper.
+            if (match.isBlock && typeof replacement === 'boolean') {
+                replacement = format(replacement ? body : elseBody, ctx);
             }
 
 
