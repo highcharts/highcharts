@@ -49,7 +49,7 @@ Dashboards.board('container', {
             type: 'Highcharts',
             sync: {
                 highlight: true,
-                selection: true
+                extremes: true
             },
             columnKeyMap: {
                 Food: 'x',
@@ -83,7 +83,7 @@ Dashboards.board('container', {
             editable: true,
             sync: {
                 highlight: true,
-                selection: true
+                extremes: true
             }
         }
     ]

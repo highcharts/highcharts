@@ -102,6 +102,9 @@ class HighchartsComponent extends Component {
             chartClassName: 'chart-container',
             chartID: 'chart-' + uniqueKey(),
             chartOptions: {
+                chart: {
+                    styledMode: true
+                },
                 series: []
             },
             chartConstructor: '',

@@ -91,8 +91,7 @@ const board = Dashboards.board('container', {
             name: 'connector-1'
         },
         sync: {
-            selection: true,
-            panning: true
+            extremes: true
         }
     }, {
         cell: 'dashboard-col-1',
@@ -117,8 +116,7 @@ const board = Dashboards.board('container', {
             name: 'connector-1'
         },
         sync: {
-            selection: true,
-            panning: true
+            extremes: true
         }
     }]
 }, true);

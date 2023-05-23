@@ -1,5 +1,23 @@
 const csvData = document.getElementById('csv').innerText;
 
+<<<<<<< HEAD
+// Necessary to enable styled mode in order to properly style the
+// chart depending on the theme.
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
+
+=======
+const connector = new CSVConnector({
+    csv: csvData,
+    firstRowAsNames: true
+});
+
+connector.load();
+>>>>>>> 9cb54e432ed2da2465f2980a55be6ba8c210f22a
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -73,6 +91,7 @@ Dashboards.board('container', {
         }
     ]
 }, true);
+
 
 [...document.querySelectorAll('input[name="color-mode"]')]
     .forEach(input => {

@@ -74,36 +74,3 @@ describe('Chart synchronized series state', () => {
     });
 
 });
-
-describe('Chart sync selection and panning', () => {
-    before(() => {
-        cy.visit('/cypress/dashboards/chart-interaction-selection/')
-    });
-
-    it('should sync selection', () => {
-        cy.get('.highcharts-container').first().as('firstchart')
-
-        cy.zoom('@firstchart')
-
-        // There should now be two reset-zoom buttons
-        cy.get('.highcharts-reset-zoom').should('have.length', 2)
-
-
-        // Click on reset in the first chart
-        cy.get('@firstchart').within(() => {
-            cy.get('.highcharts-reset-zoom').click()
-        })
-
-        // Now there should be none
-        cy.get('.highcharts-reset-zoom').should('have.length', 0)
-
-    })
-
-    // Todo: find a way to assert this
-    it('should sync panning', () => {
-        cy.get('.highcharts-container').first().as('firstchart')
-        cy.zoom('@firstchart')
-        // Do the pan
-        cy.pan('@firstchart')
-    })
-});

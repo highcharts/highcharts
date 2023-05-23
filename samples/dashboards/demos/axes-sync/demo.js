@@ -88,7 +88,7 @@ Dashboards.board('container', {
                 name: 'connector-1'
             },
             sync: {
-                selection: true,
+                extremes: true,
                 highlight: true
             },
             columnKeyMap: {
@@ -115,7 +115,7 @@ Dashboards.board('container', {
                 name: 'connector-1'
             },
             sync: {
-                selection: true,
+                extremes: true,
                 highlight: true
             },
             columnKeyMap: {
@@ -139,7 +139,7 @@ Dashboards.board('container', {
                 name: 'connector-2'
             },
             sync: {
-                selection: true,
+                extremes: true,
                 highlight: true
             },
             columnKeyMap: {
@@ -163,7 +163,7 @@ Dashboards.board('container', {
                 name: 'connector-2'
             },
             sync: {
-                selection: true,
+                extremes: true,
                 highlight: true
             },
             columnKeyMap: {

@@ -607,7 +607,7 @@ class EditMode {
             {
                 className: EditGlobals.classNames.editToolsBtn,
                 icon: addIconURL,
-                value: 'Add Component',
+                value: this.lang.addComponent,
                 callback: (): void => {
                     // sidebar trigger
                     if (editMode.sidebar) {
@@ -636,7 +636,7 @@ class EditMode {
                     {
                         className: EditGlobals.classNames.editToolsBtn,
                         icon: (rwdIcons as any)[key] || '',
-                        value: key,
+                        value: this.lang[key],
                         callback: (e: PointerEvent): void => {
                             const button = e.target as HTMLElement,
                                 isSelected =

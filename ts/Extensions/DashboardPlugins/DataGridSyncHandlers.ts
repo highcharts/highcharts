@@ -122,7 +122,7 @@ const configs: {
                 }
             }
         ],
-        selectionHandler: function (this: DataGridComponent): void {
+        extremesHandler: function (this: DataGridComponent): void {
             const { board } = this;
             const table = this.connector && this.connector.table;
             if (board && table) {
@@ -130,9 +130,13 @@ const configs: {
                 const { dataCursor: cursor } = board;
                 if (cursor) {
                     cursor.addListener(table.id, 'xAxis.extremes.min', (e): void => {
-                        if (e.cursor.type === 'position' && this.dataGrid && e.cursor.row !== void 0) {
-                            const { row } = e.cursor;
-                            this.dataGrid.scrollToRow(row);
+                        if (e.cursor.type === 'position' && this.dataGrid && e.cursors.length) {
+                            // Lasting cursor, so get last cursor
+                            const lastCursor = e.cursors[e.cursors.length - 1];
+                            if ('row' in lastCursor && typeof lastCursor.row === 'number') {
+                                const { row } = lastCursor;
+                                this.dataGrid.scrollToRow(row);
+                            }
                         }
                     });
                 }
@@ -144,7 +148,7 @@ const configs: {
 
 const defaults: Sync.OptionsRecord = {
     highlight: { emitter: configs.emitters.highlightEmitter, handler: configs.handlers.highlightHandler },
-    selection: { handler: configs.handlers.selectionHandler }
+    extremes: { handler: configs.handlers.extremesHandler }
 };
 
 

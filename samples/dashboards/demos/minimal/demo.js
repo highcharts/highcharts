@@ -56,7 +56,7 @@ Dashboards.board('container', {
         sync: {
             visibility: true,
             highlight: true,
-            selection: true
+            extremes: true
         },
         connector: {
             name: 'Vitamin'
@@ -78,7 +78,7 @@ Dashboards.board('container', {
         sync: {
             visibility: true,
             highlight: true,
-            selection: true
+            extremes: true
         },
         connector: {
             name: 'Vitamin'
@@ -106,7 +106,7 @@ Dashboards.board('container', {
         sync: {
             visibility: true,
             highlight: true,
-            selection: true
+            extremes: true
         },
         type: 'Highcharts',
         columnKeyMap: {
