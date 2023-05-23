@@ -122,9 +122,10 @@ const configs: {
                 if (this.type === 'Highcharts') {
                     const component = this as HighchartsComponent;
                     return this.on('afterRender', (): void => {
-                        const { chart, connector: store, board } = component;
+                        const { chart, connector, board } = component;
+                        const table = connector && connector.table;
                         if (
-                            store && // has a store
+                            table && // has a store
                             board &&
                             chart
                         ) {
@@ -136,7 +137,7 @@ const configs: {
                                     events: {
                                         show: function (): void {
                                             cursor.emitCursor(
-                                                store.table,
+                                                table,
                                                 {
                                                     type: 'position',
                                                     state: 'series.show',
@@ -146,7 +147,7 @@ const configs: {
                                         },
                                         hide: function (): void {
                                             cursor.emitCursor(
-                                                store.table,
+                                                table,
                                                 {
                                                     type: 'position',
                                                     state: 'series.hide',
@@ -302,33 +303,71 @@ const configs: {
     handlers: {
         seriesVisibilityHandler:
             function (this: HighchartsComponent): void {
-                const { chart, connector: store, board } = this;
-                if (store && chart && board) {
+                const component = this;
+                const { board } = this;
+
+                const findSeries = (seriesArray: Series[], name: string): Series | undefined => {
+                    for (const series of seriesArray) {
+                        if (series.name === name) {
+                            return series;
+                        }
+                    }
+                };
+
+                const handleShow = (e: DataCursor.Event): void => {
+                    const chart = component.chart;
+                    if (!chart) {
+                        return;
+                    }
+                    if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
+                        const series = findSeries(chart.series, e.cursor.column);
+                        if (series) {
+                            series.setVisible(true, true);
+                        }
+                    }
+                };
+
+                const handleHide = (e: DataCursor.Event): void => {
+                    const chart = component.chart;
+                    if (!chart) {
+                        return;
+                    }
+                    if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
+                        const series = findSeries(chart.series, e.cursor.column);
+                        if (series) {
+                            series.setVisible(false, true);
+                        }
+                    }
+                };
+
+                const registerCursorListeners = (): void => {
                     const { dataCursor } = board;
 
-                    const findSeries = (seriesArray: Series[], name: string): Series | undefined => {
-                        for (const series of seriesArray) {
-                            if (series.name === name) {
-                                return series;
-                            }
-                        }
-                    };
+                    if (!dataCursor) {
+                        return;
+                    }
+                    const table = this.connector && this.connector.table;
 
-                    dataCursor.addListener(store.table.id, 'series.show', (e): void => {
-                        if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
-                            const series = findSeries(chart.series, e.cursor.column);
-                            if (series) {
-                                series.setVisible(true, true);
-                            }
-                        }
-                    }).addListener(store.table.id, 'series.hide', (e): void => {
-                        if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
-                            const series = findSeries(chart.series, e.cursor.column);
-                            if (series) {
-                                series.setVisible(false, true);
-                            }
-                        }
-                    });
+                    if (!table) {
+                        return;
+                    }
+                    dataCursor.addListener(table.id, 'series.show', handleShow);
+                    dataCursor.addListener(table.id, 'series.hide', handleHide);
+                };
+
+                const unregisterCursorListeners = (): void => {
+                    const table = this.connector && this.connector.table;
+                    if (table) {
+                        board.dataCursor.removeListener(table.id, 'series.show', handleShow);
+                        board.dataCursor.removeListener(table.id, 'series.hide', handleHide);
+                    }
+                };
+
+                if (board) {
+                    registerCursorListeners();
+
+                    this.on('setConnector', (): void => unregisterCursorListeners());
+                    this.on('afterSetConnector', (): void => registerCursorListeners());
                 }
             },
         highlightHandler:
@@ -386,7 +425,6 @@ const configs: {
                         if (table) {
                             cursor.addListener(table.id, 'point.mouseOver', handleCursor);
                             cursor.addListener(table.id, 'dataGrid.hoverRow', handleCursor);
-
                             cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
                             cursor.addListener(table.id, 'dataGrid.hoverOut', handleCursorOut);
                         }
