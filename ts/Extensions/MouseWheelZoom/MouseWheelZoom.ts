@@ -72,7 +72,6 @@ const fitToBox = function (
     inner: BBoxObject,
     outer: BBoxObject
 ): BBoxObject {
-
     if (inner.x + inner.width > outer.x + outer.width) {
         if (inner.width > outer.width) {
             inner.width = outer.width;
@@ -184,23 +183,31 @@ const zoomBy = function (
             newYRange = yRange * howMuch,
             newXMin = centerX - newXRange * fixToX,
             newYMin = centerY - newYRange * fixToY,
+            dataRangeX = xAxis.dataMax - xAxis.dataMin,
+            dataRangeY = yAxis.dataMax - yAxis.dataMin,
+            outerX = xAxis.dataMin - dataRangeX * xAxis.options.minPadding,
+            outerWidth = dataRangeX + dataRangeX * xAxis.options.minPadding +
+                dataRangeX * xAxis.options.maxPadding,
+            outerY = yAxis.dataMin - dataRangeY * yAxis.options.minPadding,
+            outerHeight = dataRangeY + dataRangeY * yAxis.options.minPadding +
+                dataRangeY * yAxis.options.maxPadding,
             newExt = fitToBox({
                 x: newXMin,
                 y: newYMin,
                 width: newXRange,
                 height: newYRange
             }, {
-                x: xAxis.dataMin,
-                y: yAxis.dataMin,
-                width: xAxis.dataMax - xAxis.dataMin,
-                height: yAxis.dataMax - yAxis.dataMin
+                x: outerX,
+                y: outerY,
+                width: outerWidth,
+                height: outerHeight
             }),
             zoomOut = (
-                newExt.x <= xAxis.dataMin &&
+                newExt.x <= outerX &&
                 newExt.width >=
-                xAxis.dataMax - xAxis.dataMin &&
-                newExt.y <= yAxis.dataMin &&
-                newExt.height >= yAxis.dataMax - yAxis.dataMin
+                outerWidth &&
+                newExt.y <= outerY &&
+                newExt.height >= outerHeight
             );
 
         const type = pick(
