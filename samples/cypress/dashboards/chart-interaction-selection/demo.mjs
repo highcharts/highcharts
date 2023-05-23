@@ -1,4 +1,3 @@
-import CSVConnector from '../../../../code/es-modules/Data/Connectors/CSVConnector.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 import Highcharts from  '../../../../code/es-modules/masters/highcharts.src.js';
@@ -7,7 +6,6 @@ import HighchartsPlugin from  '../../../../code/es-modules/Extensions/DashboardP
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-// A shared connector
 const board = Dashboards.board('container', {
     dataPool: {
         connectors: [{

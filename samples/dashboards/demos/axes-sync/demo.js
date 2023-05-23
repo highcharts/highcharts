@@ -1,5 +1,3 @@
-const CSVConnector = Dashboards.DataConnector.types.CSV;
-
 // Set global chart options.
 Highcharts.setOptions({
     chart: {

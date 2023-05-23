@@ -1,10 +1,9 @@
 //@ts-check
-import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
-import HighchartsComponent from '/base/code/es-modules/Extensions/DashboardPlugins/HighchartsComponent.js';
-import HTMLComponent from '/base/code/es-modules/Dashboards/Components/HTMLComponent.js';
-import Component from '/base/code/es-modules/Dashboards/Components/Component.js';
-import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
-import Board from '/base/code/es-modules/Dashboards/Board.js';
+import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
+import HighchartsComponent from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsComponent.js';
+import HTMLComponent from '../../../../code/es-modules/Dashboards/Components/HTMLComponent.js';
+import Component from '../../../../code/es-modules/Dashboards/Components/Component.js';
+import CSVConnector from '../../../../code/es-modules/Data/Connectors/CSVConnector.js';
 
 import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 import PluginHandler from '../../../../code/es-modules/Dashboards/PluginHandler.js';
@@ -39,7 +38,9 @@ function registerEvent(e) {
     registeredEvents.push(e.type);
 }
 
-/** @param {Array<any>} [array] */
+/**
+ * @param {string[]} array
+ */
 function emptyArray(array) {
     array.length = 0;
 }
@@ -273,7 +274,12 @@ skip('component resizing', function (assert) {
     const parent = document.createElement('div');
     parent.id = 'test';
 
-    document.getElementById('container').appendChild(parent);
+    const container = document.getElementById('container');
+    if (!container) {
+        return;
+    }
+
+    container.appendChild(parent);
 
     const component = new HTMLComponent({
         parentElement: parent
