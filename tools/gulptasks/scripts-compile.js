@@ -23,51 +23,77 @@ function scriptsCompile() {
         path = require('path'),
         processLib = require('./lib/process');
 
-    const promises = fsLib
-        .getFilePaths('code', true)
-        .filter(filePath => (
-            !filePath.startsWith('code/es-modules/') &&
-            filePath.endsWith('.src.js')
-        ))
-        .map(inputPath => {
-            const language = (
-                    inputPath.includes('/es5/') ?
-                        'ECMASCRIPT5_STRICT' :
-                        'ECMASCRIPT_2020'
-                ),
-                outputPath = inputPath.replace('.src.js', '.js'),
-                outputMapPath = outputPath + '.map';
+    const filePathes = fsLib.getFilePaths('code', true);
 
-            // Compile file
-            // See github.com/google/closure-compiler/wiki/Flags-and-Options
-            return processLib.exec(
-                'google-closure-compiler' +
-                ' --compilation_level SIMPLE' +
-                ` --create_source_map "${outputMapPath}"` +
-                ` --js "${inputPath}"` +
-                ` --js_output_file "${outputPath}"` +
-                ` --language_in ${language}` +
-                ` --language_out ${language}` +
-                ' --platform native',
-                { silent: 2 }
+    let promiseChain1 = Promise.resolve(),
+        promiseChain2 = Promise.resolve();
 
-            // Fix source map reference
-            ).then(result => {
-                const outputMapFileName = path.basename(outputMapPath);
+    for (
+        let i = 0,
+            iEnd = filePathes.length,
+            inputPath,
+            promise;
+        i < iEnd;
+        ++i
+    ) {
+        inputPath = filePathes[i];
 
-                // Still no option for it
-                fs.appendFileSync(
-                    outputPath,
-                    `//# sourceMappingURL=${outputMapFileName}`
-                );
+        if (
+            inputPath.startsWith('code/es-modules/') ||
+            !inputPath.endsWith('.src.js')
+        ) {
+            continue;
+        }
 
-                logLib.success(`Compiled ${inputPath} => ${outputPath}`);
 
-                return result;
-            });
+        const language = (
+                inputPath.includes('/es5/') ?
+                    'ECMASCRIPT5_STRICT' :
+                    'ECMASCRIPT_2020'
+            ),
+            outputPath = inputPath.replace('.src.js', '.js'),
+            outputMapPath = outputPath + '.map';
+
+        // Compile file
+        // See github.com/google/closure-compiler/wiki/Flags-and-Options
+        promise = processLib.exec(
+            'google-closure-compiler' +
+            ' --compilation_level SIMPLE' +
+            ` --create_source_map "${outputMapPath}"` +
+            ` --js "${inputPath}"` +
+            ` --js_output_file "${outputPath}"` +
+            ` --language_in ${language}` +
+            ` --language_out ${language}` +
+            ' --platform native',
+            { silent: 2 }
+
+        // Fix source map reference
+        ).then(result => {
+            const outputMapFileName = path.basename(outputMapPath);
+
+            // Still no option for it
+            fs.appendFileSync(
+                outputPath,
+                `//# sourceMappingURL=${outputMapFileName}`
+            );
+
+            logLib.success(`Compiled ${inputPath} => ${outputPath}`);
+
+            return result;
         });
 
-    return Promise.all(promises);
+        if (i % 2) {
+            promiseChain1 = promiseChain1.then(() => promise);
+        } else {
+            promiseChain2 = promiseChain2.then(() => promise);
+        }
+    }
+
+    // not too many in parallel because of IO
+    return Promise.all([
+        promiseChain1,
+        promiseChain2
+    ]);
 }
 
 gulp.task('scripts-compile', scriptsCompile);
