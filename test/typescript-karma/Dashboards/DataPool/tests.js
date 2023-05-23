@@ -16,7 +16,7 @@ HighchartsComponent.charter = Highcharts;
 
 const { test } = QUnit;
 
-test('Components should be initialized with a connector', function(assert){
+test('Components should be initialized with a connector', function(assert) {
 
     const parentElement = document.getElementById('container');
     if (!parentElement) {

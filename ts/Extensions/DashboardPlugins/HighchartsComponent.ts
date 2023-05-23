@@ -457,15 +457,6 @@ class HighchartsComponent extends Component {
         hcComponent.emit({ type: 'afterRender' });
         hcComponent.setupConnectorUpdate();
 
-        // addEvent(hcComponent.chart, 'afterUpdate', function ():void {
-        //     const options = this.userOptions;
-
-        //     if (hcComponent.hasLoaded) {
-        //         hcComponent.updateComponentOptions({
-        //             chartOptions: options
-        //         }, false);
-        //     }
-        // });
         return this;
     }
 
@@ -548,23 +539,6 @@ class HighchartsComponent extends Component {
 
         table.setCell(columnName, rowNumber, valueToSet);
     }
-    /**
-     * Handles updating via options.
-     * @param options
-     * The options to apply.
-     *
-     * @param redraw
-     * The flag triggers the main redraw operation.
-     *
-     * @internal
-     */
-    // private updateComponentOptions(
-    //     options: Partial<HighchartsComponent.Options>,
-    //     redraw = true
-    // ): void {
-    //     super.update(options, true);
-    // }
-
     /**
      * Handles updating via options.
      * @param options
