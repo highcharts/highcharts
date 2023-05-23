@@ -583,7 +583,7 @@ class HighchartsComponent extends Component {
         }
         this.emit({ type: 'afterUpdate' });
 
-        this.redraw();
+        redraw && this.redraw();
     }
 
     /**

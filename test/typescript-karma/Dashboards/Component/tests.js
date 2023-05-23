@@ -15,7 +15,6 @@ HighchartsComponent.charter = Highcharts;
 
 const { test, only, skip } = QUnit;
 
-/** @type {Component.Event['type'][]} */
 const eventTypes = [
     'load',
     'afterLoad',
@@ -24,23 +23,19 @@ const eventTypes = [
     'redraw',
     'afterRedraw',
     'tableChanged',
-    'connectorAttached',
+    'setConnector',
     'update',
     'afterUpdate',
     'message'
 ];
 
-/** @type {Component.Event['type'][]} */
 const registeredEvents = [];
+window.registeredEvents = registeredEvents;
 
-/** @param {Component.Event} e */
 function registerEvent(e) {
     registeredEvents.push(e.type);
 }
 
-/**
- * @param {string[]} array
- */
 function emptyArray(array) {
     array.length = 0;
 }
@@ -49,7 +44,7 @@ function registerEvents(component) {
     eventTypes.forEach((eventType) => component.on(eventType, registerEvent));
 }
 
-skip('Board without data connectors and HighchartsComponent update', function (assert) {
+test('Board without data connectors and HighchartsComponent update', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
@@ -101,16 +96,17 @@ skip('Board without data connectors and HighchartsComponent update', function (a
     const highchartsComponent = board.mountedComponents[0].component;
 
     registerEvents(highchartsComponent);
-    highchartsComponent.update({
+    await highchartsComponent.update({
         chartOptions: {
             title: {
                 text: 'Hello World'
             }
         }
     });
+
     assert.deepEqual(
         registeredEvents,
-        ['update', 'redraw', 'beforeRender', 'load', 'afterLoad', 'afterRender'],
+        ['update',  'afterUpdate', 'redraw', 'beforeRender', 'load', 'afterLoad', 'afterRender'],
         'After updating the HighchartsComponent events should be fired in the correct order.'
     );
 
@@ -137,7 +133,15 @@ skip('Board without data connectors and HighchartsComponent update', function (a
 
     assert.deepEqual(
         registeredEvents,
-        ['update', 'redraw', 'beforeRender', 'load', 'afterLoad', 'afterRender', 'afterRedraw'],
+        [
+            'update',
+            'redraw',
+            'beforeRender',
+            'load',
+            'afterLoad',
+            'afterRender',
+            'afterRedraw'
+        ],
         'After updating HTMLComponent, the events should be fired in the correct order.'
     );
 
@@ -167,7 +171,7 @@ skip('Board without data connectors and HighchartsComponent update', function (a
     emptyArray(registeredEvents);
 });
 
-skip('Board with data connectors and HighchartsComponent update', async function (assert) {
+test('Board with data connectors and HighchartsComponent update', async function (assert) {
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
@@ -219,6 +223,7 @@ skip('Board with data connectors and HighchartsComponent update', async function
     }, true);
     const componentWithConnector = board.mountedComponents[0].component;
 
+    emptyArray(registeredEvents);
     registerEvents(componentWithConnector);
     await componentWithConnector.update({
         chartOptions: {
@@ -227,19 +232,18 @@ skip('Board with data connectors and HighchartsComponent update', async function
             }
         }
     });
-    await assert.deepEqual(
+
+    assert.deepEqual(
         registeredEvents,
         [
-            'afterUpdate',
-            'afterUpdate',
             'update',
-            'connectorAttached',
+            'setConnector',
+            'afterUpdate',
             'redraw',
             'beforeRender',
             'load',
             'afterLoad',
             'afterRender',
-            'afterUpdate'
         ],
         'If connector is given in options, it will be attached during load'
     );

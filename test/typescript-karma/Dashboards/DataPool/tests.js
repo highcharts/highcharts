@@ -18,7 +18,6 @@ const { test } = QUnit;
 
 test('Components should be initialized with a connector', function(assert){
 
-    console.log('Components should be initialized with a connector');
     const parentElement = document.getElementById('container');
     if (!parentElement) {
         return;
