@@ -88,6 +88,7 @@ const {
     extend,
     find,
     fireEvent,
+    getClosestDistance,
     getNestedProperty,
     insertItem,
     isArray,
@@ -1570,15 +1571,11 @@ class Series {
                 forceExtremesFromAll ||
                 series.getExtremesFromAll ||
                 options.getExtremesFromAll, // #4599
-            isCartesian = series.isCartesian,
-            val2lin = xAxis && xAxis.val2lin,
-            isLog = !!(xAxis && xAxis.logarithmic);
+            logarithmic = xAxis?.logarithmic,
+            isCartesian = series.isCartesian;
         let croppedData: Series.CropDataObject,
             cropped,
             cropStart = 0,
-            distance,
-            closestPointRange,
-            i, // loop variable
             xExtremes,
             min,
             max,
@@ -1587,7 +1584,6 @@ class Series {
             processedYData: (
                 Array<(number|null)>|Array<Array<(number|null)>>
             ) = (series.yData as any),
-            throwOnUnsorted = series.requireSorting,
             updatingNames = false;
         const dataLength = (processedXData as any).length;
 
@@ -1639,34 +1635,23 @@ class Series {
 
 
         // Find the closest distance between processed points
-        i = (processedXData as any).length || 1;
-        while (--i) {
-            distance = (
-                isLog ?
-                    (val2lin((processedXData as any)[i]) -
-                    val2lin((processedXData as any)[i - 1])) :
-                    ((processedXData as any)[i] -
-                    (processedXData as any)[i - 1])
-            );
+        const closestPointRange = getClosestDistance(
+            [
+                logarithmic ?
+                    processedXData.map(logarithmic.log2lin) :
+                    processedXData
+            ],
 
-            if (distance > 0 &&
-                (
-                    typeof closestPointRange === 'undefined' ||
-                    distance < closestPointRange
-                )
-            ) {
-                closestPointRange = distance;
-
-            // Unsorted data is not supported by the line tooltip, as well
-            // as data grouping and navigation in Stock charts (#725) and
-            // width calculation of columns (#1900).
-            // Avoid warning during the premature processing pass in
-            // updateNames (#16104).
-            } else if (distance < 0 && throwOnUnsorted && !updatingNames) {
-                error(15, false, series.chart);
-                throwOnUnsorted = false; // Only once
-            }
-        }
+            // Unsorted data is not supported by the line tooltip, as well as
+            // data grouping and navigation in Stock charts (#725) and width
+            // calculation of columns (#1900). Avoid warning during the
+            // premature processing pass in updateNames (#16104).
+            (): false|void => (
+                series.requireSorting &&
+                !updatingNames &&
+                error(15, false, series.chart)
+            )
+        );
 
         return {
             xData: processedXData,

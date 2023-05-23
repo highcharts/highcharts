@@ -71,6 +71,7 @@ const {
     error,
     extend,
     fireEvent,
+    getClosestDistance,
     insertItem,
     isArray,
     isNumber,
@@ -1232,17 +1233,13 @@ class Axis {
     public adjustForMinRange(): void {
         const axis = this,
             options = axis.options,
-            log = axis.logarithmic;
+            logarithmic = axis.logarithmic;
 
         let min = axis.min,
             max = axis.max,
             zoomOffset,
             spaceAvailable: boolean,
-            closestDataRange = 0,
-            i,
-            distance,
-            xData,
-            loopLength,
+            closestDataRange: number,
             minArgs: Array<(number|null|undefined)>,
             maxArgs: Array<(number|null|undefined)>,
             minRange;
@@ -1251,7 +1248,7 @@ class Axis {
         if (
             axis.isXAxis &&
             typeof axis.minRange === 'undefined' &&
-            !log
+            !logarithmic
         ) {
 
             if (
@@ -1267,22 +1264,14 @@ class Axis {
                 // Find the closest distance between raw data points, as opposed
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
-                axis.series.forEach(function (series): void {
-                    xData = series.xData as any;
-                    loopLength = series.xIncrement ? 1 : xData.length - 1;
+                closestDataRange = getClosestDistance(
+                    axis.series.map((s): number[] =>
+                        // If xIncrement, we only need to measure the two first
+                        // points to get the distance. Saves processing time.
+                        (s.xIncrement ? s.xData?.slice(0, 2) : s.xData) || []
+                    )
+                ) || 0;
 
-                    if (xData.length > 1) {
-                        for (i = loopLength; i > 0; i--) {
-                            distance = xData[i] - xData[i - 1];
-                            if (
-                                !closestDataRange ||
-                                distance < closestDataRange
-                            ) {
-                                closestDataRange = distance;
-                            }
-                        }
-                    }
-                });
                 axis.minRange = Math.min(
                     closestDataRange * 5,
                     (axis.dataMax as any) - (axis.dataMin as any)
@@ -1306,8 +1295,8 @@ class Axis {
             ];
             // If space is available, stay within the data range
             if (spaceAvailable) {
-                minArgs[2] = axis.logarithmic ?
-                    axis.logarithmic.log2lin(axis.dataMin as any) :
+                minArgs[2] = logarithmic ?
+                    logarithmic.log2lin(axis.dataMin as any) :
                     axis.dataMin;
             }
             min = arrayMax(minArgs);
@@ -1318,8 +1307,8 @@ class Axis {
             ];
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
-                maxArgs[2] = log ?
-                    log.log2lin(axis.dataMax as any) :
+                maxArgs[2] = logarithmic ?
+                    logarithmic.log2lin(axis.dataMax as any) :
                     axis.dataMax;
             }
 
@@ -1339,34 +1328,47 @@ class Axis {
     }
 
     /**
-     * Find the closestPointRange across all series.
+     * Find the closestPointRange across all series, including the single data
+     * series.
      *
      * @private
      * @function Highcharts.Axis#getClosest
      */
-    public getClosest(): number {
-        let ret: any;
+    public getClosest(): number | undefined {
+        let closestSingleDistance: number | undefined,
+            closestDistance: number | undefined;
 
         if (this.categories) {
-            ret = 1;
+            closestDistance = 1;
         } else {
+            const singleXs: number[] = [];
             this.series.forEach(function (series): void {
                 const seriesClosest = series.closestPointRange,
                     visible = series.visible ||
                         !series.chart.options.chart.ignoreHiddenSeries;
 
-                if (
+                if (series.xData?.length === 1) {
+                    singleXs.push(series.xData[0]);
+                } else if (
                     !series.noSharedTooltip &&
                     defined(seriesClosest) &&
                     visible
                 ) {
-                    ret = defined(ret) ?
-                        Math.min(ret, seriesClosest as any) :
+                    closestDistance = defined(closestDistance) ?
+                        Math.min(closestDistance, seriesClosest) :
                         seriesClosest;
                 }
             });
+            if (singleXs.length) {
+                singleXs.sort((a, b): number => a - b);
+                closestSingleDistance = getClosestDistance([singleXs]);
+            }
         }
-        return ret;
+
+        if (closestSingleDistance && closestDistance) {
+            return Math.min(closestSingleDistance, closestDistance);
+        }
+        return closestSingleDistance || closestDistance;
     }
 
     /**
@@ -1501,7 +1503,7 @@ class Axis {
             isXAxis = axis.isXAxis;
 
         let pointRange = axis.axisPointRange || 0,
-            closestPointRange: number,
+            closestPointRange: number | undefined,
             minPointOffset = 0,
             pointRangePadding = 0,
             ordinalCorrection,
@@ -1587,7 +1589,7 @@ class Axis {
             // closestPointRange means the closest distance between points. In
             // columns it is mostly equal to pointRange, but in lines pointRange
             // is 0 while closestPointRange is some other value
-            if (isXAxis) {
+            if (isXAxis && closestPointRange) {
                 axis.closestPointRange = closestPointRange;
             }
         }

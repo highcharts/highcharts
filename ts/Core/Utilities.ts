@@ -1325,6 +1325,48 @@ Math.easeInOutSine = function (pos: number): number {
 };
 
 /**
+ * Find the closest distance between two values of a two-dimensional array
+ * @private
+ * @function Highcharts.getClosestDistance
+ *
+ * @param {Array<Array<number>>} arrays
+ *          An array of arrays of numbers
+ *
+ * @return {number | undefined}
+ *          The closest distance between values
+ */
+function getClosestDistance(
+    arrays: number[][],
+    onError?: Function
+): (number|undefined) {
+    const allowNegative = !onError;
+    let closest: number | undefined,
+        loopLength: number,
+        distance: number,
+        i: number;
+
+    arrays.forEach((xData): void => {
+        if (xData.length > 1) {
+            loopLength = xData.length - 1;
+            for (i = loopLength; i > 0; i--) {
+                distance = xData[i] - xData[i - 1];
+                if (distance < 0 && !allowNegative) {
+                    onError?.();
+                    // Only one call
+                    onError = void 0;
+                } else if (distance && (
+                    typeof closest === 'undefined' || distance < closest
+                )) {
+                    closest = distance;
+                }
+            }
+        }
+    });
+
+    return closest;
+}
+
+/**
  * Returns the value of a property path on a given object.
  *
  * @private
@@ -2209,6 +2251,7 @@ const Utilities = {
     extendClass,
     find,
     fireEvent,
+    getClosestDistance,
     getMagnitude,
     getNestedProperty,
     getStyle,
