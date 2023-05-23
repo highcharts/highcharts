@@ -1,0 +1,1 @@
+Test zooming both with mouse wheel and mousepad. In both cases the animation should feel smooth Verify that the labels do not disconnect from the shapes. Also test the animation with zoomBy, you can use the setTimeout function for this.

@@ -755,21 +755,16 @@ class MapSeries extends ScatterSeries {
 
                 };
 
-                let animOptions: boolean | Partial<AnimationOptions> | undefined = {};
+                const animOptions = merge(animObject(renderer.globalAnimation)),
+                    userStep = animOptions.step;
 
-                animOptions = merge({}, renderer.globalAnimation);
-
-                if (typeof animOptions !== 'boolean') {
-                    const userStep = animOptions.step;
-
-                    animOptions.step =
-                        function (obj?: { applyDrilldown?: boolean }): void {
-                            if (userStep) {
-                                userStep.apply(this, arguments);
-                            }
-                            step.apply(this, arguments);
-                        };
-                }
+                animOptions.step =
+                    function (obj?: { applyDrilldown?: boolean }): void {
+                        if (userStep) {
+                            userStep.apply(this, arguments);
+                        }
+                        step.apply(this, arguments);
+                    };
 
                 transformGroup
                     .attr({ animator: 0 })
