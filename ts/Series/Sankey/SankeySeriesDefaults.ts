@@ -58,8 +58,6 @@ import type SankeySeries from './SankeySeries';
  */
 const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
 
-    borderRadius: 0,
-
     borderWidth: 0,
 
     colorByPoint: true,
