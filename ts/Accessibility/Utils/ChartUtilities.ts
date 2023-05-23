@@ -97,9 +97,8 @@ function getChartTitle(chart: Accessibility.ChartComposition): string {
  */
 function getAxisDescription(axis: Axis): string {
     return axis && (
-        axis.userOptions && axis.userOptions.accessibility &&
-            axis.userOptions.accessibility.description ||
-        axis.axisTitle && axis.axisTitle.textStr ||
+        axis.options.accessibility?.description ||
+        axis.axisTitle?.textStr ||
         axis.options.id ||
         axis.categories && 'categories' ||
         axis.dateTime && 'Time' ||

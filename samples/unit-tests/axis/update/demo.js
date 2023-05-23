@@ -80,7 +80,7 @@ QUnit.test('Update to non-ordinal (#4196)', function (assert) {
 });
 
 QUnit.test('General yAxis updates', function (assert) {
-    var chart = new Highcharts.StockChart({
+    const chart = new Highcharts.StockChart({
         chart: {
             type: 'column',
             renderTo: 'container',
@@ -92,6 +92,27 @@ QUnit.test('General yAxis updates', function (assert) {
             }
         }
     });
+
+    const checkOptionsConsistency = () => {
+
+        assert.strictEqual(
+            chart.options.yAxis.length,
+            chart.yAxis.filter(axis => !axis.options.isInternal).length,
+            'Chart Options yAxis should be the same length as Chart yAxis'
+        );
+
+        for (let i = 0; i < chart.yAxis.length; i++) {
+            if (!chart.yAxis[i].options.isInternal) {
+                assert.strictEqual(
+                    chart.options.yAxis[i],
+                    chart.yAxis[i].options,
+                    'Current axis options should be available in chart options'
+                );
+            }
+        }
+    };
+
+    checkOptionsConsistency();
 
     // #5323
     chart.yAxis[0].setTitle({
@@ -106,6 +127,8 @@ QUnit.test('General yAxis updates', function (assert) {
         ]
     });
 
+    checkOptionsConsistency();
+
     assert.strictEqual(
         chart.series[0].points.length,
         3,
@@ -117,16 +140,13 @@ QUnit.test('General yAxis updates', function (assert) {
     chart.addAxis({}, false, false);
     chart.yAxis[2].remove();
 
-    assert.strictEqual(
-        chart.yAxis[2].userOptions.index,
-        chart.yAxis.length - 1,
-        'Last index should be less than yAxis array length (#8075) - part I'
-    );
+
+    checkOptionsConsistency();
 
     assert.strictEqual(
-        chart.yAxis[2].options.index,
+        chart.yAxis[2].index,
         chart.yAxis.length - 1,
-        'Last index should be less than yAxis array length (#8075) - part II'
+        'Last index should be less than yAxis array length (#8075)'
     );
 
     chart.update({
@@ -145,9 +165,11 @@ QUnit.test('General yAxis updates', function (assert) {
     );
     assert.strictEqual(
         chart.series[1].yAxis,
-        chart.yAxis[2],
+        chart.yAxis[1],
         '#9671: The second series should be bound to the second axis'
     );
+
+    checkOptionsConsistency();
 });
 
 // Highcharts 4.1.1, Issue #3830
