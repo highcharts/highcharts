@@ -16,14 +16,14 @@ const gulp = require('gulp');
  * @return {Promise}
  * Promise to keep
  */
-function scriptsCompile() {
+function scriptsCompile(filePathes) {
     const fs = require('fs'),
         fsLib = require('./lib/fs'),
         logLib = require('./lib/log'),
         path = require('path'),
         processLib = require('./lib/process');
 
-    const filePathes = fsLib.getFilePaths('code', true);
+    filePathes = filePathes || fsLib.getFilePaths('code', true);
 
     let promiseChain1 = Promise.resolve(),
         promiseChain2 = Promise.resolve();
@@ -97,3 +97,5 @@ function scriptsCompile() {
 }
 
 gulp.task('scripts-compile', scriptsCompile);
+
+module.exports = scriptsCompile;
