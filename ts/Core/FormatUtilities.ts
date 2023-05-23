@@ -52,7 +52,7 @@ const helpers: Record<string, Function> = {
     divide: (a: number, b: number): number|string => (b !== 0 ? a / b : ''),
     // eslint-disable-next-line eqeqeq
     eq: (a: unknown, b: unknown): boolean => a == b,
-    each: function (arr: string[]|object[]|undefined): string|undefined {
+    each: function (arr: string[]|object[]|undefined): string|false {
         const match = arguments[arguments.length - 1];
         return arr?.map((item, i): string => format(match.body, extend(
             isObject(item) ? item : { '@this': item }, {
@@ -60,13 +60,13 @@ const helpers: Record<string, Function> = {
                 '@first': i === 0,
                 '@last': i === arr.length - 1
             }
-        ))).join('');
+        ))).join('') || false;
     },
     ge: (a: number, b: number): boolean => a >= b,
     gt: (a: number, b: number): boolean => a > b,
-    'if': function (condition: string[]|undefined): string|undefined {
+    'if': function (condition: string[]|undefined): string|false {
         const match = arguments[arguments.length - 1];
-        return (condition ? format(match.body, match.ctx) : void 0);
+        return condition ? format(match.body, match.ctx) : false;
     },
     le: (a: number, b: number): boolean => a <= b,
     lt: (a: number, b: number): boolean => a < b,
@@ -74,9 +74,9 @@ const helpers: Record<string, Function> = {
     // eslint-disable-next-line eqeqeq
     ne: (a: unknown, b: unknown): boolean => a != b,
     subtract: (a: number, b: number): number => a - b,
-    unless: function (condition: string[]|undefined): string|undefined {
+    unless: function (condition: string[]|undefined): string|false {
         const match = arguments[arguments.length - 1];
-        return (condition ? void 0 : format(match.body, match.ctx));
+        return condition ? false : format(match.body, match.ctx);
     }
 };
 
@@ -373,8 +373,10 @@ function format(str = '', ctx: any, chart?: Chart): string {
             }
 
             try {
-                replacement = helpers[fn].apply(ctx, args) ??
-                    (elseBody ? format(elseBody, ctx) : '');
+                replacement = helpers[fn].apply(ctx, args);
+                if (replacement === false) {
+                    replacement = elseBody ? format(elseBody, ctx) : '';
+                }
             } catch (e) {
                 replacement = '';
             }

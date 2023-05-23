@@ -345,6 +345,17 @@ QUnit.module('Format', () => {
             'true',
             'Less than or equal'
         );
+
+        assert.strictEqual(
+            format(
+                '{#ne 1 one}not equal{else}equal{/ne}',
+                {
+                    one: 1
+                }
+            ),
+            'equal',
+            'Shorthand relational'
+        );
     });
 
     QUnit.test('Subexpressions', assert => {
