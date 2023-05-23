@@ -1686,23 +1686,23 @@ class Series {
 
 
         // Find the closest distance between processed points
-        const closestPointRange = getClosestDistance([
-            logarithmic ?
-                processedXData.map(logarithmic.log2lin) :
-                processedXData
-        ]);
+        const closestPointRange = getClosestDistance(
+            [
+                logarithmic ?
+                    processedXData.map(logarithmic.log2lin) :
+                    processedXData
+            ],
 
-        // Unsorted data is not supported by the line tooltip, as well as data
-        // grouping and navigation in Stock charts (#725) and width calculation
-        // of columns (#1900). Avoid warning during the premature processing
-        // pass in updateNames (#16104).
-        if (
-            (closestPointRange || 0) < 0 &&
-            series.requireSorting &&
-            !updatingNames
-        ) {
-            error(15, false, series.chart);
-        }
+            // Unsorted data is not supported by the line tooltip, as well as
+            // data grouping and navigation in Stock charts (#725) and width
+            // calculation of columns (#1900). Avoid warning during the
+            // premature processing pass in updateNames (#16104).
+            (): false|void => (
+                series.requireSorting &&
+                !updatingNames &&
+                error(15, false, series.chart)
+            )
+        );
 
         return {
             xData: processedXData,

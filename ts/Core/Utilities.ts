@@ -1225,8 +1225,10 @@ Math.easeInOutSine = function (pos: number): number {
  *          The closest distance between values
  */
 function getClosestDistance(
-    arrays: number[][]
+    arrays: number[][],
+    onError?: Function
 ): (number|undefined) {
+    const allowNegative = !onError;
     let closest: number | undefined,
         loopLength: number,
         distance: number,
@@ -1237,7 +1239,11 @@ function getClosestDistance(
             loopLength = xData.length - 1;
             for (i = loopLength; i > 0; i--) {
                 distance = xData[i] - xData[i - 1];
-                if (distance && (
+                if (distance < 0 && !allowNegative) {
+                    onError?.();
+                    // Only one call
+                    onError = void 0;
+                } else if (distance && (
                     typeof closest === 'undefined' || distance < closest
                 )) {
                     closest = distance;
