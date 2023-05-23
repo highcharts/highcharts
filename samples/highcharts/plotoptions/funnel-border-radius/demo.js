@@ -2,20 +2,16 @@ Highcharts.chart('container', {
     chart: {
         type: 'funnel'
     },
-    accessibility: {
-        enabled: false
-    },
     title: {
         text: 'Funnel chart with rounded corners'
     },
     plotOptions: {
         series: {
-            borderRadius: `${document.getElementById('range').value}`,
+            borderRadius: {
+                radius: document.getElementById('range').value
+            },
             borderWidth: 2,
             borderColor: '#666',
-            dataLabels: {
-                enabled: true
-            },
             center: ['47%', '50%'],
             width: '90%'
         }
@@ -49,19 +45,23 @@ document.getElementById('range').addEventListener('input', e => {
         chart.update({
             plotOptions: {
                 series: {
-                    borderRadius: e.target.value
+                    borderRadius: {
+                        radius: e.target.value
+                    }
                 }
             }
         }, undefined, undefined, false);
     });
 });
 
-document.querySelectorAll('button.radius-mode').forEach(btn => {
+document.querySelectorAll('button.radius-scope').forEach(btn => {
     btn.addEventListener('click', () => {
         Highcharts.charts[0].update({
             plotOptions: {
                 series: {
-                    borderRadiusMode: btn.dataset.value
+                    borderRadius: {
+                        scope: btn.dataset.value
+                    }
                 }
             }
         });

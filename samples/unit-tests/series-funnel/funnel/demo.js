@@ -210,7 +210,10 @@ QUnit.test('Funnel path', function (assert) {
     );
 
     series.update({
-        borderRadiusMode: 'points'
+        borderRadius: {
+            radius: '1%',
+            scope: 'point'
+        }
     });
 
     assert.strictEqual(
