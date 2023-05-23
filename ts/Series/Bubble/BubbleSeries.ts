@@ -727,9 +727,8 @@ class BubbleSeries extends ScatterSeries {
     }
 
     public translateBubble(): void {
-        const { data, radii } = this,
-            { minPxSize } = this.getPxExtremes(),
-            options = this.options;
+        const { data, options, radii } = this,
+            { minPxSize } = this.getPxExtremes();
 
         // Set the shape type and arguments to be picked up in drawPoints
         let i = data.length;
