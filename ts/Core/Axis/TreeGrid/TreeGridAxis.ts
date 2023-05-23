@@ -17,7 +17,7 @@
  *
  * */
 
-import type { AxisBreakOptions } from '../AxisOptions';
+import type { AxisBreakOptions, AxisCollectionKey } from '../AxisOptions';
 import type Chart from '../../Chart/Chart';
 import type { ChartAddSeriesEventObject } from '../../Chart/ChartOptions';
 import type GanttPoint from '../../../Series/Gantt/GanttPoint';
@@ -609,7 +609,8 @@ function wrapInit(
     this: TreeGridAxisComposition,
     proceed: Function,
     chart: Chart,
-    userOptions: TreeGridAxisOptions
+    userOptions: TreeGridAxisOptions,
+    coll: AxisCollectionKey
 ): void {
     const axis = this,
         isTreeGrid = userOptions.type === 'treegrid';
@@ -772,9 +773,9 @@ function wrapInit(
         });
     }
 
-    // Now apply the original function with the original arguments,
-    // which are sliced off this function's arguments
-    proceed.apply(axis, [chart, userOptions]);
+    // Now apply the original function with the original arguments, which are
+    // sliced off this function's arguments
+    proceed.apply(axis, [chart, userOptions, coll]);
 
     if (isTreeGrid) {
         axis.hasNames = true;

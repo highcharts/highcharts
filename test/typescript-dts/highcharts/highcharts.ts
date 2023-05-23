@@ -15,7 +15,8 @@ test_seriesColumn();
 test_seriesDependencyWheel();
 test_seriesLine();
 test_seriesPie();
-
+test_tooltip();
+test_yAxis();
 
 /**
  * Tests legend options.
@@ -484,4 +485,31 @@ function test_seriesPie() {
             }]
         }]
     });
+}
+
+/**
+ * Tests TooltipOptions in a common use cases.
+ */
+function test_tooltip() {
+    Highcharts.chart('container', {
+        tooltip: {
+            borderWidth: 10 // #18977
+        }
+    });
+}
+
+/**
+ * Tests YAxisLabelsOptions in a common use cases.
+ */
+function test_yAxis() {
+    Highcharts.chart('container', {
+        chart: {
+            polar: true
+        },
+        yAxis: {
+            labels: {
+                distance: "10%" // #18977
+            }
+        }
+    })
 }

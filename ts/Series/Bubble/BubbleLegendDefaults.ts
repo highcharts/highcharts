@@ -176,7 +176,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
          */
         style: {
             /** @ignore-option */
-            fontSize: '0.7em',
+            fontSize: '0.9em',
             /** @ignore-option */
             color: Palette.neutralColor100
         },

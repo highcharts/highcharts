@@ -80,9 +80,9 @@ const {
     arrayMax,
     arrayMin,
     clamp,
-    cleanRecursively,
     correctFloat,
     defined,
+    diffObjects,
     erase,
     error,
     extend,
@@ -90,6 +90,7 @@ const {
     fireEvent,
     getClosestDistance,
     getNestedProperty,
+    insertItem,
     isArray,
     isNumber,
     isString,
@@ -356,6 +357,8 @@ class Series {
 
     public symbol?: SymbolKey;
 
+    public symbolIndex?: number;
+
     public tooltipOptions: TooltipOptions = void 0 as any;
 
     public tracker?: SVGElement;
@@ -505,7 +508,7 @@ class Series {
 
         // Insert the series and re-order all series above the insertion
         // point.
-        chart.orderSeries(this.insert(chartSeries));
+        chart.orderItems('series', insertItem(this, chartSeries));
 
         // Set options for series with sorting and set data later.
         if (options.dataSorting && options.dataSorting.enabled) {
@@ -535,47 +538,6 @@ class Series {
     }
 
     /**
-     * Insert the series in a collection with other series, either the chart
-     * series or yAxis series, in the correct order according to the index
-     * option. Used internally when adding series.
-     *
-     * @private
-     * @function Highcharts.Series#insert
-     * @param {Array<Highcharts.Series>} collection
-     *        A collection of series, like `chart.series` or `xAxis.series`.
-     * @return {number}
-     *         The index of the series in the collection.
-     */
-    public insert(collection: Array<Series>): number {
-        const indexOption = this.options.index;
-        let i: any;
-
-        // Insert by index option
-        if (isNumber(indexOption)) {
-            i = collection.length;
-            while (i--) {
-                // Loop down until the interted element has higher index
-                if ((indexOption as any) >=
-                        pick(collection[i].options.index, collection[i]._i)
-                ) {
-                    collection.splice(i + 1, 0, this);
-                    break;
-                }
-            }
-            if (i === -1) {
-                collection.unshift(this);
-            }
-            i = i + 1;
-
-
-        // Or just push it to the end
-        } else {
-            collection.push(this);
-        }
-        return pick(i, collection.length - 1);
-    }
-
-    /**
      * Set the xAxis and yAxis properties of cartesian series, and register
      * the series in the `axis.series` array.
      *
@@ -591,35 +553,25 @@ class Series {
         fireEvent(this, 'bindAxes', null as any, function (): void {
 
             // repeat for xAxis and yAxis
-            (series.axisTypes || []).forEach(function (AXIS: string): void {
-                let index = 0;
-
+            (series.axisTypes || []).forEach(function (coll: string): void {
                 // loop through the chart's axis objects
-                (chart as any)[AXIS].forEach(function (axis: Axis): void {
+                (chart as any)[coll].forEach(function (axis: Axis): void {
                     axisOptions = axis.options;
 
                     // apply if the series xAxis or yAxis option mathches
                     // the number of the axis, or if undefined, use the
                     // first axis
                     if (
+                        pick((seriesOptions as any)[coll], 0) === axis.index ||
                         (
-                            (seriesOptions as any)[AXIS] === index &&
-                            !axisOptions.isInternal
-                        ) ||
-                        (
-                            typeof (seriesOptions as any)[AXIS] !==
+                            typeof (seriesOptions as any)[coll] !==
                             'undefined' &&
-                            (seriesOptions as any)[AXIS] === axisOptions.id
-                        ) ||
-                        (
-                            typeof (seriesOptions as any)[AXIS] ===
-                            'undefined' &&
-                            axisOptions.index === 0
+                            (seriesOptions as any)[coll] === axisOptions.id
                         )
                     ) {
 
                         // register this series in the axis.series lookup
-                        series.insert(axis.series);
+                        insertItem(series, axis.series);
 
                         // set this series.xAxis or series.yAxis reference
                         /**
@@ -636,20 +588,16 @@ class Series {
                          * @name Highcharts.Series#yAxis
                          * @type {Highcharts.Axis}
                          */
-                        (series as any)[AXIS] = axis;
+                        (series as any)[coll] = axis;
 
                         // mark dirty for redraw
                         axis.isDirty = true;
                     }
-
-                    if (!axisOptions.isInternal) {
-                        index++;
-                    }
                 });
 
                 // The series needs an X and an Y axis
-                if (!(series as any)[AXIS] &&
-                    series.optionalAxis !== AXIS
+                if (!(series as any)[coll] &&
+                    series.optionalAxis !== coll
                 ) {
                     error(18, true, chart);
                 }
@@ -833,7 +781,12 @@ class Series {
         const typeOptions = (e.plotOptions as any)[this.type],
             userPlotOptions = (
                 userOptions.plotOptions || {} as SeriesTypePlotOptions
-            );
+            ),
+            userPlotOptionsSeries = userPlotOptions.series || {},
+            defaultPlotOptionsType = (
+                defaultOptions.plotOptions[this.type] || {}
+            ),
+            userPlotOptionsType = userPlotOptions[this.type] || {};
 
         // use copy to prevent undetected changes (#9762)
         /**
@@ -845,10 +798,10 @@ class Series {
 
         const options: SeriesTypeOptions = merge(
             typeOptions,
-            plotOptions?.series,
+            plotOptions.series,
             // #3881, chart instance plotOptions[type] should trump
             // plotOptions.series
-            userPlotOptions?.[this.type],
+            userPlotOptionsType,
             seriesUserOptions
         );
 
@@ -860,15 +813,11 @@ class Series {
         // (7)this series options
         this.tooltipOptions = merge(
             defaultOptions.tooltip, // 1
-            defaultOptions.plotOptions?.series?.tooltip, // 2
-            defaultOptions.plotOptions?.[this.type]?.tooltip, // 3
-            (
-                defaultOptions.tooltip &&
-                chartOptions.tooltip &&
-                cleanRecursively(chartOptions.tooltip, defaultOptions.tooltip)
-            ), // 4 - #18876 take only "userOptions" (calculate them)
-            plotOptions?.series?.tooltip, // 5
-            plotOptions?.[this.type]?.tooltip, // 6
+            defaultOptions.plotOptions.series?.tooltip, // 2
+            defaultPlotOptionsType?.tooltip, // 3
+            chart.userOptions.tooltip, // 4
+            userPlotOptions.series?.tooltip, // 5
+            userPlotOptionsType.tooltip, // 6
             seriesUserOptions.tooltip // 7
         );
 
@@ -876,8 +825,8 @@ class Series {
         // unless user says otherwise.
         this.stickyTracking = pick(
             seriesUserOptions.stickyTracking,
-            userPlotOptions?.[this.type]?.stickyTracking,
-            userPlotOptions?.series?.stickyTracking,
+            userPlotOptionsType.stickyTracking,
+            userPlotOptionsSeries.stickyTracking,
             (
                 this.tooltipOptions.shared && !this.noSharedTooltip ?
                     true :
@@ -947,38 +896,38 @@ class Series {
      * @function Highcharts.Series#getCyclic
      */
     public getCyclic(
-        prop: string,
+        prop: 'color'|'symbol',
         value?: any,
         defaults?: AnyRecord
     ): void {
         const chart = this.chart,
-            userOptions = this.userOptions,
-            indexName = prop + 'Index',
-            counterName = prop + 'Counter',
-            len = defaults ? defaults.length : pick(
-                (chart.options.chart as any)[prop + 'Count'],
-                (chart as any)[prop + 'Count']
+            indexName: 'colorIndex'|'symbolIndex' = `${prop}Index`,
+            counterName: 'colorCounter'|'symbolCounter' = `${prop}Counter`,
+            len = (
+                // Symbol count
+                defaults?.length ||
+                // Color count
+                chart.options.chart.colorCount
             );
-        let i,
-            setting;
+        let i: number|undefined,
+            setting: number|undefined;
 
         if (!value) {
-            // Pick up either the colorIndex option, or the _colorIndex
+            // Pick up either the colorIndex option, or the series.colorIndex
             // after Series.update()
             setting = pick(
-                (userOptions as any)[indexName],
-                (userOptions as any)['_' + indexName]
+                prop === 'color' ? this.options.colorIndex : void 0,
+                this[indexName]
             );
             if (defined(setting)) { // after Series.update()
                 i = setting;
             } else {
                 // #6138
                 if (!chart.series.length) {
-                    (chart as any)[counterName] = 0;
+                    chart[counterName] = 0;
                 }
-                (userOptions as any)['_' + indexName] = i =
-                    (chart as any)[counterName] % len;
-                (chart as any)[counterName] += 1;
+                i = chart[counterName] % len;
+                chart[counterName] += 1;
             }
             if (defaults) {
                 value = defaults[i];
@@ -986,9 +935,9 @@ class Series {
         }
         // Set the colorIndex
         if (typeof i !== 'undefined') {
-            (this as any)[indexName] = i;
+            this[indexName] = i;
         }
-        (this as any)[prop] = value;
+        this[prop] = value;
     }
 
     /**
@@ -3011,7 +2960,7 @@ class Series {
             chart.hoverSeries = void 0;
         }
         erase(chart.series, series);
-        chart.orderSeries();
+        chart.orderItems('series');
 
         // clear all members
         objectEach(series, function (val: any, prop: string): void {
@@ -4096,7 +4045,7 @@ class Series {
         redraw?: boolean
     ): void {
 
-        options = cleanRecursively(options, this.userOptions);
+        options = diffObjects(options, this.userOptions);
         fireEvent(this, 'update', { options: options });
 
         const series = this,
@@ -4122,8 +4071,10 @@ class Series {
         let seriesOptions: SeriesOptions,
             n,
             preserve = [
+                'colorIndex',
                 'eventOptions',
                 'navigatorSeries',
+                'symbolIndex',
                 'baseSeries'
             ],
             newType = (

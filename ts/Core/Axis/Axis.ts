@@ -20,6 +20,7 @@ import type { AlignValue } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisComposition from './AxisComposition';
 import type {
+    AxisCollectionKey,
     AxisCrosshairOptions,
     AxisLabelFormatterCallback,
     AxisLabelFormatterContextObject,
@@ -29,7 +30,7 @@ import type {
     YAxisOptions
 } from './AxisOptions';
 import type AxisLike from './AxisLike';
-import type { AxisTypeOptions } from './AxisType';
+import type { AxisType, AxisTypeOptions } from './AxisType';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { EventCallback } from '../Callback';
@@ -71,6 +72,7 @@ const {
     extend,
     fireEvent,
     getClosestDistance,
+    insertItem,
     isArray,
     isNumber,
     isString,
@@ -152,7 +154,7 @@ declare module '../Series/SeriesOptions' {
  * The Chart instance to apply the axis on.
  *
  * @param {Highcharts.AxisOptions} userOptions
- * Axis options.
+ * Axis options
  */
 class Axis {
 
@@ -167,6 +169,7 @@ class Axis {
     // Properties to survive after destroy, needed for Axis.update (#4317,
     // #5773, #5881).
     public static keepProps = [
+        'coll',
         'extKey',
         'hcEvents',
         'names',
@@ -183,9 +186,10 @@ class Axis {
 
     public constructor(
         chart: Chart,
-        userOptions: DeepPartial<AxisOptions>
+        userOptions: DeepPartial<AxisOptions>,
+        coll?: AxisCollectionKey
     ) {
-        this.init(chart, userOptions);
+        this.init(chart, userOptions, coll);
     }
 
     /* *
@@ -208,7 +212,7 @@ class Axis {
     public categories?: Array<string>;
     public chart: Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
-    public coll: ('colorAxis'|'xAxis'|'yAxis'|'zAxis') = void 0 as any;
+    public coll: AxisCollectionKey = void 0 as any;
     public cross?: SVGElement;
     public crosshair?: AxisCrosshairOptions;
     public dataMax?: (null|number);
@@ -223,6 +227,7 @@ class Axis {
     public hasVisibleSeries: boolean = void 0 as any;
     public height: number = void 0 as any;
     public horiz?: boolean;
+    public index: number = void 0 as any;
     public isDirty?: boolean;
     public isLinked: boolean = void 0 as any;
     public isOrdinal?: boolean;
@@ -324,9 +329,12 @@ class Axis {
      * @emits Highcharts.Axis#event:afterInit
      * @emits Highcharts.Axis#event:init
      */
-    public init(chart: Chart, userOptions: DeepPartial<AxisOptions>): void {
-
-        const isXAxis = userOptions.isX,
+    public init(
+        chart: Chart,
+        userOptions: DeepPartial<AxisOptions>,
+        coll: AxisCollectionKey = this.coll
+    ): void {
+        const isXAxis = coll === 'xAxis',
             axis = this;
 
         /**
@@ -343,7 +351,7 @@ class Axis {
          * @name Highcharts.Axis#horiz
          * @type {boolean|undefined}
          */
-        axis.horiz = chart.inverted && !axis.isZAxis ? !isXAxis : isXAxis;
+        axis.horiz = axis.isZAxis || (chart.inverted ? !isXAxis : isXAxis);
 
         /**
          * Whether the axis is the x-axis.
@@ -361,7 +369,7 @@ class Axis {
          * @name Highcharts.Axis#coll
          * @type {string}
          */
-        axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
+        axis.coll = coll;
 
         fireEvent(this, 'init', { userOptions: userOptions });
 
@@ -527,8 +535,10 @@ class Axis {
                 chart.axes.push(axis);
             }
 
-            (chart as any)[axis.coll].push(axis);
+            insertItem(this, chart[this.coll] as Array<AxisType>);
+
         }
+        chart.orderItems(axis.coll);
 
         /**
          * All series associated to the axis.
@@ -581,7 +591,7 @@ class Axis {
             ][this.side],
             merge(
                 // if set in setOptions (#1053):
-                (defaultOptions as any)[this.coll],
+                defaultOptions[this.coll],
                 userOptions
             )
         );
@@ -4365,7 +4375,7 @@ class Axis {
      */
     public remove(redraw?: boolean): void {
         const chart = this.chart,
-            key = this.coll, // xAxis or yAxis
+            coll = this.coll,
             axisSeries = this.series;
 
         let i = axisSeries.length;
@@ -4379,15 +4389,9 @@ class Axis {
 
         // Remove the axis
         erase(chart.axes, this);
-        erase((chart as any)[key], this);
+        erase(chart[coll] || [], this);
 
-        (chart as any)[key].forEach(function (
-            axis: Axis,
-            i: number
-        ): void {
-            // Re-index, #1706, #8075
-            axis.options.index = axis.userOptions.index = i;
-        });
+        chart.orderItems(coll);
         this.destroy();
         chart.isDirtyBox = true;
 

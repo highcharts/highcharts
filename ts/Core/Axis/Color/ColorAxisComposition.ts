@@ -199,8 +199,7 @@ namespace ColorAxisComposition {
 
         if (options.colorAxis) {
             options.colorAxis = splat(options.colorAxis);
-            options.colorAxis.forEach((axisOptions, i): void => {
-                axisOptions.index = i;
+            options.colorAxis.forEach((axisOptions): void => {
                 new ColorAxisClass(this, axisOptions); // eslint-disable-line no-new
             });
         }
