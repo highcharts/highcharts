@@ -45,6 +45,7 @@ const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
 
 const {
+    clamp,
     extend,
     fireEvent,
     isNumber,
@@ -454,12 +455,9 @@ class HeatmapSeries extends ScatterSeries {
         if (interpolation) {
             const
                 { image, chart, xAxis, yAxis } = series,
+                { len: xAxisLen } = xAxis,
+                { len: yAxisLen } = yAxis,
                 { inverted } = chart,
-                { colsize, rowsize } = seriesOptions,
-                { min: yMin, max: yMax } = yAxis.getExtremes(),
-                { min: xMin, max: xMax } = xAxis.getExtremes(),
-                { reversed: xRev } = xAxis,
-                { reversed: yRev } = yAxis,
                 xPadding = series.points[0].getCellAttributes().x1,
                 dimensions = inverted ?
                     {
@@ -468,8 +466,8 @@ class HeatmapSeries extends ScatterSeries {
                         x: 0,
                         y: 0
                     } : {
-                        width: xAxis.len - (xPadding * 2),
-                        height: yAxis.len,
+                        width: xAxisLen - (xPadding * 2),
+                        height: yAxisLen,
                         x: xPadding,
                         y: 0
                     };
@@ -486,18 +484,27 @@ class HeatmapSeries extends ScatterSeries {
                 if (canvas && ctx && colorAxis) {
                     const
                         { boost: seriesBoost, points } = series,
-                        notBoosting = !seriesBoost && !chart.boost,
-                        pointAmount = points.length,
-                        { width: canvasWidth, height: canvasHeight } = canvas,
+                        notBoosting = (!seriesBoost && !chart.boost),
+
+                        xMin = (xAxis.min as number),
+                        yMin = (yAxis.min as number),
+                        xMax = (xAxis.max as number),
+                        yMax = (yAxis.max as number),
+
+                        xDelta = xMax - xMin,
+                        yDelta = yMax - yMin,
+                        [colsize, rowsize] = [seriesOptions.colsize||1,seriesOptions.rowsize||1],
+                        canvasWidth = canvas.width = ~~((xMax - xMin)/colsize) + 1,
+                        canvasHeight = canvas.height = ~~((yMax - yMin)/rowsize) + 1,
                         canvasArea = (canvasWidth * canvasHeight),
-                        scaleToPoints = pointAmount / canvasArea,
-                        scaleToCanvas = ~~(canvasArea / pointAmount),
-                        pixelData = new Uint8ClampedArray(canvasArea * 4),
 
                         colorFromPoint = (p: HeatmapPoint): number[] => {
                             const rgba = ((
                                 colorAxis.toColor(
-                                    p.value || 0, p) as string)
+                                    p.value ||
+                                    0,
+                                    pick(p)
+                                ) as string)
                                 .split(')')[0]
                                 .split('(')[1]
                                 .split(',')
@@ -511,72 +518,67 @@ class HeatmapSeries extends ScatterSeries {
                             return rgba;
                         },
 
-                        posByDirection = (
-                            (): Function => {
-                                const
-                                    canvasPixelFactorX = ((canvasWidth -
-                                        (1 / (colsize || 1))) /
-                                        (xMax - xMin)
-                                    ),
 
-                                    canvasPixelFactorY = ((canvasHeight -
-                                        (1 / (rowsize || 1))) /
-                                        (yMax - yMin)
-                                    ),
-
-                                    xDir = xRev ?
-                                        (x: number): number => (
-                                            (xMax - x) -
-                                            xMin
-                                        ) :
-                                        (x: number): number => (x - xMin),
-
-                                    yDir = yRev ?
-                                        (y: number): number => (y - yMin) :
-                                        (y: number): number => (
-                                            (yMax - y) -
-                                            yMin
-                                        );
-
-                                return (
-                                    (x: number, y: number): number => (
-                                        (xDir(x) * canvasPixelFactorX) +
-                                        canvasWidth *
-                                        (yDir(y) * canvasPixelFactorY)
+                        sorted = points.sort((a,b) => (a.x - b.x) === 0 ? (a.y - b.y) : 0),
+                            scaleToRange = (val: number, fromMin: number, fromMax: number, toMin: number, toMax: number) => {
+                            return ~~(
+                                (val - fromMin) * (
+                                    (toMax - toMin) /
+                                    (fromMax - fromMin)
                                     )
                                 );
-                            }
-                        )();
+                            };
+
+                    const pixelData = new Uint8ClampedArray(canvasWidth * canvasHeight * 4);
 
                     let imgDataIndex = 0;
-
-                    while (imgDataIndex < canvasArea) {
-                        const
-                            point = points[~~(imgDataIndex * scaleToPoints)],
-
-                            { x: pixelX, y: pixelY } = (
-                                point
-                            ),
-
-                            pixelBufferIndex = (4 *
-                                ~~(
-                                    posByDirection(pixelX, pixelY)
-                                )
-                            );
-
-                        pixelData.set(
-                            colorFromPoint(point),
-                            pixelBufferIndex
-                        );
-
-                        imgDataIndex++;
-                    }
 
                     if (notBoosting) {
                         series.buildKDTree();
                         series.directTouch = false;
                     }
 
+                    console.log(canvas.width, canvas.height);
+                    console.log(canvasWidth, canvasHeight);
+                    const normalize = (val: number, max: number, min: number) => (val - min) / (max - min);
+                    // while (imgDataIndex < points.length) {
+
+                    //     const {x, y} = points[imgDataIndex],
+                    //     adjustedX = scaleToRange(x, xMin, xMax, 0, canvasWidth),
+                    //     adjustedY = scaleToRange(y, yMin, yMax, 0, canvasHeight),
+                    //     pixelIndex = (adjustedX * (adjustedY || (adjustedX ? 1 : 0)));
+                    //     adjustedX * scaleX
+                    //     pixelIndex = adjustedY * canvasWidth + adjustedX,
+                    //     sourceArr = new Uint8ClampedArray(colorFromPoint(points[imgDataIndex]));
+                    //     console.log(pixelIndex, imgDataIndex);
+
+                    //     pixelData.set(sourceArr, pixelIndex * 4);
+
+                    //     imgDataIndex++;
+                    // }
+
+
+
+                    // det maker ingen sense å scale x y til x/ymax
+                    //heller ikke å
+
+                    for (let x = 0; x < canvasWidth; x++) {
+                        for (let y = 0; y < canvasHeight; y++) {
+                            // const adjustedX = scaleToRange(x, xMin, xMax, 0, canvasWidth - 1),
+                            //     adjustedY = scaleToRange(y, yMin, yMax, 0, canvasHeight - 1),
+                            const
+                                pixelIndex = y * canvasWidth + x,
+
+                                toPointScale = scaleToRange(pixelIndex, 0, (canvasWidth * canvasHeight), 0, points.length - 1),
+                                p = points[toPointScale],
+                                adjustedX = normalize(p.x, xMax, xMin) * (canvasWidth - 1),
+                                adjustedY = normalize(p.y, yMax, yMin) * (canvasHeight - 1),
+                                sourceArr = new Uint8ClampedArray(colorFromPoint(p))
+                            ;
+
+                            pixelData.set(sourceArr, (adjustedY * canvasWidth + adjustedX) * 4);
+                        }
+                    }
                     ctx.putImageData(
                         new ImageData(pixelData, canvasWidth, canvasHeight),
                         0,
@@ -624,15 +626,15 @@ class HeatmapSeries extends ScatterSeries {
         } else {
             series.canvas = doc.createElement('canvas');
 
-            series.canvas.width = ((
-                (series.xAxis.max || 0) - (series.xAxis.min || 0)) /
-                (series.options.colsize || 1)
-            ) + 1;
+            // series.canvas.width = ((
+            //     (series.xAxis.max || 0) - (series.xAxis.min || 0)) /
+            //     (series.options.colsize || 1)
+            // ) + 1;
 
-            series.canvas.height = ((
-                (series.yAxis.max || 0) - (series.yAxis.min || 0)) /
-                (series.options.rowsize || 1)
-            ) + 1;
+            // series.canvas.height = ((
+            //     (series.yAxis.max || 0) - (series.yAxis.min || 0)) /
+            //     (series.options.rowsize || 1)
+            // ) + 1;
 
             series.context = series.canvas.getContext('2d') || void 0;
             return series.context;
