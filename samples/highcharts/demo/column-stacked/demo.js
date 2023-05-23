@@ -19,15 +19,7 @@ Highcharts.chart('container', {
             text: 'Count trophies'
         },
         stackLabels: {
-            enabled: true,
-            style: {
-                fontWeight: 'bold',
-                color: ( // theme
-                    Highcharts.defaultOptions.title.style &&
-                    Highcharts.defaultOptions.title.style.color
-                ) || 'gray',
-                textOutline: 'none'
-            }
+            enabled: true
         }
     },
     legend: {

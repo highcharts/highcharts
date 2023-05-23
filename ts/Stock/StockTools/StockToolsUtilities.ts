@@ -302,8 +302,8 @@ function attractToPoint(
             y: closestPoint.y,
             below: y < closestPoint.y,
             series: closestPoint.series,
-            xAxis: closestPoint.series.xAxis.options.index || 0,
-            yAxis: closestPoint.series.yAxis.options.index || 0
+            xAxis: closestPoint.series.xAxis.index || 0,
+            yAxis: closestPoint.series.yAxis.index || 0
         };
     }
 }

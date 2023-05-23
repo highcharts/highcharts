@@ -610,10 +610,9 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
  *   ^                 ^
  */
 QUnit.test('Horizontal axis ticks at start and end', function (assert) {
-    var chart,
-        types = ['line', 'column', 'bar', 'bubble'];
+    const types = ['line', 'column', 'bar', 'bubble'];
 
-    chart = Highcharts.chart('container', {
+    const options = {
         chart: {
             type: 'line'
         },
@@ -681,22 +680,20 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
                 data: [-144.0, -106.4, 29.9]
             }
         ]
-    });
+    };
 
     types.forEach(function (type) {
-        var axes, axis, $axisGroup, axisGroupBox, leftTick, rightTick, ticks, i;
+        options.chart.type = type;
+        const chart = Highcharts.chart('container', options);
+        const axes = chart.xAxis;
 
-        chart.options.chart.type = type;
-        chart = Highcharts.chart('container', chart.options);
-
-        axes = chart.xAxis;
-        for (i = 0; i < axes.length; i++) {
-            axis = axes[0];
-            $axisGroup = $(axis.axisGroup.element);
-            axisGroupBox = $axisGroup[0].getBBox();
-            ticks = $axisGroup.find('.highcharts-tick');
-            leftTick = ticks[0].getBBox();
-            rightTick = ticks.slice(-1)[0].getBBox();
+        for (let i = 0; i < axes.length; i++) {
+            const axis = axes[i],
+                $axisGroup = $(axis.axisGroup.element),
+                axisGroupBox = $axisGroup[0].getBBox(),
+                ticks = $axisGroup.find('.highcharts-tick'),
+                leftTick = ticks[0].getBBox(),
+                rightTick = ticks.slice(-1)[0].getBBox();
 
             assert.equal(
                 leftTick.x,
@@ -958,9 +955,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
         ]
     });
 
-    axes = Highcharts.grep(chart.xAxis, function (axis) {
-        return !axis.options.isInternal;
-    });
+    axes = chart.xAxis.filter(axis => !axis.options.isInternal);
 
     axes.forEach(axis => {
         var axisType = axis.options.type || 'linear',
