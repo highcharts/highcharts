@@ -729,9 +729,7 @@ class BubbleSeries extends ScatterSeries {
     public translateBubble(): void {
         const { data, radii } = this,
             { minPxSize } = this.getPxExtremes(),
-            options = this.options,
-            threshold = options.threshold,
-            zoneAxis = this.zoneAxis || 'y';
+            options = this.options;
 
         // Set the shape type and arguments to be picked up in drawPoints
         let i = data.length;
@@ -741,11 +739,9 @@ class BubbleSeries extends ScatterSeries {
             const radius = radii ? radii[i] : 0; // #1737
 
             // Negative points means negative z values (#9728)
-            point.negative = (point as any)[zoneAxis] < (
-                (options as any)[zoneAxis + 'Threshold'] ||
-                threshold ||
-                0
-            );
+            if (this.zoneAxis === 'z') {
+                point.negative = (point.z || 0) < (options.zThreshold || 0);
+            }
 
             if (isNumber(radius) && radius >= minPxSize / 2) {
                 // Shape arguments

@@ -2266,7 +2266,7 @@ class Series {
                 plotX; // #1514, #5383, #5518
 
             // Negative points #19028
-            point.negative = defined(point.y) && point.y < (threshold || 0);
+            point.negative = (point.y || 0) < (threshold || 0);
 
             // some API data
             point.category = pick(
