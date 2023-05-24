@@ -21,11 +21,14 @@ function scriptsCompile(filePathes) {
         fsLib = require('./lib/fs'),
         logLib = require('./lib/log'),
         path = require('path'),
-        processLib = require('./lib/process');
+        processLib = require('./lib/process'),
+        argv = require('yargs').argv;
 
     filePathes = filePathes instanceof Array ?
         filePathes :
-        fsLib.getFilePaths('code', true);
+        typeof argv.files === 'string' ?
+            argv.files.split(',') :
+            fsLib.getFilePaths('code', true);
 
     let promiseChain1 = Promise.resolve(),
         promiseChain2 = Promise.resolve();
@@ -48,7 +51,8 @@ function scriptsCompile(filePathes) {
         }
 
 
-        const language = (
+        const target = (
+                argv.target ||
                 inputPath.includes('/es5/') ?
                     'ECMASCRIPT5_STRICT' :
                     'ECMASCRIPT_2020'
@@ -65,8 +69,8 @@ function scriptsCompile(filePathes) {
             ' --emit_use_strict' +
             ` --js "${inputPath}"` +
             ` --js_output_file "${outputPath}"` +
-            ` --language_in ${language}` +
-            ` --language_out ${language}` +
+            ` --language_in ${target}` +
+            ` --language_out ${target}` +
             ' --platform native',
             { silent: 2 }
 
