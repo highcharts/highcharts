@@ -145,23 +145,38 @@ class Board implements Serializable<Board, Board.JSON> {
         this.a11y = new DashboardsAccessibility(this);
     }
 
-    public async initAsync(): Promise<Board> {
-        const componentPromises: Array<Promise<Component>> = [],
-            mountedComponents = this.mountedComponents;
 
-        this.init();
-
-        for (let i = 0, iEnd = mountedComponents.length; i < iEnd; ++i) {
-            componentPromises.push(
-                mountedComponents[i].component.initConnector()
-            );
-        }
-
-        return Promise.all(componentPromises).then((): Board => this);
-    }
-
-    // Init layouts from options.
-    public init(): Board {
+    /**
+     * Init the layouts and components on the dashboard.
+     *
+     * @param async Whether to initialize the dashboard asynchronously. When
+     * false or undefined the function returns the dashboard isntance.
+     *  instance.
+     *
+     * @returns
+     * Board instance
+     */
+    public init(async?: boolean): Board;
+    /**
+     * Init the layouts and components on the dashboard.
+     *
+     * @param async Whether to initialize the dashboard asynchronously. When
+     * true, the function returns a promise that resolves with the dashboard
+     *  instance.
+     *
+     * @returns
+    * A promise that resolves with the dashboard instance.
+     */
+    public init(async: true): Promise<Board>;
+    /**
+     * Init the layouts and components on the dashboard.
+     *
+     * @param async Whether to initialize the dashboard asynchronously. When
+     * true, the function returns a promise that resolves with the dashboard
+     *  instance.
+     *
+     */
+    public init(async?: boolean): (Board | Promise<Board>) {
         const options = this.options;
         if (options.gui && this.options.gui) {
             this.setLayouts(this.options.gui);
@@ -180,6 +195,20 @@ class Board implements Serializable<Board, Board.JSON> {
         // Init events.
         this.initEvents();
 
+        if (async) {
+
+            const componentPromises: Array<Promise<Component>> = [],
+                mountedComponents = this.mountedComponents;
+
+            for (let i = 0, iEnd = mountedComponents.length; i < iEnd; ++i) {
+                componentPromises.push(
+                    mountedComponents[i].component.initConnector()
+                );
+            }
+
+            return Promise.all(componentPromises).then((): Board => this);
+        }
+
         return this;
     }
 
@@ -197,17 +226,48 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      * @param options
      * The options for the dashboard.
+     *
+     * @param async
+     * Whether to initialize the dashboard asynchronously. When false or
+     * undefined, the function returns the dashboard instance.
      */
     public static board(
         renderTo: (string|globalThis.HTMLElement),
         options: Board.Options,
-        async?: false
+        async?: boolean
     ): Board;
+    /**
+     * Factory function for creating a new dashboard.
+     *
+     * @param renderTo
+     * The DOM element to render to, or its id.
+     *
+     * @param options
+     * The options for the dashboard.
+     *
+     * @param async
+     * Whether to initialize the dashboard asynchronously. When true, the
+     * function returns a promise that resolves with the dashboard instance.
+     */
     public static board(
         renderTo: (string|globalThis.HTMLElement),
         options: Board.Options,
         async: true
     ): Promise<Board>;
+    /**
+     * Factory function for creating a new dashboard.
+     *
+     * @param renderTo
+     * The DOM element to render to, or its id.
+     *
+     * @param options
+     * The options for the dashboard.
+     *
+     * @param async
+     * Whether to initialize the dashboard asynchronously. When true, the
+     * function returns a promise that resolves with the Dashboard instance.
+     * When false, the function returns the Dashboard instance.
+     */
     public static board(
         renderTo: (string|globalThis.HTMLElement),
         options: Board.Options,
@@ -215,11 +275,7 @@ class Board implements Serializable<Board, Board.JSON> {
     ): (Board|Promise<Board>) {
         const board = new Board(renderTo, options);
 
-        if (async) {
-            return board.initAsync();
-        }
-
-        return board.init();
+        return board.init(async);
     }
 
     /* *
