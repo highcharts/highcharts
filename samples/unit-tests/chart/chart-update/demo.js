@@ -92,7 +92,7 @@
             }
         });
         assert.strictEqual(
-            chart.series[0].legendItem.label.styles.fill,
+            chart.series[0].legendItem.label.styles.color,
             'gray',
             'Text color is updated'
         );

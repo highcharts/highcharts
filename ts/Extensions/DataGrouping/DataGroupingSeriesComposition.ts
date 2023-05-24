@@ -552,7 +552,12 @@ function getDGApproximation(
     if (this.is('hlc')) {
         return 'hlc';
     }
-    if (this.is('column')) {
+    if (
+        // #18974, default approximation for cumulative
+        // should be `sum` when `dataGrouping` is enabled
+        this.is('column') ||
+        this.options.cumulative
+    ) {
         return 'sum';
     }
     return 'average';

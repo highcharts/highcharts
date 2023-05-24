@@ -1,0 +1,15 @@
+.highcharts-figure {
+    min-width: 320px;
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+#container {
+    height: 550px;
+}
+
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}

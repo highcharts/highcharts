@@ -2090,7 +2090,7 @@ class Pointer {
      */
     private touchSelect(e: PointerEvent): boolean {
         return Boolean(
-            this.chart.options.chart.zooming.singleTouch &&
+            this.chart.zooming.singleTouch &&
             e.touches &&
             e.touches.length === 1
         );
@@ -2107,13 +2107,13 @@ class Pointer {
             options = chart.options.chart,
             inverted = chart.inverted;
 
-        let zoomType = options.zooming.type || '',
+        let zoomType = chart.zooming.type || '',
             zoomX,
             zoomY;
 
         // Look for the pinchType option
         if (/touch/.test(e.type)) {
-            zoomType = pick(options.zooming.pinchType, zoomType);
+            zoomType = pick(chart.zooming.pinchType, zoomType);
         }
 
         this.zoomX = zoomX = /x/.test(zoomType);

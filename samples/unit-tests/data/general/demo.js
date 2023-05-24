@@ -32,7 +32,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Data module with decimapPoint and negative numbers (#4749)',
+    'Data module with decimapPoint and negative numbers (#4749, #19017)',
     function (assert) {
         document.body.innerHTML += `<table id="datatable">
     <thead>
@@ -65,8 +65,8 @@ QUnit.test(
         </tr>
         <tr>
             <th>Oranges</th>
-            <td>-3,12</td>
-            <td>-2,9</td>
+            <td>3 123</td>
+            <td>-3 123</td>
         </tr>
     </tbody>
 </table>`;
@@ -88,7 +88,7 @@ QUnit.test(
                     return point.y;
                 })
                 .join(','),
-            '-3.4,-1.2,5.1,-1.1,-3.12',
+            '-3.4,-1.2,5.1,-1.1,3123',
             'Series 1 correct data'
         );
         assert.equal(
@@ -97,7 +97,7 @@ QUnit.test(
                     return point.y;
                 })
                 .join(','),
-            '-4.24,-1.5,11.1,-1.1,-2.9',
+            '-4.24,-1.5,11.1,-1.1,-3123',
             'Series 2 correct data'
         );
     }

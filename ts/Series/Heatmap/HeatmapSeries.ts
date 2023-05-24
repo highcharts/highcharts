@@ -16,6 +16,7 @@
  *
  * */
 
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorAxis from '../../Core/Axis/Color/ColorAxis';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
@@ -719,7 +720,6 @@ class HeatmapSeries extends ScatterSeries {
         // top left corner like other symbols are. This should be refactored,
         // then we could save ourselves some tests for .hasImage etc. And the
         // evaluation of borderRadius would be moved to `markerAttribs`.
-
         if (options.marker && isNumber(options.borderRadius)) {
             options.marker.r = options.borderRadius;
         }

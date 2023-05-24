@@ -41,6 +41,7 @@ const {
     extend,
     isArray,
     isNumber,
+    getClosestDistance,
     merge,
     objectEach
 } = U;
@@ -91,36 +92,6 @@ function highlowLevel(
         high: maxHigh(arr),
         low: minLow(arr)
     };
-}
-
-/**
- * @private
- */
-function getClosestPointRange(axis: Axis): (number|undefined) {
-    let closestDataRange: number | undefined,
-        loopLength: number,
-        distance: number,
-        xData: Array<number>,
-        i: number;
-
-    axis.series.forEach(function (series): void {
-        if (series.xData) {
-            xData = series.xData;
-            loopLength = series.xIncrement ? 1 : xData.length - 1;
-
-            for (i = loopLength; i > 0; i--) {
-                distance = xData[i] - xData[i - 1];
-                if (
-                    typeof closestDataRange === 'undefined' ||
-                    distance < closestDataRange
-                ) {
-                    closestDataRange = distance;
-                }
-            }
-        }
-    });
-
-    return closestDataRange;
 }
 
 /**
@@ -838,7 +809,9 @@ class IKHIndicator extends SMAIndicator {
             yVal: Array<Array<number>> = series.yData as any,
             xAxis: Axis = series.xAxis,
             yValLen: number = (yVal && yVal.length) || 0,
-            closestPointRange: number = getClosestPointRange(xAxis) as any,
+            closestPointRange: number = getClosestDistance(
+                xAxis.series.map((s): number[] => s.xData || [])
+            ) as any,
             IKH: Array<Array<number | undefined>> = [],
             xData: Array<number> = [];
 

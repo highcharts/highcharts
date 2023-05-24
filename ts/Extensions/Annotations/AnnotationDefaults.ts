@@ -316,7 +316,7 @@ const AnnotationDefaults: AnnotationOptions = {
          */
         style: {
             /** @ignore */
-            fontSize: '11px',
+            fontSize: '0.7em',
             /** @ignore */
             fontWeight: 'normal',
             /** @ignore */

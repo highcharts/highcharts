@@ -64,6 +64,8 @@ import Breadcrumbs from './Breadcrumbs/Breadcrumbs.js';
 
 const {
     addEvent,
+    defined,
+    diffObjects,
     extend,
     fireEvent,
     merge,
@@ -158,7 +160,6 @@ declare module '../Core/Series/SeriesLike' {
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
-        _colorIndex?: number;
         _ddSeriesId?: number;
         _levelNumber?: number;
         drilldown?: string;
@@ -631,12 +632,12 @@ defaultOptions.drilldown = {
      * drill into. If mapZooming is set to false the drilldown/drillup
      * animations only fade in/fade out without zooming to a specific map point.
      *
-     * @sample    maps/demo/map-drilldown-without-async/
+     * @sample    maps/demo/map-drilldown-preloaded/
      *            Map drilldown without async maps loading
      *
      * @type      {boolean}
      * @default   true
-     * @since     next
+     * @since 11.0.0
      * @product   highmaps
      * @apioption drilldown.mapZooming
      */
@@ -766,20 +767,38 @@ Chart.prototype.addSeriesAsDrilldown = function (
     if (chart.mapView) {
         // stop hovering while drilling down
         point.series.isDrilling = true;
-        // stop duplicating and overriding animations
-        point.series.options.inactiveOtherPoints = true;
+
+        chart.series.forEach((series): void => {
+            // stop duplicating and overriding animations
+            series.options.inactiveOtherPoints = true;
+
+            // hide and disable dataLabels
+            series.dataLabelsGroup?.destroy();
+            delete series.dataLabelsGroup;
+        });
+
+        // #18925 map zooming is not working with geoJSON maps
+        if (
+            chart.options.drilldown &&
+            !chart.mapView.projection.hasGeoProjection &&
+            defaultOptions.drilldown
+        ) {
+            const userDrilldown = diffObjects(
+                chart.options.drilldown,
+                defaultOptions.drilldown
+            );
+
+            // set mapZooming to false if user didn't set any in chart config
+            if (!defined(userDrilldown.mapZooming)) {
+                chart.options.drilldown.mapZooming = false;
+            }
+        }
 
         if (
             chart.options.drilldown &&
             chart.options.drilldown.animation &&
             chart.options.drilldown.mapZooming
         ) {
-            // hide and disable dataLabels
-            if (point.series.dataLabelsGroup) {
-                point.series.dataLabelsGroup.destroy();
-                delete point.series.dataLabelsGroup;
-            }
-
             // first zoomTo then crossfade series
             chart.mapView.allowTransformAnimation = true;
 
@@ -858,7 +877,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         if (series.xAxis === xAxis) {
             series.options._ddSeriesId =
                 series.options._ddSeriesId || ddSeriesId++;
-            series.options._colorIndex = series.userOptions._colorIndex;
+            series.options.colorIndex = series.colorIndex;
             series.options._levelNumber =
                 series.options._levelNumber || levelNumber; // #3182
 
@@ -987,30 +1006,31 @@ Chart.prototype.applyDrilldown = function (): void {
                             animOptions,
                             function (): void {
                                 series.remove(false);
+                                // If it is the last series
+                                if (!(level.levelSeries.filter((el): number =>
+                                    Object.keys(el).length)).length) {
+                                    // We have a reset zoom button. Hide it and
+                                    // detatch it from the chart. It is
+                                    // preserved to the layer config above.
+                                    if (chart.resetZoomButton) {
+                                        chart.resetZoomButton.hide();
+                                        delete chart.resetZoomButton;
+                                    }
 
-                                // We have a reset zoom button. Hide it and
-                                // detatch it from the chart. It is preserved
-                                // to the layer config above.
-                                if (chart.resetZoomButton) {
-                                    chart.resetZoomButton.hide();
-                                    delete chart.resetZoomButton;
+                                    chart.pointer.reset();
+
+                                    fireEvent(chart, 'afterDrilldown');
+
+                                    if (chart.mapView) {
+                                        chart.series.forEach((series): void => {
+                                            series.isDirtyData = true;
+                                            series.isDrilling = false;
+                                        });
+                                        chart.mapView.fitToBounds(
+                                            void 0, void 0);
+                                    }
+                                    fireEvent(chart, 'afterApplyDrilldown');
                                 }
-
-                                chart.pointer.reset();
-
-                                fireEvent(chart, 'afterDrilldown');
-
-                                if (chart.mapView) {
-                                    chart.series.forEach((series): void => {
-                                        series.isDirtyData = true;
-                                        // series.isDrilling = false;
-                                    });
-                                    chart.mapView.setView(void 0, 1);
-                                }
-                                chart.series.forEach((series): void => {
-                                    series.isDrilling = false;
-                                });
-                                fireEvent(chart, 'afterApplyDrilldown');
                             });
                         }
                     }
@@ -1185,7 +1205,10 @@ Chart.prototype.drillUp = function (isMultipleDrillUp?: boolean): void {
             }
 
             level.levelSeriesOptions.forEach((el): void => {
-                newSeries = addSeries(el, oldSeries);
+                const addedSeries = addSeries(el, oldSeries);
+                if (addedSeries) {
+                    newSeries = addedSeries;
+                }
             });
 
             fireEvent(chart, 'drillup', {
@@ -1778,6 +1801,8 @@ if (MapSeries) {
                                     ),
                                     true
                                 );
+                            series.isDirty = true;
+                            chart.redraw();
                         }
                     });
 

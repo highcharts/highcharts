@@ -682,7 +682,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        symbolX: 12.5,
+        symbolX: 14.5,
 
         /**
          * The y position of the center of the symbol inside the button.
@@ -692,7 +692,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        symbolY: 10.5,
+        symbolY: 13.5,
 
         /**
          * Alignment for the buttons.
@@ -720,7 +720,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        height: 22,
+        height: 28,
 
         /**
          * A text string to add to the individual button.
@@ -784,7 +784,7 @@ const navigation: NavigationOptions = {
          *
          * @since 2.0
          */
-        width: 24,
+        width: 28,
 
         /**
          * Fill color for the symbol within the button.
@@ -869,16 +869,18 @@ const navigation: NavigationOptions = {
      *         Light gray menu background
      *
      * @type    {Highcharts.CSSObject}
-     * @default {"border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0"}
+     * @default {"background": "#ffffff", "borderRadius": "3px", "padding": "0.5em"}
      * @since   2.0
      */
     menuStyle: {
         /** @ignore-option */
-        border: `1px solid ${Palette.neutralColor40}`,
+        border: 'none',
+        /** @ignore-option */
+        borderRadius: '3px',
         /** @ignore-option */
         background: Palette.backgroundColor,
         /** @ignore-option */
-        padding: '5px 0'
+        padding: '0.5em'
     },
 
     /**
@@ -894,18 +896,20 @@ const navigation: NavigationOptions = {
      *         Add a grey stripe to the left
      *
      * @type    {Highcharts.CSSObject}
-     * @default {"padding": "0.5em 1em", "color": "#333333", "background": "none", "fontSize": "11px/14px", "transition": "background 250ms, color 250ms"}
+     * @default {"padding": "0.5em", "color": "#333333", "background": "none", "borderRadius": "3px", "fontSize": "0.8em", "transition": "background 250ms, color 250ms"}
      * @since   2.0
      */
     menuItemStyle: {
         /** @ignore-option */
-        padding: '0.5em 1em',
+        background: 'none',
+        /** @ignore-option */
+        borderRadius: '3px',
         /** @ignore-option */
         color: Palette.neutralColor80,
         /** @ignore-option */
-        background: 'none',
+        padding: '0.5em',
         /** @ignore-option */
-        fontSize: isTouchDevice ? '14px' : '11px',
+        fontSize: isTouchDevice ? '0.9em' : '0.8em',
         /** @ignore-option */
         transition: 'background 250ms, color 250ms'
     },
@@ -922,14 +926,12 @@ const navigation: NavigationOptions = {
      *         Bold text on hover
      *
      * @type    {Highcharts.CSSObject}
-     * @default {"background": "#335cad", "color": "#ffffff"}
+     * @default {"background": "#f2f2f2" }
      * @since   2.0
      */
     menuItemHoverStyle: {
         /** @ignore-option */
-        background: Palette.highlightColor80,
-        /** @ignore-option */
-        color: Palette.backgroundColor
+        background: Palette.neutralColor5
     }
 
 };

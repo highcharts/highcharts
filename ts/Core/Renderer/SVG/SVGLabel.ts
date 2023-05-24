@@ -18,7 +18,6 @@ import type { AlignValue } from '../AlignObject';
 import type BBoxObject from '../BBoxObject';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
-import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
@@ -338,18 +337,6 @@ class SVGLabel extends SVGElement {
         this.boxAttr(key, value);
     }
 
-    public shadow(
-        b?: (boolean|Partial<ShadowOptionsObject>)
-    ): this {
-        if (b && !this.renderer.styledMode) {
-            this.updateBoxSize();
-            if (this.box) {
-                this.box.shadow(b);
-            }
-        }
-        return this;
-    }
-
     public strokeSetter(
         value: ColorType,
         key: string
@@ -389,7 +376,6 @@ class SVGLabel extends SVGElement {
      */
     private updateBoxSize(): void {
         const text = this.text,
-            style = text.element.style,
             attribs: SVGAttributes = {},
             padding = this.padding,
             // #12165 error when width is null (auto)
@@ -410,10 +396,7 @@ class SVGLabel extends SVGElement {
         this.width = this.getPaddedWidth();
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
 
-        const metrics = this.renderer.fontMetrics(
-            style && style.fontSize,
-            text
-        );
+        const metrics = this.renderer.fontMetrics(text);
 
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)

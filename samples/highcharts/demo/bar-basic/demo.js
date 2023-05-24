@@ -16,7 +16,9 @@ Highcharts.chart('container', {
         categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],
         title: {
             text: null
-        }
+        },
+        gridLineWidth: 1,
+        lineWidth: 0
     },
     yAxis: {
         min: 0,
@@ -26,16 +28,19 @@ Highcharts.chart('container', {
         },
         labels: {
             overflow: 'justify'
-        }
+        },
+        gridLineWidth: 0
     },
     tooltip: {
         valueSuffix: ' millions'
     },
     plotOptions: {
         bar: {
+            borderRadius: '50%',
             dataLabels: {
                 enabled: true
-            }
+            },
+            groupPadding: 0.1
         }
     },
     legend: {

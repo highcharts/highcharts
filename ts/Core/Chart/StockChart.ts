@@ -17,6 +17,7 @@
  * */
 
 import type {
+    AxisCollectionKey,
     AxisOptions,
     YAxisOptions
 } from '../Axis/AxisOptions';
@@ -236,21 +237,21 @@ class StockChart extends Chart {
      *
      * @private
      * @function Highcharts.StockChart#createAxis
-     * @param {string} type
+     * @param {string} coll
      * An axis type.
      * @param {Chart.CreateAxisOptionsObject} options
      * The axis creation options.
      */
     public createAxis(
-        type: string,
+        coll: AxisCollectionKey,
         options: Chart.CreateAxisOptionsObject
     ): Axis {
         options.axis = merge(
-            getDefaultAxisOptions(type, options.axis),
+            getDefaultAxisOptions(coll, options.axis),
             options.axis,
-            getForcedAxisOptions(type, this.userOptions)
+            getForcedAxisOptions(coll, this.userOptions)
         );
-        return super.createAxis(type, options);
+        return super.createAxis(coll, options);
     }
 }
 
@@ -748,7 +749,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 .css(extend<CSSObject>({
                     color: Palette.backgroundColor,
                     fontWeight: 'normal',
-                    fontSize: '11px',
+                    fontSize: '0.7em',
                     textAlign: 'center'
                 }, options.style || {}));
         }

@@ -148,6 +148,16 @@ function getDlOptions(
 
     if (!isNumber(options.rotation)) {
         if (rotationMode === 'auto' || rotationMode === 'circular') {
+
+            if (
+                options.useHTML &&
+                rotationMode === 'circular'
+            ) {
+                // Change rotationMode to 'auto' to avoid using text paths
+                // for HTML labels, see #18953
+                rotationMode = 'auto';
+            }
+
             if (
                 (point.innerArcLength as any) < 1 &&
                 (point.outerArcLength as any) > (shape.radius as any)
@@ -219,9 +229,11 @@ function getDlOptions(
 
         if (
             rotationMode === 'perpendicular' &&
-            point.series.chart.renderer.fontMetrics(
-                (options.style as any).fontSize
-            ).h > (point.outerArcLength as any)
+            // 16 is the inferred line height. We don't know the real line
+            // yet because the label is not rendered. A better approach for this
+            // would be to hide the label from the `alignDataLabel` function
+            // when the actual line height is known.
+            point.outerArcLength as any < 16
         ) {
             (options.style as any).width = 1;
         }
@@ -885,6 +897,13 @@ class SunburstSeries extends TreemapSeries {
                 animationInfo,
                 onComplete,
                 visible = !!(node.visible && node.shapeArgs);
+
+            // Border radius requires the border-radius.js module. Adding it
+            // here because the SunburstSeries is a mess and I can't find the
+            // regular shapeArgs. Usually shapeArgs are created in the series'
+            // `translate` function and then passed directly on to the renderer
+            // in the `drawPoints` function.
+            shape.borderRadius = series.options.borderRadius;
 
             if (hasRendered && animation) {
                 animationInfo = getAnimation(shape, {

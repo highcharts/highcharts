@@ -31,7 +31,7 @@ import type TooltipOptions from './TooltipOptions';
 import F from './FormatUtilities.js';
 const { format } = F;
 import H from './Globals.js';
-const { doc } = H;
+const { doc, isSafari } = H;
 import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
@@ -182,60 +182,6 @@ class Tooltip {
      *  Functions
      *
      * */
-
-    /**
-     * In styled mode, apply the default filter for the tooltip drop-shadow. It
-     * needs to have an id specific to the chart, otherwise there will be issues
-     * when one tooltip adopts the filter of a different chart, specifically one
-     * where the container is hidden.
-     *
-     * @private
-     * @function Highcharts.Tooltip#applyFilter
-     */
-    public applyFilter(): void {
-
-        const chart = this.chart;
-
-        chart.renderer.definition({
-            tagName: 'filter',
-            attributes: {
-                id: 'drop-shadow-' + chart.index,
-                opacity: 0.5
-            },
-            children: [{
-                tagName: 'feGaussianBlur',
-                attributes: {
-                    'in': 'SourceAlpha',
-                    stdDeviation: 1
-                }
-            }, {
-                tagName: 'feOffset',
-                attributes: {
-                    dx: 1,
-                    dy: 1
-                }
-            }, {
-                tagName: 'feComponentTransfer',
-                children: [{
-                    tagName: 'feFuncA',
-                    attributes: {
-                        type: 'linear',
-                        slope: 0.3
-                    }
-                }]
-            }, {
-                tagName: 'feMerge',
-                children: [{
-                    tagName: 'feMergeNode'
-                }, {
-                    tagName: 'feMergeNode',
-                    attributes: {
-                        'in': 'SourceGraphic'
-                    }
-                }]
-            }]
-        });
-    }
 
     /**
      * Build the body (lines) of the tooltip by iterating over the items and
@@ -557,23 +503,13 @@ class Tooltip {
                     this.label
                         .attr({
                             fill: options.backgroundColor,
-                            'stroke-width': options.borderWidth
+                            'stroke-width': options.borderWidth || 0
                         })
                         // #2301, #2657
                         .css(options.style)
-                        .css({ pointerEvents })
-                        .shadow(options.shadow);
+                        .css({ pointerEvents });
                 }
             }
-
-            if (styledMode && options.shadow) {
-                // Apply the drop-shadow filter
-                this.applyFilter();
-                this.label.attr({
-                    filter: 'url(#drop-shadow-' + this.chart.index + ')'
-                });
-            }
-
             // Split tooltip use updateTooltipContainer to position the tooltip
             // container.
             if (tooltip.outside) {
@@ -595,6 +531,7 @@ class Tooltip {
 
             this.label
                 .attr({ zIndex: 8 })
+                .shadow(options.shadow)
                 .add();
         }
         return this.label;
@@ -1387,7 +1324,7 @@ class Tooltip {
 
                 if (!styledMode) {
                     attribs.fill = options.backgroundColor;
-                    attribs['stroke-width'] = options.borderWidth;
+                    attribs['stroke-width'] = options.borderWidth ?? 1;
                 }
                 tt = ren
                     .label(
@@ -1412,7 +1349,6 @@ class Tooltip {
             });
             if (!styledMode) {
                 tt.css(options.style)
-                    .shadow(options.shadow)
                     .attr({
                         stroke: (
                             options.borderColor ||
@@ -1637,6 +1573,18 @@ class Tooltip {
             container.style.left = boxExtremes.left + 'px';
             container.style.top = chartTop + 'px';
         }
+
+        // Workaround for #18927, artefacts left by the shadows of split
+        // tooltips in Safari v16 (2023). Check again with later versions if we
+        // can remove this.
+        if (isSafari) {
+            tooltipLabel.attr({
+                // Force a redraw of the whole group by chaning the opacity
+                // slightly
+                opacity: tooltipLabel.opacity === 1 ? 0.999 : 1
+            });
+        }
+
     }
 
     /**
@@ -1719,7 +1667,7 @@ class Tooltip {
     public styledModeFormat(formatString: string): string {
         return formatString
             .replace(
-                'style="font-size: 10px"',
+                'style="font-size: 0.8em"',
                 'class="highcharts-header"'
             )
             .replace(
@@ -1803,8 +1751,6 @@ class Tooltip {
      */
     public update(options: TooltipOptions): void {
         this.destroy();
-        // Update user options (#6218)
-        merge(true, (this.chart.options.tooltip as any).userOptions, options);
         this.init(this.chart, merge(true, this.options, options));
     }
 
@@ -1844,7 +1790,7 @@ class Tooltip {
                 pos.y += top - distance;
             }
 
-            pad = options.borderWidth + 2 * distance;
+            pad = (options.borderWidth || 0) + 2 * distance;
 
             (this.renderer as any).setSize(
                 label.width + pad,

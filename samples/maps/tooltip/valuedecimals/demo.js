@@ -42,12 +42,7 @@
                 data: data,
                 mapData: topology,
                 joinBy: ['iso-a2', 'code'],
-                name: 'Population density',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                }
+                name: 'Population density'
             }]
         });
     });

@@ -18,6 +18,7 @@
 
 import type MapNavigationOptions from './MapNavigationOptions';
 import D from '../Core/Defaults.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
 const { extend } = U;
 
@@ -29,7 +30,7 @@ const { extend } = U;
 
 /**
  * The `mapNavigation` option handles buttons for navigation in addition to
- * mousewheel and doubleclick handlers for map zooming.
+ * `mousewheel` and `doubleclick` handlers for map zooming.
  *
  * @product      highmaps
  * @optionparent mapNavigation
@@ -95,11 +96,13 @@ const MapNavigationDefaults: MapNavigationOptions = {
          * Text styles for the map navigation buttons.
          *
          * @type    {Highcharts.CSSObject}
-         * @default {"fontSize": "15px", "fontWeight": "bold"}
+         * @default {"fontSize": "1em", "fontWeight": "bold"}
          */
         style: {
             /** @ignore */
-            fontSize: '15px',
+            color: Palette.neutralColor60,
+            /** @ignore */
+            fontSize: '1em',
             /** @ignore */
             fontWeight: 'bold'
         },
@@ -117,6 +120,10 @@ const MapNavigationDefaults: MapNavigationOptions = {
          * @default {"stroke-width": 1, "text-align": "center"}
          */
         theme: {
+            /** @ignore */
+            fill: Palette.backgroundColor,
+            /** @ignore */
+            stroke: Palette.neutralColor10,
             /** @ignore */
             'stroke-width': 1,
             /** @ignore */
@@ -217,13 +224,13 @@ const MapNavigationDefaults: MapNavigationOptions = {
     /**
      * Whether to enable map navigation. The default is not to enable
      * navigation, as many choropleth maps are simple and don't need it.
-     * Additionally, when touch zoom and mousewheel zoom is enabled, it breaks
+     * Additionally, when touch zoom and mouse wheel zoom is enabled, it breaks
      * the default behaviour of these interactions in the website, and the
      * implementer should be aware of this.
      *
      * Individual interactions can be enabled separately, namely buttons,
      * multitouch zoom, double click zoom, double click zoom to element and
-     * mousewheel zoom.
+     * mouse wheel zoom.
      *
      * @type      {boolean}
      * @default   false
@@ -270,7 +277,7 @@ const MapNavigationDefaults: MapNavigationOptions = {
 
     /**
      * Sensitivity of mouse wheel or trackpad scrolling. 1 is no sensitivity,
-     * while with 2, one mousewheel delta will zoom in 50%.
+     * while with 2, one mouse wheel delta will zoom in 50%.
      *
      * @since 4.2.4
      */

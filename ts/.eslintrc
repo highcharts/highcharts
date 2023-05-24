@@ -20,6 +20,7 @@
                 "properties": "always"
             }
         ],
+        "capitalized-comments": ["warn", "always", { "ignoreConsecutiveComments": true }],
         "class-methods-use-this": 0,
         "comma-dangle": [
             2,
@@ -107,7 +108,6 @@
         "highcharts/no-highcharts-namespace": 1, // @todo
         "highcharts/no-highcharts-object": 2,
         "highcharts/no-mixin": 1, // @todo
-        "highcharts/no-optional-chaining": 1,
         "highcharts/no-private-constructor-doclet": 0,
         "highcharts/no-wrap": 1, // @todo
         "highcharts/quote-members": 2,

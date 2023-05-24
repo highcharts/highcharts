@@ -16,7 +16,6 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
 import type Chart3D from '../../Core/Chart/Chart3D';
@@ -38,6 +37,7 @@ import StackItem, { StackBoxProps } from '../../Core/Axis/Stacking/StackItem.js'
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    extend,
     pick,
     wrap
 } = U;
@@ -177,45 +177,47 @@ columnProto.translate3dShapes = function (): void {
         // #7103 Reset outside3dPlot flag
         point.outside3dPlot = null;
         if (point.y !== null) {
-            let shapeArgs = point.shapeArgs,
-                tooltipPos = point.tooltipPos,
+            const shapeArgs: BBoxObject = extend(
+                    { x: 0, y: 0, width: 0, height: 0 },
+                    point.shapeArgs || {}
+                ),
                 // Array for final shapeArgs calculation.
                 // We are checking two dimensions (x and y).
-                dimensions = [['x', 'width'], ['y', 'height']],
-                borderlessBase; // Crisped rects can have +/- 0.5 pixels offset.
+                dimensions: (['x', 'width']|['y', 'height'])[] =
+                    [['x', 'width'], ['y', 'height']],
+                tooltipPos = point.tooltipPos;
+
+            let borderlessBase; // Crisped rects can have +/- 0.5 pixels offset.
 
             // #3131 We need to check if column is inside plotArea.
-            dimensions.forEach(function (d: Array<string>): void {
-                borderlessBase = (shapeArgs as any)[d[0]] - borderCrisp;
+            dimensions.forEach((d): void => {
+                borderlessBase = shapeArgs[d[0]] - borderCrisp;
                 if (borderlessBase < 0) {
                     // If borderLessBase is smaller than 0, it is needed to set
                     // its value to 0 or 0.5 depending on borderWidth
                     // borderWidth may be even or odd.
-                    (shapeArgs as any)[d[1]] +=
-                        (shapeArgs as any)[d[0]] + borderCrisp;
-                    (shapeArgs as any)[d[0]] = -borderCrisp;
+                    shapeArgs[d[1]] += shapeArgs[d[0]] + borderCrisp;
+                    shapeArgs[d[0]] = -borderCrisp;
                     borderlessBase = 0;
                 }
                 if (
                     (
-                        borderlessBase + (shapeArgs as any)[d[1]] >
+                        borderlessBase + shapeArgs[d[1]] >
                         (series as any)[d[0] + 'Axis'].len
                     ) &&
                     // Do not change height/width of column if 0 (#6708)
-                    (shapeArgs as any)[d[1]] !== 0
+                    shapeArgs[d[1]] !== 0
                 ) {
-                    (shapeArgs as any)[d[1]] =
+                    shapeArgs[d[1]] =
                         (series as any)[d[0] + 'Axis'].len -
-                        (shapeArgs as any)[d[0]];
+                        shapeArgs[d[0]];
                 }
                 if (
                     // Do not remove columns with zero height/width.
-                    ((shapeArgs as any)[d[1]] !== 0) &&
+                    shapeArgs[d[1]] !== 0 &&
                     (
-                        (shapeArgs as any)[d[0]] >=
-                        (series as any)[d[0] + 'Axis'].len ||
-                        (shapeArgs as any)[d[0]] + (shapeArgs as any)[d[1]] <=
-                        borderCrisp
+                        shapeArgs[d[0]] >= (series as any)[d[0] + 'Axis'].len ||
+                        shapeArgs[d[0]] + shapeArgs[d[1]] <= borderCrisp
                     )
                 ) {
                     // Set args to 0 if column is outside the chart.
@@ -230,25 +232,28 @@ columnProto.translate3dShapes = function (): void {
             });
 
             // Change from 2d to 3d
-            if (point.shapeType === 'rect') {
+            if (point.shapeType === 'roundedRect') {
                 point.shapeType = 'cuboid';
             }
-
-            (shapeArgs as any).z = z;
-            (shapeArgs as any).depth = depth;
-            (shapeArgs as any).insidePlotArea = true;
+            point.shapeArgs = extend<SVGAttributes>(
+                shapeArgs, {
+                    z,
+                    depth,
+                    insidePlotArea: true
+                } as any
+            );
 
             // Point's position in 2D
             point2dPos = {
-                x: (shapeArgs as any).x + (shapeArgs as any).width / 2,
-                y: (shapeArgs as any).y,
+                x: shapeArgs.x + shapeArgs.width / 2,
+                y: shapeArgs.y,
                 z: z + depth / 2 // The center of column in Z dimension
             };
 
             // Recalculate point positions for inverted graphs
             if (chart.inverted) {
-                point2dPos.x = (shapeArgs as any).height;
-                point2dPos.y = point.clientX;
+                point2dPos.x = shapeArgs.height;
+                point2dPos.y = point.clientX || 0;
             }
 
             // Calculate and store point's position in 3D,
@@ -256,17 +261,19 @@ columnProto.translate3dShapes = function (): void {
             point.plot3d = perspective([point2dPos], chart, true, false)[0];
 
             // Translate the tooltip position in 3d space
-            tooltipPos = perspective(
-                [{
-                    x: (tooltipPos as any)[0],
-                    y: (tooltipPos as any)[1],
-                    z: z + depth / 2 // The center of column in Z dimension
-                }],
-                chart,
-                true,
-                false
-            )[0] as any;
-            point.tooltipPos = [(tooltipPos as any).x, (tooltipPos as any).y];
+            if (tooltipPos) {
+                const translatedTTPos = perspective(
+                    [{
+                        x: tooltipPos[0],
+                        y: tooltipPos[1],
+                        z: z + depth / 2 // The center of column in Z dimension
+                    }],
+                    chart,
+                    true,
+                    false
+                )[0];
+                point.tooltipPos = [translatedTTPos.x, translatedTTPos.y];
+            }
         }
     });
     // store for later use #4067

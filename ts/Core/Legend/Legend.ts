@@ -298,8 +298,8 @@ class Legend {
             );
         }
 
-        this.itemMarginTop = options.itemMarginTop || 0;
-        this.itemMarginBottom = options.itemMarginBottom || 0;
+        this.itemMarginTop = options.itemMarginTop;
+        this.itemMarginBottom = options.itemMarginBottom;
         this.padding = padding;
         this.initialItemY = padding - 5; // 5 is pixels above the text
         this.symbolWidth = pick(options.symbolWidth, 16);
@@ -368,27 +368,17 @@ class Legend {
         }
 
         if (!this.chart.styledMode) {
-            const legend = this,
-                options = legend.options,
-                hiddenColor = (legend.itemHiddenStyle as any).color,
-                textColor = visible ?
-                    options.itemStyle.color :
-                    hiddenColor,
+            const { itemHiddenStyle } = this,
+                hiddenColor = (itemHiddenStyle as any).color,
                 symbolColor = visible ?
                     (item.color || hiddenColor) :
                     hiddenColor,
                 markerOptions = item.options && (item.options as any).marker;
             let symbolAttr: SVGAttributes = { fill: symbolColor };
 
-            if (label) {
-                label.css({
-                    fill: textColor
-                });
-            }
+            label?.css(merge(visible ? this.itemStyle : itemHiddenStyle));
 
-            if (line) {
-                line.attr({ stroke: symbolColor });
-            }
+            line?.attr({ stroke: symbolColor });
 
             if (symbol) {
 
@@ -729,10 +719,7 @@ class Legend {
             // Get the baseline for the first item - the font size is equal for
             // all
             if (!legend.baseline) {
-                legend.fontMetrics = renderer.fontMetrics(
-                    chart.styledMode ? 12 : (itemStyle as any).fontSize,
-                    label
-                );
+                legend.fontMetrics = renderer.fontMetrics(label);
                 legend.baseline =
                     legend.fontMetrics.f + 3 + legend.itemMarginTop;
                 label.attr('y', legend.baseline);

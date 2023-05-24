@@ -1,0 +1,43 @@
+.highcharts-figure {
+    max-width: 800px;
+    min-width: 320px;
+    margin: 0 auto;
+    position: relative;
+}
+
+#sonify {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    z-index: 1;
+    background-color: #fff;
+    border: 1px solid #25386f;
+    color: #25386f;
+    font-size: 0.9rem;
+    min-height: 30px;
+    line-height: 1rem;
+    font-weight: 500;
+    border-radius: 4px;
+    padding: 0.375rem 0;
+    width: 7rem;
+    margin-bottom: 0.25rem;
+    margin-top: 0.25rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+#sonify:hover {
+    background-color: #25386f;
+    color: #fff;
+}
+
+@media (max-width: 380px) {
+    #sonify {
+        position: static;
+        margin-bottom: 10px;
+    }
+}
+
+#csv {
+    display: none;
+}

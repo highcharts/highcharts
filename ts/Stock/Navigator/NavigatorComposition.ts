@@ -185,6 +185,7 @@ function onChartAfterSetChartSize(
                 this.chartHeight -
                 navigator.height -
                 scrollbarHeight -
+                (this.scrollbar?.options.margin || 0) -
                 this.spacing[2] -
                 (
                     this.rangeSelector && this.extraBottomMargin ?
@@ -276,9 +277,8 @@ function onChartBeforeShowResetZoom(
     if (((navigator && navigator.enabled) ||
         (rangeSelector && rangeSelector.enabled)) &&
         ((!isTouchDevice &&
-        (chartOptions.chart as any).zooming.type === 'x') ||
-        (isTouchDevice &&
-        (chartOptions.chart as any).zooming.pinchType === 'x'))
+        this.zooming.type === 'x') ||
+        (isTouchDevice && this.zooming.pinchType === 'x'))
     ) {
         return false;
     }

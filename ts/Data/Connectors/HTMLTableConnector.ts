@@ -25,7 +25,6 @@
 import type DataEvent from '../DataEvent';
 
 import DataConnector from './DataConnector.js';
-import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableConverter from '../Converters/HTMLTableConverter.js';

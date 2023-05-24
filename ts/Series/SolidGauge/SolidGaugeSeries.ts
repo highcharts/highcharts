@@ -23,7 +23,7 @@ import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
+import BorderRadius from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -44,8 +44,6 @@ const {
     pick,
     pInt
 } = U;
-
-import './SolidGaugeComposition.js';
 
 /* *
  *
@@ -121,6 +119,7 @@ class SolidGaugeSeries extends GaugeSeries {
             options = series.options,
             renderer = series.chart.renderer,
             overshoot = options.overshoot,
+            rounded = options.rounded && options.borderRadius === void 0,
             overshootVal = isNumber(overshoot) ?
                 overshoot / 180 * Math.PI :
                 0;
@@ -182,9 +181,7 @@ class SolidGaugeSeries extends GaugeSeries {
                         )),
                     shapeArgs: (SVGAttributes | undefined),
                     d: (string | SVGPath | undefined),
-                    toColor = yAxis.toColor(point.y as any, point),
-                    minAngle,
-                    maxAngle;
+                    toColor = yAxis.toColor(point.y as any, point);
 
                 if (toColor === 'none') { // #3708
                     toColor = point.color || series.color || 'none';
@@ -205,11 +202,23 @@ class SolidGaugeSeries extends GaugeSeries {
                     rotation = clamp(rotation, axisMinAngle, axisMaxAngle);
                 }
 
-                minAngle = Math.min(rotation, series.thresholdAngleRad);
-                maxAngle = Math.max(rotation, series.thresholdAngleRad);
+                const angleOfRounding = rounded ?
+                        ((radius - innerRadius) / 2) / radius :
+                        0,
+                    start = Math.min(rotation, series.thresholdAngleRad) -
+                        angleOfRounding;
+                let end = Math.max(rotation, series.thresholdAngleRad) +
+                    angleOfRounding;
 
-                if (maxAngle - minAngle > 2 * Math.PI) {
-                    maxAngle = minAngle + 2 * Math.PI;
+                if (end - start > 2 * Math.PI) {
+                    end = start + 2 * Math.PI;
+                }
+
+                let borderRadius = rounded ? '50%' : 0;
+                if (options.borderRadius) {
+                    borderRadius = BorderRadius.optionsToObject(
+                        options.borderRadius
+                    ).radius;
                 }
 
                 point.shapeArgs = shapeArgs = {
@@ -217,9 +226,9 @@ class SolidGaugeSeries extends GaugeSeries {
                     y: center[1],
                     r: radius,
                     innerR: innerRadius,
-                    start: minAngle,
-                    end: maxAngle,
-                    rounded: options.rounded
+                    start,
+                    end,
+                    borderRadius
                 };
                 point.startR = radius; // For PieSeries.animate
 
@@ -275,13 +284,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
 interface SolidGaugeSeries {
     pointClass: typeof SolidGaugePoint;
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
 }
-
-extend(SolidGaugeSeries.prototype, {
-    drawLegendSymbol: LegendSymbol.drawRectangle
-});
-
 
 /* *
  *

@@ -275,7 +275,7 @@ namespace ColumnDataLabel {
                 bottom,
                 naturalY,
                 sideOverflow,
-                size: any,
+                size = 0,
                 distributionLength;
 
             if (!length) {
@@ -316,7 +316,7 @@ namespace ColumnDataLabel {
                         point.distributeBox = {
                             target: (point.labelPosition as any).natural.y -
                                 point.top + size / 2,
-                            size: size,
+                            size,
                             rank: point.y
                         };
                         positions.push(point.distributeBox);
@@ -415,11 +415,11 @@ namespace ColumnDataLabel {
                         } as any)[(labelPosition as any).alignment] || 0)
                     ),
 
-                    // 10 is for the baseline (label vs text)
                     y: (
                         y +
                         pick(pointDataLabelsOptions.y, options.y) - // (#12985)
-                        10
+                        // Vertically center
+                        (dataLabel as any).getBBox().height / 2
                     )
                 };
                 // labelPos.x = x;
@@ -583,7 +583,9 @@ namespace ColumnDataLabel {
                     }
 
                     dataLabel.attr(dataLabel._attr);
-                    dataLabel[dataLabel.moved ? 'animate' : 'attr'](_pos);
+                    (dataLabel as any)[
+                        dataLabel.moved ? 'animate' : 'attr'
+                    ](_pos);
                     dataLabel.moved = true;
                 } else if (dataLabel) {
                     dataLabel.attr({ y: -9999 });

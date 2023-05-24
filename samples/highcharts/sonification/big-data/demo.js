@@ -4,17 +4,12 @@ for (var i = 0; i < 1000; ++i) {
     data.push(Math.sin(i / 50) * 3 + Math.random() - 0.5);
 }
 
-Highcharts.setOptions({
-    lang: {
-        accessibility: {
-            chartContainerLabel: 'Big data sonification. Highcharts interactive chart.'
-        }
-    }
-});
-
+// Show the chart
 var chart = Highcharts.chart('container', {
     title: {
-        text: 'Click series to sonify'
+        text: 'Large dataset sonified',
+        align: 'left',
+        margin: 35
     },
     legend: {
         enabled: false
@@ -22,40 +17,44 @@ var chart = Highcharts.chart('container', {
     accessibility: {
         landmarkVerbosity: 'one'
     },
-    series: [{
-        data: data,
-        cursor: 'pointer',
+    lang: {
+        accessibility: {
+            chartContainerLabel: 'Big data sonification. Highcharts interactive chart.'
+        }
+    },
+    sonification: {
         events: {
-            click: function () {
-                this.sonify();
+            onPlay: function () {
+                document.getElementById('btn').textContent = 'Stop';
+            },
+            onStop: function () {
+                document.getElementById('btn').textContent = 'Play';
             }
         },
-        sonification: {
-            duration: 3000,
-            instruments: [{
-                instrument: 'triangleMajor',
-                minFrequency: 200,
-                maxFrequency: 2000,
-                mapping: {
-                    volume: 0.6,
-                    duration: 50,
-                    pan: 'x'
-                }
-            }],
-            events: {
-                onPointStart: function () {
-                    document.getElementById('stop').style.visibility = 'visible';
-                    document.getElementById('stop').focus();
+        defaultInstrumentOptions: {
+            instrument: 'square',
+            mapping: {
+                lowpass: {
+                    frequency: 2000
                 },
-                onSeriesEnd: function () {
-                    document.getElementById('stop').style.visibility = 'hidden';
+                highpass: {
+                    frequency: 200
                 }
             }
         }
+    },
+    tooltip: {
+        valueDecimals: 2
+    },
+    series: [{
+        data: data
     }]
 });
 
-document.getElementById('stop').onclick = function () {
-    chart.cancelSonify();
-    document.getElementById('stop').style.visibility = 'hidden';
+// Play/Stop button
+document.getElementById('btn').onclick = function () {
+    var btn = this;
+    chart.toggleSonify(true, function () {
+        btn.textContent = 'Play';
+    });
 };
