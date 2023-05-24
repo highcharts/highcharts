@@ -408,9 +408,9 @@ class HighchartsComponent extends Component {
             tooltip: {} // Temporary fix for #18876
         });
 
-        if (this.connector) {
-            this.on('tableChanged', (): void => this.updateSeries());
+        this.on('tableChanged', (): void => this.updateSeries());
 
+        if (this.connector) {
             // reload the store when polling
             this.connector.on('afterLoad', (e: DataConnector.Event): void => {
                 if (e.table && this.connector) {
