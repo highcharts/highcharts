@@ -122,32 +122,51 @@ const zoomBy = function (
     options: MouseWheelZoomOptions
 ): void {
     const xAxis = chart.xAxis[0],
-        yAxis = chart.yAxis[0];
+        yAxis = chart.yAxis[0],
+        type = pick(
+            options.type,
+            chart.options.chart.zooming.type,
+            'x'
+        ),
+        zoomX = /x/.test(type),
+        zoomY = /y/.test(type);
+
     if (defined(xAxis.max) && defined(xAxis.min) &&
         defined(yAxis.max) && defined(yAxis.min) &&
         defined(xAxis.dataMax) && defined(xAxis.dataMin) &&
         defined(yAxis.dataMax) && defined(yAxis.dataMin)) {
 
-        // Options interfering with yAxis zoom by setExtremes() returning
-        // integers by default.
-        if (defined(wheelTimer)) {
-            clearTimeout(wheelTimer);
-        }
-
-        const { startOnTick, endOnTick } = yAxis.options;
-        if (!originalOptions) {
-            originalOptions = { startOnTick, endOnTick };
-        }
-
-        if (startOnTick || endOnTick) {
-            yAxis.setOptions({ startOnTick: false, endOnTick: false });
-        }
-        wheelTimer = setTimeout((): void => {
-            if (originalOptions) {
-                yAxis.update(originalOptions);
-                originalOptions = void 0;
+        if (zoomY) {
+            // Options interfering with yAxis zoom by setExtremes() returning
+            // integers by default.
+            if (defined(wheelTimer)) {
+                clearTimeout(wheelTimer);
             }
-        }, 400);
+
+            const { startOnTick, endOnTick } = yAxis.options;
+            if (!originalOptions) {
+                originalOptions = { startOnTick, endOnTick };
+            }
+
+            if (startOnTick || endOnTick) {
+                yAxis.setOptions({ startOnTick: false, endOnTick: false });
+            }
+            wheelTimer = setTimeout((): void => {
+                if (originalOptions) {
+                    yAxis.setOptions(originalOptions);
+
+                    // Set the extremes to the same as they already are, but now
+                    // with the original startOnTick and endOnTick. We need
+                    // `forceRedraw` otherwise it will detect that the values
+                    // haven't changed. We do not use a simple yAxis.update()
+                    // because it will destroy the ticks and prevent animation.
+                    const { min, max } = yAxis.getExtremes();
+                    yAxis.forceRedraw = true;
+                    yAxis.setExtremes(min, max);
+                    originalOptions = void 0;
+                }
+            }, 400);
+        }
 
         if (chart.inverted) {
             const emulateRoof = yAxis.pos + yAxis.len;
@@ -210,13 +229,6 @@ const zoomBy = function (
                 newExt.height >= outerHeight
             );
 
-        const type = pick(
-                options.type,
-                chart.options.chart.zooming.type,
-                'x'
-            ),
-            zoomX = /x/.test(type),
-            zoomY = /y/.test(type);
         // Zoom
         if (defined(howMuch) && !zoomOut) {
             if (zoomX) {
