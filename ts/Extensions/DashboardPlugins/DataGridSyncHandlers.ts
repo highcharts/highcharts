@@ -26,6 +26,8 @@ import type Sync from '../../Dashboards/Components/Sync/Sync';
 import ComponentType from '../../Dashboards/Components/ComponentType';
 import DataGridComponent from './DataGridComponent.js';
 import U from '../../Core/Utilities.js';
+import DataGrid from '../../DataGrid/DataGrid';
+import DataCursor from '../../Data/DataCursor';
 const {
     addEvent
 } = U;
@@ -45,30 +47,45 @@ const configs: {
             'highlightEmitter',
             function (this: ComponentType): Function | void {
                 if (this.type === 'DataGrid') {
-                    const { dataGrid, connector: store, board } = this as DataGridComponent;
+                    const { dataGrid, board } = this as DataGridComponent;
 
-                    if (dataGrid && store && board) {
+                    if (board) {
+
                         const { dataCursor: cursor } = board;
+                        const callbacks: Function[] = [];
 
-                        const callbacks = [
+                        if (!dataGrid) {
+                            return;
+                        }
+
+                        callbacks.push(
                             addEvent(dataGrid.container, 'dataGridHover', (e: any): void => {
-                                const row = e.row;
-                                const cell = row.querySelector(`.hc-dg-cell[data-original-data="${row.dataset.rowXIndex}"]`);
+                                const table = this.connector && this.connector.table;
+                                if (table) {
+                                    const row = e.row;
+                                    const cell = row.querySelector(`.hc-dg-cell[data-original-data="${row.dataset.rowXIndex}"]`);
 
-                                cursor.emitCursor(store.table, {
-                                    type: 'position',
-                                    row: parseInt(row.dataset.rowIndex, 10),
-                                    column: cell ? cell.dataset.columnName : void 0,
-                                    state: 'dataGrid.hoverRow'
-                                });
-                            }),
-                            addEvent(dataGrid.container, 'mouseout', (): void => {
-                                cursor.emitCursor(store.table, {
-                                    type: 'position',
-                                    state: 'dataGrid.hoverOut'
-                                });
+                                    cursor.emitCursor(table, {
+                                        type: 'position',
+                                        row: parseInt(row.dataset.rowIndex, 10),
+                                        column: cell ? cell.dataset.columnName : void 0,
+                                        state: 'dataGrid.hoverRow'
+                                    });
+                                }
                             })
-                        ];
+                        );
+
+                        callbacks.push(
+                            addEvent(dataGrid.container, 'mouseout', (): void => {
+                                const table = this.connector && this.connector.table;
+                                if (table) {
+                                    cursor.emitCursor(table, {
+                                        type: 'position',
+                                        state: 'dataGrid.hoverOut'
+                                    });
+                                }
+                            })
+                        );
 
                         // Return a function that calls the callbacks
                         return function (): void {
@@ -85,63 +102,115 @@ const configs: {
             void 0, // 'afterHoverPointChange',
             function (this: DataGridComponent): void {
                 const { board } = this;
-                const table = this.connector && this.connector.table;
 
-                // @todo wrap in a listener on component.update with
-                // connector change
-                if (board && table) {
-                    const { dataCursor: cursor } = board;
-                    if (cursor) {
-                        cursor.addListener(table.id, 'point.mouseOver', (e): void => {
-                            const cursor = e.cursor;
-                            if (cursor.type === 'position') {
-                                const { row } = cursor;
-                                const { dataGrid } = this;
+                const handlCursor = (e: DataCursor.Event): void => {
+                    const cursor = e.cursor;
+                    if (cursor.type === 'position') {
+                        const { row } = cursor;
+                        const { dataGrid } = this;
 
-                                if (row && dataGrid) {
-                                    const highlightedDataRow = dataGrid.container
-                                        .querySelector<HTMLElement>(`.hc-dg-row[data-row-index="${row}"]`);
+                        if (row && dataGrid) {
+                            const highlightedDataRow = dataGrid.container
+                                .querySelector<HTMLElement>(`.hc-dg-row[data-row-index="${row}"]`);
 
-                                    if (highlightedDataRow) {
-                                        dataGrid.toggleRowHighlight(highlightedDataRow);
-                                        dataGrid.hoveredRow = highlightedDataRow;
-                                    }
-                                }
+                            if (highlightedDataRow) {
+                                dataGrid.toggleRowHighlight(highlightedDataRow);
+                                dataGrid.hoveredRow = highlightedDataRow;
                             }
-
-                        });
-
-                        cursor.addListener(table.id, 'point.mouseOut', (): void => {
-                            const { dataGrid } = this;
-                            if (dataGrid) {
-                                dataGrid.toggleRowHighlight(void 0);
-                            }
-
-                        });
+                        }
                     }
+
+                };
+
+                const handleCursorOut = (): void => {
+                    const { dataGrid } = this;
+                    if (dataGrid) {
+                        dataGrid.toggleRowHighlight(void 0);
+                    }
+
+                };
+
+                const registerCursorListeners = (): void => {
+                    const { dataCursor: cursor } = board;
+                    if (!cursor) {
+                        return;
+                    }
+                    const table = this.connector && this.connector.table;
+                    if (!table) {
+                        return;
+                    }
+
+                    cursor.addListener(table.id, 'point.mouseOver', handlCursor);
+                    cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
+                };
+
+                const unregisterCursorListeners = (): void => {
+                    const cursor = board.dataCursor;
+                    const table = this.connector && this.connector.table;
+                    if (!table) {
+                        return;
+                    }
+                    cursor.addListener(table.id, 'point.mouseOver', handlCursor);
+                    cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
+
+                };
+
+                if (board) {
+                    registerCursorListeners();
+
+                    this.on('setConnector', (): void => unregisterCursorListeners());
+                    this.on('afterSetConnector', (): void => registerCursorListeners());
                 }
             }
         ],
         extremesHandler: function (this: DataGridComponent): void {
             const { board } = this;
-            const table = this.connector && this.connector.table;
-            if (board && table) {
 
-                const { dataCursor: cursor } = board;
-                if (cursor) {
-                    cursor.addListener(table.id, 'xAxis.extremes.min', (e): void => {
-                        if (e.cursor.type === 'position' && this.dataGrid && e.cursors.length) {
-                            // Lasting cursor, so get last cursor
-                            const lastCursor = e.cursors[e.cursors.length - 1];
-                            if ('row' in lastCursor && typeof lastCursor.row === 'number') {
-                                const { row } = lastCursor;
-                                this.dataGrid.scrollToRow(row);
-                            }
-                        }
-                    });
+            const handleChangeExtremes = (e: DataCursor.Event): void => {
+                if (e.cursor.type === 'position' && this.dataGrid && e.cursors.length) {
+                    // Lasting cursor, so get last cursor
+                    const lastCursor = e.cursors[e.cursors.length - 1];
+                    if ('row' in lastCursor && typeof lastCursor.row === 'number') {
+                        const { row } = lastCursor;
+                        this.dataGrid.scrollToRow(row);
+                    }
                 }
-            }
 
+            };
+
+            const registerCursorListeners = (): void => {
+                const { dataCursor: cursor } = board;
+
+                if (!cursor) {
+                    return;
+                }
+                const table = this.connector && this.connector.table;
+
+                if (!table) {
+                    return;
+                }
+
+                cursor.addListener(table.id, 'xAxis.extremes.min', handleChangeExtremes);
+            };
+
+            const unregisterCursorListeners = (): void => {
+                const table = this.connector && this.connector.table;
+                const { dataCursor: cursor } = board;
+
+                if (!table) {
+                    return;
+                }
+
+                cursor.removeListener(table.id, 'xAxis.extremes.min', handleChangeExtremes);
+            };
+
+
+            if (board) {
+                registerCursorListeners();
+
+                this.on('setConnector', (): void => unregisterCursorListeners());
+                this.on('afterSetConnector', (): void => registerCursorListeners());
+            }
         }
     }
 };
