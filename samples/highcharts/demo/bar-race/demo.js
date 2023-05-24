@@ -52,7 +52,11 @@ let dataset, chart;
                 (point.dataLabels || []).forEach(
                     label =>
                         (label.attr = function (hash) {
-                            if (hash && hash.text !== undefined) {
+                            if (
+                                hash &&
+                                hash.text !== undefined &&
+                                chart.isResizing === 0
+                            ) {
                                 const text = hash.text;
 
                                 delete hash.text;

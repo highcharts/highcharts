@@ -90,10 +90,10 @@ QUnit.test(
                 },
                 series: [
                     {
-                        data: usdeur
+                        data: [1, 2, 3, 4]
                     },
                     {
-                        data: usdeur
+                        data: [4, 3, 4, 5]
                     }
                 ]
             }),
@@ -382,7 +382,7 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     assert.strictEqual(
         lin2val(380 / axis.transA + axis.min),
         7,
-        `For the pixel value equal to last point, 
+        `For the pixel value equal to last point,
         the function should return the value for that point.`
     );
     assert.strictEqual(

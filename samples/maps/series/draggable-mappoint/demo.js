@@ -97,12 +97,7 @@ Highcharts.getJSON(
 
             mapNavigation: {
                 enabled: true,
-                enableDoubleClickZoomTo: true,
-                buttonOptions: {
-                    theme: {
-                        r: 8
-                    }
-                }
+                enableDoubleClickZoomTo: true
             },
 
             mapView: {
@@ -139,7 +134,8 @@ Highcharts.getJSON(
                 nullColor: 'rgba(0, 0, 0, 0.05)',
                 accessibility: {
                     enabled: false
-                }
+                },
+                enableMouseTracking: false
             }, {
                 name: 'Countries',
                 nullColor: '#aec584',

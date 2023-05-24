@@ -1,28 +1,18 @@
 QUnit.test('Series shadows', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [
-                {
-                    shadow: {
-                        color: 'red',
-                        width: 10,
-                        offsetX: 40,
-                        offsetY: -20,
-                        opacity: 0.05
-                    },
-                    data: [29, 71, 106, 129, 144]
-                }
-            ]
-        }),
-        attributes = [
-            'stroke="blue"',
-            'stroke-opacity="0.2"',
-            'transform="translate(0, 20)'
-        ],
-        defaultAttributes = [
-            'stroke="#000000"',
-            'stroke-opacity="0.15"',
-            'transform="translate(1, 1)'
-        ];
+        series: [
+            {
+                shadow: {
+                    color: 'red',
+                    width: 10,
+                    offsetX: 40,
+                    offsetY: -20,
+                    opacity: 0.05
+                },
+                data: [29, 71, 106, 129, 144]
+            }
+        ]
+    });
 
     chart.series[0].update({
         shadow: {
@@ -50,7 +40,7 @@ QUnit.test('Series shadows', function (assert) {
 
     assert.strictEqual(
         chart.series[0].graph.attr('filter'),
-        'url(#drop-shadow)',
+        `url(#highcharts-drop-shadow-${chart.index})`,
         'Shadows should be updated when old options defined as object and new as boolean (#12091).'
     );
 
@@ -65,12 +55,6 @@ QUnit.test('Series shadows', function (assert) {
             }
         ]
     });
-
-    attributes = [
-        'stroke="red"',
-        'stroke-opacity="0.3"',
-        'transform="translate(10, 5)'
-    ];
 
     chart.series[0].update({
         shadow: {
