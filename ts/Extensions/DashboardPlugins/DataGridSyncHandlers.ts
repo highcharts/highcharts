@@ -26,7 +26,6 @@ import type Sync from '../../Dashboards/Components/Sync/Sync';
 import ComponentType from '../../Dashboards/Components/ComponentType';
 import DataGridComponent from './DataGridComponent.js';
 import U from '../../Core/Utilities.js';
-import DataGrid from '../../DataGrid/DataGrid';
 import DataCursor from '../../Data/DataCursor';
 const {
     addEvent
@@ -109,7 +108,7 @@ const configs: {
                         const { row } = cursor;
                         const { dataGrid } = this;
 
-                        if (row && dataGrid) {
+                        if (row !== void 0 && dataGrid) {
                             const highlightedDataRow = dataGrid.container
                                 .querySelector<HTMLElement>(`.hc-dg-row[data-row-index="${row}"]`);
 

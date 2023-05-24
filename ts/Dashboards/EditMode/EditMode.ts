@@ -201,19 +201,20 @@ class EditMode {
     public initEditMode(): void {
         const editMode = this;
 
-        if (
-            !(editMode.options.resize &&
-                !editMode.options.resize.enabled)
+        if (!(editMode.options.resize &&
+                editMode.options.resize.enabled !== false)
         ) {
-            editMode.resizer = new Resizer(editMode);
+            editMode.resizer = new Resizer(editMode, editMode.options.resize);
         }
 
-        // Init dragDrop.
-        if (
-            !(editMode.options.dragDrop &&
-                !editMode.options.dragDrop.enabled)
+        // If dragDrop is disabled in options, don't init it.
+        if (!(editMode.options.dragDrop &&
+                editMode.options.dragDrop.enabled !== false)
         ) {
-            editMode.dragDrop = new DragDrop(editMode);
+            editMode.dragDrop = new DragDrop(
+                editMode,
+                editMode.options.dragDrop
+            );
         }
 
         // Init rowToolbar.
