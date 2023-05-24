@@ -274,7 +274,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
     while ((match = regex.exec(str)) !== null) {
         // When a sub expression is found, it is evaluated first, and the
         // results recursively evaluated until no subexpression exists.
-        const subMatch = subRegex.exec(str);
+        const subMatch = subRegex.exec(match[1]);
         if (subMatch) {
             match = subMatch;
             hasSub = true;

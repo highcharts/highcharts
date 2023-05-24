@@ -394,6 +394,17 @@ QUnit.module('Format', () => {
             '',
             'Division by zero'
         );
+
+        assert.strictEqual(
+            format(
+                'A {word} (outside bracket) is not a subexpression',
+                {
+                    word: 'parentheses'
+                }
+            ),
+            'A parentheses (outside bracket) is not a subexpression',
+            'A parentheses outside brackets should should not be touched'
+        );
     });
 
     QUnit.test('Error handling', assert => {
