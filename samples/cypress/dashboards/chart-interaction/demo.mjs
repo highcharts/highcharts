@@ -1,7 +1,7 @@
+import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from  '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from  '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
-import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
@@ -28,12 +28,6 @@ const board = Dashboards.board('container', {
         enabled: true,
         layouts: [{
             id: 'layout-1', // mandatory
-            rowClassName: 'custom-row', // optional
-            columnClassName: 'custom-column', // optional
-            style: {
-                fontSize: '1.5em',
-                color: 'blue'
-            },
             rows: [{
                 // id: 'dashboard-row-0',
                 cells: [{
@@ -88,9 +82,3 @@ const board = Dashboards.board('container', {
         }
     }]
 }, true);
-
-window.addEventListener('resize', e => {
-    board.mountedComponents.forEach(({ component }) => {
-        component.resize();
-    });
-});
