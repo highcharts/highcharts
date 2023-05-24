@@ -3,6 +3,7 @@ Highcharts.chart('container', {
     chart: {
         zooming: {
             mouseWheel: {
+                type: 'y',
                 sensitivity: 1.03
             }
         }
