@@ -70,7 +70,7 @@ class AreaRangePoint extends AreaPoint {
 
     public below?: boolean;
 
-    public dataLabelUpper?: SVGLabel;
+    public dataLabelUpper?: SVGElement|SVGLabel;
 
     public isInside?: boolean;
 
