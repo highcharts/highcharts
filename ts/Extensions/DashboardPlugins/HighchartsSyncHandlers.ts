@@ -62,7 +62,7 @@ const configs: {
                                     series.update({
                                         point: {
                                             events: {
-                                                // emit table cursor
+                                                // Emit table cursor
                                                 mouseOver: function (): void {
                                                     let offset = 0;
                                                     const modifier = table.getModifier();
@@ -125,7 +125,7 @@ const configs: {
                         const { chart, connector, board } = component;
                         const table = connector && connector.table;
                         if (
-                            table && // has a store
+                            table && // Has a store
                             board &&
                             chart
                         ) {
@@ -165,20 +165,16 @@ const configs: {
         extremesEmitter:
             function (this: ComponentType): Function | void {
                 if (this.type === 'Highcharts') {
-                    const {
-                        chart,
-                        board,
-                        connector: store
-                    } = this as HighchartsComponent;
+                    const component = this as HighchartsComponent;
                     const callbacks: Function[] = [];
 
-                    if (store && chart && board) {
+                    this.on('afterRender', (): void => {
+                        const { chart, connector, board } = component;
+                        const table = connector && connector.table;
 
+                        const { dataCursor: cursor } = board;
 
-                        this.on('afterRender', (): void => {
-
-                            const { dataCursor: cursor } = board;
-
+                        if (table && chart) {
                             const extremesEventHandler = (e: any): void => {
                                 const reset = !!(e as any).resetSelection;
                                 if ((!e.trigger || (e.trigger && e.trigger !== 'dashboards-sync')) && !reset) {
@@ -189,7 +185,7 @@ const configs: {
                                     // but allow for other data
                                     const seriesInTable = axis.series
                                         .filter((series): boolean =>
-                                            store.table.hasColumns([series.name]));
+                                            table.hasColumns([series.name]));
 
                                     const [series] = seriesInTable.length ?
                                         seriesInTable :
@@ -219,11 +215,11 @@ const configs: {
                                         }
 
                                         // Emit as lasting cursors
-                                        cursor.emitCursor(store.table,
+                                        cursor.emitCursor(table,
                                             minCursorData,
                                             e as any,
                                             true
-                                        ).emitCursor(store.table,
+                                        ).emitCursor(table,
                                             maxCursorData,
                                             e as any,
                                             true
@@ -259,7 +255,7 @@ const configs: {
                                     resetExtremesEvent();
 
                                     cursor.emitCursor(
-                                        store.table,
+                                        table,
                                         {
                                             type: 'position',
                                             state: 'chart.zoomOut'
@@ -277,26 +273,26 @@ const configs: {
 
 
                             callbacks.push((): void => {
-                                cursor.remitCursor(store.table.id, {
+                                cursor.remitCursor(table.id, {
                                     type: 'position',
                                     state: 'xAxis.extremes.min'
                                 });
-                                cursor.remitCursor(store.table.id, {
+                                cursor.remitCursor(table.id, {
                                     type: 'position',
                                     state: 'xAxis.extremes.max'
                                 });
 
                                 resetExtremesEvent();
                             });
-                        });
+                        }
+                    });
 
-                        // Return cleanup
-                        return function (): void {
-                            // Call back the cleanup callbacks
-                            callbacks.forEach((callback): void => callback());
+                    // Return cleanup
+                    return function (): void {
+                        // Call back the cleanup callbacks
+                        callbacks.forEach((callback): void => callback());
 
-                        };
-                    }
+                    };
                 }
             }
     },
@@ -452,14 +448,11 @@ const configs: {
         extremesHandler:
             function (this: HighchartsComponent): Function | void {
 
-                const callbacks: Function[] = [];
+                const { chart, board } = this;
 
-                const { chart, board, connector: store } = this;
-
-                if (chart && board && store && store.table) {
-                    const { dataCursor: cursor } = board;
-
+                if (chart && board) {
                     ['xAxis', 'yAxis'].forEach((dimension): void => {
+                        const callbacks: Function[] = [];
                         const handleUpdateExtremes = (e: DataCursor.Event): void => {
                             const { cursor, event } = e;
 
@@ -507,40 +500,55 @@ const configs: {
                             }
                         };
 
-                        cursor.addListener(store.table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
-                        cursor.addListener(store.table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
+                        const addCursorListeners = (): void => {
+                            const { dataCursor: cursor } = board;
+                            const { connector } = this;
 
-                        const handleChartZoomOut = (): void => {
-                            chart.zoomOut();
+                            if (connector) {
+                                const { table } = connector;
+                                cursor.addListener(table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
+                                cursor.addListener(table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
 
-                            setTimeout(():void => {
-                                // Workaround for zoom button not being removed
-                                const resetZoomButtons = this.element
-                                    .querySelectorAll<SVGElement>('.highcharts-reset-zoom');
+                                const handleChartZoomOut = (): void => {
+                                    chart.zoomOut();
 
-                                resetZoomButtons.forEach((button): void => {
-                                    button.remove();
-                                });
+                                    setTimeout((): void => {
+                                        // Workaround for zoom button not being removed
+                                        const resetZoomButtons = this.element
+                                            .querySelectorAll<SVGElement>('.highcharts-reset-zoom');
 
-                            });
+                                        resetZoomButtons.forEach((button): void => {
+                                            button.remove();
+                                        });
+
+                                    });
 
 
+                                };
+
+                                cursor.addListener(table.id, 'chart.zoomOut', handleChartZoomOut);
+
+                                callbacks.push(
+                                    (): void => {
+                                        cursor.removeListener(table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
+                                        cursor.removeListener(table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
+                                        cursor.removeListener(table.id, 'chart.zoomOut', handleChartZoomOut);
+                                    }
+                                );
+                            }
                         };
 
-                        cursor.addListener(store.table.id, 'chart.zoomOut', handleChartZoomOut);
+                        const unregisterCursorListeners = (): void => {
+                            callbacks.forEach((callback): void => callback());
+                        };
 
-                        callbacks.push(
-                            (): void => {
-                                cursor.removeListener(store.table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
-                                cursor.removeListener(store.table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
-                                cursor.removeListener(store.table.id, 'chart.zoomOut', handleChartZoomOut);
-                            }
-                        );
+                        if (board) {
+                            addCursorListeners();
+
+                            this.on('setConnector', (): void => unregisterCursorListeners());
+                            this.on('afterSetConnector', (): void => addCursorListeners());
+                        }
                     });
-
-                    return (): void => {
-                        callbacks.forEach((callback): void => callback());
-                    };
 
                 }
 
