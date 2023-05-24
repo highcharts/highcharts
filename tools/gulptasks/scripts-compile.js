@@ -27,7 +27,7 @@ function scriptsCompile(filePathes) {
     filePathes = filePathes instanceof Array ?
         filePathes :
         typeof argv.files === 'string' ?
-            argv.files.split(',') :
+            argv.files.split(',').map(filePath => path.join('code', filePath)) :
             fsLib.getFilePaths('code', true);
 
     let promiseChain1 = Promise.resolve(),
@@ -64,6 +64,7 @@ function scriptsCompile(filePathes) {
         // See https://github.com/google/closure-compiler/wiki/Flags-and-Options
         promise = processLib.exec(
             'google-closure-compiler' +
+            ' --assume_function_wrapper' +
             ' --compilation_level SIMPLE' +
             ` --create_source_map "${outputMapPath}"` +
             ' --emit_use_strict' +
@@ -71,7 +72,7 @@ function scriptsCompile(filePathes) {
             ` --js_output_file "${outputPath}"` +
             ` --language_in ${target}` +
             ` --language_out ${target}` +
-            ' --platform native',
+            ' --platform native', // use native compiler
             { silent: 2 }
 
         // Fix source map reference
