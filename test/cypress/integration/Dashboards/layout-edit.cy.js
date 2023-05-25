@@ -26,7 +26,6 @@ describe('layout resize on window changes', () => {
         cy.visit('/cypress/dashboards/chart-interaction/');
     });
     it('should resize rows and cells correctly on horizontal window changes', () => {
-        debugger;
         cy.viewport(1200, 1000);
         checkRowsAndCells();
 
