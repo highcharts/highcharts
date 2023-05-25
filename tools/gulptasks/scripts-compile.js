@@ -68,6 +68,7 @@ function scriptsCompile(filePathes) {
             ' --compilation_level SIMPLE' +
             ` --create_source_map "${outputMapPath}"` +
             ' --emit_use_strict' +
+            ' --env CUSTOM' +
             ` --js "${inputPath}"` +
             ` --js_output_file "${outputPath}"` +
             ` --language_in ${target}` +
