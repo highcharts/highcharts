@@ -1,5 +1,5 @@
 ---
- name: MathModifier Formula demo
+ name: DataGrid with MathModifier demo
  authors:
    - Sophie Bremer
  js_wrap: b
