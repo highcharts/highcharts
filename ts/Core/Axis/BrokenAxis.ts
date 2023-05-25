@@ -712,7 +712,9 @@ namespace BrokenAxis {
 
             axis.isDirty = brokenAxis.hasBreaks !== hasBreaks;
             brokenAxis.hasBreaks = hasBreaks;
-            axis.options.breaks = axis.userOptions.breaks = breaks;
+            if (breaks !== axis.options.breaks) {
+                axis.options.breaks = axis.userOptions.breaks = breaks;
+            }
             axis.forceRedraw = true; // Force recalculation in setScale
 
             // Recalculate series related to the axis.

@@ -1,7 +1,7 @@
 QUnit.test(
     'The title should have correct font-size (#2944)',
     function (assert) {
-        var chart;
+        let chart;
 
         chart = $('#container')
             .highcharts('StockChart', {
@@ -78,11 +78,15 @@ QUnit.test(
 );
 
 QUnit.test('Title alignment', function (assert) {
+    let redraws = 0;
     var chart = Highcharts.chart('container', {
         chart: {
             width: 500,
             borderWidth: 1,
-            height: 150
+            height: 150,
+            events: {
+                redraw: () => redraws++
+            }
         },
         exporting: {
             enabled: false
@@ -122,6 +126,13 @@ QUnit.test('Title alignment', function (assert) {
         'The text should contain one break'
     );
 
+    redraws = 0;
+    assert.strictEqual(
+        redraws,
+        0,
+        'Reset redraws for initial render'
+    );
+
     chart.update({
         chart: {
             style: {
@@ -134,4 +145,32 @@ QUnit.test('Title alignment', function (assert) {
         0,
         'The text should reflow and contain no breaks'
     );
+
+    assert.strictEqual(
+        redraws,
+        1,
+        'There should be only one redraw call for changing generic font size'
+    );
+
+    redraws = 0;
+    chart.update({
+        title: {
+            style: {
+                fontSize: '30px'
+            }
+        },
+        subtitle: {
+            text: 'New title',
+            style: {
+                fontSize: '30px'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        redraws,
+        1,
+        'There should be only one redraw call for changing title font size'
+    );
+
 });

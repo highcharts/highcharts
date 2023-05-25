@@ -46,6 +46,38 @@ QUnit.test('Ordinal general tests.', function (assert) {
             'ordinal is enabled (#12716).'
     );
 
+    assert.close(
+        chart.xAxis[0].toValue(
+            chart.series[0].data[chart.series[0].data.length - 1].plotX,
+            true
+        ),
+        0.001,
+        chart.series[0].xData[chart.series[0].xData.length - 1],
+        'Column: toValue should return a correct value for ordinal axes, #18863'
+    );
+
+    chart.series.forEach(series => {
+        series.update({
+            type: 'line'
+        });
+    });
+
+    assert.close(
+        chart.xAxis[0].toValue(
+            chart.xAxis[0].len,
+            true
+        ),
+        0.001,
+        chart.series[0].xData[chart.series[0].xData.length - 1],
+        'Line: toValue should return a correct value for ordinal axes, #18863'
+    );
+
+    chart.series.forEach(series => {
+        series.update({
+            type: 'column'
+        });
+    });
+
     chart.update({
         xAxis: {
             min: 1451577600000,

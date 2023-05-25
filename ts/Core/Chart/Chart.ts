@@ -37,11 +37,14 @@ import type {
 } from '../Options';
 import type ChartLike from './ChartLike';
 import type ChartOptions from './ChartOptions';
-import type { ChartPanningOptions } from './ChartOptions';
+import type {
+    ChartPanningOptions,
+    ChartResetZoomButtonOptions,
+    ChartZoomingOptions
+} from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
-import type Series from '../Series/Series';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
     SeriesTypeOptions,
@@ -78,19 +81,21 @@ const {
 import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
+import Series from '../Series/Series.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
+import { AxisCollectionKey, XAxisOptions } from '../Axis/AxisOptions';
 const {
     addEvent,
     attr,
-    cleanRecursively,
     createElement,
     css,
     defined,
+    diffObjects,
     discardElement,
     erase,
     error,
@@ -124,12 +129,6 @@ declare module '../Axis/AxisLike' {
         extKey?: string;
         index?: number;
         touched?: boolean;
-    }
-}
-
-declare module '../Axis/AxisOptions' {
-    interface AxisOptions {
-        index?: number;
     }
 }
 
@@ -360,6 +359,7 @@ class Chart {
     public userOptions: Partial<Options> = void 0 as any;
     public xAxis: Array<AxisType> = void 0 as any;
     public yAxis: Array<AxisType> = void 0 as any;
+    public zooming: ChartZoomingOptions = void 0 as any;
 
     /* *
      *
@@ -395,6 +395,35 @@ class Chart {
     }
 
     /**
+     * Function setting zoom options after chart init and after chart update.
+     * Offers support for deprecated options.
+     *
+     * @private
+     * @function Highcharts.Chart#setZoomOptions
+     */
+    public setZoomOptions(): void {
+        const chart = this,
+            options = chart.options.chart,
+            zooming = options.zooming;
+
+        chart.zooming = {
+            ...zooming,
+            type: pick(options.zoomType, zooming.type),
+            key: pick(options.zoomKey, zooming.key),
+            pinchType: pick(options.pinchType, zooming.pinchType),
+            singleTouch: pick(
+                options.zoomBySingleTouch,
+                zooming.singleTouch,
+                false
+            ),
+            resetButton: merge(
+                zooming.resetButton,
+                options.resetZoomButton
+            )
+        };
+    }
+
+    /**
      * Overridable function that initializes the chart. The constructor's
      * arguments are passed on directly.
      *
@@ -416,47 +445,29 @@ class Chart {
         callback?: Chart.CallbackFunction
     ): void {
 
-        // Handle regular options
-        const userPlotOptions =
-            userOptions.plotOptions || {} as SeriesTypePlotOptions;
-
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            const options = merge(defaultOptions, userOptions); // do the merge
-
-            const optionsChart = options.chart;
-
-            // Override (by copy of user options) or clear tooltip options
-            // in chart.options.plotOptions (#6218)
-            objectEach(options.plotOptions, function (
-                typeOptions: AnyRecord,
-                type: string
-            ): void {
-                if (isObject(typeOptions)) { // #8766
-                    typeOptions.tooltip = (
-                        userPlotOptions[type] && // override by copy:
-                        merge((userPlotOptions[type] as any).tooltip)
-                    ) || void 0; // or clear
-                }
-            });
-
-            // User options have higher priority than default options
-            // (#6218). In case of exporting: path is changed
-            (options.tooltip as any).userOptions = (
-                userOptions.chart &&
-                userOptions.chart.forExport &&
-                (userOptions.tooltip as any).userOptions
-            ) || userOptions.tooltip;
+            const options = merge(defaultOptions, userOptions), // do the merge
+                optionsChart = options.chart;
 
             /**
              * The original options given to the constructor or a chart factory
              * like {@link Highcharts.chart} and {@link Highcharts.stockChart}.
+             * The original options are shallow copied to avoid mutation. The
+             * copy, `chart.userOptions`, may later be mutated to reflect
+             * updated options throughout the lifetime of the chart.
+             *
+             * For collections, like `series`, `xAxis` and `yAxis`, the chart
+             * user options should always be reflected by the item user option,
+             * so for example the following should always be true:
+             *
+             * `chart.xAxis[0].userOptions === chart.userOptions.xAxis[0]`
              *
              * @name Highcharts.Chart#userOptions
              * @type {Highcharts.Options}
              */
-            this.userOptions = userOptions;
+            this.userOptions = extend<Partial<Options>>({}, userOptions);
 
             this.margin = [];
             this.spacing = [];
@@ -470,29 +481,6 @@ class Chart {
 
             this.callback = callback;
             this.isResizing = 0;
-
-            const zooming = optionsChart.zooming = optionsChart.zooming || {};
-
-            // Other options have no default so just pick
-            if (userOptions.chart && !userOptions.chart.zooming) {
-                zooming.resetButton = optionsChart.resetZoomButton;
-            }
-            zooming.key = pick(
-                zooming.key,
-                optionsChart.zoomKey
-            );
-            zooming.pinchType = pick(
-                zooming.pinchType,
-                optionsChart.pinchType
-            );
-            zooming.singleTouch = pick(
-                zooming.singleTouch,
-                optionsChart.zoomBySingleTouch
-            );
-            zooming.type = pick(
-                zooming.type,
-                optionsChart.zoomType
-            );
 
             /**
              * The options structure for the chart after merging
@@ -596,6 +584,8 @@ class Chart {
 
             chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
 
+            this.setZoomOptions();
+
             // Fire after init but before first render, before axes and series
             // have been initialized.
             fireEvent(chart, 'afterInit');
@@ -664,29 +654,59 @@ class Chart {
     }
 
     /**
-     * Order all series above a given index. When series are added and ordered
-     * by configuration, only the last series is handled (#248, #1123, #2456,
-     * #6112). This function is called on series initialization and destroy.
+     * Order all series or axes above a given index. When series or axes are
+     * added and ordered by configuration, only the last series is handled
+     * (#248, #1123, #2456, #6112). This function is called on series and axis
+     * initialization and destroy.
      *
      * @private
-     * @function Highcharts.Series#orderSeries
-     * @param {number} [fromIndex]
+     * @function Highcharts.Chart#orderItems
+     * @param {string} coll The collection name
+     * @param {number} [fromIndex=0]
      * If this is given, only the series above this index are handled.
      */
-    public orderSeries(fromIndex?: number): void {
-        const series = this.series;
+    public orderItems(
+        coll: ('colorAxis'|'series'|'xAxis'|'yAxis'|'zAxis'),
+        fromIndex = 0
+    ): void {
+        const collection = this[coll],
 
-        for (let i = (fromIndex || 0), iEnd = series.length; i < iEnd; ++i) {
-            if (series[i]) {
-                /**
-                 * Contains the series' index in the `Chart.series` array.
-                 *
-                 * @name Highcharts.Series#index
-                 * @type {number}
-                 * @readonly
-                 */
-                series[i].index = i;
-                series[i].name = series[i].getName();
+            // Item options should be reflected in chart.options.series,
+            // chart.options.yAxis etc
+            optionsArray = this.options[coll] = splat(this.options[coll])
+                .slice(),
+            userOptionsArray = this.userOptions[coll] = this.userOptions[coll] ?
+                splat(this.userOptions[coll]).slice() :
+                [];
+
+        if (this.hasRendered) {
+            // Remove all above index
+            optionsArray.splice(fromIndex);
+            userOptionsArray.splice(fromIndex);
+        }
+
+        if (collection) {
+            for (let i = fromIndex, iEnd = collection.length; i < iEnd; ++i) {
+                const item = collection[i];
+                if (item) {
+                    /**
+                     * Contains the series' index in the `Chart.series` array.
+                     *
+                     * @name Highcharts.Series#index
+                     * @type {number}
+                     * @readonly
+                     */
+                    item.index = i;
+
+                    if (item instanceof Series) {
+                        item.name = item.getName();
+                    }
+
+                    if (!item.options.isInternal) {
+                        optionsArray[i] = item.options;
+                        userOptionsArray[i] = item.userOptions;
+                    }
+                }
             }
         }
     }
@@ -858,7 +878,7 @@ class Chart {
         }
 
         // Adjust title layout (reflow multiline text)
-        chart.layOutTitles();
+        chart.layOutTitles(false);
 
         // link stacked series
         i = series.length;
@@ -1053,31 +1073,19 @@ class Chart {
      * @emits Highcharts.Chart#event:getAxes
      */
     public getAxes(): void {
-        const chart = this,
-            options = this.options,
-            xAxisOptions = options.xAxis = splat(options.xAxis || {}),
-            yAxisOptions = options.yAxis = splat(options.yAxis || {});
+        const options = this.options;
 
         fireEvent(this, 'getAxes');
 
-        // make sure the options are arrays and add some members
-        xAxisOptions.forEach(function (axis: any, i: number): void {
-            axis.index = i;
-            axis.isX = true;
-        });
-
-        yAxisOptions.forEach(function (axis: any, i: number): void {
-            axis.index = i;
-        });
-
-        // concatenate all axis options into one array
-        const optionsArray = xAxisOptions.concat(yAxisOptions);
-
-        optionsArray.forEach(function (
-            axisOptions: AxisOptions
-        ): void {
-            new Axis(chart, axisOptions); // eslint-disable-line no-new
-        });
+        for (const coll of ['xAxis', 'yAxis'] as Array<'xAxis'|'yAxis'>) {
+            const arr: Array<AxisOptions> = options[coll] = splat(
+                options[coll] || {}
+            );
+            for (const axisOptions of arr) {
+                // eslint-disable-next-line no-new
+                new Axis(this, axisOptions, coll);
+            }
+        }
 
         fireEvent(this, 'afterGetAxes');
     }
@@ -1185,21 +1193,8 @@ class Chart {
     ): void {
         const chart = this;
 
-        // Default style
-        const style = name === 'title' ? {
-            color: Palette.neutralColor80,
-            fontSize: this.options.isStock ? '1em' : '1.2em', // #2944
-            fontWeight: 'bold'
-        } : {
-            // Subtitle or caption
-            color: Palette.neutralColor60,
-            fontSize: '0.8em'
-        };
-
         // Merge default options with explicit options
         const options = this.options[name] = merge(
-            // Default styles
-            (!this.styledMode && { style }) as Chart.DescriptionOptionsType,
             this.options[name],
             explicitOptions
         );
@@ -1207,7 +1202,7 @@ class Chart {
         let elem = this[name];
 
         if (elem && explicitOptions) {
-            this[name] = elem = (elem as any).destroy(); // remove old
+            this[name] = elem = elem.destroy(); // remove old
         }
 
         if (options && !elem) {
@@ -1224,22 +1219,24 @@ class Chart {
                 })
                 .add();
 
-            // Update methods, shortcut to Chart.setTitle, Chart.setSubtitle and
-            // Chart.setCaption
+            // Update methods, relay to `applyDescription`
             elem.update = function (
-                updateOptions: (Chart.DescriptionOptionsType)
+                updateOptions: (Chart.DescriptionOptionsType),
+                redraw?: boolean
             ): void {
-                const fn = {
-                    title: 'setTitle',
-                    subtitle: 'setSubtitle',
-                    caption: 'setCaption'
-                }[name];
-                (chart as any)[fn](updateOptions);
+                chart.applyDescription(name, updateOptions);
+                chart.layOutTitles(redraw);
             };
 
             // Presentational
             if (!this.styledMode) {
-                elem.css((options as any).style);
+                elem.css(extend<CSSObject>(
+                    name === 'title' ? {
+                        // #2944
+                        fontSize: this.options.isStock ? '1em' : '1.2em'
+                    } : {},
+                    options.style
+                ));
             }
 
             /**
@@ -1278,7 +1275,7 @@ class Chart {
      * @param {boolean} [redraw=true]
      * @emits Highcharts.Chart#event:afterLayOutTitles
      */
-    public layOutTitles(redraw?: boolean): void {
+    public layOutTitles(redraw = true): void {
         const titleOffset = [0, 0, 0],
             renderer = this.renderer,
             spacingBox = this.spacingBox;
@@ -1361,7 +1358,7 @@ class Chart {
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
             // Redraw if necessary (#2719, #2744)
-            if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
+            if (this.hasRendered && redraw && this.isDirtyBox) {
                 this.redraw();
             }
         }
@@ -1740,6 +1737,22 @@ class Chart {
 
         chart.setChartSize();
 
+    }
+
+    /**
+     * Return the current options of the chart, but only those that differ from
+     * default options. Items that can be either an object or an array of
+     * objects, like `series`, `xAxis` and `yAxis`, are always returned as
+     * array.
+     *
+     * @sample highcharts/members/chart-getoptions
+     *
+     * @function Highcharts.Chart#getOptions
+     *
+     * @since next
+     */
+    public getOptions(): DeepPartial<Options> {
+        return diffObjects(this.userOptions, defaultOptions);
     }
 
     /**
@@ -2515,7 +2528,7 @@ class Chart {
 
 
             if (!chart.styledMode) {
-                this.credits.css(creds.style as any);
+                this.credits.css(creds.style);
             }
 
             this.credits
@@ -2644,7 +2657,9 @@ class Chart {
         chart.getAxes();
 
         // Initialize the series
-        (isArray(options.series) ? options.series : []).forEach(
+        const series = isArray(options.series) ? options.series : [];
+        options.series = []; // Avoid mutation
+        series.forEach(
             // #9680
             function (serieOptions): void {
                 chart.initSeries(serieOptions);
@@ -2897,7 +2912,7 @@ class Chart {
      * @private
      * @function Highcharts.Chart#createAxis
      *
-     * @param {string} type
+     * @param {string} coll
      *        An axis type.
      *
      * @param {...Array<*>} arguments
@@ -2907,13 +2922,10 @@ class Chart {
      *         The newly generated Axis object.
      */
     public createAxis(
-        type: string,
+        coll: AxisCollectionKey,
         options: Chart.CreateAxisOptionsObject
     ): Axis {
-        const axis = new Axis(this, merge(options.axis, {
-            index: (this as AnyRecord)[type].length,
-            isX: type === 'xAxis'
-        }));
+        const axis = new Axis(this, options.axis, coll);
 
         if (pick(options.redraw, true)) {
             this.redraw(options.animation);
@@ -3129,7 +3141,7 @@ class Chart {
             chart.setResponsive(false, true);
         }
 
-        options = cleanRecursively(options, chart.options);
+        options = diffObjects(options, chart.options);
 
         chart.userOptions = merge(chart.userOptions, options);
 
@@ -3138,8 +3150,10 @@ class Chart {
         const optionsChart = options.chart;
 
         if (optionsChart) {
-
             merge(true, chart.options.chart, optionsChart);
+
+            // Add support for deprecated zooming options like zoomType, #17861
+            this.setZoomOptions();
 
             // Setter function
             if ('className' in optionsChart) {
@@ -3260,22 +3274,8 @@ class Chart {
         // an id will update the first and the second respectively (#6019)
         // chart.update and responsive.
         this.collectionsWithUpdate.forEach(function (coll: string): void {
-            let indexMap: Array<number>;
 
             if ((options as any)[coll]) {
-
-                // In stock charts, the navigator series are also part of the
-                // chart.series array, but those series should not be handled
-                // here (#8196) and neither should the navigator axis (#9671).
-                indexMap = [];
-                (chart as any)[coll].forEach(function (
-                    s: (Series|Axis),
-                    i: number
-                ): void {
-                    if (!s.options.isInternal) {
-                        indexMap.push(pick(s.options.index, i));
-                    }
-                });
 
                 splat((options as any)[coll]).forEach(function (
                     newOptions,
@@ -3291,16 +3291,22 @@ class Chart {
 
                     // No match by id found, match by index instead
                     if (!item && (chart as any)[coll]) {
-                        item = (chart as any)[coll][indexMap ? indexMap[i] : i];
+                        item = (chart as any)[coll][pick(newOptions.index, i)];
 
                         // Check if we grabbed an item with an exising but
-                        // different id (#13541)
-                        if (item && hasId && defined(item.options.id)) {
+                        // different id (#13541). Check that the item in this
+                        // position is not internal (navigator).
+                        if (
+                            item && (
+                                (hasId && defined(item.options.id)) ||
+                                (item as Axis|Series).options.isInternal
+                            )
+                        ) {
                             item = void 0;
                         }
                     }
 
-                    if (item && (item as any).coll === coll) {
+                    if (item && (item as Axis|Series).coll === coll) {
                         item.update(newOptions, false);
 
                         if (oneToOne) {
@@ -3447,7 +3453,7 @@ class Chart {
 
         const chart = this,
             lang = defaultOptions.lang,
-            btnOptions = chart.options.chart.zooming.resetButton as any,
+            btnOptions = chart.zooming.resetButton as any,
             theme = btnOptions.theme,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
@@ -3913,7 +3919,7 @@ namespace Chart {
         align?: AlignValue;
         floating?: boolean;
         margin?: number;
-        style?: CSSObject;
+        style: CSSObject;
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
@@ -3934,7 +3940,7 @@ namespace Chart {
         mapText?: string;
         mapTextFull?: string;
         position?: AlignObject;
-        style?: CSSObject;
+        style: CSSObject;
         text?: string;
     }
 
@@ -3964,7 +3970,7 @@ namespace Chart {
     export interface SubtitleOptions {
         align?: AlignValue;
         floating?: boolean;
-        style?: CSSObject;
+        style: CSSObject;
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;
@@ -3977,7 +3983,7 @@ namespace Chart {
         align?: AlignValue;
         floating?: boolean;
         margin?: number;
-        style?: CSSObject;
+        style: CSSObject;
         text?: string;
         useHTML?: boolean;
         verticalAlign?: VerticalAlignValue;

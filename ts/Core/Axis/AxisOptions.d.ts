@@ -42,6 +42,8 @@ declare module '../../Core/Options'{
     }
 }
 
+export type AxisCollectionKey = ('colorAxis'|'xAxis'|'yAxis'|'zAxis');
+
 export interface AxisCrosshairLabelOptions {
     align?: AlignValue;
     backgroundColor?: ColorType;
@@ -132,7 +134,6 @@ export interface AxisOptions {
     gridZIndex: number;
     height?: (number|string);
     id?: string;
-    isX?: boolean;
     labels: AxisLabelOptions;
     left?: (number|string);
     lineColor: ColorType;

@@ -114,8 +114,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'segment',
                         type: 'crookedLine',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -171,8 +171,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             line: {
                                 markerEnd: 'arrow'
                             },
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -226,8 +226,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'infinityLine',
                         typeOptions: {
                             type: 'ray',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -284,8 +284,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             line: {
                                 markerEnd: 'arrow'
                             },
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -338,8 +338,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'infinityLine',
                         typeOptions: {
                             type: 'line',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -396,8 +396,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             line: {
                                 markerEnd: 'arrow'
                             },
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -449,8 +449,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         draggable: 'y',
                         typeOptions: {
                             type: 'horizontalLine',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -495,8 +495,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         draggable: 'x',
                         typeOptions: {
                             type: 'verticalLine',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value
@@ -545,8 +545,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'crooked3',
                         type: 'crookedLine',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -600,8 +600,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'crooked5',
                         type: 'crookedLine',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -659,8 +659,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'elliott3',
                         type: 'elliottWave',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -721,8 +721,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'elliott5',
                         type: 'elliottWave',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y },
@@ -788,8 +788,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'measure',
                         typeOptions: {
                             selectType: 'x',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             point: { x, y },
                             crosshairX: {
                                 strokeWidth: 1,
@@ -859,8 +859,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'measure',
                         typeOptions: {
                             selectType: 'y',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             point: { x, y },
                             crosshairX: {
                                 enabled: false,
@@ -930,8 +930,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'measure',
                         typeOptions: {
                             selectType: 'xy',
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             point: { x, y },
                             background: {
                                 width: 0,
@@ -1002,8 +1002,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'fibonacci',
                         type: 'fibonacci',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y }
@@ -1061,8 +1061,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'parallelChannel',
                         type: 'tunnel',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [
                                 { x, y },
                                 { x, y }
@@ -1116,8 +1116,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         langKey: 'pitchfork',
                         type: 'pitchfork',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value,
                                 y: coordsY.value,
@@ -1420,8 +1420,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         type: 'fibonacciTimeZones',
                         langKey: 'fibonacciTimeZones',
                         typeOptions: {
-                            xAxis: coordsX.axis.options.index,
-                            yAxis: coordsY.axis.options.index,
+                            xAxis: coordsX.axis.index,
+                            yAxis: coordsY.axis.index,
                             points: [{
                                 x: coordsX.value
                             }]
@@ -1450,8 +1450,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
 
                 annotation.update({
                     typeOptions: {
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
+                        xAxis: coordsX.axis.index,
+                        yAxis: coordsY.axis.index,
                         points: [{
                             x: x
                         }, {
