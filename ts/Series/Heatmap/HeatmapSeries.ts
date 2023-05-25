@@ -455,9 +455,17 @@ class HeatmapSeries extends ScatterSeries {
 
         if (interpolation) {
             const
-                { image, chart, xAxis, yAxis } = series,
-                pointPlacement = series.pointPlacementToXValue(),
-                { len: xAxisLen, reversed: xRev, userOptions: xConf } = xAxis,
+                {
+                    image,
+                    chart,
+                    xAxis,
+                    yAxis,
+                    points,
+                    boost
+                } = series,
+                lastPointIndex = points.length - 1,
+                notBoosting = (!boost && !chart.boost),
+                { len: xAxisLen, reversed: xRev } = xAxis,
                 { len: yAxisLen, reversed: yRev } = yAxis,
                 { min: xMin, max: xMax } = xAxis.getExtremes(),
                 { min: yMin, max: yMax } = yAxis.getExtremes(),
@@ -466,39 +474,12 @@ class HeatmapSeries extends ScatterSeries {
                     pick(seriesOptions.rowsize, 1)
                 ],
                 { inverted } = chart,
-                applyMinPixelPadding = (
-                    !xConf.minPadding &&
-                    xConf.minPadding !== 0
-                ),
-                xPad = colsize / 2,
-                xEnd = (xConf.maxPadding ?
-                    Math.max(
-                        xAxis.translate(
-                            xPad,
-                            false,
-                            true,
-                            false,
-                            true,
-                            -pointPlacement
-                        ),
-                        0
-                    ) :
-                    xAxisLen
-                ) - (applyMinPixelPadding ? xAxis.minPixelPadding / 2 : 0),
-                xStart = (!applyMinPixelPadding ?
-                    xAxisLen - Math.min(
-                        xAxis.translate(
-                            xPad,
-                            false,
-                            true,
-                            false,
-                            true,
-                            -pointPlacement
-                        ),
-                        xAxisLen
-                    ) :
-                    xAxis.minPixelPadding
-                ),
+                firstCell = points[0],
+                firstCellX = pick(firstCell.plotX, 0),
+                firstCellPaddedX = firstCell.getCellAttributes().x1,
+                endPadding = points[lastPointIndex].getCellAttributes().x2,
+                x1 = firstCellPaddedX ? firstCellX - firstCellPaddedX : 0,
+                x2 = (endPadding + firstCellPaddedX),
                 dimensions = inverted ?
                     {
                         width: xAxisLen,
@@ -506,11 +487,13 @@ class HeatmapSeries extends ScatterSeries {
                         x: 0,
                         y: 0
                     } : {
-                        width: xEnd,
+                        width: x2,
                         height: yAxisLen,
-                        x: xStart,
+                        x: x1,
                         y: 0
                     };
+
+                console.log(x1);
             if (!image) {
                 const
                     colorAxis = (
@@ -522,8 +505,6 @@ class HeatmapSeries extends ScatterSeries {
 
                 if (canvas && ctx && colorAxis) {
                     const
-                        { boost: seriesBoost, points } = series,
-                        notBoosting = (!seriesBoost && !chart.boost),
                         canvasWidth = canvas.width = ~~(
                             (xMax - xMin) / colsize
                         ) + 1,
@@ -590,9 +571,8 @@ class HeatmapSeries extends ScatterSeries {
                                 0,
                                 pixelData.length - 4,
                                 0,
-                                points.length - 1
+                                lastPointIndex
                             ),
-
                             p = points[toPointScale],
                             sourceArr = new Uint8ClampedArray(
                                 colorFromPoint(p)
