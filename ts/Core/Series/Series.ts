@@ -3318,12 +3318,28 @@ class Series {
             series.redrawPoints();
         }
 
-        // draw the mouse tracking area
-        if (
-            series.drawTracker &&
-            series.options.enableMouseTracking !== false
-        ) {
-            series.drawTracker();
+        // Draw the mouse tracking area
+        if (series.drawTracker) {
+            if (series.options.enableMouseTracking !== false) {
+                series.drawTracker();
+            } else {
+                series.trackerGroups?.forEach((key: string): void => {
+                    const tracker = (series as any)[key];
+                    if (tracker) {
+                        tracker.removeClass(
+                            options.trackByArea ?
+                                'highcharts-tracker-area' :
+                                'highcharts-tracker-line'
+                        );
+                        removeEvent(tracker.element, 'mouseover');
+                        removeEvent(tracker.element, 'mouseout');
+
+                        if (hasTouch) {
+                            removeEvent(tracker.element, 'touchstart');
+                        }
+                    }
+                });
+            }
         }
 
         // Run the animation
