@@ -2,22 +2,15 @@ function random(max, min = 0) {
     return Math.floor(min + Math.random() * (max - min));
 }
 
-const board = new Dashboards.Board('container', {
+const board = Dashboards.board('container', {
     components: [{
         cell: 'kpi-00',
         type: 'KPI',
-        title: 'Average revenue',
-        value: 888,
-        threshold: [200, 800],
-        thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d']
+        value: 888
     }, {
         cell: 'kpi-01',
         type: 'KPI',
-        title: 'Earnings',
-        value: 900,
-        subtitle: {
-            type: 'diff'
-        }
+        value: 900
     },  {
         cell: 'kpi-02',
         type: 'KPI',
@@ -32,8 +25,7 @@ const board = new Dashboards.Board('container', {
     }, {
         cell: 'kpi-03',
         type: 'KPI',
-        title: 'Active users',
-        value: 70
+        title: 'Active users'
     }, {
         cell: 'kpi-10',
         type: 'KPI',
@@ -108,7 +100,9 @@ const board = new Dashboards.Board('container', {
                     id: 'kpi-00'
                 }, {
                     id: 'kpi-01'
-                }, {
+                }]
+            }, {
+                cells: [{
                     id: 'kpi-02'
                 }, {
                     id: 'kpi-03'
@@ -118,7 +112,9 @@ const board = new Dashboards.Board('container', {
                     id: 'kpi-10'
                 }, {
                     id: 'kpi-11'
-                }, {
+                }]
+            }, {
+                cells: [{
                     id: 'kpi-12'
                 }, {
                     id: 'kpi-13'
@@ -147,8 +143,6 @@ function setValues() {
         });
     });
 }
-// Set some initial data
-setValues();
 
 // Update the data every second
 setInterval(() => {

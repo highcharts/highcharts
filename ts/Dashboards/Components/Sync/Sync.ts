@@ -42,10 +42,9 @@ namespace Sync {
      * */
 
     export type EventType = (
+        | 'extremes'
         | 'visibility'
-        | 'selection'
         | 'highlight'
-        | 'panning'
     );
 
     export type EmitterConfig = (

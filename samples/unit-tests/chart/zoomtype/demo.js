@@ -103,7 +103,7 @@ QUnit.test('Zooming scatter charts', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'scatter',
-            zoomType: 'xy',
+            zoomType: 'y',
             width: 600,
             height: 400
         },
@@ -363,6 +363,35 @@ QUnit.test('Zooming scatter charts', function (assert) {
             }
         ]
     });
+
+    // Update the deprecated properties
+    chart.update({
+        chart: {
+            zoomType: 'xy'
+        }
+    });
+
+    assert.strictEqual(
+        chart.zooming.type,
+        'xy',
+        'There should be support for updating the deprecated zoomType (#17861)'
+    );
+
+    chart.update({
+        chart: {
+            resetZoomButton: {
+                theme: {
+                    zIndex: 8
+                }
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.zooming.resetButton.theme.zIndex,
+        8,
+        'Deprecated zooming properties should be updated (#17861)'
+    );
 
     // Do the first zoom
     chart.pointer.zoomX = chart.pointer.zoomY = true;

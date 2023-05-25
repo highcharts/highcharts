@@ -387,7 +387,7 @@ abstract class Component {
         this.syncHandlers = this.handleSyncOptions();
         this.element = createElement('div', {
             className: this.options.className
-        }, this.options.style);
+        });
 
         this.contentElement = createElement('div', {
             className: `${this.options.className}-content`
@@ -1235,7 +1235,7 @@ namespace Component {
 
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
-    export interface ComponentOptions extends EditableOptions {
+    export interface ComponentOptions {
         [key: string]: unknown;
         /**
          * @internal
@@ -1274,8 +1274,10 @@ namespace Component {
          * Events attached to the component : `mount`, `unmount`.
          */
         events?: Record<string, Function>;
-        /** @internal */
-        editableOptions: Array<EditableOptions.Configuration>;
+        /**
+         * Set of options that are available for editing through sidebar.
+         */
+        editableOptions: Array<EditableOptions.Options>;
         /** @internal */
         editableOptionsBindings: EditableOptions.OptionsBindings;
         /** @internal */
@@ -1291,6 +1293,24 @@ namespace Component {
          *
          */
         sync: SyncOptions;
+        connector?: ConnectorTypes;
+        connectorName?: string;
+        /**
+         * Sets an ID for the component's container.
+         */
+        id?: string;
+        /**
+         * Additional CSS styles to apply inline to the component's container.
+         */
+        style?: CSSObject;
+        /**
+         * The component's title, which will render at the top.
+         */
+        title?: TextOptionsType;
+        /**
+         * The component's caption, which will render at the bottom.
+         */
+        caption?: TextOptionsType;
     }
 
     /**
@@ -1316,27 +1336,6 @@ namespace Component {
 
     /** @internal */
     export type ConnectorTypes = DataConnector;
-    /** @internal */
-    export interface EditableOptions {
-        connector?: ConnectorTypes;
-        connectorName?: string;
-        /**
-         * Sets an ID for the component's container.
-         */
-        id?: string;
-        /**
-         * Additional CSS styles to apply inline to the component's container.
-         */
-        style?: CSSObject;
-        /**
-         * The component's title, which will render at the top.
-         */
-        title?: TextOptionsType;
-        /**
-         * The component's caption, which will render at the bottom.
-         */
-        caption?: TextOptionsType;
-    }
 
     export type TextOptionsType = string | false | TextOptions | undefined;
     /** @internal */

@@ -102,7 +102,8 @@ class AccordionMenu {
                 accordionContainer,
                 {
                     name: option.name,
-                    iconsURLPrefix: menu.iconsURLPrefix
+                    iconsURLPrefix: menu.iconsURLPrefix,
+                    lang: (component.board?.editMode || EditGlobals).lang
                 }
             ).content;
 
@@ -121,7 +122,8 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: EditGlobals.lang.confirmButton,
+                value: (component.board?.editMode || EditGlobals)
+                    .lang.confirmButton,
                 callback: (): void => {
                     const changedOptions = this
                         .changedOptions as Partial<Component.ComponentOptions>;
@@ -141,7 +143,8 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: EditGlobals.lang.cancelButton,
+                value: (component.board?.editMode || EditGlobals)
+                    .lang.cancelButton,
                 callback: (): void => {
                     menu.changedOptions = {};
                     menu.chartOptionsJSON = {};
@@ -209,7 +212,7 @@ class AccordionMenu {
      * the component for which the menu should be rendered.
      */
     public renderAccordion(
-        options: EditableOptions.Configuration,
+        options: EditableOptions.Options,
         parentNode: HTMLElement,
         component: Component
     ): void {
@@ -220,10 +223,10 @@ class AccordionMenu {
 
         const renderFunction = EditRenderer.getRendererFunction(options.type);
 
-
         if (!renderFunction) {
             return;
         }
+
         renderFunction(parentNode, {
             ...options,
             iconsURLPrefix: this.iconsURLPrefix,
@@ -247,35 +250,36 @@ class AccordionMenu {
      */
     public renderNested(
         parentElement: HTMLElement,
-        options: EditableOptions.Configuration,
+        options: EditableOptions.Options,
         component: Component
     ): void {
-        if (!parentElement || !options.detailedOptions) {
+        if (!parentElement || !options.nestedOptions) {
             return;
         }
 
-        const detailedOptions = options.detailedOptions;
+        const nestedOptions = options.nestedOptions;
 
-        for (let i = 0, iEnd = detailedOptions.length; i < iEnd; ++i) {
-            const name = detailedOptions[i].name;
-            const nestedOptions = detailedOptions[i].options;
-            const allowEnabled = !!detailedOptions[i].allowEnabled;
-            const propertyPath = detailedOptions[i].propertyPath || [];
+        for (let i = 0, iEnd = nestedOptions.length; i < iEnd; ++i) {
+            const name = nestedOptions[i].name;
+            const accordionOptions = nestedOptions[i].options;
+            const showToggle = !!nestedOptions[i].showToggle;
+            const propertyPath = nestedOptions[i].propertyPath || [];
             const collapsedHeader = EditRenderer.renderCollapseHeader(
                 parentElement, {
                     name,
                     isEnabled: !!component.getEditableOptionValue(propertyPath),
                     iconsURLPrefix: this.iconsURLPrefix,
-                    allowEnabled,
+                    showToggle: showToggle,
                     onchange: (value: boolean | string | number): void =>
                         this.updateOptions(propertyPath, value),
-                    isNested: true
+                    isNested: true,
+                    lang: (component.board?.editMode || EditGlobals).lang
                 }
             );
 
-            for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
+            for (let j = 0, jEnd = accordionOptions.length; j < jEnd; ++j) {
                 this.renderAccordion(
-                    nestedOptions[j] as EditableOptions.Configuration,
+                    accordionOptions[j] as EditableOptions.Options,
                     collapsedHeader.content,
                     component
                 );

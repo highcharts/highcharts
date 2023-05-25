@@ -481,7 +481,7 @@ const components = state => [
             }
         },
         sync: {
-            selection: true
+            extremes: true
         },
         events: {
             afterPresentationModifier: function () {
@@ -525,7 +525,7 @@ const components = state => [
             }
         },
         sync: {
-            selection: {
+            extremes: {
                 handler: altSyncHandler
             }
         }
@@ -565,7 +565,7 @@ const components = state => [
             }
         },
         sync: {
-            selection: {
+            extremes: {
                 handler: altSyncHandler
             }
         }

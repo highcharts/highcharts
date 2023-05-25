@@ -730,7 +730,8 @@ class Connection {
                 connection.graphics[type] = renderer
                     .symbol(options.symbol as any)
                     .addClass(
-                        'highcharts-point-connecting-path-' + type + '-marker'
+                        'highcharts-point-connecting-path-' + type + '-marker' +
+                        ' highcharts-color-' + this.fromPoint.colorIndex
                     )
                     .attr(box)
                     .add((pathfinder as any).group);

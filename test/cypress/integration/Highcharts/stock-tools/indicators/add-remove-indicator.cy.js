@@ -28,9 +28,9 @@ describe('Axis height recalculation.', () => {
 
         cy.chart().should(chart =>{
             // Exclude 2 first axes and navigator axis.
-            const yAxis = chart.yAxis;
+            const yAxis = chart.yAxis.filter(a => !a.options.isInternal);
 
-            for(let i = 3; i < chart.yAxis.length - 1; i++) {
+            for(let i = 3; i < yAxis.length - 1; i++) {
                 assert.closeTo(
                     yAxis[i].top + yAxis[i].height,
                     yAxis[i + 1].top,
@@ -53,9 +53,9 @@ describe('Axis height recalculation.', () => {
 
         cy.chart().should(chart => {
             // Exclude 2 first axes and navigator axis.
-            const yAxis = chart.yAxis;
+            const yAxis = chart.yAxis.filter(a => !a.options.isInternal);
 
-            for(let i = 3; i < chart.yAxis.length - 1; i++) {
+            for(let i = 3; i < yAxis.length - 1; i++) {
                 assert.closeTo(
                     yAxis[i].top + yAxis[i].height,
                     yAxis[i + 1].top,
@@ -85,9 +85,9 @@ describe('Axis height recalculation.', () => {
             .click(); // Remove that indicator.
         cy.chart().should(chart => {
             // Exclude 2 first axes and navigator axis.
-            const yAxis = chart.yAxis;
+            const yAxis = chart.yAxis.filter(a => !a.options.isInternal);
 
-            for(let i = 3; i < chart.yAxis.length - 1; i++) {
+            for(let i = 3; i < yAxis.length - 1; i++) {
                 assert.closeTo(
                     yAxis[i].top + yAxis[i].height,
                     yAxis[i + 1].top,

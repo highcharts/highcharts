@@ -1,5 +1,5 @@
-@import "https://code.highcharts.com/css/highcharts.css";
-@import "https://code.highcharts.com/css/dashboards/gui.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/css/dashboards/gui.css");
 
 #csv {
     display: none;

@@ -772,21 +772,20 @@ namespace AxisDefaults {
              * @sample {highcharts} highcharts/xaxis/labels-reservespace-true/
              *         Left-aligned labels on a vertical category axis
              *
-             * @type       {Highcharts.AlignValue}
-             * @apioption  xAxis.labels.align
+             * @type      {Highcharts.AlignValue}
+             * @apioption xAxis.labels.align
              */
 
             /**
-             * Whether to allow the axis labels to overlap.
-             * When false, overlapping labels are hidden.
+             * Whether to allow the axis labels to overlap. When false,
+             * overlapping labels are hidden.
              *
              * @sample {highcharts} highcharts/xaxis/labels-allowoverlap-true/
              *         X axis labels overlap enabled
              *
-             * @type {boolean}
-             * @default false
+             * @type      {boolean}
+             * @default   false
              * @apioption xAxis.labels.allowOverlap
-             *
              */
 
             /**
@@ -831,10 +830,6 @@ namespace AxisDefaults {
              * The label's pixel distance from the perimeter of the plot area.
              * On cartesian charts, this is overridden if the `labels.y` setting
              * is set.
-             *
-             * * On polar charts, if it's a percentage string, it is interpreted
-             * the same as [series.radius](#plotOptions.gauge.radius), so the
-             * label can be aligned under the gauge's shape.
              *
              * @sample {highcharts} highcharts/yaxis/labels-distance/
              *         Polar chart, labels centered under the arc
@@ -2527,6 +2522,24 @@ namespace AxisDefaults {
          * @extends xAxis.labels
          */
         labels: {
+
+            /**
+             * The label's pixel distance from the perimeter of the plot area.
+             * On cartesian charts, this is overridden if the `labels.y` setting
+             * is set.
+             *
+             * On polar charts, if it's a percentage string, it is interpreted
+             * the same as [series.radius](#plotOptions.gauge.radius), so the
+             * label can be aligned under the gauge's shape.
+             *
+             * @sample {highcharts} highcharts/yaxis/labels-distance/
+             *         Polar chart, labels centered under the arc
+             *
+             * @type      {number|string}
+             * @product   highcharts
+             * @apioption yAxis.labels.distance
+             */
+
             /**
              * The y position offset of all labels relative to the tick
              * positions on the axis. For polar and radial axis consider the use

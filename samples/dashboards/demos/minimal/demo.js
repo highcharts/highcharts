@@ -61,7 +61,7 @@ async function setupDashboard() {
         sync: {
             visibility: true,
             highlight: true,
-            selection: true
+            extremes: true
         },
         cell: 'dashboard-col-0',
         type: 'Highcharts',
@@ -82,7 +82,7 @@ async function setupDashboard() {
         sync: {
             visibility: true,
             highlight: true,
-            selection: true
+            extremes: true
         },
         type: 'Highcharts',
         connector,
@@ -106,7 +106,7 @@ async function setupDashboard() {
         sync: {
             visibility: true,
             highlight: true,
-            selection: true
+            extremes: true
         },
         type: 'Highcharts',
         connector,
