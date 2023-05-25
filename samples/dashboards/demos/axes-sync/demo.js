@@ -43,6 +43,13 @@ Highcharts.setOptions({
 const csvData = document.getElementById('csv').innerText;
 
 Dashboards.board('container', {
+    editMode: {
+        enabled: true,
+        contextMenu: {
+            enabled: true,
+            items: ['editMode']
+        }
+    },
     dataPool: {
         connectors: [{
             name: 'connector-1',

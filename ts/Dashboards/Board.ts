@@ -145,73 +145,6 @@ class Board implements Serializable<Board, Board.JSON> {
         this.a11y = new DashboardsAccessibility(this);
     }
 
-
-    /**
-     * Init the layouts and components on the dashboard.
-     *
-     * @param async Whether to initialize the dashboard asynchronously. When
-     * false or undefined the function returns the dashboard isntance.
-     *  instance.
-     *
-     * @returns
-     * Board instance
-     */
-    public init(async?: boolean): Board;
-    /**
-     * Init the layouts and components on the dashboard.
-     *
-     * @param async Whether to initialize the dashboard asynchronously. When
-     * true, the function returns a promise that resolves with the dashboard
-     *  instance.
-     *
-     * @returns
-    * A promise that resolves with the dashboard instance.
-     */
-    public init(async: true): Promise<Board>;
-    /**
-     * Init the layouts and components on the dashboard.
-     *
-     * @param async Whether to initialize the dashboard asynchronously. When
-     * true, the function returns a promise that resolves with the dashboard
-     *  instance.
-     *
-     */
-    public init(async?: boolean): (Board | Promise<Board>) {
-        const options = this.options;
-        if (options.gui && this.options.gui) {
-            this.setLayouts(this.options.gui);
-        }
-
-        // Init layouts from JSON.
-        if (options.layoutsJSON && !this.layouts.length) {
-            this.setLayoutsFromJSON(options.layoutsJSON);
-        }
-
-        // Init components from options.
-        if (options.components) {
-            this.setComponents(options.components);
-        }
-
-        // Init events.
-        this.initEvents();
-
-        if (async) {
-
-            const componentPromises: Array<Promise<Component>> = [],
-                mountedComponents = this.mountedComponents;
-
-            for (let i = 0, iEnd = mountedComponents.length; i < iEnd; ++i) {
-                componentPromises.push(
-                    mountedComponents[i].component.initConnector()
-                );
-            }
-
-            return Promise.all(componentPromises).then((): Board => this);
-        }
-
-        return this;
-    }
-
     /* *
      *
      *  Static Functions
@@ -370,6 +303,71 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      * */
 
+    /**
+     * Init the layouts and components on the dashboard.
+     *
+     * @param async Whether to initialize the dashboard asynchronously. When
+     * false or undefined the function returns the dashboard isntance.
+     *  instance.
+     *
+     * @returns
+     * Board instance
+     */
+    public init(async?: boolean): Board;
+    /**
+     * Init the layouts and components on the dashboard.
+     *
+     * @param async Whether to initialize the dashboard asynchronously. When
+     * true, the function returns a promise that resolves with the dashboard
+     *  instance.
+     *
+     * @returns
+    * A promise that resolves with the dashboard instance.
+     */
+    public init(async: true): Promise<Board>;
+    /**
+     * Init the layouts and components on the dashboard.
+     *
+     * @param async Whether to initialize the dashboard asynchronously. When
+     * true, the function returns a promise that resolves with the dashboard
+     *  instance.
+     *
+     */
+    public init(async?: boolean): (Board | Promise<Board>) {
+        const options = this.options;
+        if (options.gui && this.options.gui) {
+            this.setLayouts(this.options.gui);
+        }
+
+        // Init layouts from JSON.
+        if (options.layoutsJSON && !this.layouts.length) {
+            this.setLayoutsFromJSON(options.layoutsJSON);
+        }
+
+        // Init components from options.
+        if (options.components) {
+            this.setComponents(options.components);
+        }
+
+        // Init events.
+        this.initEvents();
+
+        if (async) {
+
+            const componentPromises: Array<Promise<Component>> = [],
+                mountedComponents = this.mountedComponents;
+
+            for (let i = 0, iEnd = mountedComponents.length; i < iEnd; ++i) {
+                componentPromises.push(
+                    mountedComponents[i].component.initConnector()
+                );
+            }
+
+            return Promise.all(componentPromises).then((): Board => this);
+        }
+
+        return this;
+    }
     /**
      * Initializes the events.
      * @internal

@@ -157,7 +157,7 @@ abstract class Component {
         sync: Sync.defaultHandlers,
         editableOptions: [{
             name: 'connectorName',
-            propertyPath: ['connectorName'],
+            propertyPath: ['connector', 'name'],
             type: 'select'
         }, {
             name: 'title',
