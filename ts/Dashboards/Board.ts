@@ -187,20 +187,7 @@ class Board implements Serializable<Board, Board.JSON> {
         options: Board.Options,
         async: true
     ): Promise<Board>;
-    /**
-     * Factory function for creating a new dashboard.
-     *
-     * @param renderTo
-     * The DOM element to render to, or its id.
-     *
-     * @param options
-     * The options for the dashboard.
-     *
-     * @param async
-     * Whether to initialize the dashboard asynchronously. When true, the
-     * function returns a promise that resolves with the Dashboard instance.
-     * When false, the function returns the Dashboard instance.
-     */
+
     public static board(
         renderTo: (string|globalThis.HTMLElement),
         options: Board.Options,
@@ -315,14 +302,15 @@ class Board implements Serializable<Board, Board.JSON> {
      */
     public init(async?: boolean): Board;
     /**
-     * Init the layouts and components on the dashboard.
+     * Init the layouts and components on the dashboard, and attaches connectors
+     * if they are defined on component level.
      *
      * @param async Whether to initialize the dashboard asynchronously. When
      * true, the function returns a promise that resolves with the dashboard
      *  instance.
      *
      * @returns
-    * A promise that resolves with the dashboard instance.
+     * A promise that resolves with the dashboard instance.
      */
     public init(async: true): Promise<Board>;
     /**
@@ -332,6 +320,8 @@ class Board implements Serializable<Board, Board.JSON> {
      * true, the function returns a promise that resolves with the dashboard
      *  instance.
      *
+     * @returns
+     * A promise that resolves with the dashboard instance.
      */
     public init(async?: boolean): (Board | Promise<Board>) {
         const options = this.options;

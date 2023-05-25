@@ -378,6 +378,12 @@ abstract class Component {
 
     }
 
+    /**
+     * Inits connectors for the component and redraws it.
+     *
+     * @returns
+     * Promise resolviing to the component.
+     */
     public async initConnector(): Promise<this> {
         if (
             this.options.connector?.name &&
