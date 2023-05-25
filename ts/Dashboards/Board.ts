@@ -101,7 +101,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * @param options
      * The options for the dashboard.
      */
-    public constructor(
+    private constructor(
         renderTo: (string|HTMLElement),
         options: Board.Options
     ) {
@@ -167,7 +167,7 @@ class Board implements Serializable<Board, Board.JSON> {
     public static board(
         renderTo: (string|globalThis.HTMLElement),
         options: Board.Options,
-        async?: boolean
+        async?: false
     ): Board;
     /**
      * Factory function for creating a new dashboard.
@@ -191,11 +191,13 @@ class Board implements Serializable<Board, Board.JSON> {
     public static board(
         renderTo: (string|globalThis.HTMLElement),
         options: Board.Options,
-        async?: boolean
+        async?: (true|false)
     ): (Board|Promise<Board>) {
-        const board = new Board(renderTo, options);
 
-        return board.init(async);
+        if (async) {
+            return new Board(renderTo, options).init(async);
+        }
+        return new Board(renderTo, options).init(!!async);
     }
 
     /* *
@@ -293,6 +295,7 @@ class Board implements Serializable<Board, Board.JSON> {
     /**
      * Init the layouts and components on the dashboard.
      *
+     * @internal
      * @param async Whether to initialize the dashboard asynchronously. When
      * false or undefined the function returns the dashboard isntance.
      *  instance.
@@ -300,11 +303,12 @@ class Board implements Serializable<Board, Board.JSON> {
      * @returns
      * Board instance
      */
-    public init(async?: boolean): Board;
+    public init(async: false): Board;
     /**
      * Init the layouts and components on the dashboard, and attaches connectors
      * if they are defined on component level.
      *
+     * @internal
      * @param async Whether to initialize the dashboard asynchronously. When
      * true, the function returns a promise that resolves with the dashboard
      *  instance.
@@ -313,17 +317,8 @@ class Board implements Serializable<Board, Board.JSON> {
      * A promise that resolves with the dashboard instance.
      */
     public init(async: true): Promise<Board>;
-    /**
-     * Init the layouts and components on the dashboard.
-     *
-     * @param async Whether to initialize the dashboard asynchronously. When
-     * true, the function returns a promise that resolves with the dashboard
-     *  instance.
-     *
-     * @returns
-     * A promise that resolves with the dashboard instance.
-     */
-    public init(async?: boolean): (Board | Promise<Board>) {
+
+    public init(async: (true|false)): (Board | Promise<Board>) {
         const options = this.options;
         if (options.gui && this.options.gui) {
             this.setLayouts(this.options.gui);

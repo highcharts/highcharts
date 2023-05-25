@@ -16,9 +16,6 @@ Highcharts.setOptions({
     xAxis: {
         type: 'datetime'
     },
-    legend: {
-        enabled: false
-    },
     colors: ['#37D5D6'],
     plotOptions: {
         area: {
