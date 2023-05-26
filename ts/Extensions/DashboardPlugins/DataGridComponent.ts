@@ -62,7 +62,11 @@ class DataGridComponent extends Component {
             dataGridClassName: 'dataGrid-container',
             dataGridID: 'dataGrid-' + uniqueKey(),
             dataGridOptions: {},
-            editableOptions: [],
+            editableOptions: [{
+                name: 'connectorName',
+                propertyPath: ['connector', 'name'],
+                type: 'select'
+            }],
             syncHandlers: DataGridSyncHandlers,
             onUpdate: DataGridComponent.onUpdate
         }

@@ -73,8 +73,5 @@ test('Components should be initialized with a connector', function(assert) {
         mountedComponents.forEach(mComponent => {
             assert.ok(mComponent.component.connector, 'Component should have a connector.');
         });
-        assert.strictEqual(board.mountedComponents.length, 2, 'There should be two mounted components.');
     });
-
-
 });

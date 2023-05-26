@@ -149,25 +149,12 @@ class SidebarPopup extends BaseForm {
                 sidebar: SidebarPopup,
                 dropContext: Cell | Row
             ): Cell|void {
-                const headers = ['Apples', 'Pears', 'Plums'];
-                const columns = ((): Record<string, Array<string>> => {
-                    const makeRandomRows = (): Array<string> =>
-                        new Array(40).map(
-                            (): string => (10 * Math.random()).toFixed(2)
-                        );
-                    const cols: Record<string, Array<string>> = {};
-                    for (let i = 0; i < headers.length; ++i) {
-                        cols[headers[i]] = makeRandomRows();
-                    }
-                    return cols;
-                })();
 
                 if (sidebar && dropContext) {
                     return sidebar.onDropNewComponent(dropContext, {
                         cell: '',
                         type: 'DataGrid'
-                        // connector: new CSVConnector(new DataTable(columns))
-                    }); // necessary for now
+                    });
                 }
             }
         }, {

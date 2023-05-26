@@ -772,6 +772,28 @@ class HighchartsComponent extends Component {
             });
         }
     }
+    public setConnector(connector: DataConnector | undefined): this {
+        const chart = this.chart;
+        if (
+            this.connector &&
+            chart &&
+            chart.series &&
+            this.connector.table.id !== connector?.table.id
+        ) {
+            const storeTableID = this.connector.table.id;
+            for (let i = chart.series.length - 1; i >= 0; i--) {
+                const series = chart.series[i];
+
+                if (series.options.id?.indexOf(storeTableID) !== -1) {
+                    series.remove(false);
+                }
+            }
+        }
+        super.setConnector(connector);
+
+
+        return this;
+    }
     /**
      * Converts the class instance to a class JSON.
      *
