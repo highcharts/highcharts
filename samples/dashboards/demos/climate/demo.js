@@ -1,3 +1,556 @@
+(async function () {
+    let activeCity = 'New York';
+    let activeColumn = 'TXC';
+    let temperatureScale = 'C';
+
+    // Initialize board with most basic data
+    const board = await Dashboards.board('container', {
+        dataPool: {
+            connectors: [{
+                name: 'Active City',
+                type: 'CSV'
+            }, {
+                name: 'Cities',
+                type: 'CSV',
+                options: {
+                    csvURL: (
+                        'https://www.highcharts.com/samples/data/' +
+                        'climate-cities.csv'
+                    )
+                }
+            }, {
+                name: 'New York',
+                type: 'CSV'
+            }]
+        },
+        editMode: {
+            enabled: true,
+            contextMenu: {
+                enabled: true,
+                icon: (
+                    'https://code.highcharts.com/gfx/dashboard-icons/menu.svg'
+                ),
+                items: [
+                    'editMode',
+                    {
+                        id: 'dark-mode',
+                        type: 'toggle',
+                        text: 'Dark mode',
+                        events: {
+                            click: function () {
+                                this.menu.editMode.board.container
+                                    .classList.toggle('highcharts-dark');
+                            }
+                        }
+                    }, {
+                        id: 'fahrenheit',
+                        type: 'toggle',
+                        text: 'Fahrenheit',
+                        events: {
+                            click: function () {
+                                // Change temperature scale.
+                                temperatureScale =
+                                    temperatureScale === 'C' ? 'F' : 'C';
+                                activeColumn = 'TX' + temperatureScale;
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        gui: {
+            layouts: [{
+                id: 'layout-1', // mandatory
+                rows: [{
+                    cells: [{
+                        id: 'time-range-selector',
+                        width: '100%'
+                    }]
+                }, {
+                    cells: [{
+                        id: 'world-map',
+                        width: '50%'
+                    }, {
+                        id: 'kpi-layout',
+                        width: '50%',
+                        layout: {
+                            rows: [{
+                                cells: [{
+                                    id: 'kpi-data',
+                                    width: '33.333%',
+                                    height: '204px'
+                                }, {
+                                    id: 'kpi-temperature',
+                                    width: '33.333%',
+                                    height: '204px'
+                                }, {
+                                    id: 'kpi-max-temperature',
+                                    width: '33.333%',
+                                    height: '204px'
+                                }]
+                            }, {
+                                cells: [{
+                                    id: 'kpi-rain',
+                                    width: '33.333%',
+                                    height: '204px'
+                                }, {
+                                    id: 'kpi-ice',
+                                    width: '33.333%',
+                                    height: '204px'
+                                }, {
+                                    id: 'kpi-frost',
+                                    width: '33.333%',
+                                    height: '204px'
+                                }]
+                            }]
+                        }
+                    }]
+                }, {
+                    cells: [{
+                        id: 'selection-grid',
+                        width: '50%'
+                    }, {
+                        id: 'city-chart',
+                        width: '50%'
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            cell: 'time-range-selector',
+            type: 'Highcharts',
+            connector: {
+                name: 'Active City'
+            },
+            chartOptions: {
+                chart: {
+                    height: '80px',
+                    styledMode: true,
+                    type: 'spline'
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                title: {
+                    text: ''
+                },
+                tooltip: {
+                    enabled: false
+                },
+                series: [{
+                    // type: 'spline',
+                    name: 'Timeline',
+                    data: (() => {
+                        const dateEnd = new Date(Date.UTC(2010, 11, 25)),
+                            dates = [];
+
+                        let date = new Date(Date.UTC(1951, 0, 5));
+
+                        while (date <= dateEnd) {
+                            dates.push([date.getTime(), 0]);
+                            date = date.getUTCDate() >= 25 ?
+                                new Date(Date.UTC(
+                                    date.getFullYear(),
+                                    date.getUTCMonth() + 1,
+                                    5
+                                )) :
+                                new Date(Date.UTC(
+                                    date.getFullYear(),
+                                    date.getUTCMonth(),
+                                    date.getUTCDate() + 10
+                                ));
+                        }
+
+                        return dates;
+                    })(),
+                    showInNavigator: false,
+                    marker: {
+                        enabled: false
+                    },
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
+                    }
+                }],
+                navigator: {
+                    enabled: true,
+                    handles: {
+                        symbols: ['leftarrow', 'rightarrow'],
+                        lineWidth: 0,
+                        width: 8,
+                        height: 14
+                    },
+                    series: [{
+                        name: activeCity,
+                        data: [],
+                        animation: false,
+                        animationLimit: 0
+                    }],
+                    xAxis: {
+                        endOnTick: true,
+                        gridZIndex: 4,
+                        labels: {
+                            x: 1,
+                            y: 22
+                        },
+                        opposite: true,
+                        showFirstLabel: true,
+                        showLastLabel: true,
+                        startOnTick: true,
+                        tickPosition: 'inside'
+                    },
+                    yAxis: {
+                        maxPadding: 0.5
+                    }
+                },
+                scrollbar: {
+                    enabled: true,
+                    barBorderRadius: 0,
+                    barBorderWidth: 0,
+                    buttonBorderWidth: 0,
+                    buttonBorderRadius: 0,
+                    height: 14,
+                    trackBorderWidth: 0,
+                    trackBorderRadius: 0
+                },
+                xAxis: {
+                    visible: false,
+                    min: Date.UTC(2010, 0, 5),
+                    minRange: 30 * 24 * 3600 * 1000, // 30 days,
+                    maxRange: 2 * 365 * 24 * 3600 * 1000 // 2 years
+                },
+                yAxis: {
+                    visible: false
+                }
+            }
+        }, {
+            cell: 'world-map',
+            type: 'Highcharts',
+            connector: {
+                name: 'Active City'
+            },
+            chartConstructor: 'mapChart',
+            chartOptions: {
+                chart: {
+                    map: await fetch(
+                        'https://code.highcharts.com/mapdata/' +
+                        'custom/world.topo.json'
+                    ).then(response => response.json()),
+                    styledMode: true
+                },
+                // colorAxis: buildColorAxis(),
+                legend: {
+                    enabled: false
+                },
+                mapNavigation: {
+                    buttonOptions: {
+                        verticalAlign: 'bottom'
+                    },
+                    enabled: true,
+                    enableMouseWheelZoom: false
+                },
+                mapView: {
+                    maxZoom: 4
+                },
+                series: [{
+                    type: 'map',
+                    name: 'World Map'
+                }, {
+                    type: 'mappoint',
+                    name: 'Cities',
+                    data: [],
+                    animation: false,
+                    animationLimit: 0,
+                    allowPointSelect: true,
+                    dataLabels: [{
+                        align: 'left',
+                        animation: false,
+                        crop: false,
+                        enabled: true,
+                        format: '{point.name}',
+                        padding: 0,
+                        verticalAlign: 'top',
+                        x: -2,
+                        y: 2
+                    }, {
+                        animation: false,
+                        crop: false,
+                        enabled: true,
+                        format: '{y:.0f}',
+                        inside: true,
+                        padding: 0,
+                        verticalAlign: 'bottom',
+                        y: -16
+                    }],
+                    marker: {
+                        enabled: true,
+                        lineWidth: 2,
+                        radius: 12,
+                        states: {
+                            hover: {
+                                lineWidthPlus: 4,
+                                radiusPlus: 0
+                            },
+                            select: {
+                                lineWidthPlus: 4,
+                                radiusPlus: 0
+                            }
+                        },
+                        symbol: 'mapmarker'
+                    }
+                }],
+                title: {
+                    text: void 0
+                },
+                tooltip: {
+                    enabled: true,
+                    positioner: function (width, _height, axisInfo) {
+                        return {
+                            x: (
+                                axisInfo.plotX -
+                                this.options.padding
+                            ),
+                            y: (
+                                axisInfo.plotY +
+                                this.options.padding +
+                                5
+                            )
+                        };
+                    },
+                    shape: 'rect',
+                    useHTML: true
+                }
+            }
+        }, {
+            cell: 'kpi-data',
+            type: 'KPI',
+            title: activeCity,
+            value: 10,
+            valueFormat: '{value:.0f}m'
+        }, {
+            cell: 'kpi-temperature',
+            type: 'KPI',
+            events: {
+                click: function () {
+                    activeColumn = 'TN' + temperatureScale;
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        }, {
+            cell: 'kpi-max-temperature',
+            type: 'KPI',
+            events: {
+                click: function () {
+                    activeColumn = 'TX' + temperatureScale;
+                },
+                afterLoad: function () {
+                    this.cell.setActiveState();
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        }, {
+            cell: 'kpi-rain',
+            type: 'KPI',
+            events: {
+                click: function () {
+                    activeColumn = 'RR1';
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        }, {
+            cell: 'kpi-ice',
+            type: 'KPI',
+            events: {
+                click: function () {
+                    activeColumn = 'ID';
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        }, {
+            cell: 'kpi-frost',
+            type: 'KPI',
+            events: {
+                click: function () {
+                    activeColumn = 'FD';
+                }
+            },
+            states: {
+                active: {
+                    enabled: true
+                },
+                hover: {
+                    enabled: true
+                }
+            }
+        }, {
+            cell: 'selection-grid',
+            type: 'DataGrid',
+            connector: {
+                name: 'Active City'
+            },
+            sync: {
+                highlight: true
+            },
+            dataGridOptions: {
+                cellHeight: 38,
+                editable: false,
+                columns: {
+                    time: {
+                        show: false
+                    },
+                    FD: {
+                        headerFormat: 'Days with Frost'
+                    },
+                    ID: {
+                        headerFormat: 'Days with Ice'
+                    },
+                    RR1: {
+                        headerFormat: 'Days with Rain'
+                    },
+                    TN: {
+                        show: false
+                    },
+                    TX: {
+                        show: false
+                    },
+                    TNC: {
+                        headerFormat: 'Average Temperature °C'
+                    },
+                    TNF: {
+                        headerFormat: 'Average Temperature °F'
+                    },
+                    TXC: {
+                        headerFormat: 'Maximal Temperature °C'
+                    },
+                    TXF: {
+                        headerFormat: 'Maximal Temperature °F'
+                    }
+                }
+            },
+            editable: true
+        }, {
+            cell: 'city-chart',
+            type: 'Highcharts',
+            connector: {
+                name: 'Active City'
+            },
+            sync: {
+                highlight: true
+            },
+            columnKeyMap: {
+                time: null,
+                FD: null,
+                ID: null,
+                RR1: null,
+                TN: null,
+                TX: null,
+                TNC: null,
+                TNF: null,
+                TXC: null,
+                TXF: null,
+                Date: null
+            },
+            chartOptions: {
+                chart: {
+                    spacing: [40, 40, 40, 10],
+                    styledMode: true,
+                    type: 'spline',
+                    animation: false,
+                    animationLimit: 0
+                },
+                credits: {
+                    enabled: false
+                },
+                legend: {
+                    enabled: false
+                },
+                // colorAxis: buildColorAxis(),
+                series: [{
+                    // type: 'spline',
+                    name: activeCity,
+                    animation: false,
+                    animationLimit: 0,
+                    marker: {
+                        enabledThreshold: 0.5
+                    }
+                }],
+                title: {
+                    margin: 20,
+                    text: 'Maximal Temperature',
+                    x: 15,
+                    y: 5
+                },
+                tooltip: {
+                    enabled: true
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        month: '%e. %b'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Celsius'
+                    }
+                }
+            }
+        }]
+    }, true);
+    const cities = await board.dataPool.getConnectorTable('Cities');
+
+    // Load initial city
+    board.dataPool.setConnectorOptions({
+        name: activeCity,
+        type: 'CSV',
+        options: {
+            csvURL: cities.getCell(
+                'csv',
+                cities.getRowIndexBy('city', activeCity)
+            )
+        }
+    });
+
+}());
+
+/* *
+ *
+ *  OLD DEMO CODE
+ *
+ * */
+
 /* eslint-disable prefer-const, jsdoc/require-description */
 const { Range: RangeModifier } = Dashboards.DataModifier.types;
 
@@ -360,9 +913,7 @@ async function setupDashboard() {
                     tooltip: {
                         footerFormat: '',
                         headerFormat: '',
-                        pointFormatter: function () {
-                            return tooltipFormatter(this.y);
-                        }
+                        pointFormat: ''
                     }
                 }],
                 title: {
@@ -768,7 +1319,7 @@ async function main() {
     await setupCitiesData();
 }
 
-main().catch(e => console.error(e));
+// main().catch(e => console.error(e));
 
 /* *
  *
