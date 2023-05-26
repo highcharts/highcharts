@@ -544,10 +544,25 @@ interface Resizer {
     mouseUpSnap?: Function;
 }
 namespace Resizer {
+    /**
+     * Resizer options
+     */
     export interface Options {
+        /**
+         * Weather the resizer is enabled or not.
+         */
         enabled: boolean;
-        type: string;
+        /**
+         * Resizer type
+         */
+        type: 'x'|'y'|'xy';
+        /**
+         * Snap Options
+         */
         snap: SnapOptions;
+        /**
+         * Style of the snap element
+         */
         styles: ElementStyles
     }
     export interface ResizedCell extends Cell {
@@ -555,12 +570,34 @@ namespace Resizer {
         // styles?: ElementStyles;
     }
 
+
+    /**
+     * Style of the snap element
+     */
     export interface ElementStyles {
+        /**
+         * Width of the border on the left site of element in pixels.
+         */
         borderLeft?: number;
+        /**
+         * Width of the border on the right site of element in pixels.
+         */
         borderRight?: number;
+        /**
+         * Width of the border on the top site of element in pixels.
+         */
         borderTop?: number;
+        /**
+         * Width of the border on the bottom site of element in pixels.
+         */
         borderBottom?: number;
+        /**
+         * Minimum width of the element in pixels.
+         */
         minWidth?: number;
+        /**
+         * Minimum height of the element in pixels.
+         */
         minHeight?: number;
     }
     export interface Snap {
@@ -569,7 +606,14 @@ namespace Resizer {
     }
 
     export interface SnapOptions {
+
+        /**
+         * Width of the element in pixels.
+         */
         width?: number;
+        /**
+         * Height of the element in pixels.
+         */
         height?: number;
     }
 
@@ -584,7 +628,7 @@ namespace Resizer {
     export interface JSONOptions extends JSON.Object {
         enabled: boolean;
         styles: ElementStylesJSON;
-        type: string;
+        type: 'x'|'y'|'xy';
         snap: SnapJSON;
     }
     export interface SnapJSON extends JSON.Object {
