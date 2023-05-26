@@ -89,5 +89,26 @@ format: '{log}'
 ```
 [View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/format-log).
 
+## Built-in helpers
+* **add**. Add two numbers. For example `{add index 1}` where `index` is a zero-based index from the context. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
+* **divide**. Divide the first number with the second. For example `{divide 10 2}` prints 5. Division by zero returns an empty string. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
+* **eq**. Returns `true` for loose equality (JavaScript `==`) between the first and second argument. Can be used either as a block helper, `{#eq index 0}First item{/eq}`, or in a subexpression `{#if (eq index 0)}First item{/if}`.
+* **#each**. Iterate over an array of items. The context of each child is given as `{this}` in the block body. Additional variables in the block body are `@index`, `@first` and `@last`. Example `{#each points}{@index}) {name}, {#if @last}and {/if}`. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/tooltip/format-shared).
+* **ge**. Greater than or equal, JavaScript `>=`. Doubles as block helper and subexpression.
+* **gt**. Greater than, JavaScript `>`. Doubles as block helper and subexpression.
+* **#if**. Conditional block helper. `{#if point.isNull}The point is null{else}The value is {point.y}{/if}`.
+* **le**. Less than or equal, JavaScript `<=`. Doubles as block helper and subexpression.
+* **lt**. Less than, JavaScript `<`. Doubles as block helper and subexpression.
+* **multiply**. Multiply two numbers. For example `{multiply value 1000}`. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
+* **ne**. Not equal, JavaScript `!=`. Doubles as block helper and subexpression.
+* **subtract**. Subtract the second number from the first. Example `{subtract 5 2}` prints 3.
+* **#unless**. The inverse of `#if`. `{#unless point.isNull}The value is {point.y}{/unless}`.
+
+## Limitations
+The templating system only works on the context that is passed in to each item. For data label, the context is the point, for tooltip formats the context holds the series, points, suggested header, for axis labels it holds the axis value etc. In most of these cases the context holds deep access to DOM elements (for example through `series.chart.container.ownerDocument`), but these properties are not accessible in templates due to XSS filtering. Preventing DOM access is one of the reasons for choosing string formats over formatter callbacks.
+
+In cases where helpers are not sufficient to reach the desired formatting, it is better to preprocess the data set. Use [the custom option](https://api.highcharts.com/highcharts/series.line.custom) for series and points, and accessed that from the format string.
+
+
 ## Deprecated format functions
 The accessibility module prior to v11.1 had two advanced functions, `#each()` and `#plural()`. These have been deprecated and replaced in the default language strings by the new `#each` and `#eq`. See [Advanced format strings](https://github.com/highcharts/highcharts/blob/v11.0.0/docs/chart-concepts/labels-and-string-formatting.md#advanced-format-strings) on GitHub for details.
