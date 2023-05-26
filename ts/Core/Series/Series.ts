@@ -2139,6 +2139,11 @@ class Series {
              * to the X axis position if the series has one, otherwise relative
              * to the plot area. Depending on the series type this value might
              * not be defined.
+             *
+             * The value is relative to the direction of the axis so in an
+             * inverted chart plotX is going from the bottom to the top.
+             *
+             * @see Highcharts.Point#pos
              * @name Highcharts.Point#plotX
              * @type {number|undefined}
              */
@@ -2231,6 +2236,11 @@ class Series {
              * to the Y axis position if the series has one, otherwise relative
              * to the plot area. Depending on the series type this value might
              * not be defined.
+             *
+             * The value is relative to the direction of the axis so in an
+             * inverted chart plotY is going from the right to left.
+             *
+             * @see Highcharts.Point#pos
              * @name Highcharts.Point#plotY
              * @type {number|undefined}
              */
