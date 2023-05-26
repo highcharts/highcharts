@@ -4,7 +4,7 @@
         'https://code.highcharts.com/mapdata/countries/gb/gb-all.topo.json'
     ).then(response => response.json());
 
-    Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
 
         plotOptions: {
             mappoint: {
@@ -16,6 +16,10 @@
 
         mapNavigation: {
             enabled: true
+        },
+
+        legend: {
+            enabled: false
         },
 
         series: [{
@@ -57,29 +61,24 @@
                 lon: -1.145
             }]
         }]
-    }, function (chart) {
+    });
 
-        const button = document.getElementById('button');
-
-        button.addEventListener('click', function () {
-            setTimeout(function () {
-                chart.mapView.zoomBy(
-                    1,
-                    void 0,
-                    [550, 350], {
-                        duration: 1000
-                    }
-                );
-                setTimeout(function () {
-                    chart.mapView.zoomBy(
-                        0.7,
-                        void 0,
-                        [550, 350],
-                        false
-                    );
-                }, 1000);
-            }, 300);
-        });
+    document.getElementById('button').addEventListener('click', () => {
+        chart.mapView.zoomBy(
+            1,
+            void 0,
+            [550, 350], {
+                duration: 1000
+            }
+        );
+        setTimeout(function () {
+            chart.mapView.zoomBy(
+                0.7,
+                void 0,
+                [550, 350],
+                false
+            );
+        }, 700);
     });
 
 })();

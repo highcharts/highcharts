@@ -33,7 +33,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+const { animObject, stop } = A;
 import ColorMapComposition from '../ColorMapComposition.js';
 import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
@@ -782,9 +782,10 @@ class MapSeries extends ScatterSeries {
 
             // When dragging or first rendering, animation is off
             } else {
+                stop(transformGroup);
                 transformGroup.attr(merge(
                     svgTransform,
-                    { 'stroke-width': strokeWidth / scale, animator: 1 }
+                    { 'stroke-width': strokeWidth / scale }
                 ));
 
                 animatePoints(scale); // #18166
