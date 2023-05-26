@@ -205,7 +205,7 @@ function chartCallback(
                         label.points.forEach((points): void => {
                             const annotationX = points.x,
                                 xAxisIndex = points.series.xAxis ?
-                                    points.series.xAxis.options.index :
+                                    points.series.xAxis.index :
                                     -1;
                             let wasAdded = false;
 

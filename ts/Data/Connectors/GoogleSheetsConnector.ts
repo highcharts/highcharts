@@ -25,7 +25,6 @@
 import type DataEvent from '../DataEvent';
 
 import DataConnector from './DataConnector.js';
-import DataTable from '../DataTable.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
 import U from '../../Core/Utilities.js';
 const {

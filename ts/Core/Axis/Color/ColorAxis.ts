@@ -43,6 +43,7 @@ const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
 const {
     extend,
+    isArray,
     isNumber,
     merge,
     pick
@@ -231,19 +232,18 @@ class ColorAxis extends Axis implements AxisLike {
             }
         );
 
-        axis.coll = 'colorAxis';
         axis.side = userOptions.side || horiz ? 2 : 1;
         axis.reversed = userOptions.reversed || !horiz;
         axis.opposite = !horiz;
 
-        super.init(chart, options);
+        super.init(chart, options, 'colorAxis');
 
-        // #16053: Restore the actual userOptions.visible so the color axis
-        // doesnt stay hidden forever when hiding and showing legend
-        axis.userOptions.visible = visible;
-
-        // Base init() pushes it to the xAxis array, now pop it again
-        // chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
+        // Super.init saves the extended user options, now replace it with the
+        // originals
+        this.userOptions = userOptions;
+        if (isArray(chart.userOptions.colorAxis)) {
+            chart.userOptions.colorAxis[this.index] = userOptions;
+        }
 
         // Prepare data classes
         if (userOptions.dataClasses) {

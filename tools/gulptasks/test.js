@@ -71,7 +71,9 @@ function checkJSWrap() {
     }
 }
 
-/* *
+/**
+ * Checks
+ *
  * @return {void}
  */
 function checkDemosConsistency() {
@@ -174,9 +176,10 @@ function checkDemosConsistency() {
     }
 }
 
-/* *
+/**
+ * Checks
  * @async
- * @return {void}
+ * @return {Promise<void>}
  */
 function checkDocsConsistency() {
     const FS = require('fs');
@@ -247,7 +250,8 @@ function checkDocsConsistency() {
 
 }
 
-/* *
+/**
+ * Save states
  * @return {void}
  */
 function saveRun() {
@@ -275,9 +279,11 @@ function saveRun() {
     FS.writeFileSync(CONFIGURATION_FILE, JSON.stringify(configuration));
 }
 
-/* *
+/**
+ * Check states
+ *
  * @return {boolean}
- *         True if outdated
+ * True if outdated
  */
 function shouldRun() {
 

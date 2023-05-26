@@ -28,6 +28,13 @@ QUnit.test('Map drilldown animation', assert => {
                         value: 1,
                         drilldown: 'germany'
                     }]
+                }, {
+                    mapData: europeTopo,
+                    name: 'second',
+                    data: [{
+                        'hc-key': 'pl',
+                        value: 2
+                    }]
                 }],
                 drilldown: {
                     animation: {
