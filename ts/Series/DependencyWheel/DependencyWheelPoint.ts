@@ -117,8 +117,7 @@ class DependencyWheelPoint extends SankeyPoint {
                 x: shapeArgs.x,
                 y: shapeArgs.y,
                 r: (
-                    shapeArgs.r +
-                    ((this.dataLabel as any).options.distance || 0)
+                    shapeArgs.r + (label.options.distance || 0)
                 ),
                 start: (upperHalf ? start : end),
                 end: (upperHalf ? end : start),

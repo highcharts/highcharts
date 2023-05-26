@@ -89,7 +89,7 @@ interface NavigationBindingsButtonEventsObject {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -429,9 +429,7 @@ class NavigationBindings {
         ChartClass: typeof Chart
     ): void {
 
-        if (composedClasses.indexOf(AnnotationClass) === -1) {
-            composedClasses.push(AnnotationClass);
-
+        if (U.pushUnique(composedMembers, AnnotationClass)) {
             addEvent(AnnotationClass, 'remove', onAnnotationRemove);
 
             // Basic shapes:
@@ -445,17 +443,13 @@ class NavigationBindings {
             });
         }
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'destroy', onChartDestroy);
             addEvent(ChartClass, 'load', onChartLoad);
             addEvent(ChartClass, 'render', onChartRender);
         }
 
-        if (composedClasses.indexOf(NavigationBindings) === -1) {
-            composedClasses.push(NavigationBindings);
-
+        if (U.pushUnique(composedMembers, NavigationBindings)) {
             addEvent(
                 NavigationBindings,
                 'closePopup',
@@ -468,9 +462,7 @@ class NavigationBindings {
             );
         }
 
-        if (composedClasses.indexOf(setOptions) === -1) {
-            composedClasses.push(setOptions);
-
+        if (U.pushUnique(composedMembers, setOptions)) {
             setOptions(NavigationBindingDefaults);
         }
 
@@ -1232,6 +1224,7 @@ class NavigationBindings {
 
 interface NavigationBindings extends NavigationBindingsLike {
 }
+
 
 /* *
  *

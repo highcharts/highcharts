@@ -148,6 +148,16 @@ function getDlOptions(
 
     if (!isNumber(options.rotation)) {
         if (rotationMode === 'auto' || rotationMode === 'circular') {
+
+            if (
+                options.useHTML &&
+                rotationMode === 'circular'
+            ) {
+                // Change rotationMode to 'auto' to avoid using text paths
+                // for HTML labels, see #18953
+                rotationMode = 'auto';
+            }
+
             if (
                 (point.innerArcLength as any) < 1 &&
                 (point.outerArcLength as any) > (shape.radius as any)
@@ -189,6 +199,12 @@ function getDlOptions(
         }
 
         if (rotationMode !== 'auto' && rotationMode !== 'circular') {
+
+            if (point.dataLabel && point.dataLabel.textPath) {
+                options.textPath = {
+                    enabled: false
+                };
+            }
             rotationRad = (
                 (shape.end as any) -
                 ((shape.end as any) - (shape.start as any)) / 2
@@ -213,9 +229,11 @@ function getDlOptions(
 
         if (
             rotationMode === 'perpendicular' &&
-            point.series.chart.renderer.fontMetrics(
-                (options.style as any).fontSize
-            ).h > (point.outerArcLength as any)
+            // 16 is the inferred line height. We don't know the real line
+            // yet because the label is not rendered. A better approach for this
+            // would be to hide the label from the `alignDataLabel` function
+            // when the actual line height is known.
+            point.outerArcLength as any < 16
         ) {
             (options.style as any).width = 1;
         }
@@ -621,22 +639,24 @@ class SunburstSeries extends TreemapSeries {
 
             /**
              * Decides how the data label will be rotated relative to the
-             * perimeter of the sunburst. Valid values are `auto`, `circular`,
-             * `parallel` and `perpendicular`. When `auto`, the best fit will be
-             * computed for the point. The `circular` option works similiar
-             * to `auto`, but uses the `textPath` feature - labels are curved,
-             * resulting in a better layout, however multiple lines and
-             * `textOutline` are not supported.
+             * perimeter of the sunburst. Valid values are `circular`, `auto`,
+             * `parallel` and `perpendicular`. When `circular`, the best fit
+             * will be computed for the point, so that the label is curved
+             * around the center when there is room for it, otherwise
+             * perpendicular. The legacy `auto` option works similiar to
+             * `circular`, but instead of curving the labels they are tangent to
+             * the perimiter.
              *
              * The `rotation` option takes precedence over `rotationMode`.
              *
              * @type       {string}
-             * @sample {highcharts} highcharts/plotoptions/sunburst-datalabels-rotationmode-circular/
+             * @sample {highcharts}
+             *         highcharts/plotoptions/sunburst-datalabels-rotationmode-circular/
              *         Circular rotation mode
              * @validvalue ["auto", "perpendicular", "parallel", "circular"]
              * @since      6.0.0
              */
-            rotationMode: 'auto',
+            rotationMode: 'circular',
 
             style: {
                 /** @internal */
@@ -878,6 +898,13 @@ class SunburstSeries extends TreemapSeries {
                 onComplete,
                 visible = !!(node.visible && node.shapeArgs);
 
+            // Border radius requires the border-radius.js module. Adding it
+            // here because the SunburstSeries is a mess and I can't find the
+            // regular shapeArgs. Usually shapeArgs are created in the series'
+            // `translate` function and then passed directly on to the renderer
+            // in the `drawPoints` function.
+            shape.borderRadius = series.options.borderRadius;
+
             if (hasRendered && animation) {
                 animationInfo = getAnimation(shape, {
                     center: center,
@@ -950,6 +977,8 @@ class SunburstSeries extends TreemapSeries {
         } else {
             Series.prototype.drawDataLabels.call(series);
         }
+
+        series.idPreviousRoot = idRoot;
     }
 
     /**
@@ -1007,6 +1036,29 @@ class SunburstSeries extends TreemapSeries {
                 return arr;
             }, [] as Array<SunburstNode.NodeValuesObject>
         );
+    }
+
+    public setRootNode(
+        id: string,
+        redraw?: boolean,
+        eventArguments?: SunburstSeries.SetRootNodeObject
+    ): void {
+        const series = this;
+
+        if ( // If the target node is the only one at level 1, skip it. (#18658)
+            series.nodeMap[id].level === 1 &&
+            series.nodeList
+                .filter((node): boolean => node.level === 1)
+                .length === 1
+        ) {
+            if (series.idPreviousRoot === '') {
+                return;
+            }
+
+            id = '';
+        }
+
+        super.setRootNode(id, redraw, eventArguments);
     }
 
     /**
@@ -1234,6 +1286,14 @@ namespace SunburstSeries {
         optionsPoint: SunburstPointOptions;
         point: SunburstPoint;
         shapeArgs: SunburstNode.NodeValuesObject;
+    }
+
+    export interface SetRootNodeObject {
+        newRootId?: string;
+        previousRootId?: string;
+        redraw?: boolean;
+        series?: object;
+        trigger?: string;
     }
 }
 

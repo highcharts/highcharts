@@ -646,7 +646,7 @@ namespace LegendComponent {
      * */
 
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
 
     /* *
@@ -702,23 +702,20 @@ namespace LegendComponent {
         LegendClass: typeof Legend
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightLegendItem = chartHighlightLegendItem;
         }
 
-        if (composedClasses.indexOf(LegendClass) === -1) {
-            composedClasses.push(LegendClass);
-
+        if (U.pushUnique(composedMembers, LegendClass)) {
             addEvent(
                 LegendClass as typeof LegendComposition,
                 'afterColorizeItem',
                 legendOnAfterColorizeItem
             );
         }
+
     }
 
 

@@ -21,12 +21,12 @@
 
 import type {
     DataPoolOptions,
-    DataPoolStoreOptions
+    DataPoolConnectorOptions
 } from './DataPoolOptions.js';
 import type DataTable from './DataTable.js';
 
 import DataPoolDefaults from './DataPoolDefaults.js';
-import DataStore from './Stores/DataStore.js';
+import DataConnector from './Connectors/DataConnector.js';
 
 /* *
  *
@@ -35,14 +35,14 @@ import DataStore from './Stores/DataStore.js';
  * */
 
 /**
- * Data pool to load stores on-demand.
+ * Data pool to load connectors on-demand.
  *
  * @private
  * @class
  * @name Data.DataPool
  *
  * @param {Data.DataPoolOptions} options
- * Pool options with all stores.
+ * Pool options with all connectors.
  */
 class DataPool {
 
@@ -55,10 +55,10 @@ class DataPool {
     public constructor(
         options: (DataPoolOptions|undefined) = DataPoolDefaults
     ) {
-        options.stores = (options.stores || []);
+        options.connectors = (options.connectors || []);
 
         this.options = options;
-        this.stores = {};
+        this.connectors = {};
     }
 
     /* *
@@ -68,7 +68,7 @@ class DataPool {
      * */
 
     /**
-     * Pool options with all stores.
+     * Pool options with all connectors.
      *
      * @name Data.DataPool#options
      * @type {Data.DataPoolOptions}
@@ -76,11 +76,11 @@ class DataPool {
     public readonly options: DataPoolOptions;
 
     /**
-     * Internal dictionary with the stores and their names.
+     * Internal dictionary with the connectors and their names.
      * @private
      */
-    protected readonly stores: (
-        Record<string, (DataStore|undefined)>
+    protected readonly connectors: (
+        Record<string, (DataConnector|undefined)>
     );
 
     /* *
@@ -90,128 +90,129 @@ class DataPool {
      * */
 
     /**
-     * Loads the store.
+     * Loads the connector.
      *
-     * @function Data.DataPool#getStore
+     * @function Data.DataPool#getConnector
      *
      * @param {string} name
-     * Name of the store.
+     * Name of the connector.
      *
-     * @return {Promise<Data.DataStore>}
-     * Returns the store.
+     * @return {Promise<Data.DataConnector>}
+     * Returns the connector.
      */
-    public getStore(
+    public getConnector(
         name: string
-    ): Promise<DataStore> {
-        const store = this.stores[name];
+    ): Promise<DataConnector> {
+        const connector = this.connectors[name];
 
-        if (store) {
+        if (connector) {
             // already loaded
-            return Promise.resolve(store);
+            return Promise.resolve(connector);
         }
 
-        const storeOptions = this.getStoreOptions(name);
+        const connectorOptions = this.getConnectorOptions(name);
 
-        if (storeOptions) {
-            return this.loadStore(storeOptions);
+        if (connectorOptions) {
+            return this.loadConnector(connectorOptions);
         }
 
-        throw new Error(`Store not found. (${name})`);
+        throw new Error(`Connector not found. (${name})`);
     }
 
     /**
-     * Loads the options of the store.
+     * Loads the options of the connector.
      *
      * @private
      *
      * @param {string} name
-     * Name of the store.
+     * Name of the connector.
      *
-     * @return {DataPoolStoreOptions|undefined}
-     * Returns the options of the store, or `undefined` if not found.
+     * @return {DataPoolConnectorOptions|undefined}
+     * Returns the options of the connector, or `undefined` if not found.
      */
-    protected getStoreOptions(
+    protected getConnectorOptions(
         name: string
-    ): (DataPoolStoreOptions|undefined) {
-        const stores = this.options.stores;
+    ): (DataPoolConnectorOptions|undefined) {
+        const connectors = this.options.connectors;
 
-        for (let i = 0, iEnd = stores.length; i < iEnd; ++i) {
-            if (stores[i].name === name) {
-                return stores[i];
+        for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
+            if (connectors[i].name === name) {
+                return connectors[i];
             }
         }
     }
 
     /**
-     * Loads the store table.
+     * Loads the connector table.
      *
-     * @function Data.DataPool#getStoreTable
+     * @function Data.DataPool#getConnectorTable
      *
      * @param {string} name
-     * Name of the store.
+     * Name of the connector.
      *
      * @return {Promise<Data.DataTable>}
-     * Returns the store table.
+     * Returns the connector table.
      */
-    public getStoreTable(
+    public getConnectorTable(
         name: string
     ): Promise<DataTable> {
         return this
-            .getStore(name)
-            .then((store): DataTable => store.table);
+            .getConnector(name)
+            .then((connector): DataTable => connector.table);
     }
 
     /**
-     * Creates and loads the store.
+     * Creates and loads the connector.
      *
      * @private
      *
-     * @param {Data.DataPoolStoreOptions} storeOptions
-     * Options of store.
+     * @param {Data.DataPoolConnectorOptions} connectorOptions
+     * Options of connector.
      *
-     * @return {Promise<Data.DataStore>}
-     * Returns the store.
+     * @return {Promise<Data.DataConnector>}
+     * Returns the connector.
      */
-    protected loadStore(
-        storeOptions: DataPoolStoreOptions
-    ): Promise<DataStore> {
+    protected loadConnector(
+        connectorOptions: DataPoolConnectorOptions
+    ): Promise<DataConnector> {
         return new Promise((resolve, reject): void => {
-            const StoreClass: (Class|undefined) =
-                DataStore.getStore(storeOptions.storeType);
+            const ConnectorClass = DataConnector.types[connectorOptions.type];
 
-            if (!StoreClass) {
-                throw new Error(`Store type not found. (${storeOptions.storeType})`);
+            if (!ConnectorClass) {
+                throw new Error(
+                    `Connector type not found. (${connectorOptions.type})`
+                );
             }
 
-            const store = new StoreClass(void 0, storeOptions.storeOptions);
+            const connector =
+                new ConnectorClass(connectorOptions.options);
 
-            this.stores[storeOptions.name] = store;
+            this.connectors[connectorOptions.name] = connector;
 
-            store.on('afterLoad', (): void => resolve(store));
-            store.on('loadError', reject);
-            store.load();
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            connector.load().then(resolve)['catch'](reject);
         });
     }
 
     /**
-     * Sets store options with a specific name.
+     * Sets connector options with a specific name.
      *
-     * @param {Data.DataPoolStoreOptions} storeOptions
-     * Store options to set.
+     * @param {Data.DataPoolConnectorOptions} connectorOptions
+     * Connector options to set.
      */
-    public setStoreOptions(
-        storeOptions: DataPoolStoreOptions
+    public setConnectorOptions(
+        connectorOptions: DataPoolConnectorOptions
     ): void {
-        const stores = this.options.stores;
+        const connectors = this.options.connectors;
 
-        for (let i = 0, iEnd = stores.length; i < iEnd; ++i) {
-            if (stores[i].name === storeOptions.name) {
-                stores.splice(i, 1, storeOptions);
+        for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
+            if (connectors[i].name === connectorOptions.name) {
+                connectors.splice(i, 1, connectorOptions);
                 return;
             }
         }
 
-        stores.push(storeOptions);
+        connectors.push(connectorOptions);
     }
 
 }

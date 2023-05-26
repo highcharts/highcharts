@@ -30,13 +30,13 @@ QUnit.test('getSeriesExtremes', function (assert) {
 
     assert.strictEqual(
         series.points[1].color,
-        'rgb(190,218,246)',
-        'should give second point on series the color rgb(190,218,246)'
+        'rgb(150,215,255)',
+        'should give second point on series an interpolated color'
     );
 
     assert.strictEqual(
         series.points[2].color,
-        'rgb(124,181,236)',
-        'should give third point on series the color rgb(124,181,236)'
+        'rgb(44,175,254)',
+        'should give third point on series an interpolated color'
     );
 });

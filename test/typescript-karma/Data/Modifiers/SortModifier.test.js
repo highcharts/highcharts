@@ -5,8 +5,10 @@ QUnit.test('SortModifier.modify', (assert) => {
 
     const done = assert.async(),
         table = new DataTable({
-            x: [ 0, 1, 2 ],
-            y: [ 3, 1, 2 ]
+            columns: {
+                x: [ 0, 1, 2 ],
+                y: [ 3, 1, 2 ]
+            }
         }),
         ascXModifier = new SortModifier({
             direction: 'asc',
@@ -55,8 +57,10 @@ QUnit.test('SortModifier.modifyCell', function (assert) {
             orderInColumn: 'x'
         }),
         table = new DataTable({
-            x: [ 0, 1, 2 ],
-            y: [ 3, 1, 2 ]
+            columns: {
+                x: [ 0, 1, 2 ],
+                y: [ 3, 1, 2 ]
+            }
         });
 
     table
@@ -116,8 +120,10 @@ QUnit.test('SortModifier.modifyColumns', function (assert) {
             orderInColumn: 'x'
         }),
         table = new DataTable({
-            x: [ 0, 1, 2 ],
-            y: [ 3, 1, 2 ]
+            columns: {
+                x: [ 0, 1, 2 ],
+                y: [ 3, 1, 2 ]
+            }
         });
 
     table
@@ -177,8 +183,10 @@ QUnit.test('SortModifier.modifyRows', function (assert) {
             orderInColumn: 'x'
         }),
         table = new DataTable({
-            x: [ 0, 1, 2 ],
-            y: [ 3, 1, 2 ]
+            columns: {
+                x: [ 0, 1, 2 ],
+                y: [ 3, 1, 2 ]
+            }
         });
 
     table

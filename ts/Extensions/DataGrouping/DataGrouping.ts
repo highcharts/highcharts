@@ -60,13 +60,13 @@ function compose(
 
     if (
         TooltipClass &&
-        composedMembers.indexOf(TooltipClass) === -1
+        U.pushUnique(composedMembers, TooltipClass)
     ) {
-        composedMembers.push(TooltipClass);
-
         addEvent(TooltipClass, 'headerFormatter', onTooltipHeaderFormatter);
     }
+
 }
+
 /**
  * Extend the original method, make the tooltip's header reflect the grouped
  * range.
@@ -349,13 +349,13 @@ export default DataGroupingComposition;
  * ```js
  * {
  *     millisecond: [
- *         '%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'
+ *         '%A, %e %b, %H:%M:%S.%L', '%A, %e %b, %H:%M:%S.%L', '-%H:%M:%S.%L'
  *     ],
- *     second: ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
- *     minute: ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
- *     hour: ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
- *     day: ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
- *     week: ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+ *     second: ['%A, %e %b, %H:%M:%S', '%A, %e %b, %H:%M:%S', '-%H:%M:%S'],
+ *     minute: ['%A, %e %b, %H:%M', '%A, %e %b, %H:%M', '-%H:%M'],
+ *     hour: ['%A, %e %b, %H:%M', '%A, %e %b, %H:%M', '-%H:%M'],
+ *     day: ['%A, %e %b %Y', '%A, %e %b', '-%A, %e %b %Y'],
+ *     week: ['Week from %A, %e %b %Y', '%A, %e %b', '-%A, %e %b %Y'],
  *     month: ['%B %Y', '%B', '-%B %Y'],
  *     year: ['%Y', '%Y', '-%Y']
  * }

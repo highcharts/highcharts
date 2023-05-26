@@ -260,14 +260,18 @@ class KeyboardNavigation {
      * @param {global.FocusEvent} e Browser focus event.
      */
     private onFocus(e: FocusEvent): void {
-        const chart = this.chart;
-        const focusComesFromChart = (
-            e.relatedTarget &&
-            chart.container.contains(e.relatedTarget as any)
-        );
+        const chart = this.chart,
+            focusComesFromChart = (
+                e.relatedTarget &&
+                chart.container.contains(e.relatedTarget as any)
+            ),
+            a11yOptions = chart.options.accessibility,
+            keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
+            enabled = keyboardOptions && keyboardOptions.enabled;
 
         // Init keyboard nav if tabbing into chart
         if (
+            enabled &&
             !this.exiting &&
             !this.tabbingInBackwards &&
             !this.isClickingChart &&
@@ -560,7 +564,7 @@ namespace KeyboardNavigation {
      *
      * */
 
-    const composedItems: Array<(Document|Function)> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -579,17 +583,13 @@ namespace KeyboardNavigation {
     ): (T&typeof ChartComposition) {
         MenuComponent.compose(ChartClass);
 
-        if (composedItems.indexOf(ChartClass) === -1) {
-            composedItems.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.dismissPopupContent = chartDismissPopupContent;
         }
 
-        if (composedItems.indexOf(doc) === -1) {
-            composedItems.push(doc);
-
+        if (U.pushUnique(composedMembers, doc)) {
             addEvent(doc, 'keydown', documentOnKeydown);
         }
 

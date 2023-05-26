@@ -49,7 +49,7 @@ class SortModifier extends DataModifier {
      * Default options to group table rows.
      */
     public static readonly defaultOptions: SortModifier.Options = {
-        modifier: 'Order',
+        modifier: 'Sort',
         direction: 'desc',
         orderByColumn: 'y'
     };
@@ -94,7 +94,9 @@ class SortModifier extends DataModifier {
      * @param {RangeDataModifier.Options} [options]
      * Options to configure the range modifier.
      */
-    public constructor(options?: DeepPartial<SortModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<SortModifier.Options>
+    ) {
         super();
 
         this.options = merge(SortModifier.defaultOptions, options);
@@ -113,6 +115,33 @@ class SortModifier extends DataModifier {
      *  Functions
      *
      * */
+
+    /**
+     * Returns index and row for sort reference.
+     *
+     * @private
+     *
+     * @param {Highcharts.DataTable} table
+     * Table with rows to reference.
+     *
+     * @return {Array<SortModifier.RowReference>}
+     * Array of row references.
+     */
+    protected getRowReferences(
+        table: DataTable
+    ): Array<SortModifier.RowReference> {
+        const rows = table.getRows(),
+            rowReferences: Array<SortModifier.RowReference> = [];
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            rowReferences.push({
+                index: i,
+                row: rows[i]
+            });
+        }
+
+        return rowReferences;
+    }
 
     /**
      * Applies partial modifications of a cell change to the property `modified`
@@ -155,9 +184,10 @@ class SortModifier extends DataModifier {
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
+                        .modifyTable(new DataTable({
+                            columns: table
+                                .getColumns([orderByColumn, orderInColumn])
+                        }))
                         .modified
                         .getColumn(orderInColumn)
                 );
@@ -211,9 +241,10 @@ class SortModifier extends DataModifier {
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
+                        .modifyTable(new DataTable({
+                            columns: table
+                                .getColumns([orderByColumn, orderInColumn])
+                        }))
                         .modified
                         .getColumn(orderInColumn)
                 );
@@ -266,9 +297,10 @@ class SortModifier extends DataModifier {
             table.modified.setColumn(
                 orderInColumn,
                 modifier
-                    .modifyTable(new DataTable(
-                        table.getColumns([orderByColumn, orderInColumn])
-                    ))
+                    .modifyTable(new DataTable({
+                        columns: table
+                            .getColumns([orderByColumn, orderInColumn])
+                    }))
                     .modified
                     .getColumn(orderInColumn)
             );
@@ -301,12 +333,7 @@ class SortModifier extends DataModifier {
 
         const columnNames = table.getColumnNames(),
             rowCount = table.getRowCount(),
-            rowReferences = table.getRows().map(
-                (row, index): SortModifier.RowReference => ({
-                    index,
-                    row
-                })
-            ),
+            rowReferences = this.getRowReferences(table),
             {
                 direction,
                 orderByColumn,
@@ -355,8 +382,8 @@ class SortModifier extends DataModifier {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace SortModifier {
 
@@ -399,6 +426,20 @@ namespace SortModifier {
     }
 
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module './DataModifierType' {
+    interface DataModifierTypes {
+        Sort: typeof SortModifier;
+    }
+}
+
+DataModifier.registerType('Sort', SortModifier);
 
 /* *
  *

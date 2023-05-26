@@ -1,0 +1,143 @@
+/* Global font */
+@import url("https://fonts.googleapis.com/css?family=Unica+One");
+@import url("../highcharts.css");
+
+:root {
+    /* Chart background, point stroke for markers and columns etc */
+    --highcharts-background-color: #2a2a2b;
+
+    /* Colors for data series and points. */
+    --highcharts-color-0: #2b908f;
+    --highcharts-color-1: #90ee7e;
+    --highcharts-color-2: #f45b5b;
+    --highcharts-color-3: #7798bf;
+    --highcharts-color-4: #aaeeee;
+    --highcharts-color-5: #ff0066;
+    --highcharts-color-6: #eeaaee;
+    --highcharts-color-7: #55bf3b;
+    --highcharts-color-8: #df5353;
+    --highcharts-color-9: #7798bf;
+
+    /* Neutral colors */
+    --highcharts-neutral-color-100: #ffffff;
+    --highcharts-neutral-color-80: #e0e0e3;
+    --highcharts-neutral-color-60: #e0e0e3;
+    --highcharts-neutral-color-40: #666666;
+    --highcharts-neutral-color-20: #606063;
+    --highcharts-neutral-color-10: #707073;
+    --highcharts-neutral-color-5: #505053;
+    --highcharts-neutral-color-3: #303033;
+
+    /* Highlight colors https://jsfiddle.net/highcharts/pukradvh/ */
+    --highcharts-highlight-color-100: rgb(166, 199, 237);
+    --highcharts-highlight-color-80: rgb(134, 165, 201);
+    --highcharts-highlight-color-60: rgb(102, 131, 164);
+    --highcharts-highlight-color-20: rgb(39, 64, 91);
+    --highcharts-highlight-color-10: rgb(23, 47, 73);
+}
+
+.highcharts-container {
+    font-family: "Unica One", arial, helvetica, sans-serif;
+}
+
+/* Titles */
+.highcharts-title,
+.highcharts-subtitle {
+    text-transform: uppercase;
+}
+
+.highcharts-title {
+    font-size: 1.7em;
+}
+
+/* Tooltip */
+.highcharts-tooltip text {
+    fill: #f0f0f0;
+}
+
+.highcharts-tooltip-box {
+    fill: #000000;
+}
+
+/* Range-selector */
+.highcharts-range-selector-buttons text {
+    fill: silver;
+}
+
+/* Axes */
+.highcharts-yaxis-grid {
+    stroke-width: 1px;
+}
+
+.highcharts-axis-labels,
+.highcharts-axis-title {
+    fill: #e0e0e3;
+}
+
+/* Navigator */
+.highcharts-navigator .highcharts-navigator-handle {
+    fill: var(--highcharts-neutral-color-40);
+    stroke: #aaaaaa;
+}
+
+.highcharts-navigator .highcharts-navigator-outline {
+    stroke: #cccccc;
+}
+
+.highcharts-navigator .highcharts-navigator-xaxis .highcharts-grid-line {
+    stroke: var(--highcharts-neutral-color-5);
+}
+
+/* Buttons */
+.highcharts-button {
+    fill: var(--highcharts-neutral-color-5);
+}
+
+.highcharts-button text {
+    fill: #cccccc;
+}
+
+.highcharts-button-hover {
+    fill: var(--highcharts-neutral-color-10);
+}
+
+.highcharts-button-hover text {
+    fill: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-button-pressed {
+    fill: #000003;
+    stroke: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-button-pressed text {
+    fill: var(--highcharts-neutral-color-100);
+}
+
+/* Scrollbar */
+.highcharts-scrollbar .highcharts-scrollbar-rifles {
+    stroke: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-scrollbar .highcharts-scrollbar-button {
+    stroke: #606063;
+    fill: #606063;
+}
+
+.highcharts-scrollbar .highcharts-scrollbar-arrow {
+    fill: #cccccc;
+}
+
+.highcharts-scrollbar .highcharts-scrollbar-thumb {
+    fill: #808083;
+    stroke: #808083;
+}
+
+/* Navigation */
+.highcharts-contextbutton {
+    fill: var(--highcharts-neutral-color-5);
+}
+
+.highcharts-contextbutton .highcharts-button-symbol {
+    stroke: #dddddd;
+}

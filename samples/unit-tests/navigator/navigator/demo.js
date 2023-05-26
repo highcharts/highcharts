@@ -316,9 +316,10 @@ QUnit.test('General Navigator tests', function (assert) {
     });
 
     chart.setSize(400, 500);
-    assert.strictEqual(
+    assert.close(
         chart.navigator.xAxis.top,
         chart.navigator.navigatorGroup.getBBox().y,
+        1, // Crisping
         'Navigator position should be updated when scrollbar ' +
             'disabled and navigator.baseSeries not set (#13114).'
     );
@@ -425,6 +426,10 @@ QUnit.test('Scrollbar without navigator (#5709).', function (assert) {
 });
 
 QUnit.test('Missing points using navigator (#5699)', function (assert) {
+    const data = new Array(3000).fill(1).map((item, i) => [
+        Date.UTC(2010, 0, 1) + i * 24 * 36e5,
+        Math.random()
+    ]);
     var container = $('#container'),
         chart = container
             .highcharts('StockChart', {
@@ -440,8 +445,7 @@ QUnit.test('Missing points using navigator (#5699)', function (assert) {
 
     chart.addSeries({
         type: 'column',
-        name: 'USD to EUR',
-        data: usdeur
+        data
     });
 
     navigator.handlesMousedown(
@@ -646,6 +650,10 @@ QUnit.test('Add point and disabled navigator (#3452)', function (assert) {
 
         exporting: {
             enabled: false
+        },
+
+        scrollbar: {
+            buttonsEnabled: true
         },
 
         series: [

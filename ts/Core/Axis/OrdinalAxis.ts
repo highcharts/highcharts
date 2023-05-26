@@ -87,7 +87,7 @@ declare module './AxisType' {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* eslint-disable valid-jsdoc */
 
@@ -154,9 +154,7 @@ namespace OrdinalAxis {
         ChartClass: typeof Chart
     ): (typeof Composition&T) {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             const axisProto = AxisClass.prototype as Composition;
 
             axisProto.getTimeTicks = getTimeTicks;
@@ -179,15 +177,14 @@ namespace OrdinalAxis {
                 onAxisInitialAxisTranslation
             );
         }
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
+
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'pan', onChartPan);
         }
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
         }
-        /* eslint-enable no-invalid-this */
+
         return AxisClass as (typeof Composition&T);
     }
     /**
@@ -473,9 +470,10 @@ namespace OrdinalAxis {
         }
 
         // Convert back from modivied value to pixels. // #15970
-        const pixelVal = (val - (localMin as any)) * localA +
-                axis.minPixelPadding,
-            isInside = pixelVal > 0 && pixelVal < axis.left + axis.len;
+        const pixelVal = correctFloat((val - (localMin as any)) * localA +
+                axis.minPixelPadding),
+            isInside = val >= positions[0] &&
+                val <= positions[positions.length - 1];
 
         // If the value is not inside the plot area, use the extended positions.
         // (array contains also points that are outside of the plotArea).
@@ -493,12 +491,16 @@ namespace OrdinalAxis {
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
         if (positions && positions.length) {
-            const index = ordinal.getIndexOfPoint(pixelVal, positions),
+            const indexOf = positions.indexOf(val);
+
+            const index = indexOf !== -1 ? indexOf : correctFloat(
+                    ordinal.getIndexOfPoint(pixelVal, positions)
+                ),
                 mantissa = correctFloat(index % 1);
 
             // Check if the index is inside position array. If true,
             // read/approximate value for that exact index.
-            if (index >= 0 && index < positions.length - 1) {
+            if (index >= 0 && index <= positions.length - 1) {
                 const leftNeighbour = positions[Math.floor(index)],
                     rightNeighbour = positions[Math.ceil(index)],
                     distance = rightNeighbour - leftNeighbour;
@@ -1434,11 +1436,13 @@ namespace OrdinalAxis {
                     ordinal.overscrollPointsRange as number
                 ),
                 // toValue for the first point.
-                shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
+                shiftIndex = correctFloat(
+                    (val - firstPointX) / ordinalPointPixelInterval);
 
             return Additions.findIndexOf(
                 ordinalArray,
-                firstPointVal
+                firstPointVal,
+                true
             ) + shiftIndex;
         }
 
@@ -1456,8 +1460,9 @@ namespace OrdinalAxis {
                 axis = ordinal.axis,
                 extraRange = axis.options.overscroll,
                 distance = ordinal.overscrollPointsRange,
-                positions = [],
-                max = axis.dataMax;
+                positions = [];
+
+            let max = axis.dataMax;
 
             if (defined(distance)) {
                 // Max + pointRange because we need to scroll to the last

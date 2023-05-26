@@ -1,0 +1,20 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<div id="controls">
+  <button id="sonify">Play chart</button>
+  <label>
+    <input type="checkbox" id="logarithmicAxis">
+    Show logarithmic axis
+  </label>
+  <label>
+    <input type="checkbox" id="logarithmicMapping" checked>
+    Do logarithmic mapping
+  </label>
+</div>
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+  <p class="highcharts-description">All mapping parameters can be mapped either linearly or logarithmically.</p>
+</figure>

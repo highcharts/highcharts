@@ -19,10 +19,7 @@
  *
  * */
 
-import type {
-    StoreType,
-    StoreTypeRegistry
-} from './Stores/StoreType.js';
+import type { DataConnectorTypes } from './Connectors/DataConnectorType.js';
 
 /* *
  *
@@ -31,13 +28,14 @@ import type {
  * */
 
 export interface DataPoolOptions {
-    stores: Array<DataPoolStoreOptions>;
+    connectors: Array<DataPoolConnectorOptions>;
 }
 
-export interface DataPoolStoreOptions {
+export interface DataPoolConnectorOptions
+<T extends keyof DataConnectorTypes = keyof DataConnectorTypes> {
     name: string;
-    storeOptions: StoreType['prototype']['options'];
-    storeType: keyof StoreTypeRegistry;
+    options: DataConnectorTypes[T]['prototype']['options'];
+    type: T;
 }
 
 /* *

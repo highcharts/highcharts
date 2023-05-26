@@ -28,7 +28,7 @@ import type DataPoolOptions from './DataPoolOptions.js';
  * */
 
 const DataPoolDefaults: DataPoolOptions = {
-    stores: []
+    connectors: []
 };
 
 /* *

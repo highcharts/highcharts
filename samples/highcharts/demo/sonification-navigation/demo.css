@@ -1,0 +1,90 @@
+.highcharts-figure {
+    max-width: 1000px;
+    min-width: 320px;
+    margin: 0 auto;
+}
+
+#top {
+    padding: 0 10px;
+}
+
+#title {
+    font-size: 0.8rem;
+    font-family: Helvetica, sans-serif;
+    color: #333;
+}
+
+#title h1 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    margin-top: 0;
+    font-weight: normal;
+}
+
+#title p {
+    margin: 0;
+}
+
+#container {
+    height: 450px;
+}
+
+#controls {
+    padding: 10px;
+    color: #333;
+    font-size: 0.8rem;
+    text-align: center;
+    border: 1px solid #c3d7cf;
+    background-color: #f7f7f8;
+    overflow: hidden;
+    height: 0;
+    transition: height 0.4s, border 0.2s, background-color 0.2s, outline 0.15s;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(100, 100, 150, 0.3);
+    visibility: hidden;
+}
+
+#controls:focus {
+    border: 1px solid #78c8ab;
+    outline: 1px solid #468d73;
+    background-color: #f0f5f3;
+}
+
+#controls.visible {
+    height: auto;
+    visibility: visible;
+    margin: 15px 10px;
+}
+
+#sonify {
+    background-color: #fff;
+    border: 1px solid #25386f;
+    color: #25386f;
+    font-size: 0.9rem;
+    max-height: 1.8rem;
+    line-height: 1rem;
+    font-weight: 500;
+    border-radius: 4px;
+    padding: 0;
+    width: 7rem;
+    margin-bottom: 0.25rem;
+    margin-top: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+#sonify:hover {
+    background-color: #25386f;
+    color: #fff;
+}
+
+@media (min-width: 530px) {
+    #top {
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+#csv {
+    display: none;
+}

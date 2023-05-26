@@ -12,11 +12,11 @@
  *
  * */
 
+import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from '../SMA/SMAOptions';
-import type CSSObject from '../../../Core/Renderer/CSSObject';
 
 /* *
  *
@@ -34,7 +34,12 @@ export interface PriceEnvelopesParamsOptions extends SMAParamsOptions {
     topBand: number;
     bottomBand: number;
     period: number;
-    // for inheritance
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default PriceEnvelopesOptions;

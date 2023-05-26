@@ -100,7 +100,7 @@ QUnit.test(
             data[i] = Math.random();
         }
 
-        var chart = new Highcharts.chart('container', {
+        var chart = new Highcharts.Chart('container', {
             chart: {
                 type: 'pie',
                 width: 500

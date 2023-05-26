@@ -52,7 +52,7 @@ export declare class NavigatorAxisComposition extends Axis {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -88,9 +88,9 @@ function onAxisZoom(
         chartOptions = chart.options,
         navigator = chartOptions.navigator,
         navigatorAxis = axis.navigatorAxis,
-        pinchType = chartOptions.chart.zooming.pinchType,
+        pinchType = chart.zooming.pinchType,
         rangeSelector = chartOptions.rangeSelector,
-        zoomType = chartOptions.chart.zooming.type;
+        zoomType = chart.zooming.type;
 
     if (axis.isXAxis && ((navigator && navigator.enabled) ||
             (rangeSelector && rangeSelector.enabled))) {
@@ -154,9 +154,7 @@ class NavigatorAxisAdditions {
         AxisClass: typeof Axis
     ): void {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             AxisClass.keepProps.push('navigatorAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);

@@ -60,7 +60,7 @@ class LineSeries extends Series {
          * @optionparent plotOptions.series
          */
         {
-            // nothing here yet
+            legendSymbol: 'lineMarker'
         } as PlotOptionsOf<LineSeries>
     );
 
@@ -548,6 +548,9 @@ export default LineSeries;
  * change the color of the graphic. In non-styled mode, the color is set by the
  * `fill` attribute, so the change in class name won't have a visual effect by
  * default.
+ *
+ * Since v11, CSS variables on the form `--highcharts-color-{n}` make changing
+ * the color scheme very convenient.
  *
  * @sample    {highcharts} highcharts/css/colorindex/
  *            Series and point color index

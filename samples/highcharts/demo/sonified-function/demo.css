@@ -1,0 +1,32 @@
+.highcharts-figure {
+    max-width: 550px;
+    min-width: 360px;
+    margin: 0 auto;
+    position: relative;
+}
+
+#sonify {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    z-index: 1;
+    background-color: #fff;
+    border: 1px solid #25386f;
+    color: #25386f;
+    font-size: 0.9rem;
+    line-height: 1rem;
+    min-height: 25px;
+    font-weight: 500;
+    border-radius: 4px;
+    padding: 0.375rem 0;
+    width: 7rem;
+    margin-bottom: 0.25rem;
+    margin-top: 0.25rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+#sonify:hover {
+    background-color: #25386f;
+    color: #fff;
+}

@@ -43,6 +43,7 @@ const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
 const {
     extend,
+    isArray,
     isNumber,
     merge,
     pick
@@ -188,7 +189,7 @@ class ColorAxis extends Axis implements AxisLike {
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
     public legendColor?: GradientColor;
     public legendItem?: LegendItemObject;
-    public name: string = ''; // Prevents 'undefined' in legend in IE8
+    public name?: string;
     public options: ColorAxis.Options = void 0 as any;
     public stops: GradientColor['stops'] = void 0 as any;
     public visible: boolean = true;
@@ -231,19 +232,18 @@ class ColorAxis extends Axis implements AxisLike {
             }
         );
 
-        axis.coll = 'colorAxis';
         axis.side = userOptions.side || horiz ? 2 : 1;
         axis.reversed = userOptions.reversed || !horiz;
         axis.opposite = !horiz;
 
-        super.init(chart, options);
+        super.init(chart, options, 'colorAxis');
 
-        // #16053: Restore the actual userOptions.visible so the color axis
-        // doesnt stay hidden forever when hiding and showing legend
-        axis.userOptions.visible = visible;
-
-        // Base init() pushes it to the xAxis array, now pop it again
-        // chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
+        // Super.init saves the extended user options, now replace it with the
+        // originals
+        this.userOptions = userOptions;
+        if (isArray(chart.userOptions.colorAxis)) {
+            chart.userOptions.colorAxis[this.index] = userOptions;
+        }
 
         // Prepare data classes
         if (userOptions.dataClasses) {
@@ -548,6 +548,7 @@ class ColorAxis extends Axis implements AxisLike {
             legendItem = item.legendItem || {},
             padding = legend.padding,
             legendOptions = legend.options,
+            labelOptions = axis.options.labels,
             itemDistance = pick(legendOptions.itemDistance, 10),
             horiz = axis.horiz,
             width = pick(
@@ -569,11 +570,13 @@ class ColorAxis extends Axis implements AxisLike {
 
         // Create the gradient
         if (!legendItem.symbol) {
-            legendItem.symbol = this.chart.renderer.rect(
+            legendItem.symbol = this.chart.renderer.symbol(
+                'roundedRect',
                 0,
                 (legend.baseline as any) - 11,
                 width,
-                height
+                height,
+                { r: legendOptions.symbolRadius ?? 3 }
             ).attr({
                 zIndex: 1
             }).add(legendItem.group);
@@ -586,7 +589,8 @@ class ColorAxis extends Axis implements AxisLike {
             (
                 horiz ?
                     itemDistance :
-                    this.options.labels.x + this.maxLabelLength
+                    pick(labelOptions.x, labelOptions.distance) +
+                        this.maxLabelLength
             )
         );
         legendItem.labelHeight = height + padding + (horiz ? labelPadding : 0);
@@ -933,7 +937,7 @@ class ColorAxis extends Axis implements AxisLike {
                         chart,
                         name,
                         options: {},
-                        drawLegendSymbol: LegendSymbol.drawRectangle,
+                        drawLegendSymbol: LegendSymbol.rectangle,
                         visible: true,
                         isDataClass: true,
 
@@ -993,7 +997,7 @@ namespace ColorAxis {
         chart: Chart;
         name: string;
         options: object;
-        drawLegendSymbol: typeof LegendSymbol['drawRectangle'];
+        drawLegendSymbol: typeof LegendSymbol['rectangle'];
         visible: boolean;
         setState: Point['setState'];
         isDataClass: true;

@@ -19,11 +19,13 @@ import type {
     VerticalAlignValue
 } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type Point from './Point';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -58,9 +60,10 @@ export interface DataLabelOptions {
     borderRadius?: number;
     borderWidth?: number;
     className?: string;
-    color?: ColorType;
+    color?: ColorString;
     crop?: boolean;
     defer?: boolean;
+    distance?: number;
     enabled?: boolean;
     filter?: DataLabelFilterOptions;
     format?: string;
@@ -71,7 +74,7 @@ export interface DataLabelOptions {
     padding?: number;
     rotation?: number;
     shadow?: (boolean|Partial<ShadowOptionsObject>);
-    shape?: string;
+    shape?: keyof SymbolTypeRegistry;
     style?: CSSObject;
     textPath?: DataLabelTextPathOptions;
     useHTML?: boolean;

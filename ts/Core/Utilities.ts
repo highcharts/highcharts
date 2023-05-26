@@ -16,6 +16,7 @@
  *
  * */
 
+import type AxisType from './Axis/AxisType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
 import type {
@@ -24,6 +25,7 @@ import type {
 } from './Renderer/DOMElementType';
 import type EventCallback from './EventCallback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
+import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
 
@@ -267,46 +269,102 @@ function clamp(value: number, min: number, max: number): number {
 
 // eslint-disable-next-line valid-jsdoc
 /**
- * Remove settings that have not changed, to avoid unnecessary rendering or
- * computing (#9197).
+ * Return the deep difference between two objects. It can either return the new
+ * properties, or optionally return the old values of new properties.
  * @private
  */
-function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
-    newer: TNew,
-    older: TOld
-): TNew & TOld {
-    const result: AnyRecord = {};
+function diffObjects(
+    newer: AnyRecord,
+    older: AnyRecord,
+    keepOlder?: boolean,
+    collectionsWithUpdate?: string[]
+): AnyRecord {
+    const ret = {};
 
-    objectEach(newer, function (_val: unknown, key: (number|string)): void {
-        let ob;
+    /**
+     * Recurse over a set of options and its current values, and store the
+     * current values in the ret object.
+     */
+    function diff(
+        newer: AnyRecord,
+        older: AnyRecord,
+        ret: AnyRecord,
+        depth: number
+    ): void {
+        const keeper = keepOlder ? older : newer;
 
-        // Dive into objects (except DOM nodes)
-        if (
-            isObject(newer[key], true) &&
-            !newer.nodeType && // #10044
-            older[key]
-        ) {
-            ob = cleanRecursively(
-                newer[key],
+        objectEach(newer, function (newerVal, key): void {
+            if (
+                !depth &&
+                collectionsWithUpdate &&
+                collectionsWithUpdate.indexOf(key) > -1 &&
                 older[key]
-            );
-            if (Object.keys(ob).length) {
-                result[key] = ob;
+            ) {
+                newerVal = splat(newerVal);
+
+                ret[key] = [];
+
+                // Iterate over collections like series, xAxis or yAxis and map
+                // the items by index.
+                for (
+                    let i = 0;
+                    i < Math.max(newerVal.length, older[key].length);
+                    i++
+                ) {
+
+                    // Item exists in current data (#6347)
+                    if (older[key][i]) {
+                        // If the item is missing from the new data, we need to
+                        // save the whole config structure. Like when
+                        // responsively updating from a dual axis layout to a
+                        // single axis and back (#13544).
+                        if (newerVal[i] === void 0) {
+                            ret[key][i] = older[key][i];
+
+                        // Otherwise, proceed
+                        } else {
+                            ret[key][i] = {};
+                            diff(
+                                newerVal[i],
+                                older[key][i],
+                                ret[key][i],
+                                depth + 1
+                            );
+                        }
+                    }
+                }
+            } else if (
+                isObject(newerVal, true) &&
+                !newerVal.nodeType // #10044
+            ) {
+                ret[key] = isArray(newerVal) ? [] : {};
+                diff(newerVal, older[key] || {}, ret[key], depth + 1);
+                // Delete empty nested objects
+                if (
+                    Object.keys(ret[key]).length === 0 &&
+                    // Except colorAxis which is a special case where the empty
+                    // object means it is enabled. Which is unfortunate and we
+                    // should try to find a better way.
+                    !(key === 'colorAxis' && depth === 0)
+                ) {
+                    delete ret[key];
+                }
+
+            } else if (
+                newer[key] !== older[key] ||
+                // If the newer key is explicitly undefined, keep it (#10525)
+                (key in newer && !(key in older))
+            ) {
+                ret[key] = keeper[key];
             }
+        });
+    }
 
-        // Arrays, primitives and DOM nodes are copied directly
-        } else if (
-            isObject(newer[key]) ||
-            newer[key] !== older[key] ||
-            // If the newer key is explicitly undefined, keep it (#10525)
-            (key in newer && !(key in older))
-        ) {
-            result[key] = newer[key];
-        }
-    });
+    diff(newer, older, ret, 0);
 
-    return result;
+    return ret;
 }
+
 
 /**
  * Shortcut for parseInt
@@ -460,6 +518,80 @@ function erase(arr: Array<unknown>, item: unknown): void {
             break;
         }
     }
+}
+
+/**
+ * Insert a series or an axis in a collection with other items, either the
+ * chart series or yAxis series or axis collections, in the correct order
+ * according to the index option and whether it is internal. Used internally
+ * when adding series and axes.
+ *
+ * @private
+ * @function Highcharts.Chart#insertItem
+ * @param  {Highcharts.Series|Highcharts.Axis} item
+ *         The item to insert
+ * @param  {Array<Highcharts.Series>|Array<Highcharts.Axis>} collection
+ *         A collection of items, like `chart.series` or `xAxis.series`.
+ * @return {number} The index of the series in the collection.
+ */
+function insertItem(
+    item: Series|AxisType,
+    collection: Array<Series|AxisType>
+): number {
+    const indexOption = (item as Series).options.index,
+        length = collection.length;
+    let i: number|undefined;
+
+    for (
+        // Internal item (navigator) should always be pushed to the end
+        i = item.options.isInternal ? length : 0;
+        i < length + 1;
+        i++
+    ) {
+        if (
+            // No index option, reached the end of the collection,
+            // equivalent to pushing
+            !collection[i] ||
+
+            // Handle index option, the element to insert has lower index
+            (
+                isNumber(indexOption) &&
+                indexOption < pick(
+                    (collection[i] as Series).options.index,
+                    (collection[i] as Series)._i
+                )
+            ) ||
+
+            // Insert the new item before other internal items
+            // (navigator)
+            collection[i].options.isInternal
+        ) {
+            collection.splice(i, 0, item);
+            break;
+        }
+    }
+    return i;
+}
+
+/**
+ * Adds an item to an array, if it is not present in the array.
+ *
+ * @function Highcharts.pushUnique
+ *
+ * @param {Array<unknown>} array
+ * The array to add the item to.
+ *
+ * @param {unknown} item
+ * The item to add.
+ *
+ * @return {boolean}
+ * Returns true, if the item was not present and has been added.
+ */
+function pushUnique(
+    array: Array<unknown>,
+    item: unknown
+): boolean {
+    return array.indexOf(item) < 0 && !!array.push(item);
 }
 
 /**
@@ -769,6 +901,7 @@ function createElement(
 /**
  * Extend a prototyped class by new members.
  *
+ * @deprecated
  * @function Highcharts.extendClass<T>
  *
  * @param {Highcharts.Class<T>} parent
@@ -1192,6 +1325,48 @@ Math.easeInOutSine = function (pos: number): number {
 };
 
 /**
+ * Find the closest distance between two values of a two-dimensional array
+ * @private
+ * @function Highcharts.getClosestDistance
+ *
+ * @param {Array<Array<number>>} arrays
+ *          An array of arrays of numbers
+ *
+ * @return {number | undefined}
+ *          The closest distance between values
+ */
+function getClosestDistance(
+    arrays: number[][],
+    onError?: Function
+): (number|undefined) {
+    const allowNegative = !onError;
+    let closest: number | undefined,
+        loopLength: number,
+        distance: number,
+        i: number;
+
+    arrays.forEach((xData): void => {
+        if (xData.length > 1) {
+            loopLength = xData.length - 1;
+            for (i = loopLength; i > 0; i--) {
+                distance = xData[i] - xData[i - 1];
+                if (distance < 0 && !allowNegative) {
+                    onError?.();
+                    // Only one call
+                    onError = void 0;
+                } else if (distance && (
+                    typeof closest === 'undefined' || distance < closest
+                )) {
+                    closest = distance;
+                }
+            }
+        }
+    });
+
+    return closest;
+}
+
+/**
  * Returns the value of a property path on a given object.
  *
  * @private
@@ -1275,11 +1450,6 @@ function getStyle(
     prop: string,
     toInt?: boolean
 ): (number|string|undefined) {
-    const customGetStyle: typeof getStyle = (
-        (H as any).getStyle || // oldie getStyle
-        getStyle
-    );
-
     let style: (number|string|undefined);
 
     // For width and height, return the actual inner pixel size (#4913)
@@ -1305,8 +1475,8 @@ function getStyle(
             0, // #8377
             (
                 offsetWidth -
-                (customGetStyle(el, 'padding-left', true) || 0) -
-                (customGetStyle(el, 'padding-right', true) || 0)
+                (getStyle(el, 'padding-left', true) || 0) -
+                (getStyle(el, 'padding-right', true) || 0)
             )
         );
     }
@@ -1316,15 +1486,10 @@ function getStyle(
             0, // #8377
             (
                 Math.min(el.offsetHeight, el.scrollHeight) -
-                (customGetStyle(el, 'padding-top', true) || 0) -
-                (customGetStyle(el, 'padding-bottom', true) || 0)
+                (getStyle(el, 'padding-top', true) || 0) -
+                (getStyle(el, 'padding-bottom', true) || 0)
             )
         );
-    }
-
-    if (!win.getComputedStyle) {
-        // SVG not supported, forgot to load oldie.js?
-        error(27, true);
     }
 
     // Otherwise, get the computed style
@@ -1641,9 +1806,7 @@ function addEvent<T>(
     // Handle DOM events
     // If the browser supports passive events, add it to improve performance
     // on touch events (#11353).
-    const addEventListener = (
-        (el as any).addEventListener || H.addEventListenerPolyfill
-    );
+    const addEventListener = (el as any).addEventListener;
     if (addEventListener) {
         addEventListener.call(
             el,
@@ -1712,9 +1875,7 @@ function removeEvent<T>(
         type: string,
         fn: (EventCallback<T>|Function)
     ): void {
-        const removeEventListener = (
-            (el as any).removeEventListener || H.removeEventListenerPolyfill
-        );
+        const removeEventListener = (el as any).removeEventListener;
 
         if (removeEventListener) {
             removeEventListener.call(el, type, fn, false);
@@ -1848,8 +2009,7 @@ function fireEvent<T>(
                 // the zoom-out button in Chrome.
                 target: el,
                 // If the type is not set, we're running a custom event
-                // (#2297). If it is set, we're running a browser event,
-                // and setting it will cause en error in IE8 (#2465).
+                // (#2297). If it is set, we're running a browser event.
                 type: type
             });
         }
@@ -2077,13 +2237,13 @@ const Utilities = {
     arrayMin,
     attr,
     clamp,
-    cleanRecursively,
     clearTimeout: internalClearTimeout,
     correctFloat,
     createElement,
     css,
     defined,
     destroyObjectProperties,
+    diffObjects,
     discardElement,
     erase,
     error,
@@ -2091,10 +2251,12 @@ const Utilities = {
     extendClass,
     find,
     fireEvent,
+    getClosestDistance,
     getMagnitude,
     getNestedProperty,
     getStyle,
     inArray,
+    insertItem,
     isArray,
     isClass,
     isDOMElement,
@@ -2110,6 +2272,7 @@ const Utilities = {
     pad,
     pick,
     pInt,
+    pushUnique,
     relativeLength,
     removeEvent,
     splat,
