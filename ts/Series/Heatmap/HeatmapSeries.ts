@@ -492,8 +492,6 @@ class HeatmapSeries extends ScatterSeries {
                         x: x1,
                         y: 0
                     };
-
-                console.log(x1);
             if (!image) {
                 const
                     colorAxis = (
@@ -511,9 +509,12 @@ class HeatmapSeries extends ScatterSeries {
                         canvasHeight = canvas.height = ~~(
                             (yMax - yMin) / rowsize
                         ) + 1,
+                        canvasArea = canvasWidth * canvasHeight,
                         pixelData = new Uint8ClampedArray(
-                            canvasWidth * canvasHeight * 4
+                            canvasArea * 4
                         ),
+                        widthLastIndex = canvasWidth - 1,
+                        heightLastIndex = canvasHeight - 1,
                         colorFromPoint = (p: HeatmapPoint): number[] => {
                             const rgba = ((
                                 colorAxis.toColor(
@@ -548,15 +549,38 @@ class HeatmapSeries extends ScatterSeries {
                         ),
                         xPlacement = (xRev ?
                             (xToImg: number): number => (
-                                (canvasWidth - 1) - xToImg
+                                widthLastIndex - xToImg
                             ) :
                             (xToImg: number): number => xToImg
                         ),
                         yPlacement = (yRev ?
                             (yToImg: number): number => (
-                                (canvasHeight - 1) - yToImg
+                                heightLastIndex - yToImg
                             ) :
                             (yToImg: number): number => yToImg
+                        ),
+                        scaledPointPos = (x: number, y: number): number => (
+                            Math.ceil(
+                                canvasWidth *
+                                yPlacement(
+                                    scaleToImg(
+                                        yMax - y,
+                                        yMin,
+                                        yMax,
+                                        0,
+                                        heightLastIndex
+                                    )
+                                ) +
+                                xPlacement(
+                                    scaleToImg(
+                                        x,
+                                        xMin,
+                                        xMax,
+                                        0,
+                                        widthLastIndex
+                                    )
+                                )
+                            )
                         );
 
                     if (notBoosting) {
@@ -564,7 +588,7 @@ class HeatmapSeries extends ScatterSeries {
                         series.directTouch = false;
                     }
 
-                    for (let i = 0; i < canvasWidth * canvasHeight; i++) {
+                    for (let i = 0; i < canvasArea; i++) {
                         const
                             toPointScale = scaleToImg(
                                 i * 4,
@@ -576,29 +600,10 @@ class HeatmapSeries extends ScatterSeries {
                             p = points[toPointScale],
                             sourceArr = new Uint8ClampedArray(
                                 colorFromPoint(p)
-                            ),
-                            xToImg = scaleToImg(
-                                p.x,
-                                xMin,
-                                xMax,
-                                0,
-                                canvasWidth - 1
-                            ),
-                            yToImg = scaleToImg(
-                                yMax - p.y,
-                                yMin,
-                                yMax,
-                                0,
-                                canvasHeight - 1
-                            ),
-                            scaledPointPos = Math.ceil(
-                                canvasWidth *
-                                yPlacement(yToImg) +
-                                xPlacement(xToImg)
                             );
                         pixelData.set(
                             sourceArr,
-                            scaledPointPos * 4
+                            scaledPointPos(p.x, p.y) * 4
                         );
                     }
 
@@ -615,6 +620,11 @@ class HeatmapSeries extends ScatterSeries {
                         .add(series.group);
 
                 }
+            } else if (
+                image.width !== dimensions.width ||
+                image.height !== dimensions.height
+            ) {
+                image.attr(dimensions);
             }
 
         } else if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
