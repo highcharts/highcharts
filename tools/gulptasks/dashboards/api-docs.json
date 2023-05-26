@@ -5,6 +5,7 @@
     "disableSources": true,
     "entryPoints": [
         "../../../ts/Dashboards/Board.ts",
+        "../../../ts/Dashboards/Actions/DragDrop.ts",
         "../../../ts/Dashboards/Components/Component.ts",
         "../../../ts/Dashboards/Components/HTMLComponent.ts",
         "../../../ts/Dashboards/Components/KPIComponent.ts",
