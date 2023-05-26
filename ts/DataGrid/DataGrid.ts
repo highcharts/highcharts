@@ -926,8 +926,11 @@ class DataGrid {
             this.renderColumnHeader.bind(this, columnHeadersContainer)
         );
 
-        this.headerContainer = makeDiv('hc-dg-header-container');
-        this.headerContainer.appendChild(columnHeadersContainer);
+        if (!this.headerContainer) {
+            this.headerContainer = makeDiv('hc-dg-header-container');
+            this.headerContainer.appendChild(columnHeadersContainer);
+        }
+
         this.gridContainer.insertBefore(
             this.headerContainer,
             this.outerContainer

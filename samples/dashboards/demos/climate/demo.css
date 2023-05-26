@@ -267,6 +267,10 @@
     overflow: auto;
 }
 
+#selection-grid .hc-dg-outer-container {
+    height: 330px !important;
+}
+
 #selection-grid .hc-dg-column-header {
     padding: 0 12px;
     font-size: 12px;
