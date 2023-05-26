@@ -465,8 +465,16 @@ class HeatmapSeries extends ScatterSeries {
                 } = series,
                 lastPointIndex = points.length - 1,
                 notBoosting = (!boost && !chart.boost),
-                { len: xAxisLen, reversed: xRev } = xAxis,
-                { len: yAxisLen, reversed: yRev } = yAxis,
+                {
+                    len: xAxisLen,
+                    reversed: xRev,
+                    userOptions: xConf
+                } = xAxis,
+                {
+                    len: yAxisLen,
+                    reversed: yRev,
+                    userOptions: yConf
+                } = yAxis,
                 { min: xMin, max: xMax } = xAxis.getExtremes(),
                 { min: yMin, max: yMax } = yAxis.getExtremes(),
                 [colsize, rowsize] = [
@@ -475,11 +483,18 @@ class HeatmapSeries extends ScatterSeries {
                 ],
                 { inverted } = chart,
                 firstCell = points[0],
-                firstCellX = pick(firstCell.plotX, 0),
-                firstCellPaddedX = firstCell.getCellAttributes().x1,
-                endPadding = points[lastPointIndex].getCellAttributes().x2,
-                x1 = firstCellPaddedX ? firstCellX - firstCellPaddedX : 0,
-                x2 = (endPadding + firstCellPaddedX),
+                [x1, x2] = xRev ? [
+                    points[lastPointIndex].getCellAttributes().x2,
+                    firstCell.getCellAttributes().x1
+                ] : [
+                    firstCell.getCellAttributes().x1,
+                    points[lastPointIndex].getCellAttributes().x2
+                ],
+                pointWidth = (
+                    firstCell.shapeArgs && pick(
+                        firstCell.shapeArgs.width, 0
+                    ) || 0
+                ),
                 dimensions = inverted ?
                     {
                         width: xAxisLen,
@@ -487,9 +502,9 @@ class HeatmapSeries extends ScatterSeries {
                         x: 0,
                         y: 0
                     } : {
-                        width: x2,
+                        x: x1 - pointWidth,
+                        width: x2 + pointWidth,
                         height: yAxisLen,
-                        x: x1,
                         y: 0
                     };
             if (!image) {
@@ -582,7 +597,6 @@ class HeatmapSeries extends ScatterSeries {
                                 )
                             )
                         );
-
                     if (notBoosting) {
                         series.buildKDTree();
                         series.directTouch = false;
