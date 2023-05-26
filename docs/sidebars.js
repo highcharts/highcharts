@@ -25,6 +25,7 @@ module.exports = {
             'chart-concepts/plot-bands-and-plot-lines',
             'chart-concepts/zooming',
             'chart-concepts/labels-and-string-formatting',
+            'chart-concepts/templating',
             'chart-concepts/drilldown',
             'chart-concepts/3d-charts',
             'chart-concepts/responsive',
