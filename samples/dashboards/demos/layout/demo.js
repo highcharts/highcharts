@@ -1,5 +1,5 @@
 let exportedLayoutId;
-let board = new Dashboards.Board('container', {
+let board = Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {

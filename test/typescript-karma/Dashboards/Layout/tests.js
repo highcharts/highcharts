@@ -65,7 +65,7 @@ test('Components in layout with no row style', function (assert) {
         'Text should be set before adding dashboard.'
     );
 
-    const board = new Board(container.id, {
+    const board = Dashboards.board(container.id, {
         gui: {
             enabled: true,
             layouts
@@ -96,7 +96,7 @@ test('Components in rows with set height', function (assert) {
         padding: '5px'
     }
 
-    const board = new Board(container.id, {
+    const board = Dashboards.board(container.id, {
         gui: {
             enabled: true,
             layouts
@@ -124,7 +124,7 @@ skip('Components in layout with set width', function (assert) {
         width: '800px'
     }
 
-    const board = new Board(container.id, {
+    const board = Dashboards.board(container.id, {
         gui: {
             enabled: true,
             layouts
@@ -153,7 +153,7 @@ test('Components and rows in layout with set height', function (assert) {
         height: '800px'
     }
 
-    const board = new Board(container.id, {
+    const board = Dashboards.board(container.id, {
         gui: {
             enabled: true,
             layouts
@@ -199,7 +199,7 @@ test('Nested layouts serialization.', function (assert) {
             }
         }
     };
-    const board = new Board(container.id, {
+        const board = Dashboards.board(container.id, {
         editMode: {
             enabled: true,
             contextMenu: {
@@ -272,7 +272,7 @@ test('Reserialized cell width', function (assert) {
             }
         }
     };
-    const board = new Board(container.id, {
+    const board = Dashboards.board(container.id, {
         editMode: {
             enabled: true,
             contextMenu: {
