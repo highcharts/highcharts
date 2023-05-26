@@ -1944,6 +1944,25 @@ const defaultOptions: Options = {
          */
 
         /**
+         * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * for the whole tooltip. When format strings are a requirement, it is
+         * usually more convenient to use `headerFormat`, `pointFormat` and
+         * `footerFormat`, but the `format` option allows combining them into
+         * one setting.
+         *
+         * The context of the format string is the same as that of the
+         * `formatter` callback.
+         *
+         * @sample {highcharts} highcharts/tooltip/format-shared/
+         *         Format for shared tooltip
+         *
+         * @type      {string}
+         * @default   undefined
+         * @since     next
+         * @apioption tooltip.format
+         */
+
+        /**
          * Callback function to format the text of the tooltip from scratch. In
          * case of single or [shared](#tooltip.shared) tooltips, a string should
          * be returned. In case of [split](#tooltip.split) tooltips, it should

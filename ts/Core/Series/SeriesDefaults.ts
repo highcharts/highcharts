@@ -540,6 +540,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * Same as
+     * [accessibility.point.descriptionFormat](#accessibility.point.descriptionFormat),
+     * but for an individual series. Overrides the chart wide configuration.
+     *
+     * @type      {Function}
+     * @since     next
+     * @apioption plotOptions.series.pointDescriptionFormat
+     */
+
+    /**
+     * Same as
      * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
      * but for an individual series. Overrides the chart wide configuration.
      *
