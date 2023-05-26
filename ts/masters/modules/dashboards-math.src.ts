@@ -19,8 +19,8 @@
  * */
 
 
-import Formula from '../Data/Formula/Formula.js';
-import MathModifier from '../Data/Modifiers/MathModifier.js';
+import Formula from '../../Data/Formula/Formula.js';
+import MathModifier from '../../Data/Modifiers/MathModifier.js';
 
 
 /* *
