@@ -14,6 +14,7 @@ const norwegianEditMode = {
     confirmDestroyRow: 'Vil du ødelegge raden?',
     confirmDestroyCell: 'Vil du ødelegge cellen?',
     confirmButton: 'Bekreft',
+    connectorName: 'Connector navn',
     cancelButton: 'Avbryt',
     viewFullscreen: 'Se fullskjerm',
     exitFullscreen: 'Lukk fullskjerm',
@@ -21,7 +22,10 @@ const norwegianEditMode = {
     off: 'av',
     settings: 'Alternativer',
     addComponent: 'Legg til komponenter',
-    dataLabels: 'Data merkelapp'
+    dataLabels: 'Data merkelapp',
+    small: 'Liten',
+    medium: 'Medium',
+    large: 'Stor'
 };
 
 Dashboards.board('container', {
