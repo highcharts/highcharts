@@ -137,10 +137,12 @@ class BasicAnnotation extends Annotation {
                 ): void {
                     const annotation = target.annotation,
                         coords = this.chart.pointer.getCoordinates(e),
-                        x = coords.xAxis[0].value,
-                        y = coords.yAxis[0].value,
                         points: Array<MockPointOptions> = target.options.points as any,
-                        shapes = annotation.userOptions.shapes;
+                        shapes = annotation.userOptions.shapes,
+                        xAxisIndex = annotation.clipXAxis?.index || 0,
+                        yAxisIndex = annotation.clipYAxis?.index || 0,
+                        x = coords.xAxis[xAxisIndex].value,
+                        y = coords.yAxis[yAxisIndex].value;
 
                     // Top right point
                     points[1].x = x;
