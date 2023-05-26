@@ -27,6 +27,9 @@ const {
     createElement
 } = U;
 
+/**
+ * Class to create confirmation popup.
+ */
 class ConfirmationPopup extends BaseForm {
     /* *
     *
@@ -147,11 +150,23 @@ class ConfirmationPopup extends BaseForm {
 }
 
 namespace ConfirmationPopup {
+    /**
+     * Options for confirmation popup.
+     */
     export interface Options {
+        /**
+         * Close icon
+         */
         close: CloseIcon;
     }
 
+    /**
+     * Close icon options
+     */
     export interface CloseIcon {
+        /**
+         * Icon URL
+         */
         icon: string;
     }
 
