@@ -1,7 +1,25 @@
-(async function () {
+/* eslint-disable prefer-const, jsdoc/require-description */
+
+const MathModifier = Highcharts.DataModifier.types.Math; // @todo switch module
+
+const colorStopsDays = [
+    [0.0, '#C2CAEB'],
+    [1.0, '#162870']
+];
+const colorStopsTemperature = [
+    [0.0, '#4CAFFE'],
+    [0.3, '#53BB6C'],
+    [0.5, '#DDCE16'],
+    [0.6, '#DF7642'],
+    [0.7, '#DD2323']
+];
+
+setupBoard();
+
+async function setupBoard() {
     let activeCity = 'New York';
-    let activeColumn = 'TXC';
-    let temperatureScale = 'C';
+    let activeColumn = 'TX';
+    let activeScale = 'C';
 
     // Initialize board with most basic data
     const board = await Dashboards.board('container', {
@@ -19,7 +37,7 @@
                     )
                 }
             }, {
-                name: 'New York',
+                name: activeCity,
                 type: 'CSV'
             }]
         },
@@ -49,9 +67,8 @@
                         events: {
                             click: function () {
                                 // Change temperature scale.
-                                temperatureScale =
-                                    temperatureScale === 'C' ? 'F' : 'C';
-                                activeColumn = 'TX' + temperatureScale;
+                                activeScale = activeScale === 'C' ? 'F' : 'C';
+                                activeColumn = 'TX';
                             }
                         }
                     }
@@ -143,7 +160,7 @@
                 series: [{
                     // type: 'spline',
                     name: 'Timeline',
-                    data: (() => {
+                    data: (function () {
                         const dateEnd = new Date(Date.UTC(2010, 11, 25)),
                             dates = [];
 
@@ -165,7 +182,7 @@
                         }
 
                         return dates;
-                    })(),
+                    }()),
                     showInNavigator: false,
                     marker: {
                         enabled: false
@@ -230,9 +247,6 @@
         }, {
             cell: 'world-map',
             type: 'Highcharts',
-            connector: {
-                name: 'Active City'
-            },
             chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
@@ -242,7 +256,13 @@
                     ).then(response => response.json()),
                     styledMode: true
                 },
-                // colorAxis: buildColorAxis(),
+                colorAxis: {
+                    startOnTick: false,
+                    endOnTick: false,
+                    max: 50,
+                    min: 0,
+                    stops: colorStopsTemperature
+                },
                 legend: {
                     enabled: false
                 },
@@ -286,6 +306,11 @@
                         verticalAlign: 'bottom',
                         y: -16
                     }],
+                    events: {
+                        click: function (e) {
+                            console.log(this);
+                        }
+                    },
                     marker: {
                         enabled: true,
                         lineWidth: 2,
@@ -308,7 +333,7 @@
                 },
                 tooltip: {
                     enabled: true,
-                    positioner: function (width, _height, axisInfo) {
+                    positioner: function (_width, _height, axisInfo) {
                         return {
                             x: (
                                 axisInfo.plotX -
@@ -336,7 +361,7 @@
             type: 'KPI',
             events: {
                 click: function () {
-                    activeColumn = 'TN' + temperatureScale;
+                    activeColumn = 'TN' + activeScale;
                 }
             },
             states: {
@@ -352,7 +377,7 @@
             type: 'KPI',
             events: {
                 click: function () {
-                    activeColumn = 'TX' + temperatureScale;
+                    activeColumn = 'TX' + activeScale;
                 },
                 afterLoad: function () {
                     this.cell.setActiveState();
@@ -422,6 +447,11 @@
             },
             sync: {
                 highlight: true
+            },
+            columnKeyMap: {
+                time: null,
+                TN: null,
+                TX: null
             },
             dataGridOptions: {
                 cellHeight: 38,
@@ -496,9 +526,14 @@
                 legend: {
                     enabled: false
                 },
-                // colorAxis: buildColorAxis(),
+                colorAxis: {
+                    startOnTick: false,
+                    endOnTick: false,
+                    max: 50,
+                    min: 0,
+                    stops: colorStopsTemperature
+                },
                 series: [{
-                    // type: 'spline',
                     name: activeCity,
                     animation: false,
                     animationLimit: 0,
@@ -529,21 +564,85 @@
             }
         }]
     }, true);
-    const cities = await board.dataPool.getConnectorTable('Cities');
+
+    // Load city map
+    const cities = (await board.dataPool.getConnectorTable('Cities'))
+        .getRowObjects();
+    board.mountedComponents[1].component.chart.series[1].setData(
+        cities.map((row, i) => ({
+            lat: row.lat,
+            lon: row.lon,
+            name: row.name,
+            y: i
+        }))
+    );
 
     // Load initial city
     board.dataPool.setConnectorOptions({
         name: activeCity,
         type: 'CSV',
         options: {
-            csvURL: cities.getCell(
-                'csv',
-                cities.getRowIndexBy('city', activeCity)
-            )
+            csvURL: cities.find(row => row.city === activeCity).csv
         }
     });
 
-}());
+    await updateBoard(board, activeCity, activeColumn, activeScale);
+
+}
+
+async function updateBoard(board, city, column, scale) {
+    const dataPool = board.dataPool;
+    const activeCityConnector = await dataPool.getConnector('Active City');
+    const cityConnector = await dataPool.getConnector(city);
+    const [
+        navigatorComponent,
+        worldMap,
+        kpiData,
+        kpiTemperature,
+        kpiMaxTemperature,
+        kpiRain,
+        kpiIce,
+        kpiFrost,
+        selectionGrid,
+        cityChart
+    ] = board.mountedComponents.map(c => c.component);
+
+    let cityTable = cityConnector.table;
+
+    if (city) {
+
+        // Modify city table
+        if (cityTable.modified === cityTable) {
+            await cityConnector.table.setModifier(new MathModifier({
+                modifier: 'Math',
+                columnFormulas: [{
+                    column: 'TNC',
+                    formula: 'E1-273.15'
+                }, {
+                    column: 'TNF',
+                    formula: 'E1*1.8-459.67'
+                }, {
+                    column: 'TXC',
+                    formula: 'F1-273.15'
+                }, {
+                    column: 'TXF',
+                    formula: 'F1*1.8-459.67'
+                }]
+            }));
+        }
+        cityTable = cityTable.modified;
+
+        // Activate city table
+        activeCityConnector.table.setColumns(cityTable.getColumns(), 0);
+
+        // @todo remove following manual updates:
+        await selectionGrid.update({ connector: cityConnector });
+        cityChart.chart.series[0].setData(cityTable.getRows(void 0, void 0, [
+            'time',
+            column[0] === 'T' ? column + scale : column
+        ]));
+    }
+}
 
 /* *
  *
@@ -551,7 +650,6 @@
  *
  * */
 
-/* eslint-disable prefer-const, jsdoc/require-description */
 const { Range: RangeModifier } = Dashboards.DataModifier.types;
 
 const dataPool = new Dashboards.DataPool();
