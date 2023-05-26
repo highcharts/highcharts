@@ -37,7 +37,7 @@ const {
     getSeriesA11yElement,
     unhideChartElementFromAT
 } = ChartUtilities;
-import F from '../../../Core/FormatUtilities.js';
+import F from '../../../Core/Templating.js';
 const {
     format,
     numberFormat

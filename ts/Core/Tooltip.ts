@@ -28,7 +28,7 @@ import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGRenderer from './Renderer/SVG/SVGRenderer';
 import type TooltipOptions from './TooltipOptions';
 
-import F from './FormatUtilities.js';
+import F from './Templating.js';
 const { format } = F;
 import H from './Globals.js';
 const { doc, isSafari } = H;

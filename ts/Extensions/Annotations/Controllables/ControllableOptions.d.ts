@@ -26,7 +26,7 @@ import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type {
     DataLabelOverflowValue
 } from '../../../Core/Series/DataLabelOptions';
-import type FormatUtilities from '../../../Core/FormatUtilities';
+import type Templating from '../../../Core/Templating';
 import type {
     ShadowOptionsObject
 } from '../../../Core/Renderer/ShadowOptionsObject';
@@ -51,7 +51,7 @@ export interface ControllableLabelOptions extends ControllableOptions {
     dashStyle?: DashStyleValue;
     distance?: number;
     format?: string;
-    formatter: FormatUtilities.FormatterCallback<AnnotationPoint>;
+    formatter: Templating.FormatterCallback<AnnotationPoint>;
     includeInDataExport: boolean;
     overflow: DataLabelOverflowValue;
     padding?: number;

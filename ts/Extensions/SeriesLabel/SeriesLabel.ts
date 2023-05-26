@@ -48,7 +48,7 @@ import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../../Core/Chart/Chart.js';
-import FU from '../../Core/FormatUtilities.js';
+import FU from '../../Core/Templating.js';
 const { format } = FU;
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;

@@ -28,7 +28,7 @@ const {
     merge,
     pick
 } = U;
-import FU from '../../Core/FormatUtilities.js';
+import FU from '../../Core/Templating.js';
 const {
     format
 } = FU;

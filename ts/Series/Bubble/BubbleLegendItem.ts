@@ -24,7 +24,7 @@ import type BubbleSeries from './BubbleSeries';
 import type { BubbleSizeByValue } from './BubbleSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type FormatUtilities from '../../Core/FormatUtilities';
+import type Templating from '../../Core/Templating';
 import type {
     LegendItemObject,
     LegendItem
@@ -36,7 +36,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import F from '../../Core/FormatUtilities.js';
+import F from '../../Core/Templating.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend/Legend.js';
@@ -751,7 +751,7 @@ namespace BubbleLegendItem {
         allowOverlap?: boolean;
         className?: string;
         format?: string;
-        formatter?: FormatUtilities.FormatterCallback<FormatterContextObject>;
+        formatter?: Templating.FormatterCallback<FormatterContextObject>;
         style?: CSSObject;
         x?: number;
         y?: number;

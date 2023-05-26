@@ -33,7 +33,7 @@ import type SVGAttributes from '../../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Renderer/SVG/SVGLabel';
 
-import FU from '../../FormatUtilities.js';
+import FU from '../../Templating.js';
 const { format } = FU;
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;

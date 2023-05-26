@@ -16,7 +16,7 @@
 
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
-import type F from './FormatUtilities';
+import type F from './Templating';
 import type Point from './Series/Point';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
 import type Time from './Time';

@@ -29,7 +29,7 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
-import F from '../Core/FormatUtilities.js';
+import F from '../Core/Templating.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 import D from '../Core/Defaults.js';
