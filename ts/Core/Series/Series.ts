@@ -3319,27 +3319,11 @@ class Series {
         }
 
         // Draw the mouse tracking area
-        if (series.drawTracker) {
-            if (series.options.enableMouseTracking !== false) {
-                series.drawTracker();
-            } else {
-                series.trackerGroups?.forEach((key: string): void => {
-                    const tracker = (series as any)[key];
-                    if (tracker) {
-                        tracker.removeClass(
-                            options.trackByArea ?
-                                'highcharts-tracker-area' :
-                                'highcharts-tracker-line'
-                        );
-                        removeEvent(tracker.element, 'mouseover');
-                        removeEvent(tracker.element, 'mouseout');
-
-                        if (hasTouch) {
-                            removeEvent(tracker.element, 'touchstart');
-                        }
-                    }
-                });
-            }
+        if (
+            series.drawTracker &&
+            series.options.enableMouseTracking !== false
+        ) {
+            series.drawTracker();
         }
 
         // Run the animation
@@ -3682,7 +3666,10 @@ class Series {
             snap = (chart.options.tooltip as any).snap,
             tracker = series.tracker,
             onMouseOver = function (e: PointerEvent): void {
-                if (chart.hoverSeries !== series) {
+                if (
+                    series.options.enableMouseTracking !== false &&
+                    chart.hoverSeries !== series
+                ) {
                     series.onMouseOver();
                 }
             },

@@ -53,7 +53,7 @@ QUnit.test(
         assert.ok(
             chart.tooltip.isHidden,
             `Tooltip should be hidden when enableMouseTracking was updated to
-            false (#XXXXX).`
+            false (#18985).`
         );
     }
 );
