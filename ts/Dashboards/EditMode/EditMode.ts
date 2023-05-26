@@ -50,12 +50,23 @@ const {
  *  Class
  *
  * */
+/**
+ * Edit mode class.
+ */
 class EditMode {
     /* *
     *
     *  Constructor
     *
     * */
+    /**
+     * Edit mode constructor.
+     *
+     * @param board
+     * Board instance
+     * @param options
+     * Edit mode options
+     */
     constructor(
         board: Board,
         options?: EditMode.Options
@@ -132,29 +143,101 @@ class EditMode {
     *
     * */
 
+    /** @internal */
     private active: boolean = false;
+    /**
+     * Edit mode options.
+     */
     public options: EditMode.Options;
+    /**
+     * Url from which the icons will be fetched.
+     */
     public iconsURLPrefix: string = 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/';
+    /**
+     * Dashboards' board instance.
+     */
     public board: Board;
+    /**
+     * Language dictionary.
+     */
     public lang: EditGlobals.LangOptions;
+    /**
+     * Instance of the toolbar, which is displayed for the cell.
+     */
     public cellToolbar?: CellEditToolbar;
+    /**
+     * Instance of the toolbar, which is displayed for the row.
+     */
     public rowToolbar?: RowEditToolbar;
+    /**
+     * Intance of the sidebar.
+     */
     public sidebar?: SidebarPopup;
+    /**
+     * @internal
+     */
     public dragDrop?: DragDrop;
+    /**
+     * @internal
+     */
     public resizer?: Resizer;
+    /**
+     * Whether the instance of edit mode was initialized.
+     */
     public isInitialized: boolean;
+    /**
+     * HTML Element responsible for adding the component.
+     */
     public addComponentBtn?: HTMLDOMElement;
+    /**
+     * Current selected mode, for emulating different screen width for
+     * responsive web design.
+     */
     public rwdMode: string;
+    /**
+     * HTML elements responsible for changing the container width.
+     */
     public rwdMenu: Array<HTMLDOMElement>;
+    /**
+     * @internal
+     */
     public tools: EditMode.Tools;
+    /**
+     * Instance of the confirmation popup
+     */
     public confirmationPopup?: ConfirmationPopup;
+    /**
+     * @internal
+     * Whether the context detection is active.
+     */
     public isContextDetectionActive: boolean;
+    /**
+     * @internal
+     */
     public mouseCellContext?: Cell;
+    /**
+     * @internal
+     */
     public mouseRowContext?: Row;
+    /**
+     * @internal
+     */
     public potentialCellContext?: Cell;
+    /**
+     * @internal
+     */
     public editCellContext?: Cell;
+    /**
+     * @internal
+     */
     public contextPointer: EditMode.ContextPointer;
+    /**
+     * @internal
+     */
     public editOverlay: HTMLDOMElement;
+    /**
+     * @internal
+     */
     public isEditOverlayActive: boolean;
 
     /* *
@@ -163,9 +246,11 @@ class EditMode {
     *
     * */
 
-    public onContextBtnClick(
-        editMode: EditMode
-    ): void {
+    /**
+     * Event to fire on click of the context button.
+     */
+    public onContextBtnClick(): void {
+        const editMode = this;
         // Init contextMenu if doesn't exist.
         if (!editMode.tools.contextMenu) {
             editMode.tools.contextMenu = new EditContextMenu(
@@ -188,6 +273,9 @@ class EditMode {
         }
     }
 
+    /**
+     * Activate/Deactivate edit mode.
+     */
     public onEditModeToggle(): void {
         const editMode = this;
 
@@ -198,7 +286,10 @@ class EditMode {
         }
     }
 
-    public initEditMode(): void {
+    /**
+     * Init the instance of edit mode.
+     */
+    public init(): void {
         const editMode = this;
 
         if (!(editMode.options.resize &&
@@ -239,6 +330,9 @@ class EditMode {
         editMode.isInitialized = true;
     }
 
+    /**
+     * @intenal
+     */
     private initEvents(): void {
         const editMode = this,
             board = editMode.board;
@@ -300,6 +394,9 @@ class EditMode {
         });
     }
 
+    /**
+     * @intenal
+     */
     private setLayoutEvents(
         layout: Layout
     ): void {
@@ -314,10 +411,10 @@ class EditMode {
             }
         }
     }
-
-    public setRowEvents(
-        row: Row
-    ): void {
+    /**
+     * @intenal
+     */
+    public setRowEvents(row: Row): void {
         const editMode = this;
 
         // Init dragDrop row events.
@@ -355,6 +452,9 @@ class EditMode {
         }
     }
 
+    /**
+     * @intenal
+     */
     public setCellEvents(
         cell: Cell
     ): void {
@@ -408,13 +508,15 @@ class EditMode {
             }
         }
     }
-
+    /**
+     * Activate the edit mode.
+     */
     public activate(): void {
         const editMode = this;
 
         // Init edit mode.
         if (!editMode.isInitialized) {
-            editMode.initEditMode();
+            editMode.init();
             editMode.initEvents();
         }
 
@@ -438,6 +540,10 @@ class EditMode {
         editMode.isContextDetectionActive = true;
     }
 
+    /**
+     * Deactivate the edit mode.
+     *
+     */
     public deactivate(): void {
         const editMode = this,
             dashboardCnt = editMode.board.container;
@@ -478,6 +584,12 @@ class EditMode {
         this.potentialCellContext = void 0;
     }
 
+    /**
+     * Function to check whether the edit mode is activated.
+     *
+     * @returns
+     * Whether the edit mode is activated.
+     */
     public isActive(): boolean {
         return this.active;
     }
@@ -572,6 +684,10 @@ class EditMode {
         }
     }
 
+    /**
+     * Creates the buttons such as `addComponent` button, rwd buttons and
+     * context menu button.
+     */
     public createTools(): void {
         const editMode = this;
         const options = this.options;
@@ -600,8 +716,7 @@ class EditMode {
         this.createRwdMenu();
 
         // create add button
-        const addIconURL = options && options.tools &&
-        options.tools.addComponentBtn && options.tools.addComponentBtn.icon;
+        const addIconURL = options?.tools?.addComponentBtn?.icon;
 
         this.addComponentBtn = EditRenderer.renderButton(
             this.tools.container,
@@ -623,6 +738,9 @@ class EditMode {
         );
     }
 
+    /**
+     * @internal
+     */
     private createRwdMenu(): void {
         const rwdBreakingPoints = this.board.options.responsiveBreakpoints;
         const toolsContainer = this.tools.container;
@@ -678,18 +796,29 @@ class EditMode {
         }
     }
 
+    /**
+     * Shows responsive buttons.
+     */
     public showRwdButtons(): void {
         for (let i = 0, iEnd = this.rwdMenu.length; i < iEnd; ++i) {
             (this.rwdMenu[i] as HTMLDOMElement).style.display = 'block';
         }
     }
 
+    /**
+     * Hides responsive buttons.
+     */
     public hideRwdButtons(): void {
         for (let i = 0, iEnd = this.rwdMenu.length; i < iEnd; ++i) {
             (this.rwdMenu[i] as HTMLDOMElement).style.display = 'none';
         }
     }
-
+    /**
+     * Event fired when detecting context on drag&drop
+     *
+     * @param e
+     * Mouse pointer event
+     */
     public onDetectContext(e: PointerEvent): void {
         const editMode = this,
             offset = 50; // TODO - add it from options.
@@ -729,11 +858,18 @@ class EditMode {
         }
     }
 
+
+    /**
+     * Stops the context detection.
+     */
     public stopContextDetection(): void {
         this.isContextDetectionActive = false;
         this.hideContextPointer();
     }
 
+    /**
+     * Confirms the selected context.
+     */
     public onContextConfirm(): void {
         if (
             this.isContextDetectionActive &&
@@ -814,6 +950,13 @@ class EditMode {
         }
     }
 
+
+    /**
+     * Adds/Removes the edit mode overlay.
+     *
+     * @param remove
+     * Whether the edit overlay should be removed.
+     */
     public setEditOverlay(
         remove?: boolean
     ): void {
@@ -840,6 +983,9 @@ class EditMode {
  * */
 namespace EditMode {
     export interface Options {
+        /**
+         * Whether the edit mode should be enabled for the dashboards.
+         */
         enabled: boolean;
         /**
          * The URL prefix for the icons used in the edit mode like the context
@@ -848,21 +994,57 @@ namespace EditMode {
          * @default 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/'
          */
         iconsURLPrefix?: string;
+        /**
+         * Additional Language options.
+         */
         lang?: EditGlobals.LangOptions|string;
-        toolbars?: EditMode.Toolbars;
+        /**
+        * Toolbar options.
+        */
+        toolbars?: Toolbars;
+        /**
+            * Drag&Drop options.
+            */
         dragDrop?: DragDrop.Options;
+        /**
+            * Resize options.
+            */
         resize?: Resizer.Options;
+        /**
+            * @internal
+            */
         tools: Tools;
+        /**
+            * Context menu options.
+            */
         contextMenu?: EditContextMenu.Options;
+        /**
+            * Confirmation popup options.
+            */
         confirmationPopup: ConfirmationPopup.Options;
     }
 
+    /**
+    * Toolbar options.
+    */
     export interface Toolbars {
+        /**
+        * Options of the cell toolbar.
+        */
         cell?: CellEditToolbar.Options;
+        /**
+        * Options of the row toolbar.
+        */
         row?: RowEditToolbar.Options;
-        settings?: SidebarPopup.Options;
+        /**
+        * options of the sidebar.
+        */
+        sidebar?: SidebarPopup.Options;
     }
 
+    /**
+    * @internal
+    */
     export interface Tools {
         contextMenu?: EditContextMenu;
         contextButtonElement?: HTMLDOMElement;

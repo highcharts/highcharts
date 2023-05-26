@@ -11,6 +11,7 @@
         "../../../ts/Dashboards/Layout/Layout.ts",
         "../../../ts/Dashboards/Layout/Row.ts",
         "../../../ts/Dashboards/EditMode/AccordionMenu.ts",
+        "../../../ts/Dashboards/EditMode/EditMode.ts",
         "../../../ts/Dashboards/Components/EditableOptions.ts",
         "../../../ts/Dashboards/Components/ComponentOptions.ts",
         "../../../ts/Dashboards/Layout/Cell.ts",
