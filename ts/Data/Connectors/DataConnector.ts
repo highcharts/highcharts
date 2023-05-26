@@ -81,17 +81,21 @@ abstract class DataConnector implements DataEvent.Emitter {
     /**
      * Metadata to describe the connector and the content of columns.
      */
-    public metadata: DataConnector.Metadata;
+    public readonly metadata: DataConnector.Metadata;
+
+    private _polling?: number;
 
     /**
      * Poll timer ID, if active.
      */
-    public polling?: number;
+    public get polling(): boolean {
+        return !!this.polling;
+    }
 
     /**
      * Table managed by this DataConnector instance.
      */
-    public table: DataTable;
+    public readonly table: DataTable;
 
     /* *
      *
@@ -260,9 +264,9 @@ abstract class DataConnector implements DataEvent.Emitter {
     ): void {
         const connector = this;
 
-        window.clearTimeout(connector.polling);
+        window.clearTimeout(connector._polling);
 
-        connector.polling = window.setTimeout((): Promise<void> => connector
+        connector._polling = window.setTimeout((): Promise<void> => connector
             .load()['catch'](
                 (error): void => connector.emit<DataConnector.ErrorEvent>({
                     type: 'loadError',
@@ -271,7 +275,7 @@ abstract class DataConnector implements DataEvent.Emitter {
                 })
             )
             .then((): void => {
-                if (connector.polling) {
+                if (connector._polling) {
                     connector.startPolling(refreshTime);
                 }
             })
@@ -284,9 +288,9 @@ abstract class DataConnector implements DataEvent.Emitter {
     public stopPolling(): void {
         const connector = this;
 
-        window.clearTimeout(connector.polling);
+        window.clearTimeout(connector._polling);
 
-        delete connector.polling;
+        delete connector._polling;
     }
 
     /**

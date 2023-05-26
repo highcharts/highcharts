@@ -152,7 +152,7 @@ class DataGrid {
      * The column names in a sorted array as rendered (or changed).
      * @internal
      */
-    private columnNames: Array<string>;
+    private columnNames: Array<string> = [];
 
     /**
      * The dragging placeholder.
@@ -250,7 +250,6 @@ class DataGrid {
 
         // Init data table
         this.dataTable = this.initDataTable();
-        this.columnNames = this.getColumnsToDisplay();
 
         this.rowElements = [];
         this.draggedResizeHandle = null;
@@ -266,6 +265,9 @@ class DataGrid {
      */
     public update(options: DeepPartial<DataGridOptions>): void {
         this.options = merge(this.options, options);
+        if (this.options.dataTable !== this.dataTable) {
+            this.dataTable = this.initDataTable();
+        }
 
         this.scrollContainer.removeChild(this.innerContainer);
         this.render();
@@ -473,6 +475,7 @@ class DataGrid {
         emptyHTMLElement(this.innerContainer);
 
         if (options.columnHeaders.enabled) {
+            this.columnNames = this.getColumnsToDisplay();
             this.outerContainer.style.top = this.options.cellHeight + 'px';
             this.renderColumnHeaders();
         } else {

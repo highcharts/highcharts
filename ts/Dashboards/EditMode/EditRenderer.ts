@@ -99,10 +99,12 @@ function renderCollapseHeader(
 
     const {
         name,
-        allowEnabled,
+        showToggle,
         onchange,
         isEnabled,
-        isNested
+        isNested,
+        iconsURLPrefix,
+        lang
     } = options;
 
     const accordion = createElement(
@@ -135,19 +137,20 @@ function renderCollapseHeader(
     createElement(
         'span',
         {
-            textContent: (EditGlobals.lang)[name] || name
+            textContent: lang[name] || name
         },
         {},
         headerBtn
     );
 
-    if (allowEnabled) {
+    if (showToggle) {
         renderToggle(header, {
             enabledOnOffLabels: true,
             id: name,
             name: name,
             onchange,
-            value: isEnabled || false
+            value: isEnabled || false,
+            lang
         });
     }
 
@@ -157,7 +160,7 @@ function renderCollapseHeader(
             className:
                 EditGlobals.classNames.accordionHeaderIcon + ' ' +
                 EditGlobals.classNames.rotateElement,
-            src: EditGlobals.iconsURLPrefix + 'dropdown-pointer.svg'
+            src: iconsURLPrefix + 'drowdown-pointer.svg'
         },
         {},
         headerBtn
@@ -237,8 +240,10 @@ function renderSelect(
     );
 
     const iconURL = (
-        U.find(options.items, (item): boolean => item.name === options.value) ||
-        {}
+        U.find(
+            options.selectOptions,
+            (item): boolean => item.name === options.value
+        ) || {}
     ).iconURL;
 
     let headerIcon;
@@ -270,7 +275,7 @@ function renderSelect(
                 EditGlobals.classNames.dropdownIcon +
                 ' ' +
                 EditGlobals.classNames.rotateElement,
-            src: iconsURLPrefix + 'dropdown-pointer.svg'
+            src: iconsURLPrefix + 'drowdown-pointer.svg'
         },
         {},
         btn
@@ -292,9 +297,9 @@ function renderSelect(
         dropdownPointer.classList.toggle(EditGlobals.classNames.rotateElement);
     });
 
-    for (let i = 0, iEnd = options.items.length; i < iEnd; ++i) {
+    for (let i = 0, iEnd = options.selectOptions.length; i < iEnd; ++i) {
         renderSelectElement(
-            merge(options.items[i] || {}, { iconsURLPrefix }),
+            merge(options.selectOptions[i] || {}, { iconsURLPrefix }),
             dropdown,
             placeholder,
             options.id,
@@ -383,7 +388,7 @@ function renderToggle(
         return;
     }
 
-    const { value, title } = options;
+    const { value, title, lang } = options;
     const toggleContainer = createElement(
         'div',
         { className: EditGlobals.classNames.toggleContainer },
@@ -396,7 +401,7 @@ function renderToggle(
 
     if (options.enabledOnOffLabels) {
         EditRenderer.renderText(toggleContainer, {
-            title: EditGlobals.lang.off,
+            title: lang.off,
             className: EditGlobals.classNames.toggleLabels
         });
     }
@@ -438,7 +443,7 @@ function renderToggle(
 
     if (options.enabledOnOffLabels) {
         EditRenderer.renderText(toggleContainer, {
-            title: EditGlobals.lang.on,
+            title: lang.on,
             className: EditGlobals.classNames.toggleLabels
         });
     }
@@ -784,7 +789,7 @@ export interface FormFieldOptions {
 export interface SelectFormFieldOptions extends FormFieldOptions {
     title: string;
     value: string;
-    items: Array<SelectFormFieldItemOptions>;
+    selectOptions: Array<SelectFormFieldItemOptions>;
 }
 
 export interface SelectFormFieldItemOptions {
@@ -808,14 +813,17 @@ export interface ToggleFormFieldOptions {
     onchange?: (value: boolean) => void;
     id: string;
     name: string;
+    lang: EditGlobals.LangOptions;
 }
 
 export interface NestedHeaderFormFieldOptions {
     name: string;
-    allowEnabled?: boolean;
+    showToggle?: boolean;
     onchange?: (value: boolean) => void;
     isEnabled?: boolean;
     isNested?: boolean;
+    iconsURLPrefix?: string;
+    lang: EditGlobals.LangOptions;
 }
 
 export type RendererElement = (

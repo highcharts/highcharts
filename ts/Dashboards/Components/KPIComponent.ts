@@ -22,6 +22,7 @@
  *
  * */
 
+import type Cell from '../Layout/Cell';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Options from '../../Core/Options';
 import type TextOptions from './TextOptions';
@@ -29,7 +30,6 @@ import type TextOptions from './TextOptions';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
-import ComponentRegistry from './ComponentRegistry.js';
 import F from '../../Core/FormatUtilities.js';
 const {
     format
@@ -71,25 +71,30 @@ class KPIComponent extends Component {
      * @param json
      * Set of component options, used for creating the KPI component.
      *
+     * @param cell
+     * Instance of cell, where component is attached.
+     *
      * @returns
      * KPI component based on config from JSON.
      *
      * @internal
      */
-    public static fromJSON(json: KPIComponent.ClassJSON): KPIComponent {
+    public static fromJSON(
+        json: KPIComponent.ClassJSON,
+        cell: Cell
+    ): KPIComponent {
         const options = json.options;
         const chartOptions =
             options.chartOptions && JSON.parse(options.chartOptions);
         const subtitle = JSON.parse(options.subtitle || '{}');
         const title = options.title && JSON.parse(options.title);
-        const style = JSON.parse(options.style || '{}');
 
         return new KPIComponent(
+            cell,
             merge(options as any, {
                 chartOptions,
                 title,
-                subtitle,
-                style
+                subtitle
             })
         );
     }
@@ -113,10 +118,7 @@ class KPIComponent extends Component {
                 Component.defaultOptions.className,
                 `${Component.defaultOptions.className}-kpi`
             ].join(' '),
-            style: {
-                boxSizing: 'border-box',
-                textAlign: 'center'
-            },
+            minFontSize: 20,
             thresholdColors: ['#f45b5b', '#90ed7d']
         }
     );
@@ -176,12 +178,6 @@ class KPIComponent extends Component {
      */
     public options: KPIComponent.ComponentOptions;
     /**
-     * HTML element value's wrapper.
-     *
-     * @internal
-     */
-    public valueWrap: HTMLElement;
-    /**
      * HTML element where the value is created.
      *
      * @internal
@@ -228,15 +224,21 @@ class KPIComponent extends Component {
     /**
      * Creates a KPI component in the cell.
      *
+     * @param cell
+     * Instance of cell, where component is attached.
+     *
      * @param options
      * The options for the component.
      */
-    constructor(options: Partial<KPIComponent.ComponentOptions>) {
+    constructor(
+        cell: Cell,
+        options: Partial<KPIComponent.ComponentOptions>
+    ) {
         options = merge(
             KPIComponent.defaultOptions,
             options
         );
-        super(options);
+        super(cell, options);
 
         this.options = options as KPIComponent.ComponentOptions;
 
@@ -246,20 +248,32 @@ class KPIComponent extends Component {
             this.syncHandlers
         );
 
-        this.valueWrap = createElement('div', {
-            className: `${Component.defaultOptions.className}-kpi-value-wrap`
-        });
-        this.value = createElement('span', {
-            className: `${Component.defaultOptions.className}-kpi-value`
-        });
-        this.subtitle = createElement('span', {
-            className: this.getSubtitleClassName()
-        });
+        this.value = createElement(
+            'span',
+            {
+                className: `${Component.defaultOptions.className}-kpi-value`
+            },
+            {},
+            this.contentElement
+        );
+        this.subtitle = createElement(
+            'span',
+            {
+                className: this.getSubtitleClassName()
+            },
+            {},
+            this.contentElement
+        );
 
         if (this.options.chartOptions) {
-            this.chartContainer = createElement('figure', {
-                className: `${Component.defaultOptions.className}-kpi-chart-container`
-            });
+            this.chartContainer = createElement(
+                'div',
+                {
+                    className: `${Component.defaultOptions.className}-kpi-chart-container`
+                },
+                {},
+                this.contentElement
+            );
         }
     }
 
@@ -275,12 +289,6 @@ class KPIComponent extends Component {
 
         this.contentElement.style.display = 'flex';
         this.contentElement.style.flexDirection = 'column';
-        this.contentElement.appendChild(this.valueWrap);
-        this.valueWrap.appendChild(this.value);
-        this.valueWrap.appendChild(this.subtitle);
-        if (this.chartContainer) {
-            this.contentElement.appendChild(this.chartContainer);
-        }
         this.parentElement.appendChild(this.element);
 
         this.updateElements();
@@ -322,9 +330,25 @@ class KPIComponent extends Component {
      */
     private updateTitleSize(width: number, height: number): void {
         if (this.titleElement) {
-            this.titleElement.style.fontSize =
-                0.1 * Math.min(width, height) + 'px';
+            this.titleElement.style.fontSize = this.getFontSize(
+                width,
+                height,
+                0.08 * (this.chart ? 1 : 1.7)
+            );
         }
+    }
+
+    private getFontSize(
+        width: number,
+        height: number,
+        multiplier: number
+    ): string {
+        return (
+            Math.max(
+                this.options.minFontSize,
+                Math.round(multiplier * Math.min(width, height))
+            ) + 'px'
+        );
     }
 
     /**
@@ -339,8 +363,19 @@ class KPIComponent extends Component {
      */
     private updateSize(width: number, height: number): void {
         this.updateTitleSize(width, height);
-        this.value.style.fontSize = 0.2 * Math.min(width, height) + 'px';
-        this.subtitle.style.fontSize = 0.08 * Math.min(width, height) + 'px';
+        // If there is no chart, make the font size  bigger.
+        const noChartMultiplier = (this.chart ? 1 : 1.7);
+        const noTitleMultiplier = (this.options.title ? 0.7 : 1);
+        this.value.style.fontSize = this.getFontSize(
+            width,
+            height,
+            0.15 * noChartMultiplier * noTitleMultiplier
+        );
+        this.subtitle.style.fontSize = this.getFontSize(
+            width,
+            height,
+            0.08 * noChartMultiplier
+        );
 
         this.updatingSize = true;
         super.resize(
@@ -380,17 +415,16 @@ class KPIComponent extends Component {
      * Handles updating via options.
      * @param options
      * The options to apply.
-     *
-     * @returns
-     * The component for chaining
      */
-    public update(options: Partial<KPIComponent.ComponentOptions>): this {
-        super.update(options);
+    public async update(
+        options: Partial<KPIComponent.ComponentOptions>
+    ): Promise<void> {
+        await super.update(options);
         if (options.chartOptions && this.chart) {
             this.chart.update(options.chartOptions);
         }
 
-        return this.redraw();
+        this.redraw();
     }
 
     /**
@@ -572,7 +606,6 @@ class KPIComponent extends Component {
                 subtitle: JSON.stringify(this.options.subtitle),
                 title: JSON.stringify(this.options.title),
                 threshold: this.options.threshold,
-                style: JSON.stringify(this.options.style),
                 thresholdColors: this.options.thresholdColors,
                 chartOptions: JSON.stringify(this.options.chartOptions),
                 valueFormat: this.options.valueFormat
@@ -609,7 +642,6 @@ namespace KPIComponent {
     export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
         title?: string;
         chartOptions?: string;
-        style?: string;
         threshold?: number|Array<number>;
         thresholdColors?: Array<string>;
         type: 'KPI';
@@ -641,6 +673,10 @@ namespace KPIComponent {
          * The value that is displayed in KPI component.
          */
         value?: number|string;
+        /**
+         * The minimal value of the font size, that KPI component should have.
+         */
+        minFontSize: number;
         /**
          * The KPI's component subtitle. This can be used both to display
          * a subtitle below the main title.

@@ -20,6 +20,11 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-point').eq(1).trigger('mouseover');
         firstDataGridRow.parent().should('not.have.class', 'hc-dg-row hovered');
         cy.get('.hc-dg-row').eq(1).should('have.class', 'hc-dg-row hovered');
+
+        // Hover over the first point
+        cy.get('.highcharts-point').eq(0).trigger('mouseover');
+        firstDataGridRow.parent().should('not.have.class', 'hc-dg-row hovered');
+        cy.get('.hc-dg-row').eq(0).should('have.class', 'hc-dg-row hovered');
     });
 
     it('Updating of the store should work by changing chart and datagrid', () =>{

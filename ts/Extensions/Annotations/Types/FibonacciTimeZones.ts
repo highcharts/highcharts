@@ -193,15 +193,33 @@ interface FibonacciTimeZones {
 
 FibonacciTimeZones.prototype.defaultOptions = merge(
     CrookedLine.prototype.defaultOptions,
+    /**
+     * The Fibonacci Time Zones annotation.
+     *
+     * @sample highcharts/annotations-advanced/fibonacci-time-zones/
+     *         Fibonacci Time Zones
+     *
+     * @extends      annotations.crookedLine
+     * @since        9.3.0
+     * @product      highstock
+     * @optionparent annotations.fibonacciTimeZones
+     */
     {
         typeOptions: {
+            /**
+             * @exclude   y
+             * @since     9.3.0
+             * @product   highstock
+             * @apioption annotations.fibonacciTimeZones.typeOptions.points
+             */
+
             // Options for showing in popup edit
             line: {
                 /**
                  * The color of the lines.
                  *
                  * @type      {string}
-                 * @since 9.3.0
+                 * @since     9.3.0
                  * @default   'rgba(0, 0, 0, 0.75)'
                  * @apioption annotations.fibonacciTimeZones.typeOptions.line.stroke
                  */
@@ -210,7 +228,7 @@ FibonacciTimeZones.prototype.defaultOptions = merge(
                  * The width of the lines.
                  *
                  * @type      {number}
-                 * @since 9.3.0
+                 * @since     9.3.0
                  * @default   1
                  * @apioption annotations.fibonacciTimeZones.typeOptions.line.strokeWidth
                  */
@@ -309,30 +327,3 @@ Annotation.types.fibonacciTimeZones = FibonacciTimeZones;
  * */
 
 export default FibonacciTimeZones;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * The Fibonacci Time Zones annotation.
- *
- * @sample highcharts/annotations-advanced/fibonacci-time-zones/
- *         Fibonacci Time Zones
- *
- * @extends   annotations.crookedLine
- * @since 9.3.0
- * @product   highstock
- * @apioption annotations.fibonacciTimeZones
- */
-
-/**
- * @exclude   y
- * @since 9.3.0
- * @product   highstock
- * @apioption annotations.fibonacciTimeZones.typeOptions.points
- */
-
-(''); // keeps doclets above in transpiled file

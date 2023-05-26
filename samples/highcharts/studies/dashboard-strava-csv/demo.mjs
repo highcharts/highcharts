@@ -481,7 +481,7 @@ const components = state => [
             }
         },
         sync: {
-            selection: true
+            extremes: true
         },
         events: {
             afterPresentationModifier: function () {
@@ -525,7 +525,7 @@ const components = state => [
             }
         },
         sync: {
-            selection: {
+            extremes: {
                 handler: altSyncHandler
             }
         }
@@ -565,7 +565,7 @@ const components = state => [
             }
         },
         sync: {
-            selection: {
+            extremes: {
                 handler: altSyncHandler
             }
         }
@@ -640,14 +640,6 @@ const editMode = {
             events: {
                 click: function () {
                     dashboard.exportLocal();
-                }
-            }
-        }, {
-            id: 'delete-dashboard',
-            text: 'Delete current dashboard',
-            events: {
-                click: function () {
-                    dashboard.destroy();
                 }
             }
         }, {

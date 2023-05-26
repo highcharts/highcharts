@@ -31,7 +31,7 @@ import type TooltipOptions from './TooltipOptions';
 import F from './FormatUtilities.js';
 const { format } = F;
 import H from './Globals.js';
-const { doc } = H;
+const { doc, isSafari } = H;
 import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
@@ -1573,6 +1573,18 @@ class Tooltip {
             container.style.left = boxExtremes.left + 'px';
             container.style.top = chartTop + 'px';
         }
+
+        // Workaround for #18927, artefacts left by the shadows of split
+        // tooltips in Safari v16 (2023). Check again with later versions if we
+        // can remove this.
+        if (isSafari) {
+            tooltipLabel.attr({
+                // Force a redraw of the whole group by chaning the opacity
+                // slightly
+                opacity: tooltipLabel.opacity === 1 ? 0.999 : 1
+            });
+        }
+
     }
 
     /**
@@ -1739,8 +1751,6 @@ class Tooltip {
      */
     public update(options: TooltipOptions): void {
         this.destroy();
-        // Update user options (#6218)
-        merge(true, (this.chart.options.tooltip as any).userOptions, options);
         this.init(this.chart, merge(true, this.options, options));
     }
 

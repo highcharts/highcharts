@@ -1,5 +1,5 @@
 let exportedLayoutId;
-let board = new Dashboards.Board('container', {
+let board = Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -10,14 +10,6 @@ let board = new Dashboards.Board('container', {
                 events: {
                     click: function () {
                         board.exportLocal();
-                    }
-                }
-            }, {
-                id: 'delete-dashboard',
-                text: 'Delete current dashboard',
-                events: {
-                    click: function () {
-                        board.destroy();
                     }
                 }
             }, {

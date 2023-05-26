@@ -169,14 +169,15 @@ class ScrollbarAxis {
                     }
 
                     if (this.shouldUpdateExtremes(e.DOMType)) {
+                        // #17977, set animation to undefined instead of true
+                        const animate = e.DOMType === 'mousemove' ||
+                            e.DOMType === 'touchmove' ? false : void 0;
+
                         axis.setExtremes(
                             from,
                             to,
                             true,
-                            (
-                                e.DOMType !== 'mousemove' &&
-                                e.DOMType !== 'touchmove'
-                            ),
+                            animate,
                             e
                         );
                     } else {

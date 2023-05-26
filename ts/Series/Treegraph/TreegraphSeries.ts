@@ -479,7 +479,12 @@ class TreegraphSeries extends TreemapSeries {
         super.alignDataLabel.apply(this, arguments);
 
         // Fade in or out
-        dataLabel.animate({ opacity: visible === false ? 0 : 1 });
+        dataLabel.animate({
+            opacity: visible === false ? 0 : 1
+        }, void 0, function (): void {
+            // Hide data labels that belong to hidden points (#18891)
+            visible || dataLabel.hide();
+        });
 
         // Reset
         point.visible = visible;

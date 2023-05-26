@@ -1,29 +1,34 @@
-let cursor = 500;
-const chunk = 100;
-let data = usdeur.slice(0, cursor);
+(async () => {
+    const usdeur = await fetch(
+        'https://www.highcharts.com/samples/data/usdeur.json'
+    ).then(response => response.json());
+    let cursor = 500;
+    const chunk = 100;
+    let data = usdeur.slice(0, cursor);
 
-const chart = Highcharts.stockChart('container', {
-    rangeSelector: {
-        selected: 1
-    },
+    const chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 1
+        },
 
-    series: [{
-        name: 'USD to EUR',
-        data: data
-    }]
-});
+        series: [{
+            name: 'USD to EUR',
+            data: data
+        }]
+    });
 
-document.getElementById('button').addEventListener('click', e => {
-    data = usdeur.slice(cursor, cursor + chunk);
-    cursor += chunk;
+    document.getElementById('button').addEventListener('click', e => {
+        data = usdeur.slice(cursor, cursor + chunk);
+        cursor += chunk;
 
-    for (let i = 0; i < data.length; i++) {
-        chart.series[0].addPoint(data[i], false, true);
-    }
+        for (let i = 0; i < data.length; i++) {
+            chart.series[0].addPoint(data[i], false, true);
+        }
 
-    chart.redraw();
+        chart.redraw();
 
-    if (!data.length) {
-        e.target.disabled = true;
-    }
-});
+        if (!data.length) {
+            e.target.disabled = true;
+        }
+    });
+})();

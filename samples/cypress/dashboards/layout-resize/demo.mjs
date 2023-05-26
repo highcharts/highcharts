@@ -1,7 +1,7 @@
-import Board from  '../../../../code/es-modules/Dashboards/Board.js';
+import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 
 let exportedLayoutId;
-let board = new Board('container', {
+let board = Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -14,14 +14,6 @@ let board = new Board('container', {
                     click: function () {
                         board.exportLocal();
 
-                    }
-                }
-            }, {
-                id: 'delete-dashboard',
-                text: 'Delete current dashboard',
-                events: {
-                    click: function () {
-                        board.destroy();
                     }
                 }
             }, {

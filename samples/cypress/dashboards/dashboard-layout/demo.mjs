@@ -1,8 +1,8 @@
 import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
-import Board from '../../../../code/es-modules/masters/dashboards.src.js';
 import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
+
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
@@ -23,7 +23,7 @@ const chartDemo = {
     }
 };
 
-let board = Dashboards.board('container-nested-layout', {
+Dashboards.board('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -35,14 +35,6 @@ let board = Dashboards.board('container-nested-layout', {
                 events: {
                     click: function () {
                         board.exportLocal();
-                    }
-                }
-            }, {
-                id: 'delete-dashboard',
-                text: 'Delete current dashboard',
-                events: {
-                    click: function () {
-                        board.destroy();
                     }
                 }
             }, {

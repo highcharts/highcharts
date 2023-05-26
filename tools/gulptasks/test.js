@@ -178,7 +178,7 @@ function checkDemosConsistency() {
 /**
  * Checks if documentation is added to sidebar file
  * @async
- * @return {void}
+ * @return {Promise<void>}
  */
 function checkDocsConsistency() {
     const FS = require('fs');
@@ -281,7 +281,7 @@ function saveRun() {
 /**
  * Checks if tests should run
  * @return {boolean}
- *         True if outdated
+ * True if outdated
  */
 function shouldRun() {
 

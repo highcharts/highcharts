@@ -100,7 +100,11 @@ class AccordionMenu {
             option = editableOptions[i];
             content = EditRenderer.renderCollapseHeader(
                 accordionContainer,
-                { name: option.name }
+                {
+                    name: option.name,
+                    iconsURLPrefix: menu.iconsURLPrefix,
+                    lang: (component.board?.editMode || EditGlobals).lang
+                }
             ).content;
 
             this.renderAccordion(option, content, component);
@@ -118,7 +122,8 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: EditGlobals.lang.confirmButton,
+                value: (component.board?.editMode || EditGlobals)
+                    .lang.confirmButton,
                 callback: (): void => {
                     const changedOptions = this
                         .changedOptions as Partial<Component.ComponentOptions>;
@@ -138,7 +143,8 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: EditGlobals.lang.cancelButton,
+                value: (component.board?.editMode || EditGlobals)
+                    .lang.cancelButton,
                 callback: (): void => {
                     menu.changedOptions = {};
                     menu.chartOptionsJSON = {};
@@ -163,9 +169,9 @@ class AccordionMenu {
         propertyPath: Array<string>,
         value: boolean | string | number
     ): void {
-        let currentLevel = this
-            .changedOptions as DeepPartial<Component.ComponentOptions>;
         const pathLength = propertyPath.length - 1;
+
+        let currentLevel = this.changedOptions as AnyRecord;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {
@@ -187,8 +193,7 @@ class AccordionMenu {
                 currentLevel[key] = {};
             }
 
-            currentLevel = currentLevel[key] as
-                DeepPartial<Component.ComponentOptions>;
+            currentLevel = currentLevel[key];
         }
 
         currentLevel[propertyPath[pathLength]] = value;
@@ -206,7 +211,7 @@ class AccordionMenu {
      * the component for which the menu should be rendered.
      */
     public renderAccordion(
-        options: EditableOptions.Configuration,
+        options: EditableOptions.Options,
         parentNode: HTMLElement,
         component: Component
     ): void {
@@ -217,10 +222,10 @@ class AccordionMenu {
 
         const renderFunction = EditRenderer.getRendererFunction(options.type);
 
-
         if (!renderFunction) {
             return;
         }
+
         renderFunction(parentNode, {
             ...options,
             iconsURLPrefix: this.iconsURLPrefix,
@@ -244,34 +249,36 @@ class AccordionMenu {
      */
     public renderNested(
         parentElement: HTMLElement,
-        options: EditableOptions.Configuration,
+        options: EditableOptions.Options,
         component: Component
     ): void {
-        if (!parentElement || !options.detailedOptions) {
+        if (!parentElement || !options.nestedOptions) {
             return;
         }
 
-        const detailedOptions = options.detailedOptions;
+        const nestedOptions = options.nestedOptions;
 
-        for (let i = 0, iEnd = detailedOptions.length; i < iEnd; ++i) {
-            const name = detailedOptions[i].name;
-            const nestedOptions = detailedOptions[i].options;
-            const allowEnabled = !!detailedOptions[i].allowEnabled;
-            const propertyPath = detailedOptions[i].propertyPath || [];
+        for (let i = 0, iEnd = nestedOptions.length; i < iEnd; ++i) {
+            const name = nestedOptions[i].name;
+            const accordionOptions = nestedOptions[i].options;
+            const showToggle = !!nestedOptions[i].showToggle;
+            const propertyPath = nestedOptions[i].propertyPath || [];
             const collapsedHeader = EditRenderer.renderCollapseHeader(
                 parentElement, {
                     name,
                     isEnabled: !!component.getEditableOptionValue(propertyPath),
-                    allowEnabled,
+                    iconsURLPrefix: this.iconsURLPrefix,
+                    showToggle: showToggle,
                     onchange: (value: boolean | string | number): void =>
                         this.updateOptions(propertyPath, value),
-                    isNested: true
+                    isNested: true,
+                    lang: (component.board?.editMode || EditGlobals).lang
                 }
             );
 
-            for (let j = 0, jEnd = nestedOptions.length; j < jEnd; ++j) {
+            for (let j = 0, jEnd = accordionOptions.length; j < jEnd; ++j) {
                 this.renderAccordion(
-                    nestedOptions[j] as EditableOptions.Configuration,
+                    accordionOptions[j] as EditableOptions.Options,
                     collapsedHeader.content,
                     component
                 );

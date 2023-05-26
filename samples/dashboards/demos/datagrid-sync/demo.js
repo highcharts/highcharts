@@ -1,11 +1,4 @@
-const CSVConnector = Dashboards.DataConnector.types.CSV;
 const csvData = document.getElementById('csv').innerText;
-
-const connector = new CSVConnector({
-    csv: csvData,
-    firstRowAsNames: true
-});
-connector.load();
 
 const chartOptions = {
     xAxis: {
@@ -28,8 +21,17 @@ const chartOptions = {
     }
 };
 
-Dashboards.board('container', {
-    connector,
+const board = Dashboards.board('container', {
+    dataPool: {
+        connectors: [{
+            type: 'CSV',
+            name: 'synchro-data',
+            options: {
+                csv: csvData,
+                firstRowAsNames: true
+            }
+        }]
+    },
     gui: {
         layouts: [{
             id: 'layout-1',
@@ -47,8 +49,10 @@ Dashboards.board('container', {
     components: [
         {
             cell: 'dashboard-col-0',
-            connector,
             type: 'Highcharts',
+            connector: {
+                name: 'synchro-data'
+            },
             sync: {
                 highlight: true
             },
@@ -57,15 +61,14 @@ Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'allowConnectorUpdate: true',
-                style: {
-                    textAlign: 'center'
-                }
+                text: 'allowConnectorUpdate: true'
             },
             chartOptions
         }, {
             cell: 'dashboard-col-1',
-            connector,
+            connector: {
+                name: 'synchro-data'
+            },
             type: 'Highcharts',
             sync: {
                 highlight: true
@@ -75,21 +78,20 @@ Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'allowConnectorUpdate: false',
-                style: {
-                    textAlign: 'center'
-                }
+                text: 'allowConnectorUpdate: false'
             },
             allowConnectorUpdate: false,
             chartOptions
         }, {
             cell: 'dashboard-col-2',
+            connector: {
+                name: 'synchro-data'
+            },
             type: 'DataGrid',
-            connector,
             editable: true,
             sync: {
                 highlight: true
             }
         }
     ]
-});
+}, true);

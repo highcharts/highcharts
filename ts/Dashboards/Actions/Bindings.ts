@@ -53,7 +53,7 @@ namespace Bindings {
 
     export interface MountedComponent {
         cell: Cell;
-        component: Component;
+        component: ComponentType;
         options: Partial<Component.ComponentOptions>;
     }
 
@@ -83,7 +83,7 @@ namespace Bindings {
     }
 
     export function addComponent(
-        options: Partial<Component.ComponentOptions>,
+        options: Partial<ComponentType['options']>,
         cell?: Cell
     ): (Component|undefined) {
         // TODO: Check if there are states in the options, and if so, add them
@@ -99,22 +99,15 @@ namespace Bindings {
         const componentContainer = cell.container;
 
         const ComponentClass =
-            ComponentRegistry.getComponent(options.type) as Class<Component>;
+            ComponentRegistry.getComponent(options.type) as Class<ComponentType>;
 
         if (!ComponentClass) {
             return;
         }
 
-        let componentOptions = merge<Partial<ComponentType['options']>>(
-            options,
-            {
-                board: cell && cell.row.layout.board,
-                parentCell: cell,
-                parentElement: componentContainer
-            }
-        );
 
-        const component = new ComponentClass(componentOptions);
+        let board = cell.row.layout.board;
+        const component = new ComponentClass(cell, options);
 
         component.render();
         // update cell size (when component is wider, cell should adjust)
@@ -175,7 +168,11 @@ namespace Bindings {
         if (!componentClass) {
             return;
         }
-        const component = componentClass.fromJSON(json as any);
+        const cell = Bindings.getCell(json.options.cell || '');
+        if (!cell) {
+            return;
+        }
+        const component = componentClass.fromJSON(json as any, cell);
 
         if (component) {
             component.render();

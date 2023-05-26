@@ -20,18 +20,18 @@
  * */
 import type EditMode from './EditMode';
 import type Cell from '../Layout/Cell';
+import type ComponentType from '../Components/ComponentType';
 import type Row from '../Layout/Row';
-import U from '../../Core/Utilities.js';
 
-import BaseForm from '../../Shared/BaseForm.js';
-import EditGlobals from './EditGlobals.js';
-import GUIElement from '../Layout/GUIElement.js';
-import Bindings from '../Actions/Bindings.js';
-import Layout from '../Layout/Layout.js';
 import AccordionMenu from './AccordionMenu.js';
-import EditRenderer from './EditRenderer.js';
+import BaseForm from '../../Shared/BaseForm.js';
+import Bindings from '../Actions/Bindings.js';
 import Component from '../Components/Component';
-
+import EditGlobals from './EditGlobals.js';
+import EditRenderer from './EditRenderer.js';
+import GUIElement from '../Layout/GUIElement.js';
+import Layout from '../Layout/Layout.js';
+import U from '../../Core/Utilities.js';
 const {
     createElement,
     merge
@@ -116,7 +116,8 @@ class SidebarPopup extends BaseForm {
                             ],
                             chart: {
                                 animation: false,
-                                type: 'pie'
+                                type: 'pie',
+                                zooming: {}
                             }
                         }
                     });
@@ -148,25 +149,12 @@ class SidebarPopup extends BaseForm {
                 sidebar: SidebarPopup,
                 dropContext: Cell | Row
             ): Cell|void {
-                const headers = ['Apples', 'Pears', 'Plums'];
-                const columns = ((): Record<string, Array<string>> => {
-                    const makeRandomRows = (): Array<string> =>
-                        new Array(40).map(
-                            (): string => (10 * Math.random()).toFixed(2)
-                        );
-                    const cols: Record<string, Array<string>> = {};
-                    for (let i = 0; i < headers.length; ++i) {
-                        cols[headers[i]] = makeRandomRows();
-                    }
-                    return cols;
-                })();
 
                 if (sidebar && dropContext) {
                     return sidebar.onDropNewComponent(dropContext, {
                         cell: '',
                         type: 'DataGrid'
-                        // connector: new CSVConnector(new DataTable(columns))
-                    }); // necessary for now
+                    });
                 }
             }
         }, {
@@ -307,7 +295,7 @@ class SidebarPopup extends BaseForm {
         }
 
         // Remove highlight from the row.
-        if (editMode.editCellContext) {
+        if (editMode.editCellContext && editMode.editCellContext.row) {
             editMode.editCellContext.row.setHighlight(true);
         }
 
@@ -321,8 +309,11 @@ class SidebarPopup extends BaseForm {
 
     public generateContent(context?: Cell | Row): void {
 
+        // Title
         this.renderHeader(
-            context ? EditGlobals.lang.settings : EditGlobals.lang.addComponent,
+            context ?
+                this.editMode.lang.settings :
+                this.editMode.lang.addComponent,
             this.iconsURL + 'settings.svg'
         );
 
@@ -367,6 +358,25 @@ class SidebarPopup extends BaseForm {
                         e as PointerEvent,
                         void 0,
                         (dropContext: Cell|Row): void => {
+                            // Add component if there is no layout yet.
+                            if (this.editMode.board.layouts.length === 0) {
+                                const board = this.editMode.board,
+                                    newLayoutName =
+                                        GUIElement.createElementId('layout'),
+                                    layout = new Layout(board, {
+                                        id: newLayoutName,
+                                        copyId: '',
+                                        parentContainerId: board.container.id,
+                                        rows: [{}],
+                                        style: {}
+                                    });
+                                if (layout) {
+                                    board.layouts.push(layout);
+                                }
+
+                                dropContext = layout.rows[0];
+                            }
+
                             const newCell =
                                 components[i].onDrop(sidebar, dropContext);
 
@@ -386,7 +396,7 @@ class SidebarPopup extends BaseForm {
 
     public onDropNewComponent(
         dropContext: Cell|Row,
-        componentOptions: Partial<Component.ComponentOptions>
+        componentOptions: Partial<ComponentType['options']>
     ): Cell | void {
         const sidebar = this,
             dragDrop = sidebar.editMode.dragDrop;
@@ -426,7 +436,7 @@ class SidebarPopup extends BaseForm {
             editMode.setEditOverlay(true);
         }
 
-        if (editCellContext) {
+        if (editCellContext && editCellContext.row) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight();
 

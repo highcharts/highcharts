@@ -473,6 +473,11 @@ text.highcharts-data-label {
     stroke-width: 0;
 }
 
+.highcharts-series-label text {
+    fill: inherit;
+    font-weight: bold;
+}
+
 .highcharts-series:not(.highcharts-pie-series) .highcharts-point-select,
 .highcharts-markers .highcharts-point-select {
     fill: var(--highcharts-neutral-color-20);
@@ -829,7 +834,7 @@ circle.highcharts-legend-nav-inactive { /* tracker */
 }
 
 .highcharts-scrollbar-track {
-    fill: none;
+    fill: rgba(255, 255, 255, 0.001);
     stroke: var(--highcharts-neutral-color-20);
     stroke-width: 1px;
 }

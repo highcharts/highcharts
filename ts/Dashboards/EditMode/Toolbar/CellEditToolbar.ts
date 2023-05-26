@@ -103,17 +103,17 @@ class CellEditToolbar extends EditToolbar {
 
                         popup.show({
                             confirmButton: {
-                                value: EditGlobals.lang.confirmButton,
+                                value: editMode.lang.confirmButton,
                                 callback: parentNode.onCellDestroy,
                                 context: parentNode
                             },
                             cancelButton: {
-                                value: EditGlobals.lang.cancelButton,
+                                value: editMode.lang.cancelButton,
                                 callback: (): void => {
                                     popup.closePopup();
                                 }
                             },
-                            text: EditGlobals.lang.confirmDestroyCell
+                            text: editMode.lang.confirmDestroyCell
                         });
                     }
                 }

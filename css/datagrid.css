@@ -45,6 +45,7 @@
         --highcharts-neutral-color-10: rgb(71, 71, 71);
         --highcharts-neutral-color-5: rgb(61, 61, 61);
         --highcharts-neutral-color-3: rgb(57, 57, 57);
+        --highcharts-neutral-color-0: rgb(0, 0, 0);
 
         /* Highlight color variations */
         --highcharts-highlight-color-100: rgb(122, 167, 255);
@@ -84,8 +85,8 @@
     position: relative;
     height: 100%;
     box-sizing: border-box;
-    border: 1px solid var(--highcharts-neutral-color-20);
     color: var(--highcharts-neutral-color-100);
+    border: 1px solid var(--highcharts-neutral-color-20);
 }
 
 .hc-dg-outer-container {
@@ -95,6 +96,8 @@
     bottom: 0;
     overflow: scroll;
     z-index: 0;
+    background-color: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .hc-dg-scroll-container {
@@ -116,7 +119,7 @@
     border-left: 1px solid var(--highcharts-neutral-color-20);
     border-top: 1px solid var(--highcharts-neutral-color-20);
     overflow: hidden;
-    padding: 0 8px;
+    padding: 8px 12px;
     flex: 1;
     box-sizing: border-box;
 }
@@ -126,9 +129,9 @@
 }
 
 .hc-dg-cell-input {
-    width: calc(100% + 16px);
-    margin: 0 -8px;
-    padding: 0 6px;
+    width: calc(100% + 24px);
+    margin: -8px -12px;
+    padding: 0 10px;
     box-sizing: border-box;
     border: 2px solid var(--highcharts-highlight-color-100);
     outline: none;
@@ -141,8 +144,12 @@
     width: 100%;
 }
 
+.hc-dg-row:nth-child(even) {
+    background-color: var(--highcharts-neutral-color-3);
+}
+
 .hc-dg-row.hovered {
-    background-color: var(--highcharts-highlight-color-20);
+    background-color: var(--highcharts-highlight-color-10);
 }
 
 .hc-dg-row:first-child .hc-dg-cell {
@@ -152,10 +159,10 @@
 .hc-dg-column-header {
     display: flex;
     align-items: center;
-    border-left: 1px solid var(--highcharts-neutral-color-20);
     border-bottom: 1px solid var(--highcharts-neutral-color-20);
+    color: var(--highcharts-neutral-color-100);
     overflow: hidden;
-    padding: 0 8px;
+    padding: 16px 8px 12px;
     flex: 1;
     font-weight: 700;
     box-sizing: border-box;
@@ -167,7 +174,7 @@
 
 .hc-dg-column-headers {
     display: flex;
-    background-color: var(--highcharts-neutral-color-10);
+    background-color: var(--highcharts-neutral-color-5);
     width: 100%;
 }
 

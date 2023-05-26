@@ -24,12 +24,7 @@
 
 import type Board from '../Board';
 import type Cell from '../Layout/Cell';
-/* *
- *
- *  Imports
- *
- * */
-
+import type { ComponentConnectorOptions } from './ComponentOptions';
 import type {
     ComponentType,
     ComponentTypeRegistry
@@ -39,12 +34,13 @@ import type NavigationBindingsOptionsObject from
     '../../Extensions/Annotations/NavigationBindingsOptions';
 import type Serializable from '../Serializable';
 
-import type DataConnector from '../../Data/Connectors/DataConnector';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
+
 import CallbackRegistry from '../CallbackRegistry.js';
+import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DG from '../Globals.js';
 const {
     classNamePrefix
@@ -94,12 +90,6 @@ import ComponentRegistry from './ComponentRegistry.js';
  * @internal
  */
 abstract class Component {
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
 
     /* *
      *
@@ -157,7 +147,6 @@ abstract class Component {
     public static defaultOptions: Partial<Component.ComponentOptions> = {
         className: `${classNamePrefix}component`,
         parentElement: document.body,
-        parentCell: void 0,
         id: '',
         title: false,
         caption: false,
@@ -167,6 +156,10 @@ abstract class Component {
         },
         sync: Sync.defaultHandlers,
         editableOptions: [{
+            name: 'connectorName',
+            propertyPath: ['connector', 'name'],
+            type: 'select'
+        }, {
             name: 'title',
             propertyPath: ['title'],
             type: 'input'
@@ -188,16 +181,20 @@ abstract class Component {
      *
      * @internal
      */
-    public parentCell?: Cell;
+    public cell: Cell;
     /**
      * Connector that allows you to load data via URL or from a local source.
      */
     public connector?: Component.ConnectorTypes;
     /**
-    * @internal
-    * The board the component belongs to
-    * */
-    public board?: Board;
+     * The name of the connector in the data pool to use.
+     */
+    protected connectorName?: string;
+    /**
+     * @internal
+     * The board the component belongs to
+     * */
+    public board: Board;
     /**
      * Size of the component (width and height).
      */
@@ -326,10 +323,24 @@ abstract class Component {
     /**
      * Creates a component in the cell.
      *
+     * @param cell
+     * Instance of cell, where component is attached.
+     *
      * @param options
      * The options for the component.
      */
-    constructor(options: Partial<Component.ComponentOptions>) {
+    constructor(
+        cell: Cell,
+        options: Partial<Component.ComponentOptions>
+    ) {
+        this.board = cell.row.layout.board;
+
+        this.cell = cell;
+        // TODO: Change the TS of cell.
+        this.parentElement = cell.container!;
+        this.attachCellListeneres();
+
+
         this.options = merge(
             Component.defaultOptions as Required<Component.ComponentOptions>,
             options
@@ -339,33 +350,7 @@ abstract class Component {
             uniqueKey();
 
         // Todo: we might want to handle this later
-        if (typeof this.options.parentElement === 'string') {
-            const el = document.getElementById(this.options.parentElement);
-            if (!el) {
-                throw new Error(
-                    'Could not find element with id: ' +
-                    this.options.parentElement
-                );
-            }
-            this.parentElement = el;
 
-        } else {
-            this.parentElement = (
-                this.options.parentElement as any ||
-                document.createElement('div')
-            );
-        }
-
-        if (this.options.parentCell) {
-            this.parentCell = this.options.parentCell;
-            if (this.parentCell.container) {
-                this.parentElement = this.parentCell.container;
-            }
-            this.attachCellListeneres();
-        }
-
-        this.connector = this.options.connector;
-        this.board = this.options.board;
         this.hasLoaded = false;
         this.shouldRedraw = true;
         this.editableOptions =
@@ -383,7 +368,7 @@ abstract class Component {
         this.syncHandlers = this.handleSyncOptions();
         this.element = createElement('div', {
             className: this.options.className
-        }, this.options.style);
+        });
 
         this.contentElement = createElement('div', {
             className: `${this.options.className}-content`
@@ -391,6 +376,27 @@ abstract class Component {
             height: '100%'
         }, void 0, true);
 
+    }
+
+    /**
+     * Inits connectors for the component and redraws it.
+     *
+     * @returns
+     * Promise resolviing to the component.
+     */
+    public async initConnector(): Promise<this> {
+        if (
+            this.options.connector?.name &&
+            this.connectorName !== this.options.connector.name
+        ) {
+            const connector = await this.board.dataPool
+                .getConnector(this.options.connector.name);
+
+            this.setConnector(connector);
+            this.shouldRedraw = true;
+            this.redraw();
+        }
+        return this;
     }
 
     /* *
@@ -453,8 +459,8 @@ abstract class Component {
             }
         }
 
-        if (this.parentCell && Object.keys(this.parentCell).length) {
-            const board = this.parentCell.row.layout.board;
+        if (this.cell && Object.keys(this.cell).length) {
+            const board = this.cell.row.layout.board;
             this.cellListeners.push(
                 // Listen for resize on dashboard
                 addEvent(board, 'cellResize', (): void => {
@@ -462,16 +468,16 @@ abstract class Component {
                 }),
                 // Listen for changed parent
                 addEvent(
-                    this.parentCell.row,
+                    this.cell.row,
                     'cellChange',
                     (e: { row: Row }): void => {
                         const { row } = e;
-                        if (row && this.parentCell) {
+                        if (row && this.cell) {
                             const hasLeftTheRow =
-                                row.getCellIndex(this.parentCell) === void 0;
+                                row.getCellIndex(this.cell) === void 0;
                             if (hasLeftTheRow) {
-                                if (this.parentCell) {
-                                    this.setCell(this.parentCell);
+                                if (this.cell) {
+                                    this.setCell(this.cell);
                                 }
                             }
                         }
@@ -492,7 +498,7 @@ abstract class Component {
      * @internal
      */
     public setCell(cell: Cell, resize = false): void {
-        this.parentCell = cell;
+        this.cell = cell;
         if (cell.container) {
             this.parentElement = cell.container;
         }
@@ -585,6 +591,9 @@ abstract class Component {
      * @internal
      */
     public setConnector(connector: Component.ConnectorTypes | undefined): this {
+
+        fireEvent(this, 'setConnector', { connector });
+
         // Clean up old event listeners
         while (this.tableEvents.length) {
             const eventCallback = this.tableEvents.pop();
@@ -631,7 +640,8 @@ abstract class Component {
             }
         }
 
-        fireEvent(this, 'connectorAttached', { connector });
+        fireEvent(this, 'afterSetConnector', { connector });
+
         return this;
     }
 
@@ -762,77 +772,38 @@ abstract class Component {
      *
      * @param redraw
      * Set to true if the update should redraw the component.
-     * If `false` the component will be redrawn only if options are changed.
-     *
-     * @returns
-     * The component for chaining.
      */
-    public update(
+    public async update(
         newOptions: Partial<Component.ComponentOptions>,
-        redraw: boolean = false
-    ): this {
+        redraw: boolean = true
+    ): Promise<void> {
+        const eventObject = {
+            options: newOptions,
+            shouldForceRedraw: false
+        };
+
         // Update options
-        let shouldForceRedraw = false;
+        fireEvent(this, 'update', eventObject);
 
-        if (!redraw) {
-            const currentOptions = this.options;
+        this.options = merge(this.options, newOptions);
 
-            const optionNamesToSkip = this.editableOptions.bindings ?
-                this.editableOptions.bindings.skipRedraw :
-                [];
+        if (
+            this.options.connector?.name &&
+            this.connectorName !== this.options.connector.name
+        ) {
+            const connector = await this.board.dataPool
+                .getConnector(this.options.connector.name);
 
-            const newOptionKeys = Object.keys(newOptions);
-            for (let i = 0; i < newOptionKeys.length; i++) {
-                const optionName = newOptionKeys[i];
-                if (
-                    optionNamesToSkip.indexOf(optionName) > -1
-                ) {
-                    continue;
-                }
-
-                if (optionName in currentOptions) {
-                    const oldOptionValue =
-                        (currentOptions as AnyRecord)[optionName];
-                    const newOptionValue =
-                        (newOptions as AnyRecord)[optionName];
-
-                    // If the type has changed, redraw
-                    if (typeof oldOptionValue !== typeof newOptionValue) {
-                        shouldForceRedraw = true;
-                        break;
-                    }
-
-                    // If both are objects, do a quick comparison
-                    // TODO: order should not really matter in a config
-                    // so might want to do a deeper comparison
-                    if (
-                        typeof oldOptionValue === 'object' &&
-                        JSON.stringify(oldOptionValue) !==
-                        JSON.stringify(newOptionValue)
-                    ) {
-                        shouldForceRedraw = true;
-                        break;
-                    }
-
-                    if (oldOptionValue !== newOptionValue) {
-                        shouldForceRedraw = true;
-                        break;
-                    }
-                }
-            }
+            this.setConnector(connector);
+            this.shouldRedraw = true;
         }
 
         this.options = merge(this.options, newOptions);
-        fireEvent(this, 'update', {
-            options: newOptions,
-            shouldForceRedraw
-        });
 
-        if (redraw || shouldForceRedraw) {
+        if (redraw || eventObject.shouldForceRedraw) {
             this.redraw();
         }
 
-        return this;
     }
 
     /**
@@ -1173,6 +1144,7 @@ namespace Component {
      */
     /** @internal */
     export type EventTypes =
+        SetConnectorEvent |
         ResizeEvent |
         UpdateEvent |
         TableChangedEvent |
@@ -1182,6 +1154,9 @@ namespace Component {
         JSONEvent |
         MessageEvent |
         PresentationModifierEvent;
+
+    export type SetConnectorEvent =
+        Event<'setConnector'|'afterSetConnector', {}>;
 
     /** @internal */
     export type ResizeEvent = Event<'resize', {
@@ -1231,23 +1206,13 @@ namespace Component {
 
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
-    export interface ComponentOptions extends EditableOptions {
-        [key: string]: unknown;
-        /**
-         * @internal
-         * The Board the component belongs to
-         * */
-        board?: Board;
+    export interface ComponentOptions {
+
         /**
          * Cell id, where component is attached.
          */
         cell?: string;
-        /**
-         * Instance of cell, where component is attached.
-         *
-         * @internal
-         */
-        parentCell?: Cell;
+
         /**
          * The HTML element or id of HTML element that is used for appending
          * a component.
@@ -1255,10 +1220,12 @@ namespace Component {
          * @internal
          */
         parentElement: HTMLElement | string;
+
         /**
          * The name of class that is applied to the component's container.
          */
         className?: string;
+
         /**
          * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
          */
@@ -1270,8 +1237,10 @@ namespace Component {
          * Events attached to the component : `mount`, `unmount`.
          */
         events?: Record<string, Function>;
-        /** @internal */
-        editableOptions: Array<EditableOptions.Configuration>;
+        /**
+         * Set of options that are available for editing through sidebar.
+         */
+        editableOptions: Array<EditableOptions.Options>;
         /** @internal */
         editableOptionsBindings: EditableOptions.OptionsBindings;
         /** @internal */
@@ -1287,6 +1256,26 @@ namespace Component {
          *
          */
         sync: SyncOptions;
+        /**
+         * Connector options
+         */
+        connector?: ComponentConnectorOptions;
+        /**
+         * Sets an ID for the component's container.
+         */
+        id?: string;
+        /**
+         * Additional CSS styles to apply inline to the component's container.
+         */
+        style?: CSSObject;
+        /**
+         * The component's title, which will render at the top.
+         */
+        title?: TextOptionsType;
+        /**
+         * The component's caption, which will render at the bottom.
+         */
+        caption?: TextOptionsType;
     }
 
     /**
@@ -1312,26 +1301,6 @@ namespace Component {
 
     /** @internal */
     export type ConnectorTypes = DataConnector;
-    /** @internal */
-    export interface EditableOptions {
-        connector?: ConnectorTypes;
-        /**
-         * Sets an ID for the component's container.
-         */
-        id?: string;
-        /**
-         * Additional CSS styles to apply inline to the component's container.
-         */
-        style?: CSSObject;
-        /**
-         * The component's title, which will render at the top.
-         */
-        title?: TextOptionsType;
-        /**
-         * The component's caption, which will render at the bottom.
-         */
-        caption?: TextOptionsType;
-    }
 
     export type TextOptionsType = string | false | TextOptions | undefined;
     /** @internal */
