@@ -75,5 +75,19 @@ format: 'The series exists of {points.length} ' +
     '{#if (eq 1 points.length)}point{else}points{/if}.'
 ```
 
+## Debugging
+One of the downsides of working with string formats versus formatter callbacks is the ability to log and debug inside callback. To alleviate that, you can define custom helpers allowing you to inspect the context.
+
+```js
+// Custom helper to log the context
+Highcharts.Templating.helpers.log = function () {
+    console.log(arguments[0].ctx);
+};
+
+// Usage
+format: '{log}'
+```
+[View live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/format-log).
+
 ## Deprecated format functions
 The accessibility module prior to v11.1 had two advanced functions, `#each()` and `#plural()`. These have been deprecated and replaced in the default language strings by the new `#each` and `#eq`. See [Advanced format strings](https://github.com/highcharts/highcharts/blob/v11.0.0/docs/chart-concepts/labels-and-string-formatting.md#advanced-format-strings) on GitHub for details.
