@@ -107,7 +107,9 @@ format: '{log}'
 ## Limitations
 The templating system only works on the context that is passed in to each item. For data label, the context is the point, for tooltip formats the context holds the series, points, suggested header, for axis labels it holds the axis value etc. In most of these cases the context holds deep access to DOM elements (for example through `series.chart.container.ownerDocument`), but these properties are not accessible in templates due to XSS filtering. Preventing DOM access is one of the reasons for choosing string formats over formatter callbacks.
 
-In cases where helpers are not sufficient to reach the desired formatting, it is better to preprocess the data set. Use [the custom option](https://api.highcharts.com/highcharts/series.line.custom) for series and points, and accessed that from the format string.
+In cases where helpers are not sufficient to reach the desired formatting, it is better to preprocess the data set. Use [the custom option](https://api.highcharts.com/highcharts/series.line.custom) for series and points, and access that from the format string.
+
+In the [column-comparison demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/column-comparison), we prepare a lookup object for axis labels and the tooltip, append that to the options on chart level, and access it from the axis and tooltip format strings.
 
 
 ## Deprecated format functions
