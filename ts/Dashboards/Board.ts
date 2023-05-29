@@ -41,6 +41,7 @@ import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
 import U from '../Core/Utilities.js';
 import HTMLComponent from './Components/HTMLComponent.js';
+import ComponentType from './Components/ComponentType';
 const {
     merge,
     addEvent,
@@ -86,6 +87,59 @@ class Board implements Serializable<Board, Board.JSON> {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Factory function for creating a new dashboard.
+     *
+     * @param renderTo
+     * The DOM element to render to, or its id.
+     *
+     * @param options
+     * The options for the dashboard.
+     *
+     * @param async
+     * Whether to initialize the dashboard asynchronously. When false or
+     * undefined, the function returns the dashboard instance.
+     */
+    public static board(
+        renderTo: (string|globalThis.HTMLElement),
+        options: Board.Options,
+        async?: boolean
+    ): Board;
+
+    /**
+     * Factory function for creating a new dashboard.
+     *
+     * @param renderTo
+     * The DOM element to render to, or its id.
+     *
+     * @param options
+     * The options for the dashboard.
+     *
+     * @param async
+     * Whether to initialize the dashboard asynchronously. When true, the
+     * function returns a promise that resolves with the dashboard instance.
+     */
+    public static board(
+        renderTo: (string|globalThis.HTMLElement),
+        options: Board.Options,
+        async: true
+    ): Promise<Board>;
+
+    // Implementation:
+    public static board(
+        renderTo: (string|globalThis.HTMLElement),
+        options: Board.Options,
+        async?: boolean
+    ): (Board|Promise<Board>) {
+        return new Board(renderTo, options).init(async);
+    }
+
+    /* *
+     *
      *  Constructor
      *
      * */
@@ -94,13 +148,14 @@ class Board implements Serializable<Board, Board.JSON> {
      * Creates a dashboard with components like charts, tables, and HTML
      * elements.
      *
+     * @internal
      * @param renderTo
      * The DOM element to render to, or its id.
      *
      * @param options
      * The options for the dashboard.
      */
-    public constructor(
+    protected constructor(
         renderTo: (string|HTMLElement),
         options: Board.Options
     ) {
@@ -131,25 +186,8 @@ class Board implements Serializable<Board, Board.JSON> {
             this.editMode = new EditMode(this, this.options.editMode);
         }
 
-        // Init layouts from options.
-        if (options.gui && this.options.gui) {
-            this.setLayouts(this.options.gui);
-        }
-
-        // Init layouts from JSON.
-        if (options.layoutsJSON && !this.layouts.length) {
-            this.setLayoutsFromJSON(options.layoutsJSON);
-        }
-
         // Add table cursors support.
         this.dataCursor = new DataCursor();
-        // Init components from options.
-        if (options.components) {
-            this.setComponents(options.components);
-        }
-
-        // Init events.
-        this.initEvents();
 
         // Add fullscreen support.
         this.fullscreen = new Fullscreen(this);
@@ -159,28 +197,6 @@ class Board implements Serializable<Board, Board.JSON> {
 
         // a11y module
         this.a11y = new DashboardsAccessibility(this);
-    }
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Factory function for creating a new dashboard.
-     *
-     * @param renderTo
-     * The DOM element to render to, or its id.
-     *
-     * @param options
-     * The options for the dashboard.
-     */
-    public static board(
-        renderTo: (string|globalThis.HTMLElement),
-        options: Board.Options
-    ): Board {
-        return new Board(renderTo, options);
     }
 
     /* *
@@ -275,6 +291,70 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      * */
 
+    /**
+     * Init the layouts and components on the dashboard.
+     *
+     * @internal
+     * @param async Whether to initialize the dashboard asynchronously. When
+     * false or undefined the function returns the dashboard isntance.
+     *  instance.
+     *
+     * @returns
+     * Board instance
+     */
+    protected init(async?: boolean): Board;
+
+    /**
+     * Init the layouts and components on the dashboard, and attaches connectors
+     * if they are defined on component level.
+     *
+     * @internal
+     * @param async Whether to initialize the dashboard asynchronously. When
+     * true, the function returns a promise that resolves with the dashboard
+     *  instance.
+     *
+     * @returns
+     * A promise that resolves with the dashboard instance.
+     */
+    protected init(async: true): Promise<Board>;
+
+    // Implementation:
+    protected init(async?: boolean): (Board|Promise<Board>) {
+        const options = this.options;
+
+        if (options.gui && this.options.gui) {
+            this.setLayouts(this.options.gui);
+        }
+
+        // Init layouts from JSON.
+        if (options.layoutsJSON && !this.layouts.length) {
+            this.setLayoutsFromJSON(options.layoutsJSON);
+        }
+
+        // Init components from options.
+        if (options.components) {
+            this.setComponents(options.components);
+        }
+
+        // Init events.
+        this.initEvents();
+
+        if (async) {
+
+            const componentPromises: Array<Promise<Component>> = [],
+                mountedComponents = this.mountedComponents;
+
+            for (let i = 0, iEnd = mountedComponents.length; i < iEnd; ++i) {
+                componentPromises.push(
+                    mountedComponents[i].component.initConnector()
+                );
+            }
+
+            return Promise.all(componentPromises).then((): Board => this);
+        }
+
+        return this;
+    }
     /**
      * Initializes the events.
      * @internal
@@ -374,7 +454,7 @@ class Board implements Serializable<Board, Board.JSON> {
      *
      */
     public setComponents(
-        components: Array<Component.ComponentOptions>
+        components: Array<Partial<ComponentType['options']>>
     ): void {
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             Bindings.addComponent(components[i]);
@@ -581,7 +661,7 @@ namespace Board {
         /**
          * List of components to add to the board.
          **/
-        components?: Array<Component.ComponentOptions>;
+        components?: Array<Partial<ComponentType['options']>>;
         /**
          * General options for the components.
          **/

@@ -22,6 +22,7 @@
  *
  * */
 
+import type Cell from '../Layout/Cell';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Options from '../../Core/Options';
 import type TextOptions from './TextOptions';
@@ -70,12 +71,18 @@ class KPIComponent extends Component {
      * @param json
      * Set of component options, used for creating the KPI component.
      *
+     * @param cell
+     * Instance of cell, where component is attached.
+     *
      * @returns
      * KPI component based on config from JSON.
      *
      * @internal
      */
-    public static fromJSON(json: KPIComponent.ClassJSON): KPIComponent {
+    public static fromJSON(
+        json: KPIComponent.ClassJSON,
+        cell: Cell
+    ): KPIComponent {
         const options = json.options;
         const chartOptions =
             options.chartOptions && JSON.parse(options.chartOptions);
@@ -83,6 +90,7 @@ class KPIComponent extends Component {
         const title = options.title && JSON.parse(options.title);
 
         return new KPIComponent(
+            cell,
             merge(options as any, {
                 chartOptions,
                 title,
@@ -216,15 +224,21 @@ class KPIComponent extends Component {
     /**
      * Creates a KPI component in the cell.
      *
+     * @param cell
+     * Instance of cell, where component is attached.
+     *
      * @param options
      * The options for the component.
      */
-    constructor(options: Partial<KPIComponent.ComponentOptions>) {
+    constructor(
+        cell: Cell,
+        options: Partial<KPIComponent.ComponentOptions>
+    ) {
         options = merge(
             KPIComponent.defaultOptions,
             options
         );
-        super(options);
+        super(cell, options);
 
         this.options = options as KPIComponent.ComponentOptions;
 
@@ -401,17 +415,16 @@ class KPIComponent extends Component {
      * Handles updating via options.
      * @param options
      * The options to apply.
-     *
-     * @returns
-     * The component for chaining
      */
-    public update(options: Partial<KPIComponent.ComponentOptions>): this {
-        super.update(options);
+    public async update(
+        options: Partial<KPIComponent.ComponentOptions>
+    ): Promise<void> {
+        await super.update(options);
         if (options.chartOptions && this.chart) {
             this.chart.update(options.chartOptions);
         }
 
-        return this.redraw();
+        this.redraw();
     }
 
     /**

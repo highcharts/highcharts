@@ -22,6 +22,8 @@
  *
  * */
 
+import type Cell from '../Layout/Cell.js';
+
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
@@ -98,12 +100,18 @@ class HTMLComponent extends Component {
      * @param json
      * Set of component options, used for creating the HTML component.
      *
+     * @param cell
+     * Instance of cell, where component is attached.
+     *
      * @returns
      * HTML component based on config from JSON.
      *
      * @internal
      */
-    public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
+    public static fromJSON(
+        json: HTMLComponent.ClassJSON,
+        cell: Cell
+    ): HTMLComponent {
         const options = json.options;
         const elements = (
             json.elements ?
@@ -115,6 +123,7 @@ class HTMLComponent extends Component {
         // );
 
         const component = new HTMLComponent(
+            cell,
             merge(
                 options as any,
                 {
@@ -173,12 +182,12 @@ class HTMLComponent extends Component {
      * @param options
      * The options for the component.
      */
-    constructor(options: Partial<HTMLComponent.HTMLComponentOptions>) {
+    constructor(cell: Cell, options: Partial<HTMLComponent.HTMLComponentOptions>) {
         options = merge(
             HTMLComponent.defaultOptions,
             options
         );
-        super(options);
+        super(cell, options);
 
         this.options = options as HTMLComponent.HTMLComponentOptions;
 
@@ -320,10 +329,9 @@ class HTMLComponent extends Component {
      * @returns
      * The component for chaining.
      */
-    public update(options: Partial<HTMLComponent.HTMLComponentOptions>): this {
-        super.update(options);
+    public async update(options: Partial<HTMLComponent.HTMLComponentOptions>): Promise<void> {
+        await super.update(options);
         this.emit({ type: 'afterUpdate' });
-        return this;
     }
 
     /**

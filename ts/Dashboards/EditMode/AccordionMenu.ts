@@ -169,9 +169,9 @@ class AccordionMenu {
         propertyPath: Array<string>,
         value: boolean | string | number
     ): void {
-        let currentLevel = this
-            .changedOptions as DeepPartial<Component.ComponentOptions>;
         const pathLength = propertyPath.length - 1;
+
+        let currentLevel = this.changedOptions as AnyRecord;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {
@@ -193,8 +193,7 @@ class AccordionMenu {
                 currentLevel[key] = {};
             }
 
-            currentLevel = currentLevel[key] as
-                DeepPartial<Component.ComponentOptions>;
+            currentLevel = currentLevel[key];
         }
 
         currentLevel[propertyPath[pathLength]] = value;
