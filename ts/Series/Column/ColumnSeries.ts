@@ -843,7 +843,7 @@ class ColumnSeries extends Series {
                 // undefined on graph in scatterchart
                 if (
                     typeof point !== 'undefined' &&
-                    series.options.enableMouseTracking !== false
+                    series.options.enableMouseTracking
                 ) {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);

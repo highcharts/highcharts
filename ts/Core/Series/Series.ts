@@ -3321,7 +3321,7 @@ class Series {
         // Draw the mouse tracking area
         if (
             series.drawTracker &&
-            series.options.enableMouseTracking !== false
+            options.enableMouseTracking
         ) {
             series.drawTracker();
         }
@@ -3667,7 +3667,7 @@ class Series {
             tracker = series.tracker,
             onMouseOver = function (e: PointerEvent): void {
                 if (
-                    series.options.enableMouseTracking !== false &&
+                    options.enableMouseTracking &&
                     chart.hoverSeries !== series
                 ) {
                     series.onMouseOver();
