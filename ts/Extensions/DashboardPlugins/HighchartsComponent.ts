@@ -453,8 +453,6 @@ class HighchartsComponent extends Component {
         hcComponent.chart = hcComponent.getChart();
         hcComponent.updateSeries();
 
-        hcComponent.initChart();
-
         this.sync.start();
         hcComponent.emit({ type: 'afterRender' });
         hcComponent.setupConnectorUpdate();
