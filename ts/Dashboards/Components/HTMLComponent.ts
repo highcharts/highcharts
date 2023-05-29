@@ -27,10 +27,9 @@ import type Cell from '../Layout/Cell.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
-import EditGlobals from '../EditMode/EditGlobals.js';
+
 const {
-    merge,
-    error
+    merge
 } = U;
 
 // TODO: This may affect the AST parsing in Highcharts
@@ -223,6 +222,7 @@ class HTMLComponent extends Component {
         super.load();
         const options = this.options;
         const _self = this;
+        let isError = false;
 
         if (options.elements) {
             this.elements = options.elements.map(
@@ -232,14 +232,7 @@ class HTMLComponent extends Component {
                     }
 
                     if (!element.tagName) {
-                        error(
-                            'Missing tagName param in component: ' +
-                            options.cell
-                        );
-
-                        _self.update({
-                            title: _self.board?.editMode?.lang.errorMsg
-                        });
+                        isError = true;
                     }
 
                     return element;
@@ -249,10 +242,20 @@ class HTMLComponent extends Component {
         this.constructTree();
 
         this.parentElement.appendChild(this.element);
+
         if (this.scaleElements) {
             this.autoScale();
         }
+
         this.emit({ type: 'afterLoad' });
+
+        if (isError) {
+            throw new Error(
+                'Missing tagName param in component: ' +
+                options.cell
+            );
+        }
+
         return this;
     }
 

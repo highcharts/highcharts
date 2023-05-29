@@ -124,7 +124,13 @@ namespace Bindings {
         let board = cell.row.layout.board;
         const component = new ComponentClass(cell, options);
 
-        component.render();
+        try {
+            component.render();
+        } catch (e) {
+            component.update({
+                title: cell.row.layout.board?.editMode?.lang.errorMsg
+            });
+        }
         // update cell size (when component is wider, cell should adjust)
         // this.updateSize();
 

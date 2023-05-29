@@ -701,22 +701,16 @@ class HighchartsComponent extends Component {
                 try {
                     return factory(this.chartContainer, this.chartOptions);
                 } catch {
-                    this.update({
-                        title: this.board?.editMode?.lang.errorMsg
-                    });
+                    // returns errors from factory by default
                 }
             }
         }
 
         if (typeof charter.chart !== 'function') {
-            this.update({
-                title: this.board?.editMode?.lang.errorMsg
-            });
             throw new Error('Chart constructor not found');
         }
 
         this.chart = charter.chart(this.chartContainer, this.chartOptions);
-
         return this.chart;
     }
 

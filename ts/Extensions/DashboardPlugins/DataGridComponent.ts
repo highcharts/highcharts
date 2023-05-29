@@ -366,10 +366,6 @@ class DataGridComponent extends Component {
             return this.dataGrid;
         }
 
-        this.update({
-            title: this.board?.editMode?.lang.errorMsg
-        });
-
         throw new Error('DataGrid not connected.');
     }
 
