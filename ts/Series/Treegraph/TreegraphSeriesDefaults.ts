@@ -178,6 +178,11 @@ const TreegraphSeriesDefaults = {
         }
     },
     /**
+     * Whether the treegraph series should fill the entire space in the X axis
+     * even when there are collapsed points.
+     */
+    fillX: false,
+    /**
      * @extends plotOptions.series.tooltip
      */
     tooltip: {

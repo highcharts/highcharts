@@ -1,5 +1,4 @@
-QUnit.test(
-    'Hide the data labels of hidden points (#18891)',
+QUnit.test('Treegraph series',
     function (assert) {
         const chart = Highcharts.chart('container', {
                 series: [{
@@ -19,9 +18,25 @@ QUnit.test(
             series = chart.series[0];
 
         assert.strictEqual(
+            series.points[0].plotX,
+            0,
+            'The point A should be X positioned on 0 (#19038)'
+        );
+
+        series.update({
+            fillX: true
+        });
+
+        assert.notEqual(
+            series.points[0].plotX,
+            0,
+            'The point A should not be X positioned on 0 (#19038)'
+        );
+
+        assert.strictEqual(
             series.data[1].dataLabel.visibility,
             'hidden',
-            'Hidden points shoud have hidden data labels.'
+            'Hidden points should have hidden data labels (#18891)'
         );
 
         series.data[0].update({
@@ -31,7 +46,7 @@ QUnit.test(
         assert.strictEqual(
             series.data[1].dataLabel.visibility,
             'inherit',
-            'Visible points shoud have visible data labels.'
+            'Visible points should have visible data labels (#18891)'
         );
     }
 );
