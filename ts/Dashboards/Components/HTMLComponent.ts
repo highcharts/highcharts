@@ -25,7 +25,11 @@
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+import EditGlobals from '../EditMode/EditGlobals.js';
+const {
+    merge,
+    error
+} = U;
 
 // TODO: This may affect the AST parsing in Highcharts
 // should look into adding these as options if possible
@@ -208,16 +212,32 @@ class HTMLComponent extends Component {
             type: 'load'
         });
         super.load();
-        this.elements = this.options.elements ?
-            this.options.elements.map(
-                (element): AST.Node => (
-                    typeof element === 'string' ?
-                        new AST(element).nodes[0] :
-                        element
-                )) : [];
+        const options = this.options;
+        const _self = this;
+
+        if (options.elements) {
+            this.elements = options.elements.map(
+                function (element): AST.Node {
+                    if (typeof element === 'string') {
+                        return new AST(element).nodes[0];
+                    }
+
+                    if (!element.tagName) {
+                        error(
+                            'Missing tagName param in component: ' +
+                            options.cell
+                        );
+
+                        _self.update({
+                            title: _self.board?.editMode?.lang.errorMsg
+                        });
+                    }
+
+                    return element;
+                });
+        }
 
         this.constructTree();
-
 
         this.parentElement.appendChild(this.element);
         if (this.scaleElements) {

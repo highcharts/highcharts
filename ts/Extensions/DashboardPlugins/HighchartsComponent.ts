@@ -450,6 +450,8 @@ class HighchartsComponent extends Component {
         hcComponent.chart = hcComponent.initChart();
         hcComponent.updateSeries();
 
+        hcComponent.initChart();
+
         this.sync.start();
         hcComponent.emit({ type: 'afterRender' });
         hcComponent.setupConnectorUpdate();
@@ -724,11 +726,20 @@ class HighchartsComponent extends Component {
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor] || G.chart;
             if (factory) {
-                return factory(this.chartContainer, this.chartOptions);
+                try {
+                    return factory(this.chartContainer, this.chartOptions);
+                } catch {
+                    this.update({
+                        title: this.board?.editMode?.lang.errorMsg
+                    });
+                }
             }
         }
 
         if (typeof charter.chart !== 'function') {
+            this.update({
+                title: this.board?.editMode?.lang.errorMsg
+            });
             throw new Error('Chart constructor not found');
         }
 
