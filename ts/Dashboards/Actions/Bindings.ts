@@ -100,7 +100,7 @@ namespace Bindings {
         if (!cell || !cell.container || !options.type) {
             error(
                 'The component is misconfigured so is unable to find the HTML' +
-                ' cell element `' + options.cell + '` to render the content in.'
+                ' cell element `' + options.cell + '` to render the content.'
             );
             return;
         }
