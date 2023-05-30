@@ -381,7 +381,7 @@ const Options: DeepPartial<A11yOptions> = {
              *
              * @type      {string}
              * @since next
-             * @sample samples/highcharts/demo/advanced-accessible
+             * @sample highcharts/demo/advanced-accessible
              *      Description format
              * @apioption accessibility.point.descriptionFormat
              */
