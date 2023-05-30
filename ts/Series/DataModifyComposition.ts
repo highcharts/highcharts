@@ -777,6 +777,8 @@ export default DataModifyComposition;
  * Adds the `cumulativeSum` field to each point object that can be accessed
  * e.g. in the [tooltip.pointFormat](https://api.highcharts.com/highstock/tooltip.pointFormat).
  *
+ * With `dataGrouping` enabled, default grouping approximation is set to `sum`.
+ *
  * @see [Axis.setCumulative()](/class-reference/Highcharts.Axis#setCumulative)
  * @see [Series.setCumulative()](/class-reference/Highcharts.Series#setCumulative)
  *

@@ -127,7 +127,7 @@ class Point {
 
     public colorIndex?: number;
 
-    public dataLabels?: Array<SVGLabel>;
+    public dataLabels?: Array<SVGElement|SVGLabel>;
 
     public destroyed = false;
 

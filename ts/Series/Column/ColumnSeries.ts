@@ -556,6 +556,7 @@ class ColumnSeries extends Series {
                     (dataMin !== dataMax || (yAxis.max || 0) <= threshold)
                 ) {
                     up = !up;
+                    point.negative = !point.negative;
                 }
 
                 // If stacked...
@@ -840,7 +841,10 @@ class ColumnSeries extends Series {
                 const point = pointer.getPointFromEvent(e);
 
                 // undefined on graph in scatterchart
-                if (typeof point !== 'undefined') {
+                if (
+                    typeof point !== 'undefined' &&
+                    series.options.enableMouseTracking
+                ) {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
                 }

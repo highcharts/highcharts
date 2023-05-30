@@ -117,6 +117,33 @@ class SortModifier extends DataModifier {
      * */
 
     /**
+     * Returns index and row for sort reference.
+     *
+     * @private
+     *
+     * @param {Highcharts.DataTable} table
+     * Table with rows to reference.
+     *
+     * @return {Array<SortModifier.RowReference>}
+     * Array of row references.
+     */
+    protected getRowReferences(
+        table: DataTable
+    ): Array<SortModifier.RowReference> {
+        const rows = table.getRows(),
+            rowReferences: Array<SortModifier.RowReference> = [];
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            rowReferences.push({
+                index: i,
+                row: rows[i]
+            });
+        }
+
+        return rowReferences;
+    }
+
+    /**
      * Applies partial modifications of a cell change to the property `modified`
      * of the given modified table.
      *
@@ -306,12 +333,7 @@ class SortModifier extends DataModifier {
 
         const columnNames = table.getColumnNames(),
             rowCount = table.getRowCount(),
-            rowReferences = table.getRows().map(
-                (row, index): SortModifier.RowReference => ({
-                    index,
-                    row
-                })
-            ),
+            rowReferences = this.getRowReferences(table),
             {
                 direction,
                 orderByColumn,

@@ -63,6 +63,7 @@ module.exports = {
             'maps/map-series',
             'maps/mapline-series',
             'maps/mappoint-series',
+            'maps/tiledwebmap-series',
             'maps/flowmap-series',
             'maps/mapbubble-series',
             'maps/marker-clusters',

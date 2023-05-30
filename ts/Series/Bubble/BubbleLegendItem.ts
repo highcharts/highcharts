@@ -350,7 +350,8 @@ class BubbleLegendItem {
         }
         // Nesting SVG groups to enable handleOverflow
         legendItem.symbol = renderer.g('bubble-legend');
-        legendItem.label = renderer.g('bubble-legend-item');
+        legendItem.label = renderer.g('bubble-legend-item')
+            .css(this.legend.itemStyle || {});
 
         // To enable default 'hideOverlappingLabels' method
         legendItem.symbol.translateX = 0;

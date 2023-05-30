@@ -1,4 +1,9 @@
 #container {
-    max-height: 800px;
-    min-height: 75vh;
+    height: 730px;
+}
+
+@media screen and (max-width: 600px) {
+    #container {
+        height: 400px;
+    }
 }

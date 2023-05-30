@@ -177,7 +177,7 @@ wrap(Pointer.prototype, 'zoomOption', function (
         (mapNavigation as any).enableTouchZoom,
         (mapNavigation as any).enabled)
     ) {
-        this.chart.options.chart.zooming.pinchType = 'xy';
+        this.chart.zooming.pinchType = 'xy';
     }
 
     proceed.apply(this, [].slice.call(arguments, 1));

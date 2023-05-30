@@ -43,7 +43,7 @@ const {
     defined,
     erase,
     extend,
-    isArray,
+    insertItem,
     isNumber,
     merge,
     pick,
@@ -357,8 +357,8 @@ addEvent(Series, 'bindAxes', function (e: Event): void {
     if (this.chart.hasParallelCoordinates) {
         const series = this;
 
-        this.chart.axes.forEach(function (axis): void {
-            series.insert(axis.series);
+        this.chart.axes.forEach((axis): void => {
+            insertItem(series, axis.series);
             axis.isDirty = true;
         });
         series.xAxis = this.chart.xAxis[0];
