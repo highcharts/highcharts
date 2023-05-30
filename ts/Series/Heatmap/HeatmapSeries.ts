@@ -480,19 +480,20 @@ class HeatmapSeries extends ScatterSeries {
                     pick(seriesOptions.colsize, 1),
                     pick(seriesOptions.rowsize, 1)
                 ],
-                { inverted } = chart,
-                xTranslationPad = (inverted ? rowsize : colsize) / 2,
+                inverted = chart.inverted,
+                xTranslationPad = colsize / 2,
                 userMinPadding = xAxis.userOptions.minPadding,
                 isUserMinPadZero = (
                     defined(userMinPadding) &&
                     !(userMinPadding > 0)
                 ),
+                noOffset = (inverted || isUserMinPadZero),
                 padIfMinSet = (isUserMinPadZero && xTranslationPad || 0),
                 [x1, x2, postTranslationOffset] = [
                     xMin - padIfMinSet,
                     xMax + (padIfMinSet * 2),
                     isUserMinPadZero && 0 || (
-                        xMin + (inverted ? rowsize : colsize)
+                        xMin + colsize
                     )
                 ].map((side): number => (
                     clamp(
@@ -511,15 +512,14 @@ class HeatmapSeries extends ScatterSeries {
                         2 * xAxis.len
                     )
                 )),
+
                 [xStart, xEnd] = xRev ? [x2, x1] : [x1, x2],
+
                 xOffset = (
-                    (
-                        inverted ||
-                        isUserMinPadZero
-                    ) &&
-                    0 ||
+                    noOffset && 0 ||
                     (((xAxisLen / postTranslationOffset) / 2) / 2) / 2
                 ),
+
                 dimensions = inverted ?
                     {
                         width: xAxisLen,
@@ -532,6 +532,7 @@ class HeatmapSeries extends ScatterSeries {
                         height: yAxisLen,
                         y: 0
                     };
+
             if (!image) {
                 const
                     colorAxis = (
@@ -554,11 +555,7 @@ class HeatmapSeries extends ScatterSeries {
                             canvasArea * 4
                         ),
                         widthLastIndex = (
-                            canvasWidth - (
-                                (isUserMinPadZero || inverted) ?
-                                    1 :
-                                    0
-                            )
+                            canvasWidth - (noOffset && 1 || 0)
                         ),
                         heightLastIndex = canvasHeight - 1,
                         colorFromPoint = (p: HeatmapPoint): number[] => {
@@ -581,6 +578,7 @@ class HeatmapSeries extends ScatterSeries {
 
                             return rgba;
                         },
+
                         scaleToImg = (
                             val: number,
                             fromMin: number,
@@ -593,18 +591,21 @@ class HeatmapSeries extends ScatterSeries {
                                 (fromMax - fromMin)
                             )
                         ),
+
                         xPlacement = (xRev ?
                             (xToImg: number): number => (
                                 widthLastIndex - xToImg
                             ) :
                             (xToImg: number): number => xToImg
                         ),
+
                         yPlacement = (yRev ?
                             (yToImg: number): number => (
                                 heightLastIndex - yToImg
                             ) :
                             (yToImg: number): number => yToImg
                         ),
+
                         scaledPointPos = (x: number, y: number): number => (
                             Math.ceil(
                                 canvasWidth *
