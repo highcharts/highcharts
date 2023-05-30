@@ -820,6 +820,7 @@ class Point {
 
     /**
      * Get the pixel position of the point relative to the plot area.
+     * @function Highcharts.Point#pos
      *
      * @sample highcharts/point/position
      *         Get point's position in pixels.
@@ -827,6 +828,11 @@ class Point {
      * @param {boolean} chartCoordinates
      * Whether to return the position relative to the plot area of the chart.
      *
+     * @param {number|undefined} plotY
+     * plotY of the point by default.
+     *
+     * @return {Array<number>|undefined}
+     * Coordinates of the point if the point exists.
      */
     public pos(
         chartCoordinates?: boolean,
