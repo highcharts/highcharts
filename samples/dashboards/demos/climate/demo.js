@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
 
 const MathModifier = Highcharts.DataModifier.types.Math; // @todo switch module
+const RangeModifier = Dashboards.DataModifier.types.Range;
 
 const colorStopsDays = [
     [0.0, '#C2CAEB'],
@@ -326,6 +327,18 @@ async function setupBoard() {
                             }
                         },
                         symbol: 'mapmarker'
+                    },
+                    tooltip: {
+                        footerFormat: '',
+                        headerFormat: '',
+                        pointFormatter: function () {
+                            const point = this;
+
+                            return (
+                                `<b>${point.name}</b><br>` +
+                                `${point.y}%.f ˚C`
+                            );
+                        }
                     }
                 }],
                 title: {
@@ -361,7 +374,8 @@ async function setupBoard() {
             type: 'KPI',
             events: {
                 click: function () {
-                    activeColumn = 'TN' + activeScale;
+                    activeColumn = 'TN';
+                    updateBoard(board, activeCity, activeColumn, activeScale);
                 }
             },
             states: {
@@ -377,7 +391,8 @@ async function setupBoard() {
             type: 'KPI',
             events: {
                 click: function () {
-                    activeColumn = 'TX' + activeScale;
+                    activeColumn = 'TX';
+                    updateBoard(board, activeCity, activeColumn, activeScale);
                 },
                 afterLoad: function () {
                     this.cell.setActiveState();
@@ -397,6 +412,7 @@ async function setupBoard() {
             events: {
                 click: function () {
                     activeColumn = 'RR1';
+                    updateBoard(board, activeCity, activeColumn, activeScale);
                 }
             },
             states: {
@@ -413,6 +429,7 @@ async function setupBoard() {
             events: {
                 click: function () {
                     activeColumn = 'ID';
+                    updateBoard(board, activeCity, activeColumn, activeScale);
                 }
             },
             states: {
@@ -429,6 +446,7 @@ async function setupBoard() {
             events: {
                 click: function () {
                     activeColumn = 'FD';
+                    updateBoard(board, activeCity, activeColumn, activeScale);
                 }
             },
             states: {
@@ -595,7 +613,7 @@ async function updateBoard(board, city, column, scale) {
     const activeCityConnector = await dataPool.getConnector('Active City');
     const cityConnector = await dataPool.getConnector(city);
     const [
-        navigatorComponent,
+        timeRangeSelector,
         worldMap,
         kpiData,
         kpiTemperature,
@@ -609,39 +627,69 @@ async function updateBoard(board, city, column, scale) {
 
     let cityTable = cityConnector.table;
 
-    if (city) {
+    // Extend source city table (ones)
+    if (cityTable.modified === cityTable) {
+        await cityConnector.table.setModifier(new MathModifier({
+            modifier: 'Math',
+            columnFormulas: [{
+                column: 'TNC',
+                formula: 'E1-273.15'
+            }, {
+                column: 'TNF',
+                formula: 'E1*1.8-459.67'
+            }, {
+                column: 'TXC',
+                formula: 'F1-273.15'
+            }, {
+                column: 'TXF',
+                formula: 'F1*1.8-459.67'
+            }]
+        }));
+    }
 
-        // Modify city table
-        if (cityTable.modified === cityTable) {
-            await cityConnector.table.setModifier(new MathModifier({
-                modifier: 'Math',
-                columnFormulas: [{
-                    column: 'TNC',
-                    formula: 'E1-273.15'
-                }, {
-                    column: 'TNF',
-                    formula: 'E1*1.8-459.67'
-                }, {
-                    column: 'TXC',
-                    formula: 'F1-273.15'
-                }, {
-                    column: 'TXF',
-                    formula: 'F1*1.8-459.67'
-                }]
-            }));
+    // Update time range selector
+    timeRangeSelector.chart.update({
+        chart: {
+            type: column[0] === 'T' ? 'spline' : 'column'
         }
-        cityTable = cityTable.modified;
-
-        // Activate city table
-        activeCityConnector.table.setColumns(cityTable.getColumns(), 0);
-
-        // @todo remove following manual updates:
-        await selectionGrid.update({ connector: cityConnector });
-        cityChart.chart.series[0].setData(cityTable.getRows(void 0, void 0, [
+    });
+    timeRangeSelector.chart.navigator.series[0].setData(
+        cityTable.modified.getRows(void 0, void 0, [
             'time',
             column[0] === 'T' ? column + scale : column
-        ]));
+        ])
+    );
+
+    // Limit active city table
+    if (activeCityConnector.table.modified === activeCityConnector.table) {
+        console.log(timeRangeSelector);
+        await activeCityConnector.table.setModifier(new RangeModifier({
+            modifier: 'Range',
+            ranges: [{
+                column: 'time',
+                maxValue: 0,
+                minValue: 0
+            }]
+        }));
     }
+
+    // Update city table
+    activeCityConnector.table.setColumns(cityTable.getColumns(), 0);
+
+    await selectionGrid.update({ connector: cityConnector });
+    cityChart.chart.series[0].setData(
+        cityTable.modified.getRows(void 0, void 0, [
+            'time',
+            column[0] === 'T' ? column + scale : column
+        ])
+    );
+    cityChart.chart.update({
+        chart: {
+            type: column[0] === 'T' ? 'spline' : 'column'
+        }
+    });
+
+    // Update KPI
 }
 
 /* *
@@ -649,8 +697,6 @@ async function updateBoard(board, city, column, scale) {
  *  OLD DEMO CODE
  *
  * */
-
-const { Range: RangeModifier } = Dashboards.DataModifier.types;
 
 const dataPool = new Dashboards.DataPool();
 const dataScopes = {
