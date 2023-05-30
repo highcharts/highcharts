@@ -33,7 +33,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+const { animObject, stop } = A;
 import ColorMapComposition from '../ColorMapComposition.js';
 import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
@@ -755,23 +755,16 @@ class MapSeries extends ScatterSeries {
 
                 };
 
-                let animOptions: boolean | Partial<AnimationOptions> | undefined = {};
+                const animOptions = merge(animObject(renderer.globalAnimation)),
+                    userStep = animOptions.step;
 
-                if (chart.options.chart) {
-                    animOptions = merge({}, chart.options.chart.animation);
-                }
-
-                if (typeof animOptions !== 'boolean') {
-                    const userStep = animOptions.step;
-
-                    animOptions.step =
-                        function (obj?: { applyDrilldown?: boolean }): void {
-                            if (userStep) {
-                                userStep.apply(this, arguments);
-                            }
-                            step.apply(this, arguments);
-                        };
-                }
+                animOptions.step =
+                    function (obj?: { applyDrilldown?: boolean }): void {
+                        if (userStep) {
+                            userStep.apply(this, arguments);
+                        }
+                        step.apply(this, arguments);
+                    };
 
                 transformGroup
                     .attr({ animator: 0 })
@@ -789,8 +782,10 @@ class MapSeries extends ScatterSeries {
 
             // When dragging or first rendering, animation is off
             } else {
+                stop(transformGroup);
                 transformGroup.attr(merge(
-                    svgTransform, { 'stroke-width': strokeWidth / scale }
+                    svgTransform,
+                    { 'stroke-width': strokeWidth / scale }
                 ));
 
                 animatePoints(scale); // #18166
