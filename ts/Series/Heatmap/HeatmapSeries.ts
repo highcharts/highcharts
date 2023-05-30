@@ -51,7 +51,8 @@ const {
     fireEvent,
     isNumber,
     merge,
-    pick
+    pick,
+    defined
 } = U;
 
 /* *
@@ -467,13 +468,11 @@ class HeatmapSeries extends ScatterSeries {
                 notBoosting = (!boost && !chart.boost),
                 {
                     len: xAxisLen,
-                    reversed: xRev,
-                    userOptions: xConf
+                    reversed: xRev
                 } = xAxis,
                 {
                     len: yAxisLen,
-                    reversed: yRev,
-                    userOptions: yConf
+                    reversed: yRev
                 } = yAxis,
                 { min: xMin, max: xMax } = xAxis.getExtremes(),
                 { min: yMin, max: yMax } = yAxis.getExtremes(),
@@ -482,19 +481,35 @@ class HeatmapSeries extends ScatterSeries {
                     pick(seriesOptions.rowsize, 1)
                 ],
                 { inverted } = chart,
-                firstCell = points[0],
-                [x1, x2] = xRev ? [
-                    points[lastPointIndex].getCellAttributes().x2,
-                    firstCell.getCellAttributes().x1
-                ] : [
-                    firstCell.getCellAttributes().x1,
-                    points[lastPointIndex].getCellAttributes().x2
-                ],
-                pointWidth = (
-                    firstCell.shapeArgs && pick(
-                        firstCell.shapeArgs.width, 0
-                    ) || 0
-                ),
+                xPad = colsize / 2,
+                userMinPadding = xAxis.userOptions.minPadding,
+                [x1, x2] = [
+                    xMin - (
+                        (
+                            (defined(userMinPadding) && !(userMinPadding > 0))
+                        ) ?
+                            xPad :
+                            0
+                    ),
+                    xMax + xPad
+                ].map((side): number => (
+                    clamp(
+                        Math.round(
+                            xAxis.len -
+                            xAxis.translate(
+                                side,
+                                false,
+                                true,
+                                false,
+                                true,
+                                -series.pointPlacementToXValue()
+                            )
+                        ),
+                        -xAxis.len,
+                        2 * xAxis.len
+                    )
+                )),
+                [xStart, xEnd] = xRev ? [x2, x1] : [x1, x2],
                 dimensions = inverted ?
                     {
                         width: xAxisLen,
@@ -502,8 +517,8 @@ class HeatmapSeries extends ScatterSeries {
                         x: 0,
                         y: 0
                     } : {
-                        x: x1 - pointWidth,
-                        width: x2 + pointWidth,
+                        x: xStart,
+                        width: xEnd,
                         height: yAxisLen,
                         y: 0
                     };
