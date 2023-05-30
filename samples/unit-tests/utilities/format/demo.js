@@ -406,7 +406,6 @@ QUnit.module('Format', () => {
             'A parentheses outside brackets should should not be touched'
         );
 
-        /*
         assert.strictEqual(
             format(
                 '{#if completed}Task {(completed)}% completed{/if}',
@@ -417,7 +416,6 @@ QUnit.module('Format', () => {
             'Task 50% completed',
             'Subexpression in conditional body should work'
         );
-        */
 
     });
 

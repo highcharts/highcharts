@@ -284,7 +284,7 @@ function format(str = '', ctx: any, chart?: Chart): string {
         }
 
         // Evaluate sub-matches one by one to prevent orphaned block closers
-        if (subMatch) {
+        if (subMatch && !currentMatch?.isBlock) {
             break;
         }
     }
