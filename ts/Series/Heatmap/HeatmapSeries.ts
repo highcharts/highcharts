@@ -481,17 +481,19 @@ class HeatmapSeries extends ScatterSeries {
                     pick(seriesOptions.rowsize, 1)
                 ],
                 { inverted } = chart,
-                xPad = colsize / 2,
+                xTranslationPad = (inverted ? rowsize : colsize) / 2,
                 userMinPadding = xAxis.userOptions.minPadding,
-                [x1, x2] = [
-                    xMin - (
-                        (
-                            (defined(userMinPadding) && !(userMinPadding > 0))
-                        ) ?
-                            xPad :
-                            0
-                    ),
-                    xMax + xPad
+                isUserMinPadZero = (
+                    defined(userMinPadding) &&
+                    !(userMinPadding > 0)
+                ),
+                padIfMinSet = (isUserMinPadZero && xTranslationPad || 0),
+                [x1, x2, postTranslationOffset] = [
+                    xMin - padIfMinSet,
+                    xMax + (padIfMinSet * 2),
+                    isUserMinPadZero && 0 || (
+                        xMin + (inverted ? rowsize : colsize)
+                    )
                 ].map((side): number => (
                     clamp(
                         Math.round(
@@ -510,6 +512,14 @@ class HeatmapSeries extends ScatterSeries {
                     )
                 )),
                 [xStart, xEnd] = xRev ? [x2, x1] : [x1, x2],
+                xOffset = (
+                    (
+                        inverted ||
+                        isUserMinPadZero
+                    ) &&
+                    0 ||
+                    (((xAxisLen / postTranslationOffset) / 2) / 2) / 2
+                ),
                 dimensions = inverted ?
                     {
                         width: xAxisLen,
@@ -517,8 +527,8 @@ class HeatmapSeries extends ScatterSeries {
                         x: 0,
                         y: 0
                     } : {
-                        x: xStart,
-                        width: xEnd,
+                        x: xStart - xOffset,
+                        width: xEnd - xOffset,
                         height: yAxisLen,
                         y: 0
                     };
@@ -543,7 +553,13 @@ class HeatmapSeries extends ScatterSeries {
                         pixelData = new Uint8ClampedArray(
                             canvasArea * 4
                         ),
-                        widthLastIndex = canvasWidth - 1,
+                        widthLastIndex = (
+                            canvasWidth - (
+                                (isUserMinPadZero || inverted) ?
+                                    1 :
+                                    0
+                            )
+                        ),
                         heightLastIndex = canvasHeight - 1,
                         colorFromPoint = (p: HeatmapPoint): number[] => {
                             const rgba = ((
@@ -612,6 +628,7 @@ class HeatmapSeries extends ScatterSeries {
                                 )
                             )
                         );
+
                     if (notBoosting) {
                         series.buildKDTree();
                         series.directTouch = false;
