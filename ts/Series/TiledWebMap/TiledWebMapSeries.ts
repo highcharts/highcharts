@@ -365,7 +365,8 @@ class TiledWebMapSeries extends MapSeries {
                     });
                 } else {
                     chart.addCredits({
-                        text: creditsText
+                        text: creditsText,
+                        style: pick(chart.options.credits?.style, {})
                     });
                 }
 
