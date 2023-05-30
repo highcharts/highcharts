@@ -118,7 +118,12 @@ namespace Bindings {
             ComponentClass =
                 ComponentRegistry.getComponent('HTML') as Class<ComponentType>;
 
-            options.title = cell.row.layout.board?.editMode?.lang.errorMsg;
+            options.title = {
+                text: cell.row.layout.board?.editMode?.lang.errorMsg,
+                className:
+                    Globals.classNamePrefix + 'component-title-error ' +
+                    Globals.classNamePrefix + 'component-title'
+            };
         }
 
         let board = cell.row.layout.board;
@@ -128,7 +133,12 @@ namespace Bindings {
             component.render();
         } catch (e) {
             component.update({
-                title: cell.row.layout.board?.editMode?.lang.errorMsg
+                title: {
+                    text: cell.row.layout.board?.editMode?.lang.errorMsg,
+                    className:
+                        Globals.classNamePrefix + 'component-title-error ' +
+                        Globals.classNamePrefix + 'component-title'
+                }
             });
         }
         // update cell size (when component is wider, cell should adjust)
