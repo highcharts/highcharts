@@ -21,6 +21,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type DataModifierOptions from './DataModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -391,8 +392,13 @@ namespace InvertModifier {
     /**
      * Options to configure the modifier.
      */
-    export interface Options extends DataModifier.Options {
-        // nothing here yet
+    export interface Options extends DataModifierOptions {
+
+        /**
+         * Name of the related modifier for these options.
+         */
+        modifier: 'Invert';
+
     }
 }
 
