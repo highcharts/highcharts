@@ -379,7 +379,7 @@ const initCanvasBoost = function (): void {
                         this.cvsMarkerCircle
                 ),
                 strokeBatch = this.cvsStrokeBatch || 1000,
-                enableMouseTracking = options.enableMouseTracking !== false,
+                enableMouseTracking = options.enableMouseTracking,
                 lastPoint: Record<string, number>,
                 threshold: number = options.threshold as any,
                 yBottom = yAxis.getThreshold(threshold),

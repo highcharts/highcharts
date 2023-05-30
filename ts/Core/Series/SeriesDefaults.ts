@@ -429,6 +429,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default   true
      * @apioption plotOptions.series.enableMouseTracking
      */
+    enableMouseTracking: true,
 
     /**
      * Whether to use the Y extremes of the total chart width or only the

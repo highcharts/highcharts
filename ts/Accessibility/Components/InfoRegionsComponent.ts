@@ -178,7 +178,7 @@ function getTypeDescription(
         return getTypeDescForEmptyChart(chart, formatContext);
     }
 
-    if (firstType === 'map') {
+    if (firstType === 'map' || firstType === 'tiledwebmap') {
         return getTypeDescForMapChart(chart, formatContext);
     }
 
