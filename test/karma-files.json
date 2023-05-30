@@ -29,6 +29,7 @@
 	"code/modules/broken-axis.src.js",
 	"code/modules/heatmap.src.js",
 	"code/modules/tilemap.src.js",
+	"code/modules/tiledwebmap.src.js",
 	"code/modules/timeline.src.js",
 	"code/modules/treemap.src.js",
 	"code/modules/treegraph.src.js",
