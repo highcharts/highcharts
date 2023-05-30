@@ -164,70 +164,7 @@ function dateFormat(
  *
  * @return {string}
  *         The formatted string.
- * /
-function format(str: string, ctx: any, chart?: Chart): string {
-    let splitter = '{',
-        isInside = false,
-        segment,
-        valueAndFormat: Array<string>,
-        val,
-        index;
-    const floatRegex = /f$/;
-    const decRegex = /\.([0-9])/;
-    const lang = defaultOptions.lang;
-    const time = chart && chart.time || defaultTime;
-    const numberFormatter = chart && chart.numberFormatter || numberFormat;
-    const ret = [];
-
-    while (str) {
-        index = str.indexOf(splitter);
-        if (index === -1) {
-            break;
-        }
-
-        segment = str.slice(0, index);
-        if (isInside) { // we're on the closing bracket looking back
-
-            valueAndFormat = segment.split(':');
-            val = getNestedProperty(valueAndFormat.shift() || '', ctx);
-
-            // Format the replacement
-            if (valueAndFormat.length && typeof val === 'number') {
-
-                segment = valueAndFormat.join(':');
-
-                if (floatRegex.test(segment)) { // float
-                    const decimals = parseInt(
-                        (segment.match(decRegex) || ['', '-1'])[1],
-                        10
-                    );
-                    if (val !== null) {
-                        val = numberFormatter(
-                            val,
-                            decimals,
-                            lang.decimalPoint,
-                            segment.indexOf(',') > -1 ? lang.thousandsSep : ''
-                        );
-                    }
-                } else {
-                    val = time.dateFormat(segment, val);
-                }
-            }
-
-            // Push the result and advance the cursor
-            ret.push(val);
-        } else {
-            ret.push(segment);
-
-        }
-        str = str.slice(index + 1); // the rest
-        isInside = !isInside; // toggle
-        splitter = isInside ? '}' : '{'; // now look for next matching bracket
-    }
-    ret.push(str);
-    return ret.join('');
-}
-*/
+ */
 function format(str = '', ctx: any, chart?: Chart): string {
 
     const regex = /\{([a-zA-Z0-9\:\.\,\-\/<>%_@ #\(\)]+)\}/g,
