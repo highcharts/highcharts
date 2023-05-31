@@ -68,18 +68,13 @@ Highcharts.chart('container2', {
 
 });
 
-document.getElementById('toggleCollapseNodeA').addEventListener('click', () => {
-    Highcharts.charts.forEach(chart => {
-        chart.series[0].points[0].update({
-            collapsed: !chart.series[0].points[0].options.collapsed
-        });
-    });
-});
-
-document.getElementById('toggleCollapseNodeB').addEventListener('click', () => {
-    Highcharts.charts.forEach(chart => {
-        chart.series[0].points[1].update({
-            collapsed: !chart.series[0].points[1].options.collapsed
+document.querySelectorAll('.toggle-collapse-node').forEach(btn => {
+    const pointIndex = btn.dataset.value;
+    btn.addEventListener('click', () => {
+        Highcharts.charts.forEach(chart => {
+            chart.series[0].points[pointIndex].update({
+                collapsed: !chart.series[0].points[pointIndex].options.collapsed
+            });
         });
     });
 });
