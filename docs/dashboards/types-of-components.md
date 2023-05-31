@@ -100,3 +100,11 @@ Also you can post data between components in the same group via `postMessage` me
 ```js
     component.postMessage('hello world');
 ```
+
+### Component errors
+Components have built-in error handling that displays "Something went wrong" as a component title. In the developer's console, you have error details.
+
+The error title has also a specific class that allows you to customize styles.
+```css
+    .highcharts-dashboards-component-title-error
+```

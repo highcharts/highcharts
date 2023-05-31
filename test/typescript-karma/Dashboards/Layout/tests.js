@@ -30,7 +30,7 @@ const layouts = [{
 
 const components = [{
     cell: 'dashboard-col-0',
-    type: 'chart',
+    type: 'Highcharts',
     chartOptions: {
         type: 'pie',
         series: [{

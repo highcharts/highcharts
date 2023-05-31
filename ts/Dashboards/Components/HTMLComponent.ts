@@ -221,7 +221,6 @@ class HTMLComponent extends Component {
         });
         super.load();
         const options = this.options;
-        const _self = this;
         let isError = false;
 
         if (options.elements) {
@@ -231,7 +230,11 @@ class HTMLComponent extends Component {
                         return new AST(element).nodes[0];
                     }
 
-                    if (!element.tagName) {
+                    if (
+                        !element.textContent &&
+                        !element.tagName &&
+                        element.attributes
+                    ) {
                         isError = true;
                     }
 
