@@ -15,14 +15,11 @@ Highcharts.ganttChart('container', {
 
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                return Highcharts.format(
-                    point.milestone ?
-                        '{point.name}, milestone for {point.assignee} at {point.x:%Y-%m-%d}.' :
-                        '{point.name}, assigned to {point.assignee} from {point.x:%Y-%m-%d} to {point.x2:%Y-%m-%d}.',
-                    { point }
-                );
-            }
+            descriptionFormat: '{#if milestone}' +
+                '{name}, milestone for {yCategory} at {x:%Y-%m-%d}.' +
+                '{else}' +
+                '{name}, assigned to {yCategory} from {x:%Y-%m-%d} to {x2:%Y-%m-%d}.' +
+                '{/if}'
         }
     },
 
@@ -55,12 +52,7 @@ Highcharts.ganttChart('container', {
                     text: 'Est. days'
                 },
                 labels: {
-                    formatter: function () {
-                        var point = this.point,
-                            days = (1000 * 60 * 60 * 24),
-                            number = (point.x2 - point.x) / days;
-                        return Math.round(number * 100) / 100;
-                    }
+                    format: '{(divide (subtract point.x2 point.x) 86400000):.2f}'
                 }
             }, {
                 labels: {

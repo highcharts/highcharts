@@ -541,6 +541,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * Same as
+     * [accessibility.point.descriptionFormat](#accessibility.point.descriptionFormat),
+     * but for an individual series. Overrides the chart wide configuration.
+     *
+     * @type      {Function}
+     * @since     next
+     * @apioption plotOptions.series.pointDescriptionFormat
+     */
+
+    /**
+     * Same as
      * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
      * but for an individual series. Overrides the chart wide configuration.
      *
@@ -1740,6 +1750,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/
          *         Add a unit
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-format-subexpression/
+         *         Complex logic in the format string
          * @sample {highmaps} maps/plotoptions/series-datalabels-format/
          *         Formatted value in the data label
          *

@@ -93,9 +93,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        formatter: function () {
-            return this.series.chart.tooltipText;
-        }
+        format: '{series.chart.tooltipText}'
     },
 
     series: [{
