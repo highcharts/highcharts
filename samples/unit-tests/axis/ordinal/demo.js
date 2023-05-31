@@ -317,6 +317,18 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
         `After adding the point, the extendedOrdinalPositions array
         should be recalculated, #16055.`
     );
+    // #16068
+    chart.xAxis[0].setExtremes(1585665128355, 1586026260000);
+    const controller = new TestController(chart),
+        visiblePoints = chart.series[0].points.filter(p => p.isInside);
+
+    controller.pan([20, 100], [chart.xAxis[0].len, 100]);
+
+    assert.strictEqual(
+        visiblePoints.length,
+        chart.series[0].points.filter(p => p.isInside).length,
+        'Amount of visible points should remain the same while panning, #16068.'
+    );
 });
 
 QUnit.test('findIndexOf', assert => {
