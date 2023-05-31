@@ -119,7 +119,7 @@ namespace Bindings {
                 ComponentRegistry.getComponent('HTML') as Class<ComponentType>;
 
             options.title = {
-                text: cell.row.layout.board?.editMode?.lang.errorMsg,
+                text: cell.row.layout.board?.editMode?.lang.errorMessage,
                 className:
                     Globals.classNamePrefix + 'component-title-error ' +
                     Globals.classNamePrefix + 'component-title'
@@ -134,7 +134,7 @@ namespace Bindings {
         } catch (e) {
             component.update({
                 title: {
-                    text: cell.row.layout.board?.editMode?.lang.errorMsg,
+                    text: cell.row.layout.board?.editMode?.lang.errorMessage,
                     className:
                         Globals.classNamePrefix + 'component-title-error ' +
                         Globals.classNamePrefix + 'component-title'

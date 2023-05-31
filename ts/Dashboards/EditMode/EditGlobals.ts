@@ -138,7 +138,7 @@ const EditGlobals: EditGlobals = {
         small: 'Small',
         medium: 'Medium',
         large: 'Large',
-        errorMsg: 'Something went wrong'
+        errorMessage: 'Something went wrong'
     }
 };
 
@@ -254,7 +254,7 @@ namespace EditGlobals {
         settings: string;
         addComponent: string;
         dataLabels: string;
-        errorMsg: string;
+        errorMessage: string;
         [key: string]: string;
     }
 
