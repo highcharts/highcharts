@@ -24,7 +24,7 @@ QUnit.test('Treegraph series',
         );
 
         series.update({
-            fillX: true
+            fillSpace: true
         });
 
         assert.notEqual(

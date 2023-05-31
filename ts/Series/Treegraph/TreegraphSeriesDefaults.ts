@@ -180,8 +180,13 @@ const TreegraphSeriesDefaults = {
     /**
      * Whether the treegraph series should fill the entire space in the X axis
      * even when there are collapsed points.
+     *
+     * @sample  highcharts/series-treegraph/fillspace-option
+     *          Fill space demonstrated
+     *
+     * @product highcharts
      */
-    fillX: false,
+    fillSpace: false,
     /**
      * @extends plotOptions.series.tooltip
      */
