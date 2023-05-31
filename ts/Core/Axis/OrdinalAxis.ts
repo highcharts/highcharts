@@ -1423,8 +1423,8 @@ namespace OrdinalAxis {
                     defined(firstPoint?.plotX) &&
                     hasPointsInside(series) &&
                     (
-                        !defined(firstPointX) ||
-                        firstPoint.plotX < firstPointX
+                        firstPoint.plotX < firstPointX ||
+                        !defined(firstPointX)
                     )
                 ) {
                     firstPointX = firstPoint.plotX;
