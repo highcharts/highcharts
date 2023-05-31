@@ -881,7 +881,7 @@ export default TiledWebMapSeries;
  */
 
 /**
- * Set a tiles theme. Check the [providers documentation](https://www.highcharts.com/docs/maps/tiledwebmap-series)
+ * Set a tiles theme. Check the [providers documentation](https://www.highcharts.com/docs/maps/tiledwebmap)
  * for official list of available themes.
  *
  * @sample maps/series-tiledwebmap/europe-timezones
@@ -896,7 +896,7 @@ export default TiledWebMapSeries;
  */
 
 /**
- * Subdomain required by each provider. Check the [providers documentation](https://www.highcharts.com/docs/maps/tiledwebmap-series)
+ * Subdomain required by each provider. Check the [providers documentation](https://www.highcharts.com/docs/maps/tiledwebmap)
  * for available subdomains.
  *
  * @sample maps/series-tiledwebmap/basic-configuration
