@@ -155,9 +155,9 @@ class TreegraphSeries extends TreemapSeries {
             maxYSize = 0,
             minYSize = 0;
         this.points.forEach((point: TreegraphPoint): void => {
-            // When fillX is on, stop the layout calculation when the hidden
+            // When fillSpace is on, stop the layout calculation when the hidden
             // points are reached. (#19038)
-            if (this.options.fillX && !point.visible) {
+            if (this.options.fillSpace && !point.visible) {
                 return;
             }
 
