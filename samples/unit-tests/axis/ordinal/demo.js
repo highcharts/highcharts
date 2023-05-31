@@ -718,3 +718,92 @@ QUnit.test('Circular translation, #17128.', assert => {
         translation of the date should return the same value.`
     );
 });
+
+QUnit.test('Moving annotations on ordinal axis, #18459', assert => {
+    const data = [
+        [
+            1622640600000,
+            124.28,
+            125.24,
+            124.05,
+            125.06
+        ],
+        [
+            1622727000000,
+            124.68,
+            124.85,
+            123.13,
+            123.54
+        ],
+        [
+            1622813400000,
+            124.07,
+            126.16,
+            123.85,
+            125.89
+        ],
+        [
+            1623072600000,
+            126.17,
+            126.32,
+            124.83,
+            125.9
+        ],
+        [
+            1623159000000,
+            126.6,
+            128.46,
+            126.21,
+            126.74
+        ],
+        [
+            1623245400000,
+            127.21,
+            127.75,
+            126.52,
+            127.13
+        ]
+    ];
+
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            type: 'ohlc',
+            data: data
+        }, {
+            type: 'sma',
+            linkedTo: ':previous',
+            params: {
+                period: 2
+            }
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(1622727000000, 1622813400000);
+
+    const circle = chart.addAnnotation({
+        shapes: [{
+            type: 'circle',
+            point: {
+                x: 1623072600000,
+                y: 125,
+                xAxis: 0,
+                yAxis: 0
+            },
+            r: 20
+        }]
+    });
+
+    const controller = new TestController(chart),
+        { x: pointX, y: pointY } = circle.userOptions.shapes[0].point,
+        x = chart.xAxis[0].toPixels(pointX),
+        y = chart.yAxis[0].toPixels(pointY);
+
+    controller.pan([x, y], [x - 50, y]);
+
+    assert.close(
+        x - 50,
+        chart.xAxis[0].toPixels(circle.userOptions.shapes[0].point.x),
+        0.1,
+        'Annotation dragged on ordinal axis charts should follow mouse pointer.'
+    );
+});
