@@ -139,7 +139,9 @@ const langOptions: DeepPartial<LangOptions> = {
                 ),
                 descriptionMultiplePoints: (
                     '{annotationText}. Related to {annotationPoint}' +
-                    '{ Also related to, #each(additionalAnnotationPoints)}'
+                    '{#each additionalAnnotationPoints}' +
+                    ', also related to {this}' +
+                    '{/each}'
                 ),
                 descriptionNoPoints: '{annotationText}'
             },
@@ -291,23 +293,32 @@ const langOptions: DeepPartial<LangOptions> = {
             mapTypeDescription: 'Map of {mapTitle} with {numSeries} data series.',
             unknownMap: 'Map of unspecified region with {numSeries} data series.',
             combinationChart: 'Combination chart with {numSeries} data series.',
-            defaultSingle: 'Chart with {numPoints} data {#plural(numPoints, points, point)}.',
+            defaultSingle: 'Chart with {numPoints} data ' +
+                '{#eq numPoints 1}point{else}points{/eq}.',
             defaultMultiple: 'Chart with {numSeries} data series.',
-            splineSingle: 'Line chart with {numPoints} data {#plural(numPoints, points, point)}.',
+            splineSingle: 'Line chart with {numPoints} data ' +
+                '{#eq numPoints 1}point{else}points{/eq}.',
             splineMultiple: 'Line chart with {numSeries} lines.',
-            lineSingle: 'Line chart with {numPoints} data {#plural(numPoints, points, point)}.',
+            lineSingle: 'Line chart with {numPoints} data ' +
+                '{#eq numPoints 1}point{else}points{/eq}.',
             lineMultiple: 'Line chart with {numSeries} lines.',
-            columnSingle: 'Bar chart with {numPoints} {#plural(numPoints, bars, bar)}.',
+            columnSingle: 'Bar chart with {numPoints} ' +
+                '{#eq numPoints 1}bar{else}bars{/eq}.',
             columnMultiple: 'Bar chart with {numSeries} data series.',
-            barSingle: 'Bar chart with {numPoints} {#plural(numPoints, bars, bar)}.',
+            barSingle: 'Bar chart with {numPoints} ' +
+                '{#eq numPoints 1}bar{else}bars{/eq}.',
             barMultiple: 'Bar chart with {numSeries} data series.',
-            pieSingle: 'Pie chart with {numPoints} {#plural(numPoints, slices, slice)}.',
+            pieSingle: 'Pie chart with {numPoints} ' +
+                '{#eq numPoints 1}slice{else}slices{/eq}.',
             pieMultiple: 'Pie chart with {numSeries} pies.',
-            scatterSingle: 'Scatter chart with {numPoints} {#plural(numPoints, points, point)}.',
+            scatterSingle: 'Scatter chart with {numPoints} ' +
+                '{#eq numPoints 1}point{else}points{/eq}.',
             scatterMultiple: 'Scatter chart with {numSeries} data series.',
-            boxplotSingle: 'Boxplot with {numPoints} {#plural(numPoints, boxes, box)}.',
+            boxplotSingle: 'Boxplot with {numPoints} ' +
+                '{#eq numPoints 1}box{else}boxes{/eq}.',
             boxplotMultiple: 'Boxplot with {numSeries} data series.',
-            bubbleSingle: 'Bubble chart with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
+            bubbleSingle: 'Bubble chart with {numPoints} ' +
+                '{#eq numPoints 1}bubbles{else}bubble{/eq}.',
             bubbleMultiple: 'Bubble chart with {numSeries} data series.'
         }, /* eslint-enable max-len */
 
@@ -319,9 +330,9 @@ const langOptions: DeepPartial<LangOptions> = {
         axis: {
         /* eslint-disable max-len */
             xAxisDescriptionSingular: 'The chart has 1 X axis displaying {names[0]}. {ranges[0]}',
-            xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each(names, -1), }and {names[-1]}.',
+            xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each names}{#unless @first},{/unless}{#if @last} and{/if} {this}{/each}.',
             yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}. {ranges[0]}',
-            yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each(names, -1), }and {names[-1]}.',
+            yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each names}{#unless @first},{/unless}{#if @last} and{/if} {this}{/each}.',
             timeRangeDays: 'Data range: {range} days.',
             timeRangeHours: 'Data range: {range} hours.',
             timeRangeMinutes: 'Data range: {range} minutes.',
@@ -369,30 +380,30 @@ const langOptions: DeepPartial<LangOptions> = {
              */
             summary: {
                 /* eslint-disable max-len */
-                'default': '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                defaultCombination: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                line: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                lineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                spline: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                splineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                column: '{series.name}, bar series {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, bars, bar)}.',
-                columnCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bar series with {series.points.length} {#plural(series.points.length, bars, bar)}.',
-                bar: '{series.name}, bar series {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, bars, bar)}.',
-                barCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bar series with {series.points.length} {#plural(series.points.length, bars, bar)}.',
-                pie: '{series.name}, pie {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, slices, slice)}.',
-                pieCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Pie with {series.points.length} {#plural(series.points.length, slices, slice)}.',
-                scatter: '{series.name}, scatter plot {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, points, point)}.',
-                scatterCombination: '{series.name}, series {seriesNumber} of {chart.series.length}, scatter plot with {series.points.length} {#plural(series.points.length, points, point)}.',
-                boxplot: '{series.name}, boxplot {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, boxes, box)}.',
-                boxplotCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Boxplot with {series.points.length} {#plural(series.points.length, boxes, box)}.',
-                bubble: '{series.name}, bubble series {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, bubbles, bubble)}.',
-                bubbleCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bubble series with {series.points.length} {#plural(series.points.length, bubbles, bubble)}.',
-                map: '{series.name}, map {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, areas, area)}.',
-                mapCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Map with {series.points.length} {#plural(series.points.length, areas, area)}.',
-                mapline: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                maplineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#plural(series.points.length, points, point)}.',
-                mapbubble: '{series.name}, bubble series {seriesNumber} of {chart.series.length} with {series.points.length} {#plural(series.points.length, bubbles, bubble)}.',
-                mapbubbleCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bubble series with {series.points.length} {#plural(series.points.length, bubbles, bubble)}.'
+                'default': '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                defaultCombination: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                line: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                lineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                spline: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                splineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                column: '{series.name}, bar series {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}bar{else}bars{/eq}.',
+                columnCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bar series with {series.points.length} {#eq series.points.length 1}bar{else}bars{/eq}.',
+                bar: '{series.name}, bar series {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}bar{else}bars{/eq}.',
+                barCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bar series with {series.points.length} {#eq series.points.length 1}bar{else}bars{/eq}.',
+                pie: '{series.name}, pie {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}slice{else}slices{/eq}.',
+                pieCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Pie with {series.points.length} {#eq series.points.length 1}slice{else}slices{/eq}.',
+                scatter: '{series.name}, scatter plot {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}point{else}points{/eq}.',
+                scatterCombination: '{series.name}, series {seriesNumber} of {chart.series.length}, scatter plot with {series.points.length} {#eq series.points.length 1}point{else}points{/eq}.',
+                boxplot: '{series.name}, boxplot {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}box{else}boxes{/eq}.',
+                boxplotCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Boxplot with {series.points.length} {#eq series.points.length 1}box{else}boxes{/eq}.',
+                bubble: '{series.name}, bubble series {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}bubble{else}bubbles{/eq}.',
+                bubbleCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bubble series with {series.points.length} {#eq series.points.length 1}bubble{else}bubbles{/eq}.',
+                map: '{series.name}, map {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}area{else}areas{/eq}.',
+                mapCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Map with {series.points.length} {#eq series.points.length 1}area{else}areas{/eq}.',
+                mapline: '{series.name}, line {seriesNumber} of {chart.series.length} with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                maplineCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Line with {series.points.length} data {#eq series.points.length 1}point{else}points{/eq}.',
+                mapbubble: '{series.name}, bubble series {seriesNumber} of {chart.series.length} with {series.points.length} {#eq series.points.length 1}bubble{else}bubbles{/eq}.',
+                mapbubbleCombination: '{series.name}, series {seriesNumber} of {chart.series.length}. Bubble series with {series.points.length} {#eq series.points.length 1}bubble{else}bubbles{/eq}.'
             }, /* eslint-enable max-len */
 
             /**
@@ -435,7 +446,8 @@ const langOptions: DeepPartial<LangOptions> = {
              *
              * @since 8.0.1
              */
-            pointAnnotationsDescription: '{Annotation: #each(annotations). }'
+            pointAnnotationsDescription: '{#each annotations}' +
+                'Annotation: {this}{/each}'
         }
     }
 };

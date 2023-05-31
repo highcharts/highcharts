@@ -88,6 +88,7 @@ export interface AccessibilityPointOptions {
     dateFormat?: string;
     dateFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
     describeNull: boolean;
+    descriptionFormat?: string;
     descriptionFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
     valueDecimals?: number;
     valueDescriptionFormat: string;

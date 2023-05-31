@@ -88,12 +88,11 @@
                 enableMouseTracking: true,
                 accessibility: {
                     point: {
-                        descriptionFormatter: function (point) {
-                            if (point.isCluster) {
-                                return 'Grouping of ' + point.clusterPointsAmount + ' points.';
-                            }
-                            return point.name + ', country code: ' + point.country + '.';
-                        }
+                        descriptionFormat: '{#if isCluster}' +
+                            'Grouping of {clusterPointsAmount} points.' +
+                            '{else}' +
+                            '{name}, country code: {country}.' +
+                            '{/if}'
                     }
                 },
                 colorKey: 'clusterPointsAmount',

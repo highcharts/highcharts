@@ -37,7 +37,7 @@ const {
     getSeriesA11yElement,
     unhideChartElementFromAT
 } = ChartUtilities;
-import F from '../../../Core/FormatUtilities.js';
+import F from '../../../Core/Templating.js';
 const {
     format,
     numberFormat
@@ -51,6 +51,7 @@ import U from '../../../Core/Utilities.js';
 const {
     find,
     isNumber,
+    isString,
     pick,
     defined
 } = U;
@@ -539,14 +540,27 @@ function setPointScreenReaderAttribs(
     pointElement: DOMElementType
 ): void {
     const series = point.series,
+        seriesPointA11yOptions = series.options.accessibility?.point || {},
         a11yPointOptions = series.chart.options.accessibility.point || {},
-        seriesPointA11yOptions = series.options.accessibility &&
-            series.options.accessibility.point || {},
         label = stripHTMLTags(
-            seriesPointA11yOptions.descriptionFormatter &&
-            seriesPointA11yOptions.descriptionFormatter(point) ||
-            a11yPointOptions.descriptionFormatter &&
-            a11yPointOptions.descriptionFormatter(point) ||
+            (
+                isString(seriesPointA11yOptions.descriptionFormat) &&
+                format(
+                    seriesPointA11yOptions.descriptionFormat,
+                    point,
+                    series.chart
+                )
+            ) ||
+            seriesPointA11yOptions.descriptionFormatter?.(point) ||
+            (
+                isString(a11yPointOptions.descriptionFormat) &&
+                format(
+                    a11yPointOptions.descriptionFormat,
+                    point,
+                    series.chart
+                )
+            ) ||
+            a11yPointOptions.descriptionFormatter?.(point) ||
             defaultPointDescriptionFormatter(point)
         );
 
