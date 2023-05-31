@@ -6,7 +6,7 @@ Highcharts supports templating in format strings. Since v11.1 (2023) the templat
 ## Expressions
 Expressions in format strings are enclosed by `{single brackets}`. They can be simple variables or constants, or conditional blocks or functions called _helpers_.
 
-**Variables** are inserted directly inside the bracket, for example `"The point value at {point.x} is {point.y}"`.
+**Variables** and properties are inserted directly inside the bracket, for example `"The point value at {point.x} is {point.y}"`. Nested properties are supported using the dot notation. Arrays are also indexed using dot notation, for example `{series.xAxis.categories.0}`, or more practical, with a subexpression `{series.xAxis.categories.(point.x)}`
 
 **Numbers** are formatted with a subset of float formatting conventions from the C library function `sprintf`. The formatting is appended inside the expression, separated from the value by a colon. Note that even though a dot and a comma symbolizes the decimal point and the thousands separator respectively, how it is actually rendered depends on the [language settings](https://api.highcharts.com/highcharts/lang). For example:
 
@@ -19,7 +19,7 @@ Expressions in format strings are enclosed by `{single brackets}`. They can be s
 *   Full date: `{value:%Y-%m-%d}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/full-date)]
 
 ## Helpers
-Helpers define either a conditional block or a function to be used in an expression. Highcharts includes a number of built-in helpers, and allows custom helpers to be added.
+Helpers define either a conditional block or a function to be used in an expression. Highcharts includes a number of [built-in helpers](#built-in-helpers), and allows custom helpers to be added.
 
 ```js
 // Add two literal number using the `add` helper
