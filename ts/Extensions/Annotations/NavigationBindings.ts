@@ -879,7 +879,7 @@ class NavigationBindings {
             // If it's a number (not "format" options), parse it:
             if (
                 isNumber(parsedValue) &&
-                !value.match(/px/g) &&
+                !value.match(/px|em/g) &&
                 !field.match(/format/g)
             ) {
                 value = parsedValue as any;
