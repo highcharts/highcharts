@@ -533,7 +533,7 @@ class HeatmapSeries extends ScatterSeries {
                         y: 0
                     };
 
-            if (!image) {
+            if (!image || series.isDirtyData) {
                 const
                     colorAxis = (
                         chart.colorAxis &&
@@ -660,11 +660,19 @@ class HeatmapSeries extends ScatterSeries {
                         0
                     );
 
-                    series.image = chart.renderer.image(
-                        canvas.toDataURL()
-                    )
-                        .attr(dimensions)
-                        .add(series.group);
+                    if (image) {
+                        image.element.setAttributeNS(
+                            'http://www.w3.org/1999/xlink',
+                            'href',
+                            canvas.toDataURL()
+                        );
+                    } else {
+                        series.image = chart.renderer.image(
+                            canvas.toDataURL()
+                        )
+                            .attr(dimensions)
+                            .add(series.group);
+                    }
 
                 }
             } else if (
