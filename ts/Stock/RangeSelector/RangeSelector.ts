@@ -899,8 +899,8 @@ class RangeSelector {
                 dataAxis = chart.scroller && chart.scroller.xAxis ?
                     chart.scroller.xAxis :
                     chartAxis,
-                dataMin = dataAxis.dataMin,
-                dataMax = dataAxis.dataMax;
+                min = dataAxis.min,
+                max = dataAxis.max;
 
             let value: number | undefined = rangeSelector.getInputValue(name);
 
@@ -912,17 +912,17 @@ class RangeSelector {
 
                 // Validate the extremes. If it goes beyound the data min or
                 // max, use the actual data extreme (#2438).
-                if (isMin && maxInput && isNumber(dataMin)) {
+                if (isMin && maxInput && isNumber(min)) {
                     if (value > Number(maxInput.getAttribute('data-hc-time'))) {
                         value = void 0;
-                    } else if (value < dataMin) {
-                        value = dataMin;
+                    } else if (value < min) {
+                        value = min;
                     }
-                } else if (minInput && isNumber(dataMax)) {
+                } else if (minInput && isNumber(max)) {
                     if (value < Number(minInput.getAttribute('data-hc-time'))) {
                         value = void 0;
-                    } else if (value > dataMax) {
-                        value = dataMax;
+                    } else if (value > max) {
+                        value = max;
                     }
                 }
 
