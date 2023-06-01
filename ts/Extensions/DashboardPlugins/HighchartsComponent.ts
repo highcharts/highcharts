@@ -278,7 +278,7 @@ class HighchartsComponent extends Component {
                         'chartConfig'
                     ]
                 }),
-            columnKeyMap: {}
+            columnAssignment: {}
         }
     );
 
@@ -577,7 +577,7 @@ class HighchartsComponent extends Component {
             const { chart } = this;
 
             // Names/aliases that should be mapped to xAxis values
-            const columnKeyMap = this.options.columnKeyMap || {};
+            const columnAssignment = this.options.columnAssignment || {};
             const xKeyMap: Record<string, string> = {};
 
             if (this.presentationModifier) {
@@ -598,15 +598,15 @@ class HighchartsComponent extends Component {
                             .getColumnVisibility(name) !== false :
                         true;
 
-                    if (!isVisible && !columnKeyMap[name]) {
+                    if (!isVisible && !columnAssignment[name]) {
                         return false;
                     }
 
-                    if (columnKeyMap[name] === null) {
+                    if (columnAssignment[name] === null) {
                         return false;
                     }
 
-                    if (columnKeyMap[name] === 'x') {
+                    if (columnAssignment[name] === 'x') {
                         xKeyMap[name] = name;
                         return false;
                     }
@@ -941,13 +941,13 @@ namespace HighchartsComponent {
          * Names / aliases that should be mapped to xAxis values.
          * ```
          * Example
-         * columnKeyMap: {
+         * columnAssignment: {
          *      'Food': 'x',
          *      'Vitamin A': 'y'
          * }
          * ```
          */
-        columnKeyMap?: Record<string, string | null>;
+        columnAssignment?: Record<string, string | null>;
     }
     /** @internal */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {

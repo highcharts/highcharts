@@ -33,7 +33,7 @@ Dashboards.board('container', {
             sync: {
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },

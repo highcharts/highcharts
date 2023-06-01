@@ -95,7 +95,7 @@ Dashboards.board('container', {
                 extremes: true,
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 x: 'x',
                 Europe: null,
                 Africa: null,
@@ -122,7 +122,7 @@ Dashboards.board('container', {
                 extremes: true,
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 x: 'x',
                 Global: null,
                 Europe: null,
@@ -146,7 +146,7 @@ Dashboards.board('container', {
                 extremes: true,
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 x: 'x',
                 Global: null,
                 Europe: null,
@@ -170,7 +170,7 @@ Dashboards.board('container', {
                 extremes: true,
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 x: 'x',
                 Global: null,
                 Africa: null,

@@ -473,13 +473,13 @@ namespace DataGridComponent {
          * Names / aliases that should be mapped to xAxis values.
          * ```
          * Example
-         * columnKeyMap: {
+         * columnAssignment: {
          *      'Food': 'x',
          *      'Vitamin A': 'y'
          * }
          * ```
          */
-        columnKeyMap?: Record<string, string | null>;
+        columnAssignment?: Record<string, string | null>;
 
         /** @internal */
         tableAxisMap?: Record<string, string | null>;
