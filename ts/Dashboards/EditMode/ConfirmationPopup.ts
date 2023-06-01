@@ -46,7 +46,7 @@ class ConfirmationPopup extends BaseForm {
         parentDiv: HTMLElement,
         iconsURL: string,
         editMode: EditMode,
-        options: ConfirmationPopup.Options
+        options?: ConfirmationPopup.Options
     ) {
         super(parentDiv, iconsURL);
 
@@ -59,7 +59,7 @@ class ConfirmationPopup extends BaseForm {
     *  Properties
     *
     * */
-    public options: ConfirmationPopup.Options;
+    public options?: ConfirmationPopup.Options;
     public contentContainer: HTMLDOMElement|undefined;
     public editMode: EditMode;
 
@@ -85,7 +85,7 @@ class ConfirmationPopup extends BaseForm {
     public renderContent(
         options: ConfirmationPopup.ContentOptions
     ): void {
-        // render content wrapper
+        // Render content wrapper
         this.contentContainer = createElement(
             'div', {
                 className: EditGlobals.classNames.popupContentContainer
@@ -101,13 +101,12 @@ class ConfirmationPopup extends BaseForm {
             offsetTop < 0 ? Math.abs(offsetTop - 200) : 200
         ) + 'px';
 
-        // render text
+        // Render text
         EditRenderer.renderText(this.contentContainer, {
             title: options.text || ''
         });
 
-        // render buttons
-        // Cancel
+        // Render cancel buttons
         EditRenderer.renderButton(
             this.contentContainer,
             {
@@ -123,12 +122,12 @@ class ConfirmationPopup extends BaseForm {
                 value: options.confirmButton.value,
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: (): void => {
-                    // run callback
+                    // Run callback
                     // confirmCallback.call(context);
                     options.confirmButton.callback.call(
                         options.confirmButton.context
                     );
-                    // hide popup
+                    // Hide popup
                     this.closePopup();
                 }
             }
