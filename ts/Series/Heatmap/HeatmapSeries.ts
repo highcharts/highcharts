@@ -661,11 +661,10 @@ class HeatmapSeries extends ScatterSeries {
                     );
 
                     if (image) {
-                        image.element.setAttributeNS(
-                            'http://www.w3.org/1999/xlink',
-                            'href',
-                            canvas.toDataURL()
-                        );
+                        image.attr({
+                            ...dimensions,
+                            href: canvas.toDataURL()
+                        });
                     } else {
                         series.image = chart.renderer.image(
                             canvas.toDataURL()
