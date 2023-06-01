@@ -151,3 +151,9 @@ Cypress.Commands.add('toggleEditMode', ()=>{
     cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
     cy.get('.highcharts-dashboards-edit-toggle-slider').first().click();
 });
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+})

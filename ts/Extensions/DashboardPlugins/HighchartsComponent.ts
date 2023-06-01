@@ -44,7 +44,8 @@ const {
     merge,
     splat,
     isArray,
-    uniqueKey
+    uniqueKey,
+    error
 } = U;
 
 /* *
@@ -698,7 +699,14 @@ class HighchartsComponent extends Component {
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor] || G.chart;
             if (factory) {
-                return factory(this.chartContainer, this.chartOptions);
+                try {
+                    return factory(this.chartContainer, this.chartOptions);
+                } catch {
+                    error(
+                        'The Highcharts component is misconfigured: `' +
+                        this.cell.id + '`'
+                    );
+                }
             }
         }
 
@@ -707,7 +715,6 @@ class HighchartsComponent extends Component {
         }
 
         this.chart = charter.chart(this.chartContainer, this.chartOptions);
-
         return this.chart;
     }
 
