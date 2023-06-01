@@ -1303,7 +1303,7 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @function Highcharts.SVGRenderer#image
      *
-     * @param {string} src
+     * @param {string} href
      *        The image source.
      *
      * @param {number} [x]
@@ -1326,30 +1326,14 @@ class SVGRenderer implements SVGRendererLike {
      *         The generated wrapper element.
      */
     public image(
-        src: string,
+        href: string,
         x?: number,
         y?: number,
         width?: number,
         height?: number,
         onload?: Function
     ): SVGElement {
-        const attribs: SVGAttributes = { preserveAspectRatio: 'none' },
-            setSVGImageSource = function (
-                el: SVGElement,
-                src: string
-            ): void {
-                // Set the href in the xlink namespace
-                if (el.setAttributeNS) {
-                    el.setAttributeNS(
-                        'http://www.w3.org/1999/xlink', 'href', src
-                    );
-                } else {
-                    // could be exporting in IE
-                    // using href throws "not supported" in ie7 and under,
-                    // requries regex shim to fix later
-                    el.setAttribute('hc-svg-href', src);
-                }
-            };
+        const attribs: SVGAttributes = { preserveAspectRatio: 'none' };
 
         // Optional properties (#11756)
         if (isNumber(x)) {
@@ -1368,7 +1352,7 @@ class SVGRenderer implements SVGRendererLike {
 
         const elemWrapper = this.createElement('image').attr(attribs) as any,
             onDummyLoad = function (e: Event): void {
-                setSVGImageSource(elemWrapper.element as any, src);
+                elemWrapper.attr({ href });
                 (onload as any).call(elemWrapper, e);
             };
 
@@ -1377,18 +1361,18 @@ class SVGRenderer implements SVGRendererLike {
             // We have to use a dummy HTML image since IE support for SVG image
             // load events is very buggy. First set a transparent src, wait for
             // dummy to load, and then add the real src to the SVG image.
-            setSVGImageSource(
-                elemWrapper.element as any,
-                'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' /* eslint-disable-line */
-            );
+            elemWrapper.attr({
+                /* eslint-disable-next-line max-len */
+                href: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+            });
             const dummy = new win.Image();
             addEvent(dummy, 'load', onDummyLoad as any);
-            dummy.src = src;
+            dummy.src = href;
             if (dummy.complete) {
                 onDummyLoad({} as any);
             }
         } else {
-            setSVGImageSource(elemWrapper.element as any, src);
+            elemWrapper.attr({ href });
         }
 
         return elemWrapper;
