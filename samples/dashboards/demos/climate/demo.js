@@ -26,7 +26,7 @@ async function setupBoard() {
     const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
-                name: 'Active City',
+                name: 'Range Selection',
                 type: 'CSV'
             }, {
                 name: 'Cities',
@@ -37,9 +37,6 @@ async function setupBoard() {
                         'climate-cities.csv'
                     )
                 }
-            }, {
-                name: activeCity,
-                type: 'CSV'
             }]
         },
         editMode: {
@@ -138,7 +135,7 @@ async function setupBoard() {
             cell: 'time-range-selector',
             type: 'Highcharts',
             connector: {
-                name: 'Active City'
+                name: 'Range Selection'
             },
             chartOptions: {
                 chart: {
@@ -239,7 +236,32 @@ async function setupBoard() {
                     visible: false,
                     min: Date.UTC(2010, 0, 5),
                     minRange: 30 * 24 * 3600 * 1000, // 30 days,
-                    maxRange: 2 * 365 * 24 * 3600 * 1000 // 2 years
+                    maxRange: 2 * 365 * 24 * 3600 * 1000, // 2 years
+                    events: {
+                        afterSetExtremes: async e => {
+                            const selectionTable = await board.dataPool
+                                .getConnectorTable('Range Selection');
+
+                            // Limit active selection table
+                            await selectionTable.setModifier(new RangeModifier({
+                                modifier: 'Range',
+                                ranges: [{
+                                    column: 'time',
+                                    maxValue: e.max,
+                                    minValue: e.min
+                                }]
+                            }));
+
+                            if (selectionTable.modified.getRowCount() > 0) {
+                                await updateBoard(
+                                    board,
+                                    activeCity,
+                                    activeColumn,
+                                    activeScale
+                                );
+                            }
+                        }
+                    }
                 },
                 yAxis: {
                     visible: false
@@ -368,10 +390,60 @@ async function setupBoard() {
             type: 'KPI',
             title: activeCity,
             value: 10,
-            valueFormat: '{value:.0f}m'
+            valueFormat: '{value:.0f}m',
+            subtitle: 'Elevation'
         }, {
             cell: 'kpi-temperature',
             type: 'KPI',
+            chartOptions: {
+                chart: {
+                    height: 166,
+                    margin: [8, 8, 16, 8],
+                    spacing: [8, 8, 8, 8],
+                    styledMode: true,
+                    type: 'solidgauge'
+                },
+                pane: {
+                    background: {
+                        innerRadius: '90%',
+                        outerRadius: '120%',
+                        shape: 'arc'
+                    },
+                    center: ['50%', '70%'],
+                    endAngle: 90,
+                    startAngle: -90
+                },
+                series: [{
+                    data: [0],
+                    dataLabels: {
+                        format: '{y:.0f}',
+                        y: -34
+                    },
+                    animation: false,
+                    animationLimit: 0,
+                    enableMouseTracking: false,
+                    innerRadius: '90%',
+                    radius: '120%'
+                }],
+                title: {
+                    margin: 0,
+                    text: 'Average Temperature',
+                    verticalAlign: 'bottom',
+                    widthAdjust: 0
+                },
+                yAxis: {
+                    labels: {
+                        distance: 4,
+                        y: 12
+                    },
+                    max: 50,
+                    min: -10,
+                    minorTickInterval: null,
+                    stops: colorStopsDays,
+                    tickAmount: 2,
+                    visible: true
+                }
+            },
             events: {
                 click: function () {
                     activeColumn = 'TN';
@@ -389,6 +461,55 @@ async function setupBoard() {
         }, {
             cell: 'kpi-max-temperature',
             type: 'KPI',
+            chartOptions: {
+                chart: {
+                    height: 166,
+                    margin: [8, 8, 16, 8],
+                    spacing: [8, 8, 8, 8],
+                    styledMode: true,
+                    type: 'solidgauge'
+                },
+                pane: {
+                    background: {
+                        innerRadius: '90%',
+                        outerRadius: '120%',
+                        shape: 'arc'
+                    },
+                    center: ['50%', '70%'],
+                    endAngle: 90,
+                    startAngle: -90
+                },
+                series: [{
+                    data: [0],
+                    dataLabels: {
+                        format: '{y:.0f}',
+                        y: -34
+                    },
+                    animation: false,
+                    animationLimit: 0,
+                    enableMouseTracking: false,
+                    innerRadius: '90%',
+                    radius: '120%'
+                }],
+                title: {
+                    margin: 0,
+                    text: 'Maximal Temperature',
+                    verticalAlign: 'bottom',
+                    widthAdjust: 0
+                },
+                yAxis: {
+                    labels: {
+                        distance: 4,
+                        y: 12
+                    },
+                    max: 50,
+                    min: -10,
+                    minorTickInterval: null,
+                    stops: colorStopsDays,
+                    tickAmount: 2,
+                    visible: true
+                }
+            },
             events: {
                 click: function () {
                     activeColumn = 'TX';
@@ -409,6 +530,55 @@ async function setupBoard() {
         }, {
             cell: 'kpi-rain',
             type: 'KPI',
+            chartOptions: {
+                chart: {
+                    height: 166,
+                    margin: [8, 8, 16, 8],
+                    spacing: [8, 8, 8, 8],
+                    styledMode: true,
+                    type: 'solidgauge'
+                },
+                pane: {
+                    background: {
+                        innerRadius: '90%',
+                        outerRadius: '120%',
+                        shape: 'arc'
+                    },
+                    center: ['50%', '70%'],
+                    endAngle: 90,
+                    startAngle: -90
+                },
+                series: [{
+                    data: [0],
+                    dataLabels: {
+                        format: '{y:.0f}',
+                        y: -34
+                    },
+                    animation: false,
+                    animationLimit: 0,
+                    enableMouseTracking: false,
+                    innerRadius: '90%',
+                    radius: '120%'
+                }],
+                title: {
+                    margin: 0,
+                    text: 'Days with Rain',
+                    verticalAlign: 'bottom',
+                    widthAdjust: 0
+                },
+                yAxis: {
+                    labels: {
+                        distance: 4,
+                        y: 12
+                    },
+                    max: 10,
+                    min: 0,
+                    minorTickInterval: null,
+                    stops: colorStopsDays,
+                    tickAmount: 2,
+                    visible: true
+                }
+            },
             events: {
                 click: function () {
                     activeColumn = 'RR1';
@@ -426,6 +596,55 @@ async function setupBoard() {
         }, {
             cell: 'kpi-ice',
             type: 'KPI',
+            chartOptions: {
+                chart: {
+                    height: 166,
+                    margin: [8, 8, 16, 8],
+                    spacing: [8, 8, 8, 8],
+                    styledMode: true,
+                    type: 'solidgauge'
+                },
+                pane: {
+                    background: {
+                        innerRadius: '90%',
+                        outerRadius: '120%',
+                        shape: 'arc'
+                    },
+                    center: ['50%', '70%'],
+                    endAngle: 90,
+                    startAngle: -90
+                },
+                series: [{
+                    data: [0],
+                    dataLabels: {
+                        format: '{y:.0f}',
+                        y: -34
+                    },
+                    animation: false,
+                    animationLimit: 0,
+                    enableMouseTracking: false,
+                    innerRadius: '90%',
+                    radius: '120%'
+                }],
+                title: {
+                    margin: 0,
+                    text: 'Days with Ice',
+                    verticalAlign: 'bottom',
+                    widthAdjust: 0
+                },
+                yAxis: {
+                    labels: {
+                        distance: 4,
+                        y: 12
+                    },
+                    max: 10,
+                    min: 0,
+                    minorTickInterval: null,
+                    stops: colorStopsDays,
+                    tickAmount: 2,
+                    visible: true
+                }
+            },
             events: {
                 click: function () {
                     activeColumn = 'ID';
@@ -443,6 +662,55 @@ async function setupBoard() {
         }, {
             cell: 'kpi-frost',
             type: 'KPI',
+            chartOptions: {
+                chart: {
+                    height: 166,
+                    margin: [8, 8, 16, 8],
+                    spacing: [8, 8, 8, 8],
+                    styledMode: true,
+                    type: 'solidgauge'
+                },
+                pane: {
+                    background: {
+                        innerRadius: '90%',
+                        outerRadius: '120%',
+                        shape: 'arc'
+                    },
+                    center: ['50%', '70%'],
+                    endAngle: 90,
+                    startAngle: -90
+                },
+                series: [{
+                    data: [0],
+                    dataLabels: {
+                        format: '{y:.0f}',
+                        y: -34
+                    },
+                    animation: false,
+                    animationLimit: 0,
+                    enableMouseTracking: false,
+                    innerRadius: '90%',
+                    radius: '120%'
+                }],
+                title: {
+                    margin: 0,
+                    text: 'Days with Frost',
+                    verticalAlign: 'bottom',
+                    widthAdjust: 0
+                },
+                yAxis: {
+                    labels: {
+                        distance: 4,
+                        y: 12
+                    },
+                    max: 10,
+                    min: 0,
+                    minorTickInterval: null,
+                    stops: colorStopsDays,
+                    tickAmount: 2,
+                    visible: true
+                }
+            },
             events: {
                 click: function () {
                     activeColumn = 'FD';
@@ -461,15 +729,10 @@ async function setupBoard() {
             cell: 'selection-grid',
             type: 'DataGrid',
             connector: {
-                name: 'Active City'
+                name: 'Range Selection'
             },
             sync: {
                 highlight: true
-            },
-            columnKeyMap: {
-                time: null,
-                TN: null,
-                TX: null
             },
             dataGridOptions: {
                 cellHeight: 38,
@@ -512,7 +775,7 @@ async function setupBoard() {
             cell: 'city-chart',
             type: 'Highcharts',
             connector: {
-                name: 'Active City'
+                name: 'Range Selection'
             },
             sync: {
                 highlight: true
@@ -584,34 +847,34 @@ async function setupBoard() {
     }, true);
 
     // Load city map
-    const cities = (await board.dataPool.getConnectorTable('Cities'))
-        .getRowObjects();
-    board.mountedComponents[1].component.chart.series[1].setData(
-        cities.map((row, i) => ({
+    const cityRows = await board.dataPool
+        .getConnectorTable('Cities')
+        .then(table => table.getRowObjects());
+    const worldMap = board.mountedComponents[1].component.chart.series[1];
+
+    for (const row of cityRows) {
+        board.dataPool.setConnectorOptions({
+            name: row.city,
+            type: 'CSV',
+            options: {
+                csvURL: row.csv
+            }
+        });
+        worldMap.addPoint({
             lat: row.lat,
             lon: row.lon,
-            name: row.name,
-            y: i
-        }))
-    );
+            name: row.city,
+            y: 0
+        });
+    }
 
     // Load initial city
-    board.dataPool.setConnectorOptions({
-        name: activeCity,
-        type: 'CSV',
-        options: {
-            csvURL: cities.find(row => row.city === activeCity).csv
-        }
-    });
-
     await updateBoard(board, activeCity, activeColumn, activeScale);
-
 }
 
 async function updateBoard(board, city, column, scale) {
     const dataPool = board.dataPool;
-    const activeCityConnector = await dataPool.getConnector('Active City');
-    const cityConnector = await dataPool.getConnector(city);
+    const selectionTable = await dataPool.getConnectorTable('Range Selection');
     const [
         timeRangeSelector,
         worldMap,
@@ -625,11 +888,13 @@ async function updateBoard(board, city, column, scale) {
         cityChart
     ] = board.mountedComponents.map(c => c.component);
 
-    let cityTable = cityConnector.table;
+    column = (column[0] === 'T' ? column + scale : column);
+
+    let cityTable = await dataPool.getConnectorTable(city);
 
     // Extend source city table (ones)
     if (cityTable.modified === cityTable) {
-        await cityConnector.table.setModifier(new MathModifier({
+        await cityTable.setModifier(new MathModifier({
             modifier: 'Math',
             columnFormulas: [{
                 column: 'TNC',
@@ -645,58 +910,154 @@ async function updateBoard(board, city, column, scale) {
                 formula: 'F1*1.8-459.67'
             }]
         }));
+        cityTable.modified.setColumn(
+            'Date',
+            cityTable
+                .getColumn('time')
+                .map(timestamp => new Date(timestamp)
+                    .toISOString()
+                    .substring(0, 10)
+                )
+        );
     }
 
     // Update time range selector
-    timeRangeSelector.chart.update({
-        chart: {
-            type: column[0] === 'T' ? 'spline' : 'column'
+    timeRangeSelector.update({
+        chartOptions: {
+            chart: {
+                type: column[0] === 'T' ? 'spline' : 'column'
+            },
+            navigator: {
+                series: [{
+                    data: cityTable.modified
+                        .getRows(void 0, void 0, ['time', column])
+                }]
+            }
         }
     });
-    timeRangeSelector.chart.navigator.series[0].setData(
-        cityTable.modified.getRows(void 0, void 0, [
-            'time',
-            column[0] === 'T' ? column + scale : column
-        ])
+
+    // Update range selection
+    selectionTable.setColumns(cityTable.modified.getColumns(), 0);
+
+    const rangeTable = selectionTable.modified;
+
+    // Update KPIs
+    kpiData.update({
+        title: city,
+        value: -1
+    });
+    kpiTemperature.chart.series[0].points[0].update(
+        rangeTable.getCellAsNumber('TN' + scale, 0) || 0,
+        true,
+        true
+    );
+    kpiMaxTemperature.chart.series[0].points[0].update(
+        rangeTable.getCellAsNumber('TX' + scale, 0) || 0,
+        true,
+        true
+    );
+    kpiRain.chart.series[0].points[0].update(
+        rangeTable.getCellAsNumber('RR1', 0) || 0,
+        true,
+        true
+    );
+    kpiIce.chart.series[0].points[0].update(
+        rangeTable.getCellAsNumber('ID', 0) || 0,
+        true,
+        true
+    );
+    kpiFrost.chart.series[0].points[0].update(
+        rangeTable.getCellAsNumber('FD', 0) || 0,
+        true,
+        true
     );
 
-    // Limit active city table
-    if (activeCityConnector.table.modified === activeCityConnector.table) {
-        console.log(timeRangeSelector);
-        await activeCityConnector.table.setModifier(new RangeModifier({
-            modifier: 'Range',
-            ranges: [{
-                column: 'time',
-                maxValue: 0,
-                minValue: 0
+    // Update city grid selection
+    await selectionGrid.update({
+        columnKeyMap: {
+            time: null,
+            FD: column === 'FD' ? 'y' : null,
+            ID: column === 'ID' ? 'y' : null,
+            RR1: column === 'RR1' ? 'y' : null,
+            TN: null,
+            TNC: column === 'TNC' ? 'y' : null,
+            TNF: column === 'TNF' ? 'y' : null,
+            TX: null,
+            TXC: column === 'TXC' ? 'y' : null,
+            TXF: column === 'TXF' ? 'y' : null,
+            Date: 'x'
+        }
+    });
+    selectionGrid.dataGrid.update(); // force redraw ?
+    selectionGrid.dataGrid.scrollToRow(
+        selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
+    );
+
+    // Update city chart selection
+    cityChart.update({
+        columnKeyMap: {
+            time: 'x',
+            FD: column === 'FD' ? 'y' : null,
+            ID: column === 'ID' ? 'y' : null,
+            RR1: column === 'RR1' ? 'y' : null,
+            TN: null,
+            TNC: column === 'TNC' ? 'y' : null,
+            TNF: column === 'TNF' ? 'y' : null,
+            TX: null,
+            TXC: column === 'TXC' ? 'y' : null,
+            TXF: column === 'TXF' ? 'y' : null,
+            Date: null
+        },
+        chartOptions: {
+            chart: {
+                type: column[0] === 'T' ? 'spline' : 'column'
+            },
+            series: [{
+                data: rangeTable.getRows(void 0, void 0, ['time', column])
             }]
-        }));
-    }
-
-    // Update city table
-    activeCityConnector.table.setColumns(cityTable.getColumns(), 0);
-
-    await selectionGrid.update({ connector: cityConnector });
-    cityChart.chart.series[0].setData(
-        cityTable.modified.getRows(void 0, void 0, [
-            'time',
-            column[0] === 'T' ? column + scale : column
-        ])
-    );
-    cityChart.chart.update({
-        chart: {
-            type: column[0] === 'T' ? 'spline' : 'column'
         }
     });
-
-    // Update KPI
 }
 
-/* *
- *
- *  OLD DEMO CODE
- *
- * */
+
+/*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!
+ *!*!  OLD DEMO CODE
+ *!*!
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
+ *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*/
+
 
 const dataPool = new Dashboards.DataPool();
 const dataScopes = {
