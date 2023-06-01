@@ -7,8 +7,7 @@
     // Instantiate the map
     Highcharts.mapChart('container', {
         chart: {
-            map: topology,
-            borderWidth: 1
+            map: topology
         },
 
         title: {

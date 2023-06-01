@@ -24,12 +24,12 @@
                 Highcharts.mapChart('container', {
                     chart: {
                         map: mapData,
-                        borderWidth: 1,
-                        marginRight: 20 // for the legend
+                        height: '80%'
                     },
 
                     title: {
-                        text: 'US Counties unemployment rates, January 2018'
+                        text: 'US Counties unemployment rates, January 2018',
+                        align: 'left'
                     },
 
                     accessibility: {
@@ -39,7 +39,7 @@
                     legend: {
                         layout: 'vertical',
                         align: 'right',
-                        floating: true,
+                        margin: 0,
                         backgroundColor: ( // theme
                             Highcharts.defaultOptions &&
                             Highcharts.defaultOptions.legend &&
