@@ -348,7 +348,7 @@ async function setupBoard() {
                         headerFormat: '',
                         pointFormat: (
                             '<b>{point.name}</b><br>' +
-                            '{point.y:.0f}˚' + activeScale
+                            '{point.y:.1f}˚' + activeScale
                         )
                     }
                 }],
@@ -834,34 +834,88 @@ async function setupBoard() {
             }
         }]
     }, true);
+    const dataPool = board.dataPool;
+    const citiesTable = await dataPool.getConnectorTable('Cities');
 
-    // Load city map
-    const cityTable = await board.dataPool.getConnectorTable('Cities');
-    const worldMap = board.mountedComponents[1].component.chart.series[1];
-
-    for (const row of cityTable.getRowObjects()) {
-        board.dataPool.setConnectorOptions({
+    // Add city sources
+    for (const row of citiesTable.getRowObjects()) {
+        dataPool.setConnectorOptions({
             name: row.city,
             type: 'CSV',
             options: {
                 csvURL: row.csv
             }
         });
-        worldMap.addPoint({
-            custom: {
-                elevation: row.elevation
-            },
-            lat: row.lat,
-            lon: row.lon,
-            name: row.city,
-            y: Math.round((90 - Math.abs(row.lat)) / 3) // guess initially
-        });
     }
 
     // Load initial city
+    await setupCity(board, activeCity, activeColumn, activeScale);
     await updateBoard(board, activeCity, activeColumn, activeScale);
 
+    // Load additional cities
+    for (const row of citiesTable.getRowObjects()) {
+        if (row.city !== activeCity) {
+            await setupCity(board, row.city, activeColumn, activeScale);
+        }
+    }
+
+    // Done
     console.log(board);
+}
+
+async function setupCity(board, city, column, scale) {
+    const dataPool = board.dataPool;
+    const citiesTable = await dataPool.getConnectorTable('Cities');
+    const cityTable = await dataPool.getConnectorTable(city);
+    const time = board.mountedComponents[0].component.chart.axes[0].min;
+    const worldMap = board.mountedComponents[1].component.chart.series[1];
+
+    column = (column[0] === 'T' ? column + scale : column);
+
+    // Extend city table
+    await cityTable.setModifier(new MathModifier({
+        modifier: 'Math',
+        columnFormulas: [{
+            column: 'TNC',
+            formula: 'E1-273.15'
+        }, {
+            column: 'TNF',
+            formula: 'E1*1.8-459.67'
+        }, {
+            column: 'TXC',
+            formula: 'F1-273.15'
+        }, {
+            column: 'TXF',
+            formula: 'F1*1.8-459.67'
+        }]
+    }));
+    cityTable.modified.setColumn(
+        'Date',
+        (cityTable.getColumn('time') || []).map(
+            timestamp => new Date(timestamp)
+                .toISOString()
+                .substring(0, 10)
+        )
+    );
+
+    const cityInfo = citiesTable.getRowObject(
+        citiesTable.getRowIndexBy('city', city)
+    );
+
+    // Add city to world map
+    worldMap.addPoint({
+        custom: {
+            elevation: cityInfo.elevation
+        },
+        lat: cityInfo.lat,
+        lon: cityInfo.lon,
+        name: cityInfo.city,
+        y: cityTable.modified.getCellAsNumber(
+            column,
+            cityTable.getRowIndexBy('time', time)
+        ) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
+    });
+
 }
 
 async function updateBoard(board, city, column, scale) {
@@ -885,34 +939,6 @@ async function updateBoard(board, city, column, scale) {
 
     let cityTable = await dataPool.getConnectorTable(city);
 
-    // Extend source city table (ones)
-    if (cityTable.modified === cityTable) {
-        await cityTable.setModifier(new MathModifier({
-            modifier: 'Math',
-            columnFormulas: [{
-                column: 'TNC',
-                formula: 'E1-273.15'
-            }, {
-                column: 'TNF',
-                formula: 'E1*1.8-459.67'
-            }, {
-                column: 'TXC',
-                formula: 'F1-273.15'
-            }, {
-                column: 'TXF',
-                formula: 'F1*1.8-459.67'
-            }]
-        }));
-        cityTable.modified.setColumn(
-            'Date',
-            (cityTable.getColumn('time') || []).map(
-                timestamp => new Date(timestamp)
-                    .toISOString()
-                    .substring(0, 10)
-            )
-        );
-    }
-
     // Update time range selector
     await timeRangeSelector.update({
         chartOptions: {
@@ -930,12 +956,14 @@ async function updateBoard(board, city, column, scale) {
 
     // Update range selection
     selectionTable.setColumns(cityTable.modified.getColumns(), 0);
+    const timeRangeMax = timeRangeSelector.chart.axes[0].max;
+    const timeRangeMin = timeRangeSelector.chart.axes[0].min;
     await selectionTable.setModifier(new RangeModifier({
         modifier: 'Range',
         ranges: [{
             column: 'time',
-            maxValue: timeRangeSelector.chart.axes[0].max,
-            minValue: timeRangeSelector.chart.axes[0].min
+            maxValue: timeRangeMax,
+            minValue: timeRangeMin
         }]
     }));
     const rangeTable = selectionTable.modified;
@@ -946,10 +974,24 @@ async function updateBoard(board, city, column, scale) {
             pointFormat: (
                 '<b>{point.name}</b><br>' +
                 'Elevation: {point.custom.elevation}m<br>' +
-                '{point.y:.0f}˚' + scale
+                '{point.y:.1f}˚' + scale
             )
         }
     });
+    (async () => {
+        const dataPoints = worldMap.chart.series[1].data;
+
+        for (const point of dataPoints) {
+            const pointTable = await dataPool.getConnectorTable(point.name);
+
+            point.update({
+                y: pointTable.modified.getCellAsNumber(
+                    column,
+                    pointTable.getRowIndexBy('time', timeRangeMin)
+                )
+            });
+        }
+    })();
 
     // Update KPIs
     await kpiData.update({
