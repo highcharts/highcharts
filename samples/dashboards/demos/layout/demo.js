@@ -17,7 +17,7 @@ let board = Dashboards.board('container', {
                 text: 'Import saved dashboard',
                 events: {
                     click: function () {
-                        board = Dashboards.importLocal();
+                        board = Dashboards.Board.importLocal();
                     }
                 }
             }]
