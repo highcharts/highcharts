@@ -1167,6 +1167,8 @@ class Pointer {
     public onContainerMouseLeave(e: MouseEvent): void {
         const chart = charts[pick(Pointer.hoverChartIndex, -1)];
 
+        this.onContainerMouseMove(e);
+
         e = this.normalize(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target
