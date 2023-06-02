@@ -630,10 +630,8 @@ class HeatmapSeries extends ScatterSeries {
                             )
                         );
 
-                    if (notBoosting) {
-                        series.buildKDTree();
-                        series.directTouch = false;
-                    }
+                    series.buildKDTree();
+                    series.directTouch = false;
 
                     for (let i = 0; i < canvasArea; i++) {
                         const
