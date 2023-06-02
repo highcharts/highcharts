@@ -160,11 +160,11 @@ namespace ConfirmationPopup {
     }
 
     /**
-     * Close icon options
+     * Close icon options.
      */
     export interface CloseIcon {
         /**
-         * Icon URL
+         * Icon's URL.
          */
         icon: string;
     }

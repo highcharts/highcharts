@@ -221,7 +221,6 @@ class CellEditToolbar extends EditToolbar {
     }
 
     public resetEditedCell(): void {
-        // super.resetCurrentElements(this.cell as Cell);
         this.editedCell = void 0;
     }
 }

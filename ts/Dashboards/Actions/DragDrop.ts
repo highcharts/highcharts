@@ -58,7 +58,7 @@ class DragDrop {
 
     /**
      * Constructor for the DragDrop class.
-     * @intenral
+     * @internal
      *
      * @param {EditMode} editMode
      * The parent editMode reference.
@@ -134,7 +134,7 @@ class DragDrop {
     /**
      * Reference to the element that is used on drop to mount dragged element.
      * In most cases the context is the same as mouseContext. Could be different
-     * in nested layout when elements overlapps.
+     * in nested layout when elements overlap.
      */
     public dropContext?: Cell|Row;
 
@@ -640,7 +640,7 @@ class DragDrop {
                             dragDrop.dropContext = cell;
                         }
 
-                        i = iEnd; // stop the loop
+                        i = iEnd; // Stop the loop
                     } else if (
                         (i === 0 && cellOffsets.left > e.clientX) ||
                         (i === iEnd - 1 && cellOffsets.right < e.clientX)
@@ -669,7 +669,7 @@ class DragDrop {
                             dragDrop.dropContext = cell;
                         }
 
-                        i = iEnd; // stop the loop
+                        i = iEnd; // Stop the loop
                     }
                 } else if (!cell.isVisible && cell === dragDrop.context) {
                     // Element is not visible.
@@ -786,23 +786,26 @@ namespace DragDrop {
      */
     export interface Options {
         /**
-         * Whether the Drag&Drop is enabled.
-         */
-        enabled: boolean;
-        /**
-         * Offest how far from the row edge the context should be detectable.
-         */
-        rowDropOffset: number;
-        /**
-         * Offest how far from the cell edge the context should be detectable.
+         * Offset how far from the cell edge the context should be detectable.
          */
         cellDropOffset: number;
         /**
          * Size of the drop pointer in pixels.
          */
         dropPointerSize: number;
+        /**
+         * Whether the drag and drop is enabled.
+         */
+        enabled: boolean;
+        /**
+         * Offset how far from the row edge the context should be detectable.
+         */
+        rowDropOffset: number;
     }
 
+    /**
+     * @internal
+     */
     export interface DropPointer {
         isVisible: boolean;
         element: HTMLDOMElement;

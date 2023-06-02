@@ -45,7 +45,10 @@ class Resizer {
     *
     * */
 
-    /** @internal */
+    /**
+     * Creates a new instance of the Resizer class based on JSON.
+     * @internal
+     */
     public static fromJSON(
         editMode: EditMode,
         json: Resizer.JSON
@@ -90,7 +93,7 @@ class Resizer {
             options
         );
 
-        this.currentCell = void 0; // consider naming for example currentCell
+        this.currentCell = void 0;
         this.isX = this.options.type.indexOf('x') > -1;
         this.isY = this.options.type.indexOf('y') > -1;
         this.isActive = false;
@@ -184,7 +187,7 @@ class Resizer {
         const snapHeight = this.options.snap.height || 0;
         const dashboardContainer = this.editMode.board.container;
 
-        // right snap
+        // Right snap
         this.snapXR = createElement(
             'div',
             {
@@ -198,7 +201,7 @@ class Resizer {
             dashboardContainer
         );
 
-        // bottom snap
+        // Bottom snap
         this.snapYB = createElement(
             'div',
             {
@@ -238,15 +241,14 @@ class Resizer {
     /**
      * Update snap position.
      *
-     * @param {PointerEvent} e
-     * Mouse event.
-     *
+     * @param cell
+     * Cell reference
      */
     public setSnapPositions(cell: Cell): void {
-        // set current cell
+        // Set current cell
         this.currentCell = cell;
 
-        // set position of snaps
+        // Set position of snaps
         const cellOffsets = GUIElement.getOffsets(
             cell,
             this.editMode.board.container
@@ -275,7 +277,7 @@ class Resizer {
     }
 
     /**
-     * Method detecs siblings and auto-width applied by flex. The resizer
+     * Method detects siblings and auto-width applied by flex. The resizer
      * requires static widths for correct calculations, so we need to apply
      * temporary width on siblings.
      */
@@ -455,7 +457,7 @@ class Resizer {
             const { width: parentRowWidth } = GUIElement.getDimFromOffsets(
                 GUIElement.getOffsets(currentCell.row)
             );
-            // resize width
+            // Resize width
             if (currentDimension === 'x') {
                 const newWidth =
                     (Math.min(e.clientX - cellOffsets.left, parentRowWidth) /
@@ -469,7 +471,7 @@ class Resizer {
                 this.startX = e.clientX;
             }
 
-            // resize height
+            // Resize height
             if (currentDimension === 'y') {
                 cellContainer.style.height = e.clientY - cellOffsets.top + 'px';
             }
@@ -485,28 +487,25 @@ class Resizer {
             this.setSnapPositions(currentCell);
         }
     }
+
     /**
      * Destroy resizer
-     *
-     * @param {Array<Row>} nestedRows
-     * Reference to rows in the layout
-     *
      */
     public destroy(): void {
         const snaps = ['snapXR', 'snapYB'];
         let snap;
 
-        // unbind events
+        // Unbind events
         removeEvent(document, 'mousemove');
         removeEvent(document, 'mouseup');
 
         for (let i = 0, iEnd = snaps.length; i < iEnd; ++i) {
             snap = (this as any)[snaps[i]];
 
-            // unbind event
+            // Unbind event
             removeEvent(snap, 'mousedown');
 
-            // destroy snap
+            // Destroy snap
             snap.remove();
         }
     }
@@ -553,42 +552,41 @@ namespace Resizer {
          */
         enabled: boolean;
         /**
-         * Resizer type
+         * Resizer type.
          */
         type: 'x'|'y'|'xy';
         /**
-         * Snap Options
+         * Snap Options.
          */
         snap: SnapOptions;
         /**
-         * Style of the snap element
+         * Style of the snap element.
          */
         styles: ElementStyles
     }
     export interface ResizedCell extends Cell {
         resizer?: Snap;
-        // styles?: ElementStyles;
     }
 
 
     /**
-     * Style of the snap element
+     * Style of the snap element.
      */
     export interface ElementStyles {
         /**
-         * Width of the border on the left site of element in pixels.
+         * Width of the border on the left side of the element in pixels.
          */
         borderLeft?: number;
         /**
-         * Width of the border on the right site of element in pixels.
+         * Width of the border on the right side of the element in pixels.
          */
         borderRight?: number;
         /**
-         * Width of the border on the top site of element in pixels.
+         * Width of the border on the top side of the element in pixels.
          */
         borderTop?: number;
         /**
-         * Width of the border on the bottom site of element in pixels.
+         * Width of the border on the bottom side of the element in pixels.
          */
         borderBottom?: number;
         /**

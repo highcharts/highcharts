@@ -181,9 +181,14 @@ namespace EditContextMenu {
      * Options for the context menu.
      */
     export interface Options extends Menu.Options {
-        width?: number;
-        enabled?: boolean;
+        /**
+         * The icon name.
+         */
         icon?: string;
+        /**
+         * Width of the context menu.
+         */
+        width?: number;
     }
 }
 

@@ -139,11 +139,26 @@ abstract class EditToolbar {
 
 namespace EditToolbar {
     export interface Options {
-        enabled: boolean;
+        /**
+         * Class name for the toolbar.
+         */
         className: string;
-        outline: boolean;
-        outlineClassName: string;
+        /**
+         * Whether or not the toolbar is enabled.
+         */
+        enabled: boolean;
+        /**
+         * Options for the toolbar menu.
+         */
         menu: Menu.Options;
+        /**
+         * Whether or not to show the outline.
+         */
+        outline: boolean;
+        /**
+         * Class name for the outline.
+         */
+        outlineClassName: string;
     }
 }
 
