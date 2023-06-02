@@ -2,6 +2,5 @@
  name: Dashboard Caption Demo 
  authors:
    - Mustapha Mekhatria
- requiresManualTesting: true
  js_wrap: b
 ...

@@ -13,7 +13,7 @@ Dashboards.board('container', {
     },
     components: [{
         cell: 'dashboard-col-0',
-        caption: 'Caption bar',
+        caption: 'Caption line',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -23,7 +23,7 @@ Dashboards.board('container', {
     }, {
         cell: 'dashboard-col-1',
         caption: {
-            text: 'Caption line',
+            text: 'Caption bar',
             style: {
                 fontSize: '20px',
                 color: '#0000FF'
