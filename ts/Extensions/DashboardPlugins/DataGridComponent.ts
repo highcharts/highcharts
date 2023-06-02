@@ -470,16 +470,17 @@ namespace DataGridComponent {
         chartID?: string;
 
         /**
-         * Names / aliases that should be mapped to xAxis values.
+         * Names / aliases that should be mapped to xAxis values. You can use
+         * null to keep columns selectively out of the chart.
          * ```
          * Example
-         * columnKeyMap: {
+         * columnAssignment: {
          *      'Food': 'x',
          *      'Vitamin A': 'y'
          * }
          * ```
          */
-        columnKeyMap?: Record<string, string | null>;
+        columnAssignment?: Record<string, string | null>;
 
         /** @internal */
         tableAxisMap?: Record<string, string | null>;

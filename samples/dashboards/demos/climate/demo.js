@@ -318,7 +318,7 @@ async function setupDashboard() {
             sync: {
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 time: null,
                 FD: null,
                 ID: null,

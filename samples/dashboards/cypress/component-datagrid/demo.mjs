@@ -51,7 +51,7 @@ Dashboards.board('container', {
                 highlight: true,
                 extremes: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },

@@ -63,7 +63,7 @@ Dashboards.board('container', {
         },
         cell: 'dashboard-col-0',
         type: 'Highcharts',
-        columnKeyMap: {
+        columnAssignment: {
             Food: 'x',
             'Vitamin A': 'value'
         },
@@ -84,7 +84,7 @@ Dashboards.board('container', {
             name: 'Vitamin'
         },
         type: 'Highcharts',
-        columnKeyMap: {
+        columnAssignment: {
             Food: 'x',
             'Vitamin A': 'y'
         },
@@ -109,7 +109,7 @@ Dashboards.board('container', {
             extremes: true
         },
         type: 'Highcharts',
-        columnKeyMap: {
+        columnAssignment: {
             Food: 'x',
             'Vitamin A': 'y'
         },

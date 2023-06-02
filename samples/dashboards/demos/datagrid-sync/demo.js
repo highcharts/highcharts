@@ -56,7 +56,7 @@ const board = Dashboards.board('container', {
             sync: {
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -73,7 +73,7 @@ const board = Dashboards.board('container', {
             sync: {
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
