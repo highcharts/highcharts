@@ -1,5 +1,20 @@
 /* eslint-disable prefer-const, jsdoc/require-description */
 
+// left arrow
+Highcharts.SVGRenderer.prototype.symbols.leftarrow = (x, y, w, h) => [
+    'M', x + w / 2 - 1, y,
+    'L', x + w / 2 - 1, y + h,
+    x - w / 2 - 1, y + h / 2,
+    'Z'
+];
+// right arrow
+Highcharts.SVGRenderer.prototype.symbols.rightarrow = (x, y, w, h) => [
+    'M', x + w / 2 + 1, y,
+    'L', x + w / 2 + 1, y + h,
+    x + w + w / 2 + 1, y + h / 2,
+    'Z'
+];
+
 const MathModifier = Highcharts.DataModifier.types.Math; // @todo switch module
 const RangeModifier = Dashboards.DataModifier.types.Range;
 
@@ -134,9 +149,6 @@ async function setupBoard() {
         components: [{
             cell: 'time-range-selector',
             type: 'Highcharts',
-            connector: {
-                name: 'Range Selection'
-            },
             chartOptions: {
                 chart: {
                     height: '80px',
@@ -236,32 +248,7 @@ async function setupBoard() {
                     visible: false,
                     min: Date.UTC(2010, 0, 5),
                     minRange: 30 * 24 * 3600 * 1000, // 30 days,
-                    maxRange: 2 * 365 * 24 * 3600 * 1000, // 2 years
-                    events: {
-                        afterSetExtremes: async e => {
-                            const selectionTable = await board.dataPool
-                                .getConnectorTable('Range Selection');
-
-                            // Limit active selection table
-                            await selectionTable.setModifier(new RangeModifier({
-                                modifier: 'Range',
-                                ranges: [{
-                                    column: 'time',
-                                    maxValue: e.max,
-                                    minValue: e.min
-                                }]
-                            }));
-
-                            if (selectionTable.modified.getRowCount() > 0) {
-                                await updateBoard(
-                                    board,
-                                    activeCity,
-                                    activeColumn,
-                                    activeScale
-                                );
-                            }
-                        }
-                    }
+                    maxRange: 2 * 365 * 24 * 3600 * 1000 // 2 years
                 },
                 yAxis: {
                     visible: false
@@ -323,7 +310,7 @@ async function setupBoard() {
                         animation: false,
                         crop: false,
                         enabled: true,
-                        format: '{y:.0f}',
+                        format: '{point.y:.0f}',
                         inside: true,
                         padding: 0,
                         verticalAlign: 'bottom',
@@ -331,7 +318,13 @@ async function setupBoard() {
                     }],
                     events: {
                         click: function (e) {
-                            console.log(this);
+                            activeCity = e.point.name || 'New York';
+                            updateBoard(
+                                board,
+                                activeCity,
+                                activeColumn,
+                                activeScale
+                            );
                         }
                     },
                     marker: {
@@ -353,14 +346,10 @@ async function setupBoard() {
                     tooltip: {
                         footerFormat: '',
                         headerFormat: '',
-                        pointFormatter: function () {
-                            const point = this;
-
-                            return (
-                                `<b>${point.name}</b><br>` +
-                                `${point.y}%.f ˚C`
-                            );
-                        }
+                        pointFormat: (
+                            '<b>{point.name}</b><br>' +
+                            '{point.y:.0f}˚' + activeScale
+                        )
                     }
                 }],
                 title: {
@@ -847,12 +836,10 @@ async function setupBoard() {
     }, true);
 
     // Load city map
-    const cityRows = await board.dataPool
-        .getConnectorTable('Cities')
-        .then(table => table.getRowObjects());
+    const cityTable = await board.dataPool.getConnectorTable('Cities');
     const worldMap = board.mountedComponents[1].component.chart.series[1];
 
-    for (const row of cityRows) {
+    for (const row of cityTable.getRowObjects()) {
         board.dataPool.setConnectorOptions({
             name: row.city,
             type: 'CSV',
@@ -861,19 +848,25 @@ async function setupBoard() {
             }
         });
         worldMap.addPoint({
+            custom: {
+                elevation: row.elevation
+            },
             lat: row.lat,
             lon: row.lon,
             name: row.city,
-            y: 0
+            y: Math.round((90 - Math.abs(row.lat)) / 3) // guess initially
         });
     }
 
     // Load initial city
     await updateBoard(board, activeCity, activeColumn, activeScale);
+
+    console.log(board);
 }
 
 async function updateBoard(board, city, column, scale) {
     const dataPool = board.dataPool;
+    const citiesTable = await dataPool.getConnectorTable('Cities');
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
     const [
         timeRangeSelector,
@@ -912,17 +905,16 @@ async function updateBoard(board, city, column, scale) {
         }));
         cityTable.modified.setColumn(
             'Date',
-            cityTable
-                .getColumn('time')
-                .map(timestamp => new Date(timestamp)
+            (cityTable.getColumn('time') || []).map(
+                timestamp => new Date(timestamp)
                     .toISOString()
                     .substring(0, 10)
-                )
+            )
         );
     }
 
     // Update time range selector
-    timeRangeSelector.update({
+    await timeRangeSelector.update({
         chartOptions: {
             chart: {
                 type: column[0] === 'T' ? 'spline' : 'column'
@@ -938,13 +930,34 @@ async function updateBoard(board, city, column, scale) {
 
     // Update range selection
     selectionTable.setColumns(cityTable.modified.getColumns(), 0);
-
+    await selectionTable.setModifier(new RangeModifier({
+        modifier: 'Range',
+        ranges: [{
+            column: 'time',
+            maxValue: timeRangeSelector.chart.axes[0].max,
+            minValue: timeRangeSelector.chart.axes[0].min
+        }]
+    }));
     const rangeTable = selectionTable.modified;
 
+    // Update world map
+    worldMap.chart.series[1].update({
+        tooltip: {
+            pointFormat: (
+                '<b>{point.name}</b><br>' +
+                'Elevation: {point.custom.elevation}m<br>' +
+                '{point.y:.0f}˚' + scale
+            )
+        }
+    });
+
     // Update KPIs
-    kpiData.update({
+    await kpiData.update({
         title: city,
-        value: -1
+        value: citiesTable.getCellAsNumber(
+            'elevation',
+            citiesTable.getRowIndexBy('city', city)
+        ) || '--'
     });
     kpiTemperature.chart.series[0].points[0].update(
         rangeTable.getCellAsNumber('TN' + scale, 0) || 0,
@@ -975,7 +988,7 @@ async function updateBoard(board, city, column, scale) {
     // Update city grid selection
     await selectionGrid.update({
         columnKeyMap: {
-            time: null,
+            time: 'x',
             FD: column === 'FD' ? 'y' : null,
             ID: column === 'ID' ? 'y' : null,
             RR1: column === 'RR1' ? 'y' : null,
@@ -985,7 +998,7 @@ async function updateBoard(board, city, column, scale) {
             TX: null,
             TXC: column === 'TXC' ? 'y' : null,
             TXF: column === 'TXF' ? 'y' : null,
-            Date: 'x'
+            Date: null
         }
     });
     selectionGrid.dataGrid.update(); // force redraw ?
@@ -994,7 +1007,7 @@ async function updateBoard(board, city, column, scale) {
     );
 
     // Update city chart selection
-    cityChart.update({
+    await cityChart.update({
         columnKeyMap: {
             time: 'x',
             FD: column === 'FD' ? 'y' : null,
@@ -1020,43 +1033,41 @@ async function updateBoard(board, city, column, scale) {
 }
 
 
-/*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!
- *!*!  OLD DEMO CODE
- *!*!
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*
- *!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*!*/
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * *
+ * *    OLD DEMO CODE
+ * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
 const dataPool = new Dashboards.DataPool();
@@ -1418,7 +1429,9 @@ async function setupDashboard() {
                     tooltip: {
                         footerFormat: '',
                         headerFormat: '',
-                        pointFormat: ''
+                        pointFormatter: function () {
+                            return tooltipFormatter(this.y);
+                        }
                     }
                 }],
                 title: {
