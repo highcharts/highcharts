@@ -57,11 +57,11 @@ Example of synchronized components
         sync: {
             visibility: true,
             highlight: true,
-            selection: true
+            extremes: true
         },
         cell: 'dashboard-col-0',
         type: 'Highcharts',
-        columnKeyMap: {
+        columnAssignment: {
             Food: 'x',
             'Vitamin A': 'value'
         },
@@ -76,10 +76,10 @@ Example of synchronized components
         sync: {
             visibility: true,
             highlight: true,
-            selection: true
+            extremes: true
         },
         type: 'Highcharts',
-        columnKeyMap: {
+        columnAssignment: {
             Food: 'x',
             'Vitamin A': 'y'
         },
@@ -107,9 +107,8 @@ You can check how this synchronization works in our [minimal dashboard demo](htt
 
 The events, that can be synchronized between components are:
 * 'visibility’
-* 'selection'
+* 'extremes'
 * 'tooltip'
-* ‘panning'
 
 * * *
 What browsers are supported?

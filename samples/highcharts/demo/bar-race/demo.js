@@ -129,7 +129,7 @@ function getSubtitle() {
             floating: true,
             align: 'right',
             verticalAlign: 'middle',
-            y: -20,
+            y: -80,
             x: -100
         },
 

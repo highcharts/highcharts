@@ -29,73 +29,36 @@ import SyncHandler from './Handler.js';
 
 /* *
  *
- *  Class Namespace
- *
- * */
-
-namespace Sync {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export type EventType = (
-        | 'visibility'
-        | 'selection'
-        | 'highlight'
-        | 'panning'
-    );
-
-    export type EmitterConfig = (
-        | [SyncEmitter['id'], SyncEmitter['func']]
-        | SyncEmitter['func']
-    );
-
-    export type HandlerConfig = (
-        [
-            SyncHandler['id'],
-            SyncHandler['presentationStateTrigger'],
-            SyncHandler['func']
-        ] |
-        SyncHandler['func']
-    );
-
-    export interface OptionsEntry {
-
-        /**
-         * Responsible for communicating to the component group that the action
-         * has been triggered on the component.
-         *
-         * If `true` the default emitter will be used, if `false` or `null` it
-         * will be disabled
-         */
-        emitter?: EmitterConfig | null | boolean;
-
-        /**
-         * Responsible for _handling_ incoming action from the synced component
-         * group.
-         *
-         * If `true` the default handler will be used, if `false` or `null` it
-         * will be disabled
-         */
-        handler?: HandlerConfig | null | boolean;
-
-    }
-
-    export type OptionsRecord = (
-        Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
-    );
-
-}
-/* *
- *
- * Class responsible for handling the setup of component sync.
+ * Class
  *
  * */
 class Sync {
 
+    /* *
+     *
+     * Constructor
+     *
+     * */
+    constructor(
+        component: ComponentType,
+        syncHandlers: Sync.OptionsRecord = Sync.defaultHandlers
+    ) {
+        this.component = component;
+        this.syncConfig = syncHandlers;
+        this.registeredSyncHandlers = {};
+        this.registeredSyncEmitters = {};
+        this.isSyncing = false;
+        this.listeners = [];
+    }
+    /* *
+     *
+     *  Properties
+     *
+     * */
+    /**
+     * Array of listeners that should be removed when the sync is stopped.
+     */
+    private listeners: Array<Function>;
     /**
      * Default handlers for the sync class. This property is extended by
      * different Components, where default syncs are added. Allows overwriting
@@ -103,6 +66,46 @@ class Sync {
      */
     public static defaultHandlers: Record<string, Sync.OptionsEntry> = {};
 
+    /**
+     * Registry for the sync handlers used within the component.
+     */
+    private registeredSyncHandlers: Record<SyncHandler['id'], SyncHandler>;
+    /**
+     * Registry for the sync emitters used within the component.
+     */
+    private registeredSyncEmitters: Record<SyncEmitter['id'], SyncEmitter>;
+
+    /**
+     * The component to which the emitters and handlers are attached.
+     */
+    public component: ComponentType;
+
+
+    /**
+     * The emitters and handlers to use for each event
+     */
+    public syncConfig: Sync.OptionsRecord;
+
+    /**
+     * Whether the component is currently syncing.
+     */
+    public isSyncing: boolean;
+
+    /**
+     * Creates an instance of the sync class.
+     *
+     * @param component
+     * The component to which the emitters and handlers are attached.
+     *
+     * @param syncHandlers
+     * The emitters and handlers to use for each event.
+     */
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /**
      * Add new emmiter to the registered emitters.
      * @param emitter
@@ -147,51 +150,6 @@ class Sync {
      */
     public isRegisteredHandler(handlerID: string): boolean {
         return Boolean(this.registeredSyncHandlers[handlerID]);
-    }
-
-    /**
-     * Registry for the sync handlers used within the component.
-     */
-    private registeredSyncHandlers: Record<SyncHandler['id'], SyncHandler>;
-    /**
-     * Registry for the sync emitters used within the component.
-     */
-    private registeredSyncEmitters: Record<SyncEmitter['id'], SyncEmitter>;
-
-    /**
-     * The component to which the emitters and handlers are attached.
-     */
-    public component: ComponentType;
-
-
-    /**
-     * The emitters and handlers to use for each event
-     */
-    public syncConfig: Sync.OptionsRecord;
-
-    /**
-     * Whether the component is currently syncing.
-     */
-    public isSyncing: boolean;
-
-    /**
-     * Creates an instance of the sync class.
-     *
-     * @param component
-     * The component to which the emitters and handlers are attached.
-     *
-     * @param syncHandlers
-     * The emitters and handlers to use for each event.
-     */
-    constructor(
-        component: ComponentType,
-        syncHandlers: Sync.OptionsRecord = Sync.defaultHandlers
-    ) {
-        this.component = component;
-        this.syncConfig = syncHandlers;
-        this.registeredSyncHandlers = {};
-        this.registeredSyncEmitters = {};
-        this.isSyncing = false;
     }
 
     /**
@@ -257,6 +215,8 @@ class Sync {
 
             });
         this.isSyncing = true;
+
+        this.listeners.push(component.on('update', (): void => this.stop()));
     }
 
     /**
@@ -264,6 +224,8 @@ class Sync {
      */
     public stop(): void {
         const {
+            component,
+            listeners,
             registeredSyncHandlers,
             registeredSyncEmitters
         } = this;
@@ -279,10 +241,81 @@ class Sync {
         });
 
         this.isSyncing = false;
+
+        for (let i = 0, iEnd = listeners.length; i < iEnd; ++i) {
+            listeners[i]();
+        }
+
+        this.listeners.length = 0;
+        this.listeners.push(component.on('afterUpdate', (): void => {
+            this.start();
+        }));
     }
+
 
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace Sync {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export type EventType = (
+        | 'extremes'
+        | 'visibility'
+        | 'highlight'
+    );
+
+    export type EmitterConfig = (
+        | [SyncEmitter['id'], SyncEmitter['func']]
+        | SyncEmitter['func']
+    );
+
+    export type HandlerConfig = (
+        [
+            SyncHandler['id'],
+            SyncHandler['presentationStateTrigger'],
+            SyncHandler['func']
+        ] |
+        SyncHandler['func']
+    );
+
+    export interface OptionsEntry {
+
+        /**
+         * Responsible for communicating to the component group that the action
+         * has been triggered on the component.
+         *
+         * If `true` the default emitter will be used, if `false` or `null` it
+         * will be disabled
+         */
+        emitter?: EmitterConfig | null | boolean;
+
+        /**
+         * Responsible for _handling_ incoming action from the synced component
+         * group.
+         *
+         * If `true` the default handler will be used, if `false` or `null` it
+         * will be disabled
+         */
+        handler?: HandlerConfig | null | boolean;
+
+    }
+
+    export type OptionsRecord = (
+        Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
+    );
+
+}
 /* *
  *
  *  Default Export

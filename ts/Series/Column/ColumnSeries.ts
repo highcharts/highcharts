@@ -556,6 +556,7 @@ class ColumnSeries extends Series {
                     (dataMin !== dataMax || (yAxis.max || 0) <= threshold)
                 ) {
                     up = !up;
+                    point.negative = !point.negative;
                 }
 
                 // If stacked...

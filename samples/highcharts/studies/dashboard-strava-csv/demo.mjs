@@ -456,16 +456,16 @@ const components = state => [
         }
     },
     {
-        cell: "columnchart",
-        type: "Highcharts",
+        cell: 'columnchart',
+        type: 'Highcharts',
         connector,
         presentationModifier: new SortModifier({
             direction: 'asc',
             orderByColumn: 'Activity Date'
         }),
         showByDefault: true, // if false, only include columns in the map below?
-        columnKeyMap: {
-            "Activity Date": "x",
+        columnAssignment: {
+            'Activity Date': 'x',
             'Activity Type': null,
             'Activity ID': null,
             Commute: null
@@ -481,7 +481,7 @@ const components = state => [
             }
         },
         sync: {
-            selection: true
+            extremes: true
         },
         events: {
             afterPresentationModifier: function () {
@@ -489,7 +489,7 @@ const components = state => [
                     // Remove columns not in axis map
                     const [row] = this.presentationTable.getRowObjects(1, 1);
                     const removeColumns = Object.keys(row)
-                        .filter(key => !(key in this.options.columnKeyMap));
+                        .filter(key => !(key in this.options.columnAssignment));
 
                     this.presentationTable.deleteColumns(removeColumns);
                 }
@@ -497,13 +497,13 @@ const components = state => [
         }
     },
     {
-        cell: "piechart",
-        type: "Highcharts",
+        cell: 'piechart',
+        type: 'Highcharts',
         connector,
         presentationModifier: new GroupModifier({
             groupColumn: 'Activity Type'
         }),
-        columnKeyMap: {
+        columnAssignment: {
             Activity: 'x'
         },
         chartOptions: {
@@ -512,7 +512,7 @@ const components = state => [
             },
             chart: {
                 animation: false,
-                type: "pie"
+                type: 'pie'
             }
         },
         events: {
@@ -525,19 +525,19 @@ const components = state => [
             }
         },
         sync: {
-            selection: {
+            extremes: {
                 handler: altSyncHandler
             }
         }
     },
     {
-        cell: "totals",
-        type: "Highcharts",
+        cell: 'totals',
+        type: 'Highcharts',
         connector,
         presentationModifier: new GroupModifier({
             groupColumn: 'Activity Type'
         }),
-        columnKeyMap: {
+        columnAssignment: {
             Activity: 'x'
         },
         chartOptions: {
@@ -546,7 +546,7 @@ const components = state => [
             },
             chart: {
                 animation: false,
-                type: "pie"
+                type: 'pie'
             }
         },
         events: {
@@ -565,7 +565,7 @@ const components = state => [
             }
         },
         sync: {
-            selection: {
+            extremes: {
                 handler: altSyncHandler
             }
         }

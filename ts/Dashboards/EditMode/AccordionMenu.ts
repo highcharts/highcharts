@@ -102,7 +102,8 @@ class AccordionMenu {
                 accordionContainer,
                 {
                     name: option.name,
-                    iconsURLPrefix: menu.iconsURLPrefix
+                    iconsURLPrefix: menu.iconsURLPrefix,
+                    lang: (component.board?.editMode || EditGlobals).lang
                 }
             ).content;
 
@@ -121,7 +122,8 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: EditGlobals.lang.confirmButton,
+                value: (component.board?.editMode || EditGlobals)
+                    .lang.confirmButton,
                 callback: (): void => {
                     const changedOptions = this
                         .changedOptions as Partial<Component.ComponentOptions>;
@@ -141,7 +143,8 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: EditGlobals.lang.cancelButton,
+                value: (component.board?.editMode || EditGlobals)
+                    .lang.cancelButton,
                 callback: (): void => {
                     menu.changedOptions = {};
                     menu.chartOptionsJSON = {};
@@ -166,9 +169,9 @@ class AccordionMenu {
         propertyPath: Array<string>,
         value: boolean | string | number
     ): void {
-        let currentLevel = this
-            .changedOptions as DeepPartial<Component.ComponentOptions>;
         const pathLength = propertyPath.length - 1;
+
+        let currentLevel = this.changedOptions as AnyRecord;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {
@@ -190,8 +193,7 @@ class AccordionMenu {
                 currentLevel[key] = {};
             }
 
-            currentLevel = currentLevel[key] as
-                DeepPartial<Component.ComponentOptions>;
+            currentLevel = currentLevel[key];
         }
 
         currentLevel[propertyPath[pathLength]] = value;
@@ -220,10 +222,10 @@ class AccordionMenu {
 
         const renderFunction = EditRenderer.getRendererFunction(options.type);
 
-
         if (!renderFunction) {
             return;
         }
+
         renderFunction(parentNode, {
             ...options,
             iconsURLPrefix: this.iconsURLPrefix,
@@ -269,7 +271,8 @@ class AccordionMenu {
                     showToggle: showToggle,
                     onchange: (value: boolean | string | number): void =>
                         this.updateOptions(propertyPath, value),
-                    isNested: true
+                    isNested: true,
+                    lang: (component.board?.editMode || EditGlobals).lang
                 }
             );
 

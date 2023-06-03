@@ -28,6 +28,7 @@ import type ChartOptions from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
+import type Cell from '../../Dashboards/Layout/Cell';
 
 import Component from '../../Dashboards/Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -43,7 +44,8 @@ const {
     merge,
     splat,
     isArray,
-    uniqueKey
+    uniqueKey,
+    error
 } = U;
 
 /* *
@@ -101,6 +103,9 @@ class HighchartsComponent extends Component {
             chartClassName: 'chart-container',
             chartID: 'chart-' + uniqueKey(),
             chartOptions: {
+                chart: {
+                    styledMode: true
+                },
                 series: []
             },
             chartConstructor: '',
@@ -273,7 +278,7 @@ class HighchartsComponent extends Component {
                         'chartConfig'
                     ]
                 }),
-            columnKeyMap: {}
+            columnAssignment: {}
         }
     );
 
@@ -295,13 +300,15 @@ class HighchartsComponent extends Component {
      * @internal
      */
     public static fromJSON(
-        json: HighchartsComponent.ClassJSON
+        json: HighchartsComponent.ClassJSON,
+        cell: Cell
     ): HighchartsComponent {
         const options = json.options;
         const chartOptions = JSON.parse(json.options.chartOptions || '{}');
         // const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
 
         const component = new HighchartsComponent(
+            cell,
             merge<HighchartsComponent.Options>(
                 options as any,
                 {
@@ -370,12 +377,12 @@ class HighchartsComponent extends Component {
      * @param options
      * The options for the component.
      */
-    constructor(options: Partial<HighchartsComponent.Options>) {
+    constructor(cell: Cell, options: Partial<HighchartsComponent.Options>) {
         options = merge(
             HighchartsComponent.defaultOptions,
             options
         );
-        super(options);
+        super(cell, options);
         this.options = options as HighchartsComponent.Options;
 
         this.chartConstructor = this.options.chartConstructor;
@@ -402,9 +409,9 @@ class HighchartsComponent extends Component {
             tooltip: {} // Temporary fix for #18876
         });
 
-        if (this.connector) {
-            this.on('tableChanged', (): void => this.updateSeries());
+        this.on('tableChanged', (): void => this.updateSeries());
 
+        if (this.connector) {
             // reload the store when polling
             this.connector.on('afterLoad', (e: DataConnector.Event): void => {
                 if (e.table && this.connector) {
@@ -444,22 +451,13 @@ class HighchartsComponent extends Component {
 
         hcComponent.emit({ type: 'beforeRender' });
         super.render();
-        hcComponent.chart = hcComponent.initChart();
+        hcComponent.chart = hcComponent.getChart();
         hcComponent.updateSeries();
 
         this.sync.start();
         hcComponent.emit({ type: 'afterRender' });
         hcComponent.setupConnectorUpdate();
 
-        addEvent(hcComponent.chart, 'afterUpdate', function ():void {
-            const options = this.userOptions;
-
-            if (hcComponent.hasLoaded) {
-                hcComponent.updateComponentOptions({
-                    chartOptions: options
-                }, false);
-            }
-        });
         return this;
     }
 
@@ -547,37 +545,20 @@ class HighchartsComponent extends Component {
      * @param options
      * The options to apply.
      *
-     * @param redraw
-     * The flag triggers the main redraw operation.
-     *
-     * @internal
      */
-    private updateComponentOptions(
+    public async update(
         options: Partial<HighchartsComponent.Options>,
-        redraw = true
-    ): void {
-        super.update(options, redraw);
-    }
-
-    /**
-     * Handles updating via options.
-     * @param options
-     * The options to apply.
-     *
-     * @returns
-     * The component for chaining
-     */
-    public update(
-        options: Partial<HighchartsComponent.Options>
-    ): this {
-        this.updateComponentOptions(options, false);
+        redraw: boolean = true
+    ): Promise<void> {
+        await super.update(options, false);
         this.setOptions();
 
         if (this.chart) {
             this.chart.update(merge(this.options.chartOptions) || {});
         }
         this.emit({ type: 'afterUpdate' });
-        return this;
+
+        redraw && this.redraw();
     }
 
     /**
@@ -596,7 +577,7 @@ class HighchartsComponent extends Component {
             const { chart } = this;
 
             // Names/aliases that should be mapped to xAxis values
-            const columnKeyMap = this.options.columnKeyMap || {};
+            const columnAssignment = this.options.columnAssignment || {};
             const xKeyMap: Record<string, string> = {};
 
             if (this.presentationModifier) {
@@ -617,15 +598,15 @@ class HighchartsComponent extends Component {
                             .getColumnVisibility(name) !== false :
                         true;
 
-                    if (!isVisible && !columnKeyMap[name]) {
+                    if (!isVisible && !columnAssignment[name]) {
                         return false;
                     }
 
-                    if (columnKeyMap[name] === null) {
+                    if (columnAssignment[name] === null) {
                         return false;
                     }
 
-                    if (columnKeyMap[name] === 'x') {
+                    if (columnAssignment[name] === 'x') {
                         xKeyMap[name] = name;
                         return false;
                     }
@@ -700,11 +681,8 @@ class HighchartsComponent extends Component {
      * @internal
      *
      */
-    private initChart(): Chart {
-        if (this.chart) {
-            this.chart.destroy();
-        }
-        return this.constructChart();
+    private getChart(): Chart {
+        return this.chart || this.createChart();
     }
 
     /**
@@ -716,12 +694,19 @@ class HighchartsComponent extends Component {
      * @internal
      *
      */
-    private constructChart(): Chart {
+    private createChart(): Chart {
         const charter = (HighchartsComponent.charter || G);
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor] || G.chart;
             if (factory) {
-                return factory(this.chartContainer, this.chartOptions);
+                try {
+                    return factory(this.chartContainer, this.chartOptions);
+                } catch {
+                    error(
+                        'The Highcharts component is misconfigured: `' +
+                        this.cell.id + '`'
+                    );
+                }
             }
         }
 
@@ -730,7 +715,6 @@ class HighchartsComponent extends Component {
         }
 
         this.chart = charter.chart(this.chartContainer, this.chartOptions);
-
         return this.chart;
     }
 
@@ -794,6 +778,28 @@ class HighchartsComponent extends Component {
                 });
             });
         }
+    }
+    public setConnector(connector: DataConnector | undefined): this {
+        const chart = this.chart;
+        if (
+            this.connector &&
+            chart &&
+            chart.series &&
+            this.connector.table.id !== connector?.table.id
+        ) {
+            const storeTableID = this.connector.table.id;
+            for (let i = chart.series.length - 1; i >= 0; i--) {
+                const series = chart.series[i];
+
+                if (series.options.id?.indexOf(storeTableID) !== -1) {
+                    series.remove(false);
+                }
+            }
+        }
+        super.setConnector(connector);
+
+
+        return this;
     }
     /**
      * Converts the class instance to a class JSON.
@@ -932,16 +938,17 @@ namespace HighchartsComponent {
          */
         chartID?: string;
         /**
-         * Names / aliases that should be mapped to xAxis values.
+         * Names / aliases that should be mapped to xAxis values. You can use
+         * null to keep columns selectively out of the chart.
          * ```
          * Example
-         * columnKeyMap: {
+         * columnAssignment: {
          *      'Food': 'x',
          *      'Vitamin A': 'y'
          * }
          * ```
          */
-        columnKeyMap?: Record<string, string | null>;
+        columnAssignment?: Record<string, string | null>;
     }
     /** @internal */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {

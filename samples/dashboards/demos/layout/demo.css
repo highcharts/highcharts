@@ -1,5 +1,6 @@
-@import "https://code.highcharts.com/css/dashboards/gui.css";
-@import "https://code.highcharts.com/css/datagrid.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/css/datagrid.css");
+@import url("https://code.highcharts.com/css/dashboards/gui.css");
 
 .col,
 [class*="col-"] {

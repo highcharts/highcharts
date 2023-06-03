@@ -37,8 +37,13 @@ The option to include a Highcharts chart in one of the components is available o
     <script src="https://code.highcharts.com/modules/dashboards-plugin.js"></script>
 ```
 
-The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the store <LINK TO STORE> to connect some dynamic data. The data gets parsed through the `columnKeyMap` option to map correct values from the store to reflect them in the series.
-[Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/component-highcharts)
+Also the set of CSS styles needs to be imported, so that the Highcharts displays correctly.
+```css
+    @import url("https://code.highcharts.com/css/highcharts.css");
+```
+
+The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the store <LINK TO STORE> to connect some dynamic data. The data gets parsed through the `columnAssignment` option to map correct values from the store to reflect them in the series. 
+[Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/component-highcharts). The null value keeps columns selectively out of the chart.
 
 ### DataGrid Component
 To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.
@@ -50,7 +55,7 @@ To visualize data in a row column format you can use the DataGrid component. Sam
 
 Also the set of CSS styles needs to be imported, so that the DataGrid displays correctly.
 ```css
-    @import "https://code.highcharts.com/css/datagrid.css";
+    @import url("https://code.highcharts.com/css/datagrid.css");
 ```
 Then you need to specify the component type with `type: 'DataGrid'`.
 The if you connect this component to the store, the content of the component will be automatically filled with data, and will allow the user to change the data in the store and automatically in all components that also are connected to this store, by editing values in the cell. [Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/dashboards-datagrid-component)
@@ -94,4 +99,12 @@ Groups which have shared state can be accessible via
 Also you can post data between components in the same group via `postMessage` method.
 ```js
     component.postMessage('hello world');
+```
+
+### Component errors
+Components have built-in error handling that displays "Something went wrong" as a component title. In the developer's console, you have error details.
+
+The error title has also a specific class that allows you to customize styles.
+```css
+    .highcharts-dashboards-component-title-error
 ```

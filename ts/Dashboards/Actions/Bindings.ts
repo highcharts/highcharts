@@ -35,7 +35,12 @@ import type Component from '../Components/Component.js';
 import ComponentRegistry from '../Components/ComponentRegistry.js';
 import Globals from '../Globals.js';
 import U from '../../Core/Utilities.js';
-const { merge, addEvent, fireEvent } = U;
+const {
+    merge,
+    addEvent,
+    fireEvent,
+    error
+} = U;
 
 /* *
  *
@@ -53,7 +58,7 @@ namespace Bindings {
 
     export interface MountedComponent {
         cell: Cell;
-        component: Component;
+        component: ComponentType;
         options: Partial<Component.ComponentOptions>;
     }
 
@@ -83,7 +88,7 @@ namespace Bindings {
     }
 
     export function addComponent(
-        options: Partial<Component.ComponentOptions>,
+        options: Partial<ComponentType['options']>,
         cell?: Cell
     ): (Component|undefined) {
         // TODO: Check if there are states in the options, and if so, add them
@@ -93,36 +98,54 @@ namespace Bindings {
         cell = cell || Bindings.getCell(options.cell || '');
 
         if (!cell || !cell.container || !options.type) {
+            error(
+                'The component is misconfigured and is unable to find the ' +
+                'HTML cell element `' + options.cell + '` to render the content.'
+            );
             return;
         }
 
         const componentContainer = cell.container;
 
-        const ComponentClass =
-            ComponentRegistry.getComponent(options.type) as Class<Component>;
+        let ComponentClass =
+            ComponentRegistry.getComponent(options.type) as Class<ComponentType>;
 
         if (!ComponentClass) {
-            return;
+            error(
+                'The component\'s type `' + options.type + '` does not exist.'
+            );
+
+            ComponentClass =
+                ComponentRegistry.getComponent('HTML') as Class<ComponentType>;
+
+            options.title = {
+                text: cell.row.layout.board?.editMode?.lang.errorMessage,
+                className:
+                    Globals.classNamePrefix + 'component-title-error ' +
+                    Globals.classNamePrefix + 'component-title'
+            };
         }
 
-        let componentOptions = merge<Partial<ComponentType['options']>>(
-            options,
-            {
-                board: cell && cell.row.layout.board,
-                parentCell: cell,
-                parentElement: componentContainer
-            }
-        );
+        let board = cell.row.layout.board;
+        const component = new ComponentClass(cell, options);
 
-        const component = new ComponentClass(componentOptions);
-
-        component.render();
+        try {
+            component.render();
+        } catch (e) {
+            component.update({
+                title: {
+                    text: cell.row.layout.board?.editMode?.lang.errorMessage,
+                    className:
+                        Globals.classNamePrefix + 'component-title-error ' +
+                        Globals.classNamePrefix + 'component-title'
+                }
+            });
+        }
         // update cell size (when component is wider, cell should adjust)
         // this.updateSize();
 
         // add events
         fireEvent(component, 'mount');
-
 
         component.setCell(cell);
         cell.mountedComponent = component;
@@ -175,7 +198,11 @@ namespace Bindings {
         if (!componentClass) {
             return;
         }
-        const component = componentClass.fromJSON(json as any);
+        const cell = Bindings.getCell(json.options.cell || '');
+        if (!cell) {
+            return;
+        }
+        const component = componentClass.fromJSON(json as any, cell);
 
         if (component) {
             component.render();

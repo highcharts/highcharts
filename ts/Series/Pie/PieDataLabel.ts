@@ -583,7 +583,9 @@ namespace ColumnDataLabel {
                     }
 
                     dataLabel.attr(dataLabel._attr);
-                    dataLabel[dataLabel.moved ? 'animate' : 'attr'](_pos);
+                    (dataLabel as any)[
+                        dataLabel.moved ? 'animate' : 'attr'
+                    ](_pos);
                     dataLabel.moved = true;
                 } else if (dataLabel) {
                     dataLabel.attr({ y: -9999 });

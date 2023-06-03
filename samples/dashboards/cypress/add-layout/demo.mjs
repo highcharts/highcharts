@@ -17,6 +17,9 @@ Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
+            dragDrop: {
+                // drag drop options, leave empty - needed for testing
+            },
             enabled: true,
             items: ['verticalSeparator', 'editMode']
         },

@@ -108,7 +108,6 @@ const EditGlobals: EditGlobals = {
         dropdownButtonContent: PREFIX + 'dropdown-button-content',
         dropdownIcon: PREFIX + 'pointer',
         rotateElement: PREFIX + 'rotate-element',
-
         icon: PREFIX + 'icon'
     },
     lang: {
@@ -135,7 +134,11 @@ const EditGlobals: EditGlobals = {
         off: 'off',
         settings: 'Settings',
         addComponent: 'Add component',
-        dataLabels: 'Data labels'
+        dataLabels: 'Data labels',
+        small: 'Small',
+        medium: 'Medium',
+        large: 'Large',
+        errorMessage: 'Something went wrong'
     }
 };
 
@@ -251,6 +254,7 @@ namespace EditGlobals {
         settings: string;
         addComponent: string;
         dataLabels: string;
+        errorMessage: string;
         [key: string]: string;
     }
 

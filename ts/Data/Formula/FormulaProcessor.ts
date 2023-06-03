@@ -500,7 +500,11 @@ function processFormula(
 
             // Next value is our first value
             if (typeof x === 'undefined') {
-                x = y;
+                if (operator) {
+                    x = basicOperation(operator, 0, y);
+                } else {
+                    x = y;
+                }
 
             // Fail fast if no operator available
             } else if (!operator) {

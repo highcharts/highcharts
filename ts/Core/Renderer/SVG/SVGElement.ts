@@ -1065,11 +1065,6 @@ class SVGElement implements SVGElementLike {
         let textWidth,
             hasNew = !oldStyles;
 
-        // convert legacy
-        if (styles.color) {
-            styles.fill = styles.color;
-        }
-
         // Filter out existing styles to increase performance (#2640)
         if (oldStyles) {
             objectEach(styles, function (value, n: keyof CSSObject): void {
@@ -1126,6 +1121,11 @@ class SVGElement implements SVGElementLike {
                         delete stylesToApply[key]
                     )
                 );
+
+                // SVG requires fill for text
+                if (stylesToApply.color) {
+                    stylesToApply.fill = stylesToApply.color;
+                }
             }
             css(elem, stylesToApply);
         }

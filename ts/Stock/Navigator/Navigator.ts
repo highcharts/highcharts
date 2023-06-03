@@ -1269,7 +1269,6 @@ class Navigator {
             }, navigatorOptions.xAxis, {
                 id: 'navigator-x-axis',
                 yAxis: 'navigator-y-axis',
-                isX: true,
                 type: 'datetime',
                 index: xAxisIndex,
                 isInternal: true,
@@ -1286,7 +1285,7 @@ class Navigator {
             } : {
                 offsets: [0, -scrollButtonSize, 0, scrollButtonSize],
                 height: height
-            })) as NavigatorAxisComposition;
+            }), 'xAxis') as NavigatorAxisComposition;
 
             navigator.yAxis = new Axis(chart, merge(
                 navigatorOptions.yAxis,
@@ -1310,7 +1309,7 @@ class Navigator {
                 } : {
                     height: height
                 }
-            )) as NavigatorAxisComposition;
+            ), 'yAxis') as NavigatorAxisComposition;
 
             // If we have a base series, initialize the navigator series
             if (baseSeries || (navigatorOptions.series as any).data) {
