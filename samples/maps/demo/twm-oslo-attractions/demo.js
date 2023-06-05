@@ -59,7 +59,8 @@ Highcharts.mapChart('container', {
         float: true,
         borderColor: '#e6e6e6',
         borderWidth: 1,
-        borderRadius: 2
+        borderRadius: 2,
+        itemMarginBottom: 5
     },
 
     plotOptions: {

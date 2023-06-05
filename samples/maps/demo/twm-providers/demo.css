@@ -5,6 +5,7 @@
 
 .main #container {
     height: 500px;
+    max-height: calc(100vw - 20px);
     min-width: 310px;
     max-width: 800px;
     margin: 0 auto;

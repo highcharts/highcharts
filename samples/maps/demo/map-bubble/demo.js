@@ -8,7 +8,6 @@
 
         Highcharts.mapChart('container', {
             chart: {
-                borderWidth: 1,
                 map: topology
             },
 
