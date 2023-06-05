@@ -461,11 +461,9 @@ class HeatmapSeries extends ScatterSeries {
                     chart,
                     xAxis,
                     yAxis,
-                    points,
-                    boost
+                    points
                 } = series,
                 lastPointIndex = points.length - 1,
-                notBoosting = (!boost && !chart.boost),
                 {
                     len: xAxisLen,
                     reversed: xRev
