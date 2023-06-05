@@ -33,9 +33,11 @@ const colorStopsTemperature = [
 setupBoard();
 
 async function setupBoard() {
-    let activeCity = 'New York';
-    let activeColumn = 'TX';
-    let activeScale = 'C';
+    let activeCity = 'New York',
+        activeColumn = 'TX',
+        activeSelection = [Date.UTC(2010, 0, 5), Date.UTC(2010, 11, 25)],
+        activeScale = 'C',
+        selectionTimeout = -1;
 
     // Initialize board with most basic data
     const board = await Dashboards.board('container', {
@@ -246,9 +248,29 @@ async function setupBoard() {
                 },
                 xAxis: {
                     visible: false,
-                    min: Date.UTC(2010, 0, 5),
-                    minRange: 30 * 24 * 3600 * 1000, // 30 days,
-                    maxRange: 2 * 365 * 24 * 3600 * 1000 // 2 years
+                    min: activeSelection[0],
+                    max: activeSelection[1],
+                    minRange: 30 * 24 * 3600 * 1000, // 30 days
+                    maxRange: 2 * 365 * 24 * 3600 * 1000, // 2 years
+                    events: {
+                        afterSetExtremes: function (e) {
+                            window.clearTimeout(selectionTimeout);
+                            selectionTimeout = window.setTimeout(async () => {
+                                if (
+                                    activeSelection[0] !== e.min ||
+                                    activeSelection[1] !== e.max
+                                ) {
+                                    activeSelection = [e.min, e.max];
+                                    await updateBoard(
+                                        board,
+                                        activeCity,
+                                        activeColumn,
+                                        activeScale
+                                    );
+                                }
+                            }, 100);
+                        }
+                    }
                 },
                 yAxis: {
                     visible: false
@@ -318,12 +340,13 @@ async function setupBoard() {
                     }],
                     events: {
                         click: function (e) {
-                            activeCity = e.point.name || 'New York';
+                            activeCity = e.point.name;
                             updateBoard(
                                 board,
                                 activeCity,
                                 activeColumn,
-                                activeScale
+                                activeScale,
+                                true
                             );
                         }
                     },
@@ -436,7 +459,13 @@ async function setupBoard() {
             events: {
                 click: function () {
                     activeColumn = 'TN';
-                    updateBoard(board, activeCity, activeColumn, activeScale);
+                    updateBoard(
+                        board,
+                        activeCity,
+                        activeColumn,
+                        activeScale,
+                        true
+                    );
                 }
             },
             states: {
@@ -502,7 +531,13 @@ async function setupBoard() {
             events: {
                 click: function () {
                     activeColumn = 'TX';
-                    updateBoard(board, activeCity, activeColumn, activeScale);
+                    updateBoard(
+                        board,
+                        activeCity,
+                        activeColumn,
+                        activeScale,
+                        true
+                    );
                 },
                 afterLoad: function () {
                     this.cell.setActiveState();
@@ -571,7 +606,12 @@ async function setupBoard() {
             events: {
                 click: function () {
                     activeColumn = 'RR1';
-                    updateBoard(board, activeCity, activeColumn, activeScale);
+                    updateBoard(
+                        board,
+                        activeCity,
+                        activeColumn,
+                        activeScale
+                    );
                 }
             },
             states: {
@@ -637,7 +677,13 @@ async function setupBoard() {
             events: {
                 click: function () {
                     activeColumn = 'ID';
-                    updateBoard(board, activeCity, activeColumn, activeScale);
+                    updateBoard(
+                        board,
+                        activeCity,
+                        activeColumn,
+                        activeScale,
+                        true
+                    );
                 }
             },
             states: {
@@ -703,7 +749,13 @@ async function setupBoard() {
             events: {
                 click: function () {
                     activeColumn = 'FD';
-                    updateBoard(board, activeCity, activeColumn, activeScale);
+                    updateBoard(
+                        board,
+                        activeCity,
+                        activeColumn,
+                        activeScale,
+                        true
+                    );
                 }
             },
             states: {
@@ -850,7 +902,7 @@ async function setupBoard() {
 
     // Load initial city
     await setupCity(board, activeCity, activeColumn, activeScale);
-    await updateBoard(board, activeCity, activeColumn, activeScale);
+    await updateBoard(board, activeCity, activeColumn, activeScale, true);
 
     // Load additional cities
     for (const row of citiesTable.getRowObjects()) {
@@ -918,7 +970,7 @@ async function setupCity(board, city, column, scale) {
 
 }
 
-async function updateBoard(board, city, column, scale) {
+async function updateBoard(board, city, column, scale, newData) {
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
@@ -939,20 +991,22 @@ async function updateBoard(board, city, column, scale) {
 
     let cityTable = await dataPool.getConnectorTable(city);
 
-    // Update time range selector
-    await timeRangeSelector.update({
-        chartOptions: {
-            chart: {
-                type: column[0] === 'T' ? 'spline' : 'column'
-            },
-            navigator: {
-                series: [{
-                    data: cityTable.modified
-                        .getRows(void 0, void 0, ['time', column])
-                }]
+    if (newData) {
+        // Update time range selector
+        await timeRangeSelector.update({
+            chartOptions: {
+                chart: {
+                    type: column[0] === 'T' ? 'spline' : 'column'
+                },
+                navigator: {
+                    series: [{
+                        data: cityTable.modified
+                            .getRows(void 0, void 0, ['time', column])
+                    }]
+                }
             }
-        }
-    });
+        });
+    }
 
     // Update range selection
     selectionTable.setColumns(cityTable.modified.getColumns(), 0);
@@ -980,6 +1034,8 @@ async function updateBoard(board, city, column, scale) {
     });
     (async () => {
         const dataPoints = worldMap.chart.series[1].data;
+        const lastTime = rangeTable
+            .getCellAsNumber('time', rangeTable.getRowCount() - 1);
 
         for (const point of dataPoints) {
             const pointTable = await dataPool.getConnectorTable(point.name);
@@ -987,7 +1043,7 @@ async function updateBoard(board, city, column, scale) {
             point.update({
                 y: pointTable.modified.getCellAsNumber(
                     column,
-                    pointTable.getRowIndexBy('time', timeRangeMin)
+                    pointTable.getRowIndexBy('time', lastTime)
                 )
             });
         }
