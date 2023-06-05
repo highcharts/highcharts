@@ -896,11 +896,11 @@ class RangeSelector {
         function updateExtremes(): void {
             const { maxInput, minInput } = rangeSelector,
                 chartAxis = chart.xAxis[0],
-                dataAxis = chart.scroller && chart.scroller.xAxis ?
-                    chart.scroller.xAxis :
-                    chartAxis,
-                min = dataAxis.min,
-                max = dataAxis.max;
+                unionExtremes = (
+                    chart.scroller && chart.scroller.getUnionExtremes()
+                ) || chartAxis,
+                dataMin = unionExtremes.dataMin,
+                dataMax = unionExtremes.dataMax;
 
             let value: number | undefined = rangeSelector.getInputValue(name);
 
@@ -912,17 +912,17 @@ class RangeSelector {
 
                 // Validate the extremes. If it goes beyound the data min or
                 // max, use the actual data extreme (#2438).
-                if (isMin && maxInput && isNumber(min)) {
+                if (isMin && maxInput && isNumber(dataMin)) {
                     if (value > Number(maxInput.getAttribute('data-hc-time'))) {
                         value = void 0;
-                    } else if (value < min) {
-                        value = min;
+                    } else if (value < dataMin) {
+                        value = dataMin;
                     }
-                } else if (minInput && isNumber(max)) {
+                } else if (minInput && isNumber(dataMax)) {
                     if (value < Number(minInput.getAttribute('data-hc-time'))) {
                         value = void 0;
-                    } else if (value > max) {
-                        value = max;
+                    } else if (value > dataMax) {
+                        value = dataMax;
                     }
                 }
 
