@@ -1989,7 +1989,7 @@ const defaultOptions: Options = {
          *
          * @type      {string}
          * @default   undefined
-         * @since     next
+         * @since 11.1.0
          * @apioption tooltip.format
          */
 

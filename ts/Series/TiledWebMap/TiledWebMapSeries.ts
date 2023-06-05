@@ -132,7 +132,7 @@ class TiledWebMapSeries extends MapSeries {
      * Convert map coordinates in longitude/latitude to tile
      *
      * @function Highcharts.MapView#lonLatToTile
-     * @since  next
+     * @since 11.1.0
      * @param  {Highcharts.MapLonLatObject} lonLat
      *         The map coordinates
      * @return {Highcharts.PositionObject}
@@ -163,7 +163,7 @@ class TiledWebMapSeries extends MapSeries {
      * Convert tile to map coordinates in longitude/latitude
      *
      * @function Highcharts.MapView#tileToLonLat
-     * @since  next
+     * @since 11.1.0
      * @param  xTile
      *         Position x of the tile
      * @param  yTile
@@ -863,7 +863,7 @@ export default TiledWebMapSeries;
  * @sample maps/series-tiledwebmap/human-anatomy
  *         Human Anatomy Explorer - Custom TiledWebMap Provider
  *
- * @since     next
+ * @since 11.1.0
  * @product   highmaps
  * @apioption plotOptions.tiledwebmap.provider
  */
@@ -875,7 +875,7 @@ export default TiledWebMapSeries;
  *         Basic configuration for TiledWebMap
  *
  * @type      {string}
- * @since     next
+ * @since 11.1.0
  * @product   highmaps
  * @apioption plotOptions.tiledwebmap.provider.type
  */
@@ -890,7 +890,7 @@ export default TiledWebMapSeries;
  *         Topo basemap and MapLine
  *
  * @type      {string}
- * @since     next
+ * @since 11.1.0
  * @product   highmaps
  * @apioption plotOptions.tiledwebmap.provider.theme
  */
@@ -903,7 +903,7 @@ export default TiledWebMapSeries;
  *         Basic configuration for TiledWebMap
  *
  * @type      {string}
- * @since     next
+ * @since 11.1.0
  * @product   highmaps
  * @apioption plotOptions.tiledwebmap.provider.subdomain
  */
@@ -912,7 +912,7 @@ export default TiledWebMapSeries;
  * API key for providers that require using one.
  *
  * @type      {string}
- * @since     next
+ * @since 11.1.0
  * @product   highmaps
  * @apioption plotOptions.tiledwebmap.provider.apiKey
  */
@@ -927,7 +927,7 @@ export default TiledWebMapSeries;
  *         Custom URL with projection in TiledWebMap configuration
  *
  * @type      {string}
- * @since     next
+ * @since 11.1.0
  * @product   highmaps
  * @apioption plotOptions.tiledwebmap.provider.url
  */

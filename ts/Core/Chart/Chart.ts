@@ -1749,7 +1749,7 @@ class Chart {
      *
      * @function Highcharts.Chart#getOptions
      *
-     * @since next
+     * @since 11.1.0
      */
     public getOptions(): DeepPartial<Options> {
         return diffObjects(this.userOptions, defaultOptions);

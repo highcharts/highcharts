@@ -545,7 +545,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * but for an individual series. Overrides the chart wide configuration.
      *
      * @type      {Function}
-     * @since     next
+     * @since 11.1.0
      * @apioption plotOptions.series.pointDescriptionFormat
      */
 

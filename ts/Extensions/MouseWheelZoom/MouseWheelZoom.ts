@@ -338,7 +338,7 @@ export default MouseWheelZoomComposition;
  * `false`.
  *
  * @type      {boolean|object}
- * @since     next
+ * @since 11.1.0
  * @requires  modules/mouse-wheel-zoom
  * @sample    {highcharts} highcharts/mouse-wheel-zoom/enabled
  *            Enable or disable
@@ -353,7 +353,7 @@ export default MouseWheelZoomComposition;
  *
  * @type      {boolean}
  * @default   true
- * @since     next
+ * @since 11.1.0
  * @requires  modules/mouse-wheel-zoom
  * @apioption chart.zooming.mouseWheel.enabled
  */
@@ -365,7 +365,7 @@ export default MouseWheelZoomComposition;
  *
  * @type      {number}
  * @default   1.1
- * @since     next
+ * @since 11.1.0
  * @requires  modules/mouse-wheel-zoom
  * @sample    {highcharts} highcharts/mouse-wheel-zoom/sensitivity
  *            Change mouse wheel zoom sensitivity
@@ -388,7 +388,7 @@ export default MouseWheelZoomComposition;
  * @type      {string}
  * @default   x
  * @validvalue ["x", "y", "xy"]
- * @since     next
+ * @since 11.1.0
  * @requires  modules/mouse-wheel-zoom
  * @apioption chart.zooming.mouseWheel.type
  */
