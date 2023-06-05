@@ -108,7 +108,6 @@ const EditGlobals: EditGlobals = {
         dropdownButtonContent: PREFIX + 'dropdown-button-content',
         dropdownIcon: PREFIX + 'pointer',
         rotateElement: PREFIX + 'rotate-element',
-
         icon: PREFIX + 'icon'
     },
     lang: {
@@ -126,6 +125,7 @@ const EditGlobals: EditGlobals = {
         confirmDestroyRow: 'Do you want to destroy the row?',
         dataLabels: 'Data labels',
         editMode: 'Edit mode',
+        errorMessage: 'Something went wrong',
         exitFullscreen: 'Exit full screen',
         id: 'Id',
         large: 'Large',
@@ -283,6 +283,10 @@ namespace EditGlobals {
          * @default 'Edit mode'
          */
         editMode: string;
+        /**
+         * @default 'Something went wrong'
+         */
+        errorMessage: string;
         /**
          * @default 'Exit full screen'
          */

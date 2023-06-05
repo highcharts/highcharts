@@ -35,7 +35,12 @@ import type Component from '../Components/Component.js';
 import ComponentRegistry from '../Components/ComponentRegistry.js';
 import Globals from '../Globals.js';
 import U from '../../Core/Utilities.js';
-const { merge, addEvent, fireEvent } = U;
+const {
+    merge,
+    addEvent,
+    fireEvent,
+    error
+} = U;
 
 /* *
  *
@@ -93,29 +98,54 @@ namespace Bindings {
         cell = cell || Bindings.getCell(options.cell || '');
 
         if (!cell || !cell.container || !options.type) {
+            error(
+                'The component is misconfigured and is unable to find the ' +
+                'HTML cell element `' + options.cell + '` to render the content.'
+            );
             return;
         }
 
         const componentContainer = cell.container;
 
-        const ComponentClass =
+        let ComponentClass =
             ComponentRegistry.getComponent(options.type) as Class<ComponentType>;
 
         if (!ComponentClass) {
-            return;
-        }
+            error(
+                'The component\'s type `' + options.type + '` does not exist.'
+            );
 
+            ComponentClass =
+                ComponentRegistry.getComponent('HTML') as Class<ComponentType>;
+
+            options.title = {
+                text: cell.row.layout.board?.editMode?.lang.errorMessage,
+                className:
+                    Globals.classNamePrefix + 'component-title-error ' +
+                    Globals.classNamePrefix + 'component-title'
+            };
+        }
 
         let board = cell.row.layout.board;
         const component = new ComponentClass(cell, options);
 
-        component.render();
+        try {
+            component.render();
+        } catch (e) {
+            component.update({
+                title: {
+                    text: cell.row.layout.board?.editMode?.lang.errorMessage,
+                    className:
+                        Globals.classNamePrefix + 'component-title-error ' +
+                        Globals.classNamePrefix + 'component-title'
+                }
+            });
+        }
         // update cell size (when component is wider, cell should adjust)
         // this.updateSize();
 
         // add events
         fireEvent(component, 'mount');
-
 
         component.setCell(cell);
         cell.mountedComponent = component;

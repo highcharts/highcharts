@@ -42,8 +42,8 @@ Also the set of CSS styles needs to be imported, so that the Highcharts displays
     @import url("https://code.highcharts.com/css/highcharts.css");
 ```
 
-The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the store <LINK TO STORE> to connect some dynamic data. The data gets parsed through the `columnKeyMap` option to map correct values from the store to reflect them in the series.
-[Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/component-highcharts)
+The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the store <LINK TO STORE> to connect some dynamic data. The data gets parsed through the `columnAssignment` option to map correct values from the store to reflect them in the series. 
+[Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/component-highcharts). The null value keeps columns selectively out of the chart.
 
 ### DataGrid Component
 To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.
@@ -99,4 +99,12 @@ Groups which have shared state can be accessible via
 Also you can post data between components in the same group via `postMessage` method.
 ```js
     component.postMessage('hello world');
+```
+
+### Component errors
+Components have built-in error handling that displays "Something went wrong" as a component title. In the developer's console, you have error details.
+
+The error title has also a specific class that allows you to customize styles.
+```css
+    .highcharts-dashboards-component-title-error
 ```
