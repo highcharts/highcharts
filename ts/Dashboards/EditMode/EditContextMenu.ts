@@ -26,6 +26,10 @@ const {
     merge
 } = U;
 
+/**
+ * Class to create context menu.
+ * @internal
+ */
 class EditContextMenu extends Menu {
     /* *
     *

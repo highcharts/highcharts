@@ -29,6 +29,10 @@ const {
     objectEach
 } = U;
 
+
+/**
+ * @internal
+ */
 class CellEditToolbar extends EditToolbar {
     /* *
     *

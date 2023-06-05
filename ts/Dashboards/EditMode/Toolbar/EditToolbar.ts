@@ -28,6 +28,10 @@ import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import GUIElement from '../../Layout/GUIElement.js';
 
 
+/**
+ * Abstract Class of Edit Toolbar.
+ * @internal
+ */
 abstract class EditToolbar {
 
     /* *

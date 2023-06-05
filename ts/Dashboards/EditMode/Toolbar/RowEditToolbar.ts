@@ -28,6 +28,9 @@ const {
     objectEach
 } = U;
 
+/**
+ * @internal
+ */
 class RowEditToolbar extends EditToolbar {
 
     /* *
