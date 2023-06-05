@@ -304,9 +304,10 @@ const Options: DeepPartial<OptionsType> = {
         /**
          * How to map context events to time when using the `valueInterval`
          * option.
-         * @type {"linear"|"logarithmic"}
-         * @default "linear"
-         * @apioption sonification.globalContextTracks.valueMapFunction
+         * @type       {string}
+         * @default    "linear"
+         * @validvalue ["linear", "logarithmic"]
+         * @apioption  sonification.globalContextTracks.valueMapFunction
          */
 
         /**
