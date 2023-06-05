@@ -1,0 +1,14 @@
+#container1,
+#container2 {
+    height: 250px;
+}
+
+.backticks-true {
+    font-style: italic;
+    color: rgb(45, 134, 4);
+}
+
+.backticks-false {
+    font-style: italic;
+    color: rgb(207, 48, 12);
+}

@@ -30,16 +30,7 @@ Highcharts.ganttChart('container', {
             }
         },
         point: {
-            descriptionFormatter: function (point) {
-                var dependency = point.dependency &&
-                        point.series.chart.get(point.dependency).name,
-                    dependsOn = dependency ? ' Depends on ' + dependency + '.' : '';
-
-                return Highcharts.format(
-                    '{point.yCategory}. Start {point.x:%Y-%m-%d}, end {point.x2:%Y-%m-%d}.{dependsOn}',
-                    { point, dependsOn }
-                );
-            }
+            descriptionFormat: '{yCategory}. Start {x:%Y-%m-%d}, end {x2:%Y-%m-%d}.'
         }
     },
     lang: {

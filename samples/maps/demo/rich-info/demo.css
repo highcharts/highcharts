@@ -6,7 +6,7 @@
     height: 500px;
     width: 1000px;
     margin: 0 auto;
-    padding: 0;
+    padding: 10px;
     overflow: visible;
 }
 
@@ -41,7 +41,6 @@
 }
 
 @media screen and (max-width: 1000px) {
-    #wrapper,
     #container,
     #info {
         float: none;
@@ -50,5 +49,11 @@
         margin: 0.5em 0;
         padding: 0;
         border: none;
+    }
+
+    #wrapper {
+        width: auto;
+        height: auto;
+        margin: 0.5em 0;
     }
 }

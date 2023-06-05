@@ -1,7 +1,7 @@
 Getting started with Highcharts Maps
 ===
 
-Highcharts Maps is Highcharts for geo maps. Highcharts Maps supports [tiled web maps](https://www.highcharts.com/docs/maps/tiledwebmap-series) with external tile providers, and [choropleth maps](https://en.wikipedia.org/wiki/Choropleth_map) where the color intensity relates to some value of a geographic area. It also supports different features like lines (roads, rivers etc.) and points (cities, points of interest) and more, and is closely tied up to the standard TopoJSON and GeoJSON formats. Highcharts Maps comes in two flavors, either as a standalone JavaScript file, or as a plugin for Highcharts.
+Highcharts Maps is Highcharts for geo maps. Highcharts Maps supports [tiled web maps](https://www.highcharts.com/docs/maps/tiledwebmap) with external tile providers, and [choropleth maps](https://en.wikipedia.org/wiki/Choropleth_map) where the color intensity relates to some value of a geographic area. It also supports different features like lines (roads, rivers etc.) and points (cities, points of interest) and more, and is closely tied up to the standard TopoJSON and GeoJSON formats. Highcharts Maps comes in two flavors, either as a standalone JavaScript file, or as a plugin for Highcharts.
 
 Load the required files
 -----------------------
@@ -17,7 +17,7 @@ If you already have Highcharts installed in the web page and want to run Highcha
 
 Load the map
 ------------
-For working with tiled web maps, see [the documentation article](https://www.highcharts.com/docs/maps/tiledwebmap-series).
+For working with tiled web maps, see [the documentation article](https://www.highcharts.com/docs/maps/tiledwebmap).
 
 For maps based on geometry objects, Highcharts Maps loads its maps from [TopoJSON](https://github.com/topojson/topojson) or [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON) which are open standards for description of geographic features. Most GIS software supports these formats as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/class-reference/Highcharts.GeoJSON) and [see the live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/mapline-mappoint/).
 

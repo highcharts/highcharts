@@ -1,7 +1,7 @@
-TiledWebMap series
+TiledWebMap
 ==========
 
-The `tiledwebmap` series, in short TWM, allows users to dynamically create maps from small (most often 256x256 pixels) images called tiles, that are dynamically pulled from the provider's server by using a custom URL. These tiles are later joined and displayed seamlessly as a Highcharts map.
+Tiled web map, in short TWM, allows users to dynamically create maps from small (most often 256x256 pixels) images called tiles, that are dynamically pulled from a third party provider's server by using a custom URL. These tiles are later joined and displayed seamlessly as a Highcharts map.
 
 
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/twm-oslo-attractions" allow="fullscreen"></iframe>

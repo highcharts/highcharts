@@ -21,7 +21,7 @@ import type { ProjectedXY } from '../Maps/MapViewOptions';
 import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
-import F from '../Core/FormatUtilities.js';
+import F from '../Core/Templating.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 const { win } = H;

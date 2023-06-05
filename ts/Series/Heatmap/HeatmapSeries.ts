@@ -461,11 +461,9 @@ class HeatmapSeries extends ScatterSeries {
                     chart,
                     xAxis,
                     yAxis,
-                    points,
-                    boost
+                    points
                 } = series,
                 lastPointIndex = points.length - 1,
-                notBoosting = (!boost && !chart.boost),
                 {
                     len: xAxisLen,
                     reversed: xRev
@@ -533,7 +531,7 @@ class HeatmapSeries extends ScatterSeries {
                         y: 0
                     };
 
-            if (!image) {
+            if (!image || series.isDirtyData) {
                 const
                     colorAxis = (
                         chart.colorAxis &&
@@ -630,10 +628,8 @@ class HeatmapSeries extends ScatterSeries {
                             )
                         );
 
-                    if (notBoosting) {
-                        series.buildKDTree();
-                        series.directTouch = false;
-                    }
+                    series.buildKDTree();
+                    series.directTouch = false;
 
                     for (let i = 0; i < canvasArea; i++) {
                         const
@@ -660,11 +656,18 @@ class HeatmapSeries extends ScatterSeries {
                         0
                     );
 
-                    series.image = chart.renderer.image(
-                        canvas.toDataURL()
-                    )
-                        .attr(dimensions)
-                        .add(series.group);
+                    if (image) {
+                        image.attr({
+                            ...dimensions,
+                            href: canvas.toDataURL()
+                        });
+                    } else {
+                        series.image = chart.renderer.image(
+                            canvas.toDataURL()
+                        )
+                            .attr(dimensions)
+                            .add(series.group);
+                    }
 
                 }
             } else if (
