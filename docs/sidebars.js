@@ -68,7 +68,8 @@ module.exports = {
             'maps/mapbubble-series',
             'maps/marker-clusters',
             'maps/tilemap-series',
-            'maps/geoheatmap-series'
+            'maps/geoheatmap-series',
+            'maps/tiledwebmap'
         ],
         'Gantt': [
             'gantt/getting-started-gantt',
