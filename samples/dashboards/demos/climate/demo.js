@@ -818,10 +818,7 @@ async function setupBoard() {
             connector: {
                 name: 'Range Selection'
             },
-            sync: {
-                highlight: true
-            },
-            columnKeyMap: {
+            columnAssignment: {
                 time: null,
                 FD: null,
                 ID: null,
@@ -833,6 +830,9 @@ async function setupBoard() {
                 TXC: null,
                 TXF: null,
                 Date: null
+            },
+            sync: {
+                highlight: true
             },
             chartOptions: {
                 chart: {
@@ -1085,7 +1085,7 @@ async function updateBoard(board, city, column, scale, newData) {
 
     // Update city grid selection
     await selectionGrid.update({
-        columnKeyMap: {
+        columnAssignment: {
             time: 'x',
             FD: column === 'FD' ? 'y' : null,
             ID: column === 'ID' ? 'y' : null,
@@ -1106,7 +1106,7 @@ async function updateBoard(board, city, column, scale, newData) {
 
     // Update city chart selection
     await cityChart.update({
-        columnKeyMap: {
+        columnAssignment: {
             time: 'x',
             FD: column === 'FD' ? 'y' : null,
             ID: column === 'ID' ? 'y' : null,

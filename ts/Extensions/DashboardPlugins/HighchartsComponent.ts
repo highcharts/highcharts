@@ -44,7 +44,8 @@ const {
     merge,
     splat,
     isArray,
-    uniqueKey
+    uniqueKey,
+    error
 } = U;
 
 /* *
@@ -277,7 +278,7 @@ class HighchartsComponent extends Component {
                         'chartConfig'
                     ]
                 }),
-            columnKeyMap: {}
+            columnAssignment: {}
         }
     );
 
@@ -576,7 +577,7 @@ class HighchartsComponent extends Component {
             const { chart } = this;
 
             // Names/aliases that should be mapped to xAxis values
-            const columnKeyMap = this.options.columnKeyMap || {};
+            const columnAssignment = this.options.columnAssignment || {};
             const xKeyMap: Record<string, string> = {};
 
             if (this.presentationModifier) {
@@ -597,15 +598,15 @@ class HighchartsComponent extends Component {
                             .getColumnVisibility(name) !== false :
                         true;
 
-                    if (!isVisible && !columnKeyMap[name]) {
+                    if (!isVisible && !columnAssignment[name]) {
                         return false;
                     }
 
-                    if (columnKeyMap[name] === null) {
+                    if (columnAssignment[name] === null) {
                         return false;
                     }
 
-                    if (columnKeyMap[name] === 'x') {
+                    if (columnAssignment[name] === 'x') {
                         xKeyMap[name] = name;
                         return false;
                     }
@@ -698,7 +699,14 @@ class HighchartsComponent extends Component {
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor] || G.chart;
             if (factory) {
-                return factory(this.chartContainer, this.chartOptions);
+                try {
+                    return factory(this.chartContainer, this.chartOptions);
+                } catch {
+                    error(
+                        'The Highcharts component is misconfigured: `' +
+                        this.cell.id + '`'
+                    );
+                }
             }
         }
 
@@ -707,7 +715,6 @@ class HighchartsComponent extends Component {
         }
 
         this.chart = charter.chart(this.chartContainer, this.chartOptions);
-
         return this.chart;
     }
 
@@ -931,16 +938,17 @@ namespace HighchartsComponent {
          */
         chartID?: string;
         /**
-         * Names / aliases that should be mapped to xAxis values.
+         * Names / aliases that should be mapped to xAxis values. You can use
+         * null to keep columns selectively out of the chart.
          * ```
          * Example
-         * columnKeyMap: {
+         * columnAssignment: {
          *      'Food': 'x',
          *      'Vitamin A': 'y'
          * }
          * ```
          */
-        columnKeyMap?: Record<string, string | null>;
+        columnAssignment?: Record<string, string | null>;
     }
     /** @internal */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {
