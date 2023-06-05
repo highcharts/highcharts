@@ -84,6 +84,12 @@ async function setupBoard() {
                                 // Change temperature scale.
                                 activeScale = activeScale === 'C' ? 'F' : 'C';
                                 activeColumn = 'TX';
+                                updateBoard(
+                                    board,
+                                    activeCity,
+                                    activeColumn,
+                                    activeScale
+                                );
                             }
                         }
                     }
@@ -371,7 +377,8 @@ async function setupBoard() {
                         headerFormat: '',
                         pointFormat: (
                             '<b>{point.name}</b><br>' +
-                            '{point.y:.1f}˚' + activeScale
+                            'Elevation: {point.custom.elevation}m<br>' +
+                            '{point.y:.1f}˚{point.custom.yScale}'
                         )
                     }
                 }],
@@ -957,7 +964,8 @@ async function setupCity(board, city, column, scale) {
     // Add city to world map
     worldMap.addPoint({
         custom: {
-            elevation: cityInfo.elevation
+            elevation: cityInfo.elevation,
+            yScale: scale
         },
         lat: cityInfo.lat,
         lon: cityInfo.lon,
@@ -973,6 +981,13 @@ async function setupCity(board, city, column, scale) {
 async function updateBoard(board, city, column, scale, newData) {
     const dataPool = board.dataPool;
     const citiesTable = await dataPool.getConnectorTable('Cities');
+    const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
+    const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
+    const colorStops = (
+        column[0] !== 'T' ?
+            colorStopsDays :
+            colorStopsTemperature
+    );
     const selectionTable = await dataPool.getConnectorTable('Range Selection');
     const [
         timeRangeSelector,
@@ -1023,13 +1038,11 @@ async function updateBoard(board, city, column, scale, newData) {
     const rangeTable = selectionTable.modified;
 
     // Update world map
-    worldMap.chart.series[1].update({
-        tooltip: {
-            pointFormat: (
-                '<b>{point.name}</b><br>' +
-                'Elevation: {point.custom.elevation}m<br>' +
-                '{point.y:.1f}˚' + scale
-            )
+    worldMap.chart.update({
+        colorAxis: {
+            min: colorMin,
+            max: colorMax,
+            stops: colorStops
         }
     });
     (async () => {
@@ -1041,6 +1054,9 @@ async function updateBoard(board, city, column, scale, newData) {
             const pointTable = await dataPool.getConnectorTable(point.name);
 
             point.update({
+                custom: {
+                    yScale: scale
+                },
                 y: pointTable.modified.getCellAsNumber(
                     column,
                     pointTable.getRowIndexBy('time', lastTime)
@@ -1122,6 +1138,11 @@ async function updateBoard(board, city, column, scale, newData) {
         chartOptions: {
             chart: {
                 type: column[0] === 'T' ? 'spline' : 'column'
+            },
+            colorAxis: {
+                min: colorMin,
+                max: colorMax,
+                stops: colorStops
             },
             series: [{
                 data: rangeTable.getRows(void 0, void 0, ['time', column])
