@@ -354,7 +354,13 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
             title: false,
             xAxis: {
                 min: Date.UTC(2007, 8, 5),
-                max: Date.UTC(2007, 8, 25)
+                max: Date.UTC(2007, 8, 20)
+            },
+            navigator: {
+                enabled: false
+            },
+            scrollbar: {
+                enabled: false
             },
             series: [
                 {
@@ -406,53 +412,66 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
                 }
             ]
         }),
-        min = chart.xAxis[0].min,
         newMin,
+        newMax,
         test = new TestController(chart);
 
+
     const chartOffset = Highcharts.offset(chart.container);
-    const minDateBoxOffset = Highcharts.offset(
-        chart.rangeSelector.minDateBox.element
-    );
-    test.triggerEvent(
-        'click',
-        minDateBoxOffset.left - chartOffset.left + 10,
-        minDateBoxOffset.top - chartOffset.top + 10,
-        {},
-        true
-    );
 
-    document.activeElement.value = '2007-09-13';
+    const updateExtremes = (dateBoxElement, type, year, month, day) => {
 
-    test.mouseDown(400, 120);
-    test.mouseUp();
+        const dateBoxOffset = Highcharts.offset(
+            dateBoxElement
+        );
 
-    newMin = chart.xAxis[0].min;
+        test.triggerEvent(
+            'click',
+            dateBoxOffset.left - chartOffset.left + 10,
+            dateBoxOffset.top - chartOffset.top + 10,
+            {},
+            true
+        );
 
-    assert.notStrictEqual(min, newMin, 'Extremes should be updated');
+        const formattedMonth = month < 10 ? '0' + month : month;
 
-    const maxDateBoxOffset = Highcharts.offset(
-        chart.rangeSelector.maxDateBox.element
-    );
+        document.activeElement.value = `${year}-${formattedMonth}-${day}`;
 
-    test.triggerEvent(
-        'click',
-        maxDateBoxOffset.left - chartOffset.left + 10,
-        maxDateBoxOffset.top - chartOffset.top + 10,
-        {},
-        true
-    );
+        test.mouseDown(400, 120);
+        test.mouseUp();
 
-    document.activeElement.value = '2007-09-27';
+        const expectedDate = Date.UTC(year, month - 1, day);
 
-    test.mouseDown(400, 120);
-    test.mouseUp();
+        if (type === 'min') {
+            newMin = chart.xAxis[0].min;
 
-    assert.strictEqual(
-        chart.xAxis[0].max,
-        Date.UTC(2007, 8, 27),
-        'Extremes should be updated, considering all relevant series.'
-    );
+            assert.strictEqual(
+                newMin,
+                expectedDate,
+                'Min extremes should be updated, considering all relevant series.'
+            );
+        } else if (type === 'max') {
+            newMax = chart.xAxis[0].max;
+
+            assert.strictEqual(
+                newMax,
+                expectedDate,
+                'Max extremes should be updated, considering all relevant series. (#18251)'
+            );
+        }
+    };
+
+    updateExtremes(chart.rangeSelector.maxDateBox.element, 'max', 2007, 9, 29);
+
+    chart.update({
+        navigator: {
+            enabled: true
+        }
+    });
+
+    updateExtremes(chart.rangeSelector.maxDateBox.element, 'max', 2007, 9, 27);
+
+    updateExtremes(chart.rangeSelector.minDateBox.element, 'min', 2007, 9, 13);
 });
 
 QUnit.test('#13205, #14544: Timezone issues', assert => {
