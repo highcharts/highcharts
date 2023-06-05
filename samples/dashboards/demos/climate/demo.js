@@ -1143,10 +1143,7 @@ async function updateBoard(board, city, column, scale, newData) {
                 min: colorMin,
                 max: colorMax,
                 stops: colorStops
-            },
-            series: [{
-                data: rangeTable.getRows(void 0, void 0, ['time', column])
-            }]
+            }
         }
     });
 }
