@@ -36,7 +36,7 @@ export interface DataGridOptions {
      * Height of each grid cell in pixels. This is used to calculate the amount
      * of visible cells in a container and the size of the scrollbar.
      *
-     * @default 25
+     * @default 49
      */
     cellHeight?: number;
 
