@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         zoomType: 'xy'
     },
     title: {
-        text: 'Monthly weather in Karasjok, 2021',
+        text: 'Karasjok weather, 2021',
         align: 'left'
     },
     subtitle: {
@@ -52,7 +52,7 @@ Highcharts.chart('container', {
         align: 'left',
         x: 80,
         verticalAlign: 'top',
-        y: 80,
+        y: 60,
         floating: true,
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || // theme

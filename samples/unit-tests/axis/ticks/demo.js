@@ -710,8 +710,8 @@ QUnit.test('Monthly ticks (#3500)', function (assert) {
     }
 
     assert.deepEqual(
-        expectedTicksText,
         ticksText,
+        expectedTicksText,
         'Monthly X axis ticks is not correct'
     );
     // Reset

@@ -162,7 +162,8 @@
     const mapChart = Highcharts.mapChart('container', {
 
         chart: {
-            map: topology
+            map: topology,
+            spacing: 1
         },
 
         title: {
