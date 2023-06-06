@@ -21,9 +21,7 @@
         "../../../ts/DataGrid/DataGrid.ts",
         "../../../ts/DataGrid/DataGridOptions.d.ts",
         "../../../ts/Extensions/DashboardPlugins/HighchartsComponent.ts",
-        "../../../ts/Extensions/DashboardPlugins/DataGridPlugin.ts",
         "../../../ts/Extensions/DashboardPlugins/DataGridComponent.ts",
-        "../../../ts/Extensions/DashboardPlugins/HighchartsPlugin.ts"
     ],
     "customCss": "api-docs/typedoc/assets/custom.css",
     "entryPointStrategy": "expand",
