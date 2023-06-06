@@ -207,11 +207,15 @@ const configs: {
                                         };
 
                                         if (seriesInTable.length && axis.coll === 'xAxis' && visiblePoints.length) {
+                                            const columnName = axis.dateTime && table.hasColumns(['x']) ?
+                                                'x' :
+                                                series.name;
+
                                             minCursorData.row = visiblePoints[0].index;
-                                            minCursorData.column = axis.dateTime ? 'x' : series.name;
+                                            minCursorData.column = columnName;
 
                                             maxCursorData.row = visiblePoints[visiblePoints.length - 1].index;
-                                            maxCursorData.column = axis.dateTime ? 'x' : series.name;
+                                            maxCursorData.column = columnName;
                                         }
 
                                         // Emit as lasting cursors
