@@ -149,9 +149,14 @@ describe('Add components through UI', () => {
 
     it('The component is added to empty dashboard.', function() {
 
-        cy.get('#dashboard-col-0').click();
+        cy.get('#dashboard-col-0').click({ force: true });
         cy.get('.highcharts-dashboards-edit-menu-destroy').first().click();
         cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+
+        cy.get('#dashboard-col-2').click({ force: true });
+        cy.get('.highcharts-dashboards-edit-menu-destroy').first().click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click();
+
         grabComponent('chart');
         dropComponent('.highcharts-dashboards-wrapper');
         cy.hideSidebar(); // Hide sidebar to avoid interference with the next test.
