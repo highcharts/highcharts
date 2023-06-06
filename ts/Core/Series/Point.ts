@@ -524,7 +524,7 @@ class Point {
             defaultFunction = function (event: MouseEvent): void {
                 // Control key is for Windows, meta (= Cmd key) for Mac, Shift
                 // for Opera.
-                if (point.select) { // #2911
+                if (!point.destroyed && point.select) { // #2911, #19075
                     point.select(
                         null as any,
                         event.ctrlKey || event.metaKey || event.shiftKey
