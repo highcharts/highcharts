@@ -23,11 +23,8 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        formatter: function () {
-            return '<b>' + this.x + '</b><br/>' +
-                this.series.name + ': ' + this.y + '<br/>' +
-                'Total: ' + this.point.stackTotal;
-        }
+        format: '<b>{key}</b><br/>{series.name}: {y}<br/>' +
+            'Total: {point.stackTotal}'
     },
 
     plotOptions: {

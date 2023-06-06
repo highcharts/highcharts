@@ -56,12 +56,8 @@ Highcharts.chart('container', {
         name: 'Speed',
         data: [80],
         dataLabels: {
-            formatter: function () {
-                var kmh = this.y,
-                    mph = Math.round(kmh * 0.621);
-                return '<span style="color:#339">' + kmh + ' km/h</span><br/>' +
-                    '<span style="color:#933">' + mph + ' mph</span>';
-            },
+            format: '<span style="color:#339">{y} km/h</span><br/>' +
+                '<span style="color:#933">{(multiply y 0.621):.0f} mph</span>',
             backgroundColor: {
                 linearGradient: {
                     x1: 0,

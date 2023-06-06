@@ -32,12 +32,7 @@ Highcharts.ganttChart('container', {
                     x: -15
                 },
                 labels: {
-                    formatter: function () {
-                        var point = this.point,
-                            days = (1000 * 60 * 60 * 24),
-                            number = (point.end - point.start) / days;
-                        return Math.round(number * 100) / 100;
-                    }
+                    format: '{(divide (subtract point.end point.start) 86400000):.0f}'
                 }
             }]
         }

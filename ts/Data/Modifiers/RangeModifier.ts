@@ -20,6 +20,10 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type {
+    RangeModifierOptions,
+    RangeModifierRangeOptions
+} from './RangeModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -50,7 +54,7 @@ class RangeModifier extends DataModifier {
     /**
      * Default options for the range modifier.
      */
-    public static readonly defaultOptions: RangeModifier.Options = {
+    public static readonly defaultOptions: RangeModifierOptions = {
         modifier: 'Range',
         strict: false,
         ranges: []
@@ -69,7 +73,7 @@ class RangeModifier extends DataModifier {
      * Options to configure the range modifier.
      */
     public constructor(
-        options?: DeepPartial<RangeModifier.Options>
+        options?: DeepPartial<RangeModifierOptions>
     ) {
         super();
 
@@ -85,7 +89,7 @@ class RangeModifier extends DataModifier {
     /**
      * Options of the range modifier.
      */
-    public readonly options: RangeModifier.Options;
+    public readonly options: RangeModifierOptions;
 
     /* *
      *
@@ -126,7 +130,7 @@ class RangeModifier extends DataModifier {
             for (
                 let i = 0,
                     iEnd = ranges.length,
-                    range: RangeModifier.RangeOptions,
+                    range: RangeModifierRangeOptions,
                     rangeColumn: DataTable.Column;
                 i < iEnd;
                 ++i
@@ -203,7 +207,7 @@ class RangeModifier extends DataModifier {
 
         if (ranges) {
             const minRange = ranges.reduce(
-                (minRange, currentRange): RangeModifier.RangeOptions => {
+                (minRange, currentRange): RangeModifierRangeOptions => {
                     if (currentRange.minValue > minRange.minValue) {
                         minRange = currentRange;
                     }
@@ -224,67 +228,6 @@ class RangeModifier extends DataModifier {
 
         return 0;
     }
-}
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-/**
- * Additionally provided types for modifier events and options.
- * @private
- */
-namespace RangeModifier {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Options to configure the modifier.
-     */
-    export interface Options extends DataModifier.Options {
-        /**
-         * Value ranges to include in the result.
-         */
-        ranges: Array<RangeOptions>;
-        /**
-         * If set to true, it will also compare the value type.
-         */
-        strict: boolean;
-    }
-
-    /**
-     * Options to configure a range.
-     */
-    export interface RangeOptions {
-
-        /**
-         * Name of the related modifier for these options.
-         */
-        modifier: 'Range';
-
-        /**
-         * Column containing the values to filter.
-         */
-        column: string;
-
-        /**
-         * Maximum including value (`<=` operator).
-         */
-        maxValue: (boolean|number|string);
-
-        /**
-         * Minimum including value (`>=` operator).
-         */
-        minValue: (boolean|number|string);
-
-    }
-
 }
 
 /* *
