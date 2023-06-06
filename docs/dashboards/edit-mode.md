@@ -3,7 +3,7 @@ Edit mode
 
 Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).
 
-In addition this option has to be enabled in the dashboard config:
+In addition, this option has to be enabled in the dashboard config:
 ```javascript
     editMode: {
             enabled: true,

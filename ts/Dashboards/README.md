@@ -2,7 +2,7 @@
 A JavaScript library for interactive dashboards.
 
 ## Installation
-There are multiple to import this package.
+There are multiple ways to import this package.
 Among the most popular are:
 * Using npm, run the following command in your terminal:
 ``` Shell
@@ -78,6 +78,8 @@ You also need a placeholder for your dashboard. In this example we will use a di
     <script src="https://code.highcharts.com/dashboards.js"></script>
 
     <div id="container"></div>
+```
+
 Your dashboard can now be created:
 ``` JS
     Dashboards.board('container', {

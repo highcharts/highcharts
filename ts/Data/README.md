@@ -162,7 +162,7 @@ const chart = new Highcharts.chart('container', {
 
 DataGrid shows and optionally modifies cell content in a table. DataGrid can
 also change the order of cells, but DataTable provides only limited information
-about the original order of a source. Therefore a DataConnector might be needed
+about the original order of a source. Therefore, a DataConnector might be needed
 to retrieve the original order.
 
 ```TypeScript
