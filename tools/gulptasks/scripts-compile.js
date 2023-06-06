@@ -72,7 +72,7 @@ function scriptsCompile(filePathes) {
             ` --js "${inputPath}"` +
             ` --js_output_file "${outputPath}"` +
             ` --language_in ${target}` +
-            ` --language_out ${target}` +
+            // ` --language_out ${target}` +
             ' --platform native', // use native compiler
             { silent: 2 }
 
