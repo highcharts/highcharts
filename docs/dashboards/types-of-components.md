@@ -1,7 +1,7 @@
 Types of components
 ===
 
-Components are the building blocks of the dashboard layout. There are numbers of types of components, which you can use out of the box. Some of them have come with some default configuration (KPI, Highcharts, DataGrid), and some components which leave you some flexibility so that you can configure them all by yourself (HTMLComponent). You define which type of the component you want to use by defining its `type` property in the configuration object.
+Components are the building blocks of the dashboard layout. There are several types of components, which you can use out of the box. Some of them come with a default configuration (KPI, Highcharts, DataGrid), and some components are completely flexible, so that you can configure them all by yourself (HTMLComponent). You define which type of component you want to use by defining its `type` property in the configuration object.
 Each component apart from the most basic one, which is HTMLComponent, needs to be imported with the `dashboards-plugin.js` module.
 
 Here is the overview of most important parameters, that can be defined for a component:
@@ -58,10 +58,10 @@ Also the set of CSS styles needs to be imported, so that the DataGrid displays c
     @import url("https://code.highcharts.com/css/datagrid.css");
 ```
 Then you need to specify the component type with `type: 'DataGrid'`.
-The if you connect this component to the store, the content of the component will be automatically filled with data, and will allow the user to change the data in the store and automatically in all components that also are connected to this store, by editing values in the cell. [Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/dashboards-datagrid-component)
+If you connect this component to the store, the content of the component will be automatically filled with data, and will allow the user to change the data in the store and automatically in all components that also are connected to this store, by editing values in the cell. [Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/dashboards-datagrid-component)
 
 ### KPI Component
-Another type of component type, that allows you to visualize key performance indicators is KPIComponent. This component type is added with the dashboard package, so nothing apart from basic dashboards package needs to be imported.
+Another type of component type that allows you to visualize key performance indicators is KPIComponent. This component type is added with the dashboard package, so nothing apart from the basic dashboards package needs to be imported.
 You can define the threshold to change the style of the component, when one value exceeds it and some other useful features to better show what is important to you.
 
 [Here is the example](http://utils.highcharts.local/samples/#view/dashboards/demos/dashboards-component-kpi)
