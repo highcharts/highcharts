@@ -55,7 +55,7 @@ function scriptsCompile(filePathes) {
                 argv.target ||
                 inputPath.includes('/es5/') ?
                     'ECMASCRIPT5_STRICT' :
-                    'ECMASCRIPT_2020'
+                    'ECMASCRIPT6_STRICT'
             ),
             outputPath = inputPath.replace('.src.js', '.js'),
             outputMapPath = outputPath + '.map';
@@ -63,17 +63,17 @@ function scriptsCompile(filePathes) {
         // Compile file
         // See https://github.com/google/closure-compiler/wiki/Flags-and-Options
         promise = processLib.exec(
-            'google-closure-compiler' +
+            'npx google-closure-compiler' +
             ' --assume_function_wrapper' +
             ' --compilation_level SIMPLE' +
             ` --create_source_map "${outputMapPath}"` +
-            ' --emit_use_strict' +
+            // ' --emit_use_strict' + // not supported in GCC 2022
             ' --env CUSTOM' +
             ` --js "${inputPath}"` +
             ` --js_output_file "${outputPath}"` +
             ` --language_in ${target}` +
-            // ` --language_out ${target}` +
-            ' --platform native', // use native compiler
+            ` --language_out ${target}`,
+            // ' --platform native', // use native compiler // not GCC 2022
             { silent: 2 }
 
         // Fix source map reference
@@ -86,7 +86,10 @@ function scriptsCompile(filePathes) {
                 `//# sourceMappingURL=${outputMapFileName}`
             );
 
-            logLib.success(`Compiled ${inputPath} => ${outputPath}`);
+            logLib.success(
+                `Compiled ${inputPath} => ${outputPath}`,
+                `(${(fs.statSync(outputPath).size / 1024).toFixed(2)} kB)`
+            );
 
             return result;
         });
