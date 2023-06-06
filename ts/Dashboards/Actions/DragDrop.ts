@@ -786,7 +786,8 @@ namespace DragDrop {
      */
     export interface Options {
         /**
-         * Offset how far from the cell edge the context should be detectable.
+         * Offset how far from the cell edge the context (dragged element)
+         * should be detectable.
          */
         cellDropOffset: number;
         /**
@@ -798,7 +799,8 @@ namespace DragDrop {
          */
         enabled: boolean;
         /**
-         * Offset how far from the row edge the context should be detectable.
+         * Offset how far from the row edge the context (dragged element) should
+         * be detectable.
          */
         rowDropOffset: number;
     }

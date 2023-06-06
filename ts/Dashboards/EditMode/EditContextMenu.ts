@@ -54,7 +54,7 @@ class EditContextMenu extends Menu {
             getValue: function (item: MenuItem): boolean {
                 return item.menu.editMode.isActive();
             },
-            text: 'Edit mode',
+            langKey: 'editMode',
             events: {
                 click: function (this: MenuItem): void {
                     (this.menu as EditContextMenu).editMode.onEditModeToggle();

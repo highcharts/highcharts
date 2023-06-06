@@ -144,12 +144,12 @@ class Resizer {
     /**
      * Reference to right handler
      */
-    public snapXR: HTMLDOMElement|undefined;
+    public snapRight: HTMLDOMElement|undefined;
 
     /**
      * Reference to bottom handler
      */
-    public snapYB: HTMLDOMElement|undefined;
+    public snapBottom: HTMLDOMElement|undefined;
 
     /**
      * Pending resizer flag
@@ -188,7 +188,7 @@ class Resizer {
         const dashboardContainer = this.editMode.board.container;
 
         // Right snap
-        this.snapXR = createElement(
+        this.snapRight = createElement(
             'div',
             {
                 className: EditGlobals.classNames.resizeSnap + ' ' +
@@ -202,7 +202,7 @@ class Resizer {
         );
 
         // Bottom snap
-        this.snapYB = createElement(
+        this.snapBottom = createElement(
             'div',
             {
                 className: EditGlobals.classNames.resizeSnap + ' ' +
@@ -230,12 +230,12 @@ class Resizer {
         this.currentDimension = void 0;
         this.currentCell = void 0;
 
-        if (this.snapXR) {
-            this.snapXR.style.left = '-9999px';
+        if (this.snapRight) {
+            this.snapRight.style.left = '-9999px';
         }
 
-        if (this.snapYB) {
-            this.snapYB.style.left = '-9999px';
+        if (this.snapBottom) {
+            this.snapBottom.style.left = '-9999px';
         }
     }
     /**
@@ -259,16 +259,16 @@ class Resizer {
         const snapWidth = (this.options.snap.width || 0);
         const snapHeight = (this.options.snap.height || 0);
 
-        if (this.snapXR) {
-            this.snapXR.style.left = (left + width - snapWidth) + 'px';
-            this.snapXR.style.top = top + (
+        if (this.snapRight) {
+            this.snapRight.style.left = (left + width - snapWidth) + 'px';
+            this.snapRight.style.top = top + (
                 height / 2
             ) - (snapHeight / 2) + 'px';
         }
 
-        if (this.snapYB) {
-            this.snapYB.style.top = (top + height - snapHeight) + 'px';
-            this.snapYB.style.left = (
+        if (this.snapBottom) {
+            this.snapBottom.style.top = (top + height - snapHeight) + 'px';
+            this.snapBottom.style.left = (
                 left + (
                     width / 2
                 ) - (snapWidth / 2)
@@ -409,8 +409,8 @@ class Resizer {
         };
 
         // Add mouse events
-        addEvent(this.snapXR, 'mousedown', mouseDownSnapX);
-        addEvent(this.snapYB, 'mousedown', mouseDownSnapY);
+        addEvent(this.snapRight, 'mousedown', mouseDownSnapX);
+        addEvent(this.snapBottom, 'mousedown', mouseDownSnapY);
 
         addEvent(document, 'mousemove', mouseMoveSnap);
         addEvent(document, 'mouseup', mouseUpSnap);
@@ -492,7 +492,7 @@ class Resizer {
      * Destroy resizer
      */
     public destroy(): void {
-        const snaps = ['snapXR', 'snapYB'];
+        const snaps = ['snapRight', 'snapBottom'];
         let snap;
 
         // Unbind events
@@ -556,7 +556,7 @@ namespace Resizer {
          */
         type: 'x'|'y'|'xy';
         /**
-         * Snap Options.
+         * Options for the snap mechanism.
          */
         snap: SnapOptions;
         /**
@@ -603,6 +603,9 @@ namespace Resizer {
         snapY?: HTMLDOMElement|undefined;
     }
 
+    /**
+     * Options for the snap mechanism.
+     */
     export interface SnapOptions {
 
         /**
