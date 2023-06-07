@@ -61,7 +61,7 @@ Example of synchronized components
         },
         cell: 'dashboard-col-0',
         type: 'Highcharts',
-        columnKeyMap: {
+        columnAssignment: {
             Food: 'x',
             'Vitamin A': 'value'
         },
@@ -79,7 +79,7 @@ Example of synchronized components
             extremes: true
         },
         type: 'Highcharts',
-        columnKeyMap: {
+        columnAssignment: {
             Food: 'x',
             'Vitamin A': 'y'
         },

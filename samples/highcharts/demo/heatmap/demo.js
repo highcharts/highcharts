@@ -1,10 +1,8 @@
-function getPointCategoryName(point, dimension) {
-    var series = point.series,
-        isY = dimension === 'y',
-        axis = series[isY ? 'yAxis' : 'xAxis'];
-    return axis.categories[point[isY ? 'y' : 'x']];
-}
+// Substring template helper for the responsive labels
+Highcharts.Templating.helpers.substr = (s, from, length) =>
+    s.substr(from, length);
 
+// Create the chart
 Highcharts.chart('container', {
 
     chart: {
@@ -35,13 +33,9 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                var ix = point.index + 1,
-                    xName = getPointCategoryName(point, 'x'),
-                    yName = getPointCategoryName(point, 'y'),
-                    val = point.value;
-                return ix + '. ' + xName + ' sales ' + yName + ', ' + val + '.';
-            }
+            descriptionFormat: '{(add index 1)}. ' +
+                '{series.xAxis.categories.(x)} sales ' +
+                '{series.yAxis.categories.(y)}, {value}.'
         }
     },
 
@@ -61,12 +55,9 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        formatter: function () {
-            return '<b>' + getPointCategoryName(this.point, 'x') +
-                '</b> sold <br><b>' + this.point.value +
-                '</b> items on <br><b>' +
-                getPointCategoryName(this.point, 'y') + '</b>';
-        }
+        format: '<b>{series.xAxis.categories.(point.x)}</b> sold<br>' +
+            '<b>{point.value}</b> items on <br>' +
+            '<b>{series.yAxis.categories.(point.y)}</b>'
     },
 
     series: [{
@@ -96,9 +87,7 @@ Highcharts.chart('container', {
             chartOptions: {
                 yAxis: {
                     labels: {
-                        formatter: function () {
-                            return this.value.charAt(0);
-                        }
+                        format: '{substr value 0 1}'
                     }
                 }
             }

@@ -50,7 +50,7 @@ describe('Chart synchronized series state', () => {
 
     });
 
-    it.skip('should sync tooltip between two charts sharing the same connector', () => {
+    it('should sync tooltip between two charts sharing the same connector', () => {
         cy.get('.chart-container')
             .get('.highcharts-point').first()
             .as('firstPoint')
@@ -64,7 +64,10 @@ describe('Chart synchronized series state', () => {
         }));
 
         // Move mouse away from the chart area
-        cy.get('.chart-container').first().trigger('mouseleave');
+        cy.get('.chart-container').first().trigger('mousemove', {
+            pageX: 500,
+            pageY: 500
+        });
 
         // Second chart should now not have a tooltip
         cy.get('.chart-container').last().within(() => {

@@ -34,7 +34,7 @@ const {
     emptyHTMLElement,
     makeDiv
 } = DataGridUtils;
-import F from '../Core/FormatUtilities.js';
+import Templating from '../Core/Templating.js';
 import DataGridDefaults from './DataGridDefaults.js';
 import H from '../Core/Globals.js';
 const {
@@ -152,7 +152,7 @@ class DataGrid {
      * The column names in a sorted array as rendered (or changed).
      * @internal
      */
-    private columnNames: Array<string>;
+    private columnNames: Array<string> = [];
 
     /**
      * The dragging placeholder.
@@ -252,7 +252,6 @@ class DataGrid {
 
         // Init data table
         this.dataTable = this.initDataTable();
-        this.columnNames = this.getColumnsToDisplay();
 
         this.rowElements = [];
         this.draggedResizeHandle = null;
@@ -268,6 +267,9 @@ class DataGrid {
      */
     public update(options: DeepPartial<DataGridOptions>): void {
         this.options = merge(this.options, options);
+        if (this.options.dataTable !== this.dataTable) {
+            this.dataTable = this.initDataTable();
+        }
 
         this.scrollContainer.removeChild(this.innerContainer);
         this.render();
@@ -475,6 +477,7 @@ class DataGrid {
         emptyHTMLElement(this.innerContainer);
 
         if (options.columnHeaders.enabled) {
+            this.columnNames = this.getColumnsToDisplay();
             this.outerContainer.style.top = this.options.cellHeight + 'px';
             this.renderColumnHeaders();
         } else {
@@ -868,7 +871,7 @@ class DataGrid {
             headerFormat = columnOptions && columnOptions.headerFormat;
 
         if (headerFormat) {
-            return F.format(headerFormat, { text: columnName });
+            return Templating.format(headerFormat, { text: columnName });
         }
 
         return columnName;
@@ -896,12 +899,14 @@ class DataGrid {
                 typeof cellValue === 'number' &&
                 cellFormat.indexOf('value') > -1
             ) {
-                formattedCell = F.format(cellFormat, { value: cellValue });
+                formattedCell =
+                    Templating.format(cellFormat, { value: cellValue });
             } else if (
                 typeof cellValue === 'string' &&
                 cellFormat.indexOf('text') > -1
             ) {
-                formattedCell = F.format(cellFormat, { text: cellValue });
+                formattedCell =
+                    Templating.format(cellFormat, { text: cellValue });
             }
         }
 

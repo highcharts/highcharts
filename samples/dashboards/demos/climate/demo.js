@@ -318,7 +318,7 @@ async function setupDashboard() {
             sync: {
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 time: null,
                 FD: null,
                 ID: null,
@@ -497,7 +497,7 @@ async function setupDashboard() {
                     );
                 },
                 afterLoad: function () {
-                    this.parentCell.setActiveState();
+                    this.cell.setActiveState();
                 }
             },
             states: {

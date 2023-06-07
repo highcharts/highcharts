@@ -71,15 +71,7 @@ var chart = Highcharts.chart('container', {
     },
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                // Use default formatter for null points
-                if (point.isNull) {
-                    return false;
-                }
-
-                return point.category + ', low ' + point.low + ', median ' +
-                    point.median + ', high ' + point.high;
-            }
+            descriptionFormat: '{#unless isNull}{category}, low {low}, median {median}, high {high}{/unless}'
         },
         series: {
             descriptionFormat: '{series.name}, series {seriesNumber} of {chart.series.length} with {series.points.length} data points.'

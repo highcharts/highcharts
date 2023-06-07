@@ -22,10 +22,15 @@
  *
  * */
 
+import type Cell from '../Layout/Cell.js';
+
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+
+const {
+    merge
+} = U;
 
 // TODO: This may affect the AST parsing in Highcharts
 // should look into adding these as options if possible
@@ -94,12 +99,18 @@ class HTMLComponent extends Component {
      * @param json
      * Set of component options, used for creating the HTML component.
      *
+     * @param cell
+     * Instance of cell, where component is attached.
+     *
      * @returns
      * HTML component based on config from JSON.
      *
      * @internal
      */
-    public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
+    public static fromJSON(
+        json: HTMLComponent.ClassJSON,
+        cell: Cell
+    ): HTMLComponent {
         const options = json.options;
         const elements = (
             json.elements ?
@@ -111,6 +122,7 @@ class HTMLComponent extends Component {
         // );
 
         const component = new HTMLComponent(
+            cell,
             merge(
                 options as any,
                 {
@@ -169,12 +181,12 @@ class HTMLComponent extends Component {
      * @param options
      * The options for the component.
      */
-    constructor(options: Partial<HTMLComponent.HTMLComponentOptions>) {
+    constructor(cell: Cell, options: Partial<HTMLComponent.HTMLComponentOptions>) {
         options = merge(
             HTMLComponent.defaultOptions,
             options
         );
-        super(options);
+        super(cell, options);
 
         this.options = options as HTMLComponent.HTMLComponentOptions;
 
@@ -208,22 +220,45 @@ class HTMLComponent extends Component {
             type: 'load'
         });
         super.load();
-        this.elements = this.options.elements ?
-            this.options.elements.map(
-                (element): AST.Node => (
-                    typeof element === 'string' ?
-                        new AST(element).nodes[0] :
-                        element
-                )) : [];
+        const options = this.options;
+        let isError = false;
+
+        if (options.elements) {
+            this.elements = options.elements.map(
+                function (element): AST.Node {
+                    if (typeof element === 'string') {
+                        return new AST(element).nodes[0];
+                    }
+
+                    if (
+                        !element.textContent &&
+                        !element.tagName &&
+                        element.attributes
+                    ) {
+                        isError = true;
+                    }
+
+                    return element;
+                });
+        }
 
         this.constructTree();
 
-
         this.parentElement.appendChild(this.element);
+
         if (this.scaleElements) {
             this.autoScale();
         }
+
         this.emit({ type: 'afterLoad' });
+
+        if (isError) {
+            throw new Error(
+                'Missing tagName param in component: ' +
+                options.cell
+            );
+        }
+
         return this;
     }
 
@@ -300,10 +335,9 @@ class HTMLComponent extends Component {
      * @returns
      * The component for chaining.
      */
-    public update(options: Partial<HTMLComponent.HTMLComponentOptions>): this {
-        super.update(options);
+    public async update(options: Partial<HTMLComponent.HTMLComponentOptions>): Promise<void> {
+        await super.update(options);
         this.emit({ type: 'afterUpdate' });
-        return this;
     }
 
     /**

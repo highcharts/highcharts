@@ -150,13 +150,13 @@ describe('Editable component options', () => {
             );
 
             assert.deepEqual(
-                board.mountedComponents[0].component.chart.userOptions.xAxis,
+                board.mountedComponents[0].component.chart.userOptions.xAxis[0],
                 newChartOptions.xAxis,
                 'New xAxis options are applied on chart.'
             );
 
             assert.deepEqual(
-                board.mountedComponents[0].component.chart.userOptions.yAxis,
+                board.mountedComponents[0].component.chart.userOptions.yAxis[0],
                 newChartOptions.yAxis,
                 'New yAxis options are applied on chart.'
             );
