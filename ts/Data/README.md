@@ -211,7 +211,7 @@ either an URL or a local source.
 
 ### DataConnector Registry
 
-DataConnector types can be directly loaded via import. In case of bundles,
+DataConnector types can be directly loaded via import. In the case of bundles,
 connectors can also be accessed via registry, as the registry gets updated with
 each bundled type.
 
