@@ -1535,7 +1535,8 @@ export default GridAxis;
 
 /**
  * Set cell height for grid axis labels. By default this is calculated from font
- * size. This option only applies to horizontal axes.
+ * size. This option only applies to horizontal axes. For vertical axes, check
+ * the [#yAxis.staticScale](yAxis.staticScale) option.
  *
  * @sample gantt/grid-axis/cellheight
  *         Gant chart with custom cell height
