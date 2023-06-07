@@ -248,6 +248,8 @@ class DataGrid {
         // Init options
         this.options = merge(DataGrid.defaultOptions, options);
 
+        this.gridContainer.style.height = this.getDataGridSize() + 'px';
+
         // Init data table
         this.dataTable = this.initDataTable();
 
@@ -564,7 +566,7 @@ class DataGrid {
                 // TODO: get this from the store if set?
                 cell.dataset.dataType = typeof value;
 
-                if (k === 0) { // first column, that is x
+                if (k === 0) { // First column, that is x
                     rowElement.dataset.rowXIndex =
                         String(isNumber(value) ? value : i);
                 }
@@ -784,6 +786,30 @@ class DataGrid {
         );
     }
 
+    /**
+     * Internal method that calculates the data grid height. If the container
+     * has a height declared in CSS it uses that, otherwise it uses a default.
+     * @internal
+     */
+    public getDataGridSize(): number {
+        const grid = this,
+            options = grid.options,
+            { height } = grid.container.getBoundingClientRect(),
+            extraPixelsForBorders = 2;
+
+        // If the container has a height declared in CSS, use that.
+        if (height > 2) {
+            return height;
+        }
+        // Use the default height if the container has no height declared in CSS
+        // Check if the column header is enabled.
+        if (options.columnHeaders.enabled) {
+            return options.defaultHeight +
+                options.cellHeight + extraPixelsForBorders;
+        }
+        return options.defaultHeight;
+    }
+
 
     /**
      * Renders a data cell.
@@ -931,8 +957,11 @@ class DataGrid {
             this.renderColumnHeader.bind(this, columnHeadersContainer)
         );
 
-        this.headerContainer = makeDiv('hc-dg-header-container');
-        this.headerContainer.appendChild(columnHeadersContainer);
+        if (!this.headerContainer) {
+            this.headerContainer = makeDiv('hc-dg-header-container');
+            this.headerContainer.appendChild(columnHeadersContainer);
+        }
+
         this.gridContainer.insertBefore(
             this.headerContainer,
             this.outerContainer
