@@ -27,6 +27,9 @@ const {
     createElement
 } = U;
 
+/**
+ * Class to create confirmation popup.
+ */
 class ConfirmationPopup extends BaseForm {
     /* *
     *
@@ -39,11 +42,27 @@ class ConfirmationPopup extends BaseForm {
     *  Constructor
     *
     * */
+
+    /**
+     * Constructs an instance of the ConfirmationPopup.
+     *
+     * @param parentDiv
+     * Parent div where the popup will be added.
+     *
+     * @param iconsURL
+     * URL to the icons.
+     *
+     * @param editMode
+     * The EditMode instance.
+     *
+     * @param options
+     * Options for confirmation popup.
+     */
     constructor(
         parentDiv: HTMLElement,
         iconsURL: string,
         editMode: EditMode,
-        options: ConfirmationPopup.Options
+        options?: ConfirmationPopup.Options
     ) {
         super(parentDiv, iconsURL);
 
@@ -56,8 +75,18 @@ class ConfirmationPopup extends BaseForm {
     *  Properties
     *
     * */
-    public options: ConfirmationPopup.Options;
+
+    /**
+     * Options for confirmation popup.
+     */
+    public options?: ConfirmationPopup.Options;
+    /**
+     * Container for popup content.
+     */
     public contentContainer: HTMLDOMElement|undefined;
+    /**
+     * The EditMode instance.
+     */
     public editMode: EditMode;
 
     /* *
@@ -66,6 +95,15 @@ class ConfirmationPopup extends BaseForm {
     *
     * */
 
+    /**
+     * Returns popup container.
+     *
+     * @param parentDiv
+     * Parent div where the popup will be added.
+     *
+     * @param className
+     * Class name added to the popup container.
+     */
     protected createPopupContainer(
         parentDiv: HTMLElement,
         className: string = EditGlobals.classNames.confirmationPopup
@@ -73,16 +111,28 @@ class ConfirmationPopup extends BaseForm {
         return super.createPopupContainer(parentDiv, className);
     }
 
+    /**
+     * Adds close button to the popup.
+     *
+     * @param className
+     * Class name added to the close button.
+     */
     protected addCloseButton(
         className: string = EditGlobals.classNames.popupCloseButton
     ): HTMLElement {
         return super.addCloseButton(className);
     }
 
+    /**
+     * Adds content inside the popup.
+     *
+     * @param options
+     * Options for confirmation popup.
+     */
     public renderContent(
         options: ConfirmationPopup.ContentOptions
     ): void {
-        // render content wrapper
+        // Render content wrapper
         this.contentContainer = createElement(
             'div', {
                 className: EditGlobals.classNames.popupContentContainer
@@ -98,13 +148,12 @@ class ConfirmationPopup extends BaseForm {
             offsetTop < 0 ? Math.abs(offsetTop - 200) : 200
         ) + 'px';
 
-        // render text
+        // Render text
         EditRenderer.renderText(this.contentContainer, {
             title: options.text || ''
         });
 
-        // render buttons
-        // Cancel
+        // Render cancel buttons
         EditRenderer.renderButton(
             this.contentContainer,
             {
@@ -120,18 +169,24 @@ class ConfirmationPopup extends BaseForm {
                 value: options.confirmButton.value,
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: (): void => {
-                    // run callback
+                    // Run callback
                     // confirmCallback.call(context);
                     options.confirmButton.callback.call(
                         options.confirmButton.context
                     );
-                    // hide popup
+                    // Hide popup
                     this.closePopup();
                 }
             }
         );
     }
 
+    /**
+     * Shows confirmation popup.
+     *
+     * @param options
+     * Options for confirmation popup.
+     */
     public show(
         options: ConfirmationPopup.ContentOptions
     ): void {
@@ -140,6 +195,9 @@ class ConfirmationPopup extends BaseForm {
         this.editMode.setEditOverlay();
     }
 
+    /**
+     * Hides confirmation popup.
+     */
     public closePopup(): void {
         super.closePopup();
         this.editMode.setEditOverlay(true);
@@ -147,11 +205,23 @@ class ConfirmationPopup extends BaseForm {
 }
 
 namespace ConfirmationPopup {
+    /**
+     * Options for confirmation popup.
+     */
     export interface Options {
+        /**
+         * Close icon
+         */
         close: CloseIcon;
     }
 
+    /**
+     * Close icon options.
+     */
     export interface CloseIcon {
+        /**
+         * Icon's URL.
+         */
         icon: string;
     }
 

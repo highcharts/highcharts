@@ -39,10 +39,10 @@ import ContextDetection from '../Actions/ContextDetection.js';
 import GUIElement from '../Layout/GUIElement.js';
 
 const {
-    merge,
     addEvent,
     createElement,
-    css
+    css,
+    merge
 } = U;
 
 /* *
@@ -56,6 +56,17 @@ class EditMode {
     *  Constructor
     *
     * */
+
+    /**
+     * Edit mode constructor.
+     * @internal
+      *
+     * @param board
+     * Board instance
+     *
+     * @param options
+     * Edit mode options
+     */
     constructor(
         board: Board,
         options?: EditMode.Options
@@ -132,29 +143,106 @@ class EditMode {
     *
     * */
 
+    /**
+     * @internal
+     */
     private active: boolean = false;
+    /**
+     * Edit mode options.
+     */
     public options: EditMode.Options;
+    /**
+     * URL from which the icons will be fetched.
+     */
     public iconsURLPrefix: string = 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/';
+    /**
+     * Dashboards' board instance.
+     */
     public board: Board;
+    /**
+     * Language dictionary.
+     */
     public lang: EditGlobals.LangOptions;
+    /**
+     * Instance of the toolbar, which is displayed for the cell.
+     */
     public cellToolbar?: CellEditToolbar;
+    /**
+     * Instance of the toolbar, which is displayed for the row.
+     */
     public rowToolbar?: RowEditToolbar;
+    /**
+     * Instance of the sidebar.
+     */
     public sidebar?: SidebarPopup;
+    /**
+     * @internal
+     */
     public dragDrop?: DragDrop;
+    /**
+     * @internal
+     */
     public resizer?: Resizer;
+    /**
+     * Whether the instance of edit mode was initialized.
+     * @internal
+     */
     public isInitialized: boolean;
+    /**
+     * HTML Element responsible for adding the component.
+     * @internal
+     */
     public addComponentBtn?: HTMLDOMElement;
+    /**
+     * Current selected mode, for emulating different screen width for
+     * responsive web design.
+     */
     public rwdMode: string;
+    /**
+     * HTML elements responsible for changing the container width.
+     * @internal
+     */
     public rwdMenu: Array<HTMLDOMElement>;
+    /**
+     * @internal
+     */
     public tools: EditMode.Tools;
+    /**
+     * Instance of the confirmation popup.
+     */
     public confirmationPopup?: ConfirmationPopup;
+    /**
+     * @internal
+     * Whether the context detection is active.
+     */
     public isContextDetectionActive: boolean;
+    /**
+     * @internal
+     */
     public mouseCellContext?: Cell;
+    /**
+     * @internal
+     */
     public mouseRowContext?: Row;
+    /**
+     * @internal
+     */
     public potentialCellContext?: Cell;
+    /**
+     * @internal
+     */
     public editCellContext?: Cell;
+    /**
+     * @internal
+     */
     public contextPointer: EditMode.ContextPointer;
+    /**
+     * @internal
+     */
     public editOverlay: HTMLDOMElement;
+    /**
+     * @internal
+     */
     public isEditOverlayActive: boolean;
 
     /* *
@@ -163,9 +251,12 @@ class EditMode {
     *
     * */
 
-    public onContextBtnClick(
-        editMode: EditMode
-    ): void {
+    /**
+     * Event to fire on click of the context button.
+     * @internal
+     */
+    public onContextBtnClick(): void {
+        const editMode = this;
         // Init contextMenu if doesn't exist.
         if (!editMode.tools.contextMenu) {
             editMode.tools.contextMenu = new EditContextMenu(
@@ -188,6 +279,9 @@ class EditMode {
         }
     }
 
+    /**
+     * Activate or deactivate edit mode.
+     */
     public onEditModeToggle(): void {
         const editMode = this;
 
@@ -198,7 +292,11 @@ class EditMode {
         }
     }
 
-    public initEditMode(): void {
+    /**
+     * Init the instance of edit mode.
+     * @internal
+     */
+    public init(): void {
         const editMode = this;
 
         if (!(editMode.options.resize &&
@@ -239,6 +337,10 @@ class EditMode {
         editMode.isInitialized = true;
     }
 
+    /**
+     * Init events for edit mode.
+     * @internal
+     */
     private initEvents(): void {
         const editMode = this,
             board = editMode.board;
@@ -300,6 +402,10 @@ class EditMode {
         });
     }
 
+    /**
+     * Set events for the layout.
+     * @internal
+     */
     private setLayoutEvents(
         layout: Layout
     ): void {
@@ -315,9 +421,11 @@ class EditMode {
         }
     }
 
-    public setRowEvents(
-        row: Row
-    ): void {
+    /**
+     * Set events for the row.
+     * @internal
+     */
+    public setRowEvents(row: Row): void {
         const editMode = this;
 
         // Init dragDrop row events.
@@ -355,6 +463,10 @@ class EditMode {
         }
     }
 
+    /**
+     * Set events for the cell.
+     * @internal
+     */
     public setCellEvents(
         cell: Cell
     ): void {
@@ -408,13 +520,16 @@ class EditMode {
             }
         }
     }
-
+    /**
+     * Activate the edit mode.
+     * @internal
+     */
     public activate(): void {
         const editMode = this;
 
         // Init edit mode.
         if (!editMode.isInitialized) {
-            editMode.initEditMode();
+            editMode.init();
             editMode.initEvents();
         }
 
@@ -438,6 +553,10 @@ class EditMode {
         editMode.isContextDetectionActive = true;
     }
 
+    /**
+     * Deactivate the edit mode.
+     * @internal
+     */
     public deactivate(): void {
         const editMode = this,
             dashboardCnt = editMode.board.container;
@@ -478,14 +597,22 @@ class EditMode {
         this.potentialCellContext = void 0;
     }
 
+    /**
+     * Function to check whether the edit mode is activated.
+     * @internal
+     *
+     * @returns
+     * Whether the edit mode is activated.
+     */
     public isActive(): boolean {
         return this.active;
     }
 
     /**
      * Method for hiding edit toolbars.
+     * @internal
      *
-     * @param {Array<string>} toolbarTypes
+     * @param toolbarTypes
      * The array of toolbar names to hide ('cell', 'row', 'sidebar').
      */
     public hideToolbars(
@@ -526,15 +653,14 @@ class EditMode {
 
     /**
      * Method for hiding edit toolbars.
+     * @internal
      *
-     * @param {Array<string>} toolbarTypes
+     * @param toolbarTypes
      * The array of toolbar names to hide ('cell', 'row', 'sidebar').
      *
-     * @param {Cell} currentCell
-     * The cell reference for toolbar
+     * @param currentCell
+     * The cell reference for toolbar.
      *
-     * @param {Row} currentRow
-     * The row reference for toolbar
      */
     public showToolbars(
         toolbarTypes?: Array<string>,
@@ -572,11 +698,16 @@ class EditMode {
         }
     }
 
+    /**
+     * Creates the buttons such as `addComponent` button, rwd buttons and
+     * context menu button.
+     * @internal
+     */
     public createTools(): void {
         const editMode = this;
         const options = this.options;
 
-        // create tools container
+        // Create tools container
         this.tools.container = document.createElement('div');
         this.tools.container.classList.add(EditGlobals.classNames.editTools);
 
@@ -585,7 +716,7 @@ class EditMode {
             this.board.layoutsWrapper
         );
 
-        // create context menu button
+        // Create context menu button
         if (
             options.contextMenu &&
             options.contextMenu.enabled
@@ -596,12 +727,11 @@ class EditMode {
             );
         }
 
-        // create rwd menu
+        // Create rwd menu
         this.createRwdMenu();
 
-        // create add button
-        const addIconURL = options && options.tools &&
-        options.tools.addComponentBtn && options.tools.addComponentBtn.icon;
+        // Create add button
+        const addIconURL = options?.tools?.addComponentBtn?.icon;
 
         this.addComponentBtn = EditRenderer.renderButton(
             this.tools.container,
@@ -610,7 +740,7 @@ class EditMode {
                 icon: addIconURL,
                 value: this.lang.addComponent,
                 callback: (): void => {
-                    // sidebar trigger
+                    // Sidebar trigger
                     if (editMode.sidebar) {
                         editMode.sidebar.show();
                         editMode.setEditOverlay();
@@ -623,6 +753,10 @@ class EditMode {
         );
     }
 
+    /**
+     * Creates the responsive width buttons.
+     * @internal
+     */
     private createRwdMenu(): void {
         const rwdBreakingPoints = this.board.options.responsiveBreakpoints;
         const toolsContainer = this.tools.container;
@@ -678,18 +812,31 @@ class EditMode {
         }
     }
 
+    /**
+     * Shows responsive buttons.
+     * @internal
+     */
     public showRwdButtons(): void {
         for (let i = 0, iEnd = this.rwdMenu.length; i < iEnd; ++i) {
             (this.rwdMenu[i] as HTMLDOMElement).style.display = 'block';
         }
     }
 
+    /**
+     * Hides responsive buttons.
+     * @internal
+     */
     public hideRwdButtons(): void {
         for (let i = 0, iEnd = this.rwdMenu.length; i < iEnd; ++i) {
             (this.rwdMenu[i] as HTMLDOMElement).style.display = 'none';
         }
     }
-
+    /**
+     * Event fired when detecting context on drag&drop.
+     *
+     * @param e
+     * Mouse pointer event.
+     */
     public onDetectContext(e: PointerEvent): void {
         const editMode = this,
             offset = 50; // TODO - add it from options.
@@ -729,11 +876,18 @@ class EditMode {
         }
     }
 
+
+    /**
+     * Stops the context detection.
+     */
     public stopContextDetection(): void {
         this.isContextDetectionActive = false;
         this.hideContextPointer();
     }
 
+    /**
+     * Confirms the selected context.
+     */
     public onContextConfirm(): void {
         if (
             this.isContextDetectionActive &&
@@ -747,6 +901,10 @@ class EditMode {
         }
     }
 
+    /**
+     * Sets the edit cell context.
+     * @internal
+     */
     public setEditCellContext(
         editCellContext: Cell,
         oldEditCellContext?: Cell
@@ -774,18 +932,7 @@ class EditMode {
 
     /**
      * Method for showing and positioning context pointer.
-     *
-     * @param {number} left
-     * Context pointer left position.
-     *
-     * @param {number} top
-     * Context pointer top position.
-     *
-     * @param {number} width
-     * Context pointer width.
-     *
-     * @param {number} height
-     * Context pointer height.
+     * @internal
      */
     private showContextPointer(
         left: number,
@@ -806,6 +953,7 @@ class EditMode {
 
     /**
      * Method for hiding context pointer.
+     * @internal
      */
     public hideContextPointer(): void {
         if (this.contextPointer.isVisible) {
@@ -814,6 +962,14 @@ class EditMode {
         }
     }
 
+
+    /**
+     * Adds/Removes the edit mode overlay.
+     * @internal
+     *
+     * @param remove
+     * Whether the edit overlay should be removed.
+     */
     public setEditOverlay(
         remove?: boolean
     ): void {
@@ -840,29 +996,70 @@ class EditMode {
  * */
 namespace EditMode {
     export interface Options {
-        enabled: boolean;
+        /**
+         * Context menu options.
+         */
+        contextMenu?: EditContextMenu.Options;
+        /**
+         * Confirmation popup options.
+         */
+        confirmationPopup?: ConfirmationPopup.Options;
+        /**
+         * Whether the edit mode should be enabled for the dashboards.
+         *
+         * @default false
+         */
+        enabled?: boolean;
+        /**
+         * Drag and drop options.
+         */
+        dragDrop?: DragDrop.Options;
         /**
          * The URL prefix for the icons used in the edit mode like the context
          * menu icons, the row and cell edit toolbar icons, etc.
          *
-         * @default 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/'
+         * @default https://code.highcharts.com/@product.version@/gfx/dashboard-icons/
          */
         iconsURLPrefix?: string;
-        lang?: EditGlobals.LangOptions|string;
-        toolbars?: EditMode.Toolbars;
-        dragDrop?: DragDrop.Options;
+        /**
+         * Additional Language options.
+         */
+        lang?: EditGlobals.LangOptions;
+        /**
+         * Resize options.
+         */
         resize?: Resizer.Options;
-        tools: Tools;
-        contextMenu?: EditContextMenu.Options;
-        confirmationPopup: ConfirmationPopup.Options;
+        /**
+         * Toolbar options.
+         */
+        toolbars?: Toolbars;
+        /**
+         * @internal
+         */
+        tools?: Tools;
     }
 
+    /**
+    * Toolbar options.
+    */
     export interface Toolbars {
+        /**
+        * Options of the cell toolbar.
+        */
         cell?: CellEditToolbar.Options;
+        /**
+        * Options of the row toolbar.
+        */
         row?: RowEditToolbar.Options;
-        settings?: SidebarPopup.Options;
+        /**
+        * Options of the sidebar.
+        */
+        sidebar?: SidebarPopup.Options;
     }
 
+    /**
+    * @internal
+    */
     export interface Tools {
         contextMenu?: EditContextMenu;
         contextButtonElement?: HTMLDOMElement;
@@ -871,16 +1068,25 @@ namespace EditMode {
         rwdIcons?: RwdIcons;
     }
 
+    /**
+    * @internal
+    */
     export interface AddComponentBtn {
         icon: string;
     }
 
+    /**
+    * @internal
+    */
     export interface RwdIcons {
         small: string;
         medium: string;
         large: string;
     }
 
+    /**
+    * @internal
+    */
     export interface ContextPointer {
         isVisible: boolean;
         element: HTMLDOMElement;

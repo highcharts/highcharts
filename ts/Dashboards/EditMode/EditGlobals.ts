@@ -20,8 +20,10 @@ import DG from '../Globals.js';
 
 const PREFIX = DG.classNamePrefix + 'edit-';
 
+/**
+ * @internal
+ */
 const EditGlobals: EditGlobals = {
-    prefix: PREFIX,
     classNames: {
         resizeSnap: PREFIX + 'resize-snap',
         resizeSnapX: PREFIX + 'resize-snap-x',
@@ -111,39 +113,41 @@ const EditGlobals: EditGlobals = {
         icon: PREFIX + 'icon'
     },
     lang: {
-        editMode: 'Edit mode',
-        style: 'Styles',
-        id: 'Id',
-        title: 'Title',
+        addComponent: 'Add component',
+        cancelButton: 'Cancel',
         caption: 'Caption',
-        chartConfig: 'Chart configuration',
         chartClassName: 'Chart class name',
+        chartConfig: 'Chart configuration',
         chartID: 'Chart ID',
         chartOptions: 'Chart options',
         chartType: 'Chart type',
+        connectorName: 'Connector name',
+        confirmButton: 'Confirm',
+        confirmDestroyCell: 'Do you want to destroy the cell?',
+        confirmDestroyRow: 'Do you want to destroy the row?',
+        dataLabels: 'Data labels',
+        editMode: 'Edit mode',
+        errorMessage: 'Something went wrong',
+        exitFullscreen: 'Exit full screen',
+        id: 'Id',
+        large: 'Large',
+        medium: 'Medium',
+        off: 'off',
+        on: 'on',
         pointFormat: 'Point format',
         scaleElements: 'Scale elements',
-        confirmDestroyRow: 'Do you want to destroy the row?',
-        confirmDestroyCell: 'Do you want to destroy the cell?',
-        confirmButton: 'Confirm',
-        connectorName: 'Connector name',
-        cancelButton: 'Cancel',
-        viewFullscreen: 'View in full screen',
-        exitFullscreen: 'Exit full screen',
-        on: 'on',
-        off: 'off',
         settings: 'Settings',
-        addComponent: 'Add component',
-        dataLabels: 'Data labels',
         small: 'Small',
-        medium: 'Medium',
-        large: 'Large',
-        errorMessage: 'Something went wrong'
+        style: 'Styles',
+        title: 'Title',
+        viewFullscreen: 'View in full screen'
     }
 };
 
+/**
+ * @internal
+ */
 interface EditGlobals {
-    prefix: string;
     classNames: EditGlobals.ClassNamesOptions;
     lang: EditGlobals.LangOptions;
 }
@@ -231,33 +235,112 @@ namespace EditGlobals {
     }
 
     export interface LangOptions {
-        chartConfig: string;
-        editMode: string;
-        style: string;
-        chartOptions: string;
-        chartType: string;
-        id: string;
-        title: string;
-        caption: string;
-        chartClassName: string;
-        chartID: string;
-        pointFormat: string;
-        scaleElements: string;
-        confirmDestroyRow: string;
-        confirmDestroyCell: string;
-        confirmButton: string;
-        cancelButton: string;
-        viewFullscreen: string;
-        exitFullscreen: string;
-        on: string;
-        off: string;
-        settings: string;
+        /**
+         * @default 'Add component'
+         */
         addComponent: string;
+        /**
+         * @default 'Cancel'
+         */
+        cancelButton: string;
+        /**
+         * @default 'Caption'
+         */
+        caption: string;
+        /**
+         * @default 'Chart class name'
+         */
+        chartClassName: string;
+        /**
+         * @default 'Chart configuration'
+         */
+        chartConfig: string;
+        /**
+         * @default 'Chart ID'
+         */
+        chartID: string;
+        /**
+         * @default 'Chart options'
+         */
+        chartOptions: string;
+        /**
+         * @default 'Chart type'
+         */
+        chartType: string;
+        /**
+         * @default 'Connector name'
+         */
+        confirmButton: string;
+        /**
+         * @default 'Do you want to destroy the cell?'
+         */
+        confirmDestroyCell: string;
+        /**
+         * @default 'Do you want to destroy the row?'
+         */
+        confirmDestroyRow: string;
+        /**
+         * @default 'Data labels'
+         */
         dataLabels: string;
+        /**
+         * @default 'Edit mode'
+         */
+        editMode: string;
+        /**
+         * @default 'Something went wrong'
+         */
         errorMessage: string;
+        /**
+         * @default 'Exit full screen'
+         */
+        exitFullscreen: string;
+        /**
+         * @default 'Id'
+         */
+        id: string;
+        /**
+         * @default 'Large'
+         */
+        large: string;
+        /**
+         * @default 'Medium'
+         */
+        medium: string;
+        /**
+         * @default 'off'
+         */
+        off: string;
+        /**
+         * @default 'on'
+         */
+        on: string;
+        /**
+         * @default 'Point format'
+         */
+        pointFormat: string;
+        /**
+         * @default 'Scale elements'
+         */
+        scaleElements: string;
+        /**
+         * @default 'Settings'
+         */
+        settings: string;
+        /**
+         * @default 'Styles'
+         */
+        style: string;
+        /**
+         * @default 'Title'
+         */
+        title: string;
+        /**
+         * @default 'View in full screen'
+         */
+        viewFullscreen: string;
         [key: string]: string;
     }
-
 
     export type TLangKeys = 'editMode'|'verticalSeparator';
 }

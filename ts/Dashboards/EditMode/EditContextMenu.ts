@@ -26,6 +26,10 @@ const {
     merge
 } = U;
 
+/**
+ * Class to create context menu.
+ * @internal
+ */
 class EditContextMenu extends Menu {
     /* *
     *
@@ -40,6 +44,9 @@ class EditContextMenu extends Menu {
         items: ['editMode']
     };
 
+    /**
+     * Default Context menu items.
+     */
     public static items = merge(Menu.items, {
         editMode: {
             id: 'editMode',
@@ -174,10 +181,18 @@ class EditContextMenu extends Menu {
 }
 
 namespace EditContextMenu {
+    /**
+     * Options for the context menu.
+     */
     export interface Options extends Menu.Options {
-        width?: number;
-        enabled?: true;
+        /**
+         * The icon name.
+         */
         icon?: string;
+        /**
+         * Width of the context menu.
+         */
+        width?: number;
     }
 }
 
