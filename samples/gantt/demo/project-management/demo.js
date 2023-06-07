@@ -199,19 +199,16 @@ const options = {
                 format: ''
             }
         },
+        dateTimeLabelFormats: {
+            day: '%e<br><span style="opacity: 0.5; font-size: 0.7em">' +
+                '%a</span>'
+        },
         grid: {
             borderWidth: 0
         },
         gridLineWidth: 1,
-        labels: {
-            format: '<span style="{#eq value axis.options.custom.today}font-size:1.4em;font-weight:bold{/eq}">' +
-                '{value:%e}<br>' +
-                '<span style="opacity: 0.5; font-size: 0.7em">' +
-                '{value:%a}</span></span>'
-        },
         min: today - 3 * day,
         max: today + 18 * day,
-        tickInterval: day,
         custom: {
             today,
             weekendPlotBands: true
@@ -222,6 +219,14 @@ const options = {
             borderWidth: 0
         },
         gridLineWidth: 0,
+        labels: {
+            symbol: {
+                width: 8,
+                height: 6,
+                x: -4,
+                y: -2
+            }
+        },
         staticScale: 30
     },
     accessibility: {
