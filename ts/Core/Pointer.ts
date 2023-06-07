@@ -1167,9 +1167,9 @@ class Pointer {
     public onContainerMouseLeave(e: MouseEvent): void {
         const chart = charts[pick(Pointer.hoverChartIndex, -1)];
 
-        this.onContainerMouseMove(e);
-
         e = this.normalize(e);
+
+        this.onContainerMouseMove(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
@@ -1202,7 +1202,7 @@ class Pointer {
             tooltip = chart.tooltip,
             pEvt = this.normalize(e);
 
-        this.setHoverChartIndex();
+        this.setHoverChartIndex(e);
 
         if (chart.mouseIsDown === 'mousedown' || this.touchSelect(pEvt)) {
             this.drag(pEvt);
@@ -2005,7 +2005,7 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#setHoverChartIndex
      */
-    public setHoverChartIndex(): void {
+    public setHoverChartIndex(e?: MouseEvent): void {
         const chart = this.chart;
         const hoverChart = H.charts[pick(Pointer.hoverChartIndex, -1)];
 
@@ -2014,7 +2014,7 @@ class Pointer {
             hoverChart !== chart
         ) {
             hoverChart.pointer.onContainerMouseLeave(
-                { relatedTarget: chart.container } as any
+                e || { relatedTarget: chart.container } as any
             );
         }
 
