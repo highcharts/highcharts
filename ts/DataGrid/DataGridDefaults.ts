@@ -41,6 +41,8 @@ const DataGridDefaults = {
     /** @internal */
     columns: {},
     /** @internal */
+    defaultHeight: 400,
+    /** @internal */
     editable: true,
     /** @internal */
     resizableColumns: true

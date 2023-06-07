@@ -57,6 +57,15 @@ export interface DataGridOptions {
     dataTable?: DataTable;
 
     /**
+     * An explicit height for the table. If given, the height of the table will
+     * be fixed regardless of how many rows are visible. The scrollbar will
+     * disappear if the actual height of the rows is less than the set height.
+     * @internal
+     * @default 400
+     */
+    defaultHeight?: number;
+
+    /**
      * Switch to make the whole grid structure with all cells editable ('true')
      * or read-only ('false').
      *

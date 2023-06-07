@@ -794,7 +794,6 @@ class DataGrid {
     public getDataGridSize(): number {
         const grid = this,
             options = grid.options,
-            defaultHeight = 400,
             { height } = grid.container.getBoundingClientRect(),
             extraPixelsForBorders = 2;
 
@@ -805,9 +804,10 @@ class DataGrid {
         // Use the default height if the container has no height declared in CSS
         // Check if the column header is enabled.
         if (options.columnHeaders.enabled) {
-            return defaultHeight + options.cellHeight + extraPixelsForBorders;
+            return options.defaultHeight +
+                options.cellHeight + extraPixelsForBorders;
         }
-        return defaultHeight;
+        return options.defaultHeight;
     }
 
 
