@@ -2,3 +2,7 @@
     max-width: 1000px;
     margin: 1em auto;
 }
+
+.highcharts-label-icon {
+    opacity: 0.5;
+}
