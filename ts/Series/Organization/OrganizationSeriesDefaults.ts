@@ -20,6 +20,7 @@
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
+    OrganizationDataLabelsFormatterCallbackFunction,
     OrganizationDataLabelFormatterContext
 } from './OrganizationDataLabelOptions';
 import type OrganizationPoint from './OrganizationPoint';
@@ -28,6 +29,7 @@ import type Point from '../../Core/Series/Point';
 import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
+import { type DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions';
 
 /* *
  *
@@ -269,11 +271,17 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
             /** @internal */
             fontWeight: 'normal',
             /** @internal */
-            fontSize: '13px'
+            fontSize: '0.9em'
         },
 
-        useHTML: true
+        useHTML: true,
 
+        linkTextPath: {
+            attributes: {
+                startOffset: '95%',
+                textAnchor: 'end'
+            }
+        }
     },
     /**
      * The indentation in pixels of hanging nodes, nodes which parent has
@@ -422,6 +430,45 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  * @type      {string}
  * @product   highcharts
  * @apioption series.organization.nodes.image
+ */
+
+/**
+ * The format string specifying what to show for *links* in the
+ * organization chart.
+ *
+ * Best to use with [`linkTextPath`](#series.organization.dataLabels.linkTextPath) enabled.
+ *
+ * @sample highcharts/series-organization/link-labels
+ *         Organization chart with link labels
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.organization.dataLabels.linkFormat
+ * @since 11.0.0
+ */
+
+/**
+ * Callback to format data labels for _links_ in the
+ * organization chart. The `linkFormat` option takes
+ * precedence over the `linkFormatter`.
+ *
+ * @type      {OrganizationDataLabelsFormatterCallbackFunction}
+ * @product   highcharts
+ * @apioption series.organization.dataLabels.linkFormatter
+ * @since 11.0.0
+ */
+
+/**
+ * Options for a _link_ label text which should follow link
+ * connection.
+ *
+ * @sample highcharts/series-organization/link-labels
+ *         Organization chart with link labels
+ *
+ * @type { DataLabelTextPathOptions }
+ * @product highcharts
+ * @apioption series.organization.dataLabels.linkTextPath
+ * @since 11.0.0
  */
 
 /**

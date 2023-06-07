@@ -63,7 +63,7 @@ declare module '../Options' {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -95,9 +95,6 @@ function onChartAfterGetAxes(this: Chart): void {
     this.zAxis = [];
 
     zAxisOptions.forEach((axisOptions, i): void => {
-        axisOptions.index = i;
-        // Z-Axis is shown horizontally, so it's kind of a X-Axis
-        axisOptions.isX = true;
         this.addZAxis(axisOptions).setScale();
     });
 }
@@ -123,9 +120,7 @@ class ZAxis extends Axis implements AxisLike {
         ChartClass: typeof Chart
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
             const chartProto = ChartClass.prototype;
@@ -134,6 +129,7 @@ class ZAxis extends Axis implements AxisLike {
             chartProto.collectionsWithInit.zAxis = [chartProto.addZAxis];
             chartProto.collectionsWithUpdate.push('zAxis');
         }
+
     }
 
     /* *
@@ -142,11 +138,15 @@ class ZAxis extends Axis implements AxisLike {
      *
      * */
 
-    public constructor(
+    public init(
         chart: Chart,
         userOptions: AxisOptions
-    ) {
-        super(chart, userOptions);
+    ):void {
+        // #14793, this used to be set on the prototype
+        this.isZAxis = true;
+
+        super.init(chart, userOptions, 'zAxis');
+
     }
 
     /* *
@@ -237,12 +237,8 @@ class ZAxis extends Axis implements AxisLike {
             lineWidth: 0
         }, userOptions);
 
-        // #14793, this used to be set on the prototype
-        this.isZAxis = true;
 
         super.setOptions(userOptions);
-
-        this.coll = 'zAxis';
     }
 
 }

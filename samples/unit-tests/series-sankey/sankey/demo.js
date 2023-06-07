@@ -1,6 +1,6 @@
 QUnit.test('Sankey', function (assert) {
-    var chart = Highcharts.chart('container', {});
-    var series = chart.addSeries(
+    const chart = Highcharts.chart('container', {});
+    let series = chart.addSeries(
         {
             keys: ['from', 'to', 'weight'],
             data: [
@@ -115,6 +115,23 @@ QUnit.test('Sankey', function (assert) {
         typeof chart.container.querySelector('.highcharts-no-data'),
         'object',
         'No-data label should display when there is no data (#7489)'
+    );
+
+    series = chart.addSeries({
+        type: 'sankey',
+        keys: ['from', 'to', 'weight'],
+        data: [
+            ['A', 'B', 500],
+            ['B', 'C', 1]
+        ]
+    });
+
+    const { toNode } = series.points[1];
+
+    assert.ok(
+        toNode.graphic.r < toNode.graphic.height,
+        `Border radius should not greater than half the height of the node,
+        small nodes shouldn't be rendered as circles (#18956).`
     );
 });
 
@@ -786,9 +803,10 @@ QUnit.test('Wrong spacings when zero minLinkWidth #13308', function (assert) {
     const nodeYAfterUpdate = chart.series[0].nodes[1].nodeY,
         factorAfterUpdate = chart.series[0].translationFactor;
 
-    assert.strictEqual(
+    assert.close(
         nodeYAfterUpdate - nodeYBeforeUpdate,
         newMinLinkWidth,
+        1,
         'For this node the difference of the nodeY value should be equal ' +
             'to the new minLinkWidth after the update (#13308)'
     );

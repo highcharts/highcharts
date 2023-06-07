@@ -72,7 +72,11 @@ Highcharts.chart('container', {
         },
         dataLabels: {
             enabled: true,
-            linkFormat: ''
+            linkFormat: '',
+            style: {
+                fontSize: '0.8em',
+                fontWeight: 'normal'
+            }
         },
         id: 'lang-tree',
         data: [

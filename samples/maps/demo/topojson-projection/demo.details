@@ -1,12 +1,12 @@
 ---
- name: Built in projection
+ name: Built-in projection
  authors:
    - Torstein Hønsi
  js_wrap: b
  requiresManualTesting: true
- new_until: 2021-12-31
  tags:
   - Highcharts Maps demo
  categories:
-  - General
+  - General:
+    - priority: 2
 ...

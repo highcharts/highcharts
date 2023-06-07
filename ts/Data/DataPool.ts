@@ -19,14 +19,16 @@
  *
  * */
 
+import type DataEvent from './DataEvent';
 import type {
     DataPoolOptions,
-    DataPoolStoreOptions
+    DataPoolConnectorOptions
 } from './DataPoolOptions.js';
 import type DataTable from './DataTable.js';
 
+import DataConnector from './Connectors/DataConnector.js';
 import DataPoolDefaults from './DataPoolDefaults.js';
-import DataStore from './Stores/DataStore.js';
+import U from '../Core/Utilities.js';
 
 /* *
  *
@@ -35,16 +37,16 @@ import DataStore from './Stores/DataStore.js';
  * */
 
 /**
- * Data pool to load stores on-demand.
+ * Data pool to load connectors on-demand.
  *
  * @private
  * @class
  * @name Data.DataPool
  *
  * @param {Data.DataPoolOptions} options
- * Pool options with all stores.
+ * Pool options with all connectors.
  */
-class DataPool {
+class DataPool implements DataEvent.Emitter {
 
     /* *
      *
@@ -55,10 +57,10 @@ class DataPool {
     public constructor(
         options: (DataPoolOptions|undefined) = DataPoolDefaults
     ) {
-        options.stores = (options.stores || []);
+        options.connectors = (options.connectors || []);
 
         this.options = options;
-        this.stores = {};
+        this.connectors = {};
     }
 
     /* *
@@ -68,7 +70,7 @@ class DataPool {
      * */
 
     /**
-     * Pool options with all stores.
+     * Pool options with all connectors.
      *
      * @name Data.DataPool#options
      * @type {Data.DataPoolOptions}
@@ -76,11 +78,11 @@ class DataPool {
     public readonly options: DataPoolOptions;
 
     /**
-     * Internal dictionary with the stores and their names.
+     * Internal dictionary with the connectors and their names.
      * @private
      */
-    protected readonly stores: (
-        Record<string, (DataStore|undefined)>
+    protected readonly connectors: (
+        Record<string, (DataConnector|undefined)>
     );
 
     /* *
@@ -89,129 +91,207 @@ class DataPool {
      *
      * */
 
+
     /**
-     * Loads the store.
+     * Emits an event on this data pool to all registered callbacks of the given
+     * event.
+     * @private
      *
-     * @function Data.DataPool#getStore
-     *
-     * @param {string} name
-     * Name of the store.
-     *
-     * @return {Promise<Data.DataStore>}
-     * Returns the store.
+     * @param {DataTable.Event} e
+     * Event object with event information.
      */
-    public getStore(
-        name: string
-    ): Promise<DataStore> {
-        const store = this.stores[name];
-
-        if (store) {
-            // already loaded
-            return Promise.resolve(store);
-        }
-
-        const storeOptions = this.getStoreOptions(name);
-
-        if (storeOptions) {
-            return this.loadStore(storeOptions);
-        }
-
-        throw new Error(`Store not found. (${name})`);
+    public emit<E extends DataEvent>(e: E): void {
+        U.fireEvent(this, e.type, e);
     }
 
     /**
-     * Loads the options of the store.
+     * Loads the connector.
+     *
+     * @function Data.DataPool#getConnector
+     *
+     * @param {string} name
+     * Name of the connector.
+     *
+     * @return {Promise<Data.DataConnector>}
+     * Returns the connector.
+     */
+    public getConnector(
+        name: string
+    ): Promise<DataConnector> {
+        const connector = this.connectors[name];
+
+        if (connector) {
+            // already loaded
+            return Promise.resolve(connector);
+        }
+
+        const connectorOptions = this.getConnectorOptions(name);
+
+        if (connectorOptions) {
+            return this.loadConnector(connectorOptions);
+        }
+
+        throw new Error(`Connector not found. (${name})`);
+    }
+
+    /**
+     * Loads the options of the connector.
      *
      * @private
      *
      * @param {string} name
-     * Name of the store.
+     * Name of the connector.
      *
-     * @return {DataPoolStoreOptions|undefined}
-     * Returns the options of the store, or `undefined` if not found.
+     * @return {DataPoolConnectorOptions|undefined}
+     * Returns the options of the connector, or `undefined` if not found.
      */
-    protected getStoreOptions(
+    protected getConnectorOptions(
         name: string
-    ): (DataPoolStoreOptions|undefined) {
-        const stores = this.options.stores;
+    ): (DataPoolConnectorOptions|undefined) {
+        const connectors = this.options.connectors;
 
-        for (let i = 0, iEnd = stores.length; i < iEnd; ++i) {
-            if (stores[i].name === name) {
-                return stores[i];
+        for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
+            if (connectors[i].name === name) {
+                return connectors[i];
             }
         }
     }
 
     /**
-     * Loads the store table.
+     * Loads the connector table.
      *
-     * @function Data.DataPool#getStoreTable
+     * @function Data.DataPool#getConnectorTable
      *
      * @param {string} name
-     * Name of the store.
+     * Name of the connector.
      *
      * @return {Promise<Data.DataTable>}
-     * Returns the store table.
+     * Returns the connector table.
      */
-    public getStoreTable(
+    public getConnectorTable(
         name: string
     ): Promise<DataTable> {
         return this
-            .getStore(name)
-            .then((store): DataTable => store.table);
+            .getConnector(name)
+            .then((connector): DataTable => connector.table);
     }
 
     /**
-     * Creates and loads the store.
+     * Creates and loads the connector.
      *
      * @private
      *
-     * @param {Data.DataPoolStoreOptions} storeOptions
-     * Options of store.
+     * @param {Data.DataPoolConnectorOptions} options
+     * Options of connector.
      *
-     * @return {Promise<Data.DataStore>}
-     * Returns the store.
+     * @return {Promise<Data.DataConnector>}
+     * Returns the connector.
      */
-    protected loadStore(
-        storeOptions: DataPoolStoreOptions
-    ): Promise<DataStore> {
+    protected loadConnector(
+        options: DataPoolConnectorOptions
+    ): Promise<DataConnector> {
         return new Promise((resolve, reject): void => {
-            const StoreClass: (Class|undefined) =
-                DataStore.getStore(storeOptions.storeType);
 
-            if (!StoreClass) {
-                throw new Error(`Store type not found. (${storeOptions.storeType})`);
+            this.emit<DataPool.Event>({
+                type: 'load',
+                options
+            });
+
+            const ConnectorClass = DataConnector.types[options.type];
+
+            if (!ConnectorClass) {
+                throw new Error(`Connector type not found. (${options.type})`);
             }
 
-            const store = new StoreClass(void 0, storeOptions.storeOptions);
+            const connector = new ConnectorClass(options.options);
 
-            this.stores[storeOptions.name] = store;
+            this.connectors[options.name] = connector;
 
-            store.on('afterLoad', (): void => resolve(store));
-            store.on('loadError', reject);
-            store.load();
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            connector.load().then((connector): void => {
+                this.emit<DataPool.Event>({
+                    type: 'afterLoad',
+                    options
+                });
+                resolve(connector);
+            })['catch'](reject);
         });
     }
 
     /**
-     * Sets store options with a specific name.
+     * Registers a callback for a specific event.
      *
-     * @param {Data.DataPoolStoreOptions} storeOptions
-     * Store options to set.
+     * @function Highcharts.DataPool#on
+     *
+     * @param {string} type
+     * Event type as a string.
+     *
+     * @param {Highcharts.EventCallbackFunction<Highcharts.DataPool>} callback
+     * Function to register for an event callback.
+     *
+     * @return {Function}
+     * Function to unregister callback from the event.
      */
-    public setStoreOptions(
-        storeOptions: DataPoolStoreOptions
-    ): void {
-        const stores = this.options.stores;
+    public on<E extends DataEvent>(
+        type: E['type'],
+        callback: DataEvent.Callback<this, E>
+    ): Function {
+        return U.addEvent(this, type, callback);
+    }
 
-        for (let i = 0, iEnd = stores.length; i < iEnd; ++i) {
-            if (stores[i].name === storeOptions.name) {
-                stores.splice(i, 1, storeOptions);
-                return;
+    /**
+     * Sets connector options with a specific name.
+     *
+     * @param {Data.DataPoolConnectorOptions} options
+     * Connector options to set.
+     */
+    public setConnectorOptions(
+        options: DataPoolConnectorOptions
+    ): void {
+        const connectors = this.options.connectors;
+
+        this.emit<DataPool.Event>({
+            type: 'setConnectorOptions',
+            options
+        });
+
+        for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
+            if (connectors[i].name === options.name) {
+                connectors.splice(i, 1);
+                break;
             }
         }
 
-        stores.push(storeOptions);
+        connectors.push(options);
+
+        this.emit<DataPool.Event>({
+            type: 'afterSetConnectorOptions',
+            options
+        });
+    }
+
+}
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace DataPool {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface Event {
+        type: (
+            |'load'|'afterLoad'
+            |'setConnectorOptions'|'afterSetConnectorOptions'
+        );
+        options: DataPoolConnectorOptions;
     }
 
 }

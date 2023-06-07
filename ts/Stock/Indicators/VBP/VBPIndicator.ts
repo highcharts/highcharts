@@ -222,7 +222,7 @@ class VBPIndicator extends SMAIndicator {
             padding: 0,
             style: {
                 /** @internal */
-                fontSize: '7px'
+                fontSize: '0.5em'
             },
             verticalAlign: 'top'
         }
@@ -252,9 +252,14 @@ class VBPIndicator extends SMAIndicator {
      * */
 
     public init(
-        chart: Chart
+        chart: Chart,
+        options: VBPOptions
     ): VBPIndicator {
         const indicator = this;
+
+        // series.update() sends data that is not necessary
+        // as everything is calculated in getValues(), #17007
+        delete options.data;
 
         super.init.apply(indicator, arguments);
 

@@ -23,11 +23,15 @@ import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Color from '../../Core/Color/Color.js';
 import ColorMapComposition from '../ColorMapComposition.js';
+import H from '../../Core/Globals.js';
+const {
+    doc
+} = H;
 import HeatmapPoint from './HeatmapPoint.js';
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -40,12 +44,15 @@ const {
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
+
 const {
+    clamp,
     extend,
     fireEvent,
     isNumber,
     merge,
-    pick
+    pick,
+    defined
 } = U;
 
 /* *
@@ -106,7 +113,7 @@ class HeatmapSeries extends ScatterSeries {
      *               dashStyle, findNearestPointBy, getExtremesFromAll, jitter,
      *               linecap, lineWidth, pointInterval, pointIntervalUnit,
      *               pointRange, pointStart, shadow, softThreshold, stacking,
-     *               step, threshold, cluster
+     *               step, threshold, cluster, dragDrop
      * @product      highcharts highmaps
      * @optionparent plotOptions.heatmap
      */
@@ -187,6 +194,17 @@ class HeatmapSeries extends ScatterSeries {
          * @product   highcharts highmaps
          * @apioption plotOptions.heatmap.rowsize
          */
+
+        /**
+         * Make the heatmap render its data points as an interpolated image.
+         *
+         * @sample highcharts/demo/heatmap-interpolation
+         *   Interpolated heatmap image displaying user activity on a website
+         * @sample highcharts/series-heatmap/interpolation
+         *   Interpolated heatmap toggle
+         *
+         */
+        interpolation: false,
 
         /**
          * The color applied to null points. In styled mode, a general CSS class
@@ -389,8 +407,9 @@ class HeatmapSeries extends ScatterSeries {
                  */
                 brightness: 0.2
             }
+        },
 
-        }
+        legendSymbol: 'rectangle'
 
     } as HeatmapSeriesOptions);
 
@@ -399,8 +418,11 @@ class HeatmapSeries extends ScatterSeries {
      *  Properties
      *
      * */
+    public canvas?: HTMLCanvasElement = void 0 as any;
 
     public colorAxis: ColorAxis = void 0 as any;
+
+    public context?: CanvasRenderingContext2D = void 0 as any;
 
     public data: Array<HeatmapPoint> = void 0 as any;
 
@@ -426,18 +448,247 @@ class HeatmapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
+        const
+            series = this,
+            seriesOptions = series.options,
+            interpolation = seriesOptions.interpolation,
+            seriesMarkerOptions = seriesOptions.marker || {};
 
-        // In styled mode, use CSS, otherwise the fill used in the style sheet
-        // will take precedence over the fill attribute.
-        const seriesMarkerOptions = this.options.marker || {};
+        if (interpolation) {
+            const
+                {
+                    image,
+                    chart,
+                    xAxis,
+                    yAxis,
+                    points
+                } = series,
+                lastPointIndex = points.length - 1,
+                {
+                    len: xAxisLen,
+                    reversed: xRev
+                } = xAxis,
+                {
+                    len: yAxisLen,
+                    reversed: yRev
+                } = yAxis,
+                { min: xMin, max: xMax } = xAxis.getExtremes(),
+                { min: yMin, max: yMax } = yAxis.getExtremes(),
+                [colsize, rowsize] = [
+                    pick(seriesOptions.colsize, 1),
+                    pick(seriesOptions.rowsize, 1)
+                ],
+                inverted = chart.inverted,
+                xTranslationPad = colsize / 2,
+                userMinPadding = xAxis.userOptions.minPadding,
+                isUserMinPadZero = (
+                    defined(userMinPadding) &&
+                    !(userMinPadding > 0)
+                ),
+                noOffset = (inverted || isUserMinPadZero),
+                padIfMinSet = (isUserMinPadZero && xTranslationPad || 0),
+                [x1, x2, postTranslationOffset] = [
+                    xMin - padIfMinSet,
+                    xMax + (padIfMinSet * 2),
+                    isUserMinPadZero && 0 || (
+                        xMin + colsize
+                    )
+                ].map((side): number => (
+                    clamp(
+                        Math.round(
+                            xAxis.len -
+                            xAxis.translate(
+                                side,
+                                false,
+                                true,
+                                false,
+                                true,
+                                -series.pointPlacementToXValue()
+                            )
+                        ),
+                        -xAxis.len,
+                        2 * xAxis.len
+                    )
+                )),
 
-        if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
-            Series.prototype.drawPoints.call(this);
-            this.points.forEach((point): void => {
+                [xStart, xEnd] = xRev ? [x2, x1] : [x1, x2],
+
+                xOffset = (
+                    noOffset && 0 ||
+                    (((xAxisLen / postTranslationOffset) / 2) / 2) / 2
+                ),
+
+                dimensions = inverted ?
+                    {
+                        width: xAxisLen,
+                        height: yAxisLen,
+                        x: 0,
+                        y: 0
+                    } : {
+                        x: xStart - xOffset,
+                        width: xEnd - xOffset,
+                        height: yAxisLen,
+                        y: 0
+                    };
+
+            if (!image || series.isDirtyData) {
+                const
+                    colorAxis = (
+                        chart.colorAxis &&
+                        chart.colorAxis[0]
+                    ),
+                    ctx = series.getContext(),
+                    canvas = series.canvas;
+
+                if (canvas && ctx && colorAxis) {
+                    const
+                        canvasWidth = canvas.width = ~~(
+                            (xMax - xMin) / colsize
+                        ) + 1,
+                        canvasHeight = canvas.height = ~~(
+                            (yMax - yMin) / rowsize
+                        ) + 1,
+                        canvasArea = canvasWidth * canvasHeight,
+                        pixelData = new Uint8ClampedArray(
+                            canvasArea * 4
+                        ),
+                        widthLastIndex = (
+                            canvasWidth - (noOffset && 1 || 0)
+                        ),
+                        heightLastIndex = canvasHeight - 1,
+                        colorFromPoint = (p: HeatmapPoint): number[] => {
+                            const rgba = ((
+                                colorAxis.toColor(
+                                    p.value ||
+                                    0,
+                                    pick(p)
+                                ) as string)
+                                .split(')')[0]
+                                .split('(')[1]
+                                .split(',')
+                                .map((s): number => pick(
+                                    parseFloat(s),
+                                    parseInt(s, 10)
+                                ))
+                            );
+
+                            rgba[3] = pick(rgba[3], 1.0) * 255;
+
+                            return rgba;
+                        },
+
+                        scaleToImg = (
+                            val: number,
+                            fromMin: number,
+                            fromMax: number,
+                            toMin: number,
+                            toMax: number
+                        ): number => ~~(
+                            (val - fromMin) * (
+                                (toMax - toMin) /
+                                (fromMax - fromMin)
+                            )
+                        ),
+
+                        xPlacement = (xRev ?
+                            (xToImg: number): number => (
+                                widthLastIndex - xToImg
+                            ) :
+                            (xToImg: number): number => xToImg
+                        ),
+
+                        yPlacement = (yRev ?
+                            (yToImg: number): number => (
+                                heightLastIndex - yToImg
+                            ) :
+                            (yToImg: number): number => yToImg
+                        ),
+
+                        scaledPointPos = (x: number, y: number): number => (
+                            Math.ceil(
+                                canvasWidth *
+                                yPlacement(
+                                    scaleToImg(
+                                        yMax - y,
+                                        yMin,
+                                        yMax,
+                                        0,
+                                        heightLastIndex
+                                    )
+                                ) +
+                                xPlacement(
+                                    scaleToImg(
+                                        x,
+                                        xMin,
+                                        xMax,
+                                        0,
+                                        widthLastIndex
+                                    )
+                                )
+                            )
+                        );
+
+                    series.buildKDTree();
+                    series.directTouch = false;
+
+                    for (let i = 0; i < canvasArea; i++) {
+                        const
+                            toPointScale = scaleToImg(
+                                i * 4,
+                                0,
+                                pixelData.length - 4,
+                                0,
+                                lastPointIndex
+                            ),
+                            p = points[toPointScale],
+                            sourceArr = new Uint8ClampedArray(
+                                colorFromPoint(p)
+                            );
+                        pixelData.set(
+                            sourceArr,
+                            scaledPointPos(p.x, p.y) * 4
+                        );
+                    }
+
+                    ctx.putImageData(
+                        new ImageData(pixelData, canvasWidth, canvasHeight),
+                        0,
+                        0
+                    );
+
+                    if (image) {
+                        image.attr({
+                            ...dimensions,
+                            href: canvas.toDataURL()
+                        });
+                    } else {
+                        series.image = chart.renderer.image(
+                            canvas.toDataURL()
+                        )
+                            .attr(dimensions)
+                            .add(series.group);
+                    }
+
+                }
+            } else if (
+                image.width !== dimensions.width ||
+                image.height !== dimensions.height
+            ) {
+                image.attr(dimensions);
+            }
+
+        } else if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
+            Series.prototype.drawPoints.call(series);
+
+            series.points.forEach((point): void => {
                 if (point.graphic) {
-                    point.graphic[
-                        this.chart.styledMode ? 'css' : 'animate'
-                    ](this.colorAttribs(point));
+
+                    // In styled mode, use CSS, otherwise the fill used in
+                    // the style sheet will take precedence over
+                    // the fill attribute.
+                    (point.graphic as any)[
+                        series.chart.styledMode ? 'css' : 'animate'
+                    ](series.colorAttribs(point));
 
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
@@ -445,6 +696,24 @@ class HeatmapSeries extends ScatterSeries {
                 }
             });
         }
+    }
+
+    /**
+     * @private
+     */
+    public getContext(): CanvasRenderingContext2D | undefined {
+        const series = this,
+            { canvas, context } = series;
+        if (canvas && context) {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        } else {
+            series.canvas = doc.createElement('canvas');
+
+            series.context = series.canvas.getContext('2d') || void 0;
+            return series.context;
+        }
+
+        return context;
     }
 
     /**
@@ -518,7 +787,7 @@ class HeatmapSeries extends ScatterSeries {
         // top left corner like other symbols are. This should be refactored,
         // then we could save ourselves some tests for .hasImage etc. And the
         // evaluation of borderRadius would be moved to `markerAttribs`.
-        if (options.marker) {
+        if (options.marker && isNumber(options.borderRadius)) {
             options.marker.r = options.borderRadius;
         }
     }
@@ -660,7 +929,8 @@ class HeatmapSeries extends ScatterSeries {
     public translate(): void {
         const series = this,
             options = series.options,
-            symbol = options.marker && options.marker.symbol || 'rect',
+            { borderRadius, marker } = options,
+            symbol = marker && marker.symbol || 'rect',
             shape = symbols[symbol] ? symbol : 'rect',
             hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
 
@@ -706,7 +976,7 @@ class HeatmapSeries extends ScatterSeries {
                         y,
                         width,
                         height,
-                        { r: options.borderRadius }
+                        { r: isNumber(borderRadius) ? borderRadius : 0 }
                     )
                 }
             );
@@ -730,8 +1000,8 @@ interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getSymbol: typeof Series.prototype.getSymbol;
+    image?: SVGElement;
 }
 extend(HeatmapSeries.prototype, {
 
@@ -759,11 +1029,6 @@ extend(HeatmapSeries.prototype, {
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
-
-    /**
-     * @private
-     */
-    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     getSymbol: Series.prototype.getSymbol
 
@@ -839,7 +1104,7 @@ export default HeatmapSeries;
  * Requires `modules/heatmap`.
  *
  * @extends   series,plotOptions.heatmap
- * @excluding cropThreshold, dataParser, dataURL, pointRange, stack,
+ * @excluding cropThreshold, dataParser, dataURL, dragDrop ,pointRange, stack,
  * @product   highcharts highmaps
  * @apioption series.heatmap
  */

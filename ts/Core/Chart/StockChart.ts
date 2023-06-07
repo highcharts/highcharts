@@ -17,6 +17,7 @@
  * */
 
 import type {
+    AxisCollectionKey,
     AxisOptions,
     YAxisOptions
 } from '../Axis/AxisOptions';
@@ -31,7 +32,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
-import F from '../../Core/FormatUtilities.js';
+import F from '../Templating.js';
 const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;
@@ -236,21 +237,21 @@ class StockChart extends Chart {
      *
      * @private
      * @function Highcharts.StockChart#createAxis
-     * @param {string} type
+     * @param {string} coll
      * An axis type.
      * @param {Chart.CreateAxisOptionsObject} options
      * The axis creation options.
      */
     public createAxis(
-        type: string,
+        coll: AxisCollectionKey,
         options: Chart.CreateAxisOptionsObject
     ): Axis {
         options.axis = merge(
-            getDefaultAxisOptions(type, options.axis),
+            getDefaultAxisOptions(coll, options.axis),
             options.axis,
-            getForcedAxisOptions(type, this.userOptions)
+            getForcedAxisOptions(coll, this.userOptions)
         );
-        return super.createAxis(type, options);
+        return super.createAxis(coll, options);
     }
 }
 
@@ -280,13 +281,9 @@ namespace StockChart {
      *        [options reference](https://api.highcharts.com/highstock).
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
-     *        A function to execute when the chart object is finished loading
-     *        and rendering. In most cases the chart is built in one thread,
-     *        but in Internet Explorer version 8 or less the chart is sometimes
-     *        initialized before the document is ready, and in these cases the
-     *        chart object will not be finished synchronously. As a
-     *        consequence, code that relies on the newly built Chart object
-     *        should always run in the callback. Defining a
+     *        A function to execute when the chart object is finished
+     *        rendering and all external image files (`chart.backgroundImage`,
+     *        `chart.plotBackgroundImage` etc) are loaded. Defining a
      *        [chart.events.load](https://api.highcharts.com/highstock/chart.events.load)
      *        handler is equivalent.
      *
@@ -416,21 +413,22 @@ addEvent(Series, 'setOptions', function (
     }
 });
 
-// Override the automatic label alignment so that the first Y axis' labels
-// are drawn on top of the grid line, and subsequent axes are drawn outside
+// Override the automatic label alignment so that the first Y axis' labels are
+// drawn on top of the grid line, and subsequent axes are drawn outside
 addEvent(Axis, 'autoLabelAlign', function (e: Event): void {
-    let chart = this.chart,
-        options = this.options,
+    const { chart, options } = this,
         panes = chart._labelPanes = chart._labelPanes || {},
-        key,
-        labelOptions = this.options.labels;
+        labelOptions = options.labels;
 
-    if (this.chart.options.isStock && this.coll === 'yAxis') {
-        key = options.top + ',' + options.height;
-        // do it only for the first Y axis of each pane
+    if (chart.options.isStock && this.coll === 'yAxis') {
+        const key = options.top + ',' + options.height;
+        // Do it only for the first Y axis of each pane
         if (!panes[key] && labelOptions.enabled) {
-            if (labelOptions.x === 15) { // default
-                labelOptions.x = 0;
+            if (
+                labelOptions.distance === 15 && // default
+                this.side === 1
+            ) {
+                labelOptions.distance = 0;
             }
             if (typeof labelOptions.align === 'undefined') {
                 labelOptions.align = 'right';
@@ -687,6 +685,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         opposite = this.opposite, // axis position
         left = this.left, // left position
         top = this.top, // top position
+        width = this.width,
         crossLabel = this.crossLabel, // the svgElement
         posx,
         posy,
@@ -750,7 +749,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 .css(extend<CSSObject>({
                     color: Palette.backgroundColor,
                     fontWeight: 'normal',
-                    fontSize: '11px',
+                    fontSize: '0.7em',
                     textAlign: 'center'
                 }, options.style || {}));
         }
@@ -760,7 +759,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         posx = snap ? (point.plotX || 0) + left : e.chartX;
         posy = top + (opposite ? 0 : this.height);
     } else {
-        posx = opposite ? this.width + left : 0;
+        posx = left + this.offset + (opposite ? width : 0);
         posy = snap ? (point.plotY || 0) + top : e.chartY;
     }
 
@@ -800,6 +799,10 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     crossBox = crossLabel.getBBox();
 
     // now it is placed we can correct its position
+    if (isNumber(crossLabel.x) && !horiz && !opposite) {
+        posx = crossLabel.x - (crossBox.width / 2);
+    }
+
     if (isNumber(crossLabel.y)) {
         if (horiz) {
             if ((tickInside && !opposite) || (!tickInside && opposite)) {

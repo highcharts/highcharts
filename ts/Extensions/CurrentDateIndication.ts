@@ -25,7 +25,7 @@ import type {
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type FormatUtilities from '../Core/FormatUtilities';
+import type Templating from '../Core/Templating';
 import type { PlotBandLabelOptions } from '../Core/Axis/PlotLineOrBand/PlotBandOptions';
 import type {
     PlotLineLabelOptions,
@@ -60,7 +60,7 @@ interface CurrentDateIndicatorLabelFormatterCallbackFunction {
 interface CurrentDateIndicatorLabelOptions {
     align?: AlignValue;
     format?: string;
-    formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
+    formatter?: Templating.FormatterCallback<PlotLineOrBand>;
     rotation?: number;
     style?: CSSObject;
     text?: string;
@@ -138,7 +138,7 @@ const defaultOptions: CurrentDateIndicatorOptions = {
          */
         style: {
             /** @internal */
-            fontSize: '10px'
+            fontSize: '0.7em'
         }
     }
 };
@@ -156,20 +156,21 @@ function compose(
     AxisClass: typeof Axis,
     PlotLineOrBandClass: typeof PlotLineOrBand
 ): void {
-    if (composedMembers.indexOf(AxisClass) === -1) {
-        composedMembers.push(AxisClass);
+
+    if (U.pushUnique(composedMembers, AxisClass)) {
         addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
     }
 
-    if (composedMembers.indexOf(PlotLineOrBandClass) === -1) {
-        composedMembers.push(PlotLineOrBandClass);
+    if (U.pushUnique(composedMembers, PlotLineOrBandClass)) {
         addEvent(PlotLineOrBandClass, 'render', onPlotLineOrBandRender);
+
         wrap(
             PlotLineOrBandClass.prototype,
             'getLabelText',
             wrapPlotLineOrBandGetLabelText
         );
     }
+
 }
 
 /**

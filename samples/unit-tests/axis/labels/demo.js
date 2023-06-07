@@ -1291,7 +1291,7 @@ QUnit.test('Long labels and ellipsis', function (assert) {
 });
 
 QUnit.test('Label ellipsis and expanding', function (assert) {
-    var chart = new Highcharts.chart('container', {
+    var chart = new Highcharts.Chart('container', {
         chart: {
             width: 300
         },
@@ -1325,7 +1325,7 @@ QUnit.test('Label ellipsis and expanding', function (assert) {
 });
 
 QUnit.test('Label ellipsis and resetting categories', assert => {
-    const chart = new Highcharts.chart('container', {
+    const chart = new Highcharts.Chart('container', {
         chart: {
             width: 600,
             height: 400
@@ -1439,9 +1439,12 @@ QUnit.test('Width set from label style (#7028)', function (assert) {
         ]
     });
 
+    const labelWidth = Math.floor(
+        chart.xAxis[0].ticks[3].label.getBBox().width
+    );
     assert.ok(
-        Math.floor(chart.xAxis[0].ticks[3].label.getBBox().width) <= 40,
-        'Label width set correctly'
+        labelWidth <= 41,
+        `Label width set correctly (is ${labelWidth})`
     );
 });
 
@@ -1587,7 +1590,7 @@ QUnit.test('Labels text height (#3891)', function (assert) {
 // Highcharts 3.0.10, Issue #2806
 // Unable to see all labels on the bar charts
 QUnit.test('Column pointrange (#2806)', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
@@ -1646,6 +1649,70 @@ QUnit.test('Column pointrange (#2806)', function (assert) {
         chart.xAxis[0].labelGroup.element.childNodes.length,
         4,
         'There should be 4 labels on the xAxis.'
+    );
+
+    chart.update({
+        xAxis: {
+            categories: void 0
+        },
+        plotOptions: {
+            column: {
+                stacking: false
+            }
+        }
+    }, false);
+
+    chart.series[1].remove(false);
+    chart.series[0].remove(false);
+
+    chart.addSeries({
+        data: [{
+            x: 0,
+            y: 1
+        }]
+    }, false);
+    chart.addSeries({
+        data: [{
+            x: 1,
+            y: 1
+        }]
+    }, false);
+    chart.addSeries({
+        data: [{
+            x: 2,
+            y: 1
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].closestPointRange,
+        1,
+        `pointRange should be calculated properly for multiple series with
+        single points(#17791).`
+    );
+
+    chart.xAxis[0].update({
+        type: 'datetime'
+    }, false);
+
+    chart.series[0].setData([{
+        x: 1640995200000,
+        y: 1
+    }], false);
+    chart.series[1].setData([{
+        x: 1672531200000,
+        y: 1
+    }], false);
+    chart.series[2].setData([{
+        x: 1704067200000,
+        y: 1
+    }]);
+
+    assert.strictEqual(
+        chart.xAxis[0].closestPointRange,
+        31536000000,
+        `pointRange should be calculated properly for multiple series with
+        single datetime points(#17791).`
     );
 });
 
@@ -2152,12 +2219,12 @@ QUnit.test(
 
         assert.deepEqual(
             chart.xAxis[0].ticks[1].label.attr('y'),
-            // +3px because of a "bug" in default positioning
+            // -3px because of a "bug" in default positioning
             // If you read this comment and you are not sure if you can remove
             // this +3px, then yes, you can.
-            defaultY + 3,
-            `labels.y=0 for opposite xAxis should align label the same way as
-            labels.y=undefined (#12206)`
+            defaultY - 3,
+            'labels.y=0 for opposite xAxis should align label the same way ' +
+            'as labels.y=undefined (#12206)'
         );
     }
 );

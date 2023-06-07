@@ -33,53 +33,65 @@ const {
 
 /* *
  *
- *  Functions
+ *  Class Namespace
  *
  * */
 
-/* eslint-disable valid-jsdoc */
+namespace Foundation {
 
-/**
- * Register event options. If an event handler is set on the options, it
- * should be subject to Chart.update, Axis.update and Series.update. This is
- * contrary to general handlers that are set directly using addEvent either
- * on the class or on the instance. #6538, #6943, #10861.
- * @private
- */
-function registerEventOptions(
-    component: Axis|Chart|Series,
-    options: XAxisOptions|ChartOptions|SeriesOptions
-): void {
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-    // A lookup over those events that are added by _options_ (not
-    // programmatically). These are updated through .update()
-    component.eventOptions = component.eventOptions || {};
+    /* eslint-disable valid-jsdoc */
 
-    // Register event listeners
-    objectEach(
-        options.events,
-        function (event: any, eventType: string): void {
-            // If event does not exist, or is changed by the .update()
-            // function
-            if (component.eventOptions[eventType] !== event) {
+    /**
+     * Register event options. If an event handler is set on the options, it
+     * should be subject to Chart.update, Axis.update and Series.update. This is
+     * contrary to general handlers that are set directly using addEvent either
+     * on the class or on the instance. #6538, #6943, #10861.
+     * @private
+     */
+    export function registerEventOptions(
+        component: Axis|Chart|Series,
+        options: XAxisOptions|ChartOptions|SeriesOptions
+    ): void {
 
-                // Remove existing if set by option
-                if (component.eventOptions[eventType]) {
-                    removeEvent(
-                        component,
-                        eventType,
-                        component.eventOptions[eventType]
-                    );
-                    delete component.eventOptions[eventType];
-                }
+        // A lookup over those events that are added by _options_ (not
+        // programmatically). These are updated through .update()
+        component.eventOptions = component.eventOptions || {};
 
-                if (isFunction(event)) {
-                    component.eventOptions[eventType] = event;
-                    addEvent(component, eventType, event);
+        // Register event listeners
+        objectEach(
+            options.events,
+            function (event: any, eventType: string): void {
+                // If event does not exist, or is changed by the .update()
+                // function
+                if (component.eventOptions[eventType] !== event) {
+
+                    // Remove existing if set by option
+                    if (component.eventOptions[eventType]) {
+                        removeEvent(
+                            component,
+                            eventType,
+                            component.eventOptions[eventType]
+                        );
+                        delete component.eventOptions[eventType];
+                    }
+
+                    if (isFunction(event)) {
+                        component.eventOptions[eventType] = event;
+                        addEvent(component, eventType, event, {
+                            order: 0 // #14080 fire those events as firsts
+                        });
+                    }
                 }
             }
-        }
-    );
+        );
+    }
+
 }
 
 /* *
@@ -87,9 +99,5 @@ function registerEventOptions(
  *  Default Export
  *
  * */
-
-const Foundation = {
-    registerEventOptions
-};
 
 export default Foundation;

@@ -44,13 +44,15 @@ test('guessType', function (assert) {
 
 test('asBoolean', function (assert) {
     const sampleTable = new DataTable({
-        id: ['a', 'b', 'c'],
-        column1: ['value1', 'value1', 'value1'],
-        column2: [0.0002, 'value2', 'value2'],
-        column3: [false, new DataTable({
-            id: ['ba', 'bb', 'bc'],
-            column1: ['value1', 'value1', 'value1']
-        }), 'value3']
+        columns: {
+            id: ['a', 'b', 'c'],
+            column1: ['value1', 'value1', 'value1'],
+            column2: [0.0002, 'value2', 'value2'],
+            column3: [false, new DataTable({
+                id: ['ba', 'bb', 'bc'],
+                column1: ['value1', 'value1', 'value1']
+            }), 'value3']
+        }
     });
 
     const testCases = [
@@ -98,8 +100,10 @@ test('asNumber', function (assert) {
 });
 
 test('asDate', function (assert) {
-    let converter = new DataConverter({}, function (value) {
-        return new Date('2009-01-01').getTime();
+    let converter = new DataConverter({
+        parseDate: function (value) {
+            return new Date('2009-01-01').getTime();
+        }
     });
 
     assert.strictEqual(

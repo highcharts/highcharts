@@ -33,12 +33,11 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+const { animObject, stop } = A;
 import ColorMapComposition from '../ColorMapComposition.js';
 import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import MapChart from '../../Core/Chart/MapChart.js';
 const {
     splitPath
@@ -128,7 +127,7 @@ class MapSeries extends ScatterSeries {
      *         Choropleth map
      *
      * @extends      plotOptions.scatter
-     * @excluding    marker, cluster
+     * @excluding    boostBlending, boostThreshold, dragDrop, cluster, marker
      * @product      highmaps
      * @optionparent plotOptions.map
      *
@@ -176,7 +175,7 @@ class MapSeries extends ScatterSeries {
          * @type   {Highcharts.SeriesLinecapValue}
          * @since  10.3.3
          */
-        linecap: 'butt',
+        linecap: 'round',
 
         /**
          * @ignore-option
@@ -258,7 +257,7 @@ class MapSeries extends ScatterSeries {
          *
          * @private
          */
-        borderColor: Palette.neutralColor20,
+        borderColor: Palette.neutralColor10,
 
         /**
          * The border width of each map area.
@@ -337,7 +336,7 @@ class MapSeries extends ScatterSeries {
             hover: {
 
                 /** @ignore-option */
-                halo: null as any,
+                halo: void 0,
 
                 /**
                  * The color of the shape in this state.
@@ -357,6 +356,7 @@ class MapSeries extends ScatterSeries {
                  * @product   highmaps
                  * @apioption plotOptions.series.states.hover.borderColor
                  */
+                borderColor: Palette.neutralColor60,
 
                 /**
                  * The border width of the point in this state
@@ -365,6 +365,7 @@ class MapSeries extends ScatterSeries {
                  * @product   highmaps
                  * @apioption plotOptions.series.states.hover.borderWidth
                  */
+                borderWidth: 2
 
                 /**
                  * The relative brightness of the point when hovered, relative
@@ -372,10 +373,9 @@ class MapSeries extends ScatterSeries {
                  *
                  * @type      {number}
                  * @product   highmaps
-                 * @default   0.2
+                 * @default   0
                  * @apioption plotOptions.series.states.hover.brightness
                  */
-                brightness: 0.2
             },
 
             /**
@@ -410,7 +410,9 @@ class MapSeries extends ScatterSeries {
                  */
                 color: Palette.neutralColor20
             }
-        }
+        },
+
+        legendSymbol: 'rectangle'
     } as MapSeriesOptions);
 
     /* *
@@ -465,36 +467,32 @@ class MapSeries extends ScatterSeries {
 
     /**
      * The initial animation for the map series. By default, animation is
-     * disabled. Animation of map shapes is not at all supported in VML
-     * browsers.
+     * disabled.
      * @private
      */
     public animate(init?: boolean): void {
         const { chart, group } = this,
             animation = animObject(this.options.animation);
 
-        if (chart.renderer.isSVG) {
+        // Initialize the animation
+        if (init) {
 
-            // Initialize the animation
-            if (init) {
+            // Scale down the group and place it in the center
+            group.attr({
+                translateX: chart.plotLeft + chart.plotWidth / 2,
+                translateY: chart.plotTop + chart.plotHeight / 2,
+                scaleX: 0.001, // #1499
+                scaleY: 0.001
+            });
 
-                // Scale down the group and place it in the center
-                group.attr({
-                    translateX: chart.plotLeft + chart.plotWidth / 2,
-                    translateY: chart.plotTop + chart.plotHeight / 2,
-                    scaleX: 0.001, // #1499
-                    scaleY: 0.001
-                });
-
-            // Run the animation
-            } else {
-                group.animate({
-                    translateX: chart.plotLeft,
-                    translateY: chart.plotTop,
-                    scaleX: 1,
-                    scaleY: 1
-                }, animation);
-            }
+        // Run the animation
+        } else {
+            group.animate({
+                translateX: chart.plotLeft,
+                translateY: chart.plotTop,
+                scaleX: 1,
+                scaleY: 1
+            }, animation);
         }
     }
 
@@ -516,7 +514,6 @@ class MapSeries extends ScatterSeries {
         return Boolean(
             this.isDirtyData ||
             this.chart.isResizing ||
-            this.chart.renderer.isVML ||
             !this.hasRendered
         );
     }
@@ -532,6 +529,7 @@ class MapSeries extends ScatterSeries {
         if (this.dataLabelsGroup) {
             this.dataLabelsGroup.clip(this.chart.clipRect);
         }
+
     }
 
     /**
@@ -757,23 +755,16 @@ class MapSeries extends ScatterSeries {
 
                 };
 
-                let animOptions: boolean | Partial<AnimationOptions> | undefined = {};
+                const animOptions = merge(animObject(renderer.globalAnimation)),
+                    userStep = animOptions.step;
 
-                if (chart.options.chart) {
-                    animOptions = merge({}, chart.options.chart.animation);
-                }
-
-                if (typeof animOptions !== 'boolean') {
-                    const userStep = animOptions.step;
-
-                    animOptions.step =
-                        function (obj?: { applyDrilldown?: boolean }): void {
-                            if (userStep) {
-                                userStep.apply(this, arguments);
-                            }
-                            step.apply(this, arguments);
-                        };
-                }
+                animOptions.step =
+                    function (obj?: { applyDrilldown?: boolean }): void {
+                        if (userStep) {
+                            userStep.apply(this, arguments);
+                        }
+                        step.apply(this, arguments);
+                    };
 
                 transformGroup
                     .attr({ animator: 0 })
@@ -791,8 +782,10 @@ class MapSeries extends ScatterSeries {
 
             // When dragging or first rendering, animation is off
             } else {
+                stop(transformGroup);
                 transformGroup.attr(merge(
-                    svgTransform, { 'stroke-width': strokeWidth / scale }
+                    svgTransform,
+                    { 'stroke-width': strokeWidth / scale }
                 ));
 
                 animatePoints(scale); // #18166
@@ -944,6 +937,7 @@ class MapSeries extends ScatterSeries {
             if (defined(stateStrokeWidth)) {
                 pointStrokeWidth = stateStrokeWidth;
             }
+            attr.stroke = stateOptions.borderColor ?? point.color;
         }
 
         if (pointStrokeWidth && mapView) {
@@ -1239,7 +1233,9 @@ class MapSeries extends ScatterSeries {
             if (
                 mapView &&
                 !mapView.userOptions.center &&
-                !isNumber(mapView.userOptions.zoom)
+                !isNumber(mapView.userOptions.zoom) &&
+                mapView.zoom === mapView.minZoom // #18542 don't zoom out if
+                // map is zoomed
             ) {
                 // Not only recalculate bounds but also fit view
                 mapView.fitToBounds(void 0, void 0, false); // #17012
@@ -1283,6 +1279,12 @@ class MapSeries extends ScatterSeries {
                         d: MapPoint.getProjectedPath(point, projection)
                     };
                 }
+
+                if (point.projectedPath && !point.projectedPath.length) {
+                    point.setVisible(false);
+                } else {
+                    point.setVisible(true);
+                }
             });
         }
 
@@ -1298,7 +1300,6 @@ class MapSeries extends ScatterSeries {
  * */
 
 interface MapSeries extends ColorMapComposition.SeriesComposition {
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
     pointArrayMap: ColorMapComposition.SeriesComposition['pointArrayMap'];
     pointClass: typeof MapPoint;
@@ -1334,8 +1335,6 @@ extend(MapSeries.prototype, {
 
     // No graph for the map series
     drawGraph: noop,
-
-    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     forceDL: true,
 
@@ -1415,7 +1414,7 @@ export default MapSeries;
  * is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.map
- * @excluding dataParser, dataURL, marker
+ * @excluding dataParser, dataURL, dragDrop, marker
  * @product   highmaps
  * @apioption series.map
  */
@@ -1549,8 +1548,10 @@ export default MapSeries;
  * coordinates in `projectedUnits` for geometry type other than `Point`,
  * instead of `[longitude, latitude]`.
  *
- * @sample maps/series/data-geometry/
- *         Geometry defined in data
+ * @sample maps/series/mappoint-line-geometry/
+ *         Map point and line geometry
+ * @sample maps/series/geometry-types/
+ *         Geometry types
  *
  * @type      {Object}
  * @since 9.3.0
@@ -1561,6 +1562,9 @@ export default MapSeries;
 /**
  * The geometry type. Can be one of `LineString`, `Polygon`, `MultiLineString`
  * or `MultiPolygon`.
+ *
+ * @sample maps/series/geometry-types/
+ *         Geometry types
  *
  * @declare   Highcharts.MapGeometryTypeValue
  * @type      {string}

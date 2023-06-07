@@ -3649,12 +3649,6 @@ const ball = function () {
                         color: '#78758C',
                         opacity: 1,
                         name: 'Earth',
-                        states: {
-                            hover: {
-                                color: '#a4edba',
-                                borderColor: '#333333'
-                            }
-                        },
                         dataLabels: {
                             enabled: false,
                             format: '{point.name}'

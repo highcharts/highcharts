@@ -22,7 +22,6 @@
 
 import type Accessibility from '../Accessibility';
 import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
-import type ChartSonify from '../../Extensions/Sonification/ChartSonify';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -45,7 +44,7 @@ const {
     getChartTitle,
     unhideChartElementFromAT
 } = CU;
-import F from '../../Core/FormatUtilities.js';
+import F from '../../Core/Templating.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
 const { doc } = H;
@@ -179,7 +178,7 @@ function getTypeDescription(
         return getTypeDescForEmptyChart(chart, formatContext);
     }
 
-    if (firstType === 'map') {
+    if (firstType === 'map' || firstType === 'tiledwebmap') {
         return getTypeDescForMapChart(chart, formatContext);
     }
 
@@ -492,7 +491,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
         const axesDesc = this.getAxesDescription(),
             shouldHaveSonifyBtn = (
-                chart.sonify &&
+                (chart as any).sonify &&
                 chart.options.sonification &&
                 chart.options.sonification.enabled
             ),
@@ -699,7 +698,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
         sonifyButtonId: string
     ): void {
         const el = this.sonifyButton = getElement(sonifyButtonId);
-        const chart = this.chart as ChartSonify.SonifyableChart;
+        const chart = this.chart;
         const defaultHandler = (e: Event): void => {
             if (el) {
                 el.setAttribute('aria-hidden', 'true');
@@ -720,8 +719,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
                     el.removeAttribute('aria-label');
                 }
 
-                if (chart.sonify) {
-                    chart.sonify();
+                if ((chart as any).sonify) {
+                    (chart as any).sonify();
                 }
             }, 1000); // Delay to let screen reader speak the button press
         };

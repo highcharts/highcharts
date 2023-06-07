@@ -23,7 +23,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type DataStore from '../Stores/DataStore';
+import type DataConnector from '../Connectors/DataConnector';
 
 import DataConverter from './DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -66,15 +66,17 @@ class CSVConverter extends DataConverter {
     /**
      * Constructs an instance of the CSV parser.
      *
-     * @param {CSVConverter.OptionsType} [options]
+     * @param {CSVConverter.UserOptions} [options]
      * Options for the CSV parser.
      */
     public constructor(
-        options?: CSVConverter.OptionsType
+        options?: CSVConverter.UserOptions
     ) {
-        super();
+        const mergedOptions = merge(CSVConverter.defaultOptions, options);
 
-        this.options = merge(CSVConverter.defaultOptions, options);
+        super(mergedOptions);
+
+        this.options = mergedOptions;
     }
 
     /* *
@@ -101,19 +103,19 @@ class CSVConverter extends DataConverter {
      * */
 
     /**
-     * Creates a CSV string from the datatable on the store instance.
+     * Creates a CSV string from the datatable on the connector instance.
      *
-     * @param {DataStore} store
-     * Store instance to export from.
+     * @param {DataConnector} connector
+     * Connector instance to export from.
      *
      * @param {CSVConverter.Options} [options]
      * Options used for the export.
      *
      * @return {string}
-     * CSV string from the store table.
+     * CSV string from the connector table.
      */
     public export(
-        store: DataStore,
+        connector: DataConnector,
         options: CSVConverter.Options = this.options
     ): string {
         const { useLocalDecimalPoint, lineDelimiter } = options,
@@ -122,16 +124,19 @@ class CSVConverter extends DataConverter {
         let { decimalPoint, itemDelimiter } = options;
 
         if (!decimalPoint) {
-            decimalPoint = itemDelimiter !== ',' && useLocalDecimalPoint ?
-                (1.1).toLocaleString()[1] :
-                '.';
+            decimalPoint = (
+                itemDelimiter !== ',' && useLocalDecimalPoint ?
+                    (1.1).toLocaleString()[1] :
+                    '.'
+            );
         }
 
         if (!itemDelimiter) {
-            itemDelimiter = decimalPoint === ',' ? ';' : ',';
+            itemDelimiter = (decimalPoint === ',' ? ';' : ',');
         }
 
-        const columns = store.getSortedColumns(options.usePresentationOrder),
+        const columns =
+                connector.getSortedColumns(options.usePresentationOrder),
             columnNames = Object.keys(columns),
             csvRows: Array<string> = [],
             columnsCount = columnNames.length;
@@ -150,7 +155,7 @@ class CSVConverter extends DataConverter {
                 column = columns[columnName],
                 columnLength = column.length;
 
-            const columnMeta = store.whatIs(columnName);
+            const columnMeta = connector.whatIs(columnName);
             let columnDataType;
 
             if (columnMeta) {
@@ -201,7 +206,7 @@ class CSVConverter extends DataConverter {
     /**
      * Initiates parsing of CSV
      *
-     * @param {CSVConverter.OptionsType}[options]
+     * @param {CSVConverter.UserOptions}[options]
      * Options for the parser
      *
      * @param {DataEvent.Detail} [eventDetail]
@@ -211,7 +216,7 @@ class CSVConverter extends DataConverter {
      * @emits CSVDataParser#afterParse
      */
     public parse(
-        options: CSVConverter.OptionsType,
+        options: CSVConverter.UserOptions,
         eventDetail?: DataEvent.Detail
     ): void {
         const converter = this,
@@ -248,7 +253,7 @@ class CSVConverter extends DataConverter {
 
         if (csv) {
             lines = csv
-                .replace(/\r\n|\r/gu, '\n') // Windows | Mac
+                .replace(/\r\n|\r/g, '\n') // Windows | Mac
                 .split(lineDelimiter || '\n');
 
             if (!startRow || startRow < 0) {
@@ -273,7 +278,7 @@ class CSVConverter extends DataConverter {
 
                 // Remove ""s from the headers
                 for (let i = 0; i < headers.length; i++) {
-                    headers[i] = headers[i].replace(/^["']|["']$/gu, '');
+                    headers[i] = headers[i].replace(/^["']|["']$/g, '');
                 }
 
                 converter.headers = headers;
@@ -388,7 +393,7 @@ class CSVConverter extends DataConverter {
                     token = parseFloat(token) as any;
                     pushType('number');
                 } else if (!isNaN(Date.parse(token))) {
-                    token = token.replace(/\//gu, '-');
+                    token = token.replace(/\//g, '-');
                     pushType('date');
                 } else {
                     pushType('string');
@@ -435,7 +440,7 @@ class CSVConverter extends DataConverter {
 
             if (c === '#') {
                 // If there are hexvalues remaining (#13283)
-                if (!/^#[0-F]{3,3}|[0-F]{6,6}/iu.test(columnStr.substring(i))) {
+                if (!/^#[0-F]{3,3}|[0-F]{6,6}/i.test(columnStr.substring(i))) {
                     // The rest of the row is a comment
                     push();
                     return;
@@ -618,11 +623,6 @@ namespace CSVConverter {
     }
 
     /**
-     * All available options for the parser
-     */
-    export type OptionsType = Partial<(Options&SpecialOptions)>;
-
-    /**
      * Options for the CSV parser that are compatible with ClassJSON
      */
     export interface Options extends DataConverter.Options {
@@ -641,6 +641,11 @@ namespace CSVConverter {
         beforeParse?: DataBeforeParseCallbackFunction;
         decimalRegex?: RegExp;
     }
+
+    /**
+     * Avaliable options of the CSVConverter.
+     */
+    export type UserOptions = Partial<(Options&SpecialOptions)>;
 
 }
 

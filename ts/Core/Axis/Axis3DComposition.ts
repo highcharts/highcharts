@@ -96,7 +96,7 @@ export declare class Axis3DComposition extends RadialAxis.AxisComposition {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -446,10 +446,9 @@ class Axis3DAdditions {
     ): void {
         Tick3D.compose(TickClass);
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             merge(true, AxisClass.defaultOptions, Axis3DDefaults);
+
             AxisClass.keepProps.push('axis3D');
 
             addEvent(AxisClass, 'init', onAxisInit);

@@ -28,18 +28,18 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BreadcrumbsDefaults from './BreadcrumbsDefaults.js';
 import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
-import F from '../../Core/FormatUtilities.js';
+import F from '../../Core/Templating.js';
 const { format } = F;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    objectEach,
+    defined,
     extend,
     fireEvent,
+    isString,
     merge,
-    pick,
-    defined,
-    isString
+    objectEach,
+    pick
 } = U;
 
 /* *
@@ -214,18 +214,16 @@ class Breadcrumbs {
         ChartClass: typeof Chart,
         highchartsDefaultOptions: typeof D.defaultOptions
     ): void {
-        if (composedMembers.indexOf(ChartClass) === -1) {
-            composedMembers.push(ChartClass);
 
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(Chart, 'destroy', onChartDestroy);
             addEvent(Chart, 'afterShowResetZoom', onChartAfterShowResetZoom);
             addEvent(Chart, 'getMargins', onChartGetMargins);
             addEvent(Chart, 'redraw', onChartRedraw);
             addEvent(Chart, 'selection', onChartSelection);
         }
-        if (composedMembers.indexOf(highchartsDefaultOptions) === -1) {
-            composedMembers.push(highchartsDefaultOptions);
 
+        if (U.pushUnique(composedMembers, highchartsDefaultOptions)) {
             // Add language support.
             extend(
                 highchartsDefaultOptions.lang,

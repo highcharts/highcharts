@@ -80,7 +80,7 @@ class GanttSeries extends XRangeSeries {
         },
         tooltip: {
             headerFormat:
-                '<span style="font-size: 10px">{series.name}</span><br/>',
+                '<span style="font-size: 0.8em">{series.name}</span><br/>',
             pointFormat: null as any,
             pointFormatter: function (this: GanttPoint): string {
                 let point = this,
@@ -137,6 +137,7 @@ class GanttSeries extends XRangeSeries {
             animation: {
                 reversed: true // Dependencies go from child to parent
             },
+            radius: 0,
             startMarker: {
                 enabled: true,
                 symbol: 'arrow-filled',
@@ -317,7 +318,7 @@ export default GanttSeries;
  * A `gantt` series.
  *
  * @extends   series,plotOptions.gantt
- * @excluding boostThreshold, connectors, dashStyle, findNearestPointBy,
+ * @excluding boostThreshold, dashStyle, findNearestPointBy,
  *            getExtremesFromAll, marker, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointStart
  * @product   gantt

@@ -85,7 +85,7 @@ In the case of `normal` stacking, the shape is sometimes not completely filled w
   },
 ```
 
-<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/highcharts/yaxis/stackshadow" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/highcharts/demo/pictorial-stackshadow" allow="fullscreen"></iframe>
 
 When stacking is not enabled, the series duplicate the image. This can be useful for comparing data within one series. The [paths.max](https://api.highcharts.com/highcharts/series.pictorial.paths.max) option determines the height of the image. It is the ratio of `yAxis.max` to the `paths.max`.
 

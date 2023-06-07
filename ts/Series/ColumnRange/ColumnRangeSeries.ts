@@ -37,6 +37,7 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     clamp,
     extend,
     isNumber,
@@ -65,7 +66,11 @@ const {
  * @requires     highcharts-more
  * @optionparent plotOptions.columnrange
  */
-const columnRangeOptions: ColumnRangeSeriesOptions = {
+const columnRangeOptions: DeepPartial<ColumnRangeSeriesOptions> = {
+
+    borderRadius: {
+        where: 'all'
+    },
 
     /**
      * Extended data labels for range series types. Range series data labels
@@ -135,12 +140,47 @@ class ColumnRangeSeries extends AreaRangeSeries {
         return AreaRangeSeries.prototype.setOptions.apply(this, arguments);
     }
 
-    // eslint-disable-next-line valid-jsdoc
-    /**
-     * Translate data points from raw values x and y to plotX and plotY
-     * @private
-     */
+
+    // Overrides from modules that may be loaded after this module
+    // @todo move to compositions
+
     public translate(): void {
+        return columnProto.translate.apply(this);
+    }
+
+    // public crispCol(): BBoxObject {
+    //     return columnProto.crispCol.apply(this, arguments as any);
+    // }
+    // public drawPoints(): void {
+    //     return columnProto.drawPoints.apply(this, arguments as any);
+    // }
+    // public drawTracker(): void {
+    //     return columnProto.drawTracker.apply(this, arguments as any);
+    // }
+    // public getColumnMetrics(): ColumnMetricsObject {
+    //     return columnProto.getColumnMetrics.apply(this, arguments as any);
+    // }
+    public pointAttribs(): SVGAttributes {
+        return columnProto.pointAttribs.apply(this, arguments as any);
+    }
+    // public adjustForMissingColumns(): number {
+    //     return columnProto.adjustForMissingColumns.apply(this, arguments);
+    // }
+    // public animate(): void {
+    //     return columnProto.animate.apply(this, arguments as any);
+    // }
+    public translate3dPoints(): void {
+        return columnProto.translate3dPoints.apply(this, arguments as any);
+    }
+    public translate3dShapes(): void {
+        return columnProto.translate3dShapes.apply(this, arguments as any);
+    }
+
+    public afterColumnTranslate(): void {
+        /**
+         * Translate data points from raw values x and y to plotX and plotY
+         * @private
+         */
         const yAxis = this.yAxis,
             xAxis = this.xAxis,
             startAngleRad = (xAxis as RadialAxis.AxisComposition).startAngleRad,
@@ -162,9 +202,6 @@ class ColumnRangeSeries extends AreaRangeSeries {
         function safeBounds(pixelPos: number): number {
             return clamp(pixelPos, -safeDistance, safeDistance);
         }
-
-
-        columnProto.translate.apply(this);
 
         // Set plotLow and plotHigh
         this.points.forEach((point): void => {
@@ -234,39 +271,11 @@ class ColumnRangeSeries extends AreaRangeSeries {
             }
         });
     }
-
-    // Overrides from modules that may be loaded after this module
-    // @todo move to compositions
-
-    // public crispCol(): BBoxObject {
-    //     return columnProto.crispCol.apply(this, arguments as any);
-    // }
-    // public drawPoints(): void {
-    //     return columnProto.drawPoints.apply(this, arguments as any);
-    // }
-    // public drawTracker(): void {
-    //     return columnProto.drawTracker.apply(this, arguments as any);
-    // }
-    // public getColumnMetrics(): ColumnMetricsObject {
-    //     return columnProto.getColumnMetrics.apply(this, arguments as any);
-    // }
-    public pointAttribs(): SVGAttributes {
-        return columnProto.pointAttribs.apply(this, arguments as any);
-    }
-    // public adjustForMissingColumns(): number {
-    //     return columnProto.adjustForMissingColumns.apply(this, arguments);
-    // }
-    // public animate(): void {
-    //     return columnProto.animate.apply(this, arguments as any);
-    // }
-    public translate3dPoints(): void {
-        return columnProto.translate3dPoints.apply(this, arguments as any);
-    }
-    public translate3dShapes(): void {
-        return columnProto.translate3dShapes.apply(this, arguments as any);
-    }
-
 }
+
+addEvent(ColumnRangeSeries, 'afterColumnTranslate', function (): void {
+    ColumnRangeSeries.prototype.afterColumnTranslate.apply(this);
+}, { order: 5 });
 
 /* *
  *

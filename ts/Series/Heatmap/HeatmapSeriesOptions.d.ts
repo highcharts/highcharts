@@ -28,6 +28,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
     colsize?: number;
+    interpolation?: boolean;
     marker?: HeatmapPointMarkerOptions;
     nullColor?: ColorType;
     pointPadding?: number;

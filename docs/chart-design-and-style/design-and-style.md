@@ -131,7 +131,7 @@ All layout elements of the chart that include text, have a style option that all
 
 Style properties are given in camel case like in JavaScript. So `fontFamily` will work, but `"font-family"` will not.
 
-Common for all these is that all CSS is set to the related SVG/HTML/VML element, but not all have any effect. These configurations are meant for styling text, so properties like color, textUnderline, fontSize, fontFamily, textShadow etc. will make good sense. Other properties, like margin, padding and other layout related properties will not have an effect (or even an unintended effect) and should not be used. Layout is instead handled by specific Highcharts layout options.
+Common for all these is that all CSS is set to the related SVG/HTML element, but not all have any effect. These configurations are meant for styling text, so properties like color, textUnderline, fontSize, fontFamily, textShadow etc. will make good sense. Other properties, like margin, padding and other layout related properties will not have an effect (or even an unintended effect) and should not be used. Layout is instead handled by specific Highcharts layout options.
 
 Shadows
 -------

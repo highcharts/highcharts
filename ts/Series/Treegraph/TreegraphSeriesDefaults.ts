@@ -174,9 +174,19 @@ const TreegraphSeriesDefaults = {
         style: {
             cursor: 'pointer',
             fontWeight: 'bold',
-            fontSize: '16px'
+            fontSize: '1em'
         }
     },
+    /**
+     * Whether the treegraph series should fill the entire plot area in the X
+     * axis direction, even when there are collapsed points.
+     *
+     * @sample  highcharts/series-treegraph/fillspace
+     *          Fill space demonstrated
+     *
+     * @product highcharts
+     */
+    fillSpace: false,
     /**
      * @extends plotOptions.series.tooltip
      */

@@ -40,7 +40,7 @@ QUnit.test('showInLegend. #5544', function (assert) {
         'colorAxis.showInLegend: true by default'
     );
 
-    chart = update(chart, {
+    chart.update({
         colorAxis: {
             showInLegend: false
         }
@@ -60,7 +60,7 @@ QUnit.test('showInLegend. #5544', function (assert) {
         'Marker should not display on hidden color axis'
     );
 
-    chart = update(chart, {
+    chart.update({
         colorAxis: {
             showInLegend: true
         }

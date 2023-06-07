@@ -1,0 +1,53 @@
+:root {
+    --color-background: #fff;
+    --color-tbody-background: #eee;
+    --color-text: #000;
+    --color-thead-background: #ddd;
+    --color-tbody-highlight1: #def;
+    --color-tbody-highlight2: #bdf;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #111;
+        --color-tbody-background: #222;
+        --color-text: #eee;
+        --color-thead-background: #333;
+        --color-tbody-highlight1: #a9c;
+        --color-tbody-highlight2: #bac;
+    }
+}
+
+html {
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
+table {
+    width: 100%;
+}
+
+table td,
+table th {
+    line-height: 1.5em;
+    padding: 0.25em 0.5em;
+    vertical-align: top;
+    white-space: pre-wrap;
+    width: 25%;
+}
+
+table thead th {
+    background-color: var(--color-thead-background);
+}
+
+table tbody td {
+    background-color: var(--color-tbody-background);
+}
+
+tr.highlight td {
+    background-color: var(--color-tbody-highlight1);
+}
+
+tr td.highlight {
+    background-color: var(--color-tbody-highlight2);
+}

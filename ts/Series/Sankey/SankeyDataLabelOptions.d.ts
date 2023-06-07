@@ -19,7 +19,7 @@
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';
 import type SankeyPoint from './SankeyPoint';
-import type DataLabelTextPathOptions from '../../Core/Series/DataLabelOptions';
+import type { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions';
 /* *
  *
  *  Declarations

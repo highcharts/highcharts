@@ -116,8 +116,8 @@ QUnit.test('Options importantance order static', function (assert) {
     // 4) user set -> tooltip
     assert.strictEqual(
         series.tooltipOptions.borderRadius,
-        chart.options.tooltip.userOptions.borderRadius,
-        '4) chart.options.tooltip.userOptions used'
+        chart.userOptions.tooltip.borderRadius,
+        '4) chart.userOptions.tooltip used'
     );
     assert.strictEqual(
         series.tooltipOptions.borderRadius,

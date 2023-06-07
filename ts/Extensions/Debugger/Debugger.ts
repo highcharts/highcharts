@@ -55,7 +55,7 @@ declare module '../../Core/Chart/ChartOptions'{
  *
  * */
 
-const composedClasses: Array<(Function|GlobalsLike)> = [];
+const composedMembers: Array<unknown> = [];
 
 const defaultOptions = {
     /**
@@ -89,21 +89,15 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         addEvent(ChartClass, 'beforeRedraw', onChartBeforeRedraw);
     }
 
-    if (composedClasses.indexOf(H) === -1) {
-        composedClasses.push(H);
-
+    if (U.pushUnique(composedMembers, H)) {
         addEvent(H, 'displayError', onHighchartsDisplayError);
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions(defaultOptions);
     }
 
@@ -174,7 +168,7 @@ function onHighchartsDisplayError(
         msg = msg
             .replace(
                 /<h1>(.*)<\/h1>/g,
-                '<br><span style="font-size: 24px">$1</span><br>'
+                '<br><span style="font-size: 2em">$1</span><br>'
             )
             .replace(/<p>/g, '')
             .replace(/<\/p>/g, '<br>');
@@ -204,6 +198,7 @@ function onHighchartsDisplayError(
             'debugger'
         ).css({
             color: '#ffffff',
+            fontSize: '0.8em',
             width: (chartWidth - 16) + 'px',
             padding: 0
         }).attr({

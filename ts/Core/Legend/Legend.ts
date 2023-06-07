@@ -36,7 +36,7 @@ const {
     animObject,
     setAnimation
 } = A;
-import F from '../FormatUtilities.js';
+import F from '../Templating.js';
 const { format } = F;
 import H from '../Globals.js';
 const {
@@ -67,6 +67,12 @@ const {
  *  Declarations
  *
  * */
+
+declare module '../Chart/ChartLike' {
+    interface ChartLike {
+        legend: Legend;
+    }
+}
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
@@ -216,8 +222,6 @@ class Legend {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
      * Initialize the legend.
      *
@@ -294,8 +298,8 @@ class Legend {
             );
         }
 
-        this.itemMarginTop = options.itemMarginTop || 0;
-        this.itemMarginBottom = options.itemMarginBottom || 0;
+        this.itemMarginTop = options.itemMarginTop;
+        this.itemMarginBottom = options.itemMarginBottom;
         this.padding = padding;
         this.initialItemY = padding - 5; // 5 is pixels above the text
         this.symbolWidth = pick(options.symbolWidth, 16);
@@ -364,28 +368,17 @@ class Legend {
         }
 
         if (!this.chart.styledMode) {
-            const legend = this,
-                options = legend.options,
-                hiddenColor = (legend.itemHiddenStyle as any).color,
-                textColor = visible ?
-                    options.itemStyle.color :
-                    hiddenColor,
+            const { itemHiddenStyle } = this,
+                hiddenColor = (itemHiddenStyle as any).color,
                 symbolColor = visible ?
                     (item.color || hiddenColor) :
                     hiddenColor,
                 markerOptions = item.options && (item.options as any).marker;
             let symbolAttr: SVGAttributes = { fill: symbolColor };
 
-            if (label) {
-                label.css({
-                    fill: textColor,
-                    color: textColor // #1553, oldIE
-                });
-            }
+            label?.css(merge(visible ? this.itemStyle : itemHiddenStyle));
 
-            if (line) {
-                line.attr({ stroke: symbolColor });
-            }
+            line?.attr({ stroke: symbolColor });
 
             if (symbol) {
 
@@ -726,10 +719,7 @@ class Legend {
             // Get the baseline for the first item - the font size is equal for
             // all
             if (!legend.baseline) {
-                legend.fontMetrics = renderer.fontMetrics(
-                    chart.styledMode ? 12 : (itemStyle as any).fontSize,
-                    label
-                );
+                legend.fontMetrics = renderer.fontMetrics(label);
                 legend.baseline =
                     legend.fontMetrics.f + 3 + legend.itemMarginTop;
                 label.attr('y', legend.baseline);
@@ -1376,10 +1366,9 @@ class Legend {
                 if (
                     // check the last item
                     i === allItems.length - 1 &&
-                    // if adding next page is needed
+                    // if adding next page is needed (#18768)
                     y + h - pages[len - 1] > clipHeight &&
-                    // and will fully fit inside a new page
-                    h <= clipHeight
+                    y > pages[len - 1]
                 ) {
                     pages.push(y);
                     legendItem.pageIx = len;
@@ -1394,7 +1383,7 @@ class Legend {
             // PDF export (#1787)
             if (!clipRect) {
                 clipRect = legend.clipRect =
-                    renderer.clipRect(0, padding, 9999, 0);
+                    renderer.clipRect(0, padding - 2, 9999, 0);
                 legend.contentGroup.clip(clipRect);
             }
 
@@ -1568,7 +1557,6 @@ class Legend {
         }
     }
 
-
     /**
      * @private
      * @function Highcharts.Legend#setItemEvents
@@ -1726,7 +1714,6 @@ class Legend {
             );
         });
     }
-
 }
 
 /* *
@@ -1747,6 +1734,12 @@ interface Legend extends LegendLike {
 
 namespace Legend {
 
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface CheckBoxElement extends HTMLDOMElement {
         checked?: boolean;
         x: number;
@@ -1754,6 +1747,42 @@ namespace Legend {
     }
 
     export type Item = (BubbleLegendItem|Series|Point);
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedMembers: Array<unknown> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(ChartClass: typeof Chart): void {
+
+        if (U.pushUnique(composedMembers, ChartClass)) {
+            addEvent(ChartClass, 'beforeMargins', function (): void {
+                /**
+                 * The legend contains an interactive overview over chart items,
+                 * usually individual series or points depending on the series
+                 * type. The color axis and bubble legend are also rendered in
+                 * the chart legend.
+                 *
+                 * @name Highcharts.Chart#legend
+                 * @type {Highcharts.Legend}
+                 */
+                this.legend = new Legend(this, this.options.legend);
+            });
+        }
+
+    }
 
 }
 

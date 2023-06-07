@@ -20,6 +20,11 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type DataModifierOptions from './DataModifierOptions';
+import type {
+    DataModifierType,
+    DataModifierTypeOptions
+} from './DataModifierType';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -51,8 +56,7 @@ class ChainModifier extends DataModifier {
      * Default option for the ordered modifier chain.
      */
     public static readonly defaultOptions: ChainModifier.Options = {
-        modifier: 'Chain',
-        reverse: false
+        modifier: 'Chain'
     };
 
     /* *
@@ -67,17 +71,40 @@ class ChainModifier extends DataModifier {
      * @param {DeepPartial<ChainModifier.Options>} [options]
      * Options to configure the modifier chain.
      *
-     * @param {...DataModifier} [modifiers]
-     * Modifiers in order for the modifier chain.
+     * @param {...DataModifier} [chain]
+     * Ordered chain of modifiers.
      */
     public constructor(
         options?: DeepPartial<ChainModifier.Options>,
-        ...modifiers: Array<DataModifier>
+        ...chain: Array<DataModifier>
     ) {
         super();
 
-        this.modifiers = modifiers;
+        this.chain = chain;
         this.options = merge(ChainModifier.defaultOptions, options);
+
+        const optionsChain = this.options.chain || [];
+
+        for (
+            let i = 0,
+                iEnd = optionsChain.length,
+                modifierOptions: DeepPartial<DataModifierTypeOptions>,
+                ModifierClass: (DataModifierType|undefined);
+            i < iEnd;
+            ++i
+        ) {
+            modifierOptions = optionsChain[i];
+
+            if (!modifierOptions.modifier) {
+                continue;
+            }
+
+            ModifierClass = DataModifier.types[modifierOptions.modifier];
+
+            if (ModifierClass) {
+                chain.unshift(new ModifierClass(modifierOptions as AnyRecord));
+            }
+        }
     }
 
     /* *
@@ -87,9 +114,9 @@ class ChainModifier extends DataModifier {
      * */
 
     /**
-     * Ordered modifiers.
+     * Ordered chain of modifiers.
      */
-    public readonly modifiers: Array<DataModifier>;
+    public readonly chain: Array<DataModifier>;
 
     /**
      * Options of the modifier chain.
@@ -122,7 +149,7 @@ class ChainModifier extends DataModifier {
             modifier
         });
 
-        this.modifiers.push(modifier);
+        this.chain.push(modifier);
 
         this.emit<ChainModifier.Event>({
             type: 'addModifier',
@@ -143,12 +170,61 @@ class ChainModifier extends DataModifier {
             detail: eventDetail
         });
 
-        this.modifiers.length = 0;
+        this.chain.length = 0;
 
         this.emit<ChainModifier.Event>({
             type: 'afterClearChain',
             detail: eventDetail
         });
+    }
+
+    /**
+     * Applies several modifications to the table and returns a modified copy of
+     * the given table.
+     *
+     * @param {Highcharts.DataTable} table
+     * Table to modify.
+     *
+     * @param {DataEvent.Detail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {Promise<Highcharts.DataTable>}
+     * Table with `modified` property as a reference.
+     */
+    public modify<T extends DataTable>(
+        table: T,
+        eventDetail?: DataEvent.Detail
+    ): Promise<T> {
+        const modifiers = (
+            this.options.reverse ?
+                this.chain.slice().reverse() :
+                this.chain.slice()
+        );
+
+        let promiseChain: Promise<T> = Promise.resolve(table);
+
+        for (let i = 0, iEnd = modifiers.length; i < iEnd; ++i) {
+            const modifier = modifiers[i];
+            promiseChain = promiseChain.then((chainTable): Promise<T> =>
+                modifier.modify(chainTable.modified as T, eventDetail)
+            );
+        }
+
+        promiseChain = promiseChain.then((chainTable): T => {
+            table.modified = chainTable.modified;
+            return table;
+        });
+
+        promiseChain = promiseChain['catch']((error): Promise<T> => {
+            this.emit<DataModifier.Event>({
+                type: 'error',
+                detail: eventDetail,
+                table
+            });
+            throw error;
+        });
+
+        return promiseChain;
     }
 
     /**
@@ -184,8 +260,8 @@ class ChainModifier extends DataModifier {
     ): T {
         const modifiers = (
             this.options.reverse ?
-                this.modifiers.reverse() :
-                this.modifiers
+                this.chain.reverse() :
+                this.chain
         );
 
         if (modifiers.length) {
@@ -237,8 +313,8 @@ class ChainModifier extends DataModifier {
     ): T {
         const modifiers = (
             this.options.reverse ?
-                this.modifiers.reverse() :
-                this.modifiers.slice()
+                this.chain.reverse() :
+                this.chain.slice()
         );
 
         if (modifiers.length) {
@@ -289,8 +365,8 @@ class ChainModifier extends DataModifier {
     ): T {
         const modifiers = (
             this.options.reverse ?
-                this.modifiers.reverse() :
-                this.modifiers.slice()
+                this.chain.reverse() :
+                this.chain.slice()
         );
 
         if (modifiers.length) {
@@ -343,8 +419,8 @@ class ChainModifier extends DataModifier {
 
         const modifiers = (
             chain.options.reverse ?
-                chain.modifiers.reverse() :
-                chain.modifiers.slice()
+                chain.chain.reverse() :
+                chain.chain.slice()
         );
 
         let modified = table.modified;
@@ -357,7 +433,7 @@ class ChainModifier extends DataModifier {
             ++i
         ) {
             modifier = modifiers[i];
-            modified = modifier.modifyTable(modified).modified;
+            modified = modifier.modifyTable(modified, eventDetail).modified;
         }
 
         table.modified = modified;
@@ -372,7 +448,7 @@ class ChainModifier extends DataModifier {
     }
 
     /**
-     * Removes a configured modifier from all positions of the modifier chain.
+     * Removes a configured modifier from all positions in the modifier chain.
      *
      * @param {DataModifier} modifier
      * Configured modifier to remove.
@@ -384,7 +460,7 @@ class ChainModifier extends DataModifier {
         modifier: DataModifier,
         eventDetail?: DataEvent.Detail
     ): void {
-        const modifiers = this.modifiers;
+        const modifiers = this.chain;
 
         this.emit<ChainModifier.Event>({
             type: 'removeModifier',
@@ -410,8 +486,8 @@ class ChainModifier extends DataModifier {
  * */
 
 /**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
+ * Additionally provided types for modifier events and options.
+ * @private
  */
 namespace ChainModifier {
 
@@ -449,13 +525,25 @@ namespace ChainModifier {
     }
 
     /**
-     * Options to configure the modifier.
+     * Options to configure the chain modifier.
      */
-    export interface Options extends DataModifier.Options {
+    export interface Options extends DataModifierOptions {
+
+        /**
+         * Name of the related modifier for these options.
+         */
+        modifier: 'Chain';
+
+        /**
+         * Array of options of the chain modifiers.
+         */
+        chain?: Array<DeepPartial<DataModifierTypeOptions>>;
+
         /**
          * Whether to revert the order before execution.
          */
-        reverse: boolean;
+        reverse?: boolean;
+
     }
 
 }
@@ -466,13 +554,13 @@ namespace ChainModifier {
  *
  * */
 
-DataModifier.addModifier(ChainModifier);
-
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Chain: typeof ChainModifier;
     }
 }
+
+DataModifier.registerType('Chain', ChainModifier);
 
 /* *
  *

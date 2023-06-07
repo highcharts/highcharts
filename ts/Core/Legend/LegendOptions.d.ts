@@ -21,7 +21,7 @@ import type {
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
-import type F from '../FormatUtilities';
+import type F from '../Templating';
 import type Legend from './Legend';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 
@@ -51,8 +51,8 @@ export interface LegendOptions {
     itemDistance?: number;
     itemHiddenStyle: CSSObject;
     itemHoverStyle: CSSObject;
-    itemMarginBottom?: number;
-    itemMarginTop?: number;
+    itemMarginBottom: number;
+    itemMarginTop: number;
     itemStyle: CSSObject;
     itemWidth?: number;
     layout: ('horizontal'|'vertical'|'proximate');

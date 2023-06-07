@@ -925,7 +925,7 @@ class Pointer {
      */
     public onTrackerMouseOut(e: PointerEvent): void {
         const chart = this.chart;
-        const relatedTarget = e.relatedTarget || e.toElement;
+        const relatedTarget = e.relatedTarget;
         const series = chart.hoverSeries;
 
         this.isDirectTouch = false;
@@ -1130,10 +1130,9 @@ class Pointer {
     public onContainerMouseDown(e: MouseEvent): void {
         const isPrimaryButton = ((e.buttons || e.button) & 1) === 1;
 
-        // Normalize before the 'if' for the legacy IE (#7850)
         e = this.normalize(e);
 
-        // #11635, Firefox does not reliable fire move event after click scroll
+        // #11635, Firefox does not reliably fire move event after click scroll
         if (
             H.isFirefox &&
             e.button !== 0
@@ -1141,7 +1140,7 @@ class Pointer {
             this.onContainerMouseMove(e);
         }
 
-        // #11635, limiting to primary button (incl. IE 8 support)
+        // #11635, limiting to primary button
         if (
             typeof e.button === 'undefined' ||
             isPrimaryButton
@@ -1167,23 +1166,18 @@ class Pointer {
      */
     public onContainerMouseLeave(e: MouseEvent): void {
         const chart = charts[pick(Pointer.hoverChartIndex, -1)];
-        const tooltip = this.chart.tooltip;
 
         e = this.normalize(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
             chart &&
-            (e.relatedTarget || (e as PointerEvent).toElement)
+            e.relatedTarget &&
+            !this.inClass(e.relatedTarget as any, 'highcharts-tooltip')
         ) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;
-        }
-
-        // #11635, Firefox wheel scroll does not fire out events consistently
-        if (tooltip && !tooltip.isHidden) {
-            this.reset();
         }
     }
 
@@ -1207,15 +1201,6 @@ class Pointer {
             pEvt = this.normalize(e);
 
         this.setHoverChartIndex();
-
-        // In IE8 we apparently need this returnValue set to false in order to
-        // avoid text being selected. But in Chrome, e.returnValue is prevented,
-        // plus we don't need to run e.preventDefault to prevent selected text
-        // in modern browsers. So we set it conditionally. Remove it when IE8 is
-        // no longer needed. #2251, #3224.
-        if (!pEvt.preventDefault) {
-            pEvt.returnValue = false;
-        }
 
         if (chart.mouseIsDown === 'mousedown' || this.touchSelect(pEvt)) {
             this.drag(pEvt);
@@ -2105,7 +2090,7 @@ class Pointer {
      */
     private touchSelect(e: PointerEvent): boolean {
         return Boolean(
-            this.chart.options.chart.zooming.singleTouch &&
+            this.chart.zooming.singleTouch &&
             e.touches &&
             e.touches.length === 1
         );
@@ -2122,13 +2107,13 @@ class Pointer {
             options = chart.options.chart,
             inverted = chart.inverted;
 
-        let zoomType = options.zooming.type || '',
+        let zoomType = chart.zooming.type || '',
             zoomX,
             zoomY;
 
         // Look for the pinchType option
         if (/touch/.test(e.type)) {
-            zoomType = pick(options.zooming.pinchType, zoomType);
+            zoomType = pick(chart.zooming.pinchType, zoomType);
         }
 
         this.zoomX = zoomX = /x/.test(zoomType);
@@ -2201,6 +2186,8 @@ namespace Pointer {
      *
      * */
 
+    const composedEvents: Array<Function> = [];
+
     const composedMembers: Array<unknown> = [];
 
     /* *
@@ -2213,8 +2200,7 @@ namespace Pointer {
      * @private
      */
     export function compose(ChartClass: typeof Chart): void {
-        if (composedMembers.indexOf(ChartClass) === -1) {
-            composedMembers.push(ChartClass);
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'beforeRender', function (): void {
                 /**
                  * The Pointer that keeps track of mouse and touch
@@ -2228,6 +2214,19 @@ namespace Pointer {
                 this.pointer = new Pointer(this, this.options);
             });
         }
+
+    }
+
+    /**
+     * @private
+     */
+    export function dissolve(): void {
+
+        for (let i = 0, iEnd = composedEvents.length; i < iEnd; ++i) {
+            composedEvents[i]();
+        }
+
+        composedEvents.length = 0;
     }
 
 }
