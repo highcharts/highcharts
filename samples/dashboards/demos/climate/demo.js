@@ -936,13 +936,13 @@ async function setupCity(board, city, column, scale) {
         modifier: 'Math',
         columnFormulas: [{
             column: 'TNC',
-            formula: 'E1-273.15'
+            formula: 'E1-273.15' // E1 is the TN column with Kelvin values
         }, {
             column: 'TNF',
             formula: 'E1*1.8-459.67'
         }, {
             column: 'TXC',
-            formula: 'F1-273.15'
+            formula: 'F1-273.15' // F1 is the TX column with Kelvin values
         }, {
             column: 'TXF',
             formula: 'F1*1.8-459.67'
@@ -1100,22 +1100,24 @@ async function updateBoard(board, city, column, scale, newData) {
     );
 
     // Update city grid selection
-    await selectionGrid.update({
-        columnAssignment: {
-            time: 'x',
-            FD: column === 'FD' ? 'y' : null,
-            ID: column === 'ID' ? 'y' : null,
-            RR1: column === 'RR1' ? 'y' : null,
-            TN: null,
-            TNC: column === 'TNC' ? 'y' : null,
-            TNF: column === 'TNF' ? 'y' : null,
-            TX: null,
-            TXC: column === 'TXC' ? 'y' : null,
-            TXF: column === 'TXF' ? 'y' : null,
-            Date: null
-        }
-    });
-    selectionGrid.dataGrid.update(); // force redraw ?
+    if (newData) {
+        await selectionGrid.update({
+            columnAssignment: {
+                time: 'x',
+                FD: column === 'FD' ? 'y' : null,
+                ID: column === 'ID' ? 'y' : null,
+                RR1: column === 'RR1' ? 'y' : null,
+                TN: null,
+                TNC: column === 'TNC' ? 'y' : null,
+                TNF: column === 'TNF' ? 'y' : null,
+                TX: null,
+                TXC: column === 'TXC' ? 'y' : null,
+                TXF: column === 'TXF' ? 'y' : null,
+                Date: null
+            }
+        });
+        selectionGrid.dataGrid.update(); // force redraw ?
+    }
     selectionGrid.dataGrid.scrollToRow(
         selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
     );
