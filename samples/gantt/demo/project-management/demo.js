@@ -10,7 +10,7 @@ const options = {
 
     plotOptions: {
         series: {
-            borderRadius: 12,
+            borderRadius: '50%',
             connectors: {
                 dashStyle: 'ShortDot',
                 lineWidth: 2,
