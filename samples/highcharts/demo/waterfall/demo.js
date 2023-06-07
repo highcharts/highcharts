@@ -54,12 +54,7 @@ Highcharts.chart('container', {
         }],
         dataLabels: {
             enabled: true,
-            formatter: function () {
-                return Highcharts.numberFormat(this.y / 1000, 0, ',') + 'k';
-            },
-            style: {
-                fontWeight: 'bold'
-            }
+            format: '{divide y 1000}k'
         },
         pointPadding: 0
     }]

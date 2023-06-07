@@ -34,7 +34,7 @@ const {
     emptyHTMLElement,
     makeDiv
 } = DataGridUtils;
-import F from '../Core/FormatUtilities.js';
+import Templating from '../Core/Templating.js';
 import DataGridDefaults from './DataGridDefaults.js';
 import H from '../Core/Globals.js';
 const {
@@ -845,7 +845,7 @@ class DataGrid {
             headerFormat = columnOptions && columnOptions.headerFormat;
 
         if (headerFormat) {
-            return F.format(headerFormat, { text: columnName });
+            return Templating.format(headerFormat, { text: columnName });
         }
 
         return columnName;
@@ -873,12 +873,14 @@ class DataGrid {
                 typeof cellValue === 'number' &&
                 cellFormat.indexOf('value') > -1
             ) {
-                formattedCell = F.format(cellFormat, { value: cellValue });
+                formattedCell =
+                    Templating.format(cellFormat, { value: cellValue });
             } else if (
                 typeof cellValue === 'string' &&
                 cellFormat.indexOf('text') > -1
             ) {
-                formattedCell = F.format(cellFormat, { text: cellValue });
+                formattedCell =
+                    Templating.format(cellFormat, { text: cellValue });
             }
         }
 

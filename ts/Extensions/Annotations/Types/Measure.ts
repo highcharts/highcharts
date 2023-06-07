@@ -27,7 +27,7 @@ import type {
 } from '../Controllables/ControllableOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
-import type FormatUtilities from '../../../Core/FormatUtilities';
+import type Templating from '../../../Core/Templating';
 import type MockPointOptions from '../MockPointOptions';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
@@ -1151,7 +1151,7 @@ namespace Measure {
     }
     export interface MeasureTypeLabelOptions {
         enabled: boolean;
-        formatter?: FormatUtilities.FormatterCallback<Measure>;
+        formatter?: Templating.FormatterCallback<Measure>;
         style: CSSObject;
     }
     export interface MeasureTypeOptions extends AnnotationTypeOptions {

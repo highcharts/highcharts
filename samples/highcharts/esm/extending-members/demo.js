@@ -3,11 +3,11 @@
     // Override a member of a module, which in turn will be imported into
     // subsequent modules. This is the ESM equivalent of the
     // HighchartsModuleLoaded approach.
-    const FormatUtilities = await import(
-        'https://code.highcharts.com/es-modules/Core/FormatUtilities.js'
+    const Templating = await import(
+        'https://code.highcharts.com/es-modules/Core/Templating.js'
     );
-    const numberFormat = FormatUtilities.default.numberFormat;
-    FormatUtilities.default.numberFormat = function () {
+    const numberFormat = Templating.default.numberFormat;
+    Templating.default.numberFormat = function () {
         const n = numberFormat.apply(this, arguments);
         return '~' + n;
     };

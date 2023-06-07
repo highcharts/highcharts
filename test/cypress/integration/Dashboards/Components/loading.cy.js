@@ -7,19 +7,23 @@ describe('Component loading', () => {
 
   it('image should be within parent cell', () => {
     cy.get('#dashboard-col-3').within(([dashboardCell]) => {
-      const cellBox = dashboardCell.getBoundingClientRect();
+      const cellBox = dashboardCell.getBoundingClientRect().toJSON();
       const image = dashboardCell.querySelector('img');
-      const imageBox = image?.getBoundingClientRect();
+      const imageBox = image?.getBoundingClientRect().toJSON();
 
       if (!cellBox || !imageBox) {
         throw new Error('Failed to find the cell and/or image');
       }
 
-      for (const dimension of Object.keys(cellBox.toJSON())) {
-        assert(cellBox[dimension] >= imageBox[dimension], 'Out of bounds: ' + dimension);
-      }
+      assert.ok(
+        cellBox.width > imageBox.width,
+        'The width of image is smaller than cell'
+      );
+      assert.ok(
+        cellBox.height > imageBox.height,
+        'The height of image is smaller than cell'
+      );
+
     });
   });
-
-
 });

@@ -30,10 +30,10 @@ import type TextOptions from './TextOptions';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
-import F from '../../Core/FormatUtilities.js';
+import Templating from '../../Core/Templating.js';
 const {
     format
-} = F;
+} = Templating;
 import G from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {

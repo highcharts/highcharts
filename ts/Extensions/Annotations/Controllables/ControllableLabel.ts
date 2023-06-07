@@ -27,7 +27,7 @@ import type SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer';
 import type SymbolOptions from '../../../Core/Renderer/SVG/SymbolOptions';
 
 import Controllable from './Controllable.js';
-import F from '../../../Core/FormatUtilities.js';
+import F from '../../../Core/Templating.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
