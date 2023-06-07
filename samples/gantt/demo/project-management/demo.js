@@ -14,6 +14,7 @@ const options = {
             connectors: {
                 dashStyle: 'ShortDot',
                 lineWidth: 2,
+                radius: 5,
                 startMarker: {
                     enabled: false
                 }
