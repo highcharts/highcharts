@@ -143,49 +143,14 @@ const options = {
         }]
     }],
     tooltip: {
-        pointFormatter: function () {
-            const { dateFormat, defined, isObject } = Highcharts,
-                point = this,
-                format = '%e. %b',
-                options = point.options,
-                completed = options.completed,
-                amount = isObject(completed) ? completed.amount : completed,
-                status = ((amount || 0) * 100) + '%',
-
-                lines = [{
-                    value: point.name,
-                    style: 'font-weight: bold;'
-                }, {
-                    title: 'Start',
-                    value: dateFormat(format, point.start)
-                }, {
-                    visible: !options.milestone,
-                    title: 'End',
-                    value: dateFormat(format, point.end)
-                }, {
-                    title: 'Completed',
-                    value: status
-                }, {
-                    title: 'Owner',
-                    value: options.owner || 'unassigned'
-                }];
-
-            return lines.reduce(function (str, line) {
-                var s = '',
-                    style = (
-                        defined(line.style) ? line.style : 'font-size: 0.8em;'
-                    );
-                if (line.visible !== false) {
-                    s = (
-                        '<span style="' + style + '">' +
-                        (defined(line.title) ? line.title + ': ' : '') +
-                        (defined(line.value) ? line.value : '') +
-                        '</span><br/>'
-                    );
-                }
-                return str + s;
-            }, '');
-        }
+        pointFormat: '<span style="font-weight: bold">{point.name}</span><br>' +
+            '{point.start:%e %b}' +
+            '{#unless point.milestone} → {point.end:%e %b}{/unless}' +
+            '<br>' +
+            '{#if point.completed}' +
+            'Completed: {multiply point.completed.amount 100}%<br>' +
+            '{/if}' +
+            'Owner: {#if point.owner}{point.owner}{else}unassigned{/if}'
     },
     title: {
         text: 'Gantt Project Management'
@@ -200,8 +165,7 @@ const options = {
             }
         },
         dateTimeLabelFormats: {
-            day: '%e<br><span style="opacity: 0.5; font-size: 0.7em">' +
-                '%a</span>'
+            day: '%e<br><span style="opacity: 0.5; font-size: 0.7em">%a</span>'
         },
         grid: {
             borderWidth: 0
