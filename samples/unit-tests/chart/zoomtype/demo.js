@@ -595,7 +595,8 @@ QUnit.test('Zooming accross multiple charts, #15569', assert => {
         flexContainer = document.createElement('div'),
         container1 = document.createElement('div'),
         container2 = document.createElement('div');
-    flexContainer.classList.add('flex-container');
+
+    flexContainer.style.display = 'flex';
     flexContainer.appendChild(container1);
     flexContainer.appendChild(container2);
     mainContainer.appendChild(flexContainer);
