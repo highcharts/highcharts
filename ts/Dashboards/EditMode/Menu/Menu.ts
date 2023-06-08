@@ -14,15 +14,13 @@
  *
  * */
 
-import type CSSJSONObject from '../../CSSJSONObject';
 import type EditMode from '../EditMode';
+import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
-import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
-import U from '../../../Core/Utilities.js';
 import MenuItem from './MenuItem.js';
 import MenuItemBindings from './MenuItemBindings.js';
-
+import U from '../../../Core/Utilities.js';
 const {
     createElement,
     merge

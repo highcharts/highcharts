@@ -14,6 +14,8 @@
  *
  * */
 
+import type EditContextMenu from '../EditContextMenu';
+
 import EditGlobals from '../EditGlobals.js';
 import MenuItem from './MenuItem.js';
 
@@ -38,11 +40,24 @@ const MenuItemBindings: Record<string, Partial<MenuItem.Options>> = {
         type: 'text',
         langKey: 'viewFullscreen',
         events: {
-            click: function (this: MenuItem, e: PointerEvent): void {
-                const fullScreen = this.menu.editMode.board.fullscreen;
+            click: function (this: MenuItem.Options, e: PointerEvent): void {
+                const fullScreen = this.item?.menu.editMode.board.fullscreen;
                 if (fullScreen) {
                     fullScreen.toggle();
                 }
+            }
+        }
+    },
+    editMode: {
+        id: 'editMode',
+        type: 'toggle',
+        getValue: function (item: MenuItem): boolean {
+            return item.menu.editMode.isActive();
+        },
+        langKey: 'editMode',
+        events: {
+            click: function (this: MenuItem): void {
+                (this.menu as EditContextMenu).editMode.onEditModeToggle();
             }
         }
     }

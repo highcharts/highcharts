@@ -14,13 +14,13 @@
  *
  * */
 
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+
 import EditGlobals from './EditGlobals.js';
-import U from '../../Core/Utilities.js';
 import MenuItem from './Menu/MenuItem.js';
 import Menu from './Menu/Menu.js';
 import EditMode from './EditMode.js';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     merge
@@ -47,21 +47,7 @@ class EditContextMenu extends Menu {
     /**
      * Default Context menu items.
      */
-    public static items = merge(Menu.items, {
-        editMode: {
-            id: 'editMode',
-            type: 'toggle',
-            getValue: function (item: MenuItem): boolean {
-                return item.menu.editMode.isActive();
-            },
-            langKey: 'editMode',
-            events: {
-                click: function (this: MenuItem): void {
-                    (this.menu as EditContextMenu).editMode.onEditModeToggle();
-                }
-            }
-        }
-    });
+    public static items = merge(Menu.items, {});
 
     /* *
      *

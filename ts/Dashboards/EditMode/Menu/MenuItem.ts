@@ -92,7 +92,7 @@ class MenuItem {
             { className: className || '' },
             merge(
                 this.options.style || {},
-                // to remove
+                // To remove
                 this.isActive ? { display: 'block' } : {}
             ),
             this.menu.container

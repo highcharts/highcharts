@@ -22,9 +22,9 @@
  *
  * */
 
-import type MenuItem from './Menu/MenuItem.js';
+import type MenuItem from './Menu/MenuItem';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type EditMode from './EditMode.js';
+import type EditMode from './EditMode';
 
 import EditGlobals from './EditGlobals.js';
 import U from '../../Core/Utilities.js';
@@ -42,10 +42,10 @@ const {
 
 /**
  * Function to create a context button.
- * @intenal
+ * @internal
  *
- * @param parentElement
- * The element to which the new elemenet should be appended.
+ * @param parentNode
+ * The element to which the new element should be appended.
  *
  * @param editMode
  * EditMode instance.
@@ -189,7 +189,7 @@ function renderCollapseHeader(
  * Function to create select element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param options
  * Select form field options.
@@ -313,6 +313,7 @@ function renderSelect(
 }
 
 /**
+ * Function to create select element.
  * @internal
  */
 function renderSelectElement(
@@ -371,7 +372,7 @@ function renderSelectElement(
  * Function to create toggle element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
  * @param options
  * Form field options
@@ -456,15 +457,10 @@ function renderToggle(
  * Function to create text element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended
+ * The element to which the new element should be appended.
  *
- * @param text
- * Text to be displayed
- *
- * @param callback
- * Callback function to be fired on the click
- *
- * @returns text Element
+ * @param options
+ * Text options.
  */
 function renderText(
     parentElement: HTMLElement,
@@ -486,6 +482,14 @@ function renderText(
             {},
             parentElement
         );
+
+        if (options.click) {
+            textElem.addEventListener('click', (): void => {
+                if (options.click instanceof Function) {
+                    options.click();
+                }
+            });
+        }
     }
 
     return textElem;
@@ -495,16 +499,10 @@ function renderText(
  * Function to create Icon element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended.
+ * The element to which the new element should be appended.
  *
- * @param icon
- * Icon URL
- *
- * @param callback
- * Callback function
- *
- * @returns
- * Icon Element
+ * @param options
+ * Icon options.
  */
 function renderIcon(
     parentElement: HTMLElement,
@@ -546,7 +544,7 @@ function renderIcon(
  * Function to create input element.
  *
  * @param parentElement
- * the element to which the new elemenet should be appended
+ * the element to which the new element should be appended
  *
  * @param options
  * Form field options
@@ -596,7 +594,7 @@ function renderInput(
  * Function to create textarea element.
  *
  * @param parentElement
- * The element to which the new elemenet should be appended
+ * The element to which the new element should be appended
  *
  * @param options
  * Form field options
@@ -676,7 +674,7 @@ function renderCheckbox(
  * Function to create button element.
  *
  * @param parentElement
- * the element to which the new elemenet should be appended
+ * the element to which the new element should be appended
  *
  * @param options
  * Button field options
@@ -688,13 +686,11 @@ function renderButton(
     parentElement: HTMLElement,
     options: ButtonOptions
 ): HTMLElement|undefined {
-    let button;
-
     if (!parentElement) {
         return;
     }
 
-    button = createElement(
+    const button = createElement(
         'button', {
             className: (
                 EditGlobals.classNames.button + ' ' +
@@ -799,9 +795,10 @@ export interface SelectFormFieldItemOptions {
 }
 
 export interface TextOptions {
-    title: string;
     className?: string;
+    click?: () => void;
     isLabel?: boolean;
+    title: string;
 }
 
 export interface ToggleFormFieldOptions {
