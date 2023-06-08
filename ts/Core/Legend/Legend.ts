@@ -660,9 +660,11 @@ class Legend {
                 (item as any).series :
                 item,
             seriesOptions = series.options,
-            showCheckbox = (legend.createCheckboxForItem) &&
+            showCheckbox = (
+                !!legend.createCheckboxForItem &&
                 seriesOptions &&
-                seriesOptions.showCheckbox,
+                seriesOptions.showCheckbox
+            ),
             useHTML = options.useHTML,
             itemClassName = item.options.className;
 

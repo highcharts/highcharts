@@ -1972,10 +1972,13 @@ class Series {
 
             // For points within the visible range, including the first
             // point outside the visible range (#7061), consider y extremes.
-            validValue = (
-                (isNumber(y) || isArray(y)) &&
-                (((y as any).length || y > 0) || !positiveValuesOnly)
-            );
+            validValue = ((
+                isNumber(y) ||
+                isArray(y)
+            ) && (
+                (isNumber(y) ? y > 0 : y.length) ||
+                !positiveValuesOnly
+            ));
             withinRange = (
                 forceExtremesFromAll ||
                 this.getExtremesFromAll ||
@@ -3857,7 +3860,7 @@ class Series {
 
         // Shift the first point off the parallel arrays
         if (shift) {
-            if (data[0] && (data[0].remove)) {
+            if (data[0] && !!data[0].remove) {
                 data[0].remove(false);
             } else {
                 data.shift();

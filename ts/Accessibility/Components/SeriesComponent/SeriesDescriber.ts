@@ -198,7 +198,7 @@ function hasMorePointsThanDescriptionThreshold(
     return !!(
         threshold !== false &&
         series.points &&
-        series.points.length >= threshold
+        series.points.length >= +threshold
     );
 }
 
@@ -228,7 +228,7 @@ function shouldSetKeyboardNavPropsOnPoints(
     return !!(
         series.points && (
             series.points.length <
-                seriesNavOptions.pointNavigationEnabledThreshold ||
+                +seriesNavOptions.pointNavigationEnabledThreshold ||
             seriesNavOptions.pointNavigationEnabledThreshold === false
         )
     );
