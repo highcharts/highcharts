@@ -52,7 +52,8 @@ const {
     isNumber,
     isObject,
     merge,
-    pick
+    pick,
+    relativeLength
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
@@ -280,11 +281,12 @@ class XRangeSeries extends ColumnSeries {
             yAxis = this.yAxis,
             metrics = this.columnMetrics,
             options = this.options,
-            { borderRadius } = options,
             minPointLength = options.minPointLength || 0,
             oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2,
             seriesXOffset = this.pointXOffset = metrics.offset,
-            posX = pick(point.x2, (point.x as any) + (point.len || 0));
+            posX = pick(point.x2, (point.x as any) + (point.len || 0)),
+            borderRadius = options.borderRadius;
+
 
         let plotX = point.plotX,
             plotX2 = xAxis.translate(
@@ -348,21 +350,28 @@ class XRangeSeries extends ColumnSeries {
             );
         }
 
-        const x = Math.floor(Math.min(plotX, plotX2)) + crisper;
-        const x2 = Math.floor(Math.max(plotX, plotX2)) + crisper;
+        const x = Math.floor(Math.min(plotX, plotX2)) + crisper,
+            x2 = Math.floor(Math.max(plotX, plotX2)) + crisper,
+            width = x2 - x;
+
+        const r = Math.min(
+            relativeLength((
+                typeof borderRadius === 'object' ?
+                    borderRadius.radius :
+                    borderRadius || 0
+            ), pointHeight),
+            Math.min(width, pointHeight) / 2
+        );
 
         const shapeArgs = {
             x,
             y: Math.floor((point.plotY as any) + yOffset) + crisper,
-            width: x2 - x,
-            height: pointHeight
+            width,
+            height: pointHeight,
+            r
         };
 
         point.shapeArgs = shapeArgs;
-
-        if (isNumber(borderRadius)) {
-            point.shapeArgs.r = borderRadius;
-        }
 
         // Move tooltip to default position
         if (!inverted) {
@@ -434,11 +443,7 @@ class XRangeSeries extends ColumnSeries {
                 partialFill = 0 as any;
             }
 
-            if (isNumber(borderRadius)) {
-                point.partShapeArgs = merge(shapeArgs, {
-                    r: borderRadius
-                });
-            }
+            point.partShapeArgs = merge(shapeArgs);
 
             clipRectWidth = Math.max(
                 Math.round(

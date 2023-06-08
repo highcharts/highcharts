@@ -21,6 +21,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type DataModifierOptions from './DataModifierOptions';
 import type DataTable from '../DataTable';
 import type { DataModifierTypes } from './DataModifierType';
 
@@ -53,7 +54,7 @@ abstract class DataModifier implements DataEvent.Emitter {
     /**
      * Modifier options.
      */
-    public abstract readonly options: DataModifier.Options;
+    public abstract readonly options: DataModifierOptions;
 
     /* *
      *
@@ -321,16 +322,6 @@ namespace DataModifier {
      * */
 
     /**
-     * Class constructor of modifiers.
-     *
-     * @param {DeepPartial<Options>} [options]
-     * Options to configure the modifier.
-     */
-    export interface ClassConstructor {
-        new(options?: DeepPartial<Options>): DataModifier;
-    }
-
-    /**
      * Benchmark event with additional event information.
      */
     export interface BenchmarkEvent extends DataEvent {
@@ -371,16 +362,6 @@ namespace DataModifier {
             'modify'|'afterModify'
         );
         readonly table: DataTable;
-    }
-
-    /**
-     * Options to configure the modifier.
-     */
-    export interface Options {
-        /**
-         * Name of the related modifier for these options.
-         */
-        modifier: keyof DataModifierTypes;
     }
 
     /* *

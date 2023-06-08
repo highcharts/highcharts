@@ -8,9 +8,8 @@ Highcharts.chart('container', {
                     updateSeries = document.getElementById('updateSeries');
 
                 updateSeries.addEventListener('click', function () {
-                    data.reverse();
                     chart.series[0].update({
-                        data
+                        data: data.slice(0).reverse()
                     });
                 });
             }
@@ -19,6 +18,6 @@ Highcharts.chart('container', {
     series: [{
         type: 'column',
         animationLimit: 200,
-        data: data
+        data: data.slice(0)
     }]
 });

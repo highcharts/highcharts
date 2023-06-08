@@ -380,7 +380,7 @@ const Options: DeepPartial<A11yOptions> = {
              * this option replaces the whole description.
              *
              * @type      {string}
-             * @since next
+             * @since 11.1.0
              * @sample highcharts/demo/advanced-accessible
              *      Description format
              * @apioption accessibility.point.descriptionFormat

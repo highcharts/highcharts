@@ -1408,26 +1408,31 @@ namespace OrdinalAxis {
                 axis = ordinal.axis,
                 firstPointVal = ordinal.positions ? ordinal.positions[0] : 0;
 
-            let firstPointX = axis.series[0].points &&
-                axis.series[0].points[0] &&
-                axis.series[0].points[0].plotX ||
-                axis.minPixelPadding; // #15987
+            // Check whether the series has at least one point inside the chart
+            const hasPointsInside = function (series: Series): boolean {
+                return series.points.some((point): boolean => !!point.isInside);
+            };
+
+            let firstPointX: number;
 
             // When more series assign to axis, find the smallest one, #15987.
-            if (axis.series.length > 1) {
-                axis.series.forEach(function (series): void {
-                    if (
-                        series.points &&
-                        defined(series.points[0]) &&
-                        defined(series.points[0].plotX) &&
-                        series.points[0].plotX < firstPointX &&
-                        // #17128
-                        series.points[0].plotX >= pick(axis.min, -Infinity)
-                    ) {
-                        firstPointX = series.points[0].plotX;
-                    }
-                });
-            }
+            axis.series.forEach((series): void => {
+                const firstPoint = series.points?.[0];
+
+                if (
+                    defined(firstPoint?.plotX) &&
+                    (
+                        firstPoint.plotX < firstPointX ||
+                        !defined(firstPointX)
+                    ) &&
+                    hasPointsInside(series)
+                ) {
+                    firstPointX = firstPoint.plotX;
+                }
+            });
+
+            // If undefined, give a default value
+            firstPointX ??= axis.minPixelPadding;
 
             // Distance in pixels between two points on the ordinal axis in the
             // current zoom.

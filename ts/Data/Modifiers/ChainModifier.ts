@@ -20,7 +20,11 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type DataModifierType from './DataModifierType';
+import type DataModifierOptions from './DataModifierOptions';
+import type {
+    DataModifierType,
+    DataModifierTypeOptions
+} from './DataModifierType';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -84,14 +88,21 @@ class ChainModifier extends DataModifier {
         for (
             let i = 0,
                 iEnd = optionsChain.length,
+                modifierOptions: DeepPartial<DataModifierTypeOptions>,
                 ModifierClass: (DataModifierType|undefined);
             i < iEnd;
             ++i
         ) {
-            ModifierClass = DataModifier.types[optionsChain[i].modifier];
+            modifierOptions = optionsChain[i];
+
+            if (!modifierOptions.modifier) {
+                continue;
+            }
+
+            ModifierClass = DataModifier.types[modifierOptions.modifier];
 
             if (ModifierClass) {
-                chain.unshift(new ModifierClass(optionsChain[i]));
+                chain.unshift(new ModifierClass(modifierOptions as AnyRecord));
             }
         }
     }
@@ -516,15 +527,23 @@ namespace ChainModifier {
     /**
      * Options to configure the chain modifier.
      */
-    export interface Options extends DataModifier.Options {
+    export interface Options extends DataModifierOptions {
+
+        /**
+         * Name of the related modifier for these options.
+         */
+        modifier: 'Chain';
+
         /**
          * Array of options of the chain modifiers.
          */
-        chain?: Array<DataModifierType['prototype']['options']>;
+        chain?: Array<DeepPartial<DataModifierTypeOptions>>;
+
         /**
          * Whether to revert the order before execution.
          */
         reverse?: boolean;
+
     }
 
 }

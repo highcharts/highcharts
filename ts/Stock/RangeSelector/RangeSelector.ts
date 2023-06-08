@@ -896,11 +896,11 @@ class RangeSelector {
         function updateExtremes(): void {
             const { maxInput, minInput } = rangeSelector,
                 chartAxis = chart.xAxis[0],
-                dataAxis = chart.scroller && chart.scroller.xAxis ?
-                    chart.scroller.xAxis :
-                    chartAxis,
-                dataMin = dataAxis.dataMin,
-                dataMax = dataAxis.dataMax;
+                unionExtremes = (
+                    chart.scroller && chart.scroller.getUnionExtremes()
+                ) || chartAxis,
+                dataMin = unionExtremes.dataMin,
+                dataMax = unionExtremes.dataMax;
 
             let value: number | undefined = rangeSelector.getInputValue(name);
 
