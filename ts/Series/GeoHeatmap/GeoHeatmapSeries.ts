@@ -21,6 +21,11 @@
 import type GeoHeatmapSeriesOptions from './GeoHeatmapSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import GeoHeatmapPoint from './GeoHeatmapPoint.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import H from '../../Core/Globals.js';
+const {
+    doc
+} = H;
 
 const {
     seriesTypes: {
@@ -32,7 +37,9 @@ import U from '../../Core/Utilities.js';
 
 const {
     extend,
-    merge
+    merge,
+    pick,
+    defined
 } = U;
 
 /* *
@@ -159,6 +166,10 @@ class GeoHeatmapSeries extends MapSeries {
 
     public points: Array<GeoHeatmapPoint> = void 0 as any;
 
+    public canvas?: HTMLCanvasElement = void 0 as any;
+
+    public context?: CanvasRenderingContext2D = void 0 as any;
+
     /* *
      *
      *  Functions
@@ -178,6 +189,211 @@ class GeoHeatmapSeries extends MapSeries {
         super.update.apply(series, arguments);
     }
 
+    /**
+     * Overriding drawPoints original method to apply new features.
+     * @private
+     */
+    public drawPoints(): void {
+        const
+            series = this,
+            chart = series.chart,
+            mapView = chart.mapView,
+            seriesOptions = series.options,
+            interpolation = seriesOptions.interpolation;
+
+        if (interpolation && mapView) {
+            const
+                {
+                    image,
+                    chart
+                } = series,
+                [colsize, rowsize] = [
+                    pick(seriesOptions.colsize, 1),
+                    pick(seriesOptions.rowsize, 1)
+                ],
+                visiblePoints = series.points.filter(
+                    (point): boolean => point.visible),
+                lonData = visiblePoints.map(
+                    (point): number => pick(point.options.lon, 0)
+                ),
+                latData = visiblePoints.map(
+                    (point): number => pick(point.options.lat, 0)
+                ),
+                // Calculate dimensions based on lon/lat without creating actual
+                // points on the chart
+                minLonData = Math.min(...lonData),
+                maxLonData = Math.max(...lonData),
+                minLatData = Math.min(...latData),
+                maxLatData = Math.max(...latData),
+                lonRange = maxLonData - minLonData,
+                latRange = maxLatData - minLatData,
+                leftMiddle = mapView.lonLatToPixels({
+                    lon: minLonData,
+                    lat: (minLatData + maxLatData) / 2
+                }),
+                rightMiddle = mapView.lonLatToPixels({
+                    lon: maxLonData,
+                    lat: (minLatData + maxLatData) / 2
+                }),
+                topMiddle = mapView.lonLatToPixels({
+                    lon: (minLonData + maxLatData) / 2,
+                    lat: maxLatData
+                }),
+                bottomMiddle = mapView.lonLatToPixels({
+                    lon: (minLonData + maxLatData) / 2,
+                    lat: minLatData
+                });
+
+            if (
+                leftMiddle &&
+                topMiddle &&
+                rightMiddle &&
+                bottomMiddle
+            ) {
+                const dimensions = {
+                    x: leftMiddle.x,
+                    y: topMiddle.y,
+                    width: rightMiddle.x - leftMiddle.x,
+                    height: bottomMiddle.y - topMiddle.y
+                };
+
+                if (
+                    !image ||
+                    // Orthographic should be always updated with new image
+                    mapView.projection.options.name === 'Orthographic'
+                ) {
+                    if (image) {
+                        image.destroy();
+                    }
+                    const
+                        colorAxis = (
+                            chart.colorAxis &&
+                            chart.colorAxis[0]
+                        ),
+                        ctx = series.getContext(),
+                        canvas = series.canvas;
+
+                    if (canvas && ctx && colorAxis) {
+                        const canvasWidth = canvas.width = ~~(
+                                lonRange / colsize
+                            ),
+                            canvasHeight = canvas.height = ~~(
+                                latRange / rowsize
+                            ),
+                            colorFromPoint = (p: any): number[] => {
+                                const rgba = ((
+                                    colorAxis.toColor(
+                                        p.value ||
+                                        0,
+                                        pick(p)
+                                    ) as string)
+                                    .split(')')[0]
+                                    .split('(')[1]
+                                    .split(',')
+                                    .map((s): number => pick(
+                                        parseFloat(s),
+                                        parseInt(s, 10)
+                                    ))
+                                );
+                                rgba[3] = pick(rgba[3], 1.0) * 255;
+                                return rgba;
+                            };
+
+                        // Pixels extreme values needed for normalizion, should
+                        // be refactored TO DO
+                        const minX = Math.min(...(series.points.map(
+                            (point): number => (point.projectedPath as any).map(
+                                (el: any): number => el[1])) as any)
+                            .flat().filter((el: any): boolean =>
+                                defined(el)));
+
+                        const maxX = Math.max(...(series.points.map(
+                            (point): number => (point.projectedPath as any).map(
+                                (el: any): number => el[1])) as any)
+                            .flat().filter((el: any): boolean =>
+                                defined(el)));
+
+                        const minY = Math.min(...(series.points.map(
+                            (point): number => (point.projectedPath as any).map(
+                                (el: any): number => el[2])) as any)
+                            .flat().filter((el: any): boolean =>
+                                defined(el)));
+
+                        const maxY = Math.max(...(series.points.map(
+                            (point): number => (point.projectedPath as any).map(
+                                (el: any): number => el[2])) as any)
+                            .flat().filter((el: any): boolean =>
+                                defined(el)));
+
+                        const distanceX = maxX - minX,
+                            distanceY = maxY - minY;
+
+                        for (let i = 0; i < series.points.length; i++) {
+                            const point = series.points[i];
+                            if (!point.isNull) {
+                                const path = JSON.parse(
+                                    JSON.stringify(point.projectedPath));
+                                // Normalize SVGPath to values 0-1 * canvas
+                                // Similiar to PixelData
+                                if (path) {
+                                    path.forEach((el: any): void => {
+                                        if (el[0] !== 'Z') {
+                                            el[1] += Math.abs(minX);
+                                            el[2] = maxY - el[2];
+
+                                            el[1] /= distanceX;
+                                            el[2] /= distanceY;
+
+                                            el[1] *= canvasWidth;
+                                            el[2] *= canvasHeight;
+                                        }
+                                    });
+
+                                    const p = new Path2D(path.flat().join(' '));
+                                    const color = colorFromPoint(point);
+                                    ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3]})`;
+                                    ctx.fill(p);
+                                }
+                            }
+                        }
+
+                        series.image = chart.renderer.image(
+                            canvas.toDataURL()
+                        )
+                            .attr(dimensions)
+                            .add(series.group);
+                    }
+                } else if (
+                    image.width !== dimensions.width ||
+                    image.height !== dimensions.height
+                ) {
+                    image.attr(dimensions);
+                }
+            }
+        } else {
+            super.drawPoints.apply(series, arguments);
+        }
+    }
+
+    /**
+     * Method responsible for creating a canvas for interpolation image.
+     * @private
+     */
+    public getContext(): CanvasRenderingContext2D | undefined {
+        const series = this,
+            { canvas, context } = series;
+        if (canvas && context) {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        } else {
+            series.canvas = doc.createElement('canvas');
+
+            series.context = series.canvas.getContext('2d') || void 0;
+            return series.context;
+        }
+
+        return context;
+    }
+
 }
 
 /* *
@@ -189,6 +405,7 @@ class GeoHeatmapSeries extends MapSeries {
 interface GeoHeatmapSeries {
     pointClass: typeof GeoHeatmapPoint;
     pointArrayMap: Array<string>;
+    image?: SVGElement
 }
 extend(GeoHeatmapSeries.prototype, {
     type: 'geoheatmap',

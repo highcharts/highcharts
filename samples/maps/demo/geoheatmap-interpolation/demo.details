@@ -1,0 +1,11 @@
+---
+name: Geo heatmap interpolation
+authors:
+  - Hubert Kozik
+js_wrap: b
+new_until: 2023-06-30
+tags:
+  - Highcharts Maps demo
+categories:
+  - Series types
+...

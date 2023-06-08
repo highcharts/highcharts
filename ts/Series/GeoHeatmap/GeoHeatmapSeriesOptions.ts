@@ -27,6 +27,7 @@ import type MapSeriesOptions from '../Map/MapSeriesOptions';
 interface GeoHeatmapSeriesOptions extends MapSeriesOptions {
     colsize?: number;
     rowsize?: number;
+    interpolation?: boolean;
 }
 
 /* *
