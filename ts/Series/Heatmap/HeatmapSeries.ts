@@ -461,11 +461,8 @@ class HeatmapSeries extends ScatterSeries {
                     chart,
                     xAxis,
                     yAxis,
-                    points,
-                    boost
+                    points
                 } = series,
-                lastPointIndex = points.length - 1,
-                notBoosting = (!boost && !chart.boost),
                 {
                     len: xAxisLen,
                     reversed: xRev
@@ -480,46 +477,17 @@ class HeatmapSeries extends ScatterSeries {
                     pick(seriesOptions.colsize, 1),
                     pick(seriesOptions.rowsize, 1)
                 ],
-                inverted = chart.inverted,
-                xTranslationPad = colsize / 2,
-                userMinPadding = xAxis.userOptions.minPadding,
-                isUserMinPadZero = (
-                    defined(userMinPadding) &&
-                    !(userMinPadding > 0)
+                { inverted, plotWidth } = chart,
+                [x1, x2] = [
+                    xAxis.options.minPadding,
+                    xAxis.options.maxPadding
+                ].map((padFactor): number => (
+                    xAxis.toPixels(
+                        (xMax - xMin) * padFactor,
+                        false
+                    ))
                 ),
-                noOffset = (inverted || isUserMinPadZero),
-                padIfMinSet = (isUserMinPadZero && xTranslationPad || 0),
-                [x1, x2, postTranslationOffset] = [
-                    xMin - padIfMinSet,
-                    xMax + (padIfMinSet * 2),
-                    isUserMinPadZero && 0 || (
-                        xMin + colsize
-                    )
-                ].map((side): number => (
-                    clamp(
-                        Math.round(
-                            xAxis.len -
-                            xAxis.translate(
-                                side,
-                                false,
-                                true,
-                                false,
-                                true,
-                                -series.pointPlacementToXValue()
-                            )
-                        ),
-                        -xAxis.len,
-                        2 * xAxis.len
-                    )
-                )),
-
                 [xStart, xEnd] = xRev ? [x2, x1] : [x1, x2],
-
-                xOffset = (
-                    noOffset && 0 ||
-                    (((xAxisLen / postTranslationOffset) / 2) / 2) / 2
-                ),
-
                 dimensions = inverted ?
                     {
                         width: xAxisLen,
@@ -527,10 +495,10 @@ class HeatmapSeries extends ScatterSeries {
                         x: 0,
                         y: 0
                     } : {
-                        x: xStart - xOffset,
-                        width: xEnd - xOffset,
-                        height: yAxisLen,
-                        y: 0
+                        x: xStart - xEnd,
+                        y: 0,
+                        width: plotWidth - (xStart - xEnd),
+                        height: yAxisLen
                     };
 
             if (!image || series.isDirtyData) {
@@ -551,13 +519,13 @@ class HeatmapSeries extends ScatterSeries {
                             (yMax - yMin) / rowsize
                         ) + 1,
                         canvasArea = canvasWidth * canvasHeight,
-                        pixelData = new Uint8ClampedArray(
-                            canvasArea * 4
-                        ),
-                        widthLastIndex = (
-                            canvasWidth - (noOffset && 1 || 0)
-                        ),
+                        widthLastIndex = canvasWidth - 1,
                         heightLastIndex = canvasHeight - 1,
+                        imgLastIndex = canvasArea - 1,
+                        lastPointIndex = points.length - 1,
+                        pixelData = new Uint8ClampedArray(
+                            (canvasArea * 4)
+                        ),
                         colorFromPoint = (p: HeatmapPoint): number[] => {
                             const rgba = ((
                                 colorAxis.toColor(
@@ -583,12 +551,10 @@ class HeatmapSeries extends ScatterSeries {
                             val: number,
                             fromMin: number,
                             fromMax: number,
-                            toMin: number,
                             toMax: number
                         ): number => ~~(
                             (val - fromMin) * (
-                                (toMax - toMin) /
-                                (fromMax - fromMin)
+                                toMax / (fromMax - fromMin)
                             )
                         ),
 
@@ -614,7 +580,6 @@ class HeatmapSeries extends ScatterSeries {
                                         yMax - y,
                                         yMin,
                                         yMax,
-                                        0,
                                         heightLastIndex
                                     )
                                 ) +
@@ -623,7 +588,6 @@ class HeatmapSeries extends ScatterSeries {
                                         x,
                                         xMin,
                                         xMax,
-                                        0,
                                         widthLastIndex
                                     )
                                 )
@@ -631,21 +595,22 @@ class HeatmapSeries extends ScatterSeries {
                         );
 
                     series.buildKDTree();
-                    series.directTouch = false;
 
                     for (let i = 0; i < canvasArea; i++) {
                         const
                             toPointScale = scaleToImg(
-                                i * 4,
+                                i,
                                 0,
-                                pixelData.length - 4,
-                                0,
+                                imgLastIndex,
                                 lastPointIndex
                             ),
+
                             p = points[toPointScale],
+
                             sourceArr = new Uint8ClampedArray(
                                 colorFromPoint(p)
                             );
+
                         pixelData.set(
                             sourceArr,
                             scaledPointPos(p.x, p.y) * 4
@@ -664,6 +629,7 @@ class HeatmapSeries extends ScatterSeries {
                             href: canvas.toDataURL()
                         });
                     } else {
+                        series.directTouch = false;
                         series.image = chart.renderer.image(
                             canvas.toDataURL()
                         )
