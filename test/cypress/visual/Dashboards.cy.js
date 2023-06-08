@@ -1,5 +1,5 @@
 describe('Dashboards climate demo visual tests', () => {
-    before(()=>{
+    before(() => {
         cy.intercept('/**/world.topo.json').as('getTopo');
         cy.visit('/dashboards/demos/climate');
         cy.wait('@getTopo') // wait for data to be laoded
@@ -11,7 +11,7 @@ describe('Dashboards climate demo visual tests', () => {
             .compareSnapshot('dashboard-climate-loaded', 0.1);
     })
 
-    it('edit mode', ()=>{
+    it('edit mode', () => {
         cy.toggleEditMode()
         cy.get('.highcharts-dashboards-component').first().click()
         cy.get('#demo-content')
@@ -20,20 +20,20 @@ describe('Dashboards climate demo visual tests', () => {
     })
 });
 
-describe('Test the rest',  ()=>{
+describe('Test the rest', () => {
     const DEMOS_TO_VISUALLY_TEST = [
         '/dashboards/demos/minimal'
     ]
 
-    for(const demo of DEMOS_TO_VISUALLY_TEST){
-        it('visually comparison after load ' + demo, ()=>{
+    for (const demo of DEMOS_TO_VISUALLY_TEST) {
+        it('visually comparison after load ' + demo, () => {
             cy.visit(demo);
             cy.boardRendered();
 
             cy.get('#demo-content')
                 .compareSnapshot(
                     demo.replace('/', '')
-                    .replace(/\//g, '-') + '-loaded',
+                        .replace(/\//g, '-') + '-loaded',
                     0.1
                 );
         })

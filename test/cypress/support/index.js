@@ -19,46 +19,38 @@ Cypress.Commands.add('pan', chartElement => {
 })
 
 Cypress.Commands.add('board', () =>
-    cy.window().its('Dashboards.boards').should('exist').then(boards =>{
-        if(boards.length){
-            return new Promise((resolve) =>{
-                const [board] = boards;
-                resolve(board)
-
-            })
-        } else return Promise.reject('No boards found')
+    cy.window().its('Dashboards.boards').should('have.length.gte', 1).then(boards => {
+        const [board] = boards;
+        return board;
     })
 );
 
 Cypress.Commands.add('boardRendered', () =>
-    cy.board().then( async board=>{
-        await Promise.all(
-            board.mountedComponents.map(async ({component}) => {
-                return new Promise((resolve, reject) =>{
+    cy.board().then(async board => {
+        await Cypress.Promise.all(
+            board.mountedComponents.map(async ({ component }) => {
+                return new Cypress.Promise((resolve, reject) => {
                     let attempts = 0;
 
-                    setInterval(()=>{
+                    setInterval(() => {
                         // If highcharts component, wait for chart to be rendered
-                        if(component.type === 'Highcharts'){
-                            if(
+                        if (component.type === 'Highcharts') {
+                            if (
                                 component.chart.hasRendered &&
-                                component.chart.series.every(series => series.hasRendered && series.finishedAnimating)){
+                                component.chart.series.every(series => series.hasRendered && series.finishedAnimating)) {
 
                                 resolve(component)
                             }
 
-                        } else if(component.hasLoaded){
-
+                        } else if (component.hasLoaded) {
                             resolve(component)
-
                         }
 
                         attempts++;
 
-                        if(attempts > 10){
+                        if (attempts > 10) {
                             reject('Took more than 10 attempts')
                         }
-
 
                     }, 200)
 
@@ -135,7 +127,7 @@ Cypress.Commands.add('selectIndicator', (indicator) =>
 
 Cypress.Commands.add('selectAnnotation', (annotationClassName, parentClassName) => {
 
-    if(parentClassName) {
+    if (parentClassName) {
         cy.get(`.${parentClassName}`).children().eq(1).click();
     }
     cy.get(`.${annotationClassName}`).click();
@@ -147,7 +139,7 @@ Cypress.Commands.add('selectRange', (range) =>
         .click()
 );
 
-Cypress.Commands.add('toggleEditMode', ()=>{
+Cypress.Commands.add('toggleEditMode', () => {
     cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
     cy.get('.highcharts-dashboards-edit-toggle-slider').first().click();
 });
