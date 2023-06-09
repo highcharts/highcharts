@@ -131,6 +131,8 @@ function traverseSetOption<T>(
         i = 0;
     for (;i < optionAsArray.length - 1; ++i) {
         prop = optionAsArray[i];
+        // eslint-disable-next-line max-len
+        // nosemgrep: javascript.lang.security.audit.prototype-pollution.prototype-pollution-loop.prototype-pollution-loop
         opt = opt[prop] = pick(opt[prop], {}) as any;
     }
     opt[optionAsArray[optionAsArray.length - 1]] = val;

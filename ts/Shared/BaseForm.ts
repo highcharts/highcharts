@@ -152,7 +152,7 @@ abstract class BaseForm {
         this.type = void 0;
 
         // Reset content.
-        popupDiv.innerHTML = AST.emptyHTML;
+        popupDiv.textContent = AST.emptyHTML;
 
         // Reset toolbar styles if exists.
         if (popupDiv.className.indexOf(toolbarClass) >= 0) {

@@ -1023,7 +1023,7 @@ function chartToggleDataTable(
 
         // Generate the data table
         if (show) {
-            this.dataTableDiv.innerHTML = AST.emptyHTML;
+            this.dataTableDiv.textContent = AST.emptyHTML;
             const ast = new AST([this.getTableAST()]);
             ast.addToDOM(this.dataTableDiv);
             fireEvent(this, 'afterViewData', {

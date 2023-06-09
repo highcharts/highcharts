@@ -411,7 +411,7 @@ class AST {
      * Markup string
      */
     public static setElementHTML(el: Element, html: string): void {
-        el.innerHTML = AST.emptyHTML; // Clear previous
+        el.textContent = AST.emptyHTML; // Clear previous
         if (html) {
             const ast = new AST(html);
             ast.addToDOM(el);
@@ -596,6 +596,8 @@ class AST {
             );
         } else {
             const body = createElement('div');
+            // eslint-disable-next-line max-len
+            // nosemgrep: javascript.browser.security.insecure-document-method.insecure-document-method
             body.innerHTML = markup;
             doc = { body };
         }

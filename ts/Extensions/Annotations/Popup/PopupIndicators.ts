@@ -247,7 +247,7 @@ function addFormFields(
     const fields = (series as any).params || series.options.params;
 
     // reset current content
-    rhsColWrapper.innerHTML = AST.emptyHTML;
+    rhsColWrapper.textContent = AST.emptyHTML;
 
     // create title (indicator name in the right column)
     createElement(
@@ -866,6 +866,8 @@ function filterSeries(
                     '\\$&'
                 );
 
+                // eslint-disable-next-line max-len
+                // nosemgrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp
                 const regex = new RegExp(validFilter, 'i'),
                     alias = indicatorAliases &&
                         indicatorAliases[indicatorType] &&
