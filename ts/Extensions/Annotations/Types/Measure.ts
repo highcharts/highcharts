@@ -833,6 +833,13 @@ class Measure extends Annotation {
             x: this.startXMin,
             y: this.startYMin
         };
+
+        // We need to update userOptions as well as they are used in
+        // the Annotation.update() method to initialize the annotation, #19121.
+        this.userOptions.typeOptions.point = {
+            x: this.startXMin,
+            y: this.startYMin
+        };
     }
 
 }
