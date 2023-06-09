@@ -1,8 +1,8 @@
 describe('Dashboards climate demo visual tests', () => {
     before(() => {
-        cy.intercept('/**/world.topo.json').as('getTopo');
+        cy.intercept('/**/*.csv').as('getData');
         cy.visit('/dashboards/demos/climate');
-        cy.wait('@getTopo') // wait for data to be laoded
+        cy.wait('@getData', {timeout: 100000}) // wait for data to be laoded
     })
 
     it('Climate demo', () => {
