@@ -456,36 +456,13 @@ class HeatmapSeries extends ScatterSeries {
 
         if (interpolation) {
             const
-                {
-                    image,
-                    chart,
-                    xAxis,
-                    yAxis,
-                    points
-                } = series,
-                {
-                    len: xAxisLen,
-                    reversed: xRev
-                } = xAxis,
-                {
-                    len: yAxisLen,
-                    reversed: yRev
-                } = yAxis,
-                { min: xMin, max: xMax } = xAxis.getExtremes(),
-                { min: yMin, max: yMax } = yAxis.getExtremes(),
-                xDelta = xMax - xMin,
-                yDelta = yMax - yMin,
-                [colsize, rowsize] = [
-                    pick(seriesOptions.colsize, 1),
-                    pick(seriesOptions.rowsize, 1)
-                ],
+                { image, chart, xAxis, yAxis } = series,
                 dimensions = {
-                    width: xAxisLen,
-                    height: yAxisLen,
+                    width: xAxis.len,
+                    height: yAxis.len,
                     x: 0,
                     y: 0
                 };
-
             if (!image || series.isDirtyData) {
                 const
                     colorAxis = (
@@ -493,29 +470,26 @@ class HeatmapSeries extends ScatterSeries {
                         chart.colorAxis[0]
                     ),
                     ctx = series.getContext(),
-                    canvas = series.canvas;
+                    { canvas, points } = series;
 
                 if (canvas && ctx && colorAxis) {
                     const
-                        [canvasWidth, canvasHeight] =
-                        [canvas.width, canvas.height] =
-                        [
-                            ~~(xDelta / colsize) + 1,
-                            ~~(yDelta / rowsize) + 1
-                        ],
-                        canvasArea = canvasWidth * canvasHeight,
-                        [
-                            widthLastIndex,
-                            heightLastIndex,
-                            imgLastIndex,
-                            dataLastIndex
-                        ] = [
-                            canvasWidth,
-                            canvasHeight,
-                            canvasArea,
-                            points.length
-                        ].map((n): number => n - 1),
-
+                        xRev = xAxis.reversed,
+                        yRev = yAxis.reversed,
+                        { min: xMin, max: xMax } = xAxis.getExtremes(),
+                        { min: yMin, max: yMax } = yAxis.getExtremes(),
+                        xDelta = xMax - xMin,
+                        yDelta = yMax - yMin,
+                        canvasWidth = canvas.width = (
+                            ~~(xDelta / pick(seriesOptions.colsize, 1)) + 1
+                        ),
+                        canvasHeight = canvas.height = (
+                            ~~(yDelta / pick(seriesOptions.rowsize, 1)) + 1
+                        ),
+                        canvasArea = (canvasWidth * canvasHeight),
+                        widthLastIndex = canvasWidth - 1,
+                        heightLastIndex = canvasHeight - 1,
+                        pointsLen = points.length,
                         pixelData = new Uint8ClampedArray(canvasArea * 4),
 
                         colorFromPoint = (p: HeatmapPoint): number[] => {
@@ -565,7 +539,7 @@ class HeatmapSeries extends ScatterSeries {
                         ),
 
                         scaledPointPos = (x: number, y: number): number => (
-                            Math.ceil(
+                            Math.floor(
                                 canvasWidth *
                                 yPlacement(
                                     resizeFromRange(
@@ -594,8 +568,8 @@ class HeatmapSeries extends ScatterSeries {
                                 resizeFromRange(
                                     i,
                                     0,
-                                    imgLastIndex,
-                                    dataLastIndex
+                                    canvasArea,
+                                    pointsLen
                                 )
                             ],
 
@@ -628,7 +602,6 @@ class HeatmapSeries extends ScatterSeries {
                             .attr(dimensions)
                             .add(series.group);
                     }
-
                 }
             } else if (
                 image.width !== dimensions.width ||
@@ -636,7 +609,6 @@ class HeatmapSeries extends ScatterSeries {
             ) {
                 image.attr(dimensions);
             }
-
         } else if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
             Series.prototype.drawPoints.call(series);
 
