@@ -16,7 +16,13 @@ Highcharts.chart('container', {
         data: [1, 3, 2, 4],
         type: 'column',
         colorByPoint: true,
-        name: 'Αυτή είναι η σειρά'
+        name: 'Αυτή είναι η σειρά',
+        dataLabels: {
+            enabled: true,
+            style: {
+                textOutline: 'red'
+            }
+        }
     }],
 
     exporting: {
