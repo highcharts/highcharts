@@ -72,13 +72,13 @@ Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'extremes: false'
+                text: 'extremes: true'
             },
             allowConnectorUpdate: false,
             chartOptions
         }, {
             title: {
-                text: 'extremes: true'
+                text: 'extremes: false'
             },
             cell: 'dashboard-col-2',
             type: 'DataGrid',
