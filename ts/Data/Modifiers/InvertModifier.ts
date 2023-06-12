@@ -400,6 +400,7 @@ namespace InvertModifier {
         modifier: 'Invert';
 
     }
+
 }
 
 /* *

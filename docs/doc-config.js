@@ -6,6 +6,16 @@ module.exports = {
      * Refer to doc by relative path without extension, i.e.: 'maps/drilldown'
      */
     unlisted: [
+        'dashboards/components',
+        'dashboards/custom-component',
+        'dashboards/types-of-components',
+        'dashboards/layout-description',
+        'dashboards/sync',
+        'dashboards/frequently-asked-questions',
+        'dashboards/installation',
+        'dashboards/your-first-dashboard',
+        'dashboards/edit-mode',
+        'dashboards/light-dark-theme',
         'export-module/deprecated-async-option',
         'export-module/legacy-export-servers',
         'maps/latlon',
