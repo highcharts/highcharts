@@ -394,7 +394,7 @@ namespace OfflineExporting {
                     el.removeChild(titleElement);
                 });
 
-                // Remove all .highcharts-text-outline elements, #19041, #17170
+                // Remove all .highcharts-text-outline elements, #17170
                 outlineElements =
                     el.getElementsByClassName('highcharts-text-outline');
                 while (outlineElements.length > 0) {
