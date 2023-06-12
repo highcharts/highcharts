@@ -104,9 +104,12 @@ function getBoostClipRect(
         x: chart.plotLeft,
         y: chart.plotTop,
         width: chart.plotWidth,
-        height: chart.plotHeight
+        height: chart.navigator ?
+            chart.navigator.top + chart.navigator.height - chart.plotTop :
+            chart.plotHeight
     };
 
+<<<<<<< HEAD
     // Clipping of individal series (#11906, #19039).
     if ((target as Series).getClipBox) {
         const { xAxis, yAxis } = target as Series;
@@ -126,17 +129,17 @@ function getBoostClipRect(
     if (target === chart) {
         const verticalAxes =
             chart.inverted ? chart.xAxis : chart.yAxis; // #14444
+=======
+    const verticalAxes = chart.inverted ? chart.xAxis : chart.yAxis; // #14444
+>>>>>>> d36a388195 (Fixed clip rect for boosted navigator.)
 
-        if (verticalAxes.length <= 1) {
-            clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
-            clipBox.height = (
-                verticalAxes[0].pos -
-                chart.plotTop +
-                verticalAxes[0].len
-            );
-        } else {
-            clipBox.height = chart.plotHeight;
-        }
+    if (target === chart && verticalAxes.length <= 1) {
+        clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
+        clipBox.height = (
+            verticalAxes[0].pos -
+            chart.plotTop +
+            verticalAxes[0].len
+        );
     }
 
     return clipBox;

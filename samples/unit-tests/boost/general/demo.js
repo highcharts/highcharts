@@ -352,6 +352,23 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             `After setting the axis position manually, the boost clip-path
             shouldn\'t be bigger than the axis size.`
         );
+        chart.update({
+            chart: {
+                inverted: false
+            },
+            navigator: {
+                enabled: true,
+                height: 80,
+                series: {
+                    boostThreshold: 1,
+                    color: 'red',
+                    type: 'line',
+                    dataGrouping: {
+                        enabled: false
+                    }
+                }
+            }
+        });
     }
 );
 
