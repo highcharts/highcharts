@@ -83,7 +83,7 @@ class ContainerComponent extends AccessibilityComponent {
                 'accessibility.svgContainerTitle', {
                     chartTitle: getChartTitle(chart)
                 }
-            ));
+            ), chart.renderer.forExport);
 
         if (titleContents.length) {
             const titleElement = this.svgTitleElement =
@@ -170,7 +170,12 @@ class ContainerComponent extends AccessibilityComponent {
                 credits.element.setAttribute(
                     'aria-label', chart.langFormat(
                         'accessibility.credits',
-                        { creditsStr: stripHTMLTags(credits.textStr) }
+                        {
+                            creditsStr: stripHTMLTags(
+                                credits.textStr,
+                                chart.renderer.forExport
+                            )
+                        }
                     )
                 );
             }
