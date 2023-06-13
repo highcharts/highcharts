@@ -73,3 +73,5 @@ Below is a list of online examples of the examples shown in this article:
 
 *   [Simple bar chart](https://jsfiddle.net/highcharts/kh5jY/)
 *   [Highcharts Stock Example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/basic-line/)
+
+Thank you for visiting this Page.
