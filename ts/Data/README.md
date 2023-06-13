@@ -345,7 +345,7 @@ data between multiple modules. You can request the connector multiple times,
 while the class will load each connector only once.
 
 ```TypeScript
-const googleConnector1 = await dataPool.getConnector('My Google Spreadsheet');
-const googleConnector2 = await dataPool.getConnector('My Google Spreadsheet');
-const googleConnector3 = await dataPool.getConnector('My Google Spreadsheet');
+const googleConnector1 = await dataPool.getConnector('my-google-spreadsheet');
+const googleConnector2 = await dataPool.getConnector('my-google-spreadsheet');
+const googleConnector3 = await dataPool.getConnector('my-google-spreadsheet');
 ```
