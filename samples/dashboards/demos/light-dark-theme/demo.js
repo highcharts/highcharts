@@ -3,7 +3,7 @@ const csvData = document.getElementById('csv').innerText;
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            name: 'sample',
+            id: 'sample',
             type: 'CSV',
             options: {
                 csv: csvData,
@@ -27,7 +27,7 @@ Dashboards.board('container', {
         {
             cell: 'dashboard-col-0',
             connector: {
-                name: 'sample'
+                id: 'sample'
             },
             type: 'Highcharts',
             sync: {
@@ -61,7 +61,7 @@ Dashboards.board('container', {
             cell: 'dashboard-col-1',
             type: 'DataGrid',
             connector: {
-                name: 'sample'
+                id: 'sample'
             },
             editable: true,
             title: {

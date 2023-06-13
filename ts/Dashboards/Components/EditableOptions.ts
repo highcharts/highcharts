@@ -61,7 +61,7 @@ class EditableOptions {
                 const selectOptions = !board ?
                     [] :
                     board.dataPool
-                        .getConnectorsNames()
+                        .getConnectorIds()
                         .map((name): { name: string } => ({ name }));
                 option.selectOptions = selectOptions;
             }
