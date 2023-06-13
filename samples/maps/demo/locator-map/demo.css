@@ -1,38 +1,6 @@
 #container {
-    position: relative;
     height: 500px;
     min-width: 300px;
     max-width: 800px;
     margin: 0 auto;
-}
-
-#main {
-    width: 100%;
-    height: 100%;
-}
-
-#locator {
-    height: 30%;
-    width: 25%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-}
-
-#btn {
-    position: absolute;
-    bottom: 2%;
-    left: 1%;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 0.7%;
-    border-radius: 3px;
-    border: 1px solid #e0e0e0;
-    color: #afbbd2;
-    background-color: #f7f7f7;
-}
-
-#btn:hover {
-    background-color: #e6e6e6;
-    color: #8fa2c9;
 }

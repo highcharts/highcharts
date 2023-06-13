@@ -1,26 +1,14 @@
 (async () => {
+
+    /* MAIN CHART */
+
     // Import maps
     const world = await fetch(
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
-    const italy = await fetch(
+    const topology = await fetch(
         'https://code.highcharts.com/mapdata/countries/it/it-all.topo.json'
     ).then(response => response.json());
-
-    // Generate locator div
-    const locatorDiv = document.createElement('div');
-    locatorDiv.id = 'locator';
-    document.getElementById('container').appendChild(locatorDiv);
-
-    /* Optional toggle
-    // Generate button
-    const btnButton = document.createElement('button');
-    btnButton.id = 'btn';
-    const btnIcon = document.createElement('i');
-    btnIcon.classList.add('fa', 'fa-map');
-    btnButton.appendChild(btnIcon);
-    document.getElementById('container').appendChild(btnButton);
-    */
 
     // Prepare demo data
     const data = [
@@ -135,27 +123,16 @@
         ['it-vi', 118],
         ['it-tv', 119]
     ];
-    // Global settings
-    Highcharts.setOptions({
-        title: null,
-        colorAxis: {
-            visible: false
-        },
-        legend: {
-            enabled: false
-        },
-        mapNavigation: {
-            enabled: false
-        },
-        exporting: {
-            enabled: false
-        }
-    });
-    // Main chart
-    const mainChart = Highcharts.mapChart('main', {
+
+    Highcharts.mapChart('container', {
         chart: {
             margin: 0
         },
+
+        mapNavigation: {
+            enabled: true
+        },
+
         series: [{
             states: {
                 inactive: {
@@ -170,12 +147,44 @@
         },
         {
             name: 'Italy',
-            mapData: italy,
+            mapData: topology,
             data: data,
             color: Highcharts.getOptions().colors[0]
         }
         ]
     });
+
+    /* LOCATOR CHART */
+
+    // Get the main chart
+    const mainChart = Highcharts.charts[0];
+
+    // Generate locator div
+    const locatorDiv = document.createElement('div');
+    locatorDiv.id = 'locator';
+    document.getElementById('container').appendChild(locatorDiv);
+
+    const locatorMap = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
+
+    // Apply styles
+    const setStyle = (element, styles) => {
+        Object.assign(element.style, styles);
+    };
+    const container = document.getElementById('container');
+    setStyle(container, {
+        position: 'relative'
+    });
+
+    setStyle(locatorDiv, {
+        position: 'absolute',
+        height: '30%',
+        width: '25%',
+        bottom: 0,
+        left: 0
+    });
+
     // Orthographic projection grid
     const getGraticule = () => {
         const data = [];
@@ -211,21 +220,33 @@
         }
         return data;
     };
-    // Locator map pointer logic
+
+    // Locator chart pointer logic
     function getMapFrame(chart, plotLeft, plotHeight, plotWidth, plotTop) {
-        const corners = [
-            { x: plotLeft, y: plotHeight },
-            { x: plotWidth, y: plotHeight },
-            { x: plotWidth, y: plotTop },
-            { x: plotLeft, y: plotTop }
+        const corners = [{
+            x: plotLeft,
+            y: plotTop
+        },
+        {
+            x: plotLeft,
+            y: plotTop + plotHeight
+        },
+        {
+            x: plotLeft + plotWidth,
+            y: plotTop + plotHeight
+        },
+        {
+            x: plotLeft + plotWidth,
+            y: plotTop
+        }
         ];
 
         const points = corners.map(corner => {
-            // Adjust the rectangle to the projection
             const [lon, lat] = Object.values(
                 chart.mapView.pixelsToLonLat(corner)
             ).map((lonLat, i) =>
-                (i === 0 ? Math.min(179.9, Math.max(-179.9, lonLat)) :
+                (i === 0 ?
+                    Math.min(179.9, Math.max(-179.9, lonLat)) :
                     Math.min(90, Math.max(-90, lonLat)))
             );
             return [lon, lat];
@@ -233,94 +254,76 @@
 
         function createPoints(startPoint, endPoint) {
             const points = [];
+
             // eslint-disable-next-line prefer-const
             let [lon, lat] = startPoint;
+            const dif = endPoint[0] - startPoint[0];
+            const increment = dif / 10;
 
             while (lon <= endPoint[0]) {
                 points.push([lon, lat]);
-                lon += 5;
+                lon += increment;
             }
 
             return points;
         }
 
-        const [leftBottomPoint, rightBottomPoint, rightTopPoint, leftTopPoint] =
-            points,
+        const [
+                leftTopPoint,
+                leftBottomPoint,
+                rightBottomPoint,
+                rightTopPoint
+            ] = points,
+
             bottomPoints = createPoints(leftBottomPoint, rightBottomPoint),
-            topPoints = createPoints(leftTopPoint, rightTopPoint);
 
-        const rect = [
-            leftBottomPoint,
-            ...bottomPoints,
-            rightBottomPoint,
-            rightTopPoint,
-            ...topPoints,
-            leftTopPoint,
-            leftBottomPoint
-        ];
+            topPoints = createPoints(leftTopPoint, rightTopPoint).reverse(),
 
+            rect = [
+                leftTopPoint,
+                ...bottomPoints,
+                ...topPoints
+            ];
         return rect;
     }
-    // Locator map
+
+    // Locator chart
     const locatorChart = Highcharts.mapChart('locator', {
         chart: {
             backgroundColor: '#ffffffB3',
             borderColor: '#e0e0e0',
             borderWidth: 1,
             margin: 15
-            /* Optional toggle
-            events: {
-                load() {
-                    // Locator map toggle logic
-                    const chart = this;
-                    let i = 1;
-
-                    function toggleMap() {
-                        const icon = document.getElementById('btn').firstElementChild;
-                        icon.classList.toggle('fa-map');
-                        icon.classList.toggle('fa-globe');
-
-                        if (i === 1) {
-                            updateLocatorMap('Miller', 'none', 0);
-                            i++;
-                        } else if (i === 2) {
-                            updateLocatorMap('Orthographic', '#c4c4c422', 15);
-                            i = 1;
-                        }
-                    }
-
-                    function updateLocatorMap(
-                        projectionType,
-                        graticuleColor,
-                        margin
-                    ) {
-                        chart.get('Graticule').update({
-                            color: graticuleColor
-                        }, false);
-                        chart.redraw(false);
-                        chart.update({
-                            chart: {
-                                margin: margin
-                            },
-                            mapView: {
-                                projection: {
-                                    name: projectionType
-                                }
-                            }
-                        });
-                    }
-                    document.getElementById('btn').onclick = toggleMap;
-                }
-            } */
         },
+
         credits: {
             enabled: false
         },
+
         mapView: {
             projection: {
                 name: 'Orthographic'
             }
         },
+
+        title: null,
+
+        colorAxis: {
+            visible: false
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        mapNavigation: {
+            enabled: false
+        },
+
+        exporting: {
+            enabled: false
+        },
+
         plotOptions: {
             series: {
                 accessibility: {
@@ -340,8 +343,8 @@
             }
         },
         series: [{
-            name: 'Locator',
-            mapData: world
+            name: 'Map',
+            mapData: locatorMap
         }, {
             id: 'Graticule',
             type: 'mapline',
@@ -349,7 +352,7 @@
             color: '#c4c4c422',
             zIndex: -1
         }, {
-            name: 'Locator',
+            name: 'Pointer',
             type: 'mapline',
             color: '#ff0000',
             data: [{
@@ -366,4 +369,102 @@
             }]
         }]
     });
+
+    // Adjust the pointer size when zooming
+    mainChart.redraw = function () {
+        locatorChart.series[2].setData([{
+            geometry: {
+                type: 'LineString',
+                coordinates: getMapFrame(
+                    mainChart,
+                    mainChart.plotLeft,
+                    mainChart.plotHeight,
+                    mainChart.plotWidth,
+                    mainChart.plotTop
+                )
+            }
+        }]);
+        Highcharts.Chart.prototype.redraw.call(this);
+    };
+
+
+    /* OPTIONAL TOGGLE for locator map */
+    /*
+    // Generate button
+    const btn = document.createElement('button');
+    btn.id = 'btn';
+    const btnIcon = document.createElement('i');
+    btnIcon.classList.add('fa', 'fa-map');
+    btn.appendChild(btnIcon);
+    document.getElementById('container').appendChild(btn);
+
+    // Apply styles
+    setStyle(btn, {
+        position: 'absolute',
+        bottom: '2%',
+        left: '1%',
+        cursor: 'pointer',
+        fontSize: '16px',
+        padding: '0.7%',
+        borderRadius: '3px',
+        border: '1px solid #e0e0e0',
+        backgroundColor: '#f7f7f7',
+        color: '#afbbd2'
+    });
+
+    btn.addEventListener('mouseover', () => {
+        setStyle(btn, {
+            backgroundColor: '#e6e6e6',
+            color: '#8fa2c9'
+        });
+    });
+
+    btn.addEventListener('mouseout', () => {
+        setStyle(btn, {
+            backgroundColor: '#f7f7f7',
+            color: '#afbbd2'
+        });
+    });
+
+    // Toggle map
+    let i = 1;
+    const toggleMap = () => {
+        const icon = document.getElementById('btn').firstElementChild;
+        icon.classList.toggle('fa-map');
+        icon.classList.toggle('fa-globe');
+
+        if (i === 1) {
+            updateLocatorMap('Miller', 'none', 0);
+            i++;
+        } else if (i === 2) {
+            updateLocatorMap('Orthographic', '#c4c4c422', 15);
+            i = 1;
+        }
+    };
+
+    document.getElementById('btn').onclick = toggleMap;
+
+    function updateLocatorMap(projectionType, graticuleColor, margin) {
+        locatorChart.get('Graticule').update({
+            color: graticuleColor
+        },
+        false
+        );
+        locatorChart.redraw(false);
+        locatorChart.update({
+            chart: {
+                margin: margin
+            },
+            mapView: {
+                projection: {
+                    name: projectionType
+                }
+            }
+        });
+    }
+    */
+    /* OPTIONAL TOGGLE END */
+
+    /* LOCATOR CHART END */
+
 })();
