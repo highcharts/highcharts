@@ -584,9 +584,6 @@ class Cell extends GUIElement {
 
 namespace Cell {
 
-    /**
-     * @internal
-     **/
     export interface CellResponsiveOptions {
         width: (string|number);
         // visible: boolean;
