@@ -1200,6 +1200,16 @@ namespace Component {
             detail?: AnyRecord;
         } & EventRecord;
 
+    /**
+     * Defines which elements should be synced.
+     * ```
+     * Example:
+     * {
+     *     highlight: true
+     * }
+     * ```
+     *
+     */
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions {

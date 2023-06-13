@@ -32,6 +32,8 @@ import SyncHandler from './Handler.js';
  * Class
  *
  * */
+
+/** @internal */
 class Sync {
 
     /* *
@@ -275,11 +277,13 @@ namespace Sync {
         | 'highlight'
     );
 
+    /** @internal */
     export type EmitterConfig = (
         | [SyncEmitter['id'], SyncEmitter['func']]
         | SyncEmitter['func']
     );
 
+    /** @internal */
     export type HandlerConfig = (
         [
             SyncHandler['id'],
@@ -289,6 +293,7 @@ namespace Sync {
         SyncHandler['func']
     );
 
+    /** @internal */
     export interface OptionsEntry {
 
         /**
@@ -311,6 +316,7 @@ namespace Sync {
 
     }
 
+    /** @internal */
     export type OptionsRecord = (
         Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
     );
