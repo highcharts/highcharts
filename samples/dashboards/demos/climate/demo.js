@@ -808,15 +808,13 @@ async function setupBoard() {
                         headerFormat: 'Average Temperature °C'
                     },
                     TNF: {
-                        headerFormat: 'Average Temperature °F',
-                        show: false
+                        headerFormat: 'Average Temperature °F'
                     },
                     TXC: {
                         headerFormat: 'Maximal Temperature °C'
                     },
                     TXF: {
-                        headerFormat: 'Maximal Temperature °F',
-                        show: false
+                        headerFormat: 'Maximal Temperature °F'
                     }
                 }
             },
@@ -1104,22 +1102,6 @@ async function updateBoard(board, city, column, scale, newData) {
     // Update city grid selection
     if (newData) {
         await selectionGrid.update({
-            dataGridOptions: {
-                columns: {
-                    TNC: {
-                        show: scale === 'C'
-                    },
-                    TNF: {
-                        show: scale !== 'C'
-                    },
-                    TXC: {
-                        show: scale === 'C'
-                    },
-                    TXF: {
-                        show: scale !== 'C'
-                    }
-                }
-            },
             columnAssignment: {
                 time: 'x',
                 FD: column === 'FD' ? 'y' : null,
@@ -1134,8 +1116,8 @@ async function updateBoard(board, city, column, scale, newData) {
                 Date: null
             }
         });
+        selectionGrid.dataGrid.update(); // force redraw ?
     }
-
     selectionGrid.dataGrid.scrollToRow(
         selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
     );
