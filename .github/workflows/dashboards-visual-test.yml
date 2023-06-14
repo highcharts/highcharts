@@ -1,7 +1,11 @@
 name: DashVisTest CI
 on:
   pull_request:
-    branches: [ dashboards/main ]
+    branches: 
+      - 'dashboards/main'
+  push:
+    branches:
+      - 'db/visual-test-gh-action'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
