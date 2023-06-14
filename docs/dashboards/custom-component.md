@@ -1,5 +1,7 @@
 Custom Dashboards components
 ===
+
+## Custom YouTube Component
 This article shows how to create custom Dashboards Component, in this example YouTube Component.
 
 Note, that to create the custom component we are using ES6, to use the `class` and `extends` keywords, which makes creating custom class much easier.
@@ -78,3 +80,32 @@ Dashboards.board({
 });
 ```
 [The live example can be found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/custom-component).
+
+---
+## Custom HTML Component
+The basic HTML component is described in the [Types of Components](https://www.highcharts.com/docs/chart-and-series-types/dashboards/types-of-components) page. The basic one is very flexible, but requires a lot of configuration. In this example, we will create a custom HTML component, which will be more flexible and easier to use.  
+To do so, we will use the `Highcharts.AST` class, which will be used to parse the string type HTML into the AST-like object.
+
+First we can declare our custom HTML in HTML file as shown in the code snippet below or you can declare that as a string in the code.
+``` HTML
+<div id="custom-html">
+    <h1>Your custom HTML</h1>
+    <p>Here you can add any HTML you like.</p>
+</div>
+```
+Then we can reference it in the code and parse it into the AST object like below:
+
+```JS
+const customHTML = document.getElementById('custom-html').outerHTML,
+    AST = Highcharts.AST;
+
+Dashboards.board('container', {
+    ...
+    components: [{
+        type: 'HTML',
+        cell: 'dashboard-col-0',
+        elements: new AST(`${customHTML}`).nodes
+    }, ....]
+});
+```
+Check out the [live example here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/custom-html-component).
