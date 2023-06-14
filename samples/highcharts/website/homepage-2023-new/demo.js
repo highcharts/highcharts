@@ -157,7 +157,7 @@ const arc = {
                 ['Frankfurt', 'Amsterdam', 1],
                 // ['Frankfurt', 'Paris', 1],
                 ['Frankfurt', 'Budapest', 1],
-                ['Düsseldorf', 'Wien', 1],
+                ['Düsseldorf', 'Wien', 1]
                 // ['Düsseldorf', 'Hamburg', 1],
                 // ['Amsterdam', 'Paris', 1],
                 // ['Paris', 'Brest', 1],
@@ -239,7 +239,7 @@ const arc = {
                 ['Catania', 'Milano', 1]
             ]
         }
-    ],
+    ]
     // responsive: {
     //     rules: [
     //         {
@@ -2019,7 +2019,7 @@ const dbColi =  {
 };
 
 // dashboard
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@703f6c32b1ef851620de7ed32eaff880de1987de/samples/graphics/homepage/';
+const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@334004f4167100b9ea770b57786ed736e68bcf69/samples/graphics/homepage/';
 
 const db = {
     chart: {
