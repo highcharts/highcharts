@@ -84,7 +84,9 @@ async function setupBoard() {
                                 // Change temperature scale.
                                 activeScale = activeScale === 'C' ? 'F' : 'C';
                                 activeColumn = 'TX';
-                                updateBoard(
+                                window.setTimeout(
+                                    updateBoard,
+                                    50,
                                     board,
                                     activeCity,
                                     activeColumn,
@@ -274,7 +276,7 @@ async function setupBoard() {
                                         activeScale
                                     );
                                 }
-                            }, 100);
+                            }, 50);
                         }
                     }
                 },
@@ -1008,18 +1010,10 @@ async function updateBoard(board, city, column, scale, newData) {
 
     if (newData) {
         // Update time range selector
-        await timeRangeSelector.update({
-            chartOptions: {
-                chart: {
-                    type: column[0] === 'T' ? 'spline' : 'column'
-                },
-                navigator: {
-                    series: [{
-                        data: cityTable.modified
-                            .getRows(void 0, void 0, ['time', column])
-                    }]
-                }
-            }
+        timeRangeSelector.chart.navigator.series[0].update({
+            type: column[0] === 'T' ? 'spline' : 'column',
+            data: cityTable.modified
+                .getRows(void 0, void 0, ['time', column])
         });
     }
 
@@ -1116,7 +1110,6 @@ async function updateBoard(board, city, column, scale, newData) {
                 Date: null
             }
         });
-        selectionGrid.dataGrid.update(); // force redraw ?
     }
     selectionGrid.dataGrid.scrollToRow(
         selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
