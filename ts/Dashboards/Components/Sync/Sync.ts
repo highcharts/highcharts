@@ -293,7 +293,6 @@ namespace Sync {
         SyncHandler['func']
     );
 
-    /** @internal */
     export interface OptionsEntry {
 
         /**
