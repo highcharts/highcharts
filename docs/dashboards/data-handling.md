@@ -38,7 +38,7 @@ can be directly done on the table or with DataModifiers.
 
 DataTables can provide automatic modification of data during their lifetime with
 the help of modifiers.  Each table can have only one modifier, but this modifier
-might call additional modifiers.  If a DataModifierfor changes the DataTable,
+might call additional modifiers.  If a DataModifier changes the DataTable,
 changes are available on a clone in the `DataTable.modified` property.
 
 
@@ -47,5 +47,5 @@ changes are available on a clone in the `DataTable.modified` property.
 
 The DataCursor provides a system to synchronize status data on cells of
 DataTables.  This can be for example highlights, markers, or selections.  It
-supports multiple tables and status simultaneously.  Each Board has a DataCursor
+supports multiple tables and statuses simultaneously.  Each Board has a DataCursor
 that is accessible via the `Board.dataCursor` property.
