@@ -110,7 +110,6 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
     // drag the annotation to the left
     controller.mouseDown(bbox.x + bbox.width / 2, bbox.y + bbox.height / 2);
     controller.mouseMove(bbox.x - 50, bbox.y);
-    controller.mouseMove(bbox.x - 50, bbox.y);
     controller.mouseUp();
 
     bbox = chart.annotations[0].shapesGroup.getBBox();
