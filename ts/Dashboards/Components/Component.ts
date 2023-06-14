@@ -1201,7 +1201,8 @@ namespace Component {
         } & EventRecord;
 
     /**
-     * Defines which elements should be synced.
+     * The sync can be an object configuration containing: `highlight`,
+     * `visibility` or `extremes`.
      * ```
      * Example:
      * {
