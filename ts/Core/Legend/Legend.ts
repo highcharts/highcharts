@@ -246,13 +246,6 @@ class Legend {
 
         this.setOptions(options);
 
-        const positionProximate = (): void => {
-            if (this.options.enabled && this.proximate) {
-                this.proximatePositions();
-                this.positionItems();
-            }
-        };
-
         if (options.enabled) {
             // Render it
             this.render();
@@ -261,14 +254,16 @@ class Legend {
             addEvent(this.chart, 'endResize', function (): void {
                 this.legend.positionCheckboxes();
             });
-
-            // On Legend.init and Legend.update, make sure that proximate layout
-            // events are either added or removed (#18362).
-            addEvent(this.chart, 'render', positionProximate);
         }
 
-        // Need to position the legend after update, #19078.
-        addEvent(this.chart, 'redraw', positionProximate);
+        // On Legend.init and Legend.update, make sure that proximate layout
+        // events are either added or removed (#18362).
+        addEvent(this.chart, 'render', (): void => {
+            if (this.options.enabled && this.proximate) {
+                this.proximatePositions();
+                this.positionItems();
+            }
+        });
     }
 
     /**
