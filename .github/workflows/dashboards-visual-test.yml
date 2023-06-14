@@ -35,7 +35,7 @@ jobs:
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
-          spec: '**/visual/*.cy.js'
+          spec: 'test/cypress/**/visual/*.cy.js'
           env: type=base
       - name: Checkout current branch 
         uses: actions/checkout@v3
@@ -46,6 +46,6 @@ jobs:
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
-          spec: '**/visual/*.cy.js'
+          spec: 'test/cypress/**/visual/*.cy.js'
           env: type=actual
 
