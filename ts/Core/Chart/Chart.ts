@@ -3466,7 +3466,7 @@ class Chart {
          * @private
          */
         function zoomOut(): void {
-            chart.zoomOut.apply(chart);
+            chart.zoomOut();
         }
 
         fireEvent(this, 'beforeShowResetZoom', null as any, function (): void {

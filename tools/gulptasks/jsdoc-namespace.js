@@ -18,7 +18,6 @@ const TREE_FILE = 'tree-namespace.json';
 const TSCONFIG_FILE = path.join(LINT_DIRECTORY, 'tsconfig.json');
 
 const TARGET_DIRECTORIES = [
-    'dashboard',
     'gantt',
     'highcharts',
     'highmaps',
