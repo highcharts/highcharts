@@ -30,7 +30,7 @@ jobs:
         uses: cypress-io/github-action@v5
         with:
           start: |
-            npx gulp scripts &&
+            npx gulp scripts
             npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3030'
           spec: 'test/cypress/visual/Dashboards.cy.js'
@@ -43,7 +43,7 @@ jobs:
         uses: cypress-io/github-action@v5
         with:
           start: |
-            npx gulp scripts &&
+            npx gulp scripts
             npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3030'
           spec: 'test/cypress/visual/Dashboards.cy.js'
