@@ -1,0 +1,50 @@
+name: DashVisTest CI
+on:
+  pull_request:
+    branches: [ dashboards/main ]
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  test_cypress:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - uses: actions/checkout@v3
+        with:
+          ref: dashboards/main
+      - name: Install other dependencies
+        run: |
+          npm i @highcharts/highcharts-utils
+      # tasks
+      - name: Build Highcharts
+        run: npx gulp scripts
+      - name: Run Highcharts-Utils
+        run: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+      - name: Run cypress via action
+        uses: cypress-io/github-action@v5
+        with:
+          spec: **/visual/*.cy.js
+          env:
+            type: base
+      - name: Checkout current branch 
+        uses: actions/checkout@v3
+        with:
+          ref: dashboards/main
+      - name: Build Highcharts
+        run: npx gulp scripts
+      - name: Run cypress via action
+        uses: cypress-io/github-action@v5
+        with:
+          spec: **/visual/*.cy.js
+          env:
+            type: actual
