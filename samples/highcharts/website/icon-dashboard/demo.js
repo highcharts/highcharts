@@ -4,538 +4,530 @@ Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
-const old = {
+// const old = {
 
-    chart: {
-        backgroundColor: '#46465C',
-        animation: {
-            duration: 4000,
-            easing: 'easeOutQuint'
-        },
-        margin: [0, 0, 0, 0],
-        // margin: 30,
-        events: {
-            load: function () {
-                const chart = this;
-                const particles = chart.series[12].data;
+//     chart: {
+//         backgroundColor: '#46465C',
+//         animation: {
+//             duration: 4000,
+//             easing: 'easeOutQuint'
+//         },
+//         margin: [0, 0, 0, 0],
+//         // margin: 30,
+//         events: {
+//             load: function () {
+//                 const chart = this;
+//                 const particles = chart.series[12].data;
 
-                const squares = document.querySelectorAll('.squares .highcharts-point');
+//                 const squares = document.querySelectorAll('.squares .highcharts-point');
 
-                setTimeout(function () {
-                    document.querySelector('.highcharts-markers.particles').style.opacity = 1;
-                    particles[0].update({
-                        x: 17,
-                        y: 13
-                    }, false);
-                    particles[2].update({
-                        x: 16,
-                        y: 11
-                    }, false);
+//                 setTimeout(function () {
+//                     document.querySelector('.highcharts-markers.particles').style.opacity = 1;
+//                     particles[0].update({
+//                         x: 17,
+//                         y: 13
+//                     }, false);
+//                     particles[2].update({
+//                         x: 16,
+//                         y: 11
+//                     }, false);
 
-                    particles[1].update({
-                        x: 9,
-                        y: 13
-                    }, false);
-                    particles[5].update({
-                        x: 11,
-                        y: 11
-                    }, false);
+//                     particles[1].update({
+//                         x: 9,
+//                         y: 13
+//                     }, false);
+//                     particles[5].update({
+//                         x: 11,
+//                         y: 11
+//                     }, false);
 
-                    particles[4].update({
-                        x: 4,
-                        y: 13
-                    }, false);
-                    particles[3].update({
-                        x: 4,
-                        y: 11
-                    }, false);
+//                     particles[4].update({
+//                         x: 4,
+//                         y: 13
+//                     }, false);
+//                     particles[3].update({
+//                         x: 4,
+//                         y: 11
+//                     }, false);
 
-                    chart.series[11].update({
-                        endAngle: 90
-                    }, false);
-                    chart.redraw();
-                }, 1000);
+//                     chart.series[11].update({
+//                         endAngle: 90
+//                     }, false);
+//                     chart.redraw();
+//                 }, 1000);
 
-                setTimeout(function () {
-                    [].forEach.call(
-                        squares,
-                        function (s) {
-                            s.style.fill = '#f0f0f0';
-                        }
-                    );
-                }, 1100);
+//                 setTimeout(function () {
+//                     [].forEach.call(
+//                         squares,
+//                         function (s) {
+//                             s.style.fill = '#f0f0f0';
+//                         }
+//                     );
+//                 }, 1100);
 
-                setTimeout(function () {
-                    chart.series[9].data[0].update({
-                        y: 12.1,
-                        x: 3.8
-                    }, false);
-                    chart.series[10].data[0].update({
-                        y: 11.7,
-                        x: 4.2
-                    }, false);
+//                 setTimeout(function () {
+//                     chart.series[9].data[0].update({
+//                         y: 12.1,
+//                         x: 3.8
+//                     }, false);
+//                     chart.series[10].data[0].update({
+//                         y: 11.7,
+//                         x: 4.2
+//                     }, false);
 
-                    chart.series[9].data[1].update({
-                        y: 12.1,
-                        x: 9.8
-                    }, false);
-                    chart.series[10].data[1].update({
-                        y: 11.7,
-                        x: 10.2
-                    }, false);
+//                     chart.series[9].data[1].update({
+//                         y: 12.1,
+//                         x: 9.8
+//                     }, false);
+//                     chart.series[10].data[1].update({
+//                         y: 11.7,
+//                         x: 10.2
+//                     }, false);
 
-                    chart.series[9].data[2].update({
-                        y: 12.1,
-                        x: 15.8
-                    }, false);
-                    chart.series[10].data[2].update({
-                        y: 11.7,
-                        x: 16.2
-                    }, false);
+//                     chart.series[9].data[2].update({
+//                         y: 12.1,
+//                         x: 15.8
+//                     }, false);
+//                     chart.series[10].data[2].update({
+//                         y: 11.7,
+//                         x: 16.2
+//                     }, false);
 
-                    chart.redraw();
+//                     chart.redraw();
 
-                }, 1500);
+//                 }, 1500);
 
-                setTimeout(function () {
-                    [].forEach.call(
-                        document.getElementsByClassName('dial'),
-                        function (e) {
-                            e.style.opacity = 0;
-                        }
-                    );
-                }, 1515);
-            }
-        }
-    },
+//                 setTimeout(function () {
+//                     [].forEach.call(
+//                         document.getElementsByClassName('dial'),
+//                         function (e) {
+//                             e.style.opacity = 0;
+//                         }
+//                     );
+//                 }, 1515);
+//             }
+//         }
+//     },
 
-    title: {
-        text: ''
-    },
-    exporting: {
-        enabled: false
-    },
-    credits: {
-        enabled: false
-    },
-    legend: {
-        enabled: false
-    },
-    xAxis: [
-        {
-            min: 0,
-            max: 20,
-            gridLineColor: 'white',
-            gridLineWidth: 0,
-            gridZIndex: 30,
-            tickInterval: 1
-        }
-    ],
-    // the value axis
-    yAxis: [
-        {
-            min: -2,
-            max: 18,
-            gridZIndex: 20,
-            gridLineWidth: 0,
-            gridLineColor: 'white',
-            tickInterval: 1,
-            startOnTick: false,
-            endOnTick: false
-        }],
-    plotOptions: {
-        series: {
-            marker: {
-                enabled: false
-            },
-            enableMouseTracking: false,
-            animation: false,
-            dataLabels: {
-                enabled: false
-            }
-        },
-        line: {
-            zIndex: 12
-        },
-        pie: {
-            zIndex: 14,
-            borderWidth: 0,
-            size: '60%',
-            innerSize: '60%',
-            center: ['50%', '88%'],
-            startAngle: -90,
-            endAngle: 90
-        },
-        scatter: {
-            dragDrop: {
-                draggableY: true,
-                draggableX: true
-            },
-            marker: {
-                enabled: true
-            }
-        }
-    },
+//     title: {
+//         text: ''
+//     },
+//     exporting: {
+//         enabled: false
+//     },
+//     credits: {
+//         enabled: false
+//     },
+//     legend: {
+//         enabled: false
+//     },
+//     xAxis: [
+//         {
+//             min: 0,
+//             max: 20,
+//             gridLineColor: 'white',
+//             gridLineWidth: 0,
+//             gridZIndex: 30,
+//             tickInterval: 1
+//         }
+//     ],
+//     // the value axis
+//     yAxis: [
+//         {
+//             min: -2,
+//             max: 18,
+//             gridZIndex: 20,
+//             gridLineWidth: 0,
+//             gridLineColor: 'white',
+//             tickInterval: 1,
+//             startOnTick: false,
+//             endOnTick: false
+//         }],
+//     plotOptions: {
+//         series: {
+//             marker: {
+//                 enabled: false
+//             },
+//             enableMouseTracking: false,
+//             animation: false,
+//             dataLabels: {
+//                 enabled: false
+//             }
+//         },
+//         line: {
+//             zIndex: 12
+//         },
+//         pie: {
+//             zIndex: 14,
+//             borderWidth: 0,
+//             size: '60%',
+//             innerSize: '60%',
+//             center: ['50%', '88%'],
+//             startAngle: -90,
+//             endAngle: 90
+//         },
+//         scatter: {
+//             dragDrop: {
+//                 draggableY: true,
+//                 draggableX: true
+//             },
+//             marker: {
+//                 enabled: true
+//             }
+//         }
+//     },
 
-    series: [
-        // 0 - arearange bottom
-        {
-            type: 'arearange',
-            color: '#201836',
-            fillOpacity: 1,
-            data: [
-                {
-                    x: 0,
-                    low: -2,
-                    high: 3
-                },
-                {
-                    x: 20,
-                    low: -2,
-                    high: 3
-                }
-            ]
-        },
-        // 1 - white line
-        {
-            type: 'line',
-            color: '#fff',
-            data: [
-                {
-                    y: -1,
-                    x: 0
-                },
-                {
-                    y: -1,
-                    x: 20
-                }
-            ]
-        },
-        // 2 - white line
-        {
-            type: 'line',
-            color: '#fff',
-            data: [
-                {
-                    y: 0,
-                    x: 0
-                },
-                {
-                    y: 0,
-                    x: 20
-                }
-            ]
-        },
-        // 3 - white line
-        {
-            type: 'line',
-            color: '#fff',
-            data: [
-                {
-                    y: 1,
-                    x: 0
-                },
-                {
-                    y: 1,
-                    x: 20
-                }
-            ]
-        },
-        // 4 - white line
-        {
-            type: 'line',
-            color: '#fff',
-            data: [
-                {
-                    y: 2,
-                    x: 0
-                },
-                {
-                    y: 2,
-                    x: 20
-                }
-            ]
-        },
-        // 5 - pie fake gauge
-        {
-            name: 'Speed',
-            visible: true,
-            borderColor: '#a3edba',
-            borderWidth: 0,
-            type: 'pie',
-            data: [
-                {
-                    y: 100,
-                    color: '#78758C'
-                }
+//     series: [
+//         // 0 - arearange bottom
+//         {
+//             type: 'arearange',
+//             color: '#201836',
+//             fillOpacity: 1,
+//             data: [
+//                 {
+//                     x: 0,
+//                     low: -2,
+//                     high: 3
+//                 },
+//                 {
+//                     x: 20,
+//                     low: -2,
+//                     high: 3
+//                 }
+//             ]
+//         },
+//         // 1 - white line
+//         {
+//             type: 'line',
+//             color: '#fff',
+//             data: [
+//                 {
+//                     y: -1,
+//                     x: 0
+//                 },
+//                 {
+//                     y: -1,
+//                     x: 20
+//                 }
+//             ]
+//         },
+//         // 2 - white line
+//         {
+//             type: 'line',
+//             color: '#fff',
+//             data: [
+//                 {
+//                     y: 0,
+//                     x: 0
+//                 },
+//                 {
+//                     y: 0,
+//                     x: 20
+//                 }
+//             ]
+//         },
+//         // 3 - white line
+//         {
+//             type: 'line',
+//             color: '#fff',
+//             data: [
+//                 {
+//                     y: 1,
+//                     x: 0
+//                 },
+//                 {
+//                     y: 1,
+//                     x: 20
+//                 }
+//             ]
+//         },
+//         // 4 - white line
+//         {
+//             type: 'line',
+//             color: '#fff',
+//             data: [
+//                 {
+//                     y: 2,
+//                     x: 0
+//                 },
+//                 {
+//                     y: 2,
+//                     x: 20
+//                 }
+//             ]
+//         },
+//         // 5 - pie fake gauge
+//         {
+//             name: 'Speed',
+//             visible: true,
+//             borderColor: '#a3edba',
+//             borderWidth: 0,
+//             type: 'pie',
+//             data: [
+//                 {
+//                     y: 100,
+//                     color: '#78758C'
+//                 }
 
-            ]
-        },
-        // 6 - scatter - dial point 1
-        {
-            name: 'dial',
-            zIndex: 15,
-            className: 'dial',
-            type: 'scatter',
-            data: [{
-                y: 10,
-                x: 10
-            }],
-            dataLabels: {
-                enabled: false
-            },
-            marker: {
-                enabled: true,
-                symbol: 'url(http://192.168.1.176:3030/dial-small.png)',
-                width: 40,
-                height: 80
-            }
-        },
-        // 7 - scatter - dial point 2
-        {
-            name: 'dial',
-            zIndex: 15,
-            className: 'dial2',
-            type: 'scatter',
-            data: [{
-                y: 10,
-                x: 10
-            }],
-            dataLabels: {
-                enabled: false
-            },
-            marker: {
-                enabled: true,
-                symbol: 'url(http://192.168.1.176:3030/dial-small.png)',
-                width: 40,
-                height: 80
-            }
-        },
-        // 8 - pie - dial center
-        {
-            name: 'dials',
-            zIndex: 34,
-            type: 'pie',
-            startAngle: -180,
-            endAngle: 180,
-            animation: false,
-            opacity: 1,
-            borderWidth: 1,
-            borderColor: 'transparent',
-            center: ['50%', '90%'
-            ],
-            data: [{
-                y: 100,
+//             ]
+//         },
+//         // 6 - scatter - dial point 1
+//         {
+//             name: 'dial',
+//             zIndex: 15,
+//             className: 'dial',
+//             type: 'scatter',
+//             data: [{
+//                 y: 10,
+//                 x: 10
+//             }],
+//             dataLabels: {
+//                 enabled: false
+//             },
+//             marker: {
+//                 enabled: true,
+//                 symbol: 'url(http://192.168.1.176:3030/dial-small.png)',
+//                 width: 40,
+//                 height: 80
+//             }
+//         },
+//         // 7 - scatter - dial point 2
+//         {
+//             name: 'dial',
+//             zIndex: 15,
+//             className: 'dial2',
+//             type: 'scatter',
+//             data: [{
+//                 y: 10,
+//                 x: 10
+//             }],
+//             dataLabels: {
+//                 enabled: false
+//             },
+//             marker: {
+//                 enabled: true,
+//                 symbol: 'url(http://192.168.1.176:3030/dial-small.png)',
+//                 width: 40,
+//                 height: 80
+//             }
+//         },
+//         // 8 - pie - dial center
+//         {
+//             name: 'dials',
+//             zIndex: 34,
+//             type: 'pie',
+//             startAngle: -180,
+//             endAngle: 180,
+//             animation: false,
+//             opacity: 1,
+//             borderWidth: 1,
+//             borderColor: 'transparent',
+//             center: ['50%', '90%'
+//             ],
+//             data: [{
+//                 y: 100,
 
-                color: '#78758C'
-            }],
-            size: '8%',
-            innerSize: '0%',
-            dataLabels: {
-                enabled: false
-            }
-        },
-        // 9 scatter squares
-        {
-            type: 'scatter',
-            className: 'squares',
-            enableMouseTracking: false,
-            animation: false,
-            zIndex: 2,
-            data: [
-                {
-                    y: 12,
-                    x: 4
-                },
-                {
-                    y: 12,
-                    x: 10
-                },
-                {
-                    y: 12,
-                    x: 16
-                }
-            ],
-            marker: {
-                enabled: true,
-                symbol: 'square'
-            }
-        },
-        // 10 scatter squares
-        {
-            type: 'scatter',
-            visible: true,
-            className: 'squares2',
-            enableMouseTracking: false,
-            animation: false,
-            zIndex: 1,
-            data: [
-                {
-                    y: 12,
-                    x: 4
-                },
-                {
-                    y: 12,
-                    x: 10
-                },
-                {
-                    y: 12,
-                    x: 16
-                }
-            ],
-            marker: {
-                enabled: true,
-                symbol: 'square'
-            }
-        },
-        // 11 pie - fake gague fill
-        {
-            type: 'pie',
-            visible: true,
-            data: [{
-                y: 100,
-                color: '#8087E8'
-            }],
-            startAngle: -90,
-            endAngle: -89.9
-        },
-        // 12 scatter particles
-        {
-            type: 'scatter',
-            enableMouseTracking: false,
-            name: 'particles',
-            animation: false,
-            className: 'particles',
-            data: [
-                {
-                    x: 0,
-                    y: 11,
-                    className: 'particle-1',
-                    marker: {
-                        enabled: true,
-                        symbol: 'url(' + imgPath + 'p1.svg)',
-                        width: 35,
-                        height: 60
+//                 color: '#78758C'
+//             }],
+//             size: '8%',
+//             innerSize: '0%',
+//             dataLabels: {
+//                 enabled: false
+//             }
+//         },
+//         // 9 scatter squares
+//         {
+//             type: 'scatter',
+//             className: 'squares',
+//             enableMouseTracking: false,
+//             animation: false,
+//             zIndex: 2,
+//             data: [
+//                 {
+//                     y: 12,
+//                     x: 4
+//                 },
+//                 {
+//                     y: 12,
+//                     x: 10
+//                 },
+//                 {
+//                     y: 12,
+//                     x: 16
+//                 }
+//             ],
+//             marker: {
+//                 enabled: true,
+//                 symbol: 'square'
+//             }
+//         },
+//         // 10 scatter squares
+//         {
+//             type: 'scatter',
+//             visible: true,
+//             className: 'squares2',
+//             enableMouseTracking: false,
+//             animation: false,
+//             zIndex: 1,
+//             data: [
+//                 {
+//                     y: 12,
+//                     x: 4
+//                 },
+//                 {
+//                     y: 12,
+//                     x: 10
+//                 },
+//                 {
+//                     y: 12,
+//                     x: 16
+//                 }
+//             ],
+//             marker: {
+//                 enabled: true,
+//                 symbol: 'square'
+//             }
+//         },
+//         // 11 pie - fake gague fill
+//         {
+//             type: 'pie',
+//             visible: true,
+//             data: [{
+//                 y: 100,
+//                 color: '#8087E8'
+//             }],
+//             startAngle: -90,
+//             endAngle: -89.9
+//         },
+//         // 12 scatter particles
+//         {
+//             type: 'scatter',
+//             enableMouseTracking: false,
+//             name: 'particles',
+//             animation: false,
+//             className: 'particles',
+//             data: [
+//                 {
+//                     x: 0,
+//                     y: 11,
+//                     className: 'particle-1',
+//                     marker: {
+//                         enabled: true,
+//                         symbol: 'url(' + imgPath + 'p1.svg)',
+//                         width: 35,
+//                         height: 60
 
-                    }
-                },
-                {
-                    x: 0.1,
-                    y: 12,
-                    className: 'particle-2',
-                    marker: {
-                        enabled: true,
-                        symbol: 'url(' + imgPath + 'p2.svg)',
-                        width: 23,
-                        height: 42
-                    }
-                },
-                {
-                    x: 0.11,
-                    y: 14,
-                    className: 'particle-3',
-                    marker: {
-                        enabled: true,
-                        symbol: 'url(' + imgPath + 'p3.svg)',
-                        width: 23,
-                        height: 34
-                    }
-                },
+//                     }
+//                 },
+//                 {
+//                     x: 0.1,
+//                     y: 12,
+//                     className: 'particle-2',
+//                     marker: {
+//                         enabled: true,
+//                         symbol: 'url(' + imgPath + 'p2.svg)',
+//                         width: 23,
+//                         height: 42
+//                     }
+//                 },
+//                 {
+//                     x: 0.11,
+//                     y: 14,
+//                     className: 'particle-3',
+//                     marker: {
+//                         enabled: true,
+//                         symbol: 'url(' + imgPath + 'p3.svg)',
+//                         width: 23,
+//                         height: 34
+//                     }
+//                 },
 
-                {
-                    x: 0.111,
-                    y: 10,
-                    className: 'particle-4',
-                    marker: {
-                        enabled: true,
-                        symbol: 'url(' + imgPath + 'p4.svg)',
-                        width: 27,
-                        height: 17
-                    }
-                },
-                {
-                    x: 0.1111,
-                    y: 10,
-                    className: 'particle-5',
-                    marker: {
-                        enabled: true,
-                        symbol: 'url(' + imgPath + 'p5.svg)',
-                        width: 35,
-                        height: 50
-                    }
-                },
-                {
-                    x: 0.11111,
-                    y: 10,
-                    className: 'particle-6',
-                    marker: {
-                        enabled: true,
-                        symbol: 'url(' + imgPath + 'p6.svg)',
-                        width: 45,
-                        height: 45
-                    }
-                }
-            ],
-            zIndex: 10,
-            visible: true
-        }
-    ],
-    responsive: {
-        rules: [
-            {
-                condition: {
-                    minWidth: 300
-                },
-                chartOptions: {
-                    plotOptions: {
-                        scatter: {
-                            marker: {
-                                radius: 40
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                condition: {
-                    minWidth: 400
-                },
-                chartOptions: {
-                    plotOptions: {
-                        scatter: {
-                            marker: {
-                                radius: 55
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                condition: {
-                    minWidth: 500
-                },
-                chartOptions: {
-                    plotOptions: {
-                        scatter: {
-                            marker: {
-                                radius: 70
-                            }
-                        }
-                    }
-                }
-            }
-        ]
-    }
+//                 {
+//                     x: 0.111,
+//                     y: 10,
+//                     className: 'particle-4',
+//                     marker: {
+//                         enabled: true,
+//                         symbol: 'url(' + imgPath + 'p4.svg)',
+//                         width: 27,
+//                         height: 17
+//                     }
+//                 },
+//                 {
+//                     x: 0.1111,
+//                     y: 10,
+//                     className: 'particle-5',
+//                     marker: {
+//                         enabled: true,
+//                         symbol: 'url(' + imgPath + 'p5.svg)',
+//                         width: 35,
+//                         height: 50
+//                     }
+//                 },
+//                 {
+//                     x: 0.11111,
+//                     y: 10,
+//                     className: 'particle-6',
+//                     marker: {
+//                         enabled: true,
+//                         symbol: 'url(' + imgPath + 'p6.svg)',
+//                         width: 45,
+//                         height: 45
+//                     }
+//                 }
+//             ],
+//             zIndex: 10,
+//             visible: true
+//         }
+//     ],
+//     responsive: {
+//         rules: [
+//             {
+//                 condition: {
+//                     minWidth: 300
+//                 },
+//                 chartOptions: {
+//                     plotOptions: {
+//                         scatter: {
+//                             marker: {
+//                                 radius: 40
+//                             }
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 condition: {
+//                     minWidth: 400
+//                 },
+//                 chartOptions: {
+//                     plotOptions: {
+//                         scatter: {
+//                             marker: {
+//                                 radius: 55
+//                             }
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 condition: {
+//                     minWidth: 500
+//                 },
+//                 chartOptions: {
+//                     plotOptions: {
+//                         scatter: {
+//                             marker: {
+//                                 radius: 70
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         ]
+//     }
 
-};
-
-function moveParticle(particle, x, y, speed) {
-    document.querySelector(particle).style.transform =
-    `translate( ${x}px, ${y}px)`;
-    document.querySelector(particle).style.transition =
-    `transform ${speed}s`;
-
-}
+// };
 
 Highcharts.chart('container', {
 
@@ -546,26 +538,22 @@ Highcharts.chart('container', {
             easing: 'easeOutQuint'
         },
         margin: [0, 0, 0, 0],
-        // margin: 30,
         events: {
             load: function () {
                 const chart = this;
                 const particles = chart.series[20].data;
 
-                const squares = document.querySelectorAll('.squares .highcharts-point');
-
                 setTimeout(function () {
                     particles[0].update({
                         x: 20,
                         y: 8
-                    });
-                    document.querySelector('.highcharts-markers.particles').style.opacity = 1;
+                    }, false);
 
                     let start = 14;
                     const end = 11;
                     let top = -1;
                     setInterval(function () {
-                        console.log(start, top);
+                        // console.log(start, top);
                         if (start >= end) {
                             chart.series[start].update({
                                 data: [{
@@ -577,39 +565,44 @@ Highcharts.chart('container', {
                                     y: top
                                 }
                                 ]
-                            });
+                            }, false);
                             start = start - 1;
                             top = top + 1;
                         }
                     }, 100);
+
+                    chart.redraw();
+
+                    document.querySelector('.highcharts-markers.particles').style.opacity = 1;
+
                 }, 100);
 
-                setTimeout(function(){
-                     // lines
-                     let start = 4;
-                     const end = 10;
-                     let top = 18;
-                     setInterval(function () {
-                         console.log(start, top);
-                         if (start <= end) {
-                             chart.series[start].update({
-                                 opacity: 0,
-                                 data: [{
-                                     x: 0,
-                                     y: top
-                                 },
-                                 {
-                                     x: 20,
-                                     y: top
-                                 }
-                                 ]
-                             });
-                             start = start + 1;
-                             top = top - 1;
-                         }
-                     }, 100);
+                setTimeout(function () {
+                    // lines
+                    let start = 4;
+                    const end = 10;
+                    let top = 18;
+                    setInterval(function () {
+                        // console.log(start, top);
+                        if (start <= end) {
+                            chart.series[start].update({
+                                opacity: 0,
+                                data: [{
+                                    x: 0,
+                                    y: top
+                                },
+                                {
+                                    x: 20,
+                                    y: top
+                                }
+                                ]
+                            }, false);
+                            start = start + 1;
+                            top = top - 1;
+                        }
+                    }, 100);
 
-                     chart.series[15].update({
+                    chart.series[15].update({
                         color: '#201836'
                     }, false);
 
@@ -624,7 +617,6 @@ Highcharts.chart('container', {
                         visible: false
                     }, false);
 
-                    
 
                     chart.redraw();
 
@@ -642,8 +634,6 @@ Highcharts.chart('container', {
                         x: 20,
                         y: 8
                     });
-
-                    
                 }, 300);
 
                 setTimeout(function () {
@@ -658,8 +648,6 @@ Highcharts.chart('container', {
                         x: 20,
                         y: 8
                     });
-
-                   
                 }, 500);
 
                 setTimeout(function () {
@@ -691,7 +679,6 @@ Highcharts.chart('container', {
                     chart.redraw();
                 }, 700);
 
-           
 
                 setTimeout(function () {
                     particles[5].update({
@@ -706,7 +693,7 @@ Highcharts.chart('container', {
                         visible: false,
                         x: 10,
                         y: 15.2
-                    });
+                    }, false);
                     chart.series[28].update({
                         data: [
                             {
@@ -720,7 +707,7 @@ Highcharts.chart('container', {
                                 high: 3
                             }
                         ]
-                    });
+                    }, false);
                     chart.series[26].update({
                         data: [
                             {
@@ -734,7 +721,7 @@ Highcharts.chart('container', {
                                 high: 10
                             }
                         ]
-                    });
+                    }, false);
 
                     chart.series[25].update({
                         data: [
@@ -749,7 +736,9 @@ Highcharts.chart('container', {
                                 high: 20
                             }
                         ]
-                    });
+                    }, false);
+
+                    chart.redraw();
                 }, 1000);
 
                 setTimeout(function () {
@@ -767,7 +756,6 @@ Highcharts.chart('container', {
                         zIndex: 4
                     }, false);
 
-                   
 
                     // fake columns
                     chart.series[16].update({
@@ -865,7 +853,7 @@ Highcharts.chart('container', {
                 }, 1200);
 
                 setTimeout(function () {
-                   
+
 
                     particles[0].update({
                         visible: true
@@ -936,7 +924,7 @@ Highcharts.chart('container', {
                 }, 1600);
 
                 setTimeout(function () {
-                   
+
                     particles[0].update({
                         x: 7.5,
                         y: 13.5
