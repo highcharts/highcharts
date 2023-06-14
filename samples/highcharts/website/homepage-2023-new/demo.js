@@ -2019,6 +2019,8 @@ const dbColi =  {
 };
 
 // dashboard
+const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@703f6c32b1ef851620de7ed32eaff880de1987de/samples/graphics/homepage/';
+
 const db = {
     chart: {
         backgroundColor: 'transparent',
@@ -2027,7 +2029,7 @@ const db = {
             duration: 1000,
             easing: 'easeOutQuint'
         },
-        plotBackgroundImage: 'http://192.168.1.176:3030/dash-bg.png',
+        plotBackgroundImage: imgPath + 'dash-bg.png',
         events: {
             redraw: function () {
                 // const dashboard = document.querySelectorAll('.highcharts-scatter-series.dashboard');
