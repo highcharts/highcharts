@@ -81,10 +81,13 @@ async function setupBoard() {
                         text: 'Fahrenheit',
                         events: {
                             click: function () {
+                                console.log('CLICK');
                                 // Change temperature scale.
                                 activeScale = activeScale === 'C' ? 'F' : 'C';
                                 activeColumn = 'TX';
-                                updateBoard(
+                                window.setTimeout(
+                                    updateBoard,
+                                    50,
                                     board,
                                     activeCity,
                                     activeColumn,
