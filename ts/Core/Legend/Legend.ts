@@ -235,7 +235,6 @@ class Legend {
      * Legend options.
      */
     public init(chart: Chart, options: LegendOptions): void {
-
         /**
          * Chart of this legend.
          *
@@ -247,29 +246,29 @@ class Legend {
 
         this.setOptions(options);
 
-        if (options.enabled) {
+        const positionProximate = (): void => {
+            if (this.options.enabled && this.proximate) {
+                this.proximatePositions();
+                this.positionItems();
+            }
+        };
 
+        if (options.enabled) {
             // Render it
             this.render();
 
-            // move checkboxes
+            // Move checkboxes
             addEvent(this.chart, 'endResize', function (): void {
                 this.legend.positionCheckboxes();
             });
 
             // On Legend.init and Legend.update, make sure that proximate layout
             // events are either added or removed (#18362).
-            addEvent(
-                this.chart,
-                'render',
-                (): void => {
-                    if (this.proximate) {
-                        this.proximatePositions();
-                        this.positionItems();
-                    }
-                }
-            );
+            addEvent(this.chart, 'render', positionProximate);
         }
+
+        // Need to position the legend after update, #19078.
+        addEvent(this.chart, 'redraw', positionProximate);
     }
 
     /**
