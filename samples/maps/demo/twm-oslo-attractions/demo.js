@@ -30,14 +30,7 @@ Highcharts.mapChart('container', {
 
     mapView: {
         center: [10.73028454146517, 59.91261204279989],
-        zoom: 13,
-        fitToGeometry: {
-            type: 'MultiPoint',
-            coordinates: [
-                [10.55, 59.95],
-                [10.9, 59.87]
-            ]
-        }
+        zoom: 13
     },
 
     tooltip: {
