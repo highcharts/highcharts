@@ -1,53 +1,53 @@
+#container {
+    width: 100%;
+    min-width: 320px;
+    max-height: 380px;
+}
+
+/* styles for testing */
 body {
-    margin: 0 !important;
-
-    /* background: linear-gradient(180deg, #201836 0%, #46465C 100%); */
-    background-color: transparent !important;
+    color: white;
 }
 
-.hero-container {
-    background: transparent;
-    width: 1;
-    height: 450px;
+.btn-small {
+    white-space: nowrap;
 }
 
-/* .container {
-    height: 400px;
-    width: 1400px;
-    position: absolute;
-    top: 400px;
-} */
+#message {
+    height: unset;
+}
 
-/* .fake {
+.fake {
     position: relative;
-    padding-bottom: 10px;
-    width: 1400px;
-    height: 800px;
-    background-repeat: no-repeat;
-    background-image:url('http://192.168.1.176:3030/page-bg.png');
-    background-size: cover;
-} */
+    background: linear-gradient(180deg, #201836 0%, #46465c 100%);
+}
 
-.highcharts-arcdiagram-series .highcharts-link {
-    opacity: 0;
+/* for the dashboard chart */
+
+.highcharts-root image {
     transition: all 2s;
-}
-
-.chart-container .highcharts-container {
-    position: relative;
-    overflow: visible !important;
-    width: 1;
     opacity: 1;
-    text-align: left;
-    line-height: normal;
-    z-index: 0;
-    -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
-    user-select: none;
-    touch-action: manipulation;
-    outline: none;
+    transform-origin: center;
 }
 
-#hero {
-    width: 1;
-    overflow: visible !important;
+.highcharts-root image {
+    transform: translate(-135px, 185px)  scale(3, 2);
+    opacity: 0.8;
+}
+
+.highcharts-root image.move {
+    transform: translate(-1535px, 185px)  scale(3, 3);
+    opacity: 0;
+}
+
+@media screen  and (min-width: 996px) {
+    #container {
+        width: 100%;
+        min-width: 480px;
+        min-height: 600px;
+    }
+
+    .highcharts-root image.move {
+        transform: translate(-435px, 185px)  scale(3, 4);
+    }
 }
