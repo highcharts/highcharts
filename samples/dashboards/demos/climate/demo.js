@@ -88,7 +88,8 @@ async function setupBoard() {
                                     board,
                                     activeCity,
                                     activeColumn,
-                                    activeScale
+                                    activeScale,
+                                    true
                                 );
                             }
                         }
@@ -1102,21 +1103,22 @@ async function updateBoard(board, city, column, scale, newData) {
     );
 
     // Update city grid selection
+    const showCelsius = scale === 'C';
     if (newData) {
         await selectionGrid.update({
             dataGridOptions: {
                 columns: {
                     TNC: {
-                        show: scale === 'C'
+                        show: showCelsius
                     },
                     TNF: {
-                        show: scale !== 'C'
+                        show: !showCelsius
                     },
                     TXC: {
-                        show: scale === 'C'
+                        show: showCelsius
                     },
                     TXF: {
-                        show: scale !== 'C'
+                        show: !showCelsius
                     }
                 }
             },
