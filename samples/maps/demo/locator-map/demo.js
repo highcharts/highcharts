@@ -221,7 +221,7 @@
         return data;
     };
 
-    // Locator chart pointer logic
+    // Locator chart frame logic
     function getMapFrame(chart, plotLeft, plotHeight, plotWidth, plotTop) {
         const corners = [{
             x: plotLeft,
@@ -279,12 +279,20 @@
 
             topPoints = createPoints(leftTopPoint, rightTopPoint).reverse(),
 
-            rect = [
+            frame = [
                 leftTopPoint,
                 ...bottomPoints,
                 ...topPoints
             ];
-        return rect;
+        return frame;
+    }
+
+    // Get the main chart center
+    const [lon, lat] = mainChart.mapView.center;
+
+    // Locator map rotation
+    function rotation(lonCenter, latCenter) {
+        return [-lonCenter, -latCenter];
     }
 
     // Locator chart
@@ -302,7 +310,8 @@
 
         mapView: {
             projection: {
-                name: 'Orthographic'
+                name: 'Orthographic',
+                rotation: rotation(lon, lat)
             }
         },
 
@@ -352,7 +361,7 @@
             color: '#c4c4c422',
             zIndex: -1
         }, {
-            name: 'Pointer',
+            name: 'Frame',
             type: 'mapline',
             color: '#ff0000',
             data: [{
@@ -370,7 +379,7 @@
         }]
     });
 
-    // Adjust the pointer size when zooming
+    // Adjust the locator frame size when zooming
     mainChart.redraw = function () {
         locatorChart.series[2].setData([{
             geometry: {
@@ -437,14 +446,14 @@
             updateLocatorMap('Miller', 'none', 0);
             i++;
         } else if (i === 2) {
-            updateLocatorMap('Orthographic', '#c4c4c422', 15);
+            updateLocatorMap('Orthographic', '#c4c4c422', 15, rotation(lon, lat));
             i = 1;
         }
     };
 
     document.getElementById('btn').onclick = toggleMap;
 
-    function updateLocatorMap(projectionType, graticuleColor, margin) {
+    function updateLocatorMap(projectionType, graticuleColor, margin, mapRotation) {
         locatorChart.get('Graticule').update({
             color: graticuleColor
         },
@@ -457,7 +466,8 @@
             },
             mapView: {
                 projection: {
-                    name: projectionType
+                    name: projectionType,
+                    rotation: mapRotation
                 }
             }
         });
