@@ -1200,6 +1200,17 @@ namespace Component {
             detail?: AnyRecord;
         } & EventRecord;
 
+    /**
+     * The sync can be an object configuration containing: `highlight`,
+     * `visibility` or `extremes`.
+     * ```
+     * Example:
+     * {
+     *     highlight: true
+     * }
+     * ```
+     *
+     */
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions {

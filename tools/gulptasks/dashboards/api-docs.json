@@ -23,7 +23,7 @@
         "../../../ts/Dashboards/Components/EditableOptions.ts",
         "../../../ts/Dashboards/Components/ComponentOptions.ts",
         "../../../ts/Dashboards/Layout/Cell.ts",
-        "../../../ts/Dashboards/Components/Sync/*.ts",
+        "../../../ts/Dashboards/Components/Sync/Sync.ts",
         "../../../ts/Dashboards/PluginHandler.ts",
         "../../../ts/Data/DataTable.ts",
         "../../../ts/Data/DataTable.ts",
