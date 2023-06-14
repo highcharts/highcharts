@@ -124,8 +124,9 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
         }
     });
 
-    assert.close(
-        bbox.x, chart.annotations[0].shapesGroup.getBBox().x, 1,
+    assert.equal(
+        bbox.x,
+        chart.annotations[0].shapesGroup.getBBox().x,
         'The annotation should stay in the same place after update, #19121.'
     );
 });
