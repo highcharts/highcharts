@@ -26,8 +26,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: ls -a
-      - run: ls -a ./test
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
@@ -35,8 +33,8 @@ jobs:
             npx gulp scripts
             npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3030'
-          spec: 'test/cypress/visual/Dashboards.cy.js'
           env: type=base
+          config: specPattern=**/visual/*.cy.js
       - name: Checkout current branch 
         uses: actions/checkout@v3
         with:
@@ -48,6 +46,6 @@ jobs:
             npx gulp scripts
             npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3030'
-          spec: 'test/cypress/visual/Dashboards.cy.js'
           env: type=actual
+          config: specPattern=**/visual/*.cy.js
 
