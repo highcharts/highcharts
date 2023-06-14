@@ -76,8 +76,9 @@ function randomNumber(min, max) {
 const arc = {
     chart: {
         backgroundColor: 'transparent',
-        // margin: [60, 60, 0, 60],
-        height: 400,
+        margin: [0, 0, 200, 0],
+        // height: 400,
+        // width: '100%',
         animation: {
             duration: 2000,
             easing: ' easeOutQuint'
@@ -85,7 +86,9 @@ const arc = {
         events: {
             load: function () {
                 const links = document.querySelectorAll('.highcharts-link');
-
+                // const chart = this;
+                // console.log(chart.chartWidth);
+                // console.log(chart.chartHeight);
                 setTimeout(function () {
                     changeOpacity(links, 1, 2);
                 }, 700);
@@ -133,16 +136,16 @@ const arc = {
                 enabled: false
             },
             data: [
-                ['Hamburg', 'Stuttgart', 1],
-                ['Hamburg', 'Frankfurt', 1],
-                ['Hamburg', 'München', 1],
-                ['Hannover', 'Wien', 1],
-                ['Hannover', 'München', 1],
+                // ['Hamburg', 'Stuttgart', 1],
+                // ['Hamburg', 'Frankfurt', 1],
+                // ['Hamburg', 'München', 1],
+                // ['Hannover', 'Wien', 1],
+                // ['Hannover', 'München', 1],
                 ['Berlin', 'Wien', 1],
                 ['Berlin', 'München', 1],
                 ['Berlin', 'Stuttgart', 1],
-                ['Berlin', 'Frankfurt', 1],
-                ['Berlin', 'Köln', 1],
+                // ['Berlin', 'Frankfurt', 1],
+                // ['Berlin', 'Köln', 1],
                 ['Berlin', 'Düsseldorf', 1],
                 ['München', 'Düsseldorf', 1],
                 ['München', 'Wien', 1],
@@ -150,21 +153,21 @@ const arc = {
                 ['München', 'Köln', 1],
                 ['München', 'Amsterdam', 1],
                 ['Stuttgart', 'Wien', 1],
-                ['Frankfurt', 'Wien', 1],
+                // ['Frankfurt', 'Wien', 1],
                 ['Frankfurt', 'Amsterdam', 1],
-                ['Frankfurt', 'Paris', 1],
+                // ['Frankfurt', 'Paris', 1],
                 ['Frankfurt', 'Budapest', 1],
                 ['Düsseldorf', 'Wien', 1],
-                ['Düsseldorf', 'Hamburg', 1],
-                ['Amsterdam', 'Paris', 1],
-                ['Paris', 'Brest', 1],
-                ['Paris', 'Nantes', 1],
-                ['Paris', 'Bayonne', 1],
-                ['Paris', 'Bordeaux', 1],
-                ['Paris', 'Toulouse', 1],
-                ['Paris', 'Montpellier', 1],
-                ['Paris', 'Marseille', 1],
-                ['Paris', 'Nice', 1]
+                // ['Düsseldorf', 'Hamburg', 1],
+                // ['Amsterdam', 'Paris', 1],
+                // ['Paris', 'Brest', 1],
+                // ['Paris', 'Nantes', 1],
+                // ['Paris', 'Bayonne', 1],
+                // ['Paris', 'Bordeaux', 1],
+                // ['Paris', 'Toulouse', 1],
+                // ['Paris', 'Montpellier', 1],
+                // ['Paris', 'Marseille', 1],
+                // ['Paris', 'Nice', 1]
             ]
         },
         {
@@ -237,30 +240,54 @@ const arc = {
             ]
         }
     ],
-    responsive: {
-        rules: [
-            {
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    chart: {
-                        margin: [0, 0, 0, 0]
-                    }
-                }
-            },
-            {
-                condition: {
-                    minWidth: 501
-                },
-                chartOptions: {
-                    chart: {
-                        margin: [60, 60, 0, 60]
-                    }
-                }
-            }
-        ]
-    }
+    // responsive: {
+    //     rules: [
+    //         {
+    //             condition: {
+    //                 maxHeight: 350
+    //             },
+    //             chartOptions: {
+    //                 chart: {
+    //                     // height: 200,
+    //                     margin: [0, 0, 100, 0]
+    //                 }
+    //             }
+    //         },
+    //         {
+    //             condition: {
+    //                 minHeight: 351
+    //             },
+    //             chartOptions: {
+    //                 chart: {
+    //                     // height: 300,
+    //                     margin: [0, 0, 150, 0]
+    //                 }
+    //             }
+    //         },
+    //         {
+    //             condition: {
+    //                 minHeight: 400
+    //             },
+    //             chartOptions: {
+    //                 chart: {
+    //                     // height: 400,
+    //                     margin: [0, 0, 230, 0]
+    //                 }
+    //             }
+    //         },
+    //         {
+    //             condition: {
+    //                 minHeight: 500
+    //             },
+    //             chartOptions: {
+    //                 chart: {
+    //                     // height: 400,
+    //                     margin: [0, 0, 400, 0]
+    //                 }
+    //             }
+    //         }
+    //     ]
+    // }
 };
 
 // column range
@@ -350,7 +377,7 @@ const cr = {
     plotOptions: {
         columnrange: {
             opacity: 0.9,
-            borderRadius: '30%',
+            borderRadius: 10,
             borderColor: null,
             dataLabels: {
                 enabled: true,
@@ -653,8 +680,8 @@ const rc = {
 const str = {
     chart: {
         type: 'streamgraph',
-        marginBottom: 30,
-        height: 430,
+        marginBottom: 10,
+        // height: 430,
         zoomType: 'x',
         backgroundColor: 'transparent',
         animation: {
@@ -1904,12 +1931,466 @@ const str = {
     ]
 };
 
-const charts = [str, cr, sk, rc];
+const dbPie = {
+    type: 'pie',
+    enableMouseTracking: true,
+    className: 'd-pie',
+    animation: true,
+    zIndex: 50,
+    fillOpacity: 1,
+    borderWidth: 0,
+    data: [
+        {
+            y: 75,
+            color: 'rgba(255, 255, 255, 0.6'
+        },
+        {
+            y: 25,
+            color: '#8087E8'
+        }
+    ]
+
+};
+
+const dbCol =  {
+    type: 'column',
+    enableMouseTracking: true,
+    color: 'white',
+    animation: true,
+    className: 'd-col',
+    opacity: 0.6,
+    borderColor: 'transparent',
+    borderRadius: 4,
+    pointWidth: 10,
+    data: [
+        {
+            x: 5,
+            y: 5
+        },
+        {
+            x: 6,
+            y: 3
+        },
+        {
+            x: 7,
+            y: 6
+        },
+        {
+            x: 8,
+            y: 4
+        },
+        {
+            x: 9,
+            y: 5
+        }
+    ]
+};
+
+const dbColi =  {
+    type: 'column',
+    color: 'transparent',
+    animation: true,
+    opacity: 0.6,
+    borderColor: 'transparent',
+    borderRadius: 4,
+    pointWidth: 10,
+    data: [
+        {
+            x: 5,
+            y: 5
+        },
+        {
+            x: 6,
+            y: 5
+        },
+        {
+            x: 7,
+            y: 5
+        },
+        {
+            x: 8,
+            y: 5
+        },
+        {
+            x: 9,
+            y: 5
+        }
+    ]
+};
+
+// dashboard
+const db = {
+    chart: {
+        backgroundColor: 'transparent',
+        margin: 0,
+        animation: {
+            duration: 1000,
+            easing: 'easeOutQuint'
+        },
+        plotBackgroundImage: 'http://192.168.1.176:3030/dash-bg.png',
+        events: {
+            redraw: function () {
+                // const dashboard = document.querySelectorAll('.highcharts-scatter-series.dashboard');
+                const dashboard = document.querySelector('.highcharts-root image');
+
+                dashboard.classList.add('move');
+
+            },
+            load: function () {
+                const chart = this;
+                const red = chart.series[0];
+                const purple = chart.series[1];
+                const green = chart.series[2];
+
+                const dashboard = document.querySelector('.highcharts-root image');
+
+
+                // console.log(chart.chartWidth);
+
+                setTimeout(function () {
+                    dashboard.classList.add('move');
+
+                }, 200);
+
+                setTimeout(function () {
+
+                    red.update({
+                        data: [{
+                            high: 18,
+                            low: 13.5,
+                            x: 0
+                        },
+                        {
+                            high: 18,
+                            low: 13.5,
+                            x: 16
+                        }]
+                    }, false);
+
+                    purple.update({
+                        data: [{
+                            high: 13,
+                            low: 0,
+                            x: 3
+                        },
+                        {
+                            high: 13,
+                            low: 0,
+                            x: 11
+                        }]
+                    }, false);
+
+                    green.update({
+                        data: [{
+                            high: 13,
+                            low: 6,
+                            x: 11.5
+                        },
+                        {
+                            high: 13,
+                            low: 6,
+                            x: 20
+                        }]
+                    }, false);
+
+                    chart.redraw();
+
+
+                }, 500);
+
+                setTimeout(function () {
+                    red.update({
+                        data: [{
+                            high: 18,
+                            low: 13.5,
+                            x: 7
+                        },
+                        {
+                            high: 18,
+                            low: 13.5,
+                            x: 16
+                        }]
+                    }, false);
+
+                    purple.update({
+                        data: [{
+                            high: 13,
+                            low: 4,
+                            x: 3
+                        },
+                        {
+                            high: 13,
+                            low: 4,
+                            x: 11
+                        }]
+                    }, false);
+
+
+                    chart.redraw();
+
+                }, 1000);
+
+                setTimeout(function () {
+                    chart.addSeries(dbPie);
+
+                }, 1200);
+
+            }
+        }
+    },
+    credits: {
+        enabled: false
+    },
+    title: {
+        text: null
+    },
+    legend: {
+        enabled: false
+    },
+    xAxis: [
+    // 0
+        {
+            visible: true,
+            min: 0,
+            max: 20,
+            gridLineWidth: 0,
+            tickInterval: 1,
+            startOnTick: false
+        }],
+    yAxis: [
+    // 0
+        {
+            visible: true,
+            min: 0,
+            max: 20,
+            gridLineColor: '#ccc',
+            labels: {
+                style: {
+                    color: '#fff'
+                }
+            },
+            gridLineWidth: 0,
+            tickInterval: 1
+        }],
+    plotOptions: {
+        series: {
+            animation: false,
+            dataLabels: {
+                enabled: false
+            },
+            enableMouseTracking: false,
+            marker: {
+                enabled: false
+            },
+            dragDrop: {
+                draggableX: true,
+                draggableY: true
+            }
+        },
+        scatter: {
+            allowOverlap: true,
+            dataLabels: {
+                allowOverlap: true,
+                enabled: true
+            }
+        },
+        spline: {
+            marker: {
+                enabled: true,
+                symbol: 'circle'
+            },
+            opacity: 0.6
+        },
+        pie: {
+            center: ['80%', '55%'],
+            size: '20%',
+            innerSize: '70%'
+        },
+        column: {
+            pointWidth: '120',
+            stacking: 'normal'
+        },
+        arearange: {
+            opacity: 0.75
+        }
+    },
+    series: [
+        // 0 red area range
+        {
+            type: 'arearange',
+            className: 'box-3',
+            color: '#DA6D85',
+            data: [{
+                high: 18,
+                low: 13,
+                x: 0
+            },
+            {
+                high: 18,
+                low: 13,
+                x: 0.1
+            }]
+        },
+        // 1 purple area range
+        {
+            type: 'arearange',
+            color: '#8087E8',
+            className: 'box-1',
+            fillOpacity: 1,
+            data: [{
+                high: 0.1,
+                low: 0,
+                x: 3
+            },
+            {
+                high: 0.1,
+                low: 0,
+                x: 11
+            }]
+        },
+        // 2 green area range
+        {
+            type: 'arearange',
+            color: '#A3EDBA',
+            className: 'box-2',
+            fillOpacity: 1,
+            data: [{
+                high: 13,
+                low: 6,
+                x: 19.9
+            },
+            {
+                high: 13,
+                low: 6,
+                x: 20
+            }]
+        },
+        // spline inside red bg
+        {
+            type: 'spline',
+            enableMouseTracking: true,
+            animation: {
+                duration: 2000
+            },
+            className: 'd-spline',
+            data: [
+                {
+                    x: 2,
+                    y: 4.6,
+                    visible: false
+                },
+                {
+                    x: 8,
+                    y: 15
+                },
+                {
+                    x: 9.62,
+                    y: 14.2
+                },
+                {
+                    x: 11.8,
+                    y: 16.3
+                },
+                {
+                    x: 14,
+                    y: 14.5
+                },
+                {
+                    x: 15.1,
+                    y: 15.4
+                }
+            ],
+            color: '#fff'
+        },
+        dbCol,
+        dbColi
+    ],
+    responsive: {
+        rules: [{
+            condition: {
+                minWidth: 400
+            },
+            chartOptions: {
+                plotOptions: {
+                    pie: {
+                        center: ['80%', '52%']
+                    }
+                }
+            }
+        }
+        ]
+    }
+};
+
+// radial bar
+const rb = {
+    chart: {
+        type: 'column',
+        animation: {
+            duration: 2000,
+            easing: 'easeOutQuint'
+        },
+        inverted: true,
+        polar: true,
+        margin: [10, 0, 0, 0],
+        backgroundColor: 'transparent'
+    },
+    colors: colors,
+    legend: {
+        enabled: false
+    },
+    credits: {
+        enabled: false
+    },
+    title: {
+        text: ''
+    },
+    xAxis: {
+        tickInterval: 1,
+        visible: false,
+        crosshair: {
+            snap: false,
+            width: 2,
+            zIndex: 5,
+            color: '#BBBAC5'
+        }
+    },
+    yAxis: {
+        visible: false,
+        min: 0,
+        max: 250,
+        tickInterval: 25,
+        crosshair: {
+            snap: false,
+            width: 2,
+            zIndex: 5,
+            color: '#BBBAC5'
+        }
+    },
+    series: [{
+        borderWidth: 0,
+        pointWidth: 12,
+        borderRadius: 10, // causes a cool animation effect
+        colorByPoint: true,
+        data: [29, 71, 106, 129, 144, 176, 135, 148, 216, 194, 95, 54]
+    }]
+};
+
+const charts = [db, rb, db, arc, db, cr, db, str, db, sk, rc];
 
 function makeChart() {
-    const chartNum = Math.round(randomNumber(0, 3));
+    // let chartNum;
+    // const flip = Math.round(randomNumber(0, 2));
+    // if (flip < 2) {
+    //     chartNum = 0;
+    // } else {
+    //     chartNum = Math.round(randomNumber(1, 6));
+    // }
+    const chartNum = Math.round(randomNumber(0, 10));
     const chart = charts[chartNum];
-    Highcharts.chart('hero', chart);
+    // console.log(chartNum);
+    Highcharts.chart('container', chart);
 }
+
 
 makeChart();
