@@ -1167,6 +1167,9 @@ Chart.prototype.drillUp = function (isMultipleDrillUp?: boolean): void {
         level: Highcharts.DrilldownLevelObject,
         oldExtremes: Record<string, (number|undefined)>;
 
+    // Reset symbol and color counters after every drill-up. (#19134)
+    chart.symbolCounter = chart.colorCounter = 0;
+
     while (i--) {
 
         let oldSeries: Series,
@@ -1902,6 +1905,9 @@ Point.prototype.runDrilldown = function (
     if (!chart.ddDupes) {
         chart.ddDupes = [];
     }
+
+    // Reset the color and symbol counters after every drilldown. (#19134)
+    chart.colorCounter = chart.symbolCounter = 0;
 
     while (i-- && !seriesOptions) {
         if (

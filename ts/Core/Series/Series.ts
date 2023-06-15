@@ -917,8 +917,7 @@ class Series {
             // after Series.update()
             setting = pick(
                 prop === 'color' ? this.options.colorIndex : void 0,
-                this[indexName],
-                (this.userOptions as any)['_' + indexName]
+                this[indexName]
             );
             if (defined(setting)) { // after Series.update()
                 i = setting;
@@ -927,8 +926,7 @@ class Series {
                 if (!chart.series.length) {
                     chart[counterName] = 0;
                 }
-                (this.userOptions as any)['_' + indexName] = i =
-                    chart[counterName] % len;
+                i = chart[counterName] % len;
                 chart[counterName] += 1;
             }
             if (defaults) {
