@@ -35,7 +35,7 @@ Dashboards.board('container', {
             },
             enabled: true,
             items: ['verticalSeparator', 'editMode', {
-                id: 'export-dashboard',
+                id: 'text-button-test',
                 text: 'Context menu click test',
                 events: {
                     click: function () {

@@ -483,12 +483,8 @@ function renderText(
             parentElement
         );
 
-        if (options.click) {
-            textElem.addEventListener('click', (): void => {
-                if (options.click instanceof Function) {
-                    options.click();
-                }
-            });
+        if (options.click && (options.click instanceof Function)) {
+            textElem.addEventListener('click', options.click);
         }
     }
 
