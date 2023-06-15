@@ -43,10 +43,10 @@ async function setupBoard() {
     const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
-                name: 'Range Selection',
+                id: 'Range Selection',
                 type: 'CSV'
             }, {
-                name: 'Cities',
+                id: 'Cities',
                 type: 'CSV',
                 options: {
                     csvURL: (
@@ -779,7 +779,7 @@ async function setupBoard() {
             cell: 'selection-grid',
             type: 'DataGrid',
             connector: {
-                name: 'Range Selection'
+                id: 'Range Selection'
             },
             sync: {
                 highlight: true
@@ -825,7 +825,7 @@ async function setupBoard() {
             cell: 'city-chart',
             type: 'Highcharts',
             connector: {
-                name: 'Range Selection'
+                id: 'Range Selection'
             },
             columnAssignment: {
                 time: null,
@@ -901,7 +901,7 @@ async function setupBoard() {
     // Add city sources
     for (const row of citiesTable.getRowObjects()) {
         dataPool.setConnectorOptions({
-            name: row.city,
+            id: row.city,
             type: 'CSV',
             options: {
                 csvURL: row.csv

@@ -54,7 +54,7 @@ Example of synchronized components
 ```js
     components: [{
         connector: {
-            name: 'Vitamin'
+            id: 'Vitamin'
         },
         sync: {
             visibility: true,
@@ -75,7 +75,7 @@ Example of synchronized components
     }, {
         cell: 'dashboard-col-1',
         connector: {
-            name: 'Vitamin'
+            id: 'Vitamin'
         },
         sync: {
             visibility: true,
