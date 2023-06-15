@@ -117,7 +117,7 @@ class CustomHTML extends HTMLComponent {
 ComponentRegistry.registerComponent(CustomHTML);
 ```
 
-This custom component can generate HTML elements to you dashboards by:
+This custom component can generate HTML elements in the dashboards by:
 - referencing the HTML element by its `id` attribute
 - passing the HTML as a string to the `html` property
 
