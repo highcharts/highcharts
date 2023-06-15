@@ -181,17 +181,17 @@ class DataPool implements DataEvent.Emitter {
      *
      * @function Data.DataPool#getConnectorTable
      *
-     * @param {string} id
+     * @param {string} connectorId
      * Name of the connector.
      *
      * @return {Promise<Data.DataTable>}
      * Returns the connector table.
      */
     public getConnectorTable(
-        id: string
+        connectorId: string
     ): Promise<DataTable> {
         return this
-            .getConnector(id)
+            .getConnector(connectorId)
             .then((connector): DataTable => connector.table);
     }
 
