@@ -619,7 +619,8 @@ class SVGRenderer implements SVGRendererLike {
             this.definition({
                 tagName: 'filter',
                 attributes: {
-                    id
+                    id,
+                    filterUnits: options.filterUnits
                 },
                 children: [{
                     tagName: 'feDropShadow',
