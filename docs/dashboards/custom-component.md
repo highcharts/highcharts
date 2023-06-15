@@ -83,7 +83,7 @@ Dashboards.board({
 
 ---
 ## Custom HTML Component
-The basic HTML component is described in the [Types of Components](https://www.highcharts.com/docs/chart-and-series-types/dashboards/types-of-components) page. The basic one is very flexible, but requires a lot of configuration. In this example, we will create a custom HTML component, which will be more flexible and easier to use.
+The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/chart-and-series-types/dashboards/types-of-components) page is very flexible, but requires a lot of configuration. In this example, we will create a custom HTML component, which will be more flexible and easier to use.
 
 This custom component will be extended from the basic HTML component, so we will need to import the `HTMLComponent` class. The easiest way to do so is through the `ComponentRegistry` as shown below. We also will use the `Highcharts.AST` class, which will be used to parse the string type HTML into the AST-like object.
 
