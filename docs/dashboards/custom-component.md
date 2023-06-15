@@ -83,7 +83,7 @@ Dashboards.board({
 
 ---
 ## Custom HTML Component
-The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/chart-and-series-types/dashboards/types-of-components) page is very flexible, but requires a lot of configuration. In this example, we will create a custom HTML component, which will be more flexible and easier to use.
+The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/chart-and-series-types/dashboards/types-of-components) it is easier to use, but requires a lot of configuration. In this example, we will create a custom HTML component, which will require less code to configure.
 
 This custom component will be extended from the basic HTML component, so we will need to import the `HTMLComponent` class. The easiest way to do so is through the `ComponentRegistry` as shown below. We also will use the `Highcharts.AST` class, which will be used to parse the string type HTML into the AST-like object.
 
@@ -107,7 +107,7 @@ class CustomHTML extends HTMLComponent {
         if (options.id) {
             const customHTML = document.getElementById(options.id).outerHTML;
 
-            this.options.elements = new AST(`${customHTML}`).nodes;
+            this.options.elements = new AST(customHTML).nodes;
         } else if (options.html) {
             this.options.elements = new AST(options.html).nodes;
         }
@@ -125,7 +125,20 @@ Use of this component is shown below:
 
 ```js
 Dashboards.board('container', {
-    ...
+    gui: {
+        layouts: [{
+            id: 'layout-1',
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-0'
+                }, {
+                    id: 'dashboard-col-1'
+                }, {
+                    id: 'dashboard-col-2'
+                }]
+            }]
+        }]
+    },
     components: [{
         type: 'CustomHTML',
         cell: 'dashboard-col-0',
@@ -138,7 +151,16 @@ Dashboards.board('container', {
                 <h1>Custom HTML 2</h1>
                 <span id="custom-html-div-2">Custom HTML added as string </span>
             </div>`
-    }, ...]
+    },
+    {
+        cell: 'dashboard-col-2',
+        type: 'Highcharts',
+        chartOptions: {
+            series: [{
+                data: [1, 2, 3, 4]
+            }]
+        }
+    }]
 });
 ```
 Check out the [live example here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/custom-html-component).

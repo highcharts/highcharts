@@ -14,7 +14,7 @@ class CustomHTML extends HTMLComponent {
         if (options.id) {
             const customHTML = document.getElementById(options.id).outerHTML;
 
-            this.options.elements = new AST(`${customHTML}`).nodes;
+            this.options.elements = new AST(customHTML).nodes;
         } else if (options.html) {
             this.options.elements = new AST(options.html).nodes;
         }

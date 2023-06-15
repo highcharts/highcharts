@@ -28,7 +28,7 @@ Code snippet:
         }]
     }
 ```
-Also please check the [Custom Component](http://www.highcharts.com/docs/dashboards/custom-component) section below, where you can find a more flexible way to define HTML components.
+Also please check the [Custom Component](http://www.highcharts.com/docs/dashboards/custom-component) section below, where you can find alternative ways to create HTML components.
 
 ### Highcharts Component
 The option to include a Highcharts chart in one of the components is available out of the box. Here is the set of files that need to be included to make the Highcharts component work.
