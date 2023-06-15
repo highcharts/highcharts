@@ -90,7 +90,8 @@ async function setupBoard() {
                                     board,
                                     activeCity,
                                     activeColumn,
-                                    activeScale
+                                    activeScale,
+                                    true
                                 );
                             }
                         }
@@ -810,13 +811,15 @@ async function setupBoard() {
                         headerFormat: 'Average Temperature °C'
                     },
                     TNF: {
-                        headerFormat: 'Average Temperature °F'
+                        headerFormat: 'Average Temperature °F',
+                        show: false
                     },
                     TXC: {
                         headerFormat: 'Maximal Temperature °C'
                     },
                     TXF: {
-                        headerFormat: 'Maximal Temperature °F'
+                        headerFormat: 'Maximal Temperature °F',
+                        show: false
                     }
                 }
             },
@@ -1094,8 +1097,25 @@ async function updateBoard(board, city, column, scale, newData) {
     );
 
     // Update city grid selection
+    const showCelsius = scale === 'C';
     if (newData) {
         await selectionGrid.update({
+            dataGridOptions: {
+                columns: {
+                    TNC: {
+                        show: showCelsius
+                    },
+                    TNF: {
+                        show: !showCelsius
+                    },
+                    TXC: {
+                        show: showCelsius
+                    },
+                    TXF: {
+                        show: !showCelsius
+                    }
+                }
+            },
             columnAssignment: {
                 time: 'x',
                 FD: column === 'FD' ? 'y' : null,
@@ -1111,6 +1131,7 @@ async function updateBoard(board, city, column, scale, newData) {
             }
         });
     }
+
     selectionGrid.dataGrid.scrollToRow(
         selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
     );
