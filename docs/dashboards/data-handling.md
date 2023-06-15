@@ -10,9 +10,9 @@ data to show.
 ## DataPool
 
 With the `BoardOptions.dataPool` option you can define as many connections to
-data as you like.  Each definition is accessible by its `id` and will only
-create a connector to load the actually data when accessed the first time via
-`Board.dataPool.getConnector`.
+data sources as you like.  Each definition is accessible by its `id` and will
+only create a connector to load the actually data when accessed the first time
+via `Board.dataPool.getConnector`.
 
 
 
