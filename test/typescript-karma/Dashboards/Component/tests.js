@@ -30,7 +30,7 @@ const eventTypes = [
 ];
 
 const registeredEvents = [];
-window.registeredEvents = registeredEvents;
+// window.registeredEvents = registeredEvents;
 
 function registerEvent(e) {
     registeredEvents.push(e.type);
@@ -76,7 +76,8 @@ test('Board without data connectors and HighchartsComponent update', async funct
                 type: 'Highcharts',
                 chartOptions: {
                     title: {
-                        text: void 0
+                        text: void 0,
+                        style: {}
                     }
                 }
             },
@@ -99,7 +100,8 @@ test('Board without data connectors and HighchartsComponent update', async funct
     await highchartsComponent.update({
         chartOptions: {
             title: {
-                text: 'Hello World'
+                text: 'Hello World',
+                style: {}
             }
         }
     });
@@ -215,7 +217,8 @@ test('Board with data connectors and HighchartsComponent update', async function
                 },
                 chartOptions: {
                     title: {
-                        text: void 0
+                        text: void 0,
+                        style: {}
                     }
                 }
             }
@@ -228,7 +231,8 @@ test('Board with data connectors and HighchartsComponent update', async function
     await componentWithConnector.update({
         chartOptions: {
             title: {
-                text: 'Hello World'
+                text: 'Hello World',
+                style: {}
             }
         }
     });
