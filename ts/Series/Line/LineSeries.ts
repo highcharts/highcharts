@@ -184,16 +184,13 @@ class LineSeries extends Series {
                 // zone (1) #3932
                     .shadow(
                         (i < 2) &&
-                        (options.shadow ?
-                            // If shadow is defined, call function with
-                            // `filterUnits: 'userSpaceOnUse'` to avoid known
-                            // SVG filter bug (#19093)
-                            (isObject(options.shadow) ?
-                                merge(
-                                    options.shadow,
-                                    { filterUnits: 'userSpaceOnUse' }
-                                ) : { filterUnits: 'userSpaceOnUse' }
-                            ) : options.shadow
+                        options.shadow &&
+                        // If shadow is defined, call function with
+                        // `filterUnits: 'userSpaceOnUse'` to avoid known
+                        // SVG filter bug (#19093)
+                        merge(
+                            { filterUnits: 'userSpaceOnUse' },
+                            isObject(options.shadow) ? options.shadow : {}
                         )
                     );
             }
