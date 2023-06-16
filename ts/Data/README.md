@@ -220,7 +220,7 @@ import CSVConnector from 'dashboards/Data/Connectors/CSVConnector';
 ```
 
 ```TypeScript
-const CSVConnector = Dashboard.DataConnector.registry.CSVConnector;
+const CSVConnector = Dashboards.DataConnector.types.CSVConnector;
 ```
 
 
