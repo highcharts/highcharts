@@ -33,7 +33,7 @@ export interface DataPoolOptions {
 
 export interface DataPoolConnectorOptions
 <T extends keyof DataConnectorTypes = keyof DataConnectorTypes> {
-    name: string;
+    id: string;
     options: DeepPartial<DataConnectorTypes[T]['prototype']['options']>;
     type: T;
 }

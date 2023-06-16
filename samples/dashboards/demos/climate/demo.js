@@ -43,10 +43,10 @@ async function setupBoard() {
     const board = await Dashboards.board('container', {
         dataPool: {
             connectors: [{
-                name: 'Range Selection',
+                id: 'Range Selection',
                 type: 'CSV'
             }, {
-                name: 'Cities',
+                id: 'Cities',
                 type: 'CSV',
                 options: {
                     csvURL: (
@@ -90,7 +90,8 @@ async function setupBoard() {
                                     board,
                                     activeCity,
                                     activeColumn,
-                                    activeScale
+                                    activeScale,
+                                    true
                                 );
                             }
                         }
@@ -779,7 +780,7 @@ async function setupBoard() {
             cell: 'selection-grid',
             type: 'DataGrid',
             connector: {
-                name: 'Range Selection'
+                id: 'Range Selection'
             },
             sync: {
                 highlight: true
@@ -810,13 +811,15 @@ async function setupBoard() {
                         headerFormat: 'Average Temperature °C'
                     },
                     TNF: {
-                        headerFormat: 'Average Temperature °F'
+                        headerFormat: 'Average Temperature °F',
+                        show: false
                     },
                     TXC: {
                         headerFormat: 'Maximal Temperature °C'
                     },
                     TXF: {
-                        headerFormat: 'Maximal Temperature °F'
+                        headerFormat: 'Maximal Temperature °F',
+                        show: false
                     }
                 }
             },
@@ -825,7 +828,7 @@ async function setupBoard() {
             cell: 'city-chart',
             type: 'Highcharts',
             connector: {
-                name: 'Range Selection'
+                id: 'Range Selection'
             },
             columnAssignment: {
                 time: null,
@@ -901,7 +904,7 @@ async function setupBoard() {
     // Add city sources
     for (const row of citiesTable.getRowObjects()) {
         dataPool.setConnectorOptions({
-            name: row.city,
+            id: row.city,
             type: 'CSV',
             options: {
                 csvURL: row.csv
@@ -1094,8 +1097,25 @@ async function updateBoard(board, city, column, scale, newData) {
     );
 
     // Update city grid selection
+    const showCelsius = scale === 'C';
     if (newData) {
         await selectionGrid.update({
+            dataGridOptions: {
+                columns: {
+                    TNC: {
+                        show: showCelsius
+                    },
+                    TNF: {
+                        show: !showCelsius
+                    },
+                    TXC: {
+                        show: showCelsius
+                    },
+                    TXF: {
+                        show: !showCelsius
+                    }
+                }
+            },
             columnAssignment: {
                 time: 'x',
                 FD: column === 'FD' ? 'y' : null,
@@ -1111,6 +1131,7 @@ async function updateBoard(board, city, column, scale, newData) {
             }
         });
     }
+
     selectionGrid.dataGrid.scrollToRow(
         selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
     );

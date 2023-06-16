@@ -64,7 +64,7 @@ class DataGridComponent extends Component {
             dataGridOptions: {},
             editableOptions: [{
                 name: 'connectorName',
-                propertyPath: ['connector', 'name'],
+                propertyPath: ['connector', 'id'],
                 type: 'select'
             }],
             syncHandlers: DataGridSyncHandlers,
@@ -339,7 +339,7 @@ class DataGridComponent extends Component {
     public async update(
         options: Partial<DataGridComponent.ComponentOptions>
     ): Promise<void> {
-        if (options.connector?.name !== this.connectorName) {
+        if (options.connector?.id !== this.connectorId) {
             const connectorListeners = this.connectorListeners;
             for (let i = 0, iEnd = connectorListeners.length; i < iEnd; ++i) {
                 connectorListeners[i]();

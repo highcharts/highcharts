@@ -9,7 +9,7 @@
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            name: 'connector-1',
+            id: 'connector-1',
             type: 'CSV',
             options: {
                 csv: `$GME,$AMC,$NOK
@@ -55,7 +55,7 @@ Dashboards.board('container', {
         },
         events: {},
         connector: {
-            name: 'connector-1'
+            id: 'connector-1'
         },
         sync: {
             visibility: true
@@ -71,7 +71,7 @@ Dashboards.board('container', {
         },
         events: {},
         connector: {
-            name: 'connector-1'
+            id: 'connector-1'
         },
         sync: {
             visibility: true
@@ -88,7 +88,7 @@ Dashboards.board('container', {
         },
         events: {},
         connector: {
-            name: 'connector-1'
+            id: 'connector-1'
         },
         sync: {
             visibility: true

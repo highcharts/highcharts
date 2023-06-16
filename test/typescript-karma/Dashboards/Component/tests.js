@@ -183,7 +183,7 @@ test('Board with data connectors and HighchartsComponent update', async function
         dataPool: {
             connectors: [
                 {
-                    name: 'connector-1',
+                    id: 'connector-1',
                     type: 'CSV',
                     options: {
                         csv: '1,2,3',
@@ -213,7 +213,7 @@ test('Board with data connectors and HighchartsComponent update', async function
                 cell: 'cell-1',
                 type: 'Highcharts',
                 connector: {
-                    name: 'connector-1'
+                    id: 'connector-1'
                 },
                 chartOptions: {
                     title: {

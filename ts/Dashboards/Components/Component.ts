@@ -157,7 +157,7 @@ abstract class Component {
         sync: Sync.defaultHandlers,
         editableOptions: [{
             name: 'connectorName',
-            propertyPath: ['connector', 'name'],
+            propertyPath: ['connector', 'id'],
             type: 'select'
         }, {
             name: 'title',
@@ -187,9 +187,9 @@ abstract class Component {
      */
     public connector?: Component.ConnectorTypes;
     /**
-     * The name of the connector in the data pool to use.
+     * The id of the connector in the data pool to use.
      */
-    protected connectorName?: string;
+    protected connectorId?: string;
     /**
      * @internal
      * The board the component belongs to
@@ -386,11 +386,11 @@ abstract class Component {
      */
     public async initConnector(): Promise<this> {
         if (
-            this.options.connector?.name &&
-            this.connectorName !== this.options.connector.name
+            this.options.connector?.id &&
+            this.connectorId !== this.options.connector.id
         ) {
             const connector = await this.board.dataPool
-                .getConnector(this.options.connector.name);
+                .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
             this.shouldRedraw = true;
@@ -788,11 +788,11 @@ abstract class Component {
         this.options = merge(this.options, newOptions);
 
         if (
-            this.options.connector?.name &&
-            this.connectorName !== this.options.connector.name
+            this.options.connector?.id &&
+            this.connectorId !== this.options.connector.id
         ) {
             const connector = await this.board.dataPool
-                .getConnector(this.options.connector.name);
+                .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
             this.shouldRedraw = true;
