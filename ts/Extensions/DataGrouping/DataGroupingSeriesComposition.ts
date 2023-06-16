@@ -31,6 +31,7 @@ import type {
 import type Series from '../../Core/Series/Series';
 import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';
@@ -73,7 +74,11 @@ declare module '../../Core/Series/PointLike' {
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
-        allGroupedData?: Array<(number|null|undefined)>|Array<Array<(number|null|undefined)>>;
+        allGroupedData?: (
+            Array<(number|null|undefined)>|
+            Array<Array<(number|null|undefined)>>|
+            TypedArray
+        );
         cropStart?: number;
         currentDataGrouping?: TimeTicksInfoObject;
         dataGroupInfo?: DataGroupingInfoObject;
@@ -89,7 +94,7 @@ declare module '../../Core/Series/SeriesLike' {
         generatePoints(): void;
         getDGApproximation(): ApproximationKeyValue;
         groupData(
-            xData: Array<number>,
+            xData: Array<number>|TypedArray,
             yData: (Array<number>|Array<Array<number>>),
             groupPosition: Array<number>,
             approximation: (string|Function)
@@ -106,10 +111,11 @@ export interface DataGroupingInfoObject {
 }
 
 export interface DataGroupingResultObject {
-    groupedXData: Array<number>;
+    groupedXData: Array<number>|TypedArray;
     groupedYData: (
         Array<(number|null|undefined)>|
-        Array<Array<(number|null|undefined)>>
+        Array<Array<(number|null|undefined)>>|
+        TypedArray
     );
     groupMap: Array<DataGroupingInfoObject>;
 }
@@ -135,7 +141,7 @@ const composedMembers: Array<Function> = [];
  */
 function adjustExtremes(
     xAxis: Axis,
-    groupedXData: Array<number>
+    groupedXData: Array<number>|TypedArray
 ): void {
     // Make sure the X axis extends to show the first group (#2533)
     // But only for visible series (#5493, #6393)
@@ -194,7 +200,7 @@ function adjustExtremes(
  */
 function anchorPoints(
     series: Series,
-    groupedXData: Array<number>,
+    groupedXData: Array<number>|TypedArray,
     xMax: number
 ): any {
     const options = series.options,

@@ -27,6 +27,7 @@ import type {
 import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import BoostableMap from './BoostableMap.js';
 import U from '../../Core/Utilities.js';
@@ -331,16 +332,15 @@ function onChartCallback(
  * @return {number}
  * Max value
  */
-function patientMax(...args: Array<Array<unknown>>): number {
+function patientMax(...args: Array<Array<unknown>|TypedArray>): number {
     let r = -Number.MAX_VALUE;
 
-    args.forEach(function (t: Array<unknown>): (boolean|undefined) {
+    args.forEach(function (t): (boolean|undefined) {
         if (
             typeof t !== 'undefined' &&
             t !== null &&
             typeof t.length !== 'undefined'
         ) {
-            // r = r < t.length ? t.length : r;
             if (t.length > 0) {
                 r = t.length;
                 return true;

@@ -31,6 +31,7 @@ import type {
     VBPOptions,
     VBPParamsOptions
 } from './VBPOptions';
+import type { TypedArray } from '../../../Core/Series/SeriesOptions';
 import VBPPoint from './VBPPoint.js';
 
 import A from '../../../Core/Animation/AnimationUtilities.js';
@@ -536,7 +537,7 @@ class VBPIndicator extends SMAIndicator {
         params: VBPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indicator = this,
-            xValues: Array<number> = series.processedXData,
+            xValues = series.processedXData,
             yValues: Array<Array<number>> = (series.processedYData as any),
             chart = indicator.chart,
             ranges: number = (params.ranges as any),
@@ -622,7 +623,7 @@ class VBPIndicator extends SMAIndicator {
     // Specifing where each zone should start ans end
     public specifyZones(
         isOHLC: boolean,
-        xValues: Array<number>,
+        xValues: Array<number>|TypedArray,
         yValues: Array<Array<number>>,
         ranges: number,
         volumeSeries: LineSeries
@@ -701,11 +702,11 @@ class VBPIndicator extends SMAIndicator {
         isOHLC: boolean,
         priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject>,
         volumeSeries: LineSeries,
-        xValues: Array<number>,
+        xValues: Array<number>|TypedArray,
         yValues: Array<Array<number>>
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
         const indicator = this,
-            volumeXData: Array<number> = volumeSeries.processedXData,
+            volumeXData = volumeSeries.processedXData,
             volumeYData: Array<number> = (
                 volumeSeries.processedYData as any
             ),

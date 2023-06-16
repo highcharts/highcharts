@@ -36,6 +36,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
+    isArray,
     merge
 } = U;
 
@@ -301,7 +302,7 @@ class MapBubbleSeries extends BubbleSeries {
         let processedXData = this.processedXData,
             xData = this.xData;
 
-        if (processedXData && xData) {
+        if (isArray(processedXData) && xData) {
             processedXData.length = xData.length;
         }
     }

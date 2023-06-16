@@ -24,6 +24,7 @@ import type Point from '../../Core/Series/Point';
 import type SeriesType from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
@@ -509,7 +510,7 @@ class BubbleSeries extends ScatterSeries {
 
     public yData: Array<(number|null)> = void 0 as any;
 
-    public zData: Array<(number|null)> = void 0 as any;
+    public zData: Array<(number|null)>|TypedArray = void 0 as any;
 
     public zMax: BubbleSeriesOptions['zMax'];
 

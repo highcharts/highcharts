@@ -20,6 +20,7 @@ import type { NavigatorAxisComposition } from './NavigatorAxisComposition';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
+import type { TypedArray } from '../../Core/Series/SeriesOptions';
 
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
@@ -52,7 +53,7 @@ declare module './AxisComposition' {
             min: number,
             max: number,
             startOfWeek?: number,
-            positions?: Array<number>,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;
@@ -118,7 +119,7 @@ namespace OrdinalAxis {
             min: number,
             max: number,
             startOfWeek: number,
-            positions?: Array<number>,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;

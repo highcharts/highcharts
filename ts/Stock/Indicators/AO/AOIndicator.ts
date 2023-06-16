@@ -168,7 +168,7 @@ class AOIndicator extends SMAIndicator {
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const shortPeriod = 5,
             longPeriod = 34,
-            xVal: Array<number> = series.xData || [],
+            xVal = series.xData || [],
             yVal: Array<number|null|undefined> =
                 (series.yData as any) || [],
             yValLen: number = yVal.length,

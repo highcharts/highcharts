@@ -141,7 +141,7 @@ class DPOIndicator extends SMAIndicator {
             index: number = (params.index as any),
             offset: number = Math.floor(period / 2 + 1),
             range: number = period + offset,
-            xVal: Array<number> = series.xData || [],
+            xVal = series.xData || [],
             yVal: (Array<number> | Array<Array<number>>) =
                 (series.yData as any) || [],
             yValLen: number = yVal.length,

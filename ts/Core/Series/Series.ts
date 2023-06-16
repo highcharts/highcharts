@@ -346,9 +346,13 @@ class Series {
 
     public pointValKey?: string;
 
-    public processedXData: Array<number> = void 0 as any;
+    public processedXData: Array<number>|TypedArray = void 0 as any;
 
-    public processedYData: (Array<(number|null)>|Array<Array<(number|null)>>) = void 0 as any;
+    public processedYData: (
+        Array<(number|null)>|
+        Array<Array<(number|null)>>|
+        TypedArray
+    ) = void 0 as any;
 
     public selected?: boolean;
 
@@ -372,7 +376,7 @@ class Series {
 
     public xAxis: AxisType = void 0 as any;
 
-    public xData?: Array<number>;
+    public xData?: Array<number>|TypedArray;
 
     public xIncrement?: (number|null);
 
@@ -380,7 +384,8 @@ class Series {
 
     public yData?: (
         Array<(number|null)>|
-        Array<Array<(number|null)>>
+        Array<Array<(number|null)>>|
+        TypedArray
     );
 
     public zoneAxis?: string;
@@ -1448,8 +1453,9 @@ class Series {
                 }
 
             } else if (isObject(data)) {
-                this.xData = data.x as any;
-                this.yData = data.y as any;
+                this.xData = data.x;
+                this.yData = data.y;
+                this.zData = data.z;
             }
 
             series.data = [];
@@ -1592,11 +1598,9 @@ class Series {
             xExtremes,
             min,
             max,
-            // copied during slice operation:
-            processedXData: Array<number> = series.xData as any,
-            processedYData: (
-                Array<(number|null)>|Array<Array<(number|null)>>
-            ) = (series.yData as any),
+            // Copied during slice operation:
+            processedXData = series.xData || [],
+            processedYData = series.yData || [],
             updatingNames = false;
         const dataLength = (processedXData as any).length;
 
@@ -1651,7 +1655,7 @@ class Series {
         const closestPointRange = getClosestDistance(
             [
                 logarithmic ?
-                    processedXData.map(logarithmic.log2lin) :
+                    (processedXData as any).map(logarithmic.log2lin) :
                     processedXData
             ],
 
@@ -1723,8 +1727,8 @@ class Series {
      * @function Highcharts.Series#cropData
      */
     public cropData(
-        xData: Array<number>,
-        yData: (Array<(number|null)>|Array<Array<(number|null)>>),
+        xData: Array<number>|TypedArray,
+        yData: (Array<(number|null)>|Array<Array<(number|null)>>|TypedArray),
         min: number,
         max: number,
         cropShoulder?: number
@@ -1927,7 +1931,7 @@ class Series {
      * The data to inspect. Defaults to the current data within the visible
      * range.
      */
-    public getXExtremes(xData: Array<number>): RangeSelector.RangeObject {
+    public getXExtremes(xData: Array<number>|TypedArray): RangeSelector.RangeObject {
         return {
             min: arrayMin(xData),
             max: arrayMax(xData)
@@ -1947,7 +1951,7 @@ class Series {
      * Force getting extremes of a total series data range.
      */
     public getExtremes(
-        yData?: (Array<(number|null)>|Array<Array<(number|null)>>),
+        yData?: (Array<(number|null)>|Array<Array<(number|null)>>|TypedArray),
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {
         const xAxis = this.xAxis,
@@ -4831,8 +4835,8 @@ namespace Series {
     export interface CropDataObject {
         end: number;
         start: number;
-        xData: Array<number>;
-        yData: (Array<(number|null)>|Array<Array<(number|null)>>);
+        xData: Array<number>|TypedArray;
+        yData: (Array<(number|null)>|Array<Array<(number|null)>>)|TypedArray;
     }
 
     export interface PlotBoxTransform extends SVGAttributes {
@@ -4843,8 +4847,8 @@ namespace Series {
     }
 
     export interface ProcessedDataObject {
-        xData: Array<number>;
-        yData: (Array<(number|null)>|Array<Array<(number|null)>>);
+        xData: Array<number>|TypedArray;
+        yData: (Array<(number|null)>|Array<Array<(number|null)>>)|TypedArray;
         cropped: (boolean|undefined);
         cropStart: number;
         closestPointRange: (number|undefined);

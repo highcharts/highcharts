@@ -347,8 +347,12 @@ class LinearRegressionIndicator extends SMAIndicator {
                 y: endPointY
             } as any);
 
-            indicatorData.xData.push(endPointX);
-            indicatorData.yData.push(endPointY as any);
+            if (isArray(indicatorData.xData)) {
+                indicatorData.xData.push(endPointX);
+            }
+            if (isArray(indicatorData.yData)) {
+                indicatorData.yData.push(endPointY as any);
+            }
         }
 
         return indicatorData;

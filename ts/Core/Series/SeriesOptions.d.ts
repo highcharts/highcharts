@@ -61,6 +61,7 @@ export type TypedArray = (
 export interface SeriesDataOptionsObject {
     x?: TypedArray|number[];
     y?: TypedArray|number[];
+    z?: TypedArray|number[];
 }
 
 export interface SeriesAfterAnimateEvent {

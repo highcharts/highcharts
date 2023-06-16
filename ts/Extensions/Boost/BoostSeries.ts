@@ -32,7 +32,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
-import type { SeriesDataOptionsObject } from '../../Core/Series/SeriesOptions';
+import type { SeriesDataOptionsObject, TypedArray } from '../../Core/Series/SeriesOptions';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -60,6 +60,7 @@ const {
     fireEvent,
     isArray,
     isNumber,
+    isObject,
     pick,
     wrap
 } = U;
@@ -591,7 +592,7 @@ function destroyGraphics(
  * Set to true to skip timeouts.
  */
 function eachAsync(
-    arr: Array<unknown>,
+    arr: Array<unknown>|TypedArray,
     fn: Function,
     finalFunc: Function,
     chunkSize?: number,
@@ -1266,7 +1267,11 @@ function wrapSeriesProcessData(
     this: Series,
     proceed: Function
 ): void {
-    let dataToMeasure = this.options.data;
+    let dataToMeasure = isArray(this.options.data) ?
+        this.options.data :
+        isObject(this.options.data) ?
+            this.options.data.y :
+            void 0;
 
     /**
      * Used twice in this function, first on this.options.data, the second
@@ -1275,12 +1280,9 @@ function wrapSeriesProcessData(
      * @private
      */
     const getSeriesBoosting = (
-        data?: Array<(PointOptions|PointShortOptions)>|SeriesDataOptionsObject
+        data?: Array<(PointOptions|PointShortOptions)>|TypedArray
     ): boolean => {
-        const series = this as BoostSeriesComposition,
-            dataOptionLength = (
-                isArray(data) ? data.length : data?.y?.length
-            ) || 0;
+        const series = this as BoostSeriesComposition;
 
         // Check if will be grouped.
         if (series.forceCrop) {
@@ -1289,7 +1291,7 @@ function wrapSeriesProcessData(
         return (
             isChartSeriesBoosting(series.chart) ||
             (
-                dataOptionLength >=
+                (data ? data.length : 0) >=
                 (series.options.boostThreshold || Number.MAX_VALUE)
             )
         );

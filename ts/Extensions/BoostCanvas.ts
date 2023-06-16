@@ -27,6 +27,7 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
+import type { TypedArray } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import BoostChart from './Boost/BoostChart.js';
@@ -402,7 +403,7 @@ const initCanvasBoost = function (): void {
                 minI: (number|undefined),
                 maxI: (number|undefined),
                 index: (number|string),
-                sdata: Array<any> = (
+                sdata: Array<any>|TypedArray = (
                     isStacked ?
                         series.data :
                         (xData || rawData)
