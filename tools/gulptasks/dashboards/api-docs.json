@@ -36,8 +36,13 @@
     "entryPointStrategy": "expand",
     "excludeInternal": true,
     "hideGenerator": true,
+    "htmlLang": "en",
     "name": "Highcharts Dashboards",
-    "readme": "../../../docs/dashboards/your-first-dashboard.md",
     "out": "../../../build/api/dashboards/typedoc/",
+    "plugin": [
+        "typedoc-plugin-rename-defaults"
+    ],
+    "readme": "../../../docs/dashboards/your-first-dashboard.md",
+    "titleLink": "https://api.highcharts.com/dashboards/typedoc/index.html",
     "visibilityFilters": {}
 }

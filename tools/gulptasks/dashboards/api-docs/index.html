@@ -25,11 +25,11 @@
 <meta property="og:determiner" content="">
 <meta property="og:image" content="https://api.highcharts.com/highcharts/mstile-310x310.png">
 <meta property="og:site_name" content="Highcharts">
-<meta property="og:title" content="Highcharts Android API Reference">
+<meta property="og:title" content="Highcharts Dashboards API Reference">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://api.highcharts.com/android/highcharts/">
+<meta property="og:url" content="https://api.highcharts.com/dashboards/">
 <meta name="searchboost" content="9700">
-<meta name="searchtitle" content="Android API Overview">
+<meta name="searchtitle" content="Dashboards API Overview">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:creator" content="@highcharts">
 <meta name="twitter:site" content="@highcharts">
@@ -68,6 +68,7 @@
                                 <li class="product">
                                     <a id="gantt-link" href="../gantt/">Highcharts Gantt</a>
                                 </li>
+                                <li class="separator"></li>
                                 <li class="product highlighted">
                                     <a id="dashboards-link" href="../dashboards/">Highcharts Dashboards</a>
                                 </li>
@@ -84,8 +85,33 @@
 
 </div>
 <div class="mainContainerWrapper">
-   <iframe frameborder="0" src="typedoc/index.html" width="100%" height="850" style="box-sizing:border-box;height:100vh;padding-top:112px"></iframe>
+    <script>
+        (function(){
+            var iframe = document.createElement('iframe');
+            iframe.setAttribute('frameborder', '0');
+            iframe.setAttribute('height', '850');
+            iframe.setAttribute('src', (
+                location.hash.length > 1 ?
+                    'typedoc/' + location.hash.substring(1) + '.html':
+                    'typedoc/index.html'
+            ));
+            iframe.style.boxSizing = 'border-box';
+            iframe.style.height = '100vh';
+            iframe.style.paddingTop = '112px';
+            iframe.setAttribute('width', '100%');
+            iframe.onload = function (e) {
+                var iframeWindow = e.target.contentWindow,
+                    hash = iframeWindow.location.href
+                        .split('/typedoc/')[1]
+                        .replace('.html', '');
+
+                if (hash !== 'index') {
+                    history.replaceState(null, null, '#' + hash);
+                }
+            };
+            document.body.appendChild(iframe);
+        }());
+    </script>
 </div>
-    
 </body>
 </html>
