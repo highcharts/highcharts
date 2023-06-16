@@ -1,4 +1,4 @@
-name: DashVisTest CI
+name: Dashboards visual comparison tests
 on:
   pull_request:
     branches: 
