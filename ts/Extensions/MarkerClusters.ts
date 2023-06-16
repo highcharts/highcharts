@@ -1861,6 +1861,7 @@ Scatter.prototype.getClusteredData = function (
     options: Highcharts.MarkerClusterOptions
 ): (Highcharts.MarkerClusterInfoObject | boolean) {
     let series = this,
+        data = series.options.data,
         groupedXData = [],
         groupedYData = [],
         clusters = [], // Container for clusters.
@@ -1980,11 +1981,10 @@ Scatter.prototype.getClusteredData = function (
             });
 
             // Save cluster data points options.
-            if (series.options.data && series.options.data.length) {
+            if (isArray(data) && data.length) {
                 for (i = 0; i < pointsLen; i++) {
-                    if (isObject(series.options.data[points[i].dataIndex])) {
-                        points[i].options =
-                            series.options.data[points[i].dataIndex];
+                    if (isObject(data[points[i].dataIndex])) {
+                        points[i].options = data[points[i].dataIndex];
                     }
                 }
             }
@@ -1997,8 +1997,7 @@ Scatter.prototype.getClusteredData = function (
                 point = groupedData[k][i];
                 stateId = getStateId();
                 pointOptions = null;
-                pointUserOptions =
-                    ((series.options || {}).data || [])[point.dataIndex];
+                pointUserOptions = isArray(data) && data[point.dataIndex];
                 groupedXData.push(point.x);
                 groupedYData.push(point.y);
 

@@ -44,6 +44,7 @@ const {
     erase,
     extend,
     insertItem,
+    isArray,
     isNumber,
     merge,
     pick,
@@ -343,7 +344,11 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
             if (series.data) {
                 chart.parallelInfo.counter = Math.max(
                     chart.parallelInfo.counter,
-                    series.data.length - 1
+                    (
+                        isArray(series.data) ?
+                            series.data.length :
+                            series.data.y?.length || 0
+                    ) - 1
                 );
             }
         });

@@ -35,6 +35,7 @@ const {
     defined,
     extend,
     find,
+    isArray,
     merge,
     pick
 } = U;
@@ -416,8 +417,8 @@ namespace NodesComposition {
     ): void {
         const nodes = this.series.options.nodes,
             data = this.series.options.data,
-            dataLength = data && data.length || 0,
-            linkConfig = data && data[this.index];
+            dataLength = isArray(data) && data.length || 0,
+            linkConfig = isArray(data) && data[this.index];
 
         pointProto.update.call(
             this,
@@ -439,14 +440,14 @@ namespace NodesComposition {
                 // options.data, because of default logic in point.update()
                 nodeConfig = merge(
                     nodes && nodes[nodeIndex] || {},
-                    data && data[this.index] || {}
+                    isArray(data) && data[this.index] || {}
                 );
 
             // Restore link config
             if (data) {
                 if (linkConfig) {
                     data[this.index] = linkConfig;
-                } else {
+                } else if (isArray(data)) {
                     // Remove node from config if there's more nodes than links
                     data.length = dataLength;
                 }

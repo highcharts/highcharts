@@ -35,6 +35,7 @@ const {
     arrayMin,
     correctFloat,
     extend,
+    isArray,
     isNumber,
     merge,
     objectEach,
@@ -240,7 +241,7 @@ class WaterfallSeries extends ColumnSeries {
             options = series.options,
             yData = series.yData,
             // #3710 Update point does not propagate to sum
-            points = options.data,
+            data = options.data,
             point,
             dataLength = yData.length,
             threshold = options.threshold || 0,
@@ -255,7 +256,7 @@ class WaterfallSeries extends ColumnSeries {
 
         for (i = 0; i < dataLength; i++) {
             y = yData[i];
-            point = points && points[i] ? points[i] : {};
+            point = isArray(data) && data[i] ? data[i] : {};
 
             if (y === 'sum' || (point as any).isSum) {
                 yData[i] = correctFloat(sum);

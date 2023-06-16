@@ -428,27 +428,25 @@ function onBeforeRender(
             if (isDirty) {
                 // Concatenate data from all series assigned to this axis.
                 data = axis.series.reduce(function (arr, s): Array<PointOptions> {
-                    if (s.visible) {
+                    if (s.visible && isArray(s.options.data)) {
                         // Push all data to array
-                        (s.options.data || []).forEach(function (
-                            data
-                        ): void {
+                        s.options.data.forEach((pointOptions): void => {
                             // For using keys - rebuild the data structure
                             if (s.options.keys && s.options.keys.length) {
 
-                                data = s.pointClass.prototype
+                                pointOptions = s.pointClass.prototype
                                     .optionsToObject
-                                    .call({ series: s }, data);
-                                s.pointClass.setGanttPointAliases(data);
+                                    .call({ series: s }, pointOptions);
+                                s.pointClass.setGanttPointAliases(pointOptions);
 
                             }
-                            if (isObject(data, true)) {
+                            if (isObject(pointOptions, true)) {
                                 // Set series index on data. Removed again
                                 // after use.
-                                (data as PointOptions).seriesIndex = (
+                                (pointOptions as PointOptions).seriesIndex = (
                                     numberOfSeries
                                 );
-                                arr.push(data as PointOptions);
+                                arr.push(pointOptions as PointOptions);
                             }
                         });
 
@@ -491,7 +489,7 @@ function onBeforeRender(
                 // Update yData now that we have calculated the y values
                 axis.series.forEach(function (series): void {
                     const axisData = (
-                        series.options.data || []
+                        isArray(series.options.data) ? series.options.data : []
                     ).map(function (
                         d: (PointOptions|PointShortOptions)
                     ): (PointOptions|PointShortOptions) {
@@ -927,7 +925,7 @@ class TreeGridAxisAdditions {
 
         axis.series.forEach(function (series): void {
             const data = series.options.data;
-            if (node.id && data) {
+            if (node.id && isArray(data)) {
                 const point = chart.get(node.id),
                     dataPoint = data[series.data.indexOf(
                         point as GanttPoint

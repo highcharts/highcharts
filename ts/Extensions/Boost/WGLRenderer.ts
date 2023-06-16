@@ -35,6 +35,7 @@ import H from '../../Core/Globals.js';
 const { doc, win } = H;
 import U from '../../Core/Utilities.js';
 const {
+    isArray,
     isNumber,
     isObject,
     merge,
@@ -384,7 +385,7 @@ class WGLRenderer {
             chart = series.chart,
             options = series.options,
             isStacked = !!options.stacking,
-            rawData = options.data,
+            rawData = isArray(options.data) && options.data,
             xExtremes = series.xAxis.getExtremes(),
             xMin = xExtremes.min,
             xMax = xExtremes.max,

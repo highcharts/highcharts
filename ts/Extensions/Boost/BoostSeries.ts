@@ -32,11 +32,10 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
+import type { SeriesDataOptionsObject } from '../../Core/Series/SeriesOptions';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import BoostableMap from './BoostableMap.js';
 import Boostables from './Boostables.js';
@@ -1276,9 +1275,12 @@ function wrapSeriesProcessData(
      * @private
      */
     const getSeriesBoosting = (
-        data?: Array<(PointOptions|PointShortOptions)>
+        data?: Array<(PointOptions|PointShortOptions)>|SeriesDataOptionsObject
     ): boolean => {
-        const series = this as BoostSeriesComposition;
+        const series = this as BoostSeriesComposition,
+            dataOptionLength = (
+                isArray(data) ? data.length : data?.y?.length
+            ) || 0;
 
         // Check if will be grouped.
         if (series.forceCrop) {
@@ -1287,7 +1289,7 @@ function wrapSeriesProcessData(
         return (
             isChartSeriesBoosting(series.chart) ||
             (
-                (data ? data.length : 0) >=
+                dataOptionLength >=
                 (series.options.boostThreshold || Number.MAX_VALUE)
             )
         );
@@ -1320,10 +1322,7 @@ function wrapSeriesProcessData(
         if (series.boosted) {
             // Force turbo-mode:
             let firstPoint;
-            if (
-                series.options.data &&
-                series.options.data.length
-            ) {
+            if (isArray(series.options.data) && series.options.data.length) {
                 firstPoint = series.getFirstValidPoint(
                     series.options.data
                 );

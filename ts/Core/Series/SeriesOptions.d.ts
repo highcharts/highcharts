@@ -53,6 +53,16 @@ export type PlotOptionsOf<T extends Series = Series> = (
     Omit<T['options'], NonPlotOptions>
 );
 
+export type TypedArray = (
+  Int8Array|Uint8Array|Uint8ClampedArray|Int16Array|Uint16Array|Int32Array|
+  Uint32Array|Float32Array|Float64Array
+);
+
+export interface SeriesDataOptionsObject {
+    x?: TypedArray|number[];
+    y?: TypedArray|number[];
+}
+
 export interface SeriesAfterAnimateEvent {
     target: Series;
     type: 'afterAnimate';
@@ -109,7 +119,7 @@ export interface SeriesOptions {
     crisp?: boolean;
     cursor?: CursorValue;
     dashStyle?: DashStyleValue;
-    data?: Array<(PointOptions|PointShortOptions)>;
+    data?: Array<(PointOptions|PointShortOptions)>|SeriesDataOptionsObject;
     dataSorting?: SeriesDataSortingOptions;
     enableMouseTracking?: boolean;
     events?: SeriesEventsOptions;

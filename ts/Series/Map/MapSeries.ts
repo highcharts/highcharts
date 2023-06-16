@@ -1067,7 +1067,7 @@ class MapSeries extends ScatterSeries {
 
         // Pick up numeric values, add index. Convert Array point definitions to
         // objects using pointArrayMap.
-        if (data) {
+        if (isArray(data)) {
             data.forEach(function (val, i): void {
                 let ix = 0;
 
