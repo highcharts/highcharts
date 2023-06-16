@@ -26,7 +26,6 @@
         "../../../ts/Dashboards/Components/Sync/Sync.ts",
         "../../../ts/Dashboards/PluginHandler.ts",
         "../../../ts/Data/DataTable.ts",
-        "../../../ts/Data/DataTable.ts",
         "../../../ts/DataGrid/DataGrid.ts",
         "../../../ts/DataGrid/DataGridOptions.d.ts",
         "../../../ts/Extensions/DashboardPlugins/HighchartsComponent.ts",
