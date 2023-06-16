@@ -52,6 +52,7 @@ jobs:
 
 
   cypress_visual_actual:
+    needs: cypress_visual_base
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
