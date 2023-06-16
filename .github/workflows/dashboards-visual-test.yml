@@ -8,7 +8,7 @@ permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
-  test_cypress:
+  cypress_visual_base:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
@@ -42,9 +42,38 @@ jobs:
           config: specPattern=**/visual/*.cy.js
           install: false
 
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: reference
+          path: |
+            cypress/screenshots
+            cypress/snapshots
+
+
+  cypress_visual_actual:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
       - name: Checkout current branch 
         uses: actions/checkout@v3
 
+      - name: Download references
+        uses: actions/download-artifact@v3
+        with: 
+          name: reference
+          path: cypress # this path is root relative, not based on the working-directory above
 
       - name: Install dependencies
         uses: cypress-io/github-action@v5
@@ -63,4 +92,12 @@ jobs:
           env: type=actual
           config: specPattern=**/visual/*.cy.js
           install: false
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: post-tests
+          path: |
+            cypress/screenshots
+            cypress/snapshots
 
