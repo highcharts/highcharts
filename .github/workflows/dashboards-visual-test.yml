@@ -3,9 +3,6 @@ on:
   pull_request:
     branches: 
       - 'dashboards/main'
-  push:
-    branches:
-      - 'db/visual-test-gh-action'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -29,7 +26,10 @@ jobs:
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
-          start: npx gulp scripts, npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          install-command: |
+            npm ci
+            npx gulp scripts
+          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=base
           config: specPattern=**/visual/*.cy.js
@@ -40,7 +40,10 @@ jobs:
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
-          start: npx gulp scripts, npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          install-command: |
+            npm ci
+            npx gulp scripts
+          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=actual
           config: specPattern=**/visual/*.cy.js
