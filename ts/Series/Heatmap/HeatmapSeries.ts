@@ -456,26 +456,20 @@ class HeatmapSeries extends ScatterSeries {
 
         if (interpolation) {
             const
-                { image, chart, xAxis, yAxis } = series,
-                {
-                    reversed: xRev,
-                    options: xAxisOptions,
-                    len: xAxisLen
-                } = xAxis,
+                { image, isDirtyData, chart, xAxis, yAxis } = series,
                 { min: xMin, max: xMax } = xAxis.getExtremes(),
                 { min: yMin, max: yMax } = yAxis.getExtremes(),
-                { reversed: yRev, len: yAxisLen } = yAxis,
-                { minPadding, maxPadding } = xAxisOptions,
-                allPadding = maxPadding + minPadding,
-                { plotWidth } = chart,
-                dimensions = {
-                    x: 0,
-                    y: 0,
-                    width: xAxisLen,
-                    height: yAxisLen
-                };
+                xRev = xAxis.reversed,
+                { reversed: yRev, len: height } = yAxis,
+                { colsize = 1, rowsize = 1 } = seriesOptions,
+                halfCol = (colsize / 2),
+                [x, width] = [
+                    xMin - halfCol,
+                    xMax + halfCol
+                ].map((n): number => xAxis.toPixels(n, true)),
+                dimensions = { x, width, height };
 
-            if (!image || series.isDirtyData) {
+            if (!image || isDirtyData) {
                 const
                     ctx = series.getContext(),
                     { canvas, points } = series,
@@ -488,23 +482,23 @@ class HeatmapSeries extends ScatterSeries {
                     const
                         xDelta = xMax - xMin,
                         yDelta = yMax - yMin,
-
                         canvasWidth = canvas.width = (
-                            ~~(xDelta / pick(seriesOptions.colsize, 1)) + 1
+                            Math.ceil((xDelta / colsize) + 1)
                         ),
                         canvasHeight = canvas.height = (
-                            ~~(yDelta / pick(seriesOptions.rowsize, 1)) + 1
+                            Math.ceil((yDelta / rowsize) + 1)
                         ),
-
                         canvasArea = (canvasWidth * canvasHeight),
-
-                        widthLastIndex = canvasWidth - 1,
-                        heightLastIndex = canvasHeight - 1,
-
-                        pointsLen = points.length,
-
                         pixelData = new Uint8ClampedArray(canvasArea * 4),
-
+                        [
+                            widthLastIndex,
+                            heightLastIndex,
+                            pointsLastIndex
+                        ] = [
+                            canvasWidth,
+                            canvasHeight,
+                            points.length
+                        ].map((n): number => n - 1),
                         colorFromPoint = (p: HeatmapPoint): number[] => {
                             const rgba = ((
                                 colorAxis.toColor(
@@ -525,50 +519,50 @@ class HeatmapSeries extends ScatterSeries {
 
                             return rgba;
                         },
-
                         resizeFromRange = (
                             val: number,
-                            fromMin: number,
                             fromDelta: number,
                             size: number
                         ): number => (
-                            (val - fromMin) * (
-                                size / fromDelta
-                            )
+                            val * (size / fromDelta)
                         ),
-
                         xPlacement = (xRev ?
                             (xToImg: number): number => (
                                 widthLastIndex - xToImg
                             ) :
                             (xToImg: number): number => xToImg
                         ),
-
                         yPlacement = (yRev ?
+                            (yToImg: number): number => yToImg :
                             (yToImg: number): number => (
                                 heightLastIndex - yToImg
-                            ) :
-                            (yToImg: number): number => yToImg
+                            )
                         ),
-
-                        scaledPointPos = (x: number, y: number): number => (
-                            Math.ceil(
+                        coordsToPixelSpace = (x: number, y: number): number => (
+                            4 * (
                                 canvasWidth *
                                 yPlacement(
-                                    resizeFromRange(
-                                        yMax - y,
-                                        yMin,
+                                    ~~resizeFromRange(
+                                        y - yMin,
                                         yDelta,
                                         heightLastIndex
                                     )
                                 ) +
                                 xPlacement(
-                                    resizeFromRange(
-                                        x,
-                                        xMin,
+                                    ~~resizeFromRange(
+                                        x - xMin,
                                         xDelta,
                                         widthLastIndex
                                     )
+                                )
+                            )
+                        ),
+                        pixelToPointRange = (pixelIndex: number): number => (
+                            Math.ceil(
+                                resizeFromRange(
+                                    pixelIndex,
+                                    canvasArea,
+                                    pointsLastIndex
                                 )
                             )
                         );
@@ -576,33 +570,19 @@ class HeatmapSeries extends ScatterSeries {
                     series.buildKDTree();
 
                     for (let i = 0; i < canvasArea; i++) {
-                        const
-                            p = points[
-                                Math.floor(resizeFromRange(
-                                    i,
-                                    0,
-                                    canvasArea,
-                                    pointsLen
-                                ))
-                            ],
-
-                            sourceArr = new Uint8ClampedArray(
-                                colorFromPoint(p)
-                            );
+                        const p = points[pixelToPointRange(i)];
 
                         pixelData.set(
-                            sourceArr, (scaledPointPos(p.x, p.y)) *
-                            4
+                            colorFromPoint(p),
+                            coordsToPixelSpace(p.x, p.y)
                         );
                     }
 
-                    const imgDat = new ImageData(
-                        pixelData,
-                        canvasWidth
-                    );
-
                     ctx.putImageData(
-                        imgDat,
+                        new ImageData(
+                            pixelData,
+                            canvasWidth
+                        ),
                         0,
                         0
                     );
