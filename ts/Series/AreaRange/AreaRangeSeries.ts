@@ -723,6 +723,7 @@ interface AreaRangeSeries {
 
 extend(AreaRangeSeries.prototype, {
     deferTranslatePolar: true,
+    // parallelArrays: ['x', 'low', 'high'],
     pointArrayMap: ['low', 'high'],
     pointClass: AreaRangePoint,
     pointValKey: 'low',

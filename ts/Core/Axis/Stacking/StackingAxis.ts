@@ -72,7 +72,10 @@ declare module '../../Series/SeriesLike' {
         negStacks?: boolean;
         singleStacks?: false;
         stack?: StackOverflowValue;
-        stackedYData?: (Array<number>|Array<Array<number>>);
+        stackedYData?: (
+            Array<number>
+            // Array<Array<number>>
+        );
         stackKey?: string;
         getStackIndicator(
             stackIndicator: (StackItemIndicatorObject|undefined),

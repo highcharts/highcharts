@@ -227,6 +227,7 @@ interface OHLCSeries {
 }
 extend(OHLCSeries.prototype, {
     pointClass: OHLCPoint,
+    // parallelArrays: ['x', 'open', 'high', 'low', 'close'],
     pointArrayMap: ['open', 'high', 'low', 'close']
 });
 

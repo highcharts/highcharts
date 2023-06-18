@@ -29,6 +29,10 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
+import type {
+    DataTableLight,
+    DataTableLightModified
+} from '../../Core/Series/Series';
 import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type { TypedArray } from '../../Core/Series/SeriesOptions';
@@ -51,7 +55,8 @@ const {
     extend,
     isNumber,
     merge,
-    pick
+    pick,
+    splat
 } = U;
 
 /* *
@@ -97,7 +102,8 @@ declare module '../../Core/Series/SeriesLike' {
             xData: Array<number>|TypedArray,
             yData: (Array<number>|Array<Array<number>>),
             groupPosition: Array<number>,
-            approximation: (string|Function)
+            approximation: (string|Function),
+            table: DataTableLight
         ): DataGroupingResultObject;
     }
 }
@@ -117,6 +123,7 @@ export interface DataGroupingResultObject {
         Array<Array<(number|null|undefined)>>|
         TypedArray
     );
+    modified: DataTableLightModified;
     groupMap: Array<DataGroupingInfoObject>;
 }
 
@@ -320,9 +327,14 @@ function applyGrouping(
     if (!skip) {
         series.destroyGroupedData();
 
-        const processedXData = (dataGroupingOptions as any).groupAll ?
+        const table = dataGroupingOptions.groupAll ?
+                series.table :
+                series.table.modified || series.table,
+            processedXData = (dataGroupingOptions as any).groupAll ?
                 series.xData :
                 series.processedXData,
+            xData = series.useDataTable ? table.columns.x : processedXData,
+
             processedYData = (dataGroupingOptions as any).groupAll ?
                 series.yData :
                 series.processedYData,
@@ -338,8 +350,8 @@ function applyGrouping(
         // defined in groupPixelWidth
         if (
             groupPixelWidth &&
-            processedXData &&
-            processedXData.length &&
+            xData &&
+            (this.useDataTable ? table.rowCount : xData.length) &&
             plotSizeX
         ) {
             hasGroupedData = true;
@@ -366,35 +378,42 @@ function applyGrouping(
                         DataGroupingDefaults.units
                     ),
                     // Processed data may extend beyond axis (#4907)
-                    Math.min(xMin, processedXData[0]),
+                    Math.min(xMin, xData[0]),
                     Math.max(
                         xMax,
-                        processedXData[processedXData.length - 1]
+                        xData[xData.length - 1]
                     ),
                     xAxis.options.startOfWeek,
-                    processedXData,
+                    xData,
                     series.closestPointRange
                 ),
                 groupedData = seriesProto.groupData.apply(
                     series,
                     [
-                        processedXData,
-                        processedYData as any,
+                        xData,
+                        series.useDataTable ?
+                            table.columns.y as any :
+                            processedYData as any,
                         groupPositions,
-                        (dataGroupingOptions as any).approximation
+                        (dataGroupingOptions as any).approximation,
+                        table
                     ]
                 );
 
-            let groupedXData = groupedData.groupedXData,
-                groupedYData = groupedData.groupedYData,
+            let modified = groupedData.modified,
+                groupedXData = series.useDataTable ?
+                    modified.columns.x :
+                    groupedData.groupedXData,
+                groupedYData = series.useDataTable ?
+                    modified.columns.y || [] :
+                    groupedData.groupedYData,
                 gapSize = 0;
 
             // The smoothed option is deprecated, instead, there is a fallback
             // to the new anchoring mechanism. #12455.
             if (
-                dataGroupingOptions &&
-                dataGroupingOptions.smoothed &&
-                groupedXData.length
+                dataGroupingOptions?.smoothed &&
+                (series.useDataTable ? modified.rowCount : groupedXData?.length)
             ) {
                 dataGroupingOptions.firstAnchor = 'firstPoint';
                 dataGroupingOptions.anchor = 'middle';
@@ -405,7 +424,7 @@ function applyGrouping(
                 });
             }
 
-            anchorPoints(series, groupedXData, xMax);
+            anchorPoints(series, groupedXData || [], xMax);
 
             // Record what data grouping values were used
             for (i = 1; i < groupPositions.length; i++) {
@@ -427,7 +446,7 @@ function applyGrouping(
             series.closestPointRange = (groupPositions.info as any).totalRange;
             series.groupMap = groupedData.groupMap;
 
-            if (visible) {
+            if (visible && groupedXData) {
                 adjustExtremes(xAxis, groupedXData);
             }
 
@@ -439,19 +458,25 @@ function applyGrouping(
                 series.allGroupedData = groupedYData;
 
                 croppedData = series.cropData(
-                    groupedXData,
+                    groupedXData as any,
                     groupedYData as any,
                     xAxis.min as any,
                     xAxis.max as any,
-                    1 // Ordinal xAxis will remove left-most points otherwise
+                    1, // Ordinal xAxis will remove left-most points otherwise
+                    modified
                 );
                 groupedXData = croppedData.xData;
                 groupedYData = croppedData.yData;
+                if (croppedData.modified) {
+                    modified = croppedData.modified;
+                }
                 series.cropStart = croppedData.start; // #15005
             }
             // Set series props
-            series.processedXData = groupedXData;
+            series.processedXData = groupedXData || [];
             series.processedYData = groupedYData as any;
+            series.table.modified = modified;
+
         } else {
             series.groupMap = null as any;
         }
@@ -590,22 +615,33 @@ function getDGApproximation(
  */
 function groupData(
     this: Series,
-    xData: Array<number>,
+    xData: Array<number>|TypedArray,
     yData: (
         Array<(number|null|undefined)>|
-        Array<Array<(number|null|undefined)>>
+        Array<Array<(number|null|undefined)>>|
+        TypedArray
     ),
     groupPositions: Array<number>,
-    approximation?: (ApproximationKeyValue|Function)
+    approximation: (ApproximationKeyValue|Function),
+    table: DataTableLight
 ): DataGroupingResultObject {
+    if (this.useDataTable) {
+        xData = table.columns.x || [];
+        yData = table.columns.y || [];
+    }
+
     const series = this,
         data = series.data,
         dataOptions = series.options && series.options.data,
         groupedXData = [],
         groupedYData = [],
+        modified: DataTableLightModified = {
+            columns: {},
+            rowCount: 0
+        },
         groupMap = [],
-        dataLength = xData.length,
-        // when grouping the fake extended axis for panning,
+        dataLength = series.useDataTable ? table.rowCount : xData.length,
+        // When grouping the fake extended axis for panning,
         // we don't need to consider y
         handleYData = !!yData,
         values = [] as Array<ApproximationArray>,
@@ -699,6 +735,20 @@ function groupData(
             if (typeof groupedY !== 'undefined') {
                 groupedXData.push(pointX);
                 groupedYData.push(groupedY);
+
+                // Apply the grouped values to the row
+                const groupedValuesArr = splat(groupedY);
+                for (let j = 0; j < groupedValuesArr.length; j++) {
+                    const key = pointArrayMap?.[j] || 'y',
+                        val = groupedValuesArr[j],
+                        column = modified.columns[key] || [];
+                    if (isNumber(val)) {
+                        column[pos] = val;
+                    }
+                    if (!modified.columns[key]) {
+                        modified.columns[key] = column;
+                    }
+                }
                 groupMap.push(series.dataGroupInfo);
             }
 
@@ -758,10 +808,14 @@ function groupData(
         }
     }
 
+    modified.columns.x = groupedXData;
+    modified.rowCount = groupedXData.length;
+
     return {
         groupedXData,
         groupedYData,
-        groupMap
+        groupMap,
+        modified
     };
 }
 

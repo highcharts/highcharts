@@ -34,6 +34,7 @@ const {
     css,
     defined,
     error,
+    isArray,
     pick,
     timeUnits
 } = U;
@@ -958,6 +959,15 @@ namespace OrdinalAxis {
                 let distanceBetweenPoint = 0;
 
                 axis.series.forEach(function (series, i): void {
+
+                    const xData = series.useDataTable ?
+                        (
+                            (
+                                series.table.modified || series.table
+                            ).columns.x || []
+                        ) :
+                        series.processedXData;
+
                     uniqueOrdinalPositions = [];
 
                     // For an axis with multiple series, check if the distance
@@ -965,14 +975,13 @@ namespace OrdinalAxis {
                     if (
                         i > 0 &&
                         series.options.id !== 'highcharts-navigator-series' &&
-                        series.processedXData.length > 1
+                        xData.length > 1
                     ) {
-                        adjustOrdinalExtremesPoints =
-                            distanceBetweenPoint !== series.processedXData[1] -
-                                series.processedXData[0];
+                        adjustOrdinalExtremesPoints = (
+                            distanceBetweenPoint !== xData[1] - xData[0]
+                        );
                     }
-                    distanceBetweenPoint =
-                        series.processedXData[1] - series.processedXData[0];
+                    distanceBetweenPoint = xData[1] - xData[0];
 
                     if (series.boosted) {
                         isBoosted = series.boosted;
@@ -990,7 +999,7 @@ namespace OrdinalAxis {
                         // concatenate the processed X data into the existing
                         // positions, or the empty array
                         ordinalPositions = ordinalPositions.concat(
-                            series.processedXData as any
+                            xData as any
                         );
 
                         len = ordinalPositions.length;
@@ -1270,7 +1279,11 @@ namespace OrdinalAxis {
                         chart: chart,
                         destroyGroupedData: H.noop,
                         getProcessedData: Series.prototype.getProcessedData,
-                        applyGrouping: Series.prototype.applyGrouping
+                        applyGrouping: Series.prototype.applyGrouping,
+                        table: {
+                            columns: [],
+                            rowCount: 0
+                        }
                     } as any;
 
                     fakeSeries.xData = (fakeSeries.xData as any).concat(

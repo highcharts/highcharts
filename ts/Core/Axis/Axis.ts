@@ -731,7 +731,9 @@ class Axis {
 
                     // Get dataMin and dataMax for X axes
                     if (axis.isXAxis) {
-                        xData = series.xData;
+                        xData = series.useDataTable ?
+                            series.table.columns.x :
+                            series.xData;
                         if (xData && xData.length) {
                             xData = axis.logarithmic ?
                                 xData.filter((x): boolean => x > 0) :
