@@ -15,16 +15,7 @@ Dashboards.board('container', {
         enabled: true,
         contextMenu: {
             enabled: true,
-            items: ['editMode', {
-                id: 'test',
-                text: 'TEEEST',
-                type: 'toggle',
-                events: {
-                    click: function () {
-                        console.log('test');
-                    }
-                }
-            }]
+            items: ['editMode']
         }
     },
     gui: {
@@ -144,8 +135,3 @@ Dashboards.board('container', {
         }
     }]
 }, true);
-
-document.querySelector('.highcharts-dashboards-edit-context-menu-btn').click()
-
-// Dashboards.boards[0].editMode.activate();
-// Dashboards.boards[0].editMode.sidebar.show(Dashboards.boards[0].mountedComponents[0].cell);

@@ -118,7 +118,7 @@ class Menu {
                 merge(itemSchema, itemConfig);
 
             if (options.id) {
-                item = new MenuItem(menu, options as any);
+                item = new MenuItem(menu, options);
 
                 // Save initialized item.
                 menu.items[item.options.id] = item;

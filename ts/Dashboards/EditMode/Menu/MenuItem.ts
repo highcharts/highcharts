@@ -105,13 +105,6 @@ class MenuItem {
             container = item.container,
             langKey = options.langKey;
 
-        const renderItem = EditRenderer.getRendererFunction(
-            options.type
-        );
-
-        if (!renderItem) {
-            return;
-        }
 
         if (options.type === 'toggle') {
             return EditRenderer.renderToggle(container, {
@@ -126,7 +119,7 @@ class MenuItem {
             });
         }
 
-        if (options.type === 'text') {
+        if (options.type === 'text' || !options.type) {
             return EditRenderer.renderText(container, {
                 title: langKey ?
                     this.menu.editMode.lang[langKey] :
@@ -185,7 +178,7 @@ namespace MenuItem {
         collapsable?: boolean;
         id: string;
         name?: string;
-        type: 'icon'|'toggle'|'text';
+        type?: 'icon'|'toggle'|'text';
         text?: string;
         getValue?: (item: MenuItem) => string | number | boolean;
         className?: string;
