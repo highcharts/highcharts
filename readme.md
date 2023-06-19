@@ -2,9 +2,11 @@ Highcharts JS is a JavaScript charting library based on SVG and some canvas/WebG
 
 * Official website: [www.highcharts.com](http://www.highcharts.com)
 * Download page: [www.highcharts.com/download](http://www.highcharts.com/download)
-* Licensing: [www.highcharts.com/license](http://www.highcharts.com/license)
+* Licensing: [shop.highcharts.com](https://shop.highcharts.com/)
 * Support: [www.highcharts.com/support](http://www.highcharts.com/support)
 * Issues: [Repo guidelines](repo-guidelines.md)
+
+Highcharts is a [source available](https://en.wikipedia.org/wiki/Source-available_software) product. Please refer to [shop.highcharts.com](https://shop.highcharts.com/) for details on licensing.
 
 ## Installing and using Highcharts
 This is the *working repo* for Highcharts code. If you simply want to include Highcharts into a project, use the [distribution package](https://www.npmjs.com/package/highcharts) instead, or read the [download page](http://www.highcharts.com/download).
