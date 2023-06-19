@@ -92,7 +92,9 @@
             iframe.setAttribute('height', '850');
             iframe.setAttribute('src', (
                 location.hash.length > 1 ?
-                    'typedoc/' + location.hash.substring(1) + '.html':
+                    'typedoc/' + location.hash
+                        .substring(1)
+                        .replace(/(#)|$/, '.html$1') :
                     'typedoc/index.html'
             ));
             iframe.style.boxSizing = 'border-box';
@@ -108,6 +110,16 @@
                 if (hash !== 'index') {
                     history.replaceState(null, null, '#' + hash);
                 }
+
+                iframeWindow.onhashchange = function (e) {
+                    var subhash = iframeWindow.location.hash;
+
+                    history.replaceState(
+                        null,
+                        null,
+                        '#' + hash.split('#')[0] + (subhash ? subhash : '')
+                    );
+                };
             };
             document.body.appendChild(iframe);
         }());
