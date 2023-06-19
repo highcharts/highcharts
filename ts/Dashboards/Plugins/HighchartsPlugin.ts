@@ -19,11 +19,11 @@
  *
  * */
 
-import type PluginHandler from '../../Dashboards/PluginHandler';
+import type PluginHandler from '../PluginHandler';
 import type G from '../../Core/Globals';
 
 import HighchartsComponent from './HighchartsComponent.js';
-import KPIComponent from '../../Dashboards/Components/KPIComponent.js';
+import KPIComponent from '../Components/KPIComponent.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 
 
@@ -33,7 +33,7 @@ import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
  *
  * */
 
-declare module '../../Dashboards/Components/ComponentType' {
+declare module '../Components/ComponentType' {
     interface ComponentTypeRegistry {
         Highcharts: typeof HighchartsComponent;
     }

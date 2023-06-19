@@ -28,9 +28,9 @@ import type ChartOptions from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
-import type Cell from '../../Dashboards/Layout/Cell';
+import type Cell from '../Layout/Cell';
 
-import Component from '../../Dashboards/Components/Component.js';
+import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataTable from '../../Data/DataTable.js';
@@ -43,7 +43,6 @@ const {
     createElement,
     merge,
     splat,
-    isArray,
     uniqueKey,
     error
 } = U;
