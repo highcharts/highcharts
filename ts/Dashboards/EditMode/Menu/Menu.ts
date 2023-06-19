@@ -95,7 +95,7 @@ class Menu {
 
     // ItemsSchemas - default items definitions.
     public initItems(
-        itemsSchemas: Record<string, Partial<MenuItem.Options>>,
+        itemsSchemas: Record<string, MenuItem.Options>,
         activeItems?: boolean
     ): void {
         const menu = this,
@@ -118,7 +118,7 @@ class Menu {
                 merge(itemSchema, itemConfig);
 
             if (options.id) {
-                item = new MenuItem(menu, options);
+                item = new MenuItem(menu, options as MenuItem.Options);
 
                 // Save initialized item.
                 menu.items[item.options.id] = item;

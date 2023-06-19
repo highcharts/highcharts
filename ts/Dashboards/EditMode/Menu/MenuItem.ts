@@ -51,7 +51,7 @@ class MenuItem {
     ) {
         this.menu = menu;
         this.isActive = false;
-        this.options = merge(MenuItem.defaultOptions, options || {});
+        this.options = merge(MenuItem.defaultOptions, options);
 
         this.container = this.setContainer();
         this.innerElement = this.setInnerElement();
@@ -113,13 +113,13 @@ class MenuItem {
                 title: langKey ?
                     this.menu.editMode.lang[langKey] :
                     options.text,
-                value: !!(this.options.getValue && this.options.getValue(item)),
+                value: !!(options.getValue && options.getValue(item)),
                 lang: this.menu.editMode.lang,
-                callback: options.events && options.events.click.bind(item)
+                callback: options.events?.click?.bind(item)
             });
         }
 
-        if (options.type === 'text' || !options.type) {
+        if (options.type === 'text') {
             return EditRenderer.renderText(container, {
                 title: langKey ?
                     this.menu.editMode.lang[langKey] :
@@ -134,6 +134,17 @@ class MenuItem {
                 mousedown: options.events?.onmousedown?.bind(item),
                 click: options.events?.click?.bind(item)
             });
+        }
+        if (options.type === 'button') {
+            return EditRenderer.renderButton(container, {
+                callback: options.events?.click?.bind(item),
+                className: options.className || '',
+                style: options.style || {},
+                text: langKey ?
+                    this.menu.editMode.lang[langKey] :
+                    (options.text || '')
+            });
+
         }
     }
 
@@ -170,28 +181,60 @@ class MenuItem {
 }
 
 namespace MenuItem {
-    export interface Options {
-        langKey?: string;
-        nestedOptions?: Record<string, Options>;
-        callback?: () => void;
-        click?: Function;
-        collapsable?: boolean;
+    export interface ItemOptions {
         id: string;
         name?: string;
-        type?: 'icon'|'toggle'|'text';
-        text?: string;
-        getValue?: (item: MenuItem) => string | number | boolean;
+        type: 'icon'|'toggle'|'text'|'button';
         className?: string;
-        events?: Record<Event['type'], Function>;
-        mousedown?: Function;
-        onchange?: Function;
-        item?: MenuItem;
+        text?: string;
+        langKey?: string;
         style?: CSSJSONObject;
-        icon?: string;
-        isActive?: boolean;
-        title?: string;
-        value?: string;
+        events?: {
+            update?: Function;
+        }
     }
+
+    export interface ButtonOptions extends ItemOptions {
+        type: 'button';
+        text?: string;
+        events?: {
+            update?: Function;
+            click?: Function;
+        }
+    }
+
+    export interface IconOptions extends ItemOptions {
+        type: 'icon';
+        icon: string;
+        events: {
+            update?: Function;
+            onmousedown?: Function;
+            click?: Function;
+        }
+
+    }
+
+    export interface ToggleOptions extends ItemOptions {
+        type: 'toggle';
+        getValue?: (item: MenuItem) => boolean;
+        events: {
+            update?: Function;
+            click: Function;
+        }
+
+    }
+
+    export interface TextOptions extends ItemOptions {
+        type: 'text';
+    }
+
+    export type Type = 'icon'|'toggle'|'text'|'button';
+
+    export type Options =
+        | ButtonOptions
+        | IconOptions
+        | ToggleOptions
+        | TextOptions;
 }
 
 export default MenuItem;

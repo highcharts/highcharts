@@ -17,7 +17,7 @@
 import EditGlobals from '../EditGlobals.js';
 import MenuItem from './MenuItem.js';
 
-const MenuItemBindings: Record<string, Partial<MenuItem.Options>> = {
+const MenuItemBindings: Record<string, MenuItem.Options> = {
     /* *
     *
     *  Context menu
@@ -35,7 +35,7 @@ const MenuItemBindings: Record<string, Partial<MenuItem.Options>> = {
     // },
     viewFullscreen: {
         id: 'viewFullscreen',
-        type: 'text',
+        type: 'button',
         langKey: 'viewFullscreen',
         events: {
             click: function (this: MenuItem, e: PointerEvent): void {

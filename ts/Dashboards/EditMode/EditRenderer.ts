@@ -700,7 +700,7 @@ function renderButton(
                 (options.className || '')
             ),
             onclick: options.callback,
-            textContent: options.value
+            textContent: options.text
         }, options.style || {},
         parentElement
     );
@@ -756,7 +756,7 @@ export default EditRenderer;
 
 export interface ButtonOptions {
     callback?: Function;
-    value?: string;
+    text?: string;
     className?: string;
     icon?: string;
     isDisabled?: boolean;
