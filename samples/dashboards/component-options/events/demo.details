@@ -1,5 +1,5 @@
 ---
- name: Dashboard Title Demo 
+ name: Dashboard event demo 
  authors:
    - Mustapha Mekhatria
  js_wrap: b
