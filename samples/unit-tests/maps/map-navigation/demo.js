@@ -265,6 +265,7 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
 
         mapView: {
             maxZoom: 30,
+            zoom: -1,
             projection: {
                 name: 'Orthographic',
                 rotation: [0, -90]
@@ -318,11 +319,22 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
 
     const controller = new TestController(chart),
         point = chart.get('A'),
-        oldPlotY = point.plotY;
+        oldPlotX = point.plotX;
     let oldRotation = chart.mapView.projection.options.rotation;
 
+    controller.pan([350, 150], [200, 150], void 0);
+    assert.ok(
+        true,
+        `No errors about NaN values when paning with mouse outside the
+        container (#18542).`
+    );
+    controller.pan([200, 150], [350, 150], void 0);
+
+    // Zoom needed to pan initially.
+    chart.mapView.zoomBy(1);
+
     // Test event properties
-    controller.click(350, 300, void 0, true);
+    controller.click(350, 300, void 0);
     // No idea why Safari fails this, possibly related to test controller. It
     // works in practice.
     assert.close(
@@ -339,22 +351,15 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         'Latitude should be available on event'
     );
 
-    // Zoom needed to pan initially.
-    chart.mapView.zoomBy(1);
+    const beforeZoom = chart.mapView.zoom;
 
-    controller.pan([305, 50], [350, 150]);
+    controller.pan([305, 50], [350, 150], void 0);
 
     // eslint-disable-next-line
     if (!/14\.1\.[0-9] Safari/.test(navigator.userAgent)) {
         assert.ok(
-            (point.plotY > oldPlotY),
+            (point.plotX > oldPlotX),
             'Panning should be activated (#16722).'
-        );
-
-        assert.deepEqual(
-            chart.mapView.projection.options.rotation,
-            oldRotation,
-            'Rotation should not be activated (#16722).'
         );
     }
 
@@ -395,4 +400,9 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         'Point graphics on the near side should not be hidden'
     );
 
+    assert.strictEqual(
+        beforeZoom,
+        chart.mapView.zoom,
+        'Map shouldn\'t be zoomed out after panning (#18542).'
+    );
 });

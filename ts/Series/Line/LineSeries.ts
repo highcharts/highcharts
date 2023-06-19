@@ -60,7 +60,7 @@ class LineSeries extends Series {
          * @optionparent plotOptions.series
          */
         {
-            // nothing here yet
+            legendSymbol: 'lineMarker'
         } as PlotOptionsOf<LineSeries>
     );
 
@@ -238,7 +238,8 @@ class LineSeries extends Series {
 
             const plotX = point.plotX,
                 plotY = point.plotY,
-                lastPoint = (points as any)[i - 1];
+                lastPoint = (points as any)[i - 1],
+                isNull = point.isNull || typeof plotY !== 'number';
             // the path to this point from the previous
             let pathToPoint: SVGPath;
 
@@ -250,11 +251,11 @@ class LineSeries extends Series {
             }
 
             // Line series, nullsAsZeroes is not handled
-            if (point.isNull && !defined(nullsAsZeroes) && i > 0) {
+            if (isNull && !defined(nullsAsZeroes) && i > 0) {
                 gap = !options.connectNulls;
 
             // Area series, nullsAsZeroes is set
-            } else if (point.isNull && !nullsAsZeroes) {
+            } else if (isNull && !nullsAsZeroes) {
                 gap = true;
 
             } else {
@@ -547,6 +548,9 @@ export default LineSeries;
  * change the color of the graphic. In non-styled mode, the color is set by the
  * `fill` attribute, so the change in class name won't have a visual effect by
  * default.
+ *
+ * Since v11, CSS variables on the form `--highcharts-color-{n}` make changing
+ * the color scheme very convenient.
  *
  * @sample    {highcharts} highcharts/css/colorindex/
  *            Series and point color index

@@ -102,7 +102,7 @@ function uploadFilesTest(params) {
 function uploadAPIDocs() {
     const {
         getFilesInFolder
-    } = require('highcharts-assembler/src/build.js');
+    } = require('@highcharts/highcharts-assembler/src/build.js');
     const colors = require('colors');
     const isString = x => typeof x === 'string';
     const {

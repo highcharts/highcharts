@@ -117,18 +117,18 @@ const mergeCollections = <
  * The map view handles zooming and centering on the map, and various
  * client-side projection capabilities.
  *
- * On a chart instance, the map view is available as `chart.mapView`.
+ * On a chart instance of `MapChart`, the map view is available as `chart.mapView`.
  *
  * @class
  * @name Highcharts.MapView
  *
- * @param {Highcharts.Chart} chart
- *        The Chart instance
+ * @param {Highcharts.MapChart} chart
+ *        The MapChart instance
  * @param {Highcharts.MapViewOptions} options
  *        MapView options
  */
 class MapView {
-
+    public allowTransformAnimation: boolean = true;
     public center: LonLatArray;
     public fitToGeometryCache?: MapBounds;
     public geoMap?: GeoJSON;
@@ -141,6 +141,8 @@ class MapView {
     public projection: Projection;
     public userOptions: DeepPartial<MapViewOptions>;
     public zoom: number;
+    recommendedProjection: DeepPartial<ProjectionOptions>|undefined;
+    recommendedMapView: DeepPartial<MapViewOptions>|undefined;
 
     public chart: Chart;
 
@@ -213,7 +215,6 @@ class MapView {
         chart: Chart,
         options?: DeepPartial<MapViewOptions>
     ) {
-
         let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
         let recommendedProjection: DeepPartial<ProjectionOptions>|undefined;
         if (!(this instanceof MapViewInset)) {
@@ -233,7 +234,8 @@ class MapView {
                 if (geoMap) {
                     // Use the first geo map as main
                     if (!recommendedMapView) {
-                        recommendedMapView = geoMap['hc-recommended-mapview'];
+                        recommendedMapView =
+                            geoMap['hc-recommended-mapview'];
                     }
 
                     // Combine the bounding boxes of all loaded maps
@@ -250,30 +252,46 @@ class MapView {
                 MapView.compositeBounds(allGeoBounds)
             );
 
-            // Provide a best-guess recommended projection if not set in the map
-            // or in user options
-            if (geoBounds) {
+            // Provide a best-guess recommended projection if not set in
+            // the map or in user options
 
-                const { x1, y1, x2, y2 } = geoBounds;
-                recommendedProjection = (x2 - x1 > 180 && y2 - y1 > 90) ?
-                    // Wide angle, go for the world view
-                    {
-                        name: 'EqualEarth'
-                    } :
-                    // Narrower angle, use a projection better suited for local
-                    // view
-                    {
-                        name: 'LambertConformalConic',
-                        parallels: [y1, y2],
-                        rotation: [-(x1 + x2) / 2]
-                    };
-            }
-
+            fireEvent(
+                chart,
+                'beforeMapViewInit',
+                {
+                    geoBounds
+                },
+                function (): void {
+                    if (geoBounds) {
+                        const { x1, y1, x2, y2 } = geoBounds;
+                        recommendedProjection =
+                            (x2 - x1 > 180 && y2 - y1 > 90) ?
+                                // Wide angle, go for the world view
+                                {
+                                    name: 'EqualEarth'
+                                } :
+                                // Narrower angle, use a projection better
+                                // suited for local view
+                                {
+                                    name: 'LambertConformalConic',
+                                    parallels: [y1, y2],
+                                    rotation: [-(x1 + x2) / 2]
+                                };
+                    }
+                }
+            );
             // Register the main geo map (from options.chart.map) if set
             this.geoMap = geoMaps[0];
         }
 
         this.userOptions = options || {};
+
+        if (
+            chart.options.mapView &&
+            chart.options.mapView.recommendedMapView
+        ) {
+            recommendedMapView = chart.options.mapView.recommendedMapView;
+        }
 
         const o = merge(
             defaultOptions,
@@ -312,6 +330,7 @@ class MapView {
          * @type {number}
          */
         this.zoom = o.zoom || 0;
+        this.minZoom = o.minZoom;
 
         // Create the insets
         this.createInsets();
@@ -415,6 +434,10 @@ class MapView {
 
     public getGeoMap(map?: MapDataType): GeoJSON|undefined {
         if (isString(map)) {
+            if (maps[map] && maps[map].type === 'Topology') {
+                return topo2geo(maps[map]);
+            }
+
             return maps[map];
         }
         if (isObject(map, true)) {
@@ -749,48 +772,56 @@ class MapView {
                 boundsCenterProjected = [
                     (bounds.x1 + bounds.x2) / 2,
                     (bounds.y1 + bounds.y2) / 2
-                ];
+                ],
+                isDrilling = this.chart.series.some(
+                    (series): boolean | undefined =>
+                        series.isDrilling);
 
+            if (!isDrilling) {
+                // Constrain to data bounds
 
-            // Constrain to data bounds
+                // Pixel coordinate system is reversed vs projected
+                const x1 = bottomLeft.x,
+                    y1 = topRight.y,
+                    x2 = topRight.x,
+                    y2 = bottomLeft.y;
 
-            // Pixel coordinate system is reversed vs projected
-            const x1 = bottomLeft.x,
-                y1 = topRight.y,
-                x2 = topRight.x,
-                y2 = bottomLeft.y;
+                // Map smaller than plot area, center it
+                if (x2 - x1 < width) {
+                    projectedCenter[0] = boundsCenterProjected[0];
 
-            // Map smaller than plot area, center it
-            if (x2 - x1 < width) {
-                projectedCenter[0] = boundsCenterProjected[0];
+                // Off west
+                } else if (x1 < x && x2 < x + width) {
+                    // Adjust eastwards
+                    projectedCenter[0] +=
+                        Math.max(x1 - x, x2 - width - x) / scale;
 
-            // Off west
-            } else if (x1 < x && x2 < x + width) {
-                // Adjust eastwards
-                projectedCenter[0] += Math.max(x1 - x, x2 - width - x) / scale;
+                // Off east
+                } else if (x2 > x + width && x1 > x) {
+                    // Adjust westwards
+                    projectedCenter[0] +=
+                        Math.min(x2 - width - x, x1 - x) / scale;
+                }
 
-            // Off east
-            } else if (x2 > x + width && x1 > x) {
-                // Adjust westwards
-                projectedCenter[0] += Math.min(x2 - width - x, x1 - x) / scale;
+                // Map smaller than plot area, center it
+                if (y2 - y1 < height) {
+                    projectedCenter[1] = boundsCenterProjected[1];
+
+                // Off north
+                } else if (y1 < y && y2 < y + height) {
+                    // Adjust southwards
+                    projectedCenter[1] -=
+                        Math.max(y1 - y, y2 - height - y) / scale;
+
+                // Off south
+                } else if (y2 > y + height && y1 > y) {
+                    // Adjust northwards
+                    projectedCenter[1] -=
+                        Math.min(y2 - height - y, y1 - y) / scale;
+                }
+
+                this.center = this.projection.inverse(projectedCenter);
             }
-
-            // Map smaller than plot area, center it
-            if (y2 - y1 < height) {
-                projectedCenter[1] = boundsCenterProjected[1];
-
-            // Off north
-            } else if (y1 < y && y2 < y + height) {
-                // Adjust southwards
-                projectedCenter[1] -= Math.max(y1 - y, y2 - height - y) / scale;
-
-            // Off south
-            } else if (y2 > y + height && y1 > y) {
-                // Adjust northwards
-                projectedCenter[1] -= Math.min(y2 - height - y, y1 - y) / scale;
-            }
-
-            this.center = this.projection.inverse(projectedCenter);
 
 
             this.insets.forEach((inset): void => {
@@ -926,7 +957,7 @@ class MapView {
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
-                    (this.minZoom || Infinity) < worldZoom * 1.1
+                    (this.minZoom || Infinity) < worldZoom * 1.3
                 ) {
 
                     // Empirical ratio where the globe rotates roughly the same
@@ -952,6 +983,7 @@ class MapView {
                                 rotation: [-lon, -lat]
                             }
                         }, false);
+                        this.fitToBounds(void 0, void 0, false);
                         this.zoom = zoom;
                         chart.redraw(false);
 
@@ -1098,7 +1130,15 @@ class MapView {
             }
 
             // Fit to natural bounds if center/zoom are not explicitly given
-            if (!options.center && !isNumber(options.zoom)) {
+            if (
+                !options.center &&
+                // do not fire fitToBounds if user don't want to set zoom
+                Object.hasOwnProperty.call(
+                    options,
+                    'zoom'
+                ) &&
+                !isNumber(options.zoom)
+            ) {
                 this.fitToBounds(void 0, void 0, false);
             }
         }
@@ -1371,6 +1411,13 @@ class MapViewInset extends MapView {
 
 // Initialize the MapView after initialization, but before firstRender
 addEvent(MapChart, 'afterInit', function (): void {
+    /**
+     * The map view handles zooming and centering on the map, and various
+     * client-side projection capabilities.
+     *
+     * @name Highcharts.MapChart#mapView
+     * @type {Highcharts.MapView|undefined}
+     */
     this.mapView = new MapView(this, this.options.mapView);
 });
 

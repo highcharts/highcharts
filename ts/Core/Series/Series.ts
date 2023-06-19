@@ -43,11 +43,13 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from './SeriesType';
+import type StackItem from '../Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
+import type { LegendSymbolType } from './SeriesOptions';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -64,6 +66,7 @@ const {
     svg,
     win
 } = H;
+import type Legend from '../Legend/Legend';
 import LegendSymbol from '../Legend/LegendSymbol.js';
 import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
@@ -77,15 +80,17 @@ const {
     arrayMax,
     arrayMin,
     clamp,
-    cleanRecursively,
     correctFloat,
     defined,
+    diffObjects,
     erase,
     error,
     extend,
     find,
     fireEvent,
+    getClosestDistance,
     getNestedProperty,
+    insertItem,
     isArray,
     isNumber,
     isString,
@@ -352,6 +357,8 @@ class Series {
 
     public symbol?: SymbolKey;
 
+    public symbolIndex?: number;
+
     public tooltipOptions: TooltipOptions = void 0 as any;
 
     public tracker?: SVGElement;
@@ -501,7 +508,7 @@ class Series {
 
         // Insert the series and re-order all series above the insertion
         // point.
-        chart.orderSeries(this.insert(chartSeries));
+        chart.orderItems('series', insertItem(this, chartSeries));
 
         // Set options for series with sorting and set data later.
         if (options.dataSorting && options.dataSorting.enabled) {
@@ -531,47 +538,6 @@ class Series {
     }
 
     /**
-     * Insert the series in a collection with other series, either the chart
-     * series or yAxis series, in the correct order according to the index
-     * option. Used internally when adding series.
-     *
-     * @private
-     * @function Highcharts.Series#insert
-     * @param {Array<Highcharts.Series>} collection
-     *        A collection of series, like `chart.series` or `xAxis.series`.
-     * @return {number}
-     *         The index of the series in the collection.
-     */
-    public insert(collection: Array<Series>): number {
-        const indexOption = this.options.index;
-        let i: any;
-
-        // Insert by index option
-        if (isNumber(indexOption)) {
-            i = collection.length;
-            while (i--) {
-                // Loop down until the interted element has higher index
-                if ((indexOption as any) >=
-                        pick(collection[i].options.index, collection[i]._i)
-                ) {
-                    collection.splice(i + 1, 0, this);
-                    break;
-                }
-            }
-            if (i === -1) {
-                collection.unshift(this);
-            }
-            i = i + 1;
-
-
-        // Or just push it to the end
-        } else {
-            collection.push(this);
-        }
-        return pick(i, collection.length - 1);
-    }
-
-    /**
      * Set the xAxis and yAxis properties of cartesian series, and register
      * the series in the `axis.series` array.
      *
@@ -587,35 +553,25 @@ class Series {
         fireEvent(this, 'bindAxes', null as any, function (): void {
 
             // repeat for xAxis and yAxis
-            (series.axisTypes || []).forEach(function (AXIS: string): void {
-                let index = 0;
-
+            (series.axisTypes || []).forEach(function (coll: string): void {
                 // loop through the chart's axis objects
-                (chart as any)[AXIS].forEach(function (axis: Axis): void {
+                (chart as any)[coll].forEach(function (axis: Axis): void {
                     axisOptions = axis.options;
 
                     // apply if the series xAxis or yAxis option mathches
                     // the number of the axis, or if undefined, use the
                     // first axis
                     if (
+                        pick((seriesOptions as any)[coll], 0) === axis.index ||
                         (
-                            (seriesOptions as any)[AXIS] === index &&
-                            !axisOptions.isInternal
-                        ) ||
-                        (
-                            typeof (seriesOptions as any)[AXIS] !==
+                            typeof (seriesOptions as any)[coll] !==
                             'undefined' &&
-                            (seriesOptions as any)[AXIS] === axisOptions.id
-                        ) ||
-                        (
-                            typeof (seriesOptions as any)[AXIS] ===
-                            'undefined' &&
-                            axisOptions.index === 0
+                            (seriesOptions as any)[coll] === axisOptions.id
                         )
                     ) {
 
                         // register this series in the axis.series lookup
-                        series.insert(axis.series);
+                        insertItem(series, axis.series);
 
                         // set this series.xAxis or series.yAxis reference
                         /**
@@ -632,20 +588,16 @@ class Series {
                          * @name Highcharts.Series#yAxis
                          * @type {Highcharts.Axis}
                          */
-                        (series as any)[AXIS] = axis;
+                        (series as any)[coll] = axis;
 
                         // mark dirty for redraw
                         axis.isDirty = true;
                     }
-
-                    if (!axisOptions.isInternal) {
-                        index++;
-                    }
                 });
 
                 // The series needs an X and an Y axis
-                if (!(series as any)[AXIS] &&
-                    series.optionalAxis !== AXIS
+                if (!(series as any)[coll] &&
+                    series.optionalAxis !== coll
                 ) {
                     error(18, true, chart);
                 }
@@ -668,17 +620,16 @@ class Series {
      */
     public updateParallelArrays(
         point: Point,
-        i: (number|string)
+        i: (number|string),
+        iArgs?: Array<any>
     ): void {
         const series = point.series,
-            args = arguments,
             fn = isNumber(i) ?
                 // Insert the value in the given position
                 function (key: string): void {
                     const val = key === 'y' && series.toYData ?
                         series.toYData(point) :
                         (point as any)[key];
-
                     (series as any)[key + 'Data'][i] = val;
                 } :
                 // Apply the method specified in i with the following
@@ -686,7 +637,7 @@ class Series {
                 function (key: string): void {
                     (Array.prototype as any)[i].apply(
                         (series as any)[key + 'Data'],
-                        Array.prototype.slice.call(args, 2)
+                        iArgs
                     );
                 };
 
@@ -830,7 +781,12 @@ class Series {
         const typeOptions = (e.plotOptions as any)[this.type],
             userPlotOptions = (
                 userOptions.plotOptions || {} as SeriesTypePlotOptions
-            );
+            ),
+            userPlotOptionsSeries = userPlotOptions.series || {},
+            defaultPlotOptionsType = (
+                defaultOptions.plotOptions[this.type] || {}
+            ),
+            userPlotOptionsType = userPlotOptions[this.type] || {};
 
         // use copy to prevent undetected changes (#9762)
         /**
@@ -842,11 +798,10 @@ class Series {
 
         const options: SeriesTypeOptions = merge(
             typeOptions,
-            (plotOptions as any).series,
+            plotOptions.series,
             // #3881, chart instance plotOptions[type] should trump
             // plotOptions.series
-            userOptions.plotOptions &&
-            (userOptions.plotOptions as any)[this.type],
+            userPlotOptionsType,
             seriesUserOptions
         );
 
@@ -858,23 +813,20 @@ class Series {
         // (7)this series options
         this.tooltipOptions = merge(
             defaultOptions.tooltip, // 1
-            (defaultOptions.plotOptions as any).series &&
-                (defaultOptions.plotOptions as any).series.tooltip, // 2
-            (defaultOptions.plotOptions as any)[this.type].tooltip, // 3
-            (chartOptions.tooltip as any).userOptions, // 4
-            (plotOptions as any).series &&
-            (plotOptions as any).series.tooltip, // 5
-            (plotOptions as any)[this.type].tooltip, // 6
-            (seriesUserOptions.tooltip as any) // 7
-        ) as any;
+            defaultOptions.plotOptions.series?.tooltip, // 2
+            defaultPlotOptionsType?.tooltip, // 3
+            chart.userOptions.tooltip, // 4
+            userPlotOptions.series?.tooltip, // 5
+            userPlotOptionsType.tooltip, // 6
+            seriesUserOptions.tooltip // 7
+        );
 
         // When shared tooltip, stickyTracking is true by default,
         // unless user says otherwise.
         this.stickyTracking = pick(
             seriesUserOptions.stickyTracking,
-            (userPlotOptions as any)[this.type] &&
-            (userPlotOptions as any)[this.type].stickyTracking,
-            userPlotOptions.series && userPlotOptions.series.stickyTracking,
+            userPlotOptionsType.stickyTracking,
+            userPlotOptionsSeries.stickyTracking,
             (
                 this.tooltipOptions.shared && !this.noSharedTooltip ?
                     true :
@@ -944,38 +896,38 @@ class Series {
      * @function Highcharts.Series#getCyclic
      */
     public getCyclic(
-        prop: string,
+        prop: 'color'|'symbol',
         value?: any,
         defaults?: AnyRecord
     ): void {
         const chart = this.chart,
-            userOptions = this.userOptions,
-            indexName = prop + 'Index',
-            counterName = prop + 'Counter',
-            len = defaults ? defaults.length : pick(
-                (chart.options.chart as any)[prop + 'Count'],
-                (chart as any)[prop + 'Count']
+            indexName: 'colorIndex'|'symbolIndex' = `${prop}Index`,
+            counterName: 'colorCounter'|'symbolCounter' = `${prop}Counter`,
+            len = (
+                // Symbol count
+                defaults?.length ||
+                // Color count
+                chart.options.chart.colorCount
             );
-        let i,
-            setting;
+        let i: number|undefined,
+            setting: number|undefined;
 
         if (!value) {
-            // Pick up either the colorIndex option, or the _colorIndex
+            // Pick up either the colorIndex option, or the series.colorIndex
             // after Series.update()
             setting = pick(
-                (userOptions as any)[indexName],
-                (userOptions as any)['_' + indexName]
+                prop === 'color' ? this.options.colorIndex : void 0,
+                this[indexName]
             );
             if (defined(setting)) { // after Series.update()
                 i = setting;
             } else {
                 // #6138
                 if (!chart.series.length) {
-                    (chart as any)[counterName] = 0;
+                    chart[counterName] = 0;
                 }
-                (userOptions as any)['_' + indexName] = i =
-                    (chart as any)[counterName] % len;
-                (chart as any)[counterName] += 1;
+                i = chart[counterName] % len;
+                chart[counterName] += 1;
             }
             if (defaults) {
                 value = defaults[i];
@@ -983,9 +935,9 @@ class Series {
         }
         // Set the colorIndex
         if (typeof i !== 'undefined') {
-            (this as any)[indexName] = i;
+            this[indexName] = i;
         }
-        (this as any)[prop] = value;
+        this[prop] = value;
     }
 
     /**
@@ -1246,7 +1198,7 @@ class Series {
             data.forEach(function (point, i): void {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
-                if (point !== oldData[i].y && (oldData[i].update)) {
+                if (point !== oldData[i].y && !oldData[i].destroyed) {
                     oldData[i].update(point, false, null as any, false);
                 }
             });
@@ -1472,15 +1424,12 @@ class Series {
                 }
             } else {
                 for (i = 0; i < dataLength; i++) {
-                    // stray commas in oldIE:
-                    if (typeof data[i] !== 'undefined') {
-                        pt = { series: series };
-                        series.pointClass.prototype.applyOptions.apply(
-                            pt,
-                            [data[i]]
-                        );
-                        series.updateParallelArrays(pt as any, i);
-                    }
+                    pt = { series: series };
+                    series.pointClass.prototype.applyOptions.apply(
+                        pt,
+                        [data[i]]
+                    );
+                    series.updateParallelArrays(pt as any, i);
                 }
             }
 
@@ -1496,9 +1445,7 @@ class Series {
             // destroy old points
             i = oldDataLength;
             while (i--) {
-                if (oldData[i] && (oldData[i].destroy)) {
-                    oldData[i].destroy();
-                }
+                oldData[i]?.destroy();
             }
 
             // reset minRange (#878)
@@ -1624,15 +1571,11 @@ class Series {
                 forceExtremesFromAll ||
                 series.getExtremesFromAll ||
                 options.getExtremesFromAll, // #4599
-            isCartesian = series.isCartesian,
-            val2lin = xAxis && xAxis.val2lin,
-            isLog = !!(xAxis && xAxis.logarithmic);
+            logarithmic = xAxis?.logarithmic,
+            isCartesian = series.isCartesian;
         let croppedData: Series.CropDataObject,
             cropped,
             cropStart = 0,
-            distance,
-            closestPointRange,
-            i, // loop variable
             xExtremes,
             min,
             max,
@@ -1641,7 +1584,6 @@ class Series {
             processedYData: (
                 Array<(number|null)>|Array<Array<(number|null)>>
             ) = (series.yData as any),
-            throwOnUnsorted = series.requireSorting,
             updatingNames = false;
         const dataLength = (processedXData as any).length;
 
@@ -1693,34 +1635,23 @@ class Series {
 
 
         // Find the closest distance between processed points
-        i = (processedXData as any).length || 1;
-        while (--i) {
-            distance = (
-                isLog ?
-                    (val2lin((processedXData as any)[i]) -
-                    val2lin((processedXData as any)[i - 1])) :
-                    ((processedXData as any)[i] -
-                    (processedXData as any)[i - 1])
-            );
+        const closestPointRange = getClosestDistance(
+            [
+                logarithmic ?
+                    processedXData.map(logarithmic.log2lin) :
+                    processedXData
+            ],
 
-            if (distance > 0 &&
-                (
-                    typeof closestPointRange === 'undefined' ||
-                    distance < closestPointRange
-                )
-            ) {
-                closestPointRange = distance;
-
-            // Unsorted data is not supported by the line tooltip, as well
-            // as data grouping and navigation in Stock charts (#725) and
-            // width calculation of columns (#1900).
-            // Avoid warning during the premature processing pass in
-            // updateNames (#16104).
-            } else if (distance < 0 && throwOnUnsorted && !updatingNames) {
-                error(15, false, series.chart);
-                throwOnUnsorted = false; // Only once
-            }
-        }
+            // Unsorted data is not supported by the line tooltip, as well as
+            // data grouping and navigation in Stock charts (#725) and width
+            // calculation of columns (#1900). Avoid warning during the
+            // premature processing pass in updateNames (#16104).
+            (): false|void => (
+                series.requireSorting &&
+                !updatingNames &&
+                error(15, false, series.chart)
+            )
+        );
 
         return {
             xData: processedXData,
@@ -2167,8 +2098,7 @@ class Series {
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
             threshold = options.threshold,
-            stackThreshold = options.startFromThreshold ? threshold : 0,
-            zoneAxis = this.zoneAxis || 'y';
+            stackThreshold = options.startFromThreshold ? threshold : 0;
         let i,
             plotX,
             lastPlotX,
@@ -2189,11 +2119,11 @@ class Series {
         for (i = 0; i < dataLength; i++) {
             const point = points[i],
                 xValue = point.x;
-            let pointStack,
+            let stackItem: StackItem|undefined,
                 stackValues: (Array<number>|undefined),
                 yValue = point.y,
-                yBottom = point.low;
-            const stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(
+                lowValue = point.low;
+            const stacks = stacking && yAxis.stacking?.stacks[(
                 series.negStacks &&
                 (yValue as any) <
                 (stackThreshold ? 0 : (threshold as any)) ?
@@ -2201,15 +2131,9 @@ class Series {
                     ''
             ) + series.stackKey];
 
-            if (
-                yAxis.positiveValuesOnly &&
-                !yAxis.validatePositiveValue(yValue) ||
-                xAxis.positiveValuesOnly &&
-                !xAxis.validatePositiveValue(xValue)
-            ) {
-                point.isNull = true;
-            }
-
+            plotX = xAxis.translate( // #3923
+                xValue, false, false, false, true, pointPlacement
+            );
             /**
              * The translated X value for the point in terms of pixels. Relative
              * to the X axis position if the series has one, otherwise relative
@@ -2218,24 +2142,15 @@ class Series {
              * @name Highcharts.Point#plotX
              * @type {number|undefined}
              */
-            point.plotX = plotX = correctFloat( // #5236
-                // Get the plotX translation
-                limitedRange((xAxis.translate as any)( // #3923
-                    xValue,
-                    0,
-                    0,
-                    0,
-                    1,
-                    pointPlacement,
-                    this.type === 'flags'
-                )) // #3923
-            );
+            point.plotX = isNumber(plotX) ? correctFloat( // #5236
+                limitedRange(plotX) // #3923
+            ) : void 0;
 
             // Calculate the bottom y value for stacked series
             if (stacking &&
                 series.visible &&
-                stack &&
-                stack[xValue]
+                stacks &&
+                stacks[xValue]
             ) {
                 stackIndicator = series.getStackIndicator(
                     stackIndicator,
@@ -2244,18 +2159,18 @@ class Series {
                 );
 
                 if (!point.isNull && stackIndicator.key) {
-                    pointStack = stack[xValue];
-                    stackValues = pointStack.points[stackIndicator.key];
+                    stackItem = stacks[xValue];
+                    stackValues = stackItem.points[stackIndicator.key];
                 }
 
-                if (pointStack && isArray(stackValues)) {
-                    yBottom = stackValues[0];
+                if (stackItem && isArray(stackValues)) {
+                    lowValue = stackValues[0];
                     yValue = stackValues[1];
 
-                    if (yBottom === stackThreshold &&
-                        stackIndicator.key === stack[xValue].base
+                    if (lowValue === stackThreshold &&
+                        stackIndicator.key === stacks[xValue].base
                     ) {
-                        yBottom = pick(
+                        lowValue = pick(
                             isNumber(threshold) ? threshold : yAxis.min
                         );
                     }
@@ -2263,18 +2178,16 @@ class Series {
                     // #1200, #1232
                     if (
                         yAxis.positiveValuesOnly &&
-                        defined(yBottom) &&
-                        yBottom <= 0
+                        defined(lowValue) &&
+                        lowValue <= 0
                     ) {
-                        yBottom = void 0;
+                        lowValue = void 0;
                     }
 
-                    point.total = point.stackTotal = pick(pointStack.total);
-                    point.percentage = defined(point.y) && pointStack.total ?
-                        (point.y / pointStack.total * 100) : void 0;
+                    point.total = point.stackTotal = pick(stackItem.total);
+                    point.percentage = defined(point.y) && stackItem.total ?
+                        (point.y / stackItem.total * 100) : void 0;
                     point.stackY = yValue;
-
-                    // Place the stack label
 
                     // in case of variwide series (where widths of points are
                     // different in most cases), stack labels are positioned
@@ -2282,7 +2195,7 @@ class Series {
                     // labels are correctly positioned later, at the end of the
                     // variwide's translate function (#10962)
                     if (!(series as any).irregularWidths) {
-                        pointStack.setOffset(
+                        stackItem.setOffset(
                             series.pointXOffset || 0,
                             series.barW || 0,
                             void 0,
@@ -2296,10 +2209,10 @@ class Series {
             }
 
             // Set translated yBottom or remove it
-            point.yBottom = defined(yBottom) ?
-                limitedRange(yAxis.translate(
-                    (yBottom as any), 0 as any, 1 as any, 0 as any, 1 as any
-                )) :
+            point.yBottom = defined(lowValue) ?
+                limitedRange(
+                    yAxis.translate(lowValue, false, true, false, true)
+                ) :
                 void 0;
 
             // General hook, used for Highcharts Stock compare and cumulative
@@ -2307,47 +2220,38 @@ class Series {
                 yValue = series.dataModify.modifyValue(yValue, i);
             }
 
-            // Set the the plotY value, reset it for redraws
-            // #3201
-            point.plotY = void 0;
-            if (isNumber(yValue)) {
-                const translated = yAxis.translate(
-                    yValue, false, true, false, true
-                );
-                if (typeof translated !== 'undefined') {
-                    /**
-                     * The translated Y value for the point in terms of pixels.
-                     * Relative to the Y axis position if the series has one,
-                     * otherwise relative to the plot area. Depending on the
-                     * series type this value might not be defined.
-                     * @name Highcharts.Point#plotY
-                     * @type {number|undefined}
-                     */
-                    point.plotY = limitedRange(translated);
-                }
+            // Set the the plotY value, reset it for redraws #3201, #18422
+            let plotY: number|undefined;
+            if (isNumber(yValue) && point.plotX !== void 0) {
+                plotY = yAxis.translate(yValue, false, true, false, true);
+                plotY = isNumber(plotY) ? limitedRange(plotY) : void 0;
             }
+            /**
+             * The translated Y value for the point in terms of pixels. Relative
+             * to the Y axis position if the series has one, otherwise relative
+             * to the plot area. Depending on the series type this value might
+             * not be defined.
+             * @name Highcharts.Point#plotY
+             * @type {number|undefined}
+             */
+            point.plotY = plotY;
 
             point.isInside = this.isPointInside(point);
 
             // Set client related positions for mouse tracking
             point.clientX = dynamicallyPlaced ?
                 correctFloat(xAxis.translate(
-                    xValue as any,
-                    0 as any,
-                    0 as any,
-                    0 as any,
-                    1 as any,
+                    xValue,
+                    false,
+                    false,
+                    false,
+                    true,
                     pointPlacement
                 )) :
                 plotX; // #1514, #5383, #5518
 
-            // Negative points. For bubble charts, this means negative z
-            // values (#9728)
-            point.negative = (point as any)[zoneAxis] < (
-                (options as any)[zoneAxis + 'Threshold'] ||
-                threshold ||
-                0
-            );
+            // Negative points #19028
+            point.negative = (point.y || 0) < (threshold || 0);
 
             // some API data
             point.category = pick(
@@ -2406,15 +2310,22 @@ class Series {
         // #3916, #5029, #5085
         return (points || this.points || []).filter(
             function (point: Point): boolean {
-                if (insideOnly && !chart.isInsidePlot(
-                    point.plotX as any,
-                    point.plotY as any,
-                    { inverted: chart.inverted }
-                )) {
+                const { plotX, plotY } = point,
+                    // Undefined plotY is treated as null when negative values
+                    // in log axis (#18422)
+                    asNull = !allowNull && (point.isNull || !isNumber(plotY));
+                if (
+                    asNull || (
+                        insideOnly && !chart.isInsidePlot(
+                            plotX as any,
+                            plotY as any,
+                            { inverted: chart.inverted }
+                        )
+                    )
+                ) {
                     return false;
                 }
-                return point.visible !== false &&
-                    (allowNull || !point.isNull);
+                return point.visible !== false;
             }
         );
     }
@@ -3043,7 +2954,7 @@ class Series {
             chart.hoverSeries = void 0;
         }
         erase(chart.series, series);
-        chart.orderSeries();
+        chart.orderItems('series');
 
         // clear all members
         objectEach(series, function (val: any, prop: string): void {
@@ -3158,30 +3069,6 @@ class Series {
                     }
                 }
 
-                // VML SUPPPORT
-                if (inverted && renderer.isVML) {
-                    if (axis.isXAxis) {
-                        clipAttr = {
-                            x: 0,
-                            y: reversed ? pxPosMin : pxPosMax,
-                            height: clipAttr.width,
-                            width: chart.chartWidth
-                        };
-                    } else {
-                        clipAttr = {
-                            x: (
-                                clipAttr.y -
-                                chart.plotLeft -
-                                chart.spacingBox.x
-                            ),
-                            y: 0,
-                            width: clipAttr.height,
-                            height: chart.chartHeight
-                        };
-                    }
-                }
-                // END OF VML SUPPORT
-
                 if (clips[i]) {
                     clips[i].animate(clipAttr);
                 } else {
@@ -3242,7 +3129,7 @@ class Series {
         const isNew = !group,
             attrs: SVGAttributes = {
                 visibility,
-                zIndex: zIndex || 0.1 // IE8 and pointer logic use this
+                zIndex: zIndex || 0.1 // Pointer logic uses this
             };
 
         // Avoid setting undefined opacity, or in styled mode
@@ -3376,9 +3263,8 @@ class Series {
             hasRendered = series.hasRendered,
             chartSeriesGroup = chart.seriesGroup,
             inverted = chart.inverted;
-        // Animation doesn't work in IE8 quirks when the group div is
-        // hidden, and looks bad in other oldIE
-        let animDuration = (!series.finishedAnimating && chart.renderer.isSVG) ?
+
+        let animDuration = (!series.finishedAnimating) ?
             animOptions.duration : 0;
 
         fireEvent(this, 'render');
@@ -3432,10 +3318,10 @@ class Series {
             series.redrawPoints();
         }
 
-        // draw the mouse tracking area
+        // Draw the mouse tracking area
         if (
             series.drawTracker &&
-            series.options.enableMouseTracking !== false
+            options.enableMouseTracking
         ) {
             series.drawTracker();
         }
@@ -3780,16 +3666,16 @@ class Series {
             snap = (chart.options.tooltip as any).snap,
             tracker = series.tracker,
             onMouseOver = function (e: PointerEvent): void {
-                if (chart.hoverSeries !== series) {
+                if (
+                    options.enableMouseTracking &&
+                    chart.hoverSeries !== series
+                ) {
                     series.onMouseOver();
                 }
             },
             /*
              * Empirical lowest possible opacities for TRACKER_FILL for an
              * element to stay invisible but clickable
-             * IE6: 0.002
-             * IE7: 0.002
-             * IE8: 0.002
              * IE9: 0.00000000001 (unlimited)
              * IE10: 0.0001 (exporting only)
              * FF: 0.00000000001 (unlimited)
@@ -3945,9 +3831,9 @@ class Series {
         }
 
         // Insert undefined item
-        (series.updateParallelArrays as any)(point, 'splice', i, 0, 0);
+        series.updateParallelArrays(point, 'splice', [i, 0, 0]);
         // Update it
-        series.updateParallelArrays(point as any, i);
+        series.updateParallelArrays(point, i);
 
         if (names && point.name) {
             names[x as any] = point.name;
@@ -3975,7 +3861,7 @@ class Series {
                 data[0].remove(false);
             } else {
                 data.shift();
-                series.updateParallelArrays(point as any, 'shift');
+                series.updateParallelArrays(point, 'shift');
 
                 (dataOptions as any).shift();
             }
@@ -4040,11 +3926,10 @@ class Series {
                 }
                 data.splice(i, 1);
                 (series.options.data as any).splice(i, 1);
-                (series.updateParallelArrays as any)(
+                series.updateParallelArrays(
                     point || { series: series },
                     'splice',
-                    i,
-                    1
+                    [i, 1]
                 );
 
                 if (point) {
@@ -4110,7 +3995,7 @@ class Series {
 
             // Redraw
             chart.isDirtyLegend = chart.isDirtyBox = true;
-            chart.linkSeries();
+            chart.linkSeries(keepEvents);
 
             if (pick(redraw, true)) {
                 chart.redraw(animation);
@@ -4157,7 +4042,7 @@ class Series {
         redraw?: boolean
     ): void {
 
-        options = cleanRecursively(options, this.userOptions);
+        options = diffObjects(options, this.userOptions);
         fireEvent(this, 'update', { options: options });
 
         const series = this,
@@ -4172,8 +4057,7 @@ class Series {
                 'group',
                 'markerGroup',
                 'dataLabelsGroup',
-                'transformGroup',
-                'shadowGroup'
+                'transformGroup'
             ],
             // Animation must be enabled when calling update before the initial
             // animation has first run. This happens when calling update
@@ -4184,8 +4068,10 @@ class Series {
         let seriesOptions: SeriesOptions,
             n,
             preserve = [
+                'colorIndex',
                 'eventOptions',
                 'navigatorSeries',
+                'symbolIndex',
                 'baseSeries'
             ],
             newType = (
@@ -4863,6 +4749,16 @@ class Series {
         return this.chart.isInsidePlot(plotX, plotY, options);
     }
 
+    /**
+     * Draws the legend symbol based on the legendSymbol user option.
+     *
+     * @private
+     */
+    public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
+        LegendSymbol[this.options.legendSymbol || 'rectangle']
+            ?.call(this, legend, item);
+    }
+
     /** eslint-enable valid-jsdoc */
 
 }
@@ -4894,7 +4790,6 @@ extend(Series.prototype, {
     colorCounter: 0,
     cropShoulder: 1,
     directTouch: false,
-    drawLegendSymbol: LegendSymbol.drawLineMarker,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
     // each point's x and y values are stored in this.xData and this.yData:

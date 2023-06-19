@@ -184,7 +184,7 @@ namespace RadialAxis {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /**
      * Circular axis around the perimeter of a polar chart.
@@ -194,7 +194,6 @@ namespace RadialAxis {
         gridLineWidth: 1, // spokes
         labels: {
             align: void 0, // auto
-            distance: 15,
             x: 0,
             y: void 0, // auto
             style: {
@@ -214,6 +213,7 @@ namespace RadialAxis {
     const defaultRadialGaugeOptions: DeepPartial<Options> = {
         labels: {
             align: 'center',
+            distance: -25,
             x: 0,
             y: void 0 // auto
         },
@@ -351,9 +351,7 @@ namespace RadialAxis {
         TickClass: typeof Tick
     ): (T&typeof AxisComposition) {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
                 'afterInit',
@@ -381,9 +379,7 @@ namespace RadialAxis {
             );
         }
 
-        if (composedClasses.indexOf(TickClass) === -1) {
-            composedClasses.push(TickClass);
-
+        if (U.pushUnique(composedMembers, TickClass)) {
             addEvent(
                 TickClass as typeof TickComposition,
                 'afterGetLabelPosition',
@@ -1199,9 +1195,8 @@ namespace RadialAxis {
             // Vertically centered
             } else if (!defined(optionsY)) {
                 optionsY = (
-                    axis.chart.renderer
-                        .fontMetrics(label.styles && label.styles.fontSize).b -
-                        labelBBox.height / 2
+                    axis.chart.renderer.fontMetrics(label).b -
+                    labelBBox.height / 2
                 );
             }
 

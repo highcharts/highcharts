@@ -6,7 +6,6 @@ Highcharts.chart('container', {
 
     legend: {
         verticalAlign: 'top',
-        y: 100,
         align: 'right'
     },
 

@@ -18,7 +18,9 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type {
+    BreadcrumbOptions
+} from '../../Extensions/Breadcrumbs/BreadcrumbsOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition';
 import type ColorType from '../../Core/Color/ColorType';
@@ -39,7 +41,6 @@ const { parse: color } = Color;
 import ColorMapComposition from '../ColorMapComposition.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -54,7 +55,7 @@ import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
 import TU from '../TreeUtilities.js';
-import Breadcrumbs from '../../Extensions/Breadcrumbs.js';
+import Breadcrumbs from '../../Extensions/Breadcrumbs/Breadcrumbs.js';
 const {
     getColor,
     getLevelOptions,
@@ -592,7 +593,9 @@ class TreemapSeries extends ScatterSeries {
                  */
                 shadow: false
             }
-        }
+        },
+
+        legendSymbol: 'rectangle'
     } as TreemapSeriesOptions);
 
     /* *
@@ -928,7 +931,7 @@ class TreemapSeries extends ScatterSeries {
     public createList(e: any): any {
         const chart = this.chart,
             breadcrumbs = chart.breadcrumbs,
-            list: Array<Breadcrumbs.BreadcrumbOptions> = [];
+            list: Array<BreadcrumbOptions> = [];
 
         if (breadcrumbs) {
 
@@ -1925,7 +1928,6 @@ interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series
     colorAttribs: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getExtremesFromAll: boolean;
     optionalAxis: string;
     parallelArrays: Array<string>;
@@ -1942,7 +1944,6 @@ extend(TreemapSeries.prototype, {
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
     colorKey: 'colorValue', // Point color option key
     directTouch: true,
-    drawLegendSymbol: LegendSymbol.drawRectangle,
     getExtremesFromAll: true,
     getSymbol: noop,
     optionalAxis: 'colorAxis',

@@ -88,6 +88,7 @@ export interface AccessibilityPointOptions {
     dateFormat?: string;
     dateFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
     describeNull: boolean;
+    descriptionFormat?: string;
     descriptionFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
     valueDecimals?: number;
     valueDescriptionFormat: string;
@@ -162,6 +163,7 @@ export interface SeriesAccessibilityKeyboardNavigationOptions {
 
 export interface SeriesAccessibilityOptions {
     description?: string;
+    descriptionFormat?: string;
     enabled?: boolean;
     exposeAsGroupOnly?: boolean;
     keyboardNavigation?: (

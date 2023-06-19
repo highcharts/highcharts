@@ -117,6 +117,7 @@ class VerticalLine extends Annotation {
             );
 
         typeOptions.connector = connector.options;
+        this.userOptions.typeOptions.point = typeOptions.point;
     }
 
     public addLabels(): void {

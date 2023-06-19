@@ -14,6 +14,8 @@
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
+import PathUtilities from '../Series/PathUtilities.js';
 import U from '../Core/Utilities.js';
 const {
     extend,
@@ -380,8 +382,13 @@ const simpleConnect = function (
     // Finally add the endSegment
     segments.push(endSegment);
 
+    const path = PathUtilities.applyRadius(
+        pathFromSegments(segments),
+        options.radius
+    );
+
     return {
-        path: pathFromSegments(segments),
+        path,
         obstacles: segments
     };
 };

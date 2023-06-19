@@ -57,6 +57,21 @@ QUnit.test('Polar chart data', function (assert) {
         ),
         '#18147: All data labels should be visible'
     );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    }, false);
+    chart.series[0].update({
+        type: 'bar'
+    });
+
+    assert.ok(
+        true,
+        `#18444: A polar chart with type "bar" and data labels should not cause
+        JavaScript error.`
+    );
 });
 QUnit.test(
     'Polar and categorized chart should not render extra alternate band.(#2248)',

@@ -1,14 +1,9 @@
 Highcharts.chart('container', {
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                var intersection = point.sets.join(', '),
-                    name = point.name,
-                    ix = point.index + 1,
-                    val = point.value;
-                return ix + '. Intersection: ' + intersection + '. ' +
-                    (point.sets.length > 1 ? name + '. ' : '') + 'Value ' + val + '.';
-            }
+            descriptionFormat: '{add index 1}. Intersection: {sets}. ' +
+                '{#if (gt sets.length 1)}{name}. {/if}' +
+                'Value {value}'
         }
     },
     series: [{

@@ -50,10 +50,18 @@ function getProperties() {
 function getHTML(path) {
     let html = fs.readFileSync(`samples/${path}/demo.html`, 'utf8');
 
-    html = html.replace(
-        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-        ''
-    );
+    html = html
+        .replace(
+            /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+            ''
+        )
+        // Google fonts mess up the calculation of bounding boxes because they
+        // load async, so sometimes they're loaded prior to screenshot,
+        // sometimes not
+        .replace(
+            /<link[a-z"=:\.\/ ]+(fonts.googleapis.com|fonts.gstatic.com)[^>]+>/gi,
+            ''
+        );
 
     return html + '\n';
 }
@@ -185,19 +193,13 @@ module.exports = function (config) {
 
     let frameworks = ['qunit'];
 
-    if (argv.oldie) {
-        frameworks = []; // Custom framework in test file
-    }
-
     // Browsers
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
         // Use karma.defaultbrowser=FirefoxHeadless to bypass WebGL problems in
         // Chrome 109
         [getProperties()['karma.defaultbrowser'] || 'ChromeHeadless'];
-    if (argv.oldie) {
-        browsers = ['Win.IE8'];
-    } else if (argv.browsers === 'all') {
+    if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
 
@@ -221,16 +223,11 @@ module.exports = function (config) {
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
 
-    // The tests to run by default
-    const defaultTests = argv.oldie ?
-        ['unit-tests/oldie/*'] :
-        ['unit-tests/*/*'];
-
     const tests = (
             argv.tests ? argv.tests.split(',') :
             (
                 argv.testsAbsolutePath ? argv.testsAbsolutePath.split(',') :
-                defaultTests
+                ['unit-tests/*/*'] // The tests to run by default
             )
         )
         .filter(path => !!path)
@@ -238,23 +235,6 @@ module.exports = function (config) {
 
     // Get the files
     let files = require('./karma-files.json');
-    if (argv.oldie) {
-        files = files.filter(f =>
-            f.indexOf('vendor/jquery') !== 0 &&
-            f.indexOf('vendor/moment') !== 0 &&
-            f.indexOf('vendor/proj4') !== 0 &&
-            f.indexOf('vendor/rgbcolor') !== 0 &&
-            f.indexOf('node_modules/lolex') !== 0 &&
-            f.indexOf('topojson-client') === -1 &&
-
-            // Complains on chart.renderer.addPattern
-            f.indexOf('code/modules/pattern-fill.src.js') !== 0 &&
-            // Uses classList extensively
-            f.indexOf('code/modules/stock-tools.src.js') !== 0
-        );
-        files.splice(0, 0, 'code/modules/oldie-polyfills.src.js');
-        files.splice(2, 0, 'code/modules/oldie.src.js');
-    }
 
     let options = {
         basePath: '../', // Root relative to this file
@@ -303,7 +283,7 @@ module.exports = function (config) {
         ],
 
         // These ones fail
-        exclude: argv.oldie ? [] : [
+        exclude: [
             // Themes alter the whole default options structure. Set up a
             // separate test suite? Or perhaps somehow decouple the options so
             // they are not mutated for later tests?
@@ -353,9 +333,6 @@ module.exports = function (config) {
 
             // Failing on Edge only
             'samples/unit-tests/pointer/members/demo.js',
-
-            // Skip the special oldie tests (which don't run QUnit)
-            'samples/unit-tests/oldie/*/demo.js',
 
             // visual tests excluded for now due to failure
             'samples/highcharts/demo/funnel3d/demo.js',
@@ -563,7 +540,7 @@ module.exports = function (config) {
         options.browserDisconnectTimeout = 30000; // default 2000
     }
 
-    if (browsers.some(browser => /^(Mac|Win)\./.test(browser)) || argv.oldie) {
+    if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
         let properties = getProperties();
 
         if (!properties['browserstack.username']) {
@@ -587,17 +564,7 @@ module.exports = function (config) {
             pollingTimeout: 5000, // to avoid rate limit errors with browserstack.
             'browserstack.timezone': argv.timezone || 'UTC'
         };
-        options.customLaunchers = argv.oldie ?
-            {
-                'Win.IE8': {
-                    base: 'BrowserStack',
-                    browser: 'ie',
-                    browser_version: '8.0',
-                    os: 'Windows',
-                    os_version: 'XP'
-                }
-            } :
-            browserStackBrowsers;
+        options.customLaunchers = browserStackBrowsers;
         options.logLevel = config.LOG_INFO;
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
@@ -611,11 +578,9 @@ module.exports = function (config) {
         options.plugins = [
             'karma-browserstack-launcher',
             'karma-sharding',
-            'karma-generic-preprocessor'
+            'karma-generic-preprocessor',
+            'karma-qunit'
         ];
-        if (!argv.oldie) {
-            options.plugins.push('karma-qunit');
-        }
 
         options.reporters = ['progress'];
 
@@ -648,7 +613,7 @@ module.exports = function (config) {
     config.set(options);
 };
 
-function createVisualTestTemplate(argv, path, js, assertion) {
+function createVisualTestTemplate(argv, samplePath, js, assertion) {
     let scriptBody = resolveJSON(js);
 
     // Don't do intervals (typically for gauge samples, add point etc)
@@ -666,7 +631,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
         '$1_animation: '
     );
 
-    let html = getHTML(path);
+    let html = getHTML(samplePath);
     let resets = [];
 
     // Reset global options, but only if necessary
@@ -682,9 +647,76 @@ function createVisualTestTemplate(argv, path, js, assertion) {
         resets.push('callbacks');
     }
 
+    // Include demo.css and its imports (highcharcts.css or theme) to be
+    // inserted into the SVG in karma-setup.js:getSVG
+    /*
+    let css = fs.readFileSync(
+        path.join(__dirname, `../samples/${samplePath}/demo.css`),
+        'utf8'
+    );
+
+    if (css) {
+        const regex = /@import ("|')([a-zA-Z:\/\.\-\?\+]+)("|');/g,
+            regexDeep = /@import ("|')([a-zA-Z:\/\.\-\?\+]+)("|');/g;
+
+        let match;
+        while (match = regex.exec(css)) {
+            let url = match[2],
+                importedCSS = '';
+
+            if (url.indexOf('https://code.highcharts.com/css/') === 0) {
+                url = url.replace(
+                    'https://code.highcharts.com/css/',
+                    '../code/css/'
+                );
+                importedCSS = fs.readFileSync(
+                    path.join(__dirname, url),
+                    'utf8'
+                );
+                // Strip deep imports like fonts inside themes
+                importedCSS = importedCSS.replace(regexDeep, '');
+            }
+            // If our own, inserts the content of the CSS, otherwise removes the
+            // @import statement
+            css = css.replace(match[0], importedCSS);
+        }
+
+        html += `<style id="demo.css">${css}</style>`;
+
+    }
+    */
+
+    // Include highcharts.css, to be inserted into the SVG in
+    // karma-setup.js:getSVG
+    if (scriptBody.indexOf('styledMode: true') !== -1) {
+        const highchartsCSS = fs.readFileSync(
+            path.join(__dirname, '../code/css/highcharts.css'),
+            'utf8'
+        );
+        html += `<style id="highcharts.css">${highchartsCSS}</style>`;
+
+        let demoCSS = fs.readFileSync(
+            path.join(__dirname, `../samples/${samplePath}/demo.css`),
+            'utf8'
+        );
+
+        if (demoCSS) {
+            demoCSS = demoCSS
+                // Remove all imported CSS because fonts make it unstable, and
+                // to avoid loading over network. We have highcharts.css
+                // already. Reconsider this if we want better visual tests for
+                // themes. An attempt was made in the commented code above, but
+                // abandoned cause time was running.
+                .replace(/@import [^;]+;/, '');
+
+            html += `<style id="demo.css">${demoCSS}</style>`;
+        }
+
+    }
+
     resets = JSON.stringify(resets);
     return `
-        QUnit.test('${path}', function (assert) {
+        QUnit.test('${samplePath}', function (assert) {
             // Apply demo.html
             document.getElementById('demo-html').innerHTML = \`${html}\`;
 

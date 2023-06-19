@@ -33,7 +33,9 @@ const {
 import initCanvasBoost from '../../Extensions/BoostCanvas.js';
 import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
-const { error } = U;
+const {
+    error
+} = U;
 
 /* *
  *
@@ -76,9 +78,7 @@ function compose(
         }
     }
 
-    if (ColorClass && composedClasses.indexOf(ColorClass) === -1) {
-        composedClasses.push(ColorClass);
-
+    if (ColorClass && U.pushUnique(composedClasses, ColorClass)) {
         ColorClass.names = {
             ...ColorClass.names,
             ...NamedColors.defaultHTMLColorMap
@@ -92,8 +92,14 @@ function compose(
 }
 
 /**
- * Returns true if the current browser supports webgl
- * @private
+ * Returns true if the current browser supports WebGL.
+ *
+ * @requires module:modules/boost
+ *
+ * @function Highcharts.hasWebGLSupport
+ *
+ * @return {boolean}
+ * `true` if the browser supports WebGL.
  */
 function hasWebGLSupport(): boolean {
     let canvas,

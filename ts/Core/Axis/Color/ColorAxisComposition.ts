@@ -97,7 +97,7 @@ namespace ColorAxisComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -125,12 +125,12 @@ namespace ColorAxisComposition {
         LegendClass: typeof Legend,
         SeriesClass: typeof Series
     ): void {
+
         if (!ColorAxisClass) {
             ColorAxisClass = ColorAxisType;
         }
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
 
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype;
 
             chartProto.collectionsWithUpdate.push('colorAxis');
@@ -142,17 +142,15 @@ namespace ColorAxisComposition {
 
             wrapChartCreateAxis(ChartClass);
         }
-        if (composedClasses.indexOf(FxClass) === -1) {
-            composedClasses.push(FxClass);
 
+        if (U.pushUnique(composedMembers, FxClass)) {
             const fxProto = FxClass.prototype;
 
             fxProto.fillSetter = wrapFxFillSetter;
             fxProto.strokeSetter = wrapFxStrokeSetter;
         }
-        if (composedClasses.indexOf(LegendClass) === -1) {
-            composedClasses.push(LegendClass);
 
+        if (U.pushUnique(composedMembers, LegendClass)) {
             addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
             addEvent(
                 LegendClass,
@@ -161,9 +159,8 @@ namespace ColorAxisComposition {
             );
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
         }
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
 
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             extend(
                 SeriesClass.prototype,
                 {
@@ -186,6 +183,7 @@ namespace ColorAxisComposition {
             );
             addEvent(SeriesClass, 'bindAxes', onSeriesBindAxes);
         }
+
     }
 
     /**
@@ -201,8 +199,7 @@ namespace ColorAxisComposition {
 
         if (options.colorAxis) {
             options.colorAxis = splat(options.colorAxis);
-            options.colorAxis.forEach((axisOptions, i): void => {
-                axisOptions.index = i;
+            options.colorAxis.forEach((axisOptions): void => {
                 new ColorAxisClass(this, axisOptions); // eslint-disable-line no-new
             });
         }

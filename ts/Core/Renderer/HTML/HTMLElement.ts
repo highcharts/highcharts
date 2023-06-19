@@ -92,6 +92,14 @@ declare module '../SVG/SVGElementLike' {
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+const composedMembers: Array<unknown> = [];
+
+/* *
+ *
  *  Class
  *
  * */
@@ -99,14 +107,6 @@ declare module '../SVG/SVGElementLike' {
 /* eslint-disable valid-jsdoc */
 
 class HTMLElement extends SVGElement {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    private static readonly composedClasses: Array<Function> = [];
 
     /* *
      *
@@ -122,9 +122,7 @@ class HTMLElement extends SVGElement {
         SVGElementClass: T
     ): (T&typeof HTMLElement) {
 
-        if (HTMLElement.composedClasses.indexOf(SVGElementClass) === -1) {
-            HTMLElement.composedClasses.push(SVGElementClass);
-
+        if (U.pushUnique(composedMembers, SVGElementClass)) {
             const htmlElementProto = HTMLElement.prototype,
                 svgElementProto = SVGElementClass.prototype;
 
@@ -169,8 +167,7 @@ class HTMLElement extends SVGElement {
     }
 
     /**
-     * Apply CSS to HTML elements. This is used in text within SVG rendering and
-     * by the VML renderer
+     * Apply CSS to HTML elements. This is used in text within SVG rendering.
      * @private
      */
     public htmlCss(styles: CSSObject): HTMLElement {
@@ -212,7 +209,7 @@ class HTMLElement extends SVGElement {
     }
 
     /**
-     * VML and useHTML method for calculating the bounding box based on offsets.
+     * useHTML method for calculating the bounding box based on offsets.
      */
     public htmlGetBBox(): BBoxObject {
         const wrapper = this,
@@ -227,8 +224,6 @@ class HTMLElement extends SVGElement {
     }
 
     /**
-     * VML override private method to update elements based on internal
-     * properties based on SVG transform.
      * @private
      */
     public htmlUpdateTransform(): void {
@@ -271,24 +266,6 @@ class HTMLElement extends SVGElement {
             marginLeft: translateX as any,
             marginTop: translateY as any
         });
-
-        if (!renderer.styledMode && wrapper.shadows) { // used in labels/tooltip
-            wrapper.shadows.forEach(function (
-                shadow: DOMElementType
-            ): void {
-                css(shadow, {
-                    marginLeft: translateX + 1 as any,
-                    marginTop: translateY + 1 as any
-                });
-            });
-        }
-
-        // apply inversion
-        if (wrapper.inverted) { // wrapper is a group
-            [].forEach.call(elem.childNodes, function (child: ChildNode): void {
-                renderer.invertChild(child as any, elem);
-            });
-        }
 
         if (elem.tagName === 'SPAN') {
             const rotation = wrapper.rotation,
@@ -337,10 +314,7 @@ class HTMLElement extends SVGElement {
 
             // Do the calculations and DOM access only if properties changed
             if (currentTextTransform !== wrapper.cTT) {
-                baseline = renderer.fontMetrics(
-                    elem.style.fontSize as any,
-                    elem
-                ).b;
+                baseline = renderer.fontMetrics(elem).b;
 
                 // Renderer specific handling of span rotation, but only if we
                 // have something to update.

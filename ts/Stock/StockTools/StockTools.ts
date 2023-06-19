@@ -82,7 +82,7 @@ export interface AxisPositions {
 }
 
 export interface NavigationBindingsResizerObject {
-    controlledAxis?: Record<string, Array<number>>;
+    controlledAxis?: Record<string, Array<string|number>>;
     enabled: boolean;
 }
 
@@ -97,7 +97,7 @@ export interface YAxisPositions {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -112,9 +112,7 @@ function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
 
-    if (composedClasses.indexOf(NavigationBindingsClass) === -1) {
-        composedClasses.push(NavigationBindingsClass);
-
+    if (U.pushUnique(composedMembers, NavigationBindingsClass)) {
         const navigationProto = NavigationBindingsClass.prototype;
 
         // Extends NavigationBindings to support indicators and resizers:
@@ -132,9 +130,7 @@ function compose(
         };
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions(StockToolsDefaults);
         setOptions({
             navigation: {
@@ -276,7 +272,7 @@ function navigationGetYAxisResizers(
                     next: [
                         pick(
                             nextYAxis.options.id,
-                            nextYAxis.options.index as any
+                            nextYAxis.index
                         )
                     ]
                 }

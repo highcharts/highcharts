@@ -300,8 +300,8 @@ QUnit.test('Series.update', function (assert) {
             );
             assert.strictEqual(chart.series[0].area, undefined, 'No area');
             assert.strictEqual(
-                lastPoint().graphic.element.nodeName,
-                'rect',
+                lastPoint().graphic.symbolName,
+                'roundedRect',
                 'Has column'
             );
 

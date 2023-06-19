@@ -28,9 +28,7 @@ import type {
 import type VWAPPoint from './VWAPPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     error,
@@ -112,14 +110,15 @@ class VWAPIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: VWAPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let indicator = this,
+        const indicator = this,
             chart: Chart = series.chart,
             xValues: Array<number> = (series.xData as any),
             yValues: (
                 Array<number>|Array<[number, number, number, number]>
             ) = (series.yData as any),
-            period: number = (params.period as any),
-            isOHLC = true,
+            period: number = (params.period as any);
+
+        let isOHLC = true,
             volumeSeries: TLinkedSeries;
 
         // Checks if volume series exists
@@ -182,15 +181,16 @@ class VWAPIndicator extends SMAIndicator {
         volumeSeries: TLinkedSeries,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
-        let volumeValues: Array<number> = (volumeSeries.yData as any),
+        const volumeValues: Array<number> = (volumeSeries.yData as any),
             volumeLength: number = (volumeSeries.xData as any).length,
             pointsLength: number = xValues.length,
             cumulativePrice: Array<number> = [],
             cumulativeVolume: Array<number> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            VWAP: Array<Array<number>> = [],
-            commonLength: number,
+            VWAP: Array<Array<number>> = [];
+
+        let commonLength: number,
             typicalPrice: number,
             cPrice: number,
             cVolume: number,
@@ -239,6 +239,7 @@ class VWAPIndicator extends SMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+
 }
 
 /* *

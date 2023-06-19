@@ -182,7 +182,10 @@ class HeatmapPoint extends ScatterPoint {
 
             // Handle pointPadding
             if (pointPadding) {
-                if (direction === 'y') {
+                if (
+                    (direction === 'x' && xAxis.reversed) ||
+                    (direction === 'y' && !yAxis.reversed)
+                ) {
                     start = end;
                     end = direction + '1';
                 }

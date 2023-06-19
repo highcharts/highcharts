@@ -142,6 +142,7 @@ declare global {
             lineColor?: ColorString;
             lineWidth?: number;
             marker?: ConnectorsMarkerOptions;
+            radius?: number;
             startMarker?: ConnectorsStartMarkerOptions;
             type?: PathfinderTypeValue;
         }
@@ -212,7 +213,6 @@ declare global {
 ''; // detach doclets above
 
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
-import '../Extensions/ArrowSymbols.js';
 
 const max = Math.max,
     min = Math.min;
@@ -325,6 +325,13 @@ extend(defaultOptions, {
          * @since   6.2.0
          */
         type: 'straight',
+
+        /**
+         * The corner radius for the connector line
+         *
+         * @since next
+         */
+        radius: 0,
 
         /**
          * Set the default pixel width for this chart's Pathfinder connecting

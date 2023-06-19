@@ -19,7 +19,7 @@ const candlestick = function () {
     // create the chart
         Highcharts.stockChart('hero', {
             chart: {
-                styledMode: (true),
+                styledMode: true,
                 margin: [0, 0, 0, 0],
                 height: 430,
                 animation: {

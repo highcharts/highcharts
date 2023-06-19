@@ -12,19 +12,19 @@ const {
     buildModules,
     buildDistFromModules,
     getFilesInFolder
-} = require('highcharts-assembler/src/build.js');
+} = require('@highcharts/highcharts-assembler/src/build.js');
 const {
     getOrderedDependencies,
     getRequires
-} = require('highcharts-assembler/src/dependencies.js');
+} = require('@highcharts/highcharts-assembler/src/dependencies.js');
 const {
     exists,
     getFile
-} = require('highcharts-assembler/src/utilities.js');
+} = require('@highcharts/highcharts-assembler/src/utilities.js');
 const {
     checkDependency
 } = require('./filesystem.js');
-const build = require('highcharts-assembler/index.js');
+const build = require('@highcharts/highcharts-assembler/index.js');
 
 // TODO move to a utils file
 const isArray = x => Array.isArray(x);
@@ -65,7 +65,7 @@ const getBuildOptions = input => {
 };
 
 const scripts = params => {
-    checkDependency('highcharts-assembler', 'warn', 'devDependencies');
+    checkDependency('@highcharts/highcharts-assembler', 'warn', 'devDependencies');
     const options = getBuildOptions(params);
     return build(options);
 };
@@ -166,6 +166,12 @@ const watchESModules = (event, options, type, dependencies, pathESMasters) => {
     });
 };
 
+const getPathToEsMasters = (pathSource, base) => {
+    // remove empty string
+    const splittedPath = base.split('/').filter(name => name);
+    return join(pathSource, splittedPath.pop());
+};
+
 const fnFirstBuild = options => {
     // Build all module files
     const pathJSParts = './js/';
@@ -176,7 +182,8 @@ const fnFirstBuild = options => {
         fileOptions,
         files,
         output,
-        version
+        version,
+        base
     } = options;
     buildModules({
         base: pathJSParts,
@@ -187,7 +194,7 @@ const fnFirstBuild = options => {
     const promises = [];
     types.forEach(type => {
         const pathSource = mapTypeToSource[type];
-        const pathESMasters = join(pathSource, 'masters');
+        const pathESMasters = getPathToEsMasters(pathSource, base);
         promises.push(buildDistFromModules({
             base: pathESMasters,
             debug,
@@ -202,12 +209,13 @@ const fnFirstBuild = options => {
 };
 
 const getBuildScripts = params => {
-    checkDependency('highcharts-assembler', 'warn', 'devDependencies');
+    checkDependency('@highcharts/highcharts-assembler', 'warn', 'devDependencies');
     const options = getBuildOptions(params);
     const {
         files,
         type: types,
-        mapTypeToSource
+        mapTypeToSource,
+        base
     } = options;
     const result = {
         fnFirstBuild: () => fnFirstBuild(options),
@@ -217,7 +225,7 @@ const getBuildScripts = params => {
     };
     types.forEach(type => {
         const pathSource = mapTypeToSource[type];
-        const pathESMasters = join(pathSource, 'masters');
+        const pathESMasters = getPathToEsMasters(pathSource, base);
         const key = join(pathSource, '**/*.js').split(sep).join('/');
         const fn = event => {
             const dependencies = getListOfDependencies(

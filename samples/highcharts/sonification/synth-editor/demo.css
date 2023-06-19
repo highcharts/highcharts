@@ -1,0 +1,253 @@
+h2 {
+    font-size: 1.3rem;
+    font-weight: normal;
+    margin-top: 30px;
+}
+
+.code {
+    font-family: monospace;
+    background-color: #efefef;
+    padding: 1px 4px;
+}
+
+#startSynth {
+    height: 2.5rem;
+}
+
+#help {
+    font-size: 0.8rem;
+    padding: 20px 40px;
+    max-width: 895px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #f8f8f8;
+}
+
+#help h2 {
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 0;
+}
+
+#help p {
+    margin: 0;
+    margin-top: 8px;
+}
+
+#showHelp {
+    margin-bottom: 20px;
+    padding: 5px 20px;
+}
+
+.json {
+    font-family: monospace;
+    background-color: #444;
+    color: #d6eed6;
+    padding: 10px;
+    height: 200px;
+    width: 100%;
+    overflow-y: scroll;
+    resize: none;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+
+.firstrow {
+    align-items: stretch;
+    gap: 2px;
+    margin-bottom: 20px;
+    max-width: 1500px;
+}
+
+.firstrow p {
+    margin: 0;
+}
+
+#intro {
+    font-size: 1.1rem;
+    padding: 20px;
+    background-color: #e1f6fe;
+}
+
+#keyStatus {
+    background-color: #f3f2fc;
+    padding: 20px;
+    text-align: center;
+    flex: 1;
+}
+
+.chart {
+    height: 200px;
+}
+
+.hidden {
+    display: none;
+}
+
+.globalControls {
+    display: inline-flex;
+    align-items: flex-start;
+    margin-top: 30px;
+    background-color: #fcfcfc;
+    border: 1px solid #f0f0f0;
+    padding: 20px;
+}
+
+.globalControls h2 {
+    margin-top: 0;
+}
+
+.globalControls h3 {
+    margin-top: 5px;
+    margin-left: 30px;
+    font-size: 0.8rem;
+    font-weight: normal;
+}
+
+.globalControls .chart {
+    width: 250px;
+    margin-left: 20px;
+}
+
+.globalControls input {
+    display: block;
+    margin-top: 5px;
+}
+
+.globalControls label {
+    margin-top: 20px;
+    display: block;
+}
+
+button {
+    height: 1.9rem;
+    background: none;
+    cursor: pointer;
+    padding: 2px 16px;
+    border-radius: 3px;
+    border: 1px solid #aaa;
+    background-color: #fafafa;
+}
+
+button:hover {
+    background-color: #efefef;
+}
+
+button:active {
+    background-color: #e0e0e0;
+}
+
+.masterVolume {
+    display: block;
+    margin-top: 7px;
+}
+
+.presetLabel {
+    font-size: 1rem;
+    margin: 10px 5px;
+}
+
+.preset {
+    width: 150px;
+    height: 1.8rem;
+    margin-left: 5px;
+}
+
+.masterEQ {
+    margin-left: 20px;
+}
+
+.eqSliders {
+    gap: 0;
+    flex-wrap: nowrap;
+}
+
+.eqSlider .gain {
+    -webkit-appearance: slider-vertical;
+    width: 50px;
+}
+
+.eqSlider input[type="number"] {
+    width: 3.5rem;
+    text-align: center;
+}
+
+.resetEQ {
+    height: 1.3rem;
+    font-size: 0.7rem;
+    justify-self: flex-end;
+    margin-bottom: 6px;
+}
+
+.addOsc {
+    height: 30px;
+    margin-top: 10px;
+    background-color: #d5f3d5;
+    border: 1px solid #616161;
+}
+
+.addOsc:hover {
+    background-color: #e6f2e6;
+    border: 1px solid #455;
+}
+
+.addOsc:active {
+    background-color: #dcece9;
+}
+
+.span2 {
+    grid-column-end: span 2;
+}
+
+.oscillator {
+    background-color: #fafafa;
+    border: 1px solid #d7d7d7;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.oscillator .controlsContainer {
+    display: grid;
+    column-gap: 2px;
+    align-items: center;
+    row-gap: 5px;
+    grid-template-columns: 11rem 3rem 3.5rem;
+}
+
+.oscillator h3 {
+    font-size: 1.4rem;
+    display: inline-block;
+    margin-top: 0;
+}
+
+.oscillator button:not(.chartReset) {
+    background-color: #af1919;
+    color: white;
+    padding: 5px;
+    float: right;
+}
+
+.oscillator select {
+    height: 1.4rem;
+}
+
+.oscillator .chart {
+    margin-top: 20px;
+}
+
+.chartlabel {
+    font-size: 0.85rem;
+    margin-left: 3px;
+}
+
+.chartReset {
+    position: absolute;
+    right: 8px;
+    font-size: 0.8rem;
+    height: 1.2rem;
+}

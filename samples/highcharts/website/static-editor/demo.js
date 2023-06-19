@@ -16349,7 +16349,7 @@ highed.highchartsErrors = {
         text: 'In Highstock, if you try to add a point using the object literal configuration syntax, it works only when the number of data points is below the series turboThreshold. Instead of the object syntax, use the Array syntax.'
     },
     // Can't find Proj4js library
-    21: { title: 'Can\'t find Proj4js library', text: 'Using latitude/longitude functionality in Highmaps requires the Proj4js library to be loaded.' },
+    21: { title: 'Can\'t find Proj4js library', text: 'Using latitude/longitude functionality with pre-projected GeoJSON in Highcharts Maps requires the Proj4js library to be loaded. It is recommended to utilize TopoJSON for Highcharts v10 and above, as built-in projection support is included and no third-party library is required. For more information, see the <a href=\"https://www.highcharts.com/blog/tutorials/highcharts-now-prefers-topojson-maps\">Highcharts now prefers topojson maps</a>.' },
     // Map does not support lat/long
     22: { title: 'Map does not support latitude/longitude', text: 'The loaded map does not support latitude/longitude functionality. This is only supported with maps from the official Highmaps map collection from version 1.1.0 onwards. If you are using a custom map, consider using the Proj4js library to convert between projections.' },
     // Unsupported color format used for color

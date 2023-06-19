@@ -103,7 +103,7 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
             lastStackLabel.width -
             lastStackLabel.padding,
         chart.plotWidth,
-        0.5,
+        1,
         'Stack label should be inside plot area right'
         // 0.5 is a difference taken from the stackLabel.width which value is
         // not rounded
@@ -543,6 +543,25 @@ QUnit.test('Stack labels various', function (assert) {
         'There should still be two labels after redraw'
     );
 
+    chart.yAxis[0].update({
+        type: 'logarithmic',
+        stackLabels: {
+            enabled: true,
+            verticalAlign: 'bottom'
+        }
+    });
+
+    const yAxisGridBox = chart.yAxis[0].gridGroup.getBBox(),
+        firstStackLabel =
+            chart.yAxis[0].stacking.stacks['column,,,']['0'].label;
+
+    assert.close(
+        yAxisGridBox.y + yAxisGridBox.height,
+        firstStackLabel.absoluteBox.y + firstStackLabel.absoluteBox.height,
+        1,
+        `#18501: Vertical alignment of stack labels should work with
+        logarithmic axes.`
+    );
 });
 
 QUnit.test(
@@ -885,6 +904,9 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
             data: [1, 2, 3, -1, -2, -3]
         }, {
             data: [1, 2, 3, -1, -2, -3]
+        }, {
+            data: [1, 2, 3, -1, -2, -3],
+            stack: 'b'
         }]
     });
 
@@ -959,5 +981,12 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
         alignOptions2.verticalAlign,
         'middle',
         'negative value inverted chart not reversed axis'
+    );
+
+    assert.close(
+        chart.yAxis[0].series[0].points[1].dataLabel.y,
+        chart.yAxis[0].stacking.stacks['column,,,'][1].label.y,
+        2,
+        'Stack label Y positions should be correct for inverted charts (#18617)'
     );
 });

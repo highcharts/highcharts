@@ -9,5 +9,10 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
 import '../../Series/Treemap/TreemapSeries.js';
 import '../../Series/Sunburst/SunburstSeries.js';
+import Breadcrumbs from '../../Extensions/Breadcrumbs/Breadcrumbs.js';
+const G: AnyRecord = Highcharts;
+G.Breadcrumbs = Breadcrumbs;
+Breadcrumbs.compose(G.Chart, G.defaultOptions);

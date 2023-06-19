@@ -1,0 +1,7 @@
+---
+name: Logarithmic mapping
+authors:
+  - Øystein Moseng
+skipTest: true
+js_wrap: b
+...

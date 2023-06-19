@@ -27,7 +27,7 @@ import type {
 } from '../Controllables/ControllableOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
-import type FormatUtilities from '../../../Core/FormatUtilities';
+import type Templating from '../../../Core/Templating';
 import type MockPointOptions from '../MockPointOptions';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
@@ -43,6 +43,7 @@ const {
     merge,
     pick
 } = U;
+import { Palette } from '../../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -396,6 +397,18 @@ function updateStartPoints(
         this.offsetX = 0;
         this.offsetY = 0;
     }
+
+    this.options.typeOptions.point = {
+        x: this.startXMin,
+        y: this.startYMin
+    };
+
+    // We need to update userOptions as well as they are used in
+    // the Annotation.update() method to initialize the annotation, #19121.
+    this.userOptions.typeOptions.point = {
+        x: this.startXMin,
+        y: this.startYMin
+    };
 }
 
 /* *
@@ -421,12 +434,7 @@ class Measure extends Annotation {
         userOptions: Measure.MeasureOptions,
         index?: number
     ): void {
-        Annotation.prototype.init.call(
-            this,
-            annotationOrChart,
-            userOptions,
-            index
-        );
+        super.init(annotationOrChart, userOptions, index);
 
         this.offsetX = 0;
         this.offsetY = 0;
@@ -832,9 +840,6 @@ class Measure extends Annotation {
         this.shapes.forEach((item): void =>
             item.translate(dx, dy)
         );
-
-        this.options.typeOptions.point.x = this.startXMin;
-        this.options.typeOptions.point.y = this.startYMin;
     }
 
 }
@@ -995,8 +1000,8 @@ Measure.prototype.defaultOptions = merge(
                  * @default {"color": "#666666", "fontSize": "11px"}
                  */
                 style: {
-                    fontSize: '11px',
-                    color: '#666666'
+                    fontSize: '0.7em',
+                    color: Palette.neutralColor60
                 },
                 /**
                  * Formatter function for the label text.
@@ -1153,7 +1158,7 @@ namespace Measure {
     }
     export interface MeasureTypeLabelOptions {
         enabled: boolean;
-        formatter?: FormatUtilities.FormatterCallback<Measure>;
+        formatter?: Templating.FormatterCallback<Measure>;
         style: CSSObject;
     }
     export interface MeasureTypeOptions extends AnnotationTypeOptions {

@@ -29,7 +29,7 @@ const finalMap = function () {
             // Initialize the chart
             Highcharts.mapChart('maps', {
                 chart: {
-                    styledMode: (true),
+                    styledMode: true,
                     animation: {
 
                         duration: 1000

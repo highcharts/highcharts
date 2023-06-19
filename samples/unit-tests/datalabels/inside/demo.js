@@ -25,10 +25,9 @@ QUnit.test('Datalabel inside on columnrange(#2711)', function (assert) {
         })
         .highcharts();
 
-    assert.strictEqual(
-        chart.series[0].data[0].dataLabel.x <
-            chart.series[0].data[0].dataLabelUpper.x,
-        true,
+    assert.lessThan(
+        chart.series[0].data[0].dataLabel.x,
+        chart.series[0].data[0].dataLabelUpper.x,
         'Correct positions'
     );
 });

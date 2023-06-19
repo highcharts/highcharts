@@ -117,7 +117,7 @@ const ganttChart = function () {
 
                 }
             },
-            styledMode: (true)
+            styledMode: true
         },
         lang: {
             accessibility: {
@@ -523,7 +523,7 @@ const gantt = {
             duration: 1000,
             easing: 'easeOutQuint'
         },
-        styledMode: (true),
+        styledMode: true,
         margin: 0,
         spacing: 0,
         plotBackgroundImage: 'gantt.png',

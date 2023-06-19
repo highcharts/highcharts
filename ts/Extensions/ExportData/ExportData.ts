@@ -143,7 +143,7 @@ interface ExportDataSeries {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -1086,9 +1086,7 @@ function compose(
     ChartClass: typeof Chart
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         // Add an event listener to handle the showTable option
         addEvent(ChartClass, 'afterViewData', onChartAfterViewData);
         addEvent(ChartClass, 'render', onChartRenderer);
@@ -1106,9 +1104,7 @@ function compose(
         chartProto.viewData = chartViewData;
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (U.pushUnique(composedMembers, setOptions)) {
         const exportingOptions = getOptions().exporting;
 
         // Add "Download CSV" to the exporting menu.
@@ -1152,34 +1148,29 @@ function compose(
         setOptions(ExportDataDefaults);
     }
 
-    if (AreaRangeSeries && composedClasses.indexOf(AreaRangeSeries) === -1) {
-        composedClasses.push(AreaRangeSeries);
+    if (AreaRangeSeries && U.pushUnique(composedMembers, AreaRangeSeries)) {
         AreaRangeSeries.prototype.keyToAxis = {
             low: 'y',
             high: 'y'
         };
     }
 
-    if (GanttSeries && composedClasses.indexOf(GanttSeries) === -1) {
-        composedClasses.push(GanttSeries);
+    if (GanttSeries && U.pushUnique(composedMembers, GanttSeries)) {
         GanttSeries.prototype.keyToAxis = {
             start: 'x',
             end: 'x'
         };
     }
 
-    if (MapSeries && composedClasses.indexOf(MapSeries) === -1) {
-        composedClasses.push(MapSeries);
+    if (MapSeries && U.pushUnique(composedMembers, MapSeries)) {
         MapSeries.prototype.exportKey = 'name';
     }
 
-    if (MapBubbleSeries && composedClasses.indexOf(MapBubbleSeries) === -1) {
-        composedClasses.push(MapBubbleSeries);
+    if (MapBubbleSeries && U.pushUnique(composedMembers, MapBubbleSeries)) {
         MapBubbleSeries.prototype.exportKey = 'name';
     }
 
-    if (TreemapSeries && composedClasses.indexOf(TreemapSeries) === -1) {
-        composedClasses.push(TreemapSeries);
+    if (TreemapSeries && U.pushUnique(composedMembers, TreemapSeries)) {
         TreemapSeries.prototype.exportKey = 'name';
     }
 

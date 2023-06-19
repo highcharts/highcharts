@@ -140,7 +140,7 @@ namespace DataModifyComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -170,9 +170,8 @@ namespace DataModifyComposition {
         AxisClass: typeof Axis,
         PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
 
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             seriesProto.setCompare = seriesSetCompare;
@@ -183,9 +182,7 @@ namespace DataModifyComposition {
             addEvent(SeriesClass, 'afterProcessData', afterProcessData);
         }
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             const axisProto = AxisClass.prototype as AxisComposition;
 
             axisProto.setCompare = axisSetCompare;
@@ -193,9 +190,7 @@ namespace DataModifyComposition {
             axisProto.setCumulative = axisSetCumulative;
         }
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
+        if (U.pushUnique(composedMembers, PointClass)) {
             const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.tooltipFormatter = tooltipFormatter;
@@ -781,6 +776,8 @@ export default DataModifyComposition;
  * Works only for points in a visible range.
  * Adds the `cumulativeSum` field to each point object that can be accessed
  * e.g. in the [tooltip.pointFormat](https://api.highcharts.com/highstock/tooltip.pointFormat).
+ *
+ * With `dataGrouping` enabled, default grouping approximation is set to `sum`.
  *
  * @see [Axis.setCumulative()](/class-reference/Highcharts.Axis#setCumulative)
  * @see [Series.setCumulative()](/class-reference/Highcharts.Series#setCumulative)

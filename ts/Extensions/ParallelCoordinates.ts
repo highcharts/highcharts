@@ -29,7 +29,7 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
-import F from '../Core/FormatUtilities.js';
+import F from '../Core/Templating.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 import D from '../Core/Defaults.js';
@@ -43,7 +43,7 @@ const {
     defined,
     erase,
     extend,
-    isArray,
+    insertItem,
     isNumber,
     merge,
     pick,
@@ -357,8 +357,8 @@ addEvent(Series, 'bindAxes', function (e: Event): void {
     if (this.chart.hasParallelCoordinates) {
         const series = this;
 
-        this.chart.axes.forEach(function (axis): void {
-            series.insert(axis.series);
+        this.chart.axes.forEach((axis): void => {
+            insertItem(series, axis.series);
             axis.isDirty = true;
         });
         series.xAxis = this.chart.xAxis[0];

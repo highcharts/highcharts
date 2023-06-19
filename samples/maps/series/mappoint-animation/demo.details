@@ -1,0 +1,5 @@
+---
+ name: Map and mappoint animation
+ requiresManualTesting: true
+ js_wrap: b
+...

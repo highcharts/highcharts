@@ -65,7 +65,7 @@ declare class AnnotationChart extends Chart {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -205,7 +205,7 @@ function chartCallback(
                         label.points.forEach((points): void => {
                             const annotationX = points.x,
                                 xAxisIndex = points.series.xAxis ?
-                                    points.series.xAxis.options.index :
+                                    points.series.xAxis.index :
                                     -1;
                             let wasAdded = false;
 
@@ -399,9 +399,7 @@ namespace AnnotationChart {
         PointerClass: typeof Pointer
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             addEvent(ChartClass, 'afterInit', onChartAfterInit);
 
             const chartProto = ChartClass.prototype as AnnotationChart;
@@ -429,9 +427,7 @@ namespace AnnotationChart {
             };
         }
 
-        if (composedClasses.indexOf(PointerClass) === -1) {
-            composedClasses.push(PointerClass);
-
+        if (U.pushUnique(composedMembers, PointerClass)) {
             const pointerProto = PointerClass.prototype;
 
             wrap(
@@ -440,6 +436,7 @@ namespace AnnotationChart {
                 wrapPointerOnContainerMouseDown
             );
         }
+
     }
 
 }

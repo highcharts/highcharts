@@ -10,4 +10,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/ArrowSymbols.js';
+import Highcharts from '../../Core/Globals.js';
+import ArrowSymbols from '../../Extensions/ArrowSymbols.js';
+const G: AnyRecord = Highcharts;
+ArrowSymbols.compose(G.SVGRenderer);

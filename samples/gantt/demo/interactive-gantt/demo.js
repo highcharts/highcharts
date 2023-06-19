@@ -64,14 +64,11 @@ var chart = Highcharts.ganttChart('container', {
 
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                return Highcharts.format(
-                    point.milestone ?
-                        '{point.name}, milestone for {point.yCategory} at {point.x:%Y-%m-%d}.' :
-                        '{point.name}, assigned to {point.yCategory} from {point.x:%Y-%m-%d} to {point.x2:%Y-%m-%d}.',
-                    { point }
-                );
-            }
+            descriptionFormat: '{#if milestone}' +
+                '{name}, milestone for {yCategory} at {x:%Y-%m-%d}.' +
+                '{else}' +
+                '{name}, assigned to {yCategory} from {x:%Y-%m-%d} to {x2:%Y-%m-%d}.' +
+                '{/if}'
         }
     },
 

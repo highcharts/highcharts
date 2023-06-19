@@ -37,7 +37,7 @@ const {
     getSeriesA11yElement,
     unhideChartElementFromAT
 } = ChartUtilities;
-import F from '../../../Core/FormatUtilities.js';
+import F from '../../../Core/Templating.js';
 const {
     format,
     numberFormat
@@ -51,6 +51,7 @@ import U from '../../../Core/Utilities.js';
 const {
     find,
     isNumber,
+    isString,
     pick,
     defined
 } = U;
@@ -262,8 +263,8 @@ function shouldDescribeSeriesElement(
  */
 function pointNumberToString(
     point: Accessibility.PointComposition,
-    value: number
-): string {
+    value: number|undefined
+): string|undefined {
     const series = point.series,
         chart = series.chart,
         a11yPointOptions = chart.options.accessibility.point || {},
@@ -386,17 +387,22 @@ function getPointArrayMapValueDescription(
 ): string {
     const pre = prefix || '',
         suf = suffix || '',
-        keyToValStr = function (key: string): string {
+        keyToValStr = function (key: string): string|undefined {
             const num = pointNumberToString(
                 point,
                 pick((point as any)[key], (point.options as any)[key])
             );
-            return key + ': ' + pre + num + suf;
+            return num !== void 0 ?
+                key + ': ' + pre + num + suf :
+                num;
         },
         pointArrayMap: Array<string> = point.series.pointArrayMap as any;
 
     return pointArrayMap.reduce(function (desc: string, key: string): string {
-        return desc + (desc.length ? ', ' : '') + keyToValStr(key);
+        const propDesc = keyToValStr(key);
+        return propDesc ?
+            (desc + (desc.length ? ', ' : '') + propDesc) :
+            desc;
     }, '');
 }
 
@@ -483,7 +489,7 @@ function getPointValueDescription(
             series.xAxis &&
             series.xAxis.options.accessibility &&
             series.xAxis.options.accessibility.enabled,
-            !chart.angular
+            !chart.angular && series.type !== 'flowmap'
         ),
         xDesc = showXDescription ? getPointXDescription(point) : '',
         context = {
@@ -534,14 +540,27 @@ function setPointScreenReaderAttribs(
     pointElement: DOMElementType
 ): void {
     const series = point.series,
+        seriesPointA11yOptions = series.options.accessibility?.point || {},
         a11yPointOptions = series.chart.options.accessibility.point || {},
-        seriesPointA11yOptions = series.options.accessibility &&
-            series.options.accessibility.point || {},
         label = stripHTMLTags(
-            seriesPointA11yOptions.descriptionFormatter &&
-            seriesPointA11yOptions.descriptionFormatter(point) ||
-            a11yPointOptions.descriptionFormatter &&
-            a11yPointOptions.descriptionFormatter(point) ||
+            (
+                isString(seriesPointA11yOptions.descriptionFormat) &&
+                format(
+                    seriesPointA11yOptions.descriptionFormat,
+                    point,
+                    series.chart
+                )
+            ) ||
+            seriesPointA11yOptions.descriptionFormatter?.(point) ||
+            (
+                isString(a11yPointOptions.descriptionFormat) &&
+                format(
+                    a11yPointOptions.descriptionFormat,
+                    point,
+                    series.chart
+                )
+            ) ||
+            a11yPointOptions.descriptionFormatter?.(point) ||
             defaultPointDescriptionFormatter(point)
         );
 
@@ -634,7 +653,12 @@ function defaultSeriesDescriptionFormatter(
         ) + (
             shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo + '.' : ''
         ),
-        formatStr = chart.options.accessibility.series.descriptionFormat || '';
+        formatStr = pick(
+            series.options.accessibility &&
+                series.options.accessibility.descriptionFormat,
+            chart.options.accessibility.series.descriptionFormat,
+            ''
+        );
 
     return format(formatStr, {
         seriesDescription: summary,

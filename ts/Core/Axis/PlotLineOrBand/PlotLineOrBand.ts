@@ -16,7 +16,7 @@
  *
  * */
 
-import type FormatUtilities from '../../FormatUtilities';
+import type Templating from '../../Templating';
 import type {
     PlotBandLabelOptions,
     PlotBandOptions
@@ -324,6 +324,7 @@ class PlotLineOrBand {
 
             if (!axis.chart.styledMode) {
                 label.css(merge({
+                    fontSize: '0.8em',
                     textOverflow: 'ellipsis'
                 }, optionsLabel.style));
             }
@@ -371,7 +372,7 @@ class PlotLineOrBand {
     ): string | undefined {
         return defined(optionsLabel.formatter) ?
             (optionsLabel.formatter as
-              FormatUtilities.FormatterCallback<PlotLineOrBand>)
+              Templating.FormatterCallback<PlotLineOrBand>)
                 .call(this as any) :
             optionsLabel.text;
     }

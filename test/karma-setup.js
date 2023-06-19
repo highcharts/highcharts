@@ -184,7 +184,7 @@ XMLHttpRequest.prototype.send = function () {
     }
 }
 
-// Hijack fetch to run local sources. Note the oldIE-friendly syntax.
+// Hijack fetch to run local sources.
 if (window.Promise) {
     window.fetch = function (url) {
         return new Promise(function (resolve, reject) {
@@ -304,6 +304,50 @@ if (window.QUnit) {
         }
 
         var result = number === expected || (number <= expected + error && number >= expected - error) || false;
+
+        this.pushResult({
+            result: result,
+            actual: number,
+            expected: expected,
+            message: message
+        });
+    };
+
+    /*
+     * Less than comparison
+     *
+     * @param  {Float} number
+     * @param  {Float} expected
+     * @param  {String} message  Optional
+     */
+    QUnit.assert.lessThan = function (number, expected, message) {
+        var result = (
+            typeof number === 'number' &&
+            typeof expected === 'number' &&
+            number < expected
+        ) || false;
+
+        this.pushResult({
+            result: result,
+            actual: number,
+            expected: expected,
+            message: message
+        });
+    };
+
+    /*
+     * Greater than comparison
+     *
+     * @param  {Float} number
+     * @param  {Float} expected
+     * @param  {String} message  Optional
+     */
+    QUnit.assert.greaterThan = function (number, expected, message) {
+        var result = (
+            typeof number === 'number' &&
+            typeof expected === 'number' &&
+            number > expected
+        ) || false;
 
         this.pushResult({
             result: result,
@@ -521,21 +565,32 @@ function getSVG(chart) {
             );
 
         if (chart.styledMode) {
-            svg = svg.replace(
-                '</defs>',
-                '<style>' +
-                '* {' +
-                '   fill: rgba(0, 0, 0, 0.1);' +
-                '   stroke: black;' +
-                '   stroke-width: 1px;' +
-                '}' +
-                'text, tspan {' +
-                '    fill: blue;' +
-                '    stroke: none;' +
-                '}' +
-                '</style>' +
-                '</defs>'
-            );
+            var highchartsCSS = document.getElementById('highcharts.css');
+            if (highchartsCSS) {
+                svg = svg
+                    // Get the typography styling right
+                    .replace(
+                        ' class="highcharts-root" ',
+                        ' class="highcharts-root highcharts-container" ' +
+                            'style="width:auto; height:auto" '
+                    )
+
+                    // Insert highcharts.css
+                    .replace(
+                        '</defs>',
+                        '<style>' + highchartsCSS.innerText + '</style></defs>'
+                );
+            }
+
+            var demoCSS = document.getElementById('demo.css');
+            if (demoCSS) {
+                svg = svg
+                    // Insert demo.css
+                    .replace(
+                        '</defs>',
+                        '<style>' + demoCSS.innerText + '</style></defs>'
+                );
+            }
         }
 
         // Renderer samples
@@ -705,11 +760,6 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 }
                 resolve(diff);
             })
-        ['catch'](function (error) { // to avoid IE8 failure
-            console.log(error && error.message);
-            resolve(error && error.message); // skip and continue processing
-        });
-
     });
 }
 

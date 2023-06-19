@@ -158,7 +158,7 @@ QUnit.test(
         chart.xAxis[0].setExtremes(min, max1);
 
         assert.strictEqual(
-            chart.series[0].crossLabel.added,
+            chart.series[0].lastVisiblePriceLabel.added,
             true,
             'Label shouldn\t be deleted #11480'
         );
@@ -229,17 +229,17 @@ function (assert) {
     chart.navigationBindings.options.bindings.currentPriceIndicator.init
         .call(chart.navigationBindings, button);
     assert.strictEqual(
-        chart.series[0].crossLabel.visibility,
+        chart.series[0].lastVisiblePriceLabel.visibility,
         'inherit',
         'Series price indicator should be visible.'
     );
     assert.strictEqual(
-        chart.series[0].crossLabel.element.childNodes[0].getAttribute('fill'),
+        chart.series[0].lastVisiblePriceLabel.element.childNodes[0].getAttribute('fill'),
         '#00ff00',
-        'Cross label fill color should be blue.'
+        'Last visible price label fill color should be blue.'
     );
 
-    // Show currentPriceIndicator togehter with axis croshair.
+    // Show currentPriceIndicator together with axis crosshair.
     controller.moveTo(200, 200);
     assert.strictEqual(
         chart.yAxis[0].crossLabel.visibility,
@@ -255,7 +255,7 @@ function (assert) {
     // Adjust extremes to show the lastPrice line.
     chart.xAxis[0].setExtremes(0, 4);
     assert.strictEqual(
-        chart.series[0].crossLabel.visibility,
+        chart.series[0].lastVisiblePriceLabel.visibility,
         'inherit',
         'Series last price indicator should be visible.'
     );
@@ -291,7 +291,7 @@ function (assert) {
         'Cross label fill color should be blue again.'
     );
     assert.strictEqual(
-        chart.series[0].crossLabel.visibility,
+        chart.series[0].lastVisiblePriceLabel.visibility,
         'inherit',
         'Series last price indicator should be visible again.'
     );
@@ -389,7 +389,7 @@ QUnit.test('The currentPriceIndicator for multiple series, #14888.', function (a
                 'Each series\' lastPrice line should have color as series.'
             );
             assert.strictEqual(
-                series.crossLabel.attr('fill'),
+                series.lastVisiblePriceLabel.attr('fill'),
                 series.color,
                 'Each series\' lastVisiblePrice label should have color as series.'
             );

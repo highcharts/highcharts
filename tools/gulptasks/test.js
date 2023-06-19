@@ -72,6 +72,8 @@ function checkJSWrap() {
 }
 
 /**
+ * Checks
+ *
  * @return {void}
  */
 function checkDemosConsistency() {
@@ -99,47 +101,73 @@ function checkDemosConsistency() {
     let errors = 0;
 
     glob.sync(
-        process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/demo/*/demo.details'
+        process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/*/*/demo.details'
     ).forEach(detailsFile => {
 
-        try {
-            const details = yaml.load(
-                fs.readFileSync(detailsFile, 'utf-8')
-            );
+        if (/\/samples\/(highcharts|stock|maps|gantt)\/demo\//u.test(detailsFile)) {
+            try {
+                const details = yaml.load(
+                    fs.readFileSync(detailsFile, 'utf-8')
+                );
 
-            if (typeof details !== 'object') {
-                throw new Error('Malformed details file');
-            }
+                if (typeof details !== 'object') {
+                    throw new Error('Malformed details file');
+                }
 
-            const { name, categories: demoCategories, tags: demoTags } = details;
-            if (!name || /High.*demo/.test(name)) {
-                logLib.failure('no name set, or default name used:', detailsFile);
-                errors++;
-            }
-
-            if (!demoCategories || !demoCategories.length) {
-                logLib.failure('no categories found:', detailsFile);
-                errors++;
-            } else {
-                if (!demoCategories.every(category => categories.includes(typeof category === 'object' ? Object.keys(category)[0] : category))) {
-                    logLib.failure('one or more categories are missing from demo-config:', detailsFile);
+                const { name, categories: demoCategories, tags: demoTags } = details;
+                if (!name || /High.*demo/.test(name)) {
+                    logLib.failure('no name set, or default name used:', detailsFile);
                     errors++;
                 }
-            }
 
-            if (!demoTags || !demoTags.length) {
-                logLib.failure('no tags found:', detailsFile);
-                errors++;
-            } else {
-                if (!demoTags.every(tag => tag === 'unlisted' || tags.includes(tag))) {
-                    logLib.failure('one or more tags are missing from demo-config:', detailsFile);
+                if (!demoCategories || !demoCategories.length) {
+                    logLib.failure('no categories found:', detailsFile);
                     errors++;
+                } else {
+                    if (!demoCategories.every(category => categories.includes(typeof category === 'object' ? Object.keys(category)[0] : category))) {
+                        logLib.failure('one or more categories are missing from demo-config:', detailsFile);
+                        errors++;
+                    }
                 }
+
+                if (!demoTags || !demoTags.length) {
+                    logLib.failure('no tags found:', detailsFile);
+                    errors++;
+                } else {
+                    if (!demoTags.every(tag => tag === 'unlisted' || tags.includes(tag))) {
+                        logLib.failure('one or more tags are missing from demo-config:', detailsFile);
+                        errors++;
+                    }
+                }
+
+            } catch (e) {
+                logLib.failure('File not found:', detailsFile);
+                errors++;
             }
 
-        } catch (e) {
-            logLib.failure('File not found:', detailsFile);
-            errors++;
+        } else {
+            try {
+                const details = yaml.load(
+                    fs.readFileSync(detailsFile, 'utf-8')
+                );
+
+                if (typeof details === 'object') {
+                    if (details.categories) {
+                        logLib.failure(
+                            'categories should not be used in demo.details outside demo folder',
+                            detailsFile
+                        );
+                        errors++;
+                    } else if (details.tags) {
+                        logLib.failure(
+                            'tags should not be used in demo.details outside demo folder',
+                            detailsFile
+                        );
+                        errors++;
+                    }
+                }
+            // eslint-disable-next-line
+            } catch (e) {}
         }
     });
 
@@ -149,11 +177,13 @@ function checkDemosConsistency() {
 }
 
 /**
+ * Checks
  * @async
- * @return {void}
+ * @return {Promise<void>}
  */
 function checkDocsConsistency() {
     const FS = require('fs');
+    const glob = require('glob');
     const LogLib = require('./lib/log');
 
     const sidebar = require('../../docs/sidebars.js');
@@ -192,9 +222,36 @@ function checkDocsConsistency() {
         docsNotAdded.forEach(file => LogLib.warn(`   '${file}'`));
         throw new Error('Docs not added to sidebar');
     }
+
+    // Check links and references to samples
+    glob.sync(process.cwd() + '/docs/**/*.md').forEach(file => {
+        const md = FS.readFileSync(file),
+            regex = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu;
+
+        const error404s = [];
+
+        let match;
+        while ((match = regex.exec(md))) {
+            const sample = match[2].replace(/\/$/u, '');
+            try {
+                FS.statSync(`samples/${sample}/demo.js`);
+            } catch (error) {
+                error404s.push({ file, sample });
+            }
+        }
+
+        if (error404s.length) {
+            throw new Error(
+                'Rotten links\n' + JSON.stringify(error404s, null, '  ')
+            );
+        }
+
+    });
+
 }
 
 /**
+ * Save states
  * @return {void}
  */
 function saveRun() {
@@ -223,8 +280,10 @@ function saveRun() {
 }
 
 /**
+ * Check states
+ *
  * @return {boolean}
- *         True if outdated
+ * True if outdated
  */
 function shouldRun() {
 

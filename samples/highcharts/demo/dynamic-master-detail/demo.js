@@ -1,5 +1,5 @@
 Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json',
     data => {
         let detailChart;
 
@@ -47,11 +47,8 @@ Highcharts.getJSON(
                     maxZoom: 0.1
                 },
                 tooltip: {
-                    formatter: function () {
-                        var point = this.points[0];
-                        return '<b>' + point.series.name + '</b><br/>' + Highcharts.dateFormat('%A %B %e %Y', this.x) + ':<br/>' +
-                            '1 USD = ' + Highcharts.numberFormat(point.y, 2) + ' EUR';
-                    },
+                    format: '<b>{series.name}</b><br/>{x:%A %B %e %Y}:<br/>' +
+                        '1 USD = {y:.2f} EUR',
                     shared: true
                 },
                 legend: {
@@ -86,6 +83,7 @@ Highcharts.getJSON(
 
         // create the master chart
         function createMaster() {
+            const maskFill = 'rgba(0,0,255,0.05)';
             Highcharts.chart('master-container', {
                 chart: {
                     reflow: false,
@@ -96,8 +94,8 @@ Highcharts.getJSON(
                     zoomType: 'x',
                     events: {
 
-                        // listen to the selection event on the master chart to update the
-                        // extremes of the detail chart
+                        // listen to the selection event on the master chart to
+                        // update the extremes of the detail chart
                         selection: function (event) {
                             var extremesObject = event.xAxis[0],
                                 min = extremesObject.min,
@@ -112,13 +110,14 @@ Highcharts.getJSON(
                                 }
                             });
 
-                            // move the plot bands to reflect the new detail span
+                            // move the plot bands to reflect the new detail
+                            // span
                             xAxis.removePlotBand('mask-before');
                             xAxis.addPlotBand({
                                 id: 'mask-before',
                                 from: data[0][0],
                                 to: min,
-                                color: 'rgba(0, 0, 0, 0.2)'
+                                color: maskFill
                             });
 
                             xAxis.removePlotBand('mask-after');
@@ -126,7 +125,7 @@ Highcharts.getJSON(
                                 id: 'mask-after',
                                 from: max,
                                 to: data[data.length - 1][0],
-                                color: 'rgba(0, 0, 0, 0.2)'
+                                color: maskFill
                             });
 
 
@@ -150,7 +149,7 @@ Highcharts.getJSON(
                         id: 'mask-before',
                         from: data[0][0],
                         to: data[data.length - 1][0],
-                        color: 'rgba(0, 0, 0, 0.2)'
+                        color: maskFill
                     }],
                     title: {
                         text: null
@@ -166,11 +165,6 @@ Highcharts.getJSON(
                     },
                     min: 0.6,
                     showFirstLabel: false
-                },
-                tooltip: {
-                    formatter: function () {
-                        return false;
-                    }
                 },
                 legend: {
                     enabled: false

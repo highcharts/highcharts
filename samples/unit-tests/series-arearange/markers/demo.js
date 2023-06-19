@@ -107,12 +107,12 @@ QUnit.test('Markers for arearange.', function (assert) {
 
     assert.ok(
         xAxis.series[0].points[0].graphics[0].element,
-        `Bottom point's graphic should exist when chart is zoomed, #18080.`
+        'Bottom point\'s graphic should exist when chart is zoomed, #18080.'
     );
 
     assert.ok(
         xAxis.series[0].points[0].graphics[1].element,
-        `Top point's graphic should exist when chart is zoomed, #18080.`
+        'Top point\'s graphic should exist when chart is zoomed, #18080.'
     );
 
 });

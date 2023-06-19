@@ -54,7 +54,7 @@ The wrap function accepts the parent object as the first argument, the name of t
 It's best explained by a code sample:
 
 ```js
-H.wrap(H.Series.prototype, 'drawGraph', function (proceed) {
+H.wrap(H.Series.types.line.prototype, 'drawGraph', function (proceed) {
 
     // Before the original function
     console.log("We are about to draw the graph: ", typeof this.graph);
