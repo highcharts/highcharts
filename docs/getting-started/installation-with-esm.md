@@ -156,7 +156,7 @@ packages.
 ## Dynamic imports from CDN
 
 Highcharts is available on our CDN as ECMAScript modules. You can [import ES modules directly in modern browsers](https://jakearchibald.com/2017/es-modules-in-browsers/)
-without any bundling tools by using `<script type="module">` ([demo](https://jsfiddle.net/highcharts/rtcx6j3h/)):
+without any bundling tools by using `<script type="module">` ([demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/simple/)):
 ```html
 <script type="module">
     import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
