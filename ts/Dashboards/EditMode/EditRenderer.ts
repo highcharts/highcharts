@@ -148,7 +148,7 @@ function renderCollapseHeader(
             enabledOnOffLabels: true,
             id: name,
             name: name,
-            onchange,
+            callback: onchange,
             value: isEnabled || false,
             lang
         });
@@ -417,29 +417,28 @@ function renderToggle(
     );
 
     const input = renderCheckbox(toggle, value);
-    const onchange = options.onchange;
-    if (input && onchange) {
-        input.addEventListener('change', (e: any): void => {
-            onchange(e.target.checked);
-        });
+    const callbackFn = options.callback;
 
+    if (input && callbackFn) {
         toggleContainer.addEventListener('click', (e: any): void => {
-            onchange((input as HTMLInputElement).checked);
+            callbackFn(!!(e.target?.checked));
             (input as HTMLInputElement).checked = !(input as HTMLInputElement)
                 .checked;
         });
     }
 
-
-    createElement(
+    const slider = createElement(
         'span',
         {
-            className: EditGlobals.classNames.toggleSlider,
-            onclick: options.callback
+            className: EditGlobals.classNames.toggleSlider
         },
         {},
         toggle
     );
+
+    callbackFn && slider.addEventListener('click', (e): void => {
+        e.preventDefault();
+    });
 
     if (options.enabledOnOffLabels) {
         EditRenderer.renderText(toggleContainer, {
@@ -530,14 +529,14 @@ function renderIcon(
     const click = options.click;
     if (mousedown) {
         iconElem.onmousedown = function (): void {
-            mousedown.apply(options.item, arguments);
+            mousedown.apply(this, arguments);
         };
     }
 
     if (click) {
-        iconElem.onclick = function (): void {
-            click.apply(options.item, arguments);
-        };
+        iconElem.addEventListener('click', function (): void {
+            click.apply(this, arguments);
+        });
     }
     return iconElem;
 }

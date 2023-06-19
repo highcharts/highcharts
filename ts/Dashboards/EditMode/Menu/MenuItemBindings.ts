@@ -23,16 +23,16 @@ const MenuItemBindings: Record<string, Partial<MenuItem.Options>> = {
     *  Context menu
     *
     * */
-    horizontalSeparator: {
-        id: 'horizontalSeparator',
-        type: 'horizontalSeparator',
-        className: EditGlobals.classNames.menuHorizontalSeparator
-    },
-    verticalSeparator: {
-        id: 'verticalSeparator',
-        type: 'verticalSeparator',
-        className: EditGlobals.classNames.menuVerticalSeparator
-    },
+    // horizontalSeparator: {
+    //     id: 'horizontalSeparator',
+    //     type: 'horizontalSeparator',
+    //     className: EditGlobals.classNames.menuHorizontalSeparator
+    // },
+    // verticalSeparator: {
+    //     id: 'verticalSeparator',
+    //     type: 'verticalSeparator',
+    //     className: EditGlobals.classNames.menuVerticalSeparator
+    // },
     viewFullscreen: {
         id: 'viewFullscreen',
         type: 'text',

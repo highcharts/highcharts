@@ -106,54 +106,42 @@ class MenuItem {
             langKey = options.langKey;
 
         const renderItem = EditRenderer.getRendererFunction(
-            options.type as RendererElement
+            options.type
         );
 
         if (!renderItem) {
             return;
         }
 
-        const value = this.options.getValue && this.options.getValue(item);
-        const callback = function (): void {
-            if (options.events && options.events.click) {
-                options.events.click.apply(item, arguments);
-            }
-        };
+        if (options.type === 'toggle') {
+            return EditRenderer.renderToggle(container, {
+                id: options.id,
+                name: options.id,
+                title: langKey ?
+                    this.menu.editMode.lang[langKey] :
+                    options.text,
+                value: !!(this.options.getValue && this.options.getValue(item)),
+                lang: this.menu.editMode.lang,
+                callback: options.events && options.events.click.bind(item)
+            });
+        }
 
-        renderItem(
-            container,
-            this.getElementOptions(
-                merge(
-                    options,
-                    {
-                        value,
-                        text: langKey ?
-                            this.menu.editMode.lang[langKey] : options.text
-                    }
-                ),
-                callback
-            )
-        );
+        if (options.type === 'text') {
+            return EditRenderer.renderText(container, {
+                title: langKey ?
+                    this.menu.editMode.lang[langKey] :
+                    options.text || '',
+                className: options.className || ''
+            });
+        }
 
-    }
-
-    private getElementOptions(
-        options: MenuItem.Options,
-        callback?: Function
-    ): MenuItem.Options {
-
-        return {
-            id: options.id,
-            name: options.id,
-            title: options.collapsable ? '' : options.text || '',
-            item: this,
-            icon: options.icon,
-            mousedown: options.events && options.events.onmousedown,
-            click: options.events && options.events.click,
-            value: options.value || '',
-            onchange: callback,
-            items: options.items
-        };
+        if (options.type === 'icon') {
+            return EditRenderer.renderIcon(container, {
+                icon: options.icon || '',
+                mousedown: options.events?.onmousedown?.bind(item),
+                click: options.events?.click?.bind(item)
+            });
+        }
     }
 
     public update(): void {
@@ -197,8 +185,7 @@ namespace MenuItem {
         collapsable?: boolean;
         id: string;
         name?: string;
-        type?: 'addComponent'|'addLayout'|'horizontalSeparator'|'icon'|'input'|
-        'toggle'|'text'|'textarea'|'verticalSeparator'|'select';
+        type: 'icon'|'toggle'|'text';
         text?: string;
         getValue?: (item: MenuItem) => string | number | boolean;
         className?: string;
@@ -211,7 +198,6 @@ namespace MenuItem {
         isActive?: boolean;
         title?: string;
         value?: string;
-        items?: Array<string> | Array<SelectFormFieldItemOptions>;
     }
 }
 
