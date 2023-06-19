@@ -618,7 +618,6 @@ interface BoxPlotSeries extends ColumnSeries {
 }
 
 extend(BoxPlotSeries.prototype, {
-    // parallelArrays: ['x', 'low', 'q1', 'median', 'q3', 'high'],
     // Array point configs are mapped to this
     pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],
     // defines the top of the tracker

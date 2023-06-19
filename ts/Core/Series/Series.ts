@@ -529,6 +529,11 @@ class Series {
             if (!(series as any)[key + 'Data']) {
                 (series as any)[key + 'Data'] = [];
             }
+        });
+
+        // Initialize the data table columns
+        const dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
+        dataColumnKeys.forEach((key): void => {
             if (!columns[key]) {
                 columns[key] = [];
             }
@@ -669,20 +674,23 @@ class Series {
             fn = isNumber(i) ?
                 // Insert the value in the given position
                 function (key: string): void {
-                    const val = key === 'y' && series.toYData ?
-                        series.toYData(point) :
-                        (point as any)[key];
-                    (series as any)[key + 'Data'][i] = val;
-
-                    // Data table
-                    const column = series.table.columns[key];
-                    if (column) {
-                        column[i] = (point as any)[key];
-                        series.table.rowCount = Math.max(
-                            series.table.rowCount,
-                            column.length
-                        );
+                    if (series.useDataTable) {
+                        // Data table
+                        const column = series.table.columns[key];
+                        if (column) {
+                            column[i] = (point as any)[key];
+                            series.table.rowCount = Math.max(
+                                series.table.rowCount,
+                                column.length
+                            );
+                        }
+                    } else {
+                        const val = key === 'y' && series.toYData ?
+                            series.toYData(point) :
+                            (point as any)[key];
+                        (series as any)[key + 'Data'][i] = val;
                     }
+
                 } :
                 // Apply the method specified in i with the following
                 // arguments as arguments
@@ -693,7 +701,12 @@ class Series {
                     );
                 };
 
-        series.parallelArrays.forEach(fn);
+        if (this.useDataTable) {
+            const dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
+            dataColumnKeys.forEach(fn);
+        } else {
+            series.parallelArrays.forEach(fn);
+        }
     }
 
     /**
@@ -1353,8 +1366,8 @@ class Series {
             columns = this.table.columns,
             xData = this.useDataTable ? columns.x : this.xData,
             yData = this.useDataTable ? columns.y : this.yData,
-            pointArrayMap = series.pointArrayMap,
-            valueCount = pointArrayMap && pointArrayMap.length,
+            pointArrayMap = series.pointArrayMap || [],
+            valueCount = pointArrayMap.length,
             keys = options.keys;
         let i,
             pt,
@@ -1455,8 +1468,18 @@ class Series {
                                 for (i = 0; i < dataLength; i++) {
                                     pt = data[i];
                                     (xData as any)[i] = (pt as any)[0];
-                                    (yData as any)[i] =
-                                        (pt as any).slice(1, valueCount + 1);
+                                    // Data table
+                                    if (series.useDataTable) {
+                                        let j = 1;
+                                        for (const key of pointArrayMap) {
+                                            (columns as any)[key][i] =
+                                                (pt as any)[j++];
+                                        }
+                                    // Legacy
+                                    } else {
+                                        (yData as any)[i] = (pt as any)
+                                            .slice(1, valueCount + 1);
+                                    }
                                 }
                             }
                         } else { // [x, y]
@@ -1695,7 +1718,12 @@ class Series {
 
             // only crop if it's actually spilling out
             } else if (
-                (series.useDataTable ? columns.y : series.yData) && (
+                (
+                    // Don't understand why this condition is needed
+                    series.useDataTable ?
+                        columns[series.pointValKey || 'y'] :
+                        series.yData
+                ) && (
                     (processedXData as any)[0] < (min as any) ||
                     (processedXData as any)[dataLength - 1] > (max as any)
                 )
@@ -1849,7 +1877,7 @@ class Series {
         }
         return {
             xData: xData.slice(cropStart, cropEnd),
-            yData: yData.slice(cropStart, cropEnd),
+            yData: yData?.slice(cropStart, cropEnd),
             modified: {
                 columns,
                 rowCount: cropEnd - cropStart
@@ -1891,14 +1919,14 @@ class Series {
                     0
             ),
             // Create a configuration object out of a data row
-            row2Object = (i: number): PointOptions => this.parallelArrays
-                .reduce(
-                    (pointOptions, key): PointOptions => {
-                        (pointOptions as any)[key] = columns[key]?.[i];
-                        return pointOptions;
-                    },
-                    {} as PointOptions
-                );
+            dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])],
+            row2Object = (i: number): PointOptions => dataColumnKeys.reduce(
+                (pointOptions, key): PointOptions => {
+                    (pointOptions as any)[key] = columns[key]?.[i];
+                    return pointOptions;
+                },
+                {} as PointOptions
+            );
         let dataLength,
             cursor,
             point,

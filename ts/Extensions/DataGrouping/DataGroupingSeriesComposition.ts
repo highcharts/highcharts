@@ -269,15 +269,19 @@ function anchorPoints(
             groupedXData[groupedDataLength] >= xMax - totalRange
         ) {
             const lastGroupStart = series.groupMap[
-                series.groupMap.length - 1
-            ].start;
+                    series.groupMap.length - 1
+                ].start,
+                xData = series.useDataTable ?
+                    (series.table.columns.x || []) :
+                    series.xData;
 
             groupedXData[groupedDataLength] = ({
                 middle: groupedXData[groupedDataLength] + 0.5 * totalRange,
                 end: groupedXData[groupedDataLength] + totalRange,
                 firstPoint: lastGroupStart && series.xData[lastGroupStart],
-                lastPoint: series.xData[series.xData.length - 1]
+                lastPoint: xData[xData.length - 1]
             } as AnchorChoiceType)[lastAnchor];
+
         }
     }
 }
