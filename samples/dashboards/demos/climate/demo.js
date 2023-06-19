@@ -160,6 +160,12 @@ async function setupBoard() {
         components: [{
             cell: 'time-range-selector',
             type: 'Highcharts',
+            // connector: {
+            //     id: 'Range Selection'
+            // },
+            // sync: {
+            //     extremes: true
+            // },
             chartOptions: {
                 chart: {
                     height: '80px',
@@ -179,32 +185,11 @@ async function setupBoard() {
                     enabled: false
                 },
                 series: [{
-                    // type: 'spline',
                     name: 'Timeline',
-                    data: (function () {
-                        const dateEnd = new Date(Date.UTC(2010, 11, 25)),
-                            dates = [];
-
-                        let date = new Date(Date.UTC(1951, 0, 5));
-
-                        while (date <= dateEnd) {
-                            dates.push([date.getTime(), 0]);
-                            date = date.getUTCDate() >= 25 ?
-                                new Date(Date.UTC(
-                                    date.getFullYear(),
-                                    date.getUTCMonth() + 1,
-                                    5
-                                )) :
-                                new Date(Date.UTC(
-                                    date.getFullYear(),
-                                    date.getUTCMonth(),
-                                    date.getUTCDate() + 10
-                                ));
-                        }
-
-                        return dates;
-                    }()),
-                    showInNavigator: false,
+                    data: [
+                        [Date.UTC(1951, 0, 5), 0],
+                        [Date.UTC(2010, 11, 25), 0]
+                    ],
                     marker: {
                         enabled: false
                     },
@@ -844,6 +829,7 @@ async function setupBoard() {
                 Date: null
             },
             sync: {
+                // extremes: true,
                 highlight: true
             },
             chartOptions: {
@@ -1013,7 +999,7 @@ async function updateBoard(board, city, column, scale, newData) {
 
     if (newData) {
         // Update time range selector
-        timeRangeSelector.chart.navigator.series[0].update({
+        timeRangeSelector.chart.series[0].update({
             type: column[0] === 'T' ? 'spline' : 'column',
             data: cityTable.modified
                 .getRows(void 0, void 0, ['time', column])
