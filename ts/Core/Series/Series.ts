@@ -1778,9 +1778,7 @@ class Series {
         const processedData = series.getProcessedData();
 
         // Record the properties
-        if (processedData.modified) {
-            table.modified = processedData.modified;
-        }
+        table.modified = processedData.modified;
         series.cropped = processedData.cropped; // undefined or true
         series.cropStart = processedData.cropStart;
         series.processedXData = processedData.xData;
@@ -2068,7 +2066,8 @@ class Series {
         ),
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {
-        const { table, xAxis, yAxis } = this,
+        const { xAxis, yAxis } = this,
+            table = this.table.modified || this.table,
             columns = table.columns,
             yAxisData = (this.keysAffectYAxis || this.pointArrayMap)?.map(
                 (key): DataColumn => table.columns[key] || []
