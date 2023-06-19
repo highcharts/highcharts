@@ -28,6 +28,7 @@ interface GeoHeatmapSeriesOptions extends MapSeriesOptions {
     colsize?: number;
     rowsize?: number;
     interpolation?: boolean;
+    interpolationBlur?: number;
 }
 
 /* *

@@ -45,7 +45,7 @@
         colorAxis: {
             dataClasses: [{
                 to: 100,
-                color: 'rgba(0,0,0,0)'
+                color: 'rgba(51,132,51,0.3)'
             }, {
                 from: 100,
                 to: 1e3,
@@ -74,7 +74,7 @@
             name: 'GeoHeatMap',
             type: 'geoheatmap',
             interpolation: true,
-            opacity: 0.55,
+            interpolationBlur: 3,
             colsize: 10,
             rowsize: 10,
             data: data
