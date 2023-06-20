@@ -226,6 +226,7 @@ interface OHLCSeries {
     toYData(point: OHLCPoint): Array<number>;
 }
 extend(OHLCSeries.prototype, {
+    keysAffectYAxis: ['low', 'high'],
     pointClass: OHLCPoint,
     pointArrayMap: ['open', 'high', 'low', 'close']
 });

@@ -722,7 +722,12 @@ class HeatmapSeries extends ScatterSeries {
     getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
         const { dataMin, dataMax } = Series.prototype.getExtremes
-            .call(this, this.valueData);
+            .call(
+                this,
+                this.useDataTable ?
+                    (this.table.modified || this.table).columns.value || [] :
+                    this.valueData
+            );
 
         if (isNumber(dataMin)) {
             this.valueMin = dataMin;
@@ -1012,6 +1017,8 @@ extend(HeatmapSeries.prototype, {
     directTouch: true,
 
     getExtremesFromAll: true,
+
+    keysAffectYAxis: ['y'],
 
     parallelArrays: ColorMapComposition.seriesMembers.parallelArrays,
 

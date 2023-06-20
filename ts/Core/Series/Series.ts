@@ -2097,9 +2097,12 @@ class Series {
         const { xAxis, yAxis } = this,
             table = this.table.modified || this.table,
             columns = table.columns,
-            yAxisData = (this.keysAffectYAxis || this.pointArrayMap)?.map(
-                (key): DataColumn => table.columns[key] || []
-            ) || [this.stackedYData || columns.y || []],
+            customData = yData || this.stackedYData,
+            yAxisData = customData ?
+                [customData] :
+                (this.keysAffectYAxis || this.pointArrayMap)?.map(
+                    (key): DataColumn => table.columns[key] || []
+                ) || [],
             xData = this.useDataTable ?
                 columns.x || [] :
                 this.processedXData || this.xData,
@@ -2120,9 +2123,7 @@ class Series {
             xMax = 0,
             activeCounter = 0;
 
-        yData = this.useDataTable ?
-            yData || this.stackedYData || columns.y || [] :
-            yData || this.stackedYData || this.processedYData || [];
+        yData = yData || this.stackedYData || this.processedYData || [];
 
         const yDataLength = yData.length;
         const rowCount = table.rowCount;
