@@ -120,7 +120,7 @@ Your dashboard can now be created:
     });
 ```
 
-See it in action: [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/your-first-dashboard).
+See it in action: [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/your-first-dashboard).
 
 ## FAQ
 Answers to common questions can be found on our [FAQ page](https://highcharts.com/docs/dashboards/frequently-asked-questions).
