@@ -36,7 +36,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    isNumber
+    isNumber,
+    merge
 } = U;
 
 /* *
@@ -118,7 +119,8 @@ class AreaRangePoint extends AreaPoint {
     public setState(): void {
         const prevState = this.state,
             series = this.series,
-            isPolar = series.chart.polar;
+            isPolar = series.chart.polar,
+            seriesOptionsMarker = series.options.marker;
 
 
         if (!defined(this.plotHigh)) {
@@ -165,7 +167,20 @@ class AreaRangePoint extends AreaPoint {
             series.lowerStateMarkerGraphic = void 0;
         }
 
+        if (series.options.lowMarker) {
+            series.options.marker = merge(
+                series.options.marker,
+                series.options.lowMarker
+            );
+        }
+
+        // Bottom state:
         areaProto.setState.apply(this, arguments as any);
+
+        // Restore previous state
+        if (series.options.lowMarker) {
+            series.options.marker = seriesOptionsMarker;
+        }
     }
 
     public haloPath(): SVGPath {
