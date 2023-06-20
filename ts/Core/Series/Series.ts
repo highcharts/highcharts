@@ -1432,7 +1432,9 @@ class Series {
             if (isArray(data)) {
                 // Update parallel arrays
                 this.parallelArrays.forEach(function (key): void {
-                    (series as any)[key + 'Data'].length = 0;
+                    if ((series as any)[key + 'Data']) {
+                        (series as any)[key + 'Data'].length = 0;
+                    }
                 });
 
                 // Update data table
@@ -2106,7 +2108,7 @@ class Series {
             customData = yData || this.stackedYData,
             yAxisData = customData ?
                 [customData] :
-                (this.keysAffectYAxis || this.pointArrayMap)?.map(
+                (this.keysAffectYAxis || this.pointArrayMap || ['y'])?.map(
                     (key): DataColumn => table.columns[key] || []
                 ) || [],
             xData = this.useDataTable ?
