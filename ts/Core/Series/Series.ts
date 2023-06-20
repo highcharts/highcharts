@@ -2121,7 +2121,13 @@ class Series {
             // non-sorted data like scatter (#7639).
             shoulder = this.requireSorting ? this.cropShoulder : 0,
             // #2117, need to compensate for log X axis
-            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false;
+            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
+            doAll = forceExtremesFromAll ||
+                this.getExtremesFromAll ||
+                this.options.getExtremesFromAll ||
+                this.cropped ||
+                !xAxis; // For colorAxis support
+
         let xExtremes,
             validValue,
             withinRange,
@@ -2152,11 +2158,7 @@ class Series {
 
                 // Check if it is within the selected x axis range
                 if (
-                    forceExtremesFromAll ||
-                    this.getExtremesFromAll ||
-                    this.options.getExtremesFromAll ||
-                    this.cropped ||
-                    !xAxis || // For colorAxis support
+                    doAll ||
                     (
                         (xData[i + shoulder] || x) >= xMin &&
                         (xData[i - shoulder] || x) <= xMax
@@ -2190,11 +2192,7 @@ class Series {
                     (((y as any).length || y > 0) || !positiveValuesOnly)
                 );
                 withinRange = (
-                    forceExtremesFromAll ||
-                    this.getExtremesFromAll ||
-                    this.options.getExtremesFromAll ||
-                    this.cropped ||
-                    !xAxis || // for colorAxis support
+                    doAll ||
                     (
                         ((xData as any)[i + shoulder] || x) >= xMin &&
                         ((xData as any)[i - shoulder] || x) <= xMax

@@ -690,6 +690,8 @@ extend(XRangeSeries.prototype, {
     pointClass: XRangePoint,
     cropShoulder: 1,
     getExtremesFromAll: true,
+    keysAffectYAxis: ['y'],
+    pointArrayMap: ['x2', 'y'],
     parallelArrays: ['x', 'x2', 'y'],
     requireSorting: false,
     type: 'xrange',
