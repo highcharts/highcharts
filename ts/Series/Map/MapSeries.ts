@@ -901,6 +901,9 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
+        if (this.useDataTable) {
+            return !!this.table.columns.rowCount;
+        }
         return !!this.processedXData.length; // != 0
     }
 
@@ -1187,7 +1190,11 @@ class MapSeries extends ScatterSeries {
         }
         // The processedXData array is used by general chart logic for checking
         // data length in various scanarios
-        this.processedXData = new Array(processedData.length);
+        if (this.useDataTable) {
+            this.table.rowCount = processedData.length;
+        } else {
+            this.processedXData = new Array(processedData.length);
+        }
 
         return void 0;
     }

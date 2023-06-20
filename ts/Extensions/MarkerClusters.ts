@@ -2100,7 +2100,9 @@ Scatter.prototype.generatePoints = function (): void {
         chart = series.chart,
         mapView = chart.mapView,
         xData = series.xData,
-        yData = series.yData,
+        yData = series.useDataTable ?
+            series.table.columns.y || series.table.columns.value :
+            series.yData,
         clusterOptions = series.options.cluster,
         realExtremes = series.getRealExtremes(),
         visibleXData = [],
@@ -2280,8 +2282,18 @@ Scatter.prototype.generatePoints = function (): void {
         oldMarkerClusterInfo = series.markerClusterInfo;
 
         if (clusteredData) {
-            series.processedXData = clusteredData.groupedXData;
-            series.processedYData = clusteredData.groupedYData;
+            if (series.useDataTable) {
+                series.table.modified = {
+                    columns: {
+                        x: clusteredData.groupedXData,
+                        y: clusteredData.groupedYData
+                    },
+                    rowCount: clusteredData.groupedXData.length
+                };
+            } else {
+                series.processedXData = clusteredData.groupedXData;
+                series.processedYData = clusteredData.groupedYData;
+            }
 
             series.hasGroupedData = true;
             series.markerClusterInfo = clusteredData;

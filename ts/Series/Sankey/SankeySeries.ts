@@ -262,6 +262,9 @@ class SankeySeries extends ColumnSeries {
      *         Returns true if the series has points at all.
      */
     public hasData(): boolean {
+        if (this.useDataTable) {
+            return !!this.table.columns.rowCount;
+        }
         return !!this.processedXData.length; // != 0
     }
 
