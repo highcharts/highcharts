@@ -35,7 +35,7 @@ QUnit.test('Series shadows', function (assert) {
     );
 
     assert.ok(
-        chart.series[0].graph.attr('filter').indexOf('userpacense') !== -1,
+        chart.series[0].graph.attr('filter').indexOf('userspaceonuse') !== -1,
         `Shadow should have 'filterUnits: userSpaceOnUse' attribute
         with line series (#19093)`
     );
@@ -46,7 +46,9 @@ QUnit.test('Series shadows', function (assert) {
 
     assert.strictEqual(
         chart.series[0].graph.attr('filter'),
-        `url(#highcharts-drop-shadow-${chart.index}-userpacense)`,
+        `url(#highcharts-drop-shadow-${
+            chart.index
+        }-filterunits-userspaceonuse)`,
         'Shadows should be updated when old options defined as object and new as boolean (#12091, #19093).'
     );
 
