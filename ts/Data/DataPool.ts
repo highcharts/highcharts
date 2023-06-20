@@ -142,15 +142,15 @@ class DataPool implements DataEvent.Emitter {
      * @return {Array<string>}
      * Names of all connectors.
      */
-    public getConnectorsNames(): Array<string> {
+    public getConnectorIds(): Array<string> {
         const connectors = this.options.connectors,
-            connectorsNames: Array<string> = [];
+            connectorIds: Array<string> = [];
 
         for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
-            connectorsNames.push(connectors[i].name);
+            connectorIds.push(connectors[i].id);
         }
 
-        return connectorsNames;
+        return connectorIds;
     }
 
     /**
@@ -158,19 +158,19 @@ class DataPool implements DataEvent.Emitter {
      *
      * @private
      *
-     * @param {string} name
+     * @param {string} id
      * Name of the connector.
      *
      * @return {DataPoolConnectorOptions|undefined}
      * Returns the options of the connector, or `undefined` if not found.
      */
     protected getConnectorOptions(
-        name: string
+        id: string
     ): (DataPoolConnectorOptions|undefined) {
         const connectors = this.options.connectors;
 
         for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
-            if (connectors[i].name === name) {
+            if (connectors[i].id === id) {
                 return connectors[i];
             }
         }
@@ -181,17 +181,17 @@ class DataPool implements DataEvent.Emitter {
      *
      * @function Data.DataPool#getConnectorTable
      *
-     * @param {string} name
+     * @param {string} connectorId
      * Name of the connector.
      *
      * @return {Promise<Data.DataTable>}
      * Returns the connector table.
      */
     public getConnectorTable(
-        name: string
+        connectorId: string
     ): Promise<DataTable> {
         return this
-            .getConnector(name)
+            .getConnector(connectorId)
             .then((connector): DataTable => connector.table);
     }
 
@@ -224,7 +224,7 @@ class DataPool implements DataEvent.Emitter {
 
             const connector = new ConnectorClass(options.options);
 
-            this.connectors[options.name] = connector;
+            this.connectors[options.id] = connector;
 
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             connector.load().then((connector): void => {
@@ -275,7 +275,7 @@ class DataPool implements DataEvent.Emitter {
         });
 
         for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
-            if (connectors[i].name === options.name) {
+            if (connectors[i].id === options.id) {
                 connectors.splice(i, 1);
                 break;
             }

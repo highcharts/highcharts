@@ -23,9 +23,8 @@
         "../../../ts/Dashboards/Components/EditableOptions.ts",
         "../../../ts/Dashboards/Components/ComponentOptions.ts",
         "../../../ts/Dashboards/Layout/Cell.ts",
-        "../../../ts/Dashboards/Components/Sync/*.ts",
+        "../../../ts/Dashboards/Components/Sync/Sync.ts",
         "../../../ts/Dashboards/PluginHandler.ts",
-        "../../../ts/Data/DataTable.ts",
         "../../../ts/Data/DataTable.ts",
         "../../../ts/DataGrid/DataGrid.ts",
         "../../../ts/DataGrid/DataGridOptions.d.ts",
@@ -36,8 +35,13 @@
     "entryPointStrategy": "expand",
     "excludeInternal": true,
     "hideGenerator": true,
+    "htmlLang": "en",
     "name": "Highcharts Dashboards",
-    "readme": "../../../docs/dashboards/your-first-dashboard.md",
     "out": "../../../build/api/dashboards/typedoc/",
+    "plugin": [
+        "typedoc-plugin-rename-defaults"
+    ],
+    "readme": "../../../docs/dashboards/your-first-dashboard.md",
+    "titleLink": "https://api.highcharts.com/dashboards/typedoc/index.html",
     "visibilityFilters": {}
 }

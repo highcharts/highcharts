@@ -41,7 +41,7 @@
     "@babel/preset-env": "^7.20.2",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.1",
     "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.26",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.4",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.5",
     "@highcharts/map-collection": "^2.0.1",
     "@octokit/rest": "^19.0.7",
     "@types/jquery": "^3.5.16",

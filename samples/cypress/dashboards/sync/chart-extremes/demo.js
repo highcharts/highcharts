@@ -1,7 +1,7 @@
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            name: 'connector',
+            id: 'connector',
             type: 'CSV',
             options: {
                 csv: `$GME,$AMC,$NOK
@@ -63,7 +63,7 @@ Dashboards.board('container', {
             }
         },
         connector: {
-            name: 'connector'
+            id: 'connector'
         },
         sync: {
             extremes: true
@@ -83,7 +83,7 @@ Dashboards.board('container', {
             }]
         },
         connector: {
-            name: 'connector'
+            id: 'connector'
         },
         sync: {
             extremes: true
@@ -105,7 +105,7 @@ Dashboards.board('container', {
             }]
         },
         connector: {
-            name: 'connector'
+            id: 'connector'
         },
         sync: {
             extremes: true

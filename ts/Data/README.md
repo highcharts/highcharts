@@ -220,7 +220,7 @@ import CSVConnector from 'dashboards/Data/Connectors/CSVConnector';
 ```
 
 ```TypeScript
-const CSVConnector = Dashboard.DataConnector.registry.CSVConnector;
+const CSVConnector = Dashboards.DataConnector.types.CSVConnector;
 ```
 
 
@@ -313,7 +313,7 @@ DataPool
 --------
 
 With DataPool one can "lazy" load connectors besides the initial phase. After
-adding connector name, connector type and connector options to DataPool, one can
+adding connector id, connector type and connector options to DataPool, one can
 request (later on) the connector or table under their given name and the class
 will give a promise that resolves to the connector or table as soon as it has
 been loaded.
@@ -321,7 +321,7 @@ been loaded.
 ```TypeScript
 const dataPool = new DataPool({
     connectors: [{
-        name: 'My Google Spreadsheet',
+        id: 'my-google-spreadsheet',
         type: 'GoogleSheets',
         options: {
             googleAPIKey: 'XXXXX',
@@ -330,14 +330,14 @@ const dataPool = new DataPool({
     }]
 });
 dataPool.setConnectorOptions({
-    name: 'My CSV',
+    name: 'my-csv',
     type: 'CSV',
     options: {
         csvURL: 'https://domain.example/data.csv'
     }
 });
-const googleConnector = await dataPool.getConnector('My Google Spreadsheet');
-const csvTable = await dataPool.getConnectorTable('My CSV');
+const googleConnector = await dataPool.getConnector('my-google-spreadsheet');
+const csvTable = await dataPool.getConnectorTable('my-csv');
 ```
 
 DataPool can be used to coordinate and share connectors and their
@@ -345,7 +345,7 @@ data between multiple modules. You can request the connector multiple times,
 while the class will load each connector only once.
 
 ```TypeScript
-const googleConnector1 = await dataPool.getConnector('My Google Spreadsheet');
-const googleConnector2 = await dataPool.getConnector('My Google Spreadsheet');
-const googleConnector3 = await dataPool.getConnector('My Google Spreadsheet');
+const googleConnector1 = await dataPool.getConnector('my-google-spreadsheet');
+const googleConnector2 = await dataPool.getConnector('my-google-spreadsheet');
+const googleConnector3 = await dataPool.getConnector('my-google-spreadsheet');
 ```
