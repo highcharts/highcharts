@@ -6,7 +6,7 @@ module.exports = {
             'getting-started/installation',
             'getting-started/installation-with-esm',
             'getting-started/install-from-npm',
-            'getting-started/install-from-bower',
+            'getting-started/installation-with-amd-commonjs',
             'getting-started/your-first-chart',
             'getting-started/how-to-set-options',
             'getting-started/frequently-asked-questions',
