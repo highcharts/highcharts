@@ -148,7 +148,7 @@ function renderCollapseHeader(
             enabledOnOffLabels: true,
             id: name,
             name: name,
-            callback: onchange,
+            onchange: onchange,
             value: isEnabled || false,
             lang
         });
@@ -417,7 +417,7 @@ function renderToggle(
     );
 
     const input = renderCheckbox(toggle, value) as HTMLInputElement;
-    const callbackFn = options.callback;
+    const callbackFn = options.onchange;
 
     if (input && callbackFn) {
         toggleContainer.addEventListener('click', (e: any): void => {
@@ -721,7 +721,7 @@ function renderButton(
  * @returns
  * function to render a specific element
  */
-function getRendererFunction(type: RendererElement): Function|undefined {
+function getRendererFunction(type: RendererElement): Function | undefined {
     return {
         select: renderSelect,
         toggle: renderToggle,
@@ -807,7 +807,6 @@ export interface ToggleFormFieldOptions {
     value: boolean;
     enabledOnOffLabels?: boolean;
     className?: string;
-    callback?: Function;
     onchange?: (value: boolean) => void;
     id: string;
     name: string;
