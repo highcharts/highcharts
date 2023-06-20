@@ -160,6 +160,15 @@ class ColumnPyramidSeries extends ColumnSeries {
                 invBarPos: number,
                 x1, x2, x3, x4, y1, y2;
 
+            // Adjust for null or missing points
+            if (options.centerInCategory) {
+                barX = series.adjustForMissingColumns(
+                    barX,
+                    pointWidth,
+                    point,
+                    metrics
+                );
+            }
 
             point.barX = barX;
             point.pointWidth = pointWidth;

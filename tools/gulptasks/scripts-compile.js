@@ -17,7 +17,7 @@ const SOURCE_DIRECTORY = 'code';
  * Split an array into multiple new arrays/chuncks
  *
  * @param {Array} arr to split
- * @param {Number} numParts to split array in
+ * @param {number} numParts to split array in
  * @return {Array} Array of arrays/chunks
  */
 function chunk(arr, numParts) {
@@ -34,21 +34,21 @@ function chunk(arr, numParts) {
 }
 
 /**
- * Compile the JS files in the /code folder
+ * Compiles `.src.js`-files (masters) of the `/code` folder.
  *
  * @return {Promise<void>}
- *         Promise to keep
+ * Promise to keep
  */
 async function task() {
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
 
-    const fileBatches = [];
+    const threads = [];
 
     if (workerData) {
         const compileTool = require('../compile');
 
-        fileBatches.push(
+        threads.push(
             compileTool.compile(workerData.files, (SOURCE_DIRECTORY + '/'))
         );
 
@@ -70,19 +70,16 @@ async function task() {
                     .map(path => path.substr(SOURCE_DIRECTORY.length + 1))
         );
 
-        const numThreads = argv.numThreads ?
+        const numberOfThreads = argv.numThreads ?
             argv.numThreads :
-            Math.min(
-                files.length,
-                Math.max(2, os.cpus().length - 2)
-            );
-        const batches = chunk(files, numThreads);
+            Math.max(2, os.cpus().length - 2);
+        const batches = chunk(files, numberOfThreads);
 
-        logLib.message(`Splitting files to compile in ${batches.length} batches/threads..`);
+        logLib.message(`Splitting files to compile in ${batches.length} batches.`);
         logLib.message('Compiling', SOURCE_DIRECTORY + '...');
 
         batches.forEach((batch, index) => {
-            fileBatches.push(new Promise((resolve, reject) => {
+            threads.push(new Promise((resolve, reject) => {
 
                 const worker = new Worker(
                     __filename,
@@ -100,7 +97,7 @@ async function task() {
         });
     }
 
-    return Promise.all(fileBatches);
+    return Promise.all(threads);
 }
 
 gulp.task('scripts-compile', task);
