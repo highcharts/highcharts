@@ -524,20 +524,26 @@ class Series {
         series.getColor();
         series.getSymbol();
 
-        // Initialize the parallel data arrays
-        series.parallelArrays.forEach(function (key: string): void {
-            if (!(series as any)[key + 'Data']) {
-                (series as any)[key + 'Data'] = [];
-            }
-        });
+        if (this.useDataTable) {
+            // Initialize the data table columns
+            const dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
+            dataColumnKeys.forEach((key): void => {
+                if (!columns[key]) {
+                    columns[key] = [];
 
-        // Initialize the data table columns
-        const dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
-        dataColumnKeys.forEach((key): void => {
-            if (!columns[key]) {
-                columns[key] = [];
-            }
-        });
+                    // Legacy parallel arrays are copies of data table columns
+                    (series as any)[key + 'Data'] = columns[key];
+                }
+            });
+
+        } else {
+            // Initialize the parallel data arrays
+            series.parallelArrays.forEach(function (key: string): void {
+                if (!(series as any)[key + 'Data']) {
+                    (series as any)[key + 'Data'] = [];
+                }
+            });
+        }
 
         // Mark cartesian
         if (series.isCartesian) {
