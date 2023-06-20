@@ -161,21 +161,23 @@ class PackedBubbleSeries extends BubbleSeries {
         const chart = this.chart,
             allDataPoints = [] as Array<PackedBubbleSeries.Data>;
 
-        let yData: SeriesType['yData'];
-
         for (const series of chart.series) {
             if (
                 series.is('packedbubble') && // #13574
                 series.visible ||
                 !chart.options.chart.ignoreHiddenSeries
             ) {
-                yData = series.yData || [];
+                const valueData = (
+                    series.useDataTable ?
+                        series.table.columns.value :
+                        series.yData
+                ) || [];
 
                 // add data to array only if series is visible
-                for (let j = 0; j < yData.length; j++) {
+                for (let j = 0; j < valueData.length; j++) {
                     allDataPoints.push([
                         null, null,
-                        yData[j] as (number|null),
+                        valueData[j] as (number|null),
                         series.index,
                         j,
                         {
@@ -326,10 +328,14 @@ class PackedBubbleSeries extends BubbleSeries {
         if (zMin && zMax) {
             return [zMin, zMax];
         }
-        // it is needed to deal with null
-        // and undefined values
+
+        // It is needed to deal with null and undefined values
         allSeries.forEach((series): void => {
-            series.yData.forEach((y): void => {
+            const values = series.useDataTable ?
+                series.table.columns.value || [] :
+                series.yData;
+
+            values.forEach((y): void => {
                 if (defined(y)) {
                     if (y > valMax) {
                         valMax = y;

@@ -839,6 +839,7 @@ extend(BubbleSeries.prototype, {
     buildKDTree: noop,
     directTouch: true,
     isBubble: true,
+    keysAffectYAxis: ['y'],
     pointArrayMap: ['y', 'z'],
     pointClass: BubblePoint,
     parallelArrays: ['x', 'y', 'z'],

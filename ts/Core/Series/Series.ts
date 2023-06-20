@@ -10,6 +10,8 @@
 
 'use strict';
 
+const useDataTable = false;
+
 /* *
  *
  *  Imports
@@ -409,7 +411,7 @@ class Series {
         TypedArray
     );
 
-    public useDataTable: boolean|undefined;
+    public useDataTable = useDataTable;
 
     public zoneAxis?: string;
 
