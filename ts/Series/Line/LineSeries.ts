@@ -18,7 +18,7 @@
 
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
-import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
+import type { PlotOptionsOf, SeriesStepOptionsObject, SeriesStepType } from '../../Core/Series/SeriesOptions';
 import type SplineSeries from '../Spline/SplineSeries';
 import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -30,6 +30,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     defined,
+    isNumber,
     merge
 } = U;
 
@@ -205,10 +206,19 @@ class LineSeries extends Series {
     ): SVGPath {
         const series = this,
             options = series.options,
-            graphPath = [] as SVGPath,
-            xMap = [] as Array<(number|null)>;
+            stepOption = typeof options.step === 'object' ?
+                options.step :
+                { type: options.step },
+            graphPath: SVGPath = [],
+            isSpline = !!(series as unknown as Partial<SplineSeries>)
+                .getPointSpline,
+            xMap: number[] = [];
+
         let gap: boolean,
-            step = options.step as any;
+            step = 0,
+            pointRange = (
+                stepOption.type === 'center' && series.closestPointRangePx
+            ) || 0;
 
         points = points || series.points;
 
@@ -216,31 +226,39 @@ class LineSeries extends Series {
         const reversed = (points as any).reversed;
         if (reversed) {
             points.reverse();
+            pointRange *= -1;
         }
+
         // Reverse the steps (#5004)
-        step = ({
-            right: 1,
-            center: 2
-        } as Record<string, number>)[step as any] || (step && 3);
-        if (step && reversed) {
-            step = 4 - step;
+        if (stepOption.type && !isSpline) {
+            step = ({
+                right: 1,
+                center: 2
+            } as Record<SeriesStepType, number>)[stepOption.type] || 3;
+            if (step && reversed) {
+                step = 4 - step;
+            }
+            if (series.xAxis.reversed) {
+                pointRange *= -1;
+            }
         }
 
         // Remove invalid points, especially in spline (#5015)
-        points = this.getValidPoints(
+        const vPoints = this.getValidPoints(
             points,
             false,
             !(options.connectNulls && !nullsAsZeroes && !connectCliffs)
         ) as Array<LinePoint>;
 
         // Build the line
-        points.forEach(function (point, i): void {
+        vPoints.forEach((point, i): void => {
 
-            const plotX = point.plotX,
-                plotY = point.plotY,
-                lastPoint = (points as any)[i - 1],
-                isNull = point.isNull || typeof plotY !== 'number';
-            // the path to this point from the previous
+            const { plotX, plotY } = point,
+                lastPoint = vPoints[i - 1],
+                nextPoint = vPoints[i + 1],
+                isNull = point.isNull || !isNumber(plotY);
+
+            // The path from last point to this point
             let pathToPoint: SVGPath;
 
             if (
@@ -258,68 +276,63 @@ class LineSeries extends Series {
             } else if (isNull && !nullsAsZeroes) {
                 gap = true;
 
-            } else {
+            } else if (isNumber(plotX) && isNumber(plotY)) {
 
-                if (i === 0 || gap) {
-                    pathToPoint = [[
-                        'M',
-                        point.plotX as any,
-                        point.plotY as any
-                    ]];
+                if (step) {
+                    const lastX = lastPoint && !lastPoint.isNull ?
+                            lastPoint.plotX || 0 :
+                            plotX - pointRange,
+                        nextX = nextPoint && !nextPoint.isNull ?
+                            nextPoint.plotX || 0 :
+                            plotX + pointRange,
+
+                        // Defaults for step left
+                        a: SVGPath.Segment = [
+                            i === 0 || gap || (
+                                stepOption.risers === false && !connectCliffs
+                            ) ?
+                                'M' : 'L',
+                            plotX,
+                            plotY
+                        ],
+                        b: SVGPath.Segment = [
+                            'L',
+                            nextX,
+                            plotY
+                        ];
+
+                    // Step right
+                    if (step === 1) {
+                        a[1] = lastX;
+                        b[1] = plotX;
+
+                    // Step center
+                    } else if (step === 2) {
+                        a[1] = (lastX + plotX) / 2;
+                        b[1] = (nextX + plotX) / 2;
+                    }
+
+                    pathToPoint = [a, b];
+
+
+                } else if (i === 0 || gap) {
+
+                    pathToPoint = [['M', plotX, plotY]];
 
                 // Generate the spline as defined in the SplineSeries object
-                } else if (
-                    (series as unknown as Partial<SplineSeries>).getPointSpline
-                ) {
+                } else if (isSpline) {
 
                     pathToPoint = [(
                         series as unknown as SplineSeries
                     ).getPointSpline(
-                        points as Array<SplinePoint>,
+                        vPoints as Array<SplinePoint>,
                         point as SplinePoint,
                         i
                     )];
 
-                } else if (step) {
-
-                    if (step === 1) { // right
-                        pathToPoint = [[
-                            'L',
-                            lastPoint.plotX as any,
-                            plotY as any
-                        ]];
-
-                    } else if (step === 2) { // center
-                        pathToPoint = [[
-                            'L',
-                            ((lastPoint.plotX as any) + plotX) / 2,
-                            lastPoint.plotY as any
-                        ], [
-                            'L',
-                            ((lastPoint.plotX as any) + plotX) / 2,
-                            plotY as any
-                        ]];
-
-                    } else {
-                        pathToPoint = [[
-                            'L',
-                            plotX as any,
-                            lastPoint.plotY as any
-                        ]];
-                    }
-                    pathToPoint.push([
-                        'L',
-                        plotX as any,
-                        plotY as any
-                    ]);
-
                 } else {
                     // normal line to next point
-                    pathToPoint = [[
-                        'L',
-                        plotX as any,
-                        plotY as any
-                    ]];
+                    pathToPoint = [['L', plotX, plotY]];
                 }
 
                 // Prepare for animation. When step is enabled, there are
@@ -327,9 +340,6 @@ class LineSeries extends Series {
                 xMap.push(point.x);
                 if (step) {
                     xMap.push(point.x);
-                    if (step === 2) { // step = center (#8073)
-                        xMap.push(point.x);
-                    }
                 }
 
                 graphPath.push.apply(graphPath, pathToPoint);
@@ -337,7 +347,7 @@ class LineSeries extends Series {
             }
         });
 
-        (graphPath as any).xMap = xMap;
+        graphPath.xMap = xMap;
         series.graphPath = graphPath;
 
         return graphPath;

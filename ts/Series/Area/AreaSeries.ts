@@ -50,7 +50,7 @@ const {
 
 declare module '../../Core/Renderer/SVG/SVGPath' {
     interface SVGPath {
-        xMap?: number;
+        xMap?: number[];
         isArea?: boolean;
     }
 }
