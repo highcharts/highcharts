@@ -1948,7 +1948,7 @@ extend(TreemapSeries.prototype, {
     getSymbol: noop,
     optionalAxis: 'colorAxis',
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
-    pointArrayMap: ['value'],
+    pointArrayMap: ['value', 'colorValue'],
     pointClass: TreemapPoint,
     NodeClass: TreemapNode,
     trackerGroups: ['group', 'dataLabelsGroup'],
