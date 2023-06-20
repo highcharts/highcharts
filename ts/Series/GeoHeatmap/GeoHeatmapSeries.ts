@@ -26,6 +26,11 @@ import H from '../../Core/Globals.js';
 const {
     doc
 } = H;
+import A from '../../Core/Animation/AnimationUtilities.js';
+const { animObject, stop } = A;
+import type {
+    AnimationStepCallbackFunction
+} from '../../Core/Animation/AnimationOptions';
 
 const {
     seriesTypes: {
@@ -171,6 +176,8 @@ class GeoHeatmapSeries extends MapSeries {
 
     public context?: CanvasRenderingContext2D = void 0 as any;
 
+    public isDirtyCanvas: boolean = true;
+
     /* *
      *
      *  Functions
@@ -187,6 +194,9 @@ class GeoHeatmapSeries extends MapSeries {
         const series = this;
 
         series.options = merge(series.options, arguments[0]);
+        if (series.options.interpolation) {
+            series.isDirtyCanvas = true;
+        }
         super.update.apply(series, arguments);
     }
 
@@ -222,7 +232,6 @@ class GeoHeatmapSeries extends MapSeries {
                     y: series.bounds.y1
                 });
 
-
             if (topLeft && bottomRight) {
                 const dimensions = {
                         x: topLeft.x,
@@ -234,208 +243,272 @@ class GeoHeatmapSeries extends MapSeries {
                         chart.colorAxis &&
                         chart.colorAxis[0]
                     ),
-                    ctx = series.getContext(),
+                    ctx = series.context || series.getContext(),
                     canvas = series.canvas;
 
                 if (canvas && ctx && colorAxis) {
-                    const canvasWidth = canvas.width = ~~(
-                            360 / colsize
-                        ) + 1,
-                        canvasHeight = canvas.height = ~~(
-                            180 / rowsize
-                        ) + 1,
-                        canvasArea = canvasWidth * canvasHeight,
-                        pixelData = new Uint8ClampedArray(
-                            canvasArea * 4
-                        ),
-                        colorFromPoint = (p: any): number[] => {
-                            const rgba = ((
-                                colorAxis.toColor(
-                                    p.value ||
-                                    0,
-                                    pick(p)
-                                ) as string)
-                                .split(')')[0]
-                                .split('(')[1]
-                                .split(',')
-                                .map((s): number => pick(
-                                    parseFloat(s),
-                                    parseInt(s, 10)
-                                ))
-                            );
-                            rgba[3] = pick(rgba[3], 1.0) * 255;
-                            if (!defined(p.value)) {
-                                rgba[3] = 0;
-                            }
-                            return rgba;
-                        },
-                        scaledPointPos = (
-                            lon: number,
-                            lat: number
-                        ): number => (
-                            Math.ceil(
-                                (
-                                    canvasWidth *
-                                    (
-                                        canvasHeight - 1 -
-                                            (lat + 90) / rowsize
-                                    )
-                                ) +
-                                (
-                                    (lon + 180) / colsize
-                                )
-                            )
-                        );
-
-                    for (let i = 0; i < points.length; i++) {
-                        const p = points[i],
-                            sourceArr = new Uint8ClampedArray(
-                                colorFromPoint(p)
+                    if (
+                        // Do not calculate new canvas if not necessary
+                        series.isDirtyCanvas ||
+                        // Always calculate new canvas for Orthographic proj
+                        mapView.projection.options.name === 'Orthographic'
+                    ) {
+                        const canvasWidth = canvas.width = ~~(
+                                360 / colsize
+                            ) + 1,
+                            canvasHeight = canvas.height = ~~(
+                                180 / rowsize
+                            ) + 1,
+                            canvasArea = canvasWidth * canvasHeight,
+                            pixelData = new Uint8ClampedArray(
+                                canvasArea * 4
                             ),
-                            { lon, lat } = p.options;
-
-                        if (isNumber(lon) && isNumber(lat)) {
-                            pixelData.set(
-                                sourceArr,
-                                scaledPointPos(lon, lat) * 4
+                            colorFromPoint = (p: any): number[] => {
+                                const rgba = ((
+                                    colorAxis.toColor(
+                                        p.value ||
+                                        0,
+                                        pick(p)
+                                    ) as string)
+                                    .split(')')[0]
+                                    .split('(')[1]
+                                    .split(',')
+                                    .map((s): number => pick(
+                                        parseFloat(s),
+                                        parseInt(s, 10)
+                                    ))
+                                );
+                                rgba[3] = pick(rgba[3], 1.0) * 255;
+                                if (!defined(p.value)) {
+                                    rgba[3] = 0;
+                                }
+                                return rgba;
+                            },
+                            scaledPointPos = (
+                                lon: number,
+                                lat: number
+                            ): number => (
+                                Math.ceil(
+                                    (
+                                        canvasWidth *
+                                        (
+                                            canvasHeight - 1 -
+                                                (lat + 90) / rowsize
+                                        )
+                                    ) +
+                                    (
+                                        (lon + 180) / colsize
+                                    )
+                                )
                             );
+
+                        for (let i = 0; i < points.length; i++) {
+                            const p = points[i],
+                                sourceArr = new Uint8ClampedArray(
+                                    colorFromPoint(p)
+                                ),
+                                { lon, lat } = p.options;
+
+                            if (isNumber(lon) && isNumber(lat)) {
+                                pixelData.set(
+                                    sourceArr,
+                                    scaledPointPos(lon, lat) * 4
+                                );
+                            }
                         }
-                    }
 
-                    const blur = pick(series.options.interpolationBlur, 1),
-                        upscaledWidth = ~~(dimensions.width * blur),
-                        upscaledHeight =
-                            ~~(
-                                (blur * dimensions.width) / canvasWidth
-                            ) * canvasHeight,
-                        projectedWidth = ~~dimensions.width,
-                        projectedHeight = ~~dimensions.height;
+                        const blur = pick(series.options.interpolationBlur, 1),
+                            upscaledWidth = ~~(dimensions.width * blur),
+                            upscaledHeight =
+                                ~~(
+                                    (blur * dimensions.width) / canvasWidth
+                                ) * canvasHeight,
+                            projectedWidth = ~~dimensions.width,
+                            projectedHeight = ~~dimensions.height;
 
-                    canvas.width = upscaledWidth;
-                    canvas.height = upscaledHeight;
+                        canvas.width = upscaledWidth;
+                        canvas.height = upscaledHeight;
 
-                    const img =
-                        new ImageData(pixelData, canvasWidth, canvasHeight);
+                        const img =
+                            new ImageData(pixelData, canvasWidth, canvasHeight);
 
-                    ctx.putImageData(img, 0, 0);
-                    // Now we have an unscaled version of our ImageData
-                    // let's make the compositing mode to 'copy' so that
-                    // our next drawing op erases whatever was there
-                    // previously just like putImageData would have done
-                    ctx.globalCompositeOperation = 'copy';
-                    // Now we can draw ourself over ourself.
-                    ctx.drawImage(
-                        canvas,
-                        0, 0, img.width, img.height, // Grab the ImageData
-                        0, 0, canvas.width, canvas.height // Scale it
-                    );
-
-                    const projectedPixelData = new Uint8ClampedArray(
-                            projectedWidth * projectedHeight * 4
-                        ),
-                        cartesianImageData = ctx.getImageData(
-                            0, 0, canvas.width, canvas.height
+                        ctx.putImageData(img, 0, 0);
+                        // Now we have an unscaled version of our ImageData
+                        // let's make the compositing mode to 'copy' so that
+                        // our next drawing op erases whatever was there
+                        // previously just like putImageData would have done
+                        ctx.globalCompositeOperation = 'copy';
+                        // Now we can draw ourself over ourself.
+                        ctx.drawImage(
+                            canvas,
+                            0, 0, img.width, img.height, // Grab the ImageData
+                            0, 0, canvas.width, canvas.height // Scale it
                         );
 
-                    let y = -1;
-                    // For each pixel on the map plane, find the map
-                    // coordinate and get the color value
-                    for (let i = 0; i < projectedPixelData.length; i += 4) {
-                        const x = (i / 4) % projectedWidth;
-
-                        if (x === 0) {
-                            y++;
-                        }
-                        const projectedCoords = mapView.pixelsToLonLat({
-                                x: dimensions.x + x,
-                                y: dimensions.y + y
-                            }),
-                            lambda = pick(
-                                mapView.projection.options.rotation?.[0],
-                                0
+                        const projectedPixelData = new Uint8ClampedArray(
+                                projectedWidth * projectedHeight * 4
+                            ),
+                            cartesianImageData = ctx.getImageData(
+                                0, 0, canvas.width, canvas.height
                             );
 
-                        if (projectedCoords) {
-                            // Normalize lon values
-                            if (
-                                projectedCoords.lon > -180 - lambda &&
-                                projectedCoords.lon < 180 - lambda
-                            ) {
-                                projectedCoords.lon = projectedCoords.lon -
-                                Math.floor(
-                                    (projectedCoords.lon + 180) / 360
-                                ) * 360;
-                            }
+                        let y = -1;
+                        // For each pixel on the map plane, find the map
+                        // coordinate and get the color value
+                        for (let i = 0; i < projectedPixelData.length; i += 4) {
+                            const x = (i / 4) % projectedWidth;
 
-                            const projected = [
-                                    projectedCoords.lon,
-                                    projectedCoords.lat
-                                ],
-                                scale = 1,
-                                cvs2PixelX =
-                                    projected[0] * canvas.width /
-                                    (360 * scale) +
-                                    canvas.width / 2,
-                                cvs2PixelY = -1 *
-                                    projected[1] * canvas.height /
-                                    (180 * scale) +
-                                    canvas.height / 2,
-                                redPos = (
-                                    // Rows
-                                    Math.floor(cvs2PixelY) *
-                                    canvas.width * 4 +
-                                    // Columns
-                                    Math.round(cvs2PixelX) * 4
+                            if (x === 0) {
+                                y++;
+                            }
+                            const projectedCoords = mapView.pixelsToLonLat({
+                                    x: dimensions.x + x,
+                                    y: dimensions.y + y
+                                }),
+                                lambda = pick(
+                                    mapView.projection.options.rotation?.[0],
+                                    0
                                 );
 
-                            if (
-                                cvs2PixelX >= 0 &&
-                                cvs2PixelX <= canvas.width &&
-                                cvs2PixelY >= 0 &&
-                                cvs2PixelY <= canvas.height
-                            ) {
-                                projectedPixelData[i] =
-                                    cartesianImageData.data[redPos];
-                                projectedPixelData[i + 1] =
-                                    cartesianImageData.data[redPos + 1];
-                                projectedPixelData[i + 2] =
-                                    cartesianImageData.data[redPos + 2];
-                                projectedPixelData[i + 3] =
-                                    cartesianImageData.data[redPos + 3];
+                            if (projectedCoords) {
+                                // Normalize lon values
+                                if (
+                                    projectedCoords.lon > -180 - lambda &&
+                                    projectedCoords.lon < 180 - lambda
+                                ) {
+                                    projectedCoords.lon = projectedCoords.lon -
+                                    Math.floor(
+                                        (projectedCoords.lon + 180) / 360
+                                    ) * 360;
+                                }
+
+                                const projected = [
+                                        projectedCoords.lon,
+                                        projectedCoords.lat
+                                    ],
+                                    scale = 1,
+                                    cvs2PixelX =
+                                        projected[0] * canvas.width /
+                                        (360 * scale) +
+                                        canvas.width / 2,
+                                    cvs2PixelY = -1 *
+                                        projected[1] * canvas.height /
+                                        (180 * scale) +
+                                        canvas.height / 2,
+                                    redPos = (
+                                        // Rows
+                                        Math.floor(cvs2PixelY) *
+                                        canvas.width * 4 +
+                                        // Columns
+                                        Math.round(cvs2PixelX) * 4
+                                    );
+
+                                if (
+                                    cvs2PixelX >= 0 &&
+                                    cvs2PixelX <= canvas.width &&
+                                    cvs2PixelY >= 0 &&
+                                    cvs2PixelY <= canvas.height
+                                ) {
+                                    projectedPixelData[i] =
+                                        cartesianImageData.data[redPos];
+                                    projectedPixelData[i + 1] =
+                                        cartesianImageData.data[redPos + 1];
+                                    projectedPixelData[i + 2] =
+                                        cartesianImageData.data[redPos + 2];
+                                    projectedPixelData[i + 3] =
+                                        cartesianImageData.data[redPos + 3];
+                                }
                             }
                         }
+
+                        const projectedImg = new ImageData(
+                            projectedPixelData,
+                            projectedWidth,
+                            projectedHeight
+                        );
+                        ctx.globalCompositeOperation = 'copy';
+                        canvas.width = projectedWidth;
+                        canvas.height = projectedHeight;
+                        ctx.putImageData(projectedImg, 0, 0);
                     }
 
-                    const projectedImg = new ImageData(
-                        projectedPixelData,
-                        projectedWidth,
-                        projectedHeight
-                    );
-                    ctx.globalCompositeOperation = 'copy';
-                    canvas.width = projectedWidth;
-                    canvas.height = projectedHeight;
-                    ctx.putImageData(projectedImg, 0, 0);
-
-                    series.image = chart.renderer.image(
-                        canvas.toDataURL()
-                    )
-                        .attr({
-                            x: dimensions.x,
-                            y: dimensions.y
-                        })
-                        .add(series.group);
-
                     if (image) {
-                        image.attr({
-                            ...dimensions,
-                            href: canvas.toDataURL()
-                        });
+                        if (
+                            chart.renderer.globalAnimation &&
+                            chart.hasRendered
+                        ) {
+                            const startX = Number(
+                                    image.attr('x')
+                                ),
+                                startY = Number(
+                                    image.attr('y')
+                                ),
+                                startWidth = Number(
+                                    image.attr('width')
+                                ),
+                                startHeight = Number(
+                                    image.attr('height')
+                                );
+
+                            const step: AnimationStepCallbackFunction = (
+                                now,
+                                fx
+                            ): void => {
+                                image.attr({
+                                    x: (
+                                        startX + (
+                                            dimensions.x - startX
+                                        ) * fx.pos
+                                    ),
+                                    y: (
+                                        startY + (
+                                            dimensions.y - startY
+                                        ) * fx.pos
+                                    ),
+                                    width: (
+                                        startWidth + (
+                                            dimensions.width - startWidth
+                                        ) * fx.pos
+                                    ),
+                                    height: (
+                                        startHeight + (
+                                            dimensions.height - startHeight
+                                        ) * fx.pos
+                                    )
+                                });
+                            };
+
+                            const animOptions = merge(
+                                    animObject(chart.renderer.globalAnimation)),
+                                userStep = animOptions.step;
+
+                            animOptions.step =
+                                function (): void {
+                                    if (userStep) {
+                                        userStep.apply(this, arguments);
+                                    }
+                                    step.apply(this, arguments);
+                                };
+
+                            image
+                                .attr({ animator: 0 })
+                                .animate({ animator: 1 }, animOptions);
+
+                        // When dragging or first rendering, animation is off
+                        } else {
+                            stop(image);
+                            image.attr({
+                                ...dimensions,
+                                href: canvas.toDataURL()
+                            });
+                        }
                     } else {
                         series.image = chart.renderer.image(
                             canvas.toDataURL()
                         )
                             .attr(dimensions)
                             .add(series.group);
+                        series.isDirtyCanvas = false;
                     }
                 }
             }

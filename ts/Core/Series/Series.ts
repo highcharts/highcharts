@@ -4105,6 +4105,8 @@ class Series {
             preserve.push(
                 'data',
                 'isDirtyData',
+                // GeoHeatMap interpolation
+                'isDirtyCanvas',
                 'points',
 
                 'processedData', // #17057
