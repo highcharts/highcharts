@@ -449,7 +449,7 @@ class Tooltip {
                 css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents,
+                    pointerEvents: 'none',
                     zIndex: Math.max(
                         this.options.style.zIndex || 0,
                         (chartStyle && chartStyle.zIndex || 0) + 3
