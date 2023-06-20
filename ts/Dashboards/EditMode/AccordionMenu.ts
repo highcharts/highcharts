@@ -119,7 +119,7 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: (component.board?.editMode || EditGlobals)
+                text: (component.board?.editMode || EditGlobals)
                     .lang.confirmButton,
                 callback: (): void => {
                     const changedOptions = this
@@ -140,7 +140,7 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: (component.board?.editMode || EditGlobals)
+                text: (component.board?.editMode || EditGlobals)
                     .lang.cancelButton,
                 callback: (): void => {
                     menu.changedOptions = {};
