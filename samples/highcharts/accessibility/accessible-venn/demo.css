@@ -10,7 +10,6 @@ body {
     white-space: nowrap;
     clip: rect(1px, 1px, 1px, 1px);
     margin-top: -3px;
-    filter: alpha(opacity=1);
     opacity: 1%;
 }
 
