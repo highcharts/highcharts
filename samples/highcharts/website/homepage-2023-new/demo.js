@@ -86,8 +86,6 @@ const arc = {
             load: function () {
                 const links = document.querySelectorAll('.highcharts-link');
                 const chart = this;
-                console.log(chart.chartWidth);
-                // console.log(chart.chartHeight);
                 setTimeout(function () {
                     changeOpacity(links, 1, 2);
                 }, 700);
@@ -2335,8 +2333,7 @@ const rb = {
         events: {
             load: function () {
                 const chart = this;
-                console.log(chart.chartWidth);
-
+                
                 setTimeout(function () {
                     chart.update({
                         pane: {
@@ -2417,7 +2414,7 @@ function makeChart() {
     // }
     const chartNum = Math.round(randomNumber(0, 10));
     const chart = charts[chartNum];
-    // console.log(chartNum);
+    // (chartNum);
     Highcharts.chart('container', chart);
 }
 
