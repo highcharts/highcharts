@@ -416,14 +416,13 @@ function renderToggle(
         toggleContainer
     );
 
-    const input = renderCheckbox(toggle, value);
+    const input = renderCheckbox(toggle, value) as HTMLInputElement;
     const callbackFn = options.callback;
 
     if (input && callbackFn) {
         toggleContainer.addEventListener('click', (e: any): void => {
-            callbackFn(!!(e.target?.checked));
-            (input as HTMLInputElement).checked = !(input as HTMLInputElement)
-                .checked;
+            callbackFn(!input.checked);
+            input.checked = !input.checked;
         });
     }
 
