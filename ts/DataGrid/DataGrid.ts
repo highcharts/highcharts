@@ -794,19 +794,13 @@ class DataGrid {
     public getDataGridSize(): number {
         const grid = this,
             options = grid.options,
-            { height } = grid.container.getBoundingClientRect(),
-            extraPixelsForBorders = 2;
+            { height } = grid.container.getBoundingClientRect();
 
         // If the container has a height declared in CSS, use that.
         if (height > 2) {
             return height;
         }
         // Use the default height if the container has no height declared in CSS
-        // Check if the column header is enabled.
-        if (options.columnHeaders.enabled) {
-            return options.defaultHeight +
-                options.cellHeight + extraPixelsForBorders;
-        }
         return options.defaultHeight;
     }
 
@@ -1191,15 +1185,43 @@ class DataGrid {
         height?: number | string | null
     ): void {
         if (width) {
-            this.innerContainer.style.width = width + 'px';
+            if (typeof width === 'string') {
+                this.innerContainer.style.width = width;
+            } else {
+                this.innerContainer.style.width = width + 'px';
+            }
         }
 
         if (height) {
-            this.gridContainer.style.height = height + 'px';
-            this.outerContainer.style.height = height + 'px';
+            if (typeof height === 'string') {
+                this.outerContainer.style.height = height;
+            } else {
+                this.outerContainer.style.height =
+                    `${height} - ${this.getHeaderHeight() + this.getMarginHeight(height)}px`;
+            }
         }
 
         this.render();
+    }
+
+    /**
+     * If the grid is in the parent container that has margins, calculate the
+     * height of the margins.
+     * @internal
+     *
+     * @param  height
+     * The height of the parent container.
+     */
+    private getMarginHeight(height: number): number {
+        return height - this.gridContainer.getBoundingClientRect().height;
+    }
+
+    /**
+     * Internal method used to get the height of the header.
+     * @internal
+     */
+    private getHeaderHeight(): number {
+        return this.options.cellHeight;
     }
 }
 

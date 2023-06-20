@@ -171,8 +171,6 @@ class DataGridComponent extends Component {
     /** @internal */
     public dataGrid?: DataGrid;
     /** @internal */
-    public dataGridContainer: HTMLElement;
-    /** @internal */
     public dataGridOptions: Partial<Options>;
     /** @internal */
     public options: DataGridComponent.ComponentOptions;
@@ -198,20 +196,12 @@ class DataGridComponent extends Component {
         this.connectorListeners = [];
         this.options = options as DataGridComponent.ComponentOptions;
         this.type = 'DataGrid';
-        this.dataGridContainer = createElement(
-            'figure',
-            void 0,
-            void 0,
-            void 0,
-            true
-        );
 
         if (this.options.dataGridClassName) {
-            this.dataGridContainer.classList
-                .add(this.options.dataGridClassName);
+            this.contentElement.classList.add(this.options.dataGridClassName);
         }
         if (this.options.dataGridID) {
-            this.dataGridContainer.id = this.options.dataGridID;
+            this.contentElement.id = this.options.dataGridID;
         }
 
         this.syncHandlers = this.handleSyncOptions(DataGridSyncHandlers);
@@ -239,7 +229,6 @@ class DataGridComponent extends Component {
         this.emit({ type: 'load' });
         super.load();
         this.parentElement.appendChild(this.element);
-        this.contentElement.appendChild(this.dataGridContainer);
         this.hasLoaded = true;
 
         if (
@@ -357,7 +346,7 @@ class DataGridComponent extends Component {
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
             this.dataGrid = new DataGridComponent.DataGridConstructor(
-                this.dataGridContainer,
+                this.contentElement,
                 {
                     ...this.options.dataGridOptions,
                     dataTable: this.connector && this.connector.table.modified
