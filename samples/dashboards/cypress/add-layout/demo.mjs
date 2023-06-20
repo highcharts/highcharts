@@ -34,7 +34,17 @@ Dashboards.board('container', {
                 // drag drop options, leave empty - needed for testing
             },
             enabled: true,
-            items: ['verticalSeparator', 'editMode']
+            items: ['verticalSeparator', 'editMode', {
+                id: 'text-button-test',
+                text: 'Context menu click test',
+                type: 'button',
+                events: {
+                    click: function () {
+                        document.querySelector('.highcharts-dashboards-wrapper')
+                            .classList.add('context-menu-button-clicked');
+                    }
+                }
+            }]
         },
         resize: {
             enabled: true,
