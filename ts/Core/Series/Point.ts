@@ -826,10 +826,13 @@ class Point {
      *         Get point's position in pixels.
      *
      * @param {boolean} chartCoordinates
-     * Whether to return the position relative to the plot area of the chart.
+     * If true, the returned position is relative to the full chart area.
+     * If false, it is relative to the plot area determined by the axes.
      *
      * @param {number|undefined} plotY
-     * plotY of the point by default.
+     * A custom plot y position to be computed. Used internally for some
+     * series types that have multiple `y` positions, like area range (low
+     * and high values).
      *
      * @return {Array<number>|undefined}
      * Coordinates of the point if the point exists.
