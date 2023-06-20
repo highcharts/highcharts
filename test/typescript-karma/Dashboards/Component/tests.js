@@ -30,7 +30,6 @@ const eventTypes = [
 ];
 
 const registeredEvents = [];
-// window.registeredEvents = registeredEvents;
 
 function registerEvent(e) {
     registeredEvents.push(e.type);
