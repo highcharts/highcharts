@@ -183,10 +183,6 @@ class AreaRangePoint extends AreaPoint {
         // Restore previous state
         if (series.options.lowMarker) {
             series.options.marker = seriesOptionsMarker;
-
-            if (series.options.lowMarker.symbol) {
-                series.symbol = series.options.marker?.symbol;
-            }
         }
     }
 
