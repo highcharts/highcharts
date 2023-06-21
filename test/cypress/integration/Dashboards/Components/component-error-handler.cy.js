@@ -2,7 +2,7 @@ const titleClassError = 'highcharts-dashboards-component-title-error';
 
 describe('Component error handling', () => {
   before(() => {
-    cy.visit('/dashboards/component-error-handler', {});
+    cy.visit('/dashboards/components/component-error-handler', {});
   })
 
   it('Component that type does not exist, should throw error', () => {
