@@ -57,7 +57,7 @@ Highcharts.chart('container', {
         },
         accessibility: {
             description: 'Percentage population',
-            rangeDescription: 'Range: 0 to 5%'
+            rangeDescription: 'Range: 0 to 10%'
         },
         width: '50%'
     }, {
