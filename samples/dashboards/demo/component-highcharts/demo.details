@@ -1,6 +1,10 @@
 ---
- name: Highcharts Dashboards Demo
- author:
-   - Pawel Lysy
- js_wrap: b
+name: Highcharts Dashboards Component Highcharts
+author:
+  - Pawel Lysy
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - General
 ...

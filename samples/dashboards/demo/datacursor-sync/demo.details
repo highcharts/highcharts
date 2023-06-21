@@ -1,6 +1,10 @@
 ---
- name: Highcharts Dashboards Demo
- author:
-   - Sophie Bremer
- js_wrap: b
+name: Highcharts Dashboards Datacoursor Sync
+author:
+  - Sophie Bremer
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - General
 ...

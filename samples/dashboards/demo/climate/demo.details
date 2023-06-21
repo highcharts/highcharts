@@ -1,7 +1,11 @@
 ---
- name: Dashboard Demo
- authors:
-   - Sebastian Bochan, Wojciech Chmiel, Sophie Bremer
- requiresManualTesting: true
- js_wrap: b
+name: Highcharts Dashboards Climate Demo
+authors:
+  - Sebastian Bochan, Wojciech Chmiel, Sophie Bremer, Karol Kolodziej, Pawel Lysy
+requiresManualTesting: true
+js_wrap: b
+tags:
+- Highcharts Dashboards demo
+categories:
+  - General
 ...
