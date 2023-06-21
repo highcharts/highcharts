@@ -146,7 +146,7 @@ class AreaRangePoint extends AreaPoint {
             this.plotX = this.plotHighX;
         }
 
-        // Top state:
+        // Top state
         areaProto.setState.apply(this, arguments as any);
 
         this.state = prevState;
