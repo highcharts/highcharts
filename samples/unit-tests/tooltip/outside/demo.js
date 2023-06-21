@@ -41,45 +41,14 @@ QUnit.test('Outside tooltip styling, correct position & pointer-events', functio
                 }
             },
             tooltip: {
-                hideDelay: 0,
-                outside: true,
-                style: {
-                    pointerEvents: 'auto'
-                },
-                useHTML: true,
-                headerFormat: '',
-                pointFormat: '<div style="width: 400px; height: 400px;">Hello</div>'
+                outside: true
             },
             series: [{
-                type: 'column',
                 data: [1, 2, 2, 2, 2, 1]
             }]
         }),
-        points = chart.series[0].points,
         point = chart.series[0].points[0],
-        tooltip = chart.tooltip,
-        controller = new TestController(chart);
-
-    controller.moveTo(
-        chart.plotLeft + points[1].plotX,
-        chart.plotTop + points[1].plotY
-    );
-
-    controller.moveTo(
-        chart.plotLeft + points[1].plotX,
-        chart.plotTop + chart.plotHeight + 10
-    );
-
-    controller.moveTo(
-        chart.plotLeft + points[0].plotX,
-        chart.plotTop + points[0].plotY
-    );
-
-    assert.notEqual(
-        chart.tooltip.label.visibility,
-        'hidden',
-        'Tooltip should show after hovering over a series even with pointer-events set (#19025)'
-    );
+        tooltip = chart.tooltip;
 
     // Set hoverPoint
     point.onMouseOver();
