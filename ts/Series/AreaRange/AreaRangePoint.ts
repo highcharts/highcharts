@@ -146,7 +146,7 @@ class AreaRangePoint extends AreaPoint {
             this.plotX = this.plotHighX;
         }
 
-        // Top state
+        // Top state:
         areaProto.setState.apply(this, arguments as any);
 
         this.state = prevState;
@@ -168,10 +168,13 @@ class AreaRangePoint extends AreaPoint {
         }
 
         if (series.options.lowMarker) {
-            series.options.marker = merge(
-                series.options.marker,
-                series.options.lowMarker
-            );
+            const { marker, lowMarker } = series.options;
+
+            series.options.marker = merge(marker, lowMarker);
+
+            if (lowMarker.symbol) {
+                series.symbol = lowMarker.symbol;
+            }
         }
 
         // Bottom state:
@@ -180,6 +183,10 @@ class AreaRangePoint extends AreaPoint {
         // Restore previous state
         if (series.options.lowMarker) {
             series.options.marker = seriesOptionsMarker;
+
+            if (series.options.lowMarker.symbol) {
+                series.symbol = series.options.marker?.symbol;
+            }
         }
     }
 

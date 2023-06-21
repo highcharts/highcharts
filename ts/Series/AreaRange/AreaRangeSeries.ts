@@ -567,13 +567,12 @@ class AreaRangeSeries extends AreaSeries {
             point: AreaRangePoint;
 
         if (series.options.lowMarker) {
-            series.options.marker = merge(
-                series.options.marker,
-                series.options.lowMarker
-            );
+            const { options: { marker, lowMarker } } = series;
 
-            if (series.options.lowMarker.symbol) {
-                series.symbol = series.options.lowMarker.symbol;
+            series.options.marker = merge(marker, lowMarker);
+
+            if (lowMarker.symbol) {
+                series.symbol = lowMarker.symbol;
             }
         }
 
