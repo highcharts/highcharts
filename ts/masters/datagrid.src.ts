@@ -39,7 +39,6 @@ declare global {
 
 const DG = {
     win: window,
-    _modules: (typeof _modules === 'undefined' ? {} : _modules),
     DataGrid
 };
 

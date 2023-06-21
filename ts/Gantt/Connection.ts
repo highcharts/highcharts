@@ -215,6 +215,13 @@ extend(defaultOptions, {
         type: 'straight',
 
         /**
+         * The corner radius for this chart's Pathfinder connecting lines
+         *
+         * @since next
+         */
+        radius: 0,
+
+        /**
          * Set the default pixel width for this chart's Pathfinder connecting
          * lines.
          *

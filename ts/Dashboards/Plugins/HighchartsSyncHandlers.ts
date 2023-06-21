@@ -26,10 +26,9 @@ import type Axis from '../../Core/Axis/Axis';
 import type DataCursor from '../../Data/DataCursor';
 import type RangeModifier from '../../Data/Modifiers/RangeModifier';
 import type Series from '../../Core/Series/Series';
-import type SharedState from '../../Dashboards/Components/SharedComponentState';
-import type Sync from '../../Dashboards/Components/Sync/Sync';
+import type Sync from '../Components/Sync/Sync';
 
-import ComponentType from '../../Dashboards/Components/ComponentType';
+import ComponentType from '../Components/ComponentType';
 import HighchartsComponent from './HighchartsComponent';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;

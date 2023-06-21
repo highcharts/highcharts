@@ -397,6 +397,18 @@ function updateStartPoints(
         this.offsetX = 0;
         this.offsetY = 0;
     }
+
+    this.options.typeOptions.point = {
+        x: this.startXMin,
+        y: this.startYMin
+    };
+
+    // We need to update userOptions as well as they are used in
+    // the Annotation.update() method to initialize the annotation, #19121.
+    this.userOptions.typeOptions.point = {
+        x: this.startXMin,
+        y: this.startYMin
+    };
 }
 
 /* *
@@ -828,11 +840,6 @@ class Measure extends Annotation {
         this.shapes.forEach((item): void =>
             item.translate(dx, dy)
         );
-
-        this.options.typeOptions.point = {
-            x: this.startXMin,
-            y: this.startYMin
-        };
     }
 
 }

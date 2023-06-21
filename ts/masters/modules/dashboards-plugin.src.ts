@@ -1,6 +1,6 @@
 /* eslint-disable require-jsdoc */
 /**
- * @license Highcharts Dashboards v0.0.2 (@product.date@)
+ * @license Highcharts Dashboards v0.0.3 (@product.date@)
  * @module highcharts/modules/dashboard-component
  * @requires highcharts
  *
@@ -13,8 +13,8 @@
 
 import Highcharts from '../../Core/Globals.js';
 import DataGrid from '../../DataGrid/DataGrid.js';
-import HighchartsPlugin from '../../Extensions/DashboardPlugins/HighchartsPlugin.js';
-import DataGridPlugin from '../../Extensions/DashboardPlugins/DataGridPlugin.js';
+import HighchartsPlugin from '../../Dashboards/Plugins/HighchartsPlugin.js';
+import DataGridPlugin from '../../Dashboards/Plugins/DataGridPlugin.js';
 
 const G: AnyRecord = Highcharts;
 G.DashboardPlugin = HighchartsPlugin;
