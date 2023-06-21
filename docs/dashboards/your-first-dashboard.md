@@ -85,4 +85,4 @@ Thus, we have to import the main dashboard package, the Highcharts library and a
         }]
     ```
 
-6. With that config, your dashboard should look like the one in the [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demo/your-first-dashboard).
+6. With that config, your dashboard should look like the one in the [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/your-first-dashboard).

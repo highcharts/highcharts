@@ -79,7 +79,7 @@ Dashboards.board({
     }]
 });
 ```
-[The live example can be found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/custom-component).
+[The live example can be found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/custom-component).
 
 ---
 ## Custom HTML Component
@@ -163,4 +163,4 @@ Dashboards.board('container', {
     }]
 });
 ```
-Check out the [live example here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/custom-html-component).
+Check out the [live example here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/custom-html-component).

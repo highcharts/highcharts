@@ -101,13 +101,13 @@ Example of synchronized components
 
 
 
-You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/dashboard-minimal).
+You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/minimal).
 See the next question for possible syncrhonization events.
 
 * * *
 What are the synchronization events available in Highcharts Dashboards?
 -----------------------------------------------------------------------
-You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/dashboard-minimal).
+You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/minimal).
 
 The events, that can be synchronized between components are:
 * 'visibility’
