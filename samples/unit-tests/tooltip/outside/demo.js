@@ -30,7 +30,7 @@ QUnit.test('Outside tooltip and styledMode (#11783)', function (assert) {
     );
 });
 
-QUnit.test('Outside tooltip styling, correct position & pointer-events', function (assert) {
+QUnit.test('Outside tooltip styling and correct position', function (assert) {
     const chart = Highcharts.chart('container', {
             chart: {
                 width: 400,
@@ -44,7 +44,7 @@ QUnit.test('Outside tooltip styling, correct position & pointer-events', functio
                 outside: true
             },
             series: [{
-                data: [1, 2, 2, 2, 2, 1]
+                data: [1, 3, 2, 4]
             }]
         }),
         point = chart.series[0].points[0],
