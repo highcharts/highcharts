@@ -446,6 +446,10 @@ class Tooltip {
                 this.container = container = H.doc.createElement('div');
 
                 container.className = 'highcharts-tooltip-container';
+
+                // We need to set pointerEvents = 'none' as otherwise
+                // it makes the area under the tooltip non-hoverable
+                // even after the tooltip disappears, #19035.
                 css(container, {
                     position: 'absolute',
                     top: '1px',
