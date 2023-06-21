@@ -394,6 +394,7 @@ class DumbbellSeries extends AreaRangeSeries {
             chart = series.chart,
             pointLength = series.points.length,
             seriesLowColor = series.lowColor = series.options.lowColor,
+            seriesLowMarker = series.options.lowMarker,
             i = 0,
             lowerGraphicColor,
             point,
@@ -419,6 +420,7 @@ class DumbbellSeries extends AreaRangeSeries {
                 lowerGraphicColor = pick(
                     point.options.lowColor,
                     seriesLowColor,
+                    seriesLowMarker?.fillColor,
                     point.options.color,
                     zoneColor,
                     point.color,
