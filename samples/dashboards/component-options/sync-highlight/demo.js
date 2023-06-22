@@ -1,11 +1,4 @@
-const CSVConnector = Dashboards.DataConnector.types.CSV;
 const csvData = document.getElementById('csv').innerText;
-
-const connector = new CSVConnector({
-    csv: csvData,
-    firstRowAsNames: true
-});
-connector.load();
 
 const chartOptions = {
     xAxis: {
@@ -29,7 +22,16 @@ const chartOptions = {
 };
 
 Dashboards.board('container', {
-    connector,
+    dataPool: {
+        connectors: [{
+            id: 'Vitamin',
+            type: 'CSV',
+            options: {
+                csv: csvData,
+                firstRowAsNames: true
+            }
+        }]
+    },
     gui: {
         layouts: [{
             id: 'layout-1',
@@ -47,12 +49,14 @@ Dashboards.board('container', {
     components: [
         {
             cell: 'dashboard-col-0',
-            connector,
+            connector: {
+                id: 'Vitamin'
+            },
             type: 'Highcharts',
             sync: {
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -62,12 +66,14 @@ Dashboards.board('container', {
             chartOptions
         }, {
             cell: 'dashboard-col-1',
-            connector,
+            connector: {
+                id: 'Vitamin'
+            },
             type: 'Highcharts',
             sync: {
                 highlight: false
             },
-            columnKeyMap: {
+            columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -82,11 +88,13 @@ Dashboards.board('container', {
             },
             cell: 'dashboard-col-2',
             type: 'DataGrid',
-            connector,
+            connector: {
+                id: 'Vitamin'
+            },
             editable: true,
             sync: {
                 highlight: true
             }
         }
     ]
-});
+}, true);

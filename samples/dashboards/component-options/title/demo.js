@@ -3,11 +3,10 @@ Dashboards.board('container', {
         layouts: [{
             id: 'layout-1',
             rows: [{
-                cells: [{
-                    id: 'dashboard-col-0'
-                }, {
-                    id: 'dashboard-col-1'
-                }]
+                cells: [
+                    { id: 'dashboard-col-0' },
+                    { id: 'dashboard-col-1' }
+                ]
             }]
         }]
     },

@@ -3,7 +3,7 @@ const csvData = document.getElementById('csv').innerText;
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            name: 'Vitamin',
+            id: 'Vitamin',
             type: 'CSV',
             options: {
                 csv: csvData,
@@ -59,7 +59,7 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            name: 'Vitamin'
+            id: 'Vitamin'
         },
         cell: 'dashboard-col-0',
         type: 'Highcharts',
@@ -81,7 +81,7 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            name: 'Vitamin'
+            id: 'Vitamin'
         },
         type: 'Highcharts',
         columnAssignment: {
@@ -101,7 +101,7 @@ Dashboards.board('container', {
     {
         cell: 'dashboard-col-12',
         connector: {
-            name: 'Vitamin'
+            id: 'Vitamin'
         },
         sync: {
             visibility: true,
@@ -137,10 +137,9 @@ Dashboards.board('container', {
     {
         cell: 'dashboard-col-2',
         connector: {
-            name: 'Vitamin'
+            id: 'Vitamin'
         },
         type: 'DataGrid',
-        editable: true,
         sync: {
             highlight: true
         }

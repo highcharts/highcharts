@@ -1,6 +1,0 @@
----
- name: Sync selection demo
- authors:
-   - Mustapha Mekhatria
- js_wrap: b
-...
