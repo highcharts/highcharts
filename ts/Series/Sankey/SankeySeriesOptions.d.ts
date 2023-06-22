@@ -18,7 +18,7 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type FormatUtilities from '../../Core/FormatUtilities';
+import type Templating from '../../Core/Templating';
 import type NodesComposition from '../NodesComposition';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type SankeyPoint from './SankeyPoint';
@@ -73,7 +73,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
 export interface SankeySeriesTooltipOptions extends Partial<TooltipOptions> {
     nodeFormat?: string;
-    nodeFormatter?: FormatUtilities.FormatterCallback<SankeyPoint>;
+    nodeFormatter?: Templating.FormatterCallback<SankeyPoint>;
 }
 
 export default SankeySeriesOptions;

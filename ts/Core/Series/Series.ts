@@ -3318,10 +3318,10 @@ class Series {
             series.redrawPoints();
         }
 
-        // draw the mouse tracking area
+        // Draw the mouse tracking area
         if (
             series.drawTracker &&
-            series.options.enableMouseTracking !== false
+            options.enableMouseTracking
         ) {
             series.drawTracker();
         }
@@ -3666,7 +3666,10 @@ class Series {
             snap = (chart.options.tooltip as any).snap,
             tracker = series.tracker,
             onMouseOver = function (e: PointerEvent): void {
-                if (chart.hoverSeries !== series) {
+                if (
+                    options.enableMouseTracking &&
+                    chart.hoverSeries !== series
+                ) {
                     series.onMouseOver();
                 }
             },

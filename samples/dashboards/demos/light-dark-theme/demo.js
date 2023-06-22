@@ -1,15 +1,16 @@
-const CSVConnector = Dashboards.DataConnector.types.CSV;
 const csvData = document.getElementById('csv').innerText;
 
-const connector = new CSVConnector({
-    csv: csvData,
-    firstRowAsNames: true
-});
-
-connector.load();
-
 Dashboards.board('container', {
-    connector,
+    dataPool: {
+        connectors: [{
+            id: 'sample',
+            type: 'CSV',
+            options: {
+                csv: csvData,
+                firstRowAsNames: true
+            }
+        }]
+    },
     gui: {
         layouts: [{
             id: 'layout-1',
@@ -25,12 +26,14 @@ Dashboards.board('container', {
     components: [
         {
             cell: 'dashboard-col-0',
-            connector,
+            connector: {
+                id: 'sample'
+            },
             type: 'Highcharts',
             sync: {
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -57,7 +60,9 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-1',
             type: 'DataGrid',
-            connector,
+            connector: {
+                id: 'sample'
+            },
             editable: true,
             title: {
                 text: 'Grid component'
@@ -67,8 +72,7 @@ Dashboards.board('container', {
             }
         }
     ]
-});
-
+}, true);
 
 [...document.querySelectorAll('input[name="color-mode"]')]
     .forEach(input => {

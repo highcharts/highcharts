@@ -1,11 +1,4 @@
-const CSVConnector = Dashboards.DataConnector.types.CSV;
 const csvData = document.getElementById('csv').innerText;
-
-const connector = new CSVConnector({
-    csv: csvData,
-    firstRowAsNames: true
-});
-connector.load();
 
 const chartOptions = {
     xAxis: {
@@ -28,8 +21,17 @@ const chartOptions = {
     }
 };
 
-Dashboards.board('container', {
-    connector,
+const board = Dashboards.board('container', {
+    dataPool: {
+        connectors: [{
+            type: 'CSV',
+            id: 'synchro-data',
+            options: {
+                csv: csvData,
+                firstRowAsNames: true
+            }
+        }]
+    },
     gui: {
         layouts: [{
             id: 'layout-1',
@@ -47,12 +49,14 @@ Dashboards.board('container', {
     components: [
         {
             cell: 'dashboard-col-0',
-            connector,
             type: 'Highcharts',
+            connector: {
+                id: 'synchro-data'
+            },
             sync: {
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -62,12 +66,14 @@ Dashboards.board('container', {
             chartOptions
         }, {
             cell: 'dashboard-col-1',
-            connector,
+            connector: {
+                id: 'synchro-data'
+            },
             type: 'Highcharts',
             sync: {
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -78,12 +84,14 @@ Dashboards.board('container', {
             chartOptions
         }, {
             cell: 'dashboard-col-2',
+            connector: {
+                id: 'synchro-data'
+            },
             type: 'DataGrid',
-            connector,
             editable: true,
             sync: {
                 highlight: true
             }
         }
     ]
-});
+}, true);

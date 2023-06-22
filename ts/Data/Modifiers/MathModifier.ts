@@ -23,6 +23,7 @@
 
 
 import type DataEvent from '../DataEvent';
+import type DataModifierOptions from './DataModifierOptions';
 import type DataTable from '../DataTable';
 import type { Formula } from '../Formula/Formula';
 
@@ -330,7 +331,12 @@ namespace MathModifier {
     /**
      * Options to configure the MathModifier and Formula system.
      */
-    export interface Options extends DataModifier.Options {
+    export interface Options extends DataModifierOptions {
+
+        /**
+         * Name of the related modifier for these options.
+         */
+        modifier: 'Math';
 
         /**
          * Whether to expect regular or alternative separators in formulas.

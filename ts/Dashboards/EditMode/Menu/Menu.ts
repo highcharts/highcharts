@@ -88,14 +88,14 @@ class Menu {
                 className: EditGlobals.classNames.menu +
                     ' ' + (this.options.className || '')
             },
-            this.options.style || {},
+            {},
             this.parentElement
         );
     }
 
-    // itemsSchemas - default items definitions.
+    // ItemsSchemas - default items definitions.
     public initItems(
-        itemsSchemas: Record<string, Partial<MenuItem.Options>>,
+        itemsSchemas: Record<string, MenuItem.Options>,
         activeItems?: boolean
     ): void {
         const menu = this,
@@ -118,7 +118,7 @@ class Menu {
                 merge(itemSchema, itemConfig);
 
             if (options.id) {
-                item = new MenuItem(menu, options);
+                item = new MenuItem(menu, options as MenuItem.Options);
 
                 // Save initialized item.
                 menu.items[item.options.id] = item;
@@ -190,11 +190,24 @@ class Menu {
 
 namespace Menu {
     export interface Options {
-        items?: Array<MenuItem.Options|string>;
-        enabled?: boolean;
-        style?: CSSJSONObject;
+        /**
+         * The class name of the menu's container.
+         */
         className?: string;
+        /**
+         * The list of items in the context menu.
+         * @default ['editMode']
+         */
+        items?: Array<MenuItem.Options|string>;
+        /**
+         * The class name of the menu's items.
+         * Applied to each item in the context menu.
+         */
         itemsClassName?: string;
+        /**
+         * Whether to enable the context menu.
+         */
+        enabled?: boolean;
     }
 }
 

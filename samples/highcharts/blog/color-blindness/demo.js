@@ -26,10 +26,10 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        formatter: function () {
-            return 'How people with <b>' + this.series.yAxis.categories[this.point.y] + '</b> see <b>' + this.series.xAxis.categories[this.point.x] + '</b>';
-        }
+        format: `How people with <b>{series.yAxis.categories.(point.y)}</b> see
+            <b>{series.xAxis.categories.(point.x)}</b>`
     },
+
     plotOptions: {
         series: {
             states: {

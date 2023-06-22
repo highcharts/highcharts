@@ -20,6 +20,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type DataModifierOptions from './DataModifierOptions';
 import type {
     DataModifierType,
     DataModifierTypeOptions
@@ -526,7 +527,7 @@ namespace ChainModifier {
     /**
      * Options to configure the chain modifier.
      */
-    export interface Options extends DataModifier.Options {
+    export interface Options extends DataModifierOptions {
 
         /**
          * Name of the related modifier for these options.

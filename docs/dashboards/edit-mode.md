@@ -1,9 +1,9 @@
 Edit mode
 ===
 
-Edit mode is a mode, in which the user can change the appearance of the dashboard through the User Interface (UI).
+Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).
 
-In addition this option has to be enabled in the dashboard config:
+In addition, this option has to be enabled in the dashboard config:
 ```javascript
     editMode: {
             enabled: true,
@@ -14,19 +14,19 @@ In addition this option has to be enabled in the dashboard config:
         },
 ```
 
-Then the edit mode option can be enabled by the context menu in the upper right corner.
+Edit mode can now be enabled by the burger menu in the upper right corner.
 
 ![edit-mode-context-menu.png](edit-mode-context-menu.png)
 
-When edit mode is enabled, the appearance of the dashboard changes. When a cell is hovered it gets blue border and the row, containing the cell, gets green border. Additionally both row and cell get a tooltip, which allows the user to change its position, change its options, or just delete it.
+When edit mode is enabled, the appearance of the dashboard changes. When hovering over a cell a blue border appears arount it. The border of the row containing the cell turns green. Additionally, both the row and the cell get a tooltip, which allows the user to change its position, change its options, or just delete it.
 
 ![edit-mode-tooltip.png](edit-mode-tooltip.png)
 
-Additionally the buttons next to the burger menu are added.
+Next to the burger menu, some additional buttons are added.
 
-The “Large”, “medium”, and “small” buttons change the width of the dashboard, to let the designer check, how the dashboard would look like for tablets and smartphones with smaller screens.
+The “Large”, “Medium”, and “Small” buttons change the width of the dashboard, to let the designer check how the dashboard will appear on smaller screens such as tablets and smartphones.
 
-The `Add` button allows the user to add the new component. When clicked, the sidebar is shown, which lets you choose the type of component you want to add, and then by drag&drop component type can be selected and dragged to the correct place, which is also indicated by the drop marker.
+The `Add Component` button allows the user to add a new component. When clicked, a sidebar appears, which lets you choose the type of component you want to add and then by drag&drop component type can be selected and dragged to the correct place, which is also indicated by the drop marker.
 
 ![edit-mode-sidebar.png](edit-mode-sidebar.png)
 

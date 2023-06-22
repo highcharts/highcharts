@@ -1,0 +1,24 @@
+.main {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.main #container {
+    height: 500px;
+    max-height: calc(100vw - 20px);
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.main .mt-4 {
+    margin-top: 0;
+    min-width: 25%;
+}
+
+.main .btn {
+    line-height: 1.5;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    margin: 1rem 0;
+}

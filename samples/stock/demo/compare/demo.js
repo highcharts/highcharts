@@ -16,9 +16,7 @@ function createChart() {
 
         yAxis: {
             labels: {
-                formatter: function () {
-                    return (this.value > 0 ? ' + ' : '') + this.value + '%';
-                }
+                format: '{#if (gt value 0)}+{/if}{value}%'
             },
             plotLines: [{
                 value: 0,

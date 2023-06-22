@@ -1,5 +1,5 @@
 let exportedLayoutId;
-let board = new Dashboards.Board('container', {
+let board = Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -7,6 +7,7 @@ let board = new Dashboards.Board('container', {
             items: ['editMode', 'viewFullscreen', {
                 id: 'export-dashboard',
                 text: 'Export dashboard',
+                type: 'button',
                 events: {
                     click: function () {
                         board.exportLocal();
@@ -15,9 +16,10 @@ let board = new Dashboards.Board('container', {
             }, {
                 id: 'import-dashboard',
                 text: 'Import saved dashboard',
+                type: 'button',
                 events: {
                     click: function () {
-                        board = Dashboards.importLocal();
+                        board = Dashboards.Board.importLocal();
                     }
                 }
             }]

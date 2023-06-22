@@ -51,18 +51,18 @@ const configs: {
             function (this: ComponentType): Function | void {
                 if (this.type === 'Highcharts') {
                     const { chart, board } = this as HighchartsComponent;
-                    const table = this.connector && this.connector.table;
 
-                    if (board && table) {
+                    if (board) {
                         const { dataCursor: cursor } = board;
 
                         this.on('afterRender', (): void => {
-                            if (chart && chart.series) {
+                            const table = this.connector && this.connector.table;
+                            if (chart && chart.series && table) {
                                 chart.series.forEach((series): void => {
                                     series.update({
                                         point: {
                                             events: {
-                                                // emit table cursor
+                                                // Emit table cursor
                                                 mouseOver: function (): void {
                                                     let offset = 0;
                                                     const modifier = table.getModifier();
@@ -122,9 +122,10 @@ const configs: {
                 if (this.type === 'Highcharts') {
                     const component = this as HighchartsComponent;
                     return this.on('afterRender', (): void => {
-                        const { chart, connector: store, board } = component;
+                        const { chart, connector, board } = component;
+                        const table = connector && connector.table;
                         if (
-                            store && // has a store
+                            table && // Has a store
                             board &&
                             chart
                         ) {
@@ -136,7 +137,7 @@ const configs: {
                                     events: {
                                         show: function (): void {
                                             cursor.emitCursor(
-                                                store.table,
+                                                table,
                                                 {
                                                     type: 'position',
                                                     state: 'series.show',
@@ -146,7 +147,7 @@ const configs: {
                                         },
                                         hide: function (): void {
                                             cursor.emitCursor(
-                                                store.table,
+                                                table,
                                                 {
                                                     type: 'position',
                                                     state: 'series.hide',
@@ -164,20 +165,16 @@ const configs: {
         extremesEmitter:
             function (this: ComponentType): Function | void {
                 if (this.type === 'Highcharts') {
-                    const {
-                        chart,
-                        board,
-                        connector: store
-                    } = this as HighchartsComponent;
+                    const component = this as HighchartsComponent;
                     const callbacks: Function[] = [];
 
-                    if (store && chart && board) {
+                    this.on('afterRender', (): void => {
+                        const { chart, connector, board } = component;
+                        const table = connector && connector.table;
 
+                        const { dataCursor: cursor } = board;
 
-                        this.on('afterRender', (): void => {
-
-                            const { dataCursor: cursor } = board;
-
+                        if (table && chart) {
                             const extremesEventHandler = (e: any): void => {
                                 const reset = !!(e as any).resetSelection;
                                 if ((!e.trigger || (e.trigger && e.trigger !== 'dashboards-sync')) && !reset) {
@@ -188,7 +185,7 @@ const configs: {
                                     // but allow for other data
                                     const seriesInTable = axis.series
                                         .filter((series): boolean =>
-                                            store.table.hasColumns([series.name]));
+                                            table.hasColumns([series.name]));
 
                                     const [series] = seriesInTable.length ?
                                         seriesInTable :
@@ -210,19 +207,23 @@ const configs: {
                                         };
 
                                         if (seriesInTable.length && axis.coll === 'xAxis' && visiblePoints.length) {
+                                            const columnName = axis.dateTime && table.hasColumns(['x']) ?
+                                                'x' :
+                                                series.name;
+
                                             minCursorData.row = visiblePoints[0].index;
-                                            minCursorData.column = axis.dateTime ? 'x' : series.name;
+                                            minCursorData.column = columnName;
 
                                             maxCursorData.row = visiblePoints[visiblePoints.length - 1].index;
-                                            maxCursorData.column = axis.dateTime ? 'x' : series.name;
+                                            maxCursorData.column = columnName;
                                         }
 
                                         // Emit as lasting cursors
-                                        cursor.emitCursor(store.table,
+                                        cursor.emitCursor(table,
                                             minCursorData,
                                             e as any,
                                             true
-                                        ).emitCursor(store.table,
+                                        ).emitCursor(table,
                                             maxCursorData,
                                             e as any,
                                             true
@@ -258,7 +259,7 @@ const configs: {
                                     resetExtremesEvent();
 
                                     cursor.emitCursor(
-                                        store.table,
+                                        table,
                                         {
                                             type: 'position',
                                             state: 'chart.zoomOut'
@@ -276,120 +277,186 @@ const configs: {
 
 
                             callbacks.push((): void => {
-                                cursor.remitCursor(store.table.id, {
+                                cursor.remitCursor(table.id, {
                                     type: 'position',
                                     state: 'xAxis.extremes.min'
                                 });
-                                cursor.remitCursor(store.table.id, {
+                                cursor.remitCursor(table.id, {
                                     type: 'position',
                                     state: 'xAxis.extremes.max'
                                 });
 
                                 resetExtremesEvent();
                             });
-                        });
+                        }
+                    });
 
-                        // Return cleanup
-                        return function (): void {
-                            // Call back the cleanup callbacks
-                            callbacks.forEach((callback): void => callback());
+                    // Return cleanup
+                    return function (): void {
+                        // Call back the cleanup callbacks
+                        callbacks.forEach((callback): void => callback());
 
-                        };
-                    }
+                    };
                 }
             }
     },
     handlers: {
         seriesVisibilityHandler:
             function (this: HighchartsComponent): void {
-                const { chart, connector: store, board } = this;
-                if (store && chart && board) {
+                const component = this;
+                const { board } = this;
+
+                const findSeries = (seriesArray: Series[], name: string): Series | undefined => {
+                    for (const series of seriesArray) {
+                        if (series.name === name) {
+                            return series;
+                        }
+                    }
+                };
+
+                const handleShow = (e: DataCursor.Event): void => {
+                    const chart = component.chart;
+                    if (!chart) {
+                        return;
+                    }
+                    if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
+                        const series = findSeries(chart.series, e.cursor.column);
+                        if (series) {
+                            series.setVisible(true, true);
+                        }
+                    }
+                };
+
+                const handleHide = (e: DataCursor.Event): void => {
+                    const chart = component.chart;
+                    if (!chart) {
+                        return;
+                    }
+                    if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
+                        const series = findSeries(chart.series, e.cursor.column);
+                        if (series) {
+                            series.setVisible(false, true);
+                        }
+                    }
+                };
+
+                const registerCursorListeners = (): void => {
                     const { dataCursor } = board;
 
-                    const findSeries = (seriesArray: Series[], name: string): Series | undefined => {
-                        for (const series of seriesArray) {
-                            if (series.name === name) {
-                                return series;
-                            }
-                        }
-                    };
+                    if (!dataCursor) {
+                        return;
+                    }
+                    const table = this.connector && this.connector.table;
 
-                    dataCursor.addListener(store.table.id, 'series.show', (e): void => {
-                        if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
-                            const series = findSeries(chart.series, e.cursor.column);
-                            if (series) {
-                                series.setVisible(true, true);
-                            }
-                        }
-                    }).addListener(store.table.id, 'series.hide', (e): void => {
-                        if (e.cursor.type === 'position' && e.cursor.column !== void 0) {
-                            const series = findSeries(chart.series, e.cursor.column);
-                            if (series) {
-                                series.setVisible(false, true);
-                            }
-                        }
-                    });
+                    if (!table) {
+                        return;
+                    }
+                    dataCursor.addListener(table.id, 'series.show', handleShow);
+                    dataCursor.addListener(table.id, 'series.hide', handleHide);
+                };
+
+                const unregisterCursorListeners = (): void => {
+                    const table = this.connector && this.connector.table;
+                    if (table) {
+                        board.dataCursor.removeListener(table.id, 'series.show', handleShow);
+                        board.dataCursor.removeListener(table.id, 'series.hide', handleHide);
+                    }
+                };
+
+                if (board) {
+                    registerCursorListeners();
+
+                    this.on('setConnector', (): void => unregisterCursorListeners());
+                    this.on('afterSetConnector', (): void => registerCursorListeners());
                 }
             },
         highlightHandler:
             function (this: HighchartsComponent): void {
                 const { chart, board } = this;
-                const table = this.connector && this.connector.table;
-                if (board && table) {
-                    const { dataCursor: cursor } = board;
 
-                    const handleCursor = (e: DataCursor.Event): void => {
-                        let offset = 0;
-                        const modifier = table.getModifier();
-                        if (modifier && 'getModifiedTableOffset' in modifier) {
-                            offset = (modifier as RangeModifier).getModifiedTableOffset(table);
-                        }
+                const handleCursor = (e: DataCursor.Event): void => {
+                    const table = this.connector && this.connector.table;
 
-                        if (chart && chart.series.length) {
-                            const cursor = e.cursor;
-                            if (cursor.type === 'position') {
-                                const [series] = chart.series.length > 1 && cursor.column ?
-                                    chart.series.filter((series): boolean => series.name === cursor.column) :
-                                    chart.series;
+                    if (!table) {
+                        return;
+                    }
+
+                    let offset = 0;
+
+                    const modifier = table.getModifier();
+
+                    if (modifier && 'getModifiedTableOffset' in modifier) {
+                        offset = (modifier as RangeModifier).getModifiedTableOffset(table);
+                    }
+
+                    if (chart && chart.series.length) {
+                        const cursor = e.cursor;
+                        if (cursor.type === 'position') {
+                            const [series] = chart.series.length > 1 && cursor.column ?
+                                chart.series.filter((series): boolean => series.name === cursor.column) :
+                                chart.series;
 
 
-                                if (series && series.visible && cursor.row !== void 0) {
-                                    const point = series.points[cursor.row - offset];
+                            if (series && series.visible && cursor.row !== void 0) {
+                                const point = series.points[cursor.row - offset];
 
-                                    if (point) {
-                                        chart.tooltip && chart.tooltip.refresh(point);
-                                    }
+                                if (point) {
+                                    chart.tooltip && chart.tooltip.refresh(point);
                                 }
                             }
                         }
-                    };
-
-                    const handleCursorOut = (): void => {
-                        if (chart && chart.series.length) {
-                            chart.tooltip && chart.tooltip.hide();
-                        }
-                    };
-
-                    if (cursor) {
-                        cursor.addListener(table.id, 'point.mouseOver', handleCursor);
-                        cursor.addListener(table.id, 'dataGrid.hoverRow', handleCursor);
-
-                        cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
-                        cursor.addListener(table.id, 'dataGrid.hoverOut', handleCursorOut);
                     }
+                };
+
+                const handleCursorOut = (): void => {
+                    if (chart && chart.series.length) {
+                        chart.tooltip && chart.tooltip.hide();
+                    }
+                };
+
+                const registerCursorListeners = (): void => {
+                    const { dataCursor: cursor } = board;
+
+                    // @todo wrap in a listener on component.update with
+                    // connector change
+                    if (cursor) {
+                        const table = this.connector && this.connector.table;
+
+                        if (table) {
+                            cursor.addListener(table.id, 'point.mouseOver', handleCursor);
+                            cursor.addListener(table.id, 'dataGrid.hoverRow', handleCursor);
+                            cursor.addListener(table.id, 'point.mouseOut', handleCursorOut);
+                            cursor.addListener(table.id, 'dataGrid.hoverOut', handleCursorOut);
+                        }
+                    }
+                };
+
+                const unregisterCursorListeners = (): void => {
+                    const table = this.connector && this.connector.table;
+
+                    if (table) {
+                        board.dataCursor.removeListener(table.id, 'point.mouseOver', handleCursor);
+                        board.dataCursor.removeListener(table.id, 'dataGrid.hoverRow', handleCursor);
+                        board.dataCursor.removeListener(table.id, 'point.mouseOut', handleCursorOut);
+                        board.dataCursor.removeListener(table.id, 'dataGrid.hoverOut', handleCursorOut);
+                    }
+                };
+
+                if (board) {
+                    registerCursorListeners();
+
+                    this.on('setConnector', (): void => unregisterCursorListeners());
+                    this.on('afterSetConnector', (): void => registerCursorListeners());
                 }
             },
         extremesHandler:
             function (this: HighchartsComponent): Function | void {
 
-                const callbacks: Function[] = [];
+                const { chart, board } = this;
 
-                const { chart, board, connector: store } = this;
-
-                if (chart && board && store && store.table) {
-                    const { dataCursor: cursor } = board;
-
+                if (chart && board) {
                     ['xAxis', 'yAxis'].forEach((dimension): void => {
+                        const callbacks: Function[] = [];
                         const handleUpdateExtremes = (e: DataCursor.Event): void => {
                             const { cursor, event } = e;
 
@@ -437,40 +504,55 @@ const configs: {
                             }
                         };
 
-                        cursor.addListener(store.table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
-                        cursor.addListener(store.table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
+                        const addCursorListeners = (): void => {
+                            const { dataCursor: cursor } = board;
+                            const { connector } = this;
 
-                        const handleChartZoomOut = (): void => {
-                            chart.zoomOut();
+                            if (connector) {
+                                const { table } = connector;
+                                cursor.addListener(table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
+                                cursor.addListener(table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
 
-                            setTimeout(():void => {
-                                // Workaround for zoom button not being removed
-                                const resetZoomButtons = this.element
-                                    .querySelectorAll<SVGElement>('.highcharts-reset-zoom');
+                                const handleChartZoomOut = (): void => {
+                                    chart.zoomOut();
 
-                                resetZoomButtons.forEach((button): void => {
-                                    button.remove();
-                                });
+                                    setTimeout((): void => {
+                                        // Workaround for zoom button not being removed
+                                        const resetZoomButtons = this.element
+                                            .querySelectorAll<SVGElement>('.highcharts-reset-zoom');
 
-                            });
+                                        resetZoomButtons.forEach((button): void => {
+                                            button.remove();
+                                        });
+
+                                    });
 
 
+                                };
+
+                                cursor.addListener(table.id, 'chart.zoomOut', handleChartZoomOut);
+
+                                callbacks.push(
+                                    (): void => {
+                                        cursor.removeListener(table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
+                                        cursor.removeListener(table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
+                                        cursor.removeListener(table.id, 'chart.zoomOut', handleChartZoomOut);
+                                    }
+                                );
+                            }
                         };
 
-                        cursor.addListener(store.table.id, 'chart.zoomOut', handleChartZoomOut);
+                        const unregisterCursorListeners = (): void => {
+                            callbacks.forEach((callback): void => callback());
+                        };
 
-                        callbacks.push(
-                            (): void => {
-                                cursor.removeListener(store.table.id, `${dimension}.extremes.min`, handleUpdateExtremes);
-                                cursor.removeListener(store.table.id, `${dimension}.extremes.max`, handleUpdateExtremes);
-                                cursor.removeListener(store.table.id, 'chart.zoomOut', handleChartZoomOut);
-                            }
-                        );
+                        if (board) {
+                            addCursorListeners();
+
+                            this.on('setConnector', (): void => unregisterCursorListeners());
+                            this.on('afterSetConnector', (): void => addCursorListeners());
+                        }
                     });
-
-                    return (): void => {
-                        callbacks.forEach((callback): void => callback());
-                    };
 
                 }
 

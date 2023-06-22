@@ -3877,10 +3877,11 @@ class Axis {
             const otherAxis = this.isXAxis ? chart.yAxis[0] : chart.xAxis[0],
                 directionFactor = [1, -1, -1, 1][this.side];
             if (otherAxis) {
-                this.offset = directionFactor * otherAxis.toPixels(
-                    crossing,
-                    true
-                );
+                let px = otherAxis.toPixels(crossing, true);
+                if (axis.horiz) {
+                    px = otherAxis.len - px;
+                }
+                axis.offset = directionFactor * px;
             }
         }
 

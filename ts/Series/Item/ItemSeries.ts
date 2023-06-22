@@ -345,18 +345,21 @@ class ItemSeries extends PieSeries {
                     i++;
                 }
             }
-            graphics.forEach((graphic, i): void => {
+
+            for (let j = 0; j < graphics.length; j++) {
+                const graphic = graphics[j];
                 if (!graphic) {
                     return;
                 }
 
                 if (!graphic.isActive) {
                     graphic.destroy();
-                    graphics.splice(i, 1);
+                    graphics.splice(j, 1);
+                    j--; // Need to substract 1 after splice, #19053
                 } else {
                     graphic.isActive = false;
                 }
-            });
+            }
         });
     }
 

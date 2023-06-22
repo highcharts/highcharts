@@ -1,8 +1,8 @@
 const { ComponentRegistry, Component } = Dashboards;
 
 class YouTubeComponent extends Component {
-    constructor(options) {
-        super(options);
+    constructor(cell, options) {
+        super(cell, options);
         this.type = 'YouTube';
         this.youTubeElement = document.createElement('iframe');
         return this;

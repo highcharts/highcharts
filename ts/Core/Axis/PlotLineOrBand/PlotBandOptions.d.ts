@@ -21,7 +21,7 @@ import type {
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
-import type FormatUtilities from '../../FormatUtilities';
+import type Templating from '../../Templating';
 import type PlotLineOrBand from './PlotLineOrBand';
 
 /* *
@@ -33,7 +33,7 @@ import type PlotLineOrBand from './PlotLineOrBand';
 export interface PlotBandLabelOptions {
     align?: AlignValue;
     clip?: boolean;
-    formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
+    formatter?: Templating.FormatterCallback<PlotLineOrBand>;
     rotation?: number;
     style?: CSSObject;
     text?: string;

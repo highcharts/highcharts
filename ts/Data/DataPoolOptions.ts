@@ -49,7 +49,7 @@ export interface DataPoolConnectorOptions
     /**
      * Name of the connector in the data pool.
      */
-    name: string;
+    id: string;
 
     /**
      * Connector options to use.
