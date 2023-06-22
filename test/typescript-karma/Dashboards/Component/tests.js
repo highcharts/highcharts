@@ -30,7 +30,6 @@ const eventTypes = [
 ];
 
 const registeredEvents = [];
-window.registeredEvents = registeredEvents;
 
 function registerEvent(e) {
     registeredEvents.push(e.type);
@@ -76,7 +75,8 @@ test('Board without data connectors and HighchartsComponent update', async funct
                 type: 'Highcharts',
                 chartOptions: {
                     title: {
-                        text: void 0
+                        text: void 0,
+                        style: {}
                     }
                 }
             },
@@ -99,7 +99,8 @@ test('Board without data connectors and HighchartsComponent update', async funct
     await highchartsComponent.update({
         chartOptions: {
             title: {
-                text: 'Hello World'
+                text: 'Hello World',
+                style: {}
             }
         }
     });
@@ -215,7 +216,8 @@ test('Board with data connectors and HighchartsComponent update', async function
                 },
                 chartOptions: {
                     title: {
-                        text: void 0
+                        text: void 0,
+                        style: {}
                     }
                 }
             }
@@ -228,7 +230,8 @@ test('Board with data connectors and HighchartsComponent update', async function
     await componentWithConnector.update({
         chartOptions: {
             title: {
-                text: 'Hello World'
+                text: 'Hello World',
+                style: {}
             }
         }
     });
@@ -274,20 +277,31 @@ test('Board with data connectors and HighchartsComponent update', async function
     Component.removeInstance(componentWithConnector);
 });
 
-skip('component resizing', function (assert) {
-    const parent = document.createElement('div');
-    parent.id = 'test';
-
-    const container = document.getElementById('container');
-    if (!container) {
+test('component resizing', function (assert) {
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
         return;
     }
 
-    container.appendChild(parent);
+    const board = Dashboards.board(parentElement, {
+        gui: {
+            enabled: true,
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-cell'
+                    }]
+                }]
+            }]
+        },
+        components: [{
+            type: 'HTML',
+            cell: 'dashboard-cell'
+        }]
+    });
 
-    const component = new HTMLComponent({
-        parentElement: parent
-    }).render();
+    const component = board.mountedComponents[0].component;
+
     assert.deepEqual(
         {
             width: component.element.style.width,
@@ -327,22 +341,22 @@ skip('component resizing', function (assert) {
         'Should be able to update just the height. Width should stay the same.'
     );
 
-    parent.style.width = '1000px';
-    parent.style.height = '200px';
-    component.resize('100%', '100%');
-    assert.deepEqual(
-        {
-            width: component.dimensions.width,
-            height: component.dimensions.height
-        },
-        {
-            width: 1000,
-            height: 200
-        },
-        'Should be able to update just the height'
-    );
-
     component.destroy();
+
+    // parentElement.style.width = '1000px';
+    // parentElement.style.height = '200px';
+    // component.resize('100%', '100%');
+    // assert.deepEqual(
+    //     {
+    //         width: component.element.style.width,
+    //         height: component.element.style.height
+    //     },
+    //     {
+    //         width: 1000,
+    //         height: 200
+    //     },
+    //     'Should be able to update just the height'
+    // );
 
     // const widthComponent = new HTMLComponent({
     //     dimensions: {
@@ -396,25 +410,65 @@ skip('component resizing', function (assert) {
     // percentageDimensions.destroy();
 });
 
-skip('HighchartsComponent resizing', function (assert) {
-    const parent = document.createElement('div');
-    parent.id = 'test';
-    parent.style.width = '500px';
-    document.getElementById('container').appendChild(parent);
+test('HighchartsComponent resizing', function (assert) {
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
+        return;
+    }
 
-    const component = new HighchartsComponent({
-        parentElement: parent,
-        chartOptions: {
-            chart: {}
+    parentElement.style.width = '500px';
+
+    const board = Dashboards.board(parentElement, {
+        gui: {
+            enabled: true,
+            layouts: [{
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-cell'
+                    }]
+                }]
+            }]
         },
-        dimensions: {
-            height: '100%',
-            width: '100%'
-        }
-    }).render();
+        components: [{
+            type: 'Highcharts',
+            cell: 'dashboard-cell',
+            chartOptions: {
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }
+        }]
+    });
 
-    const { width, height } = component.element.style;
-    assert.ok(true);
+    const component = board.mountedComponents[0].component;
+    component.resize(200);
+
+    assert.deepEqual(
+        {
+            width: component.element.style.width,
+            height: component.element.style.height
+        },
+        {
+            width: '200px',
+            height: ''
+        },
+        'Should be able to update just the width'
+    );
+
+    component.resize(undefined, 300);
+
+    assert.deepEqual(
+        {
+            height: component.element.style.height
+        },
+        {
+            height: '300px'
+        },
+        'Should be able to update just the height. Width should stay the same.'
+    );
+
+    component.destroy();
+
 });
 
 skip('toJSON', function (assert) {

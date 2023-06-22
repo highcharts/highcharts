@@ -16,8 +16,7 @@ describe('Add components through UI', () => {
     beforeEach(() => {
         cy.visit('/dashboards/cypress/add-layout');
         cy.viewport(1200, 1000);
-        cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
-        cy.get('.highcharts-dashboards-edit-toggle-slider').click();
+        cy.toggleEditMode();
     });
 
     it('should be able to add a layout', function() {
