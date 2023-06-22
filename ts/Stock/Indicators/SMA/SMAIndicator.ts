@@ -13,7 +13,7 @@
  *  Imports
  *
  * */
-
+import type { DataColumn, DataColumns } from '../../../Core/Series/Series';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeriesType from '../../../Series/Line/LineSeries';
@@ -236,9 +236,15 @@ class SMAIndicator extends LineSeries {
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = params.period as any,
-            xVal: Array<number> = series.xData as any,
+            columns = (series.pointArrayMap || ['y']).map(
+                (key): DataColumn =>
+                    series.table?.columns[key] || []
+            ),
+            xVal = this.useDataTable ?
+                series.table.columns.x || [] :
+                series.xData || [],
             yVal: Array<(number|Array<(number|null)>|null)> = series.yData as any,
-            yValLen = yVal.length,
+            yValLen = this.useDataTable ? series.table.rowCount : yVal.length,
             SMA: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [];
@@ -253,36 +259,61 @@ class SMAIndicator extends LineSeries {
         }
 
         // Switch index for OHLC / Candlestick / Arearange
-        if (isArray(yVal[0])) {
-            index = params.index ? params.index : 0;
+        if (this.useDataTable) {
+            index = columns.length > 1 && params.index || 0;
+        } else {
+            if (isArray(yVal[0])) {
+                index = params.index ? params.index : 0;
+            }
         }
 
         // Accumulate first N-points
         while (range < period - 1) {
-            sum += index < 0 ? yVal[range] : (yVal as any)[range][index];
+            if (this.useDataTable) {
+                sum += columns[index]?.[range] || 0;
+            } else {
+                sum += index < 0 ? yVal[range] : (yVal as any)[range][index];
+            }
             range++;
         }
 
         // Calculate value one-by-one for each period in visible data
         for (i = range; i < yValLen; i++) {
-            sum += index < 0 ? yVal[i] : (yVal as any)[i][index];
+            if (this.useDataTable) {
+                sum += columns[index]?.[i] || 0;
+            } else {
+                sum += index < 0 ? yVal[i] : (yVal as any)[i][index];
+            }
 
             SMAPoint = [xVal[i], sum / period];
             SMA.push(SMAPoint);
             xData.push(SMAPoint[0]);
             yData.push(SMAPoint[1]);
 
-            sum -= (
-                index < 0 ?
-                    yVal[i - range] :
-                    (yVal as any)[i - range][index]
-            );
+            if (this.useDataTable) {
+                sum -= columns[index]?.[i - range] || 0;
+            } else {
+                sum -= (
+                    index < 0 ?
+                        yVal[i - range] :
+                        (yVal as any)[i - range][index]
+                );
+            }
         }
+
+        const indColumns: DataColumns = {
+            x: xData,
+            y: yData
+        };
 
         return {
             values: SMA,
             xData: xData,
-            yData: yData
+            yData: yData,
+            table: {
+                columns: indColumns,
+                rowCount: xData.length
+            }
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 
@@ -392,12 +423,15 @@ class SMAIndicator extends LineSeries {
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
                 values: [],
                 xData: [],
-                yData: []
+                yData: [],
+                table: {
+                    columns: {},
+                    rowCount: 0
+                }
             };
         let overwriteData = true,
             oldFirstPointIndex,
             oldLastPointIndex,
-            croppedData,
             min,
             max,
             i;
@@ -408,8 +442,12 @@ class SMAIndicator extends LineSeries {
         // (except for prototyped ones). This is what happens
         // for example when using Axis.setDataGrouping(). See #16670
         const processedData: IndicatorValuesObject<typeof LineSeries.prototype> = indicator.linkedParent.options &&
-            indicator.linkedParent.yData && // #18176, #18177 indicators should
-            indicator.linkedParent.yData.length ? // work with empty dataset
+            (
+                // #18176, #18177 indicators should work with empty dataset
+                this.useDataTable ?
+                    indicator.linkedParent.table.rowCount :
+                    indicator.linkedParent.yData?.length
+            ) ?
             (
                 indicator.getValues(
                     indicator.linkedParent,
@@ -433,20 +471,33 @@ class SMAIndicator extends LineSeries {
                     max = indicator.xAxis.max;
                 }
 
-                croppedData = indicator.cropData(
+                const croppedData = indicator.cropData(
                     processedData.xData,
                     processedData.yData,
                     min as any,
-                    max as any
+                    max as any,
+                    void 0,
+                    processedData.table
                 );
 
-                for (i = 0; i < croppedData.xData.length; i++) {
-                    // (#10774)
-                    croppedDataValues.push([
-                        croppedData.xData[i]
-                    ].concat(
-                        splat(croppedData.yData[i])
-                    ));
+                if (indicator.useDataTable) {
+                    const keys = ['x', ...(indicator.pointArrayMap || ['y'])];
+                    for (let i = 0; i < croppedData.xData.length; i++) {
+                        const values = keys.map((key): number =>
+                            croppedData.modified?.columns[key]?.[i] || 0
+                        );
+                        croppedDataValues.push(values);
+                    }
+
+                } else {
+                    for (i = 0; i < croppedData.xData.length; i++) {
+                        // (#10774)
+                        croppedDataValues.push([
+                            croppedData.xData[i]
+                        ].concat(
+                            splat(croppedData.yData[i])
+                        ));
+                    }
                 }
 
                 oldFirstPointIndex = processedData.xData.indexOf(
@@ -482,8 +533,13 @@ class SMAIndicator extends LineSeries {
         }
 
         if (overwriteData) {
-            indicator.xData = processedData.xData;
-            indicator.yData = (processedData.yData as any);
+            if (this.useDataTable) {
+                indicator.table = processedData.table;
+                indicator.xData = processedData.table.columns.x;
+            } else {
+                indicator.xData = processedData.xData;
+                indicator.yData = (processedData.yData as any);
+            }
             indicator.options.data = (processedData.values as any);
         }
 

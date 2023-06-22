@@ -11,7 +11,7 @@
  *  Imports
  *
  * */
-
+import type { DataTableLight } from '../../Core/Series/Series';
 import type LineSeries from '../../Series/Line/LineSeries';
 
 /* *
@@ -27,6 +27,7 @@ export interface IndicatorValuesObject<TLinkedSeries extends LineSeries> {
     )>>;
     xData: NonNullable<TLinkedSeries['xData']>;
     yData: NonNullable<TLinkedSeries['yData']>;
+    table: DataTableLight;
 }
 
 export default IndicatorValuesObject;

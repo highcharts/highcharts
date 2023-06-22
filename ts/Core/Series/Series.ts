@@ -143,9 +143,9 @@ declare module './SeriesLike' {
     }
 }
 
-type DataColumn = Array<number|null>|TypedArray;
+export type DataColumn = Array<number|null>|TypedArray;
 
-interface DataColumns {
+export interface DataColumns {
     [key: string]: DataColumn|undefined;
     x?: Array<number>|TypedArray;
 }

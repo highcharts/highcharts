@@ -1362,9 +1362,8 @@ namespace OrdinalAxis {
             series: Series
         ): number {
             const ordinal = this,
-                axis = ordinal.axis,
-                processedXData = series.processedXData,
-                len = (processedXData as any).length,
+                processedXData = series.processedXData || [],
+                len = processedXData.length,
                 distances = [];
             let median,
                 i,
@@ -1378,8 +1377,8 @@ namespace OrdinalAxis {
                 // Register all the distances in an array
                 for (i = 0; i < len - 1; i++) {
                     distances[i] = (
-                        (processedXData as any)[i + 1] -
-                        (processedXData as any)[i]
+                        processedXData[i + 1] -
+                        processedXData[i]
                     );
                 }
 
@@ -1391,8 +1390,8 @@ namespace OrdinalAxis {
 
                 // Compensate for series that don't extend through the entire
                 // axis extent. #1675.
-                xMin = Math.max(xMin, (processedXData as any)[0]);
-                xMax = Math.min(xMax, (processedXData as any)[len - 1]);
+                xMin = Math.max(xMin, processedXData[0]);
+                xMax = Math.min(xMax, processedXData[len - 1]);
 
                 ordinal.groupIntervalFactor = groupIntervalFactor =
                     (len * median) / (xMax - xMin);

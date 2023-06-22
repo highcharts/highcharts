@@ -746,9 +746,7 @@ function groupData(
                     const key = pointArrayMap?.[j] || 'y',
                         val = groupedValuesArr[j],
                         column = modified.columns[key] || [];
-                    if (isNumber(val)) {
-                        column[pos] = val;
-                    }
+                    (column as any).push(val);
                     if (!modified.columns[key]) {
                         modified.columns[key] = column;
                     }
