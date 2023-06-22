@@ -419,8 +419,8 @@ class DumbbellSeries extends AreaRangeSeries {
                 zoneColor = point.zone && point.zone.color;
                 lowerGraphicColor = pick(
                     point.options.lowColor,
-                    seriesLowColor,
                     seriesLowMarker?.fillColor,
+                    seriesLowColor,
                     point.options.color,
                     zoneColor,
                     point.color,

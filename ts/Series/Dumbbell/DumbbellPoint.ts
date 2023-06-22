@@ -72,8 +72,8 @@ class DumbbellPoint extends AreaRangePoint {
             zoneColor = point.zone && point.zone.color,
             lowerGraphicColor = pick(
                 pointLowColor,
-                seriesLowColor,
                 seriesLowMarker?.fillColor,
+                seriesLowColor,
                 pointOptions.color,
                 zoneColor,
                 point.color,
