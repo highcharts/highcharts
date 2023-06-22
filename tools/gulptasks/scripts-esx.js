@@ -84,7 +84,6 @@ function _registerModule(path, fn) {
     if (!_modules[path]) {
         var module = {};
         fn(module);
-        ${isPM ? 'console.log("_registerModule", path);' : ''}
         _modules[path] = module;
         if (typeof CustomEvent === "function") {
             window.dispatchEvent(new CustomEvent(
@@ -95,7 +94,6 @@ function _registerModule(path, fn) {
     }
 }
 function require(path) {
-    console.log("require", path); /***/
     return _modules[path];
 }
 ${moduleCode}
@@ -155,7 +153,7 @@ function addHelpers(modulePath, moduleCode) {
  */
 async function assembleBundle(filePath, basePath, sourcePath, targetPath) {
     const requiredModules =
-        await extractRequiredModules(filePath, isProductMaster(filePath));
+        await extractRequiredModules(filePath, filePath.endsWith('.src.js'));
 
     let assembly = '';
 
@@ -178,13 +176,10 @@ async function assembleBundle(filePath, basePath, sourcePath, targetPath) {
     await fs.mkdir(path.dirname(targetFile), { recursive: true });
     await fs.writeFile(
         targetFile,
-        addFactory(
-            modulePath,
-            assembly,
-            sourcePath,
-            'Highcharts'
-        )
+        addFactory(modulePath, assembly, sourcePath, 'Highcharts')
     );
+
+    assembledBundles.push(filePath);
 }
 
 /**
@@ -201,6 +196,7 @@ async function assembleBundle(filePath, basePath, sourcePath, targetPath) {
  */
 async function extractRequiredModules(filePath, recursive) {
     const file = (await fs.readFile(filePath)).toString(),
+        isPM = isProductMaster(filePath),
         moduleBase = path.dirname(filePath),
         requireMatchs = file.matchAll(REQUIRE_PATTERN),
         requiredModules = [];
@@ -212,14 +208,16 @@ async function extractRequiredModules(filePath, recursive) {
 
         if (
             recursive &&
-            !assembledBundles.includes(modulePath)
+            (
+                isPM ||
+                !assembledBundles.includes(modulePath)
+            )
         ) {
-            const moreRequiredModules =
-                await extractRequiredModules(modulePath, true);
+            const moreMatches = await extractRequiredModules(modulePath, true);
 
-            for (const anotherModulePath of moreRequiredModules) {
-                if (!requiredModules.includes(anotherModulePath)) {
-                    requiredModules.push(anotherModulePath);
+            for (let i = 0, iEnd = moreMatches.length; i < iEnd; ++i) {
+                if (!requiredModules.includes(moreMatches[i])) {
+                    requiredModules.push(moreMatches[i]);
                 }
             }
         }
@@ -286,13 +284,13 @@ async function scriptsESX(
 
         processLib.isRunning('scripts-esx', true);
 
-        logLib.message(`Deleting ${bundleTargetFolder}...`);
-
-        fsLib.deleteDirectory(bundleTargetFolder, true);
-
         logLib.message(`Deleting ${esModulesFolder}...`);
 
         fsLib.deleteDirectory(esModulesFolder, true);
+
+        logLib.message(`Deleting ${bundleTargetFolder}...`);
+
+        fsLib.deleteDirectory(bundleTargetFolder, true);
 
         logLib.message(`Building ${bundleTargetFolder}...`);
 
@@ -322,8 +320,6 @@ async function scriptsESX(
                     bundleSourceFolder,
                     bundleTargetFolder
                 );
-
-                assembledBundles.push(filePath);
             }
         }
 
