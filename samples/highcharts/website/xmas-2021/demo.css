@@ -116,7 +116,7 @@ body {
 }
 
 .box {
-    opacity: 100%;
+    opacity: 1;
     position: absolute;
     top: 0;
     left: 0;
@@ -288,12 +288,12 @@ body {
     width: 100%;
     text-align: center;
     margin-top: 10px;
-    opacity: 0%;
+    opacity: 0;
 }
 
 #back a {
     color: #fff;
-    opacity: 100%;
+    opacity: 1;
 }
 
 #back a:hover {
@@ -318,7 +318,7 @@ body {
         transform: rotateY(70deg);
         -webkit-transform-origin: right;
         transform-origin: right;
-        opacity: 0%;
+        opacity: 0;
     }
 
     100% {
@@ -326,7 +326,7 @@ body {
         transform: rotateY(0);
         -webkit-transform-origin: right;
         transform-origin: right;
-        opacity: 100%;
+        opacity: 1;
     }
 }
 
@@ -336,7 +336,7 @@ body {
         transform: rotateY(70deg);
         -webkit-transform-origin: right;
         transform-origin: right;
-        opacity: 0%;
+        opacity: 0;
     }
 
     100% {
@@ -344,7 +344,7 @@ body {
         transform: rotateY(0);
         -webkit-transform-origin: right;
         transform-origin: right;
-        opacity: 100%;
+        opacity: 1;
     }
 }
 

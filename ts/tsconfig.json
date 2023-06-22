@@ -132,6 +132,7 @@
         "keyofStringsOnly": true
     },
     "exclude": [
+        "./masters-dashboards/",
         "./masters-es5/"
     ],
     "include": [

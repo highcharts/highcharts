@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@3.0.0
-  browser-tools: circleci/browser-tools@1.2.3
+  browser-tools: circleci/browser-tools@1.4.1
   slack: circleci/slack@3.4.1
 
 parameters:
@@ -48,6 +48,7 @@ add_gh_user_config: &add_gh_user_config
       command: |
         git config --global user.name "CircleCI"
         git config --global user.email "technical+circleci_mu@highsoft.com"
+        git config --global core.editor vi
 
 #######################################
 
@@ -198,7 +199,7 @@ jobs:
           key: cypress-cache-{{ checksum "package-lock.json" }}
           paths:
             - /home/circleci/repo/highcharts/.cache
-      - run: npm i --no-save @highcharts/highcharts-utils cross-env
+      - run: npm i --no-save github:highcharts/highcharts-utils cross-env
       - run:
           name: Run utils in background
           command: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
@@ -365,6 +366,104 @@ jobs:
           path: ../visual-test-results
       - store_artifacts:
           path: ../visual-test-results
+
+  visual_comparison_with_dashboards:
+    <<: *defaults
+    description: Create visual comparison base images
+    parameters:
+      reference-branch:
+        description: "The reference branch"
+        type: string
+        default: "dashboards/main"
+    steps:
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - <<: *add_gh_user_config
+      - run: |
+          if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+            echo "Not a PR according to CircleCI, so marking this step successful"
+            circleci step halt
+          fi
+      - <<: *load_workspace
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+          command: |
+            google-chrome --version
+            whereis google-chrome
+          name: Check Chrome
+      - run: sudo apt-get update -y
+      - run: sudo apt-get install -y rsync
+      - run: | # checkout reference branch
+          git fetch origin << parameters.reference-branch >> &&
+          git checkout << parameters.reference-branch >>  &&
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+      - run: npm i --no-save @highcharts/highcharts-utils cross-env cypress-visual-regression
+      - run: 
+          name: Clear previous files if present 
+          command: rm -rf /home/circleci/repo/highcharts/cypress/screenshots && rm -rf /home/circleci/repo/highcharts/cypress/snapshots
+      - run:
+          name: Run utils in background
+          command: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          background: true
+      - run: 
+          name: Run cypress visual tests as base
+          command: npx cypress run --env type=base --config specPattern="**/visual/*.cy.js"
+      - run:
+          command: git checkout ${CIRCLE_BRANCH}
+          when: always # always go back
+      - run: npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+      - run: npm i --no-save @highcharts/highcharts-utils cross-env cypress-visual-regression
+      - run: 
+          name: Run cypress visual tests as reference # only dashboards for now
+          command: npx cypress run --env type=actual --config specPattern="**/visual/*.cy.js"
+      - store_artifacts:
+          path: /home/circleci/repo/highcharts/cypress/snapshots
+          destination: cypress-chrome
+      - store_artifacts:
+          path: /home/circleci/repo/highcharts/cypress/screenshots
+          destination: cypress-chrome
+      - run:
+          name: Comment on PR and upload visual test images if any produced
+          command: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} npx gulp update-pr-testresults-cypress --fail-silently --user circleci-mu --pr {}
+          when: always
+
+  filesize_comparison: 
+    <<: *defaults
+    description: Create visual comparison base images
+    parameters:
+      reference-branch:
+        description: "The reference branch"
+        type: string
+        default: "dashboards/main"
+    steps:
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - <<: *add_gh_user_config
+      - run: |
+          if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+            echo "Not a PR according to CircleCI, so marking this step successful"
+            circleci step halt
+          fi
+      - <<: *load_workspace
+      - run: | # checkout reference branch
+          git fetch origin << parameters.reference-branch >> &&
+          git checkout << parameters.reference-branch >>  &&
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+      - run:
+          name: Write file sizes at reference branch
+          command: npx gulp write-file-sizes --filename master.json
+      - run:
+          command: git checkout ${CIRCLE_BRANCH}
+          when: always # always go back
+      - run: npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+      - run:
+          name: File size comparison
+          command: |
+            npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json &&
+            npx gulp compare-size-and-comment --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
+      - store_artifacts:
+          path: /home/circleci/repo/highcharts/tmp/filesizes
 
   nightly_visual_diff:
     <<: *defaults
@@ -544,7 +643,22 @@ workflows:
           requires: [lint]
           filters:
             branches:
+              ignore: 
+                - master
+                - /db\/.*/
+          context: highcharts-staging
+      - filesize_comparison:
+          requires: [lint]
+          filters:
+            branches:
               ignore: master
+          context: highcharts-staging
+      - visual_comparison_with_dashboards:
+          requires: [test_cypress]
+          filters:
+            branches:
+              ignore: master
+              only: /db\/.*/
           context: highcharts-staging
       - generate_release_reference_images:
           requires: [lint]
@@ -569,7 +683,7 @@ workflows:
           requires: [lint]
       - test_browsers:
           name: "test-Mac.Safari"
-          requires: ["generate_ts_declarations"]
+          requires: ["filesize_comparison", "generate_ts_declarations"]
           browsers: "Mac.Safari"
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
@@ -579,7 +693,7 @@ workflows:
       - test_browsers:
           name: "test-Win.Chrome"
           browsercount: 2
-          requires: ["test-Mac.Safari"]
+          requires: ["verify-samples-Chrome", "test-Mac.Safari"]
           browsers: "Win.Chrome"
       - check_for_docs_changes_and_deploy:
           requires: ["test-Mac.Safari", "test-Win.Chrome"]
