@@ -1,0 +1,6 @@
+{
+    "bundleSourceFolder": "code/dashboards/es-modules/masters-dashboards",
+    "bundleTargetFolder": "code/dashboards/",
+    "esModulesFolder": "code/dashboards/es-modules/",
+    "typeScriptFolder": "ts/masters-dashboards/"
+}
