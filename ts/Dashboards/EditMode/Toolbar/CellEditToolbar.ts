@@ -67,7 +67,7 @@ class CellEditToolbar extends EditToolbar {
             )
         );
 
-        this.menu.initItems(merge(Menu.items, {
+        this.menu.initItems({
             drag: {
                 id: 'drag',
                 type: 'icon',
@@ -122,7 +122,7 @@ class CellEditToolbar extends EditToolbar {
                     }
                 }
             }
-        }));
+        });
     }
 
     /* *
