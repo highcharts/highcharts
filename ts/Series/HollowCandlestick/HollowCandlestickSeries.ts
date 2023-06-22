@@ -41,6 +41,9 @@ interface HollowcandleInfo {
     trendDirection: 'down'|'up';
 }
 
+// Data array type (o, h, l, c) used locally
+type DataArr = Array<number|null|undefined>;
+
 /* *
  *
  *  Code
@@ -169,15 +172,16 @@ class HollowCandlestickSeries extends CandlestickSeries {
      */
     public getPriceMovement(): void {
         const series = this,
-            // procesed and grouped data
+            // Processed and grouped data
             processedYData = series.allGroupedData || series.yData,
-            hollowCandlestickData = this.hollowCandlestickData;
+            table = series.allGroupedTable || series.table,
+            dataLength = series.useDataTable ?
+                table.rowCount :
+                processedYData?.length,
+            hollowCandlestickData = this.hollowCandlestickData,
+            pointArrayMap = series.pointArrayMap || [];
 
-        if (
-            !hollowCandlestickData.length &&
-            processedYData &&
-            processedYData.length
-        ) {
+        if (!hollowCandlestickData.length && dataLength) {
 
             // First point is allways bullish (transparent).
             hollowCandlestickData.push({
@@ -185,14 +189,35 @@ class HollowCandlestickSeries extends CandlestickSeries {
                 trendDirection: 'up'
             });
 
-            for (let i = 1; i < processedYData.length; i++) {
-                const dataPoint: any = processedYData[i],
-                    previousDataPoint: any = processedYData[i - 1];
+            const row2Arr = (row: number): DataArr => {
+                const arr: DataArr = [];
+                pointArrayMap.forEach((key): void => {
+                    arr.push(table.columns[key]?.[row]);
+                });
+                return arr;
+            };
 
-                hollowCandlestickData.push(series.isBullish(
-                    dataPoint,
-                    previousDataPoint
-                ));
+            if (series.useDataTable) {
+                let previousDataArr: DataArr|undefined;
+                for (let i = 1; i < dataLength; i++) {
+                    const dataArr = row2Arr(i);
+
+                    hollowCandlestickData.push(series.isBullish(
+                        dataArr,
+                        previousDataArr
+                    ));
+                    previousDataArr = dataArr;
+                }
+            } else {
+                for (let i = 1; i < dataLength; i++) {
+                    const dataPoint: any = processedYData[i],
+                        previousDataPoint: any = processedYData[i - 1];
+
+                    hollowCandlestickData.push(series.isBullish(
+                        dataPoint,
+                        previousDataPoint
+                    ));
+                }
             }
         }
     }
@@ -265,14 +290,16 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Previous point.
      */
     public isBullish(
-        dataPoint: Array<(number)>,
-        previousDataPoint: Array<(number)>
+        dataPoint: DataArr,
+        previousDataPoint?: DataArr
     ): HollowcandleInfo {
         return {
             // Compare points' open and close value.
-            isBullish: dataPoint[0] <= dataPoint[3],
+            isBullish: (dataPoint[0] || 0) <= (dataPoint[3] || 0),
             // For bearish candles.
-            trendDirection: dataPoint[3] < previousDataPoint[3] ? 'down' : 'up'
+            trendDirection:
+                (dataPoint[3] || 0) < (previousDataPoint?.[3] || 0) ?
+                    'down' : 'up'
         };
     }
 

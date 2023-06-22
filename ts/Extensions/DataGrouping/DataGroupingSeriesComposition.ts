@@ -84,6 +84,7 @@ declare module '../../Core/Series/SeriesLike' {
             Array<Array<(number|null|undefined)>>|
             TypedArray
         );
+        allGroupedTable?: DataTableLightModified;
         cropStart?: number;
         currentDataGrouping?: TimeTicksInfoObject;
         dataGroupInfo?: DataGroupingInfoObject;
@@ -460,6 +461,7 @@ function applyGrouping(
                 // Keep the reference to all grouped points
                 // for further calculation (eg. heikinashi).
                 series.allGroupedData = groupedYData;
+                series.allGroupedTable = modified;
 
                 croppedData = series.cropData(
                     groupedXData as any,

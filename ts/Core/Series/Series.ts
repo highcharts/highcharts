@@ -1480,6 +1480,7 @@ class Series {
                                     (xData as any)[i] = (pt as any)[0];
                                     // Data table
                                     if (series.useDataTable) {
+                                        // @todo: arrayToRow()
                                         let j = 1;
                                         for (const key of pointArrayMap) {
                                             (columns as any)[key][i] =
