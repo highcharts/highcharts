@@ -1197,7 +1197,9 @@ class DataGrid {
                 this.outerContainer.style.height = height;
             } else {
                 this.outerContainer.style.height =
-                    `${height} - ${this.getHeaderHeight() + this.getMarginHeight(height)}px`;
+                    height -
+                    (this.getHeaderHeight() +
+                    this.getMarginHeight(height)) + 'px';
             }
         }
 
