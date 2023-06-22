@@ -390,8 +390,7 @@ async function setupBoard() {
                 },
                 tooltip: {
                     enabled: true,
-                    distance: -60,
-                    _positioner: function (_width, _height, axisInfo) {
+                    positioner: function (_width, _height, axisInfo) {
                         return {
                             x: (
                                 axisInfo.plotX -
