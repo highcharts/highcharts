@@ -1242,6 +1242,10 @@ namespace Component {
         navigationBindings?: NavigationBindingsOptionsObject[];
         /**
          * Events attached to the component : `mount`, `unmount`.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/events/ | Mount event }
          */
         events?: Record<string, Function>;
         /**
@@ -1260,7 +1264,13 @@ namespace Component {
          *     highlight: true
          * }
          * ```
+         * Try it:
          *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
          */
         sync: SyncOptions;
         /**
@@ -1277,10 +1287,18 @@ namespace Component {
         style?: CSSObject;
         /**
          * The component's title, which will render at the top.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/title/ | Changed captions }
          */
         title?: TextOptionsType;
         /**
          * The component's caption, which will render at the bottom.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/caption/ | Changed captions }
          */
         caption?: TextOptionsType;
     }
