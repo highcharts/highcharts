@@ -2220,17 +2220,16 @@ class SeriesBuilder {
             });
 
             if (columnIndexes.length >= 2) {
-                // remove the first one (x col)
+                // Remove the first one (x col)
                 columnIndexes.shift();
 
                 // Sort the remaining
                 columnIndexes.sort(function (a: number, b: number): number {
                     return a - b;
                 });
-
-                // Now use the lowest index as name column
-                this.name = (columns[columnIndexes.shift() as any] as any).name;
             }
+            // Now use the lowest index as name column
+            this.name = (columns[pick(columnIndexes.shift(), 0)] as any).name;
         }
 
         return point;
