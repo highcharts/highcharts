@@ -32,6 +32,11 @@ const TESTS_DIRECTORY = path.join(BASE, 'test', 'typescript-karma');
  * */
 
 /**
+ * Save latest hashes of:
+ * - code build
+ * - js build
+ * - test result
+ *
  * @return {void}
  */
 function saveRun() {
@@ -60,6 +65,10 @@ function saveRun() {
 }
 
 /**
+ * Check if we have to rebuild sources, or we are good.
+ * We are good for example when changing demos, tooling etc.
+ * without touching the source code (TS files).
+ *
  * @return {boolean}
  *         True if outdated
  */
@@ -99,7 +108,10 @@ function shouldRun() {
         logLib.failure(
             '✖ The files have not been built' +
             ' since the last source code changes.' +
-            ' Run `npx gulp` and try again.'
+            ' Run `npx gulp` and try again.' +
+            ' If this error occures contantly ' +
+            ' without a reason, then remove ' +
+            '`node_modules/_gulptasks_*.json` files.'
         );
 
         throw new Error('Code out of sync');
