@@ -1282,7 +1282,7 @@ class MapSeries extends ScatterSeries {
 
                 if (point.projectedPath && !point.projectedPath.length) {
                     point.setVisible(false);
-                } else {
+                } else if (!point.visible) {
                     point.setVisible(true);
                 }
             });
