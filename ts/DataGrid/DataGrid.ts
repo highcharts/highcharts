@@ -1193,6 +1193,8 @@ class DataGrid {
         }
 
         if (height) {
+            this.gridContainer.style.height = this.getDataGridSize() + 'px';
+
             if (typeof height === 'string') {
                 this.outerContainer.style.height = height;
             } else {
