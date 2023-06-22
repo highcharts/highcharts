@@ -27,7 +27,6 @@ export interface IndicatorValuesObject<TLinkedSeries extends LineSeries> {
     )>>;
     xData: NonNullable<TLinkedSeries['xData']>;
     yData: NonNullable<TLinkedSeries['yData']>;
-    table: DataTableLight;
 }
 
 export default IndicatorValuesObject;

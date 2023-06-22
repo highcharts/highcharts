@@ -13,7 +13,7 @@
  *  Imports
  *
  * */
-import type { DataColumn, DataColumns } from '../../../Core/Series/Series';
+import type { DataColumn, DataColumns, DataTableLight } from '../../../Core/Series/Series';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeriesType from '../../../Series/Line/LineSeries';
@@ -56,6 +56,34 @@ interface CalculateOnObject {
     chart: string;
     xAxis?: string;
 }
+
+
+/**
+ *
+ * Return the parent series values in the legacy two-dimensional yData
+ * format
+ * @private
+ */
+const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
+    series: TLinkedSeries
+): Array<number|Array<number|null>> => {
+    if (!series.useDataTable) {
+        return (series.yData as any);
+    }
+
+    if (!series.pointArrayMap) {
+        return (series.table.columns.y || []) as any;
+    }
+
+    const yData = [];
+    for (let i = 0; i < series.table.rowCount; i++) {
+        const values = series.pointArrayMap.map((key): number =>
+            series.table.columns[key]?.[i] || 0
+        );
+        yData.push(values);
+    }
+    return yData;
+};
 
 /* *
  *
@@ -236,15 +264,9 @@ class SMAIndicator extends LineSeries {
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = params.period as any,
-            columns = (series.pointArrayMap || ['y']).map(
-                (key): DataColumn =>
-                    series.table?.columns[key] || []
-            ),
-            xVal = this.useDataTable ?
-                series.table.columns.x || [] :
-                series.xData || [],
+            xVal = series.xData || [],
             yVal: Array<(number|Array<(number|null)>|null)> = series.yData as any,
-            yValLen = this.useDataTable ? series.table.rowCount : yVal.length,
+            yValLen = yVal.length,
             SMA: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [];
@@ -259,61 +281,36 @@ class SMAIndicator extends LineSeries {
         }
 
         // Switch index for OHLC / Candlestick / Arearange
-        if (this.useDataTable) {
-            index = columns.length > 1 && params.index || 0;
-        } else {
-            if (isArray(yVal[0])) {
-                index = params.index ? params.index : 0;
-            }
+        if (isArray(yVal[0])) {
+            index = params.index ? params.index : 0;
         }
 
         // Accumulate first N-points
         while (range < period - 1) {
-            if (this.useDataTable) {
-                sum += columns[index]?.[range] || 0;
-            } else {
-                sum += index < 0 ? yVal[range] : (yVal as any)[range][index];
-            }
+            sum += index < 0 ? yVal[range] : (yVal as any)[range][index];
             range++;
         }
 
         // Calculate value one-by-one for each period in visible data
         for (i = range; i < yValLen; i++) {
-            if (this.useDataTable) {
-                sum += columns[index]?.[i] || 0;
-            } else {
-                sum += index < 0 ? yVal[i] : (yVal as any)[i][index];
-            }
+            sum += index < 0 ? yVal[i] : (yVal as any)[i][index];
 
             SMAPoint = [xVal[i], sum / period];
             SMA.push(SMAPoint);
             xData.push(SMAPoint[0]);
             yData.push(SMAPoint[1]);
 
-            if (this.useDataTable) {
-                sum -= columns[index]?.[i - range] || 0;
-            } else {
-                sum -= (
-                    index < 0 ?
-                        yVal[i - range] :
-                        (yVal as any)[i - range][index]
-                );
-            }
+            sum -= (
+                index < 0 ?
+                    yVal[i - range] :
+                    (yVal as any)[i - range][index]
+            );
         }
-
-        const indColumns: DataColumns = {
-            x: xData,
-            y: yData
-        };
 
         return {
             values: SMA,
             xData: xData,
-            yData: yData,
-            table: {
-                columns: indColumns,
-                rowCount: xData.length
-            }
+            yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 
@@ -423,11 +420,7 @@ class SMAIndicator extends LineSeries {
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
                 values: [],
                 xData: [],
-                yData: [],
-                table: {
-                    columns: {},
-                    rowCount: 0
-                }
+                yData: []
             };
         let overwriteData = true,
             oldFirstPointIndex,
@@ -441,6 +434,15 @@ class SMAIndicator extends LineSeries {
         // we will try to access Series object without any properties
         // (except for prototyped ones). This is what happens
         // for example when using Axis.setDataGrouping(). See #16670
+        const yData = indicator.linkedParent.yData;
+
+        // For the newer data table, temporarily set the parent series `yData`
+        // to the legacy format that is documented for custom indicators.
+        if (indicator.useDataTable) {
+            indicator.linkedParent.yData = tableToMultiYData(
+                indicator.linkedParent
+            ) as any;
+        }
         const processedData: IndicatorValuesObject<typeof LineSeries.prototype> = indicator.linkedParent.options &&
             (
                 // #18176, #18177 indicators should work with empty dataset
@@ -454,6 +456,34 @@ class SMAIndicator extends LineSeries {
                     indicator.options.params as any
                 ) || emptySet
             ) : emptySet;
+
+        // Reset
+        if (indicator.useDataTable) {
+            indicator.linkedParent.yData = yData;
+        }
+
+        const pointArrayMap = indicator.pointArrayMap || ['y'],
+            valueColumns: Record<string, Array<number|null>> = {};
+        (processedData.yData as any)
+            .forEach((values: number|null|Array<number|null>): void => {
+                pointArrayMap.forEach((key, index): void => {
+                    const column = valueColumns[key] || [];
+                    column.push(
+                        isArray(values) ? values[index] : values
+                    );
+                    if (!valueColumns[key]) {
+                        valueColumns[key] = column;
+                    }
+                });
+            });
+
+        let table: DataTableLight = {
+            columns: {
+                x: processedData.xData,
+                ...valueColumns
+            },
+            rowCount: processedData.xData.length
+        };
 
         // We need to update points to reflect changes in all,
         // x and y's, values. However, do it only for non-grouped
@@ -477,14 +507,17 @@ class SMAIndicator extends LineSeries {
                     min as any,
                     max as any,
                     void 0,
-                    processedData.table
+                    table
                 );
 
                 if (indicator.useDataTable) {
+                    if (croppedData.modified) {
+                        table = croppedData.modified;
+                    }
                     const keys = ['x', ...(indicator.pointArrayMap || ['y'])];
                     for (let i = 0; i < croppedData.xData.length; i++) {
                         const values = keys.map((key): number =>
-                            croppedData.modified?.columns[key]?.[i] || 0
+                            table.columns[key]?.[i] || 0
                         );
                         croppedDataValues.push(values);
                     }
@@ -533,11 +566,10 @@ class SMAIndicator extends LineSeries {
         }
 
         if (overwriteData) {
+            indicator.xData = processedData.xData;
             if (this.useDataTable) {
-                indicator.table = processedData.table;
-                indicator.xData = processedData.table.columns.x;
+                indicator.table = table;
             } else {
-                indicator.xData = processedData.xData;
                 indicator.yData = (processedData.yData as any);
             }
             indicator.options.data = (processedData.values as any);
