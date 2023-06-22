@@ -28,10 +28,10 @@ const {
     merge,
     pick
 } = U;
-import FU from '../../Core/FormatUtilities.js';
+import T from '../../Core/Templating.js';
 const {
     format
-} = FU;
+} = T;
 
 interface PointGroupItem {
     point: Point;

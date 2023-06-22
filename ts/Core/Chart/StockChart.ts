@@ -32,7 +32,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
-import F from '../../Core/FormatUtilities.js';
+import F from '../Templating.js';
 const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;

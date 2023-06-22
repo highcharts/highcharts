@@ -2,12 +2,12 @@ Frequently asked questions
 ===
 
 * * *
-How to connect store to the other components?
+How to connect dataPool to the other components?
 ---------------------------------------------
 
-First, you need to create the correct type of store using the right constructor, and pass the data reference. More about this topic [in the DataStore section](https://www.highcharts.com/docs/dashboards/data-store)
+First, you need to create the dataPool, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-pool)
 
-After that, you need to pass the store to the component config, and that’s it.
+After that, you need to pass the connector to the component config, and that’s it.
 [Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demos/dashboard-minimal).
 
 * * *
@@ -47,13 +47,15 @@ Each cell must have an `id` field. The same id must be passed in the component c
 
 How to synchronize the components?
 -----------------------------
-To synchronize components you have to specify which event you want to synchronize between each component, as well as they have to use the same store.
+To synchronize components you have to specify which event you want to synchronize between each component, as well as they have to use the same connector.
 
 Example of synchronized components
 
 ```js
     components: [{
-        store,
+        connector: {
+            id: 'Vitamin'
+        },
         sync: {
             visibility: true,
             highlight: true,
@@ -72,7 +74,9 @@ Example of synchronized components
         },
     }, {
         cell: 'dashboard-col-1',
-        store,
+        connector: {
+            id: 'Vitamin'
+        },
         sync: {
             visibility: true,
             highlight: true,
@@ -108,7 +112,7 @@ You can check how this synchronization works in our [minimal dashboard demo](htt
 The events, that can be synchronized between components are:
 * 'visibility’
 * 'extremes'
-* 'tooltip'
+* 'highlight'
 
 * * *
 What browsers are supported?

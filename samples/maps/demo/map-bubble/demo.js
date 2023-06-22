@@ -8,12 +8,11 @@
 
         Highcharts.mapChart('container', {
             chart: {
-                borderWidth: 1,
                 map: topology
             },
 
             title: {
-                text: 'World population 2013 by country'
+                text: 'World population 2016 by country'
             },
 
             subtitle: {

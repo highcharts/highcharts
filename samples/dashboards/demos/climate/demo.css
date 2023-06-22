@@ -258,17 +258,9 @@
 
 #selection-grid .highcharts-dashboards-component {
     background-color: var(--color-background);
-    padding: 14px;
-}
-
-#selection-grid .hc-dg-container {
-    border: none;
-    height: 372px;
-    overflow: auto;
 }
 
 #selection-grid .hc-dg-column-header {
-    padding: 0 12px;
     font-size: 12px;
 }
 

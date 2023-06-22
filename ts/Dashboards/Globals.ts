@@ -34,9 +34,9 @@ import type Board from './Board';
  * */
 
 /**
- * Global Dashboard namespace in classic `<scripts>`-based implementations.
+ * Global Dashboards namespace in classic `<scripts>`-based implementations.
  *
- * @namespace Dashboard
+ * @namespace Dashboards
  */
 namespace Globals {
 

@@ -870,7 +870,7 @@ function seriesRenderCanvas(this: Series): void {
         yMax = yExtremes.max,
         pointTaken: Record<string, boolean> = {},
         sampling = !!this.sampling,
-        enableMouseTracking = options.enableMouseTracking !== false,
+        enableMouseTracking = options.enableMouseTracking,
         threshold: number = options.threshold as any,
         isRange = this.pointArrayMap &&
             this.pointArrayMap.join(',') === 'low,high',

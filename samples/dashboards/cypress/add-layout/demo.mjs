@@ -14,6 +14,19 @@ PluginHandler.addPlugin(DataGridPlugin);
 PluginHandler.addPlugin(HighchartsPlugin);
 
 Dashboards.board('container', {
+    dataPool: {
+        connectors: [{
+            name: 'connector-1',
+            type: 'CSV',
+            options: {
+                csv: `ABC,DEF
+                    4,5
+                    1,5
+                    41,23`,
+                firstRowAsNames: true
+            }
+        }]
+    },
     editMode: {
         enabled: true,
         contextMenu: {
@@ -21,7 +34,17 @@ Dashboards.board('container', {
                 // drag drop options, leave empty - needed for testing
             },
             enabled: true,
-            items: ['verticalSeparator', 'editMode']
+            items: ['verticalSeparator', 'editMode', {
+                id: 'text-button-test',
+                text: 'Context menu click test',
+                type: 'button',
+                events: {
+                    click: function () {
+                        document.querySelector('.highcharts-dashboards-wrapper')
+                            .classList.add('context-menu-button-clicked');
+                    }
+                }
+            }]
         },
         resize: {
             enabled: true,
@@ -45,11 +68,13 @@ Dashboards.board('container', {
                 cellClassName: 'custom-cell', // optional
                 rows: [{
                     cells: [{
-                        id: 'dashboard-col-0',
-                        width: '50%'
+                        id: 'dashboard-col-0'
                     }, {
-                        id: 'dashboard-col-1',
-                        width: '1/2'
+                        id: 'dashboard-col-1'
+                    }]
+                }, {
+                    cells: [{
+                        id: 'dashboard-col-2'
                     }]
                 }]
             }
@@ -82,6 +107,12 @@ Dashboards.board('container', {
                     }
                 }
             ]
+        }, {
+            cell: 'dashboard-col-2',
+            connector: {
+                name: 'connector-1'
+            },
+            type: 'DataGrid'
         }
     ]
-});
+}, true);

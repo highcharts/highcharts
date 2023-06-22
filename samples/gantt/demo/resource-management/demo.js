@@ -150,9 +150,7 @@ Highcharts.ganttChart('container', {
             valueDescriptionFormat: 'Rented to {point.rentedTo} from {point.x:%A, %B %e} to {point.x2:%A, %B %e}.'
         },
         series: {
-            descriptionFormatter: function (series) {
-                return series.name + ', car ' + (series.index + 1) + ' of ' + series.chart.series.length + '.';
-            }
+            descriptionFormat: '{series.name}, car {add series.index 1} of {series.chart.series.length}.'
         }
     },
     xAxis: {

@@ -7,6 +7,7 @@ let board = Dashboards.board('container', {
             items: ['editMode', 'viewFullscreen', {
                 id: 'export-dashboard',
                 text: 'Export dashboard',
+                type: 'button',
                 events: {
                     click: function () {
                         board.exportLocal();
@@ -15,9 +16,10 @@ let board = Dashboards.board('container', {
             }, {
                 id: 'import-dashboard',
                 text: 'Import saved dashboard',
+                type: 'button',
                 events: {
                     click: function () {
-                        board = Dashboards.importLocal();
+                        board = Dashboards.Board.importLocal();
                     }
                 }
             }]

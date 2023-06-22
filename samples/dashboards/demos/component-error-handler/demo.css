@@ -3,5 +3,5 @@
 @import url("https://code.highcharts.com/css/dashboards/gui.css");
 
 .highcharts-dashboards-component-title-error {
-  color: red;
+    color: red;
 }

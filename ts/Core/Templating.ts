@@ -25,11 +25,58 @@ const {
 } = D;
 import U from './Utilities.js';
 const {
+    extend,
     getNestedProperty,
+    isArray,
     isNumber,
+    isObject,
+    isString,
     pick,
     pInt
 } = U;
+
+interface MatchObject {
+    body?: string;
+    ctx: any;
+    elseBody?: string;
+    expression: string;
+    find: string;
+    fn?: string;
+    length: number;
+    isBlock: boolean;
+    start: number;
+    startInner: number;
+}
+
+const helpers: Record<string, Function> = {
+    // Built-in helpers
+    add: (a: number, b: number): number => a + b,
+    divide: (a: number, b: number): number|string => (b !== 0 ? a / b : ''),
+    // eslint-disable-next-line eqeqeq
+    eq: (a: unknown, b: unknown): boolean => a == b,
+    each: function (arr: string[]|object[]|undefined): string|false {
+        const match = arguments[arguments.length - 1];
+        return isArray(arr) ?
+            arr.map((item, i): string => format(match.body, extend(
+                isObject(item) ? item : { '@this': item }, {
+                    '@index': i,
+                    '@first': i === 0,
+                    '@last': i === arr.length - 1
+                }
+            ))).join('') :
+            false;
+    },
+    ge: (a: number, b: number): boolean => a >= b,
+    gt: (a: number, b: number): boolean => a > b,
+    'if': (condition: string[]|undefined): boolean => !!condition,
+    le: (a: number, b: number): boolean => a <= b,
+    lt: (a: number, b: number): boolean => a < b,
+    multiply: (a: number, b: number): number => a * b,
+    // eslint-disable-next-line eqeqeq
+    ne: (a: unknown, b: unknown): boolean => a != b,
+    subtract: (a: number, b: number): number => a - b,
+    unless: (condition: string[]|undefined): boolean => !condition
+};
 
 /* *
  *
@@ -118,67 +165,189 @@ function dateFormat(
  * @return {string}
  *         The formatted string.
  */
-function format(str: string, ctx: any, chart?: Chart): string {
-    let splitter = '{',
-        isInside = false,
-        segment,
-        valueAndFormat: Array<string>,
-        val,
-        index;
-    const floatRegex = /f$/;
-    const decRegex = /\.([0-9])/;
-    const lang = defaultOptions.lang;
-    const time = chart && chart.time || defaultTime;
-    const numberFormatter = chart && chart.numberFormatter || numberFormat;
-    const ret = [];
+function format(str = '', ctx: any, chart?: Chart): string {
 
-    while (str) {
-        index = str.indexOf(splitter);
-        if (index === -1) {
-            break;
+    const regex = /\{([a-zA-Z0-9\:\.\,;\-\/<>%_@"'= #\(\)]+)\}/g,
+        // The sub expression regex is the same as the top expression regex,
+        // but except parens and block helpers (#), and surrounded by parens
+        // instead of curly brackets.
+        subRegex = /\(([a-zA-Z0-9\:\.\,;\-\/<>%_@"'= ]+)\)/g,
+        matches = [],
+        floatRegex = /f$/,
+        decRegex = /\.([0-9])/,
+        lang = defaultOptions.lang,
+        time = chart && chart.time || defaultTime,
+        numberFormatter = chart && chart.numberFormatter || numberFormat;
+
+    /*
+     * Get a literal or variable value inside a template expression. May be
+     * extended with other types like string or null if needed, but keep it
+     * small for now.
+     */
+    const resolveProperty = (key = ''): unknown => {
+        let n: number;
+
+        // Literals
+        if (key === 'true') {
+            return true;
+        }
+        if (key === 'false') {
+            return false;
+        }
+        if ((n = Number(key)).toString() === key) {
+            return n;
         }
 
-        segment = str.slice(0, index);
-        if (isInside) { // we're on the closing bracket looking back
+        // Variables and constants
+        return getNestedProperty(key, ctx);
+    };
 
-            valueAndFormat = segment.split(':');
-            val = getNestedProperty(valueAndFormat.shift() || '', ctx);
+    let match: RegExpExecArray|null,
+        currentMatch: MatchObject|undefined,
+        depth = 0,
+        hasSub: boolean|undefined;
+
+    // Parse and create tree
+    while ((match = regex.exec(str)) !== null) {
+        // When a sub expression is found, it is evaluated first, and the
+        // results recursively evaluated until no subexpression exists.
+        const subMatch = subRegex.exec(match[1]);
+        if (subMatch) {
+            match = subMatch;
+            hasSub = true;
+        }
+        if (!currentMatch || !currentMatch.isBlock) {
+            currentMatch = {
+                ctx,
+                expression: match[1],
+                find: match[0],
+                isBlock: match[1].charAt(0) === '#',
+                start: match.index,
+                startInner: match.index + match[0].length,
+                length: match[0].length
+            };
+        }
+
+        // Identify helpers
+        const fn = match[1].split(' ')[0].replace('#', '');
+        if (helpers[fn]) {
+
+            // Block helper, only 0 level is handled
+            if (currentMatch.isBlock && fn === currentMatch.fn) {
+                depth++;
+            }
+            if (!currentMatch.fn) {
+                currentMatch.fn = fn;
+            }
+        }
+
+        // Closing a block helper
+        const startingElseSection = match[1] === 'else';
+        if (
+            currentMatch.isBlock &&
+            currentMatch.fn && (
+                match[1] === `/${currentMatch.fn}` ||
+                startingElseSection
+            )
+        ) {
+            if (!depth) { // === 0
+
+                const start = currentMatch.startInner,
+                    body = str.substr(
+                        start,
+                        match.index - start
+                    );
+
+                // Either closing without an else section, or when encountering
+                // an else section
+                if (currentMatch.body === void 0) {
+                    currentMatch.body = body;
+                    currentMatch.startInner = match.index + match[0].length;
+
+                // The body exists already, so this is the else section
+                } else {
+                    currentMatch.elseBody = body;
+                }
+                currentMatch.find += body + match[0];
+
+                if (!startingElseSection) {
+                    matches.push(currentMatch);
+                    currentMatch = void 0;
+                }
+            } else if (!startingElseSection) {
+                depth--;
+            }
+
+        // Common expression
+        } else if (!currentMatch.isBlock) {
+            matches.push(currentMatch);
+        }
+
+        // Evaluate sub-matches one by one to prevent orphaned block closers
+        if (subMatch && !currentMatch?.isBlock) {
+            break;
+        }
+    }
+
+    // Execute
+    matches.forEach((match): void => {
+        const { body, elseBody, expression, fn } = match;
+        let replacement: any,
+            i: number;
+
+        // Helper function
+        if (fn) {
+            // Pass the helpers the amount of arguments defined by the function,
+            // then the match as the last argument.
+            const args: unknown[] = [match],
+                parts = expression.split(' ');
+
+            i = helpers[fn].length;
+            while (i--) {
+                args.unshift(resolveProperty(parts[i + 1]));
+            }
+
+            replacement = helpers[fn].apply(ctx, args);
+
+            // Block helpers may return true or false. They may also return a
+            // string, like the `each` helper.
+            if (match.isBlock && typeof replacement === 'boolean') {
+                replacement = format(replacement ? body : elseBody, ctx);
+            }
+
+
+        // Simple variable replacement
+        } else {
+            const valueAndFormat = expression.split(':');
+
+            replacement = resolveProperty(valueAndFormat.shift() || '');
 
             // Format the replacement
-            if (valueAndFormat.length && typeof val === 'number') {
+            if (valueAndFormat.length && typeof replacement === 'number') {
 
-                segment = valueAndFormat.join(':');
+                const segment = valueAndFormat.join(':');
 
                 if (floatRegex.test(segment)) { // float
                     const decimals = parseInt(
                         (segment.match(decRegex) || ['', '-1'])[1],
                         10
                     );
-                    if (val !== null) {
-                        val = numberFormatter(
-                            val,
+                    if (replacement !== null) {
+                        replacement = numberFormatter(
+                            replacement,
                             decimals,
                             lang.decimalPoint,
                             segment.indexOf(',') > -1 ? lang.thousandsSep : ''
                         );
                     }
                 } else {
-                    val = time.dateFormat(segment, val);
+                    replacement = time.dateFormat(segment, replacement);
                 }
             }
-
-            // Push the result and advance the cursor
-            ret.push(val);
-        } else {
-            ret.push(segment);
-
         }
-        str = str.slice(index + 1); // the rest
-        isInside = !isInside; // toggle
-        splitter = isInside ? '}' : '{'; // now look for next matching bracket
-    }
-    ret.push(str);
-    return ret.join('');
+        str = str.replace(match.find, pick(replacement, ''));
+    });
+    return hasSub ? format(str, ctx, chart) : str;
 }
 
 /**
@@ -305,16 +474,17 @@ function numberFormat(
  *
  * */
 
-const FormatUtilities = {
+const Templating = {
     dateFormat,
     format,
+    helpers,
     numberFormat
 };
 
-namespace FormatUtilities {
+namespace Templating {
     export interface FormatterCallback<T> {
         (this: T): string;
     }
 }
 
-export default FormatUtilities;
+export default Templating;

@@ -21,7 +21,6 @@
  * */
 
 import type Component from '../Components/Component';
-import type HighchartsComponent from '../../Extensions/DashboardPlugins/HighchartsComponent';
 import type EditableOptions from '../Components/EditableOptions';
 
 import EditRenderer from './EditRenderer.js';
@@ -30,9 +29,7 @@ import EditGlobals from './EditGlobals.js';
 const {
     createElement,
     merge,
-    error,
-    splat,
-    isArray
+    error
 } = U;
 
 /* *
@@ -122,7 +119,7 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: (component.board?.editMode || EditGlobals)
+                text: (component.board?.editMode || EditGlobals)
                     .lang.confirmButton,
                 callback: (): void => {
                     const changedOptions = this
@@ -143,7 +140,7 @@ class AccordionMenu {
         EditRenderer.renderButton(
             buttonContainer,
             {
-                value: (component.board?.editMode || EditGlobals)
+                text: (component.board?.editMode || EditGlobals)
                     .lang.cancelButton,
                 callback: (): void => {
                     menu.changedOptions = {};

@@ -141,6 +141,8 @@ class MapView {
     public projection: Projection;
     public userOptions: DeepPartial<MapViewOptions>;
     public zoom: number;
+    recommendedProjection: DeepPartial<ProjectionOptions>|undefined;
+    recommendedMapView: DeepPartial<MapViewOptions>|undefined;
 
     public chart: Chart;
 
@@ -213,7 +215,6 @@ class MapView {
         chart: Chart,
         options?: DeepPartial<MapViewOptions>
     ) {
-
         let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
         let recommendedProjection: DeepPartial<ProjectionOptions>|undefined;
         if (!(this instanceof MapViewInset)) {
@@ -233,7 +234,8 @@ class MapView {
                 if (geoMap) {
                     // Use the first geo map as main
                     if (!recommendedMapView) {
-                        recommendedMapView = geoMap['hc-recommended-mapview'];
+                        recommendedMapView =
+                            geoMap['hc-recommended-mapview'];
                     }
 
                     // Combine the bounding boxes of all loaded maps
@@ -250,30 +252,46 @@ class MapView {
                 MapView.compositeBounds(allGeoBounds)
             );
 
-            // Provide a best-guess recommended projection if not set in the map
-            // or in user options
-            if (geoBounds) {
+            // Provide a best-guess recommended projection if not set in
+            // the map or in user options
 
-                const { x1, y1, x2, y2 } = geoBounds;
-                recommendedProjection = (x2 - x1 > 180 && y2 - y1 > 90) ?
-                    // Wide angle, go for the world view
-                    {
-                        name: 'EqualEarth'
-                    } :
-                    // Narrower angle, use a projection better suited for local
-                    // view
-                    {
-                        name: 'LambertConformalConic',
-                        parallels: [y1, y2],
-                        rotation: [-(x1 + x2) / 2]
-                    };
-            }
-
+            fireEvent(
+                chart,
+                'beforeMapViewInit',
+                {
+                    geoBounds
+                },
+                function (): void {
+                    if (geoBounds) {
+                        const { x1, y1, x2, y2 } = geoBounds;
+                        recommendedProjection =
+                            (x2 - x1 > 180 && y2 - y1 > 90) ?
+                                // Wide angle, go for the world view
+                                {
+                                    name: 'EqualEarth'
+                                } :
+                                // Narrower angle, use a projection better
+                                // suited for local view
+                                {
+                                    name: 'LambertConformalConic',
+                                    parallels: [y1, y2],
+                                    rotation: [-(x1 + x2) / 2]
+                                };
+                    }
+                }
+            );
             // Register the main geo map (from options.chart.map) if set
             this.geoMap = geoMaps[0];
         }
 
         this.userOptions = options || {};
+
+        if (
+            chart.options.mapView &&
+            chart.options.mapView.recommendedMapView
+        ) {
+            recommendedMapView = chart.options.mapView.recommendedMapView;
+        }
 
         const o = merge(
             defaultOptions,
@@ -312,6 +330,7 @@ class MapView {
          * @type {number}
          */
         this.zoom = o.zoom || 0;
+        this.minZoom = o.minZoom;
 
         // Create the insets
         this.createInsets();

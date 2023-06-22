@@ -5,18 +5,12 @@ const getNow = () => {
     const now = new Date();
 
     return {
+        date: now,
         hours: now.getHours() + now.getMinutes() / 60,
         minutes: now.getMinutes() * 12 / 60 + now.getSeconds() * 12 / 3600,
         seconds: now.getSeconds() * 12 / 60
     };
 };
-
-/**
- * Pad numbers
- */
-const pad = (number, length) =>
-    // Create an array of the remaining length + 1 and join it with 0's
-    new Array((length || 2) + 1 - String(number).length).join(0) + number;
 
 let now = getNow();
 
@@ -93,9 +87,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        formatter: function () {
-            return this.series.chart.tooltipText;
-        }
+        format: '{series.chart.tooltipText}'
     },
 
     series: [{
@@ -143,11 +135,7 @@ function (chart) {
                 second = chart.get('second');
 
             // Cache the tooltip text
-            chart.tooltipText =
-                pad(Math.floor(now.hours), 2) + ':' +
-                pad(Math.floor(now.minutes * 5), 2) + ':' +
-                pad(now.seconds * 5, 2);
-
+            chart.tooltipText = Highcharts.dateFormat('%H:%M:%S', now.date);
 
             hour.update(now.hours, true, false);
             minute.update(now.minutes, true, false);

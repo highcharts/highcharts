@@ -29,6 +29,10 @@ const {
     objectEach
 } = U;
 
+
+/**
+ * @internal
+ */
 class CellEditToolbar extends EditToolbar {
     /* *
     *
@@ -63,7 +67,7 @@ class CellEditToolbar extends EditToolbar {
             )
         );
 
-        this.menu.initItems(merge(Menu.items, {
+        this.menu.initItems({
             drag: {
                 id: 'drag',
                 type: 'icon',
@@ -118,7 +122,7 @@ class CellEditToolbar extends EditToolbar {
                     }
                 }
             }
-        }));
+        });
     }
 
     /* *
@@ -221,7 +225,6 @@ class CellEditToolbar extends EditToolbar {
     }
 
     public resetEditedCell(): void {
-        // super.resetCurrentElements(this.cell as Cell);
         this.editedCell = void 0;
     }
 }
