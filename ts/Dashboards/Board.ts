@@ -339,17 +339,16 @@ class Board implements Serializable<Board, Board.JSON> {
         // Init events.
         this.initEvents();
 
+        const componentPromises: Array<Promise<Component>> = [],
+            mountedComponents = this.mountedComponents;
+
+        for (let i = 0, iEnd = mountedComponents.length; i < iEnd; ++i) {
+            componentPromises.push(
+                mountedComponents[i].component.initConnector()
+            );
+        }
+
         if (async) {
-
-            const componentPromises: Array<Promise<Component>> = [],
-                mountedComponents = this.mountedComponents;
-
-            for (let i = 0, iEnd = mountedComponents.length; i < iEnd; ++i) {
-                componentPromises.push(
-                    mountedComponents[i].component.initConnector()
-                );
-            }
-
             return Promise.all(componentPromises).then((): Board => this);
         }
 
