@@ -17,6 +17,10 @@
     "Highcharts Gantt": {
       "cdnpath": "/gantt",
       "distpath": "/gantt"
+    },
+    "Highcharts Dashboards": {
+      "cdnpath": "/dashboards",
+      "distpath": "/dashboards"
     }
   }
 }

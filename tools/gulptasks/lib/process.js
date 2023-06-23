@@ -68,10 +68,14 @@ function exec(command, options = {}) {
     return new Promise((resolve, reject) => {
 
         const cli = ChildProcess.exec(command, options, (error, stdout) => {
+
             if (error) {
                 LogLib.failure(error);
                 reject(error);
-            } else {
+                return;
+            }
+
+            if (silent !== 2) {
                 LogLib.success(
                     (
                         silent ?
@@ -80,8 +84,9 @@ function exec(command, options = {}) {
                     ),
                     command
                 );
-                resolve(stdout);
             }
+
+            resolve(stdout);
         });
 
         if (!silent) {

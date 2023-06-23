@@ -21,8 +21,9 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
 import type { DataConnectorTypes } from './DataConnectorType';
+import type DataEvent from '../DataEvent';
+import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
 
 import DataConverter from '../Converters/DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -366,6 +367,7 @@ namespace DataConnector {
      * Option of the DataConnector.
      */
     export interface Options {
+        dataModifier?: DataModifierTypeOptions;
         dataTable?: DataTable.Options;
         metadata?: Metadata;
     }

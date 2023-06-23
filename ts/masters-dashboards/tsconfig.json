@@ -9,8 +9,8 @@
 
     },
     "exclude": [
-        "../masters/**/*.ts",
-        "../masters-es5/**/*.ts"
+        "../masters/",
+        "../masters-es5/"
     ],
     "include": [
         "../Accessibility/**/*.ts",

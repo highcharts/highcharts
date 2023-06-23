@@ -55,9 +55,9 @@ class RangeModifier extends DataModifier {
      * Default options for the range modifier.
      */
     public static readonly defaultOptions: RangeModifierOptions = {
-        modifier: 'Range',
-        strict: false,
-        ranges: []
+        type: 'Range',
+        ranges: [],
+        strict: false
     };
 
     /* *
@@ -194,6 +194,40 @@ class RangeModifier extends DataModifier {
         return table;
     }
 
+
+    /**
+     * Utility function that returns the first row index
+     * if the table has been modified by a range modifier
+     * @param {DataTable} table the table to get the offset from
+     *
+     * @return {number} The row offset of the modified table
+     */
+    public getModifiedTableOffset(table: DataTable): number {
+        const { ranges } = this.options;
+
+        if (ranges) {
+            const minRange = ranges.reduce(
+                (minRange, currentRange): RangeModifierRangeOptions => {
+                    if (currentRange.minValue > minRange.minValue) {
+                        minRange = currentRange;
+                    }
+                    return minRange;
+
+                }, ranges[0]
+            );
+
+            const tableRowIndex = table.getRowIndexBy(
+                minRange.column,
+                minRange.minValue
+            );
+
+            if (tableRowIndex) {
+                return tableRowIndex;
+            }
+        }
+
+        return 0;
+    }
 }
 
 /* *

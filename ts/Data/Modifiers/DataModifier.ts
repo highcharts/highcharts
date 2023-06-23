@@ -21,6 +21,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
+import type DataModifierEvent from './DataModifierEvent';
 import type DataModifierOptions from './DataModifierOptions';
 import type DataTable from '../DataTable';
 import type { DataModifierTypes } from './DataModifierType';
@@ -84,7 +85,7 @@ abstract class DataModifier implements DataEvent.Emitter {
         const modifier = this;
         const execute = (): void => {
             modifier.modifyTable(dataTable);
-            modifier.emit<DataModifier.Event>({
+            modifier.emit<DataModifierEvent>({
                 type: 'afterBenchmarkIteration'
             });
         };
@@ -100,7 +101,7 @@ abstract class DataModifier implements DataEvent.Emitter {
 
         modifier.on('afterBenchmarkIteration', (): void => {
             if (results.length === iterations) {
-                modifier.emit<DataModifier.Event>({
+                modifier.emit<DataModifierEvent>({
                     type: 'afterBenchmark',
                     results
                 });
@@ -166,7 +167,7 @@ abstract class DataModifier implements DataEvent.Emitter {
             try {
                 resolve(modifier.modifyTable(table, eventDetail));
             } catch (e) {
-                modifier.emit<DataModifier.Event>({
+                modifier.emit<DataModifierEvent>({
                     type: 'error',
                     detail: eventDetail,
                     table
@@ -322,46 +323,10 @@ namespace DataModifier {
      * */
 
     /**
-     * Benchmark event with additional event information.
-     */
-    export interface BenchmarkEvent extends DataEvent {
-        readonly type: (
-            'afterBenchmark'|
-            'afterBenchmarkIteration'
-        );
-        readonly results?: Array<number>;
-    }
-
-    /**
      * Benchmark options.
      */
     export interface BenchmarkOptions {
         iterations: number;
-    }
-
-    /**
-     * Error event with additional event information.
-     */
-    export interface ErrorEvent extends DataEvent{
-        readonly type: (
-            'error'
-        );
-        readonly table: DataTable;
-    }
-
-    /**
-     * Event information.
-     */
-    export type Event = (BenchmarkEvent|ErrorEvent|ModifyEvent);
-
-    /**
-     * Modify event with additional event information.
-     */
-    export interface ModifyEvent extends DataEvent {
-        readonly type: (
-            'modify'|'afterModify'
-        );
-        readonly table: DataTable;
     }
 
     /* *

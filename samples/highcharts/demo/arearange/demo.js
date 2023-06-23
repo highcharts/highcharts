@@ -1,51 +1,52 @@
-Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json',
-    function (data) {
+(async () => {
 
-        Highcharts.chart('container', {
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json'
+    ).then(response => response.json());
 
-            chart: {
-                type: 'arearange',
-                zoomType: 'x',
-                scrollablePlotArea: {
-                    minWidth: 600,
-                    scrollPositionX: 1
-                }
-            },
+    Highcharts.chart('container', {
 
+        chart: {
+            type: 'arearange',
+            zoomType: 'x',
+            scrollablePlotArea: {
+                minWidth: 600,
+                scrollPositionX: 1
+            }
+        },
+
+        title: {
+            text: 'Temperature variation by day'
+        },
+
+        xAxis: {
+            type: 'datetime',
+            accessibility: {
+                rangeDescription: 'Range: Jan 1st 2017 to Dec 31 2017.'
+            }
+        },
+
+        yAxis: {
             title: {
-                text: 'Temperature variation by day'
-            },
+                text: null
+            }
+        },
 
-            xAxis: {
-                type: 'datetime',
-                accessibility: {
-                    rangeDescription: 'Range: Jan 1st 2017 to Dec 31 2017.'
-                }
-            },
+        tooltip: {
+            crosshairs: true,
+            shared: true,
+            valueSuffix: '°C',
+            xDateFormat: '%A, %b %e'
+        },
 
-            yAxis: {
-                title: {
-                    text: null
-                }
-            },
+        legend: {
+            enabled: false
+        },
 
-            tooltip: {
-                crosshairs: true,
-                shared: true,
-                valueSuffix: '°C',
-                xDateFormat: '%A, %b %e'
-            },
+        series: [{
+            name: 'Temperatures',
+            data: data
+        }]
 
-            legend: {
-                enabled: false
-            },
-
-            series: [{
-                name: 'Temperatures',
-                data: data
-            }]
-
-        });
-    }
-);
+    });
+})();

@@ -120,7 +120,7 @@ function isSkipSeries(
         // reached
         (
             seriesNavOptions.pointNavigationEnabledThreshold &&
-            seriesNavOptions.pointNavigationEnabledThreshold <=
+            +seriesNavOptions.pointNavigationEnabledThreshold <=
             series.points.length
         );
 }
