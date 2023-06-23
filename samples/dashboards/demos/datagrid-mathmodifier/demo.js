@@ -1,24 +1,23 @@
-const CSVConnector = Dashboards.DataConnector.types.CSV;
-const MathModifier = Dashboards.DataModifier.types.Math;
-
-// Load data
-const connector = new CSVConnector({
-    csv: document.getElementById('csv').innerText,
-    firstRowAsNames: true
-});
-connector.load();
-
-// Add MathModifier to create USD column with exchange valuta from EUR
-connector.table.setModifier(new MathModifier({
-    columnFormulas: [{
-        column: 'USD',
-        formula: 'B1*C1'
-    }]
-}));
-
 // Create Dashboard
 Dashboards.board('container', {
-    connector,
+    dataPool: {
+        connectors: [{
+            id: 'EUR-USD',
+            type: 'CSV',
+            options: {
+                csv: document.getElementById('csv').innerText,
+                firstRowAsNames: true,
+                // Add MathModifier to create USD column with exchange valuta
+                dataModifier: {
+                    type: 'Math',
+                    columnFormulas: [{
+                        column: 'USD',
+                        formula: 'B1*C1' // Multiple EUR (B1) with the rate (C1)
+                    }]
+                }
+            }
+        }]
+    },
     gui: {
         layouts: [{
             id: 'layout-1',
@@ -34,16 +33,18 @@ Dashboards.board('container', {
     components: [
         {
             cell: 'dashboard-col-1',
-            connector,
             type: 'Highcharts',
+            connector: {
+                id: 'EUR-USD'
+            },
+            columnAssignment: {
+                Day: 'x',
+                EUR: 'custom.eur',
+                Rate: 'y',
+                USD: 'custom.usd'
+            },
             sync: {
                 highlight: true
-            },
-            columnKeyMap: {
-                Day: 'x',
-                EUR: 'eur',
-                Rate: 'y',
-                USD: 'usd'
             },
             title: {
                 text: 'Chart',
@@ -51,35 +52,39 @@ Dashboards.board('container', {
                     textAlign: 'center'
                 }
             },
-            allowConnectorUpdate: true,
             chartOptions: {
-                xAxis: {
-                    type: 'category'
-                },
                 chart: {
                     animation: false,
-                    type: 'line'
+                    type: 'line',
+                    zooming: false
                 },
                 title: {
                     text: 'Drag points to update the data grid'
                 },
-                plotOptions: {
-                    series: {
-                        dragDrop: {
-                            draggableY: true,
-                            dragPrecisionY: 1
-                        }
-                    }
+                tooltip: {
+                    shared: true,
+                    split: true
+                },
+                xAxis: {
+                    type: 'category'
                 }
             }
         }, {
             cell: 'dashboard-col-2',
             type: 'DataGrid',
-            connector,
-            editable: true,
+            connector: {
+                id: 'EUR-USD'
+            },
             sync: {
                 highlight: true
-            }
+            },
+            columns: {
+                // Disable Math column for editing
+                USD: {
+                    editable: false
+                }
+            },
+            editable: true
         }
     ]
 });
