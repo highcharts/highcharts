@@ -61,7 +61,7 @@ Dashboards.board('container', {
             visibility: false
         },
         title: {
-            text: 'visibility: false'
+            text: 'sync visibility: false'
         },
         type: 'Highcharts',
         connector: {
@@ -86,7 +86,7 @@ Dashboards.board('container', {
             visibility: true
         },
         title: {
-            text: 'visibility: true'
+            text: 'sync visibility: true'
         },
         type: 'Highcharts',
         connector: {

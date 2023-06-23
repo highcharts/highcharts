@@ -7,17 +7,6 @@ const chartOptions = {
     chart: {
         animation: false,
         type: 'column'
-    },
-    title: {
-        text: 'Drag points to update the data grid'
-    },
-    plotOptions: {
-        series: {
-            dragDrop: {
-                draggableY: true,
-                dragPrecisionY: 1
-            }
-        }
     }
 };
 
@@ -61,7 +50,7 @@ Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'highlight: true'
+                text: 'sync highlight: true'
             },
             chartOptions
         }, {
@@ -78,13 +67,13 @@ Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'highlight: false'
+                text: 'sync highlight: false'
             },
             allowConnectorUpdate: false,
             chartOptions
         }, {
             title: {
-                text: 'highlight: true'
+                text: 'sync highlight: true'
             },
             cell: 'dashboard-col-2',
             type: 'DataGrid',
