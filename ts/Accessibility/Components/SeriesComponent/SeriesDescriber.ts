@@ -561,7 +561,8 @@ function setPointScreenReaderAttribs(
                 )
             ) ||
             a11yPointOptions.descriptionFormatter?.(point) ||
-            defaultPointDescriptionFormatter(point)
+            defaultPointDescriptionFormatter(point),
+            series.chart.renderer.forExport
         );
 
     pointElement.setAttribute('role', 'img');
@@ -704,7 +705,8 @@ function describeSeriesElement(
         stripHTMLTags(
             (a11yOptions.series as any).descriptionFormatter &&
             (a11yOptions.series as any).descriptionFormatter(series) ||
-            defaultSeriesDescriptionFormatter(series)
+            defaultSeriesDescriptionFormatter(series),
+            series.chart.renderer.forExport
         )
     );
 }

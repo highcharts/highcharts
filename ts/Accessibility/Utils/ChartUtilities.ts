@@ -86,7 +86,8 @@ function getChartTitle(chart: Accessibility.ChartComposition): string {
         chart.options.title.text ||
         chart.langFormat(
             'accessibility.defaultChartTitle', { chart: chart }
-        )
+        ),
+        chart.renderer.forExport
     );
 }
 

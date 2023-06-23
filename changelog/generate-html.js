@@ -36,6 +36,11 @@ function generateHTML() {
             name: 'highcharts-gantt',
             changelogId: 'hg-changelog',
             offset: 'hg-'
+        }, {
+            header: 'Highcharts Dashboards',
+            name: 'highcharts-dashboards',
+            cangelogId: 'hd-changelog',
+            offset: 'hd-'
         }];
 
         var changelog = {

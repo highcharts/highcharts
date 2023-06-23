@@ -49,6 +49,9 @@ QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
 
 QUnit.test('Exported chart should not contain HTML elements from a11y module', function (assert) {
     var chart = Highcharts.chart('container', {
+            title: {
+                text: 'Title < title'
+            },
             series: [{
                 data: [1, 2, 3, 4, 5, 6]
             }],
@@ -59,7 +62,14 @@ QUnit.test('Exported chart should not contain HTML elements from a11y module', f
         svg = chart.getSVGForExport(),
         hasHTMLElements = svg.match(
             /<(div|p|h[1-7]|button|a|li|ul|ol|table|input|select)(\s[^>]+)?>/gu
-        );
+        ),
+        hasTitleChanged = svg.match(/\bTitle\b(?:\s&lt;\s)\btitle\b/g);
 
     assert.strictEqual(hasHTMLElements, null, 'Should not have any HTML elements in the SVG');
+
+    assert.strictEqual(
+        hasTitleChanged[0],
+        'Title &lt; title',
+        'Title should replace `<` to `&lt;` for exporting, (#17753, #19002)'
+    );
 });
