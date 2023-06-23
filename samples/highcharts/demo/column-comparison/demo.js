@@ -138,7 +138,7 @@ const countries = {
         color: '#2CAFFE'
     },
     de: {
-        flag: 'de',
+        name: 'Germany',
         color: '#FE6A35'
     },
     ru: {
