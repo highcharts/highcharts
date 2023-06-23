@@ -65,20 +65,25 @@ interface CalculateOnObject {
  * @private
  */
 const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
-    series: TLinkedSeries
+    series: TLinkedSeries,
+    processed?: boolean
 ): Array<number|Array<number|null>> => {
     if (!series.useDataTable) {
-        return (series.yData as any);
+        return processed ?
+            (series.processedYData as any) :
+            (series.yData as any);
     }
+
+    const yData = [],
+        table = processed && series.table.modified || series.table;
 
     if (!series.pointArrayMap) {
-        return (series.table.columns.y || []) as any;
+        return (table.columns.y || []) as any;
     }
 
-    const yData = [];
-    for (let i = 0; i < series.table.rowCount; i++) {
+    for (let i = 0; i < table.rowCount; i++) {
         const values = series.pointArrayMap.map((key): number =>
-            series.table.columns[key]?.[i] || 0
+            table.columns[key]?.[i] || 0
         );
         yData.push(values);
     }
@@ -429,20 +434,26 @@ class SMAIndicator extends LineSeries {
             max,
             i;
 
+        // For the newer data table, temporarily set the parent series `yData`
+        // to the legacy format that is documented for custom indicators.
+        const yData = indicator.linkedParent.yData,
+            processedYData = indicator.linkedParent.processedYData;
+        if (indicator.useDataTable) {
+            indicator.linkedParent.yData = tableToMultiYData(
+                indicator.linkedParent
+            ) as any;
+            indicator.linkedParent.processedYData = tableToMultiYData(
+                indicator.linkedParent,
+                true
+            ) as any;
+        }
+
+
         // Updating an indicator with redraw=false may destroy data.
         // If there will be a following update for the parent series,
         // we will try to access Series object without any properties
         // (except for prototyped ones). This is what happens
         // for example when using Axis.setDataGrouping(). See #16670
-        const yData = indicator.linkedParent.yData;
-
-        // For the newer data table, temporarily set the parent series `yData`
-        // to the legacy format that is documented for custom indicators.
-        if (indicator.useDataTable) {
-            indicator.linkedParent.yData = tableToMultiYData(
-                indicator.linkedParent
-            ) as any;
-        }
         const processedData: IndicatorValuesObject<typeof LineSeries.prototype> = indicator.linkedParent.options &&
             (
                 // #18176, #18177 indicators should work with empty dataset
@@ -460,6 +471,7 @@ class SMAIndicator extends LineSeries {
         // Reset
         if (indicator.useDataTable) {
             indicator.linkedParent.yData = yData;
+            indicator.linkedParent.processedYData = processedYData;
         }
 
         const pointArrayMap = indicator.pointArrayMap || ['y'],
