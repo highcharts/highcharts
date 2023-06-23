@@ -199,22 +199,45 @@ class HeikinAshiSeries extends CandlestickSeries {
     public getHeikinashiData(): void {
         const series = this,
             processedYData = series.allGroupedData || series.yData,
+            table = series.allGroupedTable || series.table,
+            columns = table.columns,
+            dataLength = series.useDataTable ?
+                table.rowCount :
+                processedYData?.length,
             heikiashiData = series.heikiashiData;
 
-        if (!heikiashiData.length && processedYData && processedYData.length) {
-            // Cast to `any` in order to avoid checks before calculation.
-            // Adding null doesn't change anything.
-            const firstPoint: any = processedYData[0];
+        if (!heikiashiData.length && dataLength) {
 
-            // Modify the first point.
-            this.modifyFirstPointValue(firstPoint);
+            const row2Arr = (row: number): number[] => [
+                columns.open?.[row] || 0,
+                columns.high?.[row] || 0,
+                columns.low?.[row] || 0,
+                columns.close?.[row] || 0
+            ];
 
-            // Modify other points.
-            for (let i = 1; i < processedYData.length; i++) {
-                const dataPoint: any = processedYData[i],
-                    previousDataPoint: any = heikiashiData[i - 1];
+            if (series.useDataTable) {
+                // Modify the first point.
+                this.modifyFirstPointValue(row2Arr(0));
 
-                this.modifyDataPoint(dataPoint, previousDataPoint);
+                // Modify other points.
+                for (let i = 1; i < dataLength; i++) {
+                    this.modifyDataPoint(row2Arr(i), heikiashiData[i - 1]);
+                }
+            } else {
+                // Cast to `any` in order to avoid checks before calculation.
+                // Adding null doesn't change anything.
+                const firstPoint: any = processedYData[0];
+
+                // Modify the first point.
+                this.modifyFirstPointValue(firstPoint);
+
+                // Modify other points.
+                for (let i = 1; i < processedYData.length; i++) {
+                    const dataPoint: any = processedYData[i],
+                        previousDataPoint: any = heikiashiData[i - 1];
+
+                    this.modifyDataPoint(dataPoint, previousDataPoint);
+                }
             }
         }
         series.heikiashiData = heikiashiData;

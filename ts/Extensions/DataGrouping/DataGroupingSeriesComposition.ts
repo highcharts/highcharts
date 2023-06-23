@@ -455,13 +455,15 @@ function applyGrouping(
                 adjustExtremes(xAxis, groupedXData);
             }
 
-            // We calculated all group positions but we should render
-            // only the ones within the visible range
-            if ((dataGroupingOptions as any).groupAll) {
-                // Keep the reference to all grouped points
-                // for further calculation (eg. heikinashi).
-                series.allGroupedData = groupedYData;
-                series.allGroupedTable = modified;
+            // We calculated all group positions but we should render only the
+            // ones within the visible range
+            if (dataGroupingOptions.groupAll) {
+                // Keep the reference to all grouped points for further
+                // calculation
+                if (series.is('heikinashi') || series.is('hollowcandlestick')) {
+                    series.allGroupedData = groupedYData;
+                    series.allGroupedTable = modified;
+                }
 
                 croppedData = series.cropData(
                     groupedXData as any,

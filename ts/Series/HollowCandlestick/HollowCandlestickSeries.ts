@@ -175,6 +175,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
             // Processed and grouped data
             processedYData = series.allGroupedData || series.yData,
             table = series.allGroupedTable || series.table,
+            columns = table.columns,
             dataLength = series.useDataTable ?
                 table.rowCount :
                 processedYData?.length,
@@ -189,13 +190,12 @@ class HollowCandlestickSeries extends CandlestickSeries {
                 trendDirection: 'up'
             });
 
-            const row2Arr = (row: number): DataArr => {
-                const arr: DataArr = [];
-                pointArrayMap.forEach((key): void => {
-                    arr.push(table.columns[key]?.[row]);
-                });
-                return arr;
-            };
+            const row2Arr = (row: number): DataArr => [
+                columns.open?.[row] || 0,
+                columns.high?.[row] || 0,
+                columns.low?.[row] || 0,
+                columns.close?.[row] || 0
+            ];
 
             if (series.useDataTable) {
                 let previousDataArr: DataArr|undefined;
