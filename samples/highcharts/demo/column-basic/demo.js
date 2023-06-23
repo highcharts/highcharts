@@ -26,9 +26,7 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        valueSuffix: ' (1000 MT)',
-        stickOnContact: true,
-        backgroundColor: 'rgba(255, 255, 255, 0.93)'
+        valueSuffix: ' (1000 MT)'
     },
     plotOptions: {
         column: {
