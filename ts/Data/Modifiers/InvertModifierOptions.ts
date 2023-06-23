@@ -7,8 +7,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
+ *  - Wojciech Chmiel
  *  - Sophie Bremer
- *  - Gøran Slettemark
  *
  * */
 
@@ -23,7 +23,7 @@
  * */
 
 
-import type { DataModifierTypes } from './DataModifierType';
+import type DataModifierOptions from './DataModifierOptions';
 
 
 /* *
@@ -36,12 +36,12 @@ import type { DataModifierTypes } from './DataModifierType';
 /**
  * Options to configure the modifier.
  */
-export interface DataModifierOptions {
+export interface InvertModifierOptions extends DataModifierOptions {
 
     /**
-     * Type of the related modifier for these options.
+     * Name of the related modifier for these options.
      */
-    type: keyof DataModifierTypes;
+    type: 'Invert';
 
 }
 
@@ -53,4 +53,4 @@ export interface DataModifierOptions {
  * */
 
 
-export default DataModifierOptions;
+export default InvertModifierOptions;
