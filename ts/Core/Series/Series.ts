@@ -678,16 +678,20 @@ class Series {
         iArgs?: Array<any>
     ): void {
         const series = point.series,
+            table = series.table,
+            columns = table.columns,
             fn = isNumber(i) ?
                 // Insert the value in the given position
                 function (key: string): void {
                     if (series.useDataTable) {
                         // Data table
-                        const column = series.table.columns[key];
+                        const column = columns[key];
                         if (column) {
                             column[i] = (point as any)[key];
-                            series.table.rowCount = Math.max(
-                                series.table.rowCount,
+                            // @todo: Do this in one operation after the loops?
+                            // Or use DataTable method.
+                            table.rowCount = Math.max(
+                                table.rowCount,
                                 column.length
                             );
                         }
@@ -702,15 +706,31 @@ class Series {
                 // Apply the method specified in i with the following
                 // arguments as arguments
                 function (key: string): void {
-                    (Array.prototype as any)[i].apply(
-                        (series as any)[key + 'Data'],
-                        iArgs
-                    );
+                    if (series.useDataTable) {
+                        // Data table
+                        const column = columns[key];
+                        if (column) {
+                            (Array.prototype as any)[i].apply(
+                                column,
+                                iArgs
+                            );
+                            table.rowCount = Math.max(
+                                table.rowCount,
+                                column.length
+                            );
+                        }
+                    } else {
+                        (Array.prototype as any)[i].apply(
+                            (series as any)[key + 'Data'],
+                            iArgs
+                        );
+                    }
                 };
 
         if (this.useDataTable) {
             const dataColumnKeys = ['x', ...(series.pointArrayMap || ['y'])];
             dataColumnKeys.forEach(fn);
+
         } else {
             series.parallelArrays.forEach(fn);
         }
