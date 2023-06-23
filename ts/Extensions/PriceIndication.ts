@@ -322,11 +322,20 @@ addEvent(Series, 'afterRender', function (): void {
             origGraphic = yAxis.cross,
             origLabel = yAxis.crossLabel,
             points = series.points,
-            yLength = (series.yData as any).length,
             pLength = points.length,
-            x = (series.xData as any)[(series.xData as any).length - 1],
-            y = (series.yData as any)[yLength - 1],
-            yValue;
+            yValue,
+            dataLength = series.useDataTable ?
+                series.table.rowCount :
+                (series.yData as any).length,
+            x = series.useDataTable ?
+                series.table.columns.x?.[dataLength - 1] :
+                (series.xData as any)[(series.xData as any).length - 1],
+            y = series.useDataTable ?
+                (
+                    series.table.columns.y || series.table.columns.close
+                )?.[dataLength - 1] :
+                (series.yData as any)[dataLength - 1];
+
 
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
@@ -342,7 +351,11 @@ addEvent(Series, 'afterRender', function (): void {
             }
 
             yAxis.cross = series.lastPrice;
-            yValue = isArray(y) ? y[3] : y;
+            if (series.useDataTable) {
+                yValue = y;
+            } else {
+                yValue = isArray(y) ? y[3] : y;
+            }
 
             if (series.lastPriceLabel) {
                 series.lastPriceLabel.destroy();

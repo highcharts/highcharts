@@ -41,6 +41,7 @@ const {
     addEvent,
     correctFloat,
     isArray,
+    isNumber,
     extend,
     merge,
     objectEach
@@ -63,8 +64,12 @@ function createPointObj(
 ): SupertrendLinkedParentPointObject {
     return {
         index: index,
-        close: mainSeries.yData[index][close],
-        x: mainSeries.xData[index]
+        close: mainSeries.useDataTable ?
+            mainSeries.table.columns.close?.[index] :
+            mainSeries.yData[index][close],
+        x: mainSeries.useDataTable ?
+            mainSeries.table.columns.x?.[index] :
+            mainSeries.xData[index]
     } as any;
 }
 
@@ -242,6 +247,7 @@ class SupertrendIndicator extends SMAIndicator {
 
             // Series that indicator is linked to
             mainSeries = indicator.linkedParent,
+            columns = mainSeries.table.columns,
             mainLinePoints: Array<(SupertrendLinkedParentPointObject)> =
                 (mainSeries ? mainSeries.points : []),
             indicPoints: Array<SupertrendPoint> = indicator.points,
@@ -334,7 +340,8 @@ class SupertrendIndicator extends SMAIndicator {
             // but supertrend has additional one
             if (
                 !nextMainPoint &&
-                mainPoint && mainSeries.yData[mainPoint.index - 1]
+                mainPoint &&
+                isNumber(mainSeries.xData[mainPoint.index - 1])
             ) {
                 nextMainPoint = createPointObj(
                     mainSeries, mainPoint.index - 1, close
@@ -345,7 +352,8 @@ class SupertrendIndicator extends SMAIndicator {
             // but supertrend has additional one (and points are shifted)
             if (
                 !prevPrevMainPoint &&
-                prevMainPoint && mainSeries.yData[prevMainPoint.index + 1]
+                prevMainPoint &&
+                isNumber(mainSeries.xData[prevMainPoint.index + 1])
             ) {
                 prevPrevMainPoint = createPointObj(
                     mainSeries, prevMainPoint.index + 1, close
@@ -355,14 +363,16 @@ class SupertrendIndicator extends SMAIndicator {
             // When points are shifted (right or left plot area edge)
             if (
                 !mainPoint &&
-                nextMainPoint && mainSeries.yData[nextMainPoint.index + 1]
+                nextMainPoint &&
+                isNumber(mainSeries.xData[nextMainPoint.index + 1])
             ) {
                 mainPoint = createPointObj(
                     mainSeries, nextMainPoint.index + 1, close
                 );
             } else if (
                 !mainPoint &&
-                prevMainPoint && mainSeries.yData[prevMainPoint.index - 1]
+                prevMainPoint &&
+                isNumber(mainSeries.xData[prevMainPoint.index - 1])
             ) {
                 mainPoint = createPointObj(
                     mainSeries, prevMainPoint.index - 1, close
@@ -383,7 +393,9 @@ class SupertrendIndicator extends SMAIndicator {
                 } else if (point.x === nextMainPoint.x) {
                     mainPoint = nextMainPoint;
                     nextMainPoint = ({
-                        close: mainSeries.yData[mainPoint.index - 1][close],
+                        close: this.useDataTable ?
+                            columns.close?.[mainPoint.index - 1] :
+                            mainSeries.yData[mainPoint.index - 1][close],
                         x: mainSeries.xData[mainPoint.index - 1]
                     } as any);
                 } else if (
