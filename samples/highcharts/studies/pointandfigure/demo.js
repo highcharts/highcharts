@@ -144,7 +144,14 @@ function generatePnfData() {
     return {
         groupedXData,
         groupedYData,
-        groupMap
+        groupMap,
+        modified: {
+            columns: {
+                x: groupedXData,
+                y: groupedYData
+            },
+            rowCount: groupedXData.length
+        }
     };
 }
 
