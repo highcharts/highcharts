@@ -11,7 +11,7 @@ body {
     clip: rect(1px, 1px, 1px, 1px);
     margin-top: -3px;
     filter: opacity(1);
-    opacity: 0.01;
+    opacity: 1%;
 }
 
 .btn {

@@ -3,9 +3,11 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'dashboard-1'
+                    id: 'dashboard-1',
+                    height: 400
                 }, {
-                    id: 'dashboard-2'
+                    id: 'dashboard-2',
+                    height: 400
                 }]
             }, {
                 cells: [{

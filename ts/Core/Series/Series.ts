@@ -2139,6 +2139,12 @@ class Series {
              * to the X axis position if the series has one, otherwise relative
              * to the plot area. Depending on the series type this value might
              * not be defined.
+             *
+             * In an inverted chart the x-axis is going from the bottom to the
+             * top so the `plotX` value is the number of pixels from the bottom
+             * of the axis.
+             *
+             * @see Highcharts.Point#pos
              * @name Highcharts.Point#plotX
              * @type {number|undefined}
              */
@@ -2231,6 +2237,12 @@ class Series {
              * to the Y axis position if the series has one, otherwise relative
              * to the plot area. Depending on the series type this value might
              * not be defined.
+             *
+             * In an inverted chart the y-axis is going from right to left
+             * so the `plotY` value is the number of pixels from the right
+             * of the `yAxis`.
+             *
+             * @see Highcharts.Point#pos
              * @name Highcharts.Point#plotY
              * @type {number|undefined}
              */

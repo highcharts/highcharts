@@ -1773,11 +1773,6 @@ class Chart {
      */
     public reflow(e?: Event): void {
         const chart = this,
-            optionsChart = chart.options.chart,
-            hasUserSize = (
-                defined(optionsChart.width) &&
-                defined(optionsChart.height)
-            ),
             oldBox = chart.containerBox,
             containerBox = chart.getContainerBox();
 
@@ -1786,8 +1781,8 @@ class Chart {
         // Width and height checks for display:none. Target is doc in Opera
         // and win in Firefox, Chrome and IE9.
         if (
-            !hasUserSize &&
             !chart.isPrinting &&
+            !chart.isResizing &&
             oldBox &&
             // When fired by resize observer inside hidden container
             containerBox.width
@@ -1926,10 +1921,11 @@ class Chart {
         fireEvent(chart, 'resize');
 
         // Fire endResize and set isResizing back. If animation is disabled,
-        // fire without delay
-        syncTimeout(function (): void {
+        // fire without delay, but in a new thread to avoid triggering the
+        // resize observer (#19027).
+        setTimeout((): void => {
             if (chart) {
-                fireEvent(chart, 'endResize', null as any, function (): void {
+                fireEvent(chart, 'endResize', void 0, (): void => {
                     chart.isResizing -= 1;
                 });
             }
@@ -3466,7 +3462,7 @@ class Chart {
          * @private
          */
         function zoomOut(): void {
-            chart.zoomOut.apply(chart);
+            chart.zoomOut();
         }
 
         fireEvent(this, 'beforeShowResetZoom', null as any, function (): void {

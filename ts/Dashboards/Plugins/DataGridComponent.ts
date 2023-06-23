@@ -19,12 +19,12 @@
  *
  * */
 
-import type Cell from '../../Dashboards/Layout/Cell';
+import type Cell from '../Layout/Cell';
 import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 
-import Component from '../../Dashboards/Components/Component.js';
+import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import U from '../../Core/Utilities.js';
