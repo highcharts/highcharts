@@ -2,7 +2,7 @@ Data Layer
 ==========
 
 The data layer provides functionality to load, process and convert data for
-different use cases. Additionally it provides the necessary structure to
+different use cases. Additionally, it provides the necessary structure to
 synchronize data changes between different components and network nodes.
 
 Sub-folders:
@@ -48,7 +48,7 @@ table.autoId === false;
 ### Column Aliases
 
 Tables provide an alias system that allows access to columns under multiple
-names. That way also row objects can have different key-value-pairs but
+names. That way also row objects can have different key-value pairs, but
 identical data.
 
 ```TypeScript
@@ -62,8 +62,8 @@ table.getColumn('movie_title') === undefined;
 
 ### Column References
 
-For maximum performance you can retrieve columns from the table as reference.
-These arrays are the internal representation and a change in the retrieved array
+For maximum performance you can retrieve columns from the table as a reference.
+These arrays are the internal representation, and a change in the retrieved array
 will change the table's column as well.
 
 ```TypeScript
@@ -102,7 +102,7 @@ might call additional modifiers.
 Modifications usually do not change the table. Instead modifiers produce a
 second table, accessible under `DataTable.modified`. Changes in the original
 table will also result in changes in the second table, unless the modifier
-explicitly dismiss incoming changes.
+explicitly dismisses incoming changes.
 
 ```TypeScript
 table.setModifier(new RangeModifier({
@@ -129,7 +129,7 @@ table.modified.getRowCount() === 2;
 ### DataTable in Highcharts
 
 If the series does support tables, you can use the 'setTable' to connect and
-synchronize table and series. Otherwise you use the data options to provide the
+synchronize table and series. Otherwise, you use the data options to provide the
 columns of interest. The most effective way is to retrieve the necessary data
 from the table as two dimensional arrays like Highcharts expects it.
 
@@ -143,7 +143,7 @@ const chart = new Highcharts.chart('container', {
 ```
 
 In case of a series that only accepts data points as objects, you might need to
-setup column aliases to retrieve the expected structure.
+set up column aliases to retrieve the expected structure.
 
 ```TypeScript
 table.setColumnAlias('name', 'year');
@@ -162,8 +162,8 @@ const chart = new Highcharts.chart('container', {
 
 DataGrid shows and optionally modifies cell content in a table. DataGrid can
 also change the order of cells, but DataTable provides only limited information
-about the original order of a source. Therefor a DataConnector might be needed
-in addition to retrieve the original order.
+about the original order of a source. Therefore, a DataConnector might be needed
+to retrieve the original order.
 
 ```TypeScript
 const dataGrid = new DataGrid('container', {
@@ -176,7 +176,7 @@ const dataGrid = new DataGrid('container', {
 });
 ```
 
-If a row reference is needed, this index column has to be part of the table.
+If a row reference is needed, an index column has to be part of the table:
 
 ```TypeScript
 const dataGrid = new DataGrid('container', {
@@ -211,8 +211,8 @@ either an URL or a local source.
 
 ### DataConnector Registry
 
-DataConnector types can be directly loaded via import. In case of bundles
-connectors can also accessed via registry, as the registry gets updated with
+DataConnector types can be directly loaded via import. In the case of bundles,
+connectors can also be accessed via registry, as the registry gets updated with
 each bundled type.
 
 ```TypeScript
@@ -220,7 +220,7 @@ import CSVConnector from 'dashboards/Data/Connectors/CSVConnector';
 ```
 
 ```TypeScript
-const CSVConnector = Dashboard.DataConnector.registry.CSVConnector;
+const CSVConnector = Dashboards.DataConnector.types.CSVConnector;
 ```
 
 
@@ -259,7 +259,7 @@ connector.table.getRowCount() === 3;
 ```
 
 Depending on the connector type you have to provide different mandatory options
-to load data. Continue with our example we can provide an URL to a CSV and then
+to load data. Continuing with our example we can provide a URL to a CSV and then
 wait for loading to fulfill.
 
 ```TypeScript
@@ -290,9 +290,9 @@ const connector = new CSVConnector({
 connector.converter.export(connector) === 'column\n1\n2\n3\n';
 ```
 
-If your connector is based on a external source in the internet or in the HTML
+If your connector is based on an external source on the internet or in the HTML
 DOM, the save function can write data back. Please note that an error will be
-thrown, if this is not supported by the connector type, or if permissions do now
+thrown if this is not supported by the connector type, or if permissions do now
 allow this.
 
 ```TypeScript
@@ -313,7 +313,7 @@ DataPool
 --------
 
 With DataPool one can "lazy" load connectors besides the initial phase. After
-adding connector name, connector type and connector options to DataPool, one can
+adding connector id, connector type and connector options to DataPool, one can
 request (later on) the connector or table under their given name and the class
 will give a promise that resolves to the connector or table as soon as it has
 been loaded.
@@ -321,7 +321,7 @@ been loaded.
 ```TypeScript
 const dataPool = new DataPool({
     connectors: [{
-        name: 'My Google Spreadsheet',
+        id: 'my-google-spreadsheet',
         type: 'GoogleSheets',
         options: {
             googleAPIKey: 'XXXXX',
@@ -330,22 +330,22 @@ const dataPool = new DataPool({
     }]
 });
 dataPool.setConnectorOptions({
-    name: 'My CSV',
+    name: 'my-csv',
     type: 'CSV',
     options: {
         csvURL: 'https://domain.example/data.csv'
     }
 });
-const googleConnector = await dataPool.getConnector('My Google Spreadsheet');
-const csvTable = await dataPool.getConnectorTable('My CSV');
+const googleConnector = await dataPool.getConnector('my-google-spreadsheet');
+const csvTable = await dataPool.getConnectorTable('my-csv');
 ```
 
-DataPool is one of possible way to coordinate and share connectors and their
+DataPool can be used to coordinate and share connectors and their
 data between multiple modules. You can request the connector multiple times,
-while the class will load each connector only ones.
+while the class will load each connector only once.
 
 ```TypeScript
-const googleConnector1 = await dataPool.getConnector('My Google Spreadsheet');
-const googleConnector2 = await dataPool.getConnector('My Google Spreadsheet');
-const googleConnector3 = await dataPool.getConnector('My Google Spreadsheet');
+const googleConnector1 = await dataPool.getConnector('my-google-spreadsheet');
+const googleConnector2 = await dataPool.getConnector('my-google-spreadsheet');
+const googleConnector3 = await dataPool.getConnector('my-google-spreadsheet');
 ```

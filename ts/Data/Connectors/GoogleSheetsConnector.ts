@@ -271,7 +271,7 @@ namespace GoogleSheetsConnector {
      * GoogleSheetsConnector.
      */
     export type UserOptions =
-        (Partial<Options>&GoogleSheetsConverter.UserOptions);
+        (DeepPartial<Options>&GoogleSheetsConverter.UserOptions);
 
     /* *
      *
