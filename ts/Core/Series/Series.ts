@@ -433,7 +433,7 @@ class Series {
         fireEvent(this, 'init', { options: userOptions });
 
         // Create the data table
-        this.table = {
+        this.table = this.table || {
             columns: {},
             rowCount: 0
         };
@@ -4285,6 +4285,7 @@ class Series {
                 'navigatorSeries',
                 'symbolIndex',
                 'table',
+                'useDataTable',
                 'baseSeries'
             ],
             newType = (
