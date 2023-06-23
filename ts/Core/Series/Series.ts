@@ -387,7 +387,7 @@ class Series {
 
     public symbolIndex?: number;
 
-    public table: DataTableLight;
+    public table: DataTableLight = void 0 as any;
 
     public tooltipOptions: TooltipOptions = void 0 as any;
 
@@ -425,19 +425,18 @@ class Series {
 
     /* eslint-disable valid-jsdoc */
 
-    public constructor() {
-        this.table = {
-            columns: {},
-            rowCount: 0
-        };
-    }
-
     public init(
         chart: Chart,
         userOptions: DeepPartial<SeriesTypeOptions>
     ): void {
 
         fireEvent(this, 'init', { options: userOptions });
+
+        // Create the data table
+        this.table = {
+            columns: {},
+            rowCount: 0
+        };
 
         const series = this,
             columns = series.table.columns,
