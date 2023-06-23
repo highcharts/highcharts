@@ -85,9 +85,13 @@ function onAxisAfterGetSeriesExtremes(
     if (this.isXAxis) {
         dataMax = pick(this.dataMax, -Number.MAX_VALUE);
         for (const series of this.series as Array<XRangeSeries>) {
-            if (series.x2Data) {
-                for (const val of series.x2Data) {
-                    if (val && val > dataMax) {
+            const column = series.useDataTable ?
+                series.table.columns.x2 || series.table.columns.end :
+                series.x2Data;
+
+            if (column) {
+                for (const val of (column as any)) {
+                    if (isNumber(val) && val > dataMax) {
                         dataMax = val;
                         modMax = true;
                     }
