@@ -1,7 +1,7 @@
 ---
 name: Highcharts Dashboards Climate Demo
 authors:
-  - Sebastian Bochan, Wojciech Chmiel, Sophie Bremer, Karol Kolodziej, Pawel Lysy
+  - Sebastian Bochan, Wojciech Chmiel, Sophie Bremer, Karol Kolodziej, Pawel Lysy, Gøran Slettemark
 requiresManualTesting: true
 js_wrap: b
 tags:
