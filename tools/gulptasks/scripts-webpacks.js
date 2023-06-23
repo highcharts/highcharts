@@ -20,6 +20,8 @@ const WEBPACKS_PATH = path.join('tools', 'webpacks');
  * */
 
 /**
+ * Webpack task
+ *
  * @return {Promise<void>}
  * Promise to keep
  */

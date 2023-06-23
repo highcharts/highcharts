@@ -2333,7 +2333,7 @@ const rb = {
         events: {
             load: function () {
                 const chart = this;
-                
+
                 setTimeout(function () {
                     chart.update({
                         pane: {
