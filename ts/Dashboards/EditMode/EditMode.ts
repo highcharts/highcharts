@@ -77,6 +77,9 @@ class EditMode {
         this.options = merge(
             // Default options.
             {
+                dragDrop: {
+                    enabled: true
+                },
                 enabled: true,
                 contextMenu: {
                     icon: this.iconsURLPrefix + 'menu.svg'
