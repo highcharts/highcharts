@@ -19,6 +19,7 @@
  *
  * */
 
+import type InvertModifierOptions from '../../Data/Modifiers/InvertModifierOptions';
 import type JSON from '../JSON';
 
 import InvertModifier from '../../Data/Modifiers/InvertModifier';
@@ -97,7 +98,7 @@ namespace InvertModifierHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (JSON.Object&InvertModifier.Options);
+    export type OptionsJSON = (JSON.Object&InvertModifierOptions);
 
 }
 
