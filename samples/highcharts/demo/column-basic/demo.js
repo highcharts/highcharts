@@ -3,12 +3,14 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Corn vs wheat estimated production for 2020 (1000 MT)'
+        text: 'Corn vs wheat estimated production for 2020',
+        align: 'left'
     },
     subtitle: {
         text:
             'Source: <a target="_blank" ' +
-            'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>'
+            'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>',
+        align: 'left'
     },
     xAxis: {
         categories: ['USA', 'China', 'Brazil', 'EU', 'India', 'Russia'],
