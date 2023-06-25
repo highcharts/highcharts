@@ -531,8 +531,9 @@ class Series {
             dataColumnKeys.forEach((key): void => {
                 if (!columns[key]) {
                     columns[key] = [];
-
-                    // Legacy parallel arrays are copies of data table columns
+                }
+                // Legacy parallel arrays are references to data table columns
+                if ((series as any)[key + 'Data'] !== columns[key]) {
                     (series as any)[key + 'Data'] = columns[key];
                 }
             });
@@ -4304,7 +4305,6 @@ class Series {
                 'eventOptions',
                 'navigatorSeries',
                 'symbolIndex',
-                'table',
                 'useDataTable',
                 'baseSeries'
             ],
@@ -4340,6 +4340,7 @@ class Series {
                 'data',
                 'isDirtyData',
                 'points',
+                'table',
 
                 'processedData', // #17057
 
@@ -4393,15 +4394,13 @@ class Series {
             index: typeof oldOptions.index === 'undefined' ?
                 series.index : oldOptions.index,
             pointStart: pick(
-                // when updating from blank (#7933)
-                (
-                    plotOptions &&
-                    plotOptions.series &&
-                    plotOptions.series.pointStart
-                ),
+                // When updating from blank (#7933)
+                plotOptions?.series?.pointStart,
                 oldOptions.pointStart,
-                // when updating after addPoint
-                (series.xData as any)[0]
+                // When updating after addPoint
+                series.useDataTable ?
+                    series.table.columns.x?.[0] :
+                    (series.xData as any)[0]
             )
         }, (!keepPoints && { data: series.options.data }) as any, options);
 

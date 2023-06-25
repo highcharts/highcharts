@@ -581,6 +581,7 @@ class SMAIndicator extends LineSeries {
             indicator.xData = processedData.xData;
             if (this.useDataTable) {
                 indicator.table = table;
+                indicator.yData = table.columns.y;
             } else {
                 indicator.yData = (processedData.yData as any);
             }

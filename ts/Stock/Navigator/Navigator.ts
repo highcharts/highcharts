@@ -1938,7 +1938,9 @@ class Navigator {
 
         // Set the navigator series data to the new data of the base series
         if (navigatorSeries && !navigator.hasNavigatorData) {
-            navigatorSeries.options.pointStart = (baseSeries.xData as any)[0];
+            navigatorSeries.options.pointStart = baseSeries.useDataTable ?
+                baseSeries.table.columns.x?.[0] :
+                (baseSeries.xData as any)[0];
             navigatorSeries.setData(
                 baseSeries.options.data as any,
                 false,
@@ -1959,7 +1961,9 @@ class Navigator {
         navigator: Navigator
     ): boolean|undefined {
         const xDataMin = navigator.getBaseSeriesMin(
-                (baseSeries.xData as any)[0]
+                baseSeries.useDataTable ?
+                    baseSeries.table.columns.x?.[0] :
+                    (baseSeries.xData as any)[0]
             ),
             xAxis = baseSeries.xAxis,
             max = xAxis.max,
