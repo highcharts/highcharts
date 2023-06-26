@@ -7,7 +7,7 @@ HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
 
-const board = Dashboards.board('container', {
+Dashboards.board('container', {
     editMode: {
         enabled: true
     },
@@ -27,9 +27,7 @@ const board = Dashboards.board('container', {
     gui: {
         enabled: true,
         layouts: [{
-            id: 'layout-1', // mandatory
             rows: [{
-                // id: 'dashboard-row-0',
                 cells: [{
                     id: 'dashboard-col-0'
                 }, {

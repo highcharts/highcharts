@@ -19,38 +19,22 @@ Dashboards.board('container', {
         }
     },
     gui: {
-        layouts: [
-            {
-                id: 'layout-1',
-                rowClassName: 'custom-row',
-                cellClassName: 'custom-cell',
-                rows: [
-                    {
-                        cells: [
-                            {
-                                id: 'dashboard-col-0',
-                                width: '50%'
-                            },
-                            {
-                                id: 'dashboard-col-1'
-                            },
-                            {
-                                id: 'dashboard-col-12'
-                            }
-                        ]
-                    },
-                    {
-                        id: 'dashboard-row-1',
-                        cells: [
-                            {
-                                id: 'dashboard-col-2',
-                                width: '1'
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
+        layouts: [{
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-0',
+                    width: '50%'
+                }, {
+                    id: 'dashboard-col-1'
+                }, {
+                    id: 'dashboard-col-12'
+                }]
+            }, {
+                cells: [{
+                    id: 'dashboard-col-2'
+                }]
+            }]
+        }]
     },
     components: [{
         sync: {
