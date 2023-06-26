@@ -157,7 +157,7 @@ class ConfirmationPopup extends BaseForm {
         EditRenderer.renderButton(
             this.contentContainer,
             {
-                value: options.cancelButton.value,
+                text: options.cancelButton.value,
                 callback: options.cancelButton.callback
             }
         );
@@ -166,7 +166,7 @@ class ConfirmationPopup extends BaseForm {
         EditRenderer.renderButton(
             this.contentContainer,
             {
-                value: options.confirmButton.value,
+                text: options.confirmButton.value,
                 className: EditGlobals.classNames.popupConfirmBtn,
                 callback: (): void => {
                     // Run callback

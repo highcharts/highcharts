@@ -22,8 +22,8 @@ export namespace JSON {
     /**
      * Type structor of arrays as it is supported in JSON.
      */
-    export interface Array<T extends (Primitive|Type)=(Primitive|Type)> extends globalThis.Array<T> {
-        [index: number]: T;
+    export interface Array extends globalThis.Array<(Primitive|Type)> {
+        [index: number]: (Primitive|Type);
     }
 
     /**
@@ -36,8 +36,8 @@ export namespace JSON {
     /**
      * Type structure of a record object as it is supported in JSON.
      */
-    export interface Object<T extends (Primitive|Type)=(Primitive|Type)> {
-        [key: string]: T;
+    export interface Object {
+        [key: string]: (Primitive|Type);
     }
 
     /**

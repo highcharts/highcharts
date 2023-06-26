@@ -3,8 +3,8 @@
 import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import DataGrid from '../../../../code/es-modules/masters/datagrid.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
-import DataGridPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/DataGridPlugin.js';
+import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
+import DataGridPlugin from '../../../../code/es-modules/Dashboards/Plugins/DataGridPlugin.js';
 
 const { PluginHandler } = Dashboards;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
@@ -34,7 +34,17 @@ Dashboards.board('container', {
                 // drag drop options, leave empty - needed for testing
             },
             enabled: true,
-            items: ['verticalSeparator', 'editMode']
+            items: ['verticalSeparator', 'editMode', {
+                id: 'text-button-test',
+                text: 'Context menu click test',
+                type: 'button',
+                events: {
+                    click: function () {
+                        document.querySelector('.highcharts-dashboards-wrapper')
+                            .classList.add('context-menu-button-clicked');
+                    }
+                }
+            }]
         },
         resize: {
             enabled: true,
