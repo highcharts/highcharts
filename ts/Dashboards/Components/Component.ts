@@ -157,7 +157,7 @@ abstract class Component {
         sync: Sync.defaultHandlers,
         editableOptions: [{
             name: 'connectorName',
-            propertyPath: ['connector', 'name'],
+            propertyPath: ['connector', 'id'],
             type: 'select'
         }, {
             name: 'title',
@@ -187,9 +187,9 @@ abstract class Component {
      */
     public connector?: Component.ConnectorTypes;
     /**
-     * The name of the connector in the data pool to use.
+     * The id of the connector in the data pool to use.
      */
-    protected connectorName?: string;
+    protected connectorId?: string;
     /**
      * @internal
      * The board the component belongs to
@@ -386,11 +386,11 @@ abstract class Component {
      */
     public async initConnector(): Promise<this> {
         if (
-            this.options.connector?.name &&
-            this.connectorName !== this.options.connector.name
+            this.options.connector?.id &&
+            this.connectorId !== this.options.connector.id
         ) {
             const connector = await this.board.dataPool
-                .getConnector(this.options.connector.name);
+                .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
             this.shouldRedraw = true;
@@ -788,11 +788,11 @@ abstract class Component {
         this.options = merge(this.options, newOptions);
 
         if (
-            this.options.connector?.name &&
-            this.connectorName !== this.options.connector.name
+            this.options.connector?.id &&
+            this.connectorId !== this.options.connector.id
         ) {
             const connector = await this.board.dataPool
-                .getConnector(this.options.connector.name);
+                .getConnector(this.options.connector.id);
 
             this.setConnector(connector);
             this.shouldRedraw = true;
@@ -947,12 +947,8 @@ abstract class Component {
          */
         if (this.shouldRedraw || !this.hasLoaded) {
             this.load();
-            // Call resize to fit to the cell. Only for non HTML elements.
-            // There is no need to set a fixed height for the HTML element
-            // because it will fill the available space when added to DOM.
-            if (this.type !== 'HTML') {
-                this.resizeTo(this.parentElement);
-            }
+            // Call resize to fit to the cell.
+            this.resizeTo(this.parentElement);
         }
         return this;
     }
@@ -1204,6 +1200,17 @@ namespace Component {
             detail?: AnyRecord;
         } & EventRecord;
 
+    /**
+     * The sync can be an object configuration containing: `highlight`,
+     * `visibility` or `extremes`.
+     * ```
+     * Example:
+     * {
+     *     highlight: true
+     * }
+     * ```
+     *
+     */
     export type SyncOptions = Record<string, boolean | Partial<Sync.OptionsEntry>>;
 
     export interface ComponentOptions {

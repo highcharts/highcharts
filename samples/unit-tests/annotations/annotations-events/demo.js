@@ -246,4 +246,63 @@ QUnit.test('Annotations events - general', function (assert) {
         `#16675: Annotation should be added from the custom button, that has a
         custom SVG symbol.`
     );
+
+    chart.addAxis({
+        height: '50%',
+        top: '50%',
+        offset: 0
+    }, false, false);
+
+    chart.yAxis[0].update({
+        height: '50%'
+    }, false);
+
+    chart.addSeries({
+        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 23.3, 18.3, 13.9, 9.6],
+        yAxis: 1
+    }, true);
+
+    const xAxis = 0,
+        yAxis = 1;
+
+    chart.addAnnotation({
+        type: 'basicAnnotation',
+        shapes: [{
+            type: 'path',
+            points: [
+                { xAxis, yAxis, x: 3, y: 25 },
+                { xAxis, yAxis, x: 2, y: 25 },
+                { xAxis, yAxis, x: 2, y: 15 },
+                { xAxis, yAxis, x: 3, y: 15 },
+                { command: 'Z' }
+            ]
+        }]
+    });
+
+    const rect = chart.annotations[3].shapes[0],
+        target = rect.controlPoints[0];
+
+    controller.click(
+        chart.xAxis[0].toPixels(2),
+        chart.yAxis[1].toPixels(20)
+    );
+
+    controller.mouseDown(
+        target.graphic.x + target.graphic.width / 2,
+        target.graphic.y + target.graphic.height / 2
+    );
+
+    controller.mouseMove(
+        chart.xAxis[0].toPixels(1),
+        chart.yAxis[1].toPixels(10)
+    );
+
+    controller.mouseUp();
+
+    assert.strictEqual(
+        Math.round(chart.yAxis[1].toPixels(10)),
+        Math.round(chart.yAxis[1].toPixels(rect.points[2].y)),
+        '#19024, rectangle should resize to exact drag position.'
+    );
+
 });

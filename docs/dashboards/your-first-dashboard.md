@@ -1,7 +1,7 @@
 Your first dashboard
 ===
 
-If you are ready to create your first simple dashboard please follow the steps:
+When you are ready to create your first simple dashboard, please follow these steps:
 
 1. Add a div to your webpage with a specific id.
 
@@ -9,8 +9,8 @@ If you are ready to create your first simple dashboard please follow the steps:
         <div id="container">
     ```
 
-2. In this basic example we are going to create a dashboard with two cells. One will contain a static HTML and the other will contain a chart created with the Highcharts.
-Thus we have to import the main dashboard package, the Highcharts library and a plugin that allows implementing the Highcharts chart inside the dashboard.
+2. In this basic example we are going to create a dashboard with two cells. One will contain a static HTML and the other will contain a chart created with Highcharts.
+Thus, we have to import the main dashboard package, the Highcharts library and a plugin that allows implementing the Highcharts chart inside the dashboard.
 
     ```html
         <script src="https://code.highcharts.com/dashboards.js"></script>
@@ -18,7 +18,7 @@ Thus we have to import the main dashboard package, the Highcharts library and a 
         <script src="https://code.highcharts.com/modules/dashboards-plugin.js"></script>
     ```
 
-3. In order to properly display the whole dashboard we need some styling. You can get the basic one by importing the modules to the CSS file as shown below.
+3. In order to properly display the whole dashboard, we need some styling. You can get the basic one by importing the modules to the CSS file as shown below.
 
     ```css
         @import url("https://code.highcharts.com/css/dashboards/gui.css");
@@ -29,7 +29,7 @@ Thus we have to import the main dashboard package, the Highcharts library and a 
     * the div’s id where the dashboard should be placed (see point 1).
     * the object with dashboard options.
 
-    To do so, you can use factory function `Dashboards.board`:
+    To do so, you can use the factory function `Dashboards.board`:
 
     ```js
         Dashboards.board('container', {...})
@@ -58,7 +58,7 @@ Thus we have to import the main dashboard package, the Highcharts library and a 
         },
     ```
 
-    * __components__ - array with components to insert into the dashboard. To place a component in the cell, use the cell id. You also have to declare the type of the component (more on that in a dedicated chapter) and its options.
+    * __components__ - this is an array with components to be inserted into the dashboard. To place a component in a cell, use the cell id. You also have to declare the type of the component (more on that in a dedicated chapter) and its options.
 
     ```js
         components: [{
@@ -85,4 +85,4 @@ Thus we have to import the main dashboard package, the Highcharts library and a 
         }]
     ```
 
-6. With that config, you dashboard should look like the one in the [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/your-first-dashboard).
+6. With that config, your dashboard should look like the one in the [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/demos/your-first-dashboard).

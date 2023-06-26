@@ -25,7 +25,7 @@ const board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
             type: 'CSV',
-            name: 'synchro-data',
+            id: 'synchro-data',
             options: {
                 csv: csvData,
                 firstRowAsNames: true
@@ -51,12 +51,12 @@ const board = Dashboards.board('container', {
             cell: 'dashboard-col-0',
             type: 'Highcharts',
             connector: {
-                name: 'synchro-data'
+                id: 'synchro-data'
             },
             sync: {
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -67,13 +67,13 @@ const board = Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-1',
             connector: {
-                name: 'synchro-data'
+                id: 'synchro-data'
             },
             type: 'Highcharts',
             sync: {
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
@@ -85,7 +85,7 @@ const board = Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-2',
             connector: {
-                name: 'synchro-data'
+                id: 'synchro-data'
             },
             type: 'DataGrid',
             editable: true,

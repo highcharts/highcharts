@@ -110,6 +110,16 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     }
 
     assert.strictEqual(
+        chart.container
+            .querySelectorAll(
+                '.highcharts-breadcrumbs-group .highcharts-breadcrumbs-button'
+            )
+            .length,
+        3,
+        'There should be three breadcrumbs items'
+    );
+
+    assert.strictEqual(
         points[2].dlOptions.textPath.enabled,
         false,
         'Center label has changed after drilldown and should have textPath disabled'

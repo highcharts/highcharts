@@ -49,14 +49,14 @@ Dashboards.board('container', {
     },
     dataPool: {
         connectors: [{
-            name: 'connector-1',
+            id: 'connector-1',
             type: 'CSV',
             options: {
                 csv: csvData,
                 firstRowAsNames: true
             }
         }, {
-            name: 'connector-2',
+            id: 'connector-2',
             type: 'CSV',
             options: {
                 csv: csvData,
@@ -89,13 +89,13 @@ Dashboards.board('container', {
             cell: 'dashboard-col-1',
             type: 'Highcharts',
             connector: {
-                name: 'connector-1'
+                id: 'connector-1'
             },
             sync: {
                 extremes: true,
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 x: 'x',
                 Europe: null,
                 Africa: null,
@@ -116,13 +116,13 @@ Dashboards.board('container', {
             cell: 'dashboard-col-2',
             type: 'Highcharts',
             connector: {
-                name: 'connector-1'
+                id: 'connector-1'
             },
             sync: {
                 extremes: true,
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 x: 'x',
                 Global: null,
                 Europe: null,
@@ -140,13 +140,13 @@ Dashboards.board('container', {
             cell: 'dashboard-col-3',
             type: 'Highcharts',
             connector: {
-                name: 'connector-2'
+                id: 'connector-2'
             },
             sync: {
                 extremes: true,
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 x: 'x',
                 Global: null,
                 Europe: null,
@@ -164,13 +164,13 @@ Dashboards.board('container', {
             cell: 'dashboard-col-4',
             type: 'Highcharts',
             connector: {
-                name: 'connector-2'
+                id: 'connector-2'
             },
             sync: {
                 extremes: true,
                 highlight: true
             },
-            columnKeyMap: {
+            columnAssignment: {
                 x: 'x',
                 Global: null,
                 Africa: null,

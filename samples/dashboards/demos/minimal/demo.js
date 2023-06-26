@@ -3,7 +3,7 @@ const csvData = document.getElementById('csv').innerText;
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            name: 'Vitamin',
+            id: 'Vitamin',
             type: 'CSV',
             options: {
                 csv: csvData,
@@ -59,11 +59,11 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            name: 'Vitamin'
+            id: 'Vitamin'
         },
         cell: 'dashboard-col-0',
         type: 'Highcharts',
-        columnKeyMap: {
+        columnAssignment: {
             Food: 'x',
             'Vitamin A': 'value'
         },
@@ -81,10 +81,10 @@ Dashboards.board('container', {
             extremes: true
         },
         connector: {
-            name: 'Vitamin'
+            id: 'Vitamin'
         },
         type: 'Highcharts',
-        columnKeyMap: {
+        columnAssignment: {
             Food: 'x',
             'Vitamin A': 'y'
         },
@@ -101,7 +101,7 @@ Dashboards.board('container', {
     {
         cell: 'dashboard-col-12',
         connector: {
-            name: 'Vitamin'
+            id: 'Vitamin'
         },
         sync: {
             visibility: true,
@@ -109,7 +109,7 @@ Dashboards.board('container', {
             extremes: true
         },
         type: 'Highcharts',
-        columnKeyMap: {
+        columnAssignment: {
             Food: 'x',
             'Vitamin A': 'y'
         },
@@ -126,7 +126,7 @@ Dashboards.board('container', {
     {
         cell: 'dashboard-col-2',
         connector: {
-            name: 'Vitamin'
+            id: 'Vitamin'
         },
         type: 'DataGrid',
         editable: true,

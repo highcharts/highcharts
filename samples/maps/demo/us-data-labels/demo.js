@@ -66,9 +66,7 @@
             name: 'Unemployment rate per 2017',
             dataLabels: {
                 enabled: true,
-                formatter: function () {
-                    return this.point.properties['hc-a2'];
-                },
+                format: '{point.properties.hc-a2}',
                 style: {
                     fontSize: '10px'
                 }

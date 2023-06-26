@@ -33,9 +33,9 @@ export interface ComponentConnectorOptions {
     allowSave?: boolean;
 
     /**
-     * The name of the connector configuration in the data pool of the
+     * The id of the connector configuration in the data pool of the
      * dashboard.
      */
-    name: string;
+    id: string;
 
 }

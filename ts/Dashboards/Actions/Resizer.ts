@@ -45,7 +45,10 @@ class Resizer {
     *
     * */
 
-    /** @internal */
+    /**
+     * Creates a new instance of the Resizer class based on JSON.
+     * @internal
+     */
     public static fromJSON(
         editMode: EditMode,
         json: Resizer.JSON
@@ -90,7 +93,7 @@ class Resizer {
             options
         );
 
-        this.currentCell = void 0; // consider naming for example currentCell
+        this.currentCell = void 0;
         this.isX = this.options.type.indexOf('x') > -1;
         this.isY = this.options.type.indexOf('y') > -1;
         this.isActive = false;
@@ -141,12 +144,12 @@ class Resizer {
     /**
      * Reference to right handler
      */
-    public snapXR: HTMLDOMElement|undefined;
+    public snapRight: HTMLDOMElement|undefined;
 
     /**
      * Reference to bottom handler
      */
-    public snapYB: HTMLDOMElement|undefined;
+    public snapBottom: HTMLDOMElement|undefined;
 
     /**
      * Pending resizer flag
@@ -184,8 +187,8 @@ class Resizer {
         const snapHeight = this.options.snap.height || 0;
         const dashboardContainer = this.editMode.board.container;
 
-        // right snap
-        this.snapXR = createElement(
+        // Right snap
+        this.snapRight = createElement(
             'div',
             {
                 className: EditGlobals.classNames.resizeSnap + ' ' +
@@ -198,8 +201,8 @@ class Resizer {
             dashboardContainer
         );
 
-        // bottom snap
-        this.snapYB = createElement(
+        // Bottom snap
+        this.snapBottom = createElement(
             'div',
             {
                 className: EditGlobals.classNames.resizeSnap + ' ' +
@@ -227,26 +230,25 @@ class Resizer {
         this.currentDimension = void 0;
         this.currentCell = void 0;
 
-        if (this.snapXR) {
-            this.snapXR.style.left = '-9999px';
+        if (this.snapRight) {
+            this.snapRight.style.left = '-9999px';
         }
 
-        if (this.snapYB) {
-            this.snapYB.style.left = '-9999px';
+        if (this.snapBottom) {
+            this.snapBottom.style.left = '-9999px';
         }
     }
     /**
      * Update snap position.
      *
-     * @param {PointerEvent} e
-     * Mouse event.
-     *
+     * @param cell
+     * Cell reference
      */
     public setSnapPositions(cell: Cell): void {
-        // set current cell
+        // Set current cell
         this.currentCell = cell;
 
-        // set position of snaps
+        // Set position of snaps
         const cellOffsets = GUIElement.getOffsets(
             cell,
             this.editMode.board.container
@@ -257,16 +259,16 @@ class Resizer {
         const snapWidth = (this.options.snap.width || 0);
         const snapHeight = (this.options.snap.height || 0);
 
-        if (this.snapXR) {
-            this.snapXR.style.left = (left + width - snapWidth) + 'px';
-            this.snapXR.style.top = top + (
+        if (this.snapRight) {
+            this.snapRight.style.left = (left + width - snapWidth) + 'px';
+            this.snapRight.style.top = top + (
                 height / 2
             ) - (snapHeight / 2) + 'px';
         }
 
-        if (this.snapYB) {
-            this.snapYB.style.top = (top + height - snapHeight) + 'px';
-            this.snapYB.style.left = (
+        if (this.snapBottom) {
+            this.snapBottom.style.top = (top + height - snapHeight) + 'px';
+            this.snapBottom.style.left = (
                 left + (
                     width / 2
                 ) - (snapWidth / 2)
@@ -275,7 +277,7 @@ class Resizer {
     }
 
     /**
-     * Method detecs siblings and auto-width applied by flex. The resizer
+     * Method detects siblings and auto-width applied by flex. The resizer
      * requires static widths for correct calculations, so we need to apply
      * temporary width on siblings.
      */
@@ -407,8 +409,8 @@ class Resizer {
         };
 
         // Add mouse events
-        addEvent(this.snapXR, 'mousedown', mouseDownSnapX);
-        addEvent(this.snapYB, 'mousedown', mouseDownSnapY);
+        addEvent(this.snapRight, 'mousedown', mouseDownSnapX);
+        addEvent(this.snapBottom, 'mousedown', mouseDownSnapY);
 
         addEvent(document, 'mousemove', mouseMoveSnap);
         addEvent(document, 'mouseup', mouseUpSnap);
@@ -455,7 +457,7 @@ class Resizer {
             const { width: parentRowWidth } = GUIElement.getDimFromOffsets(
                 GUIElement.getOffsets(currentCell.row)
             );
-            // resize width
+            // Resize width
             if (currentDimension === 'x') {
                 const newWidth =
                     (Math.min(e.clientX - cellOffsets.left, parentRowWidth) /
@@ -469,7 +471,7 @@ class Resizer {
                 this.startX = e.clientX;
             }
 
-            // resize height
+            // Resize height
             if (currentDimension === 'y') {
                 cellContainer.style.height = e.clientY - cellOffsets.top + 'px';
             }
@@ -485,28 +487,25 @@ class Resizer {
             this.setSnapPositions(currentCell);
         }
     }
+
     /**
      * Destroy resizer
-     *
-     * @param {Array<Row>} nestedRows
-     * Reference to rows in the layout
-     *
      */
     public destroy(): void {
-        const snaps = ['snapXR', 'snapYB'];
+        const snaps = ['snapRight', 'snapBottom'];
         let snap;
 
-        // unbind events
+        // Unbind events
         removeEvent(document, 'mousemove');
         removeEvent(document, 'mouseup');
 
         for (let i = 0, iEnd = snaps.length; i < iEnd; ++i) {
             snap = (this as any)[snaps[i]];
 
-            // unbind event
+            // Unbind event
             removeEvent(snap, 'mousedown');
 
-            // destroy snap
+            // Destroy snap
             snap.remove();
         }
     }
@@ -544,23 +543,59 @@ interface Resizer {
     mouseUpSnap?: Function;
 }
 namespace Resizer {
+    /**
+     * Resizer options
+     */
     export interface Options {
+        /**
+         * Weather the resizer is enabled or not.
+         */
         enabled: boolean;
-        type: string;
+        /**
+         * Resizer type.
+         */
+        type: 'x'|'y'|'xy';
+        /**
+         * Options for the snap mechanism.
+         */
         snap: SnapOptions;
+        /**
+         * Style of the snap element.
+         */
         styles: ElementStyles
     }
     export interface ResizedCell extends Cell {
         resizer?: Snap;
-        // styles?: ElementStyles;
     }
 
+
+    /**
+     * Style of the snap element.
+     */
     export interface ElementStyles {
+        /**
+         * Width of the border on the left side of the element in pixels.
+         */
         borderLeft?: number;
+        /**
+         * Width of the border on the right side of the element in pixels.
+         */
         borderRight?: number;
+        /**
+         * Width of the border on the top side of the element in pixels.
+         */
         borderTop?: number;
+        /**
+         * Width of the border on the bottom side of the element in pixels.
+         */
         borderBottom?: number;
+        /**
+         * Minimum width of the element in pixels.
+         */
         minWidth?: number;
+        /**
+         * Minimum height of the element in pixels.
+         */
         minHeight?: number;
     }
     export interface Snap {
@@ -568,8 +603,18 @@ namespace Resizer {
         snapY?: HTMLDOMElement|undefined;
     }
 
+    /**
+     * Options for the snap mechanism.
+     */
     export interface SnapOptions {
+
+        /**
+         * Width of the element in pixels.
+         */
         width?: number;
+        /**
+         * Height of the element in pixels.
+         */
         height?: number;
     }
 
@@ -584,7 +629,7 @@ namespace Resizer {
     export interface JSONOptions extends JSON.Object {
         enabled: boolean;
         styles: ElementStylesJSON;
-        type: string;
+        type: 'x'|'y'|'xy';
         snap: SnapJSON;
     }
     export interface SnapJSON extends JSON.Object {

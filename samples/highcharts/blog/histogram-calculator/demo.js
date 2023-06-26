@@ -331,9 +331,7 @@ chart = Highcharts.chart('container', {
                 color: 'rgba(0,0,0,1)',
                 fomntWeight: 'bold'
             },
-            formatter: function () {
-                return Highcharts.numberFormat(this.value, 2);
-            }
+            format: '{value:.2f}'
         }
     }],
     yAxis: {

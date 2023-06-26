@@ -36,7 +36,7 @@ const {
     animObject,
     setAnimation
 } = A;
-import F from '../FormatUtilities.js';
+import F from '../Templating.js';
 const { format } = F;
 import H from '../Globals.js';
 const {

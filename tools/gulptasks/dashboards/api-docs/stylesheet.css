@@ -915,6 +915,10 @@ div.contentContainer ul.blockList li.blockList h2{
   display: none;
 }
 
+.dropdown-menu li.separator {
+    border-top: 1px solid #000;
+}
+
 /*
 .menu[expanded="true"] .dropdown-link i {
   transform: rotate(90deg);

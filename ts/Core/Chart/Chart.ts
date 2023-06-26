@@ -66,8 +66,8 @@ const {
     defaultOptions,
     defaultTime
 } = D;
-import FormatUtilities from '../FormatUtilities.js';
-const { numberFormat } = FormatUtilities;
+import Templating from '../Templating.js';
+const { numberFormat } = Templating;
 import Foundation from '../Foundation.js';
 const { registerEventOptions } = Foundation;
 import H from '../Globals.js';
@@ -1749,7 +1749,7 @@ class Chart {
      *
      * @function Highcharts.Chart#getOptions
      *
-     * @since next
+     * @since 11.1.0
      */
     public getOptions(): DeepPartial<Options> {
         return diffObjects(this.userOptions, defaultOptions);

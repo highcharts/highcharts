@@ -585,11 +585,13 @@ class Cell extends GUIElement {
 namespace Cell {
 
     /**
-     * @internal
-     **/
+     * Responsive options of the cell.
+     */
     export interface CellResponsiveOptions {
+        /**
+         * The width, that should the cell have in the given responsive mode.
+         */
         width: (string|number);
-        // visible: boolean;
     }
 
     /**
