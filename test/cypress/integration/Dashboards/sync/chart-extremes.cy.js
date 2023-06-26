@@ -20,7 +20,7 @@ function testAxes(currentChart, comparisionChart) {
 
 describe('Chart extremes sync', () => {
     before(() => {
-        cy.visit('/cypress/dashboards/sync/chart-extremes');
+        cy.visit('/dashboards/cypress/sync/chart-extremes');
     });
 
     it('Dashboard should be rendered', () => {
