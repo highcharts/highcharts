@@ -154,12 +154,6 @@ async function setupBoard() {
         components: [{
             cell: 'time-range-selector',
             type: 'Highcharts',
-            // connector: {
-            //     id: 'Range Selection'
-            // },
-            // sync: {
-            //     extremes: true
-            // },
             chartOptions: {
                 chart: {
                     height: '80px',
@@ -822,7 +816,6 @@ async function setupBoard() {
                 Date: null
             },
             sync: {
-                // extremes: true,
                 highlight: true
             },
             chartOptions: {
