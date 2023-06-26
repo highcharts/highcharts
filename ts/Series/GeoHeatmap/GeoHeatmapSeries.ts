@@ -222,6 +222,13 @@ class GeoHeatmapSeries extends MapSeries {
         series.options = merge(series.options, arguments[0]);
         if (series.options.interpolation) {
             series.isDirtyCanvas = true;
+
+            series.points.forEach((point): void => {
+                if (point.graphic) {
+                    point.graphic.destroy();
+                    delete point.graphic;
+                }
+            });
         }
         super.update.apply(series, arguments);
     }
