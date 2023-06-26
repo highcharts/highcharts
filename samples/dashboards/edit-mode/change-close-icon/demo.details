@@ -1,5 +1,5 @@
 ---
- name: Context disabled
+ name: Change close icon
  authors:
    - Askel Eirik Johansson
  js_wrap: b
