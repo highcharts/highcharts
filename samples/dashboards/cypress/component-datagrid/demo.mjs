@@ -30,7 +30,6 @@ Dashboards.board('container', {
     },
     gui: {
         layouts: [{
-            id: 'layout-1',
             rows: [{
                 cells: [{
                     id: 'dashboard-col-0'
