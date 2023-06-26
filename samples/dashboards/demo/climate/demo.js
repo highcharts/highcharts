@@ -35,8 +35,8 @@ setupBoard();
 async function setupBoard() {
     let activeCity = 'New York',
         activeColumn = 'TX',
-        activeSelection = [Date.UTC(2010, 0, 5), Date.UTC(2010, 11, 25)],
         activeScale = 'C',
+        activeTimeRange = [Date.UTC(2010, 0, 5), Date.UTC(2010, 11, 25)],
         selectionTimeout = -1;
 
     // Initialize board with most basic data
@@ -229,8 +229,8 @@ async function setupBoard() {
                 },
                 xAxis: {
                     visible: false,
-                    min: activeSelection[0],
-                    max: activeSelection[1],
+                    min: activeTimeRange[0],
+                    max: activeTimeRange[1],
                     minRange: 30 * 24 * 3600 * 1000, // 30 days
                     maxRange: 2 * 365 * 24 * 3600 * 1000, // 2 years
                     events: {
@@ -238,10 +238,10 @@ async function setupBoard() {
                             window.clearTimeout(selectionTimeout);
                             selectionTimeout = window.setTimeout(async () => {
                                 if (
-                                    activeSelection[0] !== e.min ||
-                                    activeSelection[1] !== e.max
+                                    activeTimeRange[0] !== e.min ||
+                                    activeTimeRange[1] !== e.max
                                 ) {
-                                    activeSelection = [e.min, e.max];
+                                    activeTimeRange = [e.min, e.max];
                                     await updateBoard(
                                         board,
                                         activeCity,
