@@ -9,7 +9,7 @@ PluginHandler.addPlugin(HighchartsPlugin);
 const board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            name: 'connector-1',
+            id: 'connector-1',
             type: 'CSV',
             options: {
                 csv: `$GME,$AMC,$NOK
@@ -23,35 +23,11 @@ const board = Dashboards.board('container', {
     gui: {
         enabled: true,
         layouts: [{
-            id: 'layout-1', // mandatory
-            rowClassName: 'custom-row', // optional
-            columnClassName: 'custom-column', // optional
-            style: {
-                fontSize: '1.5em',
-                color: 'blue'
-            },
             rows: [{
-                // id: 'dashboard-row-0',
                 cells: [{
                     id: 'dashboard-col-0'
                 }, {
                     id: 'dashboard-col-1'
-                }]
-            }, {
-                id: 'dashboard-row-1',
-                style: {
-                    color: 'red'
-                },
-                cells: [{
-                    id: 'dashboard-col-2'
-                }]
-            }]
-        }, {
-            id: 'layout-2', // mandatory
-            rows: [{
-                id: 'dashboard-row-2',
-                cells: [{
-                    id: 'dashboard-col-3'
                 }]
             }]
         }]
@@ -88,7 +64,7 @@ const board = Dashboards.board('container', {
         },
         events: {},
         connector: {
-            name: 'connector-1'
+            id: 'connector-1'
         },
         sync: {
             extremes: true

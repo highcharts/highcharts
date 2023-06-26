@@ -1,5 +1,4 @@
-import CSVConnector from '../../../../code/es-modules/Data/Connectors/CSVConnector.js';
-import Board from '../../../../code/es-modules/Dashboards/Board';
+import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 import PluginHandler from '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugin/HighchartsPlugin.js';
@@ -7,18 +6,20 @@ import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugin/High
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-// A shared connector
-const connector = new CSVConnector({
-  csv: `$GME,$AMC,$NOK
- 4,5,6
- 1,5,2
- 41,23,2`,
-  firstRowAsNames: true
-});
-
-connector.load();
-
-new Board('container', {
+Dashboards.board('container', {
+  dataPool: {
+      connectors: [{
+          id: 'connector-1',
+          type: 'CSV',
+          options: {
+              csv: `$GME,$AMC,$NOK
+                  4,5,6
+                  1,5,2
+                  41,23,2`,
+              firstRowAsNames: true
+          }
+      }]
+  },
   gui: {
     enabled: true,
     layouts: [{
@@ -57,10 +58,12 @@ new Board('container', {
         type: 'column'
       }
     },
-    connector,
+    connector: {
+      id: 'connector-1'
+    },
     sync: {
       'visibility': true,
-      'highlight': true 
+      'highlight': trare
     }
   }, {
     cell: 'dashboard-col-1',
@@ -71,7 +74,9 @@ new Board('container', {
         animation: false
       }
     },
-    connector,
+    connector: {
+      id: 'connector-1'
+    },
     sync: {
       'visibility': true,
       'highlight': {
