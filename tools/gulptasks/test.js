@@ -491,4 +491,4 @@ Available arguments for 'gulp test':
     });
 }
 
-gulp.task('test', gulp.series('scripts', test));
+gulp.task('test', gulp.series('scripts', 'dashboards/scripts', test));

@@ -4,26 +4,16 @@
         "composite": false,
         "declaration": true,
         "moduleResolution": "node",
-        "outDir": "../../code/dashboards/",
+        "outDir": "../../js/",
         "rootDir": "../",
 
     },
     "exclude": [
-        "../masters/",
-        "../masters-es5/"
+        "../masters/**/*.ts",
+        "../masters-es5/**/*.ts"
     ],
     "include": [
-        "../Accessibility/**/*.ts",
-        "../Core/**/*.ts",
-        "../Dashboards/**/*.ts",
-        "../DataGrid/**/*.ts",
-        "../DataTable/**/*.ts",
-        "../Extensions/**/*.ts",
-        "../Gantt/**/*.ts",
-        "../Maps/**/*.ts",
-        "../masters-dashboards/**/*.ts",
-        "../Series/**/*.ts",
-        "../Shared/**/*.ts",
-        "../Stock/**/*.ts"
+        "../**/*.ts"
     ]
+
 }

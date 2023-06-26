@@ -33,6 +33,7 @@ const FACTORY_PATTERN =
 
 /** Main product bundles that should contain all sub dependencies. **/
 const PRODUCT_MASTERS = [
+    'dashboards',
     'highcharts',
     'highcharts-gantt',
     'highmaps',
@@ -151,7 +152,13 @@ function addHelpers(modulePath, moduleCode) {
  * @return {Promise}
  * Promise to keep.
  */
-async function assembleBundle(filePath, basePath, sourcePath, targetPath) {
+async function assembleBundle(
+    filePath,
+    basePath,
+    sourcePath,
+    targetPath,
+    namespace
+) {
     const requiredModules =
         await extractRequiredModules(filePath, filePath.endsWith('.src.js'));
 
@@ -176,7 +183,7 @@ async function assembleBundle(filePath, basePath, sourcePath, targetPath) {
     await fs.mkdir(path.dirname(targetFile), { recursive: true });
     await fs.writeFile(
         targetFile,
-        addFactory(modulePath, assembly, sourcePath, 'Highcharts')
+        addFactory(modulePath, assembly, sourcePath, namespace)
     );
 
     assembledBundles.push(filePath);
@@ -280,6 +287,7 @@ async function scriptsESX(
                 options.bundleSourceFolder ||
                 path.join(esModulesFolder, 'masters')
             ),
+            namespace = options.namespace || 'Highcharts',
             typeScriptFolder = (options.typeScriptFolder || 'ts');
 
         processLib.isRunning('scripts-esx', true);
@@ -318,7 +326,8 @@ async function scriptsESX(
                     filePath,
                     esModulesFolder,
                     bundleSourceFolder,
-                    bundleTargetFolder
+                    bundleTargetFolder,
+                    namespace
                 );
             }
         }

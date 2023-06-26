@@ -41,7 +41,8 @@ const getBuildOptions = input => {
         base = './js/masters/',
         debug = false,
         version = getProductVersion(),
-        output = './code/'
+        output = './code/',
+        product = 'Highcharts'
     } = input;
     const files = (
         isArray(input.files) ?
@@ -58,6 +59,7 @@ const getBuildOptions = input => {
         debug,
         files,
         output,
+        product,
         type,
         version,
         mapTypeToSource
@@ -178,16 +180,18 @@ const fnFirstBuild = options => {
     const {
         type: types,
         mapTypeToSource,
+        base,
         debug,
         fileOptions,
         files,
         output,
-        version,
-        base
+        product,
+        version
     } = options;
     buildModules({
         base: pathJSParts,
         output,
+        product,
         type: types,
         version
     });
@@ -201,6 +205,7 @@ const fnFirstBuild = options => {
             fileOptions,
             files,
             output,
+            product,
             type: [type],
             version
         }));

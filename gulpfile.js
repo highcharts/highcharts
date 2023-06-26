@@ -24,6 +24,7 @@ Gulp.registry(new GulpForwardReference());
 }([
     'api-upload',
     'dashboards/api-docs',
+    'dashboards/scripts',
     'default',
     'dist',
     'dist-clean',

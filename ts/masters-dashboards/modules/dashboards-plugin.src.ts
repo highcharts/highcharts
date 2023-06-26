@@ -1,7 +1,7 @@
 /* eslint-disable require-jsdoc */
 /**
  * @license Highcharts Dashboards v0.0.3 (@product.date@)
- * @module highcharts/modules/dashboard-component
+ * @module dashboards/modules/dashboards-plugin
  * @requires highcharts
  *
  * (c) 2009-2023 Highsoft AS
