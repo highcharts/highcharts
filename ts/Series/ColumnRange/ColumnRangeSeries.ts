@@ -125,7 +125,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
     public static defaultOptions: ColumnRangeSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         AreaRangeSeries.defaultOptions,
-        columnRangeOptions
+        columnRangeOptions as ColumnRangeSeriesOptions
     );
 
     /* *

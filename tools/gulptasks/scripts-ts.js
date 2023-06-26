@@ -151,6 +151,8 @@ function extendUMD(filePath) {
 }
 
 /**
+ * Gets the AMD path of the given file path.
+ *
  * @param {string} filePath
  * File path to convert.
  *
@@ -165,6 +167,8 @@ function getAMDPath(filePath) {
 }
 
 /**
+ * Extracts required modules for the given file.
+ *
  * @param {string} filePath
  * Path to file.
  *
@@ -207,6 +211,8 @@ function getRequiredModules(filePath, recursive) {
 }
 
 /**
+ * Checks whether the file path is a product master.
+ *
  * @param {string} filePath
  * File path to test.
  *
@@ -258,6 +264,8 @@ function scriptsTS() {
 }
 
 /**
+ * Assembles code files directly from TypeScript with some post processing.
+ *
  * @return {Promise}
  * Promise to keep.
  */

@@ -28,6 +28,8 @@ describing the internals of how it was fixed.
     node changelog/generate --review
     ```
 
+    If a `tree.json` error occurs, run `npx gulp jsdoc-options` and try the step above again.
+
 3. Review the contents of the generated HTML page in a browser, and make edits upstream in the PR descriptions.
 
 3. Generate again, this time without the `review` flag. Remember the `branches` argument if applicable.

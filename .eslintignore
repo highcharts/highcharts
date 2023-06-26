@@ -11,6 +11,7 @@ test/test-*.*
 test/*.ts
 test/typescript-karma
 tools/eslint-plugin-highcharts/node_modules/**
+tools/gulptasks/dashboards/api-docs/**/*.js
 tools/jsdoc/storage/**/*.js
 ts/**/*.js
 vendor/**/*

@@ -113,7 +113,8 @@ class Announcer {
 
         attr(div, {
             'aria-hidden': false,
-            'aria-live': type
+            'aria-live': type,
+            'aria-atomic': true
         });
 
         if (this.chart.styledMode) {

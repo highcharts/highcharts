@@ -358,9 +358,14 @@ function reverseChildNodes(node: DOMElementType): void {
  * text contains tags.
  * @private
  */
-function stripHTMLTagsFromString(str: string): string {
-    return typeof str === 'string' ?
-        str.replace(/<\/?[^>]+(>|$)/g, '') : str;
+function stripHTMLTagsFromString(
+    str: string,
+    isForExport: boolean = false
+): string {
+    return (typeof str === 'string') ?
+        (isForExport ?
+            str.replace(/<\/?[^>]+(>|$)/g, '') :
+            str.replace(/<\/?(?!\s)[^>]+(>|$)/g, '')) : str;
 }
 
 

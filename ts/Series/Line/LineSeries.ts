@@ -30,7 +30,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    merge
+    merge,
+    isObject
 } = U;
 
 /* *
@@ -179,9 +180,19 @@ class LineSeries extends Series {
                 }
 
                 graph[verb](attribs)
-                    // Add shadow to normal series (0) or to first
-                    // zone (1) #3932
-                    .shadow((i < 2) && options.shadow);
+                // Add shadow to normal series (0) or to first
+                // zone (1) #3932
+                    .shadow(
+                        (i < 2) &&
+                        options.shadow &&
+                        // If shadow is defined, call function with
+                        // `filterUnits: 'userSpaceOnUse'` to avoid known
+                        // SVG filter bug (#19093)
+                        merge(
+                            { filterUnits: 'userSpaceOnUse' },
+                            isObject(options.shadow) ? options.shadow : {}
+                        )
+                    );
             }
 
             // Helpers for animation

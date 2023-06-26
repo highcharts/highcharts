@@ -915,7 +915,7 @@ class Chart {
                 } else if (
                     legendUserOptions &&
                     (
-                        legendUserOptions.labelFormatter ||
+                        !!legendUserOptions.labelFormatter ||
                         legendUserOptions.labelFormat
                     )
                 ) {
