@@ -2,7 +2,13 @@ name: Dashboards visual comparison tests
 on:
   pull_request:
     branches: 
-      - 'dashboards/main'
+      - 'master'
+    paths:
+      - 'test/cypress/visual/**'
+      - 'samples/cypress/dashboards/**'
+      - 'samples/dashboards/**'
+      - 'ts/Dashboards/**'
+      - 'ts/Data/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -17,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: dashboards/main
+          ref: master
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
