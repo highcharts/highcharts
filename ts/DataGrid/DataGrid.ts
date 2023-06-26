@@ -1200,7 +1200,7 @@ class DataGrid {
             } else {
                 this.outerContainer.style.height =
                     height -
-                    (this.getHeaderHeight() +
+                    (this.options.cellHeight + // Header height
                     this.getMarginHeight(height)) + 'px';
             }
         }
@@ -1218,14 +1218,6 @@ class DataGrid {
      */
     private getMarginHeight(height: number): number {
         return height - this.gridContainer.getBoundingClientRect().height;
-    }
-
-    /**
-     * Internal method used to get the height of the header.
-     * @internal
-     */
-    private getHeaderHeight(): number {
-        return this.options.cellHeight;
     }
 }
 
