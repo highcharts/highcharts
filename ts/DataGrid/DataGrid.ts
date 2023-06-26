@@ -1175,34 +1175,26 @@ class DataGrid {
      * @internal
      *
      * @param width
-     * The new width in pixel, or `null` / `undefined` for no change.
+     * The new width in pixel, or `null` for no change.
      *
      * @param height
-     * The new height in pixel, or `null` / `undefined` for no change.
+     * The new height in pixel, or `null` for no change.
      */
     public setSize(
-        width?: number | string | null,
-        height?: number | string | null
+        width?: number|null,
+        height?: number|null
     ): void {
         if (width) {
-            if (typeof width === 'string') {
-                this.innerContainer.style.width = width;
-            } else {
-                this.innerContainer.style.width = width + 'px';
-            }
+            this.innerContainer.style.width = width + 'px';
         }
 
         if (height) {
             this.gridContainer.style.height = this.getDataGridSize() + 'px';
 
-            if (typeof height === 'string') {
-                this.outerContainer.style.height = height;
-            } else {
-                this.outerContainer.style.height =
-                    height -
-                    (this.options.cellHeight + // Header height
-                    this.getMarginHeight(height)) + 'px';
-            }
+            this.outerContainer.style.height =
+                height -
+                (this.options.cellHeight + // Header height
+                this.getMarginHeight(height)) + 'px';
         }
 
         this.render();

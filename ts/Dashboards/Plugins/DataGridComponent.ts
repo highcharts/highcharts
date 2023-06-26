@@ -316,8 +316,8 @@ class DataGridComponent extends Component {
 
     /** @internal */
     public resize(
-        width?: number | string | null,
-        height?: number | string | null
+        width?: number|null,
+        height?: number|null
     ): void {
         if (this.dataGrid) {
             super.resize(width, height);
