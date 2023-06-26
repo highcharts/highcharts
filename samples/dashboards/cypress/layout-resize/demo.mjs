@@ -1,5 +1,12 @@
 import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 
+import PluginHandler from  '../../../../code/es-modules/Dashboards/PluginHandler.js';
+import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
+import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
+
+HighchartsPlugin.custom.connectHighcharts(Highcharts);
+PluginHandler.addPlugin(HighchartsPlugin);
+
 let exportedLayoutId;
 let board = Dashboards.board('container', {
     editMode: {
@@ -64,10 +71,6 @@ let board = Dashboards.board('container', {
                     }, {
                         id: 'my-option-1',
                         text: 't1',
-                        events: {
-                            click: function () {
-                            }
-                        }
                     }, {
                         id: 'destroy',
                         icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
@@ -99,41 +102,15 @@ let board = Dashboards.board('container', {
     },
     gui: {
         enabled: true,
-        layoutOptions: {
-            resize: {
-                cells: true,
-                rows: true,
-                snap: {
-                    width: 20
-                }
-            }
-        },
         layouts: [{
-            id: 'layout-1', // mandatory
-            rowClassName: 'custom-row', // optional
-            cellClassName: 'custom-cell', // optional
-            style: {
-            // fontSize: '1.5em',
-            // color: 'blue'
-            },
             rows: [{
-                // id: 'dashboard-row-0',
                 cells: [{
                     id: 'dashboard-col-0',
-                    style: {
-                        color: 'yellow'
-                    }
                 }, {
                     id: 'dashboard-col-1',
-                    style: {
-                    // color: 'orange'
-                    }
                 }]
             }, {
                 id: 'dashboard-row-1',
-                style: {
-                    // color: 'red'
-                },
                 cells: [{
                     id: 'dashboard-col-2'
                 }, {
@@ -142,10 +119,6 @@ let board = Dashboards.board('container', {
                     id: 'dashboard-col-22'
                 }]
             }, {
-                id: 'dashboard-row-3',
-                style: {
-                    // color: 'red'
-                },
                 cells: [{
                     id: 'dashboard-col-3'
                 }, {
@@ -154,15 +127,12 @@ let board = Dashboards.board('container', {
                     id: 'dashboard-col-32'
                 }]
             }, {
-                id: 'dashboard-row-4',
                 cells: [{
                     id: 'dashboard-col-add-component'
                 }]
             }]
         }, {
-            id: 'layout-2', // mandatory
             rows: [{
-                id: 'dashboard-row-2',
                 cells: [{
                     id: 'dashboard-col-4'
                 }]
@@ -171,7 +141,7 @@ let board = Dashboards.board('container', {
     },
     components: [{
         cell: 'dashboard-col-0',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             series: [{
                 name: 'Series from options',
@@ -182,16 +152,9 @@ let board = Dashboards.board('container', {
                 type: 'pie'
             }
         },
-        events: {
-            mount: function () {
-                // call action
-            },
-            unmount: function () {
-            }
-        }
     }, {
         cell: 'dashboard-col-1',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {
@@ -200,7 +163,7 @@ let board = Dashboards.board('container', {
         }]
     }, {
         cell: 'dashboard-col-2',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'cell',
             series: [{
@@ -211,14 +174,9 @@ let board = Dashboards.board('container', {
                 animation: false
             }
         },
-        events: {
-            mount: function () {
-                // call action
-            }
-        }
     }, {
         cell: 'dashboard-col-21',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'cell',
             series: [{
@@ -230,14 +188,9 @@ let board = Dashboards.board('container', {
                 type: 'pie'
             }
         },
-        events: {
-            mount: function () {
-                // call action
-            }
-        }
     }, {
         cell: 'dashboard-col-22',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'cell',
             series: [{
@@ -249,14 +202,9 @@ let board = Dashboards.board('container', {
                 type: 'column'
             }
         },
-        events: {
-            mount: function () {
-                // call action
-            }
-        }
     }, {
         cell: 'dashboard-col-3',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {
@@ -265,7 +213,7 @@ let board = Dashboards.board('container', {
         }]
     }, {
         cell: 'dashboard-col-31',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {
@@ -274,7 +222,7 @@ let board = Dashboards.board('container', {
         }]
     }, {
         cell: 'dashboard-col-32',
-        type: 'html',
+        type: 'HTML',
         elements: [{
             tagName: 'img',
             attributes: {
@@ -283,7 +231,7 @@ let board = Dashboards.board('container', {
         }]
     }, {
         cell: 'dashboard-col-5',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'line',
             series: [{
@@ -294,14 +242,9 @@ let board = Dashboards.board('container', {
                 animation: false
             }
         },
-        events: {
-            mount: function () {
-                // call action
-            }
-        }
     }, {
         cell: 'dashboard-col-add-component',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'line',
             series: [{
@@ -312,11 +255,6 @@ let board = Dashboards.board('container', {
                 animation: false
             }
         },
-        events: {
-            mount: function () {
-                // call action
-            }
-        }
     }]
 });
 
