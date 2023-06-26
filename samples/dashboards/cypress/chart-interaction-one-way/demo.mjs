@@ -63,7 +63,7 @@ Dashboards.board('container', {
     },
     sync: {
       'visibility': true,
-      'highlight': trare
+      'highlight': true
     }
   }, {
     cell: 'dashboard-col-1',
