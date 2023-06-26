@@ -389,21 +389,8 @@ async function setupBoard() {
                     text: void 0
                 },
                 tooltip: {
-                    enabled: true,
-                    positioner: function (_width, _height, axisInfo) {
-                        return {
-                            x: (
-                                axisInfo.plotX -
-                                this.options.padding
-                            ),
-                            y: (
-                                axisInfo.plotY +
-                                this.options.padding +
-                                5
-                            )
-                        };
-                    },
                     shape: 'rect',
+                    distance: -60,
                     useHTML: true
                 }
             }
