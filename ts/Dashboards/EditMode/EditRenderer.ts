@@ -148,7 +148,7 @@ function renderCollapseHeader(
             enabledOnOffLabels: true,
             id: name,
             name: name,
-            onchange,
+            onchange: onchange,
             value: isEnabled || false,
             lang
         });
@@ -416,30 +416,28 @@ function renderToggle(
         toggleContainer
     );
 
-    const input = renderCheckbox(toggle, value);
-    const onchange = options.onchange;
-    if (input && onchange) {
-        input.addEventListener('change', (e: any): void => {
-            onchange(e.target.checked);
-        });
+    const input = renderCheckbox(toggle, value) as HTMLInputElement;
+    const callbackFn = options.onchange;
 
+    if (input && callbackFn) {
         toggleContainer.addEventListener('click', (e: any): void => {
-            onchange((input as HTMLInputElement).checked);
-            (input as HTMLInputElement).checked = !(input as HTMLInputElement)
-                .checked;
+            callbackFn(!input.checked);
+            input.checked = !input.checked;
         });
     }
 
-
-    createElement(
+    const slider = createElement(
         'span',
         {
-            className: EditGlobals.classNames.toggleSlider,
-            onclick: options.callback
+            className: EditGlobals.classNames.toggleSlider
         },
         {},
         toggle
     );
+
+    callbackFn && slider.addEventListener('click', (e): void => {
+        e.preventDefault();
+    });
 
     if (options.enabledOnOffLabels) {
         EditRenderer.renderText(toggleContainer, {
@@ -530,14 +528,14 @@ function renderIcon(
     const click = options.click;
     if (mousedown) {
         iconElem.onmousedown = function (): void {
-            mousedown.apply(options.item, arguments);
+            mousedown.apply(this, arguments);
         };
     }
 
     if (click) {
-        iconElem.onclick = function (): void {
-            click.apply(options.item, arguments);
-        };
+        iconElem.addEventListener('click', function (): void {
+            click.apply(this, arguments);
+        });
     }
     return iconElem;
 }
@@ -701,7 +699,7 @@ function renderButton(
                 (options.className || '')
             ),
             onclick: options.callback,
-            textContent: options.value
+            textContent: options.text
         }, options.style || {},
         parentElement
     );
@@ -723,7 +721,7 @@ function renderButton(
  * @returns
  * function to render a specific element
  */
-function getRendererFunction(type: RendererElement): Function|undefined {
+function getRendererFunction(type: RendererElement): Function | undefined {
     return {
         select: renderSelect,
         toggle: renderToggle,
@@ -757,7 +755,7 @@ export default EditRenderer;
 
 export interface ButtonOptions {
     callback?: Function;
-    value?: string;
+    text?: string;
     className?: string;
     icon?: string;
     isDisabled?: boolean;
@@ -809,7 +807,6 @@ export interface ToggleFormFieldOptions {
     value: boolean;
     enabledOnOffLabels?: boolean;
     className?: string;
-    callback?: Function;
     onchange?: (value: boolean) => void;
     id: string;
     name: string;

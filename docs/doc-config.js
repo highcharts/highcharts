@@ -8,6 +8,7 @@ module.exports = {
     unlisted: [
         'dashboards/components',
         'dashboards/custom-component',
+        'dashboards/data-handling',
         'dashboards/types-of-components',
         'dashboards/layout-description',
         'dashboards/sync',

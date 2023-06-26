@@ -19,6 +19,7 @@ export interface HTMLAttributes {
     'aria-expanded'?: boolean;
     'aria-label'?: string;
     'aria-live'?: string;
+    'aria-atomic'?: boolean;
     checked?: boolean;
     class?: string;
     className?: string;

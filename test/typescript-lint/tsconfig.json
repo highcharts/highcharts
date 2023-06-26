@@ -138,6 +138,9 @@
         "../../code/modules/marker-clusters.d.ts",
         "../../code/modules/marker-clusters.src.d.ts",
 
+        "../../code/modules/mouse-wheel-zoom.d.ts",
+        "../../code/modules/mouse-wheel-zoom.src.d.ts",
+
         "../../code/modules/networkgraph.d.ts",
         "../../code/modules/networkgraph.src.d.ts",
 

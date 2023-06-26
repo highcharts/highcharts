@@ -1,9 +1,7 @@
-import Board from '../../../../code/es-modules/Dashboards/Board.js';
 import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
 import PluginHandler from '../../../../code/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
-import HighchartsComponent from '../../../../code/es-modules/Dashboards/Components/HTMLComponent.js';
+import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);

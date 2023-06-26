@@ -59,7 +59,7 @@ function fireEventOnWrappedOrUnwrappedElement(
     const hcEvents = (el as SVGElement).hcEvents;
 
     if (
-        (doc.createEvent) &&
+        !!doc.createEvent &&
         ((el as Element).dispatchEvent || (el as SVGElement).fireEvent)
     ) {
         if (el.dispatchEvent) {
@@ -86,7 +86,8 @@ function getChartTitle(chart: Accessibility.ChartComposition): string {
         chart.options.title.text ||
         chart.langFormat(
             'accessibility.defaultChartTitle', { chart: chart }
-        )
+        ),
+        chart.renderer.forExport
     );
 }
 

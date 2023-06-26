@@ -19,8 +19,9 @@
  *
  * */
 
+import type ChainModifierOptions from './ChainModifierOptions';
 import type DataEvent from '../DataEvent';
-import type DataModifierOptions from './DataModifierOptions';
+import type DataModifierEvent from './DataModifierEvent';
 import type {
     DataModifierType,
     DataModifierTypeOptions
@@ -55,8 +56,8 @@ class ChainModifier extends DataModifier {
     /**
      * Default option for the ordered modifier chain.
      */
-    public static readonly defaultOptions: ChainModifier.Options = {
-        modifier: 'Chain'
+    public static readonly defaultOptions: ChainModifierOptions = {
+        type: 'Chain'
     };
 
     /* *
@@ -75,7 +76,7 @@ class ChainModifier extends DataModifier {
      * Ordered chain of modifiers.
      */
     public constructor(
-        options?: DeepPartial<ChainModifier.Options>,
+        options?: DeepPartial<ChainModifierOptions>,
         ...chain: Array<DataModifier>
     ) {
         super();
@@ -95,11 +96,11 @@ class ChainModifier extends DataModifier {
         ) {
             modifierOptions = optionsChain[i];
 
-            if (!modifierOptions.modifier) {
+            if (!modifierOptions.type) {
                 continue;
             }
 
-            ModifierClass = DataModifier.types[modifierOptions.modifier];
+            ModifierClass = DataModifier.types[modifierOptions.type];
 
             if (ModifierClass) {
                 chain.unshift(new ModifierClass(modifierOptions as AnyRecord));
@@ -121,7 +122,7 @@ class ChainModifier extends DataModifier {
     /**
      * Options of the modifier chain.
      */
-    public readonly options: ChainModifier.Options;
+    public readonly options: ChainModifierOptions;
 
     /* *
      *
@@ -216,7 +217,7 @@ class ChainModifier extends DataModifier {
         });
 
         promiseChain = promiseChain['catch']((error): Promise<T> => {
-            this.emit<DataModifier.Event>({
+            this.emit<DataModifierEvent>({
                 type: 'error',
                 detail: eventDetail,
                 table
@@ -503,7 +504,7 @@ namespace ChainModifier {
     export interface ChainEvent extends DataEvent {
         readonly type: (
             'clearChain'|'afterClearChain'|
-            DataModifier.Event['type']
+            DataModifierEvent['type']
         );
         readonly table?: DataTable;
     }
@@ -522,28 +523,6 @@ namespace ChainModifier {
             'removeModifier'|'afterRemoveModifier'
         );
         readonly modifier: DataModifier;
-    }
-
-    /**
-     * Options to configure the chain modifier.
-     */
-    export interface Options extends DataModifierOptions {
-
-        /**
-         * Name of the related modifier for these options.
-         */
-        modifier: 'Chain';
-
-        /**
-         * Array of options of the chain modifiers.
-         */
-        chain?: Array<DeepPartial<DataModifierTypeOptions>>;
-
-        /**
-         * Whether to revert the order before execution.
-         */
-        reverse?: boolean;
-
     }
 
 }

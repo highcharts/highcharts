@@ -262,7 +262,7 @@ namespace CSVConnector {
     /**
      * Available options for constructor and converter of the CSVConnector.
      */
-    export type UserOptions = (Partial<Options>&CSVConverter.UserOptions);
+    export type UserOptions = (DeepPartial<Options>&CSVConverter.UserOptions);
 
 }
 

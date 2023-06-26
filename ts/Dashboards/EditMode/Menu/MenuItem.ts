@@ -51,7 +51,7 @@ class MenuItem {
     ) {
         this.menu = menu;
         this.isActive = false;
-        this.options = merge(MenuItem.defaultOptions, options || {});
+        this.options = merge(MenuItem.defaultOptions, options);
 
         this.container = this.setContainer();
         this.innerElement = this.setInnerElement();
@@ -105,55 +105,47 @@ class MenuItem {
             container = item.container,
             langKey = options.langKey;
 
-        const renderItem = EditRenderer.getRendererFunction(
-            options.type as RendererElement
-        );
 
-        if (!renderItem) {
-            return;
+        if (options.type === 'toggle') {
+            return EditRenderer.renderToggle(container, {
+                id: options.id,
+                name: options.id,
+                title: langKey ?
+                    this.menu.editMode.lang[langKey] :
+                    options.text,
+                value: !!(options.getValue && options.getValue(item)),
+                lang: this.menu.editMode.lang,
+                onchange: options.events?.click?.bind(item)
+            });
         }
 
-        const value = this.options.getValue && this.options.getValue(item);
-        const callback = function (): void {
-            if (options.events && options.events.click) {
-                options.events.click.apply(item, arguments);
-            }
-        };
+        if (options.type === 'text') {
+            return EditRenderer.renderText(container, {
+                title: langKey ?
+                    this.menu.editMode.lang[langKey] :
+                    options.text || '',
+                className: options.className || ''
+            });
+        }
 
-        renderItem(
-            container,
-            this.getElementOptions(
-                merge(
-                    options,
-                    {
-                        value,
-                        text: langKey ?
-                            this.menu.editMode.lang[langKey] : options.text
-                    }
-                ),
-                callback
-            )
-        );
+        if (options.type === 'icon') {
+            return EditRenderer.renderIcon(container, {
+                icon: options.icon || '',
+                mousedown: options.events?.onmousedown?.bind(item),
+                click: options.events?.click?.bind(item)
+            });
+        }
+        if (options.type === 'button') {
+            return EditRenderer.renderButton(container, {
+                callback: options.events?.click?.bind(item),
+                className: options.className || '',
+                style: options.style || {},
+                text: langKey ?
+                    this.menu.editMode.lang[langKey] :
+                    (options.text || '')
+            });
 
-    }
-
-    private getElementOptions(
-        options: MenuItem.Options,
-        callback?: Function
-    ): MenuItem.Options {
-
-        return {
-            id: options.id,
-            name: options.id,
-            title: options.collapsable ? '' : options.text || '',
-            item: this,
-            icon: options.icon,
-            mousedown: options.events && options.events.onmousedown,
-            click: options.events && options.events.click,
-            value: options.value || '',
-            onchange: callback,
-            items: options.items
-        };
+        }
     }
 
     public update(): void {
@@ -189,30 +181,60 @@ class MenuItem {
 }
 
 namespace MenuItem {
-    export interface Options {
-        langKey?: string;
-        nestedOptions?: Record<string, Options>;
-        callback?: () => void;
-        click?: Function;
-        collapsable?: boolean;
+    export interface ItemOptions {
         id: string;
         name?: string;
-        type?: 'addComponent'|'addLayout'|'horizontalSeparator'|'icon'|'input'|
-        'toggle'|'text'|'textarea'|'verticalSeparator'|'select';
-        text?: string;
-        getValue?: (item: MenuItem) => string | number | boolean;
+        type: 'icon'|'toggle'|'text'|'button';
         className?: string;
-        events?: Record<Event['type'], Function>;
-        mousedown?: Function;
-        onchange?: Function;
-        item?: MenuItem;
+        text?: string;
+        langKey?: string;
         style?: CSSJSONObject;
-        icon?: string;
-        isActive?: boolean;
-        title?: string;
-        value?: string;
-        items?: Array<string> | Array<SelectFormFieldItemOptions>;
+        events?: {
+            update?: Function;
+        }
     }
+
+    export interface ButtonOptions extends ItemOptions {
+        type: 'button';
+        text?: string;
+        events?: {
+            update?: Function;
+            click?: Function;
+        }
+    }
+
+    export interface IconOptions extends ItemOptions {
+        type: 'icon';
+        icon: string;
+        events: {
+            update?: Function;
+            onmousedown?: Function;
+            click?: Function;
+        }
+
+    }
+
+    export interface ToggleOptions extends ItemOptions {
+        type: 'toggle';
+        getValue?: (item: MenuItem) => boolean;
+        events: {
+            update?: Function;
+            click: Function;
+        }
+
+    }
+
+    export interface TextOptions extends ItemOptions {
+        type: 'text';
+    }
+
+    export type Type = 'icon'|'toggle'|'text'|'button';
+
+    export type Options =
+        | ButtonOptions
+        | IconOptions
+        | ToggleOptions
+        | TextOptions;
 }
 
 export default MenuItem;

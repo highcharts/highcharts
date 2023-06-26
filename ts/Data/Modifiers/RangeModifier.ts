@@ -55,9 +55,9 @@ class RangeModifier extends DataModifier {
      * Default options for the range modifier.
      */
     public static readonly defaultOptions: RangeModifierOptions = {
-        modifier: 'Range',
-        strict: false,
-        ranges: []
+        type: 'Range',
+        ranges: [],
+        strict: false
     };
 
     /* *
