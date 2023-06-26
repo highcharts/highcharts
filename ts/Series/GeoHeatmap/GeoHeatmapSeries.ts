@@ -39,6 +39,8 @@ const {
 } = SeriesRegistry;
 
 import U from '../../Core/Utilities.js';
+import PointerEvent from '../../Core/PointerEvent.js';
+import Point from '../../Core/Series/Point.js';
 
 const {
     defined,
@@ -47,6 +49,27 @@ const {
     merge,
     pick
 } = U;
+
+/**
+ * Normalize longitute value to -180:180 range.
+ * @private
+ */
+function normalizeLonValue(lon: number): number {
+    return lon - Math.floor((lon + 180) / 360) * 360;
+}
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/KDPointSearchObjectLike' {
+    interface KDPointSearchObjectLike {
+        lon?: number;
+        lat?: number;
+    }
+}
 
 /* *
  *
@@ -84,9 +107,10 @@ class GeoHeatmapSeries extends MapSeries {
      *         GeoHeatmap Chart on the Equal Earth Projection
      *
      * @extends      plotOptions.map
-     * @since 11.0.0
+     * @since        11.0.0
      * @product      highmaps
-     * @excluding    allAreas, dragDrop, findNearestPointBy, geometry, joinBy, negativeColor, onPoint,
+     * @excluding    allAreas, dragDrop, findNearestPointBy, geometry, joinBy,
+     * negativeColor, onPoint, stickyTracking
      * @requires     modules/geoheatmap
      * @optionparent plotOptions.geoheatmap
      */
@@ -156,7 +180,9 @@ class GeoHeatmapSeries extends MapSeries {
              * @product   highmaps
              * @apioption plotOptions.geoheatmap.rowsize
              */
-            rowsize: 1
+            rowsize: 1,
+
+            stickyTracking: true
 
         } as GeoHeatmapSeriesOptions);
 
@@ -301,6 +327,7 @@ class GeoHeatmapSeries extends MapSeries {
                                     )
                                 )
                             );
+                        series.directTouch = false; // Needed for tooltip
 
                         for (let i = 0; i < points.length; i++) {
                             const p = points[i],
@@ -376,10 +403,8 @@ class GeoHeatmapSeries extends MapSeries {
                                     projectedCoords.lon > -180 - lambda &&
                                     projectedCoords.lon < 180 - lambda
                                 ) {
-                                    projectedCoords.lon = projectedCoords.lon -
-                                    Math.floor(
-                                        (projectedCoords.lon + 180) / 360
-                                    ) * 360;
+                                    projectedCoords.lon =
+                                        normalizeLonValue(projectedCoords.lon);
                                 }
 
                                 const projected = [
@@ -541,6 +566,24 @@ class GeoHeatmapSeries extends MapSeries {
         return context;
     }
 
+    public searchPoint(
+        e: PointerEvent,
+        compareX?: boolean | undefined
+    ): Point | undefined {
+        const chart = this.chart,
+            projection = chart.mapView?.projection;
+        chart.pointer.normalize(e);
+
+        if (e.lon && e.lat && projection) {
+            return this.searchKDTree({
+                clientX: e.chartX,
+                lon: projection.options.name === 'Orthographic' ?
+                    normalizeLonValue(e.lon) : e.lon, // Loop for Ortho
+                lat: e.lat
+            }, compareX, e);
+        }
+    }
+
 }
 
 /* *
@@ -557,7 +600,8 @@ interface GeoHeatmapSeries {
 extend(GeoHeatmapSeries.prototype, {
     type: 'geoheatmap',
     pointClass: GeoHeatmapPoint,
-    pointArrayMap: ['lon', 'lat', 'value']
+    pointArrayMap: ['lon', 'lat', 'value'],
+    kdAxisArray: ['lon', 'lat'] // Search k-d-tree by lon/lat values
 });
 
 /* *
@@ -593,7 +637,8 @@ export default GeoHeatmapSeries;
  *
  * @extends   series,plotOptions.geoheatmap
  * @excluding allAreas, dataParser, dataURL, dragDrop, findNearestPointBy,
- *            joinBy, marker, mapData, negativeColor, onPoint, shadow
+ *            joinBy, marker, mapData, negativeColor, onPoint, shadow,
+ *            stickyTracking
  * @product   highmaps
  * @apioption series.geoheatmap
  */
