@@ -19,9 +19,10 @@
  *
  * */
 
-import type JSON from '../JSON';
+import type ChainModifierOptions from '../../Data/Modifiers/ChainModifierOptions';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type { DataModifierTypeOptions } from '../../Data/Modifiers/DataModifierType';
+import type JSON from '../JSON';
 
 import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
 import Serializable from '../Serializable.js';
@@ -138,7 +139,7 @@ namespace ChainModifierHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (JSON.Object&ChainModifier.Options);
+    export type OptionsJSON = (JSON.Object&ChainModifierOptions);
 
 }
 

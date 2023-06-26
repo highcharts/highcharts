@@ -582,7 +582,7 @@ class Pointer {
         // (#877)
         if (chart && isNumber(chart.index)) {
             css(chart.container, { cursor: chart._cursor as any });
-            chart.cancelClick = this.hasDragged > 10; // #370
+            chart.cancelClick = +this.hasDragged > 10; // #370
             chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
             this.pinchDown = [];
         }

@@ -696,9 +696,6 @@ abstract class Component {
         width?: number | string | null,
         height?: number | string | null
     ): void {
-        // if (!this.resizeTimeout) {
-        //     this.resizeTimeout = requestAnimationFrame(() => {
-
         if (height) {
             // Get offset for border, padding
             const pad =
@@ -733,10 +730,6 @@ abstract class Component {
             width,
             height
         });
-        //         cancelAnimationFrame(this.resizeTimeout)
-        //         this.resizeTimeout = 0;
-        //     });
-        // }
     }
 
     /**
