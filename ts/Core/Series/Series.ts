@@ -1972,10 +1972,13 @@ class Series {
 
             // For points within the visible range, including the first
             // point outside the visible range (#7061), consider y extremes.
-            validValue = (
-                (isNumber(y) || isArray(y)) &&
-                (((y as any).length || y > 0) || !positiveValuesOnly)
-            );
+            validValue = ((
+                isNumber(y) ||
+                isArray(y)
+            ) && (
+                (isNumber(y) ? y > 0 : y.length) ||
+                !positiveValuesOnly
+            ));
             withinRange = (
                 forceExtremesFromAll ||
                 this.getExtremesFromAll ||
@@ -2139,6 +2142,12 @@ class Series {
              * to the X axis position if the series has one, otherwise relative
              * to the plot area. Depending on the series type this value might
              * not be defined.
+             *
+             * In an inverted chart the x-axis is going from the bottom to the
+             * top so the `plotX` value is the number of pixels from the bottom
+             * of the axis.
+             *
+             * @see Highcharts.Point#pos
              * @name Highcharts.Point#plotX
              * @type {number|undefined}
              */
@@ -2231,6 +2240,12 @@ class Series {
              * to the Y axis position if the series has one, otherwise relative
              * to the plot area. Depending on the series type this value might
              * not be defined.
+             *
+             * In an inverted chart the y-axis is going from right to left
+             * so the `plotY` value is the number of pixels from the right
+             * of the `yAxis`.
+             *
+             * @see Highcharts.Point#pos
              * @name Highcharts.Point#plotY
              * @type {number|undefined}
              */
@@ -3857,7 +3872,7 @@ class Series {
 
         // Shift the first point off the parallel arrays
         if (shift) {
-            if (data[0] && (data[0].remove)) {
+            if (data[0] && !!data[0].remove) {
                 data[0].remove(false);
             } else {
                 data.shift();

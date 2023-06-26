@@ -1,6 +1,0 @@
----
- name: Dashboard Demo Sync Axes
- authors:
-   - Karol Kolodziej
- js_wrap: b
-...

@@ -566,6 +566,17 @@
     color: var(--highcharts-neutral-color-100);
 }
 
+.highcharts-dashboards-edit-context-menu-item > button {
+    color: var(--highcharts-neutral-color-60);
+    background-color: transparent;
+    border: none;
+    text-align: left;
+}
+
+.highcharts-dashboards-edit-context-menu-item > button:hover {
+    color: var(--highcharts-neutral-color-100);
+}
+
 .highcharts-dashboards-edit-separator {
     background-color: var(--highcharts-neutral-color-20);
     height: 1px;

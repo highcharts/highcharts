@@ -71,8 +71,7 @@ const D = {
     DataPool,
     DataTable,
     PluginHandler,
-    Sync,
-    _modules: (typeof _modules === 'undefined' ? {} : _modules)
+    Sync
 };
 
 /* *

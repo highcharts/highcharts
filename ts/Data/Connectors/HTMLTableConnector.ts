@@ -232,7 +232,7 @@ namespace HTMLTableConnector {
      * Available options for constructor and converter of the
      * HTMLTableConnector.
      */
-    export type UserOptions = (Partial<Options>&HTMLTableConverter.UserOptions);
+    export type UserOptions = (DeepPartial<Options>&HTMLTableConverter.UserOptions);
 
 }
 

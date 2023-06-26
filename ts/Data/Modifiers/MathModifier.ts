@@ -23,9 +23,12 @@
 
 
 import type DataEvent from '../DataEvent';
-import type DataModifierOptions from './DataModifierOptions';
 import type DataTable from '../DataTable';
 import type { Formula } from '../Formula/Formula';
+import type {
+    MathModifierColumnFormulaOptions,
+    MathModifierOptions
+} from './MathModifierOptions';
 
 
 import DataModifier from './DataModifier.js';
@@ -61,9 +64,9 @@ class MathModifier extends DataModifier {
      * Default options of MathModifier.
      * @private
      */
-    public static readonly defaultOptions: MathModifier.Options = {
-        alternativeSeparators: false,
-        modifier: 'Math'
+    public static readonly defaultOptions: MathModifierOptions = {
+        type: 'Math',
+        alternativeSeparators: false
     };
 
 
@@ -75,7 +78,7 @@ class MathModifier extends DataModifier {
 
 
     public constructor(
-        options: Partial<MathModifier.Options>
+        options: Partial<MathModifierOptions>
     ) {
         super();
 
@@ -93,7 +96,7 @@ class MathModifier extends DataModifier {
      * */
 
 
-    public options: MathModifier.Options;
+    public options: MathModifierOptions;
 
 
     /* *
@@ -140,7 +143,7 @@ class MathModifier extends DataModifier {
         for (
             let i = 0,
                 iEnd = columnFormulas.length,
-                columnFormula: MathModifier.ColumnFormula,
+                columnFormula: MathModifierColumnFormulaOptions,
                 formula: Formula;
             i < iEnd;
             ++i
@@ -276,90 +279,6 @@ class MathModifier extends DataModifier {
         }
 
         return column;
-    }
-
-
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-
-namespace MathModifier {
-
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-
-    /**
-     * Options to configure a formula replacing column values.
-     */
-    export interface ColumnFormula {
-
-        /**
-         * Column name or alias in the DataTable to replace with values of the
-         * formula.
-         */
-        column: string;
-
-        /**
-         * Formula to use to replace column values.
-         */
-        formula: string;
-
-        /**
-         * Row index to end the replacing process.
-         */
-        rowEnd?: number;
-
-        /**
-         * Row index to start the replacing process from.
-         */
-        rowStart?: number;
-
-    }
-
-
-    /**
-     * Options to configure the MathModifier and Formula system.
-     */
-    export interface Options extends DataModifierOptions {
-
-        /**
-         * Name of the related modifier for these options.
-         */
-        modifier: 'Math';
-
-        /**
-         * Whether to expect regular or alternative separators in formulas.
-         * * `false` to expect `,` between arguments and `.` in decimals.
-         * * `true` to expect `;` between arguments and `,` in decimals.
-         */
-        alternativeSeparators: boolean;
-
-        /**
-         * Array of column formulas that will be used to replace the column
-         * values in their columns.
-         * @private
-         * @todo Implement
-         */
-        columnFormulas?: Array<ColumnFormula>;
-
-        /**
-         * Array of column names or aliases to replace formula strings to
-         * replace with calculated values. By default all columns in a table
-         * will be processed.
-         */
-        formulaColumns?: Array<string>;
-
     }
 
 

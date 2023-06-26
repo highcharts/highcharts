@@ -741,7 +741,7 @@ namespace Board {
         /**
          * General options for the layouts applied to all layouts.
          **/
-        layoutOptions: Partial<Layout.Options>;
+        layoutOptions?: Partial<Layout.Options>;
         /**
          * Allows to define graphical elements and its layout. The layout is
          * defined by the row and cells. The row is a horizontal container for
