@@ -457,53 +457,64 @@ class HeatmapSeries extends ScatterSeries {
         if (interpolation) {
             const
                 { image, chart, xAxis, yAxis } = series,
-                { reversed: xRev, len: width } = xAxis,
-                { reversed: yRev, len: height } = yAxis,
-                dimensions = {width, height};
+                { reversed: xRev = false, len: width } = xAxis,
+                { reversed: yRev = false, len: height } = yAxis,
+                dimensions = { width, height };
 
             if (!image || series.isDirtyData) {
-                const ctx = series.getContext(),
+                const
+                    ctx = series.getContext(),
                     {
                         canvas,
                         points,
                         points: { length: pointAmount },
                         options: { colsize = 1, rowsize = 1 }
                     } = series,
-
                     colorAxis = (
                         chart.colorAxis &&
                         chart.colorAxis[0]
                     );
 
                 if (canvas && ctx && colorAxis) {
-
                     const
                         { min: xMin, max: xMax } = xAxis.getExtremes(),
                         { min: yMin, max: yMax } = yAxis.getExtremes(),
                         xDelta = xMax - xMin,
                         yDelta = yMax - yMin,
+                        imgMultiple = 8.0,
+                        [lastX, lastY] = ([xDelta / colsize, yDelta / rowsize]
+                            .map((slots): number => (
+                                Math.round(
+                                    imgMultiple * (slots / imgMultiple)
+                                )
+                            ))
+                        ),
                         [
-                            canvasWidth = canvas.width,
-                            canvasHeight = canvas.height
+                            transformX,
+                            transformY
                         ] = [
-                            (xDelta / colsize),
-                            (yDelta / rowsize)
-                        ].map((dimOnUnit): number => (
-                            Math.round(8.0 * (dimOnUnit / 8.0)) + 1
-                        )),
-                        [
-                            lastPointPos,
-                            lastXPos,
-                            lastYPos
-                        ] = [
-                            pointAmount,
-                            canvasWidth,
-                            canvasHeight
-                        ].map(n => n - 1),
-                        xScale = lastXPos / xDelta,
-                        yScale = lastYPos / yDelta,
+                            [lastX, lastX / xDelta, xRev, 'ceil'],
+                            [lastY, lastY / yDelta, !yRev, 'floor']
+                        ].map(
+                            ([last, scale, rev, rounding]): Function => (
+                                rev ?
+                                    (v: number): number => (
+                                        Math[rounding as 'floor' | 'ceil'](
+                                            (last as number) -
+                                            (scale as number * (v))
+                                        )
+                                    ) :
+                                    (v: number): number => (
+                                        Math[rounding as 'floor' | 'ceil'](
+                                            (scale as number) * v
+                                        )
+                                    )
+                            )
+                        ),
+                        canvasWidth = canvas.width = lastX + 1,
+                        canvasHeight = canvas.height = lastY + 1,
                         canvasArea = canvasWidth * canvasHeight,
-                        pixelToPointScale = lastPointPos / canvasArea,
+                        pixelToPointScale = (pointAmount - 1) / canvasArea,
                         pixelData = new Uint8ClampedArray(canvasArea * 4),
 
                         colorFromPoint = (p: HeatmapPoint): number[] => {
@@ -527,69 +538,39 @@ class HeatmapSeries extends ScatterSeries {
                             return rgba;
                         },
 
-                        xPlacement = (xRev ?
-                            (xToImg: number): number => (
-                                lastXPos - xToImg
-                            ) :
-                            (xToImg: number): number => xToImg
-                        ),
-
-                        yPlacement = (yRev ?
-                            (yToImg: number): number => yToImg :
-                            (yToImg: number): number => (
-                                lastYPos - yToImg
-                            )
-                        ),
-
-                        pointInPixels = (
-                            xPos: number,
-                            yPos: number
-                        ): number => Math.ceil((
-                            canvasWidth * Math.floor(
-                                yPlacement(
-                                    yScale * (yPos - yMin)
-                                )
-                            )) +
+                        pointInPixels = (x: number, y: number): number => (
                             Math.ceil(
-                                xPlacement(
-                                    xScale * (xPos - xMin)
-                                )
-                            )
-                        ),
-
-                        pixelToPointIndex = (pixelIndex: number): number => (
-                            Math.ceil(pixelIndex * pixelToPointScale)
+                                (canvasWidth * transformY(y - yMin)) +
+                                transformX(x - xMin)
+                            ) * 4
                         );
 
                     series.buildKDTree();
 
                     for (let i = 0; i < canvasArea; i++) {
-                        const p = points[pixelToPointIndex(i)];
+                        const p = points[
+                            Math.ceil(pixelToPointScale * i)
+                        ];
 
                         pixelData.set(
-                            colorFromPoint(p), pointInPixels(p.x, p.y) * 4
+                            colorFromPoint(p),
+                            pointInPixels(p.x, p.y)
                         );
                     }
 
-
                     ctx.putImageData(
-                        new ImageData(
-                            pixelData,
-                            canvasWidth
-                        ),
-                        0,
-                        0
+                        new ImageData(pixelData, canvasWidth), 0, 0
                     );
 
                     if (image) {
                         image.attr({
                             ...dimensions,
-                            href: canvas.toDataURL()
+                            href: canvas.toDataURL('image/png', 1)
                         });
                     } else {
                         series.directTouch = false;
                         series.image = chart.renderer.image(
-                            canvas.toDataURL()
+                            canvas.toDataURL('image/png', 1)
                         )
                             .attr(dimensions)
                             .add(series.group);
@@ -628,6 +609,7 @@ class HeatmapSeries extends ScatterSeries {
     public getContext(): CanvasRenderingContext2D | undefined {
         const series = this,
             { canvas, context } = series;
+
         if (canvas && context) {
             context.clearRect(0, 0, canvas.width, canvas.height);
         } else {
