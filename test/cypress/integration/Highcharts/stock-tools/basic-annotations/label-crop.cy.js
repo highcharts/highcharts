@@ -15,7 +15,7 @@ describe('Label annotation crop property.', () => {
 
         cy.chart().should(chart => {
             assert.strictEqual(
-                chart.annotations[0].userOptions.crop,
+                chart.annotations[0].labels[0].options.crop,
                 false
             );
         });
