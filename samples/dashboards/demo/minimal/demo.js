@@ -49,7 +49,7 @@ Dashboards.board('container', {
         type: 'HTML',
         elements: [{
             tagName: 'h1',
-            textContent: 'Vitamin A in Foods'
+            textContent: 'MicroElement amount in Foods'
         }]
     }, {
         sync: {
@@ -64,11 +64,18 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             Food: 'x',
-            'Vitamin A': 'value'
+            'Vitamin A': 'value',
+            Iron: null
         },
         chartOptions: {
+            xAxis: {
+                type: 'category'
+            },
             chart: {
-                type: 'pie'
+                type: 'column'
+            },
+            title: {
+                text: 'Vitamin A'
             }
         }
     },
@@ -85,11 +92,15 @@ Dashboards.board('container', {
         type: 'Highcharts',
         columnAssignment: {
             Food: 'x',
-            'Vitamin A': 'y'
+            'Vitamin A': null,
+            Iron: 'y'
         },
         chartOptions: {
             xAxis: {
                 type: 'category'
+            },
+            title: {
+                text: 'Iron'
             },
             chart: {
                 animation: false,
