@@ -1,5 +1,5 @@
 ---
- name: Context enabled
+ name: Context menu enabled
  authors:
    - Askel Eirik Johansson
  js_wrap: b

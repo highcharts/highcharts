@@ -1,7 +1,7 @@
 Dashboards.board('container', {
     editMode: {
         enabled: true,
-        confirationPopup: {
+        confirmationPopup: {
             close: {
                 icon: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@381ddd81b2100b6f4851a05cdbcd38658b662c18/gfx/dashboard-icons/series-types/icon-gauge.svg'
             }
