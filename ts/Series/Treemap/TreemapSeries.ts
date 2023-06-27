@@ -1100,6 +1100,7 @@ class TreemapSeries extends ScatterSeries {
                 attribs,
                 css,
                 group: (series as any)[groupKey],
+                imageUrl: point.imageUrl,
                 renderer,
                 shadow,
                 shapeArgs,

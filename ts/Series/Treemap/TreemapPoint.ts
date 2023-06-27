@@ -69,6 +69,8 @@ class TreemapPoint extends ScatterPoint {
 
     public drillId?: (boolean|string);
 
+    public imageUrl?: string;
+
     public name: string = void 0 as any;
 
     public node: TreemapNode = void 0 as any;
@@ -79,7 +81,7 @@ class TreemapPoint extends ScatterPoint {
 
     public series: TreemapSeries = void 0 as any;
 
-    public shapeType: 'arc'|'circle'|'path'|'rect'|'text' = 'rect';
+    public shapeType: 'arc'|'circle'|'image'|'path'|'rect'|'text' = 'rect';
 
     public sortIndex?: number;
 
