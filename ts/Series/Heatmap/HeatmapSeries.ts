@@ -44,6 +44,7 @@ const {
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
+import { PointShortOptions } from '../../Core/Series/PointOptions';
 
 const {
     clamp,
@@ -466,9 +467,7 @@ class HeatmapSeries extends ScatterSeries {
                     ctx = series.getContext(),
                     {
                         canvas,
-                        points,
-                        points: { length: pointAmount },
-                        options: { colsize = 1, rowsize = 1 }
+                        options: { colsize = 1, rowsize = 1, data  }
                     } = series,
                     colorAxis = (
                         chart.colorAxis &&
@@ -482,12 +481,14 @@ class HeatmapSeries extends ScatterSeries {
                         xDelta = xMax - xMin,
                         yDelta = yMax - yMin,
                         imgMultiple = 8.0,
-                        [lastX, lastY] = ([xDelta / colsize, yDelta / rowsize]
-                            .map((slots): number => (
-                                Math.round(
-                                    imgMultiple * (slots / imgMultiple)
+                        [lastX, lastY] = (
+                            [xDelta / colsize, yDelta / rowsize]
+                                .map((slots): number => (
+                                    Math.round(
+                                        imgMultiple * (slots / imgMultiple)
+                                    )
                                 )
-                            ))
+                            )
                         ),
                         [
                             transformX,
@@ -514,15 +515,20 @@ class HeatmapSeries extends ScatterSeries {
                         canvasWidth = canvas.width = lastX + 1,
                         canvasHeight = canvas.height = lastY + 1,
                         canvasArea = canvasWidth * canvasHeight,
-                        pixelToPointScale = (pointAmount - 1) / canvasArea,
+                        heatmapData = pick(data, series.points),
+                        pixelToPointScale =  (
+                            (heatmapData.length - 1)
+                            / canvasArea
+                        ),
                         pixelData = new Uint8ClampedArray(canvasArea * 4),
+                        dummyPoint = new HeatmapPoint(),
 
-                        colorFromPoint = (p: HeatmapPoint): number[] => {
+                        colorFromPoint = (value: number): number[] => {
                             const rgba = ((
                                 colorAxis.toColor(
-                                    p.value ||
+                                    value ||
                                     0,
-                                    pick(p)
+                                    dummyPoint
                                 ) as string)
                                 .split(')')[0]
                                 .split('(')[1]
@@ -548,13 +554,12 @@ class HeatmapSeries extends ScatterSeries {
                     series.buildKDTree();
 
                     for (let i = 0; i < canvasArea; i++) {
-                        const p = points[
+                        const {x, y, value} = heatmapData[
                             Math.ceil(pixelToPointScale * i)
-                        ];
+                        ] as any;
 
                         pixelData.set(
-                            colorFromPoint(p),
-                            pointInPixels(p.x, p.y)
+                            colorFromPoint(value), pointInPixels(x, y)
                         );
                     }
 
