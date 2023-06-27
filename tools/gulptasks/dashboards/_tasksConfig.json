@@ -1,7 +1,0 @@
-{
-    "bundleSourceFolder": "code/dashboards/es-modules/masters-dashboards",
-    "bundleTargetFolder": "code/dashboards/",
-    "esModulesFolder": "code/dashboards/es-modules/",
-    "namespace": "Dashboards",
-    "typeScriptFolder": "ts/masters-dashboards/"
-}

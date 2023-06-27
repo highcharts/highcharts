@@ -11,12 +11,12 @@ const gulp = require('gulp');
  * */
 
 /**
- * Gulp task to run the building process of distribution js files for "older"
- * browsers. By default it builds the js distribution files (without DTS) into
- * the ./code/es5 folder.
+ * Gulp task to run the building process of distribution js files the classic
+ * way.
  *
+ * @deprecated
  * @return {Promise<void>}
- *         Promise to keep
+ * Promise to keep
  */
 async function dashboardsScripts() {
 
@@ -26,10 +26,11 @@ async function dashboardsScripts() {
     const fsLib = require('../lib/fs');
     const logLib = require('../lib/log');
     const processLib = require('../lib/process');
-
-    logLib.message('Generating Dashboards code...');
+    const tasksConfig = require('./_config.json');
 
     try {
+        logLib.message('Generating Dashboards code...');
+
         processLib.isRunning('scripts-dashboards', true);
 
         fsLib.deleteDirectory('js/', true);
@@ -50,7 +51,7 @@ async function dashboardsScripts() {
         // Fix masters
         fs.renameSync('js/masters-dashboards', 'js/masters');
 
-        // Assemble
+        // Assemble bundle
         await buildTool
             .getBuildScripts({
                 base: 'js/masters/',
@@ -60,8 +61,8 @@ async function dashboardsScripts() {
                         argv.file.split(',') :
                         null
                 ),
-                output: 'code/dashboards/',
-                product: 'Dashboards'
+                namespace: 'Dashboards',
+                output: tasksConfig.bundleTargetFolder
             })
             .fnFirstBuild();
 
@@ -71,4 +72,4 @@ async function dashboardsScripts() {
     }
 }
 
-gulp.task('dashboards/scripts', gulp.series(dashboardsScripts, 'scripts'));
+gulp.task('dashboards/scripts', dashboardsScripts);

@@ -20,7 +20,7 @@ async function dashboardsScriptsESX() {
     const logLib = require('../lib/log');
     const processLib = require('../lib/process');
     const scriptsESX = require('../scripts-esx');
-    const tasksConfig = require('./_tasksConfig.json');
+    const tasksConfig = require('./_config.json');
 
     try {
         processLib.isRunning('dashboards-scripts', true);

@@ -15,7 +15,8 @@ const gulp = require('gulp');
  * @return {Promise}
  * Promise to keep
  */
-async function bundle() {
+async function distMinify() {
+
     const argv = require('yargs').argv;
     const fs = require('fs');
     const fsLib = require('../lib/fs');
@@ -23,9 +24,10 @@ async function bundle() {
     const path = require('path');
     const processLib = require('../lib/process');
     const scriptsESX = require('../scripts-esx');
-    const tasksConfig = require('./_tasksConfig.json');
+    const tasksConfig = require('./_config.json');
 
-    const sourceFolder = tasksConfig.sourceFolder,
+    const esModulesFolder = tasksConfig.esModulesFolder,
+        sourceFolder = tasksConfig.sourceFolder,
         targetFolder = tasksConfig.targetFolder;
 
     await scriptsESX({
@@ -54,7 +56,7 @@ async function bundle() {
         inputPath = filePathes[i];
 
         if (
-            inputPath.startsWith('code/es-modules/') ||
+            inputPath.startsWith(esModulesFolder) ||
             !inputPath.endsWith('.src.js')
         ) {
             continue;
@@ -113,6 +115,4 @@ async function bundle() {
     ]);
 }
 
-gulp.task('dashboards/bundle', gulp.series('dashboards/scripts', bundle));
-
-module.exports = bundle;
+gulp.task('dashboards/dist-minify', distMinify);
