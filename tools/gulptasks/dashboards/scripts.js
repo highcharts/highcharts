@@ -71,10 +71,4 @@ async function dashboardsScripts() {
     }
 }
 
-gulp.task('dashboards/scripts', gulp.series(
-    'scripts-ts',
-    'scripts-css',
-    'scripts-js',
-    'scripts-code',
-    dashboardsScripts
-));
+gulp.task('dashboards/scripts', gulp.series(dashboardsScripts, 'scripts'));
