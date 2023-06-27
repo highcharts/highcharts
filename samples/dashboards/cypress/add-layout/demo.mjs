@@ -61,24 +61,19 @@ Dashboards.board('container', {
     },
 
     gui: {
-        layouts: [
-            {
-                id: 'layout-1', // mandatory
-                rowClassName: 'custom-row', // optional
-                cellClassName: 'custom-cell', // optional
-                rows: [{
-                    cells: [{
-                        id: 'dashboard-col-0'
-                    }, {
-                        id: 'dashboard-col-1'
-                    }]
+        layouts: [{
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-0'
                 }, {
-                    cells: [{
-                        id: 'dashboard-col-2'
-                    }]
+                    id: 'dashboard-col-1'
                 }]
-            }
-        ]
+            }, {
+                cells: [{
+                    id: 'dashboard-col-2'
+                }]
+            }]
+        }]
     },
     components: [
         {
