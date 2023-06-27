@@ -101,46 +101,42 @@ async function setupBoard() {
         },
         gui: {
             layouts: [{
-                id: 'layout-1', // mandatory
                 rows: [{
                     cells: [{
-                        id: 'time-range-selector',
-                        width: '100%'
+                        id: 'time-range-selector'
                     }]
                 }, {
                     cells: [{
-                        id: 'world-map',
-                        width: '50%'
+                        id: 'world-map'
                     }, {
                         id: 'kpi-layout',
-                        width: '50%',
                         layout: {
                             rows: [{
                                 cells: [{
                                     id: 'kpi-data',
-                                    width: '33.333%',
+                                    width: '1/3',
                                     height: '204px'
                                 }, {
                                     id: 'kpi-temperature',
-                                    width: '33.333%',
+                                    width: '1/3',
                                     height: '204px'
                                 }, {
                                     id: 'kpi-max-temperature',
-                                    width: '33.333%',
+                                    width: '1/3',
                                     height: '204px'
                                 }]
                             }, {
                                 cells: [{
                                     id: 'kpi-rain',
-                                    width: '33.333%',
+                                    width: '1/3',
                                     height: '204px'
                                 }, {
                                     id: 'kpi-ice',
-                                    width: '33.333%',
+                                    width: '1/3',
                                     height: '204px'
                                 }, {
                                     id: 'kpi-frost',
-                                    width: '33.333%',
+                                    width: '1/3',
                                     height: '204px'
                                 }]
                             }]
@@ -148,11 +144,9 @@ async function setupBoard() {
                     }]
                 }, {
                     cells: [{
-                        id: 'selection-grid',
-                        width: '50%'
+                        id: 'selection-grid'
                     }, {
-                        id: 'city-chart',
-                        width: '50%'
+                        id: 'city-chart'
                     }]
                 }]
             }]
@@ -163,7 +157,6 @@ async function setupBoard() {
             chartOptions: {
                 chart: {
                     height: '80px',
-                    styledMode: true,
                     type: 'spline'
                 },
                 credits: {
