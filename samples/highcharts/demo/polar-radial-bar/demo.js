@@ -65,7 +65,8 @@ Highcharts.chart('container', {
             stacking: 'normal',
             borderWidth: 0,
             pointPadding: 0,
-            groupPadding: 0.15
+            groupPadding: 0.15,
+            borderRadius: '50%'
         }
     },
     series: [{
