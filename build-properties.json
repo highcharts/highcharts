@@ -20,7 +20,8 @@
     },
     "Highcharts Dashboards": {
       "cdnpath": "/dashboards",
-      "distpath": "/dashboards"
+      "distpath": "/dashboards",
+      "version": "1.0.0"
     }
   }
 }

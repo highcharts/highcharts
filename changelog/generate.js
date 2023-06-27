@@ -188,6 +188,7 @@ const getFile = url => new Promise((resolve, reject) => {
                 'Highcharts Dashboards': 'dashboards'
             }[name];
 
+        log = log || [];
         log = washPRLog(name, log);
 
         const upgradeNotes = [];
@@ -202,10 +203,12 @@ const getFile = url => new Promise((resolve, reject) => {
         // Start the output string
         outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
 
-        if (name !== 'Highcharts') {
-            outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
-        } else if (log.length === 0) {
-            outputString += '- No changes for the basic Highcharts package.';
+        if (name !== 'Highcharts Dashboards') {
+            if (name !== 'Highcharts') {
+                outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
+            } else if (log.length === 0) {
+                outputString += '- No changes for the basic Highcharts package.';
+            }
         }
 
         log.forEach((change, i) => {
@@ -302,8 +305,12 @@ const getFile = url => new Promise((resolve, reject) => {
                 var name;
 
                 if (products) {
-                    products = products.replace('var products = ', '');
+                    products = products.replace('var products=', '');
                     products = JSON.parse(products);
+
+                    if (params.dashboards) {
+                        products = { 'Highcharts Dashboards': products['Highcharts Dashboards'] };
+                    }
                 }
 
                 for (name in products) {
@@ -311,7 +318,6 @@ const getFile = url => new Promise((resolve, reject) => {
                     if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
                         const version = params.buildMetadata ? `${pack.version}+build.${getLatestGitSha()}` : pack.version;
 
-                        products[name].nr = version;
                         products[name].date =
                             d.getFullYear() + '-' +
                             pad(d.getMonth() + 1, 2) + '-' +
@@ -319,7 +325,7 @@ const getFile = url => new Promise((resolve, reject) => {
 
                         review.push(buildMarkdown(
                             name,
-                            version,
+                            products[name].nr || version,
                             products[name].date,
                             log,
                             products,

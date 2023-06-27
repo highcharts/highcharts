@@ -22,6 +22,7 @@ const TARGET_FILE = Path.join('build', 'dist', 'products.js');
  * */
 
 /**
+ * Creates a products.js file with version numbers for each product.
  * @return {Promise<void>}
  *         Promise to keep
  */
@@ -42,22 +43,33 @@ function distProductsJS() {
             ''
         );
 
-        const nr = (
-            buildProperties.version ||
-            packageJson.version ||
-            ''
-        );
+        function getNr(name) {
+            return (
+                (name && buildProperties.products[name].version) ||
+                buildProperties.version ||
+                packageJson.version ||
+                ''
+            );
+        }
 
         Fs.writeFileSync(
             TARGET_FILE,
-            (
-                'var products = ' + JSON.stringify({
-                    Highcharts: { date, nr },
-                    'Highcharts Stock': { date, nr },
-                    'Highcharts Maps': { date, nr },
-                    'Highcharts Gantt': { date, nr }
-                }, undefined, '    ') + '\n'
-            )
+            'var products = ' +
+                JSON.stringify(
+                    {
+                        Highcharts: { date, nr: getNr() },
+                        'Highcharts Stock': { date, nr: getNr() },
+                        'Highcharts Maps': { date, nr: getNr() },
+                        'Highcharts Gantt': { date, nr: getNr() },
+                        'Highcharts Dashboards': {
+                            date,
+                            nr: getNr('Highcharts Dashboards')
+                        }
+                    },
+                    undefined,
+                    '    '
+                ) +
+                '\n'
         );
 
         LogLib.success('Created', TARGET_FILE);
