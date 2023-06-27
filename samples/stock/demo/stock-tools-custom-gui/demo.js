@@ -1,109 +1,114 @@
-function addPopupEvents(chart) {
-    var closePopupButtons = document.getElementsByClassName('highcharts-close-popup');
-    // Close popup button:
-    Highcharts.addEvent(
-        closePopupButtons[0],
-        'click',
-        function () {
-            this.parentNode.style.display = 'none';
-        }
-    );
+(async () => {
 
-    Highcharts.addEvent(
-        closePopupButtons[1],
-        'click',
-        function () {
-            this.parentNode.style.display = 'none';
-        }
-    );
+    function addPopupEvents(chart) {
+        var closePopupButtons = document.getElementsByClassName('highcharts-close-popup');
+        // Close popup button:
+        Highcharts.addEvent(
+            closePopupButtons[0],
+            'click',
+            function () {
+                this.parentNode.style.display = 'none';
+            }
+        );
 
-    // Add an indicator from popup
-    Highcharts.addEvent(
-        document.querySelectorAll('.highcharts-popup-indicators button')[0],
-        'click',
-        function () {
-            var typeSelect = document.querySelectorAll(
-                    '.highcharts-popup-indicators select'
-                )[0],
-                type = typeSelect.options[typeSelect.selectedIndex].value,
-                period = document.querySelectorAll(
-                    '.highcharts-popup-indicators input'
-                )[0].value || 14;
+        Highcharts.addEvent(
+            closePopupButtons[1],
+            'click',
+            function () {
+                this.parentNode.style.display = 'none';
+            }
+        );
 
-            chart.addSeries({
-                linkedTo: 'aapl-ohlc',
-                type: type,
-                params: {
-                    period: parseInt(period, 10)
-                }
-            });
+        // Add an indicator from popup
+        Highcharts.addEvent(
+            document.querySelectorAll('.highcharts-popup-indicators button')[0],
+            'click',
+            function () {
+                var typeSelect = document.querySelectorAll(
+                        '.highcharts-popup-indicators select'
+                    )[0],
+                    type = typeSelect.options[typeSelect.selectedIndex].value,
+                    period = document.querySelectorAll(
+                        '.highcharts-popup-indicators input'
+                    )[0].value || 14;
 
-            chart.stockToolbar.indicatorsPopupContainer.style.display = 'none';
-        }
-    );
-
-    // Update an annotaiton from popup
-    Highcharts.addEvent(
-        document.querySelectorAll('.highcharts-popup-annotations button')[0],
-        'click',
-        function () {
-            var strokeWidth = parseInt(
-                    document.querySelectorAll(
-                        '.highcharts-popup-annotations input[name="stroke-width"]'
-                    )[0].value,
-                    10
-                ),
-                strokeColor = document.querySelectorAll(
-                    '.highcharts-popup-annotations input[name="stroke"]'
-                )[0].value;
-
-            // Stock/advanced annotations have common options under typeOptions
-            if (chart.currentAnnotation.options.typeOptions) {
-                chart.currentAnnotation.update({
-                    typeOptions: {
-                        lineColor: strokeColor,
-                        lineWidth: strokeWidth,
-                        line: {
-                            strokeWidth: strokeWidth,
-                            stroke: strokeColor
-                        },
-                        background: {
-                            strokeWidth: strokeWidth,
-                            stroke: strokeColor
-                        },
-                        innerBackground: {
-                            strokeWidth: strokeWidth,
-                            stroke: strokeColor
-                        },
-                        outerBackground: {
-                            strokeWidth: strokeWidth,
-                            stroke: strokeColor
-                        },
-                        connector: {
-                            strokeWidth: strokeWidth,
-                            stroke: strokeColor
-                        }
+                chart.addSeries({
+                    linkedTo: 'aapl-ohlc',
+                    type: type,
+                    params: {
+                        period: parseInt(period, 10)
                     }
                 });
-            } else {
-                // Basic annotations:
-                chart.currentAnnotation.update({
-                    shapes: [{
-                        'stroke-width': strokeWidth,
-                        stroke: strokeColor
-                    }],
-                    labels: [{
-                        borderWidth: strokeWidth,
-                        borderColor: strokeColor
-                    }]
-                });
-            }
-            chart.stockToolbar.annotationsPopupContainer.style.display = 'none';
-        }
-    );
-}
 
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
+                chart.stockToolbar.indicatorsPopupContainer.style.display = 'none';
+            }
+        );
+
+        // Update an annotaiton from popup
+        Highcharts.addEvent(
+            document.querySelectorAll('.highcharts-popup-annotations button')[0],
+            'click',
+            function () {
+                var strokeWidth = parseInt(
+                        document.querySelectorAll(
+                            '.highcharts-popup-annotations input[name="stroke-width"]'
+                        )[0].value,
+                        10
+                    ),
+                    strokeColor = document.querySelectorAll(
+                        '.highcharts-popup-annotations input[name="stroke"]'
+                    )[0].value;
+
+                // Stock/advanced annotations have common options under typeOptions
+                if (chart.currentAnnotation.options.typeOptions) {
+                    chart.currentAnnotation.update({
+                        typeOptions: {
+                            lineColor: strokeColor,
+                            lineWidth: strokeWidth,
+                            line: {
+                                strokeWidth: strokeWidth,
+                                stroke: strokeColor
+                            },
+                            background: {
+                                strokeWidth: strokeWidth,
+                                stroke: strokeColor
+                            },
+                            innerBackground: {
+                                strokeWidth: strokeWidth,
+                                stroke: strokeColor
+                            },
+                            outerBackground: {
+                                strokeWidth: strokeWidth,
+                                stroke: strokeColor
+                            },
+                            connector: {
+                                strokeWidth: strokeWidth,
+                                stroke: strokeColor
+                            }
+                        }
+                    });
+                } else {
+                // Basic annotations:
+                    chart.currentAnnotation.update({
+                        shapes: [{
+                            'stroke-width': strokeWidth,
+                            stroke: strokeColor
+                        }],
+                        labels: [{
+                            borderWidth: strokeWidth,
+                            borderColor: strokeColor
+                        }]
+                    });
+                }
+                chart.stockToolbar.annotationsPopupContainer.style.display = 'none';
+            }
+        );
+    }
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+    ).then(response => response.json());
 
     // split the data set into ohlc and volume
     var ohlc = [],
@@ -234,4 +239,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }]
         }
     });
-});
+})();
