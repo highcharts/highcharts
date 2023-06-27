@@ -7,7 +7,6 @@ Highcharts.chart('container', {
     },
     navigation: {
         annotationsOptions: {
-            crop: false,
             labelOptions: {
                 crop: false
             }
