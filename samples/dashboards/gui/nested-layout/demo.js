@@ -1,6 +1,6 @@
 const csvData = document.getElementById('csv').innerText;
 
-const board = Dashboards.board(
+Dashboards.board(
     'container',
     {
         dataPool: {
@@ -80,8 +80,7 @@ const board = Dashboards.board(
                                     }
                                 },
                                 {
-                                    id: 'db-col-2-nolayout',
-                                    width: '1/3'
+                                    id: 'db-col-2-nolayout'
                                 }
                             ]
                         }
