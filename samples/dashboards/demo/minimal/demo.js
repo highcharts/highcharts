@@ -1,5 +1,11 @@
 const csvData = document.getElementById('csv').innerText;
 
+Highcharts.setOptions({
+    title: {
+        text: ''
+    }
+});
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -22,12 +28,14 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
+                    id: 'title'
+                }]
+            }, {
+                cells: [{
                     id: 'dashboard-col-0',
-                    width: '50%'
+                    width: '2/3'
                 }, {
                     id: 'dashboard-col-1'
-                }, {
-                    id: 'dashboard-col-12'
                 }]
             }, {
                 cells: [{
@@ -37,6 +45,13 @@ Dashboards.board('container', {
         }]
     },
     components: [{
+        cell: 'title',
+        type: 'HTML',
+        elements: [{
+            tagName: 'h1',
+            textContent: 'Vitamin A in Foods'
+        }]
+    }, {
         sync: {
             visibility: true,
             highlight: true,
@@ -81,33 +96,7 @@ Dashboards.board('container', {
                 type: 'column'
             }
         }
-    },
-    {
-        cell: 'dashboard-col-12',
-        connector: {
-            id: 'Vitamin'
-        },
-        sync: {
-            visibility: true,
-            highlight: true,
-            extremes: true
-        },
-        type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
-        },
-        chartOptions: {
-            xAxis: {
-                type: 'category'
-            },
-            chart: {
-                animation: false,
-                type: 'scatter'
-            }
-        }
-    },
-    {
+    }, {
         cell: 'dashboard-col-2',
         connector: {
             id: 'Vitamin'
