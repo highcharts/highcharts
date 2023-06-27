@@ -35,8 +35,8 @@ setupBoard();
 async function setupBoard() {
     let activeCity = 'New York',
         activeColumn = 'TX',
-        activeSelection = [Date.UTC(2010, 0, 5), Date.UTC(2010, 11, 25)],
         activeScale = 'C',
+        activeTimeRange = [Date.UTC(2010, 0, 5), Date.UTC(2010, 11, 25)],
         selectionTimeout = -1;
 
     // Initialize board with most basic data
@@ -172,32 +172,11 @@ async function setupBoard() {
                     enabled: false
                 },
                 series: [{
-                    // type: 'spline',
                     name: 'Timeline',
-                    data: (function () {
-                        const dateEnd = new Date(Date.UTC(2010, 11, 25)),
-                            dates = [];
-
-                        let date = new Date(Date.UTC(1951, 0, 5));
-
-                        while (date <= dateEnd) {
-                            dates.push([date.getTime(), 0]);
-                            date = date.getUTCDate() >= 25 ?
-                                new Date(Date.UTC(
-                                    date.getFullYear(),
-                                    date.getUTCMonth() + 1,
-                                    5
-                                )) :
-                                new Date(Date.UTC(
-                                    date.getFullYear(),
-                                    date.getUTCMonth(),
-                                    date.getUTCDate() + 10
-                                ));
-                        }
-
-                        return dates;
-                    }()),
-                    showInNavigator: false,
+                    data: [
+                        [Date.UTC(1951, 0, 5), 0],
+                        [Date.UTC(2010, 11, 25), 0]
+                    ],
                     marker: {
                         enabled: false
                     },
@@ -250,8 +229,8 @@ async function setupBoard() {
                 },
                 xAxis: {
                     visible: false,
-                    min: activeSelection[0],
-                    max: activeSelection[1],
+                    min: activeTimeRange[0],
+                    max: activeTimeRange[1],
                     minRange: 30 * 24 * 3600 * 1000, // 30 days
                     maxRange: 2 * 365 * 24 * 3600 * 1000, // 2 years
                     events: {
@@ -259,10 +238,10 @@ async function setupBoard() {
                             window.clearTimeout(selectionTimeout);
                             selectionTimeout = window.setTimeout(async () => {
                                 if (
-                                    activeSelection[0] !== e.min ||
-                                    activeSelection[1] !== e.max
+                                    activeTimeRange[0] !== e.min ||
+                                    activeTimeRange[1] !== e.max
                                 ) {
-                                    activeSelection = [e.min, e.max];
+                                    activeTimeRange = [e.min, e.max];
                                     await updateBoard(
                                         board,
                                         activeCity,
@@ -993,7 +972,7 @@ async function updateBoard(board, city, column, scale, newData) {
 
     if (newData) {
         // Update time range selector
-        timeRangeSelector.chart.navigator.series[0].update({
+        timeRangeSelector.chart.series[0].update({
             type: column[0] === 'T' ? 'spline' : 'column',
             data: cityTable.modified
                 .getRows(void 0, void 0, ['time', column])
