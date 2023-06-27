@@ -1,28 +1,21 @@
-const { board } = Dashboards;
-const CSVConnector = Dashboards.DataConnector.types.CSV;
-
-// A shared connector
-const connector = new CSVConnector({
-    csv: `$GME,$AMC,$NOK
- 4,5,6
- 1,5,2
- 41,23,2`,
-    firstRowAsNames: true
-});
-
-connector.load();
-
-board('container', {
+Dashboards.board('container', {
+    dataPool: {
+        connectors: [{
+            id: 'connector',
+            type: 'CSV',
+            options: {
+                csv: `$GME,$AMC,$NOK
+            4,5,6
+            1,5,2
+            41,23,2`,
+                firstRowAsNames: true
+            }
+        }]
+    },
     gui: {
         enabled: true,
         layouts: [{
-            id: 'layout-1', // mandatory
-            style: {
-                fontSize: '1.5em',
-                color: 'blue'
-            },
             rows: [{
-                // id: 'dashboard-row-0',
                 cells: [
                     {
                         id: 'dashboard-col-0'
@@ -63,7 +56,9 @@ board('container', {
                 }
             }
         },
-        connector,
+        connector: {
+            id: 'connector'
+        },
         sync: {
             extremes: true
         }
@@ -81,7 +76,9 @@ board('container', {
                 minRange: 1
             }]
         },
-        connector,
+        connector: {
+            id: 'connector'
+        },
         sync: {
             extremes: true
         }
@@ -105,10 +102,11 @@ board('container', {
                 data: [-1, 0, 2]
             }]
         },
-        connector,
+        connector: {
+            id: 'connector'
+        },
         sync: {
             extremes: true
         }
-    }
-    ]
-});
+    }]
+}, true);
