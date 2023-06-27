@@ -310,6 +310,8 @@ const getFile = url => new Promise((resolve, reject) => {
 
                     if (params.dashboards) {
                         products = { 'Highcharts Dashboards': products['Highcharts Dashboards'] };
+                    } else {
+                        delete products['Highcharts Dashboards'];
                     }
                 }
 
