@@ -32,8 +32,22 @@ Dashboards.board('container', {
                 }]
             }, {
                 cells: [{
+                    layout: {
+                        rows: [{
+                            cells: [{
+                                id: 'kpi-vitamin-a',
+                                height: 214
+                            }]
+                        }, {
+                            cells: [{
+                                id: 'kpi-iron',
+                                height: 214
+                            }]
+                        }]
+                    }
+                }, {
                     id: 'dashboard-col-0',
-                    width: '2/3'
+                    width: '1/2'
                 }, {
                     id: 'dashboard-col-1'
                 }]
@@ -45,6 +59,18 @@ Dashboards.board('container', {
         }]
     },
     components: [{
+        type: 'KPI',
+        cell: 'kpi-vitamin-a',
+        value: 900,
+        valueFormat: '{value} mcg',
+        title: 'Recommended daily dose of Vitamin A'
+    }, {
+        type: 'KPI',
+        cell: 'kpi-iron',
+        value: 8,
+        title: 'Recommended daily dose of Iron',
+        valueFormat: '{value} mcg'
+    }, {
         cell: 'title',
         type: 'HTML',
         elements: [{
