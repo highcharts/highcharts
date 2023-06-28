@@ -41,6 +41,7 @@ const {
 import U from '../../Core/Utilities.js';
 import PointerEvent from '../../Core/PointerEvent.js';
 import Point from '../../Core/Series/Point.js';
+import type MapView from '../../Maps/MapView.js';
 
 const {
     defined,
@@ -56,6 +57,92 @@ const {
  */
 function normalizeLonValue(lon: number): number {
     return lon - Math.floor((lon + 180) / 360) * 360;
+}
+
+/**
+ * Project ImageData to actual mapView projection used on a chart.
+ * @private
+ */
+function getProjectedImageData(
+    mapView: MapView,
+    projectedWidth: number,
+    projectedHeight: number,
+    cartesianImageData: ImageData,
+    canvas: HTMLCanvasElement,
+    horizontalShift: number,
+    verticalShift: number
+): Uint8ClampedArray {
+    const projectedPixelData = new Uint8ClampedArray(
+        projectedWidth * projectedHeight * 4
+    );
+    let y = -1;
+    // For each pixel on the map plane, find the map
+    // coordinate and get the color value
+    for (let i = 0; i < projectedPixelData.length; i += 4) {
+        const x = (i / 4) % projectedWidth;
+
+        if (x === 0) {
+            y++;
+        }
+        const projectedCoords = mapView.pixelsToLonLat({
+                x: horizontalShift + x,
+                y: verticalShift + y
+            }),
+            lambda = pick(
+                mapView.projection.options.rotation?.[0],
+                0
+            );
+
+        if (projectedCoords) {
+            // Normalize lon values
+            if (
+                projectedCoords.lon > -180 - lambda &&
+                projectedCoords.lon < 180 - lambda
+            ) {
+                projectedCoords.lon =
+                    normalizeLonValue(projectedCoords.lon);
+            }
+
+            const projected = [
+                    projectedCoords.lon,
+                    projectedCoords.lat
+                ],
+                scale = 1,
+                cvs2PixelX =
+                    projected[0] * canvas.width /
+                    (360 * scale) +
+                    canvas.width / 2,
+                cvs2PixelY = -1 *
+                    projected[1] * canvas.height /
+                    (180 * scale) +
+                    canvas.height / 2,
+                redPos = (
+                    // Rows
+                    Math.floor(cvs2PixelY) *
+                    canvas.width * 4 +
+                    // Columns
+                    Math.round(cvs2PixelX) * 4
+                );
+
+            if (
+                cvs2PixelX >= 0 &&
+                cvs2PixelX <= canvas.width &&
+                cvs2PixelY >= 0 &&
+                cvs2PixelY <= canvas.height
+            ) {
+                projectedPixelData[i] =
+                    cartesianImageData.data[redPos];
+                projectedPixelData[i + 1] =
+                    cartesianImageData.data[redPos + 1];
+                projectedPixelData[i + 2] =
+                    cartesianImageData.data[redPos + 2];
+                projectedPixelData[i + 3] =
+                    cartesianImageData.data[redPos + 3];
+            }
+        }
+    }
+
+    return projectedPixelData;
 }
 
 /* *
@@ -366,6 +453,7 @@ class GeoHeatmapSeries extends MapSeries {
                             );
                         series.directTouch = false; // Needed for tooltip
 
+                        // First pixelData represents the geo coordinates
                         for (let i = 0; i < points.length; i++) {
                             const p = points[i],
                                 sourceArr = new Uint8ClampedArray(
@@ -396,92 +484,35 @@ class GeoHeatmapSeries extends MapSeries {
                         const img =
                             new ImageData(pixelData, canvasWidth, canvasHeight);
 
+                        // Next step is to upscale pixelData to big image to get
+                        // the blur on the interpolation
+
                         ctx.putImageData(img, 0, 0);
                         // Now we have an unscaled version of our ImageData
                         // let's make the compositing mode to 'copy' so that
                         // our next drawing op erases whatever was there
                         // previously just like putImageData would have done
                         ctx.globalCompositeOperation = 'copy';
-                        // Now we can draw ourself over ourself.
+                        // Now we can draw ourself over ourself
                         ctx.drawImage(
                             canvas,
                             0, 0, img.width, img.height, // Grab the ImageData
                             0, 0, canvas.width, canvas.height // Scale it
                         );
 
-                        const projectedPixelData = new Uint8ClampedArray(
-                                projectedWidth * projectedHeight * 4
-                            ),
-                            cartesianImageData = ctx.getImageData(
+                        // Add projection to upscaled ImageData
+                        const cartesianImageData = ctx.getImageData(
                                 0, 0, canvas.width, canvas.height
+                            ),
+                            projectedPixelData = getProjectedImageData(
+                                mapView,
+                                projectedWidth,
+                                projectedHeight,
+                                cartesianImageData,
+                                canvas,
+                                dimensions.x,
+                                dimensions.y
                             );
-
-                        let y = -1;
-                        // For each pixel on the map plane, find the map
-                        // coordinate and get the color value
-                        for (let i = 0; i < projectedPixelData.length; i += 4) {
-                            const x = (i / 4) % projectedWidth;
-
-                            if (x === 0) {
-                                y++;
-                            }
-                            const projectedCoords = mapView.pixelsToLonLat({
-                                    x: dimensions.x + x,
-                                    y: dimensions.y + y
-                                }),
-                                lambda = pick(
-                                    mapView.projection.options.rotation?.[0],
-                                    0
-                                );
-
-                            if (projectedCoords) {
-                                // Normalize lon values
-                                if (
-                                    projectedCoords.lon > -180 - lambda &&
-                                    projectedCoords.lon < 180 - lambda
-                                ) {
-                                    projectedCoords.lon =
-                                        normalizeLonValue(projectedCoords.lon);
-                                }
-
-                                const projected = [
-                                        projectedCoords.lon,
-                                        projectedCoords.lat
-                                    ],
-                                    scale = 1,
-                                    cvs2PixelX =
-                                        projected[0] * canvas.width /
-                                        (360 * scale) +
-                                        canvas.width / 2,
-                                    cvs2PixelY = -1 *
-                                        projected[1] * canvas.height /
-                                        (180 * scale) +
-                                        canvas.height / 2,
-                                    redPos = (
-                                        // Rows
-                                        Math.floor(cvs2PixelY) *
-                                        canvas.width * 4 +
-                                        // Columns
-                                        Math.round(cvs2PixelX) * 4
-                                    );
-
-                                if (
-                                    cvs2PixelX >= 0 &&
-                                    cvs2PixelX <= canvas.width &&
-                                    cvs2PixelY >= 0 &&
-                                    cvs2PixelY <= canvas.height
-                                ) {
-                                    projectedPixelData[i] =
-                                        cartesianImageData.data[redPos];
-                                    projectedPixelData[i + 1] =
-                                        cartesianImageData.data[redPos + 1];
-                                    projectedPixelData[i + 2] =
-                                        cartesianImageData.data[redPos + 2];
-                                    projectedPixelData[i + 3] =
-                                        cartesianImageData.data[redPos + 3];
-                                }
-                            }
-                        }
 
                         const projectedImg = new ImageData(
                             projectedPixelData,
