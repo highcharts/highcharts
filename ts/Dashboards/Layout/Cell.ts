@@ -451,8 +451,8 @@ class Cell extends GUIElement {
      * @param width
      * % value or 'auto' or px
      *
-     * @param width
-     * % value or 'auto' or px
+     * @param height
+     * value in px
      */
     public setSize(
         width?: (string|number),
