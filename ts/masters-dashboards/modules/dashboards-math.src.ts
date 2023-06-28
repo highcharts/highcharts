@@ -8,29 +8,13 @@
  * License: www.highcharts.com/license
  */
 
-
 'use strict';
 
-
-/* *
- *
- *  Imports
- *
- * */
-
-
+import Dashboards from '../../Dashboards/Globals.js';
 import Formula from '../../Data/Formula/Formula.js';
 import MathModifier from '../../Data/Modifiers/MathModifier.js';
 
-
-/* *
- *
- *  Namespace
- *
- * */
-
-
-const G: AnyRecord = window.Dashboards;
+const G: AnyRecord = Dashboards;
 
 if (G) {
     G.Formula = Formula;
@@ -38,14 +22,6 @@ if (G) {
         G.DataModifier.types.Math = MathModifier;
     }
 }
-
-
-/* *
- *
- *  Default Export
- *
- * */
-
 
 const DashboardsMath = {
     Formula,
