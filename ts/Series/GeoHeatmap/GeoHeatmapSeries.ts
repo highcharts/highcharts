@@ -182,7 +182,37 @@ class GeoHeatmapSeries extends MapSeries {
              */
             rowsize: 1,
 
-            stickyTracking: true
+            stickyTracking: true,
+
+            /**
+             * Make the geoheatmap render its data points as an interpolated
+             * image. It can be used to show a Temperature Map-like charts.
+             *
+             * @type      {boolean}
+             * @default   false
+             * @since     @next
+             * @product   highmaps
+             * @apioption plotOptions.geoheatmap.interpolation
+             */
+            interpolation: false,
+
+            /**
+             * Represents how much blur should be added to interpolated image.
+             *
+             *  * **Note:** Useful, if the data is spread into wide range of
+             *  longitue and latitude values.
+             *
+             * @sample maps/series-geoheatmap/turkey-fire-areas
+             *         Simple demo of GeoHeatmap interpolation with increased
+             *         blur
+             *
+             * @type      {number}
+             * @default   1
+             * @since     @next
+             * @product   highmaps
+             * @apioption plotOptions.geoheatmap.interpolationBlur
+             */
+            interpolationBlur: 1
 
         } as GeoHeatmapSeriesOptions);
 
