@@ -19,4 +19,15 @@ describe('JSON serialization test', () => {
         clickElementInContextMenu('Delete current dashboard');
         clickElementInContextMenu('Import saved dashboard');
    });
+
+
+   it('should save state after dragging.', () => {
+        cy.toggleEditMode();
+        cy.get('#cell-1').click();
+        cy.get('.highcharts-dashboards-edit-toolbar-cell').children()
+            .first()
+            .trigger('mousedown');
+        cy.get('#cell-2').first().trigger('mousemove', 'bottom');
+        cy.get('#cell-2').first().trigger('mouseup', 'bottom');
+   });
 });
