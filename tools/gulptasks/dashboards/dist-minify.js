@@ -12,23 +12,28 @@ const gulp = require('gulp');
 
 /**
  * Creates minified versions of `.src.js` bundles in `/code` folder.
- *
  * @return {Promise}
  * Promise to keep
  */
-function scriptsCompile(filePathes) {
-    const fs = require('fs'),
-        fsLib = require('./lib/fs'),
-        logLib = require('./lib/log'),
-        path = require('path'),
-        processLib = require('./lib/process'),
-        argv = require('yargs').argv;
+async function distMinify() {
 
-    filePathes = filePathes instanceof Array ?
-        filePathes :
-        typeof argv.files === 'string' ?
-            argv.files.split(',').map(filePath => path.join('code', filePath)) :
-            fsLib.getFilePaths('code', true);
+    const argv = require('yargs').argv;
+    const config = require('./_config.json');
+    const fs = require('fs');
+    const fsLib = require('../lib/fs');
+    const logLib = require('../lib/log');
+    const path = require('path');
+    const processLib = require('../lib/process');
+
+    const esModulesFolder = config.esModulesFolder,
+        targetFolder = config.bundleTargetFolder;
+
+    const filePathes = typeof argv.files === 'string' ?
+        argv.files
+            .split(',')
+            .map(filePath => path.join(targetFolder, filePath)) :
+        fsLib
+            .getFilePaths(targetFolder, true);
 
     let promiseChain1 = Promise.resolve(),
         promiseChain2 = Promise.resolve();
@@ -44,19 +49,14 @@ function scriptsCompile(filePathes) {
         inputPath = filePathes[i];
 
         if (
-            inputPath.includes('/es-modules/') ||
+            inputPath.startsWith(esModulesFolder) ||
             !inputPath.endsWith('.src.js')
         ) {
             continue;
         }
 
 
-        const target = (
-                argv.target ||
-                inputPath.includes('/es5/') ?
-                    'ECMASCRIPT5_STRICT' :
-                    'ECMASCRIPT6_STRICT'
-            ),
+        const targetES = (argv.target || 'ECMASCRIPT6_STRICT'),
             outputPath = inputPath.replace('.src.js', '.js'),
             outputMapPath = outputPath + '.map';
 
@@ -71,8 +71,8 @@ function scriptsCompile(filePathes) {
             ' --env CUSTOM' +
             ` --js "${inputPath}"` +
             ` --js_output_file "${outputPath}"` +
-            ` --language_in ${target}` +
-            ` --language_out ${target}`,
+            ` --language_in ${targetES}` +
+            ` --language_out ${targetES}`,
             // ' --platform native', // use native compiler // not GCC 2022
             { silent: 2 }
 
@@ -102,12 +102,10 @@ function scriptsCompile(filePathes) {
     }
 
     // not too many in parallel because of IO
-    return Promise.all([
+    await Promise.all([
         promiseChain1,
         promiseChain2
     ]);
 }
 
-gulp.task('scripts-compile', scriptsCompile);
-
-module.exports = scriptsCompile;
+gulp.task('dashboards/dist-minify', distMinify);

@@ -2,22 +2,18 @@
     "extends": "../tsconfig.json",
     "compilerOptions": {
         "composite": false,
-        "declaration": false,
-        "module": "es6",
+        "declaration": true,
         "moduleResolution": "node",
         "outDir": "../../js/",
         "rootDir": "../",
-        "target": "es5",
-        "lib": [
-            "DOM",
-            "ES5",
-            "ES2015.Promise"
-        ]
+
     },
     "exclude": [
-        "../masters-dashboards/**/*.ts"
+        "../masters/**/*.ts",
+        "../masters-es5/**/*.ts"
     ],
     "include": [
         "../**/*.ts"
     ]
+
 }

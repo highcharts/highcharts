@@ -14,7 +14,7 @@ Then import the package in your project:
 ```
 * Importing as a script
 ``` HTML
-    <script src="https://code.highcharts.com/dashboards.js"></script>
+    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
 To fully utilize the Dashboards potential, there might be a need to load additional modules.  
@@ -75,7 +75,7 @@ Find more information in the [Edit Mode documentation](https://highcharts.com/do
 To create your dashboard, you first have to import the Dashboards package.  
 You also need a placeholder for your dashboard. In this example we will use a div with the id `container`.
 ``` HTML
-    <script src="https://code.highcharts.com/dashboards.js"></script>
+    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 
     <div id="container"></div>
 ```

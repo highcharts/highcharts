@@ -1,4 +1,4 @@
-import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
+import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 
 let exportedLayoutId;
 let board = Dashboards.board('container', {
