@@ -1,10 +1,15 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+    ).then(response => response.json());
+
     const year = 2021,
         monthIndex = 11;
 
     // Create the chart
     Highcharts.stockChart('container', {
-
 
         rangeSelector: {
             selected: 0
@@ -186,4 +191,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/sa
             width: 16
         }]
     });
-});
+})();
