@@ -750,6 +750,7 @@ export default TreegraphSeries;
  * @sample highcharts/series-treegraph/level-options
  *          Treegraph chart with level options applied
  *
+ * @type      {Array<*>}
  * @excluding layoutStartingDirection, layoutAlgorithm
  * @apioption series.treegraph.levels
  */
@@ -758,6 +759,12 @@ export default TreegraphSeries;
  * Set collapsed status for nodes level-wise.
  * @type {boolean}
  * @apioption series.treegraph.levels.collapsed
+ */
+
+/**
+ * Set marker options for nodes at the level.
+ * @extends   series.treegraph.marker
+ * @apioption series.treegraph.levels.marker
  */
 
 /**
