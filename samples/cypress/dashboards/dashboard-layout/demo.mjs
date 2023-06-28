@@ -23,7 +23,7 @@ const chartDemo = {
     }
 };
 
-const board = Dashboards.board('container-nested-layout', {
+Dashboards.board('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
@@ -91,21 +91,21 @@ const board = Dashboards.board('container-nested-layout', {
     gui: {
         enabled: true,
         layouts: [{
-            id: 'layout-in-1', // mandatory
             rows: [{
                 cells: [{
-                    id: 'dashboard-col-nolayout-0'
+                    id: 'cell-1'
                 }, {
-                    id: 'dashboard-col-layout-0'
+                    id: 'cell-2'
                 }]
             }]
         }]
     },
     components: [{
-        cell: 'dashboard-col-nolayout-0',
+        cell: 'cell-1',
         type: 'Highcharts',
         chartOptions: {
             chart: {
+                type: 'pie',
                 animation: false
             },
             legend: {
@@ -123,7 +123,7 @@ const board = Dashboards.board('container-nested-layout', {
             }
         }
     }, {
-        cell: 'dashboard-col-layout-0',
+        cell: 'cell-2',
         ...chartDemo
     }]
 });
