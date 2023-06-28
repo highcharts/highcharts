@@ -18,22 +18,15 @@ const gulp = require('gulp');
 async function distMinify() {
 
     const argv = require('yargs').argv;
+    const config = require('./_config.json');
     const fs = require('fs');
     const fsLib = require('../lib/fs');
     const logLib = require('../lib/log');
     const path = require('path');
     const processLib = require('../lib/process');
-    const scriptsESX = require('../scripts-esx');
-    const tasksConfig = require('./_config.json');
 
-    const esModulesFolder = tasksConfig.esModulesFolder,
-        sourceFolder = tasksConfig.sourceFolder,
-        targetFolder = tasksConfig.targetFolder;
-
-    await scriptsESX({
-        sourceFolder,
-        targetFolder
-    });
+    const esModulesFolder = config.esModulesFolder,
+        targetFolder = config.bundleTargetFolder;
 
     const filePathes = typeof argv.files === 'string' ?
         argv.files

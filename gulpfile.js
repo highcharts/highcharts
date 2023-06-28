@@ -25,6 +25,7 @@ Gulp.registry(new GulpForwardReference());
     'api-upload',
     'dashboards/api-docs',
     'dashboards/dist-minify',
+    'dashboards/dist',
     'dashboards/scripts',
     'default',
     'dist',
