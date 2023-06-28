@@ -72,4 +72,4 @@ async function dashboardsScripts() {
     }
 }
 
-gulp.task('dashboards/scripts', dashboardsScripts);
+gulp.task('dashboards/scripts', gulp.series('scripts-css', dashboardsScripts));
