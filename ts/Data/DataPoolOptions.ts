@@ -40,6 +40,18 @@ export interface DataPoolConnectorOptions
     id: string;
     /**
      * The options of the given connector type.
+     * @example
+     * ```TS
+     * dataPool: {
+     *      connectors: [{
+     *      id: 'my-csv-connector',
+     *      type: 'CSV',
+     *      options: {
+     *          csv: csvData,
+     *          firstRowAsNames: true
+     *          }
+     *       }]
+     * },
      **/
     options: DataConnectorTypes[T]['prototype']['options'];
     /**
