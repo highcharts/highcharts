@@ -30,7 +30,7 @@ There are some additional modules that you might want to include in your webpage
 ```html
     ../dashboards/dashboards.js
     ../dashboards/modules/dashboards-plugin.js
-    ../highcharts/highcharts.js
+    ../highcharts.js
 ```
 
 ### Get started
