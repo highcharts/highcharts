@@ -1,11 +1,5 @@
 const csvData = document.getElementById('csv').innerText;
 
-Highcharts.setOptions({
-    title: {
-        text: ''
-    }
-});
-
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -36,18 +30,17 @@ Dashboards.board('container', {
                         rows: [{
                             cells: [{
                                 id: 'kpi-vitamin-a',
-                                height: 214
+                                height: 205
                             }]
                         }, {
                             cells: [{
                                 id: 'kpi-iron',
-                                height: 214
+                                height: 205
                             }]
                         }]
                     }
                 }, {
-                    id: 'dashboard-col-0',
-                    width: '1/2'
+                    id: 'dashboard-col-0'
                 }, {
                     id: 'dashboard-col-1'
                 }]
