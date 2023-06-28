@@ -23,7 +23,7 @@ const chartDemo = {
     }
 };
 
-Dashboards.board('container-nested-layout', {
+const board = Dashboards.board('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
