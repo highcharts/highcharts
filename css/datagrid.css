@@ -92,7 +92,6 @@
 .hc-dg-outer-container {
     position: absolute;
     width: 100%;
-    height: 400px;
     bottom: 0;
     overflow: scroll;
     z-index: 0;
