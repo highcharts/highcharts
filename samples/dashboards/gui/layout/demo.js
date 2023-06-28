@@ -1,30 +1,11 @@
-let board = Dashboards.board('container', {
+Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
             enabled: true,
             items: [
                 'editMode',
-                'viewFullscreen',
-                {
-                    id: 'export-dashboard',
-                    text: 'Export dashboard',
-                    type: 'button',
-                    events: {
-                        click: function () {
-                            board.exportLocal();
-                        }
-                    }
-                }, {
-                    id: 'import-dashboard',
-                    text: 'Import saved dashboard',
-                    type: 'button',
-                    events: {
-                        click: function () {
-                            board = Dashboards.Board.importLocal();
-                        }
-                    }
-                }
+                'viewFullscreen'
             ]
         },
         lang: {
@@ -36,9 +17,7 @@ let board = Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'dashboard-col-0',
-                    width: 500,
-                    height: 400
+                    id: 'dashboard-col-0'
                 }, {
                     id: 'dashboard-col-1'
                 }]
