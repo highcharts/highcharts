@@ -450,25 +450,41 @@ class Cell extends GUIElement {
      *
      * @param width
      * % value or 'auto' or px
+     *
+     * @param height
+     * value in px
      */
     public setSize(
-        width: (string|number)
+        width?: (string|number),
+        height?: (string|number)
     ): void {
         const cell = this,
             editMode = cell.row.layout.board.editMode;
 
         if (cell.container) {
-            if (width === 'auto' && cell.container.style.flex !== '1 1 0%') {
-                cell.container.style.flex = '1 1 0%';
-            } else {
-                const cellWidth = cell.convertWidthToValue(width);
-
+            if (width) {
                 if (
-                    cellWidth &&
-                    cell.container.style.flex !== '0 0 ' + cellWidth
+                    width === 'auto' &&
+                    cell.container.style.flex !== '1 1 0%'
                 ) {
-                    cell.container.style.flex = '0 0 ' + cellWidth;
+                    cell.container.style.flex = '1 1 0%';
+                } else {
+                    const cellWidth = cell.convertWidthToValue(width);
+
+                    if (
+                        cellWidth &&
+                        cell.container.style.flex !== '0 0 ' + cellWidth
+                    ) {
+                        cell.container.style.flex = '0 0 ' + cellWidth;
+                    }
+
+                    cell.options.width = cellWidth;
                 }
+            }
+
+            if (height) {
+                cell.options.height = cell.container.style.height =
+                    height + 'px';
             }
 
             if (editMode) {

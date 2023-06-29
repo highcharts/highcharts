@@ -11,12 +11,12 @@ let exportedLayoutId;
 const chartDemo = {
     type: 'Highcharts',
     chartOptions: {
-        type: 'line',
         series: [{
             name: 'Series from options',
             data: [1, 2, 3, 4]
         }],
         chart: {
+            type: 'pie',
             animation: false,
             height: 150
         }
@@ -74,18 +74,6 @@ Dashboards.board('container-nested-layout', {
                     }
                 }
             }]
-        },
-        resize: {
-            enabled: true,
-            styles: {
-                minWidth: 20,
-                minHeight: 50
-            },
-            type: 'xy',
-            snap: {
-                width: 20,
-                height: 20
-            }
         }
     },
     gui: {
@@ -105,7 +93,6 @@ Dashboards.board('container-nested-layout', {
         type: 'Highcharts',
         chartOptions: {
             chart: {
-                type: 'pie',
                 animation: false
             },
             legend: {
