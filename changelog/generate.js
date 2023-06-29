@@ -308,31 +308,48 @@ const getFile = url => new Promise((resolve, reject) => {
                     products = products.replace('var products=', '');
                     products = JSON.parse(products);
 
-                    if (params.dashboards) {
-                        products = { 'Highcharts Dashboards': products['Highcharts Dashboards'] };
-                    } else {
-                        delete products['Highcharts Dashboards'];
-                    }
-                }
-
-                for (name in products) {
-
-                    if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
-                        const version = params.buildMetadata ? `${pack.version}+build.${getLatestGitSha()}` : pack.version;
-
-                        products[name].date =
-                            d.getFullYear() + '-' +
+                    if (params.dashboards && params.vNumber) {
+                        const dashboardsName = 'Highcharts Dashboards';
+                        const dashboardsProduct = {
+                            'Highcharts Dashboards': {
+                                nr: params.vNumber,
+                                date: d.getFullYear() + '-' +
                             pad(d.getMonth() + 1, 2) + '-' +
-                            pad(d.getDate(), 2);
+                            pad(d.getDate(), 2)
+                            }
+                        };
+
+                        const version = params.vNumber;
 
                         review.push(buildMarkdown(
-                            name,
-                            products[name].nr || version,
-                            products[name].date,
+                            dashboardsName,
+                            version,
+                            dashboardsProduct[dashboardsName].date,
                             log,
                             products,
                             optionKeys
                         ));
+                    } else {
+                        for (name in products) {
+
+                            if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
+                                const version = params.buildMetadata ? `${pack.version}+build.${getLatestGitSha()}` : pack.version;
+
+                                products[name].date =
+                                    d.getFullYear() + '-' +
+                                    pad(d.getMonth() + 1, 2) + '-' +
+                                    pad(d.getDate(), 2);
+
+                                review.push(buildMarkdown(
+                                    name,
+                                    products[name].nr || version,
+                                    products[name].date,
+                                    log,
+                                    products,
+                                    optionKeys
+                                ));
+                            }
+                        }
                     }
                 }
 
