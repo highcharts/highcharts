@@ -108,7 +108,7 @@ namespace Bindings {
         const componentContainer = cell.container;
 
         let ComponentClass =
-            ComponentRegistry.getComponent(options.type) as Class<ComponentType>;
+            ComponentRegistry.types[options.type] as Class<ComponentType>;
 
         if (!ComponentClass) {
             error(
@@ -116,7 +116,7 @@ namespace Bindings {
             );
 
             ComponentClass =
-                ComponentRegistry.getComponent('HTML') as Class<ComponentType>;
+                ComponentRegistry.types['HTML'] as Class<ComponentType>;
 
             options.title = {
                 text: cell.row.layout.board?.editMode?.lang.errorMessage,
@@ -191,9 +191,9 @@ namespace Bindings {
         json: Component.JSON,
         cellContainer: (HTMLElement|undefined) // @todo
     ): (Component|undefined) {
-        let componentClass = ComponentRegistry.getComponent(
+        let componentClass = ComponentRegistry.types[
             json.$class as keyof ComponentTypeRegistry
-        );
+        ];
 
         if (!componentClass) {
             return;

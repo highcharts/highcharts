@@ -339,17 +339,16 @@ class Board implements Serializable<Board, Board.JSON> {
         // Init events.
         this.initEvents();
 
+        const componentPromises: Array<Promise<Component>> = [],
+            mountedComponents = this.mountedComponents;
+
+        for (let i = 0, iEnd = mountedComponents.length; i < iEnd; ++i) {
+            componentPromises.push(
+                mountedComponents[i].component.initConnector()
+            );
+        }
+
         if (async) {
-
-            const componentPromises: Array<Promise<Component>> = [],
-                mountedComponents = this.mountedComponents;
-
-            for (let i = 0, iEnd = mountedComponents.length; i < iEnd; ++i) {
-                componentPromises.push(
-                    mountedComponents[i].component.initConnector()
-                );
-            }
-
             return Promise.all(componentPromises).then((): Board => this);
         }
 
@@ -673,6 +672,10 @@ namespace Board {
         layoutsJSON?: Array<Layout.JSON>;
         /**
          * Responsive breakpoints for the board - small, medium and large.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/responsive/responsive-breakpoints/ | Change responsive breakpoints}
          **/
         responsiveBreakpoints?: ResponsiveBreakpoints;
     }
@@ -832,7 +835,7 @@ namespace Board {
  * */
 
 Serializable.registerClassPrototype('Board', Board.prototype);
-ComponentRegistry.registerComponent(HTMLComponent);
+ComponentRegistry.registerComponent('HTML', HTMLComponent);
 
 /* *
  *
