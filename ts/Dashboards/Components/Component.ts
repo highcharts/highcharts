@@ -1053,7 +1053,7 @@ abstract class Component {
         });
 
         const json: Component.JSON = {
-            $class: ComponentRegistry.getName(this.constructor),
+            $class: this.options.type,
             // connector: this.connector ? this.connector.toJSON() : void 0,
             options: {
                 cell: this.options.cell,

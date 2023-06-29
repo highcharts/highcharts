@@ -31,7 +31,7 @@ class YouTubeComponent extends Component {
     }
 }
 
-ComponentRegistry.registerComponent(YouTubeComponent);
+ComponentRegistry.registerComponent('YouTube', YouTubeComponent);
 
 Dashboards.board('container', {
     editMode: {
