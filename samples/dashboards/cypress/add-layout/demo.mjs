@@ -16,7 +16,7 @@ PluginHandler.addPlugin(HighchartsPlugin);
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            name: 'connector-1',
+            id: 'connector-1',
             type: 'CSV',
             options: {
                 csv: `ABC,DEF
@@ -93,7 +93,7 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-2',
             connector: {
-                name: 'connector-1'
+                id: 'connector-1'
             },
             type: 'DataGrid'
         }
