@@ -1008,6 +1008,11 @@ namespace EditMode {
          * Whether the edit mode should be enabled for the dashboards.
          *
          * @default false
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/ctx-enabled/ | context enabled }
+         *
          */
         enabled?: boolean;
         /**
@@ -1023,6 +1028,10 @@ namespace EditMode {
         iconsURLPrefix?: string;
         /**
          * Additional Language options.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/lang/ | Norwegian language}
          */
         lang?: EditGlobals.LangOptions;
         /**
