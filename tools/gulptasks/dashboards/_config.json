@@ -2,9 +2,12 @@
     "buildFolder": "build/dist/dashboards/",
     "bundleSourceFolder": "code/dashboards/es-modules/masters-dashboards/",
     "bundleTargetFolder": "code/dashboards/",
-    "cdnFolder": "/dashboards/",
+    "cdnFolder": "dashboards/",
+    "cssFolder": "css/",
     "distRepository": "../dashboards-dist/",
     "esModulesFolder": "code/dashboards/es-modules/",
+    "gfxFolder": "gfx/",
     "namespace": "Dashboards",
+    "product": "Highcharts Dashboards",
     "typeScriptFolder": "ts/masters-dashboards/"
 }

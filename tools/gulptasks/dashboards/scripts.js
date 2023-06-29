@@ -22,11 +22,11 @@ async function dashboardsScripts() {
 
     const argv = require('yargs').argv;
     const buildTool = require('../../build');
+    const config = require('./_config.json');
     const fs = require('fs');
     const fsLib = require('../lib/fs');
     const logLib = require('../lib/log');
     const processLib = require('../lib/process');
-    const tasksConfig = require('./_config.json');
 
     try {
         logLib.message('Generating Dashboards code...');
@@ -36,7 +36,7 @@ async function dashboardsScripts() {
         fsLib.deleteDirectory('js/', true);
 
         // Transpile
-        await processLib.exec('npx tsc -p ts/masters-dashboards/');
+        await processLib.exec(`npx tsc -p ${config.typeScriptFolder}`);
 
         // Remove Highcharts
         fsLib.deleteDirectory('js/Accessibility/', true);
@@ -62,9 +62,17 @@ async function dashboardsScripts() {
                         null
                 ),
                 namespace: 'Dashboards',
-                output: tasksConfig.bundleTargetFolder
+                output: config.bundleTargetFolder
             })
             .fnFirstBuild();
+
+        // Copy valid native DTS
+        fsLib.copyAllFiles(
+            'js/',
+            config.esModulesFolder,
+            true,
+            sourcePath => sourcePath.endsWith('.d.ts')
+        );
 
         logLib.success('Created Dashboards code');
     } finally {

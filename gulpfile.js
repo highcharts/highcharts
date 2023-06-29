@@ -24,7 +24,12 @@ Gulp.registry(new GulpForwardReference());
 }([
     'api-upload',
     'dashboards/api-docs',
+    'dashboards/dist-build',
+    'dashboards/dist-copy',
+    'dashboards/dist-examples',
     'dashboards/dist-minify',
+    'dashboards/dist-upload',
+    'dashboards/dist-zip',
     'dashboards/dist',
     'dashboards/scripts',
     'default',
