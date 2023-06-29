@@ -22,8 +22,8 @@ const zlib = require('zlib');
 async function distZip() {
 
     const argv = require('yargs').argv;
-    const logLib = require('../lib/log');
     const config = require('./_config.json');
+    const logLib = require('../lib/log');
     const zip = require('gulp-zip');
 
     const release = argv.release;

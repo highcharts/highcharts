@@ -3,11 +3,13 @@
     "bundleSourceFolder": "code/dashboards/es-modules/masters-dashboards/",
     "bundleTargetFolder": "code/dashboards/",
     "cdnFolder": "dashboards/",
-    "cssFolder": "css/",
+    "cssFolder": "code/css/",
     "distRepository": "../dashboards-dist/",
     "esModulesFolder": "code/dashboards/es-modules/",
-    "gfxFolder": "gfx/",
+    "examplesFolder": "samples/dashboards/demo/",
+    "gfxFolder": "code/gfx/",
     "namespace": "Dashboards",
     "product": "Highcharts Dashboards",
+    "readmeFile": "ts/Dashboards/README.md",
     "typeScriptFolder": "ts/masters-dashboards/"
 }

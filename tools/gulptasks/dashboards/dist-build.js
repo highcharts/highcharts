@@ -37,8 +37,19 @@ async function distBuild() {
 
     const cssTarget = path.join(codeTarget, 'css');
 
-    fsLib.copyAllFiles(config.cssFolder, cssTarget, true);
+    fsLib.copyAllFiles(
+        config.cssFolder,
+        cssTarget,
+        true,
+        file => path.basename(file)[0] !== '.'
+    );
     logLib.success(`Created ${cssTarget}`);
+
+    const examplesSourceFolder = config.examplesFolder;
+    const examplesTargetFolder = path.join(config.buildFolder, 'examples');
+
+    fsLib.copyAllFiles(examplesSourceFolder, examplesTargetFolder, true);
+    logLib.success(`Created ${examplesTargetFolder}`);
 
     const gfxTarget = path.join(codeTarget, 'gfx');
 
