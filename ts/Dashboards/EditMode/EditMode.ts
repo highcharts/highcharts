@@ -77,6 +77,12 @@ class EditMode {
         this.options = merge(
             // Default options.
             {
+                dragDrop: {
+                    enabled: true
+                },
+                resize: {
+                    enabled: true
+                },
                 enabled: true,
                 contextMenu: {
                     icon: this.iconsURLPrefix + 'menu.svg'
@@ -299,21 +305,14 @@ class EditMode {
     public init(): void {
         const editMode = this;
 
-        if (!(editMode.options.resize &&
-                editMode.options.resize.enabled !== false)
-        ) {
+        if (this.options.resize?.enabled) {
             editMode.resizer = new Resizer(editMode, editMode.options.resize);
         }
 
-        // If dragDrop is disabled in options, don't init it.
-        if (!(editMode.options.dragDrop &&
-                editMode.options.dragDrop.enabled !== false)
-        ) {
-            editMode.dragDrop = new DragDrop(
-                editMode,
-                editMode.options.dragDrop
-            );
-        }
+        editMode.dragDrop = new DragDrop(
+            editMode,
+            editMode.options.dragDrop
+        );
 
         // Init rowToolbar.
         if (!editMode.rowToolbar) {
