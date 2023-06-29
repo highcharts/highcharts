@@ -74,18 +74,6 @@ Dashboards.board('container-nested-layout', {
                     }
                 }
             }]
-        },
-        resize: {
-            enabled: true,
-            styles: {
-                minWidth: 20,
-                minHeight: 50
-            },
-            type: 'xy',
-            snap: {
-                width: 20,
-                height: 20
-            }
         }
     },
     gui: {

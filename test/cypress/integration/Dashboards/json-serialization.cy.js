@@ -8,15 +8,27 @@ describe('JSON serialization test', () => {
         cy.visit('cypress/dashboards/dashboard-layout');
     });
 
-    it.skip('should be the same state after export-delete-import of layout', () => {
-        clickElementInContextMenu('Export 1 layout');
-        clickElementInContextMenu('Delete 1 layout');
-        clickElementInContextMenu('Import saved layout');
-    });
+    it('Resize component', () => {
+        cy.viewport(1200, 1000);
+        cy.toggleEditMode();
+        cy.get('.highcharts-dashboards-component').first().click();
 
-    it.skip('should be the same state after export-delete-import of dashboard', () => {
-        clickElementInContextMenu('Export dashboard');
-        clickElementInContextMenu('Delete current dashboard');
-        clickElementInContextMenu('Import saved dashboard');
-   });
+        cy.get('.highcharts-dashboards-edit-resize-snap-x').first()
+            .trigger('mousedown')
+            .trigger('mousemove', { clientX: 300 })
+            .trigger('mouseup');
+
+        cy.get('.highcharts-dashboards-edit-resize-snap-y').first()
+            .trigger('mousedown')
+            .trigger('mousemove', { clientY: 300 })
+            .trigger('mouseup');
+
+        cy.board().then((board) => {
+            const json = board.toJSON();
+            const cellOptions = json.options.layouts[0].options.rows[0].options.cells[0].options;
+
+            expect(cellOptions.width).to.match(/%/);
+            expect(cellOptions.height).to.match(/px/);
+        });
+    });
 });
