@@ -23,7 +23,6 @@ Dashboards.board('container', {
     },
     gui: {
         layouts: [{
-            id: 'layout-in-1',
             rows: [{
                 cells: [{
                     id: 'dashboard-col-nolayout-0'
