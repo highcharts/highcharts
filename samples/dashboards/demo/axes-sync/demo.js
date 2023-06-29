@@ -52,15 +52,13 @@ Dashboards.board('container', {
             id: 'connector-1',
             type: 'CSV',
             options: {
-                csv: csvData,
-                firstRowAsNames: true
+                csv: csvData
             }
         }, {
             id: 'connector-2',
             type: 'CSV',
             options: {
-                csv: csvData,
-                firstRowAsNames: true
+                csv: csvData
             }
         }]
     },

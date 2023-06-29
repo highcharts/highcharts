@@ -367,8 +367,17 @@ namespace DataConnector {
      * Option of the DataConnector.
      */
     export interface Options {
+        /**
+         * Option of the modifier that is used to modify the data.
+         */
         dataModifier?: DataModifierTypeOptions;
+        /**
+         * Options for the data table.
+         */
         dataTable?: DataTable.Options;
+        /**
+         * Your custom metadata.
+         */
         metadata?: Metadata;
     }
 

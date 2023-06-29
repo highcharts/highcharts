@@ -20,6 +20,9 @@
  * */
 
 import type { DataConnectorTypes } from './Connectors/DataConnectorType';
+import type CSVConnectorOptions from './Connectors/CSVConnectorOptions';
+import type GoogleSheetsConnectorOptions from './Connectors/GoogleSheetsConnectorOptions';
+import type HTMLTableConnectorOptions from './Connectors/HTMLTableConnectorOptions';
 
 /* *
  *
@@ -28,6 +31,14 @@ import type { DataConnectorTypes } from './Connectors/DataConnectorType';
  * */
 
 export interface DataPoolOptions {
+    /**
+     * Link list to connector options + mention DataConnector.types
+     *
+     * Available connectors and its options:
+     * {@link CSVConnectorOptions | CSVConnector}
+     * {@link GoogleSheetsConnectorOptions | GoogleSheetsConnector}
+     * {@link HTMLTableConnectorOptions | HTMLTableConnector}
+     **/
     connectors: Array<DataPoolConnectorOptions>;
 }
 
@@ -47,8 +58,7 @@ export interface DataPoolConnectorOptions
      *      id: 'my-csv-connector',
      *      type: 'CSV',
      *      options: {
-     *          csv: csvData,
-     *          firstRowAsNames: true
+     *          csv: csvData
      *          }
      *       }]
      * },
