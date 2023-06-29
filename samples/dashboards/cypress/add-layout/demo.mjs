@@ -16,7 +16,7 @@ PluginHandler.addPlugin(HighchartsPlugin);
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
-            name: 'connector-1',
+            id: 'connector-1',
             type: 'CSV',
             options: {
                 csv: `ABC,DEF
@@ -34,7 +34,7 @@ Dashboards.board('container', {
                 // drag drop options, leave empty - needed for testing
             },
             enabled: true,
-            items: ['verticalSeparator', 'editMode', {
+            items: ['editMode', {
                 id: 'text-button-test',
                 text: 'Context menu click test',
                 type: 'button',
@@ -45,18 +45,6 @@ Dashboards.board('container', {
                     }
                 }
             }]
-        },
-        resize: {
-            enabled: true,
-            styles: {
-                minWidth: 50,
-                minHeight: 50
-            },
-            type: 'xy',
-            snap: {
-                width: 20,
-                height: 20
-            }
         }
     },
 
@@ -105,7 +93,7 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-2',
             connector: {
-                name: 'connector-1'
+                id: 'connector-1'
             },
             type: 'DataGrid'
         }

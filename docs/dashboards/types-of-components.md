@@ -18,7 +18,7 @@ The most basic and generic component type. Allows you to add everything which co
 Code snippet:
 ``` JS
     {
-        type: 'html',
+        type: 'HTML',
         cell: 'dashboard-1',
         elements: [{
             tagName: 'img',

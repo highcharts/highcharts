@@ -1,11 +1,10 @@
 
-import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
+import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import PluginHandler from '../../../../code/dashboards/es-modules/Dashboards/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
+import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
 
-const { PluginHandler } = Dashboards;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
-
 PluginHandler.addPlugin(HighchartsPlugin);
 
 Dashboards.board('container', {
@@ -48,7 +47,6 @@ Dashboards.board('container', {
         }, {
             cell: 'dashboard-col-1',
             type: 'HTML',
-            cell: 'dashboard-3',
             elements: [{
                 tagName: 'h1',
                 textContent: 'Placeholder text'

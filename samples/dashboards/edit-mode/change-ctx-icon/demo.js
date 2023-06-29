@@ -39,4 +39,3 @@ const dash = Dashboards.board('container', {
         }
     }]
 });
-

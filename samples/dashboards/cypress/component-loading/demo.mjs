@@ -6,38 +6,29 @@ import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-const board = Dashboards.board('container', {
+Dashboards.board('container', {
     editMode: {
-        enabled: true
+        enabled: true,
+        contextMenu: {
+            enabled: true,
+            items: ['editMode']
+        }
     },
     gui: {
         enabled: true,
         layouts: [{
-            id: 'layout-1', // mandatory
-            rowClassName: 'custom-row', // optional
-            columnClassName: 'custom-column', // optional
-            style: {
-                fontSize: '1.5em',
-                color: 'blue'
-            },
             rows: [{
-                // id: 'dashboard-row-0',
                 cells: [{
                     id: 'dashboard-col-0'
                 }, {
                     id: 'dashboard-col-1'
                 }]
             }, {
-                id: 'dashboard-row-1',
-                style: {
-                    color: 'red'
-                },
                 cells: [{
                     id: 'dashboard-col-2'
                 }]
             }]
         }, {
-            id: 'layout-2', // mandatory
             rows: [{
                 id: 'dashboard-row-2',
                 cells: [{

@@ -399,7 +399,7 @@ jobs:
           git fetch origin << parameters.reference-branch >> &&
           git checkout << parameters.reference-branch >>  &&
           npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
-      - run: npm i --no-save @highcharts/highcharts-utils cross-env cypress-visual-regression
+      - run: npm i --no-save github:highcharts/highcharts-utils cross-env cypress-visual-regression
       - run: 
           name: Clear previous files if present 
           command: rm -rf /home/circleci/repo/highcharts/cypress/screenshots && rm -rf /home/circleci/repo/highcharts/cypress/snapshots
@@ -414,7 +414,7 @@ jobs:
           command: git checkout ${CIRCLE_BRANCH}
           when: always # always go back
       - run: npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
-      - run: npm i --no-save @highcharts/highcharts-utils cross-env cypress-visual-regression
+      - run: npm i --no-save github:highcharts/highcharts-utils cross-env cypress-visual-regression
       - run: 
           name: Run cypress visual tests as reference # only dashboards for now
           command: npx cypress run --env type=actual --config specPattern="**/visual/*.cy.js"
