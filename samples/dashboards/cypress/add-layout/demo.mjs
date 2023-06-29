@@ -1,10 +1,10 @@
 
 // Bring in other forms of Highcharts
-import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
+import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import DataGrid from '../../../../code/dashboards/es-modules/masters/datagrid.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import DataGrid from '../../../../code/es-modules/masters/datagrid.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
-import DataGridPlugin from '../../../../code/es-modules/Dashboards/Plugins/DataGridPlugin.js';
+import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
+import DataGridPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/DataGridPlugin.js';
 
 const { PluginHandler } = Dashboards;
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
@@ -61,24 +61,19 @@ Dashboards.board('container', {
     },
 
     gui: {
-        layouts: [
-            {
-                id: 'layout-1', // mandatory
-                rowClassName: 'custom-row', // optional
-                cellClassName: 'custom-cell', // optional
-                rows: [{
-                    cells: [{
-                        id: 'dashboard-col-0'
-                    }, {
-                        id: 'dashboard-col-1'
-                    }]
+        layouts: [{
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-0'
                 }, {
-                    cells: [{
-                        id: 'dashboard-col-2'
-                    }]
+                    id: 'dashboard-col-1'
                 }]
-            }
-        ]
+            }, {
+                cells: [{
+                    id: 'dashboard-col-2'
+                }]
+            }]
+        }]
     },
     components: [
         {

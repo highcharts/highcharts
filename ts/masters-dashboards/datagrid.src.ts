@@ -1,7 +1,7 @@
 /**
  * @license Highcharts Dashboards v0.0.2 (@product.date@)
- * @module highcharts/datagrid
- * @requires window
+ * @module dashboards/datagrid
+ * @requires dashboards
  *
  * (c) 2009-2023 Highsoft AS
  *

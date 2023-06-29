@@ -1,13 +1,13 @@
 //@ts-check
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsComponent from '../../../../code/es-modules/Dashboards/Plugins/HighchartsComponent.js';
-import HTMLComponent from '../../../../code/es-modules/Dashboards/Components/HTMLComponent.js';
-import Component from '../../../../code/es-modules/Dashboards/Components/Component.js';
-import CSVConnector from '../../../../code/es-modules/Data/Connectors/CSVConnector.js';
+import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import Component from '../../../../code/dashboards/es-modules/Dashboards/Components/Component.js';
+import HTMLComponent from '../../../../code/dashboards/es-modules/Dashboards/Components/HTMLComponent.js';
+import CSVConnector from '../../../../code/dashboards/es-modules/Data/Connectors/CSVConnector.js';
 
-import Dashboards from '../../../../code/es-modules/masters/dashboards.src.js';
-import PluginHandler from '../../../../code/es-modules/Dashboards/PluginHandler.js';
-import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
+import PluginHandler from '../../../../code/dashboards/es-modules/Dashboards/PluginHandler.js';
+import HighchartsComponent from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsComponent.js';
+import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);

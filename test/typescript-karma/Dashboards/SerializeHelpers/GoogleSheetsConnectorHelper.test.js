@@ -1,5 +1,5 @@
-import GoogleSheetsConnectorHelper from '/base/code/es-modules/Dashboards/SerializeHelper/GoogleSheetsConnectorHelper.js';
 import GoogleSheetsConnector from '/base/code/es-modules/Data/Connectors/GoogleSheetsConnector.js';
+import GoogleSheetsConnectorHelper from '/base/code/dashboards/es-modules/Dashboards/SerializeHelper/GoogleSheetsConnectorHelper.js';
 
 QUnit.test('JSON serializer for GoogleSheetsConverter', function (assert) {
 

@@ -17,11 +17,6 @@
     "Highcharts Gantt": {
       "cdnpath": "/gantt",
       "distpath": "/gantt"
-    },
-    "Highcharts Dashboards": {
-      "cdnpath": "/dashboards",
-      "distpath": "/dashboards",
-      "version": "1.0.0"
     }
   }
 }

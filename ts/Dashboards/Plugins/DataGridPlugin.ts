@@ -63,7 +63,7 @@ function onRegister(
     e: PluginHandler.Event
 ): void {
     const { ComponentRegistry } = e;
-    ComponentRegistry.registerComponent(DataGridComponent);
+    ComponentRegistry.registerComponent('DataGrid', DataGridComponent);
 }
 
 

@@ -13,9 +13,9 @@ When you are ready to create your first simple dashboard, please follow these st
 Thus, we have to import the main dashboard package, the Highcharts library and a plugin that allows implementing the Highcharts chart inside the dashboard.
 
     ```html
-        <script src="https://code.highcharts.com/dashboards.js"></script>
+        <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
         <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/dashboards-plugin.js"></script>
+        <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
     ```
 
 3. In order to properly display the whole dashboard, we need some styling. You can get the basic one by importing the modules to the CSS file as shown below.

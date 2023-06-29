@@ -33,9 +33,9 @@ Also please check the [Custom Component](http://www.highcharts.com/docs/dashboar
 ### Highcharts Component
 The option to include a Highcharts chart in one of the components is available out of the box. Here is the set of files that need to be included to make the Highcharts component work.
 ```html
-    <script src="https://code.highcharts.com/dashboards.js"></script>
+    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/dashboards-plugin.js"></script>
+    <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
 ```
 
 Also the set of CSS styles needs to be imported, so that the Highcharts displays correctly.
@@ -49,9 +49,9 @@ The last thing that you have to do is to specify the `type: 'Highcharts'` in the
 ### DataGrid Component
 To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.
 ```html
-    <script src="https://code.highcharts.com/dashboards.js"></script>
-    <script src="https://code.highcharts.com/datagrid.js"></script>
-    <script src="https://code.highcharts.com/modules/dashboards-plugin.js"></script>
+    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+    <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
 ```
 
 Also the set of CSS styles needs to be imported, so that the DataGrid displays correctly.

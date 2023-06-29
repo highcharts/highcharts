@@ -1,5 +1,5 @@
-import Board from '/base/code/es-modules/Dashboards/Board.js';
-import DashboardGlobals from '/base/code/es-modules/Dashboards/Globals.js';
+import Board from '/base/code/dashboards/es-modules/Dashboards/Board.js';
+import DashboardGlobals from '/base/code/dashboards/es-modules/Dashboards/Globals.js';
 const { test, skip } = QUnit;
 
 function setupContainer() {
