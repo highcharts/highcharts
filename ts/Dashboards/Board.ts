@@ -672,6 +672,10 @@ namespace Board {
         layoutsJSON?: Array<Layout.JSON>;
         /**
          * Responsive breakpoints for the board - small, medium and large.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/responsive/responsive-breakpoints/ | Change responsive breakpoints}
          **/
         responsiveBreakpoints?: ResponsiveBreakpoints;
     }
