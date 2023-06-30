@@ -368,43 +368,6 @@ jobs:
       - store_artifacts:
           path: ../visual-test-results
 
-  filesize_comparison: 
-    <<: *defaults
-    description: Create visual comparison base images
-    parameters:
-      reference-branch:
-        description: "The reference branch"
-        type: string
-        default: "master"
-    steps:
-      - <<: *add_gh_keys
-      - <<: *add_to_ssh_config
-      - <<: *add_gh_user_config
-      - run: |
-          if [ -z "$CIRCLE_PULL_REQUEST" ]; then
-            echo "Not a PR according to CircleCI, so marking this step successful"
-            circleci step halt
-          fi
-      - <<: *load_workspace
-      - run: | # checkout reference branch
-          git fetch origin << parameters.reference-branch >> &&
-          git checkout << parameters.reference-branch >>  &&
-          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
-      - run:
-          name: Write file sizes at reference branch
-          command: npx gulp write-file-sizes --filename master.json
-      - run:
-          command: git checkout ${CIRCLE_BRANCH}
-          when: always # always go back
-      - run: npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
-      - run:
-          name: File size comparison
-          command: |
-            npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json &&
-            npx gulp compare-size-and-comment --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
-      - store_artifacts:
-          path: /home/circleci/repo/highcharts/tmp/filesizes
-
   nightly_visual_diff:
     <<: *defaults
     description: Uploads visual test results to S3
@@ -587,12 +550,6 @@ workflows:
                 - master
                 - /db\/.*/
           context: highcharts-staging
-      - filesize_comparison:
-          requires: [lint]
-          filters:
-            branches:
-              ignore: master
-          context: highcharts-staging
       - generate_release_reference_images:
           requires: [lint]
           filters:
@@ -616,7 +573,7 @@ workflows:
           requires: [lint]
       - test_browsers:
           name: "test-Mac.Safari"
-          requires: ["filesize_comparison", "generate_ts_declarations"]
+          requires: ["generate_ts_declarations"]
           browsers: "Mac.Safari"
 #      - test_browsers:
 #          name: "test-Mac.Firefox"
