@@ -98,8 +98,8 @@ class DataGridComponent extends Component {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {
             const parentRow = inputElement
-                .closest('.hc-dg-row');
-            const cell = inputElement.closest('.hc-dg-cell');
+                .closest('.highcharts-datagrid-row');
+            const cell = inputElement.closest('.highcharts-datagrid-cell');
 
             const converter = new DataConverter();
 
