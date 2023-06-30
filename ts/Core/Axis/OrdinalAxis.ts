@@ -478,14 +478,7 @@ namespace OrdinalAxis {
         // If the value is not inside the plot area, use the extended positions.
         // (array contains also points that are outside of the plotArea).
         if (!isInside) {
-            // When iterating for the first time,
-            // get the extended ordinal positional and assign them.
-            if (!ordinal.extendedOrdinalPositions) {
-                ordinal.extendedOrdinalPositions = (
-                    ordinal.getExtendedPositions()
-                );
-            }
-            positions = ordinal.extendedOrdinalPositions;
+            positions = ordinal.getExtendedPositions();
         }
 
         // In some cases (especially in early stages of the chart creation) the
@@ -791,7 +784,7 @@ namespace OrdinalAxis {
             ordinal = axis.ordinal,
             ordinalPositions = ordinal.positions;
         let slope = ordinal.slope,
-            extendedOrdinalPositions = ordinal.extendedOrdinalPositions;
+            extendedOrdinalPositions;
 
         if (!ordinalPositions) {
             return val;
@@ -808,13 +801,10 @@ namespace OrdinalAxis {
             ordinalIndex = getIndexInArray(ordinalPositions, val);
             // final return value is based on ordinalIndex
         } else {
-
-            if (!extendedOrdinalPositions) {
-                extendedOrdinalPositions =
-                    ordinal.getExtendedPositions &&
-                    ordinal.getExtendedPositions();
-                ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
-            }
+            extendedOrdinalPositions =
+                ordinal.getExtendedPositions &&
+                ordinal.getExtendedPositions();
+            ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
             if (!(
                 extendedOrdinalPositions && extendedOrdinalPositions.length
             )) {
@@ -1267,6 +1257,7 @@ namespace OrdinalAxis {
                         xAxis: fakeAxis,
                         xData: (series.xData as any).slice(),
                         chart: chart,
+                        groupPixelWidth: series.groupPixelWidth,
                         destroyGroupedData: H.noop,
                         getProcessedData: Series.prototype.getProcessedData,
                         applyGrouping: Series.prototype.applyGrouping
@@ -1296,6 +1287,8 @@ namespace OrdinalAxis {
                     fakeAxis.series.push(fakeSeries);
 
                     series.processData.apply(fakeSeries);
+
+                    fakeSeries.applyGrouping.apply(fakeSeries);
                 });
 
                 // Force to use the ordinal when points are evenly spaced (e.g.

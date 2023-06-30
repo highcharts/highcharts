@@ -379,6 +379,10 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     };
     axis.ordinal.axis = axis;
 
+    axis.ordinal.getExtendedPositions = function () {
+        return axis.ordinal.extendedOrdinalPositions;
+    };
+
     // On the chart there are 5 points equaly spaced.
     // The distance between them equals 100px.
     // Thare are some points that are out of the current range.
@@ -459,6 +463,10 @@ QUnit.test('val2lin- unit tests', function (assert) {
     function val2lin(val, toIndex) {
         return Highcharts.Axis.prototype.val2lin.call(axis, val, toIndex);
     }
+
+    axis.ordinal.getExtendedPositions = function () {
+        return axis.ordinal.extendedOrdinalPositions;
+    };
 
     assert.equal(
         val2lin(5, true),
