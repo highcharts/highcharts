@@ -19,11 +19,14 @@ const G: AnyRecord = Dashboards;
 G.DataGridPlugin = DataGridPlugin;
 G.HighchartsPlugin = HighchartsPlugin;
 
-if (G.win.Dashboards && G.win.Highcharts) {
+if (G.win.Dashboards) {
+    if (G.win.Highcharts) {
+        HighchartsPlugin.custom.connectHighcharts(G.win.Highcharts);
+        G.win.Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
+    }
 
-    HighchartsPlugin.custom.connectHighcharts(G.win.Highcharts);
-    G.win.Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
-
-    DataGridPlugin.custom.connectDataGrid(G.win.DataGrid.DataGrid);
-    G.win.Dashboards.PluginHandler.addPlugin(DataGridPlugin);
+    if (G.win.DataGrid) {
+        DataGridPlugin.custom.connectDataGrid(G.win.DataGrid.DataGrid);
+        G.win.Dashboards.PluginHandler.addPlugin(DataGridPlugin);
+    }
 }
