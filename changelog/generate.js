@@ -301,6 +301,9 @@ const getFile = url => new Promise((resolve, reject) => {
 
         if (params.dashboards && params.release) {
             const version = params.release;
+            if (!/^\d+\.\d+\.\d(?:-\w+)$/su.test(version)) {
+                throw new Error('No valid `--release x.x.x` provided.');
+            }
             const dashboardsName = 'Highcharts Dashboards';
             const dashboardsProduct = {
                 'Highcharts Dashboards': {
