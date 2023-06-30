@@ -31,4 +31,24 @@ describe('JSON serialization test', () => {
             expect(cellOptions.height).to.match(/px/);
         });
     });
+
+
+   it('should save state after dragging.', () => {
+        cy.toggleEditMode();
+        cy.get('#cell-1').click();
+        cy.get('.highcharts-dashboards-edit-toolbar-cell').children()
+            .first()
+            .trigger('mousedown');
+        cy.get('#cell-2').first().trigger('mousemove', 'bottom');
+        cy.get('#cell-2').first().trigger('mouseup', 'bottom');
+        cy.board().then((board) => {
+            const json = board.toJSON();
+
+            assert.equal(
+                json.options.layouts[0].options.rows.length,
+                2,
+                'Two rows should be present.'
+            );
+        });
+   });
 });
