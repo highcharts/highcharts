@@ -334,7 +334,7 @@ jobs:
       - run: | # checkout master at diverge point of current branch and install
           git checkout master && git fetch origin master && git reset --hard origin/master &&
           git checkout $(git merge-base master ${CIRCLE_BRANCH}) && git log --oneline -5 &&
-          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts && npx gulp dashboards/scripts
       - run:
           name: Write file sizes at master
           command: npx gulp write-file-sizes --filename master.json
@@ -342,7 +342,7 @@ jobs:
           browsercount: 2
       - run: |
           git checkout ${CIRCLE_BRANCH} && git log --oneline -5 &&
-          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force && npx gulp dashboards/scripts
       - run:
           name: File size comparison
           command: |
