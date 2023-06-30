@@ -34,8 +34,25 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
                 marker: {
                     enabled: true
                 },
+                lowMarker: {
+                    symbol: 'triangle'
+                },
                 color: '#0000ff',
                 lowColor: '#00ff00'
+            },
+            {
+                data: [
+                    [1, 5],
+                    [3, 8]
+                ],
+                marker: {
+                    symbol: 'triangle',
+                    fillColor: '#00FF00'
+                },
+                lowMarker: {
+                    symbol: 'square',
+                    fillColor: '#ff0000'
+                }
             }
         ]
     });
@@ -72,6 +89,20 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
         'The lower marker should have a correct color (lowColor) on hover.'
     );
 
+    assert.strictEqual(
+        chart.series[0].points[1].graphics[0].symbol,
+        'triangle',
+        'The lower marker should have a correct symbol on hover.'
+    );
+
+    chart.series[1].points[1].setState('hover');
+
+    assert.strictEqual(
+        chart.series[1].points[1].graphics[0].attr('fill'),
+        '#ff0000',
+        'The lower marker should have a correct color on hover.'
+    );
+
     chart.series[0].points[1].setState('');
 
     assert.strictEqual(
@@ -84,6 +115,18 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
         chart.series[0].points[1].graphics[0].attr('fill'),
         chart.series[0].lowColor,
         'The lower marker should have a correct color (lowColor) without any state.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].points[1].graphics[0].attr('fill'),
+        '#ff0000',
+        'The lower marker should have a correct color without any state.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].points[1].graphics[1].symbol,
+        'triangle',
+        'The upper marker should have a correct symbol without any state.'
     );
 
     // Color all upper graphics
@@ -167,4 +210,23 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
             'After series.lowColor update, all the graphics[0]s should have a correct color.'
         );
     });
+
+    chart.series[0].update({
+        lowMarker: {
+            symbol: 'triangle',
+            fillColor: '#ff0000'
+        }
+    });
+
+    // assert.strictEqual(
+    //     chart.series[0].points[0].graphics[0].symbol,
+    //     'triangle',
+    //     'After series.lowMarker.symbol update, the graphics[0] should have a correct symbol.'
+    // );
+
+    // assert.strictEqual(
+    //     chart.series[0].points[0].graphics[0].fillColor,
+    //     '#ff0000',
+    //     'After series.lowMarker.fillColor update, the graphics[0] should have a correct color.'
+    // );
 });
