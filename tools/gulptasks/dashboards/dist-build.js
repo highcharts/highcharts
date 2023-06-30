@@ -14,47 +14,52 @@ const path = require('path');
  * */
 
 /**
- * Creates the build/dist/dashboards setup.
+ * Creates the ./build/dist/dashboards setup.
  *
  * @return {Promise<void>}
  * Promise to keep.
  */
 async function distBuild() {
 
-    const config = require('./_config.json');
     const fsLib = require('../lib/fs');
     const logLib = require('../lib/log');
 
-    const buildFolder = config.buildFolder;
+    const {
+        buildFolder,
+        bundleTargetFolder,
+        cssFolder,
+        examplesFolder,
+        gfxFolder
+    } = require('./_config.json');
 
     fsLib.deleteDirectory(buildFolder, true);
     logLib.success(`Deleted ${buildFolder}`);
 
-    const codeTarget = path.join(buildFolder, 'code');
+    const buildCodeTarget = path.join(buildFolder, 'code');
 
-    fsLib.copyAllFiles(config.bundleTargetFolder, codeTarget, true);
-    logLib.success(`Created ${codeTarget}`);
+    fsLib.copyAllFiles(bundleTargetFolder, buildCodeTarget, true);
+    logLib.success(`Created ${buildCodeTarget}`);
 
-    const cssTarget = path.join(codeTarget, 'css');
+    const buildCssTarget = path.join(buildCodeTarget, 'css');
 
     fsLib.copyAllFiles(
-        config.cssFolder,
-        cssTarget,
+        cssFolder,
+        buildCssTarget,
         true,
         file => path.basename(file)[0] !== '.'
     );
-    logLib.success(`Created ${cssTarget}`);
+    logLib.success(`Created ${buildCssTarget}`);
 
-    const examplesSourceFolder = config.examplesFolder;
-    const examplesTargetFolder = path.join(config.buildFolder, 'examples');
+    const examplesSourceFolder = examplesFolder;
+    const examplesTargetFolder = path.join(buildFolder, 'examples');
 
     fsLib.copyAllFiles(examplesSourceFolder, examplesTargetFolder, true);
     logLib.success(`Created ${examplesTargetFolder}`);
 
-    const gfxTarget = path.join(codeTarget, 'gfx');
+    const buildGfxTarget = path.join(buildCodeTarget, 'gfx');
 
-    fsLib.copyAllFiles(config.gfxFolder, gfxTarget, true);
-    logLib.success(`Created ${gfxTarget}`);
+    fsLib.copyAllFiles(gfxFolder, buildGfxTarget, true);
+    logLib.success(`Created ${buildGfxTarget}`);
 
 }
 

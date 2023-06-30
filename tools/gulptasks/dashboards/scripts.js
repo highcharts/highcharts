@@ -80,4 +80,11 @@ async function dashboardsScripts() {
     }
 }
 
-gulp.task('dashboards/scripts', gulp.series('scripts-css', dashboardsScripts));
+require('../scripts-css');
+require('./scripts-dts');
+
+gulp.task('dashboards/scripts', gulp.series(
+    'scripts-css',
+    dashboardsScripts,
+    'dashboards/scripts-dts'
+));
