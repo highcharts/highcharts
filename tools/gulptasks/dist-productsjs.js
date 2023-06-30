@@ -43,33 +43,22 @@ function distProductsJS() {
             ''
         );
 
-        function getNr(name) {
-            return (
-                (name && buildProperties.products[name].version) ||
-                buildProperties.version ||
-                packageJson.version ||
-                ''
-            );
-        }
+        const nr = (
+            buildProperties.version ||
+            packageJson.version ||
+            ''
+        );
 
         Fs.writeFileSync(
             TARGET_FILE,
-            'var products = ' +
-                JSON.stringify(
-                    {
-                        Highcharts: { date, nr: getNr() },
-                        'Highcharts Stock': { date, nr: getNr() },
-                        'Highcharts Maps': { date, nr: getNr() },
-                        'Highcharts Gantt': { date, nr: getNr() },
-                        'Highcharts Dashboards': {
-                            date,
-                            nr: getNr('Highcharts Dashboards')
-                        }
-                    },
-                    undefined,
-                    '    '
-                ) +
-                '\n'
+            (
+                'var products = ' + JSON.stringify({
+                    Highcharts: { date, nr },
+                    'Highcharts Stock': { date, nr },
+                    'Highcharts Maps': { date, nr },
+                    'Highcharts Gantt': { date, nr }
+                }, undefined, '    ') + '\n'
+            )
         );
 
         LogLib.success('Created', TARGET_FILE);
