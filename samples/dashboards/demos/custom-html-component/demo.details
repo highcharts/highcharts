@@ -1,6 +1,0 @@
----
- name: Dashboard Demo
- authors:
-   - Karol Kolodziej
- js_wrap: b
-...

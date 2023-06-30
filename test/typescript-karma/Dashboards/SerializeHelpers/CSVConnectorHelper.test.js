@@ -1,5 +1,5 @@
-import CSVConnectorHelper from '/base/code/es-modules/Dashboards/SerializeHelper/CSVConnectorHelper.js';
 import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
+import CSVConnectorHelper from '/base/code/dashboards/es-modules/Dashboards/SerializeHelper/CSVConnectorHelper.js';
 
 QUnit.test('JSON serializer for CSVConnector', function (assert) {
 

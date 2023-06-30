@@ -1,7 +1,0 @@
----
- name: Dashboard Demo
- authors:
-   - Sebastian Bochan, Wojciech Chmiel, Sophie Bremer
- requiresManualTesting: true
- js_wrap: b
-...

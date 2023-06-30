@@ -79,7 +79,7 @@ describe('Stock Tools Time Cicles, #15826', () => {
 
     it(`Dragging control Points should change annotation's properties.`, () => {
         cy.get('.highcharts-annotation').first()
-            .dragTo('.highcharts-container', 450, 100);
+            .dragTo('.highcharts-container', 450, 100, {force: true});
 
         cy.chart().then(chart => {
 

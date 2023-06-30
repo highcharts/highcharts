@@ -133,8 +133,8 @@
         "keyofStringsOnly": true
     },
     "exclude": [
-        "./masters-dashboards/",
-        "./masters-es5/"
+        "./masters-dashboards/**/*.ts",
+        "./masters-es5/**/*.ts"
     ],
     "include": [
         "./**/*.ts"

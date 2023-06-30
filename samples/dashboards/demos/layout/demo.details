@@ -1,6 +1,0 @@
----
- name: Highcharts Demo
- authors:
-   - Sebastian Bochan, Wojciech Chmiel
- js_wrap: b
-...

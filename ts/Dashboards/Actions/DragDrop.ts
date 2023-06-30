@@ -796,6 +796,10 @@ namespace DragDrop {
         dropPointerSize: number;
         /**
          * Whether the drag and drop is enabled.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/dragdrop-disabled/ | Drag drop disabled}
          */
         enabled: boolean;
         /**

@@ -549,6 +549,10 @@ namespace Resizer {
     export interface Options {
         /**
          * Weather the resizer is enabled or not.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/resize-disabled/ | Resize disabled}
          */
         enabled: boolean;
         /**

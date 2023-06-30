@@ -1,6 +1,6 @@
 describe('Remove the dashboard.', () => {
     before(() => {
-        cy.visit('/cypress/dashboards/chart-series-visibility');
+        cy.visit('/dashboards/cypress/chart-series-visibility');
     });
 
     it('Dashboard should be rendered', () => {

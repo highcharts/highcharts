@@ -1,5 +1,5 @@
-import HTMLTableConnectorHelper from '/base/code/es-modules/Dashboards/SerializeHelper/HTMLTableConnectorHelper.js';
 import HTMLTableConnector from '/base/code/es-modules/Data/Connectors/HTMLTableConnector.js';
+import HTMLTableConnectorHelper from '/base/code/dashboards/es-modules/Dashboards/SerializeHelper/HTMLTableConnectorHelper.js';
 
 QUnit.test('JSON serializer for HTMLTableConnector', function (assert) {
 
