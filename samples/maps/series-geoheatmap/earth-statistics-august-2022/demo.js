@@ -7,7 +7,7 @@
     const data = [{
         type: 'Land Surface Temperature (day)',
         title: 'Land Surface Temperature (day) in August 2022',
-        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/land_surface_temp_day_august_2022.json',
+        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c8a1a20e44/samples/data/land_surface_temp_day_august_2022.json',
         colorAxis: {
             min: -25,
             max: 50,
@@ -29,7 +29,7 @@
     }, {
         type: 'Land Surface Temperature (night)',
         title: 'Land Surface Temperature (night) in August 2022',
-        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/land_surface_temp_night_august_2022.json',
+        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c8a1a20e44/samples/data/land_surface_temp_night_august_2022.json',
         colorAxis: {
             min: -25,
             max: 50,
@@ -51,7 +51,7 @@
     }, {
         type: 'Net Radiation',
         title: 'Net radiation in August 2022',
-        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/net_radiation_august_2022.json',
+        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c8a1a20e44/samples/data/net_radiation_august_2022.json',
         colorAxis: {
             min: -200,
             max: 200,
@@ -70,7 +70,7 @@
     }, {
         type: 'Vegetation Index (NDVI)',
         title: 'Vegetation Index (NDVI) in August 2022',
-        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/ndvi_august_2022.json',
+        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c8a1a20e44/samples/data/ndvi_august_2022.json',
         colorAxis: {
             min: 0,
             max: 1,
