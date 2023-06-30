@@ -8,7 +8,7 @@ describe('JSON serialization test', () => {
         cy.visit('cypress/dashboards/dashboard-layout');
     });
 
-    it('Resize component', () => {
+    it('Should save state after resizing cell.', () => {
         cy.viewport(1200, 1000);
         cy.toggleEditMode();
         cy.get('.highcharts-dashboards-component').first().click();
@@ -201,6 +201,25 @@ describe('JSON serialization test', () => {
                 json.options.layouts[0].options.rows.length,
                 2,
                 'Two rows should be present.'
+            );
+        });
+    });
+
+    it('Should save state after removing cell.', () => {
+        cy.toggleEditMode();
+        cy.get('.highcharts-dashboards-component').first().click();
+        cy.get('.highcharts-dashboards-edit-toolbar-cell').children()
+            .last()
+            .click();
+        
+        cy.get('button').contains('Confirm').click();
+
+        cy.board().then((board) => {
+            const json = board.toJSON();
+            assert.equal(
+                json.options.layouts[0].options.rows[0].options.cells.length,
+                1,
+                'One cell should be present.'
             );
         });
     });
