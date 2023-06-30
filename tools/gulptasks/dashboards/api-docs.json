@@ -1,6 +1,7 @@
 {
     "$schema": "https://typedoc.org/schema.json",
     "categorizeByGroup": false,
+    "customCss": "api-docs/typedoc/assets/custom.css",
     "basePath": "../../../ts/",
     "disableSources": true,
     "entryPoints": [
@@ -31,7 +32,6 @@
         "../../../ts/Extensions/DashboardPlugins/HighchartsComponent.ts",
         "../../../ts/Extensions/DashboardPlugins/DataGridComponent.ts",
     ],
-    "customCss": "api-docs/typedoc/assets/custom.css",
     "entryPointStrategy": "expand",
     "excludeInternal": true,
     "hideGenerator": true,
