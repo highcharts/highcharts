@@ -121,3 +121,41 @@ The layout of our library is based on flexbox, so in general all browsers, which
 In particular, those are Chrome, Edge, Firefox, and Safari.
 
 * * *
+
+## I modified series names in a chart, and now sync is not working? What can I do?
+
+Sync to other components may not work if you modify certain series properties. For instance modifying series names in the chart `afterRender` event callback:
+
+```js
+afterRender(e) {
+    // Potential problem: setting custom name for series
+    e.target.chart.series[0].name = 'customName'
+    e.target.chart.series[1].name = 'otherCustomName'
+}
+```
+
+If you have to change the displayed name in the chart options (and wish to sync with other components), make sure to set an alias to the correspoding column in the dataTable:
+
+```js
+  dataPool: {
+    connectors: [{
+      id: 'Vitamin',
+      type: 'CSV',
+      options: {
+        csv: csvData,
+        firstRowAsNames: true,
+        dataTable: {
+          aliases: {
+            // Workaround for renamed series:
+            // set an alias that matches the series name
+            'customName': 'water',
+            'otherCustomName': 'air'
+          }
+        }
+      }
+    }]
+  }
+```
+See [jsfiddle.net/goransle/udcfyL8b/](https://jsfiddle.net/goransle/udcfyL8b/) for a working examples
+* * *
+
