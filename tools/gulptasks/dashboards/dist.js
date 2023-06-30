@@ -21,7 +21,7 @@ npx gulp dashboards/dist --release [x.x.x]
 
 Options:
 
-  --dry      Dry run without git commit of dashboards-dist.
+  --dryrun   Dry run without git commit of dashboards-dist.
   --helpme   This help.
   --release  Sets the release version. (required)
   --verbose  Detailed information during dist-zip.

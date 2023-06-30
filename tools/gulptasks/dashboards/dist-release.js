@@ -99,7 +99,7 @@ async function distRelease() {
 
     // Do magic
 
-    if (argv.dry) {
+    if (argv.dryrun) {
         logLib.warn('Skipped \`git push origin --tags\`');
         await processLib.exec('npm publish --access public --dry-run', {
             cwd: distRepository

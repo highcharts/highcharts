@@ -5,7 +5,7 @@
 
 const fs = require('fs');
 const gulp = require('gulp');
-const path = require('path');
+const path = require('path').posix;
 
 
 /* *
@@ -25,7 +25,7 @@ OPTIONS:
   --bucket   S3 bucket to upload to. (required)
   --region   AWS region of S3 bucket. (required)
   --release  Release version that gets uploaded. (required)
-  --dry      Dry run without uploading. (optional)
+  --dryrun   Dry run without uploading. (optional)
   --helpme   This help.
   --profile  AWS profile to load from AWS credentials file. If no profile is
              provided the default profile or standard AWS environment variables
@@ -332,19 +332,24 @@ async function distUpload() {
     logLib.warn(`Uploading to ${cdnVersionFolder}...`);
     await uploadFolder(sourceFolder, targetStorage, bucket, cdnVersionFolder);
 
-    const csnJSgzipFolder = path.join(cdnFolder, 'js-gzip/');
+    const cdnJSgzipFolder = path.join(cdnFolder, 'js-gzip/');
 
-    logLib.warn(`Uploading to ${csnJSgzipFolder}...`);
-    await uploadFolder(buildFolder, targetStorage, bucket, csnJSgzipFolder);
+    logLib.warn(`Uploading to ${cdnJSgzipFolder}...`);
+    await uploadFolder(buildFolder, targetStorage, bucket, cdnJSgzipFolder);
 
-    const csnJSgzipVersionFolder = path.join(cdnFolder, 'js-gzip', release, '/');
+    const cdnJSgzipVersionFolder = path.join(
+        cdnFolder,
+        'js-gzip',
+        release,
+        '/'
+    );
 
-    logLib.warn(`Uploading to ${csnJSgzipVersionFolder}...`);
+    logLib.warn(`Uploading to ${cdnJSgzipVersionFolder}...`);
     await uploadFolder(
         buildFolder,
         targetStorage,
         bucket,
-        csnJSgzipVersionFolder
+        cdnJSgzipVersionFolder
     );
 
     logLib.warn('Uploading to zips/...');
