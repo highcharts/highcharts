@@ -1,0 +1,19 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "composite": false,
+        "declaration": true,
+        "moduleResolution": "node",
+        "outDir": "../../js/",
+        "rootDir": "../",
+
+    },
+    "exclude": [
+        "../masters/**/*.ts",
+        "../masters-es5/**/*.ts"
+    ],
+    "include": [
+        "../**/*.ts"
+    ]
+
+}

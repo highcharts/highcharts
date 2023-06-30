@@ -262,4 +262,4 @@ Available arguments for 'gulp test':
     });
 }
 
-gulp.task('test-ts', gulp.series('scripts', testTS));
+gulp.task('test-ts', gulp.series('dashboards/scripts', 'scripts', testTS));

@@ -1,5 +1,5 @@
 import DataConverter from '/base/code/es-modules/Data/Converters/DataConverter.js';
-import DataConverterHelper from '/base/code/es-modules/Dashboards/SerializeHelper/DataConverterHelper.js';
+import DataConverterHelper from '/base/code/dashboards/es-modules/Dashboards/SerializeHelper/DataConverterHelper.js';
 
 QUnit.test('JSON serializer for DataConverter', function (assert) {
 

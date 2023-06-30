@@ -44,7 +44,7 @@ function scriptsCompile(filePathes) {
         inputPath = filePathes[i];
 
         if (
-            inputPath.startsWith('code/es-modules/') ||
+            inputPath.includes('/es-modules/') ||
             !inputPath.endsWith('.src.js')
         ) {
             continue;
