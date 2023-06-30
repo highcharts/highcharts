@@ -299,37 +299,40 @@ const getFile = url => new Promise((resolve, reject) => {
         const d = new Date();
         const review = [];
 
-        // Load the current products and versions, and create one log each
-        getFile('https://code.highcharts.com/products.js')
-            .then(products => {
-                var name;
+        if (params.dashboards && params.release) {
+            const version = params.release;
+            const dashboardsName = 'Highcharts Dashboards';
+            const dashboardsProduct = {
+                'Highcharts Dashboards': {
+                    nr: version,
+                    date: d.getFullYear() + '-' +
+                pad(d.getMonth() + 1, 2) + '-' +
+                pad(d.getDate(), 2)
+                }
+            };
 
-                if (products) {
-                    products = products.replace('var products=', '');
-                    products = JSON.parse(products);
 
-                    if (params.dashboards && params.vNumber) {
-                        const dashboardsName = 'Highcharts Dashboards';
-                        const dashboardsProduct = {
-                            'Highcharts Dashboards': {
-                                nr: params.vNumber,
-                                date: d.getFullYear() + '-' +
-                            pad(d.getMonth() + 1, 2) + '-' +
-                            pad(d.getDate(), 2)
-                            }
-                        };
+            review.push(buildMarkdown(
+                dashboardsName,
+                version,
+                dashboardsProduct[dashboardsName].date,
+                log,
+                void 0,
+                optionKeys
+            ));
+            if (params.review) {
+                saveReview(review.join('\n\n___\n'));
+            }
+        } else {
+            // Load the current products and versions, and create one log each
+            getFile('https://code.highcharts.com/products.js')
+                .then(products => {
+                    var name;
 
-                        const version = params.vNumber;
+                    if (products) {
+                        products = products.replace('var products=', '');
+                        products = JSON.parse(products);
 
-                        review.push(buildMarkdown(
-                            dashboardsName,
-                            version,
-                            dashboardsProduct[dashboardsName].date,
-                            log,
-                            products,
-                            optionKeys
-                        ));
-                    } else {
                         for (name in products) {
 
                             if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
@@ -351,14 +354,14 @@ const getFile = url => new Promise((resolve, reject) => {
                             }
                         }
                     }
-                }
 
-                if (params.review) {
-                    saveReview(review.join('\n\n___\n'));
-                }
-            })
-            .catch(err => {
-                throw err;
-            });
+                    if (params.review) {
+                        saveReview(review.join('\n\n___\n'));
+                    }
+                })
+                .catch(err => {
+                    throw err;
+                });
+        }
     });
 }());
