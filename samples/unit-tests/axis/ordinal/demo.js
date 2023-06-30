@@ -309,11 +309,11 @@ QUnit.test('Panning ordinal axis on mobile devices- lin2val calculation, #13238'
     );
 
     const extendedOrdinalPositionsLength =
-        chart.xAxis[0].ordinal.extendedOrdinalPositions.length;
+        chart.xAxis[0].ordinal.index.raw.length;
     chart.series[0].addPoint([1585666260000 + 36e7, 1171.11]);
     assert.notStrictEqual(
         extendedOrdinalPositionsLength,
-        chart.xAxis[0].ordinal.extendedOrdinalPositions.length,
+        chart.xAxis[0].ordinal.index.raw.length,
         `After adding the point, the extendedOrdinalPositions array
         should be recalculated, #16055.`
     );

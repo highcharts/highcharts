@@ -758,7 +758,6 @@ namespace OrdinalAxis {
         // and destroy extendedOrdinalPositions, #16055.
         if (xAxis && xAxis.options.ordinal) {
             delete xAxis.ordinal.index;
-            delete xAxis.ordinal.extendedOrdinalPositions;
         }
     }
 
@@ -804,7 +803,6 @@ namespace OrdinalAxis {
             extendedOrdinalPositions =
                 ordinal.getExtendedPositions &&
                 ordinal.getExtendedPositions();
-            ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
             if (!(
                 extendedOrdinalPositions && extendedOrdinalPositions.length
             )) {
@@ -901,7 +899,6 @@ namespace OrdinalAxis {
          * */
 
         public axis: Composition;
-        public extendedOrdinalPositions?: Array<number>;
         public groupIntervalFactor?: number;
         public index?: Record<string, Array<number>> = {};
         public offset?: number;
@@ -1236,6 +1233,7 @@ namespace OrdinalAxis {
                             max: extremes.dataMax + (overscroll as any)
                         } as any;
                     },
+                    applyGrouping: axisProto.applyGrouping,
                     getGroupPixelWidth: axisProto.getGroupPixelWidth,
                     getTimeTicks: axisProto.getTimeTicks,
                     options: {
@@ -1287,9 +1285,8 @@ namespace OrdinalAxis {
                     fakeAxis.series.push(fakeSeries);
 
                     series.processData.apply(fakeSeries);
-
-                    fakeSeries.applyGrouping.apply(fakeSeries);
                 });
+                fakeAxis.applyGrouping({ hasExtremesChanged: true });
 
                 // Force to use the ordinal when points are evenly spaced (e.g.
                 // weeks), #3825.
