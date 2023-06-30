@@ -12,7 +12,6 @@
 'use strict';
 
 import Dashboards from '../../Dashboards/Globals.js';
-import DataGrid from '../../DataGrid/DataGrid.js';
 import HighchartsPlugin from '../../Dashboards/Plugins/HighchartsPlugin.js';
 import DataGridPlugin from '../../Dashboards/Plugins/DataGridPlugin.js';
 
@@ -25,6 +24,6 @@ if (G.win.Dashboards && G.win.Highcharts) {
     HighchartsPlugin.custom.connectHighcharts(G.win.Highcharts);
     G.win.Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
 
-    DataGridPlugin.custom.connectDataGrid(DataGrid);
+    DataGridPlugin.custom.connectDataGrid(G.win.DataGrid.DataGrid);
     G.win.Dashboards.PluginHandler.addPlugin(DataGridPlugin);
 }
