@@ -275,6 +275,9 @@ class GeoHeatmapSeries extends MapSeries {
              * Make the geoheatmap render its data points as an interpolated
              * image. It can be used to show a Temperature Map-like charts.
              *
+             * @sample maps/series-geoheatmap/earth-statistics-august-2022
+             *         Advanced demo of GeoHeatmap interpolation
+             *
              * @type      {boolean}
              * @default   false
              * @since     @next

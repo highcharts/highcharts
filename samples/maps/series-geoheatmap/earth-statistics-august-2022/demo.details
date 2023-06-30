@@ -1,0 +1,8 @@
+---
+name: Earth Statictics August 2022 - GeoHeatmap interpolation
+authors:
+  - Hubert Kozik
+js_wrap: b
+resources:
+   - https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css
+...
