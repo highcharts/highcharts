@@ -117,7 +117,14 @@ The events, that can be synchronized between components are:
 * * *
 What browsers are supported?
 ---------------
-The layout of our library is based on flexbox, so in general all browsers, which support flexbox should also work fine with Highcharts Dashboards.
-In particular, those are Chrome, Edge, Firefox, and Safari.
+Highcharts Dashboards supports the following browsers:
+
+|  Browser |    Version    |
+|----------|:-------------:|
+| Firefox  | 52.0+ (2017+) |
+| Chrome   | 55.0+ (2016+) |
+| Safari   | 11.0+ (2017+) |
+| Opera    | 42.0+ (2016+) |
+| Edge     | 16.0+ (2017+) |
 
 * * *
