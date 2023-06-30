@@ -375,7 +375,7 @@ jobs:
       reference-branch:
         description: "The reference branch"
         type: string
-        default: "dashboards/main"
+        default: "master"
     steps:
       - <<: *add_gh_keys
       - <<: *add_to_ssh_config
