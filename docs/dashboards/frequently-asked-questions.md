@@ -156,6 +156,6 @@ If you have to change the displayed name in the chart options (and wish to sync 
     }]
   }
 ```
-See [jsfiddle.net/goransle/udcfyL8b/](https://jsfiddle.net/goransle/udcfyL8b/) for a working examples
+See [jsfiddle.net/goransle/udcfyL8b/](https://jsfiddle.net/goransle/udcfyL8b/) for a live example
 * * *
 
