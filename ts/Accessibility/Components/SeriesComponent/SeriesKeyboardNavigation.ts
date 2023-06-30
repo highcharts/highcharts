@@ -1036,12 +1036,12 @@ namespace SeriesKeyboardNavigation {
         chart.highlightedPoint = this;
 
         // Get position of the tooltip.
-        const tooltipTop = tooltipElement?.getBoundingClientRect().top as any;
+        const tooltipTop = tooltipElement?.getBoundingClientRect().top;
 
-        if (tooltipElement && tooltipTop < 0) {
+        if (tooltipElement && tooltipTop && tooltipTop < 0) {
             // Calculate scroll position.
-            const scrollTop = window.scrollY;
-            const newScrollTop = scrollTop + tooltipTop;
+            const scrollTop = window.scrollY,
+                newScrollTop = scrollTop + tooltipTop;
 
             // Scroll window to new position.
             window.scrollTo({
