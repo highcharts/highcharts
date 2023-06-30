@@ -260,11 +260,11 @@
     background-color: var(--color-background);
 }
 
-#selection-grid .hc-dg-column-header {
+#selection-grid .highcharts-datagrid-column-header {
     font-size: 12px;
 }
 
-#selection-grid .hc-dg-row.hovered {
+#selection-grid .highcharts-datagrid-row.hovered {
     background-color: var(--color-hover-background);
     border-color: var(--color-hover-border);
     color: var(--color-hover-text);
