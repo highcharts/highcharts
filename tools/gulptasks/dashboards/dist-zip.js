@@ -2,17 +2,20 @@
  * Copyright (C) Highsoft AS
  */
 
+
 const fs = require('fs');
 const gulp = require('gulp');
 const path = require('path');
 const stream = require('stream');
 const zlib = require('zlib');
 
+
 /* *
  *
  *  Tasks
  *
  * */
+
 
 /**
  * Creates zip files.
@@ -28,11 +31,8 @@ async function distZip() {
 
     const release = argv.release;
 
-    if (!release) {
-        logLib.failure(
-            'You have to specify the release version',
-            'with the `--release x.x.x` argument!'
-        );
+    if (!/^\d+\.\d+\.\d(?:-\w+)$/su.test(release)) {
+        throw new Error('No valid `--release x.x.x` provided.');
     }
 
     const buildFolder = config.buildFolder;
@@ -55,6 +55,7 @@ async function distZip() {
     logLib.message(`Created ZIP archive: ${buildFolder}/${zipDistFile}...`);
 
 }
+
 
 /**
  * Creates gzipped versions in ./js-gzip.
@@ -104,5 +105,6 @@ async function distJSGZip() {
     logLib.success('Created GZIP cache');
 
 }
+
 
 gulp.task('dashboards/dist-zip', gulp.series(distJSGZip, distZip));

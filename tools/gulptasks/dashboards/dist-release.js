@@ -7,11 +7,13 @@ const fs = require('fs');
 const gulp = require('gulp');
 const path = require('path');
 
+
 /* *
  *
  *  Tasks
  *
  * */
+
 
 /**
  * Copies files over to the dashboards-dist repository, which has to be placed
@@ -31,12 +33,8 @@ async function distRelease() {
 
     const release = argv.release;
 
-    if (!/^\d+\.\d+\.\d$/su.test(release)) {
-        logLib.failure(
-            'You have to specify the release version',
-            'with the `--release x.x.x` argument!'
-        );
-        throw new Error('Argument Error');
+    if (!/^\d+\.\d+\.\d(?:-\w+)$/su.test(release)) {
+        throw new Error('No valid `--release x.x.x` provided.');
     }
 
     const buildFolder = config.buildFolder;
