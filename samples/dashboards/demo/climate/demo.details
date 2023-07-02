@@ -1,5 +1,5 @@
 ---
-name: Highcharts Dashboards Climate Demo
+name: Climate data
 authors:
   - Sebastian Bochan, Wojciech Chmiel, Sophie Bremer, Karol Kolodziej, Pawel Lysy, Gøran Slettemark
 requiresManualTesting: true
@@ -7,5 +7,6 @@ js_wrap: b
 tags:
 - Highcharts Dashboards demo
 categories:
-  - General
+  - General:
+        priority: 2
 ...
