@@ -156,6 +156,6 @@ If you have to change the displayed name in the chart options (and wish to sync 
     }]
   }
 ```
-See [highcharts.com/samples/dashboards/issues/sync-aliases](https://highcharts.com/samples/dashboards/issues/sync-aliases) for a live example
+See [highcharts.com/samples/dashboards/issues/sync-aliases](https://www.highcharts.com/samples/dashboards/issues/sync-aliases) for a live example
 * * *
 
