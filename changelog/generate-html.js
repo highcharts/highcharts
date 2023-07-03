@@ -112,7 +112,8 @@ function generateHTML() {
                 <a href="#highcharts">Highcharts</a>,
                 <a href="#highcharts-stock">Highcharts Stock</a>,
                 <a href="#highcharts-maps">Highcharts Maps</a>,
-                <a href="#highcharts-gantt">Highcharts Gantt</a>. Go to the
+                <a href="#highcharts-gantt">Highcharts Gantt</a>,
+                <a href="#highcharts-dashboards">Highcharts Dashboards</a>. Go to the
                 <a href="download">Download</a> page to get the latest version.</p>`
             );
         }

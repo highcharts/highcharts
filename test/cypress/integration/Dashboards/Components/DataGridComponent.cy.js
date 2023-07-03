@@ -4,11 +4,11 @@ describe('layout resize on window changes', () => {
     });
 
     it('Chart and DataGridComponent should have synced hover events.', () => {
-        const firstDataGridRow = cy.get('.hc-dg-cell').eq(0)
+        const firstDataGridRow = cy.get('.highcharts-datagrid-cell').eq(0)
 
         // Hover over DataGridComponent.
         firstDataGridRow.trigger('mouseover');
-        firstDataGridRow.parent().should('have.class', 'hc-dg-row hovered');
+        firstDataGridRow.parent().should('have.class', 'highcharts-datagrid-row hovered');
         cy.chart().then(chart =>{
             assert.notOk(
                 chart.tooltip.isHidden,
@@ -18,17 +18,17 @@ describe('layout resize on window changes', () => {
 
         // Hover over the chart.
         cy.get('.highcharts-point').eq(1).trigger('mouseover');
-        firstDataGridRow.parent().should('not.have.class', 'hc-dg-row hovered');
-        cy.get('.hc-dg-row').eq(1).should('have.class', 'hc-dg-row hovered');
+        firstDataGridRow.parent().should('not.have.class', 'highcharts-datagrid-row hovered');
+        cy.get('.highcharts-datagrid-row').eq(1).should('have.class', 'highcharts-datagrid-row hovered');
 
         // Hover over the first point
         cy.get('.highcharts-point').eq(0).trigger('mouseover');
-        firstDataGridRow.parent().should('not.have.class', 'hc-dg-row hovered');
-        cy.get('.hc-dg-row').eq(0).should('have.class', 'hc-dg-row hovered');
+        firstDataGridRow.parent().should('not.have.class', 'highcharts-datagrid-row hovered');
+        cy.get('.highcharts-datagrid-row').eq(0).should('have.class', 'highcharts-datagrid-row hovered');
     });
 
     it('Updating of the store should work by changing chart and datagrid', () =>{
-        cy.get('.hc-dg-row').eq(1).children().eq(1)
+        cy.get('.highcharts-datagrid-row').eq(1).children().eq(1)
             .type('{backspace}{backspace}{backspace}000');
 
         cy.chart().then(chart =>{
@@ -43,7 +43,7 @@ describe('layout resize on window changes', () => {
     it('Chart and DataGridComponent should have synced selection events.', () => {
         let containerTop;
 
-        cy.get('.hc-dg-outer-container')
+        cy.get('.highcharts-datagrid-outer-container')
             .invoke('scrollTop')
             .then((scrollTopValue) => {
                 containerTop = scrollTopValue;
@@ -55,7 +55,7 @@ describe('layout resize on window changes', () => {
             .trigger('mouseup');
 
 
-        cy.get('.hc-dg-outer-container').then($container =>{
+        cy.get('.highcharts-datagrid-outer-container').then($container =>{
             assert.ok(
                 $container.scrollTop() > containerTop,
                 'When selecting a range in the chart, the DataGridComponent should scroll.'
