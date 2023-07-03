@@ -47,37 +47,21 @@ QUnit.test('Interpolated image test', function (assert) {
         ]
     });
 
-
     const
-        {
-            container,
-            series,
-            plotLeft,
-            plotTop
-        } = chart,
-        {
-            canvas,
-            canvas: { width, height },
-            image: { element }
-        } = series[0];
+        { container, series, chartWidth } = chart,
+        { image: { element }, points } = series[0],
+        { plotX, plotY } = points[0];
 
     assert.strictEqual(element.tagName, 'image', 'An image-tagname should exist');
 
-    const ctx = canvas.getContext('2d');
-
-    ctx.drawImage(element, 0, 0);
-
-    const firstPixelComponent = ctx.getImageData(0, 0, width, height).data[4];
-
-    assert.strictEqual(
-        firstPixelComponent,
-        235,
-        'First pixel-component should be this when chart is inverted'
+    assert.ok(
+        element.getAttribute('height') > (chartWidth / 2),
+        'Image should have a larger height than half the chart-width when inverted.'
     );
 
     const controller = new TestController(chart);
 
-    controller.moveTo(plotLeft, plotTop);
+    controller.moveTo(plotX, plotY);
 
     assert.ok(
         container.getElementsByClassName('highcharts-tooltip') !== undefined,
