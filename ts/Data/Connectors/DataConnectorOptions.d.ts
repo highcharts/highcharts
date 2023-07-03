@@ -39,20 +39,25 @@ export interface DataConnectorOptions {
      */
     dataTable?: DataTable.Options;
     /**
-     * Your custom metadata.
+     * Contains custom metadata related to the connector source, for example the
+     * column order on the source side.
      */
     metadata?: Metadata;
 }
 
 /**
- * Metadata
+ * Contains custom metadata related to the connector source, for example the
+ * column order on the source side.
  */
 export interface Metadata {
+    /**
+     * Metadata entry containing the name of the column and a metadata object.
+     */
     columns: Record<string, MetaColumn>;
 }
 
 /**
- * Metadata entry containing the name of the column and a metadata object.
+ * Metadata for a specific column in the connector source.
  */
 export interface MetaColumn {
     dataType?: string;
