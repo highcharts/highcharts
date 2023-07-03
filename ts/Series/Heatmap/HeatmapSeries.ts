@@ -467,13 +467,11 @@ class HeatmapSeries extends ScatterSeries {
                     {
                         canvas,
                         options: { colsize = 1, rowsize = 1 },
-                        points
+                        points,
+                        points: { length }
                     } = series,
-                    pointsLen = points.length - 1,
-                    colorAxis = (
-                        chart.colorAxis &&
-                        chart.colorAxis[0]
-                    );
+                    pointsLen = length - 1,
+                    colorAxis = (chart.colorAxis && chart.colorAxis[0]);
 
                 if (canvas && ctx && colorAxis) {
                     const
@@ -517,8 +515,7 @@ class HeatmapSeries extends ScatterSeries {
                         colorFromPoint = (point: HeatmapPoint): number[] => {
                             const rgba = ((
                                 colorAxis.toColor(
-                                    point.value ||
-                                    0,
+                                    point.value || 0,
                                     point
                                 ) as string)
                                 .split(')')[0]
@@ -576,8 +573,7 @@ class HeatmapSeries extends ScatterSeries {
                     }
                 }
             } else if (
-                image.width !== dimensions.width ||
-                image.height !== dimensions.height
+                image.width !== width || image.height !== height
             ) {
                 image.attr(dimensions);
             }
