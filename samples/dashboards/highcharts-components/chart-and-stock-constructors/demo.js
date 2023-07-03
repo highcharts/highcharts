@@ -1,11 +1,4 @@
 const chartOptions = {
-    legend: {
-        align: 'right',
-        verticalAlign: 'top',
-        layout: 'vertical',
-        x: 0,
-        y: 100
-    },
     series: [{
         data: [1, 2, 3, 4]
     }]
