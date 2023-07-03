@@ -333,7 +333,7 @@ const getFile = url => new Promise((resolve, reject) => {
                     var name;
 
                     if (products) {
-                        products = products.replace('var products=', '');
+                        products = products.replace('var products = ', '');
                         products = JSON.parse(products);
 
                         for (name in products) {
