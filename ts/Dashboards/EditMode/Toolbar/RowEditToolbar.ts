@@ -32,7 +32,6 @@ const {
  * @internal
  */
 class RowEditToolbar extends EditToolbar {
-
     /* *
      *
      *  Static Properties
@@ -47,35 +46,23 @@ class RowEditToolbar extends EditToolbar {
         menu: {
             className: EditGlobals.classNames.editToolbarRow,
             itemsClassName: EditGlobals.classNames.editToolbarItem,
-            items: ['drag', 'settings', 'destroy']
+            items: []
         }
     };
 
-    /* *
-    *
-    *  Constructor
-    *
-    * */
-    constructor(
-        editMode: EditMode
-    ) {
-        super(
-            editMode,
-            merge(
-                RowEditToolbar.defaultOptions,
-                (editMode.options.toolbars || {}).row
-            )
-        );
-
-        this.menu.initItems({
-            drag: {
+    public static getMenuItemsConfig(
+        options: EditMode.Options,
+        iconURLPrefix: string
+    ): MenuItem.Options[] {
+        const dragDropElement = options.dragDrop?.enabled ?
+            [{
                 id: 'drag',
-                type: 'icon',
-                icon: this.iconURLPrefix + 'drag.svg',
+                type: 'icon' as const,
+                icon: iconURLPrefix + 'drag.svg',
                 events: {
                     onmousedown: function (this: MenuItem, e: any): void {
-                        const rowEditToolbar =
-                            (this.menu.parent as RowEditToolbar),
+                        const rowEditToolbar = this.menu
+                                .parent as RowEditToolbar,
                             dragDrop = rowEditToolbar.editMode.dragDrop;
 
                         if (dragDrop && rowEditToolbar.row) {
@@ -83,65 +70,88 @@ class RowEditToolbar extends EditToolbar {
                         }
                     }
                 }
-            },
-            settings: {
-                id: 'settings',
-                type: 'icon',
-                icon: this.iconURLPrefix + 'settings.svg',
-                events: {
-                    click: function (this: MenuItem, e: any): void {
-                        (this.menu.parent as RowEditToolbar).onRowOptions(e);
-                    }
-                }
-            },
-            destroy: {
-                id: 'destroy',
-                type: 'icon',
-                className: EditGlobals.classNames.menuDestroy,
-                icon: this.iconURLPrefix + 'destroy.svg',
-                events: {
-                    click: function (this: MenuItem, e: any): void {
-                        const parentNode = (this.menu.parent as RowEditToolbar),
-                            popup = this.menu.parent.editMode.confirmationPopup;
-
-                        popup.show({
-                            confirmButton: {
-                                value: editMode.lang.confirmButton,
-                                callback: parentNode.onRowDestroy,
-                                context: parentNode
-                            },
-                            cancelButton: {
-                                value: editMode.lang.cancelButton,
-                                callback: (): void => {
-                                    popup.closePopup();
-                                }
-                            },
-                            text: editMode.lang.confirmDestroyRow
-                        });
-                    }
+            }] :
+            [];
+        const settingsElement = {
+            id: 'settings',
+            type: 'icon' as const,
+            icon: iconURLPrefix + 'settings.svg',
+            events: {
+                click: function (this: MenuItem, e: any): void {
+                    (this.menu.parent as RowEditToolbar).onRowOptions(e);
                 }
             }
-        });
+        };
+        const destroyElement = {
+            id: 'destroy',
+            type: 'icon' as const,
+            className: EditGlobals.classNames.menuDestroy,
+            icon: iconURLPrefix + 'destroy.svg',
+            events: {
+                click: function (this: MenuItem, e: any): void {
+                    const parentNode = this.menu.parent as RowEditToolbar,
+                        editMode = this.menu.parent.editMode,
+                        popup = editMode.confirmationPopup;
+
+                    popup.show({
+                        confirmButton: {
+                            value: editMode.lang.confirmButton,
+                            callback: parentNode.onRowDestroy,
+                            context: parentNode
+                        },
+                        cancelButton: {
+                            value: editMode.lang.cancelButton,
+                            callback: (): void => {
+                                popup.closePopup();
+                            }
+                        },
+                        text: editMode.lang.confirmDestroyRow
+                    });
+                }
+            }
+        };
+        return [...dragDropElement, settingsElement, destroyElement];
+    }
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    constructor(editMode: EditMode) {
+        super(
+            editMode,
+            merge(
+                RowEditToolbar.defaultOptions,
+                (editMode.options.toolbars || {}).row,
+                {
+                    menu: {
+                        items: RowEditToolbar.getMenuItemsConfig(
+                            editMode.options,
+                            editMode.iconsURLPrefix
+                        )
+                    }
+                }
+            )
+        );
+
+        this.menu.initItems({});
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
     public row?: Row;
     public editedRow?: Row;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
-    public refreshOutline(
-        x: number,
-        y: number
-    ): void {
+    public refreshOutline(x: number, y: number): void {
         const toolbar = this,
             offsetWidth = 2;
 
@@ -150,9 +160,7 @@ class RowEditToolbar extends EditToolbar {
         }
     }
 
-    public showToolbar(
-        row: Row
-    ): void {
+    public showToolbar(row: Row): void {
         const toolbar = this,
             rowCnt = row.container;
 
@@ -185,9 +193,7 @@ class RowEditToolbar extends EditToolbar {
         }
     }
 
-    public onRowOptions(
-        e: any
-    ): void {
+    public onRowOptions(e: any): void {
         const toolbar = this;
 
         if (toolbar.editMode.sidebar) {
@@ -209,7 +215,6 @@ class RowEditToolbar extends EditToolbar {
         const toolbar = this;
 
         if (toolbar.row) {
-
             this.resetEditedRow();
 
             toolbar.row.destroy();

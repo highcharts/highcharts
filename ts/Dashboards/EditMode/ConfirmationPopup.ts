@@ -211,6 +211,10 @@ namespace ConfirmationPopup {
     export interface Options {
         /**
          * Close icon
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/change-close-icon/ | Change close icon}
          */
         close: CloseIcon;
     }

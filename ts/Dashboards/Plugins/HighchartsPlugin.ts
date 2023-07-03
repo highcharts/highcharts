@@ -68,8 +68,8 @@ function onRegister(
     e: PluginHandler.Event
 ): void {
     const { Sync, ComponentRegistry } = e;
-    ComponentRegistry.registerComponent(HighchartsComponent);
-    ComponentRegistry.registerComponent(KPIComponent);
+    ComponentRegistry.registerComponent('Highcharts', HighchartsComponent);
+    ComponentRegistry.registerComponent('KPI', KPIComponent);
 
     Sync.defaultHandlers = {
         ...Sync.defaultHandlers,

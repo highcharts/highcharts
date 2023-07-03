@@ -1,61 +1,27 @@
-let exportedLayoutId;
-let board = Dashboards.board('container', {
+Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
             enabled: true,
-            items: ['editMode', 'viewFullscreen', {
-                id: 'export-dashboard',
-                text: 'Export dashboard',
-                type: 'button',
-                events: {
-                    click: function () {
-                        board.exportLocal();
-                    }
-                }
-            }, {
-                id: 'import-dashboard',
-                text: 'Import saved dashboard',
-                type: 'button',
-                events: {
-                    click: function () {
-                        board = Dashboards.Board.importLocal();
-                    }
-                }
-            }]
+            items: [
+                'editMode',
+                'viewFullscreen'
+            ]
         },
         lang: {
             editMode: 'My edit mode',
             chartOptions: 'Chart options EN'
-        },
-        resize: {
-            enabled: true,
-            styles: {
-                minWidth: 50,
-                minHeight: 50
-            },
-            type: 'xy',
-            snap: {
-                width: 20,
-                height: 20
-            }
         }
     },
     gui: {
         layouts: [{
-            id: 'layout-1',
-            rowClassName: 'custom-row',
-            cellClassName: 'custom-cell',
             rows: [{
                 cells: [{
-                    id: 'dashboard-col-0',
-                    width: 500, // '1/3' or '300px'
-                    height: 400 // '400px'
+                    id: 'dashboard-col-0'
                 }, {
                     id: 'dashboard-col-1'
                 }]
             }, {
-                id: 'dashboard-row-1',
                 cells: [{
                     id: 'dashboard-col-2',
                     width: '2/3',
@@ -99,15 +65,12 @@ let board = Dashboards.board('container', {
                     id: 'dashboard-col-32'
                 }]
             }, {
-                id: 'dashboard-row-4',
                 cells: [{
                     id: 'dashboard-col-add-component'
                 }]
             }]
         }, {
-            id: 'layout-2',
             rows: [{
-                id: 'dashboard-row-2',
                 cells: [{
                     id: 'dashboard-col-4'
                 }]

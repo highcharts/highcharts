@@ -6,6 +6,11 @@ Highcharts.chart('container', {
         text: 'Use the dropdown to add or edit annotations'
     },
     navigation: {
+        annotationsOptions: {
+            labelOptions: {
+                crop: false
+            }
+        },
         events: {
             selectButton: function (event) {
                 var newClassName = event.button.className + ' highcharts-active',

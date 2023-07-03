@@ -62,7 +62,7 @@ Thus, we have to import the main dashboard package, the Highcharts library and a
 
     ```js
         components: [{
-            type: 'html',
+            type: 'HTML',
             cell: 'dashboard-col-0',
             elements: [
                 {
