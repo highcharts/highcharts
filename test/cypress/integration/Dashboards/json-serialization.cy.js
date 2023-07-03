@@ -5,7 +5,7 @@ function clickElementInContextMenu(elemName) {
 }
 describe('JSON serialization test', () => {
     beforeEach(() => {
-        cy.visit('cypress/dashboards/dashboard-layout');
+        cy.visit('dashboards/cypress/dashboard-layout');
     });
 
     it.skip('should be the same state after export-delete-import of layout', () => {

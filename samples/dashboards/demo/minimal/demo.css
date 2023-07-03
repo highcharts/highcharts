@@ -5,3 +5,7 @@
 #csv {
     display: none;
 }
+
+#title h1 {
+    text-align: center;
+}
