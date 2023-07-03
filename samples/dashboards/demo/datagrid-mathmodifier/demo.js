@@ -12,7 +12,7 @@ Dashboards.board('container', {
                     type: 'Math',
                     columnFormulas: [{
                         column: 'USD',
-                        formula: 'B1*C1' // Multiple EUR (B1) with the rate (C1)
+                        formula: 'B1*C1' // Multiply EUR (B1) with the rate (C1)
                     }]
                 }
             }
