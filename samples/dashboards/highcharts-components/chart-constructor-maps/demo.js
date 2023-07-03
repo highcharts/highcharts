@@ -6,6 +6,8 @@
                 rows: [{
                     cells: [{
                         id: 'dashboard-col-0'
+                    }, {
+                        id: 'dashboard-col-1'
                     }]
                 }]
             }]
@@ -16,6 +18,7 @@
             chartConstructor: 'mapChart',
             chartOptions: {
                 chart: {
+                    styledMode: false,
                     map: await fetch(
                         'https://code.highcharts.com/mapdata/' +
                         'custom/world.topo.json'
@@ -24,6 +27,22 @@
                 series: [{
                     type: 'map',
                     name: 'World Map'
+                }]
+            }
+        }, {
+            cell: 'dashboard-col-1',
+            type: 'Highcharts',
+            chartConstructor: 'chart',
+            chartOptions: {
+                legend: {
+                    align: 'right',
+                    verticalAlign: 'top',
+                    layout: 'vertical',
+                    x: 0,
+                    y: 100
+                },
+                series: [{
+                    data: [1, 2, 3, 4]
                 }]
             }
         }]

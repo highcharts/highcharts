@@ -1,13 +1,5 @@
 const csvData = document.getElementById('csv').innerText;
 
-const dataGridOptions = {
-    columns: {
-        'Vitamin A': {
-            headerFormat: '{text} mg'
-        }
-    }
-};
-
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -35,6 +27,12 @@ Dashboards.board('container', {
             id: 'data'
         },
         type: 'DataGrid',
-        dataGridOptions
+        dataGridOptions: {
+            columns: {
+                'Vitamin A': {
+                    headerFormat: '{text} mg'
+                }
+            }
+        }
     }]
-}, true);
+});

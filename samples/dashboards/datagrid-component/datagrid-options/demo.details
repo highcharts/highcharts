@@ -1,10 +1,6 @@
 ---
-name: Highcharts Dashboards DataGrid Sync
+name: Highcharts Dashboards DataGrid Header format
 authors:
-  - Karol Kolodziej
+  - Askel Eirik Johansson
 js_wrap: b
-tags:
-  - Highcharts Dashboards demo
-categories:
-  - General
 ...

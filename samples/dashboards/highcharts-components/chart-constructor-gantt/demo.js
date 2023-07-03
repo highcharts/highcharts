@@ -77,6 +77,8 @@ Dashboards.board('container', {
             rows: [{
                 cells: [{
                     id: 'dashboard-col-0'
+                }, {
+                    id: 'dashboard-col-1'
                 }]
             }]
         }]
@@ -86,5 +88,14 @@ Dashboards.board('container', {
         type: 'Highcharts',
         chartConstructor: 'ganttChart',
         chartOptions
+    }, {
+        cell: 'dashboard-col-1',
+        type: 'Highcharts',
+        chartConstructor: 'chart',
+        chartOptions: {
+            series: [{
+                data: [1, 2, 3, 4]
+            }]
+        }
     }]
 });
