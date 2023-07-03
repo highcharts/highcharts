@@ -10,7 +10,7 @@
 	"code/highcharts.src.js",
 	"code/highcharts-more.src.js",
 	"code/highcharts-3d.src.js",
-
+	
 	"code/modules/stock.src.js",
 	"code/modules/map.src.js",
 	"code/modules/gantt.src.js",
@@ -90,5 +90,4 @@
 	"samples/data/ohlc.js",
 	"samples/data/three-series-1000-points.js",
 	"samples/data/large-dataset.js"
-
 ]

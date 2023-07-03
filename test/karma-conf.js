@@ -395,7 +395,8 @@ module.exports = function (config) {
             '**/maps/*/*/demo.js': ['generic'],
             '**/stock/*/*/demo.js': ['generic'],
             '**/gantt/*/*/demo.js': ['generic'],
-            '**/issues/*/*/demo.js': ['generic']
+            '**/issues/*/*/demo.js': ['generic'],
+            '**/dashboard/*/*/demo.js': ['generic']
         },
 
         /*

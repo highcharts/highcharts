@@ -13,7 +13,7 @@ Highcharts.chart('container', {
         align: 'left'
     },
     xAxis: {
-        categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],
+        categories: ['Africa', 'America', 'Asia', 'Europe'],
         title: {
             text: null
         },
@@ -60,15 +60,12 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Year 1990',
-        data: [631, 727, 3202, 721, 26]
+        data: [631, 727, 3202, 721]
     }, {
         name: 'Year 2000',
-        data: [814, 841, 3714, 726, 31]
-    }, {
-        name: 'Year 2010',
-        data: [1044, 944, 4170, 735, 40]
+        data: [814, 841, 3714, 726]
     }, {
         name: 'Year 2018',
-        data: [1276, 1007, 4561, 746, 42]
+        data: [1276, 1007, 4561, 746]
     }]
 });

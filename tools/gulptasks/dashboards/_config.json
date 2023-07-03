@@ -1,0 +1,10 @@
+{
+    "buildFolder": "build/dist/dashboards/",
+    "bundleSourceFolder": "code/dashboards/es-modules/masters-dashboards/",
+    "bundleTargetFolder": "code/dashboards/",
+    "cdnFolder": "/dashboards/",
+    "distRepository": "../dashboards-dist/",
+    "esModulesFolder": "code/dashboards/es-modules/",
+    "namespace": "Dashboards",
+    "typeScriptFolder": "ts/masters-dashboards/"
+}

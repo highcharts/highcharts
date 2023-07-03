@@ -23,6 +23,10 @@ Gulp.registry(new GulpForwardReference());
     );
 }([
     'api-upload',
+    'dashboards/api-docs',
+    'dashboards/dist-minify',
+    'dashboards/dist',
+    'dashboards/scripts',
     'default',
     'dist',
     'dist-clean',
@@ -60,13 +64,16 @@ Gulp.registry(new GulpForwardReference());
     'scripts-clean',
     'scripts-code',
     'scripts-compile',
+    'scripts-compile-old',
     'scripts-css',
     'scripts-es5',
+    'scripts-esx',
     'scripts-js',
     'scripts-messages',
     'scripts-ts',
     'scripts-vendor',
     'scripts-watch',
+    'scripts-webpacks',
     'test',
     'test-tree',
     'test-ts',
@@ -84,6 +91,7 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/upload-api',
     'unsorted/upload-files',
     'update-pr-testresults',
+    'update-pr-testresults-cypress',
     'pr-size-table'
 ]));
 

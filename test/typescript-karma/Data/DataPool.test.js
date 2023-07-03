@@ -1,9 +1,36 @@
 import DataPool from '/base/code/es-modules/Data/DataPool.js';
 
+
+QUnit.test('DataPool', function (assert) {
+    const dataPool = new DataPool();
+
+    dataPool.setConnectorOptions({
+        id: 'A',
+        type: 'CSVConnector',
+        options: {
+            csvURL: 'https://domain.example/data.csv'
+        }
+    });
+
+    dataPool.setConnectorOptions({
+        id: 'B',
+        type: 'CSVConnector',
+        options: {
+            csvURL: 'https://domain.example/data.csv'
+        }
+    });
+
+    assert.deepEqual(
+        dataPool.getConnectorIds(),
+        ['A', 'B'],
+        'The connectorsNames array should contain two elements, A and B.'
+    );
+});
+
 QUnit.test('DataPool options', async function (assert) {
     const pool = new DataPool({
         connectors: [{
-            name: 'CSV Test',
+            id: 'CSV Test',
             type: 'CSV',
             options: {
                 csv: 'y,z\n4,5\n6,7\n8,9',
@@ -28,7 +55,7 @@ QUnit.test('DataPool options', async function (assert) {
 QUnit.test('DataPool events', async function (assert) {
     const connectorOptions = {
         type: 'CSV',
-        name: 'My Connector',
+        id: 'my-connector',
         options: {
             csv: 'A,B\n1,2'
         }
@@ -61,7 +88,7 @@ QUnit.test('DataPool events', async function (assert) {
 
     eventLog.length = 0;
 
-    await pool.getConnector('My Connector');
+    await pool.getConnector('my-connector');
 
     assert.deepEqual(
         eventLog,
