@@ -33,6 +33,7 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/scripts-dts',
     'dashboards/scripts',
     'dashboards/test-dts',
+    'dashboards/test',
     'default',
     'dist',
     'dist-clean',

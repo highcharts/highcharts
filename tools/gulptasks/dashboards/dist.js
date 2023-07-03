@@ -48,7 +48,7 @@ async function dist() {
         return;
     }
 
-    if (!argv.release) {
+    if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(argv.release)) {
         throw new Error('No `--release x.x.x` provided.');
     }
 
@@ -56,12 +56,12 @@ async function dist() {
         'dashboards/scripts',
         'dashboards/dist-minify',
         'dashboards/dist-build',
-        'dashboards/dist-zip',
-        'dashboards/dist-release'
+        'dashboards/dist-zip'
+        // 'dashboards/dist-release'
         // 'dashboards/dist-upload'
     ]);
 
-    logLib.warn('Don\'t forget `npx gulp dist-upload`.');
+    logLib.warn('Don\'t forget `npx gulp dashboards/dist-upload`.');
 
 }
 

@@ -33,7 +33,7 @@ async function distRelease() {
 
     const release = argv.release;
 
-    if (!/^\d+\.\d+\.\d(?:-\w+)$/su.test(release)) {
+    if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(release)) {
         throw new Error('No valid `--release x.x.x` provided.');
     }
 
@@ -105,6 +105,7 @@ async function distRelease() {
             cwd: distRepository
         });
     } else {
+        // Play safe - do manually
         // await processLib.exec('git push origin --tags', {
         //     cwd: distRepository
         // });
@@ -113,11 +114,13 @@ async function distRelease() {
         // });
     }
 
+    logLib.success(`Updated ${distRepository}`);
+
     // Play safe
 
-    logLib.success(`Updated ${distRepository}`);
     logLib.warn([
         `Run following commands in ${distRepository}:`,
+        'git push',
         'git push origin --tags',
         'npm publish --access public'
     ].join('\n'));

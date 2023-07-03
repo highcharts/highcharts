@@ -28,7 +28,6 @@ async function distBuild() {
         buildFolder,
         bundleTargetFolder,
         cssFolder,
-        examplesFolder,
         gfxFolder
     } = require('./_config.json');
 
@@ -36,29 +35,34 @@ async function distBuild() {
     logLib.success(`Deleted ${buildFolder}`);
 
     const buildCodeTarget = path.join(buildFolder, 'code');
-
     fsLib.copyAllFiles(bundleTargetFolder, buildCodeTarget, true);
     logLib.success(`Created ${buildCodeTarget}`);
 
     const buildCssTarget = path.join(buildCodeTarget, 'css');
-
     fsLib.copyAllFiles(
         cssFolder,
         buildCssTarget,
         true,
-        file => path.basename(file)[0] !== '.'
+        file => (
+            path.basename(file)[0] !== '.' &&
+            (
+                file.includes('dashboards') ||
+                file.includes('datagrid')
+            )
+        )
     );
     logLib.success(`Created ${buildCssTarget}`);
 
-    const examplesSourceFolder = examplesFolder;
-    const examplesTargetFolder = path.join(buildFolder, 'examples');
-
-    fsLib.copyAllFiles(examplesSourceFolder, examplesTargetFolder, true);
-    logLib.success(`Created ${examplesTargetFolder}`);
-
     const buildGfxTarget = path.join(buildCodeTarget, 'gfx');
-
-    fsLib.copyAllFiles(gfxFolder, buildGfxTarget, true);
+    fsLib.copyAllFiles(
+        gfxFolder,
+        buildGfxTarget,
+        true,
+        file => (
+            path.basename(file)[0] !== '.' &&
+            file.includes('dashboard')
+        )
+    );
     logLib.success(`Created ${buildGfxTarget}`);
 
 }

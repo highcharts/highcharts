@@ -31,7 +31,7 @@ async function distZip() {
 
     const release = argv.release;
 
-    if (!/^\d+\.\d+\.\d(?:-\w+)$/su.test(release)) {
+    if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(release)) {
         throw new Error('No valid `--release x.x.x` provided.');
     }
 

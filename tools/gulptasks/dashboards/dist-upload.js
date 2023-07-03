@@ -60,6 +60,12 @@ const MIME_TYPE = {
     '.zip': 'application/zip'
 };
 
+const NOW = Date.UTC(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    new Date().getDate()
+);
+
 
 /* *
  *
@@ -126,6 +132,9 @@ function getChunks(items) {
  * @param {string} targetFolder
  * Base folder to upload to.
  *
+ * @param {number} [maxAge]
+ * Max age for cache control.
+ *
  * @return {Promise}
  * Promise to keep.
  */
@@ -134,10 +143,12 @@ async function uploadFile(
     sourceFile,
     targetStorage,
     targetBucket,
-    targetFolder
+    targetFolder,
+    maxAge = HTTP_MAX_AGE.oneDay
 ) {
     const logLib = require('../lib/log');
     const fileContent = fs.readFileSync(sourceFile);
+    const isGzip = Buffer.from(fileContent).readUInt16BE() === 8075;
 
     const filePath = path.join(
         targetFolder,
@@ -148,9 +159,15 @@ async function uploadFile(
         Bucket: targetBucket,
         Key: filePath,
         Body: fileContent,
-        CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
+        ACL: 'public-read',
         ContentType: MIME_TYPE[path.extname(filePath)],
-        ...(path.includes('/js-gzip/') ? { ContentEncoding: 'gzip' } : {})
+        ...(!maxAge ? {} : {
+            CacheControl: `public, max-age=${maxAge}`,
+            Expires: new Date(NOW + (maxAge * 1000))
+        }),
+        ...(!isGzip ? {} : {
+            ContentEncoding: 'gzip'
+        })
     });
 
     logLib.message(filePath, 'uploaded');
@@ -172,6 +189,9 @@ async function uploadFile(
  * @param {string} targetFolder
  * Base folder to upload to.
  *
+ * @param {number} [maxAge]
+ * Max age for cache control.
+ *
  * @return {Promise}
  * Promise to keep.
  */
@@ -179,9 +199,9 @@ async function uploadFolder(
     sourceFolder,
     targetStorage,
     targetBucket,
-    targetFolder
+    targetFolder,
+    maxAge
 ) {
-
     const fsLib = require('../lib/fs');
     const logLib = require('../lib/log');
 
@@ -199,7 +219,8 @@ async function uploadFolder(
                 filePath,
                 targetStorage,
                 targetBucket,
-                targetFolder
+                targetFolder,
+                maxAge
             ))
         );
     }
@@ -252,7 +273,8 @@ async function uploadZips(
                 filePath,
                 targetStorage,
                 targetBucket,
-                targetFolder
+                targetFolder,
+                0
             ))
         );
     }
@@ -305,11 +327,11 @@ async function distUpload() {
         throw new Error('No `--region aws` provided.');
     }
 
-    if (!/^\d+\.\d+\.\d(?:-\w+)$/su.test(release)) {
+    if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(release)) {
         throw new Error('No valid `--release x.x.x` provided.');
     }
 
-    const sourceFolder = path.join(buildFolder, 'code/');
+    const sourceFolder = path.join(buildFolder, 'js-gzip/');
 
     if (!fs.existsSync(sourceFolder)) {
         throw new Error(`Folder "${sourceFolder}" not found.`);
@@ -324,32 +346,18 @@ async function distUpload() {
         )
     });
 
+    const cdnVersionFolder = path.join(cdnFolder, release, '/');
+
     logLib.warn(`Uploading to ${cdnFolder}...`);
     await uploadFolder(sourceFolder, targetStorage, bucket, cdnFolder);
 
-    const cdnVersionFolder = path.join(cdnFolder, release, '/');
-
     logLib.warn(`Uploading to ${cdnVersionFolder}...`);
-    await uploadFolder(sourceFolder, targetStorage, bucket, cdnVersionFolder);
-
-    const cdnJSgzipFolder = path.join(cdnFolder, 'js-gzip/');
-
-    logLib.warn(`Uploading to ${cdnJSgzipFolder}...`);
-    await uploadFolder(buildFolder, targetStorage, bucket, cdnJSgzipFolder);
-
-    const cdnJSgzipVersionFolder = path.join(
-        cdnFolder,
-        'js-gzip',
-        release,
-        '/'
-    );
-
-    logLib.warn(`Uploading to ${cdnJSgzipVersionFolder}...`);
     await uploadFolder(
-        buildFolder,
+        sourceFolder,
         targetStorage,
         bucket,
-        cdnJSgzipVersionFolder
+        cdnVersionFolder,
+        HTTP_MAX_AGE.fiveYears
     );
 
     logLib.warn('Uploading to zips/...');
