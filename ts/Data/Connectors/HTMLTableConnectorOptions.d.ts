@@ -17,7 +17,7 @@
  *
  * */
 
-import DataConnector from './DataConnector';
+import type DataConnectorOptions from './DataConnectorOptions';
 
 
 /* *
@@ -29,7 +29,7 @@ import DataConnector from './DataConnector';
 /**
  * Options of the GoogleSheetsConnector.
  */
-export interface HTMLTableConnectorOptions extends DataConnector.Options {
+export interface HTMLTableConnectorOptions extends DataConnectorOptions {
     /**
      * The id of the HTML table element to load or a reference to the HTML.
      */

@@ -17,7 +17,7 @@
  *
  * */
 
-import DataConnector from './DataConnector';
+import type DataConnectorOptions from './DataConnectorOptions';
 
 
 /* *
@@ -29,7 +29,7 @@ import DataConnector from './DataConnector';
 /**
  * Options of the GoogleSheetsConnector.
  */
-export interface GoogleSheetsConnectorOptions extends DataConnector.Options {
+export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
     /**
      * The rate in seconds for polling for live data.
      * Note that polling requires the option `enablePolling` to be true.

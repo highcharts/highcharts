@@ -32,11 +32,13 @@ import type HTMLTableConnectorOptions from './Connectors/HTMLTableConnectorOptio
 
 export interface DataPoolOptions {
     /**
-     * Link list to connector options + mention DataConnector.types
+     * The connectors to use for loading data. Available connectors and its
+     * options:
      *
-     * Available connectors and its options:
      * {@link CSVConnectorOptions | CSVConnector}
+     *
      * {@link GoogleSheetsConnectorOptions | GoogleSheetsConnector}
+     *
      * {@link HTMLTableConnectorOptions | HTMLTableConnector}
      **/
     connectors: Array<DataPoolConnectorOptions>;

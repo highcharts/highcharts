@@ -17,7 +17,7 @@
  *
  * */
 
-import DataConnector from './DataConnector';
+import type DataConnectorOptions from './DataConnectorOptions';
 
 
 /* *
@@ -29,7 +29,7 @@ import DataConnector from './DataConnector';
 /**
  * Options of the CSVConnector.
  */
-export interface CSVConnectorOptions extends DataConnector.Options {
+export interface CSVConnectorOptions extends DataConnectorOptions {
     /**
      * Data in CSV format passed directly to connector as a string.
      */

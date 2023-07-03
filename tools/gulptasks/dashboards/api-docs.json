@@ -26,6 +26,7 @@
         "../../../ts/Dashboards/Components/Sync/Sync.ts",
         "../../../ts/Dashboards/PluginHandler.ts",
         "../../../ts/Data/DataTable.ts",
+        "../../../ts/Data/Connectors/DataConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/CSVConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/GoogleSheetsConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/HTMLTableConnectorOptions.d.ts",
