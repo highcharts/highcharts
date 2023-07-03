@@ -848,7 +848,7 @@ namespace Board {
  * */
 
 Serializable.registerClassPrototype('Board', Board.prototype);
-ComponentRegistry.registerComponent(HTMLComponent);
+ComponentRegistry.registerComponent('HTML', HTMLComponent);
 
 /* *
  *
