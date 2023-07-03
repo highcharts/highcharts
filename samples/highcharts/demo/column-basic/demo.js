@@ -22,7 +22,7 @@ Highcharts.chart('container', {
     yAxis: {
         min: 0,
         title: {
-            text: 'Metric tons (MT)'
+            text: '1000 metric tons (MT)'
         }
     },
     tooltip: {
