@@ -24,7 +24,6 @@ const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
 const logLib = require('./lib/log');
-const argv = require('yargs').argv;
 
 function getDemoBuildPath() {
     const config = getGitIgnoreMeProperties();
@@ -268,50 +267,7 @@ function convertURLToLocal(str) {
  *         Promise to keep
  */
 function distExamples() {
-
     const FS = require('fs');
-
-    function readJSONFile(filePath) {
-        return JSON.parse(readFileSync(filePath));
-    }
-
-    if (argv.dashboards) {
-        const demoPath = Path.join(getDemoBuildPath().replace('tmp/demo', ''), 'frontend', 'tmp');
-
-        const things = [{
-            name: 'Highcharts Dasboards',
-            id: 'highcharts-dashboards',
-            distName: 'dashboards',
-            path: 'dashboards/demo'
-        }];
-
-        things.forEach(({ name, id, path, distName }) => {
-            const output = [];
-            output.push(`<h1>${name} examples</h1>`);
-
-            const categories = readJSONFile(Path.join(demoPath, 'sidebar/ids', `${id}.json`));
-            categories.forEach(categoryID => {
-                const demos = readJSONFile(Path.join(demoPath, 'categories', categoryID + '.json'));
-                output.push('<ul>');
-                demos.forEach(demo => {
-
-                    const regex = new RegExp(`.*samples/${path}/`, 'u');
-
-                    const demoExamplePath = demo.location.replace(regex, '');
-                    output.push(`<li><a href="https://highcharts.com/samples/${distName}/demo/${demoExamplePath}">${demo.name}</a></li>`);
-                });
-                output.push('</ul>');
-            });
-
-            FS.writeFileSync(Path.join(TARGET_DIRECTORY, distName, 'index.html'), output.join('\n'));
-
-        });
-
-
-        return new Promise(resolve => {
-            resolve();
-        });
-    }
 
     return new Promise((resolve, reject) => {
 
@@ -359,3 +315,7 @@ function distExamples() {
 }
 
 Gulp.task('dist-examples', distExamples);
+
+module.exports = {
+    getDemoBuildPath
+};

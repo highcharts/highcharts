@@ -26,6 +26,7 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/api-docs',
     'dashboards/dist-minify',
     'dashboards/dist',
+    'dashboards/dist-examples',
     'dashboards/scripts',
     'default',
     'dist',
