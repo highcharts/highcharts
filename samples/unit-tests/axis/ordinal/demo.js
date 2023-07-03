@@ -727,7 +727,7 @@ QUnit.test('Circular translation, #17128.', assert => {
     );
 });
 
-QUnit.test('Moving annotations on ordinal axis, #18459', assert => {
+QUnit.test('Annotations on ordinal axis.', assert => {
     const data = [
         [
             1622640600000,
@@ -775,6 +775,9 @@ QUnit.test('Moving annotations on ordinal axis, #18459', assert => {
 
     const chart = Highcharts.stockChart('container', {
         series: [{
+            dataGrouping: {
+                forced: true
+            },
             type: 'ohlc',
             data: data
         }, {
@@ -812,6 +815,19 @@ QUnit.test('Moving annotations on ordinal axis, #18459', assert => {
         x - 50,
         chart.xAxis[0].toPixels(circle.userOptions.shapes[0].point.x),
         0.1,
-        'Annotation dragged on ordinal axis charts should follow mouse pointer.'
+        'Annotation dragged on ordinal axis charts should follow mouse pointer, #18459.'
+    );
+
+    chart.xAxis[0].setExtremes(1622813400000, 1623245400000);
+
+    const val = chart.xAxis[0].toValue(-150, true);
+    const pixels = chart.xAxis[0].toPixels(val, true);
+    console.log(pixels);
+
+    assert.close(
+        pixels,
+        -150,
+        0.0001,
+        'toValue <-> toPixels translation should return the same initial value, #16784. '
     );
 });
