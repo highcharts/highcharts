@@ -19,6 +19,7 @@
  *
  * */
 
+import type Globals from '../Globals';
 import type JSON from '../JSON';
 
 import CSVConnector from '../../Data/Connectors/CSVConnector.js';
@@ -51,7 +52,7 @@ function fromJSON(
 /**
  * Validates the given class instance for JSON support.
  *
- * @param {AnyRecord} obj
+ * @param {Globals.AnyRecord} obj
  * Class instance or object to validate.
  *
  * @return {boolean}
@@ -59,7 +60,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: AnyRecord
+    obj: Globals.AnyRecord
 ): obj is CSVConnector {
     return obj instanceof CSVConnector;
 }

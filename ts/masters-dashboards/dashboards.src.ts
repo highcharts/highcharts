@@ -46,7 +46,6 @@ import '../Data/Modifiers/SortModifier.js';
 declare global {
     interface Window {
         Dashboards: typeof D;
-        Highcharts: typeof Highcharts & { Dashboard: typeof D };
     }
     let Dashboards: typeof D;
 }

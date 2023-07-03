@@ -16,8 +16,12 @@ const path = require('path');
 
 const DTS_FILES = [
     'Core/Color/ColorString.d.ts',
+    'Core/Color/ColorType.d.ts',
+    'Core/Color/GradientColor.d.ts',
+    'Core/Renderer/AlignObject.d.ts',
     'Core/Renderer/CSSObject.d.ts',
-    'Core/Renderer/DOMElementType.d.ts'
+    'Core/Renderer/DOMElementType.d.ts',
+    'Core/Renderer/HTML/HTMLAttributes.d.ts'
 ];
 
 
