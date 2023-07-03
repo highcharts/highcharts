@@ -62,7 +62,8 @@ async function dashboardsScripts() {
                         null
                 ),
                 namespace: 'Dashboards',
-                output: config.bundleTargetFolder
+                output: config.bundleTargetFolder,
+                version: (argv.release || '1.0.0-modified')
             })
             .fnFirstBuild();
 
