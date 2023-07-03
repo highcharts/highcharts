@@ -276,7 +276,6 @@ function distExamples() {
     }
 
     if (argv.dashboards) {
-
         const demoPath = Path.join(getDemoBuildPath().replace('tmp/demo', ''), 'frontend', 'tmp');
 
         const things = [{
@@ -286,10 +285,9 @@ function distExamples() {
             path: 'dashboards/demo'
         }];
 
-
         things.forEach(({ name, id, path, distName }) => {
             const output = [];
-            output.push(`<h1>${name}</h1>`);
+            output.push(`<h1>${name} examples</h1>`);
 
             const categories = readJSONFile(Path.join(demoPath, 'sidebar/ids', `${id}.json`));
             categories.forEach(categoryID => {
@@ -299,49 +297,8 @@ function distExamples() {
 
                     const regex = new RegExp(`.*samples/${path}/`, 'u');
 
-                    const demoExamplePath = demo.location.replace(regex, './examples/');
-                    output.push(`<li><a href="${demoExamplePath}">${demo.name}</a></li>`);
-
-                    // transform demo.html
-                    // assume that dist-build has been run
-
-                    const exampleOutputPath =
-                        Path.join(
-                            TARGET_DIRECTORY,
-                            distName,
-                            demoExamplePath
-                        );
-
-                    const demoHTML =
-                        '<link rel="stylesheet" type="text/css" href="./demo.css"></link>' +
-                        readFileSync(
-                            Path.join(
-                                exampleOutputPath,
-                                'demo.html'
-                            ), { encoding: 'utf-8' }
-                        ).replaceAll('https://code.highcharts.com/dashboards', '../../code').replaceAll('.js', '.src.js') +
-                        '<script src="./demo.js"></script>';
-
-                    FS.rmSync(Path.join(exampleOutputPath, 'index.html'));
-                    FS.writeFileSync(Path.join(exampleOutputPath, 'index.html'), `<html>
-                        <body>
-                            ${demoHTML}
-                        </body>
-</html>
-                        `);
-
-                    const demoCSS =
-                        readFileSync(
-                            Path.join(
-                                exampleOutputPath,
-                                'demo.html'
-                            ), { encoding: 'utf-8' }
-                        ).replaceAll('https://code.highcharts.com/dashboards', '../../code');
-
-
-                    FS.writeFileSync(Path.join(exampleOutputPath, 'demo.css'), demoCSS);
-
-
+                    const demoExamplePath = demo.location.replace(regex, '');
+                    output.push(`<li><a href="https://highcharts.com/samples/${distName}/demo/${demoExamplePath}">${demo.name}</a></li>`);
                 });
                 output.push('</ul>');
             });
