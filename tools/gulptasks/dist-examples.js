@@ -24,6 +24,7 @@ const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
 const logLib = require('./lib/log');
+const argv = require('yargs').argv;
 
 function getDemoBuildPath() {
     const config = getGitIgnoreMeProperties();
@@ -166,8 +167,8 @@ async function createExamples(title, sourcePath, targetPath, template) {
                 path = Path.join(directoryPath, 'demo.' + ext);
                 obj[ext] = (
                     FS.existsSync(path) &&
-          FS.readFileSync(path).toString() ||
-          ''
+                    FS.readFileSync(path).toString() ||
+                    ''
                 );
                 return obj;
             },
@@ -190,7 +191,7 @@ async function createExamples(title, sourcePath, targetPath, template) {
 
     function getLocalSidebar(path) {
         const sidebarPath =
-      Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`);
+            Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`);
         try {
             const file = readFileSync(sidebarPath,
                 'utf-8');
@@ -204,12 +205,16 @@ async function createExamples(title, sourcePath, targetPath, template) {
 
     LogLib.success('Created', targetPath);
 
-    const localsidebar = getLocalSidebar(sourcePath.replace(/samples\//, '').replace(/\/demo/, ''));
+    const localsidebar = getLocalSidebar(
+        sourcePath
+            .replaceAll('samples/', '')
+            .replaceAll('/demo', '')
+    );
 
     LogLib.success('Created', targetPath);
     const indexContent = localsidebar
-        .replace(/style=\"display:none;\"/g, '') // remove hidden style
-        .replace(/(?!href= ")(\.\/.+?)(?=")/g, 'examples\/$1\/index.html'); // replace links
+        .replaceAll('style="display:none;"', '') // remove hidden style
+        .replace(/(?!href= ")(\.\/.+?)(?=")/gu, 'examples\/$1\/index.html'); // replace links
 
     // eslint-disable-next-line node/no-unsupported-features/node-builtins
     return FS.promises.writeFile(
@@ -265,6 +270,91 @@ function convertURLToLocal(str) {
 function distExamples() {
 
     const FS = require('fs');
+
+    function readJSONFile(filePath) {
+        return JSON.parse(readFileSync(filePath));
+    }
+
+    if (argv.dashboards) {
+
+        const demoPath = Path.join(getDemoBuildPath().replace('tmp/demo', ''), 'frontend', 'tmp');
+
+        const things = [{
+            name: 'Highcharts Dasboards',
+            id: 'highcharts-dashboards',
+            distName: 'dashboards',
+            path: 'dashboards/demo'
+        }];
+
+
+        things.forEach(({ name, id, path, distName }) => {
+            const output = [];
+            output.push(`<h1>${name}</h1>`);
+
+            const categories = readJSONFile(Path.join(demoPath, 'sidebar/ids', `${id}.json`));
+            categories.forEach(categoryID => {
+                const demos = readJSONFile(Path.join(demoPath, 'categories', categoryID + '.json'));
+                output.push('<ul>');
+                demos.forEach(demo => {
+
+                    const regex = new RegExp(`.*samples/${path}/`, 'u');
+
+                    const demoExamplePath = demo.location.replace(regex, './examples/');
+                    output.push(`<li><a href="${demoExamplePath}">${demo.name}</a></li>`);
+
+                    // transform demo.html
+                    // assume that dist-build has been run
+
+                    const exampleOutputPath =
+                        Path.join(
+                            TARGET_DIRECTORY,
+                            distName,
+                            demoExamplePath
+                        );
+
+                    const demoHTML =
+                        '<link rel="stylesheet" type="text/css" href="./demo.css"></link>' +
+                        readFileSync(
+                            Path.join(
+                                exampleOutputPath,
+                                'demo.html'
+                            ), { encoding: 'utf-8' }
+                        ).replaceAll('https://code.highcharts.com/dashboards', '../../code').replaceAll('.js', '.src.js') +
+                        '<script src="./demo.js"></script>';
+
+                    FS.rmSync(Path.join(exampleOutputPath, 'index.html'));
+                    FS.writeFileSync(Path.join(exampleOutputPath, 'index.html'), `<html>
+                        <body>
+                            ${demoHTML}
+                        </body>
+</html>
+                        `);
+
+                    const demoCSS =
+                        readFileSync(
+                            Path.join(
+                                exampleOutputPath,
+                                'demo.html'
+                            ), { encoding: 'utf-8' }
+                        ).replaceAll('https://code.highcharts.com/dashboards', '../../code');
+
+
+                    FS.writeFileSync(Path.join(exampleOutputPath, 'demo.css'), demoCSS);
+
+
+                });
+                output.push('</ul>');
+            });
+
+            FS.writeFileSync(Path.join(TARGET_DIRECTORY, distName, 'index.html'), output.join('\n'));
+
+        });
+
+
+        return new Promise(resolve => {
+            resolve();
+        });
+    }
 
     return new Promise((resolve, reject) => {
 
