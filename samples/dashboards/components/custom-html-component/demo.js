@@ -1,5 +1,5 @@
 const { ComponentRegistry } = Dashboards,
-    HTMLComponent = ComponentRegistry.getComponent('HTML'),
+    HTMLComponent = ComponentRegistry.types.HTML,
     AST = Highcharts.AST;
 class CustomHTML extends HTMLComponent {
     constructor(cell, options) {
@@ -21,7 +21,7 @@ class CustomHTML extends HTMLComponent {
     }
 }
 
-ComponentRegistry.registerComponent(CustomHTML);
+ComponentRegistry.registerComponent('CustomHTML', CustomHTML);
 
 Dashboards.board('container', {
     gui: {
