@@ -1,5 +1,5 @@
 ---
-name: Highcharts Dashboards Axis Sync
+name: Axis sync
 authors:
   - Karol Kolodziej
 js_wrap: b
