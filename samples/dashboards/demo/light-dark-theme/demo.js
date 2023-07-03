@@ -38,22 +38,51 @@ Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'Column chart'
+                text: 'Vitamin A'
             },
             chartOptions: {
                 xAxis: {
                     type: 'category'
                 },
+                yAxis: {
+                    title: ''
+                },
+                credits: {
+                    enabled: false
+                },
                 title: {
                     text: ''
                 },
+                subtitle: {
+                    text: 'in Various Foods',
+                    align: 'left',
+                    y: 10
+                },
+                legend: {
+                    enabled: false
+                },
                 chart: {
                     animation: false,
-                    type: 'column'
+                    type: 'packedbubble',
+                    margin: 0,
+                    spacing: [0, 10, 10, 10]
                 },
                 plotOptions: {
                     series: {
-                        colorByPoint: true
+                        colorByPoint: true,
+                        maxSize: '100%',
+                        minSize: '40%',
+                        dataLabels: {
+                            enabled: true,
+                            format: '{key}',
+                            style: {
+                                textOuline: '1px'
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '{point.key}:',
+                            pointFormat: ' {point.y}'
+                        }
                     }
                 }
             }
@@ -65,7 +94,7 @@ Dashboards.board('container', {
             },
             editable: true,
             title: {
-                text: 'Grid component'
+                text: 'Data Grid Component'
             },
             sync: {
                 highlight: true

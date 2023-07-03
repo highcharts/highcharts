@@ -5,3 +5,16 @@
 #csv {
     display: none;
 }
+
+#dashboard-col-0 h1,
+#dashboard-col-1 h1 {
+    text-align: center;
+    font-size: 1.2em;
+    background-color: #fffaf0;
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    color: #00766f;
+    font-family: monospace;
+    font-weight: normal;
+}

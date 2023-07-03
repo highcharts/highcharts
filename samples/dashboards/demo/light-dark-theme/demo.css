@@ -13,3 +13,21 @@
 #csv {
     display: none;
 }
+
+.highcharts-point {
+    fill-opacity: 0.5;
+}
+
+.highcharts-dark .highcharts-point {
+    fill-opacity: 0.9;
+}
+
+#dashboard-col-0 h1 {
+    margin-bottom: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .highcharts-point {
+        fill-opacity: 0.9;
+    }
+}

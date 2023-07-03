@@ -40,12 +40,40 @@ Dashboards.board('container', {
 
 // Build chart options for each HighchartsComponent
 function buildChartOptions(type, table, cursor) {
+    const typeString = type.charAt(0).toUpperCase() + type.slice(1);
+
     return {
         chart: {
+            spacing: [20, 20, 0, 20],
+            margin: [50, 50, 80, 100],
             events: {
                 load: function () {
                     const chart = this;
                     const series = chart.series[0];
+                    console.log(series);
+                    if (series.userOptions.type === 'pie') {
+
+                        chart.update({
+                            chart: {
+                                margin: 50,
+                                spacing: 30
+                            },
+                            legend: {
+                                enabled: true,
+                                layout: 'vertical',
+                                align: 'center',
+                                x: -200,
+                                verticalAlign: 'middle'
+                            }
+                        });
+                        series.update({
+                            showInLegend: true,
+                            innerSize: '60%',
+                            dataLabels: {
+                                enabled: false
+                            }
+                        });
+                    }
 
                     // react to table cursor
                     cursor.addListener(table.id, 'point.mouseOver', function (e) {
@@ -63,6 +91,14 @@ function buildChartOptions(type, table, cursor) {
         },
         legend: {
             enabled: false
+        },
+        credits: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                colorByPoint: true
+            }
         },
         series: [{
             type,
@@ -89,7 +125,7 @@ function buildChartOptions(type, table, cursor) {
             }
         }],
         title: {
-            text: table.id
+            text: table.id  + ' ' + typeString
         },
         xAxis: {
             categories: table.getColumn('name')

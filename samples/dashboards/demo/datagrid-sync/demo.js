@@ -1,18 +1,49 @@
 const csvData = document.getElementById('csv').innerText;
 
+let chartCount = 0;
+
 const chartOptions = {
     xAxis: {
         type: 'category'
     },
+    yAxis: {
+        title: {
+            text: null
+        }
+    },
     chart: {
         animation: false,
-        type: 'column'
+        type: 'column',
+        events: {
+            load: function () {
+                const chart = this;
+                if (chartCount === 1) {
+                    chart.update({
+                        subtitle: {
+                            useHTML: true,
+                            text: 'Dragging points <em>will not update</em> the grid'
+                        }
+                    });
+                }
+                chartCount = chartCount + 1;
+            }
+        }
+    },
+    credits: {
+        enabled: false
     },
     title: {
+        text: 'Vitamin A in Various Foods'
+    },
+    subtitle: {
         text: 'Drag points to update the data grid'
+    },
+    legend: {
+        enabled: false
     },
     plotOptions: {
         series: {
+            colorByPoint: true,
             dragDrop: {
                 draggableY: true,
                 dragPrecisionY: 1

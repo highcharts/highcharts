@@ -5,3 +5,41 @@
 #csv {
     display: none;
 }
+
+h1,
+p {
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 0;
+}
+
+p {
+    margin-top: 0;
+}
+
+.highcharts-point,
+.highcharts-area {
+    fill-opacity: 0.4;
+}
+
+#dashboard-col-1 .highcharts-color-0 {
+    fill: var(--highcharts-color-0);
+    stroke: var(--highcharts-color-0);
+}
+
+#dashboard-col-2 .highcharts-color-0 {
+    fill: var(--highcharts-color-1);
+    stroke: var(--highcharts-color-1);
+}
+
+#dashboard-col-3 .highcharts-color-0 {
+    fill: var(--highcharts-color-2);
+    stroke: var(--highcharts-color-2);
+}
+
+#dashboard-col-4 .highcharts-color-0 {
+    fill: var(--highcharts-color-3);
+    stroke: var(--highcharts-color-3);
+}
