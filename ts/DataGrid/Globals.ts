@@ -70,6 +70,7 @@ namespace Globals {
         row: classNamePrefix + 'row',
         columnHeader: classNamePrefix + 'column-header'
     };
+
 }
 
 /* *
