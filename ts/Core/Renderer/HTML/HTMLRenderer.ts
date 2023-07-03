@@ -314,7 +314,7 @@ class HTMLRenderer extends SVGRenderer {
                             // updating the shadow div counterpart with the same
                             // style.
                             css: function (styles: CSSObject): HTMLElement {
-                                wrapper.css.call(parentGroup, styles);
+                                wrapper.css(styles);
                                 (
                                     [
                                         // #6794
