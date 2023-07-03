@@ -271,6 +271,13 @@ class InfoRegionsComponent extends AccessibilityComponent {
             }
         });
 
+        this.addEvent(chart, 'afterHideData', function (): void {
+            if (component.viewDataTableButton) {
+                component.viewDataTableButton
+                    .setAttribute('aria-expanded', 'false');
+            }
+        });
+
         this.announcer = new Announcer(chart, 'assertive');
     }
 

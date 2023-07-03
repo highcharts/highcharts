@@ -391,7 +391,7 @@ function getRelativePointAxisPosition(axis: Axis, point: Point): number {
  * Get relative position of point on an x/y axis from 0 to 1.
  * @private
  */
-function scrollToPoint(point: Point): void {
+function scrollAxisToPoint(point: Point): void {
     const xAxis = point.series.xAxis,
         yAxis = point.series.yAxis,
         axis = (xAxis && xAxis.scrollbar ? xAxis : yAxis),
@@ -432,7 +432,7 @@ const ChartUtilities = {
     getSeriesA11yElement,
     unhideChartElementFromAT,
     hideSeriesFromAT,
-    scrollToPoint
+    scrollAxisToPoint
 };
 
 export default ChartUtilities;
