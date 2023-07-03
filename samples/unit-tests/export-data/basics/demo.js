@@ -1515,3 +1515,34 @@ QUnit.test('Exporting duplicated points (#17639)', function (assert) {
         should be same as actual, #17639.`
     );
 });
+
+QUnit.test('X-range series CSV data', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'xrange'
+            },
+
+            xAxis: {
+                type: 'datetime'
+            },
+
+            yAxis: {
+                categories: ['Prototyping']
+            },
+
+            series: [{
+                data: [{
+                    x: Date.UTC(2014, 10, 21),
+                    x2: Date.UTC(2014, 11, 2),
+                    y: 0
+                }]
+            }]
+        }),
+        csv = chart.getCSV().split('\n');
+
+    assert.strictEqual(
+        csv[1],
+        '"2014-11-21 00:00:00 - 2014-12-02 00:00:00","Prototyping"',
+        'Include start and end dates in exported CSV data for X-range series (#14108).'
+    );
+});

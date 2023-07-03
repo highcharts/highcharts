@@ -127,6 +127,7 @@ interface ExportingCategoryDateTimeMap {
 interface ExportDataPoint {
     series: ExportDataSeries;
     x?: number;
+    x2?: number;
 }
 
 interface ExportDataSeries {
@@ -571,6 +572,10 @@ function chartGetDataRows(
                 rows[key].name = name;
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
 
+                if (mockPoint.x2) {
+                    rows[key].x2 = mockPoint.x2;
+                }
+
                 if (!defined(rows[key].seriesIndices)) {
                     rows[key].seriesIndices = [];
                 }
@@ -650,6 +655,11 @@ function chartGetDataRows(
                         csvOptions.dateFormat as any,
                         row.x
                     );
+                    if (row.x2) {
+                        category += ' - ' + time.dateFormat(
+                            csvOptions.dateFormat as any, row.x2
+                        );
+                    }
                 } else if (xAxis.categories) {
                     category = pick(
                         xAxis.names[row.x],
