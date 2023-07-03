@@ -1,4 +1,9 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+    ).then(response => response.json());
 
     var lastDate = data[data.length - 1][0],  // Get year of last data point
         days = 24 * 36e5; // Milliseconds in a day
@@ -77,4 +82,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/sa
             shape: 'squarepin'
         }]
     });
-});
+})();
