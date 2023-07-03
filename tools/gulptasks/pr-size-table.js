@@ -27,7 +27,7 @@ const files = argv.files ? argv.files.split(',') : [
     'modules/exporting.src.js',
     'modules/heatmap.src.js',
     'modules/offline-exporting.src.js',
-    'modules/dashboards/dashboards-plugin.src.js',
+    'dashboards/modules/dashboards-plugin.src.js',
     'dashboards/dashboards.src.js',
     'dashboards/datagrid.src.js'
 ];
