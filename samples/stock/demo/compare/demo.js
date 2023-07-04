@@ -1,6 +1,6 @@
-var seriesOptions = [],
-    seriesCounter = 0,
+const seriesOptions = [],
     names = ['MSFT', 'AAPL', 'GOOG'];
+let seriesCounter = 0;
 
 /**
  * Create the chart when all data is loaded
@@ -43,8 +43,8 @@ function createChart() {
 }
 
 function success(data) {
-    var name = this.url.match(/(msft|aapl|goog)/)[0].toUpperCase();
-    var i = names.indexOf(name);
+    const name = this.url.match(/(msft|aapl|goog)/)[0].toUpperCase();
+    const i = names.indexOf(name);
     seriesOptions[i] = {
         name: name,
         data: data
