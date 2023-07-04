@@ -38,6 +38,7 @@ const {
     }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import SeriesOptions from '../../Core/Series/SeriesOptions';
 const {
     addEvent,
     defined,
@@ -662,6 +663,21 @@ class AreaRangeSeries extends AreaSeries {
         }
     }
 
+    public hasMarkerChanged(
+        options: DeepPartial<AreaRangeSeriesOptions>,
+        oldOptions: DeepPartial<AreaRangeSeriesOptions>
+    ): boolean | undefined {
+        const series = this,
+            lowMarker = options.lowMarker,
+            oldMarker = oldOptions.lowMarker || {};
+
+        return (lowMarker && (
+            lowMarker.enabled === false ||
+            oldMarker.symbol !== lowMarker.symbol || // #10870, #15946
+            oldMarker.height !== lowMarker.height || // #16274
+            oldMarker.width !== lowMarker.width // #16274
+        )) || super.hasMarkerChanged(options, oldOptions);
+    }
 }
 
 addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
