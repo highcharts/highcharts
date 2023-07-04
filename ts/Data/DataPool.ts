@@ -230,7 +230,7 @@ class DataPool implements DataEvent.Emitter {
             connector
                 .load()
                 .then((connector): (DataConnector|Promise<DataConnector>) => {
-                    if (options.options.dataModifier) {
+                    if (options?.options?.dataModifier) {
                         const ModifierClass = DataModifier
                             .types[options.options.dataModifier.type];
 
