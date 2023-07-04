@@ -28,6 +28,7 @@ async function distBuild() {
         buildFolder,
         bundleTargetFolder,
         cssFolder,
+        examplesFolder,
         gfxFolder
     } = require('./_config.json');
 
@@ -52,6 +53,11 @@ async function distBuild() {
         )
     );
     logLib.success(`Created ${buildCssTarget}`);
+
+    // temporary until dashboards/dist-examples task works
+    const buildExamplesTarget = path.join(buildFolder, 'examples');
+    fsLib.copyAllFiles(examplesFolder, buildExamplesTarget, true);
+    logLib.success(`Created ${buildExamplesTarget}`);
 
     const buildGfxTarget = path.join(buildCodeTarget, 'gfx');
     fsLib.copyAllFiles(
