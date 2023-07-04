@@ -118,26 +118,28 @@ function apiServer() {
 
                 let uri = request.url;
 
-                if (uri === '/dashboards' || uri === '/' || uri === '') {
-                    response302(response, '/dashboards/');
-                    return;
+                switch (uri) {
+                    case '':
+                    case '/':
+                    case '/dashboards':
+                        response302(response, '/dashboards/');
+                        return;
+                    case '/highcharts':
+                        response302(response, '/highcharts/');
+                        return;
+                    case '/highstock':
+                        response302(response, '/highstock/');
+                        return;
+                    case '/highmaps':
+                        response302(response, '/highmaps/');
+                        return;
+                    case '/gantt':
+                        response302(response, '/gantt/');
+                        return;
+                    default:
+                        break;
                 }
-                if (uri === '/highcharts') {
-                    response302(response, '/highcharts/');
-                    return;
-                }
-                if (uri === '/highstock') {
-                    response302(response, '/highstock/');
-                    return;
-                }
-                if (uri === '/highmaps') {
-                    response302(response, '/highmaps/');
-                    return;
-                }
-                if (uri === '/gantt') {
-                    response302(response, '/gantt/');
-                    return;
-                }
+
                 if (request.method !== 'GET') {
                     response404(response, uri);
                     return;
