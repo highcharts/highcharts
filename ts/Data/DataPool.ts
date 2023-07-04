@@ -27,6 +27,7 @@ import type {
 import type DataTable from './DataTable.js';
 
 import DataConnector from './Connectors/DataConnector.js';
+import DataModifier from './Modifiers/DataModifier.js';
 import DataPoolDefaults from './DataPoolDefaults.js';
 import U from '../Core/Utilities.js';
 
@@ -39,7 +40,6 @@ import U from '../Core/Utilities.js';
 /**
  * Data pool to load connectors on-demand.
  *
- * @private
  * @class
  * @name Data.DataPool
  *
@@ -227,13 +227,31 @@ class DataPool implements DataEvent.Emitter {
             this.connectors[options.id] = connector;
 
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            connector.load().then((connector): void => {
-                this.emit<DataPool.Event>({
-                    type: 'afterLoad',
-                    options
-                });
-                resolve(connector);
-            })['catch'](reject);
+            connector
+                .load()
+                .then((connector): (DataConnector|Promise<DataConnector>) => {
+                    if (options.options.dataModifier) {
+                        const ModifierClass = DataModifier
+                            .types[options.options.dataModifier.type];
+
+                        return connector.table
+                            .setModifier(
+                                new ModifierClass(
+                                    options.options.dataModifier as AnyRecord
+                                )
+                            )
+                            .then((): DataConnector => connector);
+                    }
+
+                    return connector;
+                })
+                .then((connector): void => {
+                    this.emit<DataPool.Event>({
+                        type: 'afterLoad',
+                        options
+                    });
+                    resolve(connector);
+                })['catch'](reject);
         });
     }
 

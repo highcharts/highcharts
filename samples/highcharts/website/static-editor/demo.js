@@ -18971,7 +18971,7 @@ highed.ChartPreview = function (parent, attributes) {
         if (!data || !data.csv) {
             if (highed.isStr(data)) {
                 data = {
-                    csv: data,
+                    csv: data
                     // itemDelimiter: ';',
                 };
             } else {
