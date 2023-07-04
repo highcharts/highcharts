@@ -5,11 +5,11 @@
     ).then(response => response.json());
 
     // split the data set into ohlc and volume
-    var ohlc = [],
+    const ohlc = [],
         volume = [],
         dataLength = data.length;
 
-    for (var i = 0; i < dataLength; i += 1) {
+    for (let i = 0; i < dataLength; i += 1) {
         ohlc.push([
             data[i][0], // the date
             data[i][1], // open
@@ -91,7 +91,7 @@
         }]
     }, function (chart) {
         document.getElementById('overlays').addEventListener('change', function (e) {
-            var series = chart.get('overlay');
+            const series = chart.get('overlay');
 
             if (series) {
                 series.remove(false);
@@ -104,7 +104,7 @@
         });
 
         document.getElementById('oscillators').addEventListener('change', function (e) {
-            var series = chart.get('oscillator');
+            const series = chart.get('oscillator');
 
             if (series) {
                 series.remove(false);
