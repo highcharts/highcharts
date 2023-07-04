@@ -360,9 +360,15 @@ async function distUpload() {
         HTTP_MAX_AGE.fiveYears
     );
 
+    // Hack
+    const sourceCssFolder = path.join(sourceFolder, 'css');
+    const sourceGfxFolder = path.join(sourceFolder, 'gfx');
+    logLib.warn('Uploading to css & gfx...');
+    await uploadFolder(sourceCssFolder, targetStorage, bucket, 'css');
+    await uploadFolder(sourceGfxFolder, targetStorage, bucket, 'gfx');
+
     logLib.warn('Uploading to zips/...');
     await uploadZips(buildFolder, targetStorage, bucket, 'zips/');
-
 
     logLib.success('Uploading Done.');
 

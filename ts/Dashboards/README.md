@@ -6,11 +6,11 @@ There are multiple ways to import this package.
 Among the most popular are:
 * Using npm, run the following command in your terminal:
 ``` Shell
-    npm install <PACKAGE-NAME>
+    npm install @highcharts/dashboards
 ```
 Then import the package in your project:
 ``` JS
-    import Dashboards from '<PACKAGE-NAME>';
+    import Dashboards from '@highcharts/dashboards';
 ```
 * Importing as a script
 ``` HTML
