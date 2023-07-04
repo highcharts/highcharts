@@ -22,6 +22,7 @@
 
 import type Component from '../Components/Component';
 import type EditableOptions from '../Components/EditableOptions';
+import type Globals from '../Globals';
 
 import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
@@ -168,7 +169,7 @@ class AccordionMenu {
     ): void {
         const pathLength = propertyPath.length - 1;
 
-        let currentLevel = this.changedOptions as AnyRecord;
+        let currentLevel = this.changedOptions as Globals.AnyRecord;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {

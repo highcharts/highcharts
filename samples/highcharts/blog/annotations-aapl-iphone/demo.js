@@ -1,4 +1,8 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/aapl.json', function (data) {
+(async () => {
+
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85/samples/data/aapl.json'
+    ).then(response => response.json());
 
     for (var i = 0; i < data.length; i++) {
 
@@ -159,4 +163,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@24912efc85
             }
         }]
     });
-});
+})();

@@ -56,7 +56,7 @@ class YouTubeComponent extends Component {
     }
 }
 
-Component.addComponent(YouTubeComponent);
+ComponentRegistry.registerComponent('YouTube', YouTubeComponent);
 ```
 
 And that's it! The component is ready to be used. Now, the new component type can be referenced like that:
@@ -91,7 +91,7 @@ Then we can create our custom class, which extends the `HTMLComponent` class. Th
 
 ```js
 const { ComponentRegistry } = Dashboards,
-    HTMLComponent = ComponentRegistry.getComponent('HTML'),
+    HTMLComponent = ComponentRegistry.types.HTML,
     AST = Highcharts.AST;
 
 class CustomHTML extends HTMLComponent {
@@ -114,7 +114,7 @@ class CustomHTML extends HTMLComponent {
     }
 }
 
-ComponentRegistry.registerComponent(CustomHTML);
+ComponentRegistry.registerComponent('CustomHTML', CustomHTML);
 ```
 
 This custom component can generate HTML elements in the dashboards by:

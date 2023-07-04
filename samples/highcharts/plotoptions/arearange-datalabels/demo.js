@@ -1,50 +1,52 @@
-Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json',
-    function (data) {
+(async () => {
 
-        // Shorten the data
-        data = data.splice(181, 14);
+    var data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json'
+    ).then(response => response.json());
 
-        Highcharts.chart('container', {
+    // Shorten the data
+    data = data.splice(181, 14);
 
-            chart: {
-                type: 'arearange'
-            },
+    Highcharts.chart('container', {
 
+        chart: {
+            type: 'arearange'
+        },
+
+        title: {
+            text: 'Temperature variation by day'
+        },
+
+        xAxis: {
+            type: 'datetime'
+        },
+
+        yAxis: {
             title: {
-                text: 'Temperature variation by day'
-            },
+                text: null
+            }
+        },
 
-            xAxis: {
-                type: 'datetime'
-            },
+        tooltip: {
+            crosshairs: true,
+            shared: true,
+            valueSuffix: '°C'
+        },
 
-            yAxis: {
-                title: {
-                    text: null
-                }
-            },
+        legend: {
+            enabled: false
+        },
 
-            tooltip: {
-                crosshairs: true,
-                shared: true,
-                valueSuffix: '°C'
-            },
+        series: [{
+            name: 'Temperatures',
+            data: data,
+            dataLabels: {
+                enabled: true,
+                yHigh: 20,
+                yLow: -20
+            }
+        }]
 
-            legend: {
-                enabled: false
-            },
+    });
 
-            series: [{
-                name: 'Temperatures',
-                data: data,
-                dataLabels: {
-                    enabled: true,
-                    yHigh: 20,
-                    yLow: -20
-                }
-            }]
-
-        });
-    }
-);
+})();

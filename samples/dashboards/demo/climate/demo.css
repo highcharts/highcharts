@@ -162,8 +162,8 @@
     stroke: none;
 }
 
-#city-chart div.highcharts-tooltip {
-    color: var(--color-text);
+#city-chart .highcharts-tooltip text {
+    fill: var(--color-text);
 }
 
 #city-chart .highcharts-tooltip-box {

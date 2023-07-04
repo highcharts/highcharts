@@ -40,6 +40,20 @@ namespace Globals {
 
     /* *
      *
+     *  Declarations
+     *
+     * */
+
+    /**
+     * Utility type to mark recursively all properties and sub-properties
+     * optional.
+     */
+    export type DeepPartial<T> = {
+        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
+    };
+
+    /* *
+     *
      *  Constants
      *
      * */
@@ -56,6 +70,7 @@ namespace Globals {
         row: classNamePrefix + 'row',
         columnHeader: classNamePrefix + 'column-header'
     };
+
 }
 
 /* *

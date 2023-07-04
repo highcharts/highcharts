@@ -19,6 +19,8 @@
  *
  * */
 
+import type Globals from './Globals';
+
 import Board from './Board.js';
 import Sync from './Components/Sync/Sync.js';
 import ComponentRegistry from './Components/ComponentRegistry.js';
@@ -37,7 +39,7 @@ namespace PluginHandler {
      *
      * */
 
-    export interface DashboardPlugin<T = (AnyRecord|undefined)> {
+    export interface DashboardPlugin<T = (Globals.AnyRecord|undefined)> {
         /** @internal */
         custom: T;
         /**
