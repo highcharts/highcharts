@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Dashboards v0.0.2 (@product.date@)
+ * @license Highcharts Dashboards v@product.version@ (@product.date@)
  * @module dashboards/datagrid
  * @requires dashboards
  *
@@ -16,6 +16,7 @@
  *
  * */
 
+import Globals from '../DataGrid/Globals.js';
 import DataGrid from '../DataGrid/DataGrid.js';
 
 /* *
@@ -26,9 +27,9 @@ import DataGrid from '../DataGrid/DataGrid.js';
 
 declare global {
     interface Window {
-        DataGrid: typeof DG;
+        DataGrid: typeof G;
     }
-    let DataGrid: typeof DG;
+    let DataGrid: typeof G;
 }
 
 /* *
@@ -37,19 +38,25 @@ declare global {
  *
  * */
 
-const DG = {
-    win: window,
-    DataGrid
-};
+const G: AnyRecord = Globals;
+
+G.win = window;
+G.DataGrid = DataGrid;
 
 /* *
  *
- *  Classic Exports
+ *  Classic Export
  *
  * */
 
-if (!DG.win.DataGrid) {
-    DG.win.DataGrid = DG;
+if (!G.win.DataGrid) {
+    G.win.DataGrid = G;
 }
 
-export default DG;
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default G;

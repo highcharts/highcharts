@@ -1,0 +1,21 @@
+/*
+ * Copyright (C) Highsoft AS
+ */
+
+
+const gulp = require('gulp');
+
+
+/* *
+ *
+ *  Tasks
+ *
+ * */
+
+
+require('./test-dts.js');
+
+
+gulp.task('dashboards/test', gulp.series(
+    'dashboards/test-dts'
+));

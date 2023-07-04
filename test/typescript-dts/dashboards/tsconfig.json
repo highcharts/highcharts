@@ -6,20 +6,18 @@
         "noImplicitThis": true,
         "strictFunctionTypes": true,
         "strictNullChecks": true,
-        "baseUrl": "../../",
+        "baseUrl": "../../../",
         "module": "umd",
         "moduleResolution": "node",
-        "rootDir": "../../",
+        "rootDir": "../../../",
         "lib": ["es5", "dom"],
         "paths": {
-            "highcharts": ["code/highcharts"],
-            "highcharts/*": ["code/*"],
             "@highcharts/dashboards": ["code/dashboards/dashboards"],
             "@highcharts/dashboards/*": ["code/dashboards/dashboards/*"]
         },
         "types": []
     },
     "exclude": [
-        "../../node_modules"
+        "../../../node_modules"
     ]
 }

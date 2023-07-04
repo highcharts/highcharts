@@ -1,9 +1,11 @@
 {
     "$schema": "https://typedoc.org/schema.json",
     "categorizeByGroup": false,
+    "customCss": "api-docs/typedoc/assets/custom.css",
     "basePath": "../../../ts/",
     "disableSources": true,
     "entryPoints": [
+        "../../../ts/Dashboards/Globals.ts",
         "../../../ts/Dashboards/Board.ts",
         "../../../ts/Dashboards/Actions/DragDrop.ts",
         "../../../ts/Dashboards/Components/Component.ts",
@@ -36,7 +38,6 @@
         "../../../ts/Dashboards/Plugins/HighchartsComponent.ts",
         "../../../ts/Dashboards/Plugins/DataGridComponent.ts",
     ],
-    "customCss": "api-docs/typedoc/assets/custom.css",
     "entryPointStrategy": "expand",
     "excludeInternal": true,
     "hideGenerator": true,

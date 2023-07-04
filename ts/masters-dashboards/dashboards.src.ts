@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Dashboards v0.0.2 (@product.date@)
+ * @license Highcharts Dashboards v@product.version@ (@product.date@)
  * @module dashboards/dashboards
  *
  * (c) 2009-2023 Highsoft AS
@@ -45,10 +45,9 @@ import '../Data/Modifiers/SortModifier.js';
 
 declare global {
     interface Window {
-        Dashboards: typeof D;
-        Highcharts: typeof Highcharts & { Dashboard: typeof D };
+        Dashboards: typeof G;
     }
-    let Dashboards: typeof D;
+    let Dashboards: typeof G;
 }
 
 /* *
@@ -57,30 +56,36 @@ declare global {
  *
  * */
 
-const D = {
-    ...Globals,
-    ...Utilities,
-    Board,
-    board: Board.board,
-    Component,
-    ComponentRegistry,
-    DataConnector,
-    DataCursor,
-    DataModifier,
-    DataPool,
-    DataTable,
-    PluginHandler,
-    Sync
-};
+const G: AnyRecord = Globals;
+
+G.board = Board.board;
+G.merge = Utilities.merge;
+G.uniqueKey = Utilities.uniqueKey;
+G.Board = Board;
+G.Component = Component;
+G.ComponentRegistry = ComponentRegistry;
+G.DataConnector = DataConnector;
+G.DataCursor = DataCursor;
+G.DataModifier = DataModifier;
+G.DataPool = DataPool;
+G.DataTable = DataTable;
+G.PluginHandler = PluginHandler;
+G.Sync = Sync;
 
 /* *
  *
- *  Classic Exports
+ *  Classic Export
  *
  * */
 
-if (!D.win.Dashboards) {
-    D.win.Dashboards = D;
+if (!G.win.Dashboards) {
+    G.win.Dashboards = G;
 }
 
-export default D;
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default G;
