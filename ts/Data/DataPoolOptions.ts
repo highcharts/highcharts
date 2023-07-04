@@ -19,7 +19,10 @@
  *
  * */
 
-import type { DataConnectorTypes } from './Connectors/DataConnectorType.js';
+import type { DataConnectorTypes } from './Connectors/DataConnectorType';
+import type CSVConnectorOptions from './Connectors/CSVConnectorOptions';
+import type GoogleSheetsConnectorOptions from './Connectors/GoogleSheetsConnectorOptions';
+import type HTMLTableConnectorOptions from './Connectors/HTMLTableConnectorOptions';
 
 /* *
  *
@@ -33,8 +36,15 @@ import type { DataConnectorTypes } from './Connectors/DataConnectorType.js';
 export interface DataPoolOptions {
 
     /**
-     * Connector options to add to the data pool.
-     */
+     * The connectors to use for loading data. Available connectors and its
+     * options:
+     *
+     * {@link CSVConnectorOptions | CSVConnector}
+     *
+     * {@link GoogleSheetsConnectorOptions | GoogleSheetsConnector}
+     *
+     * {@link HTMLTableConnectorOptions | HTMLTableConnector}
+     **/
     connectors: Array<DataPoolConnectorOptions>;
 
 }
@@ -47,19 +57,36 @@ export interface DataPoolConnectorOptions
 <T extends keyof DataConnectorTypes = keyof DataConnectorTypes> {
 
     /**
-     * Name of the connector in the data pool.
-     */
+     * The unique identifier of the connector. Used later when referencing
+     * the connector in the component where it is used.
+     **/
     id: string;
 
     /**
-     * Connector options to use.
-     */
+     * The options of the given connector type.
+     * @example
+     * ```TS
+     * dataPool: {
+     *      connectors: [{
+     *      id: 'my-csv-connector',
+     *      type: 'CSV',
+     *      options: {
+     *          csv: csvData
+     *          }
+     *       }]
+     * },
+     **/
     options: DataConnectorTypes[T]['prototype']['options'];
 
     /**
-     * Connector type in the `DataConnector.types` registry, like `CSV`.
-     */
+     * The type of the connector, depends on your data source.
+     * Possible values are:
+     * - `CSV`
+     * - `GoogleSheets`
+     * - `HTMLTable`
+     **/
     type: T;
+
 }
 
 /* *

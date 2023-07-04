@@ -18971,9 +18971,8 @@ highed.ChartPreview = function (parent, attributes) {
         if (!data || !data.csv) {
             if (highed.isStr(data)) {
                 data = {
-                    csv: data,
+                    csv: data
                     // itemDelimiter: ';',
-                    firstRowAsNames: true
                 };
             } else {
                 return highed.log(1, 'chart load csv: data.csv is required');
