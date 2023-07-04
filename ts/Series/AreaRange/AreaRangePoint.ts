@@ -120,7 +120,8 @@ class AreaRangePoint extends AreaPoint {
         const prevState = this.state,
             series = this.series,
             isPolar = series.chart.polar,
-            seriesOptionsMarker = series.options.marker;
+            seriesOptionsMarker = series.options.marker,
+            seriesDefaultSymbol = series.symbol;
 
 
         if (!defined(this.plotHigh)) {
@@ -183,6 +184,7 @@ class AreaRangePoint extends AreaPoint {
         // Restore previous state
         if (series.options.lowMarker) {
             series.options.marker = seriesOptionsMarker;
+            series.symbol = seriesDefaultSymbol;
         }
     }
 

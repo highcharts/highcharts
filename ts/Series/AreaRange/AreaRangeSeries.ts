@@ -561,7 +561,8 @@ class AreaRangeSeries extends AreaSeries {
     public drawPoints(): void {
         const series = this,
             pointLength = series.points.length,
-            seriesOptionsMarker = series.options.marker;
+            seriesOptionsMarker = series.options.marker,
+            seriesDefaultSymbol = series.symbol;
 
         let i: number,
             point: AreaRangePoint;
@@ -582,10 +583,7 @@ class AreaRangeSeries extends AreaSeries {
         // Restore previous state
         if (series.options.lowMarker) {
             series.options.marker = seriesOptionsMarker;
-
-            if (series.options.lowMarker.symbol) {
-                series.symbol = series.options.marker?.symbol;
-            }
+            series.symbol = seriesDefaultSymbol;
         }
 
         // Prepare drawing top points
