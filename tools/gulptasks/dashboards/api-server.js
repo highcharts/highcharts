@@ -27,7 +27,7 @@ const MIMES = {
     xml: 'application/xml'
 };
 
-const SOURCE_PATH = path.join(__dirname, '..', '..', 'build', 'api');
+const SOURCE_PATH = path.join(__dirname, '..', '..', '..', 'build', 'api');
 
 /* *
  *
@@ -39,13 +39,13 @@ const SOURCE_PATH = path.join(__dirname, '..', '..', 'build', 'api');
  * Response with a 200
  *
  * @param {ServerResponse} response
- *        HTTP response
+ * HTTP response
  *
  * @param {Buffer} data
- *        File data
+ * File data
  *
  * @param {string} ext
- *        File extension
+ * File extension
  *
  * @return {void}
  */
@@ -58,10 +58,10 @@ function response200(response, data, ext) {
  * Response with a 302 - redirect
  *
  * @param {ServerResponse} response
- *        HTTP response
+ * HTTP response
  *
  * @param {string} p
- *        Redirect path
+ * Redirect path
  *
  * @return {void}
  */
@@ -74,18 +74,18 @@ function response302(response, p) {
  * Response with a 404 - not found
  *
  * @param {ServerResponse} response
- *        HTTP response
+ * HTTP response
  *
- * @param {string} p
- *        Missing path
+ * @param {string} uri
+ * Missing URL path
  *
  * @return {void}
  */
-function response404(response, p) {
+function response404(response, uri) {
 
-    const log = require('./lib/log');
+    const logLib = require('../lib/log');
 
-    log.failure('404', p);
+    logLib.failure('404', uri);
 
     response.writeHead(404);
     response.end('Ooops, the requested file is 404', 'utf-8');
@@ -103,11 +103,11 @@ function response404(response, p) {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function jsDocServer() {
+function apiServer() {
 
     const fs = require('fs');
     const http = require('http');
-    const log = require('./lib/log');
+    const logLib = require('../lib/log');
 
     return new Promise(resolve => {
 
@@ -116,40 +116,40 @@ function jsDocServer() {
         http
             .createServer((request, response) => {
 
-                let p = request.url;
+                let uri = request.url;
 
-                if (p === '/highcharts' || p === '/' || p === '') {
-                    response302(response, '/highcharts/');
-                    return;
-                }
-                if (p === '/highstock') {
-                    response302(response, '/highstock/');
-                    return;
-                }
-                if (p === '/highmaps') {
-                    response302(response, '/highmaps/');
-                    return;
-                }
-                if (p === '/gantt') {
-                    response302(response, '/gantt/');
-                    return;
-                }
-                if (p === '/dashboards') {
+                if (uri === '/dashboards' || uri === '/' || uri === '') {
                     response302(response, '/dashboards/');
                     return;
                 }
+                if (uri === '/highcharts') {
+                    response302(response, '/highcharts/');
+                    return;
+                }
+                if (uri === '/highstock') {
+                    response302(response, '/highstock/');
+                    return;
+                }
+                if (uri === '/highmaps') {
+                    response302(response, '/highmaps/');
+                    return;
+                }
+                if (uri === '/gantt') {
+                    response302(response, '/gantt/');
+                    return;
+                }
                 if (request.method !== 'GET') {
-                    response404(response, p);
+                    response404(response, uri);
                     return;
                 }
 
-                let file = path.basename(p);
+                let file = path.basename(uri);
 
-                if (p[p.length - 1] === '/') {
+                if (uri[uri.length - 1] === '/') {
                     file = 'index.html';
                 } else {
-                    file = path.basename(p);
-                    p = path.dirname(p) + '/';
+                    file = path.basename(uri);
+                    uri = path.dirname(uri) + '/';
                 }
 
                 let ext = path.extname(file).substr(1);
@@ -161,21 +161,20 @@ function jsDocServer() {
 
                 // console.log(sourcePath + path + file);
 
-                fs
-                    .readFile(
-                        SOURCE_PATH + p + file,
-                        (error, data) => {
-                            if (error) {
-                                response404(response, (p + file));
-                            } else {
-                                response200(response, data, ext);
-                            }
+                fs.readFile(
+                    SOURCE_PATH + uri + file,
+                    (error, data) => {
+                        if (error) {
+                            response404(response, (uri + file));
+                        } else {
+                            response200(response, data, ext);
                         }
-                    );
+                    }
+                );
             })
             .listen(port);
 
-        log.warn(
+        logLib.warn(
             'API documentation server running on http://localhost:' + port
         );
 
@@ -183,4 +182,4 @@ function jsDocServer() {
     });
 }
 
-gulp.task('jsdoc-server', jsDocServer);
+gulp.task('dashboards/api-server', apiServer);
