@@ -99,7 +99,12 @@ Highcharts.chart('container', {
                             fontSize: '10px'
                         }
                     }
-                }
+                },
+                series: [{
+                    dataLabels: {
+                        enabled: false
+                    }
+                }]
             }
         }]
     }
