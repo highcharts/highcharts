@@ -20,6 +20,7 @@
  * */
 
 import type JSON from '../JSON';
+import type GoogleSheetsConnectorOptions from '../../Data/Connectors/GoogleSheetsConnectorOptions';
 
 import DataTableHelper from './DataTableHelper.js';
 import GoogleSheetsConnector from '../../Data/Connectors/GoogleSheetsConnector.js';
@@ -107,7 +108,7 @@ namespace GoogleSheetsConnectorHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (JSON.Object&GoogleSheetsConnector.Options);
+    export type OptionsJSON = (JSON.Object&GoogleSheetsConnectorOptions);
 
 }
 

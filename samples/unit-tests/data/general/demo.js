@@ -361,8 +361,7 @@ QUnit.test(
 QUnit.test('Updating with firstRowAsNames', function (assert) {
     const chart = Highcharts.chart('container', {
             data: {
-                columns: [['A', 1, 2, 3, 4, 5, 6], ['B', 2, 4, 8, 3, 6, 6]],
-                firstRowAsNames: true
+                columns: [['A', 1, 2, 3, 4, 5, 6], ['B', 2, 4, 8, 3, 6, 6]]
             }
         }),
         numPoints = chart.series[0].points.length;
@@ -384,8 +383,7 @@ QUnit.test('Updating with firstRowAsNames', function (assert) {
 QUnit.test('Update column names', function (assert) {
     const chart = Highcharts.chart('container', {
         data: {
-            columns: [['A', 1, 2, 3, 4, 5, 6], ['B', 2, 4, 8, 3, 6, 6]],
-            firstRowAsNames: true
+            columns: [['A', 1, 2, 3, 4, 5, 6], ['B', 2, 4, 8, 3, 6, 6]]
         }
     });
 
@@ -413,8 +411,7 @@ QUnit.test('Updating with firstRowAsNames and dataGrouping', function (assert) {
             }
         },
         data: {
-            columns: [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]],
-            firstRowAsNames: true
+            columns: [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]]
         }
     });
 

@@ -7,8 +7,7 @@ Dashboards.board('container', {
                 csv: `$GME,$AMC,$NOK
             4,5,6
             1,5,2
-            41,23,2`,
-                firstRowAsNames: true
+            41,23,2`
             }
         }]
     },

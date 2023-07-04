@@ -20,6 +20,7 @@
  * */
 
 import type JSON from '../JSON';
+import type HTMLTableConnectorOptions from '../../Data/Connectors/HTMLTableConnectorOptions';
 
 import DataTableHelper from './DataTableHelper.js';
 import HTMLTableConnector from '../../Data/Connectors/HTMLTableConnector.js';
@@ -104,7 +105,7 @@ namespace HTMLTableConnectorHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (JSON.Object&HTMLTableConnector.Options);
+    export type OptionsJSON = (JSON.Object&HTMLTableConnectorOptions);
 
 }
 
