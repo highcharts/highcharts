@@ -18973,7 +18973,6 @@ highed.ChartPreview = function (parent, attributes) {
                 data = {
                     csv: data,
                     // itemDelimiter: ';',
-                    firstRowAsNames: true
                 };
             } else {
                 return highed.log(1, 'chart load csv: data.csv is required');

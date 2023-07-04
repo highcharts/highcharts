@@ -29,9 +29,8 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
+import type Globals from '../Globals';
 import type JSON from '../JSON';
-import type NavigationBindingsOptionsObject from
-    '../../Extensions/Annotations/NavigationBindingsOptions';
 import type Serializable from '../Serializable';
 
 import type DataModifier from '../../Data/Modifiers/DataModifier';
@@ -1190,7 +1189,7 @@ namespace Component {
         EventRecord extends Record<string, any>> = {
             readonly type: EventType;
             target?: Component;
-            detail?: AnyRecord;
+            detail?: Globals.AnyRecord;
         } & EventRecord;
 
     /**
@@ -1230,9 +1229,11 @@ namespace Component {
          * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
          */
         type: keyof ComponentTypeRegistry;
-        // allow overwriting gui elements
-        /** @internal */
-        navigationBindings?: NavigationBindingsOptionsObject[];
+        /**
+         * Allow overwriting gui elements.
+         * @internal
+         */
+        navigationBindings?: Array<Globals.AnyRecord>;
         /**
          * Events attached to the component : `mount`, `unmount`.
          *

@@ -127,35 +127,35 @@ const data = {
 const countries = {
     kr: {
         name: 'South Korea',
-        color: 'rgb(201, 36, 39)'
+        color: '#FE2371'
     },
     jp: {
         name: 'Japan',
-        color: 'rgb(201, 36, 39)'
+        color: '#544FC5'
     },
     au: {
         name: 'Australia',
-        color: 'rgb(0, 82, 180)'
+        color: '#2CAFFE'
     },
     de: {
-        flag: 'de',
-        color: 'rgb(0, 0, 0)'
+        name: 'Germany',
+        color: '#FE6A35'
     },
     ru: {
         name: 'Russia',
-        color: 'rgb(240, 240, 240)'
+        color: '#6B8ABC'
     },
     cn: {
         name: 'China',
-        color: 'rgb(255, 217, 68)'
+        color: '#1C74BD'
     },
     gb: {
         name: 'Great Britain',
-        color: 'rgb(0, 82, 180)'
+        color: '#00A6A6'
     },
     us: {
         name: 'United States',
-        color: 'rgb(215, 0, 38)'
+        color: '#D568FB'
     }
 };
 

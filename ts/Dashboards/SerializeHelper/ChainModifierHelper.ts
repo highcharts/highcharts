@@ -22,6 +22,7 @@
 import type ChainModifierOptions from '../../Data/Modifiers/ChainModifierOptions';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type { DataModifierTypeOptions } from '../../Data/Modifiers/DataModifierType';
+import type Globals from '../Globals';
 import type JSON from '../JSON';
 
 import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
@@ -71,7 +72,7 @@ function fromJSON(
 /**
  * Validates the given class instance for JSON support.
  *
- * @param {AnyRecord} obj
+ * @param {Globals.AnyRecord} obj
  * Class instance or object to validate.
  *
  * @return {boolean}
@@ -79,7 +80,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: AnyRecord
+    obj: Globals.AnyRecord
 ): obj is ChainModifier {
     return obj instanceof ChainModifier;
 }

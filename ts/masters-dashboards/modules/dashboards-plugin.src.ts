@@ -1,6 +1,5 @@
-/* eslint-disable require-jsdoc */
 /**
- * @license Highcharts Dashboards v0.0.3 (@product.date@)
+ * @license Highcharts Dashboards v@product.version@ (@product.date@)
  * @module dashboards/modules/dashboards-plugin
  * @requires dashboards
  *
@@ -11,22 +10,41 @@
 
 'use strict';
 
-import Dashboards from '../../Dashboards/Globals.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import Globals from '../../Dashboards/Globals.js';
 import HighchartsPlugin from '../../Dashboards/Plugins/HighchartsPlugin.js';
 import DataGridPlugin from '../../Dashboards/Plugins/DataGridPlugin.js';
 
-const G: AnyRecord = Dashboards;
+/* *
+ *
+ *  Namespaces
+ *
+ * */
+
+const G: AnyRecord = Globals;
+
 G.DataGridPlugin = DataGridPlugin;
 G.HighchartsPlugin = HighchartsPlugin;
 
-if (G.win.Dashboards) {
-    if (G.win.Highcharts) {
-        HighchartsPlugin.custom.connectHighcharts(G.win.Highcharts);
-        G.win.Dashboards.PluginHandler.addPlugin(HighchartsPlugin);
-    }
-
-    if (G.win.DataGrid) {
-        DataGridPlugin.custom.connectDataGrid(G.win.DataGrid.DataGrid);
-        G.win.Dashboards.PluginHandler.addPlugin(DataGridPlugin);
-    }
+if (G.win.Highcharts) {
+    HighchartsPlugin.custom.connectHighcharts(G.win.Highcharts);
+    G.PluginHandler.addPlugin(HighchartsPlugin);
 }
+
+if (G.win.DataGrid) {
+    DataGridPlugin.custom.connectDataGrid(G.win.DataGrid.DataGrid);
+    G.PluginHandler.addPlugin(DataGridPlugin);
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default G;

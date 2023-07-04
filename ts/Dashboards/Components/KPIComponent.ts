@@ -661,11 +661,21 @@ namespace KPIComponent {
         /**
          * The threshold declares the value when color is applied
          * (according to the `thresholdColors`).
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/threshold/ | Set a threshold}
+         *
          */
         threshold?: number|Array<number>;
         /**
          * Array of two colors strings that are applied when threshold is
          * achieved.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/threshold/ | Threshold colors}
+         *
          */
         thresholdColors?: Array<string>;
         type: 'KPI';
@@ -684,6 +694,11 @@ namespace KPIComponent {
         subtitle?: string|SubtitleOptions;
         /**
          * A format string for the value text.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/value-format/ | Add a value format}
+         *
          */
         valueFormat?: string;
         /**

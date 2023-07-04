@@ -41,7 +41,7 @@ jobs:
       - uses: browser-actions/setup-geckodriver@latest
       - name: Install Dependencies
         run: |
-          npm i cypress @highcharts/highcharts-utils
+          npm i cypress github:highcharts/highcharts-utils
           npx cypress install && npx cypress info
       # tasks
       - name: Build Highcharts

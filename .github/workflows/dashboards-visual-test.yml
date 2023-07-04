@@ -9,6 +9,7 @@ on:
       - 'samples/dashboards/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
+      - '.github/workflows/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -40,6 +41,9 @@ jobs:
         run: npx gulp scripts
       - name: Build Dashboards
         run: npx gulp dashboards/scripts
+
+      - name: Install utils
+        run: npm i github:highcharts/highcharts-utils 
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
@@ -88,6 +92,9 @@ jobs:
         uses: cypress-io/github-action@v5
         with:
           runTests: false
+
+      - name: Install utils
+        run: npm i github:highcharts/highcharts-utils 
 
       - name: Build Highcharts
         run: npx gulp scripts
