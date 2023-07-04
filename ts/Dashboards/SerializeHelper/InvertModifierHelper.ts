@@ -19,6 +19,7 @@
  *
  * */
 
+import type Globals from '../Globals';
 import type InvertModifierOptions from '../../Data/Modifiers/InvertModifierOptions';
 import type JSON from '../JSON';
 
@@ -49,7 +50,7 @@ function fromJSON(
 /**
  * Validates the given class instance for JSON support.
  *
- * @param {AnyRecord} obj
+ * @param {Globals.AnyRecord} obj
  * Class instance or object to validate.
  *
  * @return {boolean}
@@ -57,7 +58,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: AnyRecord
+    obj: Globals.AnyRecord
 ): obj is InvertModifier {
     return obj instanceof InvertModifier;
 }

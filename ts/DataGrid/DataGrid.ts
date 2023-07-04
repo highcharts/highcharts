@@ -226,7 +226,10 @@ class DataGrid {
      * @param options
      * Options to create the grid structure.
      */
-    constructor(container: (string | HTMLElement), options: DeepPartial<DataGridOptions>) {
+    constructor(
+        container: (string | HTMLElement),
+        options: Globals.DeepPartial<DataGridOptions>
+    ) {
         // Initialize containers
         if (typeof container === 'string') {
             const existingContainer = doc.getElementById(container);
@@ -267,7 +270,7 @@ class DataGrid {
      * @param options
      * An object with new options.
      */
-    public update(options: DeepPartial<DataGridOptions>): void {
+    public update(options: Globals.DeepPartial<DataGridOptions>): void {
         this.options = merge(this.options, options);
         if (this.options.dataTable !== this.dataTable) {
             this.dataTable = this.initDataTable();

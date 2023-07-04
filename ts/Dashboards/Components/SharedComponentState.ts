@@ -20,7 +20,7 @@
  *
  * */
 
-import type PointType from '../../Core/Series/PointType';
+import type Globals from '../Globals';
 
 import Serializable from '../Serializable.js';
 import U from '../../Core/Utilities.js';
@@ -172,7 +172,7 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
      */
     public setColumnOrder(
         columnOrder: Array<string>,
-        eventDetail?: AnyRecord
+        eventDetail?: Globals.AnyRecord
     ): void {
         const presentationState = this,
             oldColumnOrder = (presentationState.columnOrder || []).slice(),
@@ -387,7 +387,7 @@ namespace SharedComponentState {
     }
 
     export interface HoverPointEventDetails {
-        detail?: AnyRecord;
+        detail?: Globals.AnyRecord;
         isDataGrid?: boolean;
         sender?: string
     }
@@ -405,24 +405,24 @@ namespace SharedComponentState {
      */
     export interface ColumnOrderEvent {
         type: ColumnOrderEventType;
-        detail?: AnyRecord,
+        detail?: Globals.AnyRecord,
         newColumnOrder: Array<string>;
         oldColumnOrder: Array<string>;
     }
     export interface ColumnVisibilityEvent {
         type: ColumnVisibilityEventType;
-        detail?: AnyRecord,
+        detail?: Globals.AnyRecord,
         visibilityMap: Record<string, boolean>;
     }
     export interface HiddenRowEvent {
         type: ('afterSetHiddenRows');
-        detail?: AnyRecord,
+        detail?: Globals.AnyRecord,
         hiddenRows: number[];
     }
 
     export interface PointHoverEvent {
         type: HoverPointEventType;
-        detail?: AnyRecord,
+        detail?: Globals.AnyRecord,
         hoverPoint?: PresentationHoverPointType;
         hoverRow?: HTMLElement;
     }
@@ -431,11 +431,11 @@ namespace SharedComponentState {
 
     export type SelectionObjectType = Record<string, { columnName?: string; min?: number; max?: number }>;
 
-    export type PresentationHoverPointType = Partial<PointType>;
+    export type PresentationHoverPointType = Partial<Globals.AnyRecord>;
 
     export interface SelectionEvent {
         type: selectionEventType;
-        detail?: AnyRecord,
+        detail?: Globals.AnyRecord,
         reset: boolean;
         selection: Record<string, {min?: number | undefined; max?: number | undefined}>;
     }
