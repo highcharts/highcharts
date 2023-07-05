@@ -5,10 +5,10 @@ Frequently asked questions
 How to connect dataPool to the other components?
 ---------------------------------------------
 
-First, you need to create the dataPool, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-pool)
+First, you need to create the dataPool, define a connector and pass the data reference. More about this topic [in the Data Handling section](https://www.highcharts.com/docs/dashboards/data-handling)
 
 After that, you need to pass the connector to the component config, and that’s it.
-[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/dashboard-minimal).
+[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/minimal/).
 
 * * *
 
@@ -17,31 +17,31 @@ How to connect component to a cell?
 Each cell must have an `id` field. The same id must be passed in the component config to the `cell` field. Example configuration of component and cell:
 
 ```js
-    gui: {
-        enabled: true,
-        layouts: [{
-            id: 'layout-1',
-            rows: [{
-                cells: [{
-                    id: 'dashboard-col-0'
-                }]
+gui: {
+    enabled: true,
+    layouts: [{
+        id: 'layout-1',
+        rows: [{
+            cells: [{
+                id: 'dashboard-col-0'
             }]
         }]
-    },
-    components: [
-        {
-            cell: 'dashboard-col-0',
-            type: 'Highcharts',
-            chartOptions: {
-                chart: {
-                    type: 'pie'
-                },
-                series: [{data: [1,2,3]}]
+    }]
+},
+components: [
+    {
+        cell: 'dashboard-col-0',
+        type: 'Highcharts',
+        chartOptions: {
+            chart: {
+                type: 'pie'
             },
-        }]
+            series: [{data: [1,2,3]}]
+        },
+    }]
 ```
 
-[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/component-highcharts).
+[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-highcharts/).
 
 * * *
 
@@ -107,7 +107,7 @@ See the next question for possible syncrhonization events.
 * * *
 What are the synchronization events available in Highcharts Dashboards?
 -----------------------------------------------------------------------
-You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/minimal).
+You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-highcharts/).
 
 The events, that can be synchronized between components are:
 * 'visibility’
