@@ -892,7 +892,7 @@ const causeName = {
 };
 
 for (region in data) {
-    if (Object.prototype.hasOwnProperty.call(data, region)) {
+    if ({}.hasOwnProperty.call(data, region)) {
         regionVal = 0;
         regionP = {
             id: 'id_' + regionI,
@@ -901,7 +901,7 @@ for (region in data) {
         };
         countryI = 0;
         for (country in data[region]) {
-            if (Object.prototype.hasOwnProperty.call(data[region], country)) {
+            if ({}.hasOwnProperty.call(data[region], country)) {
                 countryP = {
                     id: regionP.id + '_' + countryI,
                     name: country,
@@ -910,8 +910,7 @@ for (region in data) {
                 points.push(countryP);
                 causeI = 0;
                 for (cause in data[region][country]) {
-                    if (Object.prototype.hasOwnProperty.call(
-                        data[region][country],
+                    if ({}.hasOwnProperty.call(data[region][country],
                         cause)) {
 
                         causeP = {
