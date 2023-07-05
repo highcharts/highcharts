@@ -44,6 +44,7 @@ function scriptsCompile(filePathes) {
         inputPath = filePathes[i];
 
         if (
+            inputPath.includes('/dashboards/') ||
             inputPath.includes('/es-modules/') ||
             !inputPath.endsWith('.src.js')
         ) {
