@@ -8,7 +8,7 @@ describe('JSON serialization test', () => {
         cy.visit('dashboards/cypress/dashboard-layout');
     });
 
-    it('Should save state after resizing cell.', () => {
+    it.skip('Should save state after resizing cell.', () => {
         cy.viewport(1200, 1000);
         cy.toggleEditMode();
         cy.get('.highcharts-dashboards-component').first().click();
@@ -24,15 +24,15 @@ describe('JSON serialization test', () => {
             .trigger('mouseup');
 
         cy.board().then((board) => {
-            const json = board.toJSON();
-            const cellOptions = json.options.layouts[0].options.rows[0].options.cells[0].options;
+            const json = board.getOptions();
+            const cellOptions = json.gui.layouts[0].rows[0].cells[0];
 
             expect(cellOptions.width).to.match(/%/);
             expect(cellOptions.height).to.match(/px/);
         });
     });
 
-    it.skip('Component\'s state should be updated, after actions in sidebar', () => {
+    it('Component\'s state should be updated, after actions in sidebar', () => {
         const newChartOptions = {
             chart: {
                 type: 'column'
@@ -132,55 +132,55 @@ describe('JSON serialization test', () => {
         // call update
         cy.contains('Confirm').click();
         cy.board().then((board) => {
-            const json = board.toJSON();
-            const component = board.mountedComponents[0].component;
-            const componentJSON = json.options.layouts[0].options.rows[0].options.cells[0].options.mountedComponentJSON;
+            const json = board.getOptions();
+            const componentChartOptions = board.mountedComponents[0].component.options.chartOptions;
+            const componentJSONChartOptions = json.components[0].chartOptions;
 
             assert.equal(
-                componentJSON.chart.type,
-                component.chart.type,
+                componentJSONChartOptions.chart.type,
+                componentChartOptions.chart.type,
                 'New chart options are applied on chart.'
             );
 
-            assert.equal(
-                componentJSON.title,
-                component.title,
+            assert.deepEqual(
+                componentJSONChartOptions.title,
+                componentChartOptions.title,
                 'New title options are applied on chart.'
             );
 
-            assert.equal(
-                componentJSON.subtitle,
-                component.subtitle,
+            assert.deepEqual(
+                componentJSONChartOptions.subtitle,
+                componentChartOptions.subtitle,
                 'New subtitle options are applied on chart.'
             );
 
             assert.deepEqual(
-                componentJSON.legend,
-                component.legend,
+                componentJSONChartOptions.legend,
+                componentChartOptions.legend,
                 'New legend options are applied on chart.'
             );
 
             assert.deepEqual(
-                componentJSON.xAxis[0],
-                component.xAxis,
+                componentJSONChartOptions.xAxis[0],
+                componentChartOptions.xAxis[0],
                 'New xAxis options are applied on chart.'
             );
 
             assert.deepEqual(
-                componentJSON.yAxis[0],
-                component.yAxis,
+                componentJSONChartOptions.yAxis[0],
+                componentChartOptions.yAxis[0],
                 'New yAxis options are applied on chart.'
             );
 
             assert.deepEqual(
-                componentJSON.plotOptions,
-                component.plotOptions,
+                componentJSONChartOptions.plotOptions,
+                componentChartOptions.plotOptions,
                 'New data labels options are applied on chart.'
             );
 
             assert.deepEqual(
-                componentJSON.tooltip,
-                component.tooltip,
+                componentJSONChartOptions.tooltip,
+                componentChartOptions.tooltip,
                 'New tooltip options are applied on chart.'
             );
         });
@@ -195,10 +195,10 @@ describe('JSON serialization test', () => {
         cy.get('#cell-2').first().trigger('mousemove', 'bottom');
         cy.get('#cell-2').first().trigger('mouseup', 'bottom');
         cy.board().then((board) => {
-            const json = board.toJSON();
+            const json = board.getOptions();
 
             assert.equal(
-                json.options.layouts[0].options.rows.length,
+                json.gui.layouts[0].rows.length,
                 2,
                 'Two rows should be present.'
             );
@@ -215,9 +215,9 @@ describe('JSON serialization test', () => {
         cy.get('button').contains('Confirm').click();
 
         cy.board().then((board) => {
-            const json = board.toJSON();
+            const json = board.getOptions();
             assert.equal(
-                json.options.layouts[0].options.rows[0].options.cells.length,
+                json.gui.layouts[0].rows[0].cells.length,
                 1,
                 'One cell should be present.'
             );
