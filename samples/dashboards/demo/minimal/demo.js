@@ -25,14 +25,45 @@ Dashboards.board('container', {
                 }]
             }, {
                 cells: [{
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        },
+                        medium: {
+                            width: '50%'
+                        },
+                        large: {
+                            width: '30%'
+                        }
+                    },
                     layout: {
                         rows: [{
                             cells: [{
                                 id: 'kpi-vitamin-a',
+                                responsive: {
+                                    small: {
+                                        width: '50%'
+                                    },
+                                    medium: {
+                                        width: '100%'
+                                    },
+                                    large: {
+                                        width: '100%'
+                                    }
+                                },
                                 height: 205
-                            }]
-                        }, {
-                            cells: [{
+                            }, {
+                                responsive: {
+                                    small: {
+                                        width: '50%'
+                                    },
+                                    medium: {
+                                        width: '100%'
+                                    },
+                                    large: {
+                                        width: '100%'
+                                    }
+                                },
                                 id: 'kpi-iron',
                                 height: 205
                             }]
