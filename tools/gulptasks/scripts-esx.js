@@ -20,26 +20,28 @@ const fs = require('fs').promises,
  *
  * */
 
+/** Avoid assembling the same file twice in bundle-bundle dependencies. */
 const assembledBundles = [];
 
-const DEFAULT_PATTERN =
+/** Finds TypeScript's module default import line. */
+const IMPORT_DEFAULT_PATTERN =
     /(var __importDefault =[\s\S]*?)(?=\s+\(function \(factory)/;
 
+/** Finds TypeScript's module factory call. */
 const FACTORY_PATTERN =
     /\(function \(factory\) \{[\s\S]*?\}\)\(function \(require, exports\) \{/;
 
+/** Main product bundles that should contain all sub dependencies. **/
 const PRODUCT_MASTERS = [
+    'dashboards',
     'highcharts',
     'highcharts-gantt',
     'highmaps',
     'highstock'
 ];
 
+/** Finds TypeScript's module require lines. */
 const REQUIRE_PATTERN = /(require\(")([\/\.\w]+)("\))/g;
-
-const SOURCE_FOLDER = 'ts';
-
-const TARGET_FOLDER = 'code2';
 
 /* *
  *
@@ -47,51 +49,63 @@ const TARGET_FOLDER = 'code2';
  *
  * */
 
-function addFactory(modulePath, moduleCode) {
-    const moduleName = path.basename(modulePath);
+function addFactory(modulePath, moduleCode, basePath, namespace) {
+    const externalModulePath = [
+        namespace.toLowerCase(),
+        path.relative(basePath, modulePath).split('.')[0]
+    ].join('/');
+    const isPM = isProductMaster(modulePath);
 
     /* eslint-disable indent */
     return (
 `(function (root, factory) {
-    if (typeof module === 'object' && module.exports) {
-        factory['default'] = factory;
-        module.exports = root.document ?
-            factory(root) :
-            factory;
-    } else if (typeof define === 'function' && define.amd) {
-        define('highcharts/${moduleName}', function () {
-            return factory(root);
-        });
-    } else {
-        ${
-            isProductMaster(modulePath) ?
-                `if (root.Highcharts) {
-                    root.Highcharts.error(16, true);
-                }` :
-                ''
-        }
-        root.Highcharts = factory(root);
+if (typeof module === "object" && module.exports) {
+    factory["default"] = factory;
+    module.exports = ${isPM ? 'root.document ? factory(root) : ' : ''} factory;
+} else if (typeof define === "function" && define.amd) {
+    define("${externalModulePath}", function () {
+        return factory(root);
+    });
+} else {
+    ${
+        isPM ?
+    `if (typeof root.${namespace} !== "undefined")
+        root.${namespace}.error(16, true);
+    else
+        root.${namespace} = factory({});` :
+    `factory(root.${namespace});`
     }
-}(window || this, function (window) {
-    function __importDefault(mod) {
-        return (mod && mod.__esModule) ? mod : { "default": mod };
-    };
-    var _modules = {};
-    function _registerModule(path, fn) {
-        if (!_modules[path]) {
-            _modules[path] = fn(window.Highcharts);
-            if (typeof CustomEvent === 'function') {
-                window.dispatchEvent(new CustomEvent(
-                    'HighchartsModuleLoaded',
-                    { detail: { path: path, module: _modules[path] } }
-                ));
-            }
+}
+}(this, function (H) {
+var _modules = H._modules || {};
+function __importDefault(mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+function _registerModule(path, fn) {
+    if (!_modules[path]) {
+        var module = {};
+        fn(module);
+        _modules[path] = module;
+        if (typeof CustomEvent === "function") {
+            window.dispatchEvent(new CustomEvent(
+                "HighchartsModuleLoaded",
+                { detail: { path: path, module: __importDefault(_modules[path]).default } }
+            ));
         }
-    }function require(mod) {
-        return _modules[mod];
-    };
-    ${moduleCode}
-    }));
+    }
+}
+function require(path) {
+    return _modules[path];
+}
+${moduleCode}
+${
+    isPM ?
+`var H = __importDefault(_modules["${modulePath}"]).default;
+H._modules = _modules;
+return H;` :
+    ''
+}
+}));
 `
     );
     /* eslint-enable indent */
@@ -99,13 +113,11 @@ function addFactory(modulePath, moduleCode) {
 
 function addHelpers(modulePath, moduleCode) {
 
-    modulePath = modulePath.replace(/.src.js$/u, '');
-
-    moduleCode = moduleCode.replace(DEFAULT_PATTERN, '');
+    moduleCode = moduleCode.replace(IMPORT_DEFAULT_PATTERN, '');
 
     moduleCode = moduleCode.replace(
         FACTORY_PATTERN,
-        `_registerModule("${modulePath}", function (H) {`
+        `_registerModule("${modulePath}", function (exports) {`
     );
 
     moduleCode = moduleCode.replace(
@@ -118,11 +130,8 @@ function addHelpers(modulePath, moduleCode) {
         ) => [
             requireOpen,
             path.posix.join(
-                path.relative(
-                    path.dirname(modulePath),
-                    path.dirname(requirePath)
-                ),
-                path.basename(requirePath)
+                path.dirname(modulePath),
+                requirePath
             ),
             requireClose
         ].join('')
@@ -143,9 +152,15 @@ function addHelpers(modulePath, moduleCode) {
  * @return {Promise}
  * Promise to keep.
  */
-async function assembleBundle(filePath, basePath) {
+async function assembleBundle(
+    filePath,
+    basePath,
+    sourcePath,
+    targetPath,
+    namespace
+) {
     const requiredModules =
-        await extractRequiredModules(filePath, isProductMaster(filePath));
+        await extractRequiredModules(filePath, filePath.endsWith('.src.js'));
 
     let assembly = '';
 
@@ -156,15 +171,22 @@ async function assembleBundle(filePath, basePath) {
         );
     }
 
+    const modulePath = path.relative(basePath, filePath);
     assembly += addHelpers(
-        path.relative(basePath, filePath),
+        modulePath,
         (await fs.readFile(filePath)).toString()
     );
 
+    const targetFile =
+        path.join(targetPath, path.relative(sourcePath, filePath));
+
+    await fs.mkdir(path.dirname(targetFile), { recursive: true });
     await fs.writeFile(
-        filePath,
-        addFactory(filePath, assembly)
+        targetFile,
+        addFactory(modulePath, assembly, sourcePath, namespace)
     );
+
+    assembledBundles.push(filePath);
 }
 
 /**
@@ -181,26 +203,34 @@ async function assembleBundle(filePath, basePath) {
  */
 async function extractRequiredModules(filePath, recursive) {
     const file = (await fs.readFile(filePath)).toString(),
+        isPM = isProductMaster(filePath),
         moduleBase = path.dirname(filePath),
         requireMatchs = file.matchAll(REQUIRE_PATTERN),
         requiredModules = [];
 
+    let modulePath;
+
     for (const requireMatch of requireMatchs) {
-        requiredModules.push(path.join(moduleBase, requireMatch[2]));
-    }
+        modulePath = path.join(moduleBase, requireMatch[2]);
 
-    if (recursive) {
-        for (const requiredModule of requiredModules) {
-            if (!assembledBundles.includes(requiredModule)) {
-                const moreRequiredModules =
-                    await extractRequiredModules(requiredModule, true);
+        if (
+            recursive &&
+            (
+                isPM ||
+                !assembledBundles.includes(modulePath)
+            )
+        ) {
+            const moreMatches = await extractRequiredModules(modulePath, true);
 
-                for (const anotherRequiredModule of moreRequiredModules) {
-                    if (!requiredModules.includes(anotherRequiredModule)) {
-                        requiredModules.push(anotherRequiredModule);
-                    }
+            for (let i = 0, iEnd = moreMatches.length; i < iEnd; ++i) {
+                if (!requiredModules.includes(moreMatches[i])) {
+                    requiredModules.push(moreMatches[i]);
                 }
             }
+        }
+
+        if (!requiredModules.includes(modulePath)) {
+            requiredModules.push(modulePath);
         }
     }
 
@@ -229,47 +259,91 @@ function isProductMaster(filePath) {
 /**
  * Builds TypeScript files from the source folder into the target folder.
  *
+ * @param {Record<string,(boolean|number|string)} [options]
+ * Options to call task as function.
+ *
  * @return {Promise}
  * Promise to keep.
  */
-async function scriptsESX() {
-    const fsLib = require('./lib/fs'),
-        logLib = require('./lib/log'),
-        processLib = require('./lib/process');
+async function scriptsESX(
+    options
+) {
+    const fsLib = require('./lib/fs');
+    const logLib = require('./lib/log');
+    const processLib = require('./lib/process');
+
+    options = typeof options === 'object' ? options : {};
 
     try {
+        const bundleTargetFolder = (
+                options.bundleTargetFolder ||
+                'code'
+            ),
+            esModulesFolder = (
+                options.esModulesFolder ||
+                path.join(bundleTargetFolder, 'es-modules')
+            ),
+            bundleSourceFolder = (
+                options.bundleSourceFolder ||
+                path.join(esModulesFolder, 'masters')
+            ),
+            namespace = options.namespace || 'Highcharts',
+            typeScriptFolder = (options.typeScriptFolder || 'ts');
+
         processLib.isRunning('scripts-esx', true);
 
-        logLib.message(`Deleting ${TARGET_FOLDER}...`);
+        logLib.message(`Deleting ${esModulesFolder}...`);
 
-        fsLib.deleteDirectory(TARGET_FOLDER, true);
+        fsLib.deleteDirectory(esModulesFolder, true);
 
-        logLib.message(`Building ${TARGET_FOLDER}...`);
+        logLib.message(`Deleting ${bundleTargetFolder}...`);
+
+        fsLib.deleteDirectory(bundleTargetFolder, true);
+
+        logLib.message(`Building ${bundleTargetFolder}...`);
 
         await processLib.exec([
             'npx tsc',
-            `--project "${SOURCE_FOLDER}"`,
+            `--project "${typeScriptFolder}"`,
             '--module UMD',
-            `--outDir "${TARGET_FOLDER}"`
+            `--outDir "${esModulesFolder}"` // Use ESM temporarily for UMD
         ].join(' '));
 
-        const filePaths = fsLib.getFilePaths(TARGET_FOLDER, true);
+        const filePaths = fsLib.getFilePaths(bundleSourceFolder, true);
 
-        logLib.message(`Assembling ${TARGET_FOLDER}...`);
+        logLib.message(`Bundling ${bundleTargetFolder}...`);
 
         for (let i = 0, iEnd = filePaths.length, filePath; i < iEnd; ++i) {
             filePath = filePaths[i];
 
             if (
-                filePath.includes('/masters/') &&
                 !filePath.endsWith('.d.ts') &&
                 !assembledBundles.includes(filePath)
             ) {
                 logLib.message(`Assembling ${path.basename(filePath)}...`);
-                await assembleBundle(filePath, TARGET_FOLDER);
-                assembledBundles.push(filePath);
+
+                await assembleBundle(
+                    filePath,
+                    esModulesFolder,
+                    bundleSourceFolder,
+                    bundleTargetFolder,
+                    namespace
+                );
             }
         }
+
+        logLib.message(`Deleting ${esModulesFolder}...`);
+
+        fsLib.deleteDirectory(esModulesFolder, true);
+
+        logLib.message(`Building ${esModulesFolder}...`);
+
+        await processLib.exec([
+            'npx tsc',
+            `--project "${typeScriptFolder}"`,
+            `--outDir "${esModulesFolder}"`
+        ].join(' '));
+
 
         logLib.success('Done.');
 
@@ -279,3 +353,11 @@ async function scriptsESX() {
 }
 
 gulp.task('scripts-esx', gulp.series('scripts-messages', scriptsESX));
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+module.exports = scriptsESX;

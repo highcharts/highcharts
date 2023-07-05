@@ -1,4 +1,8 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', data => {
+(async () => {
+
+    let data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+    ).then(response => response.json());
 
     const DAY = 1000 * 60 * 60 * 24;
 
@@ -131,4 +135,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', data
             }
         });
     });
-});
+})();

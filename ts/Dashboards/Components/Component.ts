@@ -29,9 +29,8 @@ import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
+import type Globals from '../Globals';
 import type JSON from '../JSON';
-import type NavigationBindingsOptionsObject from
-    '../../Extensions/Annotations/NavigationBindingsOptions';
 import type Serializable from '../Serializable';
 
 import type DataModifier from '../../Data/Modifiers/DataModifier';
@@ -1053,7 +1052,7 @@ abstract class Component {
         });
 
         const json: Component.JSON = {
-            $class: ComponentRegistry.getName(this.constructor),
+            $class: this.options.type,
             // connector: this.connector ? this.connector.toJSON() : void 0,
             options: {
                 cell: this.options.cell,
@@ -1190,7 +1189,7 @@ namespace Component {
         EventRecord extends Record<string, any>> = {
             readonly type: EventType;
             target?: Component;
-            detail?: AnyRecord;
+            detail?: Globals.AnyRecord;
         } & EventRecord;
 
     /**
@@ -1230,11 +1229,17 @@ namespace Component {
          * The type of component like: `HTML`, `KPI`, `Highcharts`, `DataGrid`.
          */
         type: keyof ComponentTypeRegistry;
-        // allow overwriting gui elements
-        /** @internal */
-        navigationBindings?: NavigationBindingsOptionsObject[];
+        /**
+         * Allow overwriting gui elements.
+         * @internal
+         */
+        navigationBindings?: Array<Globals.AnyRecord>;
         /**
          * Events attached to the component : `mount`, `unmount`.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/events/ | Mount event }
          */
         events?: Record<string, Function>;
         /**
@@ -1253,7 +1258,13 @@ namespace Component {
          *     highlight: true
          * }
          * ```
+         * Try it:
          *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/sync-extremes/ | Extremes Sync }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-highlight/ | Highlight Sync }
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/sync-visibility/ | Visibility Sync }
          */
         sync: SyncOptions;
         /**
@@ -1270,10 +1281,18 @@ namespace Component {
         style?: CSSObject;
         /**
          * The component's title, which will render at the top.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/title/ | Changed captions }
          */
         title?: TextOptionsType;
         /**
          * The component's caption, which will render at the bottom.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/caption/ | Changed captions }
          */
         caption?: TextOptionsType;
     }

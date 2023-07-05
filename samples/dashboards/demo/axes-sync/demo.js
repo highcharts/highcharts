@@ -8,10 +8,10 @@ Highcharts.setOptions({
         zoomType: 'xy'
     },
     yAxis: {
+        max: 120,
         title: {
             text: null
-        },
-        tickAmount: 4
+        }
     },
     xAxis: {
         type: 'datetime'
@@ -52,15 +52,13 @@ Dashboards.board('container', {
             id: 'connector-1',
             type: 'CSV',
             options: {
-                csv: csvData,
-                firstRowAsNames: true
+                csv: csvData
             }
         }, {
             id: 'connector-2',
             type: 'CSV',
             options: {
-                csv: csvData,
-                firstRowAsNames: true
+                csv: csvData
             }
         }]
     },

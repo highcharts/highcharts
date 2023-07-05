@@ -81,10 +81,10 @@ class HighchartsComponent extends Component {
      *
      * */
 
-    /** @internal */
+    /** @private */
     public static charter?: typeof G;
 
-    /** @internal */
+    /** @private */
     public static syncHandlers = HighchartsSyncHandlers;
 
     /**
@@ -296,7 +296,7 @@ class HighchartsComponent extends Component {
      * @returns
      * Highcharts component based on config from JSON.
      *
-     * @internal
+     * @private
      */
     public static fromJSON(
         json: HighchartsComponent.ClassJSON,
@@ -338,6 +338,11 @@ class HighchartsComponent extends Component {
     /**
      * A full set of chart options used by the chart.
      * [Highcharts API](https://api.highcharts.com/highcharts/)
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/highcharts/  | Chart options}
+     *
      */
     public chartOptions: Partial<ChartOptions>;
     /**
@@ -355,12 +360,21 @@ class HighchartsComponent extends Component {
     /**
      * Type of constructor used for creating proper chart like: chart, stock,
      * gantt or map.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/chart-constructor-maps/ | Map constructor}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/chart-constructor-gantt/ | Gantt constructor}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/highcharts-components/chart-and-stock-constructors/ | Chart and Stock constructors}
+     *
      */
     public chartConstructor: HighchartsComponent.ConstructorType;
     /**
      * Reference to sync component that allows to sync i.e tooltips.
      *
-     * @internal
+     * @private
      */
     public sync: Component['sync'];
 
@@ -432,7 +446,7 @@ class HighchartsComponent extends Component {
      *
      * */
 
-    /** @internal */
+    /** @private */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -489,7 +503,7 @@ class HighchartsComponent extends Component {
     /**
      * Adds call update value in store, when chart's point is updated.
      *
-     * @internal
+     * @private
      * */
     private setupConnectorUpdate(): void {
         const { connector: store, chart } = this;
@@ -508,7 +522,7 @@ class HighchartsComponent extends Component {
     /**
      * Internal method for handling option updates.
      *
-     * @internal
+     * @private
      */
     private setOptions(): void {
         if (this.options.chartClassName) {
@@ -563,7 +577,7 @@ class HighchartsComponent extends Component {
     /**
      * Updates chart's series when the data table is changed.
      *
-     * @internal
+     * @private
      */
     private updateSeries(): void {
         // Heuristically create series from the store dataTable
@@ -677,7 +691,7 @@ class HighchartsComponent extends Component {
      * @returns
      * The chart.
      *
-     * @internal
+     * @private
      *
      */
     private getChart(): Chart {
@@ -690,7 +704,7 @@ class HighchartsComponent extends Component {
      * @returns
      * The chart.
      *
-     * @internal
+     * @private
      *
      */
     private createChart(): Chart {
@@ -720,7 +734,7 @@ class HighchartsComponent extends Component {
     /**
      * Registers events from the chart options to the callback register.
      *
-     * @internal
+     * @private
      */
     private registerChartEvents(): void {
         if (this.chart && this.chart.options) {
@@ -806,7 +820,7 @@ class HighchartsComponent extends Component {
      * @returns
      * Class JSON of this Component instance.
      *
-     * @internal
+     * @private
      */
     public toJSON(): HighchartsComponent.ClassJSON {
         const chartOptions = JSON.stringify(this.options.chartOptions),
@@ -887,20 +901,20 @@ namespace HighchartsComponent {
     *
     * */
 
-    /** @internal */
+    /** @private */
     export type ComponentType = HighchartsComponent;
 
-    /** @internal */
+    /** @private */
     export type ConstructorType = (
         'chart' | 'stockChart' | 'mapChart' | 'ganttChart'
     );
 
-    /** @internal */
+    /** @private */
     export type ChartComponentEvents =
         JSONEvent |
         Component.EventTypes;
 
-    /** @internal */
+    /** @private */
     export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
         json: ClassJSON;
     }>;
@@ -909,6 +923,11 @@ namespace HighchartsComponent {
         /**
          * Whether to allow the component to edit the store to which it is
          * attached.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/datagrid-sync/ | Allow connector update comparison}
+         *
          */
         allowConnectorUpdate?: boolean,
         /**
@@ -949,7 +968,7 @@ namespace HighchartsComponent {
          */
         columnAssignment?: Record<string, string | null>;
     }
-    /** @internal */
+    /** @private */
     export interface OptionsJSON extends Component.ComponentOptionsJSON {
         chartOptions?: string;
         chartClassName?: string;
@@ -957,7 +976,7 @@ namespace HighchartsComponent {
         chartConstructor: ConstructorType;
         type: 'Highcharts'
     }
-    /** @internal */
+    /** @private */
     export interface ClassJSON extends Component.JSON {
         options: OptionsJSON;
     }

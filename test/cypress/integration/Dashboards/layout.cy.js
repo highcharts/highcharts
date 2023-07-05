@@ -1,6 +1,6 @@
 describe('Components in layout', () => {
     before(() => {
-        cy.visit('/cypress/dashboards/chart-interaction/');
+        cy.visit('/dashboards/cypress/chart-interaction/');
     })
 
     it('should resize properly ', () => {

@@ -5,7 +5,7 @@ function clickElementInContextMenu(elemName) {
 }
 describe('JSON serialization test', () => {
     beforeEach(() => {
-        cy.visit('cypress/dashboards/dashboard-layout');
+        cy.visit('dashboards/cypress/dashboard-layout');
     });
 
     it('Should save state after resizing cell.', () => {

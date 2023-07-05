@@ -1,22 +1,29 @@
-Math.easeOutQuint = function (pos) {
-    return (Math.pow((pos - 1), 5) + 1);
-};
+(async () => {
 
-const big = window.matchMedia('(min-width: 500px)').matches;
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-ohlc.json'
+    ).then(response => response.json());
 
-const updateStyle = function (selector, property, value, duration) {
-    [].forEach.call(
-        document.querySelectorAll('.' + selector),
-        function (elem) {
-            elem.style.transition = property + ' ' + duration;
-            elem.style[property] = value;
-        }
-    );
-};
+    Math.easeOutQuint = function (pos) {
+        return (Math.pow((pos - 1), 5) + 1);
+    };
 
-const candlestick = function () {
-    Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
-    // create the chart
+    const big = window.matchMedia('(min-width: 500px)').matches;
+
+    const updateStyle = function (selector, property, value, duration) {
+        [].forEach.call(
+            document.querySelectorAll('.' + selector),
+            function (elem) {
+                elem.style.transition = property + ' ' + duration;
+                elem.style[property] = value;
+            }
+        );
+    };
+
+    const candlestick = function () {
+
+        // create the chart
         Highcharts.stockChart('hero', {
             chart: {
                 styledMode: true,
@@ -166,7 +173,8 @@ const candlestick = function () {
                 data: data
             }]
         });
-    });
-};
+    };
 
-candlestick();
+    candlestick();
+
+})();

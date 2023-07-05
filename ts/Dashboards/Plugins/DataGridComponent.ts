@@ -39,7 +39,7 @@ import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 
 /**
  * DataGrid component for Highcharts Dashboards.
- * @internal
+ * @private
  */
 class DataGridComponent extends Component {
 
@@ -49,13 +49,13 @@ class DataGridComponent extends Component {
      *
      * */
 
-    /** @internal */
+    /** @private */
     public static syncHandlers = DataGridSyncHandlers;
 
-    /** @internal */
+    /** @private */
     public static DataGridConstructor?: typeof DataGrid;
 
-    /** @internal */
+    /** @private */
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
@@ -83,7 +83,7 @@ class DataGridComponent extends Component {
      * be replaced with the {@link DataGridComponent.DataGridOptions#onUpdate}
      * option.
      *
-     * @internal
+     * @private
      *
      * @param e
      * Related keyboard event of the change.
@@ -98,8 +98,8 @@ class DataGridComponent extends Component {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {
             const parentRow = inputElement
-                .closest('.hc-dg-row');
-            const cell = inputElement.closest('.hc-dg-cell');
+                .closest('.highcharts-datagrid-row');
+            const cell = inputElement.closest('.highcharts-datagrid-cell');
 
             const converter = new DataConverter();
 
@@ -138,7 +138,7 @@ class DataGridComponent extends Component {
         }
     }
 
-    /** @internal */
+    /** @private */
     public static fromJSON(
         json: DataGridComponent.ClassJSON,
         cell: Cell
@@ -168,15 +168,15 @@ class DataGridComponent extends Component {
      *
      * */
 
-    /** @internal */
+    /** @private */
     public dataGrid?: DataGrid;
-    /** @internal */
+    /** @private */
     public dataGridOptions: Partial<Options>;
-    /** @internal */
+    /** @private */
     public options: DataGridComponent.ComponentOptions;
-    /** @internal */
+    /** @private */
     public sync: Component['sync'];
-    /** @internal */
+    /** @private */
     private connectorListeners: Array<Function>;
 
     /* *
@@ -224,7 +224,7 @@ class DataGridComponent extends Component {
      *
      * */
 
-    /** @internal */
+    /** @private */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -285,7 +285,7 @@ class DataGridComponent extends Component {
         return this;
     }
 
-    /** @internal */
+    /** @private */
     public render(): this {
         this.emit({ type: 'beforeRender' });
         super.render();
@@ -308,13 +308,13 @@ class DataGridComponent extends Component {
         return this;
     }
 
-    /** @internal */
+    /** @private */
     public redraw(): this {
         super.redraw();
         return this.render();
     }
 
-    /** @internal */
+    /** @private */
     public resize(
         width?: number|null,
         height?: number|null
@@ -342,7 +342,7 @@ class DataGridComponent extends Component {
         this.emit({ type: 'afterUpdate' });
     }
 
-    /** @internal */
+    /** @private */
     private constructDataGrid(): DataGrid {
         if (DataGridComponent.DataGridConstructor) {
             this.dataGrid = new DataGridComponent.DataGridConstructor(
@@ -374,7 +374,7 @@ class DataGridComponent extends Component {
         }
     }
 
-    /** @internal */
+    /** @private */
     public toJSON(): DataGridComponent.ClassJSON {
         const dataGridOptions = JSON.stringify(this.options.dataGridOptions);
         const base = super.toJSON();
@@ -407,13 +407,13 @@ namespace DataGridComponent {
      *
      * */
 
-    /** @internal */
+    /** @private */
     export type ComponentType = DataGridComponent;
 
-    /** @internal */
+    /** @private */
     export type ChartComponentEvents = JSONEvent | Component.EventTypes;
 
-    /** @internal */
+    /** @private */
     export type JSONEvent = Component.Event<
     'toJSON' | 'fromJSON',
     {
@@ -471,28 +471,28 @@ namespace DataGridComponent {
          */
         columnAssignment?: Record<string, string | null>;
 
-        /** @internal */
+        /** @private */
         tableAxisMap?: Record<string, string | null>;
 
     }
 
-    /** @internal */
+    /** @private */
     export interface ComponentJSONOptions
         extends Component.ComponentOptionsJSON {
 
-        /** @internal */
+        /** @private */
         dataGridOptions?: string;
 
-        /** @internal */
+        /** @private */
         chartClassName?: string;
 
-        /** @internal */
+        /** @private */
         chartID?: string;
     }
 
-    /** @internal */
+    /** @private */
     export interface ClassJSON extends Component.JSON {
-        /** @internal */
+        /** @private */
         options: ComponentJSONOptions;
     }
 }

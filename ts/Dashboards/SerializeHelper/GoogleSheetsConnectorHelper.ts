@@ -19,7 +19,9 @@
  *
  * */
 
+import type Globals from '../Globals';
 import type JSON from '../JSON';
+import type GoogleSheetsConnectorOptions from '../../Data/Connectors/GoogleSheetsConnectorOptions';
 
 import DataTableHelper from './DataTableHelper.js';
 import GoogleSheetsConnector from '../../Data/Connectors/GoogleSheetsConnector.js';
@@ -53,7 +55,7 @@ function fromJSON(
 /**
  * Validates the given class instance for JSON support.
  *
- * @param {AnyRecord} obj
+ * @param {Globals.AnyRecord} obj
  * Class instance or object to validate.
  *
  * @return {boolean}
@@ -61,7 +63,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: AnyRecord
+    obj: Globals.AnyRecord
 ): obj is GoogleSheetsConnector {
     return obj instanceof GoogleSheetsConnector;
 }
@@ -107,7 +109,7 @@ namespace GoogleSheetsConnectorHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (JSON.Object&GoogleSheetsConnector.Options);
+    export type OptionsJSON = (JSON.Object&GoogleSheetsConnectorOptions);
 
 }
 

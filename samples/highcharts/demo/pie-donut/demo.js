@@ -1,4 +1,4 @@
-var colors = Highcharts.getOptions().colors,
+const colors = Highcharts.getOptions().colors,
     categories = [
         'Chrome',
         'Safari',
@@ -154,9 +154,10 @@ var colors = Highcharts.getOptions().colors,
     ],
     browserData = [],
     versionsData = [],
-    i,
+    dataLen = data.length;
+
+let i,
     j,
-    dataLen = data.length,
     drillDataLen,
     brightness;
 
