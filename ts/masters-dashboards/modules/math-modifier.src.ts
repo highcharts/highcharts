@@ -1,6 +1,6 @@
 /**
  * @license Highcharts Dashboards Math @product.version@ (@product.date@)
- * @module dashboards/modules/dashboard-math
+ * @module dashboards/modules/math-modifier
  * @requires dashboards
  *
  * (c) 2009-2023 Highsoft AS
@@ -8,14 +8,56 @@
  * License: www.highcharts.com/license
  */
 
+
 'use strict';
 
-import Dashboards from '../../Dashboards/Globals.js';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+
+import Globals from '../../Dashboards/Globals.js';
 import Formula from '../../Data/Formula/Formula.js';
+
+// Fill registries
 import '../../Data/Modifiers/MathModifier.js';
 
-const G: AnyRecord = Dashboards;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+
+declare global {
+    interface Dashboards {
+        Formula: typeof Formula;
+        // MathModifier registeres itself in DataModifier.types
+    }
+}
+
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+
+const G = Globals as unknown as Dashboards;
 
 G.Formula = Formula;
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 
 export default G;

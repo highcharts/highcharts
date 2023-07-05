@@ -8,7 +8,9 @@
  * License: www.highcharts.com/license
  */
 
+
 'use strict';
+
 
 /* *
  *
@@ -16,8 +18,10 @@
  *
  * */
 
+
 import Globals from '../DataGrid/Globals.js';
-import DataGrid from '../DataGrid/DataGrid.js';
+import _DataGrid from '../DataGrid/DataGrid.js';
+
 
 /* *
  *
@@ -25,12 +29,18 @@ import DataGrid from '../DataGrid/DataGrid.js';
  *
  * */
 
+
 declare global {
-    interface Window {
-        DataGrid: typeof G;
+    interface DataGrid {
+        win: typeof Globals.win;
+        DataGrid: typeof _DataGrid;
     }
-    let DataGrid: typeof G;
+    interface Window {
+        DataGrid: DataGrid;
+    }
+    let DataGrid: DataGrid;
 }
+
 
 /* *
  *
@@ -38,10 +48,11 @@ declare global {
  *
  * */
 
-const G: AnyRecord = Globals;
 
-G.win = window;
-G.DataGrid = DataGrid;
+const G = Globals as unknown as DataGrid;
+
+G.DataGrid = _DataGrid;
+
 
 /* *
  *
@@ -49,14 +60,17 @@ G.DataGrid = DataGrid;
  *
  * */
 
+
 if (!G.win.DataGrid) {
     G.win.DataGrid = G;
 }
+
 
 /* *
  *
  *  Default Export
  *
  * */
+
 
 export default G;

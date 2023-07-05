@@ -71,6 +71,8 @@ namespace Globals {
         columnHeader: classNamePrefix + 'column-header'
     };
 
+    export const win = window;
+
 }
 
 /* *
