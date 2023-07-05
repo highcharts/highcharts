@@ -8,7 +8,7 @@ describe('JSON serialization test', () => {
         cy.visit('dashboards/cypress/dashboard-layout');
     });
 
-    it.skip('Should save state after resizing cell.', () => {
+    it('Should save state after resizing cell.', () => {
         cy.viewport(1200, 1000);
         cy.toggleEditMode();
         cy.get('.highcharts-dashboards-component').first().click();
