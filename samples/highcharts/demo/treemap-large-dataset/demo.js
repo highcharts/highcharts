@@ -4,8 +4,7 @@
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-mortality.json'
     ).then(response => response.json());
 
-    var points = [],
-        regionP,
+    let regionP,
         regionVal,
         regionI = 0,
         countryP,
@@ -14,7 +13,9 @@
         causeI,
         region,
         country,
-        cause,
+        cause;
+
+    const points = [],
         causeName = {
             'Communicable & other Group I': 'Communicable diseases',
             'Noncommunicable diseases': 'Non-communicable diseases',
