@@ -86,9 +86,9 @@ async function scriptsDTS() {
                 bundleTargetFolder,
                 path
                     .relative(bundleDtsFolder, bundleDtsFile)
-                    .replace(/.src.d.ts$/u, '.d.ts')
+                    .replace(/\.src\.d\.ts$/u, '.d.ts')
             ),
-            fs.readFileSync(bundleDtsFile, 'utf8').replace(/\.src";/gu, '";')
+            fs.readFileSync(bundleDtsFile, 'utf8').replace(/\.src"/gu, '"')
         );
     }
 

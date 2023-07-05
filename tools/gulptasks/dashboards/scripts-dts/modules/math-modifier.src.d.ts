@@ -4,7 +4,7 @@
  *
  *!*/
 
-import _Dashboards from "../dashboards.src";
+import * as _Dashboards from "../dashboards.src";
 import _Formula from "../es-modules/Data/Formula/Formula";
 
 declare module "../dashboards.src" {
@@ -17,7 +17,7 @@ declare module "../dashboards.src" {
  * @param dashboards
  * The imported Dashboards namespace to extend.
  */
-function factory(dashboards: typeof _Dashboards): void;
+declare function factory(dashboards: typeof _Dashboards): void;
 
 export let Dashboards: typeof _Dashboards;
 

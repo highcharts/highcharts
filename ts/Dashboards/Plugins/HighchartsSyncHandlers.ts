@@ -22,10 +22,12 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
+import type {
+    Axis,
+    Series
+} from './HighchartsTypes';
 import type DataCursor from '../../Data/DataCursor';
 import type RangeModifier from '../../Data/Modifiers/RangeModifier';
-import type Series from '../../Core/Series/Series';
 import type Sync from '../Components/Sync/Sync';
 
 import ComponentType from '../Components/ComponentType';

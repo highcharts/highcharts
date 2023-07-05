@@ -20,8 +20,8 @@
  * */
 
 import type Cell from '../Layout/Cell';
-import type Options from '../../Core/Options';
 import type DataGrid from '../../DataGrid/DataGrid';
+import type DataGridOptions from '../../DataGrid/DataGridOptions';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 
 import Component from '../Components/Component.js';
@@ -171,7 +171,7 @@ class DataGridComponent extends Component {
     /** @private */
     public dataGrid?: DataGrid;
     /** @private */
-    public dataGridOptions: Partial<Options>;
+    public dataGridOptions: Partial<DataGridOptions>;
     /** @private */
     public options: DataGridComponent.ComponentOptions;
     /** @private */

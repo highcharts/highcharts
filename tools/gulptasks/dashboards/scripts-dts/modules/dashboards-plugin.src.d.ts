@@ -4,7 +4,7 @@
  *
  *!*/
 
-import _Dashboards from "../dashboards.src";
+import * as _Dashboards from "../dashboards.src";
 import _DataGridPlugin from "../es-modules/Dashboards/Plugins/DataGridPlugin";
 import _HighchartsPlugin from "../es-modules/Dashboards/Plugins/HighchartsPlugin";
 
@@ -19,7 +19,7 @@ declare module "../dashboards.src" {
  * @param dashboards
  * The imported Dashboards namespace to extend.
  */
-function factory(dashboards: typeof _Dashboards): void;
+declare function factory(dashboards: typeof _Dashboards): void;
 
 export let Dashboards: typeof _Dashboards;
 

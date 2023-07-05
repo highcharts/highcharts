@@ -22,19 +22,22 @@
  *
  * */
 
-import type AxisOptions from '../../Core/Axis/AxisOptions';
-import type Chart from '../../Core/Chart/Chart';
-import type ChartOptions from '../../Core/Options';
-import type Series from '../../Core/Series/Series';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
-import type Point from '../../Core/Series/Point';
 import type Cell from '../Layout/Cell';
+import type {
+    AxisOptions,
+    Chart,
+    Options as ChartOptions,
+    Highcharts,
+    Point,
+    Series,
+    SeriesOptions
+} from './HighchartsTypes';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataTable from '../../Data/DataTable.js';
-import G from '../../Core/Globals.js';
+import Globals from '../../Dashboards/Globals.js';
 import HighchartsSyncHandlers from './HighchartsSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 
@@ -55,10 +58,10 @@ const {
 
 declare module '../../Core/GlobalsLike' {
     interface GlobalsLike {
-        chart: typeof Chart.chart;
-        ganttChart: typeof Chart.chart;
-        mapChart: typeof Chart.chart;
-        stockChart: typeof Chart.chart;
+        chart: typeof Highcharts.chart;
+        ganttChart: typeof Highcharts.chart;
+        mapChart: typeof Highcharts.chart;
+        stockChart: typeof Highcharts.chart;
     }
 }
 
@@ -82,7 +85,7 @@ class HighchartsComponent extends Component {
      * */
 
     /** @private */
-    public static charter?: typeof G;
+    public static charter?: typeof Highcharts;
 
     /** @private */
     public static syncHandlers = HighchartsSyncHandlers;
@@ -708,9 +711,12 @@ class HighchartsComponent extends Component {
      *
      */
     private createChart(): Chart {
-        const charter = (HighchartsComponent.charter || G);
+        const charter = (
+            HighchartsComponent.charter ||
+            Globals.win.Highcharts as unknown as typeof Highcharts
+        );
         if (this.chartConstructor !== 'chart') {
-            const factory = charter[this.chartConstructor] || G.chart;
+            const factory = charter[this.chartConstructor];
             if (factory) {
                 try {
                     return factory(this.chartContainer, this.chartOptions);
@@ -854,7 +860,7 @@ class HighchartsComponent extends Component {
         const componentOptions = component.options;
         const chart = component.chart;
         const chartOptions = chart && chart.options;
-        const chartType = chartOptions && chartOptions.chart.type || 'line';
+        const chartType = chartOptions && chartOptions.chart?.type || 'line';
 
         return merge(componentOptions, {
             chartOptions
