@@ -25,38 +25,38 @@ Thus, we have to import the main dashboard package, the Highcharts library and a
     ```
 
 4. With that, we are ready to start working on an actual dashboard config. Inside the script tag, create a new instance of the dashboard. <br>
-    To do so, you have to pass two arguments :
-    * the div’s id where the dashboard should be placed (see point 1).
-    * the object with dashboard options.
+To do so, you have to pass two arguments:
+* the div’s id where the dashboard should be placed (see point 1).
+* the object with dashboard options.
 
-    To do so, you can use the factory function `Dashboards.board`:
+To do so, you can use the factory function `Dashboards.board`:
 
-    ```js
-        Dashboards.board('container', {...})
-    ```
-    or the class `Dashboards.Board` to create a new instance of the dashboard:
+```js
+    Dashboards.board('container', {...})
+```
+or the class `Dashboards.Board` to create a new instance of the dashboard:
 
-    ```js
-        const board = new Dashboards.Board('container', {...})
-    ```
+```js
+    const board = new Dashboards.Board('container', {...})
+```
 
 5.  As options, you have to provide two essential things:
     * __gui__ - here you can define the layout of the dashboard by specifying rows and cells
 
-    ```js
-        gui: {
-            layouts: [{
-                id: 'layout-1',
-                rows: [{
-                    cells: [{
-                        id: 'dashboard-col-0'
-                    }, {
-                        id: 'dashboard-col-1'
+        ```js
+            gui: {
+                layouts: [{
+                    id: 'layout-1',
+                    rows: [{
+                        cells: [{
+                            id: 'dashboard-col-0'
+                        }, {
+                            id: 'dashboard-col-1'
+                        }]
                     }]
                 }]
-            }]
-        },
-    ```
+            },
+        ```
 
     * __components__ - this is an array with components to be inserted into the dashboard. To place a component in a cell, use the cell id. You also have to declare the type of the component (more on that in a dedicated chapter) and its options.
 
@@ -85,4 +85,4 @@ Thus, we have to import the main dashboard package, the Highcharts library and a
         }]
     ```
 
-6. With that config, your dashboard should look like the one in the [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboard/basic/your-first-dashboard).
+6. With that config, your dashboard should look like the one in the [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/basic/your-first-dashboard/).
