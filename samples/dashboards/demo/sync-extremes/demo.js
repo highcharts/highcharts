@@ -27,11 +27,29 @@ Dashboards.board('container', {
     gui: {
         layouts: [{
             rows: [{
-                cells: [
-                    { id: 'dashboard-col-0' },
-                    { id: 'dashboard-col-1' },
-                    { id: 'dashboard-col-2' }
-                ]
+                cells: [{
+                    id: 'dashboard-col-0',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    }
+                }, {
+                    id: 'dashboard-col-1',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+
+                    }
+                }, {
+                    id: 'dashboard-col-2',
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    }
+                }]
             }, {
                 cells: [
                     { id: 'dashboard-col-3' }
