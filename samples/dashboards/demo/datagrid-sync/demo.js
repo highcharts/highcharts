@@ -9,14 +9,16 @@ const chartOptions = {
         type: 'column'
     },
     title: {
-        text: 'Drag points to update the data grid'
+        text: 'Drag points to update the data grid',
+        align: 'left'
     },
     plotOptions: {
         series: {
             dragDrop: {
                 draggableY: true,
                 dragPrecisionY: 1
-            }
+            },
+            colorByPoint: true
         }
     }
 };
