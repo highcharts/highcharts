@@ -56,12 +56,6 @@ Dashboards.board('container', {
             sync: {
                 highlight: true
             },
-            title: {
-                text: 'Chart',
-                style: {
-                    textAlign: 'center'
-                }
-            },
             chartOptions: {
                 chart: {
                     animation: false,
@@ -69,7 +63,7 @@ Dashboards.board('container', {
                     zooming: false
                 },
                 title: {
-                    text: 'Drag points to update the data grid'
+                    text: 'Chart'
                 },
                 tooltip: {
                     shared: true,

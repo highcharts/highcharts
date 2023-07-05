@@ -1,1 +1,1 @@
-Click on the world map
+Click on a city marker in the world map
