@@ -107,9 +107,19 @@ async function setupBoard() {
                     }]
                 }, {
                     cells: [{
-                        id: 'world-map'
+                        id: 'world-map',
+                        responsive: {
+                            small: {
+                                width: '100%'
+                            }
+                        }
                     }, {
                         id: 'kpi-layout',
+                        responsive: {
+                            small: {
+                                width: '100%'
+                            }
+                        },
                         layout: {
                             rows: [{
                                 cells: [{
@@ -144,9 +154,19 @@ async function setupBoard() {
                     }]
                 }, {
                     cells: [{
-                        id: 'selection-grid'
+                        id: 'selection-grid',
+                        responsive: {
+                            small: {
+                                width: '100%'
+                            }
+                        }
                     }, {
-                        id: 'city-chart'
+                        id: 'city-chart',
+                        responsive: {
+                            small: {
+                                width: '100%'
+                            }
+                        }
                     }]
                 }]
             }]
