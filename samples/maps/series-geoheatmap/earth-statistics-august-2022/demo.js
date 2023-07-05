@@ -6,7 +6,7 @@
         data = [{
             type: 'Land Surface (day) and Sea Temperature',
             title: 'Land Surface (day) and Sea Temperature in August 2022',
-            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/geoheatmap-land-sea-day-temp-august_2022.json',
+            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@6325d4b73c/samples/data/geoheatmap-land-sea-day-temp-august_2022.json',
             colorAxis: {
                 min: -25,
                 max: 50,
@@ -29,7 +29,7 @@
         }, {
             type: 'Land Surface (night) and Sea Temperature',
             title: 'Land Surface (night) and Sea Temperature in August 2022',
-            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/geoheatmap-land-sea-night-temp-august_2022.json',
+            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@6325d4b73c/samples/data/geoheatmap-land-sea-night-temp-august_2022.json',
             colorAxis: {
                 min: -25,
                 max: 50,
