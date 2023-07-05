@@ -1,6 +1,11 @@
 ---
- name: DataGrid with MathModifier demo
- authors:
-   - Sophie Bremer
- js_wrap: b
+name: DataGrid with MathModifier
+author:
+  - Sophie Bremer
+js_wrap: b
+tags:
+  - Highcharts Dashboards demo
+categories:
+  - General
+use_png_thumbnail: true
 ...

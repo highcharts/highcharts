@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Dashboards v0.0.2
+ * @license Highcharts Dashboards v@product.version@
  *
  * (c) 2009-2023 Highsoft AS
  *
@@ -551,6 +551,9 @@
     background-color: transparent;
     border: none;
     text-align: left;
+    font-size: 1em;
+    padding-left: 3px;
+    cursor: pointer;
 }
 
 .highcharts-dashboards-edit-context-menu-item > button:hover {

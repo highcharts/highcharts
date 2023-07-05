@@ -892,7 +892,7 @@ class DataGrid {
         const options = this.options,
             columnOptions = options.columns[column],
             cellFormat = columnOptions && columnOptions.cellFormat;
-        let formattedCell = cellValue || '';
+        let formattedCell = defined(cellValue) ? cellValue : '';
 
         if (cellFormat) {
             if (
