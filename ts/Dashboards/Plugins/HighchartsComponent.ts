@@ -44,7 +44,8 @@ const {
     merge,
     splat,
     uniqueKey,
-    error
+    error,
+    diffObjects
 } = U;
 
 /* *
@@ -848,6 +849,9 @@ class HighchartsComponent extends Component {
         return json;
     }
 
+    public getOptions(): Partial<HighchartsComponent.Options> {
+        return diffObjects(this.options, HighchartsComponent.defaultOptions);
+    }
 
     public getEditableOptions(): HighchartsComponent.Options {
         const component = this;

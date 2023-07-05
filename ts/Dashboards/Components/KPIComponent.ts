@@ -43,7 +43,8 @@ const {
     getStyle,
     isArray,
     isNumber,
-    merge
+    merge,
+    diffObjects
 } = U;
 
 /* *
@@ -615,6 +616,10 @@ class KPIComponent extends Component {
         this.emit({ type: 'toJSON', json: base });
 
         return json;
+    }
+
+    public getOptions(): Partial<KPIComponent.ComponentOptions> {
+        return diffObjects(this.options, KPIComponent.defaultOptions);
     }
 }
 

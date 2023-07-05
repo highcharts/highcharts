@@ -418,6 +418,20 @@ class Layout extends GUIElement {
             }
         };
     }
+
+    public getOptions(): DeepPartial<Layout.Options> {
+        const layout = this,
+            rows = [];
+
+        // Get rows JSON.
+        for (let i = 0, iEnd = layout.rows.length; i < iEnd; ++i) {
+            rows.push(layout.rows[i].getOptions());
+        }
+
+        return {
+            rows
+        };
+    }
 }
 
 interface Layout {

@@ -56,7 +56,8 @@ const {
     objectEach,
     isFunction,
     getStyle,
-    relativeLength
+    relativeLength,
+    diffObjects
 } = U;
 
 import CU from './ComponentUtilities.js';
@@ -1064,6 +1065,10 @@ abstract class Component {
         };
 
         return json;
+    }
+
+    public getOptions(): Partial<Component.ComponentOptions> {
+        return diffObjects(this.options, Component.defaultOptions);
     }
 
     public getEditableOptions(): Component.ComponentOptions {

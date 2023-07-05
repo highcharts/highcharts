@@ -29,7 +29,8 @@ import Component from './Component.js';
 import U from '../../Core/Utilities.js';
 
 const {
-    merge
+    merge,
+    diffObjects
 } = U;
 
 // TODO: This may affect the AST parsing in Highcharts
@@ -382,6 +383,13 @@ class HTMLComponent extends Component {
         });
 
         return json;
+    }
+
+    public getOptions(): Partial<HTMLComponent.HTMLComponentOptions> {
+        return {
+            ...diffObjects(this.options, HTMLComponent.defaultOptions),
+            type: 'HTML'
+        };
     }
 }
 

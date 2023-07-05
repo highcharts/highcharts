@@ -28,7 +28,11 @@ import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import U from '../../Core/Utilities.js';
-const { createElement, merge, uniqueKey } = U;
+const {
+    merge,
+    uniqueKey,
+    diffObjects
+} = U;
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 
 /* *
@@ -391,6 +395,9 @@ class DataGridComponent extends Component {
         return json;
     }
 
+    public getOptions(): Partial<DataGridComponent.ComponentOptions> {
+        return diffObjects(this.options, DataGridComponent.defaultOptions);
+    }
 }
 
 /* *

@@ -623,6 +623,35 @@ class Board implements Serializable<Board, Board.JSON> {
         };
     }
 
+
+    public getOptions(): DeepPartial<Board.Options> {
+        const board = this,
+            layouts = [],
+            components = [];
+
+        for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+            layouts.push(board.layouts[i].getOptions());
+        }
+
+        for (let i = 0, iEnd = board.mountedComponents.length; i < iEnd; ++i) {
+            if (
+                board.mountedComponents[i].cell &&
+                board.mountedComponents[i].cell.mountedComponent
+            ) {
+                components.push(
+                    board.mountedComponents[i].component.getOptions()
+                );
+            }
+        }
+
+        return {
+            ...this.options,
+            gui: {
+                layouts
+            },
+            components: components
+        };
+    }
 }
 
 /* *

@@ -347,6 +347,16 @@ class Cell extends GUIElement {
         };
     }
 
+    public getOptions(): DeepPartial<Cell.Options> {
+        // const row = this,
+        //     cells = [];
+
+        // for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
+        //     cells.push(row.cells[i].getOptions());
+        // }
+
+        return this.options;
+    }
     protected changeVisibility(
         setVisible: boolean = true
     ): void {

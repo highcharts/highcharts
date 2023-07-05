@@ -342,6 +342,19 @@ class Row extends GUIElement {
         };
     }
 
+    public getOptions(): DeepPartial<Row.Options> {
+        const row = this,
+            cells = [];
+
+        for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
+            cells.push(row.cells[i].getOptions());
+        }
+
+        return {
+            cells
+        };
+    }
+
     public setSize(
         height?: number | string
     ): void {
