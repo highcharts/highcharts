@@ -23,7 +23,7 @@ Dashboards.board('container', {
                     click: function () {
                         document.querySelectorAll('#output')[0].value =
                             JSON.stringify(
-                                this.menu.editMode.board.toJSON(),
+                                this.menu.editMode.board.getOptions(),
                                 null,
                                 2
                             );
