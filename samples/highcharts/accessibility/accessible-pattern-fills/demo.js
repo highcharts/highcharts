@@ -1,4 +1,4 @@
-var colors = Highcharts.getOptions().colors;
+const colors = Highcharts.getOptions().colors;
 
 Highcharts.chart('container-area', {
     chart: {
@@ -173,7 +173,7 @@ Highcharts.chart('container-col', {
 });
 
 function getColorPattern(i) {
-    var colors = Highcharts.getOptions().colors,
+    const colors = Highcharts.getOptions().colors,
         patternColors = [colors[2], colors[0], colors[3], colors[1], colors[4]],
         patterns = [
             'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
