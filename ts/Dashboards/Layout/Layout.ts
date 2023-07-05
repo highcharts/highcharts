@@ -419,6 +419,14 @@ class Layout extends GUIElement {
         };
     }
 
+    /**
+     * Get the layout's options.
+     * @return {DeepPartial<Cell.Options>}
+     * The JSON of layout's options.
+     *
+     * @internal
+     *
+     */
     public getOptions(): DeepPartial<Layout.Options> {
         const layout = this,
             rows = [];

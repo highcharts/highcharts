@@ -618,8 +618,19 @@ class KPIComponent extends Component {
         return json;
     }
 
+    /**
+     * Get the KPI component's options.
+     * @return {Partial<KPI.ComponentOptions>}
+     * The JSON of KPI component's options.
+     *
+     * @internal
+     *
+     */
     public getOptions(): Partial<KPIComponent.ComponentOptions> {
-        return diffObjects(this.options, KPIComponent.defaultOptions);
+        return {
+            ...diffObjects(this.options, KPIComponent.defaultOptions),
+            type: 'KPI'
+        };
     }
 }
 

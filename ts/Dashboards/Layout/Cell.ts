@@ -347,14 +347,15 @@ class Cell extends GUIElement {
         };
     }
 
+    /**
+     * Get the cell's options.
+     * @return {DeepPartial<Cell.Options>}
+     * The JSON of cell's options.
+     *
+     * @internal
+     *
+     */
     public getOptions(): DeepPartial<Cell.Options> {
-        // const row = this,
-        //     cells = [];
-
-        // for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
-        //     cells.push(row.cells[i].getOptions());
-        // }
-
         return this.options;
     }
     protected changeVisibility(

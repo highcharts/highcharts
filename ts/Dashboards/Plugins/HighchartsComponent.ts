@@ -850,7 +850,10 @@ class HighchartsComponent extends Component {
     }
 
     public getOptions(): Partial<HighchartsComponent.Options> {
-        return diffObjects(this.options, HighchartsComponent.defaultOptions);
+        return {
+            ...diffObjects(this.options, HighchartsComponent.defaultOptions),
+            type: 'Highcharts'
+        };
     }
 
     public getEditableOptions(): HighchartsComponent.Options {

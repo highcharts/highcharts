@@ -342,6 +342,14 @@ class Row extends GUIElement {
         };
     }
 
+    /**
+     * Get the row's options.
+     * @return {DeepPartial<Row.Options>}
+     * The JSON of row's options.
+     *
+     * @internal
+     *
+     */
     public getOptions(): DeepPartial<Row.Options> {
         const row = this,
             cells = [];

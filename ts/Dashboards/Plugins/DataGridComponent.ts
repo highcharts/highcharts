@@ -395,8 +395,19 @@ class DataGridComponent extends Component {
         return json;
     }
 
+    /**
+     * Get the DataGrid component's options.
+     * @return {Partial<DataGridComponent.ComponentOptions>}
+     * The JSON of DataGrid component's options.
+     *
+     * @internal
+     *
+     */
     public getOptions(): Partial<DataGridComponent.ComponentOptions> {
-        return diffObjects(this.options, DataGridComponent.defaultOptions);
+        return {
+            ...diffObjects(this.options, DataGridComponent.defaultOptions),
+            type: 'DataGrid'
+        };
     }
 }
 

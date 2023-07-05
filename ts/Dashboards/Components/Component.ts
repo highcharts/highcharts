@@ -1067,6 +1067,14 @@ abstract class Component {
         return json;
     }
 
+    /**
+     * Get the component's options.
+     * @return {Partial<Component.ComponentOptions>}
+     * The JSON of component's options.
+     *
+     * @internal
+     *
+     */
     public getOptions(): Partial<Component.ComponentOptions> {
         return diffObjects(this.options, Component.defaultOptions);
     }

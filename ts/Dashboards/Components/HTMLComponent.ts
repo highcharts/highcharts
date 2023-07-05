@@ -385,6 +385,14 @@ class HTMLComponent extends Component {
         return json;
     }
 
+    /**
+     * Get the HTML component's options.
+     * @return {Partial<HTMLComponent.ComponentOptions>}
+     * The JSON of HTML component's options.
+     *
+     * @internal
+     *
+     */
     public getOptions(): Partial<HTMLComponent.HTMLComponentOptions> {
         return {
             ...diffObjects(this.options, HTMLComponent.defaultOptions),
