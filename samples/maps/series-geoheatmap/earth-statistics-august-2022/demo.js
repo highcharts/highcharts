@@ -1,92 +1,95 @@
 (async () => {
 
     const topology = await fetch(
-        'https://code.highcharts.com/mapdata/custom/world.topo.json'
-    ).then(response => response.json());
-
-    const data = [{
-        type: 'Land Surface Temperature (day)',
-        title: 'Land Surface Temperature (day) in August 2022',
-        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c8a1a20e44/samples/data/land_surface_temp_day_august_2022.json',
-        colorAxis: {
-            min: -25,
-            max: 50,
-            labels: {
-                format: '{value}°C',
-                style: {
-                    color: '#fff'
-                }
+            'https://code.highcharts.com/mapdata/custom/world-continents.topo.json'
+        ).then(response => response.json()),
+        data = [{
+            type: 'Land Surface (day) and Sea Temperature',
+            title: 'Land Surface (day) and Sea Temperature in August 2022',
+            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/geoheatmap-land-sea-day-temp-august_2022.json',
+            colorAxis: {
+                min: -25,
+                max: 50,
+                labels: {
+                    format: '{value}°C',
+                    style: {
+                        color: '#fff'
+                    }
+                },
+                stops: [
+                    [0, '#c0fbfa'],
+                    [0.15, '#3562d7'],
+                    [0.45, '#d400a0'],
+                    [0.55, '#f40001'],
+                    [0.75, '#f67700'],
+                    [1, '#f6ec69']
+                ]
             },
-            stops: [
-                [0, '#c0fbfa'],
-                [0.15, '#3562d7'],
-                [0.45, '#d400a0'],
-                [0.55, '#f40001'],
-                [0.75, '#f67700'],
-                [1, '#f6ec69']
-            ]
-        }
-    }, {
-        type: 'Land Surface Temperature (night)',
-        title: 'Land Surface Temperature (night) in August 2022',
-        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c8a1a20e44/samples/data/land_surface_temp_night_august_2022.json',
-        colorAxis: {
-            min: -25,
-            max: 50,
-            labels: {
-                format: '{value} °C',
-                style: {
-                    color: '#fff'
-                }
+            data: void 0
+        }, {
+            type: 'Land Surface (night) and Sea Temperature',
+            title: 'Land Surface (night) and Sea Temperature in August 2022',
+            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/geoheatmap-land-sea-night-temp-august_2022.json',
+            colorAxis: {
+                min: -25,
+                max: 50,
+                labels: {
+                    format: '{value} °C',
+                    style: {
+                        color: '#fff'
+                    }
+                },
+                stops: [
+                    [0, '#c0fbfa'],
+                    [0.15, '#3562d7'],
+                    [0.45, '#d400a0'],
+                    [0.55, '#f40001'],
+                    [0.75, '#f67700'],
+                    [1, '#f6ec69']
+                ]
             },
-            stops: [
-                [0, '#c0fbfa'],
-                [0.15, '#3562d7'],
-                [0.45, '#d400a0'],
-                [0.55, '#f40001'],
-                [0.75, '#f67700'],
-                [1, '#f6ec69']
-            ]
-        }
-    }, {
-        type: 'Net Radiation',
-        title: 'Net radiation in August 2022',
-        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c8a1a20e44/samples/data/net_radiation_august_2022.json',
-        colorAxis: {
-            min: -200,
-            max: 200,
-            labels: {
-                format: '{value} W/m²',
-                style: {
-                    color: '#fff'
-                }
+            data: void 0
+        }, {
+            type: 'Net Radiation',
+            title: 'Net radiation in August 2022',
+            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c8a1a20e44/samples/data/net_radiation_august_2022.json',
+            colorAxis: {
+                min: -200,
+                max: 200,
+                labels: {
+                    format: '{value} W/m²',
+                    style: {
+                        color: '#fff'
+                    }
+                },
+                stops: [
+                    [0, '#358abc'],
+                    [0.5, '#fcffbd'],
+                    [1, '#d64050']
+                ]
             },
-            stops: [
-                [0, '#358abc'],
-                [0.5, '#fcffbd'],
-                [1, '#d64050']
-            ]
-        }
-    }, {
-        type: 'Vegetation Index (NDVI)',
-        title: 'Vegetation Index (NDVI) in August 2022',
-        url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c8a1a20e44/samples/data/ndvi_august_2022.json',
-        colorAxis: {
-            min: 0,
-            max: 1,
-            labels: {
-                format: '{value}',
-                style: {
-                    color: '#fff'
-                }
+            data: void 0
+        }, {
+            type: 'Vegetation Index (NDVI)',
+            title: 'Vegetation Index (NDVI) in August 2022',
+            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c8a1a20e44/samples/data/ndvi_august_2022.json',
+            colorAxis: {
+                min: 0,
+                max: 1,
+                labels: {
+                    format: '{value}',
+                    style: {
+                        color: '#fff'
+                    }
+                },
+                stops: [
+                    [0, '#eee7e6'],
+                    [0.5, '#7a963c'],
+                    [1, '#04360a']
+                ]
             },
-            stops: [
-                [0, '#eee7e6'],
-                [0.5, '#7a963c'],
-                [1, '#04360a']
-            ]
-        }
-    }];
+            data: void 0
+        }];
 
     // Create the chart
     Highcharts.mapChart('container', {
@@ -107,12 +110,16 @@
                     });
 
                     // Show the Font Awesome spinner
-                    chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i>');
+                    chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i><br/><i>Loading data...</i>');
 
                     async function getDataset(type) {
-                        const dataset = data.find(el => el.type === type),
-                            apiData = await fetch(dataset.url)
+                        const dataset = data.find(el => el.type === type);
+
+                        if (typeof dataset.data === 'undefined') {
+                            const apiData = await fetch(dataset.url)
                                 .then(response => response.json());
+                            dataset.data = apiData;
+                        }
 
                         // Hide loading
                         chart.hideLoading();
@@ -120,14 +127,12 @@
                             text: dataset.title
                         }, false);
                         chart.colorAxis[0].update(dataset.colorAxis, false);
-                        geoheatmap.update({
-                            data: apiData
-                        });
+                        geoheatmap.setData(dataset.data);
                     }
 
                     datasetSelect.addEventListener('change', function () {
                         // Show the Font Awesome spinner
-                        chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i>');
+                        chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i><br/><i>Loading data...</i>');
                         getDataset(datasetSelect.value);
                     });
 
@@ -157,6 +162,11 @@
             }
         },
 
+        mapView: {
+            center: [0, 0],
+            zoom: 1.5
+        },
+
         legend: {
             symbolWidth: 350
         },
@@ -175,15 +185,34 @@
         tooltip: {
             headerFormat: '<span style="font-size: 11px">Lon: {point.point.lon}° Lat: {point.point.lat}°</span><br/>',
             pointFormatter() {
-                return `Value: ${this.value.toFixed(2)} °C`;
+                return `Value: ${this.options.value.toFixed(2)}`;
+            },
+            enabled: false
+        },
+
+        plotOptions: {
+            mapline: {
+                enableMouseTracking: false,
+                joinBy: ['iso-a2', 'code'],
+                fillColor: 'transparent',
+                states: {
+                    inactive: {
+                        enabled: false
+                    }
+                }
             }
         },
 
         series: [{
-            name: 'GeoHeatMap',
+            name: 'GeoHeatMap series',
             type: 'geoheatmap',
             interpolation: true,
-            interpolationBlur: 3
+            interpolationBlur: 1
+        }, {
+            nullColor: '#383838',
+            type: 'mapline',
+            name: 'Outlines of the Continents',
+            data: Highcharts.geojson(topology)
         }]
     });
 

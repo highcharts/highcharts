@@ -24,7 +24,8 @@ import GeoHeatmapPoint from './GeoHeatmapPoint.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import H from '../../Core/Globals.js';
 const {
-    doc
+    doc,
+    noop
 } = H;
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject, stop } = A;
@@ -287,7 +288,10 @@ class GeoHeatmapSeries extends MapSeries {
             interpolation: false,
 
             /**
-             * Represents how much blur should be added to interpolated image.
+             * Represents how much blur should be added to the interpolated
+             * image. Works best in the range of 0-1, all higher values would
+             * need a lot more perfomance of the machine to calculate more
+             * detailed interpolation.
              *
              *  * **Note:** Useful, if the data is spread into wide range of
              *  longitue and latitude values.
@@ -403,9 +407,12 @@ class GeoHeatmapSeries extends MapSeries {
                     if (
                         // Do not calculate new canvas if not necessary
                         series.isDirtyCanvas ||
+                        // Calucate new canvas if data is dirty
+                        series.isDirtyData ||
                         // Always calculate new canvas for Orthographic proj
                         mapView.projection.options.name === 'Orthographic'
                     ) {
+                        series.isDirtyCanvas = true;
                         const canvasWidth = canvas.width = ~~(
                                 360 / colsize
                             ) + 1,
@@ -473,11 +480,13 @@ class GeoHeatmapSeries extends MapSeries {
                         }
 
                         const blur = pick(series.options.interpolationBlur, 1),
-                            upscaledWidth = ~~(dimensions.width * blur),
+                            blurFactor = blur === 0 ? 1 : blur * 11;
+
+
+                        const upscaledWidth =
+                                ~~(canvasWidth * blurFactor),
                             upscaledHeight =
-                                ~~(
-                                    (blur * dimensions.width) / canvasWidth
-                                ) * canvasHeight,
+                                ~~(canvasHeight * blurFactor),
                             projectedWidth = ~~dimensions.width,
                             projectedHeight = ~~dimensions.height;
 
@@ -587,16 +596,28 @@ class GeoHeatmapSeries extends MapSeries {
                                 };
 
                             image
-                                .attr({ animator: 0 })
+                                .attr(
+                                    merge(
+                                        { animator: 0 },
+                                        series.isDirtyCanvas ? {
+                                            href: canvas.toDataURL()
+                                        } : void 0
+                                    )
+                                )
                                 .animate({ animator: 1 }, animOptions);
 
                         // When dragging or first rendering, animation is off
                         } else {
                             stop(image);
-                            image.attr({
-                                ...dimensions,
-                                href: canvas.toDataURL()
-                            });
+
+                            image.attr(
+                                merge(
+                                    dimensions,
+                                    series.isDirtyCanvas ? {
+                                        href: canvas.toDataURL()
+                                    } : void 0
+                                )
+                            );
                         }
                     } else {
                         series.image = chart.renderer.image(
@@ -604,8 +625,8 @@ class GeoHeatmapSeries extends MapSeries {
                         )
                             .attr(dimensions)
                             .add(series.group);
-                        series.isDirtyCanvas = false;
                     }
+                    series.isDirtyCanvas = false;
                 }
             }
         } else {
@@ -670,6 +691,7 @@ interface GeoHeatmapSeries {
 }
 extend(GeoHeatmapSeries.prototype, {
     type: 'geoheatmap',
+    applyJitter: noop,
     pointClass: GeoHeatmapPoint,
     pointArrayMap: ['lon', 'lat', 'value'],
     kdAxisArray: ['lon', 'lat'] // Search k-d-tree by lon/lat values

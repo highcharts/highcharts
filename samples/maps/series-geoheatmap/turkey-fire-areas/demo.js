@@ -1,7 +1,7 @@
 (async () => {
 
     const topology = await fetch(
-        'https://code.highcharts.com/mapdata/countries/tr/tr-all.topo.json'
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
     // Create the chart
@@ -61,7 +61,7 @@
             name: 'GeoHeatMap',
             type: 'geoheatmap',
             interpolation: true,
-            interpolationBlur: 10, // Change the value to change the interpolation blur
+            interpolationBlur: 1, // Change the value to change the interpolation blur
             data: [{
                 lon: 25,
                 lat: 35,
