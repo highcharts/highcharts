@@ -10,11 +10,11 @@ We start by importing the default `Component` class and `ComponentRegistry` from
 The name of the class will automatically be the string, that will be used to reference this component type e.g. the class `YouTubeComponent` will be referenced by name: "`YouTube`".
 
 ```js
-    const { Component, ComponentRegistry } = Dashboards;
+const { Component, ComponentRegistry } = Dashboards;
 
-    class YouTubeComponent extends Component {
+class YouTubeComponent extends Component {
 
-    }
+}
 ```
 
 Then, depending on what the Component is expected to do, the options are limitless. In this example, one `iframe` element will be added, which will accept one attribute from options, which is `videoId`, and since the iframe element needs it size to be defined, the resize method is extended to update the size of the element.
@@ -79,7 +79,7 @@ Dashboards.board({
     }]
 });
 ```
-[The live example can be found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/components/custom-component).
+[The live example can be found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component/).
 
 ---
 ## Custom HTML Component
@@ -163,4 +163,4 @@ Dashboards.board('container', {
     }]
 });
 ```
-Check out the [live example here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/components/custom-html-component).
+Check out the [live example here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-html-component/).
