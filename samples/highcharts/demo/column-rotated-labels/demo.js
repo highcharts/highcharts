@@ -1,30 +1,3 @@
-// Define data with both full names and abbreviations
-const cities = [
-    { fullName: 'Tokyo', abbr: 'TKY', value: 37.33 },
-    { fullName: 'Delhi', abbr: 'DL', value: 31.18 },
-    { fullName: 'Shanghai', abbr: 'SH', value: 27.79 },
-    { fullName: 'Sao Paulo', abbr: 'SP', value: 22.23 },
-    { fullName: 'Mexico City', abbr: 'MC', value: 21.91 },
-    { fullName: 'Dhaka', abbr: 'DH', value: 21.74 },
-    { fullName: 'Cairo', abbr: 'CAI', value: 21.32 },
-    { fullName: 'Beijing', abbr: 'BJ', value: 20.89 },
-    { fullName: 'Mumbai', abbr: 'MB', value: 20.67 },
-    { fullName: 'Osaka', abbr: 'OSK', value: 19.11 },
-    { fullName: 'Karachi', abbr: 'KHI', value: 16.45 },
-    { fullName: 'Chongqing', abbr: 'CQ', value: 16.38 },
-    { fullName: 'Istanbul', abbr: 'IST', value: 15.41 },
-    { fullName: 'Buenos Aires', abbr: 'BA', value: 15.25 },
-    { fullName: 'Kolkata', abbr: 'KOL', value: 14.974 },
-    { fullName: 'Kinshasa', abbr: 'KIN', value: 14.970 },
-    { fullName: 'Lagos', abbr: 'LG', value: 14.86 },
-    { fullName: 'Manila', abbr: 'MN', value: 14.16 },
-    { fullName: 'Tianjin', abbr: 'TJ', value: 13.79 },
-    { fullName: 'Guangzhou', abbr: 'GZ', value: 13.64 }
-];
-
-// Create city data
-const cityData = cities.map(city => ({ name: city.fullName, y: city.value }));
-
 Highcharts.chart('container', {
     chart: {
         type: 'column'
@@ -67,7 +40,28 @@ Highcharts.chart('container', {
         ],
         colorByPoint: true,
         groupPadding: 0,
-        data: cityData,
+        data: [
+            ['Tokyo', 37.33],
+            ['Delhi', 31.18],
+            ['Shanghai', 27.79],
+            ['Sao Paulo', 22.23],
+            ['Mexico City', 21.91],
+            ['Dhaka', 21.74],
+            ['Cairo', 21.32],
+            ['Beijing', 20.89],
+            ['Mumbai', 20.67],
+            ['Osaka', 19.11],
+            ['Karachi', 16.45],
+            ['Chongqing', 16.38],
+            ['Istanbul', 15.41],
+            ['Buenos Aires', 15.25],
+            ['Kolkata', 14.974],
+            ['Kinshasa', 14.970],
+            ['Lagos', 14.86],
+            ['Manila', 14.16],
+            ['Tianjin', 13.79],
+            ['Guangzhou', 13.64]
+        ],
         dataLabels: {
             enabled: true,
             rotation: -90,
@@ -80,32 +74,5 @@ Highcharts.chart('container', {
                 fontFamily: 'Verdana, sans-serif'
             }
         }
-    }],
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                xAxis: {
-                    labels: {
-                        formatter: function () {
-                            const city = cities
-                                .find(city => city.fullName === this.value);
-                            return city.abbr;
-                        },
-                        rotation: -90,
-                        style: {
-                            fontSize: '10px'
-                        }
-                    }
-                },
-                series: [{
-                    dataLabels: {
-                        enabled: false
-                    }
-                }]
-            }
-        }]
-    }
+    }]
 });
