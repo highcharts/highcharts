@@ -8,4 +8,10 @@
 
 #title h1 {
     text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+#title .highcharts-dashboards-component {
+    background-color: transparent;
 }
