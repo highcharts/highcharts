@@ -15,8 +15,18 @@ Dashboards.board('container', {
             id: 'layout-1',
             rows: [{
                 cells: [{
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    },
                     id: 'dashboard-col-0'
                 }, {
+                    responsive: {
+                        small: {
+                            width: '100%'
+                        }
+                    },
                     id: 'dashboard-col-1'
                 }]
             }]
