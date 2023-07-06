@@ -1,11 +1,11 @@
-var forExport = false,
+const forExport = false,
     data = JSON.parse(document.getElementById('data').innerHTML);
 
 // Conditionally shorten names to fit into the cells
 Highcharts.addEvent(Highcharts.Series, 'afterDrawDataLabels', function () {
     this.points.forEach(function (p) {
-        var label = p.dataLabel,
-            textStr,
+        const label = p.dataLabel;
+        let textStr,
             newText;
         if (label) {
 
@@ -74,7 +74,7 @@ Highcharts.chart('container', {
         point: {
             events: {
                 click: function () {
-                    var win = window.open(
+                    const win = window.open(
                         'https://www.geni.com/' + this.geniProfileId,
                         'profile'
                     );
