@@ -9,8 +9,12 @@ const chartOptions = {
         type: 'column'
     },
     title: {
-        text: 'Drag points to update the data grid',
         align: 'left'
+    },
+    yAxis: {
+        title: {
+            text: ''
+        }
     },
     plotOptions: {
         series: {
@@ -23,7 +27,7 @@ const chartOptions = {
     }
 };
 
-const board = Dashboards.board('container', {
+Dashboards.board('container', {
     dataPool: {
         connectors: [{
             type: 'CSV',
@@ -74,7 +78,11 @@ const board = Dashboards.board('container', {
             title: {
                 text: 'allowConnectorUpdate: true'
             },
-            chartOptions
+            chartOptions: Highcharts.merge(chartOptions, {
+                title: {
+                    text: 'Drag points to update all'
+                }
+            })
         }, {
             cell: 'dashboard-col-1',
             connector: {
@@ -92,7 +100,11 @@ const board = Dashboards.board('container', {
                 text: 'allowConnectorUpdate: false'
             },
             allowConnectorUpdate: false,
-            chartOptions
+            chartOptions: Highcharts.merge(chartOptions, {
+                title: {
+                    text: 'Dragging points does not affect other components'
+                }
+            })
         }, {
             cell: 'dashboard-col-2',
             connector: {

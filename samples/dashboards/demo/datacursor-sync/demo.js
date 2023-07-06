@@ -86,7 +86,8 @@ function buildChartOptions(type, table, cursor) {
                         });
                     }
                 }
-            }
+            },
+            colorByPoint: type !== 'line'
         }],
         title: {
             text: table.id

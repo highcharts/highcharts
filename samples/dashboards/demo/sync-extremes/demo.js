@@ -95,7 +95,13 @@ Dashboards.board('container', {
             'Metro Area(km2)': 'y',
             'Highest Elevation(m)': null
         },
-        chartOptions
+        chartOptions: Highcharts.merge(chartOptions, {
+            plotOptions: {
+                series: {
+                    colorIndex: 3
+                }
+            }
+        })
     },
     {
         cell: 'dashboard-col-2',
@@ -115,7 +121,13 @@ Dashboards.board('container', {
             'Metro Area(km2)': null,
             'Highest Elevation(m)': 'y'
         },
-        chartOptions
+        chartOptions: Highcharts.merge(chartOptions, {
+            plotOptions: {
+                series: {
+                    colorIndex: 2
+                }
+            }
+        })
     },
     {
         cell: 'dashboard-col-3',
