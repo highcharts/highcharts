@@ -137,6 +137,10 @@ class DumbbellSeries extends AreaRangeSeries {
              * @since 8.0.0
              * @apioption plotOptions.dumbbell.connectorColor
              */
+            /**
+             *
+             * @apioption plotOptions.series.lowMarker
+             */
             states: {
                 hover: {
                     /** @ignore-option */
@@ -614,6 +618,28 @@ export default DumbbellSeries;
  * @extends   series.arearange.data
  * @product   highcharts highstock
  * @apioption series.dumbbell.data
+ */
+/**
+ * Options for the lower markers of the dumbbell-like series. When lowMarker is
+ * not defined, options inherit form the marker.
+ *
+ * @see [marker](#series.arearange.marker)
+ *
+ * @declare   Highcharts.PointMarkerOptionsObject
+ * @extends   plotOptions.series.marker
+ * @default   undefined
+ * @product   highcharts highstock
+ * @apioption plotOptions.dumbbell.lowMarker
+ */
+/**
+ *
+ * @sample {highcharts} highcharts/demo/arearange-lowmarker/
+ *         Dumbbell chart with lowMarker option
+ *
+ * @declare   Highcharts.PointMarkerOptionsObject
+ * @extends   plotOptions.series.marker.symbol
+ * @product   highcharts highstock
+ * @apioption plotOptions.dumbbell.lowMarker.symbol
  */
 /**
  * Color of the line that connects the dumbbell point's values.

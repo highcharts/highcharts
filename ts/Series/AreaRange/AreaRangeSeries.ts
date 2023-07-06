@@ -113,7 +113,6 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      * @apioption plotOptions.arearange.shadow
      */
 
-
     /**
      * Pixel width of the arearange graph line.
      *
@@ -888,6 +887,30 @@ export default AreaRangeSeries;
  * @default   {highcharts} 0.75
  * @default   {highstock} 0.75
  * @apioption series.arearange.fillOpacity
+ */
+
+/**
+ * Options for the lower markers of the arearange-like series. When lowMarker is
+ * not defined, options inherit form the marker.
+ *
+ * @see [marker](#series.arearange.marker)
+ *
+ * @declare   Highcharts.PointMarkerOptionsObject
+ * @extends   plotOptions.series.marker
+ * @default   undefined
+ * @product   highcharts highstock
+ * @apioption plotOptions.arearange.lowMarker
+ */
+
+/**
+ *
+ * @sample {highcharts} highcharts/demo/arearange-lowmarker/
+ *         Area range chart with lowMarker option
+ *
+ * @declare   Highcharts.PointMarkerOptionsObject
+ * @extends   plotOptions.series.marker.symbol
+ * @product   highcharts highstock
+ * @apioption plotOptions.arearange.lowMarker.symbol
  */
 
 /**
