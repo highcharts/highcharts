@@ -17,16 +17,16 @@ The most basic and generic component type. Allows you to add everything which co
 
 Code snippet:
 ``` JS
-    {
-        type: 'HTML',
-        cell: 'dashboard-1',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
-            }
-        }]
-    }
+{
+    type: 'HTML',
+    cell: 'dashboard-1',
+    elements: [{
+        tagName: 'img',
+        attributes: {
+            src: 'https://www.highcharts.com/samples/graphics/stock-dark.svg'
+        }
+    }]
+}
 ```
 Also please check the [Custom Component](https://www.highcharts.com/docs/dashboards/custom-component) section below, where you can find alternative ways to create HTML components.
 

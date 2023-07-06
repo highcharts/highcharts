@@ -52,51 +52,51 @@ To synchronize components you have to specify which event you want to synchroniz
 Example of synchronized components
 
 ```js
-    components: [{
-        connector: {
-            id: 'Vitamin'
-        },
-        sync: {
-            visibility: true,
-            highlight: true,
-            extremes: true
-        },
-        cell: 'dashboard-col-0',
-        type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'value'
-        },
-        chartOptions: {
-            chart: {
-                type: 'pie'
-            }
-        },
-    }, {
-        cell: 'dashboard-col-1',
-        connector: {
-            id: 'Vitamin'
-        },
-        sync: {
-            visibility: true,
-            highlight: true,
-            extremes: true
-        },
-        type: 'Highcharts',
-        columnAssignment: {
-            Food: 'x',
-            'Vitamin A': 'y'
-        },
-        chartOptions: {
-            xAxis: {
-                type: 'category'
-            },
-            chart: {
-                animation: false,
-                type: 'column'
-            }
+components: [{
+    connector: {
+        id: 'Vitamin'
+    },
+    sync: {
+        visibility: true,
+        highlight: true,
+        extremes: true
+    },
+    cell: 'dashboard-col-0',
+    type: 'Highcharts',
+    columnAssignment: {
+        Food: 'x',
+        'Vitamin A': 'value'
+    },
+    chartOptions: {
+        chart: {
+            type: 'pie'
         }
-    }]
+    },
+}, {
+    cell: 'dashboard-col-1',
+    connector: {
+        id: 'Vitamin'
+    },
+    sync: {
+        visibility: true,
+        highlight: true,
+        extremes: true
+    },
+    type: 'Highcharts',
+    columnAssignment: {
+        Food: 'x',
+        'Vitamin A': 'y'
+    },
+    chartOptions: {
+        xAxis: {
+            type: 'category'
+        },
+        chart: {
+            animation: false,
+            type: 'column'
+        }
+    }
+}]
 ```
 
 

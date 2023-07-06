@@ -4,14 +4,14 @@ Edit mode
 Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).
 
 In addition, this option has to be enabled in the dashboard config:
-```javascript
-    editMode: {
+```js
+editMode: {
+        enabled: true,
+        contextMenu: {
             enabled: true,
-            contextMenu: {
-                enabled: true,
-                items: ['editMode']
-            }
-        },
+            items: ['editMode']
+        }
+    },
 ```
 
 Edit mode can now be enabled by the burger menu in the upper right corner.
@@ -32,14 +32,14 @@ The `Add Component` button allows the user to add a new component. When clicked,
 
 The `contextMenu` option also allows you to edit, what should be inside the menu, which shows after clicking on the burger menu.  The items can either be a string like `editMode` if it is a default button, or an object, which defines the button name, `onclick` event and some more options. Here is the example snippet of context menu button configuration:
 ```js
-    items: [{
-        id: 'custom-id',
-        type: 'toggle',
-        text: 'Custom Name',
-        events: {
-            click: function () {
-                // onClick Event
-            }
+items: [{
+    id: 'custom-id',
+    type: 'toggle',
+    text: 'Custom Name',
+    events: {
+        click: function () {
+            // onClick Event
         }
-    }]
+    }
+}]
 ```
