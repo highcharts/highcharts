@@ -23,6 +23,7 @@
 
 
 import type ColorString from '../../Core/Color/ColorString';
+import type Globals from '../Globals';
 
 
 /* *
@@ -32,7 +33,11 @@ import type ColorString from '../../Core/Color/ColorString';
  * */
 
 
-export interface AnimationOptions {
+export interface AccessibilityOptions extends Globals.AnyRecord {
+
+}
+
+export interface AnimationOptions extends Globals.AnyRecord {
 }
 
 export interface Axis {
@@ -53,9 +58,9 @@ export interface Axis {
 
 export type AxisCollectionKey = ('colorAxis'|'xAxis'|'yAxis'|'zAxis');
 
-export interface AxisOptions {
+export interface AxisOptions extends Globals.AnyRecord {
     id?: string;
-    events?: Partial<Record<string, (this: Axis) => void>>;
+    events?: EventsOptionsFor<Axis>;
 }
 
 export interface Chart {
@@ -98,26 +103,36 @@ export interface Chart {
     zoomOut(): void;
 }
 
-export interface ChartOptions {
-    animation?: AnimationOptions;
+export interface ChartOptions extends Globals.AnyRecord {
+    animation?: (boolean|AnimationOptions);
     backgroundColor?: ColorString;
+    events?: EventsOptionsFor<Chart>;
     type?: string;
 }
 
-export interface CreditsOptions {
+export interface CreditsOptions extends Globals.AnyRecord {
     enabled?: boolean;
 }
 
-export interface LegendOptions {
+export type EventsOptionsFor<T> = Partial<Record<string, ((this: T) => void)>>;
+
+export interface LangOptions {
+    [key: string]: (string|LangOptions|undefined);
+}
+
+export interface LegendOptions extends Globals.AnyRecord {
     enabled?: boolean;
 }
 
-export interface Options {
+export interface Options extends Globals.AnyRecord {
+    accessibility?: AccessibilityOptions;
     chart?: ChartOptions;
     credits?: CreditsOptions;
+    lang?: LangOptions;
     legend?: LegendOptions;
-    plotOptions?: Record<string, SeriesOptions>;
+    plotOptions?: Record<string, Omit<SeriesOptions, ('data'|'id'|'name')>>;
     series?: Array<SeriesOptions>;
+    sonification?: SonificationOptions;
     title?: TitleOptions;
     tooltip?: TooltipOptions;
     xAxis?: AxisOptions;
@@ -132,8 +147,8 @@ export interface Point {
     series: Series;
 }
 
-export interface PointOptions {
-    events?: Partial<Record<string, (this: Point) => void>>;
+export interface PointOptions extends Globals.AnyRecord {
+    events?: EventsOptionsFor<Point>;
 }
 
 export type PointShortOptions = (
@@ -171,21 +186,25 @@ export interface Series {
     ): void;
 }
 
-export interface SeriesMarkerOptions {
+export interface SeriesMarkerOptions extends Globals.AnyRecord {
     enabled?: boolean;
 }
 
-export interface SeriesOptions {
+export interface SeriesOptions extends Globals.AnyRecord {
     data?: Array<(PointOptions|PointShortOptions)>;
     id?: string;
-    events?: Partial<Record<string, (this: Series) => void>>;
+    events?: EventsOptionsFor<Series>;
     name?: string;
     marker?: SeriesMarkerOptions;
     point?: PointOptions;
     type?: string;
 }
 
-export interface TitleOptions {
+export interface SonificationOptions extends Globals.AnyRecord {
+
+}
+
+export interface TitleOptions extends Globals.AnyRecord {
     text?: string;
 }
 
@@ -200,7 +219,7 @@ export interface Tooltip {
     ): void;
 }
 
-export interface TooltipOptions {
+export interface TooltipOptions extends Globals.AnyRecord {
     outside?: boolean;
 }
 
