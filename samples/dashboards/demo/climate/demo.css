@@ -189,6 +189,15 @@
     cursor: pointer;
 }
 
+#kpi-layout .highcharts-dashboards-component-title {
+    font-size: 1em !important;
+    white-space: nowrap;
+}
+
+#kpi-layout #kpi-data .highcharts-dashboards-component-kpi-value {
+    margin: 0.5em 0;
+}
+
 #kpi-layout .highcharts-dashboards-component-kpi-content {
     background: none;
 }
@@ -235,6 +244,10 @@
 #kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text,
 #kpi-layout .highcharts-dashboards-cell-state-active .highcharts-axis-labels text {
     fill: var(--color-hover-text);
+}
+
+#kpi-layout .highcharts-title {
+    font-size: 1em;
 }
 
 #kpi-data .highcharts-dashboards-component {

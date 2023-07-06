@@ -427,7 +427,6 @@ async function setupBoard() {
                     radius: '120%'
                 }],
                 title: {
-                    margin: 0,
                     text: 'Average Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
@@ -499,7 +498,6 @@ async function setupBoard() {
                     radius: '120%'
                 }],
                 title: {
-                    margin: 0,
                     text: 'Maximal Temperature',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
@@ -574,7 +572,6 @@ async function setupBoard() {
                     radius: '120%'
                 }],
                 title: {
-                    margin: 0,
                     text: 'Days with Rain',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
@@ -645,7 +642,6 @@ async function setupBoard() {
                     radius: '120%'
                 }],
                 title: {
-                    margin: 0,
                     text: 'Days with Ice',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
@@ -717,7 +713,6 @@ async function setupBoard() {
                     radius: '120%'
                 }],
                 title: {
-                    margin: 0,
                     text: 'Days with Frost',
                     verticalAlign: 'bottom',
                     widthAdjust: 0
