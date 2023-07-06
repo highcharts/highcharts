@@ -427,7 +427,7 @@ class Layout extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): DeepPartial<Layout.Options> {
+    public getOptions(): Globals.DeepPartial<Layout.Options> {
         const layout = this,
             rows = [];
 

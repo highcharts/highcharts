@@ -350,7 +350,7 @@ class Row extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): DeepPartial<Row.Options> {
+    public getOptions(): Globals.DeepPartial<Row.Options> {
         const row = this,
             cells = [];
 

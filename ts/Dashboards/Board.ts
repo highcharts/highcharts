@@ -630,7 +630,7 @@ class Board implements Serializable<Board, Board.JSON> {
      * @returns
      * The JSON of boards's options.
      */
-    public getOptions(): DeepPartial<Board.Options> {
+    public getOptions(): Globals.DeepPartial<Board.Options> {
         const board = this,
             layouts = [],
             components = [];

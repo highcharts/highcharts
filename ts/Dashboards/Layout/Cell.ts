@@ -355,7 +355,7 @@ class Cell extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): DeepPartial<Cell.Options> {
+    public getOptions(): Globals.DeepPartial<Cell.Options> {
         return this.options;
     }
 
