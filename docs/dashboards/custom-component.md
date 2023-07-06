@@ -79,7 +79,7 @@ Dashboards.board({
     }]
 });
 ```
-[The live example can be found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component/).
+[The live example can be found here](https://www.highcharts.com/samples/embed/dashboards/components/custom-component).
 
 ---
 ## Custom HTML Component
@@ -150,7 +150,7 @@ Dashboards.board('container', {
             <div>
                 <h1>Custom HTML 2</h1>
                 <span id="custom-html-div-2">Custom HTML added as string </span>
-            </div>`
+            </div>
     },
     {
         cell: 'dashboard-col-2',
@@ -163,4 +163,4 @@ Dashboards.board('container', {
     }]
 });
 ```
-Check out the [live example here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-html-component/).
+Check out the [live example here](https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component).

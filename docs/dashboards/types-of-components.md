@@ -13,7 +13,7 @@ Here is the overview of most important parameters, that can be defined for a com
 * `Sync` - list of events, which should be synchronized between components.
 
 ### HTML Component
-The most basic and generic component type. Allows you to add everything which could be defined as HTML, as well as add some custom events, but requires the most configuration. The configuration is AST-like, where you can define the name of the tag, its attributes, and nested children elements. [Check out the basic HTML component demo here.](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-html/)
+The most basic and generic component type. Allows you to add everything which could be defined as HTML, as well as add some custom events, but requires the most configuration. The configuration is AST-like, where you can define the name of the tag, its attributes, and nested children elements. [Check out the basic HTML component demo here.](https://www.highcharts.com/samples/embed/dashboards/components/component-html)
 
 Code snippet:
 ``` JS
@@ -44,7 +44,7 @@ Also the set of CSS styles needs to be imported, so that the Highcharts displays
 ```
 
 The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The data gets parsed through the `columnAssignment` option to map correct values from the connector to reflect them in the series.
-[Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-highcharts/). The null value keeps columns selectively out of the chart.
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts). The null value keeps columns selectively out of the chart.
 
 ### DataGrid Component
 To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.
@@ -59,13 +59,13 @@ Also the set of CSS styles needs to be imported, so that the DataGrid displays c
 @import url("https://code.highcharts.com/css/datagrid.css");
 ```
 Then you need to specify the component type with `type: 'DataGrid'`.
-If you connect this component to the data connector, the content of the component will be automatically filled with data, and will allow the user to change the data in the data connector and automatically in all components that also are connected to this connector, by editing values in the cell. [Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/datagrid-component/datagrid-options/)
+If you connect this component to the data connector, the content of the component will be automatically filled with data, and will allow the user to change the data in the data connector and automatically in all components that also are connected to this connector, by editing values in the cell. [Here is the example](https://www.highcharts.com/samples/nonav/dashboards/datagrid-component/datagrid-options)
 
 ### KPI Component
 Another type of component type that allows you to visualize key performance indicators is KPIComponent. This component type is added with the dashboard package, so nothing apart from the basic dashboards package needs to be imported.
 You can define the threshold to change the style of the component, when one value exceeds it and some other useful features to better show what is important to you.
 
-[Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-kpi/)
+[Here is the example](https://www.highcharts.com/samples/embed/dashboards/components/component-kpi)
 
 Code snippet:
 ``` JS
