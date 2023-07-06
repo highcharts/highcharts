@@ -45,6 +45,7 @@ import Point from '../../Core/Series/Point.js';
 import type MapView from '../../Maps/MapView.js';
 
 const {
+    addEvent,
     defined,
     extend,
     isNumber,
@@ -58,6 +59,32 @@ const {
  */
 function normalizeLonValue(lon: number): number {
     return lon - Math.floor((lon + 180) / 360) * 360;
+}
+
+/**
+ * Get proper point's position for PixelData array.
+ * @private
+ */
+function scaledPointPos(
+    lon: number,
+    lat: number,
+    canvasWidth: number,
+    canvasHeight: number,
+    colsize: number,
+    rowsize: number
+): number {
+    return Math.ceil(
+        (
+            canvasWidth *
+            (
+                canvasHeight - 1 -
+                    (lat + 90) / rowsize
+            )
+        ) +
+        (
+            (lon + 180) / colsize
+        )
+    );
 }
 
 /**
@@ -297,8 +324,10 @@ class GeoHeatmapSeries extends MapSeries {
              *  longitue and latitude values.
              *
              * @sample maps/series-geoheatmap/turkey-fire-areas
-             *         Simple demo of GeoHeatmap interpolation with increased
-             *         blur
+             *         Simple demo of GeoHeatmap interpolation
+             * @sample maps/series-geoheatmap/earth-statistics-august-2022
+             *         Advanced demo of GeoHeatmap interpolation with multiple
+             *         datasets
              *
              * @type      {number}
              * @default   1
@@ -335,6 +364,22 @@ class GeoHeatmapSeries extends MapSeries {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    public init(): void {
+        const series = this;
+
+        super.init.apply(series, arguments);
+
+        if (
+            Object.keys(pick(series.hcEvents, {}))
+                .indexOf('afterDataClassLegendClick') === -1
+        ) {
+            addEvent(series, 'afterDataClassLegendClick', function (): void {
+                series.isDirtyCanvas = true;
+                series.drawPoints();
+            });
+        }
+    }
 
     /**
      * For updated colsize and rowsize options
@@ -439,28 +484,11 @@ class GeoHeatmapSeries extends MapSeries {
                                     ))
                                 );
                                 rgba[3] = pick(rgba[3], 1.0) * 255;
-                                if (!defined(p.value)) {
+                                if (!defined(p.value) || !p.visible) {
                                     rgba[3] = 0;
                                 }
                                 return rgba;
-                            },
-                            scaledPointPos = (
-                                lon: number,
-                                lat: number
-                            ): number => (
-                                Math.ceil(
-                                    (
-                                        canvasWidth *
-                                        (
-                                            canvasHeight - 1 -
-                                                (lat + 90) / rowsize
-                                        )
-                                    ) +
-                                    (
-                                        (lon + 180) / colsize
-                                    )
-                                )
-                            );
+                            };
                         series.directTouch = false; // Needed for tooltip
 
                         // First pixelData represents the geo coordinates
@@ -474,7 +502,10 @@ class GeoHeatmapSeries extends MapSeries {
                             if (isNumber(lon) && isNumber(lat)) {
                                 pixelData.set(
                                     sourceArr,
-                                    scaledPointPos(lon, lat) * 4
+                                    scaledPointPos(
+                                        lon, lat, canvasWidth, canvasHeight,
+                                        colsize, rowsize
+                                    ) * 4
                                 );
                             }
                         }
@@ -675,7 +706,6 @@ class GeoHeatmapSeries extends MapSeries {
             }, compareX, e);
         }
     }
-
 }
 
 /* *
