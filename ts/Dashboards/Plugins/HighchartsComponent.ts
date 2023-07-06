@@ -44,7 +44,8 @@ const {
     merge,
     splat,
     uniqueKey,
-    error
+    error,
+    diffObjects
 } = U;
 
 /* *
@@ -848,6 +849,20 @@ class HighchartsComponent extends Component {
         return json;
     }
 
+    /**
+     * Get the HighchartsComponent component's options.
+     * @returns
+     * The JSON of HighchartsComponent component's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Partial<HighchartsComponent.Options> {
+        return {
+            ...diffObjects(this.options, HighchartsComponent.defaultOptions),
+            type: 'Highcharts'
+        };
+    }
 
     public getEditableOptions(): HighchartsComponent.Options {
         const component = this;
