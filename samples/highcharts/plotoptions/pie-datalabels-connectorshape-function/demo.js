@@ -21,9 +21,12 @@ Highcharts.chart('container', {
                 enabled: true,
                 alignTo: 'plotEdges',
                 format: '<b>{point.name}</b>: {point.y}',
-                connectorShape: function (labelPosition, connectorPosition, options) {
+                connectorShape: function (
+                    labelPosition,
+                    connectorPosition,
+                    options) {
 
-                    var connectorPadding = options.connectorPadding,
+                    const connectorPadding = options.connectorPadding,
                         touchingSliceAt = connectorPosition.touchingSliceAt,
                         series = this.series,
                         plotWidth = series.chart.plotWidth,
