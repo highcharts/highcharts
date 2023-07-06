@@ -3,6 +3,22 @@ function clickElementInContextMenu(elemName) {
     cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
     cy.get('div.highcharts-dashboards-edit-context-menu-item').contains(elemName).click();
 }
+
+function grabComponent(name) {
+    cy.get('.highcharts-dashboards-edit-tools-btn').contains('Add').click();
+    cy.get('.highcharts-dashboards-edit-grid-items')
+        .children()
+        .contains(name)
+        .trigger('mousedown');
+}
+
+function dropComponent(elementName) {
+    cy.get(elementName).first().trigger('mouseenter', {force: true});
+    cy.get(elementName).first().trigger('mousemove', 'right', {force: true});
+    cy.get(elementName).first().trigger('mouseup', 'right', {force: true});
+}
+
+
 describe('JSON serialization test', () => {
     beforeEach(() => {
         cy.visit('dashboards/cypress/dashboard-layout');
@@ -186,7 +202,7 @@ describe('JSON serialization test', () => {
         });
     });
 
-    it('should save state after dragging.', () => {
+    it('Should save state after dragging.', () => {
         cy.toggleEditMode();
         cy.get('#cell-1').click();
         cy.get('.highcharts-dashboards-edit-toolbar-cell').children()
@@ -220,6 +236,44 @@ describe('JSON serialization test', () => {
                 json.gui.layouts[0].rows[0].cells.length,
                 1,
                 'One cell should be present.'
+            );
+        });
+    });
+
+    it('Should save state after add new component.', () => {
+        cy.toggleEditMode();
+        grabComponent('layout');
+        dropComponent('#cell-2');
+
+        cy.board().then((board) => {
+            const json = board.getOptions();
+
+            assert.equal(
+                json.gui.layouts.length,
+                2,
+                'New layout should be added.'
+            );
+        });
+    });
+
+    it('Should save state after add new component.', () => {
+        cy.toggleEditMode();
+        grabComponent('chart');
+        dropComponent('#cell-2');
+
+        cy.board().then((board) => {
+            const json = board.getOptions();
+
+            assert.equal(
+                json.gui.layouts[0].rows[0].cells.length,
+                3,
+                'New cell should be added.'
+            );
+
+            assert.equal(
+                json.components.length,
+                3,
+                'New component should be added.'
             );
         });
     });
