@@ -23,11 +23,11 @@
  * */
 
 import type Cell from '../Layout/Cell';
+import type Globals from '../Globals';
 
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
-import ComponentRegistry from './ComponentRegistry.js';
 const {
     isArray,
     isNumber,
@@ -109,7 +109,7 @@ class ThresholdComponent extends Component {
     public options: ThresholdComponent.ComponentOptions;
     public component?: Component;
     public sync: Component['sync'];
-    private undoOptions?: AnyRecord;
+    private undoOptions?: Globals.AnyRecord;
 
     /* *
      *
@@ -229,7 +229,7 @@ namespace ThresholdComponent {
 
     export interface ComponentOptions extends Component.ComponentOptions {
         component: ComponentConstructor;
-        options?: AnyRecord;
+        options?: Globals.AnyRecord;
         thresholds?: Array<ThresholdOptions>;
         type: 'Threshold';
         value?: number;
@@ -240,7 +240,7 @@ namespace ThresholdComponent {
         component?: ComponentConstructor;
         max?: number;
         min?: number;
-        options?: AnyRecord;
+        options?: Globals.AnyRecord;
     }
 
     /**
@@ -249,9 +249,9 @@ namespace ThresholdComponent {
      * @private
      */
     export function currentOptions(
-        options: AnyRecord,
-        curr: AnyRecord
-    ): AnyRecord {
+        options: Globals.AnyRecord,
+        curr: Globals.AnyRecord
+    ): Globals.AnyRecord {
         const ret = {};
 
         /**
@@ -259,9 +259,9 @@ namespace ThresholdComponent {
          * and store the current values in the ret object.
          */
         function getCurrent(
-            options: AnyRecord,
-            curr: AnyRecord,
-            ret: AnyRecord
+            options: Globals.AnyRecord,
+            curr: Globals.AnyRecord,
+            ret: Globals.AnyRecord
         ): void {
             objectEach(options, function (val, key): void {
                 if (

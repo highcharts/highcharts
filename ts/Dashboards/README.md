@@ -6,11 +6,11 @@ There are multiple ways to import this package.
 Among the most popular are:
 * Using npm, run the following command in your terminal:
 ``` Shell
-    npm install <PACKAGE-NAME>
+    npm install @highcharts/dashboards
 ```
 Then import the package in your project:
 ``` JS
-    import Dashboards from '<PACKAGE-NAME>';
+    import Dashboards from '@highcharts/dashboards';
 ```
 * Importing as a script
 ``` HTML
@@ -120,7 +120,7 @@ Your dashboard can now be created:
     });
 ```
 
-See it in action: [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/basic/your-first-dashboard).
+See it in action: [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/basic/your-first-dashboard).
 
 ## FAQ
 Answers to common questions can be found on our [FAQ page](https://highcharts.com/docs/dashboards/frequently-asked-questions).

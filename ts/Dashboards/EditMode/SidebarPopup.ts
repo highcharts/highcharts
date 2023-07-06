@@ -115,8 +115,7 @@ class SidebarPopup extends BaseForm {
                             ],
                             chart: {
                                 animation: false,
-                                type: 'pie',
-                                zooming: {}
+                                type: 'pie'
                             }
                         }
                     });

@@ -38,6 +38,7 @@ function jsDocESMDTS() {
         .filter(file => (
             file.endsWith('.src.d.ts') &&
             !file.endsWith('globals.src.d.ts') &&
+            !file.includes('dashboards') &&
             !file.includes('es-modules')
         ));
     const path = require('path');
