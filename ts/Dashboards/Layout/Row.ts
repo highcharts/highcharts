@@ -359,6 +359,8 @@ class Row extends GUIElement {
         }
 
         return {
+            id: this.options.id,
+            style: this.options.style,
             cells
         };
     }

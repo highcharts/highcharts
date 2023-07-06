@@ -437,6 +437,11 @@ class Layout extends GUIElement {
         }
 
         return {
+            id: this.options.id,
+            layoutClassName: this.options.layoutClassName,
+            rowClassName: this.options.rowClassName,
+            cellClassName: this.options.cellClassName,
+            style: this.options.style,
             rows
         };
     }
