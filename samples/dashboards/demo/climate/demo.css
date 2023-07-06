@@ -151,6 +151,11 @@
     fill: var(--color-axis);
 }
 
+#city-chart .highcharts-axis-line,
+#city-chart .highcharts-tick {
+    stroke: var(--color-axis);
+}
+
 #city-chart .highcharts-axis-labels,
 #city-chart .highcharts-axis-title {
     fill: var(--color-axis-labels);

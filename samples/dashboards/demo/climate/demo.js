@@ -846,13 +846,18 @@ async function setupBoard() {
                     min: 0,
                     stops: colorStopsTemperature
                 },
+                plotOptions: {
+                    series: {
+                        marker: {
+                            enabled: true,
+                            symbol: 'circle'
+                        }
+                    }
+                },
                 series: [{
                     name: activeCity,
                     animation: false,
-                    animationLimit: 0,
-                    marker: {
-                        enabledThreshold: 0.5
-                    }
+                    animationLimit: 0
                 }],
                 title: {
                     margin: 20,
