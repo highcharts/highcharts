@@ -397,7 +397,7 @@ class DataGridComponent extends Component {
 
     /**
      * Get the DataGrid component's options.
-     * @return {Partial<DataGridComponent.ComponentOptions>}
+     * @returns
      * The JSON of DataGrid component's options.
      *
      * @internal

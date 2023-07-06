@@ -349,7 +349,7 @@ class Cell extends GUIElement {
 
     /**
      * Get the cell's options.
-     * @return {DeepPartial<Cell.Options>}
+     * @returns
      * The JSON of cell's options.
      *
      * @internal
@@ -358,6 +358,7 @@ class Cell extends GUIElement {
     public getOptions(): DeepPartial<Cell.Options> {
         return this.options;
     }
+
     protected changeVisibility(
         setVisible: boolean = true
     ): void {

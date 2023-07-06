@@ -344,7 +344,7 @@ class Row extends GUIElement {
 
     /**
      * Get the row's options.
-     * @return {DeepPartial<Row.Options>}
+     * @returns
      * The JSON of row's options.
      *
      * @internal

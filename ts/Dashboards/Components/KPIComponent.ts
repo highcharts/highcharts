@@ -620,7 +620,7 @@ class KPIComponent extends Component {
 
     /**
      * Get the KPI component's options.
-     * @return {Partial<KPI.ComponentOptions>}
+     * @returns
      * The JSON of KPI component's options.
      *
      * @internal

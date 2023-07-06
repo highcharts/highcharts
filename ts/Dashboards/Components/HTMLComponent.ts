@@ -387,7 +387,7 @@ class HTMLComponent extends Component {
 
     /**
      * Get the HTML component's options.
-     * @return {Partial<HTMLComponent.ComponentOptions>}
+     * @returns
      * The JSON of HTML component's options.
      *
      * @internal

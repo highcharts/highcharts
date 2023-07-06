@@ -421,7 +421,7 @@ class Layout extends GUIElement {
 
     /**
      * Get the layout's options.
-     * @return {DeepPartial<Cell.Options>}
+     * @returns
      * The JSON of layout's options.
      *
      * @internal

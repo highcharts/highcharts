@@ -624,8 +624,10 @@ class Board implements Serializable<Board, Board.JSON> {
     }
 
     /**
-     * Get the board's options.
-     * @return {DeepPartial<Board.Options>}
+     * Convert the current state of board's options into JSON. The function does
+     * not support converting functions or events into JSON object.
+     *
+     * @returns
      * The JSON of boards's options.
      */
     public getOptions(): DeepPartial<Board.Options> {

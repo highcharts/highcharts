@@ -1069,7 +1069,7 @@ abstract class Component {
 
     /**
      * Get the component's options.
-     * @return {Partial<Component.ComponentOptions>}
+     * @returns
      * The JSON of component's options.
      *
      * @internal
