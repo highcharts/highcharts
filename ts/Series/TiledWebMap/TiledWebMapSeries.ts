@@ -321,7 +321,11 @@ class TiledWebMapSeries extends MapSeries {
                     def.subdomains.indexOf(provider.subdomain) !== -1
                 ) {
                     subdomain = provider.subdomain;
-                } else if (defined(def.subdomains)) {
+                } else if (
+                    defined(def.subdomains) &&
+                    // Do not show warning if no subdomain in URL
+                    theme.url.indexOf('{s}') !== -1
+                ) {
                     subdomain = pick(def.subdomains && def.subdomains[0], '');
                     error(
                         'Highcharts warning: The Tiles Provider\'s Subdomain ' +
