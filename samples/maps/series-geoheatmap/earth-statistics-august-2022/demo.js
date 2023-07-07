@@ -8,8 +8,8 @@
             title: 'Land Surface (day) and Sea Temperature in August 2022',
             url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@6325d4b73c/samples/data/geoheatmap-land-sea-day-temp-august_2022.json',
             colorAxis: {
-                min: -25,
-                max: 50,
+                min: -20,
+                max: 40,
                 labels: {
                     format: '{value}°C',
                     style: {
@@ -17,12 +17,13 @@
                     }
                 },
                 stops: [
-                    [0, '#c0fbfa'],
-                    [0.15, '#3562d7'],
-                    [0.45, '#d400a0'],
-                    [0.55, '#f40001'],
-                    [0.75, '#f67700'],
-                    [1, '#f6ec69']
+                    [0, '#9589d3'],
+                    [0.16, '#7cc4be'],
+                    [0.33, '#5d8bbe'],
+                    [0.5, '#688f2c'],
+                    [0.66, '#dbac0b'],
+                    [0.83, '#e75e14'],
+                    [1, '#852809']
                 ]
             },
             data: void 0
@@ -31,8 +32,8 @@
             title: 'Land Surface (night) and Sea Temperature in August 2022',
             url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@6325d4b73c/samples/data/geoheatmap-land-sea-night-temp-august_2022.json',
             colorAxis: {
-                min: -25,
-                max: 50,
+                min: -20,
+                max: 40,
                 labels: {
                     format: '{value} °C',
                     style: {
@@ -40,12 +41,13 @@
                     }
                 },
                 stops: [
-                    [0, '#c0fbfa'],
-                    [0.15, '#3562d7'],
-                    [0.45, '#d400a0'],
-                    [0.55, '#f40001'],
-                    [0.75, '#f67700'],
-                    [1, '#f6ec69']
+                    [0, '#9589d3'],
+                    [0.16, '#7cc4be'],
+                    [0.33, '#5d8bbe'],
+                    [0.5, '#688f2c'],
+                    [0.66, '#dbac0b'],
+                    [0.83, '#e75e14'],
+                    [1, '#852809']
                 ]
             },
             data: void 0
