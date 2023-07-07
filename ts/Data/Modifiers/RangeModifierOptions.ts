@@ -35,7 +35,7 @@ export interface RangeModifierOptions extends DataModifierOptions {
     /**
      * Name of the related modifier for these options.
      */
-    modifier: 'Range';
+    type: 'Range';
 
     /**
      * Value ranges to include in the result.

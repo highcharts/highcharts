@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@3.0.0
-  browser-tools: circleci/browser-tools@1.2.3
+  browser-tools: circleci/browser-tools@1.4.1
   slack: circleci/slack@3.4.1
 
 parameters:
@@ -48,6 +48,7 @@ add_gh_user_config: &add_gh_user_config
       command: |
         git config --global user.name "CircleCI"
         git config --global user.email "technical+circleci_mu@highsoft.com"
+        git config --global core.editor vi
 
 #######################################
 
@@ -109,7 +110,8 @@ jobs:
           paths:
             - /home/circleci/repo/highcharts/.npm
           key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
-      - run: npm run gulp scripts
+      - run: npx gulp scripts
+      - run: npx gulp dashboards/scripts
       - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
       - <<: *persist_workspace
 
@@ -198,7 +200,7 @@ jobs:
           key: cypress-cache-{{ checksum "package-lock.json" }}
           paths:
             - /home/circleci/repo/highcharts/.cache
-      - run: npm i --no-save @highcharts/highcharts-utils cross-env
+      - run: npm i --no-save github:highcharts/highcharts-utils cross-env
       - run:
           name: Run utils in background
           command: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
@@ -332,7 +334,7 @@ jobs:
       - run: | # checkout master at diverge point of current branch and install
           git checkout master && git fetch origin master && git reset --hard origin/master &&
           git checkout $(git merge-base master ${CIRCLE_BRANCH}) && git log --oneline -5 &&
-          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts && npx gulp dashboards/scripts
       - run:
           name: Write file sizes at master
           command: npx gulp write-file-sizes --filename master.json
@@ -340,7 +342,7 @@ jobs:
           browsercount: 2
       - run: |
           git checkout ${CIRCLE_BRANCH} && git log --oneline -5 &&
-          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force
+          npm ci --quiet --cache .npm --prefer-offline && npx gulp scripts --force && npx gulp dashboards/scripts
       - run:
           name: File size comparison
           command: |
@@ -544,7 +546,9 @@ workflows:
           requires: [lint]
           filters:
             branches:
-              ignore: master
+              ignore: 
+                - master
+                - /db\/.*/
           context: highcharts-staging
       - generate_release_reference_images:
           requires: [lint]
@@ -579,7 +583,7 @@ workflows:
       - test_browsers:
           name: "test-Win.Chrome"
           browsercount: 2
-          requires: ["test-Mac.Safari"]
+          requires: ["verify-samples-Chrome", "test-Mac.Safari"]
           browsers: "Win.Chrome"
       - check_for_docs_changes_and_deploy:
           requires: ["test-Mac.Safari", "test-Win.Chrome"]

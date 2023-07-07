@@ -408,13 +408,7 @@ class Tooltip {
         const tooltip = this,
             styledMode = this.chart.styledMode,
             options = this.options,
-            doSplit = this.split && this.allowShared,
-            pointerEvents = (
-                options.style.pointerEvents ||
-                (
-                    this.shouldStickOnContact() ? 'auto' : 'none'
-                )
-            );
+            doSplit = this.split && this.allowShared;
 
         let container: globalThis.HTMLElement,
             renderer: SVGRenderer = this.chart.renderer;
@@ -446,10 +440,14 @@ class Tooltip {
                 this.container = container = H.doc.createElement('div');
 
                 container.className = 'highcharts-tooltip-container';
+
+                // We need to set pointerEvents = 'none' as otherwise it makes
+                // the area under the tooltip non-hoverable even after the
+                // tooltip disappears, #19035.
                 css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents,
+                    pointerEvents: 'none',
                     zIndex: Math.max(
                         this.options.style.zIndex || 0,
                         (chartStyle && chartStyle.zIndex || 0) + 3
@@ -507,7 +505,12 @@ class Tooltip {
                         })
                         // #2301, #2657
                         .css(options.style)
-                        .css({ pointerEvents });
+                        .css({
+                            pointerEvents: (
+                                options.style.pointerEvents ||
+                                (this.shouldStickOnContact() ? 'auto' : 'none')
+                            )
+                        });
                 }
             }
             // Split tooltip use updateTooltipContainer to position the tooltip
@@ -1859,7 +1862,7 @@ namespace Tooltip {
         plotY: number;
     }
 
-    export type ShapeValue = ('callout'|'circle'|'square'|'rect');
+    export type ShapeValue = ('callout'|'circle'|'rect');
 
     /* *
      *
@@ -1992,7 +1995,7 @@ export default Tooltip;
  */
 
 /**
- * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
+ * @typedef {"callout"|"circle"|"rect"} Highcharts.TooltipShapeValue
  */
 
 ''; // keeps doclets above in JS file

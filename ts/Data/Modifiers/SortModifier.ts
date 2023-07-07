@@ -11,7 +11,9 @@
  *
  * */
 
+
 'use strict';
+
 
 /* *
  *
@@ -19,13 +21,29 @@
  *
  * */
 
+
 import type DataEvent from '../DataEvent';
-import type DataModifierOptions from './DataModifierOptions';
+import type SortModifierOptions from './SortModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+
+/** @private */
+interface SortRowReference {
+    index: number;
+    row: DataTable.Row;
+}
+
 
 /* *
  *
@@ -49,8 +67,8 @@ class SortModifier extends DataModifier {
     /**
      * Default options to group table rows.
      */
-    public static readonly defaultOptions: SortModifier.Options = {
-        modifier: 'Sort',
+    public static readonly defaultOptions: SortModifierOptions = {
+        type: 'Sort',
         direction: 'desc',
         orderByColumn: 'y'
     };
@@ -96,7 +114,7 @@ class SortModifier extends DataModifier {
      * Options to configure the range modifier.
      */
     public constructor(
-        options?: DeepPartial<SortModifier.Options>
+        options?: DeepPartial<SortModifierOptions>
     ) {
         super();
 
@@ -109,7 +127,7 @@ class SortModifier extends DataModifier {
      *
      * */
 
-    public options: SortModifier.Options;
+    public options: SortModifierOptions;
 
     /* *
      *
@@ -130,9 +148,9 @@ class SortModifier extends DataModifier {
      */
     protected getRowReferences(
         table: DataTable
-    ): Array<SortModifier.RowReference> {
+    ): Array<SortRowReference> {
         const rows = table.getRows(),
-            rowReferences: Array<SortModifier.RowReference> = [];
+            rowReferences: Array<SortRowReference> = [];
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             rowReferences.push({
@@ -387,49 +405,6 @@ class SortModifier extends DataModifier {
  * @private
  */
 namespace SortModifier {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Options to configure the modifier.
-     */
-    export interface Options extends DataModifierOptions {
-
-        /**
-         * Name of the related modifier for these options.
-         */
-        modifier: 'Sort';
-
-        /**
-         * Direction of sorting.
-         *
-         * @default "desc"
-         */
-        direction: ('asc'|'desc');
-
-        /**
-         * Column with values to order.
-         *
-         * @default "y"
-         */
-        orderByColumn: string;
-
-        /**
-         * Column to update with order index instead of change order of rows.
-         */
-        orderInColumn?: string;
-
-    }
-
-    /** @private */
-    export interface RowReference {
-        index: number;
-        row: DataTable.Row;
-    }
 
 }
 

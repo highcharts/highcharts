@@ -1,0 +1,7 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/css/dashboards.css");
+
+#dashboard-col-0 h1 {
+    height: 400px;
+    text-align: center;
+}

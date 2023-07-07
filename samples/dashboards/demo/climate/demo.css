@@ -1,0 +1,509 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+/* *
+ *
+ *  Colors
+ *
+ * */
+
+#city-chart {
+    --color-axis: #f7f7f7;
+    --color-axis-labels: #e7e7ec;
+    --color-background: #5352be;
+    --color-title: #f0f0f0;
+    --color-text: #000;
+    --color-tooltip-background: #dadae2;
+}
+
+#kpi-layout {
+    --color-axis-labels: #a7a4b0;
+    --color-background: #fff;
+    --color-gauge: #4caffe;
+    --color-hover: #5352be;
+    --color-hover-text: #fff;
+    --color-pane: #eee;
+    --color-pane-line: #ccc;
+    --color-text: #2f2b38;
+}
+
+.highcharts-dashboards-wrapper.highcharts-dark #kpi-layout {
+    --color-axis-labels: #838394;
+    --color-background: #0d0d0d;
+    --color-pane: #20202c;
+    --color-pane-line: #838394;
+    --color-text: #dadae2;
+}
+
+#selection-grid {
+    --color-background: #fff;
+    --color-hover-background: #5352be;
+    --color-hover-border: #e7e7ec;
+    --color-hover-text: #e7e7ec;
+}
+
+.highcharts-dashboards-wrapper.highcharts-dark #selection-grid {
+    --color-background: #20202c;
+}
+
+#time-range-selector {
+    --color-axis-labels: #646479;
+    --color-background: #fafafa;
+    --color-grid: #9a92ce;
+    --color-handle: #5352be;
+    --color-mask: #41378233;
+    --color-mask-line: #9a92ce;
+    --color-scroll: #f7f7f7;
+    --color-scroll-line: #9a92ce;
+    --color-series: #5352be;
+    --color-thumb: #5352be;
+    --color-thumb-line: #f7f7f7;
+}
+
+.highcharts-dashboards-wrapper.highcharts-dark #time-range-selector {
+    --color-axis-labels: #e7e7ec;
+    --color-background: #0d0d0d;
+    --color-grid: #838394;
+    --color-handle: #838394;
+    --color-mask: #dddbef66;
+    --color-mask-line: #838394;
+    --color-scroll: #20202c;
+    --color-scroll-line: #646479;
+    --color-series: #5352be;
+    --color-thumb: #5352be;
+    --color-thumb-line: #838394;
+}
+
+#world-map {
+    --color-background: #5352be;
+    --color-map: #dddbef;
+    --color-marker-border: #fff;
+    --color-marker-text: #fff;
+    --color-marker-text-border: #000;
+    --color-navigation: #f7f7f7;
+    --color-navigation-line: #838393;
+    --color-navigation-text: #20202b;
+    --color-text: #000;
+    --color-text-border: #fff;
+    --color-tooltip-background: #dadae2;
+}
+
+.highcharts-dashboards-wrapper.highcharts-dark #world-map {
+    --color-navigation: #20202b;
+    --color-navigation-line: #646478;
+    --color-navigation-text: #838393;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* dark mode */
+
+    #kpi-layout {
+        --color-axis-labels: #838394;
+        --color-background: #0d0d0d;
+        --color-pane: #20202c;
+        --color-pane-line: #838394;
+        --color-text: #dadae2;
+    }
+
+    #selection-grid {
+        --color-background: #20202c;
+    }
+
+    #time-range-selector {
+        --color-axis-labels: #e7e7ec;
+        --color-background: #0d0d0d;
+        --color-grid: #838394;
+        --color-mask: #dddbef66;
+        --color-mask-line: #838394;
+        --color-scroll: #20202c;
+        --color-scroll-line: #646479;
+        --color-series: #5352be;
+        --color-thumb: #5352be;
+        --color-thumb-line: #838394;
+    }
+
+    #world-map {
+        --color-navigation: #20202b;
+        --color-navigation-line: #646478;
+        --color-navigation-text: #838393;
+    }
+}
+
+/* *
+ *
+ *  City Chart
+ *
+ * */
+
+#city-chart .highcharts-dashboards-component-content {
+    background: var(--color-background);
+}
+
+#city-chart .highcharts-background {
+    fill: var(--color-background);
+}
+
+#city-chart .highcharts-title {
+    fill: var(--color-title);
+    font-size: 1.2em;
+}
+
+#city-chart .highcharts-axis {
+    fill: var(--color-axis);
+}
+
+#city-chart .highcharts-axis-labels,
+#city-chart .highcharts-axis-title {
+    fill: var(--color-axis-labels);
+}
+
+#city-chart .highcharts-tooltip {
+    fill: none;
+    filter: none;
+    stroke: none;
+}
+
+#city-chart .highcharts-tooltip text {
+    fill: var(--color-text);
+}
+
+#city-chart .highcharts-tooltip-box {
+    fill: var(--color-tooltip-background);
+    fill-opacity: 1;
+    stroke: none;
+}
+
+/* *
+ *
+ *  KPI
+ *
+ * */
+
+#kpi-layout .highcharts-dashboards-component {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+#kpi-layout .highcharts-dashboards-component-kpi-content {
+    background: none;
+}
+
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container text {
+    fill: var(--color-text);
+}
+
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-axis-labels text {
+    fill: var(--color-axis);
+}
+
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-background {
+    fill: none;
+    stroke: none;
+}
+
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-label {
+    font-size: 32px;
+}
+
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-pane {
+    fill: var(--color-pane);
+    fill-opacity: 1;
+    stroke: var(--color-pane-line);
+}
+
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
+    fill: var(--color-gauge);
+    stroke: none;
+}
+
+#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-dashboards-component,
+#kpi-layout .highcharts-dashboards-cell-state-active .highcharts-dashboards-component {
+    background-color: var(--color-hover);
+    color: var(--color-hover-text);
+}
+
+#kpi-layout .highcharts-dashboards-cell-state-hover:hover text,
+#kpi-layout .highcharts-dashboards-cell-state-active text {
+    fill: var(--color-hover-text);
+}
+
+#kpi-layout .highcharts-dashboards-cell-state-hover:hover .highcharts-axis-labels text,
+#kpi-layout .highcharts-dashboards-cell-state-active .highcharts-axis-labels text {
+    fill: var(--color-hover-text);
+}
+
+#kpi-data .highcharts-dashboards-component {
+    cursor: default;
+}
+
+#kpi-data .highcharts-dashboards-component-title::before {
+    content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0LjczNTIgMzEuODU0NEM1LjQyMTIzIDE4LjY4OTQgMy42OTIzOCAxNy4zMzgzIDMuNjkyMzggMTIuNUMzLjY5MjM4IDUuODcyNTYgOS4yMDI3IDAuNSAxNi4wMDAxIDAuNUMyMi43OTc0IDAuNSAyOC4zMDc4IDUuODcyNTYgMjguMzA3OCAxMi41QzI4LjMwNzggMTcuMzM4MyAyNi41Nzg5IDE4LjY4OTQgMTcuMjY0OSAzMS44NTQ0QzE2LjY1MzcgMzIuNzE1MiAxNS4zNDY0IDMyLjcxNTIgMTQuNzM1MiAzMS44NTQ0Wk0xNi4wMDAxIDE3LjVDMTguODMyMyAxNy41IDIxLjEyODMgMTUuMjYxNCAyMS4xMjgzIDEyLjVDMjEuMTI4MyA5LjczODU2IDE4LjgzMjMgNy41IDE2LjAwMDEgNy41QzEzLjE2NzggNy41IDEwLjg3MTkgOS43Mzg1NiAxMC44NzE5IDEyLjVDMTAuODcxOSAxNS4yNjE0IDEzLjE2NzggMTcuNSAxNi4wMDAxIDE3LjVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
+    display: inline-block;
+    margin-right: 0.25em;
+    vertical-align: middle;
+}
+
+#kpi-data .highcharts-dashboards-component-kpi-value::before {
+    content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMxLjc0NTggMjkuNDE4OEwxNy4zNDYgMS40MTg3NUMxNy4wNTE1IDAuODQ2MjUgMTYuNTQ0NSAwLjUgMTYgMC41QzE1LjQ1NTUgMC41IDE0Ljk0ODUgMC44NDYyNSAxNC42NTQgMS40MTg3NUwwLjI1NDE1NSAyOS40MTg4QzAuMDk4NzU4MSAyOS43MjA5IDAuMDExMzIwOCAzMC4wNjk4IDAuMDAxMDI3MTcgMzAuNDI4N0MtMC4wMDkyNjY0NiAzMC43ODc3IDAuMDU3OTYzNSAzMS4xNDM1IDAuMTk1NjU1IDMxLjQ1ODdDMC4zMzM0MTEgMzEuNzczOSAwLjUzNjUxOCAzMi4wMzcgMC43ODM2NDggMzIuMjIwMkMxLjAzMDc4IDMyLjQwMzQgMS4zMTI4MSAzMi41IDEuNjAwMTQgMzIuNUgzMC4zOTk5QzMwLjk4NTQgMzIuNSAzMS41MjM4IDMyLjEwMDYgMzEuODA0MyAzMS40NTgxQzMxLjk0MiAzMS4xNDMgMzIuMDA5MyAzMC43ODczIDMxLjk5OSAzMC40Mjg0QzMxLjk4ODcgMzAuMDY5NSAzMS45MDEyIDI5LjcyMDggMzEuNzQ1OCAyOS40MTg4Wk0xNiA2LjE5ODc1TDIwLjI2OTUgMTQuNUgxNkwxMi44IDE4LjVMMTAuODk3MSAxNi4xMjEzTDE2IDYuMTk4NzVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
+    display: inline-block;
+    margin-right: 0.25em;
+    vertical-align: middle;
+}
+
+/* *
+ *
+ *  Selection Grid
+ *
+ * */
+
+#selection-grid .highcharts-dashboards-component {
+    background-color: var(--color-background);
+}
+
+#selection-grid .highcharts-datagrid-column-header {
+    font-size: 12px;
+}
+
+#selection-grid .highcharts-datagrid-row.hovered {
+    background-color: var(--color-hover-background);
+    border-color: var(--color-hover-border);
+    color: var(--color-hover-text);
+}
+
+/* *
+ *
+ *  Time Range Selector
+ *
+ * */
+
+#time-range-selector .highcharts-dashboards-component-content {
+    background: var(--color-background);
+}
+
+#time-range-selector .highcharts-background {
+    fill: var(--color-background);
+}
+
+#time-range-selector .highcharts-grid-line {
+    stroke: var(--color-grid);
+}
+
+#time-range-selector .highcharts-navigator-handle {
+    fill: var(--color-thumb);
+    stroke: var(--color-thumb);
+}
+
+#time-range-selector .highcharts-navigator-mask-inside {
+    fill: var(--color-mask);
+    fill-opacity: 1;
+    stroke: var(--color-mask-line);
+    transform: translate(-1px, 0);
+}
+
+#time-range-selector .highcharts-navigator-outline {
+    display: none;
+}
+
+#time-range-selector .highcharts-navigator-series {
+    fill: none;
+    stroke: var(--color-series);
+}
+
+#time-range-selector .highcharts-navigator-series.highcharts-column-series .highcharts-point {
+    fill: var(--color-series);
+}
+
+#time-range-selector .highcharts-scrollbar-arrow {
+    fill: var(--color-scroll-line);
+    stroke: var(--color-scroll-line);
+}
+
+#time-range-selector .highcharts-scrollbar-button {
+    fill: none;
+    stroke: none;
+}
+
+#time-range-selector .highcharts-scrollbar-thumb {
+    fill: var(--color-thumb);
+    stroke-width: 0;
+    transform: translate(-1px, 0);
+}
+
+#time-range-selector .highcharts-scrollbar-thumb + path {
+    stroke: var(--color-thumb-line);
+}
+
+#time-range-selector .highcharts-scrollbar-track {
+    fill: var(--color-scroll);
+    stroke: var(--color-scroll-line);
+}
+
+#time-range-selector .highcharts-axis-labels {
+    fill: var(--color-axis-labels);
+}
+
+/* *
+ *
+ *  World Map
+ *
+ * */
+
+#world-map .highcharts-dashboards-component-content {
+    background: var(--color-background);
+}
+
+#world-map .highcharts-background {
+    fill: var(--color-background);
+}
+
+#world-map .highcharts-credits {
+    fill: var(--color-map);
+}
+
+#world-map .highcharts-halo {
+    display: none;
+}
+
+#world-map .highcharts-map-navigation {
+    fill: var(--color-navigation);
+    font-size: 20px;
+    stroke: var(--color-navigation-line);
+}
+
+#world-map .highcharts-map-navigation text {
+    fill: var(--color-navigation-text);
+}
+
+#world-map .highcharts-series-0 .highcharts-point {
+    fill: var(--color-map);
+    stroke: var(--color-background);
+}
+
+#world-map .highcharts-series-0.highcharts-series-inactive {
+    opacity: 0.6;
+}
+
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(odd) {
+    font-size: 9px;
+}
+
+#world-map .highcharts-series-1 .highcharts-data-label text {
+    fill: var(--color-text);
+    paint-order: stroke;
+    stroke: var(--color-text-border);
+    stroke-width: 2px;
+}
+
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) {
+    pointer-events: none;
+}
+
+#world-map .highcharts-series-1 .highcharts-data-label:nth-child(even) text {
+    fill: var(--color-marker-text);
+    stroke: var(--color-marker-text-border);
+    stroke-width: 1.5px;
+}
+
+#world-map .highcharts-series-1 .highcharts-point {
+    paint-order: stroke;
+    stroke: var(--color-marker-border);
+    stroke-width: 2;
+    cursor: pointer;
+}
+
+#world-map .highcharts-series-1 .highcharts-point:hover,
+#world-map .highcharts-series-1 .highcharts-point-select {
+    stroke-width: 6;
+}
+
+#world-map .highcharts-tooltip {
+    fill: none;
+    filter: none;
+    stroke: none;
+}
+
+#world-map div.highcharts-tooltip {
+    color: var(--color-text);
+}
+
+#world-map .highcharts-tooltip-box {
+    fill: var(--color-tooltip-background);
+    fill-opacity: 1;
+    stroke: none;
+}
+
+#world-map .highcharts-zoom-in text {
+    transform: translate(1px, -1px);
+}
+
+#world-map .highcharts-zoom-out text {
+    transform: translate(2px, -1px);
+}
+
+/* Safari fix for manual dark mode */
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-wrapper.highcharts-dark #world-map .highcharts-series-1 .highcharts-data-label text {
+    paint-order: stroke;
+    stroke-width: 2px;
+}
+
+/* *
+ *
+ *  Edit mode
+ *
+ * */
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-menu-item.highcharts-dashboards-edit-toolbar-item {
+    background: #241d3a;
+    border-radius: 2px;
+}
+
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-toolbar-row > .highcharts-dashboards-edit-menu-item.highcharts-dashboards-edit-toolbar-item {
+    background: #646479;
+    border-radius: 2px;
+}
+
+.highcharts-dashboards-layout > .highcharts-dashboards-row.highcharts-dashboards-edit-row-context-highlight {
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #9491a1,
+            #9895a4 10px,
+            rgb(169 167 188) 10px,
+            rgb(169 167 188) 12px
+        );
+}
+
+.highcharts-dashboards-edit-toolbar > .highcharts-dashboards-edit-toolbar-cell-outline {
+    border: 2px solid #241d3a;
+}
+
+.highcharts-dashboards-edit-toolbar > .highcharts-dashboards-edit-toolbar-row-outline {
+    border: 2px solid #646479;
+}
+
+.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-row {
+    background: #646479;
+}
+
+.highcharts-dashboards-wrapper > .highcharts-dashboards-edit-drop-pointer {
+    background: #ff8d64;
+}
+
+.highcharts-dashboards-edit-toggle-wrapper-colored > .highcharts-dashboards-edit-toggle-slider,
+/* stylelint-disable-next-line max-line-length */
+.highcharts-dashboards-edit-toggle-wrapper.hd-edit-toggle-wrapper-colored
+input:checked + .highcharts-dashboards-edit-toggle-slider {
+    background-color: #4a4a53;
+    border: 1px solid #838394;
+}
+
+.highcharts-dashboards-edit-toggle-wrapper-colored > .highcharts-dashboards-edit-toggle-slider ::before {
+    background-color: #dadae2;
+    height: 17px;
+    width: 17px;
+    left: 2px;
+    bottom: 2px;
+}

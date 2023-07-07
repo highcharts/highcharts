@@ -6,7 +6,7 @@ module.exports = {
             'getting-started/installation',
             'getting-started/installation-with-esm',
             'getting-started/install-from-npm',
-            'getting-started/install-from-bower',
+            'getting-started/installation-with-amd-commonjs',
             'getting-started/your-first-chart',
             'getting-started/how-to-set-options',
             'getting-started/frequently-asked-questions',
@@ -76,6 +76,17 @@ module.exports = {
             'gantt/gantt-task-dependencies',
             'gantt/gantt-axis-grid',
             'gantt/gantt-task-config'
+        ],
+        'Dashboards': [
+            'dashboards/installation',
+            'dashboards/your-first-dashboard',
+            'dashboards/layout-description',
+            'dashboards/edit-mode',
+            'dashboards/types-of-components',
+            'dashboards/light-dark-theme',
+            'dashboards/data-handling',
+            'dashboards/custom-component',
+            'dashboards/frequently-asked-questions',
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',

@@ -21,7 +21,7 @@
  * */
 
 import type DataEvent from '../DataEvent';
-import type DataModifierOptions from './DataModifierOptions';
+import type InvertModifierOptions from './InvertModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -50,8 +50,8 @@ class InvertModifier extends DataModifier {
     /**
      * Default options for the invert modifier.
      */
-    public static readonly defaultOptions: InvertModifier.Options = {
-        modifier: 'Invert'
+    public static readonly defaultOptions: InvertModifierOptions = {
+        type: 'Invert'
     };
 
     /* *
@@ -67,7 +67,7 @@ class InvertModifier extends DataModifier {
      * Options to configure the invert modifier.
      */
     public constructor(
-        options?: DeepPartial<InvertModifier.Options>
+        options?: DeepPartial<InvertModifierOptions>
     ) {
         super();
 
@@ -83,7 +83,7 @@ class InvertModifier extends DataModifier {
     /**
      * Options of the invert modifier.
      */
-    public options: InvertModifier.Options;
+    public options: InvertModifierOptions;
 
     /* *
      *
@@ -371,42 +371,13 @@ class InvertModifier extends DataModifier {
 
 }
 
-/* *
- *
- *  Class Namespace
- *
- * */
-
-/**
- * Additionally provided types for modifier events and options.
- * @private
- */
-namespace InvertModifier {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Options to configure the modifier.
-     */
-    export interface Options extends DataModifierOptions {
-
-        /**
-         * Name of the related modifier for these options.
-         */
-        modifier: 'Invert';
-
-    }
-}
 
 /* *
  *
  *  Registry
  *
  * */
+
 
 declare module './DataModifierType' {
     interface DataModifierTypes {
@@ -416,10 +387,12 @@ declare module './DataModifierType' {
 
 DataModifier.registerType('Invert', InvertModifier);
 
+
 /* *
  *
  *  Default Export
  *
  * */
+
 
 export default InvertModifier;

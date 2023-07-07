@@ -4,7 +4,9 @@
 
 // NOPE, YOU CANNOT FIX IT! The JS compiler is gone and only the Java version
 // is left. NOPE, closure-gun is a Java wrapper. (-_-) Keep the old version.
-const ClosureCompiler = require('google-closure-compiler').jsCompiler;
+// WELL... they have now native build as an alternatives, but it did not work.
+// This tool is now abanded, and only used via the `scripts-compile-old` task.
+const ClosureCompiler = require('google-closure-compiler').compiler;
 
 const statSync = require('fs').statSync;
 const {

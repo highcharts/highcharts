@@ -453,7 +453,9 @@ const navigation: NavigationOptions = {
                             langKey: 'label',
                             type: 'basicAnnotation',
                             labelOptions: {
-                                format: '{y:.2f}'
+                                format: '{y:.2f}',
+                                overflow: 'none',
+                                crop: true
                             },
                             labels: [{
                                 point: {
@@ -461,9 +463,7 @@ const navigation: NavigationOptions = {
                                     yAxis: coordsY.axis.index,
                                     x: coordsX.value,
                                     y: coordsY.value
-                                },
-                                overflow: 'none',
-                                crop: true
+                                }
                             }]
                         },
                         navigation

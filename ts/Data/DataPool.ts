@@ -27,6 +27,7 @@ import type {
 import type DataTable from './DataTable.js';
 
 import DataConnector from './Connectors/DataConnector.js';
+import DataModifier from './Modifiers/DataModifier.js';
 import DataPoolDefaults from './DataPoolDefaults.js';
 import U from '../Core/Utilities.js';
 
@@ -39,7 +40,6 @@ import U from '../Core/Utilities.js';
 /**
  * Data pool to load connectors on-demand.
  *
- * @private
  * @class
  * @name Data.DataPool
  *
@@ -135,23 +135,42 @@ class DataPool implements DataEvent.Emitter {
     }
 
     /**
+     * Returns the names of all connectors.
+     *
+     * @private
+     *
+     * @return {Array<string>}
+     * Names of all connectors.
+     */
+    public getConnectorIds(): Array<string> {
+        const connectors = this.options.connectors,
+            connectorIds: Array<string> = [];
+
+        for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
+            connectorIds.push(connectors[i].id);
+        }
+
+        return connectorIds;
+    }
+
+    /**
      * Loads the options of the connector.
      *
      * @private
      *
-     * @param {string} name
+     * @param {string} id
      * Name of the connector.
      *
      * @return {DataPoolConnectorOptions|undefined}
      * Returns the options of the connector, or `undefined` if not found.
      */
     protected getConnectorOptions(
-        name: string
+        id: string
     ): (DataPoolConnectorOptions|undefined) {
         const connectors = this.options.connectors;
 
         for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
-            if (connectors[i].name === name) {
+            if (connectors[i].id === id) {
                 return connectors[i];
             }
         }
@@ -162,17 +181,17 @@ class DataPool implements DataEvent.Emitter {
      *
      * @function Data.DataPool#getConnectorTable
      *
-     * @param {string} name
+     * @param {string} connectorId
      * Name of the connector.
      *
      * @return {Promise<Data.DataTable>}
      * Returns the connector table.
      */
     public getConnectorTable(
-        name: string
+        connectorId: string
     ): Promise<DataTable> {
         return this
-            .getConnector(name)
+            .getConnector(connectorId)
             .then((connector): DataTable => connector.table);
     }
 
@@ -205,16 +224,34 @@ class DataPool implements DataEvent.Emitter {
 
             const connector = new ConnectorClass(options.options);
 
-            this.connectors[options.name] = connector;
+            this.connectors[options.id] = connector;
 
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            connector.load().then((connector): void => {
-                this.emit<DataPool.Event>({
-                    type: 'afterLoad',
-                    options
-                });
-                resolve(connector);
-            })['catch'](reject);
+            connector
+                .load()
+                .then((connector): (DataConnector|Promise<DataConnector>) => {
+                    if (options?.options?.dataModifier) {
+                        const ModifierClass = DataModifier
+                            .types[options.options.dataModifier.type];
+
+                        return connector.table
+                            .setModifier(
+                                new ModifierClass(
+                                    options.options.dataModifier as AnyRecord
+                                )
+                            )
+                            .then((): DataConnector => connector);
+                    }
+
+                    return connector;
+                })
+                .then((connector): void => {
+                    this.emit<DataPool.Event>({
+                        type: 'afterLoad',
+                        options
+                    });
+                    resolve(connector);
+                })['catch'](reject);
         });
     }
 
@@ -256,7 +293,7 @@ class DataPool implements DataEvent.Emitter {
         });
 
         for (let i = 0, iEnd = connectors.length; i < iEnd; ++i) {
-            if (connectors[i].name === options.name) {
+            if (connectors[i].id === options.id) {
                 connectors.splice(i, 1);
                 break;
             }

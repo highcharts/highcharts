@@ -1,0 +1,15 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/css/datagrid.css");
+@import url("https://code.highcharts.com/css/dashboards.css");
+
+* {
+    transition: background-color 100ms, color 100ms;
+}
+
+.highcharts-description {
+    margin-top: 1em;
+}
+
+#csv {
+    display: none;
+}

@@ -14,7 +14,10 @@
             "ES2015.Promise"
         ]
     },
-    "exclude": [],
+    "exclude": [
+        "../Dashboards/**/*.ts",
+        "../masters-dashboards/**/*.ts"
+    ],
     "include": [
         "../**/*.ts"
     ]

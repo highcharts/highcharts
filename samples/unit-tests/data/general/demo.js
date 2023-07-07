@@ -112,23 +112,22 @@ QUnit.test('Empty data config', function (assert) {
 });
 
 QUnit.test('Combination charts and column mapping', function (assert) {
-    var csv = [
-        'X values,First,Second,Third,Fourth,Fifth,Sixth',
-        'Oak,10,9,11,20,19,21',
-        'Pine,11,10,12,21,20,22',
-        'Birch,12,11,13,22,21,23'
-    ].join('\n');
-
-    var chart = Highcharts.chart('container', {
-        data: {
-            csv: csv
-        },
-        series: [
-            {
-                type: 'pie'
-            }
-        ]
-    });
+    let csv = [
+            'X values,First,Second,Third,Fourth,Fifth,Sixth',
+            'Oak,10,9,11,20,19,21',
+            'Pine,11,10,12,21,20,22',
+            'Birch,12,11,13,22,21,23'
+        ].join('\n'),
+        chart = Highcharts.chart('container', {
+            data: {
+                csv: csv
+            },
+            series: [
+                {
+                    type: 'pie'
+                }
+            ]
+        });
 
     assert.deepEqual(
         chart.series.map(function (s) {
@@ -202,6 +201,44 @@ QUnit.test('Combination charts and column mapping', function (assert) {
         }),
         [3, 3],
         'Non-cartesian series should pick columns without X-column (#10984)'
+    );
+
+    csv = [
+        '"A";"A";"B";"B"',
+        '"Germany";767.1;"Ukraine";249.1',
+        '"Croatia";20.7;"Poland";298.1',
+        '"Belgium";97.2;;'
+    ].join('\n');
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            type: 'packedbubble',
+            data: []
+        }, {
+            type: 'packedbubble',
+            data: []
+        }],
+        data: {
+            csv: csv,
+            seriesMapping: [{
+                name: 0,
+                value: 1
+            },
+            {
+                name: 2,
+                value: 3
+            }
+            ]
+        }
+    });
+
+    assert.deepEqual(
+        chart.series.map(function (s) {
+            return s.name;
+        }),
+        ['A', 'B'],
+        `Name should be mapped correctly from CSV for packed bubble series,
+        which is non-cartesian (#19143).`
     );
 });
 
@@ -324,8 +361,7 @@ QUnit.test(
 QUnit.test('Updating with firstRowAsNames', function (assert) {
     const chart = Highcharts.chart('container', {
             data: {
-                columns: [['A', 1, 2, 3, 4, 5, 6], ['B', 2, 4, 8, 3, 6, 6]],
-                firstRowAsNames: true
+                columns: [['A', 1, 2, 3, 4, 5, 6], ['B', 2, 4, 8, 3, 6, 6]]
             }
         }),
         numPoints = chart.series[0].points.length;
@@ -347,8 +383,7 @@ QUnit.test('Updating with firstRowAsNames', function (assert) {
 QUnit.test('Update column names', function (assert) {
     const chart = Highcharts.chart('container', {
         data: {
-            columns: [['A', 1, 2, 3, 4, 5, 6], ['B', 2, 4, 8, 3, 6, 6]],
-            firstRowAsNames: true
+            columns: [['A', 1, 2, 3, 4, 5, 6], ['B', 2, 4, 8, 3, 6, 6]]
         }
     });
 
@@ -376,8 +411,7 @@ QUnit.test('Updating with firstRowAsNames and dataGrouping', function (assert) {
             }
         },
         data: {
-            columns: [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]],
-            firstRowAsNames: true
+            columns: [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]]
         }
     });
 

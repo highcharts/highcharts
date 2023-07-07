@@ -2211,9 +2211,9 @@ Scatter.prototype.generatePoints = function (): void {
             if (
                 xData[i] >= (realExtremes.minX - cropDataOffsetX) &&
                 xData[i] <= (realExtremes.maxX + cropDataOffsetX) &&
-                (yData[i] || realExtremes.minY) >=
+                (yData[i] as number || realExtremes.minY) >=
                     (realExtremes.minY - cropDataOffsetY) &&
-                (yData[i] || realExtremes.maxY) <=
+                (yData[i] as number || realExtremes.maxY) <=
                     (realExtremes.maxY + cropDataOffsetY)
             ) {
                 visibleXData.push(xData[i]);

@@ -21,8 +21,9 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
 import type { DataConnectorTypes } from './DataConnectorType';
+import type DataEvent from '../DataEvent';
+import type { DataConnectorOptions, MetaColumn, Metadata } from './DataConnectorOptions';
 
 import DataConverter from '../Converters/DataConverter.js';
 import DataTable from '../DataTable.js';
@@ -81,7 +82,7 @@ abstract class DataConnector implements DataEvent.Emitter {
     /**
      * Metadata to describe the connector and the content of columns.
      */
-    public readonly metadata: DataConnector.Metadata;
+    public readonly metadata: Metadata;
 
     private _polling?: number;
 
@@ -114,7 +115,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      */
     public describeColumn(
         name: string,
-        columnMeta: DataConnector.MetaColumn
+        columnMeta: MetaColumn
     ): void {
         const connector = this,
             columns = connector.metadata.columns;
@@ -129,7 +130,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * Pairs of column names and MetaColumn objects.
      */
     public describeColumns(
-        columns: Record<string, DataConnector.MetaColumn>
+        columns: Record<string, MetaColumn>
     ): void {
         const connector = this,
             columnNames = Object.keys(columns);
@@ -254,7 +255,7 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
-     * Starts polling new data after the specific timespan in milliseconds.
+     * Starts polling new data after the specific time span in milliseconds.
      *
      * @param {number} refreshTime
      * Refresh time in milliseconds between polls.
@@ -302,7 +303,7 @@ abstract class DataConnector implements DataEvent.Emitter {
      * @return {DataConnector.MetaColumn|undefined}
      * Returns a MetaColumn object if found.
      */
-    public whatIs(name: string): (DataConnector.MetaColumn | undefined) {
+    public whatIs(name: string): (MetaColumn | undefined) {
         return this.metadata.columns[name];
     }
 
@@ -345,35 +346,9 @@ namespace DataConnector {
     }
 
     /**
-     * Metadata entry containing the name of the column and a metadata object.
-     */
-    export interface MetaColumn {
-        dataType?: string;
-        // validator: Function;
-        defaultValue?: (boolean|null|number|string);
-        index?: number;
-        title?: string;
-    }
-
-    /**
-     * Metadata
-     */
-    export interface Metadata {
-        columns: Record<string, MetaColumn>;
-    }
-
-    /**
      * Option of the DataConnector.
      */
-    export interface Options {
-        dataTable?: DataTable.Options;
-        metadata?: Metadata;
-    }
-
-    /**
-     * Option of the DataConnector.
-     */
-    export type UserOptions = Partial<Options>;
+    export type UserOptions = Partial<DataConnectorOptions>;
 
     /* *
      *

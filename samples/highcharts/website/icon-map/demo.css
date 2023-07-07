@@ -1,4 +1,4 @@
-@import "https://code.highcharts.com/css/highcharts.css";
+@import url("https://code.highcharts.com/css/highcharts.css");
 
 body {
     margin: 0;
@@ -40,11 +40,11 @@ body {
 .chart-container .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
 .chart-container .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
 .chart-container .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
-    opacity: 100%;
+    opacity: 1;
 }
 
 .chart-container .highcharts-series-inactive {
-    opacity: 100%;
+    opacity: 1;
     transition: opacity 50ms;
 }
 
@@ -91,7 +91,7 @@ body {
 }
 
 #maps .highcharts-map-series {
-    opacity: 0%;
+    opacity: 0;
 }
 
 #maps .highcharts-plot-background {
@@ -151,22 +151,22 @@ body {
 }
 
 #maps .fade-in {
-    opacity: 100% !important;
+    opacity: 1 !important;
     transition: opacity 1s;
 }
 
 #maps .fade {
-    opacity: 0% !important;
+    opacity: 0 !important;
     transition: opacity 1s;
 }
 
 #maps .hide {
-    opacity: 0% !important;
+    opacity: 0 !important;
     transition: none !important;
 }
 
 #maps .show {
-    opacity: 100% !important;
+    opacity: 1 !important;
     transition: none !important;
 }
 
@@ -279,7 +279,7 @@ body {
 
 #maps .highcharts-title,
 #maps .highcharts-subtitle {
-    opacity: 0%;
+    opacity: 0;
     fill: white;
 }
 

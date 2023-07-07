@@ -271,6 +271,13 @@ class InfoRegionsComponent extends AccessibilityComponent {
             }
         });
 
+        this.addEvent(chart, 'afterHideData', function (): void {
+            if (component.viewDataTableButton) {
+                component.viewDataTableButton
+                    .setAttribute('aria-expanded', 'false');
+            }
+        });
+
         this.announcer = new Announcer(chart, 'assertive');
     }
 
@@ -556,7 +563,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
         const el = this.linkedDescriptionElement,
             content = el && el.innerHTML || '';
 
-        return stripHTMLTagsFromString(content);
+        return stripHTMLTagsFromString(content, this.chart.renderer.forExport);
     }
 
 
@@ -636,7 +643,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
         const subtitle = (
             this.chart.options.subtitle
         );
-        return stripHTMLTagsFromString(subtitle && subtitle.text || '');
+        return stripHTMLTagsFromString(
+            subtitle && subtitle.text || '',
+            this.chart.renderer.forExport
+        );
     }
 
 
