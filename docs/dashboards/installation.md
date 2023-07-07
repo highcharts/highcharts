@@ -8,7 +8,7 @@ npm install @highcharts/dashboards
 ```
 Then import the package in your project:
 ``` JS
-import Dashboards from '@highcharts/dashboards';
+import * as Dashboards from '@highcharts/dashboards';
 ```
 
 ### Include Dashboards by script tag

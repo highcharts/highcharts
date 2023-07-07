@@ -6,12 +6,12 @@ Edit mode is a mode in which the user can change the appearance of the dashboard
 In addition, this option has to be enabled in the dashboard config:
 ```js
 editMode: {
+    enabled: true,
+    contextMenu: {
         enabled: true,
-        contextMenu: {
-            enabled: true,
-            items: ['editMode']
-        }
-    },
+        items: ['editMode']
+    }
+},
 ```
 
 Edit mode can now be enabled by the burger menu in the upper right corner.
