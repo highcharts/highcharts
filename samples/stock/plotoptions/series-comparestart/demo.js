@@ -58,9 +58,9 @@
         });
     }
 
-    function success(url, data) {
-        var name = url.match(/(msft|aapl|goog)/)[0].toUpperCase();
-        var i = names.indexOf(name);
+    function success(name, data) {
+        name = name.match(/(msft|aapl|goog)/)[0].toUpperCase();
+        const i = names.indexOf(name);
         seriesOptions[i] = {
             name: name,
             data: data
@@ -75,16 +75,20 @@
         }
     }
 
-    await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/msft-c.json')
-        .then(response => response.json())
-        .then(data => success('msft', data));
+    const promises = ['msft', 'aapl', 'goog'].map(name => new Promise((resolve, reject) => {
+        (async () => {
+            const data = await fetch(
+                'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/' + name + '-c.json'
+            )
+                .then(response => response.json());
+            resolve({
+                name,
+                data
+            });
+        })();
+    }));
 
-    await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/aapl-c.json')
-        .then(response => response.json())
-        .then(data => success('aapl', data));
-
-    await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/goog-c.json')
-        .then(response => response.json())
-        .then(data => success('goog', data));
+    const series = await Promise.all(promises);
+    series.forEach(obj => success(obj.name, obj.data));
 
 })();
