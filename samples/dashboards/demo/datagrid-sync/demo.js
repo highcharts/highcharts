@@ -19,6 +19,9 @@ const chartOptions = {
                 const chart = this;
                 if (chartCount === 1) {
                     chart.update({
+                        title: {
+                            text: 'allowConnectorUpdate: false'
+                        },
                         subtitle: {
                             useHTML: true,
                             text: 'Dragging points <em>will not update</em> the grid'
@@ -33,7 +36,7 @@ const chartOptions = {
         enabled: false
     },
     title: {
-        text: 'Vitamin A in Various Foods'
+        text: 'allowConnectorUpdate: true'
     },
     subtitle: {
         text: 'Drag points to update the data grid'
@@ -92,7 +95,7 @@ const board = Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'allowConnectorUpdate: true'
+                text: 'Vitamin A'
             },
             chartOptions
         }, {
@@ -109,7 +112,7 @@ const board = Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
-                text: 'allowConnectorUpdate: false'
+                text: 'Vitamin A'
             },
             allowConnectorUpdate: false,
             chartOptions
