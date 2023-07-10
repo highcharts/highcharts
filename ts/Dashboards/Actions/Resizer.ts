@@ -622,6 +622,7 @@ namespace Resizer {
         height?: number;
     }
 
+    /** @internal */
     export interface HTMLDOMElementEvents extends HTMLDOMElement {
         hcEvents: Record<string, Array<Function>>;
     }

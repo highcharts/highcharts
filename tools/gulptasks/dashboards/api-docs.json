@@ -16,7 +16,6 @@
         "../../../ts/Dashboards/EditMode/ConfirmationPopup.ts",
         "../../../ts/Dashboards/EditMode/EditContextMenu.ts",
         "../../../ts/Dashboards/EditMode/EditMode.ts",
-        "../../../ts/Dashboards/EditMode/EditGlobals.ts",
         "../../../ts/Dashboards/EditMode/Toolbar/EditToolbar.ts",
         "../../../ts/Dashboards/EditMode/Toolbar/CellEditToolbar.ts",
         "../../../ts/Dashboards/EditMode/Toolbar/RowEditToolbar.ts",
