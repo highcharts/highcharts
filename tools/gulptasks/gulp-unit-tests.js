@@ -24,7 +24,7 @@ describe('dashboards/dist', async () => {
 
     after(async () => {
         delete process.env.DASH_RELEASE;
-        await runGulpTasks(['dist-clean']);
+        // await runGulpTasks(['dist-clean']);
     });
 
     it('dashboards/dist-examples creates build/dist directory', async () => {
@@ -35,5 +35,6 @@ describe('dashboards/dist', async () => {
     it('dashboards/dist-examples creates build/dist/dashboards/index.html ', async () => {
         await runGulpTasks(['dashboards/dist-examples']);
         assert.ok(await stat('build/dist/dashboards/index.html'));
+        assert.ok(await stat('build/dist/dashboards/examples/minimal/index.html'));
     });
 });

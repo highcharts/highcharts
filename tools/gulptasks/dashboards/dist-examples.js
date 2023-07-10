@@ -35,7 +35,7 @@ async function transformExampleDir(examplesDir) {
         'demo.html'
     ];
 
-    files.forEach(async fileName => {
+    for (const fileName of files) {
         let filePath = join(examplesDir, fileName);
         const contents = await readFile(filePath, 'utf-8');
 
@@ -55,8 +55,7 @@ ${newContent}
             filePath,
             newContent
         );
-
-    });
+    }
 }
 
 async function dashboardsDistExamples(done) {
@@ -88,16 +87,17 @@ Exiting...
         path: 'dashboards/demo'
     }];
 
-    products.forEach(async ({ name, id, path, distName }) => {
+    for (const { name, id, path, distName } of products) {
         const output = [];
         output.push(`<h1>${name} examples</h1>`);
 
         const categories = await readJSONFile(join(demoPath, 'sidebar/ids', `${id}.json`));
 
-        await Promise.all(categories.map(async categoryID => {
+        for (const categoryID of categories) {
             const demos = await readJSONFile(join(demoPath, 'categories', categoryID + '.json'));
             output.push('<ul>');
-            demos.forEach(async demo => {
+
+            for (const demo of demos) {
                 const regex = new RegExp(`.*samples/${path}/`, 'u');
 
                 const demoExamplePath = demo.location.replace(regex, '');
@@ -108,16 +108,18 @@ Exiting...
 
                 await transformExampleDir(examplesDirPath);
                 await cleanupExampleDir(examplesDirPath);
+            }
 
-            });
             output.push('</ul>');
-        }));
+
+        }
 
         await writeFile(
             join(TARGET_DIRECTORY, distName, 'index.html'),
             output.join('\n')
-        );
-    });
+        ).then(done);
+    }
+
 }
 
 Gulp.task('dashboards/dist-examples', dashboardsDistExamples);
