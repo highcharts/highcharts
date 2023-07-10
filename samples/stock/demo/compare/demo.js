@@ -1,8 +1,8 @@
 (async () => {
 
-    var seriesOptions = [],
-        seriesCounter = 0,
+    const seriesOptions = [],
         names = ['MSFT', 'AAPL', 'GOOG'];
+    let seriesCounter = 0;
 
     /**
      * Create the chart when all data is loaded
@@ -42,6 +42,7 @@
 
             series: seriesOptions
         });
+
     }
 
     function success(name, data) {
