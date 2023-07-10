@@ -8,7 +8,9 @@
  * License: www.highcharts.com/license
  * */
 
+
 'use strict';
+
 
 /* *
  *
@@ -16,9 +18,31 @@
  *
  * */
 
+
+import type GlobalsLike from '../../Core/GlobalsLike';
+
+import DataGridPlugin from '../../Dashboards/Plugins/DataGridPlugin.js';
 import Globals from '../../Dashboards/Globals.js';
 import HighchartsPlugin from '../../Dashboards/Plugins/HighchartsPlugin.js';
-import DataGridPlugin from '../../Dashboards/Plugins/DataGridPlugin.js';
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+
+declare global {
+    interface Dashboards {
+        DataGridPlugin: typeof DataGridPlugin;
+        HighchartsPlugin: typeof HighchartsPlugin;
+    }
+    interface Window {
+        Highcharts?: GlobalsLike;
+    }
+}
+
 
 /* *
  *
@@ -26,7 +50,8 @@ import DataGridPlugin from '../../Dashboards/Plugins/DataGridPlugin.js';
  *
  * */
 
-const G: AnyRecord = Globals;
+
+const G = Globals as unknown as Dashboards;
 
 G.DataGridPlugin = DataGridPlugin;
 G.HighchartsPlugin = HighchartsPlugin;
@@ -41,10 +66,12 @@ if (G.win.DataGrid) {
     G.PluginHandler.addPlugin(DataGridPlugin);
 }
 
+
 /* *
  *
  *  Default Export
  *
  * */
+
 
 export default G;

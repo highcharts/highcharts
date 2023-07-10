@@ -19,6 +19,8 @@
     "webpack"
   ],
   "scripts": {
+    "dest": "npx gulp dashboards/test",
+    "dulp": "npx gulp dashboards/scripts",
     "test": "npx gulp test-ts --force && npx gulp test --force --speak",
     "testall": "npx gulp test --browsers all --force --speak",
     "test-all": "npx gulp test --browsers all --force --speak",
