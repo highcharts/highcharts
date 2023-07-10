@@ -12,54 +12,51 @@ async function readJSONFile(filePath) {
     return JSON.parse(fileContent);
 }
 
-function cleanupExampleDir(examplesDir) {
-    return Promise.all(
-        [
-            'demo.html',
-            'demo.details',
-            'test-notes.md'
-        ].map(fileName =>
-            rm(
-                join(examplesDir, fileName),
-                { force: true }
-            ))
-    );
+async function cleanupExampleDir(examplesDir) {
+    const filesToClean = [
+        'demo.html',
+        'demo.details',
+        'test-notes.md'
+    ];
+
+    for (const fileName of filesToClean) {
+        await rm(
+            join(examplesDir, fileName),
+            { force: true }
+        );
+    }
 }
 
 async function transformExampleDir(examplesDir) {
-    return Promise.all(
-        [
-            'demo.css',
-            'demo.js',
-            'demo.html'
-        ].map(
-            async fileName => {
 
-                const filePath = join(examplesDir, fileName);
-                const contents = await readFile(filePath, 'utf-8');
+    const files = [
+        'demo.css',
+        'demo.js',
+        'demo.html'
+    ];
 
-                const newContent = contents
-                    .replaceAll('https://code.highcharts.com/dashboards/', '../../code/')
-                    .replaceAll(/(?<!\.src)\.js(?!on)/gmu, '.src.js"');
+    files.forEach(async fileName => {
+        let filePath = join(examplesDir, fileName);
+        const contents = await readFile(filePath, 'utf-8');
 
-                if (fileName === 'demo.html') {
-                    return writeFile(
-                        filePath.replace('demo.html', 'index.html'),
-                        `<link rel="stylesheet" type="text/css" href="./demo.css">
+        let newContent = contents
+            .replaceAll('https://code.highcharts.com/dashboards/', '../../code/')
+            .replaceAll(/(?<!\.src)\.js(?!on)/gmu, '.src.js"');
+
+        if (fileName === 'demo.html') {
+            filePath = filePath.replace('demo.html', 'index.html');
+            newContent = `<link rel="stylesheet" type="text/css" href="./demo.css">
 ${newContent}
 <script src="demo.js"></script>
-`
-                    );
-                }
+`;
+        }
 
-                return writeFile(
-                    filePath,
-                    newContent
-                );
+        await writeFile(
+            filePath,
+            newContent
+        );
 
-            }
-        )
-    );
+    });
 }
 
 async function dashboardsDistExamples(done) {
@@ -91,7 +88,7 @@ Exiting...
         path: 'dashboards/demo'
     }];
 
-    const promises = products.map(async ({ name, id, path, distName }) => {
+    products.forEach(async ({ name, id, path, distName }) => {
         const output = [];
         output.push(`<h1>${name} examples</h1>`);
 
@@ -116,13 +113,11 @@ Exiting...
             output.push('</ul>');
         }));
 
-        return writeFile(
+        await writeFile(
             join(TARGET_DIRECTORY, distName, 'index.html'),
             output.join('\n')
         );
     });
-
-    await Promise.all(promises);
 }
 
 Gulp.task('dashboards/dist-examples', dashboardsDistExamples);
