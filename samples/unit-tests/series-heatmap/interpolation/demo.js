@@ -7,10 +7,8 @@ QUnit.test('Interpolated image test', function (assert) {
 
         colorAxis: {
             stops: [
-                [0, 'rgba(61, 0, 255, 1)'],
-                [0.2, 'rgba(0, 255, 188, 1)'],
-                [0.6, 'rgba(194, 255, 0, 1)'],
-                [0.9, 'rgba(255, 0, 67, 1)']
+                [0, 'rgba(64, 16, 104, 1)'],
+                [0.99, 'rgba(160, 255, 48, 1)']
             ]
         },
 
@@ -18,29 +16,29 @@ QUnit.test('Interpolated image test', function (assert) {
             {
                 data: [
                     [0, 0, 2],
-                    [0, 1, 2.1],
-                    [0, 2, 2.2],
-                    [1, 0, 3],
-                    [1, 1, 3.1],
-                    [1, 2, 3.2],
-                    [2, 0, 4],
-                    [2, 1, 4.1],
-                    [2, 2, 4.2],
-                    [3, 0, 5],
-                    [3, 1, 5.1],
-                    [3, 2, 5.2],
-                    [4, 0, 2],
-                    [4, 1, 2.1],
-                    [4, 2, 2.2],
-                    [5, 0, 3],
-                    [5, 1, 3.1],
-                    [5, 2, 3.2],
-                    [6, 0, 4],
-                    [6, 1, 4.1],
-                    [6, 2, 4.2],
-                    [7, 0, 5],
-                    [7, 1, 5.1],
-                    [7, 2, 5.2]
+                    [0, 1, 3.1],
+                    [0, 2, 4.2],
+                    [1, 0, 5],
+                    [1, 1, 6.1],
+                    [1, 2, 7.2],
+                    [2, 0, 8],
+                    [2, 1, 9.1],
+                    [2, 2, 10.2],
+                    [3, 0, 11],
+                    [3, 1, 12.1],
+                    [3, 2, 13.2],
+                    [4, 0, 14],
+                    [4, 1, 15.1],
+                    [4, 2, 16.2],
+                    [5, 0, 17],
+                    [5, 1, 18.1],
+                    [5, 2, 19.2],
+                    [6, 0, 20],
+                    [6, 1, 21.1],
+                    [6, 2, 22.2],
+                    [7, 0, 23],
+                    [7, 1, 24.1],
+                    [7, 2, 25.2]
                 ],
                 interpolation: true
             }
@@ -62,7 +60,6 @@ QUnit.test('Interpolated image test', function (assert) {
     const controller = new TestController(chart);
 
     controller.moveTo(plotX, plotY);
-
     assert.ok(
         container.getElementsByClassName('highcharts-tooltip') !== undefined,
         'Should have tooltip when hovered'
