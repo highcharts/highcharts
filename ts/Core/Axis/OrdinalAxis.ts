@@ -1414,7 +1414,7 @@ namespace OrdinalAxis {
 
                 if (defined(min) && defined(max)) {
                     return series.points.some((point): boolean =>
-                        point.x > min && point.x < max
+                        point.x >= min && point.x <= max
                     );
                 }
 
