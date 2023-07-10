@@ -25,7 +25,7 @@
 import type Component from '../Components/Component.js';
 import type CSSJSONObject from '../CSSJSONObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type JSON from '../../Core/JSON';
+import type JSON from '../JSON';
 import type LayoutType from './Layout';
 import type Row from './Row';
 import type Serializable from '../Serializable';
@@ -628,6 +628,10 @@ namespace Cell {
          * ```
          * width: '33.333%'
          * ```
+         *
+         *  Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/dimensions/ | Set cell dimensions}
          **/
         width?: (string|number);
         /**
@@ -640,6 +644,10 @@ namespace Cell {
          * ```
          * height: '300px'
          * ```
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/dimensions/ | Set cell dimensions}
          **/
         height?: (string|number);
         /**
@@ -655,7 +663,11 @@ namespace Cell {
          **/
         mountedComponentJSON?: Component.JSON;
         /**
-         * To create a nested layout, cell might contain an additional layouts.
+         * To create a nested layout, add a layout object to a cell.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
          **/
         layout?: LayoutType.Options;
         /**
@@ -664,6 +676,10 @@ namespace Cell {
         layoutJSON?: LayoutType.JSON;
         /**
          * Options for responsive design.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/responsive/ | Responsive cell width}
          **/
         responsive?: Record<string, CellResponsiveOptions>;
     }

@@ -20,7 +20,7 @@
  * */
 
 import type PluginHandler from '../PluginHandler';
-import type G from '../../Core/Globals';
+import type { Highcharts } from './HighchartsTypes';
 
 import HighchartsComponent from './HighchartsComponent.js';
 import KPIComponent from '../Components/KPIComponent.js';
@@ -52,7 +52,7 @@ declare module '../Components/ComponentType' {
  * Highcharts core to connect.
  */
 function connectHighcharts(
-    highcharts: typeof G
+    highcharts: typeof Highcharts
 ): void {
     HighchartsComponent.charter = highcharts;
     KPIComponent.charter = highcharts;
@@ -68,8 +68,8 @@ function onRegister(
     e: PluginHandler.Event
 ): void {
     const { Sync, ComponentRegistry } = e;
-    ComponentRegistry.registerComponent(HighchartsComponent);
-    ComponentRegistry.registerComponent(KPIComponent);
+    ComponentRegistry.registerComponent('Highcharts', HighchartsComponent);
+    ComponentRegistry.registerComponent('KPI', KPIComponent);
 
     Sync.defaultHandlers = {
         ...Sync.defaultHandlers,

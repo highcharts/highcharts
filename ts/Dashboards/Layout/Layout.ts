@@ -462,6 +462,10 @@ namespace Layout {
         rowClassName?: string;
         /**
          * The class name applied to each cell that is in that exact layout.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/cell-class-name/ | Set cell class names}
          **/
         cellClassName?: string;
         /**

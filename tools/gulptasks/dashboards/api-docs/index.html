@@ -94,6 +94,7 @@
                 location.hash.length > 1 ?
                     'typedoc/' + location.hash
                         .substring(1)
+                        .replace('%23', '#')
                         .replace(/(#)|$/, '.html$1') :
                     'typedoc/index.html'
             ));
@@ -105,10 +106,19 @@
                 var iframeWindow = e.target.contentWindow,
                     hash = iframeWindow.location.href
                         .split('/typedoc/')[1]
-                        .replace('.html', '');
+                        .replace('.html', '')
+                        .replace('%23', '#');
 
                 if (hash !== 'index') {
                     history.replaceState(null, null, '#' + hash);
+                }
+
+                links = iframeWindow.document.body.getElementsByTagName('a');
+
+                for (let i = 0, iEnd = links.length; i < iEnd; ++i) {
+                    if (links[i].href?.indexOf('jsfiddle') !== -1) {
+                        links[i].setAttribute('target', '_blank');
+                    }
                 }
 
                 iframeWindow.onhashchange = function (e) {

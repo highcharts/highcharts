@@ -21,7 +21,13 @@ if (chartArray.length > 1) {
 }
 
 function indicators() {
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@2c6e89641888ae94c988649d96552c06c4e47351/samples/data/aapl-ohlcv.json', function (data) {
+    (async () => {
+
+        // Load the dataset
+        const data = await fetch(
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@2c6e89641888ae94c988649d96552c06c4e47351/samples/data/aapl-ohlcv.json'
+        ).then(response => response.json());
+
         // split the data set into ohlc and volume
         var ohlc = [],
             volume = [],
@@ -165,253 +171,261 @@ function indicators() {
                 yAxis: 2
             }]
         });
-    });
+
+    })();
 }
 
 function compare() {
-    var seriesOptions = [],
-        seriesCounter = 0,
-        names = ['MSFT', 'AAPL', 'GOOG'];
+    (async () => {
 
-    /**
-     * Create the chart when all data is loaded
-     * @return {undefined}
-     */
-    function createChart() {
+        var seriesOptions = [],
+            seriesCounter = 0,
+            names = ['MSFT', 'AAPL', 'GOOG'];
 
-        Highcharts.stockChart('container', {
-            chart: {
-                borderWidth: 0,
-                borderColor: 'white',
-                backgroundColor: {
-                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-                    stops: [
-                        [0, '#1f1836'],
-                        [1, '#45445d']
-                    ]
-                }
-            },
-            rangeSelector: {
-                selected: 4,
-                labelStyle: {
-                    color: '#fff'
+        /**
+         * Create the chart when all data is loaded
+         * @return {undefined}
+         */
+        function createChart() {
+
+            Highcharts.stockChart('container', {
+                chart: {
+                    borderWidth: 0,
+                    borderColor: 'white',
+                    backgroundColor: {
+                        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                        stops: [
+                            [0, '#1f1836'],
+                            [1, '#45445d']
+                        ]
+                    }
                 },
-                verticalAlign: 'top',
-                buttonTheme: {
-                    fill: '#46465C',
-                    stroke: '#BBBAC5',
-                    'stroke-width': 1,
-                    height: 30,
-                    y: 5,
-                    style: {
+                rangeSelector: {
+                    selected: 4,
+                    labelStyle: {
                         color: '#fff'
                     },
-                    states: {
-                        hover: {
-                            fill: '#1f1836',
-                            style: {
-                                color: '#fff'
-                            },
-                            'stroke-width': 1,
-                            stroke: 'white'
+                    verticalAlign: 'top',
+                    buttonTheme: {
+                        fill: '#46465C',
+                        stroke: '#BBBAC5',
+                        'stroke-width': 1,
+                        height: 30,
+                        y: 5,
+                        style: {
+                            color: '#fff'
                         },
-                        select: {
-                            fill: '#1f1836',
-                            style: {
-                                color: '#fff'
+                        states: {
+                            hover: {
+                                fill: '#1f1836',
+                                style: {
+                                    color: '#fff'
+                                },
+                                'stroke-width': 1,
+                                stroke: 'white'
                             },
-                            'stroke-width': 1,
-                            stroke: 'white'
+                            select: {
+                                fill: '#1f1836',
+                                style: {
+                                    color: '#fff'
+                                },
+                                'stroke-width': 1,
+                                stroke: 'white'
+                            }
+                        }
+                    },
+                    dropdown: 'always',
+                    inputDateFormat: '%b %e, %y',
+                    inputBoxHeight: 30,
+                    inputSpacing: 2
+                },
+                navigator: {
+                    height: 30,
+                    xAxis: {
+                        labels: {
+                            style: {
+                                color: 'transparent'
+                            }
+                        }
+                    },
+                    maskFill: 'rgba(135,180,230,0.5)',
+                    series: {
+                        label: {
+                            enabled: false
+                        },
+                        dataLabels: {
+                            enabled: false
                         }
                     }
                 },
-                dropdown: 'always',
-                inputDateFormat: '%b %e, %y',
-                inputBoxHeight: 30,
-                inputSpacing: 2
-            },
-            navigator: {
-                height: 30,
+                credits: {
+                    enabled: false
+                },
+                exporting: {
+                    enabled: false
+                },
                 xAxis: {
+                    gridLineColor: '#707073',
                     labels: {
                         style: {
-                            color: 'transparent'
-                        }
-                    }
-                },
-                maskFill: 'rgba(135,180,230,0.5)',
-                series: {
-                    label: {
-                        enabled: false
-                    },
-                    dataLabels: {
-                        enabled: false
-                    }
-                }
-            },
-            credits: {
-                enabled: false
-            },
-            exporting: {
-                enabled: false
-            },
-            xAxis: {
-                gridLineColor: '#707073',
-                labels: {
-                    style: {
-                        color: '#fff',
-                        fontSize: '12px'
-                    }
-                },
-                lineColor: '#707073',
-                minorGridLineColor: '#505053',
-                tickColor: '#707073',
-                min: Date.UTC(2013, 4, 5),
-                max: Date.UTC(2013, 4, 10)
-            },
-            yAxis: {
-                gridLineColor: '#707073',
-                labels: {
-                    formatter: function () {
-                        return (this.value > 0 ? ' + ' : '') + this.value + '%';
-                    },
-                    style: {
-                        color: '#fff',
-                        fontSize: '12px'
-                    }
-                },
-                lineColor: '#707073',
-                minorGridLineColor: '#505053',
-                tickColor: '#707073',
-                tickWidth: 1,
-                plotLines: [{
-                    value: 0,
-                    width: 2,
-                    color: 'silver'
-                }]
-            },
-            plotOptions: {
-                series: {
-                    compare: 'percent',
-                    showInNavigator: true,
-                    label: {
-                        style: {
-                            fontSize: '14px'
+                            color: '#fff',
+                            fontSize: '12px'
                         }
                     },
-                    dataLabels: {
-                        color: '#46465C',
-                        style: {
-                            fontSize: '14px'
-                        }
-                    }
-                }
-            },
-            tooltip: {
-                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
-                valueDecimals: 2,
-                split: true
-            },
-            series: seriesOptions,
-            responsive: {
-                rules: [
-                    {
-                        condition: {
-                            // /up tp this
-                            maxWidth: 219
+                    lineColor: '#707073',
+                    minorGridLineColor: '#505053',
+                    tickColor: '#707073',
+                    min: Date.UTC(2013, 4, 5),
+                    max: Date.UTC(2013, 4, 10)
+                },
+                yAxis: {
+                    gridLineColor: '#707073',
+                    labels: {
+                        formatter: function () {
+                            return (this.value > 0 ? ' + ' : '') + this.value + '%';
                         },
-                        chartOptions: {
-                            chart: {
-                                margin: [5, 10, 0, 10],
-                                spacing: 0,
-                                height: 140
-                            },
-                            navigator: {
-                                enabled: false
-                            },
-                            scrollbar: {
-                                enabled: false
-                            },
-                            rangeSelector: {
-                                enabled: true,
-                                inputEnabled: false
-                            },
-                            xAxis: {
-                                visible: false
-                            },
-                            yAxis: {
-                                visible: true
+                        style: {
+                            color: '#fff',
+                            fontSize: '12px'
+                        }
+                    },
+                    lineColor: '#707073',
+                    minorGridLineColor: '#505053',
+                    tickColor: '#707073',
+                    tickWidth: 1,
+                    plotLines: [{
+                        value: 0,
+                        width: 2,
+                        color: 'silver'
+                    }]
+                },
+                plotOptions: {
+                    series: {
+                        compare: 'percent',
+                        showInNavigator: true,
+                        label: {
+                            style: {
+                                fontSize: '14px'
                             }
-                        }
-                    },
-                    {
-                        condition: {
-                            minWidth: 220
                         },
-                        chartOptions: {
-                            chart: {
-                                margin: [15, 15, 20, 10],
-                                height: 260
-                            },
-                            navigator: {
-                                enabled: true
-                            },
-                            scrollbar: {
-                                enabled: false
-                            },
-                            rangeSelector: {
-                                enabled: true,
-                                inputEnabled: false
-                            },
-                            xAxis: {
-                                visible: true,
-                                top: '0%'
-                            },
-                            yAxis: {
-                                visible: true,
-                                top: '0%',
-                                height: '100%'
+                        dataLabels: {
+                            color: '#46465C',
+                            style: {
+                                fontSize: '14px'
                             }
                         }
                     }
-                ]
-            }
-        });
-    }
-
-    function success(data) {
-        var name = this.url.match(/(msft|aapl|goog)/u)[0].toUpperCase();
-        var i = names.indexOf(name);
-        seriesOptions[i] = {
-            name: name,
-            data: data
-        };
-
-        // As we're loading the data asynchronously, we don't know what order it
-        // will arrive. So we keep a counter and create the chart when all the data is loaded.
-        seriesCounter += 1;
-
-        if (seriesCounter === names.length) {
-            createChart();
+                },
+                tooltip: {
+                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+                    valueDecimals: 2,
+                    split: true
+                },
+                series: seriesOptions,
+                responsive: {
+                    rules: [
+                        {
+                            condition: {
+                                // /up tp this
+                                maxWidth: 219
+                            },
+                            chartOptions: {
+                                chart: {
+                                    margin: [5, 10, 0, 10],
+                                    spacing: 0,
+                                    height: 140
+                                },
+                                navigator: {
+                                    enabled: false
+                                },
+                                scrollbar: {
+                                    enabled: false
+                                },
+                                rangeSelector: {
+                                    enabled: true,
+                                    inputEnabled: false
+                                },
+                                xAxis: {
+                                    visible: false
+                                },
+                                yAxis: {
+                                    visible: true
+                                }
+                            }
+                        },
+                        {
+                            condition: {
+                                minWidth: 220
+                            },
+                            chartOptions: {
+                                chart: {
+                                    margin: [15, 15, 20, 10],
+                                    height: 260
+                                },
+                                navigator: {
+                                    enabled: true
+                                },
+                                scrollbar: {
+                                    enabled: false
+                                },
+                                rangeSelector: {
+                                    enabled: true,
+                                    inputEnabled: false
+                                },
+                                xAxis: {
+                                    visible: true,
+                                    top: '0%'
+                                },
+                                yAxis: {
+                                    visible: true,
+                                    top: '0%',
+                                    height: '100%'
+                                }
+                            }
+                        }
+                    ]
+                }
+            });
         }
-    }
 
-    Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/msft-c.json',
-        success
-    );
-    Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/aapl-c.json',
-        success
-    );
-    Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/goog-c.json',
-        success
-    );
+        function success(url, data) {
+            var name = url.match(/(msft|aapl|goog)/u)[0].toUpperCase();
+            var i = names.indexOf(name);
+            seriesOptions[i] = {
+                name: name,
+                data: data
+            };
+
+            // As we're loading the data asynchronously, we don't know what order it
+            // will arrive. So we keep a counter and create the chart when all the data is loaded.
+            seriesCounter += 1;
+
+            if (seriesCounter === names.length) {
+                createChart();
+            }
+        }
+
+        await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/msft-c.json')
+            .then(response => response.json())
+            .then(data => success('msft', data));
+
+        await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/aapl-c.json')
+            .then(response => response.json())
+            .then(data => success('aapl', data));
+
+        await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/goog-c.json')
+            .then(response => response.json())
+            .then(data => success('goog', data));
+    })();
 }
 
 function ao() {
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@fd0e573985/samples/data/aapl-ohlc-ab.json', function (data) {
+    (async () => {
+
+        // Load the dataset
+        const data = await fetch(
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@fd0e573985/samples/data/aapl-ohlc-ab.json'
+        ).then(response => response.json());
 
         Highcharts.stockChart('container', {
             chart: {
@@ -590,8 +604,7 @@ function ao() {
                 ]
             }
         });
-    });
-
+    })();
 }
 
 function dynamic() {
@@ -781,7 +794,13 @@ function dynamic() {
 }
 
 function ab() {
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@fd0e573985/samples/data/aapl-ohlc-ab.json', function (data) {
+    (async () => {
+
+        // Load the dataset
+        const data = await fetch(
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@fd0e573985/samples/data/aapl-ohlc-ab.json'
+        ).then(response => response.json());
+
         Highcharts.stockChart('container', {
             rangeSelector: {
                 selected: 4,
@@ -926,12 +945,16 @@ function ab() {
                 ]
             }
         });
-    });
-
+    })();
 }
 
 function flags() {
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json', function (data) {
+    (async () => {
+
+        // Load the dataset
+        const data = await fetch(
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+        ).then(response => response.json());
 
         var lastDate = data[data.length - 1][0],  // Get year of last data point
             days = 24 * 36e5; // Milliseconds in a day
@@ -1060,7 +1083,8 @@ function flags() {
                 shape: 'squarepin'
             }]
         });
-    });
+
+    })();
 }
 
 const charts = {

@@ -1,5 +1,5 @@
 import DataCursor from '/base/code/es-modules/Data/DataCursor.js';
-import DataCursorHelper from '/base/code/es-modules/Dashboards/SerializeHelper/DataCursorHelper.js';
+import DataCursorHelper from '/base/code/dashboards/es-modules/Dashboards/SerializeHelper/DataCursorHelper.js';
 
 QUnit.test('DataCursorHelper.toJSON', function (assert) {
 

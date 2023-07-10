@@ -13,15 +13,15 @@ When you are ready to create your first simple dashboard, please follow these st
 Thus, we have to import the main dashboard package, the Highcharts library and a plugin that allows implementing the Highcharts chart inside the dashboard.
 
     ```html
-        <script src="https://code.highcharts.com/dashboards.js"></script>
+        <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
         <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/dashboards-plugin.js"></script>
+        <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
     ```
 
 3. In order to properly display the whole dashboard, we need some styling. You can get the basic one by importing the modules to the CSS file as shown below.
 
     ```css
-        @import url("https://code.highcharts.com/css/dashboards/gui.css");
+        @import url("https://code.highcharts.com/css/dashboards.css");
     ```
 
 4. With that, we are ready to start working on an actual dashboard config. Inside the script tag, create a new instance of the dashboard. <br>
@@ -62,7 +62,7 @@ Thus, we have to import the main dashboard package, the Highcharts library and a
 
     ```js
         components: [{
-            type: 'html',
+            type: 'HTML',
             cell: 'dashboard-col-0',
             elements: [
                 {

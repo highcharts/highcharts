@@ -1862,7 +1862,7 @@ namespace Tooltip {
         plotY: number;
     }
 
-    export type ShapeValue = ('callout'|'circle'|'square'|'rect');
+    export type ShapeValue = ('callout'|'circle'|'rect');
 
     /* *
      *
@@ -1995,7 +1995,7 @@ export default Tooltip;
  */
 
 /**
- * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
+ * @typedef {"callout"|"circle"|"rect"} Highcharts.TooltipShapeValue
  */
 
 ''; // keeps doclets above in JS file

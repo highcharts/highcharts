@@ -1,0 +1,20 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/css/datagrid.css");
+@import url("https://code.highcharts.com/css/dashboards.css");
+
+#csv {
+    display: none;
+}
+
+.custom-1 {
+    background-color: #8cda58;
+    padding: 20px 10px;
+}
+
+.custom-rest {
+    background-color: #e295ee;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 4px 6px 10px #0000008c;
+    margin-top: 15px;
+}

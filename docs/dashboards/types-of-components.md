@@ -18,7 +18,7 @@ The most basic and generic component type. Allows you to add everything which co
 Code snippet:
 ``` JS
     {
-        type: 'html',
+        type: 'HTML',
         cell: 'dashboard-1',
         elements: [{
             tagName: 'img',
@@ -28,14 +28,14 @@ Code snippet:
         }]
     }
 ```
-Also please check the [Custom Component](http://www.highcharts.com/docs/dashboards/custom-component) section below, where you can find alternative ways to create HTML components.
+Also please check the [Custom Component](https://www.highcharts.com/docs/dashboards/custom-component) section below, where you can find alternative ways to create HTML components.
 
 ### Highcharts Component
 The option to include a Highcharts chart in one of the components is available out of the box. Here is the set of files that need to be included to make the Highcharts component work.
 ```html
-    <script src="https://code.highcharts.com/dashboards.js"></script>
+    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/dashboards-plugin.js"></script>
+    <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
 ```
 
 Also the set of CSS styles needs to be imported, so that the Highcharts displays correctly.
@@ -43,15 +43,15 @@ Also the set of CSS styles needs to be imported, so that the Highcharts displays
     @import url("https://code.highcharts.com/css/highcharts.css");
 ```
 
-The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the store <LINK TO STORE> to connect some dynamic data. The data gets parsed through the `columnAssignment` option to map correct values from the store to reflect them in the series. 
+The last thing that you have to do is to specify the `type: 'Highcharts'` in the component’s config and that’s it. All of the charts options can be defined in the `chartOptions` object. You can either define static data, as you would do in the basic highcharts chart, or use the [dataPool](https://www.highcharts.com/docs/dashboards/data-handling) to connect some dynamic data. The data gets parsed through the `columnAssignment` option to map correct values from the connector to reflect them in the series. 
 [Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/component-highcharts). The null value keeps columns selectively out of the chart.
 
 ### DataGrid Component
 To visualize data in a row column format you can use the DataGrid component. Same as in Highcharts component, first, it needs to be imported. Here is the set of files.
 ```html
-    <script src="https://code.highcharts.com/dashboards.js"></script>
-    <script src="https://code.highcharts.com/datagrid.js"></script>
-    <script src="https://code.highcharts.com/modules/dashboards-plugin.js"></script>
+    <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+    <script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+    <script src="https://code.highcharts.com/dashboards/modules/dashboards-plugin.js"></script>
 ```
 
 Also the set of CSS styles needs to be imported, so that the DataGrid displays correctly.
@@ -59,7 +59,7 @@ Also the set of CSS styles needs to be imported, so that the DataGrid displays c
     @import url("https://code.highcharts.com/css/datagrid.css");
 ```
 Then you need to specify the component type with `type: 'DataGrid'`.
-If you connect this component to the store, the content of the component will be automatically filled with data, and will allow the user to change the data in the store and automatically in all components that also are connected to this store, by editing values in the cell. [Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/datagrid-sync)
+If you connect this component to the data connector, the content of the component will be automatically filled with data, and will allow the user to change the data in the data connector and automatically in all components that also are connected to this connector, by editing values in the cell. [Here is the example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/datagrid-sync)
 
 ### KPI Component
 Another type of component type that allows you to visualize key performance indicators is KPIComponent. This component type is added with the dashboard package, so nothing apart from the basic dashboards package needs to be imported.

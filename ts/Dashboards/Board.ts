@@ -659,6 +659,19 @@ namespace Board {
         editMode?: EditMode.Options;
         /**
          * List of components to add to the board.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/component-highcharts/  | Highcharts component}
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-html/ | HTML component}
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/component-kpi/ | KPI component}
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component/ | Custom component}
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/datagrid-component/datagrid-options/ | Datagrid component}
+         *
          **/
         components?: Array<Partial<ComponentType['options']>>;
         /**
@@ -672,6 +685,10 @@ namespace Board {
         layoutsJSON?: Array<Layout.JSON>;
         /**
          * Responsive breakpoints for the board - small, medium and large.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/responsive/responsive-breakpoints/ | Change responsive breakpoints}
          **/
         responsiveBreakpoints?: ResponsiveBreakpoints;
     }
@@ -831,7 +848,7 @@ namespace Board {
  * */
 
 Serializable.registerClassPrototype('Board', Board.prototype);
-ComponentRegistry.registerComponent(HTMLComponent);
+ComponentRegistry.registerComponent('HTML', HTMLComponent);
 
 /* *
  *
