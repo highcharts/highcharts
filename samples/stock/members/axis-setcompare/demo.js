@@ -1,7 +1,8 @@
-var seriesOptions = [],
-    seriesCounter = 0,
-    names = ['MSFT', 'AAPL', 'GOOG'],
+let seriesCounter = 0,
     chart;
+
+const seriesOptions = [],
+    names = ['MSFT', 'AAPL', 'GOOG'];
 
 /**
  * Create the chart
@@ -17,7 +18,7 @@ function createChart() {
         yAxis: {
             labels: {
                 formatter: function () {
-                    var compare = this.axis.series[0].userOptions.compare || 'none';
+                    const compare = this.axis.series[0].userOptions.compare || 'none';
                     return (compare !== 'none' && this.value > 0 ? ' + ' : '') + this.value +
                         { none: ' USD', value: ' USD', percent: ' %' }[compare];
                 }
@@ -41,8 +42,8 @@ function createChart() {
 }
 
 function success(data) {
-    var name = this.url.match(/(msft|aapl|goog)/)[0].toUpperCase();
-    var i = names.indexOf(name);
+    const name = this.url.match(/(msft|aapl|goog)/)[0].toUpperCase();
+    const i = names.indexOf(name);
     seriesOptions[i] = {
         name: name,
         data: data
@@ -73,7 +74,7 @@ Highcharts.getJSON(
 // buttons behaviour
 document.querySelectorAll('button.compare').forEach(function (button) {
     button.addEventListener('click', function () {
-        var compare = this.getAttribute('data-compare');
+        const compare = this.getAttribute('data-compare');
         chart.yAxis[0].setCompare(compare);
     });
 });

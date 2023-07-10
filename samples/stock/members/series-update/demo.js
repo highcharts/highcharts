@@ -17,7 +17,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
     );
 
     // create the chart
-    var chart = Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
 
 
         rangeSelector: {
@@ -36,7 +36,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
         }]
     });
 
-    var enableMarkers = true,
+    let enableMarkers = true,
         color = false;
 
     // Toggle point markers
