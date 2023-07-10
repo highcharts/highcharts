@@ -662,15 +662,15 @@ namespace Board {
          *
          * Try it:
          *
-         * {@link https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts | Highcharts component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-highcharts | Highcharts component}
          *
-         * {@link https://www.highcharts.com/samples/embed/dashboards/components/component-html | HTML component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-html | HTML component}
          *
-         * {@link https://www.highcharts.com/samples/embed/dashboards/components/component-kpi | KPI component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-kpi | KPI component}
          *
-         * {@link https://www.highcharts.com/samples/embed/dashboards/components/custom-component | Custom component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component | Custom component}
          *
-         * {@link https://www.highcharts.com/samples/nonav/dashboards/datagrid-component/datagrid-options | Datagrid component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/datagrid-component/datagrid-options | Datagrid component}
          *
          **/
         components?: Array<Partial<ComponentType['options']>>;
