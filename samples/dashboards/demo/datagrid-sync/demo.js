@@ -75,10 +75,6 @@ Dashboards.board('container', {
                 Food: 'x',
                 'Vitamin A': 'y'
             },
-            title: {
-                className: 'component-title',
-                text: 'allowConnectorUpdate: true'
-            },
             chartOptions: Highcharts.merge(chartOptions, {
                 title: {
                     text: 'Drag points to update all'
@@ -96,10 +92,6 @@ Dashboards.board('container', {
             columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y'
-            },
-            title: {
-                className: 'component-title',
-                text: 'allowConnectorUpdate: false'
             },
             allowConnectorUpdate: false,
             chartOptions: Highcharts.merge(chartOptions, {
