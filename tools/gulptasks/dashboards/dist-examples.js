@@ -1,6 +1,8 @@
+/* eslint-disable no-console */
+
 const Gulp = require('gulp');
 const { join } = require('node:path');
-const { writeFile, readFile, rm } = require('node:fs/promises');
+const { writeFile, readFile, rm, lstat } = require('node:fs/promises');
 const { getDemoBuildPath } = require('../dist-examples.js');
 
 const TARGET_DIRECTORY = join('build', 'dist');
@@ -60,10 +62,27 @@ ${newContent}
     );
 }
 
-async function dashboardsDistExamples() {
+async function dashboardsDistExamples(done) {
     const demoPath = join(getDemoBuildPath().replace('tmp/demo', ''), 'frontend', 'tmp');
 
-    // TODO: error if demoPath does not exist
+    await lstat(demoPath)
+        .catch(error => {
+            if (error.code === 'ENOENT') {
+                console.error(`Could not find ${demoPath}.
+
+See https://github.com/highcharts/highcharts-demo-manager/tree/master/frontend for instructions on how to build the required files.
+
+Exiting...
+                `);
+
+                done();
+                return;
+
+            }
+
+            console.error(error);
+            done();
+        });
 
     const products = [{
         name: 'Highcharts Dashboards',
