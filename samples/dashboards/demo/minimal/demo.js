@@ -21,10 +21,6 @@ Dashboards.board('container', {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'title'
-                }]
-            }, {
-                cells: [{
                     responsive: {
                         small: {
                             width: '100%'

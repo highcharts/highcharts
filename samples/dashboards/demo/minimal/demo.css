@@ -6,12 +6,10 @@
     display: none;
 }
 
-#title h1 {
-    text-align: center;
-    padding: 0;
+h1#title {
+    padding-top: 10px;
     margin: 0;
-}
-
-#title .highcharts-dashboards-component {
-    background-color: transparent;
+    background-color: #3d3d3d;
+    text-align: center;
+    color: white;
 }
