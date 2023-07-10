@@ -82,6 +82,9 @@ Dashboards.board('container', {
             sync: {
                 highlight: true,
                 extremes: true
+            },
+            columnAssignment: {
+                notVisible: null
             }
         }
     ]

@@ -21,15 +21,16 @@
 
 import type Cell from '../Layout/Cell';
 import type DataGrid from '../../DataGrid/DataGrid';
+import type DataTable from '../../Data/DataTable';
 import type DataGridOptions from '../../DataGrid/DataGridOptions';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
-import U from '../../Core/Utilities.js';
-const { createElement, merge, uniqueKey } = U;
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
+import U from '../../Core/Utilities.js';
+const { merge, uniqueKey } = U;
 
 /* *
  *
@@ -224,7 +225,10 @@ class DataGridComponent extends Component {
      *
      * */
 
-    /** @private */
+    /**
+     * Triggered on component initialization.
+     * @private
+     */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -236,7 +240,6 @@ class DataGridComponent extends Component {
             !this.connectorListeners.length
         ) {
             const connectorListeners = this.connectorListeners;
-            // this.on('tableChanged', (): void => this.updateSeries());
 
             // Reload the store when polling.
             connectorListeners.push(this.connector
@@ -297,7 +300,7 @@ class DataGridComponent extends Component {
             this.dataGrid &&
             this.dataGrid.dataTable.modified !== this.connector.table.modified
         ) {
-            this.dataGrid.update({ dataTable: this.connector.table.modified });
+            this.dataGrid.update({ dataTable: this.filterColumns() });
         }
 
         this.sync.start();
@@ -374,6 +377,39 @@ class DataGridComponent extends Component {
         }
     }
 
+    /**
+     * Based on the `columnAssignment` option, filter the columns of the table.
+     *
+     * @internal
+     */
+    private filterColumns(): DataTable|undefined {
+        const table = this.connector?.table.modified,
+            columnAssignment = this.options.columnAssignment || {};
+
+        if (table) {
+            const columnsToDelete = table.getColumnNames().filter((columnName): boolean => {
+                if (columnAssignment) {
+                    // Don't add columns that are explicitly mapped to null.
+                    if (columnAssignment[columnName] === null) {
+                        return true;
+                    }
+
+                    // Show the other columns.
+                    return false;
+                }
+
+                // Show all columns if no columnAssignment is provided.
+                return false;
+            });
+
+            // On a fresh table clone remove the columns that are not mapped.
+            const filteredTable = table.clone();
+            filteredTable.deleteColumns(columnsToDelete);
+
+            return filteredTable;
+        }
+    }
+
     /** @private */
     public toJSON(): DataGridComponent.ClassJSON {
         const dataGridOptions = JSON.stringify(this.options.dataGridOptions);
@@ -437,7 +473,7 @@ namespace DataGridComponent {
         dataGridID?: string;
 
         /**
-         * Callback to use when a change in the data grid occures.
+         * Callback to use when a change in the data grid occurs.
          */
         onUpdate: typeof DataGridComponent.onUpdate
 
@@ -459,17 +495,20 @@ namespace DataGridComponent {
         chartID?: string;
 
         /**
-         * Names / aliases that should be mapped to xAxis values. You can use
-         * null to keep columns selectively out of the chart.
+         * When the `columnAssignment` set for given column is `null`, the
+         * column is not included in the component `dataTable` thus it is not
+         * rendered in the data grid.
+         *
+         * Alternatively, the column visibility can be controlled by the
+         * `dataGridOptions.columns` option.
          * ```
          * Example
          * columnAssignment: {
-         *      'Food': 'x',
-         *      'Vitamin A': 'y'
+         *      'Vitamin A': null
          * }
          * ```
          */
-        columnAssignment?: Record<string, string | null>;
+        columnAssignment?: Record<string, null>;
 
         /** @private */
         tableAxisMap?: Record<string, string | null>;
