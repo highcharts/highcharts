@@ -76,6 +76,7 @@ Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
+                className: 'component-title',
                 text: 'allowConnectorUpdate: true'
             },
             chartOptions: Highcharts.merge(chartOptions, {
@@ -97,6 +98,7 @@ Dashboards.board('container', {
                 'Vitamin A': 'y'
             },
             title: {
+                className: 'component-title',
                 text: 'allowConnectorUpdate: false'
             },
             allowConnectorUpdate: false,
