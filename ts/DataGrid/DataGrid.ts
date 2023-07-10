@@ -718,7 +718,7 @@ class DataGrid {
      * @internal
      */
     private updateInnerContainerWidth(): void {
-        const newWidth = this.scrollContainer.offsetWidth;
+        const newWidth = this.outerContainer.offsetWidth;
         this.innerContainer.style.width = newWidth + 'px';
     }
 
