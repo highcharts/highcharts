@@ -55,13 +55,7 @@
                 text: 'World heritage sites in China'
             },
             align: 'left',
-            symbolWidth: 20,
-            symbolHeight: 20,
-            itemStyle: {
-                textOutline: '1 1 1px rgba(255,255,255)'
-            },
             backgroundColor: 'rgba(255,255,255,0.8)',
-            float: true,
             borderColor: '#e6e6e6',
             borderWidth: 1,
             borderRadius: 2,
