@@ -5,6 +5,8 @@ const { join } = require('node:path');
 const { writeFile, readFile, rm, lstat } = require('node:fs/promises');
 const { getDemoBuildPath } = require('../dist-examples.js');
 
+const yargs = require('yargs');
+
 const TARGET_DIRECTORY = join('build', 'dist');
 
 async function readJSONFile(filePath) {
@@ -58,8 +60,21 @@ ${newContent}
     }
 }
 
+const helpText =
+    `
+Requires demo.path to be set in git-ignore-me.properties. This should be set to the output folder of the highcharts-demo-manager frontend. Example: '../highcharts-demo-manager/frontend/tmp/';
+
+Resources:
+* https://github.com/highcharts/highcharts-demo-manager/tree/master/frontend
+    `;
+
 async function dashboardsDistExamples(done) {
-    const demoPath = join(getDemoBuildPath().replace('tmp/demo', ''), 'frontend', 'tmp');
+    if (yargs.argv.helpme) {
+        console.log(helpText);
+        done();
+    }
+
+    const demoPath = getDemoBuildPath();
 
     await lstat(demoPath)
         .catch(error => {
