@@ -303,8 +303,9 @@ class GeoHeatmapSeries extends MapSeries {
              * Make the geoheatmap render its data points as an interpolated
              * image. It can be used to show a Temperature Map-like charts.
              *
-             * @sample maps/series-geoheatmap/earth-statistics-august-2022
-             *         Advanced demo of GeoHeatmap interpolation
+             * @sample maps/demo/geoheatmap-earth-statistics
+             *         Advanced demo of GeoHeatmap interpolation with multiple
+             *         datasets
              *
              * @type      {boolean}
              * @default   false
@@ -325,9 +326,6 @@ class GeoHeatmapSeries extends MapSeries {
              *
              * @sample maps/series-geoheatmap/turkey-fire-areas
              *         Simple demo of GeoHeatmap interpolation
-             * @sample maps/demo/geoheatmap-europe/geoheatmap-earth-statistics
-             *         Advanced demo of GeoHeatmap interpolation with multiple
-             *         datasets
              *
              * @type      {number}
              * @default   1
