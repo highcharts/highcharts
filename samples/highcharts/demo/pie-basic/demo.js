@@ -1,22 +1,17 @@
-// Data retrieved from https://netmarketshare.com
 Highcharts.chart('container', {
+    colors: ['#01BAF2', '#f6fa4b', '#FAA74B', '#baf201', '#f201ba'],
     chart: {
-        plotBackgroundColor: null,
-        plotBorderWidth: null,
-        plotShadow: false,
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares in May, 2020',
-        align: 'left'
+        text: 'Egg Yolk Composition'
     },
     tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        valueSuffix: '%'
     },
-    accessibility: {
-        point: {
-            valueSuffix: '%'
-        }
+    subtitle: {
+        text:
+        'Source:<a href="https://www.mdpi.com/2072-6643/11/3/684/htm" target="_default">MDPI</a>'
     },
     plotOptions: {
         pie: {
@@ -24,42 +19,39 @@ Highcharts.chart('container', {
             cursor: 'pointer',
             dataLabels: {
                 enabled: true,
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-            }
+                format: '{point.name}: {point.percentage:.1f}%'
+            },
+            showInLegend: true
         }
     },
-    series: [{
-        name: 'Brands',
-        colorByPoint: true,
-        data: [{
-            name: 'Chrome',
-            y: 70.67,
-            sliced: true,
-            selected: true
-        }, {
-            name: 'Edge',
-            y: 14.77
-        },  {
-            name: 'Firefox',
-            y: 4.86
-        }, {
-            name: 'Safari',
-            y: 2.63
-        }, {
-            name: 'Internet Explorer',
-            y: 1.53
-        },  {
-            name: 'Opera',
-            y: 1.40
-        }, {
-            name: 'Sogou Explorer',
-            y: 0.84
-        }, {
-            name: 'QQ',
-            y: 0.51
-        }, {
-            name: 'Other',
-            y: 2.6
-        }]
-    }]
+    series: [
+        {
+            name: 'Percentage',
+            colorByPoint: true,
+            data: [
+                {
+                    name: 'Water',
+                    y: 55.02
+                },
+                {
+                    name: 'Fat',
+                    sliced: true,
+                    selected: true,
+                    y: 26.71
+                },
+                {
+                    name: 'Carbohydrates',
+                    y: 1.09
+                },
+                {
+                    name: 'Protein',
+                    y: 15.5
+                },
+                {
+                    name: 'Ash',
+                    y: 1.68
+                }
+            ]
+        }
+    ]
 });
