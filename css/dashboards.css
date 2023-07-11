@@ -551,6 +551,9 @@
     background-color: transparent;
     border: none;
     text-align: left;
+    font-size: 1em;
+    padding-left: 3px;
+    cursor: pointer;
 }
 
 .highcharts-dashboards-edit-context-menu-item > button:hover {
