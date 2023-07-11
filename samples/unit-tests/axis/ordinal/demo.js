@@ -368,11 +368,9 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
         },
         series: [{
             points: [{
-                isInside: true, // #18459
                 x: 3,
                 plotX: -20
             }, {
-                isInside: true, // #18459
                 x: 4.2,
                 plotX: 80 // distance between points 100px
             }]
