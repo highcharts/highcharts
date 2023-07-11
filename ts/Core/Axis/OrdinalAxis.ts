@@ -501,22 +501,7 @@ namespace OrdinalAxis {
                 return positions[Math.floor(index)] + mantissa * distance;
             }
 
-            // For cases when the index is not in the extended ordinal position
-            // array, like when the value we are looking for exceed the
-            // available data, approximate that value based on the calculated
-            // slope.
-            const positionsLength = positions.length,
-                firstPositionsValue = positions[0],
-                lastPositionsValue = positions[positionsLength - 1],
-                slope = (
-                    lastPositionsValue - firstPositionsValue
-                ) / (positionsLength - 1);
-
-            if (index < 0) {
-                return firstPositionsValue + slope * index;
-            }
-
-            return lastPositionsValue + slope * (index - positionsLength);
+            return val;
         }
         return val;
     }
@@ -839,6 +824,9 @@ namespace OrdinalAxis {
                 ordinalIndex = getIndexInArray(extendedOrdinalPositions, val) -
                     originalPositionsReference;
             } else {
+                if (!toIndex) {
+                    return val;
+                }
                 // Since ordinal.slope is the average distance between 2
                 // points on visible plotArea, this can be used to calculete
                 // the approximate position of the point, which is outside

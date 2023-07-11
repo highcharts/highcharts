@@ -355,7 +355,7 @@ QUnit.test('findIndexOf', assert => {
 
 QUnit.test('lin2val- unit test for values outside the plotArea.', function (assert) {
     const axis = {
-        transA: -0.04,
+        transA: 0.04,
         min: 3.24,
         len: 500,
         translationSlope: 0.2,
@@ -425,9 +425,9 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     );
     assert.strictEqual(
         lin2val(-520 / axis.transA + axis.min),
-        -2,
+        -520 / axis.transA + axis.min, // #16784
         `For the pixel value lower than any point in EOP array, the function
-        should calculate an approximate value based on previous distance.`
+        should return requested value.`
     );
     assert.strictEqual(
         lin2val(380 / axis.transA + axis.min),
@@ -443,9 +443,9 @@ QUnit.test('lin2val- unit test for values outside the plotArea.', function (asse
     );
     assert.strictEqual(
         lin2val(1000 / axis.transA + axis.min),
-        12.2,
+        1000 / axis.transA + axis.min, // #16784
         `For the pixel value higher than any point in extendedOrdinalPositions,
-        array, the function should calculate value for that point.`
+        array, the function should return requested value.`
     );
 });
 
