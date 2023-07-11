@@ -501,7 +501,8 @@ namespace OrdinalAxis {
                 return positions[Math.floor(index)] + mantissa * distance;
             }
 
-            return val;
+            // If the index is outside positions array, return initial value
+            return val; // #16784
         }
         return val;
     }
@@ -825,6 +826,8 @@ namespace OrdinalAxis {
                     originalPositionsReference;
             } else {
                 if (!toIndex) {
+                    // If the index is outside positions array,
+                    // return initial value, #16784
                     return val;
                 }
                 // Since ordinal.slope is the average distance between 2
