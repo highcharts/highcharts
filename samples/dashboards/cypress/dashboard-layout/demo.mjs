@@ -11,12 +11,12 @@ let exportedLayoutId;
 const chartDemo = {
     type: 'Highcharts',
     chartOptions: {
-        type: 'line',
         series: [{
             name: 'Series from options',
             data: [1, 2, 3, 4]
         }],
         chart: {
+            type: 'pie',
             animation: false,
             height: 150
         }
@@ -74,35 +74,22 @@ Dashboards.board('container', {
                     }
                 }
             }]
-        },
-        resize: {
-            enabled: true,
-            styles: {
-                minWidth: 20,
-                minHeight: 50
-            },
-            type: 'xy',
-            snap: {
-                width: 20,
-                height: 20
-            }
         }
     },
     gui: {
         enabled: true,
         layouts: [{
-            id: 'layout-in-1', // mandatory
             rows: [{
                 cells: [{
-                    id: 'dashboard-col-nolayout-0'
+                    id: 'cell-1'
                 }, {
-                    id: 'dashboard-col-layout-0'
+                    id: 'cell-2'
                 }]
             }]
         }]
     },
     components: [{
-        cell: 'dashboard-col-nolayout-0',
+        cell: 'cell-1',
         type: 'Highcharts',
         chartOptions: {
             chart: {
@@ -123,7 +110,7 @@ Dashboards.board('container', {
             }
         }
     }, {
-        cell: 'dashboard-col-layout-0',
+        cell: 'cell-2',
         ...chartDemo
     }]
 });
