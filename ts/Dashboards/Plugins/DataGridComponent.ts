@@ -382,19 +382,19 @@ class DataGridComponent extends Component {
     }
 
     /**
-     * Based on the `columnAssignment` option, filter the columns of the table.
+     * Based on the `columnsToShow` option, filter the columns of the table.
      *
      * @internal
      */
     private filterColumns(): DataTable|undefined {
         const table = this.connector?.table.modified,
-            columnAssignment = this.options.columnAssignment || {};
+            columnsToShow = this.options.columnsToShow;
 
         if (table) {
             const columnsToDelete = table.getColumnNames().filter((columnName): boolean => {
-                if (columnAssignment) {
-                    // Don't add columns that are explicitly mapped to null.
-                    if (columnAssignment[columnName] === null) {
+                if (columnsToShow?.length) {
+                    // Don't add columns that are not listed.
+                    if (!columnsToShow.includes(columnName)) {
                         return true;
                     }
 
@@ -402,7 +402,7 @@ class DataGridComponent extends Component {
                     return false;
                 }
 
-                // Show all columns if no columnAssignment is provided.
+                // Show all columns if no columnsToShow is provided.
                 return false;
             });
 
@@ -513,20 +513,19 @@ namespace DataGridComponent {
         chartID?: string;
 
         /**
-         * When the `columnAssignment` set for given column is `null`, the
-         * column is not included in the component `dataTable` thus it is not
-         * rendered in the data grid.
+         * If the `columnsToShow` option is not provided, the data grid will
+         * calculate and include each column from the data connector.
+         * When declared, the data grid will only include the columns that are
+         * listed.
          *
          * Alternatively, the column visibility can be controlled by the
          * `dataGridOptions.columns` option.
          * ```
          * Example
-         * columnAssignment: {
-         *      'Vitamin A': null
-         * }
+         * columnsToShow: ['Food', 'Vitamin A']
          * ```
          */
-        columnAssignment?: Record<string, null>;
+        columnsToShow?: Array<string>;
 
         /** @private */
         tableAxisMap?: Record<string, string | null>;

@@ -51,7 +51,8 @@ Dashboards.board('container', {
             },
             columnAssignment: {
                 Food: 'x',
-                'Vitamin A': 'y'
+                'Vitamin A': 'y',
+                notVisible: null
             },
             chartOptions: {
                 xAxis: {
@@ -83,9 +84,7 @@ Dashboards.board('container', {
                 highlight: true,
                 extremes: true
             },
-            columnAssignment: {
-                notVisible: null
-            }
+            columnsToShow: ['Food', 'Vitamin A']
         }
     ]
 }, true);
