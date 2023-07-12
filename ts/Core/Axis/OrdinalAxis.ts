@@ -935,7 +935,7 @@ namespace OrdinalAxis {
                 extremes = axis.getExtremes(),
                 min = extremes.min,
                 max = extremes.max,
-                hasBreaks = axis.isXAxis && !!axis.options.breaks,
+
                 isOrdinal = axis.options.ordinal,
                 ignoreHiddenSeries =
                     axis.chart.options.chart.ignoreHiddenSeries;
@@ -953,7 +953,7 @@ namespace OrdinalAxis {
                 isBoosted = false;
 
             // Apply the ordinal logic
-            if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
+            if (isOrdinal) { // #4167 YAxis is never ordinal ?
                 let distanceBetweenPoint = 0;
 
                 axis.series.forEach(function (series, i): void {
@@ -981,8 +981,7 @@ namespace OrdinalAxis {
                         (!ignoreHiddenSeries || series.visible !== false) &&
                         (
                             (series as ScatterSeries)
-                                .takeOrdinalPosition !== false ||
-                            hasBreaks
+                                .takeOrdinalPosition !== false
                         )
                     ) {
 
