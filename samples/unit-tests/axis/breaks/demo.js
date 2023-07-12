@@ -568,6 +568,72 @@ QUnit.test(
             chart.series[0].points[0].graphic.attr('width') > 7,
             'Width is great enough'
         );
+
+        // #16368
+        chart.xAxis[0].update({
+            breaks: undefined
+        });
+
+        chart.series[0].update({
+            data: [
+                [
+                    1630421539000,
+                    36.25
+                ],
+                [
+                    1630422102000,
+                    35.8
+                ],
+                [
+                    1630424354000,
+                    36
+                ],
+                [
+                    1630425480000,
+                    35.5
+                ],
+                [
+                    1630426043000,
+                    35.45
+                ],
+                [
+                    1630427732000,
+                    36.4
+                ],
+                [
+                    1630428295000,
+                    36.15
+                ],
+                [
+                    1630429984000,
+                    35.95
+                ],
+                [
+                    1630430547000,
+                    36.15
+                ],
+                [
+                    1630431110000,
+                    36.1
+                ],
+                [
+                    1630433362000,
+                    34.05
+                ]
+            ]
+        });
+
+        const initialWidth = chart.series[0].points[0].shapeArgs.width;
+
+        chart.xAxis[0].update({
+            breaks: []
+        });
+
+        assert.strictEqual(
+            initialWidth,
+            chart.series[0].points[0].shapeArgs.width,
+            'Presence of axis.breaks option should not affect the columns width, #16368.'
+        );
     }
 );
 QUnit.test('Axis.brokenAxis.hasBreaks', function (assert) {
