@@ -92,11 +92,15 @@ async function task() {
         .then(() => void 0);
 }
 
-require('../scripts-css.js');
+// require('../scripts-css.js');
 require('./scripts-js.js');
 require('./scripts-ts.js');
 
 gulp.task(
     'dashboards/scripts-watch',
-    gulp.series('scripts-ts', 'scripts-css', 'scripts-js', task)
+    gulp.series(
+        'dashboards/scripts-ts',
+        'scripts-css',
+        'dashboards/scripts-js',
+    task)
 );

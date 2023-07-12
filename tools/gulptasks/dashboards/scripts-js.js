@@ -58,13 +58,13 @@ function scriptsJS() {
             // assemble JS files
             .fnFirstBuild()
             // deleting invalid masters DTS
-            .then(() => fsLib.getFilePaths('js/masters/', true).forEach(
+            .then(() => fsLib.getFilePaths('js/masters-dashboards/', true).forEach(
                 path => path.endsWith('.d.ts') && fsLib.deleteFile(path)
             ))
             // copy valid native DTS
             .then(() => fsLib.copyAllFiles(
-                'js/',
-                'code/es-modules/',
+                'js/masters-dashboards/',
+                'code/es-modules/masters-dashboards/',
                 true,
                 sourcePath => sourcePath.endsWith('.d.ts')
             ))
