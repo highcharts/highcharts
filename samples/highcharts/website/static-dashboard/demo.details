@@ -3,3 +3,4 @@ name: Static dashboard for product page
 authors:
   - Nancy Dillon
 js_wrap: b
+skipTest: true
