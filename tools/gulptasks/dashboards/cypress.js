@@ -12,23 +12,25 @@ const path = require('path');
  * */
 
 /**
- * Test TypeScript declarations in the code folder using tsconfig.json.
+ * Test Dashboards with Cypress.
  *
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function testDTS() {
+async function testCypress() {
 
     const processLib = require('../lib/process');
     const logLib = require('../lib/log');
 
     await processLib.exec(
-        'npx tsc -p ' +
-        path.join('test', 'typescript-dts', 'dashboards')
+        'npx cypress run --spec ' +
+            path.join('test', 'cypress', 'integration', 'Dashboards') +
+            ',',
+        +path.join('test', 'cypress', 'integration', 'DataGrid')
     );
 
-    logLib.success('Test DTS successful');
+    logLib.success('Cypress tests successful');
 
 }
 
-gulp.task('dashboards/test-dts', testDTS);
+gulp.task('dashboards/cypress', testCypress);
