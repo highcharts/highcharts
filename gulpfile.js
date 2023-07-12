@@ -26,6 +26,7 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/api',
     'dashboards/api-docs',
     'dashboards/api-server',
+    'dashboards/cypress',
     'dashboards/dist-build',
     'dashboards/dist-minify',
     'dashboards/dist-release',
