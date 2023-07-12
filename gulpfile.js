@@ -35,6 +35,7 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/lint',
     'dashboards/scripts-dts',
     'dashboards/scripts',
+    'dashboards/scripts-watch',
     'dashboards/test-dts',
     'dashboards/test-karma',
     'dashboards/test',
