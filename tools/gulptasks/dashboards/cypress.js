@@ -25,8 +25,8 @@ async function testCypress() {
     await processLib.exec(
         'npx cypress run --spec ' +
             path.join('test', 'cypress', 'integration', 'Dashboards') +
-            ',',
-        +path.join('test', 'cypress', 'integration', 'DataGrid')
+            ',' +
+            path.join('test', 'cypress', 'integration', 'DataGrid')
     );
 
     logLib.success('Cypress tests successful');
