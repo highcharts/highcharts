@@ -110,6 +110,11 @@ async function distBuild() {
     );
     logLib.success(`Created ${buildGfxTarget}`);
 
+    const JSONFilePath = path.join(buildCodeTarget, 'release.json');
+    fs.writeFileSync(JSONFilePath, JSON.stringify({ version: release }));
+
+    logLib.success(`Created ${JSONFilePath}`);
+
 }
 
 
