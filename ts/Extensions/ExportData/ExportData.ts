@@ -404,6 +404,11 @@ function chartGetDataRows(
                 (typeof d.y !== 'undefined') && d.name
             );
 
+            // If series type is 'xrange' include 'x2' in the point array map.
+            if (series.type === 'xrange') {
+                return ['x', 'x2', 'y'];
+            }
+
             if (
                 namedPoints.length &&
                 xAxis &&
@@ -524,6 +529,11 @@ function chartGetDataRows(
                 );
                 key = mockPoint.x as any;
 
+                // Handle 'x2' for 'xrange' series.
+                if (series.type === 'xrange') {
+                    key = mockPoint.x + ',' + mockPoint.x2;
+                }
+
                 if (defined(rows[key]) &&
                     rows[key].seriesIndices.includes(mockSeries.index)
                 ) {
@@ -572,10 +582,6 @@ function chartGetDataRows(
                 rows[key].name = name;
                 rows[key].xValues[xAxisIndex] = mockPoint.x;
 
-                if (mockPoint.x2) {
-                    rows[key].x2 = mockPoint.x2;
-                }
-
                 if (!defined(rows[key].seriesIndices)) {
                     rows[key].seriesIndices = [];
                 }
@@ -590,9 +596,14 @@ function chartGetDataRows(
                         // Y axis category if present
                         categoryAndDatetimeMap.categoryMap[prop][val],
                         // datetime yAxis
-                        categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
+                        prop === 'x2' ?
                             time.dateFormat(csvOptions.dateFormat as any, val) :
-                            null,
+                            categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
+                                time.dateFormat(
+                                    csvOptions.dateFormat as any,
+                                    val
+                                ) :
+                                null,
                         // linear/log yAxis
                         val
                     );
@@ -655,11 +666,6 @@ function chartGetDataRows(
                         csvOptions.dateFormat as any,
                         row.x
                     );
-                    if (row.x2) {
-                        category += ' - ' + time.dateFormat(
-                            csvOptions.dateFormat as any, row.x2
-                        );
-                    }
                 } else if (xAxis.categories) {
                     category = pick(
                         xAxis.names[row.x],
