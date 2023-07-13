@@ -85,4 +85,6 @@ const board = new Dashboards.Board('container', {...})
     }]
     ```
 
-6. With that config, your dashboard should look like the one in the [demo](https://www.highcharts.com/samples/embed/dashboards/basic/your-first-dashboard).
+6. With that config, your dashboard should look like the example below:
+
+<iframe src="https://www.highcharts.com/samples/embed/dashboards/basic/your-first-dashboard"></iframe>
