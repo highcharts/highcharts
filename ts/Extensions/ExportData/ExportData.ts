@@ -592,21 +592,29 @@ function chartGetDataRows(
                 while (j < valueCount) {
                     prop = pointArrayMap[j]; // y, z etc
                     val = (mockPoint as any)[prop];
-                    rows[key as any][i + j] = pick(
-                        // Y axis category if present
-                        categoryAndDatetimeMap.categoryMap[prop][val],
-                        // datetime yAxis
-                        prop === 'x2' ?
-                            time.dateFormat(csvOptions.dateFormat as any, val) :
-                            categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
-                                time.dateFormat(
-                                    csvOptions.dateFormat as any,
-                                    val
-                                ) :
-                                null,
-                        // linear/log yAxis
-                        val
-                    );
+                    let formattedTime = time.dateFormat(
+                            csvOptions.dateFormat as any,
+                            val
+                        ),
+                        isDateTimeAxis =
+                            categoryAndDatetimeMap.dateTimeValueAxisMap[prop];
+                    // x2 support for xrange series
+                    if (prop === 'x2') {
+                        if (xAxis.options.type === 'datetime') {
+                            rows[key as any][i + j] = formattedTime;
+                        } else {
+                            rows[key as any][i + j] = val;
+                        }
+                    } else {
+                        rows[key as any][i + j] = pick(
+                            // Y axis category if present
+                            categoryAndDatetimeMap.categoryMap[prop][val],
+                            // datetime yAxis
+                            isDateTimeAxis ? formattedTime : null,
+                            // linear/log yAxis
+                            val
+                        );
+                    }
                     j++;
                 }
 
