@@ -85,6 +85,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-webpacks',
     'test',
     'test-tree',
+    'test-links-docs',
     'test-ts',
     'reset-visual-references',
     'tsdoc',
