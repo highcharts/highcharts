@@ -10,7 +10,6 @@ const gulp = require('gulp');
  *
  * */
 
-const SOURCE_GLOB = './**/*.ts';
 
 /* *
  *
@@ -24,21 +23,22 @@ const SOURCE_GLOB = './**/*.ts';
  * @return {Promise<string>}
  *         Promise to keep with console output
  */
-function task() {
+async function task() {
 
     const processLib = require('../lib/process');
     const logLib = require('../lib/log');
+    const SOURCE_GLOB = './**/*.ts';
+    logLib.message('Linting [.ts/Dashboards/**/*.ts]...');
 
-    return new Promise((resolve, reject) => {
-
-        logLib.message('Linting [./Dashboards/**/*.ts]...');
-
-        processLib
-            .exec('cd ts/Dashboards && npx eslint --quiet "' + SOURCE_GLOB + '"')
-            .then(() => logLib.success('Finished linting'))
-            .then(resolve)
-            .catch(reject);
-    });
+    try {
+        await processLib.exec('npx eslint --quiet "' + SOURCE_GLOB + '"', {
+            cwd: './ts/Dashboards'
+        });
+        logLib.success('Finished linting');
+    } catch (reject) {
+        logLib.failure('Linting failed');
+        throw new Error('Linting failed');
+    }
 }
 
 gulp.task('dashboards/lint', task);
