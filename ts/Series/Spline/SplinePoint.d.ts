@@ -26,10 +26,23 @@ import type SplineSeries from './SplineSeries';
 
 declare class SplinePoint extends LinePoint {
     public doCurve?: boolean;
+    public leftCont?: ControlPoint;
     public options: SplinePointOptions;
+    public rightCont?: ControlPoint;
     public rightContX?: number;
     public rightContY?: number;
     public series: SplineSeries;
+}
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface ControlPoint {
+    plotX: number;
+    plotY: number;
 }
 
 /* *
