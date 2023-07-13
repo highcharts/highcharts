@@ -12,6 +12,9 @@ const gulp = require('gulp');
 
 const WATCH_GLOBS = [
     'ts/Dashboards/**/*.ts',
+    'ts/Data/**/*.ts',
+    'ts/DataGrid/**/*.ts',
+    'ts/masters-dashboards/**/*.ts',
     'css/**/*.css'
 ];
 
@@ -54,6 +57,9 @@ async function task() {
             if (newJsHash !== jsHash || argv.force || argv.dts) {
                 jsHash = newJsHash;
                 buildTasks.push('dashboards/scripts');
+                if (argv.dts) {
+                    buildTasks.task('jsdoc-dts')();
+                }
             }
 
             const newCssHash = fsLib.getDirectoryHash('css', true);
@@ -80,9 +86,12 @@ async function task() {
 
     processLib.isRunning('dashboards/scripts-watch', true);
 
-    return processLib
-        .exec('npx tsc --build ts/masters-dashboards --watch')
-        .then(() => void 0);
+    if (argv.dts) {
+        await gulp.task('jsdoc-dts')();
+    }
+
+    return await processLib
+        .exec('npx tsc --build ts/masters-dashboards --watch');
 }
 
 require('./scripts.js');
