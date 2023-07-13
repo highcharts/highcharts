@@ -98,3 +98,75 @@ QUnit.test('Negative values', function (assert) {
         'Only points below zThreshold should have negative class name'
     );
 });
+
+QUnit.test('Align dataLabel', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bubble'
+        },
+        yAxis: {
+            min: 0,
+            max: 5
+        },
+        plotOptions: {
+            series: {
+                clip: false,
+                dataLabels: {
+                    overflow: 'allow',
+                    crop: false,
+                    enabled: true
+                }
+            }
+        },
+        series: [
+            {
+                data: [{
+                    x: 2,
+                    y: 3,
+                    z: 5
+                }]
+            }, {
+                data: [{
+                    x: 1,
+                    y: 2,
+                    z: 8
+                }]
+            }, {
+                data: [{
+                    x: 1,
+                    y: 0,
+                    z: 10
+                }]
+            }
+        ]
+    });
+
+    const point = chart.series[2].points[0], // Access the point data
+        dataLabel = point.dataLabel,
+        dataLabelBBox = dataLabel.element.getBBox();
+
+    // Calculate the position of the dataLabel, considering possible displacements
+    const dataLabelPosX = dataLabelBBox.x + dataLabel.options.x,
+        dataLabelPosY = dataLabelBBox.y + dataLabel.options.y;
+
+    // Check if the dataLabel is outside the plotArea
+    const isOutsidePlotArea =
+        dataLabelPosX < chart.plotLeft ||
+        dataLabelPosY < chart.plotTop ||
+        dataLabelPosX + dataLabelBBox.width >
+        chart.plotLeft + chart.plotWidth ||
+        dataLabelPosY + dataLabelBBox.height >
+        chart.plotTop + chart.plotHeight;
+
+    // Assert if the dataLabel exists
+    assert.ok(
+        dataLabel,
+        'Data label exists'
+    );
+
+    // Assert if the dataLabel is outside the plotArea
+    assert.ok(
+        isOutsidePlotArea,
+        'Data label is outside the plotArea'
+    );
+});
