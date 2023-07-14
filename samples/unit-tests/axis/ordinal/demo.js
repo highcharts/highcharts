@@ -775,9 +775,6 @@ QUnit.test('Annotations on ordinal axis.', assert => {
 
     const chart = Highcharts.stockChart('container', {
         series: [{
-            dataGrouping: {
-                forced: true
-            },
             type: 'ohlc',
             data: data
         }, {
@@ -819,10 +816,14 @@ QUnit.test('Annotations on ordinal axis.', assert => {
     );
 
     chart.xAxis[0].setExtremes(1622813400000, 1623245400000);
+    chart.series[0].update({
+        dataGrouping: {
+            forced: true
+        }
+    });
 
     const val = chart.xAxis[0].toValue(-150, true);
     const pixels = chart.xAxis[0].toPixels(val, true);
-    console.log(pixels);
 
     assert.close(
         pixels,
