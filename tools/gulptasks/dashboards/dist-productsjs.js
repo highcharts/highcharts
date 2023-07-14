@@ -22,9 +22,13 @@ const path = require('path');
  */
 async function productsJS() {
 
+    const fetch = require('node-fetch').default;
     const fs = require('fs');
     const logLib = require('../lib/log');
 
+    const {
+        buildFolder
+    } = require('./_config.json');
     const {
         release
     } = require('yargs').argv;
@@ -33,38 +37,24 @@ async function productsJS() {
         throw new Error('No valid `--release x.x.x` provided.');
     }
 
-    const {
-        buildFolder
-    } = require('./_config.json');
+    const now = new Date();
+    const prefix = 'var products = ';
+    const products = await fetch('https://code.highcharts.com/products.js')
+        .then(response => response.text())
+        .then(content => JSON.parse(content.substring(prefix.length)));
 
-    const dashboardsProduct = {
-        date: '',
+    products['Highcharts Dashboards'] = {
+        date: [
+            now.getFullYear(),
+            (now.getMonth() + 1).toString().padStart('0', 2),
+            now.getDate().toString().padStart('0', 2)
+        ].join('-'),
         nr: release
-    };
-
-    const highchartsProperties = require('../../../build-properties.json');
-    const highchartsDate = (highchartsProperties.date || '');
-    const highchartsVersion = (
-        highchartsProperties.version ||
-        require('../../../package.json').version ||
-        ''
-    ).split('-')[0];
-    const highchartsProduct = {
-        date: highchartsDate,
-        nr: highchartsVersion
     };
 
     await fs.promises.writeFile(
         path.join(buildFolder, '..', 'products.js'),
-        (
-            'var products = ' + JSON.stringify({
-                Highcharts: highchartsProduct,
-                'Highcharts Stock': highchartsProduct,
-                'Highcharts Maps': highchartsProduct,
-                'Highcharts Gantt': highchartsProduct,
-                'Highcharts Dashboards': dashboardsProduct
-            }, void 0, '    ') + '\n'
-        )
+        prefix + JSON.stringify(products, void 0, '    ') + '\n'
     );
 
     logLib.success('Created products.js');

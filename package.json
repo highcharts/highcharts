@@ -92,6 +92,7 @@
     "lint-staged": "^13.1.0",
     "lolex": "^6.0.0",
     "marked": "^4.2.12",
+    "node-fetch": "^2.6.12",
     "plugin-error": "^2.0.1",
     "pngjs": "^6.0.0",
     "pretty": "^2.0.0",

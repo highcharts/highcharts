@@ -26,10 +26,16 @@ const TARGET_FILE = Path.join('build', 'dist', 'products.js');
  */
 async function distProductsJS() {
 
+    const fetch = require('node-fetch').default;
     const fs = require('fs');
     const LogLib = require('./lib/log');
 
     LogLib.message('Generating', TARGET_FILE + '...');
+
+    const prefix = 'var products = ';
+    const products = await fetch('https://code.highcharts.com/products.js')
+        .then(response => response.text())
+        .then(content => JSON.parse(content.substring(prefix.length)));
 
     const buildProperties = require('../../build-properties.json');
     const packageJson = require('../../package.json');
@@ -45,29 +51,16 @@ async function distProductsJS() {
         ''
     ).split('-')[0];
 
-    const dashboardsProduct = {
-        date,
-        nr: '1.0.0'
-    };
-
-    if (fs.existsSync('../dashboards-dist')) {
-        dashboardsProduct.nr = (
-            require('../../../dashboards-dist/package.json').version ||
-            dashboardsProduct.nr
+    products.Highcharts =
+        products['Highcharts Stock'] =
+        products['Highcharts Maps'] =
+        products['Highcharts Gantt'] = (
+            { date, nr }
         );
-    }
 
     await fs.promises.writeFile(
         TARGET_FILE,
-        (
-            'var products = ' + JSON.stringify({
-                Highcharts: { date, nr },
-                'Highcharts Stock': { date, nr },
-                'Highcharts Maps': { date, nr },
-                'Highcharts Gantt': { date, nr },
-                'Highcharts Dashboards': dashboardsProduct
-            }, void 0, '    ') + '\n'
-        )
+        prefix + JSON.stringify(products, void 0, '    ') + '\n'
     );
 
     LogLib.success('Created', TARGET_FILE);
