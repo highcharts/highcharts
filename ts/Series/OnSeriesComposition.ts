@@ -187,10 +187,8 @@ namespace OnSeriesComposition {
                                 // If the series is spline, calculate Y of the
                                 // point on the bezier line. #19264
                                 if (
-                                    defined(point.plotX) && (
-                                        onSeries.type === 'spline' ||
-                                        onSeries.type === 'areaspline'
-                                    )
+                                    defined(point.plotX) &&
+                                    onSeries.is('spline')
                                 ) {
                                     leftPoint = leftPoint as SplinePoint;
                                     rightPoint = rightPoint as SplinePoint;
@@ -210,16 +208,14 @@ namespace OnSeriesComposition {
                                         calculateCoord = (
                                             t: number,
                                             key: 'plotX'|'plotY'
-                                        ): number | null => {
-                                            if (t < 0 || t > 1) {
-                                                return null;
-                                            }
-                                            return Math.pow(1 - t, 3) *
-                                                p0[key] + 3 * (1 - t) *
-                                                (1 - t) * t * p1[key] + 3 *
-                                                (1 - t) * t * t * p2[key] + t *
-                                                t * t * p3[key];
-                                        };
+                                        ): number => (
+                                            // The parametric formula for the
+                                            // cubic Bezier curve.
+                                            Math.pow(1 - t, 3) * p0[key] +
+                                            3 * (1 - t) * (1 - t) * t *
+                                            p1[key] + 3 * (1 - t) * t * t *
+                                            p2[key] + t * t * t * p3[key]
+                                        );
 
                                     let tMin = 0,
                                         tMax = 1,
@@ -253,14 +249,10 @@ namespace OnSeriesComposition {
                                     }
 
                                     if (defined(t)) {
-                                        const plotY =
-                                            calculateCoord(t, 'plotY') || 0;
-
-                                        if (defined(plotY)) {
-                                            point.plotY = plotY;
-                                            point.y =
-                                                yAxis.toValue(plotY, true);
-                                        }
+                                        point.plotY =
+                                            calculateCoord(t, 'plotY');
+                                        point.y =
+                                            yAxis.toValue(point.plotY, true);
                                     }
                                 } else {
                                     // the distance ratio, between 0 and 1
