@@ -167,14 +167,44 @@ class ParetoSeries extends LineSeries {
      * @requires modules/pareto
      */
     public setDerivedData(): void {
-        const xValues = (this.baseSeries as any).xData,
-            yValues = (this.baseSeries as any).yData,
-            sum = this.sumPointsPercents(
-                yValues,
-                xValues,
-                null as any,
-                true
-            );
+        const baseSeries = this.baseSeries;
+
+        let xValues: Array<number> = [],
+            yValues: Array<number> = [];
+
+        if (!baseSeries) {
+            return;
+        }
+
+        // If base series needs sorting, set & sort the data, #19046.
+        if (baseSeries.enabledDataSorting) {
+            this.chart.setSeriesData();
+
+            // Array of [x, y]
+            const data: Array<[number, number]> = [];
+
+            for (let i = 0; i < (baseSeries?.xData?.length || 0); i++) {
+                data.push([
+                    baseSeries?.xData?.[i] || 0,
+                    baseSeries?.yData?.[i] as any || 0
+                ]);
+            }
+
+            data.sort((a, b): number => b[1] - a[1]);
+
+            xValues = data.map((d): number => d[0]);
+            yValues = data.map((d): number => d[1]);
+        } else {
+            xValues = baseSeries.xData || [];
+            yValues = baseSeries.yData as any;
+        }
+
+        const sum = this.sumPointsPercents(
+            yValues,
+            xValues,
+            null as any,
+            true
+        );
 
         this.setData(
             this.sumPointsPercents(yValues, xValues, sum, false),
