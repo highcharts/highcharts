@@ -61,6 +61,7 @@ const SOURCE_GLOBS = [
     'js/Extensions/OfflineExporting/OfflineExporting.js',
     'js/Extensions/PatternFill.js',
     'js/Extensions/SeriesLabel/SeriesLabel.js',
+    'js/Extensions/Themes.js',
     'js/Maps/MapNavigation.js',
     'js/Maps/MapView.js',
     'js/Series/AreaRange/AreaRangeSeries.js',
