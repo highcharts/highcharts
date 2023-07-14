@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -18,16 +24,20 @@ import type SlowStochasticPoint from './SlowStochasticPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        stochastic: StochasticIndicator
-    }
-} = SeriesRegistry;
-const { seriesTypes } = SeriesRegistry;
+    sma: SMAIndicator,
+    stochastic: StochasticIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Slow Stochastic series type.
@@ -40,48 +50,62 @@ const {
  */
 class SlowStochasticIndicator extends StochasticIndicator {
 
-    public static defaultOptions: SlowStochasticOptions = merge(
-        StochasticIndicator.defaultOptions,
-        /**
-         * Slow Stochastic oscillator. This series requires the `linkedTo`
-         * option to be set and should be loaded after
-         * `stock/indicators/indicators.js` and `stock/indicators/stochastic.js`
-         * files.
-         *
-         * @sample stock/indicators/slow-stochastic
-         *         Slow Stochastic oscillator
-         *
-         * @extends      plotOptions.stochastic
-         * @since        8.0.0
-         * @product      highstock
-         * @requires     stock/indicators/indicators
-         * @requires     stock/indicators/stochastic
-         * @requires     stock/indicators/slowstochastic
-         * @optionparent plotOptions.slowstochastic
-         */
-        {
-            params: {
-                /**
-                 * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
-                 *
-                 * @type    {Array<number,number,number>}
-                 * @default [14, 3, 3]
-                 */
-                periods: [14, 3, 3]
-            }
-        } as SlowStochasticOptions
-    );
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    /**
+     * Slow Stochastic oscillator. This series requires the `linkedTo` option
+     * to be set and should be loaded after `stock/indicators/indicators.js`
+     * and `stock/indicators/stochastic.js` files.
+     *
+     * @sample stock/indicators/slow-stochastic
+     *         Slow Stochastic oscillator
+     *
+     * @extends      plotOptions.stochastic
+     * @since        8.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/stochastic
+     * @requires     stock/indicators/slowstochastic
+     * @optionparent plotOptions.slowstochastic
+     */
+    public static defaultOptions: SlowStochasticOptions = merge(StochasticIndicator.defaultOptions, {
+        params: {
+            /**
+             * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
+             *
+             * @type    {Array<number,number,number>}
+             * @default [14, 3, 3]
+             */
+            periods: [14, 3, 3]
+        }
+    } as SlowStochasticOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<SlowStochasticPoint> = void 0 as any;
     public options: SlowStochasticOptions = void 0 as any;
     public points: Array<SlowStochasticPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: SlowStochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const periods: Array<number> = (params.periods as any),
-            fastValues = seriesTypes.stochastic.prototype.getValues.call(
+            fastValues = super.getValues.call(
                 this,
                 series,
                 params
@@ -91,8 +115,6 @@ class SlowStochasticIndicator extends StochasticIndicator {
                 xData: [] as Array<number>,
                 yData: [] as Array<Array<number>>
             };
-
-        let i = 0;
 
         if (!fastValues) {
             return;
@@ -104,7 +126,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
         // Get SMA(%D)
         const smoothedValues: (
             undefined|IndicatorValuesObject<LineSeries>
-        ) = seriesTypes.sma.prototype.getValues.call(
+        ) = SMAIndicator.prototype.getValues.call(
             this,
             ({
                 xData: slowValues.xData,
@@ -120,10 +142,8 @@ class SlowStochasticIndicator extends StochasticIndicator {
             return;
         }
 
-        const xDataLen = slowValues.xData.length;
-
         // Format data
-        for (; i < xDataLen; i++) {
+        for (let i = 0, xDataLen = slowValues.xData.length; i < xDataLen; i++) {
 
             slowValues.yData[i] = [
                 fastYData[i][1],
@@ -142,6 +162,12 @@ class SlowStochasticIndicator extends StochasticIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface SlowStochasticIndicator {
     pointClass: typeof SlowStochasticPoint;
     nameBase: string;
@@ -149,6 +175,12 @@ interface SlowStochasticIndicator {
 extend(SlowStochasticIndicator.prototype, {
     nameBase: 'Slow Stochastic'
 });
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -164,8 +196,14 @@ SeriesRegistry.registerSeriesType('slowstochastic', SlowStochasticIndicator);
  *
  * */
 
-
 export default SlowStochasticIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A Slow Stochastic indicator. If the [type](#series.slowstochastic.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).

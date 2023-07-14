@@ -144,4 +144,97 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
         3,
         'After chart update parallelInfo.counter has correct value (#10081).'
     );
+
+    // Calculate yAxis extremes based on the range series points (#15752)
+    chart.update({
+        chart: {
+            type: 'arearange'
+        }
+    }, false);
+
+    chart.series[0].setData([
+        [23, 25],
+        [-1, -0.5],
+        [1.5, 4],
+        [1.5, 5],
+        [4, 5]
+    ], false);
+
+    chart.series[1].remove();
+
+    const points = chart.series[0].points;
+    let firstAxisMin = chart.yAxis[0].dataMin,
+        firstAxisMax = chart.yAxis[0].dataMax,
+        thirdAxisMin = chart.yAxis[2].dataMin,
+        thirdAxisMax = chart.yAxis[2].dataMax;
+
+    assert.strictEqual(
+        points[0].low,
+        firstAxisMin,
+        'The first yAxis\' min should be equal to the first point\'s low value.'
+    );
+    assert.strictEqual(
+        points[0].high,
+        firstAxisMax,
+        'The first yAxis\' max should be equal to the first point\'s high value.'
+    );
+
+    assert.strictEqual(
+        points[2].low,
+        thirdAxisMin,
+        'The third yAxis\' min should be equal to the third point\'s low value.'
+    );
+    assert.strictEqual(
+        points[2].high,
+        thirdAxisMax,
+        'The third yAxis\' max should be equal to the third point\'s high value.'
+    );
+
+    // Calculate plotHigh value based on each yAxis scale (#15752)
+    points.forEach(function (point, i) {
+        assert.strictEqual(
+            chart.yAxis[i].translate(point.high, 0, 1, 0, 1),
+            point.plotHigh,
+            'PlotHigh value should be calculated based on the point\'s yAxis.'
+        );
+    });
+
+    // Multiple series case (#15752)
+    chart.addSeries({
+        data: [
+            [10, 15],
+            [10, 15],
+            [-3, -1]
+        ]
+    });
+
+    const firstSeries = chart.series[0],
+        secondSeries = chart.series[1];
+
+    firstAxisMin = chart.yAxis[0].dataMin;
+    firstAxisMax = chart.yAxis[0].dataMax;
+    thirdAxisMin = chart.yAxis[2].dataMin;
+    thirdAxisMax = chart.yAxis[2].dataMax;
+
+    assert.strictEqual(
+        secondSeries.points[0].low,
+        firstAxisMin,
+        'The first yAxis\' min should be equal to the first point\'s low value.'
+    );
+    assert.strictEqual(
+        firstSeries.points[0].high,
+        firstAxisMax,
+        'The first yAxis\' max should be equal to the first point\'s high value.'
+    );
+
+    assert.strictEqual(
+        secondSeries.points[2].low,
+        thirdAxisMin,
+        'The third yAxis\' min should be equal to the third point\'s low value.'
+    );
+    assert.strictEqual(
+        firstSeries.points[2].high,
+        thirdAxisMax,
+        'The third yAxis\' max should be equal to the third point\'s high value.'
+    );
 });

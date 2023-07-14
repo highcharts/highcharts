@@ -10,14 +10,32 @@
  *
  * */
 
-import boostables from './Boostables.js';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import Boostables from './Boostables.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 // These are the series we allow boosting for.
-
-const boostableMap: Record<string, number> = {};
-
-boostables.forEach(function (item: string): void {
-    boostableMap[item] = 1;
+const BoostableMap: Record<string, boolean> = {};
+Boostables.forEach((item: string): void => {
+    BoostableMap[item] = true;
 });
 
-export default boostableMap;
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default BoostableMap;

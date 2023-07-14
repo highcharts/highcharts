@@ -1,4 +1,4 @@
-var gaugeOptions = {
+const gaugeOptions = {
     chart: {
         type: 'solidgauge'
     },
@@ -58,7 +58,7 @@ var gaugeOptions = {
 };
 
 // The speed gauge
-var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
+const chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
     yAxis: {
         min: 0,
         max: 200,
@@ -89,7 +89,7 @@ var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptio
 }));
 
 // The RPM gauge
-var chartRpm = Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, {
+const chartRpm = Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, {
     yAxis: {
         min: 0,
         max: 5,
@@ -120,7 +120,7 @@ var chartRpm = Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, 
 // Bring life to the dials
 setInterval(function () {
     // Speed
-    var point,
+    let point,
         newVal,
         inc;
 

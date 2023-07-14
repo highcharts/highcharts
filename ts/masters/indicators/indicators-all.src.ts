@@ -10,6 +10,7 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
 
 import '../../Stock/Indicators/SMA/SMAIndicator.js';
@@ -53,12 +54,10 @@ import '../../Stock/Indicators/VWAP/VWAPIndicator.js';
 import '../../Stock/Indicators/WilliamsR/WilliamsRIndicator.js';
 import '../../Stock/Indicators/WMA/WMAIndicator.js';
 import '../../Stock/Indicators/Zigzag/ZigzagIndicator.js';
-import '../../Stock/Indicators/LinearRegression/LinearRegression.js';
-// eslint-disable-next-line max-len
-import '../../Stock/Indicators/LinearRegressionSlopes/LinearRegressionSlopes.js';
-// eslint-disable-next-line max-len
-import '../../Stock/Indicators/LinearRegressionIntercept/LinearRegressionIntercept.js';
-import '../../Stock/Indicators/LinearRegressionAngle/LinearRegressionAngle.js';
+import '../../Stock/Indicators/LinearRegression/LinearRegressionIndicator.js';
+import '../../Stock/Indicators/LinearRegressionSlopes/LinearRegressionSlopesIndicator.js';
+import '../../Stock/Indicators/LinearRegressionIntercept/LinearRegressionInterceptIndicator.js';
+import '../../Stock/Indicators/LinearRegressionAngle/LinearRegressionAngleIndicator.js';
 import '../../Stock/Indicators/ABands/ABandsIndicator.js';
 import '../../Stock/Indicators/TrendLine/TrendLineIndicator.js';
 import '../../Stock/Indicators/DisparityIndex/DisparityIndexIndicator.js';

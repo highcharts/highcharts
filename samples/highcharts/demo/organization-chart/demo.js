@@ -10,13 +10,9 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                var nodeName = point.toNode.name,
-                    nodeId = point.toNode.id,
-                    nodeDesc = nodeName === nodeId ? nodeName : nodeName + ', ' + nodeId,
-                    parentDesc = point.fromNode.id;
-                return point.index + '. ' + nodeDesc + ', reports to ' + parentDesc + '.';
-            }
+            descriptionFormat: '{add index 1}. {toNode.name}' +
+                '{#if (ne toNode.name toNode.id)}, {toNode.id}{/if}, ' +
+                'reports to {fromNode.id}'
         }
     },
 
@@ -67,11 +63,11 @@ Highcharts.chart('container', {
         }, {
             id: 'CEO',
             title: 'CEO',
-            name: 'Grethe Hjetland',
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131126/Highsoft_03862_.jpg'
+            name: 'Atle Sivertsen',
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2022/06/30081411/portrett-sorthvitt.jpg'
         }, {
             id: 'HR',
-            title: 'HR/CFO',
+            title: 'CFO',
             name: 'Anne Jorunn Fjærestad',
             color: '#007ad0',
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131210/Highsoft_04045_.jpg'

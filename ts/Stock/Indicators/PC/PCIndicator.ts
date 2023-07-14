@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -20,11 +26,7 @@ import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -127,40 +129,41 @@ class PCIndicator extends SMAIndicator {
     } as PCOptions);
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<PCPoint> = void 0 as any;
     public options: PCOptions = void 0 as any;
     public points: Array<PCPoint> = void 0 as any;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-top line, 2-middle line, 3-bottom line
             PC: Array<Array<number>> = [],
             // middle line, top line and bottom line
-            ML: number,
-            TL: number,
-            BL: number,
-            date: number,
             low = 2,
             high = 1,
             xData: Array<number> = [],
-            yData: Array<Array<number>> = [],
+            yData: Array<Array<number>> = [];
+
+        let ML: number,
+            TL: number,
+            BL: number,
+            date: number,
             slicedY: Array<Array<number>>,
             extremes: [number, number],
             i: number;
@@ -195,13 +198,12 @@ class PCIndicator extends SMAIndicator {
  *
  * */
 
-interface PCIndicator extends MultipleLinesComposition.Composition {
+interface PCIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<keyof PCPoint>;
     pointClass: typeof PCPoint;
     pointValKey: string;
-    toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(PCIndicator.prototype, {
     areaLinesNames: ['top', 'bottom'],
@@ -234,6 +236,12 @@ SeriesRegistry.registerSeriesType('pc', PCIndicator);
  * */
 
 export default PCIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A Price channel indicator. If the [type](#series.pc.type) option is not

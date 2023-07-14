@@ -1,0 +1,13 @@
+---
+ name: Heatmap with interpolation
+ authors:
+   - Markus Knutson Barstad
+ js_wrap: b
+ tags:
+  - Highcharts demo
+ new_until: 2023-08-05
+ use_png_thumbnail: true
+ categories:
+  - Heat and tree maps:
+      priority: 1
+...

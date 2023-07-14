@@ -1,5 +1,14 @@
 QUnit.test('Crosshair on multiple axes (#4927)', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const sampleData = [20, 12, 50, 40],
+        yAxisCrosshair = {
+            crosshair: {
+                label: {
+                    enabled: true
+                }
+            }
+        };
+
+    var chart = Highcharts.stockChart('container', {
         yAxis: [
             {
                 id: 'primary',
@@ -77,6 +86,61 @@ QUnit.test('Crosshair on multiple axes (#4927)', function (assert) {
         'path',
         'Secondary axis has cross'
     );
+
+    chart.update({
+        yAxis: [{
+            ...yAxisCrosshair,
+            opposite: false
+        },
+        {
+            ...yAxisCrosshair,
+            opposite: false
+        }, {
+            ...yAxisCrosshair,
+            opposite: true
+        }, {
+            ...yAxisCrosshair,
+            opposite: true
+        }],
+        series: [
+            {
+                data: sampleData
+            },
+            {
+                yAxis: 1,
+                data: sampleData
+            },
+            {
+                yAxis: 2,
+                data: sampleData
+            },
+            {
+                yAxis: 3,
+                data: sampleData
+            }
+        ]
+    }, true, true);
+
+    chart.series[0].points[0].onMouseOver();
+
+    chart.yAxis.forEach(function (axis) {
+        if (axis.crossLabel) {
+            if (axis.opposite) {
+                assert.strictEqual(
+                    axis.crossLabel.x,
+                    axis.left + axis.width + axis.offset,
+                    'Opposite yAxis crossLabel positions correctly, #16940'
+                );
+            } else {
+                assert.strictEqual(
+                    axis.crossLabel.x,
+                    axis.left + axis.offset -
+                    (axis.crossLabel.getBBox().width / 2),
+                    'Not opposite yAxis crossLabels position correctly, #16940'
+                );
+            }
+        }
+    });
 });
 
 QUnit.test('Crosshair with snap false (#5066)', function (assert) {
@@ -132,7 +196,7 @@ QUnit.test('Crosshair with snap false (#5066)', function (assert) {
     chart.renderTo.style.position = 'static';
 });
 QUnit.test(
-    "Update crosshair's stroke-width after resize.(#4737)",
+    'Update crosshair\'s stroke-width after resize.(#4737)',
     function (assert) {
         var chart = $('#container')
                 .highcharts({

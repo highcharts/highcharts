@@ -15,8 +15,7 @@
  * */
 import type ColorType from '../Core/Color/ColorType';
 import type ProjectionOptions from './ProjectionOptions';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type { MultiLineString, Polygon } from './GeoJSON';
+import type { GeoJSONGeometryMultiPoint, MultiLineString, Polygon } from './GeoJSON';
 
 /* *
  *
@@ -72,13 +71,16 @@ export interface MapViewInsetOptionsOptions {
 }
 
 export interface MapViewOptions {
+    fitToGeometry?: GeoJSONGeometryMultiPoint;
     center: LonLatArray;
     insetOptions?: MapViewInsetOptionsOptions;
     insets?: MapViewInsetsOptions[];
     maxZoom?: number;
     padding: MapViewPaddingType;
     projection?: ProjectionOptions;
+    recommendedMapView?: DeepPartial<MapViewOptions>;
     zoom?: number;
+    minZoom?: number;
 }
 
 export default MapViewOptions;

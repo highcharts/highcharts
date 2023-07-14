@@ -1,0 +1,15 @@
+---
+name: Tiled web map providers
+authors:
+  - Hubert Kozik
+js_wrap: b
+requiresManualTesting: true
+new_until: 2023-07-31
+use_png_thumbnail: true
+resources:
+   - https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css
+tags:
+  - Highcharts Maps demo
+categories:
+  - General
+...

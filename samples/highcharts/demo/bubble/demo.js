@@ -119,7 +119,8 @@ Highcharts.chart('container', {
             { x: 65.4, y: 50.8, z: 28.5, name: 'HU', country: 'Hungary' },
             { x: 63.4, y: 51.8, z: 15.4, name: 'PT', country: 'Portugal' },
             { x: 64, y: 82.9, z: 31.3, name: 'NZ', country: 'New Zealand' }
-        ]
+        ],
+        colorByPoint: true
     }]
 
 });

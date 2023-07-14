@@ -5,8 +5,8 @@
  */
 
 'use strict';
-//import H from '../Core/Globals.js';
-//import '../Core/Utilities.js';
+// import H from '../Core/Globals.js';
+// import '../Core/Utilities.js';
 var H = Highcharts;
 
 var pick = H.pick,
@@ -42,7 +42,7 @@ H.SVGRenderer.prototype.symbols.target = function (
 /**
  * The lineargauge series type.
  *
- * @constructor seriesTypes.lineargauge
+ * @class seriesTypes.lineargauge
  * @augments seriesTypes.column
  */
 seriesType('lineargauge', 'column',
@@ -110,7 +110,7 @@ seriesType('lineargauge', 'column',
              */
             baseLength: '50%',
 
-            /*= if (build.classic) { =*/
+            /* = if (build.classic) { =*/
             /**
              * The border color of the symbol representing the target. When
              * not set, point's border color is used.
@@ -146,7 +146,7 @@ seriesType('lineargauge', 'column',
              * @product highcharts
              * @apioption plotOptions.lineargauge.targetOptions.color
              */
-            /*= } =*/
+            /* = } =*/
 
             /**
              * The indentation on the upper part of the target symbol.
@@ -160,7 +160,7 @@ seriesType('lineargauge', 'column',
              */
             indent: '20%',
 
-            /*= if (build.classic) { =*/
+            /* = if (build.classic) { =*/
             /**
              * The color of the additional target line. When
              * not set, point's border color is used.
@@ -184,7 +184,7 @@ seriesType('lineargauge', 'column',
              * @product highcharts
              * @apioption plotOptions.lineargauge.targetOptions.lineWidth
              */
-            /*= } =*/
+            /* = } =*/
 
             /**
              * The zIndex of the target line.
@@ -607,7 +607,7 @@ seriesType('lineargauge', 'column',
                         series.targetEvents = targetEvents;
                     }
 
-                    /*= if (build.classic) { =*/
+                    /* = if (build.classic) { =*/
                     // Setting style to target symbol
                     targetSymGraphic.attr({
                         fill: pick(
@@ -649,7 +649,7 @@ seriesType('lineargauge', 'column',
                             'stroke-width': lineWidth
                         });
                     }
-                    /*= } =*/
+                    /* = } =*/
 
                     // Add styles
                     if (targetSymGraphic) {
@@ -760,7 +760,7 @@ seriesType('lineargauge', 'column',
  * @apioption series.lineargauge.data.targetOptions.baseLength
  */
 
-/*= if (build.classic) { =*/
+/* = if (build.classic) { =*/
 /**
  * Individual border color of the symbol representing the target. When
  * not set, point's border color is used.
@@ -796,7 +796,7 @@ seriesType('lineargauge', 'column',
  * @product highcharts
  * @apioption series.lineargauge.data.targetOptions.color
  */
-/*= } =*/
+/* = } =*/
 
 /**
  * Individual indentation on the upper part of the target symbol.
@@ -809,7 +809,7 @@ seriesType('lineargauge', 'column',
  * @apioption series.lineargauge.data.targetOptions.indent
  */
 
-/*= if (build.classic) { =*/
+/* = if (build.classic) { =*/
 /**
  * Individual color of the additional target line. When
  * not set, point's border color is used.
@@ -833,7 +833,7 @@ seriesType('lineargauge', 'column',
  * @product highcharts
  * @apioption series.lineargauge.data.targetOptions.lineWidth
  */
-/*= } =*/
+/* = } =*/
 
 /**
  * The zIndex of individual target line.
@@ -873,7 +873,7 @@ seriesType('lineargauge', 'column',
  * @apioption series.lineargauge.data.targetOptions.zIndex
  */
 
-////////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////
 
 // Common options options for all the gauges
 var commonOptions = {

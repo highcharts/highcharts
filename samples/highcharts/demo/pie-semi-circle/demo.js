@@ -1,3 +1,4 @@
+// Data retrieved from https://netmarketshare.com/
 Highcharts.chart('container', {
     chart: {
         plotBackgroundColor: null,
@@ -5,7 +6,7 @@ Highcharts.chart('container', {
         plotShadow: false
     },
     title: {
-        text: 'Browser<br>shares<br>2017',
+        text: 'Browser<br>shares<br>January<br>2022',
         align: 'center',
         verticalAlign: 'middle',
         y: 60
@@ -39,14 +40,14 @@ Highcharts.chart('container', {
         name: 'Browser share',
         innerSize: '50%',
         data: [
-            ['Chrome', 58.9],
-            ['Firefox', 13.29],
-            ['Internet Explorer', 13],
-            ['Edge', 3.78],
-            ['Safari', 3.42],
+            ['Chrome', 73.86],
+            ['Edge', 11.97],
+            ['Firefox', 5.52],
+            ['Safari', 2.98],
+            ['Internet Explorer', 1.90],
             {
                 name: 'Other',
-                y: 7.61,
+                y: 3.77,
                 dataLabels: {
                     enabled: false
                 }

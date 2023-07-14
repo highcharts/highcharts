@@ -17,11 +17,13 @@
  * */
 
 import type MapChart from '../../Core/Chart/MapChart';
-import MapSeries from '../Map/MapSeries.js';
 import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type { ProjectedXY } from '../../Maps/MapViewOptions';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
+
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import MapPointPoint from './MapPointPoint.js';
@@ -30,18 +32,21 @@ import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
+        map: MapSeries,
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
     fireEvent,
     isNumber,
-    merge
+    merge,
+    pick
 } = U;
 
-import '../../Core/DefaultOptions.js';
+import '../../Core/Defaults.js';
 import '../Scatter/ScatterSeries.js';
 
 /* *
@@ -71,6 +76,10 @@ class MapPointSeries extends ScatterSeries {
      *
      * @sample maps/demo/mapline-mappoint/
      *         Map-line and map-point series.
+     * @sample maps/demo/mappoint-mapmarker
+     *         Using the mapmarker symbol for points
+     * @sample maps/demo/mappoint-datalabels-mapmarker
+     *         Using the mapmarker shape for data labels
      *
      * @extends      plotOptions.scatter
      * @product      highmaps
@@ -91,7 +100,8 @@ class MapPointSeries extends ScatterSeries {
                 /** @internal */
                 color: Palette.neutralColor100
             }
-        }
+        },
+        legendSymbol: 'lineMarker'
     } as MapPointSeriesOptions);
 
     /* *
@@ -106,6 +116,8 @@ class MapPointSeries extends ScatterSeries {
     public options: MapPointSeriesOptions = void 0 as any;
 
     public points: Array<MapPointPoint> = void 0 as any;
+
+    public clearBounds = MapSeries.prototype.clearBounds;
 
     /* *
      *
@@ -168,12 +180,25 @@ class MapPointSeries extends ScatterSeries {
 
         // Create map based translation
         if (mapView) {
-            const { hasCoordinates } = mapView.projection;
+            const mainSvgTransform = mapView.getSVGTransform(),
+                { hasCoordinates } = mapView.projection;
             this.points.forEach((p): void => {
 
                 let { x = void 0, y = void 0 } = p;
+                const svgTransform = (
+                    isNumber(p.insetIndex) &&
+                    mapView.insets[p.insetIndex].getSVGTransform()
+                ) || mainSvgTransform;
 
-                const xy = this.projectPoint(p.options);
+                const xy = (
+                    this.projectPoint(p.options) ||
+                    (
+                        p.properties &&
+                        this.projectPoint(p.properties)
+                    )
+                );
+
+                let didBounds;
                 if (xy) {
                     x = xy.x;
                     y = xy.y;
@@ -182,16 +207,28 @@ class MapPointSeries extends ScatterSeries {
                 } else if (p.bounds) {
                     x = p.bounds.midX;
                     y = p.bounds.midY;
+                    if (svgTransform && isNumber(x) && isNumber(y)) {
+                        p.plotX = x * svgTransform.scaleX +
+                            svgTransform.translateX;
+                        p.plotY = y * svgTransform.scaleY +
+                            svgTransform.translateY;
+                        didBounds = true;
+                    }
                 }
 
                 if (isNumber(x) && isNumber(y)) {
 
                     // Establish plotX and plotY
-                    const plotCoords = mapView.projectedUnitsToPixels({ x, y });
-                    p.plotX = plotCoords.x;
-                    p.plotY = hasCoordinates ?
-                        plotCoords.y :
-                        this.chart.plotHeight - plotCoords.y;
+                    if (!didBounds) {
+                        const plotCoords = mapView.projectedUnitsToPixels(
+                            { x, y }
+                        );
+
+                        p.plotX = plotCoords.x;
+                        p.plotY = hasCoordinates ?
+                            plotCoords.y :
+                            this.chart.plotHeight - plotCoords.y;
+                    }
 
                 } else {
                     p.y = p.plotX = p.plotY = void 0;
@@ -210,6 +247,64 @@ class MapPointSeries extends ScatterSeries {
     /* eslint-enable valid-jsdoc */
 
 }
+
+/* *
+ *
+ * Extra
+ *
+ * */
+
+/* *
+ * The mapmarker symbol
+ */
+const mapmarker = (
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    options?: SymbolOptions
+): SVGPath => {
+    const isLegendSymbol = options && options.context === 'legend';
+    let anchorX: number,
+        anchorY: number;
+
+    if (isLegendSymbol) {
+        anchorX = x + w / 2;
+        anchorY = y + h;
+
+    // Put the pin in the anchor position (dataLabel.shape)
+    } else if (
+        options &&
+        typeof options.anchorX === 'number' &&
+        typeof options.anchorY === 'number'
+    ) {
+        anchorX = options.anchorX;
+        anchorY = options.anchorY;
+
+    // Put the pin in the center and shift upwards (point.marker.symbol)
+    } else {
+        anchorX = x + w / 2;
+        anchorY = y + h / 2;
+        y -= h;
+    }
+
+    const r = isLegendSymbol ? h / 3 : h / 2;
+    return [
+        ['M', anchorX, anchorY],
+        ['C', anchorX, anchorY, anchorX - r, y + r * 1.5, anchorX - r, y + r],
+        // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+        ['A', r, r, 1, 1, 1, anchorX + r, y + r],
+        ['C', anchorX + r, y + r * 1.5, anchorX, anchorY, anchorX, anchorY],
+        ['Z']
+    ];
+};
+declare module '../../Core/Renderer/SVG/SymbolType' {
+    interface SymbolTypeRegistry {
+        /** @requires Highcharts Maps */
+        mapmarker: typeof mapmarker;
+    }
+}
+SVGRenderer.prototype.symbols.mapmarker = mapmarker;
 
 /* *
  *
@@ -331,8 +426,8 @@ export default MapPointSeries;
  * features of geoJSON can be passed directly into the `data`, optionally
  * after first filtering and processing it.
  *
- * @sample maps/series/data-geometry/
- *         geometry defined in data
+ * @sample maps/series/mappoint-line-geometry/
+ *         Map point and line geometry
  *
  * @type      {Object}
  * @since 9.3.0

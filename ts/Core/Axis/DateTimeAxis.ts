@@ -43,8 +43,8 @@ declare module './AxisComposition' {
 
 declare module './AxisOptions' {
     interface AxisOptions {
-        dateTimeLabelFormats?: DateTimeAxis.LabelFormatOptions;
-        units?: Array<[DateTimeAxis.LabelFormatsKey, (Array<number>|null)]>;
+        dateTimeLabelFormats?: Time.DateTimeLabelFormatsOption;
+        units?: Array<[Time.TimeUnit, (Array<number>|null)]>;
     }
 }
 
@@ -62,7 +62,7 @@ declare module '../Series/SeriesOptions' {
 }
 
 declare module './TimeTicksInfoObject' {
-    interface TimeTicksInfoObject extends DateTimeAxis.NormalizedObject {
+    interface TimeTicksInfoObject extends Time.TimeNormalizedObject {
         // nothing to add
     }
 }
@@ -87,29 +87,6 @@ namespace DateTimeAxis{
         dateTime: Additions;
     }
 
-    export type LabelFormatsKey = keyof LabelFormatOptions;
-
-    export interface LabelFormatOptions {
-        day?: (string|LabelFormatOptionsObject);
-        hour?: (string|LabelFormatOptionsObject);
-        millisecond?: (string|LabelFormatOptionsObject);
-        minute?: (string|LabelFormatOptionsObject);
-        month?: (string|LabelFormatOptionsObject);
-        second?: (string|LabelFormatOptionsObject);
-        week?: (string|LabelFormatOptionsObject);
-        year?: (string|LabelFormatOptionsObject);
-    }
-
-    export interface LabelFormatOptionsObject {
-        list?: Array<string>;
-        main?: string;
-        range?: boolean;
-    }
-
-    export interface NormalizedObject extends Time.TimeNormalizedObject {
-        unitName: LabelFormatsKey;
-    }
-
     export type PointIntervalUnitValue = ('day'|'month'|'year');
 
     /* *
@@ -118,7 +95,7 @@ namespace DateTimeAxis{
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -134,9 +111,7 @@ namespace DateTimeAxis{
         AxisClass: T
     ): (typeof Composition&T) {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             AxisClass.keepProps.push('dateTime');
 
             const axisProto = AxisClass.prototype as Composition;
@@ -237,7 +212,7 @@ namespace DateTimeAxis{
         public normalizeTimeTickInterval(
             tickInterval: number,
             unitsOption?: AxisOptions['units']
-        ): NormalizedObject {
+        ): Time.TimeNormalizedObject {
             const units = (
                 unitsOption || [[
                     // unit name
@@ -326,18 +301,21 @@ namespace DateTimeAxis{
          */
         public getXDateFormat(
             x: number,
-            dateTimeLabelFormats: Record<string, string>
+            dateTimeLabelFormats: Time.DateTimeLabelFormatsOption
         ): string {
-            const { axis } = this;
+            const { axis } = this,
+                time = axis.chart.time;
 
             return axis.closestPointRange ?
-                axis.chart.time.getDateFormat(
+                time.getDateFormat(
                     axis.closestPointRange,
                     x,
                     axis.options.startOfWeek,
                     dateTimeLabelFormats
-                ) || dateTimeLabelFormats.year : // #2546, 2581
-                dateTimeLabelFormats.day;
+                ) ||
+                // #2546, 2581
+                time.resolveDTLFormat(dateTimeLabelFormats.year).main :
+                time.resolveDTLFormat(dateTimeLabelFormats.day).main;
         }
     }
 

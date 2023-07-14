@@ -84,7 +84,7 @@ QUnit.test('Transformed container parents', assert => {
         assert.strictEqual(
             chart.chartWidth,
             400,
-            "Transforms shouln't confuse the chart sizing (#9871, #10498)"
+            'Transforms shouln\'t confuse the chart sizing (#9871, #10498)'
         );
     } finally {
         chart.destroy();

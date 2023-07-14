@@ -1,0 +1,84 @@
+body {
+    background-color: #46465c;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+}
+
+.chart-container {
+    border: 0 solid red;
+    width: 150px;
+    height: 140px;
+}
+
+a,
+a:hover {
+    color: #fff;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#demo-content {
+    margin: 0;
+}
+
+#add {
+    position: absolute;
+    top: 172px;
+    top: 170px;
+    right: 10px;
+    background-color: #46465c;
+    color: #fff;
+    font-weight: 400;
+    border: 1px solid  #bbbac5;
+    padding: 8px;
+    width: 40px;
+    height: 35px;
+    border-radius: 4px;
+    filter: brightness(1);
+}
+
+#add:hover {
+    background-color: #2f2b38;
+    cursor: pointer;
+}
+
+@media screen  and (min-width: 220px) {
+    #add {
+        top: 140px;
+        right: 20px;
+    }
+
+    .chart-container {
+        width: 100%;
+        max-width: 100%;
+        height: 260px;
+    }
+}
+
+@media screen  and (min-width: 260px) {
+    #add {
+        top: 130px;
+        right: 15px;
+    }
+
+    .chart-container {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media screen  and (min-width: 370px) {
+    #add {
+        top: 90px;
+        right: 10px;
+    }
+
+    .chart-container {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+    }
+}

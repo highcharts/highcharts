@@ -2,37 +2,37 @@ $(function () {
 
     // Prepare random data
     var data = [{
-        code: "12Y",
+        code: '12Y',
         value: 728
     }, {
-        code: "10Y",
+        code: '10Y',
         value: 541
     }];
 
     var geojson = {
-        type: "FeatureCollection",
+        type: 'FeatureCollection',
         crs: {
-            type: "name",
+            type: 'name',
             properties: {
-                name: "urn:ogc:def:crs:OGC:1.3:CRS84"
+                name: 'urn:ogc:def:crs:OGC:1.3:CRS84'
             }
         },
 
         features: [{
-            type: "Feature",
+            type: 'Feature',
             properties: {
-                CP_BEAT: "12Y",
-                POL_BEAT: "12",
-                POL_DIST: "2",
-                POL_SECT: "1",
+                CP_BEAT: '12Y',
+                POL_BEAT: '12',
+                POL_DIST: '2',
+                POL_SECT: '1',
                 ID: 53,
                 FULLNAME: null,
-                ACTION: "P",
-                AGENCY: "OP",
+                ACTION: 'P',
+                AGENCY: 'OP',
                 RESPONSE: null,
                 MESSAGE: 0.0,
-                NAME: "12Y",
-                SOURCETHM: "Pb",
+                NAME: '12Y',
+                SOURCETHM: 'Pb',
                 ACRES: 431.053,
                 RULEID: 2,
                 RULEID_1: 0,
@@ -40,7 +40,7 @@ $(function () {
                 SHAPE_LEN: 29524.361276399999042
             },
             geometry: {
-                type: "Polygon",
+                type: 'Polygon',
                 coordinates: [
                     [
                         [-122.253567715369499, 37.850819709676422],
@@ -64,20 +64,20 @@ $(function () {
                 ]
             }
         }, {
-            type: "Feature",
+            type: 'Feature',
             properties: {
-                CP_BEAT: "10Y",
-                POL_BEAT: "10",
-                POL_DIST: "2",
-                POL_SECT: "1",
+                CP_BEAT: '10Y',
+                POL_BEAT: '10',
+                POL_DIST: '2',
+                POL_SECT: '1',
                 ID: 40,
                 FULLNAME: null,
-                ACTION: "P",
-                AGENCY: "OP",
+                ACTION: 'P',
+                AGENCY: 'OP',
                 RESPONSE: null,
                 MESSAGE: 0.0,
-                NAME: "10Y",
-                SOURCETHM: "Pb",
+                NAME: '10Y',
+                SOURCETHM: 'Pb',
                 ACRES: 277.952,
                 RULEID: 2,
                 RULEID_1: 0,
@@ -85,7 +85,7 @@ $(function () {
                 SHAPE_LEN: 16726.632870500001445
             },
             geometry: {
-                type: "Polygon",
+                type: 'Polygon',
                 coordinates: [
                     [
                         [-122.268088702101338, 37.836847065503278],
@@ -117,11 +117,6 @@ $(function () {
             mapData: geojson,
             joinBy: ['CP_BEAT', 'code'],
             name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
             dataLabels: {
                 enabled: true,
                 format: '{point.properties.CP_BEAT}'

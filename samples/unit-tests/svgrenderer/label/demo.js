@@ -532,7 +532,7 @@ QUnit.test('Change of label alignment after add (#4652)', function (assert) {
     var lbl = ren
         .label('Hello World', 100, 100)
         .attr({
-            //align: 'right',
+            // align: 'right',
             fill: 'silver'
         })
         .add();

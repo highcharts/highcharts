@@ -13,7 +13,8 @@
 'use strict';
 
 import Highcharts from '../../Core/Globals.js';
+import Debugger from '../../Extensions/Debugger/Debugger.js';
 import ErrorMessages from '../../Extensions/Debugger/ErrorMessages.js';
-Highcharts.errorMessages = ErrorMessages;
-
-import '../../Extensions/Debugger/Debugger.js';
+const G: AnyRecord = Highcharts;
+G.errorMessages = ErrorMessages;
+Debugger.compose(G.Chart);

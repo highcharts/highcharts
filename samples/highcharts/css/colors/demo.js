@@ -8,10 +8,6 @@ Highcharts.chart('container', {
         text: 'Pie point CSS'
     },
 
-    xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    },
-
     series: [{
         type: 'pie',
         allowPointSelect: true,

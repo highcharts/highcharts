@@ -1,0 +1,211 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<div id="container" style="width:800px;height:550px;margin:1.5em 1em;"></div>
+
+<script>
+  var d = new Date();
+  var pointStart = d.getTime();
+  Highcharts.setOptions({
+    global: {
+      useUTC: false
+    },
+    colors: [
+      'rgba( 0,   154, 253, 0.9 )', //bright blue
+      'rgba( 253, 99,  0,   0.9 )', //bright orange
+      'rgba( 40,  40,  56,  0.9 )', //dark
+      'rgba( 253, 0,   154, 0.9 )', //bright pink
+      'rgba( 154, 253, 0,   0.9 )', //bright green
+      'rgba( 145, 44,  138, 0.9 )', //mid purple
+      'rgba( 45,  47,  238, 0.9 )', //mid blue
+      'rgba( 177, 69,  0,   0.9 )', //dark orange
+      'rgba( 140, 140, 156, 0.9 )', //mid
+      'rgba( 238, 46,  47,  0.9 )', //mid red
+      'rgba( 44,  145, 51,  0.9 )', //mid green
+      'rgba( 103, 16,  192, 0.9 )' //dark purple
+    ],
+    chart: {
+      alignTicks: false,
+      type: '',
+      margin: [60, 25, 100, 90],
+      //borderRadius:10,
+      //borderWidth:1,
+      //borderColor:'rgba(156,156,156,.25)',
+      //backgroundColor:'rgba(204,204,204,.25)',
+      //plotBackgroundColor:'rgba(255,255,255,1)',
+      style: {
+        fontFamily: 'Abel,serif'
+      }
+    },
+    title: {
+      text: 'Generate a Histogram',
+      align: 'left',
+      margin: 10,
+      x: 25,
+      style: {
+        fontWeight: 'bold',
+        color: 'rgba(0,0,0,.9)'
+      }
+    },
+    subtitle: {
+      text: 'From raw data array',
+      align: 'left',
+      x: 30,
+    },
+    legend: {
+      enabled: true
+    },
+    plotOptions: {
+      area: {
+        lineWidth: 1,
+        marker: {
+          enabled: false,
+          symbol: 'circle',
+          radius: 4
+        }
+      },
+      arearange: {
+        lineWidth: 1
+      },
+      areaspline: {
+        lineWidth: 1,
+        marker: {
+          enabled: false,
+          symbol: 'circle',
+          radius: 4
+        }
+      },
+      areasplinerange: {
+        lineWidth: 1
+      },
+      boxplot: {
+        groupPadding: 0.05,
+        pointPadding: 0.05,
+        fillColor: 'rgba(255,255,255,.75)'
+      },
+      bubble: {
+        minSize: '0.25%',
+        maxSize: '17%'
+      },
+      column: {
+        //stacking:'normal',
+        groupPadding: 0.05,
+        pointPadding: 0.05
+      },
+      columnrange: {
+        groupPadding: 0.05,
+        pointPadding: 0.05
+      },
+      errorbar: {
+        groupPadding: 0.05,
+        pointPadding: 0.05,
+        showInLegend: true
+      },
+      line: {
+        lineWidth: 1,
+        marker: {
+          enabled: false,
+          symbol: 'circle',
+          radius: 4
+        }
+      },
+      scatter: {
+        marker: {
+          symbol: 'circle',
+          radius: 5
+        }
+      },
+      spline: {
+        lineWidth: 1,
+        marker: {
+          enabled: false,
+          symbol: 'circle',
+          radius: 4
+        }
+      },
+      series: {
+        shadow: false,
+        borderWidth: 0,
+        states: {
+          hover: {
+            lineWidthPlus: 0,
+          }
+        }
+      }
+    },
+    xAxis: {
+      title: {
+        text: 'X Axis Title',
+        rotation: 0,
+        textAlign: 'center',
+        style: {
+          color: 'rgba(0,0,0,.9)'
+        }
+      },
+      labels: {
+        style: {
+          color: 'rgba(0,0,0,.9)',
+          fontSize: '9px'
+        }
+      },
+      lineWidth: .5,
+      lineColor: 'rgba(0,0,0,.5)',
+      tickWidth: .5,
+      tickLength: 3,
+      tickColor: 'rgba(0,0,0,.75)'
+    },
+    yAxis: {
+      minPadding: 0,
+      maxPadding: 0,
+      gridLineColor: 'rgba(204,204,204,.25)',
+      gridLineWidth: 0.5,
+      title: {
+        text: 'Y Axis<br/>Title',
+        rotation: 0,
+        textAlign: 'right',
+        style: {
+          color: 'rgba(0,0,0,.9)',
+        }
+      },
+      labels: {
+        style: {
+          color: 'rgba(0,0,0,.9)',
+          fontSize: '9px'
+        }
+      },
+      lineWidth: .5,
+      lineColor: 'rgba(0,0,0,.5)',
+      tickWidth: .5,
+      tickLength: 3,
+      tickColor: 'rgba(0,0,0,.75)'
+    }
+  });
+
+  function randomData(points, positive, multiplier) {
+    points = !points ? 1 : points;
+    positive = positive !== true ? false : true;
+    multiplier = !multiplier ? 1 : multiplier;
+
+    function rnd() {
+      return ((
+        Math.random() +
+        Math.random() +
+        Math.random() +
+        Math.random() +
+        Math.random() +
+        Math.random()
+      ) - 3) / 3;
+    }
+    var rData = [];
+    for (var i = 0; i < points; i++) {
+      val = rnd();
+      val = positive === true ? Math.abs(val) : val;
+      val = multiplier > 1 ? (val * multiplier) : val;
+      rData.push(val);
+    }
+    return rData;
+  }
+
+</script>

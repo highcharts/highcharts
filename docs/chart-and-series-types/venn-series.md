@@ -80,7 +80,7 @@ In the following example A and B will be named as Apples and Bananas, while the 
 
 The final visualization should now display a venn diagram of the relation between Apples and Bananas.
 
-<iframe width="100%" height="450" style="null" src=https://jsfiddle.net/mushigh/d34whxmr/embedded/result allow="fullscreen"></iframe>
+<iframe width="100%" height="450" style="null" src=https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-venn/basic/embedded/result/ allow="fullscreen"></iframe>
 
 Its configuration should in full look as the following.
 
@@ -127,7 +127,7 @@ The venn series can be used to create both Venn and Euler diagrams.
 
 **Venn diagram of The Unattainable Triangle**
 
-The unattainable triangle is a reference often used in marketing and advertising, which says that you can either have it fast, cheap, or good, but you can not have it all. In the triangle the three qualities make up the corners, while the sides create the relationship between these qualities. Since the reference is all about relationships this can also be very well displayed as a venn diagram, as can be seen in the following demo [Venn diagram of the Unattainable Triangle.](https://highcharts.com/demo/venn-diagram)
+The unattainable triangle is a reference often used in marketing and advertising, which says that you can either have it fast, cheap, or good, but you cannot have it all. In the triangle the three qualities make up the corners, while the sides create the relationship between these qualities. Since the reference is all about relationships this can also be very well displayed as a venn diagram, as can be seen in the following demo [Venn diagram of the Unattainable Triangle.](https://highcharts.com/demo/venn-diagram)
 
 <iframe style="width: 100%; height: 520px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/venn-diagram allow="fullscreen"></iframe>
 

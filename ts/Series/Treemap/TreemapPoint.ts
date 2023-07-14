@@ -18,11 +18,13 @@
  *
  * */
 
+import type ColorMapComposition from '../ColorMapComposition';
+import type { DrawPointParams } from '../DrawPointUtilities';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
 
-import DrawPointComposition from '../DrawPointComposition.js';
+import DPU from '../DrawPointUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -44,6 +46,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import type TreemapNode from './TreemapNode.js';
 const {
     extend,
     isNumber,
@@ -66,15 +69,19 @@ class TreemapPoint extends ScatterPoint {
 
     public drillId?: (boolean|string);
 
+    public imageUrl?: string;
+
     public name: string = void 0 as any;
 
-    public node: TreemapSeries.NodeObject = void 0 as any;
+    public node: TreemapNode = void 0 as any;
 
     public options: TreemapPointOptions = void 0 as any;
 
     public parent?: string;
 
     public series: TreemapSeries = void 0 as any;
+
+    public shapeType: 'arc'|'circle'|'image'|'path'|'rect'|'text' = 'rect';
 
     public sortIndex?: number;
 
@@ -87,6 +94,12 @@ class TreemapPoint extends ScatterPoint {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    public draw(
+        params: DrawPointParams
+    ): void {
+        DPU.draw(this, params);
+    }
 
     public getClassName(): string {
         let className = Point.prototype.getClassName.call(this),
@@ -145,14 +158,12 @@ class TreemapPoint extends ScatterPoint {
  *
  * */
 
-interface TreemapPoint extends DrawPointComposition.Composition {
+interface TreemapPoint extends ColorMapComposition.PointComposition {
     setVisible: typeof PiePoint.prototype.setVisible;
 }
 extend(TreemapPoint.prototype, {
     setVisible: PiePoint.prototype.setVisible
 });
-
-DrawPointComposition.compose(TreemapPoint);
 
 /* *
  *

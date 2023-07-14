@@ -1,3 +1,4 @@
+// Data retrieved from https://en.wikipedia.org/wiki/Winter_Olympic_Games
 Highcharts.chart('container', {
 
     chart: {
@@ -5,27 +6,25 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Total fruit consumption, grouped by gender'
+        text: 'Olympic Games all-time medal table, grouped by continent',
+        align: 'left'
     },
 
     xAxis: {
-        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+        categories: ['Gold', 'Silver', 'Bronze']
     },
 
     yAxis: {
         allowDecimals: false,
         min: 0,
         title: {
-            text: 'Number of fruits'
+            text: 'Count medals'
         }
     },
 
     tooltip: {
-        formatter: function () {
-            return '<b>' + this.x + '</b><br/>' +
-                this.series.name + ': ' + this.y + '<br/>' +
-                'Total: ' + this.point.stackTotal;
-        }
+        format: '<b>{key}</b><br/>{series.name}: {y}<br/>' +
+            'Total: {point.stackTotal}'
     },
 
     plotOptions: {
@@ -35,20 +34,20 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        name: 'John',
-        data: [5, 3, 4, 7, 2],
-        stack: 'male'
+        name: 'Norway',
+        data: [148, 133, 124],
+        stack: 'Europe'
     }, {
-        name: 'Joe',
-        data: [3, 4, 4, 2, 5],
-        stack: 'male'
+        name: 'Germany',
+        data: [102, 98, 65],
+        stack: 'Europe'
     }, {
-        name: 'Jane',
-        data: [2, 5, 6, 2, 1],
-        stack: 'female'
+        name: 'United States',
+        data: [113, 122, 95],
+        stack: 'North America'
     }, {
-        name: 'Janet',
-        data: [3, 0, 4, 4, 3],
-        stack: 'female'
+        name: 'Canada',
+        data: [77, 72, 80],
+        stack: 'North America'
     }]
 });

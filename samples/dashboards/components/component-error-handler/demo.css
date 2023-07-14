@@ -1,0 +1,7 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/css/datagrid.css");
+@import url("https://code.highcharts.com/css/dashboards.css");
+
+.highcharts-dashboards-component-title-error {
+    color: red;
+}

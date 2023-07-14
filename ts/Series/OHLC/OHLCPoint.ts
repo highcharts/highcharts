@@ -19,9 +19,9 @@
 import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
 import type { SeriesZonesOptions } from './../../Core/Series/SeriesOptions';
+
 import Point from './../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 const {
     seriesTypes: {
         hlc: HLCSeries
@@ -55,8 +55,6 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Extend the parent method by adding up or down to the class name.
@@ -123,8 +121,6 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
         }
         return this;
     }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 

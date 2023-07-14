@@ -19,6 +19,9 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type {
+    AccessibilityAnnounceNewDataOptions
+} from '../../Options/A11yOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type Series from '../../../Core/Series/Series';
 
@@ -276,7 +279,7 @@ class NewDataAnnouncer {
         newPoint?: Accessibility.PointComposition
     ): void {
         const chart = this.chart;
-        const annOptions: Highcharts.AccessibilityAnnounceNewDataOptions =
+        const annOptions: AccessibilityAnnounceNewDataOptions =
             (chart.options.accessibility as any).announceNewData;
 
         if (annOptions.enabled) {
@@ -416,7 +419,7 @@ namespace NewDataAnnouncer {
      *
      * */
 
-    export const composedClasses: Array<Function> = [];
+    export const composedMembers: Array<unknown> = [];
 
 
     /* *
@@ -432,9 +435,7 @@ namespace NewDataAnnouncer {
         SeriesClass: typeof Series
     ): void {
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             addEvent(
                 SeriesClass as typeof Accessibility.SeriesComposition,
                 'addPoint',
@@ -446,6 +447,7 @@ namespace NewDataAnnouncer {
                 seriesOnUpdatedData
             );
         }
+
     }
 
 

@@ -26,4 +26,10 @@ export interface SplinePointOptions extends LinePointOptions {
     // nothing here yet
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default SplinePointOptions;

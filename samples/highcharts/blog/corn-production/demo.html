@@ -1,0 +1,89 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<div class="navbar navbar-default" style="text-align: center;">
+  <h3>🌎&nbsp;<i>Corn Production Over The Last 50 Years</i>&nbsp;🌎</h1>
+    <h5><b>Data Source: </b><a href="http://faostat3.fao.org/download/Q/QC/E"
+        target="_blank">FAOSTAT</a>,&nbsp;&nbsp;<b>Data Prep: </b><a
+        href="https://gist.github.com/mafernando/4e48c019b472638fa62f8a51a4df3523" target="_blank">Gist</a></h5>
+</div>
+
+<div id="production" style="height: 500px; cursor: crosshair;"></div>
+<div style="text-align:center">
+  <table align="center">
+    <thead>
+      <tr>
+        <td><b>Africa</b></td>
+        <td><b>Americas</b></td>
+        <td><b>Asia</b></td>
+        <td><b>Europe</b></td>
+        <td><b>Oceania</b></td>
+        <td><b>Legend</b></td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><label class="switch"><input id="africa" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+        <td><label class="switch"><input id="americas" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+        <td><label class="switch"><input id="asia" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+        <td><label class="switch"><input id="europe" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+        <td><label class="switch"><input id="oceania" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+        <td><label class="switch"><input id="legend" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="trade" style="height: 500px; cursor: crosshair;"></div>
+<div style="text-align:center">
+  <table align="center">
+    <thead>
+      <tr>
+        <td><b>Africa</b></td>
+        <td><b>Americas</b></td>
+        <td><b>Asia</b></td>
+        <td><b>Europe</b></td>
+        <td><b>Oceania</b></td>
+        <td><b>Legend</b></td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><label class="switch"><input id="africa2" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+        <td><label class="switch"><input id="americas2" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+        <td><label class="switch"><input id="asia2" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+        <td><label class="switch"><input id="europe2" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+        <td><label class="switch"><input id="oceania2" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+        <td><label class="switch"><input id="legend2" type="checkbox" checked>
+            <div class="slider round"></div>
+          </label></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="production_heatmap" style="height: 500px;"></div>

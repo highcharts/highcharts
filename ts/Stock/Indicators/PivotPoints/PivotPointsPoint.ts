@@ -6,21 +6,26 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
  *
  * */
 
-import PivotPointsIndicator from './PivotPointsIndicator';
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+import type SMAPointType from '../SMA/SMAPoint';
+import type PivotPointsIndicator from './PivotPointsIndicator';
 
-/* eslint-disable valid-jsdoc */
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const SMAPoint: typeof SMAPointType =
+    SeriesRegistry.seriesTypes.sma.prototype.pointClass;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * @private
@@ -29,8 +34,8 @@ function destroyExtraLabels(
     point: PivotPointsPoint,
     functionName: string
 ): void {
-    let props: Array<string> = point.series.pointArrayMap,
-        prop: string,
+    const props: Array<string> = point.series.pointArrayMap;
+    let prop: string,
         i: number = props.length;
 
     (SeriesRegistry.seriesTypes.sma.prototype.pointClass.prototype as any)[
@@ -47,43 +52,43 @@ function destroyExtraLabels(
     }
 }
 
-/* eslint-enable valid-jsdoc */
-
 /* *
  *
  *  Class
  *
  * */
 
-class PivotPointsPoint extends SMAIndicator.prototype.pointClass {
+class PivotPointsPoint extends SMAPoint {
 
-    /**
+    /* *
      *
-     * Properties
+     *  Properties
      *
-     */
+     * */
 
     public P: number = void 0 as any;
     public pivotLine: string = void 0 as any;
     public series: PivotPointsIndicator = void 0 as any;
 
-    /**
-      *
-      * Functions
-      *
-      */
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public destroyElements(
         this: PivotPointsPoint
     ): void {
         destroyExtraLabels(this, 'destroyElements');
     }
+
     // This method is called when removing points, e.g. series.update()
     public destroy(
         this: PivotPointsPoint
     ): void {
         destroyExtraLabels(this, 'destroyElements');
     }
+
 }
 
 /* *

@@ -31,7 +31,7 @@ declare class AreaSplineRangePoint extends AreaRangePoint {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

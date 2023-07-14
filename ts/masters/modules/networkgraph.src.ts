@@ -10,4 +10,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/Networkgraph/Networkgraph.js';
+import Highcharts from '../../Core/Globals.js';
+import NetworkgraphSeries from '../../Series/Networkgraph/NetworkgraphSeries.js';
+const G: AnyRecord = Highcharts;
+NetworkgraphSeries.compose(G.Chart);

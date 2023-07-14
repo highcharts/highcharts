@@ -20,9 +20,8 @@
 
 import type Options from '../../Core/Options';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import H from '../../Core/Globals.js';
 
 /* *
  *
@@ -120,11 +119,6 @@ namespace GridTheme {
             },
             itemHiddenStyle: {
                 color: 'gray'
-            }
-        },
-        labels: {
-            style: {
-                color: '#99b'
             }
         },
 

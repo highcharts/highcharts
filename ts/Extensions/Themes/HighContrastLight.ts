@@ -24,9 +24,8 @@
 
 import type Options from '../../Core/Options';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import H from '../../Core/Globals.js';
 
 /* *
  *
@@ -55,6 +54,11 @@ namespace HighContrastLightTheme {
             '#1A704C',
             '#B02FDD'
         ],
+        credits: {
+            style: {
+                color: '#767676'
+            }
+        },
         navigator: {
             series: {
                 color: '#5f98cf',

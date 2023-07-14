@@ -16,15 +16,21 @@
  *
  * */
 
+import type HeikinAshiSeries from './HeikinAshiSeries';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import HeikinAshiSeries from './HeikinAshiSeries';
-
 const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
+    candlestick: {
+        prototype: {
+            pointClass: CandlestickPoint
+        }
+    },
+    hlc: {
+        prototype: {
+            pointClass: HLCPoint
+        }
     }
-} = SeriesRegistry;
+} = SeriesRegistry.seriesTypes;
 
 /* *
  *
@@ -32,22 +38,19 @@ const {
  *
  * */
 
-class HeikinAshiPoint extends CandlestickSeries.prototype.pointClass {
+class HeikinAshiPoint extends CandlestickPoint {
+    // clone inheritence
+    public resolveColor = HLCPoint.prototype.resolveColor;
+}
 
-    /* *
-     *
-     *  Properties
-     *
-     * */
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
-    public series: HeikinAshiSeries = void 0 as any;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
+interface HeikinAshiPoint {
+    series: HeikinAshiSeries;
 }
 
 /* *

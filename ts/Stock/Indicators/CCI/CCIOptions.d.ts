@@ -31,4 +31,10 @@ export interface CCIParamsOptions extends SMAParamsOptions {
     // for inheritance
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default CCIOptions;

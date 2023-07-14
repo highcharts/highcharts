@@ -1,172 +1,145 @@
-var colors = Highcharts.getOptions().colors,
+const colors = Highcharts.getOptions().colors,
     categories = [
         'Chrome',
-        'Firefox',
-        'Internet Explorer',
         'Safari',
         'Edge',
-        'Opera',
+        'Firefox',
         'Other'
     ],
     data = [
         {
-            y: 62.74,
+            y: 61.04,
             color: colors[2],
             drilldown: {
                 name: 'Chrome',
                 categories: [
-                    'Chrome v65.0',
-                    'Chrome v64.0',
-                    'Chrome v63.0',
-                    'Chrome v62.0',
-                    'Chrome v61.0',
-                    'Chrome v60.0',
-                    'Chrome v59.0',
-                    'Chrome v58.0',
-                    'Chrome v57.0',
+                    'Chrome v97.0',
+                    'Chrome v96.0',
+                    'Chrome v95.0',
+                    'Chrome v94.0',
+                    'Chrome v93.0',
+                    'Chrome v92.0',
+                    'Chrome v91.0',
+                    'Chrome v90.0',
+                    'Chrome v89.0',
+                    'Chrome v88.0',
+                    'Chrome v87.0',
+                    'Chrome v86.0',
+                    'Chrome v85.0',
+                    'Chrome v84.0',
+                    'Chrome v83.0',
+                    'Chrome v81.0',
+                    'Chrome v89.0',
+                    'Chrome v79.0',
+                    'Chrome v78.0',
+                    'Chrome v76.0',
+                    'Chrome v75.0',
+                    'Chrome v72.0',
+                    'Chrome v70.0',
+                    'Chrome v69.0',
                     'Chrome v56.0',
-                    'Chrome v55.0',
-                    'Chrome v54.0',
-                    'Chrome v51.0',
-                    'Chrome v49.0',
-                    'Chrome v48.0',
-                    'Chrome v47.0',
-                    'Chrome v43.0',
-                    'Chrome v29.0'
+                    'Chrome v49.0'
                 ],
                 data: [
-                    0.1,
-                    1.3,
-                    53.02,
-                    1.4,
-                    0.88,
-                    0.56,
-                    0.45,
-                    0.49,
-                    0.32,
-                    0.29,
-                    0.79,
-                    0.18,
-                    0.13,
-                    2.16,
-                    0.13,
-                    0.11,
-                    0.17,
-                    0.26
-                ]
-            }
-        },
-        {
-            y: 10.57,
-            color: colors[1],
-            drilldown: {
-                name: 'Firefox',
-                categories: [
-                    'Firefox v58.0',
-                    'Firefox v57.0',
-                    'Firefox v56.0',
-                    'Firefox v55.0',
-                    'Firefox v54.0',
-                    'Firefox v52.0',
-                    'Firefox v51.0',
-                    'Firefox v50.0',
-                    'Firefox v48.0',
-                    'Firefox v47.0'
-                ],
-                data: [
-                    1.02,
-                    7.36,
-                    0.35,
-                    0.11,
-                    0.1,
-                    0.95,
-                    0.15,
-                    0.1,
+                    36.89,
+                    18.16,
+                    0.54,
+                    0.7,
+                    0.8,
+                    0.41,
                     0.31,
+                    0.13,
+                    0.14,
+                    0.1,
+                    0.35,
+                    0.17,
+                    0.18,
+                    0.17,
+                    0.21,
+                    0.1,
+                    0.16,
+                    0.43,
+                    0.11,
+                    0.16,
+                    0.15,
+                    0.14,
+                    0.11,
+                    0.13,
                     0.12
                 ]
             }
         },
         {
-            y: 7.23,
-            color: colors[0],
-            drilldown: {
-                name: 'Internet Explorer',
-                categories: [
-                    'Internet Explorer v11.0',
-                    'Internet Explorer v10.0',
-                    'Internet Explorer v9.0',
-                    'Internet Explorer v8.0'
-                ],
-                data: [
-                    6.2,
-                    0.29,
-                    0.27,
-                    0.47
-                ]
-            }
-        },
-        {
-            y: 5.58,
+            y: 9.47,
             color: colors[3],
             drilldown: {
                 name: 'Safari',
                 categories: [
-                    'Safari v11.0',
-                    'Safari v10.1',
-                    'Safari v10.0',
-                    'Safari v9.1',
-                    'Safari v9.0',
-                    'Safari v5.1'
+                    'Safari v15.3',
+                    'Safari v15.2',
+                    'Safari v15.1',
+                    'Safari v15.0',
+                    'Safari v14.1',
+                    'Safari v14.0',
+                    'Safari v13.1',
+                    'Safari v13.0',
+                    'Safari v12.1'
                 ],
                 data: [
-                    3.39,
-                    0.96,
-                    0.36,
-                    0.54,
+                    0.1,
+                    2.01,
+                    2.29,
+                    0.49,
+                    2.48,
+                    0.64,
+                    1.17,
                     0.13,
-                    0.2
+                    0.16
                 ]
             }
         },
         {
-            y: 4.02,
+            y: 9.32,
             color: colors[5],
             drilldown: {
                 name: 'Edge',
                 categories: [
-                    'Edge v16',
-                    'Edge v15',
-                    'Edge v14',
-                    'Edge v13'
+                    'Edge v97',
+                    'Edge v96',
+                    'Edge v95'
                 ],
                 data: [
-                    2.6,
-                    0.92,
-                    0.4,
-                    0.1
+                    6.62,
+                    2.55,
+                    0.15
                 ]
             }
         },
         {
-            y: 1.92,
-            color: colors[4],
+            y: 8.15,
+            color: colors[1],
             drilldown: {
-                name: 'Opera',
+                name: 'Firefox',
                 categories: [
-                    'Opera v50.0',
-                    'Opera v49.0',
-                    'Opera v12.1'
+                    'Firefox v96.0',
+                    'Firefox v95.0',
+                    'Firefox v94.0',
+                    'Firefox v91.0',
+                    'Firefox v78.0',
+                    'Firefox v52.0'
                 ],
                 data: [
-                    0.96,
-                    0.82,
-                    0.14
+                    4.17,
+                    3.33,
+                    0.11,
+                    0.23,
+                    0.16,
+                    0.15
                 ]
             }
         },
         {
-            y: 7.62,
+            y: 11.02,
             color: colors[6],
             drilldown: {
                 name: 'Other',
@@ -174,16 +147,17 @@ var colors = Highcharts.getOptions().colors,
                     'Other'
                 ],
                 data: [
-                    7.62
+                    11.02
                 ]
             }
         }
     ],
     browserData = [],
     versionsData = [],
-    i,
+    dataLen = data.length;
+
+let i,
     j,
-    dataLen = data.length,
     drillDataLen,
     brightness;
 
@@ -216,10 +190,12 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Browser market share, January, 2018'
+        text: 'Browser market share, January, 2022',
+        align: 'left'
     },
     subtitle: {
-        text: 'Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
+        text: 'Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>',
+        align: 'left'
     },
     plotOptions: {
         pie: {
@@ -235,9 +211,6 @@ Highcharts.chart('container', {
         data: browserData,
         size: '60%',
         dataLabels: {
-            formatter: function () {
-                return this.y > 5 ? this.point.name : null;
-            },
             color: '#ffffff',
             distance: -30
         }
@@ -247,10 +220,14 @@ Highcharts.chart('container', {
         size: '80%',
         innerSize: '60%',
         dataLabels: {
-            formatter: function () {
-                // display only if larger than 1
-                return this.y > 1 ? '<b>' + this.point.name + ':</b> ' +
-                    this.y + '%' : null;
+            format: '<b>{point.name}:</b> <span style="opacity: 0.5">{y}%</span>',
+            filter: {
+                property: 'y',
+                operator: '>',
+                value: 1
+            },
+            style: {
+                fontWeight: 'normal'
             }
         },
         id: 'versions'

@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -18,10 +24,8 @@ import type PPOPoint from './PPOPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
-} = SeriesRegistry;
+    ema: EMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -46,6 +50,13 @@ const {
  * @augments Highcharts.Series
  */
 class PPOIndicator extends EMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Percentage Price Oscillator. This series requires the
      * `linkedTo` option to be set and should be loaded after the
@@ -84,10 +95,10 @@ class PPOIndicator extends EMAIndicator {
     } as PPOOptions);
 
     /* *
-    *
-    *   Properties
-    *
-    * */
+     *
+     *   Properties
+     *
+     * */
 
     public data: Array<PPOPoint> = void 0 as any;
     public options: PPOOptions = void 0 as any;
@@ -103,24 +114,13 @@ class PPOIndicator extends EMAIndicator {
         series: TLinkedSeries,
         params: PPOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let periods: Array<number> = (params.periods as any),
+        const periods: Array<number> = (params.periods as any),
             index: number = (params.index as any),
             // 0- date, 1- Percentage Price Oscillator
             PPO: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            periodsOffset: number,
-            // Shorter Period EMA
-            SPE: (
-                IndicatorValuesObject<TLinkedSeries> |
-                undefined
-            ),
-            // Longer Period EMA
-            LPE: (
-                IndicatorValuesObject<TLinkedSeries> |
-                undefined
-            ),
-            oscillator: number,
+            yData: Array<number> = [];
+        let oscillator: number,
             i: number;
 
         // Check if periods are correct
@@ -132,12 +132,20 @@ class PPOIndicator extends EMAIndicator {
             return;
         }
 
-        SPE = EMAIndicator.prototype.getValues.call(this, series, {
+        // Shorter Period EMA
+        const SPE: (
+            IndicatorValuesObject<TLinkedSeries> |
+            undefined
+        ) = super.getValues.call(this, series, {
             index: index,
             period: periods[0]
         }) as IndicatorValuesObject<TLinkedSeries>;
 
-        LPE = EMAIndicator.prototype.getValues.call(this, series, {
+        // Longer Period EMA
+        const LPE: (
+            IndicatorValuesObject<TLinkedSeries> |
+            undefined
+        ) = super.getValues.call(this, series, {
             index: index,
             period: periods[1]
         }) as IndicatorValuesObject<TLinkedSeries>;
@@ -147,7 +155,7 @@ class PPOIndicator extends EMAIndicator {
             return;
         }
 
-        periodsOffset = periods[1] - periods[0];
+        const periodsOffset: number = periods[1] - periods[0];
 
         for (i = 0; i < LPE.yData.length; i++) {
             oscillator = correctFloat(
@@ -171,10 +179,10 @@ class PPOIndicator extends EMAIndicator {
 }
 
 /* *
-*
-*   Class Prototype
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface PPOIndicator {
     nameBase: string;
@@ -208,6 +216,12 @@ SeriesRegistry.registerSeriesType('ppo', PPOIndicator);
  * */
 
 export default PPOIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Percentage Price Oscillator` series. If the [type](#series.ppo.type)

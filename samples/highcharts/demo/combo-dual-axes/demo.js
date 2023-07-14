@@ -3,10 +3,14 @@ Highcharts.chart('container', {
         zoomType: 'xy'
     },
     title: {
-        text: 'Average Monthly Temperature and Rainfall in Tokyo'
+        text: 'Karasjok weather, 2021',
+        align: 'left'
     },
     subtitle: {
-        text: 'Source: WorldClimate.com'
+        text: 'Source: ' +
+            '<a href="https://www.yr.no/nb/historikk/graf/5-97251/Norge/Troms%20og%20Finnmark/Karasjok/Karasjok?q=2021"' +
+            'target="_blank">YR</a>',
+        align: 'left'
     },
     xAxis: [{
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -28,7 +32,7 @@ Highcharts.chart('container', {
         }
     }, { // Secondary yAxis
         title: {
-            text: 'Rainfall',
+            text: 'Precipitation',
             style: {
                 color: Highcharts.getOptions().colors[0]
             }
@@ -45,21 +49,21 @@ Highcharts.chart('container', {
         shared: true
     },
     legend: {
-        layout: 'vertical',
         align: 'left',
-        x: 120,
+        x: 80,
         verticalAlign: 'top',
-        y: 100,
+        y: 60,
         floating: true,
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || // theme
             'rgba(255,255,255,0.25)'
     },
     series: [{
-        name: 'Rainfall',
+        name: 'Precipitation',
         type: 'column',
         yAxis: 1,
-        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+        data: [27.6, 28.8, 21.7, 34.1, 29.0, 28.4, 45.6, 51.7, 39.0,
+            60.0, 28.6, 32.1],
         tooltip: {
             valueSuffix: ' mm'
         }
@@ -67,7 +71,8 @@ Highcharts.chart('container', {
     }, {
         name: 'Temperature',
         type: 'spline',
-        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
+        data: [-13.6, -14.9, -5.8, -0.7, 3.1, 13.0, 14.5, 10.8, 5.8,
+            -0.7, -11.0, -16.4],
         tooltip: {
             valueSuffix: '°C'
         }

@@ -16,8 +16,21 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
 import Chart from '../Core/Chart/Chart.js';
+import D from '../Core/Defaults.js';
+const { defaultOptions } = D;
 import H from '../Core/Globals.js';
+import Point from '../Core/Series/Point.js';
+import U from '../Core/Utilities.js';
+const {
+    defined,
+    error,
+    extend,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -86,24 +99,7 @@ declare global {
 
 ''; // detach doclets above
 
-import D from '../Core/DefaultOptions.js';
-const { defaultOptions } = D;
-import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    error,
-    extend,
-    merge,
-    objectEach,
-    pick,
-    splat
-} = U;
-
-import type Pathfinder from './Pathfinder.js';
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
-import '../Extensions/ArrowSymbols.js';
 
 const deg2rad = H.deg2rad,
     max = Math.max,
@@ -217,6 +213,13 @@ extend(defaultOptions, {
          * @since   6.2.0
          */
         type: 'straight',
+
+        /**
+         * The corner radius for this chart's Pathfinder connecting lines
+         *
+         * @since next
+         */
+        radius: 0,
 
         /**
          * Set the default pixel width for this chart's Pathfinder connecting
@@ -734,7 +737,8 @@ class Connection {
                 connection.graphics[type] = renderer
                     .symbol(options.symbol as any)
                     .addClass(
-                        'highcharts-point-connecting-path-' + type + '-marker'
+                        'highcharts-point-connecting-path-' + type + '-marker' +
+                        ' highcharts-color-' + this.fromPoint.colorIndex
                     )
                     .attr(box)
                     .add((pathfinder as any).group);

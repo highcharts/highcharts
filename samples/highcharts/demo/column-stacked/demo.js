@@ -1,34 +1,32 @@
+// Data retrieved from:
+// - https://en.as.com/soccer/which-teams-have-won-the-premier-league-the-most-times-n/
+// - https://www.statista.com/statistics/383679/fa-cup-wins-by-team/
+// - https://www.uefa.com/uefachampionsleague/history/winners/
 Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
     title: {
-        text: 'Stacked column chart'
+        text: 'Major trophies for some English teams',
+        align: 'left'
     },
     xAxis: {
-        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+        categories: ['Arsenal', 'Chelsea', 'Liverpool', 'Manchester United']
     },
     yAxis: {
         min: 0,
         title: {
-            text: 'Total fruit consumption'
+            text: 'Count trophies'
         },
         stackLabels: {
-            enabled: true,
-            style: {
-                fontWeight: 'bold',
-                color: ( // theme
-                    Highcharts.defaultOptions.title.style &&
-                    Highcharts.defaultOptions.title.style.color
-                ) || 'gray'
-            }
+            enabled: true
         }
     },
     legend: {
-        align: 'right',
-        x: -30,
+        align: 'left',
+        x: 70,
         verticalAlign: 'top',
-        y: 25,
+        y: 70,
         floating: true,
         backgroundColor:
             Highcharts.defaultOptions.legend.backgroundColor || 'white',
@@ -49,13 +47,13 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        name: 'John',
-        data: [5, 3, 4, 7, 2]
+        name: 'BPL',
+        data: [3, 5, 1, 13]
     }, {
-        name: 'Jane',
-        data: [2, 2, 3, 2, 1]
+        name: 'FA Cup',
+        data: [14, 8, 8, 12]
     }, {
-        name: 'Joe',
-        data: [3, 4, 4, 2, 5]
+        name: 'CL',
+        data: [0, 2, 6, 3]
     }]
 });

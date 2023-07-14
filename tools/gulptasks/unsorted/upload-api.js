@@ -55,7 +55,7 @@ function updateFileContent(filePath, fileContent) {
             fileContent = Buffer.from(
                 fileContent
                     .toString()
-                    .replace(/^(.*\<\/head\>.*)$/m, HTML_HEAD_STATIC + '\n$1')
+                    .replace(/^(.*<\/head>.*)$/mu, HTML_HEAD_STATIC + '\n$1')
             );
             break;
         default:
@@ -65,7 +65,6 @@ function updateFileContent(filePath, fileContent) {
 
 function uploadFilesTest(params) {
     const fs = require('fs');
-    const mkDirP = require('mkdirp');
 
     return new Promise(resolve => {
         const callback = params.callback,
@@ -84,9 +83,10 @@ function uploadFilesTest(params) {
                 if (contentCallback) {
                     content = contentCallback(from, content);
                 }
-                mkDirP.sync(Path.dirname(to));
+                fs.mkdirSync(Path.dirname(to), { recursive: true });
                 fs.writeFileSync(to, content);
                 if (callback) {
+                    // eslint-disable-next-line node/callback-return
                     callback();
                 }
             } catch (error) {
@@ -102,10 +102,9 @@ function uploadFilesTest(params) {
 function uploadAPIDocs() {
     const {
         getFilesInFolder
-    } = require('highcharts-assembler/src/build.js');
+    } = require('@highcharts/highcharts-assembler/src/build.js');
     const colors = require('colors');
     const isString = x => typeof x === 'string';
-    const ProgressBar = require('../../progress-bar.js');
     const {
         asyncForeach,
         uploadFiles
@@ -126,20 +125,11 @@ function uploadAPIDocs() {
 
     const tags = isString(argv.tags) ? argv.tags.split(',') : ['current'];
     const getUploadConfig = tag => {
-        const errors = [];
-        const bar = new ProgressBar({
-            error: '',
-            total: files.length,
-            message: !argv.silent ? `\n[:bar] - Uploading ${tag}. Completed :count of :total.:error` : ''
-        });
         const doTick = () => {
-            bar.tick();
+            process.stdout.write('.');
         };
         const onError = err => {
-            errors.push(`${err.message}. ${err.from} -> ${err.to}`);
-            bar.tick({
-                error: `\n${errors.length} file(s) errored:\n${errors.join('\n')}`
-            });
+            process.stdout.write(`\n${err.message}. ${err.from} -> ${err.to}\n`);
         };
 
         const params = {

@@ -81,25 +81,25 @@ var data = [
 
 var pointsInInterval = 5;
 
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
         margin: [50, 0, 50, 50],
         events: {
             load: function () {
                 this.series[0].data.forEach(function (point, i) {
-                    var labels = ["4σ", "3σ", "2σ", "σ", "μ", "σ", "2σ", "3σ", "4σ"];
+                    var labels = ['4σ', '3σ', '2σ', 'σ', 'μ', 'σ', '2σ', '3σ', '4σ'];
                     if (i % pointsInInterval === 0) {
                         point.update({
-                            color: "black",
+                            color: 'black',
                             dataLabels: {
                                 enabled: true,
                                 // eslint-disable-next-line max-len
                                 format: labels[Math.floor(i / pointsInInterval)],
-                                overflow: "none",
+                                overflow: 'none',
                                 crop: false,
                                 y: -2,
                                 style: {
-                                    fontSize: "13px"
+                                    fontSize: '13px'
                                 }
                             }
                         });
@@ -109,7 +109,7 @@ Highcharts.chart("container", {
         }
     },
     title: {
-        text: "Bell curve"
+        text: 'Bell curve'
     },
     subtitle: {
         text:
@@ -128,8 +128,8 @@ Highcharts.chart("container", {
     },
     series: [
         {
-            name: "Bell curve",
-            type: "bellcurve",
+            name: 'Bell curve',
+            type: 'bellcurve',
             pointsInInterval: pointsInInterval,
             intervals: 4,
             baseSeries: 1,

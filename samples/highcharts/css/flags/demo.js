@@ -1,89 +1,90 @@
-Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
-    function (data) {
+(async () => {
 
-        var year = new Date(data[data.length - 1][0]).getFullYear(); // Get year of last data point
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+    ).then(response => response.json());
 
-        // Create the chart
+    var year = new Date(data[data.length - 1][0]).getFullYear(); // Get year of last data point
 
-        Highcharts.stockChart('container', {
+    // Create the chart
 
-            chart: {
-                styledMode: true
-            },
+    Highcharts.stockChart('container', {
 
-            rangeSelector: {
-                selected: 2
-            },
+        chart: {
+            styledMode: true
+        },
 
+        rangeSelector: {
+            selected: 2
+        },
+
+        title: {
+            text: 'USD to EUR exchange rate'
+        },
+
+        yAxis: {
             title: {
-                text: 'USD to EUR exchange rate'
-            },
+                text: 'Exchange rate'
+            }
+        },
 
-            yAxis: {
-                title: {
-                    text: 'Exchange rate'
+        series: [{
+            name: 'USD to EUR',
+            data: data,
+            id: 'dataseries',
+            tooltip: {
+                valueDecimals: 4
+            }
+        }, {
+            type: 'flags',
+            data: [{
+                x: Date.UTC(year, 1, 22),
+                title: 'A',
+                text: 'Shape: "squarepin"'
+            }, {
+                x: Date.UTC(year, 3, 28),
+                title: 'A',
+                text: 'Shape: "squarepin"'
+            }],
+            onSeries: 'dataseries',
+            shape: 'squarepin',
+            width: 16
+        }, {
+            type: 'flags',
+            data: [{
+                x: Date.UTC(year, 2, 1),
+                title: 'B',
+                text: 'Shape: "circlepin"'
+            }, {
+                x: Date.UTC(year, 3, 1),
+                title: 'B',
+                text: 'Shape: "circlepin"'
+            }],
+            shape: 'circlepin',
+            width: 16,
+            className: 'circle-flags'
+        }, {
+            type: 'flags',
+            data: [{
+                x: Date.UTC(year, 2, 10),
+                title: 'C',
+                text: 'Shape: "flag"'
+            }, {
+                x: Date.UTC(year, 3, 11),
+                title: 'C',
+                text: 'Shape: "flag"'
+            }],
+            onSeries: 'dataseries',
+            width: 16,
+            style: { // text style
+                color: 'white'
+            },
+            states: {
+                hover: {
+                    fillColor: '#395C84' // darker
                 }
             },
-
-            series: [{
-                name: 'USD to EUR',
-                data: data,
-                id: 'dataseries',
-                tooltip: {
-                    valueDecimals: 4
-                }
-            }, {
-                type: 'flags',
-                data: [{
-                    x: Date.UTC(year, 1, 22),
-                    title: 'A',
-                    text: 'Shape: "squarepin"'
-                }, {
-                    x: Date.UTC(year, 3, 28),
-                    title: 'A',
-                    text: 'Shape: "squarepin"'
-                }],
-                onSeries: 'dataseries',
-                shape: 'squarepin',
-                width: 16
-            }, {
-                type: 'flags',
-                data: [{
-                    x: Date.UTC(year, 2, 1),
-                    title: 'B',
-                    text: 'Shape: "circlepin"'
-                }, {
-                    x: Date.UTC(year, 3, 1),
-                    title: 'B',
-                    text: 'Shape: "circlepin"'
-                }],
-                shape: 'circlepin',
-                width: 16,
-                className: 'circle-flags'
-            }, {
-                type: 'flags',
-                data: [{
-                    x: Date.UTC(year, 2, 10),
-                    title: 'C',
-                    text: 'Shape: "flag"'
-                }, {
-                    x: Date.UTC(year, 3, 11),
-                    title: 'C',
-                    text: 'Shape: "flag"'
-                }],
-                onSeries: 'dataseries',
-                width: 16,
-                style: { // text style
-                    color: 'white'
-                },
-                states: {
-                    hover: {
-                        fillColor: '#395C84' // darker
-                    }
-                },
-                className: 'darker-flags'
-            }]
-        });
-    }
-);
+            className: 'darker-flags'
+        }]
+    });
+})();

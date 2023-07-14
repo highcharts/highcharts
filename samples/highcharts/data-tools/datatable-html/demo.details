@@ -1,0 +1,7 @@
+---
+ name: DataTable demo with HTML table
+ authors:
+   - Sophie Bremer
+ js_wrap: b
+ skipTest: true
+...

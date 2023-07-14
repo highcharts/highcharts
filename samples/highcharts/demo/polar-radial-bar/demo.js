@@ -6,7 +6,14 @@ Highcharts.chart('container', {
         polar: true
     },
     title: {
-        text: 'Winter Olympic medals per existing country (TOP 5)'
+        text: 'Winter Olympic medals per existing country (TOP 5)',
+        align: 'left'
+    },
+    subtitle: {
+        text: 'Source: ' +
+            '<a href="https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table"' +
+            'target="_blank">Wikipedia</a>',
+        align: 'left'
     },
     tooltip: {
         outside: true
@@ -29,6 +36,7 @@ Highcharts.chart('container', {
             }
         },
         lineWidth: 0,
+        gridLineWidth: 0,
         categories: [
             'Norway <span class="f16"><span id="flag" class="flag no">' +
             '</span></span>',
@@ -36,39 +44,37 @@ Highcharts.chart('container', {
             '</span></span>',
             'Germany <span class="f16"><span id="flag" class="flag de">' +
             '</span></span>',
-            'Canada <span class="f16"><span id="flag" class="flag ca">' +
-            '</span></span>',
             'Austria <span class="f16"><span id="flag" class="flag at">' +
+            '</span></span>',
+            'Canada <span class="f16"><span id="flag" class="flag ca">' +
             '</span></span>'
         ]
     },
     yAxis: {
-        crosshair: {
-            enabled: true,
-            color: '#333'
-        },
         lineWidth: 0,
         tickInterval: 25,
         reversedStacks: false,
         endOnTick: true,
-        showLastLabel: true
+        showLastLabel: true,
+        gridLineWidth: 0
     },
     plotOptions: {
         column: {
             stacking: 'normal',
             borderWidth: 0,
             pointPadding: 0,
-            groupPadding: 0.15
+            groupPadding: 0.15,
+            borderRadius: '50%'
         }
     },
     series: [{
         name: 'Gold medals',
-        data: [132, 105, 92, 73, 64]
+        data: [148, 113, 104, 71, 77]
     }, {
         name: 'Silver medals',
-        data: [125, 110, 86, 64, 81]
+        data: [113, 122, 98, 88, 72]
     }, {
         name: 'Bronze medals',
-        data: [111, 90, 60, 62, 87]
+        data: [124, 95, 65, 91, 76]
     }]
 });

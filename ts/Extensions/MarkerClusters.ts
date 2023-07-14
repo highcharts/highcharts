@@ -35,10 +35,11 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
-import D from '../Core/DefaultOptions.js';
+import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import { Palette } from '../Core/Color/Palettes.js';
 import Point from '../Core/Series/Point.js';
@@ -457,7 +458,7 @@ const clusterDefaultOptions = {
          *         Custom algorithm
          *
          * @type {string|Function}
-         * @see [cluster.minimumClusterSize](#plotOptions.scatter.marker.cluster.minimumClusterSize)
+         * @see [cluster.minimumClusterSize](#plotOptions.scatter.cluster.minimumClusterSize)
          * @apioption plotOptions.scatter.cluster.layoutAlgorithm.type
          */
         /**
@@ -497,9 +498,9 @@ const clusterDefaultOptions = {
     },
     /**
      * Options for the cluster marker.
+     * @type      {Highcharts.PointMarkerOptionsObject}
      * @extends   plotOptions.series.marker
      * @excluding enabledThreshold, states
-     * @type      {Highcharts.PointMarkerOptionsObject}
      */
     marker: {
         /** @internal */
@@ -519,7 +520,7 @@ const clusterDefaultOptions = {
      *
      * @type      {Highcharts.MarkerClusterDrillCallbackFunction}
      * @product   highcharts highmaps
-     * @see [cluster.drillToCluster](#plotOptions.scatter.marker.cluster.drillToCluster)
+     * @see [cluster.drillToCluster](#plotOptions.scatter.cluster.drillToCluster)
      * @apioption plotOptions.scatter.cluster.events.drillToCluster
      */
 
@@ -626,6 +627,8 @@ const clusterDefaultOptions = {
              * @sample maps/marker-clusters/europe/
              *         Format tooltip for clusters using tooltip.formatter
              *
+             * @type      {string}
+             * @default   Clustered points: {point.clusterPointsAmount}
              * @apioption tooltip.clusterFormat
              */
             clusterFormat: '<span>Clustered points: ' +
@@ -1574,8 +1577,6 @@ Scatter.prototype.markerClusterAlgorithms = {
         options: Highcharts.MarkerClusterLayoutAlgorithmOptions
     ): Record<string, Highcharts.MarkerClusterSplitDataArray> {
         let series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
             pointMaxDistance = options.processedDistance ||
                 clusterDefaultOptions.layoutAlgorithm.gridSize,
             group: (Record<string, Highcharts.MarkerClusterSplitDataArray>) = {},
@@ -2099,8 +2100,6 @@ Scatter.prototype.generatePoints = function (): void {
     const series = this,
         chart = series.chart,
         mapView = chart.mapView,
-        xAxis = series.xAxis,
-        yAxis = series.yAxis,
         xData = series.xData,
         yData = series.yData,
         clusterOptions = series.options.cluster,
@@ -2212,9 +2211,9 @@ Scatter.prototype.generatePoints = function (): void {
             if (
                 xData[i] >= (realExtremes.minX - cropDataOffsetX) &&
                 xData[i] <= (realExtremes.maxX + cropDataOffsetX) &&
-                (yData[i] || realExtremes.minY) >=
+                (yData[i] as number || realExtremes.minY) >=
                     (realExtremes.minY - cropDataOffsetY) &&
-                (yData[i] || realExtremes.maxY) <=
+                (yData[i] as number || realExtremes.maxY) <=
                     (realExtremes.maxY + cropDataOffsetY)
             ) {
                 visibleXData.push(xData[i]);

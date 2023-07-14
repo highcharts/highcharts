@@ -1,5 +1,5 @@
 function getGradientColors() {
-    return ["#7cb5ec", "#434348"].map(function (color) {
+    return ['#7cb5ec', '#434348'].map(function (color) {
         return {
             radialGradient: {
                 cx: 0.4,

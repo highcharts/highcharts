@@ -26,13 +26,15 @@ import type Time from './Time';
  *
  * */
 
+type InternalHighcharts = typeof Highcharts;
+
 /**
  * Helper interface to add property types to `Globals`.
  *
  * Use the `declare module 'GlobalsLike'` pattern to overload the interface in
  * this definition file.
  */
-export interface GlobalsLike {
+export interface GlobalsLike extends InternalHighcharts {
     readonly Obj: ObjectConstructor;
     readonly SVG_NS: string;
     chartCount: number;
@@ -50,7 +52,7 @@ export interface GlobalsLike {
     readonly isWebKit: boolean;
     readonly marginNames: ReadonlyArray<string>;
     readonly nav: Navigator;
-    readonly noop: (this: unknown, ...args: Array<unknown>) => unknown;
+    readonly noop: (this: any, ...args: Array<any>) => any;
     readonly product: string;
     readonly seriesTypes: SeriesTypeRegistry;
     readonly supportsPassiveEvents: boolean;

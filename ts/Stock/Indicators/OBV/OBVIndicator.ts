@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type {
     OBVOptions,
     OBVParamsOptions
@@ -15,13 +21,12 @@ import type {
 import type OBVPoint from './OBVPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import Series from '../../../Core/Series/Series';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     isNumber,
@@ -46,6 +51,13 @@ const {
  * @augments Highcharts.Series
  */
 class OBVIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * On-Balance Volume (OBV) technical indicator. This series
      * requires the `linkedTo` option to be set and should be loaded after
@@ -214,6 +226,12 @@ SeriesRegistry.registerSeriesType('obv', OBVIndicator);
  * */
 
 export default OBVIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `OBV` series. If the [type](#series.obv.type) option is not

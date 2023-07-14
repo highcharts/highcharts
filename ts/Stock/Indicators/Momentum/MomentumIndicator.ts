@@ -8,16 +8,19 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type MomentumOptions from './MomentumOptions';
 import type MomentumPoint from './MomentumPoint';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -25,8 +28,15 @@ const {
     merge
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
+/**
+ * @private
+ */
 function populateAverage(
     xVal: Array<number>,
     yVal: Array<Array<number>>,
@@ -40,7 +50,11 @@ function populateAverage(
     return [mmX, mmY];
 }
 
-/* eslint-enable require-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Momentum series type.
@@ -52,6 +66,13 @@ function populateAverage(
  * @augments Highcharts.Series
  */
 class MomentumIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Momentum. This series requires `linkedTo` option to be set.
      *
@@ -71,24 +92,36 @@ class MomentumIndicator extends SMAIndicator {
         }
     } as MomentumOptions);
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<MomentumPoint> = void 0 as any;
     public options: MomentumOptions = void 0 as any;
     public points: Array<MomentumPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: MomentumOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = params.period,
+        const period: number = params.period,
             index: number = params.index as any,
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
-            yValue: (Array<number>|number) = yVal[0],
             MM: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            i: number,
+            yData: Array<number> = [];
+
+        let i: number,
             MMPoint: [number, number];
 
         if (xVal.length <= period) {
@@ -96,9 +129,7 @@ class MomentumIndicator extends SMAIndicator {
         }
 
         // Switch index for OHLC / Candlestick / Arearange
-        if (isArray(yVal[0])) {
-            yValue = (yVal[0][index] as any);
-        } else {
+        if (!isArray(yVal[0])) {
             return;
         }
 
@@ -121,6 +152,7 @@ class MomentumIndicator extends SMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+
 }
 
 /* *
@@ -142,6 +174,7 @@ extend(MomentumIndicator.prototype, {
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         momentum: typeof MomentumIndicator;
@@ -158,6 +191,11 @@ SeriesRegistry.registerSeriesType('momentum', MomentumIndicator);
 
 export default MomentumIndicator;
 
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `Momentum` series. If the [type](#series.momentum.type) option is not

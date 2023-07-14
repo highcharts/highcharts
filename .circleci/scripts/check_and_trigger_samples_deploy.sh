@@ -2,11 +2,9 @@
 set -e
 
 # latest commit
-LATEST_COMMIT=$(git rev-parse HEAD)
 BUCKET=""
 TOKEN=""
 FORCE_DEPLOY=false
-THUMBNAILS=false
 DEPLOYARGS=""
 
 for i in "$@"
@@ -20,12 +18,6 @@ case $i in
     ;;
       -f|--force-deploy)
     FORCE_DEPLOY=true
-    ;;
-      --thumbnails)
-    THUMBNAILS=true
-    ;;
-      --deployargs=*)
-    DEPLOYARGS="${i#*=}"
     ;;
     *)
      # unknown option
@@ -44,9 +36,9 @@ if [[ -z $TOKEN ]]; then
 fi
 
 # latest commit where samples were changed, limited to 24 hours
-SAMPLES_COMMIT=$(git log --since=\""24 hours ago\"" --format=format:%H --full-diff --name-status samples | awk '!/\/demo\//'/)
+SAMPLES_COMMIT=$(git log --since=\""24 hours ago\"" --format=format:%H --full-diff --name-status samples | awk '!/\/demo\/'/)
 
-if [[ ! -z "$SAMPLES_COMMIT" ]] || [ "$FORCE_DEPLOY" = true ]; then
+if [[ -n "$SAMPLES_COMMIT" ]] || [ "$FORCE_DEPLOY" = true ]; then
     echo "Force deployed: ${FORCE_DEPLOY}"
     echo "Files in samples/ has changed or forcing deploy. Triggering deploy of samples via highcharts-demo-manager to bucket ${BUCKET}"
     payload="{ \"branch\":\"master\", \"parameters\": { \"deploy_samples\": true, \"target_bucket\": \"${BUCKET}\", \"deploy_args\": \"${DEPLOYARGS}\" }}"
@@ -57,6 +49,7 @@ if [[ ! -z "$SAMPLES_COMMIT" ]] || [ "$FORCE_DEPLOY" = true ]; then
     rep=$(curl -f -X POST -H "Content-Type: application/json" -d "$payload" "$httpUrl")
     status="$?"
     echo "$rep"
+    exit "$status"
 else
      echo "No change in samples/ folder found."
 fi

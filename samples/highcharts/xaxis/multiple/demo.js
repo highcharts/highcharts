@@ -6,12 +6,12 @@ Highcharts.chart('container', {
         text: 'Multiple X axes'
     },
     xAxis: [{
-        categories: ["Ein", "To", "Tre", "Fire"],
+        categories: ['Ein', 'To', 'Tre', 'Fire'],
         title: {
             text: 'Norwegian'
         }
     }, {
-        categories: ["Uno", "Dos", "Tres", "Quatro"],
+        categories: ['Uno', 'Dos', 'Tres', 'Quatro'],
         title: {
             text: 'Spanish'
         }

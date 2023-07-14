@@ -19,6 +19,9 @@
  * */
 
 import type Accessibility from './Accessibility';
+import type {
+    AccessibilityKeyboardNavigationFocusBorderOptions
+} from './Options/A11yOptions';
 import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
@@ -100,7 +103,7 @@ namespace FocusBorderComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     // Attributes that trigger a focus border update
     const svgElementBorderUpdateTriggers = [
@@ -123,18 +126,14 @@ namespace FocusBorderComposition {
         SVGElementClass: typeof SVGElement
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.renderFocusBorder = chartRenderFocusBorder;
             chartProto.setFocusToElement = chartSetFocusToElement;
         }
 
-        if (composedClasses.indexOf(SVGElementClass) === -1) {
-            composedClasses.push(SVGElementClass);
-
+        if (U.pushUnique(composedMembers, SVGElementClass)) {
             const svgElementProto = (
                 SVGElementClass.prototype as SVGElementCompositon
             );
@@ -156,7 +155,7 @@ namespace FocusBorderComposition {
     ): void {
         const focusElement = this.focusElement,
             focusBorderOptions: (
-                Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions
+                AccessibilityKeyboardNavigationFocusBorderOptions
             ) = this.options.accessibility.keyboardNavigation.focusBorder;
 
         if (focusElement) {
@@ -192,7 +191,7 @@ namespace FocusBorderComposition {
         focusElement?: DOMElementType
     ): void {
         const focusBorderOptions: (
-                Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions
+                AccessibilityKeyboardNavigationFocusBorderOptions
             ) = this.options.accessibility.keyboardNavigation.focusBorder,
             browserFocusElement = focusElement || svgElement.element;
 

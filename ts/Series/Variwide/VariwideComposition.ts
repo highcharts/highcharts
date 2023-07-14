@@ -18,12 +18,12 @@
  *
  * */
 
+import type Axis from '../../Core/Axis/Axis';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import Tick from '../../Core/Axis/Tick.js';
-import Axis from '../../Core/Axis/Axis.js';
-import H from '../../Core/Globals.js';
+import type Tick from '../../Core/Axis/Tick';
+
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -56,34 +56,49 @@ declare module '../../Core/Axis/TickLike' {
 
 /* *
  *
- * Composition
+ *  Constants
  *
  * */
 
-Tick.prototype.postTranslate = function (
-    xy: PositionObject,
-    xOrY: keyof PositionObject,
-    index: number
+const composedMembers: Array<Function> = [];
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * @private
+ */
+function compose(
+    AxisClass: typeof Axis,
+    TickClass: typeof Tick
 ): void {
-    const axis = this.axis;
 
-    let pos = xy[xOrY] - axis.pos;
-
-    if (!axis.horiz) {
-        pos = axis.len - pos;
+    if (U.pushUnique(composedMembers, AxisClass)) {
+        addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
+        addEvent(AxisClass, 'afterRender', onAxisAfterRender);
     }
-    pos = (axis.series[0] as any).postTranslate(index, pos);
 
-    if (!axis.horiz) {
-        pos = axis.len - pos;
+    if (U.pushUnique(composedMembers, TickClass)) {
+        addEvent(TickClass, 'afterGetPosition', onTickAfterGetPosition);
+
+        const tickProto = TickClass.prototype;
+
+        tickProto.postTranslate = tickPostTranslate;
+
+        wrap(tickProto, 'getLabelPosition', wrapTickGetLabelPosition);
     }
-    xy[xOrY] = axis.pos + pos;
-};
 
-/* eslint-disable no-invalid-this */
+}
 
-// Same width as the category (#8083)
-addEvent(Axis, 'afterDrawCrosshair', function (
+/**
+ * Same width as the category (#8083)
+ * @private
+ */
+function onAxisAfterDrawCrosshair(
+    this: Axis,
     e: {
         point: VariwidePoint;
     }
@@ -94,10 +109,15 @@ addEvent(Axis, 'afterDrawCrosshair', function (
             (e.point && e.point.crosshairWidth) as any
         );
     }
-});
+}
 
-// On a vertical axis, apply anti-collision logic to the labels.
-addEvent(Axis, 'afterRender', function (): void {
+/**
+ * On a vertical axis, apply anti-collision logic to the labels.
+ * @private
+ */
+function onAxisAfterRender(
+    this: Axis
+): void {
     const axis = this;
 
     if (!this.horiz && this.variwide) {
@@ -120,9 +140,13 @@ addEvent(Axis, 'afterRender', function (): void {
             }
         );
     }
-});
+}
 
-addEvent(Tick, 'afterGetPosition', function (
+/**
+ * @private
+ */
+function onTickAfterGetPosition(
+    this: Tick,
     e: {
         pos: PositionObject;
         xOrY: keyof PositionObject;
@@ -135,9 +159,36 @@ addEvent(Tick, 'afterGetPosition', function (
         (this as any)[xOrY + 'Orig'] = e.pos[xOrY];
         this.postTranslate(e.pos, xOrY, this.pos);
     }
-});
+}
 
-wrap(Tick.prototype, 'getLabelPosition', function (
+/**
+ * @private
+ */
+function tickPostTranslate(
+    this: Tick,
+    xy: PositionObject,
+    xOrY: keyof PositionObject,
+    index: number
+): void {
+    const axis = this.axis;
+
+    let pos = xy[xOrY] - axis.pos;
+
+    if (!axis.horiz) {
+        pos = axis.len - pos;
+    }
+    pos = (axis.series[0] as any).postTranslate(index, pos);
+
+    if (!axis.horiz) {
+        pos = axis.len - pos;
+    }
+    xy[xOrY] = axis.pos + pos;
+}
+
+/**
+ * @private
+ */
+function wrapTickGetLabelPosition(
     this: Tick,
     proceed: Function,
     x: number,
@@ -148,8 +199,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (
     tickmarkOffset: number,
     index: number
 ): PositionObject {
-    let args = Array.prototype.slice.call(arguments, 1),
-        xy: PositionObject,
+    const args = Array.prototype.slice.call(arguments, 1),
         xOrY: keyof PositionObject = horiz ? 'x' : 'y';
 
     // Replace the x with the original x
@@ -160,11 +210,23 @@ wrap(Tick.prototype, 'getLabelPosition', function (
         args[horiz ? 0 : 1] = (this as any)[xOrY + 'Orig'];
     }
 
-    xy = proceed.apply(this, args);
+    const xy = proceed.apply(this, args);
 
     // Post-translate
     if (this.axis.variwide && this.axis.categories) {
         this.postTranslate(xy, xOrY, this.pos);
     }
     return xy;
-});
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+const VariwideComposition = {
+    compose
+};
+
+export default VariwideComposition;

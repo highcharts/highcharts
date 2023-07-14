@@ -62,9 +62,14 @@ QUnit.test('setSize parameters', function (assert) {
 
     // Test that it responds to reflow
     $('#container').width(700);
+    chart.isResizing = 0;
     chart.reflow();
 
-    assert.strictEqual(chart.chartWidth, 700, 'Width');
+    assert.strictEqual(
+        chart.chartWidth,
+        700,
+        'Chart width should respond to reflow'
+    );
 
     assert.strictEqual(chart.chartHeight, 400, 'Height');
 });
@@ -129,7 +134,7 @@ QUnit.test('3D pies stay in place on redraw (#5350)', function (assert) {
             assert.notEqual(
                 newPath,
                 path,
-                "First point's path should be updated (#7437)"
+                'First point\'s path should be updated (#7437)'
             );
         }, 50);
 

@@ -82,7 +82,7 @@ QUnit.test('Dynamic null points', function (assert) {
 
     assert.notStrictEqual(
         nullPoint.graphic.attr('y'),
-        "NaN",
+        'NaN',
         'Point graphic y shouldn\'t be NaN.'
     );
 });

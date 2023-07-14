@@ -82,19 +82,19 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[0].dataLabels[0].textPathWrapper),
+        Highcharts.defined(points[0].dataLabels[0].textPath),
         false,
-        'textPathWrapper should not exist for the center label'
+        'Text path should not exist for the center label'
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[7].dataLabels[0].textPathWrapper),
+        Highcharts.defined(points[7].dataLabels[0].textPath),
         true,
-        'textPathWrapper should exist for this data label'
+        'Text path should exist for this data label'
     );
 
     assert.strictEqual(
-        points[7].dataLabels[0].textPathWrapper.element.textContent.indexOf(
+        points[7].dataLabels[0].element.textContent.indexOf(
             '…'
         ) > 0,
         true,
@@ -110,19 +110,29 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     }
 
     assert.strictEqual(
+        chart.container
+            .querySelectorAll(
+                '.highcharts-breadcrumbs-group .highcharts-breadcrumbs-button'
+            )
+            .length,
+        3,
+        'There should be three breadcrumbs items'
+    );
+
+    assert.strictEqual(
         points[2].dlOptions.textPath.enabled,
         false,
         'Center label has changed after drilldown and should have textPath disabled'
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[2].dataLabels[0].textPathWrapper),
+        Highcharts.defined(points[2].dataLabels[0].textPath),
         false,
-        'textPathWrapper should not exist for the center label'
+        'Text path should not exist for the center label'
     );
 
     assert.strictEqual(
-        points[7].dataLabels[0].textPathWrapper.element.textContent.indexOf(
+        points[7].dataLabels[0].element.textContent.indexOf(
             '…'
         ) > 0,
         false,
@@ -141,13 +151,13 @@ QUnit.test('TextPath for dataLabels in sunburst #12373', function (assert) {
     );
 
     assert.strictEqual(
-        Highcharts.defined(points[2].dataLabels[0].textPathWrapper),
+        Highcharts.defined(points[2].dataLabels[0].textPath),
         true,
-        'textPathWrapper should exist for this data label'
+        'Text path should exist for this data label'
     );
 
     assert.strictEqual(
-        points[7].dataLabels[0].textPathWrapper.element.textContent.indexOf(
+        points[7].dataLabels[0].element.textContent.indexOf(
             '…'
         ) > 0,
         true,

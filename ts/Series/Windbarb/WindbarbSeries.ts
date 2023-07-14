@@ -18,10 +18,12 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import ApproximationRegistry from
+    '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import H from '../../Core/Globals.js';
-const { noop } = H;
 import OnSeriesComposition from '../OnSeriesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -176,8 +178,8 @@ class WindbarbSeries extends ColumnSeries {
      * @private
      */
     public static registerApproximation(): void {
-        if (H.approximations && !H.approximations.windbarb) {
-            H.approximations.windbarb = function (
+        if (!ApproximationRegistry.windbarb) {
+            ApproximationRegistry.windbarb = function (
                 values: Array<number>,
                 directions: Array<number>
             ): Array<number> {
@@ -437,6 +439,7 @@ interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof WindbarbPoint;
     remove: typeof ColumnSeries.prototype.remove;
+    drawTracker: typeof ColumnSeries.prototype.remove;
     windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
 
 }
@@ -449,11 +452,11 @@ extend(WindbarbSeries.prototype, {
         'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
         'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
         'Violent storm', 'Hurricane'],
+    invertible: false,
     parallelArrays: ['x', 'value', 'direction'],
     pointArrayMap: ['value', 'direction'],
     pointClass: WindbarbPoint,
     trackerGroups: ['markerGroup'],
-    invertGroups: noop, // Don't invert the marker group (#4960)
     translate: function (this: WindbarbSeries): void {
         const beaufortFloor = this.beaufortFloor,
             beaufortName = this.beaufortName;

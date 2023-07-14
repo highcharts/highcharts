@@ -46,6 +46,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,
+    defined,
     merge,
     pick
 } = U;
@@ -128,7 +129,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 0,
                 scrollableMinHeight - this.chartHeight
             );
-            if (scrollablePixelsY) {
+            if (defined(scrollablePixelsY)) {
                 this.scrollablePlotBox = (
                     this.renderer.scrollablePlotBox = merge(this.plotBox)
                 );
@@ -231,9 +232,14 @@ Chart.prototype.setUpScrolling = function (): void {
 
     // On scroll, reset the chart position because it applies to the scrolled
     // container
+    let lastHoverPoint: typeof this.hoverPoint;
     addEvent(this.scrollingContainer, 'scroll', (): void => {
         if (this.pointer) {
             delete this.pointer.chartPosition;
+            if (this.hoverPoint) {
+                lastHoverPoint = this.hoverPoint;
+            }
+            this.pointer.runPointActions(void 0, lastHoverPoint, true);
         }
     });
 
@@ -257,6 +263,7 @@ Chart.prototype.moveFixedElements = function (): void {
     let container = this.container,
         fixedRenderer = this.fixedRenderer,
         fixedSelectors = [
+            '.highcharts-breadcrumbs-group',
             '.highcharts-contextbutton',
             '.highcharts-credits',
             '.highcharts-legend',
@@ -498,7 +505,7 @@ addEvent(Series, 'show', function (): void {
  *         Scrollable plot area
  * @sample highcharts/chart/scrollable-plotarea-vertical
  *         Vertically scrollable plot area
- * @sample {gantt} highcharts/chart/scrollable-plotarea-vertical
+ * @sample {gantt} gantt/chart/scrollable-plotarea-vertical
  *         Gantt chart with vertically scrollable plot area
  *
  * @since     6.1.0

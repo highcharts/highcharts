@@ -10,19 +10,25 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
- * Imports
+ *  Imports
  *
  * */
+
 import type VariwidePointOptions from './VariwidePointOptions';
+import type VariwideSeries from './VariwideSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
+    column: {
+        prototype: {
+            pointClass: ColumnPoint
+        }
     }
-} = SeriesRegistry;
-import VariwideSeries from './VariwideSeries.js';
+} = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
@@ -40,25 +46,27 @@ declare module '../../Core/Series/PointLike' {
 
 /* *
  *
- * Class
+ *  Class
  *
  * */
-class VariwidePoint extends ColumnSeries.prototype.pointClass {
+class VariwidePoint extends ColumnPoint {
 
     /* *
      *
-     * Properites
+     *  Properites
      *
      * */
+
     public crosshairWidth: number = void 0 as any;
     public options: VariwidePointOptions = void 0 as any;
     public series: VariwideSeries = void 0 as any;
 
     /* *
      *
-     * Functions
+     *  Functions
      *
      * */
+
     public isValid(): boolean {
         return isNumber(this.y) && isNumber(this.z);
     }
@@ -67,7 +75,8 @@ class VariwidePoint extends ColumnSeries.prototype.pointClass {
 
 /* *
  *
- * Export
+ *  Default Export
  *
  * */
+
 export default VariwidePoint;

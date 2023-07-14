@@ -23,11 +23,12 @@ import type BoxPlotPointOptions from '../BoxPlot/BoxPlotPointOptions';
  * */
 
 export interface ErrorBarPointOptions extends BoxPlotPointOptions {
+    // nothing to add
 }
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

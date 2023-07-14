@@ -18,7 +18,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type GeoJSONGeometryMultiPoint from '../../Maps/GeoJSON';
+import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
 
 /* *
  *

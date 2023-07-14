@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LinePoint from '../../../Series/Line/LinePoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -17,13 +23,12 @@ import type {
 } from './PivotPointsOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+
 import PivotPointsPoint from './PivotPointsPoint.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -48,6 +53,13 @@ const {
  * @augments Highcharts.Series
  */
 class PivotPointsIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Pivot points indicator. This series requires the `linkedTo` option to be
      * set and should be loaded after `stock/indicators/indicators.js` file.
@@ -89,11 +101,11 @@ class PivotPointsIndicator extends SMAIndicator {
         }
     } as PivotPointsOptions);
 
-    /**
+    /* *
      *
-     * Properties
+     *  Properties
      *
-     */
+     * */
 
     public data: Array<PivotPointsPoint> = void 0 as any;
     public options: PivotPointsOptions = void 0 as any;
@@ -101,11 +113,11 @@ class PivotPointsIndicator extends SMAIndicator {
     public endPoint: number = void 0 as any;
     public plotEndPoint: number = void 0 as any;
 
-    /**
+    /* *
      *
-     * Functions
+     *  Functions
      *
-     */
+     * */
 
     public toYData(
         point: PivotPointsPoint
@@ -116,7 +128,7 @@ class PivotPointsIndicator extends SMAIndicator {
     public translate(this: PivotPointsIndicator): void {
         const indicator = this;
 
-        SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
+        super.translate.apply(indicator);
 
         indicator.points.forEach(
             function (
@@ -147,16 +159,16 @@ class PivotPointsIndicator extends SMAIndicator {
     }
 
     public getGraphPath(this: PivotPointsIndicator, points: Array<LinePoint>): SVGPath {
-        let indicator = this,
-            pointsLength: number = points.length,
+        const indicator = this,
             allPivotPoints: Array<Array<LinePoint>> = (
                 [[], [], [], [], [], [], [], [], []]
             ),
+            pointArrayMapLength: number = indicator.pointArrayMap.length;
+        let endPoint: (number|undefined) = indicator.plotEndPoint,
             path: SVGPath = [],
-            endPoint: (number|undefined) = indicator.plotEndPoint,
-            pointArrayMapLength: number = indicator.pointArrayMap.length,
             position: string,
             point: LinePoint,
+            pointsLength: number = points.length,
             i: number;
 
         while (pointsLength--) {
@@ -185,11 +197,9 @@ class PivotPointsIndicator extends SMAIndicator {
             }
             endPoint = point.plotX;
         }
-        allPivotPoints.forEach(function (
-            pivotPoints: Array<LinePoint>
-        ): void {
+        allPivotPoints.forEach((pivotPoints): void => {
             path = path.concat(
-                SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(
+                super.getGraphPath.call(
                     indicator,
                     pivotPoints
                 )
@@ -201,9 +211,9 @@ class PivotPointsIndicator extends SMAIndicator {
 
     // TODO: Rewrite this logic to use multiple datalabels
     public drawDataLabels(this: PivotPointsIndicator): void {
-        let indicator = this,
-            pointMapping: Array<(string|boolean)> = indicator.pointArrayMap,
-            currentLabel: (SVGElement|null),
+        const indicator = this,
+            pointMapping: Array<(string|boolean)> = indicator.pointArrayMap;
+        let currentLabel: (SVGElement|null),
             pointsLength: number,
             point: PivotPointsPoint,
             i: number;
@@ -215,7 +225,7 @@ class PivotPointsIndicator extends SMAIndicator {
             // Add one more item, which will just store dataLabels from
             // previous iteration
             pointMapping.concat([false]).forEach(
-                function (position: (string|boolean), k: number): void {
+                (position: (string|boolean), k: number): void => {
                     i = pointsLength;
                     while (i--) {
                         point = indicator.points[i];
@@ -253,8 +263,8 @@ class PivotPointsIndicator extends SMAIndicator {
                                     null;
                         }
                     }
-                    SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels
-                        .apply(indicator, arguments);
+                    super.drawDataLabels
+                        .call(indicator);
                 }
             );
         }
@@ -265,7 +275,7 @@ class PivotPointsIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: PivotPointsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
@@ -274,9 +284,9 @@ class PivotPointsIndicator extends SMAIndicator {
             ],
             // 0- from, 1- to, 2- R1, 3- R2, 4- pivot, 5- S1 etc.
             PP: Array<Array<number>> = [],
-            endTimestamp: (number|undefined),
             xData: Array<number> = [],
-            yData: Array<Array<number>> = [],
+            yData: Array<Array<number>> = [];
+        let endTimestamp: (number|undefined),
             slicedXLen: (number|undefined),
             slicedX: (Array<number>|undefined),
             slicedY: Array<Array<number>>,
@@ -333,16 +343,15 @@ class PivotPointsIndicator extends SMAIndicator {
     public getPivotAndHLC(
         values: Array<Array<number>>
     ): [number, number, number, number] {
+        const close: number = values[values.length - 1][3];
         let high = -Infinity,
-            low = Infinity,
-            close: number = values[values.length - 1][3],
-            pivot: number;
+            low = Infinity;
 
         values.forEach(function (p: Array<number>): void {
             high = Math.max(high, p[1]);
             low = Math.min(low, p[2]);
         });
-        pivot = (high + low + close) / 3;
+        const pivot: number = (high + low + close) / 3;
 
         return [pivot, high, low, close];
     }
@@ -405,6 +414,12 @@ class PivotPointsIndicator extends SMAIndicator {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface PivotPointsIndicator{
     nameBase: string;
     pointArrayMap: Array<string>;
@@ -433,6 +448,13 @@ SeriesRegistry.registerSeriesType('pivotpoints', PivotPointsIndicator);
  * */
 
 export default PivotPointsIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
 /**
  * A pivot points indicator. If the [type](#series.pivotpoints.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

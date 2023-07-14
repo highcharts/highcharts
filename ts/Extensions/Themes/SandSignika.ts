@@ -21,7 +21,7 @@
 
 import type Options from '../../Core/Options';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
@@ -67,11 +67,6 @@ namespace SandSignikaTheme {
         },
         tooltip: {
             borderWidth: 0
-        },
-        labels: {
-            style: {
-                color: '#6e6e70'
-            }
         },
         legend: {
             backgroundColor: '#E0E0E8',

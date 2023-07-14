@@ -1,7 +1,7 @@
 Boost module
 ============
 
-The Boost module is a stripped down renderer and a set of data handling modifications for Highcharts. It bypasses some of the standard Highcahrts features, applies some trade-offs and focuses on handling and rendering as many data points as possible as quickly as possible. It renders the data using WebGL on a canvas inside the chart's SVG structure.
+The Boost module is a stripped down renderer and a set of data handling modifications for Highcharts. It bypasses some of the standard Highcharts features, applies some trade-offs and focuses on handling and rendering as many data points as possible as quickly as possible. It renders the data using WebGL on a canvas inside the chart's SVG structure.
 
 This document will guide you through your first steps with the Highcharts boost module.
 
@@ -13,6 +13,17 @@ The boost module is a "renderer-in-a-module". Including [modules/boost.js](https
 If needed, boost can be disabled on a chart-by-chart basis by setting [boost.enabled](https://api.highcharts.com/highcharts/boost.enabled) to `false` in the chart configuration.
 
 **Note**: Boost should be the last module included. This is because it overrides both standard Highcharts functionality, and functionality in certain modules (namely treemap, heatmap, bubble, and scatter).
+
+### With ES modules
+```js
+import Highcharts from "highcharts";
+import HighchartsBoost from "highcharts/modules/boost";
+// Import order is important !
+HighchartsBoost(Highcharts);
+
+// Then you can use your Highcharts as usual
+
+```
 
 Configuration Options
 ---------------------

@@ -10,5 +10,13 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import dataGrouping from '../../Extensions/DataGrouping.js';
-export default dataGrouping;
+import Highcharts from '../../Core/Globals.js';
+import ApproximationDefaults from '../../Extensions/DataGrouping/ApproximationDefaults.js';
+import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
+import DataGrouping from '../../Extensions/DataGrouping/DataGrouping.js';
+const G: AnyRecord = Highcharts;
+G.dataGrouping = {
+    approximationDefaults: ApproximationDefaults,
+    approximations: ApproximationRegistry
+};
+DataGrouping.compose(G.Axis, G.Series, G.Tooltip);

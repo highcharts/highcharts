@@ -22,8 +22,8 @@ Math.easeOutBounce = pos => {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
-const big = window.matchMedia("(min-width: 500px)").matches;
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const big = window.matchMedia('(min-width: 500px)').matches;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@32a8c3ea661ebe4bb3d5e1c62dc3dd1bc77451a9/samples/graphics/';
 
 Highcharts.theme = {
@@ -188,21 +188,21 @@ const support = {
         text: ''
     },
     xAxis: [
-    //0 - bottom, top map area
+    // 0 - bottom, top map area
         {
             min: 0,
             max: 20,
             gridLineColor: 'transparent',
             tickInterval: 1
         },
-        //1 - left map area
+        // 1 - left map area
         {
             min: 0,
             max: 20,
             gridLineColor: 'transparent',
             tickInterval: 1
         },
-        ///2 - right map area
+        // /2 - right map area
         {
             min: 0,
             max: 20,
@@ -211,7 +211,7 @@ const support = {
             reversed: true
         },
 
-        ///3 - for particle group 2
+        // /3 - for particle group 2
         {
             min: 0,
             max: 20,
@@ -219,7 +219,7 @@ const support = {
             tickInterval: 1
         }],
     yAxis: [
-    //0
+    // 0
         {
             min: -2,
             max: 18,
@@ -229,7 +229,7 @@ const support = {
             startOnTick: false,
             endOnTick: false
         },
-        ///1 - for the top map area
+        // /1 - for the top map area
         {
             min: -2,
             max: 18,
@@ -290,7 +290,7 @@ const support = {
 
     },
     series: [
-        //0 - bottom line
+        // 0 - bottom line
         {
             type: 'line',
             className: 'green',
@@ -301,7 +301,7 @@ const support = {
             zIndex: 21
 
         },
-        //1 - line
+        // 1 - line
         {
             type: 'line',
             lineWidth: 1,
@@ -312,7 +312,7 @@ const support = {
             ],
             zIndex: 21
         },
-        //2 - line
+        // 2 - line
         {
             type: 'line',
             lineWidth: 1,
@@ -323,7 +323,7 @@ const support = {
             ],
             zIndex: 21
         },
-        //3 - line
+        // 3 - line
         {
             type: 'line',
             className: 'green',
@@ -335,7 +335,7 @@ const support = {
             zIndex: 21
 
         },
-        //4 - line
+        // 4 - line
         {
             type: 'line',
             className: 'green',
@@ -347,7 +347,7 @@ const support = {
             zIndex: 21
 
         },
-        //5 - line
+        // 5 - line
         {
             type: 'line',
             className: 'green',
@@ -358,7 +358,7 @@ const support = {
             ],
             zIndex: 11
         },
-        //6 - line
+        // 6 - line
         {
             type: 'line',
             className: 'green',
@@ -370,7 +370,7 @@ const support = {
             zIndex: 11
 
         },
-        //7 - line
+        // 7 - line
         {
             type: 'line',
             className: 'green',
@@ -382,7 +382,7 @@ const support = {
             zIndex: 11
         },
 
-        //8 - line
+        // 8 - line
         {
             type: 'line',
             className: 'green',
@@ -394,7 +394,7 @@ const support = {
             zIndex: 11
         },
 
-        //9 - line
+        // 9 - line
         {
             type: 'line',
             className: 'green',
@@ -457,7 +457,7 @@ const support = {
             zIndex: 10,
             visible: true
         },
-        //14 particles
+        // 14 particles
         {
             type: 'scatter',
             name: 'particles',
@@ -493,7 +493,7 @@ const support = {
         },
 
 
-        //14 - particles
+        // 14 - particles
 
         {
             type: 'scatter',

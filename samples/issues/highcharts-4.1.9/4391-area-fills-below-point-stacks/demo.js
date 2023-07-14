@@ -1,13 +1,13 @@
 $(function () {
     $('#container').highcharts({
         chart: {
-            type: "area"
+            type: 'area'
         },
         title: {
             text: 'Stacking multiple points on same X'
         },
         yAxis: {
-            type: "linear",
+            type: 'linear',
             reversedStacks: false,
             min: 0,
             minTickInterval: 1,
@@ -19,14 +19,14 @@ $(function () {
         plotOptions: {
             area: {
                 fillOpacity: 0.1,
-                stacking: "normal",
+                stacking: 'normal',
                 marker: {
                     enabled: true
                 }
             }
         },
         series: [{
-            name: "Series 01",
+            name: 'Series 01',
             data: [{
                 x: 0,
                 y: 0
@@ -50,7 +50,7 @@ $(function () {
                 y: 2
             }]
         }, {
-            name: "Series 02",
+            name: 'Series 02',
             data: [{
                 x: 0,
                 y: 2

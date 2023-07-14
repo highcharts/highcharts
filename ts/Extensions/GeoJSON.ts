@@ -21,14 +21,10 @@ import type { ProjectedXY } from '../Maps/MapViewOptions';
 import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
-import F from '../Core/FormatUtilities.js';
+import F from '../Core/Templating.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 const { win } = H;
-import MU from '../Maps/MapUtilities.js';
-const {
-    pointInPolygon
-} = MU;
 import U from '../Core/Utilities.js';
 const {
     error,
@@ -101,6 +97,12 @@ declare global {
             hType?: string,
             series?: Series
         ): Array<any>;
+
+        /** @requires modules/maps */
+        function topo2geo(
+            topology: TopoJSON,
+            objectName?: string
+        ): GeoJSON;
     }
     interface Window {
         d3: any;
@@ -596,8 +598,12 @@ function geojson(
             }
         }
         if (pointOptions) {
-            const name = properties && (properties.name || properties.NAME);
+            const name = properties && (properties.name || properties.NAME),
+                lon = properties && properties.lon,
+                lat = properties && properties.lat;
             mapData.push(extend(pointOptions, {
+                lat: typeof lat === 'number' ? lat : void 0,
+                lon: typeof lon === 'number' ? lon : void 0,
                 name: typeof name === 'string' ? name : void 0,
 
                 /**
@@ -656,6 +662,7 @@ wrap(Chart.prototype, 'addCredits', function (
 });
 
 H.geojson = geojson;
+H.topo2geo = topo2geo;
 
 const GeoJSONModule = {
     geojson,

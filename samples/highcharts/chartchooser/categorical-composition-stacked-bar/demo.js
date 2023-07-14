@@ -1,19 +1,19 @@
 Highcharts.setOptions({
-    colors: ["#71BF45", "#FAA74B", "#01BAF2", "#f23901", "#A0A0A0"]
+    colors: ['#71BF45', '#FAA74B', '#01BAF2', '#f23901', '#A0A0A0']
 });
 
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "bar"
+        type: 'bar'
     },
     title: {
-        text: "Honey Composition"
+        text: 'Honey Composition'
     },
     subtitle: {
         text: 'Source: <a href="https://en.wikipedia.org/wiki/Honey">Wikipedia</a>'
     },
     xAxis: {
-        categories: ["Honey composition"],
+        categories: ['Honey composition'],
         visible: false
     },
     yAxis: {
@@ -21,7 +21,7 @@ Highcharts.chart("container", {
             enabled: false
         },
         visible: false,
-        //reversed: true,
+        // reversed: true,
         min: 0,
         title: {
             text: null
@@ -34,11 +34,11 @@ Highcharts.chart("container", {
     },
     plotOptions: {
         bar: {
-            stacking: "percent",
+            stacking: 'percent',
             dataLabels: {
                 enabled: true,
-                format: "{series.name}: {y}%",
-                color: "black",
+                format: '{series.name}: {y}%',
+                color: 'black',
                 rotation: -55,
                 y: -100,
                 x: 30
@@ -47,21 +47,21 @@ Highcharts.chart("container", {
     },
     series: [
         {
-            name: "Fructose",
+            name: 'Fructose',
             data: [38.2]
         },
         {
-            name: "Glucose",
+            name: 'Glucose',
             data: [31.3]
         },
         {
-            name: "Water",
+            name: 'Water',
             data: [17.2]
         },
         {
-            name: "Maltose",
+            name: 'Maltose',
             data: [7.1]
         },
-        { name: "Other", data: [6.2] }
+        { name: 'Other', data: [6.2] }
     ]
 });

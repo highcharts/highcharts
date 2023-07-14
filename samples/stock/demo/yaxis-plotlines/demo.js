@@ -1,15 +1,24 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
+(async () => {
 
-    var startDate = new Date(data[data.length - 1][0]), // Get year of last data point
-        minRate = 1,
+    // Load the dataset
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v10.3.3/samples/data/usdeur.json'
+    ).then(response => response.json());
+
+    const startDate = new Date(data[data.length - 1][0]);
+    let minRate = 1,
         maxRate = 0,
-        startPeriod,
         date,
         rate,
         index;
 
     startDate.setMonth(startDate.getMonth() - 3); // a quarter of a year before last data point
-    startPeriod = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+
+    const startPeriod = Date.UTC(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate()
+    );
 
     for (index = data.length - 1; index >= 0; index = index - 1) {
         date = data[index][0]; // data[i][0] is date
@@ -67,4 +76,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             }
         }]
     });
-});
+})();

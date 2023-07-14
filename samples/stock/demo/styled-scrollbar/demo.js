@@ -1,4 +1,9 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
+(async () => {
+
+    // Load the dataset
+    const data = await fetch(
+        'https://demo-live-data.highcharts.com/aapl-c.json'
+    ).then(response => response.json());
 
     // Create the chart
     Highcharts.stockChart('container', {
@@ -11,17 +16,19 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
             text: 'AAPL Stock Price'
         },
 
+        subtitle: {
+            text: 'Stock chart with scrollbar styling'
+        },
+
         scrollbar: {
-            barBackgroundColor: 'gray',
-            barBorderRadius: 7,
-            barBorderWidth: 0,
-            buttonBackgroundColor: 'gray',
-            buttonBorderWidth: 0,
-            buttonBorderRadius: 7,
-            trackBackgroundColor: 'none',
-            trackBorderWidth: 1,
-            trackBorderRadius: 8,
-            trackBorderColor: '#CCC'
+            barBorderRadius: 0,
+            barBorderWidth: 1,
+            buttonsEnabled: true,
+            height: 14,
+            margin: 0,
+            rifleColor: '#333',
+            trackBackgroundColor: '#f2f2f2',
+            trackBorderRadius: 0
         },
 
         series: [{
@@ -32,4 +39,4 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
             }
         }]
     });
-});
+})();

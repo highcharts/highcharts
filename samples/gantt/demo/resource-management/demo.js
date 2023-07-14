@@ -1,9 +1,8 @@
 // Set to 00:00:00:000 today
-var today = new Date(),
-    day = 1000 * 60 * 60 * 24,
-    dateFormat = Highcharts.dateFormat,
-    series,
-    cars;
+let today = new Date();
+
+const day = 1000 * 60 * 60 * 24,
+    dateFormat = Highcharts.dateFormat;
 
 // Set to 00:00:00:000 today
 today.setUTCHours(0);
@@ -12,7 +11,7 @@ today.setUTCSeconds(0);
 today.setUTCMilliseconds(0);
 today = today.getTime();
 
-cars = [{
+const cars = [{
     model: 'Nissan Leaf',
     current: 0,
     deals: [{
@@ -95,14 +94,15 @@ cars = [{
 }];
 
 // Parse car data into series.
-series = cars.map(function (car, i) {
-    var data = car.deals.map(function (deal) {
+const series = cars.map(function (car, i) {
+    const data = car.deals.map(function (deal) {
         return {
             id: 'deal-' + i,
             rentedTo: deal.rentedTo,
             start: deal.from,
             end: deal.to,
-            y: i
+            y: i,
+            name: deal.rentedTo
         };
     });
     return {
@@ -114,6 +114,17 @@ series = cars.map(function (car, i) {
 
 Highcharts.ganttChart('container', {
     series: series,
+    plotOptions: {
+        series: {
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}',
+                style: {
+                    fontWeight: 'normal'
+                }
+            }
+        }
+    },
     title: {
         text: 'Car Rental Schedule'
     },
@@ -138,9 +149,7 @@ Highcharts.ganttChart('container', {
             valueDescriptionFormat: 'Rented to {point.rentedTo} from {point.x:%A, %B %e} to {point.x2:%A, %B %e}.'
         },
         series: {
-            descriptionFormatter: function (series) {
-                return series.name + ', car ' + (series.index + 1) + ' of ' + series.chart.series.length + '.';
-            }
+            descriptionFormat: '{series.name}, car {add series.index 1} of {series.chart.series.length}.'
         }
     },
     xAxis: {

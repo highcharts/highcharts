@@ -209,7 +209,7 @@ QUnit.test('Input focus of previously hidden chart (#5231)', function (assert) {
     );
 });
 QUnit.test(
-    "Focusable inputs after setting chart's zIndex (#8899)",
+    'Focusable inputs after setting chart\'s zIndex (#8899)',
     assert => {
         var chart = Highcharts.stockChart({
                 chart: {
@@ -354,7 +354,13 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
             title: false,
             xAxis: {
                 min: Date.UTC(2007, 8, 5),
-                max: Date.UTC(2007, 8, 25)
+                max: Date.UTC(2007, 8, 20)
+            },
+            navigator: {
+                enabled: false
+            },
+            scrollbar: {
+                enabled: false
             },
             series: [
                 {
@@ -375,38 +381,97 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
                         [Date.UTC(2007, 8, 20), 0.7107],
                         [Date.UTC(2007, 8, 21), 0.7097],
                         [Date.UTC(2007, 8, 24), 0.7098],
-                        [Date.UTC(2007, 8, 25), 0.7069],
-                        [Date.UTC(2007, 8, 26), 0.7078],
-                        [Date.UTC(2007, 8, 27), 0.7066],
-                        [Date.UTC(2007, 8, 28), 0.7006]
+                        [Date.UTC(2007, 8, 25), 0.7069]
+                    ]
+                },
+                {
+                    data: [
+                        [Date.UTC(2007, 8, 3), 0.8342],
+                        [Date.UTC(2007, 8, 4), 0.8349],
+                        [Date.UTC(2007, 8, 5), 0.8326],
+                        [Date.UTC(2007, 8, 6), 0.8306],
+                        [Date.UTC(2007, 8, 7), 0.8263],
+                        [Date.UTC(2007, 8, 10), 0.8247],
+                        [Date.UTC(2007, 8, 11), 0.8227],
+                        [Date.UTC(2007, 8, 12), 0.8191],
+                        [Date.UTC(2007, 8, 13), 0.8209],
+                        [Date.UTC(2007, 8, 14), 0.8207],
+                        [Date.UTC(2007, 8, 17), 0.8211],
+                        [Date.UTC(2007, 8, 18), 0.8153],
+                        [Date.UTC(2007, 8, 19), 0.8165],
+                        [Date.UTC(2007, 8, 20), 0.8107],
+                        [Date.UTC(2007, 8, 21), 0.8097],
+                        [Date.UTC(2007, 8, 24), 0.8098],
+                        [Date.UTC(2007, 8, 25), 0.8069],
+                        [Date.UTC(2007, 8, 26), 0.8078],
+                        [Date.UTC(2007, 8, 27), 0.8066],
+                        [Date.UTC(2007, 8, 28), 0.8006],
+                        [Date.UTC(2007, 8, 29), 0.8050],
+                        [Date.UTC(2007, 8, 30), 0.8080]
                     ]
                 }
             ]
         }),
-        min = chart.xAxis[0].min,
         newMin,
+        newMax,
         test = new TestController(chart);
 
+
     const chartOffset = Highcharts.offset(chart.container);
-    const minDateBoxOffset = Highcharts.offset(
-        chart.rangeSelector.minDateBox.element
-    );
-    test.triggerEvent(
-        'click',
-        minDateBoxOffset.left - chartOffset.left + 10,
-        minDateBoxOffset.top - chartOffset.top + 10,
-        {},
-        true
-    );
 
-    document.activeElement.value = '2007-09-13';
+    const updateExtremes = (dateBoxElement, type, year, month, day) => {
 
-    test.mouseDown(400, 120);
-    test.mouseUp();
+        const dateBoxOffset = Highcharts.offset(
+            dateBoxElement
+        );
 
-    newMin = chart.xAxis[0].min;
+        test.triggerEvent(
+            'click',
+            dateBoxOffset.left - chartOffset.left + 10,
+            dateBoxOffset.top - chartOffset.top + 10,
+            {},
+            true
+        );
 
-    assert.notStrictEqual(min, newMin, 'Extremes should be updated');
+        const formattedMonth = month < 10 ? '0' + month : month;
+
+        document.activeElement.value = `${year}-${formattedMonth}-${day}`;
+
+        test.mouseDown(400, 120);
+        test.mouseUp();
+
+        const expectedDate = Date.UTC(year, month - 1, day);
+
+        if (type === 'min') {
+            newMin = chart.xAxis[0].min;
+
+            assert.strictEqual(
+                newMin,
+                expectedDate,
+                'Min extremes should be updated, considering all relevant series.'
+            );
+        } else if (type === 'max') {
+            newMax = chart.xAxis[0].max;
+
+            assert.strictEqual(
+                newMax,
+                expectedDate,
+                'Max extremes should be updated, considering all relevant series. (#18251)'
+            );
+        }
+    };
+
+    updateExtremes(chart.rangeSelector.maxDateBox.element, 'max', 2007, 9, 29);
+
+    chart.update({
+        navigator: {
+            enabled: true
+        }
+    });
+
+    updateExtremes(chart.rangeSelector.maxDateBox.element, 'max', 2007, 9, 27);
+
+    updateExtremes(chart.rangeSelector.minDateBox.element, 'min', 2007, 9, 13);
 });
 
 QUnit.test('#13205, #14544: Timezone issues', assert => {

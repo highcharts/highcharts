@@ -1,115 +1,59 @@
-var data = [{
+const data = [{
     name: 'Austria',
-    low: 69,
-    high: 82
+    low: 70.1,
+    high: 81.3
 }, {
     name: 'Belgium',
-    low: 70,
-    high: 81
-}, {
-    name: 'Bulgaria',
-    low: 69,
-    high: 75
-}, {
-    name: 'Croatia',
-    low: 65,
-    high: 78
-}, {
-    name: 'Cyprus',
-    low: 70,
-    high: 81
-}, {
-    name: 'Czech Republic',
-    low: 70,
-    high: 79
-}, {
-    name: 'Denmark',
-    low: 72,
-    high: 81
+    low: 71.0,
+    high: 81.9
+},  {
+    name: 'Czechia',
+    low: 69.6,
+    high: 77.4
 }, {
     name: 'Estonia',
-    low: 68,
-    high: 78
-}, {
-    name: 'Finland',
-    low: 69,
-    high: 81
-}, {
-    name: 'France',
-    low: 70,
-    high: 83
+    low: 70.4,
+    high: 76.9
 }, {
     name: 'Greece',
-    low: 68,
-    high: 81
-}, {
-    name: 'Spain',
-    low: 69,
-    high: 83
-}, {
-    name: 'Netherlands',
-    low: 73,
-    high: 82
-}, {
-    name: 'Ireland',
-    low: 70,
-    high: 82
-}, {
-    name: 'Lithuania',
-    low: 70,
-    high: 75
-}, {
-    name: 'Luxembourg',
-    low: 68,
-    high: 83
-}, {
-    name: 'Latvia',
-    low: 70,
-    high: 75
-}, {
-    name: 'Malta',
-    low: 69,
-    high: 82
-}, {
-    name: 'Germany',
-    low: 69,
-    high: 81
-}, {
-    name: 'Poland',
-    low: 68,
-    high: 78
-}, {
-    name: 'Portugal',
-    low: 63,
-    high: 81
-}, {
-    name: 'Romania',
-    low: 66,
-    high: 75
-}, {
-    name: 'Slovakia',
-    low: 70,
-    high: 77
-}, {
-    name: 'Slovenia',
-    low: 69,
-    high: 81
-}, {
-    name: 'Sweden',
-    low: 73,
-    high: 82
+    low: 73.8,
+    high: 80.3
 }, {
     name: 'Hungary',
-    low: 68,
-    high: 76
+    low: 69.2,
+    high: 74.5
 }, {
-    name: 'Italy',
-    low: 69,
-    high: 83
+    name: 'Iceland',
+    low: 73.8,
+    high: 83.2
 }, {
-    name: 'UK',
-    low: 71,
-    high: 81
+    name: 'Lithuania',
+    low: 71.1,
+    high: 74.5
+}, {
+    name: 'Norway',
+    low: 74.3,
+    high: 83.2
+},  {
+    name: 'Portugal',
+    low: 66.7,
+    high: 81.2
+}, {
+    name: 'Romania',
+    low: 68.2,
+    high: 72.9
+},  {
+    name: 'Slovakia',
+    low: 69.8,
+    high: 74.8
+}, {
+    name: 'Sweden',
+    low: 74.7,
+    high: 83.2
+}, {
+    name: 'Switzerland',
+    low: 73.2,
+    high: 84.0
 }];
 
 Highcharts.chart('container', {
@@ -124,7 +68,9 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: '1960 vs 2018'
+        text: '1970 vs 2021 Source: ' +
+            '<a href="https://ec.europa.eu/eurostat/en/web/main/data/database"' +
+            'target="_blank">Eurostat</a>'
     },
 
     title: {

@@ -20,9 +20,8 @@
 
 import type Options from '../../Core/Options';
 
-import D from '../../Core/DefaultOptions.js';
+import D from '../../Core/Defaults.js';
 const { setOptions } = D;
-import H from '../../Core/Globals.js';
 
 /* *
  *
@@ -160,13 +159,6 @@ namespace DarkGreenTheme {
                 color: '#666'
             }
         },
-        labels: {
-            style: {
-                color: '#CCC'
-            }
-        },
-
-
         navigation: {
             buttonOptions: {
                 symbolStroke: '#DDDDDD',

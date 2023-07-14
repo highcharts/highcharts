@@ -34,9 +34,7 @@ Highcharts.chart('container', {
             point: '5'
         }],
         labelOptions: {
-            formatter: function () {
-                return (this.series.dataMax - this.y).toFixed(2);
-            }
+            text: '{(subtract series.dataMax y):.2f}'
         }
     }]
 });

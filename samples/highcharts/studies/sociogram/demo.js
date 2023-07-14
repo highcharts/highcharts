@@ -31,8 +31,8 @@
                             zIndex: 10,
                             stroke: series.color,
                             'stroke-width': H.pick(series.options.lineWidth, 2),
-                            'marker-end': "url(#arrow-end)"
-                            //'marker-start': "url(#arrow-start)"
+                            'marker-end': 'url(#arrow-end)'
+                            // 'marker-start': "url(#arrow-start)"
                         });
                     }
 
@@ -55,7 +55,7 @@
             def = defOptions[i];
             marker = renderer.createElement('marker').attr({
                 id: def.id,
-                viewBox: "0 -5 10 20",
+                viewBox: '0 -5 10 20',
                 refX: 16,
                 refY: 6,
                 markerWidth: 6,
@@ -68,11 +68,6 @@
                 fill: 'black'
             }).add(marker);
         }
-    });
-
-    H.wrap(H.Series.prototype, 'drawGraph', function (proceed) {
-        proceed.apply(this);
-
     });
 }(Highcharts));
 
@@ -90,7 +85,7 @@ Highcharts.chart('container', {
         fill: 'gray'
     }, {
         id: 'arrow-end',
-        path: 'M 0 0 L 10 5 L 0 10 z', //M 0 0 L 10 5 L 0 10 z
+        path: 'M 0 0 L 10 5 L 0 10 z', // M 0 0 L 10 5 L 0 10 z
         fill: 'gray'
     }],
 

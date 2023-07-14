@@ -89,7 +89,7 @@ QUnit.test(
                 series: [
                     {
                         type: 'column',
-                        //pointRange: 1,
+                        // pointRange: 1,
                         data: [
                             [7, 7],
                             [10, 8]
@@ -710,8 +710,8 @@ QUnit.test('Monthly ticks (#3500)', function (assert) {
     }
 
     assert.deepEqual(
-        expectedTicksText,
         ticksText,
+        expectedTicksText,
         'Monthly X axis ticks is not correct'
     );
     // Reset

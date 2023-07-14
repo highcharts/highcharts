@@ -46,7 +46,7 @@ declare class AreaPoint extends LinePoint {
 
 /* *
  *
- *  Export Default
+ *  Default Export
  *
  * */
 

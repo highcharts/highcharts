@@ -19,6 +19,7 @@
  * */
 
 import type BubbleLegendItem from './BubbleLegendItem';
+
 import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
@@ -175,7 +176,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
          */
         style: {
             /** @ignore-option */
-            fontSize: '10px',
+            fontSize: '0.9em',
             /** @ignore-option */
             color: Palette.neutralColor100
         },

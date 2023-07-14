@@ -6,7 +6,7 @@ QUnit.test('Sub-millisecond tooltip(#4223)', function (assert) {
         title: {
             text:
                 'Tooltip shows only year when xAxis.closestPointRange < 1 msec',
-            x: -20 //center
+            x: -20 // center
         },
         xAxis: {
             type: 'datetime'
@@ -26,7 +26,7 @@ QUnit.test('Sub-millisecond tooltip(#4223)', function (assert) {
             chart.series[0].points[0].x,
             chart.options.tooltip.dateTimeLabelFormats
         ),
-        '%A, %b %e, %H:%M:%S.%L',
+        '%A, %e %b, %H:%M:%S.%L',
         'Milliseconds are preserved in tooltip'
     );
 });

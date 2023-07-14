@@ -70,7 +70,7 @@ trackPoints.forEach((trkpt, i) => {
 
     totalDistance += distance;
 
-    /*console.log(
+    /* console.log(
         'time', time,
         'elevation', ele,
         'lat', lat,

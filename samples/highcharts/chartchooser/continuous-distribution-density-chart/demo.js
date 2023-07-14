@@ -881,7 +881,6 @@ const dataSource = [4,
     30.3,
     30.3];
 const xiData = [];
-const animationDuration = 1;//4000;
 const range = 31,
     startPoint = 2;
 let i = 0,
@@ -905,20 +904,19 @@ for (i = 0; i < xiData.length; i++) {
     data.push([xiData[i], (1 / N) * temp]);
 }
 
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     chart: {
-        type: "areaspline",
-        animation: true
+        type: 'areaspline'
     },
     title: {
-        text: "2022 Car's Fuel Consumption Ratings"
+        text: '2022 Car\'s Fuel Consumption Ratings'
     },
 
     subtitle: {
-        text: "Source <a href='https://open.canada.ca/data/en/dataset/98f1a129-f628-4ce4-b24d-6f16bf24dd64' target='_blank'>Canada.ca </a>"
+        text: 'Source <a href=\'https://open.canada.ca/data/en/dataset/98f1a129-f628-4ce4-b24d-6f16bf24dd64\' target=\'_blank\'>Canada.ca </a>'
     },
     xAxis: {
-        title: { text: "Fuel Consumption City (L/100 km)" }
+        title: { text: 'Fuel Consumption City (L/100 km)' }
     },
     yAxis: {
         title: { text: null }
@@ -935,20 +933,17 @@ Highcharts.chart("container", {
             marker: {
                 enabled: false
             },
-            dashStyle: "shortdot",
-            color: "#ff8d1e",
-            pointStart: xiData[0],
-            animation: {
-                duration: animationDuration
-            }
+            dashStyle: 'shortdot',
+            color: '#ff8d1e',
+            pointStart: xiData[0]
         }
     },
     series: [
         {
-            name: "KDI",
-            dashStyle: "solid",
+            name: 'KDI',
+            dashStyle: 'solid',
             lineWidth: 2,
-            color: "#1E90FF",
+            color: '#1E90FF',
             data: data
         }
     ]

@@ -23,8 +23,8 @@ import type GaugePointOptions from '../Gauge/GaugePointOptions';
  * */
 
 export interface SolidGaugePointOptions extends GaugePointOptions {
-    innerRadius?: (number | string);
-    radius?: (number | string);
+    innerRadius?: string;
+    radius?: string;
 }
 
 /* *

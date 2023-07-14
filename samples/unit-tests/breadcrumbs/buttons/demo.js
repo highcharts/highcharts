@@ -315,7 +315,10 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
         chart: {
             type: 'column',
             width: 600,
-            plotBorderWidth: 1
+            plotBorderWidth: 1,
+            scrollablePlotArea: {
+                minHeight: 1000
+            }
         },
         xAxis: {
             type: 'category'
@@ -431,6 +434,11 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
         chart.breadcrumbs.options.buttonSpacing,
         0,
         'Options from navigation.breadcrumbs should be handled'
+    );
+
+    assert.ok(
+        chart.breadcrumbs.group.element.closest('.highcharts-fixed'),
+        'Breadcrumbs should be a part of fixedSelectors group #17963.'
     );
 });
 

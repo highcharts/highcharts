@@ -5,7 +5,7 @@
 /* eslint func-style: 0, no-console: 0, max-len: 0 */
 const gulp = require('gulp');
 const glob = require('glob');
-const fs = require('fs-extra');
+const fs = require('fs');
 const log = require('./lib/log');
 const {
     uploadFiles,
@@ -42,19 +42,43 @@ const HTTP_EXPIRES = {
     fiveYears: addDays(TODAY, 365 * 5)
 };
 
-/*
+let purgeCacheRequests = 0;
+let error429 = false;
 async function cloudflarePurgeCode(files) {
+    const argv = require('yargs').argv;
+
+    if (!argv.useGitIgnoreMe) {
+        return;
+    }
 
     const props = getGitIgnoreMeProperties();
     const cf = require('cloudflare')({
         token: props['cloudflare.token']
     });
 
-    const resp = await cf.zones.purgeCache(props['cloudflare.zone'], { files });
+    purgeCacheRequests++;
 
-    console.log('CloudFlare', resp);
+    if (error429) {
+        console.log(`Stopped purgeCache after ${purgeCacheRequests} requests`);
+    } else {
+        const resp = await cf.zones
+            .purgeCache(props['cloudflare.zone'], { files })
+            .catch(e => {
+                if (e.statusCode === 429) {
+                    error429 = true;
+                }
+                console.log(
+                    'CloudFlare Error',
+                    e.statusCode,
+                    e.statusMessage,
+                    purgeCacheRequests
+                );
+            });
+        if (resp && resp.success) {
+            console.log(`CloudFlare: purged ${files.length} files`);
+        }
+    }
 }
-*/
 
 /**
  * Transforms a filepath to a similar named S3 destination path. Specific for highcharts js upload.
@@ -89,7 +113,13 @@ function uploadProductPackage(productProps, options = {}) {
     const promises = [];
     const fromDir = `${DIST_DIR}${localPath}`;
     const zipFilePaths = glob.sync(`${DIST_DIR}/${prettyName.replace(/ /g, '-')}-${version}.zip`);
-    const cdnFiles = [];
+    const cdnFiles = [{ to: 'products.js' }];
+
+    // For testing cache purging without uploading:
+    /*
+    const uploadFiles = () => console.log('@uploadFiles overridden');
+    zipFilePaths[0] = '';
+    // */
 
     if (zipFilePaths.length < 1) {
         throw new Error('No zip files found. Did you forget to run gulp dist-compress?');
@@ -189,18 +219,11 @@ function uploadProductPackage(productProps, options = {}) {
         }
     }));
 
-
-    // Purge CloudFlare cache POC. Currently stopped by rate limiting (1200
-    // requests per 5 minutes)
-    //
-    // @todo: Filter what files are urgent. For example,
-    // maintenance versioned files can be skipped, .map files, possibly es
-    // modules etc.
-    /*
+    // Purge CloudFlare cache POC. Currently stopped by rate limiting?
     const cloudflarePaths = cdnFiles.reduce((paths, f) => {
         if (
-            f.to.indexOf('es-modules') === -1 &&
-            f.to.indexOf('.js.map') === -1 &&
+            // f.to.indexOf('es-modules') === -1 &&
+            // f.to.indexOf('.js.map') === -1 &&
             !/\/[0-9]+\.[0-9]+\.[0-9]+\//u.test(f.to)
         ) {
             paths.push(`https://code.highcharts.com/${f.to}`);
@@ -208,10 +231,11 @@ function uploadProductPackage(productProps, options = {}) {
         return paths;
     }, []);
 
+    // fs.writeFileSync('files-to-purge.txt', cloudflarePaths.join('\n'));
+
     while (cloudflarePaths.length) {
         promises.push(cloudflarePurgeCode(cloudflarePaths.splice(0, 30)));
     }
-    */
 
     return Promise.all(promises);
 }

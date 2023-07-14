@@ -61,7 +61,7 @@ QUnit.test('series.centerInCategory', function (assert) {
     assert.strictEqual(
         chart.series[3].points[0].shapeArgs.width,
         13,
-        "(centerInCategory: false) - point's width"
+        '(centerInCategory: false) - point\'s width'
     );
 
     chart.update({
@@ -75,7 +75,7 @@ QUnit.test('series.centerInCategory', function (assert) {
     assert.strictEqual(
         chart.series[3].points[0].shapeArgs.width,
         13,
-        "(centerInCategory: true) - point's width should be unchanged"
+        '(centerInCategory: true) - point\'s width should be unchanged'
     );
 
     assert.ok(
@@ -152,12 +152,109 @@ QUnit.test('series.centerInCategory', function (assert) {
     });
 
     point = chart.series[3].points[3];
-    const tickX = chart.xAxis[0].ticks[3].mark.element.getBBox().x;
+    let tickX = chart.xAxis[0].ticks[3].mark.element.getBBox().x;
     assert.ok(
         chart.plotLeft + point.shapeArgs.x < tickX &&
             chart.plotLeft + point.shapeArgs.x + point.shapeArgs.width > tickX,
         '#15045: Point should be centered on the tick'
     );
+
+    chart.update({
+        chart: {
+            type: 'columnpyramid'
+        },
+        series: [{
+            data: [
+                [0, 2],
+                [1, 1],
+                [2, 2]
+            ]
+        }, {
+            data: [
+                [0, 2],
+                [1, null],
+                [2, 3]
+            ]
+        }, {
+            data: [
+                [0, 2],
+                [1, 2]
+            ]
+        }, {
+            data: [
+                [0, 2],
+                [1, 1]
+            ]
+        }]
+    }, true, true);
+
+    point = chart.series[2].points[1];
+    tickX = chart.xAxis[0].ticks[1].mark.element.getBBox().x;
+
+    const pointBBox = point.graphic.element.getBBox();
+
+    assert.ok(
+        chart.plotLeft + pointBBox.x < tickX &&
+            chart.plotLeft + pointBBox.x + pointBBox.width > tickX,
+        '#19127: Point should be centered on the tick if series is columnpyramid.'
+    );
+
+    chart.update({
+        chart: {
+            type: 'column'
+        },
+        series: [{
+            data: [
+                [0, 2],
+                [0, 1],
+                [1, 2]
+            ]
+        }, {
+            data: [
+                [0, null],
+                [1, 2]
+            ]
+        }]
+    }, true, true);
+
+    point = chart.series[0].points[0];
+    tickX = chart.xAxis[0].ticks[0].mark.element.getBBox().x;
+    assert.ok(
+        chart.plotLeft + point.shapeArgs.x < tickX &&
+            chart.plotLeft + point.shapeArgs.x + point.shapeArgs.width > tickX,
+        '#17610: Point should be centered on the tick.'
+    );
+
+    chart.update({
+        series: [{
+            data: [
+                [0, 10],
+                [0, 5],
+                [1, 5]
+            ]
+        }, {
+            data: [
+                [0, 10],
+                [0, 5],
+                [0, 5],
+                [0, 5],
+                [0, 5],
+                [1, 5]
+            ]
+        }]
+    }, true, true);
+
+    const series = chart.series[0];
+
+    assert.close(
+        chart.xAxis[0].ticks[0].mark.element.getBBox().x -
+            series.points[0].shapeArgs.x,
+        chart.xAxis[0].ticks[1].mark.element.getBBox().x -
+            series.points[2].shapeArgs.x,
+        2,
+        '#17610: Point should have correct offset.'
+    );
+
 
     /*
     chart.series[1].setData([

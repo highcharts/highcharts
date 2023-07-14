@@ -1,39 +1,41 @@
+// Data retrieved from https://www.ssb.no/energi-og-industri/olje-og-gass/statistikk/sal-av-petroleumsprodukt/artikler/auka-sal-av-petroleumsprodukt-til-vegtrafikk
 Highcharts.chart('container', {
     title: {
-        text: 'Combination chart'
+        text: 'Sales of petroleum products March, Norway',
+        align: 'left'
     },
     xAxis: {
-        categories: ['Apples', 'Oranges', 'Pears', 'Bananas', 'Plums']
+        categories: ['Jet fuel', 'Duty-free diesel', 'Petrol', 'Diesel', 'Gas oil']
     },
-    labels: {
-        items: [{
-            html: 'Total fruit consumption',
-            style: {
-                left: '50px',
-                top: '18px',
-                color: ( // theme
-                    Highcharts.defaultOptions.title.style &&
-                    Highcharts.defaultOptions.title.style.color
-                ) || 'black'
-            }
-        }]
+    yAxis: {
+        title: {
+            text: 'Million liters'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' million liters'
+    },
+    plotOptions: {
+        series: {
+            borderRadius: '25%'
+        }
     },
     series: [{
         type: 'column',
-        name: 'Jane',
-        data: [3, 2, 1, 3, 4]
+        name: '2020',
+        data: [59, 83, 65, 228, 184]
     }, {
         type: 'column',
-        name: 'John',
-        data: [2, 3, 5, 7, 6]
+        name: '2021',
+        data: [24, 79, 72, 240, 167]
     }, {
         type: 'column',
-        name: 'Joe',
-        data: [4, 3, 3, 9, 0]
+        name: '2022',
+        data: [58, 88, 75, 250, 176]
     }, {
         type: 'spline',
         name: 'Average',
-        data: [3, 2.67, 3, 6.33, 3.33],
+        data: [47, 83.33, 70.66, 239.33, 175.66],
         marker: {
             lineWidth: 2,
             lineColor: Highcharts.getOptions().colors[3],
@@ -41,22 +43,31 @@ Highcharts.chart('container', {
         }
     }, {
         type: 'pie',
-        name: 'Total consumption',
+        name: 'Total',
         data: [{
-            name: 'Jane',
-            y: 13,
-            color: Highcharts.getOptions().colors[0] // Jane's color
+            name: '2020',
+            y: 619,
+            color: Highcharts.getOptions().colors[0], // 2020 color
+            dataLabels: {
+                enabled: true,
+                distance: -50,
+                format: '{point.total} M',
+                style: {
+                    fontSize: '15px'
+                }
+            }
         }, {
-            name: 'John',
-            y: 23,
-            color: Highcharts.getOptions().colors[1] // John's color
+            name: '2021',
+            y: 586,
+            color: Highcharts.getOptions().colors[1] // 2021 color
         }, {
-            name: 'Joe',
-            y: 19,
-            color: Highcharts.getOptions().colors[2] // Joe's color
+            name: '2022',
+            y: 647,
+            color: Highcharts.getOptions().colors[2] // 2022 color
         }],
-        center: [100, 80],
+        center: [75, 65],
         size: 100,
+        innerSize: '70%',
         showInLegend: false,
         dataLabels: {
             enabled: false

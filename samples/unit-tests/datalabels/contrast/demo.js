@@ -1,7 +1,7 @@
 QUnit.test(
-    "#6487: Column's data label with contrast after justification.",
+    '#6487: Column\'s data label with contrast after justification.',
     function (assert) {
-        var chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
                 chart: {
                     width: 600,
                     height: 400,
@@ -66,11 +66,77 @@ QUnit.test(
             `After updating from contrast color,
             label should have new color (#12500)`
         );
+
+        chart.series[1].remove(false);
+        chart.update({
+            chart: {
+                type: 'bar',
+                backgroundColor: '#000000'
+            },
+            series: [{
+                data: [100],
+                dataLabels: {
+                    enabled: true,
+                    format: 'Some long long long long long long long long text'
+                }
+            }]
+        }, false);
+        chart.yAxis[0].setExtremes(null, 1000);
+
+        const points = chart.series[0].points;
+
+        assert.strictEqual(
+            Highcharts.color(
+                points[0].dataLabel.element.childNodes[0].style.color
+            ).get(),
+            Highcharts.color(
+                'rgb(255,255,255)'
+            ).get(),
+            `If background of chart is dark dataLabels outside the bar chart
+            should get the contrast (white) color (#17413).`
+        );
+
+        chart.update({
+            chart: {
+                plotBackgroundColor: '#ffffff'
+            }
+        });
+
+        assert.strictEqual(
+            Highcharts.color(
+                points[0].dataLabel.element.childNodes[0].style.color
+            ).get(),
+            Highcharts.color(
+                'rgb(0,0,0)'
+            ).get(),
+            `If background of chart is dark, but plot background color is light
+            dataLabels outside the bar chart should get the contrast (black) 
+            color (#17413).`
+        );
+
+        chart.update({
+            chart: {
+                backgroundColor: '#ffffff',
+                plotBackgroundColor: '#000000'
+            }
+        });
+
+        assert.strictEqual(
+            Highcharts.color(
+                points[0].dataLabel.element.childNodes[0].style.color
+            ).get(),
+            Highcharts.color(
+                'rgb(255,255,255)'
+            ).get(),
+            `If background of chart is light, but plot background color is dark
+            dataLabels outside the bar chart should get the contrast (black)
+            color (#17413).`
+        );
     }
 );
 
 QUnit.test('Pie dataLabels and contrast', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
             plotOptions: {
                 series: {
                     dataLabels: {

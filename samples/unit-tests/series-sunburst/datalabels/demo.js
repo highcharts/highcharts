@@ -9,7 +9,7 @@ QUnit.test('Rotation mode', function (assert) {
                     },
                     {
                         parent: 'root',
-                        name: 'First',
+                        name: 'First<br>item',
                         value: 1
                     },
                     {
@@ -53,11 +53,27 @@ QUnit.test('Rotation mode', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[0].points.map(function (point) {
-            return Number(point.dataLabel.rotation.toFixed(1));
-        }),
-        [0, 22.5, 67.5, -67.5, -22.5, 22.5, 67.5, -67.5, -22.5],
-        'Auto rotationMode should be parallel'
+        chart.series[0].points.map(point => typeof point.dataLabel.textPath),
+        [
+            'undefined',
+            'object',
+            'object',
+            'object',
+            'object',
+            'object',
+            'object',
+            'object',
+            'object'
+        ],
+        'Auto rotationMode should be circular'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].dataLabel.element
+            .querySelector('.highcharts-text-outline')
+            .getAttribute('y'),
+        null,
+        'The y attribute should not be set on text outline element (#17677)'
     );
 
     chart.series[0].update({

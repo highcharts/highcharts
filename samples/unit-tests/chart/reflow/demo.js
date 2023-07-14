@@ -259,3 +259,48 @@ QUnit.test('#13220, #12788, #12489, 11975: Pointer position after setting size o
 
     chart.renderTo.style.transform = '';
 });
+
+
+QUnit.test('Chart reflow using ResizeObserver, #17951.', assert => {
+    if (window.requestAnimationFrame) {
+        const chart = Highcharts.chart('container', {
+            series: [{
+                data: [3, 5, 1, 3]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.chartWidth,
+            600,
+            'Initially chart width should equal 600px.'
+        );
+        assert.strictEqual(
+            chart.chartHeight,
+            400,
+            'Initially chart height should equal 400px.'
+        );
+
+        document.getElementById('container').style.width = '500px';
+        document.getElementById('container').style.height = '800px';
+        const done = assert.async();
+        setTimeout(() => {
+            assert.strictEqual(
+                chart.chartWidth,
+                500,
+                'After updating container width, the chart should adjust its.'
+            );
+            assert.strictEqual(
+                chart.chartHeight,
+                800,
+                'After updating container width, the chart should adjust its.'
+            );
+            done();
+        }, 100);
+    } else {
+        assert.ok(
+            true,
+            `The requestAnimationFrame does not work in karma environment thus
+            ResizeObserver will not work.`
+        );
+    }
+});

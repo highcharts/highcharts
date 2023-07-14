@@ -16,6 +16,10 @@
 'use strict';
 
 import type AreaSeries from '../Series/Area/AreaSeries';
+import type {
+    BoostTargetAdditions,
+    BoostTargetObject
+} from './Boost/BoostTargetObject';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
@@ -25,6 +29,13 @@ import type {
 } from '../Core/Series/PointOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
+import BoostChart from './Boost/BoostChart.js';
+const {
+    getBoostClipRect,
+    isChartSeriesBoosting
+} = BoostChart;
+import BoostSeries from './Boost/BoostSeries.js';
+const { destroyGraphics } = BoostSeries;
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -48,8 +59,22 @@ const {
     wrap
 } = U;
 
+declare module './Boost/BoostOptions' {
+    interface BoostOptions {
+        timeRendering?: boolean;
+        timeSeriesProcessing?: boolean;
+        timeSetup?: boolean;
+    }
+}
+
+// Use a blank pixel for clearing canvas (#17182)
+const b64BlankPixel = (
+    /* eslint-disable-next-line max-len */
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+);
+
 declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike extends Highcharts.BoostTargetObject {
+    interface SeriesLike extends BoostTargetObject {
         cvsStrokeBatch?: number;
         /** @requires modules/boost-canvas */
         canvasToSVG(): void;
@@ -89,6 +114,7 @@ declare module '../Core/Series/SeriesLike' {
     }
 }
 
+
 /**
  * Internal types
  * @private
@@ -97,14 +123,6 @@ declare global {
     namespace Highcharts {
         /** @requires modules/boost-canvas */
         function initCanvasBoost(): void;
-        interface BoostOptions {
-            timeRendering?: boolean;
-            timeSeriesProcessing?: boolean;
-            timeSetup?: boolean;
-        }
-        interface BoostTargetObject {
-            ctx?: (CanvasRenderingContext2D|null);
-        }
     }
 }
 
@@ -178,11 +196,6 @@ const initCanvasBoost = function (): void {
                     'Your browser doesn\'t support HTML5 canvas, <br>' +
                     'please use a modern browser'
                 );
-
-                // Uncomment this to provide low-level (slow) support in oldIE.
-                // It will cause script errors on charts with more than a few
-                // thousand points.
-                // arguments[0].call(this);
             }
         });
     }
@@ -200,12 +213,18 @@ const initCanvasBoost = function (): void {
         getContext: function (
             this: Series
         ): (CanvasRenderingContext2D|null|undefined) {
-            let chart = this.chart,
-                width = chart.chartWidth,
+            const chart = this.chart,
+                target: BoostTargetObject =
+                    isChartSeriesBoosting(chart) ? chart : this,
+                targetGroup = (
+                    target === chart ?
+                        chart.seriesGroup :
+                        chart.seriesGroup || this.group
+                );
+
+            let width = chart.chartWidth,
                 height = chart.chartHeight,
-                targetGroup = chart.seriesGroup || this.group,
-                target: Highcharts.BoostTargetObject = this,
-                ctx: (CanvasRenderingContext2D|null|undefined),
+                ctx: CanvasRenderingContext2D,
                 swapXY = function (
                     this: CanvasRenderingContext2D,
                     proceed: Function,
@@ -219,76 +238,79 @@ const initCanvasBoost = function (): void {
                     proceed.call(this, y, x, a, b, c, d);
                 };
 
-            if (chart.isChartSeriesBoosting()) {
-                target = chart as any;
-                targetGroup = chart.seriesGroup;
-            }
+            const boost: Required<BoostTargetAdditions> = target.boost =
+                target.boost as Required<BoostTargetAdditions> ||
+                {} as Required<BoostTargetAdditions>;
 
-            ctx = target.ctx;
+            ctx = boost.targetCtx;
 
-            if (!target.canvas) {
-                target.canvas = doc.createElement('canvas');
+            if (!boost.canvas) {
+                boost.canvas = doc.createElement('canvas');
 
-                target.renderTarget = chart.renderer
+                boost.target = chart.renderer
                     .image('', 0, 0, width, height)
                     .addClass('highcharts-boost-canvas')
                     .add(targetGroup);
 
-                target.ctx = ctx = target.canvas.getContext('2d');
+                ctx = boost.targetCtx =
+                    boost.canvas.getContext('2d') as CanvasRenderingContext2D;
 
                 if (chart.inverted) {
-                    ['moveTo', 'lineTo', 'rect', 'arc'].forEach(function (
-                        fn: string
-                    ): void {
+                    (['moveTo', 'lineTo', 'rect', 'arc'] as const).forEach((
+                        fn
+                    ): void => {
                         wrap(ctx, fn, swapXY);
                     });
                 }
 
-                target.boostCopy = function (): void {
-                    (target.renderTarget as any).attr({
-                        href: (target.canvas as any).toDataURL('image/png')
+                boost.copy = function (): void {
+                    boost.target.attr({
+                        href: boost.canvas.toDataURL('image/png')
                     });
                 };
 
-                target.boostClear = function (): void {
-                    (ctx as any).clearRect(
+                boost.clear = function (): void {
+                    ctx.clearRect(
                         0,
                         0,
-                        (target.canvas as any).width,
-                        (target.canvas as any).height
+                        boost.canvas.width,
+                        boost.canvas.height
                     );
 
-                    if (target === this) {
-                        (target.renderTarget as any).attr({ href: '' });
+                    if (target === boost.target) {
+                        boost.target.attr({
+                            href: b64BlankPixel
+                        });
                     }
                 };
 
-                target.boostClipRect = chart.renderer.clipRect();
-
-                target.renderTarget.clip(target.boostClipRect);
+                boost.clipRect = chart.renderer.clipRect();
+                boost.target.clip(boost.clipRect);
 
             } else if (!(target instanceof Chart)) {
                 // ctx.clearRect(0, 0, width, height);
             }
 
-            if ((target.canvas as any).width !== width) {
-                (target.canvas as any).width = width;
+            if (boost.canvas.width !== width) {
+                boost.canvas.width = width;
             }
 
-            if ((target.canvas as any).height !== height) {
-                (target.canvas as any).height = height;
+            if (boost.canvas.height !== height) {
+                boost.canvas.height = height;
             }
 
-            (target.renderTarget as any).attr({
+            boost.target.attr({
                 x: 0,
                 y: 0,
                 width: width,
                 height: height,
                 style: 'pointer-events: none',
-                href: ''
+                href: b64BlankPixel
             });
 
-            (target.boostClipRect as any).attr(chart.getBoostClipRect(target));
+            if (boost.clipRect) {
+                boost.clipRect.attr(getBoostClipRect(chart, target));
+            }
 
             return ctx;
         },
@@ -300,14 +322,14 @@ const initCanvasBoost = function (): void {
          * @function Highcharts.Series#canvasToSVG
          */
         canvasToSVG: function (this: Series): void {
-            if (!this.chart.isChartSeriesBoosting()) {
-                if (this.boostCopy || this.chart.boostCopy) {
-                    (this.boostCopy || this.chart.boostCopy)();
+            if (!isChartSeriesBoosting(this.chart)) {
+                if (this.boost && this.boost.copy) {
+                    this.boost.copy();
+                } else if (this.chart.boost && this.chart.boost.copy) {
+                    this.chart.boost.copy();
                 }
-            } else {
-                if (this.boostClear) {
-                    this.boostClear();
-                }
+            } else if (this.boost && this.boost.clear) {
+                this.boost.clear();
             }
         },
 
@@ -357,10 +379,10 @@ const initCanvasBoost = function (): void {
                         this.cvsMarkerCircle
                 ),
                 strokeBatch = this.cvsStrokeBatch || 1000,
-                enableMouseTracking = options.enableMouseTracking !== false,
+                enableMouseTracking = options.enableMouseTracking,
                 lastPoint: Record<string, number>,
                 threshold: number = options.threshold as any,
-                yBottom: number = yAxis.getThreshold(threshold) as any,
+                yBottom = yAxis.getThreshold(threshold),
                 hasThreshold = isNumber(threshold),
                 translatedThreshold: number = yBottom as any,
                 doFill = this.fill,
@@ -513,15 +535,16 @@ const initCanvasBoost = function (): void {
                             i: cropStart + i
                         });
                     }
-                };
+                },
+                boost: BoostTargetAdditions = this.boost || {};
 
-            if (this.renderTarget) {
-                this.renderTarget.attr({ 'href': '' });
+            if (boost.target) {
+                boost.target.attr({ href: b64BlankPixel });
             }
 
             // If we are zooming out from SVG mode, destroy the graphics
             if (this.points || this.graph) {
-                this.destroyGraphics();
+                destroyGraphics(this);
             }
 
             // The group
@@ -543,8 +566,8 @@ const initCanvasBoost = function (): void {
             ctx = this.getContext();
             series.buildKDTree = noop; // Do not start building while drawing
 
-            if (this.boostClear) {
-                this.boostClear();
+            if (boost.clear) {
+                boost.clear();
             }
 
             // if (this.canvas) {
@@ -585,7 +608,7 @@ const initCanvasBoost = function (): void {
             }
 
             // Loop over the points
-            (H as any).eachAsync(sdata, function (d: any, i: number): boolean {
+            BoostSeries.eachAsync(sdata, function (d: any, i: number): boolean {
                 let x: number,
                     y: number,
                     clientX: number,
@@ -720,8 +743,16 @@ const initCanvasBoost = function (): void {
                     wasNull = isNull && !connectNulls;
 
                     if (i % CHUNK_SIZE === 0) {
-                        if (series.boostCopy || series.chart.boostCopy) {
-                            (series.boostCopy || series.chart.boostCopy)();
+                        if (
+                            series.boost &&
+                            series.boost.copy
+                        ) {
+                            series.boost.copy();
+                        } else if (
+                            series.chart.boost &&
+                            series.chart.boost.copy
+                        ) {
+                            series.chart.boost.copy();
                         }
                     }
                 }
@@ -858,8 +889,8 @@ const initCanvasBoost = function (): void {
          * @private
          */
         function canvasToSVG(this: Chart): void {
-            if (chart.boostCopy) {
-                chart.boostCopy();
+            if (chart.boost && chart.boost.copy) {
+                chart.boost.copy();
             }
         }
 
@@ -867,16 +898,18 @@ const initCanvasBoost = function (): void {
          * @private
          */
         function clear(this: Chart): void {
-            if (chart.renderTarget) {
-                chart.renderTarget.attr({ href: '' });
+            const boost = this.boost || {};
+
+            if (boost.target) {
+                boost.target.attr({ href: b64BlankPixel });
             }
 
-            if (chart.canvas) {
-                (chart.canvas.getContext('2d') as any).clearRect(
+            if (boost.canvas) {
+                (boost.canvas.getContext('2d') as any).clearRect(
                     0,
                     0,
-                    chart.canvas.width,
-                    chart.canvas.height
+                    boost.canvas.width,
+                    boost.canvas.height
                 );
             }
         }

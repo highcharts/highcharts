@@ -13,6 +13,7 @@
  *  Imports
  *
  * */
+
 import type ColorType from '../../Core/Color/ColorType';
 import type OHLCPointOptions from '../OHLC/OHLCPointOptions';
 
@@ -21,6 +22,7 @@ import type OHLCPointOptions from '../OHLC/OHLCPointOptions';
  *  Declarations
  *
  * */
+
 export interface CandlestickPointOptions extends OHLCPointOptions {
     lineColor?: ColorType;
     upLineColor?: ColorType;
@@ -28,7 +30,8 @@ export interface CandlestickPointOptions extends OHLCPointOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
+
 export default CandlestickPointOptions;

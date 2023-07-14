@@ -18,7 +18,7 @@ Highcharts.chart('container', {
     series: [{
         showInLegend: false,
         data: [{
-            name: "Pasta (no gluten)",
+            name: 'Pasta (no gluten)',
             y: 77
         }, {
             name: 'Rice (white & brown)',

@@ -76,7 +76,7 @@ QUnit.test(
             window.getComputedStyle(point.dataLabel.div.children[0])
                 .getPropertyValue('cursor'),
             'pointer',
-            "Data label's 'cursor' attribute equals to 'pointer'"
+            'Data label\'s \'cursor\' attribute equals to \'pointer\''
         );
     }
 );
@@ -112,7 +112,7 @@ QUnit.test('#10765: rotated dataLabels support useHTML', function (assert) {
                     rotation: 10,
                     useHTML: true,
                     formatter: function () {
-                        return "<span class='myLabel'>205.00</span>";
+                        return '<span class=\'myLabel\'>205.00</span>';
                     }
                 },
                 data: [1, 3, 2]

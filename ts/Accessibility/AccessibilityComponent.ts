@@ -119,7 +119,7 @@ class AccessibilityComponent {
      * @private
      */
     public addEvent<T>(
-        el: (T|U.Class<T>),
+        el: (T|Class<T>),
         type: string,
         fn: (Function|EventCallback<T>),
         options?: U.EventOptions

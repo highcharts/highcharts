@@ -1,0 +1,51 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+
+#outer {
+    max-width: 800px;
+    min-width: 320px;
+    margin: 0 auto;
+}
+
+#container {
+    height: 400px;
+}
+
+.apples {
+    fill: darkgreen;
+    stroke: darkgreen;
+}
+
+.oranges {
+    fill: yellow;
+    stroke: yellow;
+}
+
+.apples .highcharts-point {
+    fill: lightgreen;
+    stroke: lightgreen;
+}
+
+.oranges .highcharts-point {
+    fill: orange;
+    stroke: orange;
+}
+
+.oranges .blood-orange {
+    fill: red;
+    stroke: red;
+}
+
+.highcharts-tooltip .apples {
+    fill: lightgreen;
+    stroke: lightgreen;
+}
+
+.highcharts-tooltip .oranges {
+    fill: orange;
+    stroke: orange;
+}
+
+.highcharts-tooltip .blood-orange {
+    fill: red;
+    stroke: red;
+}

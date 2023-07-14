@@ -27,22 +27,22 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
  * */
 
 export interface GaugeSeriesDialOptions {
-    backgroundColor?: ColorType;
-    baseLength?: string;
-    baseWidth?: number;
-    borderColor?: ColorType;
-    borderWidth?: number;
+    backgroundColor: ColorType;
+    baseLength: string;
+    baseWidth: number;
+    borderColor: ColorType;
+    borderWidth: number;
     path?: SVGPath;
-    radius?: string;
-    rearLength?: string;
-    topWidth?: number;
+    radius: string;
+    rearLength: string;
+    topWidth: number;
 }
 
 export interface GaugeSeriesPivotOptions {
-    backgroundColor?: ColorType;
-    borderColor?: ColorType;
-    borderWidth?: number;
-    radius?: number;
+    backgroundColor: ColorType;
+    borderColor: ColorType;
+    borderWidth: number;
+    radius: number;
 }
 
 export interface GaugeSeriesOptions extends LineSeriesOptions {

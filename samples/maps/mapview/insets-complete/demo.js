@@ -3,7 +3,7 @@
         'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
     ).then(response => response.json());
 
-    // Create a dummy data value for each geometry
+    // Create a data value for each geometry
     const data = topology.objects.default.geometries.map((f, i) => i % 5);
 
     // For the sake of this demo, delete the recommended insets. Note that this
@@ -127,11 +127,6 @@
             data,
             joinBy: null,
             name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
             dataLabels: {
                 enabled: true,
                 format: '{point.properties.postal-code}'

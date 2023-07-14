@@ -6,7 +6,7 @@
 
     const data = [
         ['Atlanta', 'USA', '1996', 33.75, -84.38, 7, 2, 2, 3],
-        ['Sydney', 'Australia', '2020', -33.87, 151.20, 10, 4, 3, 3],
+        ['Sydney', 'Australia', '2000', -33.87, 151.20, 10, 4, 3, 3],
         ['Athens', 'Greece', '2004', 38, 23.72, 6, 5, 0, 1],
         ['Beijing', 'China', '2008', 39.92, 116.38, 9, 3, 5, 1],
         ['London', 'Great Britain', '2012', 51.5, -0.12, 4, 2, 1, 1],
@@ -31,12 +31,30 @@
             }
         },
 
+        mapView: {
+            fitToGeometry: {
+                type: 'MultiPoint',
+                coordinates: [
+                    // Alaska west
+                    [-164, 54],
+                    // Greenland north
+                    [-35, 84],
+                    // New Zealand east
+                    [179, -38],
+                    // Chile south
+                    [-68, -55]
+                ]
+            }
+        },
+
         title: {
-            text: 'Norwegian medals in the Summer Olympics (1996 - 2020)'
+            text: 'Norwegian medals in the Summer Olympics (1996 - 2020)',
+            align: 'left'
         },
 
         subtitle: {
-            text: 'Source: <a href="https://en.wikipedia.org/wiki/Norway_at_the_Olympics">Wikipedia</a>'
+            text: 'Source: <a href="https://en.wikipedia.org/wiki/Norway_at_the_Olympics">Wikipedia</a>',
+            align: 'left'
         },
 
         tooltip: {

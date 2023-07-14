@@ -72,7 +72,7 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
     assert.strictEqual(
         correct,
         true,
-        "Appropriate tooltip appears when hovering both point's data labels."
+        'Appropriate tooltip appears when hovering both point\'s data labels.'
     );
 
     assert.strictEqual(
@@ -191,5 +191,24 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
     assert.ok(
         result,
         'All data labels should be visible when chart is inverted (#12370).'
+    );
+
+    chart.series[0].update({
+        dataLabels: [{
+            enabled: true
+        }, {
+            enabled: false
+        }]
+    });
+
+    assert.ok(
+        true,
+        'There shouldn\'t be any error in the browser console (#17589).'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabels[1],
+        void 0,
+        'Second data label should be disabled (#17589}.'
     );
 });

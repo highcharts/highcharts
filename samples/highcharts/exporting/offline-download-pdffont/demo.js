@@ -13,10 +13,14 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        data: [1, 3, 2, 4],
+        data: [123, 345, 234, 456],
         type: 'column',
         colorByPoint: true,
-        name: 'Αυτή είναι η σειρά'
+        name: 'Αυτή είναι η σειρά',
+        dataLabels: {
+            enabled: true,
+            inside: true
+        }
     }],
 
     exporting: {

@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     chart: {
-        backgroundColor: "#f2f2f2",
+        backgroundColor: '#f2f2f2',
         height: '100%'
     },
     plotOptions: {
@@ -11,7 +11,7 @@ Highcharts.chart('container', {
                     textOutline: false,
                     width: 175,
                     fontSize: '24px',
-                    color: "#808080"
+                    color: '#808080'
                 }
             }
         }
@@ -27,7 +27,7 @@ Highcharts.chart('container', {
         data: [{
             sets: ['Knows If You Have Been Naughty Or Nice'],
             value: 4,
-            color: "#b3e5fc"
+            color: '#b3e5fc'
         }, {
             sets: ['Great Power Great Responsibility'],
             value: 4,
@@ -35,34 +35,34 @@ Highcharts.chart('container', {
         }, {
             sets: ['Wears Red Suit'],
             value: 4,
-            color: "#ff3232"
+            color: '#ff3232'
         }, {
             sets: ['Great Power Great Responsibility', 'Wears Red Suit'],
             value: 1,
             name: 'Spider Man',
             dataLabels: {
-                color: "white"
+                color: 'white'
             }
         }, {
             sets: ['Great Power Great Responsibility', 'Knows If You Have Been Naughty Or Nice'],
             value: 1,
             name: 'GOD',
             dataLabels: {
-                color: "white"
+                color: 'white'
             }
         }, {
             sets: ['Wears Red Suit', 'Knows If You Have Been Naughty Or Nice'],
             value: 1,
             name: 'Spanish Inquisition',
             dataLabels: {
-                color: "white"
+                color: 'white'
             }
         }, {
             sets: ['Great Power Great Responsibility', 'Wears Red Suit', 'Knows If You Have Been Naughty Or Nice'],
             value: 1,
             name: 'Santa',
             dataLabels: {
-                color: "white"
+                color: 'white'
             }
         }]
     }],

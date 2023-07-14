@@ -372,7 +372,7 @@ export function testHighchartsWithModules() {
     // Series Label
     require('../../../code/modules/series-label.src')(Highcharts);
     strictEqual(
-        typeof Highcharts.Series.prototype.checkClearPoint,
+        typeof Highcharts.SVGRenderer.prototype.symbols.connector,
         'function',
         'Series Label is loaded.'
     );

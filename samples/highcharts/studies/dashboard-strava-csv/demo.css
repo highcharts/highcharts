@@ -1,0 +1,18 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/css/datagrid.css");
+@import url("https://code.highcharts.com/css/dashboards.css");
+
+.hidden {
+    display: none;
+}
+
+.hcd-layout {
+    display: flex;
+    flex-direction: column;
+    flex-basis: auto;
+}
+
+.hcd-row:first-of-type {
+    height: 50vw;
+    overflow: scroll;
+}

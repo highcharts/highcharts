@@ -1,12 +1,10 @@
-// Data gathered from http://populationpyramid.net/germany/2015/
+// Custom template helper
+Highcharts.Templating.helpers.abs = value => Math.abs(value);
 
 // Age categories
-var categories = [
-    '0-4', '5-9', '10-14', '15-19',
-    '20-24', '25-29', '30-34', '35-39', '40-44',
-    '45-49', '50-54', '55-59', '60-64', '65-69',
-    '70-74', '75-79', '80-84', '85-89', '90-94',
-    '95-99', '100 + '
+const categories = [
+    '0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-40', '40-45',
+    '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80+'
 ];
 
 Highcharts.chart('container', {
@@ -14,10 +12,14 @@ Highcharts.chart('container', {
         type: 'bar'
     },
     title: {
-        text: 'Population pyramid for Germany, 2018'
+        text: 'Population pyramid for Somalia, 2021',
+        align: 'left'
     },
     subtitle: {
-        text: 'Source: <a href="http://populationpyramid.net/germany/2018/">Population Pyramids of the World from 1950 to 2100</a>'
+        text: 'Source: <a ' +
+            'href="https://countryeconomy.com/demography/population-structure/somalia"' +
+            'target="_blank">countryeconomy.com</a>',
+        align: 'left'
     },
     accessibility: {
         point: {
@@ -50,9 +52,7 @@ Highcharts.chart('container', {
             text: null
         },
         labels: {
-            formatter: function () {
-                return Math.abs(this.value) + '%';
-            }
+            format: '{abs value}%'
         },
         accessibility: {
             description: 'Percentage population',
@@ -62,35 +62,31 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            stacking: 'normal'
+            stacking: 'normal',
+            borderRadius: '50%'
         }
     },
 
     tooltip: {
-        formatter: function () {
-            return '<b>' + this.series.name + ', age ' + this.point.category + '</b><br/>' +
-                'Population: ' + Highcharts.numberFormat(Math.abs(this.point.y), 1) + '%';
-        }
+        format: '<b>{series.name}, age {point.category}</b><br/>' +
+            'Population: {(abs point.y):.1f}%'
     },
 
     series: [{
         name: 'Male',
         data: [
-            -2.2, -2.1, -2.2, -2.4,
-            -2.7, -3.0, -3.3, -3.2,
-            -2.9, -3.5, -4.4, -4.1,
-            -3.4, -2.7, -2.3, -2.2,
-            -1.6, -0.6, -0.3, -0.0,
-            -0.0
+            -8.98, -7.52, -6.65, -5.72, -4.85,
+            -3.71, -2.76, -2.07, -1.70, -1.47,
+            -1.22, -0.99, -0.81, -0.62, -0.41,
+            -0.23, -0.15
         ]
     }, {
         name: 'Female',
         data: [
-            2.1, 2.0, 2.1, 2.3, 2.6,
-            2.9, 3.2, 3.1, 2.9, 3.4,
-            4.3, 4.0, 3.5, 2.9, 2.5,
-            2.7, 2.2, 1.1, 0.6, 0.2,
-            0.0
+            8.84, 7.42, 6.57, 5.68, 4.83,
+            3.74, 2.80, 2.14, 1.79, 1.59,
+            1.34, 1.06, 0.83, 0.63, 0.43,
+            0.25, 0.19
         ]
     }]
 });

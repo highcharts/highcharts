@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -18,23 +24,30 @@ import type RSIPoint from './RSIPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     isNumber,
     merge
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 // Utils:
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
-/* eslint-enable require-jsdoc */
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The RSI series type.
@@ -46,6 +59,13 @@ function toFixed(a: number, n: number): number {
  * @augments Highcharts.Series
  */
 class RSIIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Relative strength index (RSI) technical indicator. This series
      * requires the `linkedTo` option to be set and should be loaded after
@@ -88,20 +108,20 @@ class RSIIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: RSIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period = (params.period as any),
+        const period = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<number> | Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             decimals: number = (params.decimals as any),
             // RSI starts calculations from the second point
             // Cause we need to calculate change between two points
-            range = 1,
             RSI: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
+            yData: Array<number> = [];
+        let gain: number = 0,
+            loss: number = 0,
             index = (params.index as number),
-            gain = 0,
-            loss = 0,
+            range: number = 1,
             RSIPoint: number,
             change: number,
             avgGain: number,
@@ -207,6 +227,7 @@ interface RSIIndicator {
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         rsi: typeof RSIIndicator;
@@ -222,6 +243,12 @@ SeriesRegistry.registerSeriesType('rsi', RSIIndicator);
  * */
 
 export default RSIIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `RSI` series. If the [type](#series.rsi.type) option is not

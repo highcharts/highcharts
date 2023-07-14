@@ -1,5 +1,5 @@
 QUnit.test('Setting graphic attributes for a label', function (assert) {
-    var expected = {
+    const expected = {
             text: 'Max',
             backgroundColor: 'blue',
             borderColor: 'black',
@@ -24,19 +24,30 @@ QUnit.test('Setting graphic attributes for a label', function (assert) {
                 }
             ]
         }),
-        label = chart.annotations[0].labels[0].graphic,
-        actual = {
-            text: label.text.textStr,
-            backgroundColor: label.box.attr('fill'),
-            borderColor: label.box.stroke,
-            borderRadius: label.box.r,
-            borderWidth: label.box['stroke-width'],
-            padding: label.padding,
-            shape: label.box.symbolName,
-            style: {
-                fontSize: label.text.styles.fontSize
-            }
+        annotation = chart.annotations[0],
+        actual = () => {
+            const label = annotation.labels[0].graphic;
+            return {
+                text: label.text.textStr,
+                backgroundColor: label.box.attr('fill'),
+                borderColor: label.box.attr('stroke'),
+                borderRadius: label.box.r,
+                borderWidth: label.box['stroke-width'],
+                padding: label.padding,
+                shape: label.box.symbolName,
+                style: {
+                    fontSize: label.text.styles.fontSize
+                }
+            };
         };
 
-    assert.deepEqual(actual, expected);
+    assert.deepEqual(actual(), expected, 'The attributes should be as expected for label with useHTML: false');
+
+    annotation.update({
+        labelOptions: {
+            useHTML: true
+        }
+    });
+
+    assert.deepEqual(actual(), expected, 'The attributes should be as expected for label with useHTML: true (#19200)');
 });

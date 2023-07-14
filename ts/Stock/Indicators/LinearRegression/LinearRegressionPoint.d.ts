@@ -12,7 +12,7 @@
  *
  * */
 
-import type LinearRegressionIndicator from './LinearRegression';
+import type LinearRegressionIndicator from './LinearRegressionIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *

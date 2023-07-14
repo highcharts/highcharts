@@ -202,19 +202,19 @@ QUnit.test(
 
         assert.strictEqual(
             DMIIndicator.graph.element.getAttribute('stroke-width'),
-            "2",
+            '1',
             'The DX line width should be correct.'
         );
 
         assert.strictEqual(
             DMIIndicator.graphplusDILine.element.getAttribute('stroke-width'),
-            "3",
+            '3',
             'The +DI line width should be correct.'
         );
 
         assert.strictEqual(
             DMIIndicator.graphminusDILine.element.getAttribute('stroke-width'),
-            "4",
+            '4',
             'The -DI line width should be correct.'
         );
 

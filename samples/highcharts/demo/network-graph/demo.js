@@ -5,12 +5,14 @@ Highcharts.addEvent(
     Highcharts.Series,
     'afterSetOptions',
     function (e) {
-        var colors = Highcharts.getOptions().colors,
-            i = 0,
+
+        const colors = Highcharts.getOptions().colors,
             nodes = {};
 
+        let i = 0;
+
         if (
-            this instanceof Highcharts.seriesTypes.networkgraph &&
+            this instanceof Highcharts.Series.types.networkgraph &&
             e.options.id === 'lang-tree'
         ) {
             e.options.data.forEach(function (link) {
@@ -50,10 +52,12 @@ Highcharts.chart('container', {
         height: '100%'
     },
     title: {
-        text: 'The Indo-European Language Tree'
+        text: 'The Indo-European Language Tree',
+        align: 'left'
     },
     subtitle: {
-        text: 'A Force-Directed Network Graph in Highcharts'
+        text: 'A Force-Directed Network Graph in Highcharts',
+        align: 'left'
     },
     plotOptions: {
         networkgraph: {
@@ -70,7 +74,11 @@ Highcharts.chart('container', {
         },
         dataLabels: {
             enabled: true,
-            linkFormat: ''
+            linkFormat: '',
+            style: {
+                fontSize: '0.8em',
+                fontWeight: 'normal'
+            }
         },
         id: 'lang-tree',
         data: [

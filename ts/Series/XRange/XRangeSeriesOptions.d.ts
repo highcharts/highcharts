@@ -15,6 +15,7 @@
  *  Imports
  *
  * */
+
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type XRangePointPartialFillOptions from './XRangePointOptions';
 import type XRangeSeries from './XRangeSeries';
@@ -25,6 +26,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
+
 export interface XRangeSeriesOptions extends ColumnSeriesOptions {
     partialFill?: XRangePointPartialFillOptions;
     states?: SeriesStatesOptions<XRangeSeries>;
@@ -35,4 +37,5 @@ export interface XRangeSeriesOptions extends ColumnSeriesOptions {
  *  Default Export
  *
  * */
+
 export default XRangeSeriesOptions;

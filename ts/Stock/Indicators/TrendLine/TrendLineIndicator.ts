@@ -8,6 +8,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -17,11 +23,7 @@ import type {
 import type TrendLinePoint from './TrendLinePoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -45,6 +47,13 @@ const {
  * @augments Highcharts.Series
  */
 class TrendLineIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Trendline (linear regression) fits a straight line to the selected data
      * using a method called the Sum Of Least Squares. This series requires the
@@ -78,14 +87,15 @@ class TrendLineIndicator extends SMAIndicator {
     } as TrendLineOptions);
 
     /* *
-    *
-    *   Properties
-    *
-    * */
+     *
+     *   Properties
+     *
+     * */
 
     public data: Array<TrendLinePoint> = void 0 as any;
     public options: TrendLineOptions = void 0 as any;
     public points: Array<TrendLinePoint> = void 0 as any;
+    public updateAllPoints?: boolean = true;
 
     /* *
      *
@@ -97,31 +107,28 @@ class TrendLineIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: TrendLineParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        let xVal: Array<number> = (series.xData as any),
+        const xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            sumX = 0,
+            xValLength: number = xVal.length,
+            index: number = (params.index as any);
+
+        let sumX = (xValLength - 1) * xValLength / 2,
             sumY = 0,
             sumXY = 0,
-            sumX2 = 0,
-            xValLength: number = xVal.length,
-            index: number = (params.index as any),
+            sumX2 =
+                ((xValLength - 1) * (xValLength) * (2 * xValLength - 1)) / 6,
             alpha: number,
-            beta: number,
             i: number,
-            x: number,
             y: number;
 
         // Get sums:
         for (i = 0; i < xValLength; i++) {
-            x = xVal[i];
             y = isArray(yVal[i]) ? yVal[i][index] : (yVal[i] as any);
-            sumX += x;
             sumY += y;
-            sumXY += x * y;
-            sumX2 += x * x;
+            sumXY += i * y;
         }
 
         // Get slope and offset:
@@ -132,16 +139,15 @@ class TrendLineIndicator extends SMAIndicator {
             alpha = 0;
         }
 
-        beta = (sumY - alpha * sumX) / xValLength;
+        const beta = (sumY - alpha * sumX) / xValLength;
 
         // Calculate linear regression:
         for (i = 0; i < xValLength; i++) {
-            x = xVal[i];
-            y = alpha * x + beta;
+            y = alpha * i + beta;
 
             // Prepare arrays required for getValues() method
-            LR[i] = [x, y];
-            xData[i] = x;
+            LR[i] = [xVal[i], y];
+            xData[i] = xVal[i];
             yData[i] = y;
         }
 
@@ -151,7 +157,14 @@ class TrendLineIndicator extends SMAIndicator {
             values: LR
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+
 }
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface TrendLineIndicator {
     nameBase: string;
@@ -185,6 +198,12 @@ SeriesRegistry.registerSeriesType('trendline', TrendLineIndicator);
  * */
 
 export default TrendLineIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `TrendLine` series. If the [type](#series.trendline.type) option is not

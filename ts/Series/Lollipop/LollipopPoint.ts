@@ -15,6 +15,7 @@
  *  Imports
  *
  * */
+
 import type LollipopPointOptions from './LollipopPointOptions';
 import type LollipopSeries from './LollipopSeries';
 
@@ -26,8 +27,10 @@ const {
         }
     },
     seriesTypes: {
-        area: {
-            prototype: areaProto
+        scatter: {
+            prototype: {
+                pointClass: ScatterPoint
+            }
         },
         dumbbell: {
             prototype: {
@@ -36,9 +39,9 @@ const {
         }
     }
 } = SeriesRegistry;
+
 import U from '../../Core/Utilities.js';
 const {
-    isObject,
     extend
 } = U;
 
@@ -48,41 +51,40 @@ const {
  *
  * */
 
-class LollipopPoint extends DumbbellPoint {
-    public series: LollipopSeries = void 0 as any;
+class LollipopPoint extends Point {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public options: LollipopPointOptions = void 0 as any;
+    public series: LollipopSeries = void 0 as any;
+    public plotX: number = void 0 as any;
 }
 
 /* *
  *
- *  Prototype properties
+ *  Class Prototype
  *
  * */
+
 interface LollipopPoint {
-    pointSetState: typeof areaProto.pointClass.prototype.setState;
-    init: typeof Point.prototype.init;
+    destroy: typeof DumbbellPoint.prototype['destroy'],
+    pointSetState: typeof ScatterPoint.prototype['setState'],
+    setState: typeof DumbbellPoint.prototype['setState']
 }
 
 extend(LollipopPoint.prototype, {
-    pointSetState: areaProto.pointClass.prototype.setState,
-    // Does not work with the inherited `isvalid`
-    isValid: Point.prototype.isValid,
-    init: function (
-        series: LollipopSeries,
-        options: LollipopPointOptions,
-        x?: number
-    ): typeof Point.prototype {
-        if (isObject(options) && 'low' in options) {
-            options.y = options.low;
-            delete options.low;
-        }
-        return Point.prototype.init.apply(this, arguments);
-    }
+    destroy: DumbbellPoint.prototype.destroy,
+    pointSetState: ScatterPoint.prototype.setState,
+    setState: DumbbellPoint.prototype.setState
 });
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

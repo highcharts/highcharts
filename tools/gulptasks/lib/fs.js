@@ -39,13 +39,21 @@ function copyAllFiles(
     filterFunction
 ) {
 
+    if (directorySourcePath && !directorySourcePath.endsWith('/')) {
+        directorySourcePath += '/';
+    }
+
+    if (directoryTargetPath && !directoryTargetPath.endsWith('/')) {
+        directoryTargetPath += '/';
+    }
+
     const filePaths = getFilePaths(directorySourcePath, includeSubDirectories);
 
     if (filePaths.length === 0) {
         return;
     }
 
-    const pathIndex = (directorySourcePath.length + 1);
+    const pathIndex = directorySourcePath.length;
 
     if (typeof filterFunction === 'function') {
 
@@ -87,11 +95,7 @@ function copyAllFiles(
  * @return {void}
  */
 function copyFile(fileSourcePath, fileTargetPath) {
-
-    const mkDirP = require('mkdirp');
-
-    mkDirP.sync(Path.dirname(fileTargetPath));
-
+    FS.mkdirSync(Path.dirname(fileTargetPath), { recursive: true });
     FS.writeFileSync(fileTargetPath, FS.readFileSync(fileSourcePath));
 }
 
@@ -338,6 +342,81 @@ function gzipFile(fileSourcePath, fileTargetPath) {
     });
 }
 
+/**
+ * Moves all files of a directory.
+ *
+ * @param {string} directorySourcePath
+ *        Directory to get files from.
+ *
+ * @param {string} directoryTargetPath
+ *        Directory to move files to.
+ *
+ * @param {boolean} [includeSubDirectories]
+ *        Set to true to copy files from sub-directories.
+ *
+ * @param {Function} [filterFunction]
+ *        Return true to include a file, return a string to change the
+ *        targetPath.
+ *
+ * @return {void}
+ */
+function moveAllFiles(
+    directorySourcePath,
+    directoryTargetPath,
+    includeSubDirectories,
+    filterFunction
+) {
+
+    if (directorySourcePath && !directorySourcePath.endsWith('/')) {
+        directorySourcePath += '/';
+    }
+
+    if (directoryTargetPath && !directoryTargetPath.endsWith('/')) {
+        directoryTargetPath += '/';
+    }
+
+    const filePaths = getFilePaths(directorySourcePath, includeSubDirectories);
+
+    if (filePaths.length === 0) {
+        return;
+    }
+
+    const pathIndex = directorySourcePath.length;
+
+    if (typeof filterFunction === 'function') {
+
+        let targetPath, filterResult;
+        filePaths.forEach(sourcePath => {
+
+            targetPath = Path.join(
+                directoryTargetPath, sourcePath.substr(pathIndex)
+            );
+
+            filterResult = filterFunction(sourcePath, targetPath);
+
+            if (!filterResult) {
+                return;
+            }
+
+            if (typeof filterResult === 'string') {
+                copyFile(sourcePath, filterResult);
+                deleteFile(sourcePath);
+            } else {
+                copyFile(sourcePath, targetPath);
+                deleteFile(sourcePath);
+            }
+        });
+    } else {
+        filePaths.forEach(filePath => {
+            copyFile(
+                filePath,
+                Path.join(directoryTargetPath, filePath.substring(pathIndex))
+            );
+            deleteFile(filePath);
+        });
+    }
+}
+
 /* *
  *
  *  Exports
@@ -353,5 +432,6 @@ module.exports = {
     getDirectoryPaths,
     getFileHash,
     getFilePaths,
-    gzipFile
+    gzipFile,
+    moveAllFiles
 };

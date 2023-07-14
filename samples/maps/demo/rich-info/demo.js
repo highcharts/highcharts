@@ -24,7 +24,7 @@
 
     // Parse the CSV into arrays, one array each country
     csvArr.slice(3).forEach(function (line) {
-        var row = CSVtoArray(line),
+        const row = CSVtoArray(line),
             data = row.slice(4);
 
         data.forEach(function (val, i) {
@@ -81,7 +81,7 @@
 
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-        const points = mapChart.getSelectedPoints();
+        const points = this.series.chart.getSelectedPoints();
         if (points.length) {
             if (points.length === 1) {
                 document.querySelector('#info #flag')
@@ -99,8 +99,7 @@
             if (!countryChart) {
                 countryChart = Highcharts.chart('country-chart', {
                     chart: {
-                        height: 250,
-                        spacingLeft: 0
+                        height: 250
                     },
                     credits: {
                         enabled: false
@@ -163,7 +162,8 @@
     const mapChart = Highcharts.mapChart('container', {
 
         chart: {
-            map: topology
+            map: topology,
+            spacing: 1
         },
 
         title: {
@@ -178,6 +178,22 @@
             enabled: true,
             buttonOptions: {
                 verticalAlign: 'bottom'
+            }
+        },
+
+        mapView: {
+            fitToGeometry: {
+                type: 'MultiPoint',
+                coordinates: [
+                    // Alaska west
+                    [-164, 54],
+                    // Greenland north
+                    [-35, 84],
+                    // New Zealand east
+                    [179, -38],
+                    // Chile south
+                    [-68, -55]
+                ]
             }
         },
 

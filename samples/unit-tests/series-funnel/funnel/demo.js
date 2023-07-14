@@ -35,49 +35,58 @@ QUnit.test('Funnel selected state (#5156)', function (assert) {
 });
 
 QUnit.test('Funnel size relative to center(#4738)', function (assert) {
-    var chart = $('#container')
-        .highcharts({
-            chart: {
-                type: 'funnel',
-                marginRight: 100
-            },
-            title: {
-                text: 'Sales funnel',
-                x: -50
-            },
-            plotOptions: {
-                series: {
-                    center: [110, 150],
-                    neckWidth: 50,
-                    neckHeight: 100,
-                    //reversed: true,
-                    //-- Other available options
-                    height: 200,
-                    width: 150
-                }
-            },
-            legend: {
-                enabled: false
-            },
-            series: [
-                {
-                    name: 'Unique users',
-                    data: [
-                        ['Website visits', 15654],
-                        ['Downloads', 4064],
-                        ['Requested price list', 1987],
-                        ['Invoice sent', 976],
-                        ['Finalized', 846]
-                    ]
-                }
-            ]
-        })
-        .highcharts();
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'funnel',
+            marginRight: 100,
+            animation: false
+        },
+        title: {
+            text: 'Sales funnel',
+            x: -50
+        },
+        plotOptions: {
+            series: {
+                center: [110, 150],
+                neckWidth: 50,
+                neckHeight: 100,
+                // reversed: true,
+                // -- Other available options
+                height: 200,
+                width: 150
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        series: [
+            {
+                name: 'Unique users',
+                data: [
+                    ['Website visits', 15654],
+                    ['Downloads', 4064],
+                    ['Requested price list', 1987],
+                    ['Invoice sent', 976],
+                    ['Finalized', 846]
+                ]
+            }
+        ]
+    });
 
-    var series = chart.series[0];
+    const series = chart.series[0];
     assert.equal(series.getWidthAt(250), 50, 'Bottom width');
     assert.equal(series.getWidthAt(150), 50, 'Center width');
     assert.equal(series.getWidthAt(50), 150, 'Top width');
+
+    const initialY = series.points[0].plotY;
+    series.addPoint({ name: 'Negative Point', y: -5000 });
+
+    assert.equal(
+        initialY,
+        series.points[0].plotY,
+        '#17514, Negative value should have no influence on the chart\'s layout.'
+    );
+
 });
 
 QUnit.test('Visible funnel items', function (assert) {
@@ -102,7 +111,7 @@ QUnit.test('Visible funnel items', function (assert) {
                 neckWidth: '30%',
                 neckHeight: '25%'
 
-                //-- Other available options
+                // -- Other available options
                 // height: pixels or percent
                 // width: pixels or percent
             }
@@ -138,7 +147,7 @@ QUnit.test('Visible funnel items', function (assert) {
     );
 });
 
-QUnit.test('Top path of funnel intact', function (assert) {
+QUnit.test('Funnel path', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'funnel'
@@ -161,8 +170,11 @@ QUnit.test('Top path of funnel intact', function (assert) {
         ]
     });
 
+    const series = chart.series[0],
+        points = series.points;
+
     assert.strictEqual(
-        chart.series[0].points[3].graphic.element
+        points[3].graphic.element
             .getAttribute('d')
             .split(' ')
             .filter(function (s) {
@@ -170,6 +182,53 @@ QUnit.test('Top path of funnel intact', function (assert) {
             }).length,
         14,
         'The path should have the neck intact (#8277)'
+    );
+
+    series.update({
+        borderRadius: 10
+    });
+
+    assert.strictEqual(
+        points[0].graphic.d.split(' ').filter(s => s === 'C').length,
+        2,
+        'The first point should have 2 rounded corners, scope: stack (#18839)'
+    );
+
+    assert.strictEqual(
+        points[1].graphic.d.split(' ').filter(s => s === 'C').length,
+        0,
+        'The second point should have 0 rounded corners, scope: stack (#18839)'
+    );
+
+    assert.strictEqual(
+        points[3].graphic.d.split(' ').filter(s => s === 'C').length,
+        4,
+        'The last point should have 4 rounded corners, scope: stack (#18839)'
+    );
+
+    series.update({
+        borderRadius: {
+            radius: '1%',
+            scope: 'point'
+        }
+    });
+
+    assert.strictEqual(
+        points[0].graphic.d.split(' ').filter(s => s === 'C').length,
+        4,
+        'The first point should have 4 rounded corners, scope: point (#18839)'
+    );
+
+    assert.strictEqual(
+        points[1].graphic.d.split(' ').filter(s => s === 'C').length,
+        4,
+        'The second point should have 4 rounded corners, scope: point (#18839)'
+    );
+
+    assert.strictEqual(
+        points[3].graphic.d.split(' ').filter(s => s === 'C').length,
+        6,
+        'The last point should have 6 rounded corners, scope: point (#18839)'
     );
 });
 
@@ -340,9 +399,9 @@ QUnit.test('Funnel dataLabels', function (assert) {
         }
     });
 
-    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
-    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
-    Highcharts.fireEvent(chart.series[0].points[0].legendGroup.element, 'click');
+    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
+    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
+    Highcharts.fireEvent(chart.series[0].points[0].legendItem.group.element, 'click');
 
     dataLabel = chart.series[0].points[1].dataLabel;
 

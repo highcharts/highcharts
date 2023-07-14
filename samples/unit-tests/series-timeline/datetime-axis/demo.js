@@ -238,6 +238,6 @@ QUnit.test('Timeline: General tests.', function (assert) {
     assert.strictEqual(
         timeline.points[2].isInside,
         false,
-        "The third point is hidden, when it's outside of plot area."
+        'The third point is hidden, when it\'s outside of plot area.'
     );
 });

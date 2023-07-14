@@ -160,6 +160,15 @@ class ColumnPyramidSeries extends ColumnSeries {
                 invBarPos: number,
                 x1, x2, x3, x4, y1, y2;
 
+            // Adjust for null or missing points
+            if (options.centerInCategory) {
+                barX = series.adjustForMissingColumns(
+                    barX,
+                    pointWidth,
+                    point,
+                    metrics
+                );
+            }
 
             point.barX = barX;
             point.pointWidth = pointWidth;
@@ -199,7 +208,7 @@ class ColumnPyramidSeries extends ColumnSeries {
 
             // topXwidth and bottomXwidth = width of lines from the center
             // calculated from tanges proportion.
-            // Can not be a NaN #12514
+            // Cannot be a NaN #12514
             topXwidth = stackHeight ?
                 (barW * (barY - topPointY)) / stackHeight : 0;
             // like topXwidth, but with height of point

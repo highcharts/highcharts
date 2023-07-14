@@ -1,11 +1,15 @@
 Installation
 ===
 
-### npm and Bower
+## Loading Highcharts
 
-Highcharts is also available as packages through npm and Bower. Read more on installation with [npm](https://highcharts.com/docs/getting-started/install-from-npm) or [Bower](https://highcharts.com/docs/getting-started/install-from-bower) respectively. If you're not using these, continue reading.
+There are many ways to use Highcharts, and you can choose the one that works best with your project.
 
-### A. Include Highcharts
+### 1. npm
+
+Highcharts is available as a package through npm. More info can be found on [installation with npm](https://highcharts.com/docs/getting-started/install-from-npm).
+
+### 2. Loading from our CDN
 
 Include the JavaScript files in the `<head>` section of your web page as shown below.
 
@@ -13,35 +17,54 @@ Include the JavaScript files in the `<head>` section of your web page as shown b
     <script src="https://code.highcharts.com/highcharts.js"></script>
 ```
 
-If you need support for IE6, 7 or 8, you need to include some polyfills. See details in [System Requirements](https://www.highcharts.com/docs/getting-started/system-requirements#oldie).
+This will load Highcharts from our Content Delivery Network, where we host the files worldwide. An overview of the files available on the CDN can be found on [code.highcharts.com](https://code.highcharts.com). Specific versions can also be loaded.
 
-### B. Alternatively, load files from your own domain
+*Note: We do not recommend loading the latest version automatically in production environments, as new versions may in rare occasions not be backwards-compatible.*
 
-In the example above the JavaScript files are loaded from ajax.googleapis.com and [code.highcharts.com](https://code.highcharts.com). The Highcharts files can be downloaded from [highcharts.com](https://www.highcharts.com/download/) and put on your webpage. Here is an example with Highcharts served from your own server:
+Here is an example of loading the latest v10 minor version:
+
+```html
+    <script src="https://code.highcharts.com/10/highcharts.js"></script>
+```
+
+### 3. Load the files from your own server
+
+In the example above, the JavaScript files are loaded from our servers at [code.highcharts.com](https://code.highcharts.com). You can also serve the files yourself, from your own servers. The Highcharts files can be downloaded from [highcharts.com](https://www.highcharts.com/download/) and put on your webpage. Here is an example with Highcharts served from your own server:
 
 ```html
 <script src="/js/highcharts.js"></script>
 ```
 
-### C. Load Highcharts Stock or Highcharts Maps
+### 4. Load Highcharts as ES6 modules
 
-Highcharts is already included in Highcharts Stock, so it is not necessary to load both. The highstock.js file is included in the package. The highmaps.js file is also included, but unlike highstock.js, this doesn't include the complete Highcharts feature set. Highcharts Stock and Highcharts Maps can be loaded separate files like this:
+Highcharts can be loaded using ECMAScript modules, both from the npm package and from our CDN. This allows for tree shaking, and can help reduce file size. For more information, see [installation with ES modules](https://highcharts.com/docs/getting-started/installation-with-esm).
 
-```html
-<script src="/js/highstock.js"></script>
-<script src="/js/highmaps.js"></script>
-```
 
-But the separate files can't run in the same page along with each other or with highcharts.js. So if stock or maps are required in the same page as each other or with basic Highcharts, they can be loaded as modules:
+### 5. Load Highcharts as an AMD or CommonJS module
+
+Highcharts is compatible with AMD module loaders such as RequireJS, and can also be loaded as CommonJS modules, for example with Node.js. More info can be found on [installation with AMD or CommonJS](https://highcharts.com/docs/getting-started/installation-with-amd-commonjs).
+
+
+## Loading Highcharts Stock, Highcharts Maps and Highcharts Gantt
+
+Highcharts is already included in Highcharts Stock, Maps, and Gantt, so it is not necessary to load both.
+
+The `highstock.js`, `highmaps.js` and `highcharts-gantt.js` files are included in the [download package](https://www.highcharts.com/download/) for installation on your own servers, and are also available on our [CDN](https://code.highcharts.com). They are also included in the [npm package](https://highcharts.com/docs/getting-started/install-from-npm).
+
+These files can't run in the same page along with each other or with `highcharts.js`. If Stock, Maps, or Gantt are required in the same page as each other, or with basic Highcharts, they can be loaded as modules:
 
 ```html
 <script src="/js/highcharts.js"></script>
 <script src="/js/modules/stock.js"></script>
 <script src="/js/modules/map.js"></script>
+<script src="/js/modules/gantt.js"></script>
 ```
 
-### D. Get started
+## Build your own packages
+
+To reduce file size, or combine modules together to reduce latency, you may want to create your own build of the Highcharts modules. See [Creating custom Highcharts files](https://www.highcharts.com/docs/getting-started/how-to-create-custom-highcharts-packages) for more information.
+
+
+## Get started
 
 You are now ready to use Highcharts, see [Your first chart](https://highcharts.com/docs/getting-started/your-first-chart) to get started.
-
-*) Highcharts version 1.x relied on excanvas.js for rendering in IE. From Highcharts 2.0 (and all Highcharts Stock versions) IE VML rendering is built into the library.

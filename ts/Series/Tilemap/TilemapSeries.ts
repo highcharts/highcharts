@@ -263,7 +263,7 @@ class TilemapSeries extends HeatmapSeries {
                 1 as any,
                 0 as any,
                 1 as any
-            ) as any
+            )
         );
         coord2 = Math.round(
             axis.translate(
@@ -272,11 +272,15 @@ class TilemapSeries extends HeatmapSeries {
                 1 as any,
                 0 as any,
                 1 as any
-            ) as any
+            )
         );
 
         return {
-            padding: Math.abs(coord1 - coord2) || 0,
+            padding: (
+                axis.single ? // if there is only one tick adjust padding #18647
+                    Math.abs(coord1 - coord2) / 2 :
+                    Math.abs(coord1 - coord2)
+            ) || 0,
 
             // Offset the yAxis length to compensate for shift. Setting the
             // length factor to 2 would add the same margin to max as min.

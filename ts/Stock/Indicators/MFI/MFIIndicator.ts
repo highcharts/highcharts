@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -22,10 +28,8 @@ import type MFIPoint from './MFIPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+    sma: SMAIndicator
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -34,7 +38,11 @@ const {
     isArray
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 // Utils:
 function sumArray(array: Array<number>): number {
@@ -56,8 +64,6 @@ function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
     return typicalPrice * volume;
 }
 
-/* eslint-enable require-jsdoc */
-
 /* *
  *
  *  Class
@@ -74,6 +80,13 @@ function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
  * @augments Highcharts.Series
  */
 class MFIIndicator extends SMAIndicator {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * Money Flow Index. This series requires `linkedTo` option to be set and
      * should be loaded after the `stock/indicators/indicators.js` file.
@@ -109,31 +122,30 @@ class MFIIndicator extends SMAIndicator {
     } as MFIOptions);
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
+
     public data: Array<MFIPoint> = void 0 as any;
     public options: MFIOptions = void 0 as any;
     public points: Array<MFIPoint> = void 0 as any;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
+
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: MFIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             decimals: number = (params.decimals as any),
-            // MFI starts calculations from the second point
-            // Cause we need to calculate change between two points
-            range = 1,
             volumeSeries: (LineSeries | undefined) = (
                 series.chart.get((params.volumeSeriesID as any)) as any
             ),
@@ -141,19 +153,23 @@ class MFIIndicator extends SMAIndicator {
                 volumeSeries && (volumeSeries.yData as any)
             ),
             MFI: Array<Array<number>> = [],
-            isUp = false,
             xData: Array<number> = [],
             yData: Array<number> = [],
             positiveMoneyFlow: Array<number> = [],
-            negativeMoneyFlow: Array<number> = [],
-            newTypicalPrice: number,
+            negativeMoneyFlow: Array<number> = [];
+
+        let newTypicalPrice: number,
             oldTypicalPrice: number,
             rawMoneyFlow: number,
             negativeMoneyFlowSum: number,
             positiveMoneyFlowSum: number,
             moneyFlowRatio: number,
             MFIPoint: number,
-            i: number;
+            i: number,
+            isUp = false,
+            // MFI starts calculations from the second point
+            // Cause we need to calculate change between two points
+            range = 1;
 
         if (!volumeSeries) {
             error(
@@ -174,8 +190,10 @@ class MFIIndicator extends SMAIndicator {
         ) {
             return;
         }
+
         // Calculate first typical price
         newTypicalPrice = calculateTypicalPrice(yVal[range]);
+
         // Accumulate first N-points
         while (range < period + 1) {
             // Calculate if up or down
@@ -234,10 +252,10 @@ class MFIIndicator extends SMAIndicator {
 }
 
 /* *
-*
-*   Class Prototype
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
 
 interface MFIIndicator {
     nameBase: string;
@@ -269,6 +287,12 @@ SeriesRegistry.registerSeriesType('mfi', MFIIndicator);
  * */
 
 export default MFIIndicator;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `MFI` series. If the [type](#series.mfi.type) option is not specified, it

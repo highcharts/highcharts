@@ -8,7 +8,14 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        text: 'Browser market shares at a specific website, 2014'
+        text: 'Global smartphone shipments market share, Q1 2022',
+        align: 'left'
+    },
+    subtitle: {
+        text: 'Source: ' +
+            '<a href="https://www.counterpointresearch.com/global-smartphone-share/"' +
+            'target="_blank">Counterpoint Research</a>',
+        align: 'left'
     },
     accessibility: {
         point: {
@@ -31,19 +38,19 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'pie',
-        name: 'Browser share',
+        name: 'Share',
         data: [
-            ['Firefox', 45.0],
-            ['IE', 26.8],
+            ['Samsung', 23],
+            ['Apple', 18],
             {
-                name: 'Chrome',
-                y: 12.8,
+                name: 'Xiaomi',
+                y: 12,
                 sliced: true,
                 selected: true
             },
-            ['Safari', 8.5],
-            ['Opera', 6.2],
-            ['Others', 0.7]
+            ['Oppo*', 9],
+            ['Vivo', 8],
+            ['Others', 30]
         ]
     }]
 });

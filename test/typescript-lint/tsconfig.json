@@ -39,6 +39,9 @@
         "../../code/modules/annotations-advanced.d.ts",
         "../../code/modules/annotations-advanced.src.d.ts",
 
+        "../../code/modules/arc-diagram.d.ts",
+        "../../code/modules/arc-diagram.src.d.ts",
+
         "../../code/modules/arrow-symbols.d.ts",
         "../../code/modules/arrow-symbols.src.d.ts",
 
@@ -114,8 +117,14 @@
         "../../code/modules/heatmap.d.ts",
         "../../code/modules/heatmap.src.d.ts",
 
+        "../../code/modules/heikinashi.d.ts",
+        "../../code/modules/heikinashi.src.d.ts",
+
         "../../code/modules/histogram-bellcurve.d.ts",
         "../../code/modules/histogram-bellcurve.src.d.ts",
+
+        "../../code/modules/hollowcandlestick.d.ts",
+        "../../code/modules/hollowcandlestick.src.d.ts",
 
         "../../code/modules/item-series.d.ts",
         "../../code/modules/item-series.src.d.ts",
@@ -129,6 +138,9 @@
         "../../code/modules/marker-clusters.d.ts",
         "../../code/modules/marker-clusters.src.d.ts",
 
+        "../../code/modules/mouse-wheel-zoom.d.ts",
+        "../../code/modules/mouse-wheel-zoom.src.d.ts",
+
         "../../code/modules/networkgraph.d.ts",
         "../../code/modules/networkgraph.src.d.ts",
 
@@ -137,12 +149,6 @@
 
         "../../code/modules/offline-exporting.d.ts",
         "../../code/modules/offline-exporting.src.d.ts",
-
-        "../../code/modules/oldie.d.ts",
-        "../../code/modules/oldie.src.d.ts",
-
-        "../../code/modules/oldie-polyfills.d.ts",
-        "../../code/modules/oldie-polyfills.src.d.ts",
 
         "../../code/modules/organization.d.ts",
         "../../code/modules/organization.src.d.ts",
@@ -174,6 +180,9 @@
         "../../code/modules/series-label.d.ts",
         "../../code/modules/series-label.src.d.ts",
 
+        "../../code/modules/series-on-point.d.ts",
+        "../../code/modules/series-on-point.src.d.ts",
+
         "../../code/modules/solid-gauge.d.ts",
         "../../code/modules/solid-gauge.src.d.ts",
 
@@ -200,6 +209,9 @@
 
         "../../code/modules/timeline.d.ts",
         "../../code/modules/timeline.src.d.ts",
+
+        "../../code/modules/treegraph.d.ts",
+        "../../code/modules/treegraph.src.d.ts",
 
         "../../code/modules/treegrid.d.ts",
         "../../code/modules/treegrid.src.d.ts",
@@ -264,8 +276,17 @@
         "../../code/indicators/cmf.d.ts",
         "../../code/indicators/cmf.src.d.ts",
 
+        "../../code/indicators/cmo.d.ts",
+        "../../code/indicators/cmo.src.d.ts",
+
         "../../code/indicators/dema.d.ts",
         "../../code/indicators/dema.src.d.ts",
+
+        "../../code/indicators/disparity-index.d.ts",
+        "../../code/indicators/disparity-index.src.d.ts",
+
+        "../../code/indicators/dmi.d.ts",
+        "../../code/indicators/dmi.src.d.ts",
 
         "../../code/indicators/dpo.d.ts",
         "../../code/indicators/dpo.src.d.ts",
@@ -282,6 +303,9 @@
         "../../code/indicators/keltner-channels.d.ts",
         "../../code/indicators/keltner-channels.src.d.ts",
 
+        "../../code/indicators/klinger.d.ts",
+        "../../code/indicators/klinger.src.d.ts",
+
         "../../code/indicators/macd.d.ts",
         "../../code/indicators/macd.src.d.ts",
 
@@ -293,6 +317,9 @@
 
         "../../code/indicators/natr.d.ts",
         "../../code/indicators/natr.src.d.ts",
+
+        "../../code/indicators/obv.d.ts",
+        "../../code/indicators/obv.src.d.ts",
 
         "../../code/indicators/pivot-points.d.ts",
         "../../code/indicators/pivot-points.src.d.ts",
@@ -354,6 +381,12 @@
         "../../code/themes/avocado.d.ts",
         "../../code/themes/avocado.src.d.ts",
 
+        "../../code/themes/brand-dark.d.ts",
+        "../../code/themes/brand-dark.src.d.ts",
+
+        "../../code/themes/brand-light.d.ts",
+        "../../code/themes/brand-light.src.d.ts",
+
         "../../code/themes/dark-blue.d.ts",
         "../../code/themes/dark-blue.src.d.ts",
 
@@ -371,6 +404,12 @@
 
         "../../code/themes/grid.d.ts",
         "../../code/themes/grid.src.d.ts",
+
+        "../../code/themes/high-contrast-dark.d.ts",
+        "../../code/themes/high-contrast-dark.src.d.ts",
+
+        "../../code/themes/high-contrast-light.d.ts",
+        "../../code/themes/high-contrast-light.src.d.ts",
 
         "../../code/themes/sand-signika.d.ts",
         "../../code/themes/sand-signika.src.d.ts",

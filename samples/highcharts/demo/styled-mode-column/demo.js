@@ -6,19 +6,31 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Styling axes and columns'
+        text: 'Average weight and BMI in some countries, women',
+        align: 'left'
     },
 
-    yAxis: [{
+    subtitle: {
+        text: 'Source: ' +
+            '<a href="https://www.worlddata.info/average-bodyheight.php"' +
+            'target="_blank">WorldData</a>',
+        align: 'left'
+    },
+
+    xAxis: {
+        categories: ['Tokelau', 'Ireland', 'Italy', 'Timor-Leste']
+    },
+
+    yAxis: [{ // Primary axis
         className: 'highcharts-color-0',
         title: {
-            text: 'Primary axis'
+            text: 'Weight'
         }
-    }, {
+    }, { // Secondary axis
         className: 'highcharts-color-1',
         opposite: true,
         title: {
-            text: 'Secondary axis'
+            text: 'BMI'
         }
     }],
 
@@ -29,9 +41,14 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        data: [1, 3, 2, 4]
+        name: 'Weight',
+        data: [92.5, 73.1, 64.8, 49.0],
+        tooltip: {
+            valueSuffix: ' kg'
+        }
     }, {
-        data: [324, 124, 547, 221],
+        name: 'BMI',
+        data: [33.7, 27.1, 24.9, 21.2],
         yAxis: 1
     }]
 

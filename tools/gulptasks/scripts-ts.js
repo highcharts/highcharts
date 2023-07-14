@@ -2,8 +2,15 @@
  * Copyright (C) Highsoft AS
  */
 
-const gulp = require('gulp');
+/* eslint-disable no-use-before-define, node/no-unsupported-features/node-builtins */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+const gulp = require('gulp');
 /* *
  *
  *  Tasks
@@ -11,31 +18,35 @@ const gulp = require('gulp');
  * */
 
 /**
+ * Builds files of `/ts` folder into `/js` folder.
+ *
  * @return {Promise}
- * Promise to keep
+ * Promise to keep.
  */
-function scriptsTS() {
-
+async function scriptsTS() {
     const fsLib = require('./lib/fs'),
         processLib = require('./lib/process');
 
-    return new Promise((resolve, reject) => {
-
+    try {
         processLib.isRunning('scripts-ts', true);
 
-        Promise
-            .resolve()
-            .then(() => fsLib.deleteDirectory('js', true))
-            .then(() => processLib.exec('npx tsc --project ts'))
-            .then(function (output) {
-                processLib.isRunning('scripts-ts', false);
-                resolve(output);
-            })
-            .catch(function (error) {
-                processLib.isRunning('scripts-ts', false);
-                reject(error);
-            });
-    });
+        fsLib.deleteDirectory('js/', true);
+
+        fsLib.copyAllFiles(
+            'ts', 'js', true,
+            sourcePath => sourcePath.endsWith('.d.ts')
+        );
+
+        await processLib.exec('npx tsc --build ts');
+
+        // Remove Dashboards
+        fsLib.deleteDirectory('js/Dashboards/', true);
+        fsLib.deleteDirectory('js/DataGrid/', true);
+
+        processLib.isRunning('scripts-ts', false);
+    } finally {
+        processLib.isRunning('scripts-ts', false);
+    }
 }
 
 gulp.task('scripts-ts', gulp.series('scripts-messages', scriptsTS));

@@ -36,6 +36,11 @@ function generateHTML() {
             name: 'highcharts-gantt',
             changelogId: 'hg-changelog',
             offset: 'hg-'
+        }, {
+            header: 'Highcharts Dashboards',
+            name: 'highcharts-dashboards',
+            changelogId: 'hd-changelog',
+            offset: 'hd-'
         }];
 
         var changelog = {
@@ -107,7 +112,8 @@ function generateHTML() {
                 <a href="#highcharts">Highcharts</a>,
                 <a href="#highcharts-stock">Highcharts Stock</a>,
                 <a href="#highcharts-maps">Highcharts Maps</a>,
-                <a href="#highcharts-gantt">Highcharts Gantt</a>. Go to the
+                <a href="#highcharts-gantt">Highcharts Gantt</a>,
+                <a href="#highcharts-dashboards">Highcharts Dashboards</a>. Go to the
                 <a href="download">Download</a> page to get the latest version.</p>`
             );
         }
@@ -142,7 +148,8 @@ function generateHTML() {
                 return (
                     `<h3 class="release-header">
                         <a id="${id}"></a>
-                        <a href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
+                        <span>${changelog.header.productName} v${version} ${changelog.header.date}</span>
+                        <a class="release-header-hashtag" href="#${id}">#</a>
                         <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>
                     </h3>
                     ${marked.parser(changelog.features)}`
@@ -158,7 +165,7 @@ function generateHTML() {
                 return (
                     `<div id="${changelog.header.offset}heading-${changelog.header.version}-upgrade-notes" class="card-header">
                     <h4 class="card-title">
-                    <button aria-label="Upgrade Notes ${id} v${version}" aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#upgrade-notes-${changelog.header.offset}${changelog.header.version}"><span> Upgrade notes </span></button>
+                    <button aria-label="Upgrade Notes ${id} v${version}" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#upgrade-notes-${changelog.header.offset}${changelog.header.version}"><span> Upgrade notes </span></button>
                     </h4>
                     </div>
                     <div id="upgrade-notes-${changelog.header.offset}${changelog.header.version}" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
@@ -177,7 +184,7 @@ function generateHTML() {
                 return (
                     `<div id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"class="card-header">
                     <h4 class="card-title" aria-label="Bug Fixes ${id} v${version}">
-                    <button aria-label="Bug Fixes ${id} v${version}"aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#bug-fixes-${changelog.header.offset}${changelog.header.version}"><span> Bug fixes </span></button>
+                    <button aria-label="Bug Fixes ${id} v${version}"aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-${changelog.header.offset}${changelog.header.version}"><span> Bug fixes </span></button>
                     </h4>
                     </div>
                     <div id="bug-fixes-${changelog.header.offset}${changelog.header.version}" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
@@ -260,7 +267,8 @@ function generateHTML() {
 
                 if (content.indexOf('[Edit]') !== -1) {
                     throw new Error(
-                        'Review links found inside the markdown. Generate again without --review.'
+                        'Review links found inside the markdown. Generate again without --review.\n' +
+                        path.join(__dirname, product.name, file)
                     );
                 }
 

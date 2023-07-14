@@ -1,5 +1,5 @@
 // Data generated from http://www.bikeforums.net/professional-cycling-fans/1113087-2017-tour-de-france-gpx-tcx-files.html
-var elevationData = [
+const elevationData = [
     [0.0, 225],
     [0.1, 226],
     [0.2, 228],
@@ -1899,7 +1899,8 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: '2017 Tour de France Stage 8: Dole - Station des Rousses'
+        text: '2017 Tour de France Stage 8: Dole - Station des Rousses',
+        align: 'left'
     },
 
     accessibility: {
@@ -2014,7 +2015,7 @@ Highcharts.chart('container', {
             justify: false,
             crop: true,
             style: {
-                fontSize: '0.8em',
+                fontSize: '10px',
                 textOutline: '1px white'
             }
         },

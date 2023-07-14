@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     chart: {
-        //ignoreHiddenSeries: true,
+        // ignoreHiddenSeries: true,
         type: 'line'
     },
     title: {

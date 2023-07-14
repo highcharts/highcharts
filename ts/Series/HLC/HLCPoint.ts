@@ -18,13 +18,15 @@
 
 import type HLCPointOptions from './HLCPointOptions';
 import type HLCSeries from './HLCSeries';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
+    column: {
+        prototype: {
+            pointClass: ColumnPoint
+        }
     }
-} = SeriesRegistry;
+} = SeriesRegistry.seriesTypes;
 
 /* *
  *
@@ -32,7 +34,7 @@ const {
  *
  * */
 
-class HLCPoint extends ColumnSeries.prototype.pointClass {
+class HLCPoint extends ColumnPoint {
 
     /* *
      *

@@ -246,10 +246,9 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      *         Grid lines demonstrated
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default   #e6e6e6
      * @product   highcharts highstock highmaps
-     * @apioption colorAxis.gridLineColor
      */
+    gridLineColor: Palette.backgroundColor,
 
     /**
      * The width of the grid lines extending from the axis across the
@@ -348,6 +347,8 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      */
     labels: {
 
+        distance: 8,
+
         /**
          * How to handle overflowing labels on horizontal color axis. If set
          * to `"allow"`, it will not be aligned at all. By default it
@@ -410,6 +411,10 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * first item is a float between 0 and 1 assigning the relative
      * position in the gradient, and the second item is the color.
      *
+     * @sample highcharts/coloraxis/coloraxis-stops/
+     *         Color axis stops
+     * @sample highcharts/coloraxis/color-key-with-stops/
+     *         Color axis stops with custom colorKey
      * @sample {highmaps} maps/demo/heatmap/
      *         Heatmap with three color stops
      *

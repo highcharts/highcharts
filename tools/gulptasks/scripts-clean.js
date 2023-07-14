@@ -11,19 +11,10 @@ const path = require('path');
  *
  * */
 
-const TARGET_DIRECTORY = 'code';
-
-const FILES_TO_KEEP = [
-    ['.gitignore'],
-    ['.htaccess'],
-    ['css', 'readme.md'],
-    ['js', 'modules', 'readme.md'],
-    ['js', 'readme.md'],
-    ['modules', 'readme.md'],
-    ['readme.txt']
-].map(
-    filePath => path.join(TARGET_DIRECTORY, ...filePath)
-);
+const TARGET_DIRECTORIES = [
+    'build',
+    'code'
+];
 
 /* *
  *
@@ -43,25 +34,12 @@ function task() {
     const log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
-
-        const filesToDelete = fs
-            .getFilePaths(TARGET_DIRECTORY, true)
-            .filter(filePath => !FILES_TO_KEEP.includes(filePath));
-        const directoriesToDelete = fs
-            .getDirectoryPaths(TARGET_DIRECTORY, true)
-            .filter(directoryPath => !FILES_TO_KEEP.some(
-                filterPath => filterPath.startsWith(directoryPath)
-            ));
-
         try {
-
-            log.message('Cleaning', TARGET_DIRECTORY, '...');
-
-            filesToDelete.forEach(fs.deleteFile);
-            directoriesToDelete.forEach(fs.deleteDirectory);
-
-            log.success('Cleaned', TARGET_DIRECTORY);
-
+            for (const directory of TARGET_DIRECTORIES) {
+                log.message('Cleaning', directory, '...');
+                fs.deleteDirectory(directory, true);
+            }
+            log.success('Cleaned');
             resolve();
         } catch (catchedError) {
             reject(catchedError);

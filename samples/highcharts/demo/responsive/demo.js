@@ -1,11 +1,12 @@
-var chart = Highcharts.chart('container', {
+// Data retrieved from https://www.ssb.no/statbank/table/10467/
+const chart = Highcharts.chart('container', {
 
     chart: {
         type: 'column'
     },
 
     title: {
-        text: 'Highcharts responsive chart'
+        text: 'Born persons, by girls\' name'
     },
 
     subtitle: {
@@ -19,7 +20,7 @@ var chart = Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Apples', 'Oranges', 'Bananas'],
+        categories: ['2019', '2020', '2021'],
         labels: {
             x: -10
         }
@@ -33,14 +34,14 @@ var chart = Highcharts.chart('container', {
     },
 
     series: [{
-        name: 'Christmas Eve',
-        data: [1, 4, 3]
+        name: 'Ava',
+        data: [38, 51, 34]
     }, {
-        name: 'Christmas Day before dinner',
-        data: [6, 4, 2]
+        name: 'Dina',
+        data: [31, 26, 27]
     }, {
-        name: 'Christmas Day after dinner',
-        data: [8, 4, 3]
+        name: 'Malin',
+        data: [38, 42, 41]
     }],
 
     responsive: {

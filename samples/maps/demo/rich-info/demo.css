@@ -6,7 +6,7 @@
     height: 500px;
     width: 1000px;
     margin: 0 auto;
-    padding: 0;
+    padding: 10px;
     overflow: visible;
 }
 
@@ -22,12 +22,12 @@
     width: 270px;
     padding-left: 20px;
     margin: 100px 0 0;
-    border-left: 1px solid silver;
 }
 
 #info h2 {
     display: inline;
     font-size: 13pt;
+    text-transform: none;
 }
 
 #info .f32 .flag {
@@ -36,10 +36,11 @@
 
 #info h4 {
     margin: 1em 0 0;
+    font-size: 12pt;
+    text-transform: none;
 }
 
-@media screen and (max-width: 920px) {
-    #wrapper,
+@media screen and (max-width: 1000px) {
     #container,
     #info {
         float: none;
@@ -48,5 +49,11 @@
         margin: 0.5em 0;
         padding: 0;
         border: none;
+    }
+
+    #wrapper {
+        width: auto;
+        height: auto;
+        margin: 0.5em 0;
     }
 }

@@ -1,11 +1,14 @@
 Highcharts.chart('container', {
     chart: {
         backgroundColor: 'white',
+        style: {
+            fontSize: '12px'
+        },
         events: {
             load: function () {
 
                 // Draw the flow chart
-                var ren = this.renderer,
+                const ren = this.renderer,
                     colors = Highcharts.getOptions().colors,
                     rightArrow = ['M', 0, 0, 'L', 100, 0, 'L', 95, 5, 'M', 100, 0, 'L', 95, -5],
                     leftArrow = ['M', 100, 0, 'L', 0, 0, 'L', 5, 5, 'M', 0, 0, 'L', 5, -5];
@@ -244,8 +247,10 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts export server overview',
         style: {
-            color: 'black'
-        }
+            color: 'black',
+            fontSize: '16px'
+        },
+        align: 'left'
     },
     accessibility: {
         typeDescription: 'Flowchart'

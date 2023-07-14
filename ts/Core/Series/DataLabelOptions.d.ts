@@ -19,11 +19,13 @@ import type {
     VerticalAlignValue
 } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type Point from './Point';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -32,6 +34,12 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  * */
 
 export type DataLabelFilterOperatorValue = ('>'|'<'|'>='|'<='|'=='|'===');
+
+export interface TextPathAttributes extends SVGAttributes {
+    startOffset?: string;
+    textAnchor?: 'start'|'middle'|'end';
+    dy?: number;
+}
 
 export interface DataLabelFilterOptions {
     operator: DataLabelFilterOperatorValue;
@@ -52,9 +60,10 @@ export interface DataLabelOptions {
     borderRadius?: number;
     borderWidth?: number;
     className?: string;
-    color?: ColorType;
+    color?: ColorString;
     crop?: boolean;
     defer?: boolean;
+    distance?: number;
     enabled?: boolean;
     filter?: DataLabelFilterOptions;
     format?: string;
@@ -65,7 +74,7 @@ export interface DataLabelOptions {
     padding?: number;
     rotation?: number;
     shadow?: (boolean|Partial<ShadowOptionsObject>);
-    shape?: string;
+    shape?: keyof SymbolTypeRegistry;
     style?: CSSObject;
     textPath?: DataLabelTextPathOptions;
     useHTML?: boolean;
@@ -78,7 +87,7 @@ export interface DataLabelOptions {
 export type DataLabelOverflowValue = ('allow'|'justify');
 
 export interface DataLabelTextPathOptions {
-    attributes?: SVGAttributes;
+    attributes?: TextPathAttributes;
     enabled?: boolean;
 }
 

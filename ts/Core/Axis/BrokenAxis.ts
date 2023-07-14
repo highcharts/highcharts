@@ -28,7 +28,7 @@ import type Point from '../Series/Point';
 import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
-import StackItem from '../../Extensions/Stacking.js';
+import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -122,7 +122,7 @@ namespace BrokenAxis {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -141,9 +141,7 @@ namespace BrokenAxis {
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             AxisClass.keepProps.push('brokenAxis');
 
             addEvent(AxisClass, 'init', onAxisInit);
@@ -156,9 +154,7 @@ namespace BrokenAxis {
             addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
         }
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype;
 
             seriesProto.drawBreaks = seriesDrawBreaks;
@@ -716,7 +712,9 @@ namespace BrokenAxis {
 
             axis.isDirty = brokenAxis.hasBreaks !== hasBreaks;
             brokenAxis.hasBreaks = hasBreaks;
-            axis.options.breaks = axis.userOptions.breaks = breaks;
+            if (breaks !== axis.options.breaks) {
+                axis.options.breaks = axis.userOptions.breaks = breaks;
+            }
             axis.forceRedraw = true; // Force recalculation in setScale
 
             // Recalculate series related to the axis.

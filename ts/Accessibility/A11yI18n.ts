@@ -22,7 +22,7 @@
 import type Time from '../Core/Time';
 
 import Chart from '../Core/Chart/Chart.js';
-import F from '../Core/FormatUtilities.js';
+import F from '../Core/Templating.js';
 const { format } = F;
 
 import U from '../Core/Utilities.js';
@@ -83,7 +83,7 @@ namespace A11yI18nComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -99,9 +99,8 @@ namespace A11yI18nComposition {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (T&ChartComposition) {
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
 
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.langFormat = langFormat;
@@ -293,6 +292,8 @@ namespace A11yI18nComposition {
      * A `Chart` instance with a time object and numberFormatter, passed on to
      * format().
      *
+     * @deprecated
+     *
      * @return {string}
      * The formatted string.
      */
@@ -410,8 +411,6 @@ namespace A11yI18nComposition {
     }
 
     /**
-     * String trim that works for IE6-8 as well.
-     *
      * @private
      * @function stringTrim
      *

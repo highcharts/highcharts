@@ -24,9 +24,11 @@ import type BubbleSeries from './BubbleSeries';
 import type { BubbleSizeByValue } from './BubbleSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type FontMetricsObject from '../../Core/Renderer/FontMetricsObject';
-import type FormatUtilities from '../../Core/FormatUtilities';
-import type LegendItemObject from '../../Core/Legend/LegendItemObject';
+import type Templating from '../../Core/Templating';
+import type {
+    LegendItemObject,
+    LegendItem
+} from '../../Core/Legend/LegendItem';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -34,7 +36,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import F from '../../Core/FormatUtilities.js';
+import F from '../../Core/Templating.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend/Legend.js';
@@ -80,31 +82,11 @@ declare module '../../Core/Legend/LegendOptions'{
     }
 }
 
-/**
- * @interface Highcharts.BubbleLegendFormatterContextObject
- *//**
- * The center y position of the range.
- * @name Highcharts.BubbleLegendFormatterContextObject#center
- * @type {number}
- *//**
- * The radius of the bubble range.
- * @name Highcharts.BubbleLegendFormatterContextObject#radius
- * @type {number}
- *//**
- * The bubble value.
- * @name Highcharts.BubbleLegendFormatterContextObject#value
- * @type {number}
- */
-
-''; // detach doclets above
-
 /* *
  *
  *  Class
  *
  * */
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
  * BubbleLegend class.
@@ -119,6 +101,13 @@ declare module '../../Core/Legend/LegendOptions'{
  * Legend of item.
  */
 class BubbleLegendItem {
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     public constructor(
         options: BubbleLegendItem.Options,
         legend: Legend
@@ -126,14 +115,14 @@ class BubbleLegendItem {
         this.init(options, legend);
     }
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     public chart: Chart = void 0 as any;
-    public fontMetrics: FontMetricsObject = void 0 as any;
     public legend: Legend = void 0 as any;
-    public legendGroup: SVGElement = void 0 as any;
-    public legendItem: SVGElement = void 0 as any;
-    public legendItemHeight: number = void 0 as any;
-    public legendItemWidth: number = void 0 as any;
-    public legendSymbol: SVGElement = void 0 as any;
     public maxLabel: BBoxObject = void 0 as any;
     public movementX: number = void 0 as any;
     public ranges: Array<BubbleLegendItem.RangesOptions> = void 0 as any;
@@ -142,15 +131,15 @@ class BubbleLegendItem {
     public symbols: Record<string, Array<SVGElement>> = void 0 as any;
     public options: BubbleLegendItem.Options = void 0 as any;
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     /**
      * Create basic bubbleLegend properties similar to item in legend.
-     *
      * @private
-     * @function Highcharts.BubbleLegend#init
-     * @param {Highcharts.LegendBubbleLegendOptions} options
-     *        Bubble legend options
-     * @param {Highcharts.Legend} legend
-     *        Legend
      */
     public init(
         options: BubbleLegendItem.Options,
@@ -168,9 +157,9 @@ class BubbleLegendItem {
      * Depending on the position option, add bubbleLegend to legend items.
      *
      * @private
-     * @function Highcharts.BubbleLegend#addToLegend
+     *
      * @param {Array<(Highcharts.Point|Highcharts.Series)>} items
-     * All legend items
+     *        All legend items
      */
     public addToLegend(items: Array<(Series|Point)>): void {
         // Insert bubbleLegend into legend items
@@ -182,23 +171,20 @@ class BubbleLegendItem {
      * creation.
      *
      * @private
-     * @function Highcharts.BubbleLegend#drawLegendSymbol
+     *
      * @param {Highcharts.Legend} legend
      *        Legend instance
      */
     public drawLegendSymbol(legend: Legend): void {
         const chart = this.chart,
-            options = this.options,
             itemDistance = pick(legend.options.itemDistance, 20),
+            legendItem = this.legendItem || {},
+            options = this.options,
             ranges =
                 options.ranges as Array<BubbleLegendItem.RangesOptions>,
             connectorDistance = options.connectorDistance;
-        let connectorSpace;
 
-        // Predict label dimensions
-        this.fontMetrics = chart.renderer.fontMetrics(
-            (options.labels as any).style.fontSize
-        );
+        let connectorSpace;
 
         // Do not create bubbleLegend now if ranges or ranges valeus are not
         // specified or if are empty array.
@@ -234,15 +220,13 @@ class BubbleLegendItem {
         this.movementX = (options.labels as any).align === 'left' ?
             connectorSpace : 0;
 
-        this.legendItemWidth = size + connectorSpace + itemDistance;
-        this.legendItemHeight = size + this.fontMetrics.h / 2;
+        legendItem.labelWidth = size + connectorSpace + itemDistance;
+        legendItem.labelHeight = size + maxLabel.height / 2;
     }
 
     /**
      * Set style options for each bubbleLegend range.
-     *
      * @private
-     * @function Highcharts.BubbleLegend#setOptions
      */
     public setOptions(): void {
         const ranges = this.ranges,
@@ -317,9 +301,10 @@ class BubbleLegendItem {
      * used code from BubbleSeries.js 'getRadius' method.
      *
      * @private
-     * @function Highcharts.BubbleLegend#getRangeRadius
+     *
      * @param {number} value
      *        Range value
+     *
      * @return {number|null}
      *         Radius for one range
      */
@@ -347,13 +332,12 @@ class BubbleLegendItem {
     }
 
     /**
-     * Render the legendSymbol group.
-     *
+     * Render the legendItem group.
      * @private
-     * @function Highcharts.BubbleLegend#render
      */
     public render(): void {
-        const renderer = this.chart.renderer,
+        const legendItem = this.legendItem || {},
+            renderer = this.chart.renderer,
             zThreshold = this.options.zThreshold;
 
 
@@ -365,23 +349,23 @@ class BubbleLegendItem {
             };
         }
         // Nesting SVG groups to enable handleOverflow
-        this.legendSymbol = renderer.g('bubble-legend');
-        this.legendItem = renderer.g('bubble-legend-item');
+        legendItem.symbol = renderer.g('bubble-legend');
+        legendItem.label = renderer.g('bubble-legend-item')
+            .css(this.legend.itemStyle || {});
 
         // To enable default 'hideOverlappingLabels' method
-        this.legendSymbol.translateX = 0;
-        this.legendSymbol.translateY = 0;
+        legendItem.symbol.translateX = 0;
+        legendItem.symbol.translateY = 0;
 
-        this.ranges.forEach(function (
-            range: BubbleLegendItem.RangesOptions
-        ): void {
+        // To use handleOverflow method
+        legendItem.symbol.add(legendItem.label);
+        legendItem.label.add(legendItem.group);
+
+        for (const range of this.ranges) {
             if (range.value >= (zThreshold as any)) {
                 this.renderRange(range);
             }
-        }, this);
-        // To use handleOverflow method
-        this.legendSymbol.add(this.legendItem);
-        this.legendItem.add(this.legendGroup);
+        }
 
         this.hideOverlappingLabels();
     }
@@ -390,7 +374,7 @@ class BubbleLegendItem {
      * Render one range, consisting of bubble symbol, connector and label.
      *
      * @private
-     * @function Highcharts.BubbleLegend#renderRange
+     *
      * @param {Highcharts.LegendBubbleLegendRangesOptions} range
      *        Range options
      */
@@ -416,9 +400,6 @@ class BubbleLegendItem {
             posX = mainRange.radius || 0,
             posY = (elementCenter as any) - absoluteRadius -
                 (borderWidth as any) / 2 + (connectorWidth as any) / 2,
-            fontMetrics = this.fontMetrics,
-            labelMovement = fontMetrics.f / 2 -
-                (fontMetrics.h - fontMetrics.f) / 2,
             crispMovement = (posY % 1 ? 1 : 0.5) -
                 ((connectorWidth as any) % 2 ? 0 : 0.5),
             styledMode = renderer.styledMode;
@@ -431,9 +412,6 @@ class BubbleLegendItem {
             options.connectorDistance = 0;
             (range.labelAttribs as any).align = 'center';
         }
-
-        const labelY = posY + (options.labels as any).y,
-            labelX = posX + connectorLength + (options.labels as any).x;
 
         // Render bubble symbol
         symbols.bubbleItems.push(
@@ -456,7 +434,7 @@ class BubbleLegendItem {
                     'highcharts-bubble-legend-symbol ' +
                     (options.className || '')
                 ).add(
-                    this.legendSymbol
+                    this.legendItem.symbol
                 )
         );
 
@@ -482,17 +460,13 @@ class BubbleLegendItem {
                     'highcharts-bubble-legend-connectors ' +
                     (options.connectorClassName || '')
                 ).add(
-                    this.legendSymbol
+                    this.legendItem.symbol
                 )
         );
 
         // Render label
         const label = renderer
-            .text(
-                this.formatLabel(range),
-                labelX,
-                labelY + labelMovement
-            )
+            .text(this.formatLabel(range))
             .attr(
                 (styledMode ? {} : range.labelAttribs)
             )
@@ -501,23 +475,27 @@ class BubbleLegendItem {
                 'highcharts-bubble-legend-labels ' +
                 ((options.labels as any).className || '')
             ).add(
-                this.legendSymbol
+                this.legendItem.symbol
             );
+
+        // Now that the label is added we can read the bounding box and
+        // vertically align
+        const position = {
+            x: posX + connectorLength + (options.labels as any).x,
+            y: posY + (options.labels as any).y + label.getBBox().height * 0.4
+        };
+
+        label.attr(position);
 
         labels.push(label);
         // To enable default 'hideOverlappingLabels' method
         label.placed = true;
-        label.alignAttr = {
-            x: labelX,
-            y: labelY + labelMovement
-        };
+        label.alignAttr = position;
     }
 
     /**
      * Get the label which takes up the most space.
-     *
      * @private
-     * @function Highcharts.BubbleLegend#getMaxLabelSize
      */
     public getMaxLabelSize(): BBoxObject {
         const labels = this.symbols.labels;
@@ -542,9 +520,10 @@ class BubbleLegendItem {
      * Get formatted label for range.
      *
      * @private
-     * @function Highcharts.BubbleLegend#formatLabel
+     *
      * @param {Highcharts.LegendBubbleLegendRangesOptions} range
      *        Range options
+     *
      * @return {string}
      *         Range label text
      */
@@ -562,9 +541,7 @@ class BubbleLegendItem {
     /**
      * By using default chart 'hideOverlappingLabels' method, hide or show
      * labels and connectors.
-     *
      * @private
-     * @function Highcharts.BubbleLegend#hideOverlappingLabels
      */
     public hideOverlappingLabels(): void {
         const chart = this.chart,
@@ -592,7 +569,7 @@ class BubbleLegendItem {
      * Calculate ranges from created series.
      *
      * @private
-     * @function Highcharts.BubbleLegend#getRanges
+     *
      * @return {Array<Highcharts.LegendBubbleLegendRangesOptions>}
      *         Array of range objects
      */
@@ -661,13 +638,12 @@ class BubbleLegendItem {
      * Calculate bubble legend sizes from rendered series.
      *
      * @private
-     * @function Highcharts.BubbleLegend#predictBubbleSizes
+     *
      * @return {Array<number,number>}
      *         Calculated min and max bubble sizes
      */
     public predictBubbleSizes(): [number, number] {
         const chart = this.chart,
-            fontMetrics = this.fontMetrics,
             legendOptions = chart.legend.options,
             floating = legendOptions.floating,
             horizontal = legendOptions.layout === 'horizontal',
@@ -691,8 +667,8 @@ class BubbleLegendItem {
         } else {
             maxSize = parseFloat(maxSize as any);
 
-            calculatedSize = ((plotSize + lastLineHeight -
-                fontMetrics.h / 2) * maxSize / 100) / (maxSize / 100 + 1);
+            calculatedSize = ((plotSize + lastLineHeight) * maxSize / 100) /
+                (maxSize / 100 + 1);
 
             // Get maxPxSize from bubble series if calculated bubble legend
             // size will not affect to bubbles series.
@@ -710,11 +686,7 @@ class BubbleLegendItem {
 
     /**
      * Correct ranges with calculated sizes.
-     *
      * @private
-     * @function Highcharts.BubbleLegend#updateRanges
-     * @param {number} min
-     * @param {number} max
      */
     public updateRanges(min: number, max: number): void {
         const bubbleLegendOptions = this.legend.options.bubbleLegend;
@@ -728,9 +700,7 @@ class BubbleLegendItem {
      * Because of the possibility of creating another legend line, predicted
      * bubble legend sizes may differ by a few pixels, so it is necessary to
      * correct them.
-     *
      * @private
-     * @function Highcharts.BubbleLegend#correctSizes
      */
     public correctSizes(): void {
         const legend = this.legend,
@@ -752,6 +722,7 @@ class BubbleLegendItem {
             legend.render();
         }
     }
+
 }
 
 /* *
@@ -760,8 +731,8 @@ class BubbleLegendItem {
  *
  * */
 
-interface BubbleLegendItem extends LegendItemObject {
-    // nothing more to add
+interface BubbleLegendItem extends LegendItem {
+    legendItem: LegendItemObject;
 }
 
 /* *
@@ -769,6 +740,7 @@ interface BubbleLegendItem extends LegendItemObject {
  * Class Namespace
  *
  * */
+
 namespace BubbleLegendItem {
     export interface FormatterContextObject {
         center: number;
@@ -780,9 +752,7 @@ namespace BubbleLegendItem {
         allowOverlap?: boolean;
         className?: string;
         format?: string;
-        formatter?: (
-            FormatUtilities.FormatterCallback<FormatterContextObject>
-        );
+        formatter?: Templating.FormatterCallback<FormatterContextObject>;
         style?: CSSObject;
         x?: number;
         y?: number;
@@ -809,8 +779,7 @@ namespace BubbleLegendItem {
         zIndex?: number;
         zThreshold?: number;
     }
-    export interface RangesOptions
-        extends Partial<FormatterContextObject> {
+    export interface RangesOptions extends Partial<FormatterContextObject> {
         autoRanges?: boolean;
         borderColor?: ColorType;
         color?: ColorType;
@@ -829,3 +798,27 @@ namespace BubbleLegendItem {
  * */
 
 export default BubbleLegendItem;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @interface Highcharts.BubbleLegendFormatterContextObject
+ *//**
+ * The center y position of the range.
+ * @name Highcharts.BubbleLegendFormatterContextObject#center
+ * @type {number}
+ *//**
+ * The radius of the bubble range.
+ * @name Highcharts.BubbleLegendFormatterContextObject#radius
+ * @type {number}
+ *//**
+ * The bubble value.
+ * @name Highcharts.BubbleLegendFormatterContextObject#value
+ * @type {number}
+ */
+
+''; // detach doclets above

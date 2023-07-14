@@ -24,12 +24,18 @@ import type {
  *
  * */
 
-export interface SlowStochasticOptions extends StochasticOptions, MultipleLinesComposition.Options {
+export interface SlowStochasticOptions extends StochasticOptions, MultipleLinesComposition.IndicatorOptions {
     params?: SlowStochasticParamsOptions;
 }
 
 export interface SlowStochasticParamsOptions extends StochasticParamsOptions {
     // for inheritance
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SlowStochasticOptions;

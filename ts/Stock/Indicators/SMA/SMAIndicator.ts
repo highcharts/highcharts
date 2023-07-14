@@ -14,10 +14,9 @@
  *
  * */
 
-import type AxisType from '../../../Core/Axis/AxisType';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type SeriesType from '../../../Core/Series/SeriesType';
+import type LineSeriesType from '../../../Series/Line/LineSeries';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -27,13 +26,12 @@ import type SMAPoint from './SMAPoint';
 import Chart from '../../../Core/Chart/Chart.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        line: LineSeries
-    }
-} = SeriesRegistry;
+    line: LineSeries
+} = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
+    fireEvent,
     error,
     extend,
     isArray,
@@ -42,22 +40,21 @@ const {
     splat
 } = U;
 
-import './SMAComposition.js';
-
 /* *
  *
  *  Declarations
  *
  * */
-interface CalculateOnObject {
-    chart: string;
-    xAxis?: string;
-}
 
 declare module '../../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         useOhlcData?: boolean;
     }
+}
+
+interface CalculateOnObject {
+    chart: string;
+    xAxis?: string;
 }
 
 /* *
@@ -109,6 +106,7 @@ class SMAIndicator extends LineSeries {
      * @optionparent plotOptions.sma
      */
     public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
+
         /**
          * The name of the series as shown in the legend, tooltip etc. If not
          * set, it will be based on a technical indicator type and default
@@ -117,12 +115,14 @@ class SMAIndicator extends LineSeries {
          * @type {string}
          */
         name: void 0,
+
         tooltip: {
             /**
              * Number of decimals in indicator series.
              */
             valueDecimals: 4
         },
+
         /**
          * The main series ID that indicator will be based on. Required for this
          * indicator.
@@ -130,6 +130,7 @@ class SMAIndicator extends LineSeries {
          * @type {string}
          */
         linkedTo: void 0,
+
         /**
          * Whether to compare indicator to the main series values
          * or indicator values.
@@ -141,23 +142,28 @@ class SMAIndicator extends LineSeries {
          * @type {boolean}
          */
         compareToMain: false,
+
         /**
          * Paramters used in calculation of regression series' points.
          */
         params: {
+
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
              */
             index: 3,
+
             /**
              * The base period for indicator calculations. This is the number of
              * data points which are taken into account for the indicator
              * calculations.
              */
             period: 14
+
         }
+
     } as SMAOptions);
 
     /* *
@@ -170,7 +176,7 @@ class SMAIndicator extends LineSeries {
 
     public dataEventsToUnbind: Array<Function> = void 0 as any;
 
-    public linkedParent: typeof LineSeries.prototype = void 0 as any;
+    public linkedParent: LineSeriesType = void 0 as any;
 
     public nameBase?: string;
 
@@ -183,8 +189,6 @@ class SMAIndicator extends LineSeries {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -202,8 +206,8 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public getName(): string {
-        let name = this.name,
-            params: Array<string> = [];
+        const params: Array<string> = [];
+        let name = this.name;
 
         if (!name) {
 
@@ -227,22 +231,22 @@ class SMAIndicator extends LineSeries {
     /**
      * @private
      */
-    public getValues<TLinkedSeries extends typeof LineSeries.prototype>(
+    public getValues<TLinkedSeries extends LineSeriesType>(
         series: TLinkedSeries,
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = params.period as any,
+        const period: number = params.period as any,
             xVal: Array<number> = series.xData as any,
             yVal: Array<(number|Array<(number|null)>|null)> = series.yData as any,
             yValLen = yVal.length,
-            range = 0,
-            sum = 0,
             SMA: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
+            yData: Array<number> = [];
+        let i: (number|undefined),
             index = -1,
-            i: (number|undefined),
-            SMAPoint: (Array<number>|undefined);
+            range = 0,
+            SMAPoint: (Array<number>|undefined),
+            sum = 0;
 
         if (xVal.length < period) {
             return;
@@ -301,7 +305,12 @@ class SMAIndicator extends LineSeries {
         const linkedSeriesUnbiner = addEvent(
             Chart,
             'afterLinkSeries',
-            function (): void {
+            function ({ isUpdating }: AnyRecord): void {
+                // #18643 indicator shouldn't recalculate
+                // values while series updating.
+                if (isUpdating) {
+                    return;
+                }
                 const hasEvents = !!indicator.dataEventsToUnbind.length;
 
                 if (indicator.linkedParent) {
@@ -376,17 +385,16 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public recalculateValues(): void {
-        let indicator = this,
+        const croppedDataValues = [],
+            indicator = this,
             oldData = indicator.points || [],
             oldDataLength = (indicator.xData || []).length,
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
                 values: [],
                 xData: [],
                 yData: []
-            },
-            processedData: IndicatorValuesObject<typeof LineSeries.prototype>,
-            croppedDataValues = [],
-            overwriteData = true,
+            };
+        let overwriteData = true,
             oldFirstPointIndex,
             oldLastPointIndex,
             croppedData,
@@ -399,7 +407,9 @@ class SMAIndicator extends LineSeries {
         // we will try to access Series object without any properties
         // (except for prototyped ones). This is what happens
         // for example when using Axis.setDataGrouping(). See #16670
-        processedData = indicator.linkedParent.options ?
+        const processedData: IndicatorValuesObject<typeof LineSeries.prototype> = indicator.linkedParent.options &&
+            indicator.linkedParent.yData && // #18176, #18177 indicators should
+            indicator.linkedParent.yData.length ? // work with empty dataset
             (
                 indicator.getValues(
                     indicator.linkedParent,
@@ -460,8 +470,9 @@ class SMAIndicator extends LineSeries {
 
                 indicator.updateData(croppedDataValues);
 
-            // Omit addPoint() and removePoint() cases
             } else if (
+                indicator.updateAllPoints || // #18710
+                // Omit addPoint() and removePoint() cases
                 processedData.xData.length !== oldDataLength - 1 &&
                 processedData.xData.length !== oldDataLength + 1
             ) {
@@ -484,7 +495,9 @@ class SMAIndicator extends LineSeries {
             indicator.isDirty = true;
             indicator.redraw();
         }
-        indicator.isDirtyData = false;
+
+        indicator.isDirtyData = !!indicator.linkedSeries.length;
+        fireEvent(indicator, 'updatedData'); // #18689
     }
 
     /**
@@ -510,9 +523,6 @@ class SMAIndicator extends LineSeries {
 
         return;
     }
-
-    /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -528,6 +538,7 @@ interface SMAIndicator extends IndicatorLike {
     nameSuffixes: Array<string>;
     pointClass: typeof SMAPoint;
     useCommonDataGrouping: boolean;
+    updateAllPoints?: boolean;
 }
 extend(SMAIndicator.prototype, {
     calculateOn: {
@@ -578,4 +589,4 @@ export default SMAIndicator;
  * @apioption series.sma
  */
 
-''; // adds doclet above to the transpiled file
+(''); // adds doclet above to the transpiled file
