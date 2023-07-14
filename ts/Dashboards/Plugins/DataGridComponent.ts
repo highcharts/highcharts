@@ -391,6 +391,11 @@ class DataGridComponent extends Component {
             columnsToShow = this.options.columnsToShow;
 
         if (table) {
+            // Show all columns if no columnsToShow is provided.
+            if(!columnsToShow?.length ) {
+                return table;
+            }
+
             const columnsToDelete = table.getColumnNames().filter((columnName): boolean => {
                 if (columnsToShow?.length) {
                     // Don't add columns that are not listed.
@@ -401,8 +406,6 @@ class DataGridComponent extends Component {
                     // Show the other columns.
                     return false;
                 }
-
-                // Show all columns if no columnsToShow is provided.
                 return false;
             });
 
