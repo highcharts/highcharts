@@ -69,6 +69,9 @@
         "../../code/modules/data.d.ts",
         "../../code/modules/data.src.d.ts",
 
+        "../../code/modules/data-tools.d.ts",
+        "../../code/modules/data-tools.src.d.ts",
+
         "../../code/modules/datagrouping.d.ts",
         "../../code/modules/datagrouping.src.d.ts",
 
@@ -99,6 +102,9 @@
         "../../code/modules/exporting.d.ts",
         "../../code/modules/exporting.src.d.ts",
 
+        "../../code/modules/flowmap.d.ts",
+        "../../code/modules/flowmap.src.d.ts",
+
         "../../code/modules/full-screen.d.ts",
         "../../code/modules/full-screen.src.d.ts",
 
@@ -110,6 +116,9 @@
 
         "../../code/modules/gantt.d.ts",
         "../../code/modules/gantt.src.d.ts",
+
+        "../../code/modules/geoheatmap.d.ts",
+        "../../code/modules/geoheatmap.src.d.ts",
 
         "../../code/modules/grid-axis.d.ts",
         "../../code/modules/grid-axis.src.d.ts",
@@ -168,6 +177,9 @@
         "../../code/modules/pattern-fill.d.ts",
         "../../code/modules/pattern-fill.src.d.ts",
 
+        "../../code/modules/pictorial.d.ts",
+        "../../code/modules/pictorial.src.d.ts",
+
         "../../code/modules/price-indicator.d.ts",
         "../../code/modules/price-indicator.src.d.ts",
 
@@ -203,6 +215,9 @@
 
         "../../code/modules/sunburst.d.ts",
         "../../code/modules/sunburst.src.d.ts",
+
+        "../../code/modules/tiledwebmap.d.ts",
+        "../../code/modules/tiledwebmap.src.d.ts",
 
         "../../code/modules/tilemap.d.ts",
         "../../code/modules/tilemap.src.d.ts",
