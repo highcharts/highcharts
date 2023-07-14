@@ -467,4 +467,4 @@ Available arguments for 'gulp test':
     });
 }
 
-gulp.task('test', gulp.series('test-links-docs', 'scripts', test));
+gulp.task('test', gulp.series('test-docs', 'scripts', test));

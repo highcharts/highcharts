@@ -1,11 +1,8 @@
-const gulp = require('gulp');
-const path = require('path');
+/*
+ * Copyright (C) Highsoft AS
+ */
 
-/* *
- *
- *  Constants
- *
- * */
+const gulp = require('gulp');
 
 /**
  * Checks if docs are pointing to existing samples/docs.
@@ -53,4 +50,4 @@ async function checkDocsConsistency() {
     });
 }
 
-gulp.task('test-links-docs', checkDocsConsistency);
+gulp.task('test-docs', checkDocsConsistency);
