@@ -28,7 +28,7 @@ async function task() {
     const processLib = require('../lib/process');
     const logLib = require('../lib/log');
     const SOURCE_GLOB = './**/*.ts';
-    logLib.message('Linting [.ts/Dashboards/**/*.ts]...');
+    logLib.message('Linting [./ts/Dashboards/**/*.ts]...');
 
     try {
         await processLib.exec('npx eslint --quiet "' + SOURCE_GLOB + '"', {
