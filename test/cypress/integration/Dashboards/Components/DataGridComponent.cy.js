@@ -3,6 +3,10 @@ describe('layout resize on window changes', () => {
         cy.visit('/dashboards/cypress/component-datagrid');
     });
 
+    it('The columnAssignment should be respected', () =>{
+        cy.get('.highcharts-datagrid-column-header').should('have.length', 2);
+    })
+
     it('Chart and DataGridComponent should have synced hover events.', () => {
         const firstDataGridRow = cy.get('.highcharts-datagrid-cell').eq(0)
 
