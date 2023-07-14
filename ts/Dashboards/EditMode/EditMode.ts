@@ -1006,11 +1006,11 @@ namespace EditMode {
         /**
          * Whether the edit mode should be enabled for the dashboards.
          *
-         * @default false
-         *
          * Try it:
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/ctx-enabled/ | context enabled }
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/ctx-enabled/ | context enabled}
+         *
+         * @default false
          *
          */
         enabled?: boolean;

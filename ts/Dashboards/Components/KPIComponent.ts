@@ -45,7 +45,8 @@ const {
     getStyle,
     isArray,
     isNumber,
-    merge
+    merge,
+    diffObjects
 } = U;
 
 /* *
@@ -622,6 +623,21 @@ class KPIComponent extends Component {
         this.emit({ type: 'toJSON', json: base });
 
         return json;
+    }
+
+    /**
+     * Get the KPI component's options.
+     * @returns
+     * The JSON of KPI component's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Partial<KPIComponent.ComponentOptions> {
+        return {
+            ...diffObjects(this.options, KPIComponent.defaultOptions),
+            type: 'KPI'
+        };
     }
 }
 

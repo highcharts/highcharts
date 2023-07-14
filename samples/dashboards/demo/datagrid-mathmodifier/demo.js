@@ -58,9 +58,6 @@ Dashboards.board('container', {
                     type: 'line',
                     zooming: false
                 },
-                title: {
-                    text: 'Drag points to update the data grid'
-                },
                 tooltip: {
                     shared: true,
                     split: true

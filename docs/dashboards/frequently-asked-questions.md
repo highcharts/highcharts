@@ -8,7 +8,7 @@ How to connect dataPool to the other components?
 First, you need to create the dataPool, define a connector and pass the data reference. More about this topic [in the DataPool section](https://www.highcharts.com/docs/dashboards/data-pool)
 
 After that, you need to pass the connector to the component config, and that’s it.
-[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/dashboard-minimal).
+[Here is the demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 
 * * *
 
@@ -41,7 +41,7 @@ Each cell must have an `id` field. The same id must be passed in the component c
         }]
 ```
 
-[Here is the demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/component-highcharts).
+[Here is the demo](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts).
 
 * * *
 
@@ -101,13 +101,13 @@ Example of synchronized components
 
 
 
-You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/minimal).
+You can check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 See the next question for possible syncrhonization events.
 
 * * *
 What are the synchronization events available in Highcharts Dashboards?
 -----------------------------------------------------------------------
-You can check how this synchronization works in our [minimal dashboard demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/samples/dashboards/demo/minimal).
+You can check how this synchronization works in our [minimal dashboard demo](https://www.highcharts.com/samples/embed/dashboards/demo/minimal).
 
 The events, that can be synchronized between components are:
 * 'visibility’
@@ -163,6 +163,6 @@ If you have to change the displayed name in the chart options (and wish to sync 
     }]
   }
 ```
-See [highcharts.com/samples/dashboards/issues/sync-aliases](https://www.highcharts.com/samples/dashboards/issues/sync-aliases) for a live example
+See [this link](https://www.highcharts.com/samples/dashboards/issues/sync-aliases) for a live example
 * * *
 
