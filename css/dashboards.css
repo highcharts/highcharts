@@ -163,6 +163,8 @@
     min-height: 500px;
     transition: 0.5s;
     overflow-x: scroll;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1rem;
 }
 
 .highcharts-dashboards-fullscreen:fullscreen {
