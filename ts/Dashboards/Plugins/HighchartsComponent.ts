@@ -27,7 +27,7 @@ import type {
     AxisOptions,
     Chart,
     Options as ChartOptions,
-    Highcharts,
+    Highcharts as HighchartsConstructor,
     Point,
     Series,
     SeriesOptions
@@ -59,10 +59,10 @@ const {
 
 declare module '../../Core/GlobalsLike' {
     interface GlobalsLike {
-        chart: typeof Highcharts.chart;
-        ganttChart: typeof Highcharts.chart;
-        mapChart: typeof Highcharts.chart;
-        stockChart: typeof Highcharts.chart;
+        chart: typeof HighchartsConstructor.chart;
+        ganttChart: typeof HighchartsConstructor.chart;
+        mapChart: typeof HighchartsConstructor.chart;
+        stockChart: typeof HighchartsConstructor.chart;
     }
 }
 
@@ -86,7 +86,7 @@ class HighchartsComponent extends Component {
      * */
 
     /** @private */
-    public static charter?: typeof Highcharts;
+    public static charter?: typeof HighchartsConstructor;
 
     /** @private */
     public static syncHandlers = HighchartsSyncHandlers;
@@ -714,7 +714,7 @@ class HighchartsComponent extends Component {
     private createChart(): Chart {
         const charter = (
             HighchartsComponent.charter ||
-            Globals.win.Highcharts as unknown as typeof Highcharts
+            Globals.win.Highcharts as unknown as typeof HighchartsConstructor
         );
         if (this.chartConstructor !== 'chart') {
             const factory = charter[this.chartConstructor];
