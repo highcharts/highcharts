@@ -58,9 +58,6 @@ async function task() {
             if (newJsHash !== jsHash || argv.force || argv.dts) {
                 jsHash = newJsHash;
                 buildTasks.push('dashboards/scripts');
-                if (argv.dts) {
-                    buildTasks.task('jsdoc-dts')();
-                }
             }
 
             const newCssHash = fsLib.getDirectoryHash('css', true);
