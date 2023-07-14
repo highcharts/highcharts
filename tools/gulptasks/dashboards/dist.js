@@ -56,8 +56,9 @@ async function dist() {
         'dashboards/scripts',
         'dashboards/dist-minify',
         'dashboards/dist-build',
-        'dashboards/dist-zip'
-        // 'dashboards/dist-release'
+        'dashboards/dist-zip',
+        'dashboards/dist-productsjs',
+        'dashboards/dist-release'
         // 'dashboards/dist-upload'
     ]);
 
@@ -67,8 +68,9 @@ async function dist() {
 
 
 require('./dist-build.js');
-require('./dist-release.js');
 require('./dist-minify.js');
+require('./dist-productsjs.js');
+require('./dist-release.js');
 require('./dist-upload.js');
 require('./dist-zip.js');
 require('./scripts.js');

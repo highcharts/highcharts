@@ -2,8 +2,6 @@
  * Copyright (C) Highsoft AS
  */
 
-/* eslint no-undefined: 0 */
-
 const Gulp = require('gulp');
 const Path = require('path');
 
@@ -26,45 +24,53 @@ const TARGET_FILE = Path.join('build', 'dist', 'products.js');
  * @return {Promise<void>}
  *         Promise to keep
  */
-function distProductsJS() {
+async function distProductsJS() {
 
-    const Fs = require('fs');
+    const fs = require('fs');
     const LogLib = require('./lib/log');
 
-    return new Promise(resolve => {
+    LogLib.message('Generating', TARGET_FILE + '...');
 
-        LogLib.message('Generating', TARGET_FILE + '...');
+    const buildProperties = require('../../build-properties.json');
+    const packageJson = require('../../package.json');
 
-        const buildProperties = require('../../build-properties.json');
-        const packageJson = require('../../package.json');
+    const date = (
+        buildProperties.date ||
+        ''
+    );
 
-        const date = (
-            buildProperties.date ||
-            ''
+    const nr = (
+        buildProperties.version ||
+        packageJson.version ||
+        ''
+    ).split('-')[0];
+
+    const dashboardsProduct = {
+        date,
+        nr: '1.0.0'
+    };
+
+    if (fs.existsSync('../dashboards-dist')) {
+        dashboardsProduct.nr = (
+            require('../../../dashboards-dist/package.json').version ||
+            dashboardsProduct.nr
         );
+    }
 
-        const nr = (
-            buildProperties.version ||
-            packageJson.version ||
-            ''
-        );
+    await fs.promises.writeFile(
+        TARGET_FILE,
+        (
+            'var products = ' + JSON.stringify({
+                Highcharts: { date, nr },
+                'Highcharts Stock': { date, nr },
+                'Highcharts Maps': { date, nr },
+                'Highcharts Gantt': { date, nr },
+                'Highcharts Dashboards': dashboardsProduct
+            }, void 0, '    ') + '\n'
+        )
+    );
 
-        Fs.writeFileSync(
-            TARGET_FILE,
-            (
-                'var products = ' + JSON.stringify({
-                    Highcharts: { date, nr },
-                    'Highcharts Stock': { date, nr },
-                    'Highcharts Maps': { date, nr },
-                    'Highcharts Gantt': { date, nr }
-                }, undefined, '    ') + '\n'
-            )
-        );
-
-        LogLib.success('Created', TARGET_FILE);
-
-        resolve();
-    });
+    LogLib.success('Created', TARGET_FILE);
 }
 
 Gulp.task('dist-productsjs', distProductsJS);
