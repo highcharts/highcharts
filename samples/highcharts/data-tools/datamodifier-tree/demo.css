@@ -1,0 +1,102 @@
+:root {
+    --color-background: #fff;
+    --color-comment: #080;
+    --color-foreground: #000;
+    --color-property: #088;
+    --color-tbody-background: #eee;
+    --color-thead-background: #ddd;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #111;
+        --color-comment: #0c0;
+        --color-foreground: #eee;
+        --color-property: #0cc;
+        --color-tbody-background: #222;
+        --color-thead-background: #333;
+    }
+}
+
+html {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+}
+
+button,
+input,
+select {
+    vertical-align: bottom;
+}
+
+dd > input[type="checkbox"] + div > h4 label::before {
+    content: "▷ ";
+}
+
+dd > input[type="checkbox"] + div > pre {
+    display: none;
+}
+
+dd > input[type="checkbox"]:checked + div > h4 label::before {
+    content: "▽ ";
+}
+
+dd > input[type="checkbox"]:checked + div > pre {
+    display: block;
+}
+
+dt {
+    font-weight: bold;
+    margin-top: 1em;
+}
+
+fieldset {
+    margin: 1em 0;
+}
+
+h4 {
+    margin: 0;
+}
+
+h4 label {
+    cursor: pointer;
+}
+
+pre label {
+    color: var(--color-property);
+    font-weight: bold;
+}
+
+pre span {
+    color: var(--color-comment);
+    font-style: italic;
+}
+
+section {
+    display: flex;
+}
+
+section > div {
+    flex-grow: 1;
+    margin: 0 auto;
+}
+
+table {
+    table-layout: fixed;
+    width: 99%;
+}
+
+table td,
+table th {
+    line-height: 1.5em;
+    padding: 0.25em 0.5em;
+    vertical-align: top;
+}
+
+table thead th {
+    background-color: var(--color-thead-background);
+}
+
+table tbody td {
+    background-color: var(--color-tbody-background);
+}

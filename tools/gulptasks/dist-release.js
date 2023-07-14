@@ -12,8 +12,8 @@ const { join } = require('path');
 const readline = require('readline');
 const argv = require('yargs').argv;
 const childProcess = require('child_process');
-const { getFilesInFolder } = require('highcharts-assembler/src/build.js');
-const { removeFile } = require('highcharts-assembler/src/utilities.js');
+const { getFilesInFolder } = require('@highcharts/highcharts-assembler/src/build.js');
+const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.js');
 
 const PRODUCT_NAME = 'Highcharts';
 const releaseRepo = 'highcharts-dist';

@@ -142,6 +142,10 @@ const TreegraphSeriesDefaults = {
          */
         enabled: true,
         /**
+         * The line width of the button in pixels
+         */
+        lineWidth: 1,
+        /**
          * Offset of the button in the x direction.
          */
         x: 0,
@@ -152,26 +156,37 @@ const TreegraphSeriesDefaults = {
         /**
          * Height of the button.
          */
-        height: 10,
+        height: 18,
         /**
          * Width of the button.
          */
-        width: 10,
+        width: 18,
         /**
          * The symbol of the collapse button.
          */
-        shape: 'circle'
+        shape: 'circle',
         /**
          * CSS styles for the collapse button.
          *
          * In styled mode, the collapse button style is given in the
          * `.highcharts-collapse-button` class.
-         *
-         *
-         * @type      {Highcharts.CSSObject}
-         * @apioption series.treegraph.collapseButton.style
          */
+        style: {
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            fontSize: '1em'
+        }
     },
+    /**
+     * Whether the treegraph series should fill the entire plot area in the X
+     * axis direction, even when there are collapsed points.
+     *
+     * @sample  highcharts/series-treegraph/fillspace
+     *          Fill space demonstrated
+     *
+     * @product highcharts
+     */
+    fillSpace: false,
     /**
      * @extends plotOptions.series.tooltip
      */
@@ -212,6 +227,7 @@ const TreegraphSeriesDefaults = {
      * @declare Highcharts.SeriesTreegraphDataLabelsOptionsObject
      */
     dataLabels: {
+        defer: true,
         /**
          * Options for a _link_ label text which should follow link
          * connection. Border and background are disabled for a label
@@ -233,8 +249,8 @@ const TreegraphSeriesDefaults = {
         },
         enabled: true,
         linkFormatter: (): string => '',
-        formatter: function (this: Point.PointLabelObject): string {
-            return this.point.id;
+        style: {
+            textOverflow: 'none'
         }
     }
 } as TreegraphSeriesOptions;

@@ -1,6 +1,7 @@
 QUnit.test('Legend layout', function (assert) {
     var chart = Highcharts.chart('container', {
         legend: {
+            enabled: false,
             layout: 'proximate',
             align: 'right'
         },
@@ -34,6 +35,13 @@ QUnit.test('Legend layout', function (assert) {
         ]
     });
 
+    // We should be able to update the legend.enabled property, #19078.
+    chart.update({
+        legend: {
+            enabled: true
+        }
+    });
+
     chart.series.forEach(function (s) {
         var y = s.points[2].plotY || s.yAxis.height;
 
@@ -55,7 +63,22 @@ QUnit.test('Legend layout', function (assert) {
     );
 
     chart.legend.update({
-        useHTML: true
+        layout: 'vertical'
+    });
+
+    assert.ok(
+        chart.legend.group.getBBox().height < 200,
+        'The legend items should be laid out succesively (#18362)'
+    );
+    assert.ok(
+        chart.legend.group.translateY + chart.legend.group.getBBox().height <
+            chart.chartHeight,
+        'The legend items should not spill out of the chart (#18362)'
+    );
+
+    chart.legend.update({
+        useHTML: true,
+        layout: 'proximate'
     });
 
     assert.ok(
@@ -82,11 +105,12 @@ QUnit.test('Legend layout', function (assert) {
 });
 
 QUnit.test('Proximate layout and dataGrouping', assert => {
-    const chart = new Highcharts.chart('container', {
+    const chart = new Highcharts.Chart('container', {
         chart: {
             animation: false
         },
         legend: {
+            enabled: true,
             align: 'right',
             layout: 'proximate'
         },
@@ -118,6 +142,19 @@ QUnit.test('Proximate layout and dataGrouping', assert => {
                 ]
             }
         ]
+    });
+
+    // These updates should not cause an error, #19028.
+    chart.update({
+        legend: {
+            enabled: false
+        }
+    });
+
+    chart.update({
+        legend: {
+            enabled: true
+        }
     });
 
     chart.series[1].hide();

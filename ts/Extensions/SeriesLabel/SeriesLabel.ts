@@ -13,7 +13,6 @@
  *
  * TODO:
  * - add column support (box collision detection, boxesToAvoid logic)
- * - avoid data labels, when data labels above, show series label below.
  * - add more options (connector, format, formatter)
  *
  * https://jsfiddle.net/highcharts/L2u9rpwr/
@@ -49,8 +48,8 @@ import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../../Core/Chart/Chart.js';
-import FU from '../../Core/FormatUtilities.js';
-const { format } = FU;
+import T from '../../Core/Templating.js';
+const { format } = T;
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import Series from '../../Core/Series/Series.js';
@@ -127,7 +126,7 @@ interface LabelClearPointObject extends PositionObject {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 const labelDistance = 3;
 
@@ -363,23 +362,17 @@ function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
 
-    if (composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (U.pushUnique(composedMembers, ChartClass)) {
         // Leave both events, we handle animation differently (#9815)
         addEvent(Chart, 'load', onChartRedraw);
         addEvent(Chart, 'redraw', onChartRedraw);
     }
 
-    if (composedClasses.indexOf(SVGRendererClass) === -1) {
-        composedClasses.push(SVGRendererClass);
-
+    if (U.pushUnique(composedMembers, SVGRendererClass)) {
         SVGRendererClass.prototype.symbols.connector = symbolConnector;
     }
 
-    if (composedClasses.indexOf(setOptions) === -1) {
-        composedClasses.push(setOptions);
-
+    if (U.pushUnique(composedMembers, setOptions)) {
         setOptions({ plotOptions: { series: { label: SeriesLabelDefaults } } });
     }
 
@@ -396,22 +389,41 @@ function compose(
 function drawSeriesLabels(chart: Chart): void {
 
     // console.time('drawSeriesLabels');
-
-    const labelSeries = chart.labelSeries || [];
-
     chart.boxesToAvoid = [];
+
+    const labelSeries = chart.labelSeries || [],
+        boxesToAvoid = chart.boxesToAvoid;
+
+    // Avoid data labels
+    chart.series.forEach((s): void =>
+        (s.points || []).forEach((p): void =>
+            (p.dataLabels || []).forEach((label): void => {
+                const { width, height } = label.getBBox(),
+                    left = label.translateX + (
+                        s.xAxis ? s.xAxis.pos : s.chart.plotLeft
+                    ),
+                    top = label.translateY + (
+                        s.yAxis ? s.yAxis.pos : s.chart.plotTop
+                    );
+
+                boxesToAvoid.push({
+                    left,
+                    top,
+                    right: left + width,
+                    bottom: top + height
+                });
+            })
+        )
+    );
 
     // Build the interpolated points
     labelSeries.forEach(function (series): void {
 
-        const seriesLabelOptions = series.options.label || {},
-            boxesToAvoid = chart.boxesToAvoid;
+        const seriesLabelOptions = series.options.label || {};
 
         series.interpolatedPoints = getPointsOnGraph(series);
 
-        if (boxesToAvoid) {
-            boxesToAvoid.push(...(seriesLabelOptions.boxesToAvoid || []));
-        }
+        boxesToAvoid.push(...(seriesLabelOptions.boxesToAvoid || []));
     });
 
     chart.series.forEach(function (series): void {
@@ -852,7 +864,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
         for (i = 0; i < len; i += 1) {
 
             const point = points[i],
-                { plotX, plotY } = point;
+                { plotX, plotY, plotHigh } = point;
 
             if (isNumber(plotX) && isNumber(plotY)) {
 
@@ -866,8 +878,15 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
 
                 if (onArea) {
                     // Vertically centered inside area
+
+                    if (plotHigh) {
+                        ctlPoint.plotY = plotHigh;
+                        ctlPoint.chartY = paneTop + plotHigh;
+                    }
+
                     ctlPoint.chartCenterY = paneTop + (
-                        plotY + pick(point.yBottom, translatedThreshold)
+                        (plotHigh ? plotHigh : plotY) +
+                        pick(point.yBottom, translatedThreshold)
                     ) / 2;
                 }
 

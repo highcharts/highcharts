@@ -246,10 +246,9 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      *         Grid lines demonstrated
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default   #e6e6e6
      * @product   highcharts highstock highmaps
-     * @apioption colorAxis.gridLineColor
      */
+    gridLineColor: Palette.backgroundColor,
 
     /**
      * The width of the grid lines extending from the axis across the
@@ -347,6 +346,8 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @product highcharts highstock highmaps
      */
     labels: {
+
+        distance: 8,
 
         /**
          * How to handle overflowing labels on horizontal color axis. If set

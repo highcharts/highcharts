@@ -156,6 +156,20 @@ $('#mapDropdown').on('change', async function () {
         });
     };
 
+    const fitToGeometry = (mapKey === 'custom/world') ? {
+        type: 'MultiPoint',
+        coordinates: [
+            // Alaska west
+            [-164, 54],
+            // Greenland north
+            [-35, 84],
+            // New Zealand east
+            [179, -38],
+            // Chile south
+            [-68, -55]
+        ]
+    } : undefined;
+
     // Instantiate chart
     console.time('map');
     Highcharts.mapChart('container', {
@@ -183,6 +197,10 @@ $('#mapDropdown').on('change', async function () {
             }
         },
 
+        mapView: {
+            fitToGeometry
+        },
+
         colorAxis: {
             min: 0,
             stops: [
@@ -206,11 +224,6 @@ $('#mapDropdown').on('change', async function () {
             data,
             joinBy: ['hc-key', 'key'],
             name: 'Random data',
-            states: {
-                hover: {
-                    color: Highcharts.getOptions().colors[2]
-                }
-            },
             dataLabels: {
                 enabled: showDataLabels,
                 formatter,

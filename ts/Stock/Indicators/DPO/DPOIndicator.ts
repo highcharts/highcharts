@@ -137,7 +137,7 @@ class DPOIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: DPOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             index: number = (params.index as any),
             offset: number = Math.floor(period / 2 + 1),
             range: number = period + offset,
@@ -148,14 +148,14 @@ class DPOIndicator extends SMAIndicator {
             // 0- date, 1- Detrended Price Oscillator
             DPO: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
-            sum = 0,
-            oscillator: number,
+            yData: Array<number> = [];
+        let oscillator: number,
             periodIndex: number,
             rangeIndex: number,
             price: number,
             i: number,
-            j: number;
+            j: number,
+            sum = 0;
 
         if (xVal.length <= range) {
             return;

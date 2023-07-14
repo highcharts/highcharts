@@ -81,9 +81,7 @@ function compose<T extends typeof Chart>(
     wglMode?: boolean
 ): T {
 
-    if (wglMode && composedClasses.indexOf(ChartClass) === -1) {
-        composedClasses.push(ChartClass);
-
+    if (wglMode && U.pushUnique(composedClasses, ChartClass)) {
         ChartClass.prototype.callbacks.push(onChartCallback);
     }
 
@@ -130,14 +128,11 @@ function getBoostClipRect(
 
 /**
  * Returns true if the chart is in series boost mode.
- *
- * @function Highcharts.Chart#isChartSeriesBoosting
- *
+ * @private
  * @param {Highcharts.Chart} chart
- *        the chart to check
- *
+ * Chart to check.
  * @return {boolean}
- *         true if the chart is in series boost mode
+ * `true` if the chart is in series boost mode.
  */
 function isChartSeriesBoosting(
     chart: Chart

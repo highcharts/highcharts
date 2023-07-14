@@ -10,6 +10,7 @@
  *  Imports
  *
  * */
+
 import type {
     AroonOptions,
     AroonParamsOptions
@@ -26,8 +27,7 @@ export interface AroonOscillatorOptions
     params?: AroonOscillatorParamsOptions;
 }
 
-export interface AroonOscillatorParamsOptions
-    extends AroonParamsOptions {
+export interface AroonOscillatorParamsOptions extends AroonParamsOptions {
     // for inheritance
 }
 
@@ -36,4 +36,5 @@ export interface AroonOscillatorParamsOptions
  *  Default Export
  *
  * */
+
 export default AroonOscillatorOptions;

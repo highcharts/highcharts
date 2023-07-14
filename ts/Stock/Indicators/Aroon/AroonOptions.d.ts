@@ -20,10 +20,10 @@ import type {
 } from '../SMA/SMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface AroonOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     aroonDown?: Record<string, CSSObject>;
@@ -34,5 +34,11 @@ export interface AroonOptions extends SMAOptions, MultipleLinesComposition.Indic
 export interface AroonParamsOptions extends SMAParamsOptions {
     period?: number;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default AroonOptions;

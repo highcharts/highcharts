@@ -149,14 +149,14 @@ class ROCIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: ROCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+        const period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             ROC: Array<Array<(number|null)>> = [],
             xData: Array<number> = [],
-            yData: Array<(number|null)> = [],
-            i: number,
+            yData: Array<(number|null)> = [];
+        let i: number,
             index = -1,
             ROCPoint: [number, (number|null)];
 

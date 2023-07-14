@@ -59,7 +59,6 @@ const {
 } = SeriesRegistry;
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
-import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -90,11 +89,11 @@ declare global {
             loss: number;
         }
         interface VennPropsObject {
-            overlapping: Record<string, number>;
-            totalOverlap: number;
+            overlapping?: Record<string, number>;
+            totalOverlap?: number;
         }
         interface VennRelationObject extends VennPropsObject {
-            circle: CircleObject;
+            circle?: CircleObject;
             sets: Array<string>;
             value: number;
         }
@@ -121,6 +120,8 @@ class VennSeries extends ScatterSeries {
      *  Static Properties
      *
      * */
+
+    public static splitter = 'highcharts-split';
 
     /**
      * A Venn diagram displays all possible logical relations between a
@@ -202,7 +203,8 @@ class VennSeries extends ScatterSeries {
         },
         tooltip: {
             pointFormat: '{point.name}: {point.value}'
-        }
+        },
+        legendSymbol: 'rectangle'
     } as VennSeriesOptions);
 
     /* *
@@ -336,7 +338,10 @@ class VennSeries extends ScatterSeries {
                 const property = isInternal ? 'internal' : 'external';
 
                 // Add the circle to the list.
-                data[property].push(set.circle);
+                if (set.circle) {
+                    data[property].push(set.circle);
+                }
+
                 return data;
             }, {
                 internal: [],
@@ -651,7 +656,8 @@ class VennSeries extends ScatterSeries {
         this.generatePoints();
 
         // Process the data before passing it into the layout function.
-        const relations = VennUtils.processVennData(this.options.data as any);
+        const relations = VennUtils.processVennData(this.options.data as any,
+            VennSeries.splitter);
 
         // Calculate the positions of each circle.
         const {
@@ -770,7 +776,6 @@ class VennSeries extends ScatterSeries {
 interface VennSeries {
     axisTypes: Array<string>;
     directTouch: boolean;
-    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     isCartesian: boolean;
     pointArrayMap: Array<string>;
     pointClass: typeof VennPoint;
@@ -779,7 +784,6 @@ interface VennSeries {
 extend(VennSeries.prototype, {
     axisTypes: [],
     directTouch: true,
-    drawLegendSymbol: LegendSymbol.drawRectangle,
     isCartesian: false,
     pointArrayMap: ['value'],
     pointClass: VennPoint,

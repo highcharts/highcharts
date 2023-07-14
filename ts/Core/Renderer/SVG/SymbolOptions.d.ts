@@ -18,6 +18,7 @@ export interface SymbolOptions {
     anchorX?: number;
     anchorY?: number;
     backgroundSize?: ('contain'|'cover'|'within');
+    context?: 'legend';
     clockwise?: (0|1);
     end?: number;
     height?: number;

@@ -108,20 +108,20 @@ class RSIIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: RSIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period = (params.period as any),
+        const period = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<number> | Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             decimals: number = (params.decimals as any),
             // RSI starts calculations from the second point
             // Cause we need to calculate change between two points
-            range = 1,
             RSI: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
+            yData: Array<number> = [];
+        let gain: number = 0,
+            loss: number = 0,
             index = (params.index as number),
-            gain = 0,
-            loss = 0,
+            range: number = 1,
             RSIPoint: number,
             change: number,
             avgGain: number,

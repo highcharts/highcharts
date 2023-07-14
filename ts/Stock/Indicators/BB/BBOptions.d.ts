@@ -30,7 +30,12 @@ export interface BBOptions extends SMAOptions, MultipleLinesComposition.Indicato
 
 export interface BBParamsOptions extends SMAParamsOptions {
     standardDeviation: number;
-    // for inheritance
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default BBOptions;

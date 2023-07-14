@@ -22,6 +22,7 @@ const TARGET_FILE = Path.join('build', 'dist', 'products.js');
  * */
 
 /**
+ * Creates a products.js file with version numbers for each product.
  * @return {Promise<void>}
  *         Promise to keep
  */

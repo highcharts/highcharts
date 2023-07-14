@@ -371,6 +371,22 @@ const Options: DeepPartial<A11yOptions> = {
              */
 
             /**
+             * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * to use instead of the default for point descriptions.
+             *
+             * The context of the format string is the point instance.
+             *
+             * As opposed to [accessibility.point.valueDescriptionFormat](#accessibility.point.valueDescriptionFormat),
+             * this option replaces the whole description.
+             *
+             * @type      {string}
+             * @since 11.1.0
+             * @sample highcharts/demo/advanced-accessible
+             *      Description format
+             * @apioption accessibility.point.descriptionFormat
+             */
+
+            /**
              * Formatter function to use instead of the default for point
              * descriptions.
              *
@@ -813,6 +829,16 @@ const Options: DeepPartial<A11yOptions> = {
      * @type       {string}
      * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.description
+     */
+
+    /**
+     * Format to use for describing the data series group to assistive
+     * technology - including screen readers.
+     *
+     * @see [series.descriptionFormat](#accessibility.series.descriptionFormat)
+     * @type       {string}
+     * @since 11.0.0
+     * @apioption  plotOptions.series.accessibility.descriptionFormat
      */
 
     /**

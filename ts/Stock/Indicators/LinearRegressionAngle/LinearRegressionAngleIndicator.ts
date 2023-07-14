@@ -18,7 +18,6 @@
 
 import type {
     LinearRegressionOptions,
-    LinearRegressionParamsOptions,
     RegressionLineParametersObject
 } from '../LinearRegression/LinearRegressionOptions';
 import type LinearRegressionAnglePoint from './LinearRegressionAnglePoint';

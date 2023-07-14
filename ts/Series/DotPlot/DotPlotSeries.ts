@@ -104,7 +104,7 @@ class DotPlotSeries extends ColumnSeries {
         this.points.forEach(function (point: DotPlotPoint): void {
             let yPos: number,
                 attr: SVGAttributes,
-                graphics: Array<SVGElement>,
+                graphics: Array<SVGElement|undefined>,
                 pointAttr,
                 pointMarkerOptions = point.marker || {},
                 symbol = (
@@ -171,17 +171,24 @@ class DotPlotSeries extends ColumnSeries {
                         r: radius
                     };
 
-                    if (graphics[i]) {
-                        graphics[i].animate(attr);
+                    let graphic = graphics[i];
+
+                    if (graphic) {
+                        graphic.animate(attr);
                     } else {
-                        graphics[i] = renderer.symbol(symbol)
+                        graphic = renderer.symbol(symbol)
                             .attr(extend(attr, pointAttr))
                             .add(point.graphic);
                     }
-                    graphics[i].isActive = true;
+                    graphic.isActive = true;
+                    graphics[i] = graphic;
                 }
             }
             graphics.forEach((graphic, i): void => {
+                if (!graphic) {
+                    return;
+                }
+
                 if (!graphic.isActive) {
                     graphic.destroy();
                     graphics.splice(i, 1);

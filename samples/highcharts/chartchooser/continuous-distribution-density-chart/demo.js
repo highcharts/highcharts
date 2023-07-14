@@ -881,7 +881,6 @@ const dataSource = [4,
     30.3,
     30.3];
 const xiData = [];
-const animationDuration = 1;// 4000;
 const range = 31,
     startPoint = 2;
 let i = 0,
@@ -907,8 +906,7 @@ for (i = 0; i < xiData.length; i++) {
 
 Highcharts.chart('container', {
     chart: {
-        type: 'areaspline',
-        animation: true
+        type: 'areaspline'
     },
     title: {
         text: '2022 Car\'s Fuel Consumption Ratings'
@@ -937,10 +935,7 @@ Highcharts.chart('container', {
             },
             dashStyle: 'shortdot',
             color: '#ff8d1e',
-            pointStart: xiData[0],
-            animation: {
-                duration: animationDuration
-            }
+            pointStart: xiData[0]
         }
     },
     series: [

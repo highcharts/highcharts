@@ -33,8 +33,9 @@
         mapNavigation: {
             enabled: true,
             buttonOptions: {
-                verticalAlign: 'bottom',
-                x: 10
+                align: 'right',
+                alignTo: 'spacingBox',
+                verticalAlign: 'top'
             }
         },
 
@@ -60,7 +61,7 @@
             }
         }, {
             name: 'Roman empire',
-            nullColor: 'rgb(255 0 0 / 0.5)',
+            nullColor: 'rgba(255, 0, 0, 0.5)',
             borderColor: '#666',
             dataLabels: {
                 enabled: true,

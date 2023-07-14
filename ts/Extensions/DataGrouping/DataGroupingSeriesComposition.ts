@@ -333,7 +333,8 @@ function applyGrouping(
         if (
             groupPixelWidth &&
             processedXData &&
-            processedXData.length
+            processedXData.length &&
+            plotSizeX
         ) {
             hasGroupedData = true;
 
@@ -350,7 +351,7 @@ function applyGrouping(
                     xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)
                 ) || 1,
                 interval =
-                    (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
+                    (groupPixelWidth * (xMax - xMin) / plotSizeX) *
                     groupIntervalFactor,
                 groupPositions = xAxis.getTimeTicks(
                     DateTimeAxis.Additions.prototype.normalizeTimeTickInterval(
@@ -465,9 +466,7 @@ function compose(
 ): void {
     const PointClass = SeriesClass.prototype.pointClass;
 
-    if (composedMembers.indexOf(PointClass) === -1) {
-        composedMembers.push(PointClass);
-
+    if (U.pushUnique(composedMembers, PointClass)) {
         // Override point prototype to throw a warning when trying to update
         // grouped points.
         addEvent(PointClass, 'update', function (): (boolean|undefined) {
@@ -478,9 +477,7 @@ function compose(
         });
     }
 
-    if (composedMembers.indexOf(SeriesClass) === -1) {
-        composedMembers.push(SeriesClass);
-
+    if (U.pushUnique(composedMembers, SeriesClass)) {
         addEvent(SeriesClass, 'afterSetOptions', onAfterSetOptions);
         addEvent(SeriesClass, 'destroy', destroyGroupedData);
 
@@ -555,7 +552,12 @@ function getDGApproximation(
     if (this.is('hlc')) {
         return 'hlc';
     }
-    if (this.is('column')) {
+    if (
+        // #18974, default approximation for cumulative
+        // should be `sum` when `dataGrouping` is enabled
+        this.is('column') ||
+        this.options.cumulative
+    ) {
         return 'sum';
     }
     return 'average';

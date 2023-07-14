@@ -14,6 +14,7 @@
  *
  * */
 
+import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type DataLabelTextPathOptions from '../../Core/Series/DataLabelOptions';
@@ -33,14 +34,17 @@ import type TreemapSeriesOptions from '../Treemap/TreemapSeriesOptions';
 export type TreegraphLayoutTypes = 'Walker';
 
 export interface CollapseButtonOptions {
-    style?: CSSObject;
+    enabled: boolean;
+    fillColor?: ColorType;
+    height: number;
     onlyOnHover: boolean;
     shape: SymbolKey;
+    lineColor?: ColorType;
+    lineWidth: number;
+    style?: CSSObject;
+    width: number;
     x: number;
     y: number;
-    enabled: boolean;
-    height: number;
-    width: number;
 }
 
 export interface TreegraphDataLabelFormatterCallback {
@@ -69,6 +73,7 @@ export interface TreegraphSeriesLevelOptions extends TreegraphSeriesOptions {
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
     dataLabels: TreegraphDataLabelOptions | Array<TreegraphDataLabelOptions>;
     collapseButton: CollapseButtonOptions;
+    fillSpace: boolean;
     link: TreegraphLinkOptions;
     reversed?: boolean;
     marker: PointMarkerOptions;

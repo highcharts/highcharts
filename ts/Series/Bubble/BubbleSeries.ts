@@ -90,7 +90,7 @@ type BubbleZExtremes = { zMin: number; zMax: number };
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -481,9 +481,7 @@ class BubbleSeries extends ScatterSeries {
     ): void {
         BubbleLegendComposition.compose(ChartClass, LegendClass, SeriesClass);
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             AxisClass.prototype.beforePadding = axisBeforePadding;
         }
 
@@ -594,8 +592,16 @@ class BubbleSeries extends ScatterSeries {
                     ).getZExtremes();
 
                     if (zExtremes) {
-                        zMin = Math.min(zMin || zExtremes.zMin, zExtremes.zMin);
-                        zMax = Math.max(zMax || zExtremes.zMax, zExtremes.zMax);
+                        // Changed '||' to 'pick' because min or max can be 0.
+                        // #17280
+                        zMin = Math.min(
+                            pick(zMin, zExtremes.zMin),
+                            zExtremes.zMin
+                        );
+                        zMax = Math.max(
+                            pick(zMax, zExtremes.zMax),
+                            zExtremes.zMax
+                        );
                         valid = true;
                     }
                 }
@@ -721,8 +727,8 @@ class BubbleSeries extends ScatterSeries {
     }
 
     public translateBubble(): void {
-        const { data, radii } = this;
-        const { minPxSize } = this.getPxExtremes();
+        const { data, options, radii } = this,
+            { minPxSize } = this.getPxExtremes();
 
         // Set the shape type and arguments to be picked up in drawPoints
         let i = data.length;
@@ -730,6 +736,11 @@ class BubbleSeries extends ScatterSeries {
         while (i--) {
             const point = data[i];
             const radius = radii ? radii[i] : 0; // #1737
+
+            // Negative points means negative z values (#9728)
+            if (this.zoneAxis === 'z') {
+                point.negative = (point.z || 0) < (options.zThreshold || 0);
+            }
 
             if (isNumber(radius) && radius >= minPxSize / 2) {
                 // Shape arguments
@@ -816,7 +827,7 @@ interface BubbleSeries {
     bubblePadding: boolean;
     isBubble: true;
     pointClass: typeof BubblePoint;
-    specialGroup: string;
+    specialGroup: 'group'|'markerGroup';
     zoneAxis: string;
 }
 

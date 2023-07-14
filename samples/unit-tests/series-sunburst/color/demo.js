@@ -1,5 +1,5 @@
 QUnit.test('series.color: default to series.colors[0].', function (assert) {
-    var H = Highcharts,
+    const H = Highcharts,
         chart = H.chart('container', {
             series: [
                 {
@@ -9,14 +9,13 @@ QUnit.test('series.color: default to series.colors[0].', function (assert) {
             ]
         }),
         color = chart.options.colors[0],
-        series = chart.series[0],
-        result;
+        series = chart.series[0];
     assert.strictEqual(
         series.color,
         color,
         'The series object has the property color with value of ' + color + '.'
     );
-    result = !!H.find(series.points, function (p) {
+    const result = !!H.find(series.points, function (p) {
         return p.color !== color;
     });
     assert.strictEqual(
@@ -29,7 +28,7 @@ QUnit.test('series.color: default to series.colors[0].', function (assert) {
 });
 
 QUnit.test('series.color: custom color.', function (assert) {
-    var H = Highcharts,
+    const H = Highcharts,
         color = '#ff0000',
         chart = H.chart('container', {
             series: [
@@ -40,14 +39,13 @@ QUnit.test('series.color: custom color.', function (assert) {
                 }
             ]
         }),
-        series = chart.series[0],
-        result;
+        series = chart.series[0];
     assert.strictEqual(
         series.color,
         color,
         'The series object has the property color with value of ' + color + '.'
     );
-    result = !H.find(series.points, function (p) {
+    const result = !H.find(series.points, function (p) {
         return p.color !== color;
     });
     assert.strictEqual(
@@ -56,5 +54,32 @@ QUnit.test('series.color: custom color.', function (assert) {
         'All points in the series has the property color with value of ' +
             color +
             '.'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].group.rotationOriginX,
+        0,
+        `#17168, sunburst shouldn't have any rotation, when the chart is
+        inverted.`
+    );
+
+    assert.strictEqual(
+        chart.series[0].group.rotationOriginY,
+        0,
+        `#17168, sunburst shouldn't have any rotation, when the chart is
+        inverted.`
+    );
+
+    assert.notEqual(
+        chart.series[0].group.scaleX,
+        -1,
+        `#17168, sunburst shouldn't be invert scaled, when the chart is
+        inverted.`
     );
 });

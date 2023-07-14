@@ -184,6 +184,7 @@ class BoxPlotSeries extends ColumnSeries {
                 brightness: -0.3
             }
         },
+        */
 
         /**
          * The color of the stem, the vertical line extending from the box to

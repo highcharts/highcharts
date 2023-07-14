@@ -118,6 +118,24 @@ QUnit.test('General dataGrouping options', function (assert) {
         calledWithNaN,
         'Empty series should not cause getTimezoneOffset to get called with NaN timestamp (#13247)'
     );
+
+    chart.update({
+        chart: {
+            width: 10
+        },
+        plotOptions: {
+            series: {
+                dataGrouping: {
+                    units: void 0
+                }
+            }
+        }
+    });
+
+    assert.ok(
+        true,
+        'No errors when plotSizeX of the chart is zero (#17114).'
+    );
 });
 
 QUnit.test('dataGrouping and keys', function (assert) {
@@ -430,7 +448,7 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
     });
 
     assert.strictEqual(
-        chart.container.querySelectorAll('.highcharts-series-0 rect').length,
+        chart.container.querySelectorAll('.highcharts-series-0 path').length,
         12,
         'Monthly columns'
     );
@@ -444,7 +462,7 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
 
     chart.rangeSelector.clickButton(0);
     assert.strictEqual(
-        chart.container.querySelectorAll('.highcharts-series-0 rect').length,
+        chart.container.querySelectorAll('.highcharts-series-0 path').length,
         32,
         'Daily columns, monthlies should be removed (#7547) (Timezone: UTC ' +
             Math.round(new Date().getTimezoneOffset() / -60) +

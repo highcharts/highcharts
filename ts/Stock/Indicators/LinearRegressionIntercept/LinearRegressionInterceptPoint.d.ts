@@ -12,8 +12,10 @@
  *
  * */
 
-import type LinearRegressionInterceptIndicator from './LinearRegressionInterceptIndicator';
-import type LinearRegressionPoint from '../LinearRegression/LinearRegressionPoint';
+import type LinearRegressionInterceptIndicator from
+    './LinearRegressionInterceptIndicator';
+import type LinearRegressionPoint from
+    '../LinearRegression/LinearRegressionPoint';
 
 /* *
  *

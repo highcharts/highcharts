@@ -326,9 +326,10 @@ const displayTime = time => {
         );
     };
     setUpInputs();
-
-    if (!window.karma) { // CI tests
-        play();
+    // eslint-disable-next-line no-underscore-dangle
+    if (!window.__karma__) { // CI tests
+        // Wait a bit for Visual review tool
+        setTimeout(() => play(), 100);
     }
 
 })();

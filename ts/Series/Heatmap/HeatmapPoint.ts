@@ -85,16 +85,12 @@ class HeatmapPoint extends ScatterPoint {
             delete this.color;
         }
 
-        const point: HeatmapPoint = super.applyOptions.call(
-            this,
-            options,
-            x
-        ) as any;
+        super.applyOptions(options, x);
 
-        point.formatPrefix = point.isNull || point.value === null ?
+        this.formatPrefix = this.isNull || this.value === null ?
             'null' : 'point';
 
-        return point;
+        return this;
     }
 
     public getCellAttributes(): HeatmapPoint.CellAttributes {
@@ -186,7 +182,10 @@ class HeatmapPoint extends ScatterPoint {
 
             // Handle pointPadding
             if (pointPadding) {
-                if (direction === 'y') {
+                if (
+                    (direction === 'x' && xAxis.reversed) ||
+                    (direction === 'y' && !yAxis.reversed)
+                ) {
                     start = end;
                     end = direction + '1';
                 }
@@ -205,20 +204,14 @@ class HeatmapPoint extends ScatterPoint {
         if (!size) {
             return [];
         }
-        const rect = this.shapeArgs;
+        const { x = 0, y = 0, width = 0, height = 0 } = this.shapeArgs || {};
 
         return [
-            'M',
-            (rect as any).x - size,
-            (rect as any).y - size,
-            'L',
-            (rect as any).x - size,
-            (rect as any).y + (rect as any).height + size,
-            (rect as any).x + (rect as any).width + size,
-            (rect as any).y + (rect as any).height + size,
-            (rect as any).x + (rect as any).width + size,
-            (rect as any).y - size,
-            'Z'
+            ['M', x - size, y - size],
+            ['L', x - size, y + height + size],
+            ['L', x + width + size, y + height + size],
+            ['L', x + width + size, y - size],
+            ['Z']
         ];
     }
 

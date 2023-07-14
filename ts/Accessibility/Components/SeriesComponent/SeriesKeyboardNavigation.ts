@@ -42,7 +42,7 @@ import ChartUtilities from '../../Utils/ChartUtilities.js';
 const {
     getPointFromXY,
     getSeriesFromName,
-    scrollToPoint
+    scrollAxisToPoint
 } = ChartUtilities;
 
 /* *
@@ -120,7 +120,7 @@ function isSkipSeries(
         // reached
         (
             seriesNavOptions.pointNavigationEnabledThreshold &&
-            seriesNavOptions.pointNavigationEnabledThreshold <=
+            +seriesNavOptions.pointNavigationEnabledThreshold <=
             series.points.length
         );
 }
@@ -682,8 +682,7 @@ namespace SeriesKeyboardNavigation {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
-
+    const composedMembers: Array<unknown> = [];
 
     /* *
      *
@@ -901,9 +900,7 @@ namespace SeriesKeyboardNavigation {
         SeriesClass: typeof Series
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightAdjacentPoint = chartHighlightAdjacentPoint;
@@ -913,17 +910,13 @@ namespace SeriesKeyboardNavigation {
             chartProto.highlightAdjacentSeries = chartHighlightAdjacentSeries;
         }
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
+        if (U.pushUnique(composedMembers, PointClass)) {
             const pointProto = PointClass.prototype as PointComposition;
 
             pointProto.highlight = pointHighlight;
         }
 
-        if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
-
+        if (U.pushUnique(composedMembers, SeriesClass)) {
             const seriesProto = SeriesClass.prototype as SeriesComposition;
 
             /**
@@ -950,8 +943,8 @@ namespace SeriesKeyboardNavigation {
             seriesProto.highlightNextValidPoint = (
                 seriesHighlightNextValidPoint
             );
-
         }
+
     }
 
 
@@ -1016,7 +1009,8 @@ namespace SeriesKeyboardNavigation {
         this: PointComposition,
         highlightVisually: boolean = true
     ): PointComposition {
-        const chart = this.series.chart;
+        const chart = this.series.chart,
+            tooltipElement = chart.tooltip?.label?.element;
 
         if (!this.isNull && highlightVisually) {
             this.onMouseOver(); // Show the hover marker and tooltip
@@ -1028,7 +1022,7 @@ namespace SeriesKeyboardNavigation {
             // div element of the chart
         }
 
-        scrollToPoint(this);
+        scrollAxisToPoint(this);
 
         // We focus only after calling onMouseOver because the state change can
         // change z-index and mess up the element.
@@ -1040,6 +1034,22 @@ namespace SeriesKeyboardNavigation {
         }
 
         chart.highlightedPoint = this;
+
+        // Get position of the tooltip.
+        const tooltipTop = tooltipElement?.getBoundingClientRect().top;
+
+        if (tooltipElement && tooltipTop && tooltipTop < 0) {
+            // Calculate scroll position.
+            const scrollTop = window.scrollY,
+                newScrollTop = scrollTop + tooltipTop;
+
+            // Scroll window to new position.
+            window.scrollTo({
+                behavior: 'smooth',
+                top: newScrollTop
+            });
+        }
+
         return this;
     }
 

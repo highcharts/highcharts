@@ -16,10 +16,11 @@
  *
  * */
 
+import type ColorType from '../Core/Color/ColorType';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type Point from '../Core/Series/Point';
 import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterSeries from './Scatter/ScatterSeries';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const {
@@ -51,6 +52,16 @@ declare module '../Core/Series/PointLike' {
 
 namespace ColorMapComposition {
 
+    // These properties can be set as both attributes and CSS properties
+    interface ColorAttribsType {
+        dashstyle?: DashStyleValue;
+        fill?: ColorType;
+        stroke?: ColorType;
+        'stroke-linecap'?: 'butt'|'round'|'square';
+        'stroke-linejoin'?: 'butt'|'round'|'square';
+        'stroke-width'?: number;
+    }
+
     /* *
      *
      *  Declarations
@@ -66,13 +77,13 @@ namespace ColorMapComposition {
     }
 
     export declare class SeriesComposition extends ScatterSeries {
-        colorProp?: string;
+        colorProp?: 'fill'|'stroke';
         data: Array<PointComposition>;
         parallelArrays: Array<string>;
         pointArrayMap: Array<string>;
         points: Array<PointComposition>;
         trackerGroups: Array<string>;
-        colorAttribs(point: PointComposition): SVGAttributes;
+        colorAttribs(point: PointComposition): ColorAttribsType;
     }
 
     /* *
@@ -81,7 +92,7 @@ namespace ColorMapComposition {
      *
      * */
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
     export const pointMembers = {
         dataLabelOnNull: true,
@@ -113,9 +124,7 @@ namespace ColorMapComposition {
     ): (T&typeof SeriesComposition) {
         const PointClass = SeriesClass.prototype.pointClass;
 
-        if (composedClasses.indexOf(PointClass) === -1) {
-            composedClasses.push(PointClass);
-
+        if (U.pushUnique(composedMembers, PointClass)) {
             addEvent(PointClass, 'afterSetState', onPointAfterSetState);
         }
 
@@ -167,14 +176,14 @@ namespace ColorMapComposition {
     function seriesColorAttribs(
         this: SeriesComposition,
         point: PointComposition
-    ): SVGAttributes {
-        const ret: SVGAttributes = {};
+    ): ColorAttribsType {
+        const ret: ColorAttribsType = {};
 
         if (
             defined(point.color) &&
             (!point.state || point.state === 'normal') // #15746
         ) {
-            (ret as any)[this.colorProp || 'fill'] = point.color;
+            ret[this.colorProp || 'fill'] = point.color;
         }
         return ret;
     }

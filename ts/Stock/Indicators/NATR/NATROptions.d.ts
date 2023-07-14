@@ -31,4 +31,10 @@ export interface NATRParamsOptions extends SMAParamsOptions {
     // for inheritance
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default NATROptions;

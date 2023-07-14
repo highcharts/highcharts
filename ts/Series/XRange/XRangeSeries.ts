@@ -21,9 +21,6 @@
 import type Axis from '../../Core/Axis/Axis';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type SeriesClass from '../../Core/Series/Series';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type {
     XRangePointOptions,
@@ -55,7 +52,8 @@ const {
     isNumber,
     isObject,
     merge,
-    pick
+    pick,
+    relativeLength
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
@@ -66,7 +64,7 @@ import XRangePoint from './XRangePoint.js';
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -139,9 +137,7 @@ class XRangeSeries extends ColumnSeries {
         AxisClass: typeof Axis
     ): void {
 
-        if (composedClasses.indexOf(AxisClass) === -1) {
-            composedClasses.push(AxisClass);
-
+        if (U.pushUnique(composedMembers, AxisClass)) {
             addEvent(
                 AxisClass,
                 'afterGetSeriesExtremes',
@@ -288,7 +284,9 @@ class XRangeSeries extends ColumnSeries {
             minPointLength = options.minPointLength || 0,
             oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2,
             seriesXOffset = this.pointXOffset = metrics.offset,
-            posX = pick(point.x2, (point.x as any) + (point.len || 0));
+            posX = pick(point.x2, (point.x as any) + (point.len || 0)),
+            borderRadius = options.borderRadius;
+
 
         let plotX = point.plotX,
             plotX2 = xAxis.translate(
@@ -352,16 +350,27 @@ class XRangeSeries extends ColumnSeries {
             );
         }
 
-        const x = Math.floor(Math.min(plotX, plotX2)) + crisper;
-        const x2 = Math.floor(Math.max(plotX, plotX2)) + crisper;
+        const x = Math.floor(Math.min(plotX, plotX2)) + crisper,
+            x2 = Math.floor(Math.max(plotX, plotX2)) + crisper,
+            width = x2 - x;
+
+        const r = Math.min(
+            relativeLength((
+                typeof borderRadius === 'object' ?
+                    borderRadius.radius :
+                    borderRadius || 0
+            ), pointHeight),
+            Math.min(width, pointHeight) / 2
+        );
 
         const shapeArgs = {
             x,
             y: Math.floor((point.plotY as any) + yOffset) + crisper,
-            width: x2 - x,
+            width,
             height: pointHeight,
-            r: this.options.borderRadius
+            r
         };
+
         point.shapeArgs = shapeArgs;
 
         // Move tooltip to default position
@@ -405,7 +414,12 @@ class XRangeSeries extends ColumnSeries {
 
         // Centering tooltip position (#14147)
         if (!inverted) {
-            tooltipPos[xIndex] += (xAxis.reversed ? -1 : 0) * shapeArgs.width;
+            tooltipPos[xIndex] = clamp(
+                tooltipPos[xIndex] +
+                (xAxis.reversed ? -1 : 0) * shapeArgs.width,
+                0,
+                xAxis.len - 1
+            );
         } else {
             tooltipPos[xIndex] += shapeArgs.width / 2;
         }
@@ -428,9 +442,8 @@ class XRangeSeries extends ColumnSeries {
             if (!isNumber(partialFill)) {
                 partialFill = 0 as any;
             }
-            point.partShapeArgs = merge(shapeArgs, {
-                r: this.options.borderRadius
-            });
+
+            point.partShapeArgs = merge(shapeArgs);
 
             clipRectWidth = Math.max(
                 Math.round(
@@ -553,7 +566,7 @@ class XRangeSeries extends ColumnSeries {
                         pointAttr,
                         animation
                     )
-                    .shadow(seriesOpts.shadow, null, cutOff);
+                    .shadow(seriesOpts.shadow);
 
                 if (partShapeArgs) {
                     // Ensure pfOptions is an object
@@ -579,7 +592,7 @@ class XRangeSeries extends ColumnSeries {
                             pointAttr,
                             animation
                         )
-                        .shadow(seriesOpts.shadow, null, cutOff);
+                        .shadow(seriesOpts.shadow);
                 }
             }
 

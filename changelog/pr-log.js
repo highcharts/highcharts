@@ -19,22 +19,39 @@ const log = {
     Highcharts: {},
     'Highcharts Stock': {},
     'Highcharts Maps': {},
-    'Highcharts Gantt': {}
+    'Highcharts Gantt': {},
+    'Highcharts Dashboards': {}
 };
 
 // Whenever the string 'Upgrade note' appears, the next paragraph is interpreted
-// as the not
-const parseUpgradeNote = p => {
-    const paragraphs = p.body.split('\n');
-    for (let i = 0; i < paragraphs.length; i++) {
-        if (/upgrade note/i.test(paragraphs[i])) {
-            return (paragraphs[i + 1] ? paragraphs[i + 1].trim() : void 0);
+// as the note
+const parseUpgradeNotes = p => {
+    const upgradeNotes = [],
+        paragraphs = p.body.split('\n');
+
+    let look = false,
+        listItemsOnly = false;
+    for (const para of paragraphs) {
+        if (look) {
+            if (para.charAt(0) === '*') {
+                upgradeNotes.push(para.replace(/^\* /, '').trim());
+                listItemsOnly = true;
+            } else if (!listItemsOnly) {
+                upgradeNotes.push(para.trim());
+                look = false;
+            }
+        }
+        if (/upgrade note/i.test(para)) {
+            look = true;
         }
     }
-    return void 0;
+    return upgradeNotes;
 };
 
-const loadPulls = async since => {
+const loadPulls = async (
+    since,
+    branches = 'master'
+) => {
     let page = 1;
     let pulls = [];
 
@@ -55,12 +72,10 @@ const loadPulls = async since => {
     );
     const after = Date.parse(commit.headers['last-modified']);
 
+    const branchesArr = branches.split(',');
     while (page < 20) {
-        const baseBranches = [
-            'master'
-        ];
         const pageData = [];
-        for (const base of baseBranches) {
+        for (const base of branchesArr) {
 
             let { data } = await octokit.pulls.list({
                 owner: 'highcharts',
@@ -97,7 +112,7 @@ const loadPulls = async since => {
     return pulls;
 };
 
-module.exports = async (since, fromCache) => {
+module.exports = async (since, fromCache, branches) => {
 
     const included = [],
         tmpFileName = path.join(os.tmpdir(), 'pulls.json');
@@ -107,7 +122,7 @@ module.exports = async (since, fromCache) => {
         pulls = await fs.readFile(tmpFileName);
         pulls = JSON.parse(pulls);
     } else {
-        pulls = await loadPulls(since);
+        pulls = await loadPulls(since, branches);
         await fs.writeFile(tmpFileName, JSON.stringify(pulls));
     }
 
@@ -116,7 +131,7 @@ module.exports = async (since, fromCache) => {
         .filter(p => Boolean(p.body))
         .map(p => ({
             description: p.body.split('\n')[0].trim(),
-            upgradeNote: parseUpgradeNote(p),
+            upgradeNotes: parseUpgradeNotes(p),
             labels: p.labels,
             number: p.number
         }));

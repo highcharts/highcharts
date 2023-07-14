@@ -20,7 +20,10 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            stacking: 'normal'
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true
+            }
         }
     },
     series: [{

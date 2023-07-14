@@ -28,7 +28,7 @@ Highcharts.chart('container', {
             symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
         }
     }, {
-        name: 'Base64 symbol (*)',
+        name: 'Base64 symbol',
         data: [106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6,
             54.4, 29.9, 71.5],
         marker: {
@@ -47,14 +47,5 @@ Highcharts.chart('container', {
 
     credits: {
         enabled: false
-    },
-
-    subtitle: {
-        text: '*) Base64 not supported in IE6 and IE7',
-        verticalAlign: 'bottom',
-        align: 'right',
-        style: {
-            fontSize: '10px'
-        }
     }
 });

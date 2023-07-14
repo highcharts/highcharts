@@ -23,12 +23,17 @@ const TARGET_DIRECTORY = Path.join('build', 'dist');
 const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
+const logLib = require('./lib/log');
 
 function getDemoBuildPath() {
+    const config = getGitIgnoreMeProperties();
     let value;
-    try {
-        value = getGitIgnoreMeProperties()['demos.path'];
-    } catch {
+    if (config) {
+        value = config['demos.path'];
+    }
+
+    if (!value || !value.length) {
+        logLib.message('git-ignore-me-properties is missing demos.path, trying default ./tmp/demo');
         value = 'tmp/demo';
     }
     return value;
@@ -70,6 +75,13 @@ function indexTemplate(options) {
                 list-style-type: initial;
                 padding-left: 1.25em;
                 font-size: 1.15em;
+            }
+            li button.sidebar-category {
+                border: none;
+                background: none;
+                padding: 0;
+                margin: 1rem 0 0.5rem 0;
+                font-size: 1.4rem;
             }
             li a {
                 text-decoration: none;
@@ -177,11 +189,17 @@ async function createExamples(title, sourcePath, targetPath, template) {
     });
 
     function getLocalSidebar(path) {
-        const file = readFileSync(
-            Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`),
-            'utf-8'
-        );
-        return file;
+        const sidebarPath =
+      Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`);
+        try {
+            const file = readFileSync(sidebarPath,
+                'utf-8');
+            return file;
+
+        } catch {
+            throw new Error(`Could not find ${sidebarPath}
+  If demos are built elsewhere, the path can be specified in git-ignore-me.properties by the demos.path property.`);
+        }
     }
 
     LogLib.success('Created', targetPath);

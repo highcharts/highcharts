@@ -340,8 +340,7 @@ function subtasks() {
                 borderWidth: 0,
                 connectors: {
                     lineWidth: 2
-                },
-                borderRadius: 0
+                }
             }
         },
         series: [{
@@ -590,7 +589,6 @@ function nav() {
                 type: 'gantt',
                 color: 'white',
                 borderColor: 'white',
-                borderRadius: 0,
                 pointWidth: 10,
                 accessibility: {
                     enabled: false
@@ -648,9 +646,8 @@ function nav() {
             series: {
                 groupPadding: 0.3,
                 pointPadding: 0.3,
-                pointWidth: 30,
+                pointWidth: 25,
                 borderWidth: 0,
-                borderRadius: 0,
                 dataLabels: {
                     enabled: false,
                     color: 'white',
@@ -940,7 +937,6 @@ function drag() {
                 borderColor: '#E1D369',
                 borderWidth: 2,
                 name: '2',
-                borderRadius: 20,
                 dependency: 'proto_done',
                 zIndex: 1,
                 y: 0,

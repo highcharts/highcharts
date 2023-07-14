@@ -4,13 +4,15 @@
 
 // NOPE, YOU CANNOT FIX IT! The JS compiler is gone and only the Java version
 // is left. NOPE, closure-gun is a Java wrapper. (-_-) Keep the old version.
-const ClosureCompiler = require('google-closure-compiler').jsCompiler;
+// WELL... they have now native build as an alternatives, but it did not work.
+// This tool is now abanded, and only used via the `scripts-compile-old` task.
+const ClosureCompiler = require('google-closure-compiler').compiler;
 
 const statSync = require('fs').statSync;
 const {
     getFile,
     writeFile
-} = require('highcharts-assembler/src/utilities.js');
+} = require('@highcharts/highcharts-assembler/src/utilities.js');
 const colors = require('colors');
 
 const compileSingleFile = (path, sourceFolder, createSourceMap) => {
@@ -22,7 +24,8 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
     return new Promise((resolve, reject) => {
         const closureCompiler = new ClosureCompiler({
             compilationLevel: 'SIMPLE_OPTIMIZATIONS',
-            languageIn: 'ECMASCRIPT5_STRICT',
+            languageIn: 'ECMASCRIPT6_STRICT',
+            languageOut: 'ECMASCRIPT6_STRICT',
             createSourceMap
         });
         closureCompiler.run([{

@@ -324,7 +324,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
         followPointer: true,
 
         headerFormat:
-        '<span style="font-size: 10px">{series.name}</span><br/>',
+        '<span style="font-size: 0.8em">{series.name}</span><br/>',
         pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>{point.weight}</b><br/>',
         /**
          * The

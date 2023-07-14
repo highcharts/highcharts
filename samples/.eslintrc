@@ -5,6 +5,8 @@ globals:
     $: true
     ADBE: true
     CallAnalyzer: true
+    Dashboards: true
+    DataGrid: true
     GOOGL: true
     Highcharts: true
     hs: true                    # Highslide
@@ -39,6 +41,7 @@ rules:
     no-loss-of-precision: 1
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
     no-undefined: 0
+    no-use-before-define: ["error", {"functions": false}]
     no-shadow: 0                # 10 violations as of 2015-10-31
     no-throw-literal: 0
     node/no-missing-require: 0
@@ -55,3 +58,4 @@ rules:
     jsdoc/require-param-description: 0
     jsdoc/require-param-type: 0
     jsdoc/valid-jsdoc: 0
+

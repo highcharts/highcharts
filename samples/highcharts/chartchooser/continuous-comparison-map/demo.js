@@ -19,7 +19,7 @@
             }
         },
         subtitle: {
-            text: 'Source <a hef="https://earthquake.usgs.gov/" target="_blank">USGS</a>'
+            text: 'Source <a href="https://earthquake.usgs.gov/" target="_blank">USGS</a>'
         },
 
         mapNavigation: {

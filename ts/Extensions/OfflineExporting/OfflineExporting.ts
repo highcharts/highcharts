@@ -51,7 +51,6 @@ const {
     error,
     extend,
     fireEvent,
-    pick,
     merge
 } = U;
 
@@ -104,7 +103,7 @@ declare module '../../Core/Chart/ChartLike' {
  *
  * */
 
-const composedClasses: Array<Function> = [];
+const composedMembers: Array<unknown> = [];
 
 /* *
  *
@@ -166,9 +165,7 @@ namespace OfflineExporting {
         ChartClass: T
     ): (typeof Composition&T) {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as Composition;
 
             chartProto.getSVGForLocalExport = getSVGForLocalExport;
@@ -348,31 +345,36 @@ namespace OfflineExporting {
                 // chart container.
                 setStylePropertyFromParents = function (
                     el: DOMElementType,
-                    propName: string
+                    propName: 'fontFamily'|'fontSize'
                 ): void {
                     let curParent = el;
 
                     while (curParent && curParent !== dummySVGContainer) {
-                        if (curParent.style[propName as any]) {
-                            el.style[propName as any] =
-                                curParent.style[propName as any];
+                        if (curParent.style[propName]) {
+                            let value = curParent.style[propName];
+                            if (propName === 'fontSize' && /em$/.test(value)) {
+                                value = Math.round(
+                                    parseFloat(value) * 16
+                                ) + 'px';
+                            }
+                            el.style[propName] = value;
                             break;
                         }
                         curParent = curParent.parentNode as any;
                     }
                 };
-            let titleElements;
+            let titleElements,
+                outlineElements;
 
             // Workaround for the text styling. Making sure it does pick up
             // settings for parent elements.
             [].forEach.call(textElements, function (el: SVGDOMElement): void {
                 // Workaround for the text styling. making sure it does pick up
                 // the root element
-                ['font-family', 'font-size'].forEach(function (
-                    property: string
-                ): void {
-                    setStylePropertyFromParents(el, property);
-                });
+                (['fontFamily', 'fontSize'] as ['fontFamily', 'fontSize'])
+                    .forEach((property): void => {
+                        setStylePropertyFromParents(el, property);
+                    });
 
                 el.style.fontFamily = pdfFont && pdfFont.normal ?
                     // Custom PDF font
@@ -391,6 +393,13 @@ namespace OfflineExporting {
                 ): void {
                     el.removeChild(titleElement);
                 });
+
+                // Remove all .highcharts-text-outline elements, #17170
+                outlineElements =
+                    el.getElementsByClassName('highcharts-text-outline');
+                while (outlineElements.length > 0) {
+                    el.removeChild(outlineElements[0]);
+                }
             });
 
             const svgNode = dummySVGContainer.querySelector('svg');
@@ -420,8 +429,8 @@ namespace OfflineExporting {
             // SVG download. In this case, we want to use Microsoft specific
             // Blob if available
             try {
-                if (typeof win.navigator.msSaveOrOpenBlob !== 'undefined') {
-                    blob = new MSBlobBuilder();
+                if (typeof win.MSBlobBuilder !== 'undefined') {
+                    blob = new win.MSBlobBuilder();
                     blob.append(svg);
                     svgurl = blob.getBlob('image/svg+xml') as any;
                 } else {

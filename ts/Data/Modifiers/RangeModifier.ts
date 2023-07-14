@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2022 Highsoft AS
+ *  (c) 2009-2023 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -19,8 +19,11 @@
  *
  * */
 
-import type DataEventEmitter from '../DataEventEmitter';
-import type JSON from '../../Core/JSON';
+import type DataEvent from '../DataEvent';
+import type {
+    RangeModifierOptions,
+    RangeModifierRangeOptions
+} from './RangeModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -51,10 +54,10 @@ class RangeModifier extends DataModifier {
     /**
      * Default options for the range modifier.
      */
-    public static readonly defaultOptions: RangeModifier.Options = {
-        modifier: 'Range',
-        strict: false,
-        ranges: []
+    public static readonly defaultOptions: RangeModifierOptions = {
+        type: 'Range',
+        ranges: [],
+        strict: false
     };
 
     /* *
@@ -69,7 +72,9 @@ class RangeModifier extends DataModifier {
      * @param {RangeModifier.Options} [options]
      * Options to configure the range modifier.
      */
-    public constructor(options?: DeepPartial<RangeModifier.Options>) {
+    public constructor(
+        options?: DeepPartial<RangeModifierOptions>
+    ) {
         super();
 
         this.options = merge(RangeModifier.defaultOptions, options);
@@ -84,7 +89,7 @@ class RangeModifier extends DataModifier {
     /**
      * Options of the range modifier.
      */
-    public readonly options: Readonly<RangeModifier.Options>;
+    public readonly options: RangeModifierOptions;
 
     /* *
      *
@@ -98,7 +103,7 @@ class RangeModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {DataEvent.Detail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -106,7 +111,7 @@ class RangeModifier extends DataModifier {
      */
     public modifyTable<T extends DataTable>(
         table: T,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEvent.Detail
     ): T {
         const modifier = this;
 
@@ -125,7 +130,7 @@ class RangeModifier extends DataModifier {
             for (
                 let i = 0,
                     iEnd = ranges.length,
-                    range: RangeModifier.RangeOptions,
+                    range: RangeModifierRangeOptions,
                     rangeColumn: DataTable.Column;
                 i < iEnd;
                 ++i
@@ -189,72 +194,59 @@ class RangeModifier extends DataModifier {
         return table;
     }
 
+
+    /**
+     * Utility function that returns the first row index
+     * if the table has been modified by a range modifier
+     * @param {DataTable} table the table to get the offset from
+     *
+     * @return {number} The row offset of the modified table
+     */
+    public getModifiedTableOffset(table: DataTable): number {
+        const { ranges } = this.options;
+
+        if (ranges) {
+            const minRange = ranges.reduce(
+                (minRange, currentRange): RangeModifierRangeOptions => {
+                    if (currentRange.minValue > minRange.minValue) {
+                        minRange = currentRange;
+                    }
+                    return minRange;
+
+                }, ranges[0]
+            );
+
+            const tableRowIndex = table.getRowIndexBy(
+                minRange.column,
+                minRange.minValue
+            );
+
+            if (tableRowIndex) {
+                return tableRowIndex;
+            }
+        }
+
+        return 0;
+    }
 }
 
 /* *
  *
- *  Namespace
+ *  Registry
  *
  * */
 
-/**
- * Additionally provided types for modifier events and options, and JSON
- * conversion.
- */
-namespace RangeModifier {
-
-    /**
-     * Options to configure the modifier.
-     */
-    export interface Options extends DataModifier.Options {
-        /**
-         * Value ranges to include in the result.
-         */
-        ranges: Array<RangeOptions>;
-        /**
-         * If set to true, it will also compare the value type.
-         */
-        strict: boolean;
-    }
-
-    /**
-     * Options to configure a range.
-     */
-    export interface RangeOptions extends JSON.Object {
-        /**
-         * Column containing the filtered values. This can be an index or a
-         * name.
-         */
-        column: string;
-        /**
-         * Maximum including value (`<=` operator).
-         */
-        maxValue: (boolean|number|string);
-        /**
-         * Minimum including value (`>=` operator).
-         */
-        minValue: (boolean|number|string);
-    }
-
-}
-
-/* *
- *
- *  Register
- *
- * */
-
-DataModifier.addModifier(RangeModifier);
-
-declare module './ModifierType' {
-    interface ModifierTypeRegistry {
+declare module './DataModifierType' {
+    interface DataModifierTypes {
         Range: typeof RangeModifier;
     }
 }
 
+DataModifier.registerType('Range', RangeModifier);
+
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

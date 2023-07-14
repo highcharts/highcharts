@@ -24,4 +24,10 @@ export interface IndicatorLike extends Series {
     useCommonDataGrouping?: boolean;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default IndicatorLike;

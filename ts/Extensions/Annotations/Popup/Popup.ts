@@ -23,11 +23,11 @@ import type AnnotationOptions from '../AnnotationOptions';
 import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
-import AST from '../../../Core/Renderer/HTML/AST.js';
-import D from '../../../Core/Defaults.js';
-const { getOptions } = D;
+import BaseForm from '../../../Shared/BaseForm.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
+import D from '../../../Core/Defaults.js';
+const { getOptions } = D;
 import PopupAnnotations from './PopupAnnotations.js';
 import PopupIndicators from './PopupIndicators.js';
 import PopupTabs from './PopupTabs.js';
@@ -146,7 +146,7 @@ function getFields(
  *
  * */
 
-class Popup {
+class Popup extends BaseForm {
 
     /* *
      *
@@ -159,19 +159,10 @@ class Popup {
         iconsURL: string,
         chart?: Chart
     ) {
-        this.chart = chart;
-        this.iconsURL = iconsURL;
-        this.lang = (getOptions().lang.navigation as any).popup;
+        super(parentDiv, iconsURL);
 
-        // create popup div
-        this.container = createElement(
-            'div',
-            {
-                className: 'highcharts-popup highcharts-no-tooltip'
-            },
-            void 0,
-            parentDiv
-        );
+        this.chart = chart;
+        this.lang = (getOptions().lang.navigation || {}).popup as any || {};
 
         addEvent(this.container, 'mousedown', (): void => {
             const activeAnnotation = chart &&
@@ -181,7 +172,7 @@ class Popup {
             if (activeAnnotation) {
                 activeAnnotation.cancelClick = true;
 
-                const unbind = addEvent(H.doc, 'click', (): void => {
+                const unbind = addEvent(doc, 'click', (): void => {
                     setTimeout((): void => {
                         activeAnnotation.cancelClick = false;
                     }, 0);
@@ -189,9 +180,6 @@ class Popup {
                 });
             }
         });
-
-        // add close button
-        this.addCloseBtn();
     }
 
     /* *
@@ -201,9 +189,7 @@ class Popup {
      * */
 
     public chart?: Chart;
-    public container: HTMLDOMElement;
-    public formType?: string;
-    public iconsURL: string;
+    public type?: string;
     public lang: Record<string, string>;
 
     /* *
@@ -211,69 +197,6 @@ class Popup {
      *  Functions
      *
      * */
-
-    /**
-     * Initialize the popup. Create base div and add close button.
-     * @private
-     * @param {Highcharts.HTMLDOMElement} parentDiv
-     * Container where popup should be placed
-     * @param {string} iconsURL
-     * Icon URL
-     */
-    public init(
-        parentDiv: HTMLDOMElement,
-        iconsURL: string,
-        chart?: Chart
-    ): void {
-        Popup.call(this, parentDiv, iconsURL, chart);
-    }
-
-    /**
-     * Create HTML element and attach click event (close popup).
-     * @private
-     */
-    public addCloseBtn(): void {
-        const iconsURL = this.iconsURL;
-
-        // create close popup btn
-        const closeBtn = createElement(
-            'div',
-            {
-                className: 'highcharts-popup-close'
-            },
-            void 0,
-            this.container
-        );
-
-        closeBtn.style['background-image' as any] = 'url(' +
-                (
-                    iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
-                        iconsURL : iconsURL + 'close.svg'
-                ) + ')';
-
-        ['click', 'touchstart'].forEach((eventName: string): void => {
-            addEvent(closeBtn, eventName, (): void => {
-                if (this.chart) {
-                    const navigationBindings = this.chart.navigationBindings;
-
-                    fireEvent(navigationBindings, 'closePopup');
-
-                    if (
-                        navigationBindings &&
-                        navigationBindings.selectedButtonElement
-                    ) {
-                        fireEvent(
-                            navigationBindings,
-                            'deselectButton',
-                            { button: navigationBindings.selectedButtonElement }
-                        );
-                    }
-                } else {
-                    this.closePopup();
-                }
-            });
-        });
-    }
 
     /**
      * Create input with label.
@@ -309,7 +232,7 @@ class Popup {
                 optionName
             );
 
-        if (!inputName.match(/\d/g)) {
+        if (!optionName.match(/^\d+$/)) {
             // add label
             createElement(
                 'label',
@@ -340,6 +263,27 @@ class Popup {
         input.setAttribute('highcharts-data-name', option);
 
         return input;
+    }
+
+    public closeButtonEvents(): void {
+        if (this.chart) {
+            const navigationBindings = this.chart.navigationBindings;
+
+            fireEvent(navigationBindings, 'closePopup');
+
+            if (
+                navigationBindings &&
+                navigationBindings.selectedButtonElement
+            ) {
+                fireEvent(
+                    navigationBindings,
+                    'deselectButton',
+                    { button: navigationBindings.selectedButtonElement }
+                );
+            }
+        } else {
+            super.closeButtonEvents();
+        }
     }
 
     /**
@@ -384,44 +328,6 @@ class Popup {
     }
 
     /**
-     * Reset content of the current popup and show.
-     * @private
-     */
-    public showPopup(): void {
-
-        const popupDiv = this.container,
-            toolbarClass = 'highcharts-annotation-toolbar',
-            popupCloseBtn = popupDiv
-                .querySelectorAll('.highcharts-popup-close')[0];
-
-        this.formType = void 0;
-
-        // reset content
-        popupDiv.innerHTML = AST.emptyHTML;
-
-        // reset toolbar styles if exists
-        if (popupDiv.className.indexOf(toolbarClass) >= 0) {
-            popupDiv.classList.remove(toolbarClass);
-
-            // reset toolbar inline styles
-            popupDiv.removeAttribute('style');
-        }
-
-        // add close button
-        popupDiv.appendChild(popupCloseBtn);
-        popupDiv.style.display = 'block';
-        popupDiv.style.height = '';
-    }
-
-    /**
-     * Hide popup.
-     * @private
-     */
-    public closePopup(): void {
-        this.container.style.display = 'none';
-    }
-
-    /**
      * Create content and show popup.
      * @private
      * @param {string} - type of popup i.e indicators
@@ -463,7 +369,7 @@ class Popup {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }
 
-        this.formType = type;
+        this.type = type;
 
         // Explicit height is needed to make inner elements scrollable
         this.container.style.height = this.container.offsetHeight + 'px';

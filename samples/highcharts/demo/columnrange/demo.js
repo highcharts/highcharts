@@ -35,6 +35,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         columnrange: {
+            borderRadius: '50%',
             dataLabels: {
                 enabled: true,
                 format: '{y}°C'

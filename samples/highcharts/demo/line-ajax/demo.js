@@ -57,7 +57,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Source: Google Analytics'
+        text: 'Source: Google Analytics',
+        align: 'left'
     },
 
     xAxis: {

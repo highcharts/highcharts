@@ -1,0 +1,67 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/draggable-points.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
+
+<main>
+  <h1>Synth Patch Editor</h1>
+  <div class="row firstrow">
+    <p id="intro">Play the synth using the <span class="code">A</span> to <span class="code">L</span> and <span class="code">W</span> to <span class="code">O</span> keys on your keyboard, simulating white and black keys on a piano.</p>
+    <p id="keyStatus">Synth not started</p>
+  </div>
+
+  <button id="startSynth">Start synth</button>
+
+  <div id="controls" class="hidden">
+      <div id="help" class="hidden">
+        <h2>Help</h2>
+        <p>Note: The synth can overdrive if you set volume too high or add many oscillators to play at once without lowering their volumes.</p>
+        <p>To create volume envelopes, click in the charts to add points. The points can be dragged, or clicked to delete. The master envelopes run in addition to the oscillator envelopes if defined.</p>
+        <p>The pulse width parameter only applies to oscillators with waveform type "pulse".</p>
+        <p>The frequency parameters do not apply to oscillators with waveform type "whitenoise".</p>
+        <p>The tracking multiplier parameters are used for frequency dependent behavior. For example, by setting the volume tracking multiplier to 0.01, the volume will be lower at higher notes. The multiplier is a logarithmic function, where 1 is at ca 50Hz, and you define the output for an input frequency around 3.2kHz.</p>
+        <p>The FM and VM oscillator parameters are used for frequency modulation (FM) and volume modulation (VM). Set this parameter to one of the other oscillators to modulate its frequency or volume. Note: With pulse waveforms, the FM parameter actually controls PWM (pulse width modulation) instead of FM.</p>
+      </div>
+
+      <button id="showHelp">Help</button>
+
+      <div id="synthContainer">
+        <div class="row">
+          <label class="presetLabel">Preset <select class="preset"></select></label>
+          <button class="playWideRange">Play wide range</button>
+        </div>
+
+        <div class="globalControls">
+          <div>
+            <h2>Global controls</h2>
+            <label>Master volume <input class="masterVolume" min="0.1" max="1" step="0.05" type="range" value="0.8"></label>
+            <label>Glide between notes <input class="glideDuration" type="number" value="0"></label>
+          </div>
+          <div>
+            <h3>Master Attack Envelope</h3>
+            <div class="masterAttackEnvChart chart"></div>
+          </div>
+          <div>
+            <h3>Master Release Envelope</h3>
+            <div class="masterReleaseEnvChart chart"></div>
+          </div>
+          <div class="masterEQ">
+            <div class="row">
+              <h3>Master Parametric EQ (gain, frequency, Q)</h3>
+              <button class="resetEQ">Reset</button>
+            </div>
+            <div class="eqSliders row"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <h2>Oscillators</h2>
+          <button class="addOsc">+ Add oscillator</button>
+        </div>
+        <div class="oscillators row">
+        </div>
+  
+        <h2>Generated Patch JSON</h2>
+        <textarea readonly class="json">{}</textarea>
+      </div>
+  </div>
+</main>

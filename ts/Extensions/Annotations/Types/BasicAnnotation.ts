@@ -22,7 +22,7 @@ import type {
 } from '../Controllables/ControllableOptions';
 import type ControllableRect from '../Controllables/ControllableRect';
 import type ControlPoint from '../ControlPoint';
-import type { ControlPointOptionsObject } from '../ControlPointOptions';
+import type ControlPointOptions from '../ControlPointOptions';
 import type MockPointOptions from '../MockPointOptions';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
@@ -71,7 +71,7 @@ class BasicAnnotation extends Annotation {
                 drag: function (
                     this: Annotation,
                     e: AnnotationEventObject,
-                    target: Annotation
+                    target: Controllable
                 ): void {
                     const xy = this.mouseMoveToTranslation(e);
 
@@ -137,10 +137,12 @@ class BasicAnnotation extends Annotation {
                 ): void {
                     const annotation = target.annotation,
                         coords = this.chart.pointer.getCoordinates(e),
-                        x = coords.xAxis[0].value,
-                        y = coords.yAxis[0].value,
                         points: Array<MockPointOptions> = target.options.points as any,
-                        shapes = annotation.userOptions.shapes;
+                        shapes = annotation.userOptions.shapes,
+                        xAxisIndex = annotation.clipXAxis?.index || 0,
+                        yAxisIndex = annotation.clipYAxis?.index || 0,
+                        x = coords.xAxis[xAxisIndex].value,
+                        y = coords.yAxis[yAxisIndex].value;
 
                     // Top right point
                     points[1].x = x;
@@ -354,7 +356,7 @@ class BasicAnnotation extends Annotation {
             delete options.shapes;
             this.basicType = 'label';
         }
-        Annotation.prototype.init.apply(this, arguments);
+        super.init.apply(this, arguments);
     }
 
 }
@@ -383,10 +385,10 @@ BasicAnnotation.prototype.defaultOptions = merge(
 
 namespace BasicAnnotation {
     export interface ControlPoints {
-        label: DeepPartial<ControlPointOptionsObject>[];
-        rectangle: DeepPartial<ControlPointOptionsObject>[];
-        ellipse: DeepPartial<ControlPointOptionsObject>[];
-        circle: DeepPartial<ControlPointOptionsObject>[];
+        label: DeepPartial<ControlPointOptions>[];
+        rectangle: DeepPartial<ControlPointOptions>[];
+        ellipse: DeepPartial<ControlPointOptions>[];
+        circle: DeepPartial<ControlPointOptions>[];
     }
 }
 

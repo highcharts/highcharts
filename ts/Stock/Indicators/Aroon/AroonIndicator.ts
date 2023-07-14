@@ -169,7 +169,7 @@ class AroonIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: AroonParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        let period = (params.period as any),
+        const period = (params.period as any),
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen = yVal ? yVal.length : 0,
@@ -177,14 +177,14 @@ class AroonIndicator extends SMAIndicator {
             AR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<Array<number>> = [],
-            slicedY: Array<Array<number>>,
             low = 2,
-            high = 1,
-            aroonUp: number,
+            high = 1;
+        let aroonUp: number,
             aroonDown: number,
             xLow: number,
             xHigh: number,
-            i: number;
+            i: number,
+            slicedY: Array<Array<number>>;
 
         // For a N-period, we start from N-1 point, to calculate Nth point
         // That is why we later need to comprehend slice() elements list

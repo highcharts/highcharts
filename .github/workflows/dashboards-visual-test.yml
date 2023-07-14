@@ -1,0 +1,122 @@
+name: Dashboards visual comparison tests
+on:
+  pull_request:
+    branches: 
+      - 'master'
+    paths:
+      - 'test/cypress/visual/**'
+      - 'samples/cypress/dashboards/**'
+      - 'samples/dashboards/**'
+      - 'ts/Dashboards/**'
+      - 'ts/Data/**'
+      - 'css/**'
+      - '.github/workflows/**'
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  cypress_visual_base:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: master
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        uses: cypress-io/github-action@v5
+        with:
+          runTests: false
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+      - name: Build Dashboards
+        run: npx gulp dashboards/scripts
+
+      - name: Install utils
+        run: npm i github:highcharts/highcharts-utils 
+
+      - name: Run cypress via action
+        uses: cypress-io/github-action@v5
+        with:
+          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          wait-on: 'http://localhost:3031/dashboards.js'
+          env: type=base
+          config: specPattern=**/visual/*.cy.js
+          install: false
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: reference
+          path: |
+            cypress/screenshots
+            cypress/snapshots
+
+
+  cypress_visual_actual:
+    needs: cypress_visual_base
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Checkout current branch 
+        uses: actions/checkout@v3
+
+      - name: Download references
+        uses: actions/download-artifact@v3
+        with: 
+          name: reference
+          path: cypress # this path is root relative, not based on the working-directory above
+
+      - name: Install dependencies
+        uses: cypress-io/github-action@v5
+        with:
+          runTests: false
+
+      - name: Install utils
+        run: npm i github:highcharts/highcharts-utils 
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+      - name: Build Dashboards
+        run: npx gulp dashboards/scripts
+
+      - name: Run cypress via action
+        uses: cypress-io/github-action@v5
+        with:
+          install-command: npm ci && npx gulp scripts
+          start: npx cross-env NODE_PATH=${GITHUB_WORKSPACE}/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
+          wait-on: 'http://localhost:3031/dashboards.js'
+          env: type=actual
+          config: specPattern=**/visual/*.cy.js
+          install: false
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: post-tests
+          path: |
+            cypress/screenshots
+            cypress/snapshots
+

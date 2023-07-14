@@ -42,12 +42,42 @@ declare global {
         [K in keyof T as T[K] extends Function ? K : never]: T[K];
     };
 
+    interface Array<T> {
+        forEach<TScope = any>(
+            callbackfn: ArrayForEachCallbackFunction<T, TScope>,
+            thisArg?: TScope
+        ): void;
+    }
+
+    interface ArrayForEachCallbackFunction<T, TScope = any> {
+        (this: TScope, value: T, index: number, array: Array<T>): void;
+    }
+
     interface CallableFunction {
         apply<TScope, TArguments extends Array<unknown>, TReturn>(
             this: (this: TScope, ...args: TArguments) => TReturn,
             thisArg: TScope,
             args?: (TArguments|IArguments)
         ): TReturn;
+    }
+
+    interface Class<T = any> extends Function {
+        new(...args: Array<any>): T;
+    }
+
+    interface Document {
+        /** @deprecated */
+        exitFullscreen: () => Promise<void>;
+        /** @deprecated */
+        mozCancelFullScreen: Function;
+        /** @deprecated */
+        msExitFullscreen: Function;
+        /** @deprecated */
+        msHidden: boolean;
+        /** @deprecated */
+        webkitExitFullscreen: Function;
+        /** @deprecated */
+        webkitHidden: boolean;
     }
 
     interface Element {
@@ -65,6 +95,19 @@ declare global {
             qualifiedName: string,
             value: (boolean|number|string)
         ): void;
+
+        /** @deprecated */
+        currentStyle?: ElementCSSInlineStyle;
+        /** @deprecated */
+        mozRequestFullScreen: Function;
+        /** @deprecated */
+        msMatchesSelector: Element['matches'];
+        /** @deprecated */
+        msRequestFullscreen: Function;
+        /** @deprecated */
+        webkitMatchesSelector: Element['matches'];
+        /** @deprecated */
+        webkitRequestFullScreen: Function;
     }
 
     interface HTMLElement {
@@ -73,16 +116,6 @@ declare global {
 
     interface Math {
         easeInOutSine(pos: number): number;
-    }
-
-    interface ObjectConstructor {
-        /**
-         * Sets the prototype of a specified object o to object proto or null.
-         * Returns the object o.
-         * @param o The object to change its prototype.
-         * @param proto The value of the new prototype or null.
-         */
-        setPrototypeOf?<T>(o: T, proto: object | null): T;
     }
 
     interface SVGElement {
@@ -98,6 +131,30 @@ declare global {
         changedTouches: Array<Touch>;
     }
 
+    interface Window {
+        /** @deprecated */
+        opera?: unknown;
+        /** @deprecated */
+        webkitAudioContext?: typeof AudioContext;
+        /** @deprecated */
+        webkitURL?: typeof URL;
+    }
+
+    interface GlobalOptions {
+        /** @deprecated */
+        canvasToolsURL?: string;
+        /** @deprecated */
+        Date?: Function;
+        /** @deprecated */
+        getTimezoneOffset?: Function;
+        /** @deprecated */
+        timezone?: string;
+        /** @deprecated */
+        timezoneOffset?: number;
+        /** @deprecated */
+        useUTC?: boolean;
+    }
+
     namespace Intl {
 
         interface DateTimeFormat {
@@ -108,7 +165,6 @@ declare global {
         }
 
     }
-
 }
 
 /* *

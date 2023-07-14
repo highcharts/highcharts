@@ -40,7 +40,7 @@ Highcharts.chart('container', {
             borderColor: '#8294C9'
         },
         {
-            name: 'Ohter renewable',
+            name: 'Other renewable',
             data: [2.2, 4.8, 0.1, 5, 4.2, 3.3, 17.6, 3.6, 0.6, 40.3],
             borderColor: '#949494'
         },

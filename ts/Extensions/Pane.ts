@@ -616,17 +616,14 @@ addEvent(Chart, 'afterIsInsidePlot', function (
     const chart = this;
 
     if (chart.polar) {
-        let x = e.x - (e.options.paneCoordinates ? chart.plotLeft : 0),
-            y = e.y - (e.options.paneCoordinates ? chart.plotTop : 0);
-
         if (e.options.inverted) {
-            [x, y] = [y, x];
+            [e.x, e.y] = [e.y, e.x];
         }
 
         e.isInsidePlot = (chart as Highcharts.PaneChart).pane.some(
             (pane): boolean => isInsidePane(
-                x,
-                y,
+                e.x,
+                e.y,
                 pane.center,
                 pane.axis && pane.axis.normalizedStartAngleRad,
                 pane.axis && pane.axis.normalizedEndAngleRad

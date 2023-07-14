@@ -246,7 +246,7 @@ class ItemSeries extends PieSeries {
 
         this.points.forEach(function (point): void {
             let attr: SVGAttributes,
-                graphics: Array<SVGElement>,
+                graphics: Array<SVGElement|undefined>,
                 pointAttr: (SVGAttributes|undefined),
                 pointMarkerOptions = point.marker || {},
                 symbol: SymbolKey = (
@@ -316,15 +316,17 @@ class ItemSeries extends PieSeries {
                     if (typeof r !== 'undefined') {
                         attr.r = r;
                     }
+                    // Circles attributes update (#17257)
+                    if (pointAttr) {
+                        extend(attr, pointAttr);
+                    }
 
-                    if (graphics[val]) {
-                        graphics[val].animate(attr);
+                    let graphic = graphics[val];
+
+                    if (graphic) {
+                        graphic.animate(attr);
                     } else {
-                        if (pointAttr) {
-                            extend(attr, pointAttr);
-                        }
-
-                        graphics[val] = renderer
+                        graphic = renderer
                             .symbol(
                                 symbol,
                                 void 0,
@@ -338,19 +340,26 @@ class ItemSeries extends PieSeries {
                             .attr(attr)
                             .add(point.graphic);
                     }
-                    graphics[val].isActive = true;
-
+                    graphic.isActive = true;
+                    graphics[val] = graphic;
                     i++;
                 }
             }
-            graphics.forEach((graphic, i): void => {
+
+            for (let j = 0; j < graphics.length; j++) {
+                const graphic = graphics[j];
+                if (!graphic) {
+                    return;
+                }
+
                 if (!graphic.isActive) {
                     graphic.destroy();
-                    graphics.splice(i, 1);
+                    graphics.splice(j, 1);
+                    j--; // Need to substract 1 after splice, #19053
                 } else {
                     graphic.isActive = false;
                 }
-            });
+            }
         });
     }
 
@@ -697,6 +706,11 @@ export default ItemSeries;
  * @type      {number}
  * @product   highcharts
  * @apioption series.pie.data.legendIndex
+ */
+
+/**
+ * @excluding legendItemClick
+ * @apioption series.item.events
  */
 
 ''; // adds the doclets above to the transpiled file

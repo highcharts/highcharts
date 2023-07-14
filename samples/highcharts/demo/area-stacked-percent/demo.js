@@ -10,7 +10,8 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: ' +
             '<a href="https://energiogklima.no/klimavakten/land-med-hoyest-utslipp/"' +
-            'target="_blank">Energi og Klima</a>'
+            'target="_blank">Energi og Klima</a>',
+        align: 'left'
     },
     accessibility: {
         point: {

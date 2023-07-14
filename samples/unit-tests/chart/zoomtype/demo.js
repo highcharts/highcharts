@@ -2,7 +2,7 @@ QUnit.test('Zoom type', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'line',
-            zoomType: 'x',
+            zoomType: 'y',
             width: 600,
             height: 300
         },
@@ -82,13 +82,28 @@ QUnit.test('Zoom type', function (assert) {
         buttonY,
         'The zoom button should have been re-aligned'
     );
+
+    chart.zoomOut();
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+    const plotTop = chart.plotTop;
+
+    // zoom at the top of the plot
+    controller.pan([500, plotTop + 10], [530, plotTop + 10]);
+    assert.ok(
+        chart.resetZoomButton,
+        'Y zoom should work when panning at the top of the plot on inverted chart (#18103)'
+    );
 });
 
 QUnit.test('Zooming scatter charts', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'scatter',
-            zoomType: 'xy',
+            zoomType: 'y',
             width: 600,
             height: 400
         },
@@ -348,6 +363,35 @@ QUnit.test('Zooming scatter charts', function (assert) {
             }
         ]
     });
+
+    // Update the deprecated properties
+    chart.update({
+        chart: {
+            zoomType: 'xy'
+        }
+    });
+
+    assert.strictEqual(
+        chart.zooming.type,
+        'xy',
+        'There should be support for updating the deprecated zoomType (#17861)'
+    );
+
+    chart.update({
+        chart: {
+            resetZoomButton: {
+                theme: {
+                    zIndex: 8
+                }
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.zooming.resetButton.theme.zIndex,
+        8,
+        'Deprecated zooming properties should be updated (#17861)'
+    );
 
     // Do the first zoom
     chart.pointer.zoomX = chart.pointer.zoomY = true;

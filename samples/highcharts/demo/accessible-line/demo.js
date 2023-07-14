@@ -1,4 +1,4 @@
-var colors = Highcharts.getOptions().colors;
+const colors = Highcharts.getOptions().colors;
 
 Highcharts.chart('container', {
     chart: {
@@ -52,7 +52,8 @@ Highcharts.chart('container', {
                     }
                 }
             },
-            cursor: 'pointer'
+            cursor: 'pointer',
+            lineWidth: 2
         }
     },
 

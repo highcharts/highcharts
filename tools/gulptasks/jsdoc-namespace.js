@@ -20,8 +20,8 @@ const TSCONFIG_FILE = path.join(LINT_DIRECTORY, 'tsconfig.json');
 const TARGET_DIRECTORIES = [
     'gantt',
     'highcharts',
-    'highstock',
-    'highmaps'
+    'highmaps',
+    'highstock'
 ].map(
     directoryName => path.join('build', 'api', directoryName)
 );

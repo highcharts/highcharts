@@ -34,7 +34,7 @@
                 animate = params.animate,
                 attr = params.attr,
                 onComplete = params.onComplete,
-                css = params.css,
+                css = params.css || {},
                 group = params.group,
                 renderer = params.renderer,
                 shape = params.shapeArgs,

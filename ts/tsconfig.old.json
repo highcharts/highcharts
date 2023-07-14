@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "alwaysStrict": false,
+        "composite": true,
+        "declaration": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "keyofStringsOnly": true,
+        "noEmitOnError": true,
+        // "noEmitHelpers": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitThis": true,
+        "strict": true,
+        "module": "ES6",
+        "moduleResolution": "node",
+        "outDir": "../js/",
+        "rootDir": "./",
+        "target": "ES5",
+        "lib": [
+            "DOM",
+            "ES2016"
+        ],
+        "types": [
+            "jquery",
+            "trusted-types"
+        ]
+    },
+    "include": [
+        "**/*.ts"
+    ]
+}

@@ -100,7 +100,6 @@ declare global {
 ''; // detach doclets above
 
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
-import '../Extensions/ArrowSymbols.js';
 
 const deg2rad = H.deg2rad,
     max = Math.max,
@@ -214,6 +213,13 @@ extend(defaultOptions, {
          * @since   6.2.0
          */
         type: 'straight',
+
+        /**
+         * The corner radius for this chart's Pathfinder connecting lines
+         *
+         * @since next
+         */
+        radius: 0,
 
         /**
          * Set the default pixel width for this chart's Pathfinder connecting
@@ -731,7 +737,8 @@ class Connection {
                 connection.graphics[type] = renderer
                     .symbol(options.symbol as any)
                     .addClass(
-                        'highcharts-point-connecting-path-' + type + '-marker'
+                        'highcharts-point-connecting-path-' + type + '-marker' +
+                        ' highcharts-color-' + this.fromPoint.colorIndex
                     )
                     .attr(box)
                     .add((pathfinder as any).group);

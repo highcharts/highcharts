@@ -41,7 +41,7 @@ import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import D from '../Defaults.js';
 const { defaultOptions } = D;
-import F from '../FormatUtilities.js';
+import F from '../Templating.js';
 const { format } = F;
 import U from '../Utilities.js';
 const {
@@ -127,13 +127,15 @@ class Point {
 
     public colorIndex?: number;
 
-    public dataLabels?: Array<SVGLabel>;
+    public dataLabels?: Array<SVGElement|SVGLabel>;
+
+    public destroyed = false;
 
     public formatPrefix: string = 'point';
 
     public graphic?: SVGElement;
 
-    public graphics?: Array<SVGElement>;
+    public graphics?: Array<SVGElement|undefined>;
 
     public id: string = void 0 as any;
 
@@ -189,7 +191,7 @@ class Point {
     public options: PointOptions = void 0 as any;
 
     /**
-     * The percentage for points in a stacked series or pies.
+     * The percentage for points in a stacked series, pies or gauges.
      *
      * @name Highcharts.Point#percentage
      * @type {number|undefined}
@@ -390,63 +392,66 @@ class Point {
      * @function Highcharts.Point#destroy
      */
     public destroy(): void {
-        const point = this,
-            series = point.series,
-            chart = series.chart,
-            dataSorting = series.options.dataSorting,
-            hoverPoints = chart.hoverPoints,
-            globalAnimation = point.series.chart.renderer.globalAnimation,
-            animation = animObject(globalAnimation);
-        let prop;
+        if (!this.destroyed) {
+            const point = this,
+                series = point.series,
+                chart = series.chart,
+                dataSorting = series.options.dataSorting,
+                hoverPoints = chart.hoverPoints,
+                globalAnimation = point.series.chart.renderer.globalAnimation,
+                animation = animObject(globalAnimation);
 
-        /**
-         * Allow to call after animation.
-         * @private
-         */
-        function destroyPoint(): void {
-            // Remove all events and elements
-            if (
-                point.graphic ||
-                point.graphics ||
-                point.dataLabel ||
-                point.dataLabels
-            ) {
-                removeEvent(point);
-                point.destroyElements();
+            /**
+             * Allow to call after animation.
+             * @private
+             */
+            const destroyPoint = (): void => {
+                // Remove all events and elements
+                if (
+                    point.graphic ||
+                    point.graphics ||
+                    point.dataLabel ||
+                    point.dataLabels
+                ) {
+                    removeEvent(point);
+                    point.destroyElements();
+                }
+
+                for (const prop in point) { // eslint-disable-line guard-for-in
+                    delete point[prop];
+                }
+            };
+
+            if (point.legendItem) {
+                // pies have legend items
+                chart.legend.destroyItem(point);
             }
 
-            for (prop in point) { // eslint-disable-line guard-for-in
-                (point as any)[prop] = null;
+            if (hoverPoints) {
+                point.setState();
+                erase(hoverPoints, point);
+                if (!hoverPoints.length) {
+                    chart.hoverPoints = null as any;
+                }
+
             }
-        }
-
-        if (point.legendItem) {
-            // pies have legend items
-            chart.legend.destroyItem(point);
-        }
-
-        if (hoverPoints) {
-            point.setState();
-            erase(hoverPoints, point);
-            if (!hoverPoints.length) {
-                chart.hoverPoints = null as any;
+            if (point === chart.hoverPoint) {
+                point.onMouseOut();
             }
 
-        }
-        if (point === chart.hoverPoint) {
-            point.onMouseOut();
-        }
+            // Remove properties after animation
+            if (!dataSorting || !dataSorting.enabled) {
+                destroyPoint();
 
-        // Remove properties after animation
-        if (!dataSorting || !dataSorting.enabled) {
-            destroyPoint();
+            } else {
+                this.animateBeforeDestroy();
+                syncTimeout(destroyPoint, animation.duration);
+            }
 
-        } else {
-            this.animateBeforeDestroy();
-            syncTimeout(destroyPoint, animation.duration);
+            chart.pointCount--;
         }
 
-        chart.pointCount--;
+        this.destroyed = true;
     }
 
     /**
@@ -466,7 +471,7 @@ class Point {
 
         props.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
-                if (item.element) {
+                if (item && item.element) {
                     item.destroy();
                 }
             });
@@ -519,7 +524,7 @@ class Point {
             defaultFunction = function (event: MouseEvent): void {
                 // Control key is for Windows, meta (= Cmd key) for Mac, Shift
                 // for Opera.
-                if (point.select) { // #2911
+                if (!point.destroyed && point.select) { // #2911, #19075
                     point.select(
                         null as any,
                         event.ctrlKey || event.metaKey || event.shiftKey
@@ -570,7 +575,7 @@ class Point {
         kinds = kinds || { graphic: 1, dataLabel: 1 };
 
         if (kinds.graphic) {
-            props.push('graphic', 'shadowGroup');
+            props.push('graphic');
         }
         if (kinds.dataLabel) {
             props.push(
@@ -811,6 +816,50 @@ class Point {
             }
         }
         return ret;
+    }
+
+    /**
+     * Get the pixel position of the point relative to the plot area.
+     * @function Highcharts.Point#pos
+     *
+     * @sample highcharts/point/position
+     *         Get point's position in pixels.
+     *
+     * @param {boolean} chartCoordinates
+     * If true, the returned position is relative to the full chart area.
+     * If false, it is relative to the plot area determined by the axes.
+     *
+     * @param {number|undefined} plotY
+     * A custom plot y position to be computed. Used internally for some
+     * series types that have multiple `y` positions, like area range (low
+     * and high values).
+     *
+     * @return {Array<number>|undefined}
+     * Coordinates of the point if the point exists.
+     */
+    public pos(
+        chartCoordinates?: boolean,
+        plotY: number|undefined = this.plotY
+    ): [number, number]|undefined {
+
+        if (!this.destroyed) {
+            const { plotX, series } = this,
+                { chart, xAxis, yAxis } = series;
+
+            let posX = 0,
+                posY = 0;
+
+            if (isNumber(plotX) && isNumber(plotY)) {
+                if (chartCoordinates) {
+                    posX = xAxis ? xAxis.pos : chart.plotLeft;
+                    posY = yAxis ? yAxis.pos : chart.plotTop;
+                }
+                return chart.inverted && xAxis && yAxis ?
+                    [yAxis.len - plotY + posY, xAxis.len - plotX + posX] :
+                    [plotX + posX, plotY + posY];
+            }
+        }
+
     }
 
     /**
@@ -1563,15 +1612,14 @@ class Point {
      *         The path definition.
      */
     public haloPath(size: number): SVGPath {
-        const series = this.series,
-            chart = series.chart;
+        const pos = this.pos();
 
-        return chart.renderer.symbols.circle(
-            Math.floor(this.plotX as any) - size,
-            (this.plotY as any) - size,
+        return pos ? this.series.chart.renderer.symbols.circle(
+            Math.floor(pos[0]) - size,
+            pos[1] - size,
             size * 2,
             size * 2
-        );
+        ) : [];
     }
 
 }

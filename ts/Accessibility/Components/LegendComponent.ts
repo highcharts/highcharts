@@ -369,7 +369,8 @@ class LegendComponent extends AccessibilityComponent {
                 chart.legend.options.title &&
                 chart.legend.options.title.text ||
                 ''
-            ).replace(/<br ?\/?>/g, ' ')
+            ).replace(/<br ?\/?>/g, ' '),
+            chart.renderer.forExport
         );
         const legendLabel = chart.langFormat(
             'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'),
@@ -438,7 +439,10 @@ class LegendComponent extends AccessibilityComponent {
             'accessibility.legend.legendItem',
             {
                 chart: this.chart,
-                itemName: stripHTMLTags((item as any).name),
+                itemName: stripHTMLTags(
+                    (item as any).name,
+                    this.chart.renderer.forExport
+                ),
                 item
             }
         );
@@ -646,7 +650,7 @@ namespace LegendComponent {
      * */
 
 
-    const composedClasses: Array<Function> = [];
+    const composedMembers: Array<unknown> = [];
 
 
     /* *
@@ -702,23 +706,20 @@ namespace LegendComponent {
         LegendClass: typeof Legend
     ): void {
 
-        if (composedClasses.indexOf(ChartClass) === -1) {
-            composedClasses.push(ChartClass);
-
+        if (U.pushUnique(composedMembers, ChartClass)) {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightLegendItem = chartHighlightLegendItem;
         }
 
-        if (composedClasses.indexOf(LegendClass) === -1) {
-            composedClasses.push(LegendClass);
-
+        if (U.pushUnique(composedMembers, LegendClass)) {
             addEvent(
                 LegendClass as typeof LegendComposition,
                 'afterColorizeItem',
                 legendOnAfterColorizeItem
             );
         }
+
     }
 
 

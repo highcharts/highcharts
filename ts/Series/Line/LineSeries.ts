@@ -30,7 +30,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     defined,
-    merge
+    merge,
+    isObject
 } = U;
 
 /* *
@@ -60,7 +61,7 @@ class LineSeries extends Series {
          * @optionparent plotOptions.series
          */
         {
-            // nothing here yet
+            legendSymbol: 'lineMarker'
         } as PlotOptionsOf<LineSeries>
     );
 
@@ -166,16 +167,32 @@ class LineSeries extends Series {
                     'fill': (series.fillGraph && series.color) || 'none'
                 };
 
+                // Apply dash style
                 if (prop[3]) {
                     attribs.dashstyle = prop[3] as any;
+
+                // The reason for the `else if` is that linecaps don't mix well
+                // with dashstyle. The gaps get partially filled by the
+                // linecap.
                 } else if (options.linecap !== 'square') {
                     attribs['stroke-linecap'] =
                         attribs['stroke-linejoin'] = 'round';
                 }
+
                 graph[verb](attribs)
-                    // Add shadow to normal series (0) or to first
-                    // zone (1) #3932
-                    .shadow((i < 2) && options.shadow);
+                // Add shadow to normal series (0) or to first
+                // zone (1) #3932
+                    .shadow(
+                        (i < 2) &&
+                        options.shadow &&
+                        // If shadow is defined, call function with
+                        // `filterUnits: 'userSpaceOnUse'` to avoid known
+                        // SVG filter bug (#19093)
+                        merge(
+                            { filterUnits: 'userSpaceOnUse' },
+                            isObject(options.shadow) ? options.shadow : {}
+                        )
+                    );
             }
 
             // Helpers for animation
@@ -232,7 +249,8 @@ class LineSeries extends Series {
 
             const plotX = point.plotX,
                 plotY = point.plotY,
-                lastPoint = (points as any)[i - 1];
+                lastPoint = (points as any)[i - 1],
+                isNull = point.isNull || typeof plotY !== 'number';
             // the path to this point from the previous
             let pathToPoint: SVGPath;
 
@@ -244,11 +262,11 @@ class LineSeries extends Series {
             }
 
             // Line series, nullsAsZeroes is not handled
-            if (point.isNull && !defined(nullsAsZeroes) && i > 0) {
+            if (isNull && !defined(nullsAsZeroes) && i > 0) {
                 gap = !options.connectNulls;
 
             // Area series, nullsAsZeroes is set
-            } else if (point.isNull && !nullsAsZeroes) {
+            } else if (isNull && !nullsAsZeroes) {
                 gap = true;
 
             } else {
@@ -541,6 +559,9 @@ export default LineSeries;
  * change the color of the graphic. In non-styled mode, the color is set by the
  * `fill` attribute, so the change in class name won't have a visual effect by
  * default.
+ *
+ * Since v11, CSS variables on the form `--highcharts-color-{n}` make changing
+ * the color scheme very convenient.
  *
  * @sample    {highcharts} highcharts/css/colorindex/
  *            Series and point color index

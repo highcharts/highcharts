@@ -21,7 +21,7 @@ import type {
 import type ColorString from '../../Color/ColorString';
 import type CSSObject from '../../Renderer/CSSObject';
 import type DashStyleValue from '../../Renderer/DashStyleValue';
-import type FormatUtilities from '../../FormatUtilities';
+import type Templating from '../../Templating';
 import type PlotLineOrBand from './PlotLineOrBand';
 
 /* *
@@ -32,7 +32,8 @@ import type PlotLineOrBand from './PlotLineOrBand';
 
 export interface PlotLineLabelOptions {
     align?: AlignValue;
-    formatter?: FormatUtilities.FormatterCallback<PlotLineOrBand>;
+    clip?: boolean;
+    formatter?: Templating.FormatterCallback<PlotLineOrBand>;
     rotation?: number;
     style?: CSSObject;
     text?: string;
