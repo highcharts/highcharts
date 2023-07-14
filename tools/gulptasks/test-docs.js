@@ -15,7 +15,7 @@ async function checkDocsConsistency() {
     const LogLib = require('./lib/log');
 
     // Check links and references to samples
-    LogLib.message('Checking links to samples in ts files...');
+    LogLib.message('Checking links to samples in *.ts files...');
     glob.sync(process.cwd() + '/ts/**/*.ts').forEach(file => {
         const md = FS.readFileSync(file),
             regex = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
@@ -38,6 +38,7 @@ async function checkDocsConsistency() {
         }
 
     });
+    LogLib.message('Checking links to samples in *.md files...');
     glob.sync(process.cwd() + '/docs/**/*.md').forEach(file => {
         const md = FS.readFileSync(file),
             regex = /(https:\/\/jsfiddle.net\/gh\/get\/library\/pure\/highcharts\/highcharts\/tree\/master\/samples|https:\/\/www.highcharts.com\/samples\/embed)\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)/gu,
