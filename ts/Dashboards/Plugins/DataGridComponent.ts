@@ -382,24 +382,24 @@ class DataGridComponent extends Component {
     }
 
     /**
-     * Based on the `columnsToShow` option, filter the columns of the table.
+     * Based on the `visibleColumns` option, filter the columns of the table.
      *
      * @internal
      */
     private filterColumns(): DataTable|undefined {
         const table = this.connector?.table.modified,
-            columnsToShow = this.options.columnsToShow;
+            visibleColumns = this.options.visibleColumns;
 
         if (table) {
-            // Show all columns if no columnsToShow is provided.
-            if(!columnsToShow?.length ) {
+            // Show all columns if no visibleColumns is provided.
+            if(!visibleColumns?.length ) {
                 return table;
             }
 
             const columnsToDelete = table.getColumnNames().filter((columnName): boolean => {
-                if (columnsToShow?.length) {
+                if (visibleColumns?.length) {
                     // Don't add columns that are not listed.
-                    if (!columnsToShow.includes(columnName)) {
+                    if (!visibleColumns.includes(columnName)) {
                         return true;
                     }
 
@@ -515,8 +515,11 @@ namespace DataGridComponent {
          */
         chartID?: string;
 
+        /** @private */
+        tableAxisMap?: Record<string, string | null>;
+
         /**
-         * If the `columnsToShow` option is not provided, the data grid will
+         * If the `visibleColumns` option is not provided, the data grid will
          * calculate and include each column from the data connector.
          * When declared, the data grid will only include the columns that are
          * listed.
@@ -525,13 +528,10 @@ namespace DataGridComponent {
          * `dataGridOptions.columns` option.
          * ```
          * Example
-         * columnsToShow: ['Food', 'Vitamin A']
+         * visibleColumns: ['Food', 'Vitamin A']
          * ```
          */
-        columnsToShow?: Array<string>;
-
-        /** @private */
-        tableAxisMap?: Record<string, string | null>;
+        visibleColumns?: Array<string>;
 
     }
 

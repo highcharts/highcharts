@@ -84,7 +84,7 @@ Dashboards.board('container', {
                 highlight: true,
                 extremes: true
             },
-            columnsToShow: ['Food', 'Vitamin A']
+            visibleColumns: ['Food', 'Vitamin A']
         }
     ]
 }, true);
