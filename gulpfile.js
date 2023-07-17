@@ -29,6 +29,7 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/cypress',
     'dashboards/dist-build',
     'dashboards/dist-minify',
+    'dashboards/dist-productsjs',
     'dashboards/dist-release',
     'dashboards/dist-upload',
     'dashboards/dist-zip',
