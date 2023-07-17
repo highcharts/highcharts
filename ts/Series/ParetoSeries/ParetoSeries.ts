@@ -167,14 +167,16 @@ class ParetoSeries extends LineSeries {
      * @requires modules/pareto
      */
     public setDerivedData(): void {
-        const baseSeries = this.baseSeries;
+        if (!this.baseSeries) {
+            return;
+        }
+
+        const baseSeries = this.baseSeries,
+            xData = baseSeries?.xData || [],
+            yData = baseSeries?.yData as Array<number> || [];
 
         let xValues: Array<number> = [],
             yValues: Array<number> = [];
-
-        if (!baseSeries) {
-            return;
-        }
 
         // If base series needs sorting, set & sort the data, #19046.
         if (baseSeries.enabledDataSorting) {
@@ -183,29 +185,27 @@ class ParetoSeries extends LineSeries {
             // Array of [x, y]
             const data: Array<[number, number]> = [];
 
-            for (let i = 0; i < (baseSeries?.xData?.length || 0); i++) {
+            for (let i = 0; i < xData.length; i++) {
                 data.push([
-                    baseSeries?.xData?.[i] || 0,
-                    baseSeries?.yData?.[i] as any || 0
+                    xData[i] || 0,
+                    yData[i] || 0
                 ]);
             }
 
-            data.sort((a, b): number => b[1] - a[1]);
+            // Sort the data by 'x' or 'y'
+            const sortKey: number = +(
+                (baseSeries?.options?.dataSorting?.sortKey || 'y') === 'y'
+            );
+            data.sort((a, b): number => b[sortKey] - a[sortKey]);
 
             xValues = data.map((d): number => d[0]);
             yValues = data.map((d): number => d[1]);
         } else {
-            xValues = baseSeries.xData || [];
-            yValues = baseSeries.yData as any;
+            xValues = xData;
+            yValues = yData;
         }
 
-        const sum = this.sumPointsPercents(
-            yValues,
-            xValues,
-            null as any,
-            true
-        );
-
+        const sum = this.sumPointsPercents(yValues, xValues, 0, true);
         this.setData(
             this.sumPointsPercents(yValues, xValues, sum, false),
             false
