@@ -730,6 +730,10 @@ abstract class Component {
             width,
             height
         });
+
+        fireEvent(this, 'redraw', {
+            component: this
+        });
     }
 
     /**
@@ -891,9 +895,11 @@ abstract class Component {
         // Setup event listeners
         // Grabbed from Chart.ts
         const events = this.options.events;
+
         if (events) {
             Object.keys(events).forEach((key): void => {
                 const eventCallback = (events as any)[key];
+
                 if (eventCallback) {
                     this.callbackRegistry.addCallback(key, {
                         type: 'component',
@@ -1248,7 +1254,7 @@ namespace Component {
          */
         navigationBindings?: Array<Globals.AnyRecord>;
         /**
-         * Events attached to the component : `mount`, `unmount`.
+         * Events attached to the component : `mount`, `unmount`, `redraw`.
          *
          * Try it:
          *
