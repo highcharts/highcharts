@@ -105,7 +105,7 @@ async function distBuild() {
         true,
         file => (
             path.basename(file)[0] !== '.' &&
-            file.includes('dashboard')
+            file.includes('dashboards')
         )
     );
     logLib.success(`Created ${buildGfxTarget}`);
