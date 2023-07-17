@@ -631,7 +631,7 @@ connector.load();
 const editMode = {
     enabled: true,
     contextMenu: {
-        icon: 'https://code.highcharts.com/gfx/dashboard-icons/menu.svg',
+        icon: 'https://code.highcharts.com/gfx/dashboards-icons/menu.svg',
         enabled: true,
         items: ['editMode', {
             id: 'export-dashboard',
@@ -684,10 +684,10 @@ const editMode = {
             menu: {
                 items: [{
                     id: 'drag',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/drag.svg'
                 }, {
                     id: 'settings',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/settings.svg'
                 }, {
                     id: 'my-option-1',
                     text: 't1',
@@ -698,7 +698,7 @@ const editMode = {
                     }
                 }, {
                     id: 'destroy',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/destroy.svg'
                 }]
             }
         },
@@ -706,19 +706,19 @@ const editMode = {
             menu: {
                 items: [{
                     id: 'drag',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/drag.svg'
                 }, {
                     id: 'settings',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/settings.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/settings.svg'
                 }, {
                     id: 'destroy',
-                    icon: 'https://code.highcharts.com/gfx/dashboard-icons/destroy.svg'
+                    icon: 'https://code.highcharts.com/gfx/dashboards-icons/destroy.svg'
                 }]
             }
         },
         settings: {
-            closeIcon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg',
-            dragIcon: 'https://code.highcharts.com/gfx/dashboard-icons/drag.svg'
+            closeIcon: 'https://code.highcharts.com/gfx/dashboards-icons/close.svg',
+            dragIcon: 'https://code.highcharts.com/gfx/dashboards-icons/drag.svg'
         }
     },
     lang: {
@@ -727,12 +727,12 @@ const editMode = {
     },
     tools: {
         addComponentBtn: {
-            icon: 'https://code.highcharts.com/gfx/dashboard-icons/add.svg'
+            icon: 'https://code.highcharts.com/gfx/dashboards-icons/add.svg'
         }
     },
     confirmationPopup: {
         close: {
-            icon: 'https://code.highcharts.com/gfx/dashboard-icons/close.svg'
+            icon: 'https://code.highcharts.com/gfx/dashboards-icons/close.svg'
         }
     },
     resize: {
