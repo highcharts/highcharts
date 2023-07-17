@@ -21,19 +21,20 @@
 
 import type Cell from '../Layout/Cell';
 import type DataGrid from '../../DataGrid/DataGrid';
+import type DataTable from '../../Data/DataTable';
 import type DataGridOptions from '../../DataGrid/DataGridOptions';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
+import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 const {
+    diffObjects,
     merge,
-    uniqueKey,
-    diffObjects
+    uniqueKey
 } = U;
-import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 
 /* *
  *
@@ -228,7 +229,10 @@ class DataGridComponent extends Component {
      *
      * */
 
-    /** @private */
+    /**
+     * Triggered on component initialization.
+     * @private
+     */
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -240,7 +244,6 @@ class DataGridComponent extends Component {
             !this.connectorListeners.length
         ) {
             const connectorListeners = this.connectorListeners;
-            // this.on('tableChanged', (): void => this.updateSeries());
 
             // Reload the store when polling.
             connectorListeners.push(this.connector
@@ -301,7 +304,7 @@ class DataGridComponent extends Component {
             this.dataGrid &&
             this.dataGrid.dataTable.modified !== this.connector.table.modified
         ) {
-            this.dataGrid.update({ dataTable: this.connector.table.modified });
+            this.dataGrid.update({ dataTable: this.filterColumns() });
         }
 
         this.sync.start();
@@ -375,6 +378,38 @@ class DataGridComponent extends Component {
                     );
                 }
             });
+        }
+    }
+
+    /**
+     * Based on the `visibleColumns` option, filter the columns of the table.
+     *
+     * @internal
+     */
+    private filterColumns(): DataTable|undefined {
+        const table = this.connector?.table.modified,
+            visibleColumns = this.options.visibleColumns;
+
+        if (table) {
+            // Show all columns if no visibleColumns is provided.
+            if (!visibleColumns?.length) {
+                return table;
+            }
+
+            const columnsToDelete = table
+                .getColumnNames()
+                .filter((columnName): boolean => (
+                    visibleColumns?.length > 0 &&
+                    // Don't add columns that are not listed.
+                    !visibleColumns.includes(columnName)
+                    // Else show the other columns.
+                ));
+
+            // On a fresh table clone remove the columns that are not mapped.
+            const filteredTable = table.clone();
+            filteredTable.deleteColumns(columnsToDelete);
+
+            return filteredTable;
         }
     }
 
@@ -455,7 +490,7 @@ namespace DataGridComponent {
         dataGridID?: string;
 
         /**
-         * Callback to use when a change in the data grid occures.
+         * Callback to use when a change in the data grid occurs.
          */
         onUpdate: typeof DataGridComponent.onUpdate
 
@@ -476,21 +511,23 @@ namespace DataGridComponent {
          */
         chartID?: string;
 
-        /**
-         * Names / aliases that should be mapped to xAxis values. You can use
-         * null to keep columns selectively out of the chart.
-         * ```
-         * Example
-         * columnAssignment: {
-         *      'Food': 'x',
-         *      'Vitamin A': 'y'
-         * }
-         * ```
-         */
-        columnAssignment?: Record<string, string | null>;
-
         /** @private */
         tableAxisMap?: Record<string, string | null>;
+
+        /**
+         * If the `visibleColumns` option is not provided, the data grid will
+         * calculate and include each column from the data connector.
+         * When declared, the data grid will only include the columns that are
+         * listed.
+         *
+         * Alternatively, the column visibility can be controlled by the
+         * `dataGridOptions.columns` option.
+         * ```
+         * Example
+         * visibleColumns: ['Food', 'Vitamin A']
+         * ```
+         */
+        visibleColumns?: Array<string>;
 
     }
 
