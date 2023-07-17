@@ -93,12 +93,12 @@ class DataGridComponent extends Component {
      * @param e
      * Related keyboard event of the change.
      *
-     * @param store
+     * @param connector
      * Relate store of the change.
      */
     public static onUpdate(
         e: KeyboardEvent,
-        store: Component.ConnectorTypes
+        connector: Component.ConnectorTypes
     ): void {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {
@@ -122,7 +122,7 @@ class DataGridComponent extends Component {
                     dataTableRowIndex !== void 0 &&
                     columnName !== void 0
                 ) {
-                    const table = store.table.modified;
+                    const table = connector.table;
 
                     if (table) {
                         let valueToSet = converter
