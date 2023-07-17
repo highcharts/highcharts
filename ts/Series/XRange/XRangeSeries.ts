@@ -413,22 +413,22 @@ class XRangeSeries extends ColumnSeries {
         );
 
         // Centering tooltip position (#14147)
-        if (!inverted) {
+        if (inverted) {
+            tooltipPos[xIndex] += shapeArgs.width / 2;
+        } else {
             tooltipPos[xIndex] = clamp(
                 tooltipPos[xIndex] +
                 (xAxis.reversed ? -1 : 0) * shapeArgs.width,
                 0,
-                xAxis.len - 1
+                xAxis.left + xAxis.len - 1
             );
-        } else {
-            tooltipPos[xIndex] += shapeArgs.width / 2;
         }
         tooltipPos[yIndex] = clamp(
             tooltipPos[yIndex] + (
                 (inverted ? -1 : 1) * tooltipYOffset
             ),
             0,
-            yAxis.len - 1
+            yAxis.top + yAxis.len - 1
         );
 
         // Add a partShapeArgs to the point, based on the shapeArgs property
