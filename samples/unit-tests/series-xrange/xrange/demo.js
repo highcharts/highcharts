@@ -822,4 +822,28 @@ QUnit.test('XRange series and tooltip position', assert => {
         'Tooltip on plotLeft when only far right part of the point is visible'
     );
 
+    chart.update({
+        xAxis: {
+            left: '75%',
+            width: '25%'
+        },
+        yAxis: {
+            top: '75%',
+            height: '25%'
+        }
+    });
+
+    const point = chart.series[0].points[0];
+
+    assert.strictEqual(
+        point.tooltipPos[0],
+        chart.xAxis[0].left - chart.plotLeft,
+        'Tooltip position should be correct on the resized x-axis. (#19343)'
+    );
+
+    assert.ok(
+        point.tooltipPos[1] > chart.yAxis[0].top - chart.plotTop,
+        `Tooltip y position should be greater than the top boundery of the
+        resized y-axis. (#19343)`
+    );
 });
