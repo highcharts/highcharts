@@ -14,7 +14,6 @@ const gulp = require('gulp');
  * Gulp task to run the building process of distribution js files the classic
  * way.
  *
- * @deprecated
  * @return {Promise<void>}
  * Promise to keep
  */
