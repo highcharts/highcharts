@@ -154,6 +154,10 @@ class TreegraphPoint extends TreemapPoint {
             if (btnOptions.onlyOnHover && !point.collapsed) {
                 point.collapseButton.attr({ opacity: 0 });
             }
+
+            point.collapseButton.attr({
+                opacity: point.visible ? 1 : 0
+            });
         } else {
             if (!point.node.children.length || !btnOptions.enabled) {
                 point.collapseButton.destroy();
