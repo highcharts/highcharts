@@ -52,7 +52,7 @@ Dashboards.board('container', {
             columnAssignment: {
                 Food: 'x',
                 'Vitamin A': 'y',
-                notVisible: null
+                hiddenColumn: null
             },
             chartOptions: {
                 xAxis: {
