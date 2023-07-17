@@ -5,7 +5,7 @@ const gulp = require('gulp');
 
 const { stat } = require('node:fs/promises');
 
-require('../../gulpfile.js');
+require('../gulpfile.js');
 
 
 function runGulpTasks(gulpTasks = []) {
