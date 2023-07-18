@@ -74,14 +74,7 @@ Dashboards.board('container', {
             },
             sync: {
                 highlight: true
-            },
-            columns: {
-                // Disable Math column for editing
-                USD: {
-                    editable: false
-                }
-            },
-            editable: true
+            }
         }
     ]
 });
