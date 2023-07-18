@@ -58,6 +58,14 @@ Dashboards.board('container', {
                     type: 'line',
                     zooming: false
                 },
+                plotOptions: {
+                    series: {
+                        dragDrop: {
+                            draggableY: true
+                        }
+                    }
+
+                },
                 tooltip: {
                     shared: true,
                     split: true

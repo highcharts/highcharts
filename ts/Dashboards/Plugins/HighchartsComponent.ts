@@ -551,7 +551,7 @@ class HighchartsComponent extends Component {
     ): void {
         const table = store.table,
             columnName = point.series.name,
-            rowNumber = point.x,
+            rowNumber = point.index,
             converter = new DataConverter(),
             valueToSet = converter.asNumber(point.y);
 
