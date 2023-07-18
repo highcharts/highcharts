@@ -18,7 +18,7 @@ describe('DataGrid and data csvURL.', () => {
             });
         });
 
-        cy.visit('/dashboards/cypress/component-datagrid-csvurl');
+        cy.visit('/dashboards/cypress/component-datagrid-csv-url');
     });
 
     it('Should render the DataGrid when data provided through csvURL.', () => {
