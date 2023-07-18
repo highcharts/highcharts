@@ -24,6 +24,8 @@ import type DataGrid from '../../DataGrid/DataGrid';
 import type DataTable from '../../Data/DataTable';
 import type DataGridOptions from '../../DataGrid/DataGridOptions';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
+import type { ColumnOptions } from '../../DataGrid/DataGridOptions';
+import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
 
 import Component from '../Components/Component.js';
 import DataConnector from '../../Data/Connectors/DataConnector.js';
@@ -31,7 +33,7 @@ import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
 import DataConnectorType from '../../Data/Connectors/DataConnectorType';
-import MathModifier from '../../Data/Modifiers/MathModifier';
+
 const {
     diffObjects,
     merge,
@@ -217,13 +219,13 @@ class DataGridComponent extends Component {
             this.syncHandlers
         );
 
-        this.dataGridOptions = this.options.dataGridOptions || ({} as any);
+        this.dataGridOptions = this.options.dataGridOptions || ({} as DataGridOptions);
 
         this.innerResizeTimeouts = [];
 
 
-        this.on('setConnector', (e: any) => {
-            this.disableModifiedColumns(e.connector);
+        this.on('setConnector', (e: any): void => {
+            this.disableEditingModifiedColumns(e.connector);
         });
 
         this.on('tableChanged', (): void => {
@@ -234,17 +236,24 @@ class DataGridComponent extends Component {
         Component.addInstance(this);
     }
 
-    private disableModifiedColumns(connector: DataConnectorType) {
+    /**
+     * Disable editing of the columns that are modified by the data modifier.
+     * @internal
+     *
+     * @param connector
+     * Attached connector
+     */
+    private disableEditingModifiedColumns(connector: DataConnectorType) {
         const dataModifier = connector.options.dataModifier;
 
-        if (!dataModifier) {
+        if (!dataModifier || dataModifier.type !== 'Math') {
             return;
         }
-        const modifierColumns = (dataModifier as any).columnFormulas;
+        const modifierColumns = (dataModifier as MathModifierOptions).columnFormulas;
         if (!modifierColumns) {
             return;
         }
-        const options = {} as any;
+        const options = {} as Record<string, ColumnOptions>;
 
         for (let i = 0, iEnd = modifierColumns.length; i < iEnd; ++i) {
             const columnName = modifierColumns[i].column;
