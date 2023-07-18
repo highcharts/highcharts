@@ -83,13 +83,6 @@ Dashboards.board('container', {
             sync: {
                 highlight: true
             },
-            dataGridOptions: {
-                columns: {
-                    USD: {
-                        editable: false
-                    }
-                }
-            },
             editable: true
         }
     ]

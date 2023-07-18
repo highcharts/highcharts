@@ -30,6 +30,8 @@ import DataConnector from '../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import DataGridSyncHandlers from './DataGridSyncHandlers.js';
 import U from '../../Core/Utilities.js';
+import DataConnectorType from '../../Data/Connectors/DataConnectorType';
+import MathModifier from '../../Data/Modifiers/MathModifier';
 const {
     diffObjects,
     merge,
@@ -219,12 +221,40 @@ class DataGridComponent extends Component {
 
         this.innerResizeTimeouts = [];
 
+
+        this.on('setConnector', (e: any) => {
+            this.disableModifiedColumns(e.connector);
+        });
+
         this.on('tableChanged', (): void => {
             this.dataGrid?.update({ dataTable: this.filterColumns() });
         });
 
         // Add the component instance to the registry
         Component.addInstance(this);
+    }
+
+    private disableModifiedColumns(connector: DataConnectorType) {
+        const dataModifier = connector.options.dataModifier;
+
+        if (!dataModifier) {
+            return;
+        }
+        const modifierColumns = (dataModifier as any).columnFormulas;
+        if (!modifierColumns) {
+            return;
+        }
+        const options = {} as any;
+
+        for (let i = 0, iEnd = modifierColumns.length; i < iEnd; ++i) {
+            const columnName = modifierColumns[i].column;
+            options[columnName] = {
+                editable: false
+            }
+        }
+        this.dataGrid?.update({ columns: options })
+
+
     }
 
     /* *
@@ -258,7 +288,7 @@ class DataGridComponent extends Component {
                 })
             );
 
-            // Update the DataGrid when store changed.
+            // Update the DataGrid when connector changed.
             connectorListeners.push(this.connector.table
                 .on('afterSetCell', (e: any): void => {
                     const dataGrid = this.dataGrid;
