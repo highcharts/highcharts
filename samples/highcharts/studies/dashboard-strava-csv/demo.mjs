@@ -5,12 +5,11 @@ import RangeModifier from '../../../../code/es-modules/Data/Modifiers/RangeModif
 import ChainModifier from '../../../../code/es-modules/Data/Modifiers/ChainModifier.js';
 import GroupModifier from '../../../../code/es-modules/Data/Modifiers/GroupModifier.js';
 import SortModifier from '../../../../code/es-modules/Data/Modifiers/SortModifier.js';
-import DataConnector from '../../../../code/es-modules/Data/Connectors/DataConnector.js';
 import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
 import PluginHandler from '../../../../code/es-modules/Dashboard/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
-import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugins/HighchartsPlugin.js';
+import HighchartsPlugin from '../../../../code/es-modules/Dashboards/Plugins/HighchartsPlugin.js';
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);

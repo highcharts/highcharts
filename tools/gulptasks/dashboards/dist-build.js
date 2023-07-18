@@ -66,12 +66,16 @@ async function distBuild() {
     const fsLib = require('../lib/fs');
     const logLib = require('../lib/log');
 
-    const {
+    let {
         release
     } = require('yargs').argv;
 
     if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(release)) {
-        throw new Error('No valid `--release x.x.x` provided.');
+        if (process.env.DASH_RELEASE) {
+            release = process.env.DASH_RELEASE;
+        } else {
+            throw new Error('No valid `--release x.x.x` provided.');
+        }
     }
 
     const {
@@ -105,7 +109,7 @@ async function distBuild() {
         true,
         file => (
             path.basename(file)[0] !== '.' &&
-            file.includes('dashboard')
+            file.includes('dashboards')
         )
     );
     logLib.success(`Created ${buildGfxTarget}`);

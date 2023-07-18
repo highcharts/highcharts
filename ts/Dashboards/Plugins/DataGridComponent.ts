@@ -34,7 +34,7 @@ const {
     diffObjects,
     merge,
     uniqueKey
-    } = U;
+} = U;
 
 /* *
  *
@@ -219,6 +219,10 @@ class DataGridComponent extends Component {
 
         this.innerResizeTimeouts = [];
 
+        this.on('tableChanged', (): void => {
+            this.dataGrid?.update({ dataTable: this.filterColumns() });
+        });
+
         // Add the component instance to the registry
         Component.addInstance(this);
     }
@@ -392,22 +396,18 @@ class DataGridComponent extends Component {
 
         if (table) {
             // Show all columns if no visibleColumns is provided.
-            if(!visibleColumns?.length ) {
+            if (!visibleColumns?.length) {
                 return table;
             }
 
-            const columnsToDelete = table.getColumnNames().filter((columnName): boolean => {
-                if (visibleColumns?.length) {
+            const columnsToDelete = table
+                .getColumnNames()
+                .filter((columnName): boolean => (
+                    visibleColumns?.length > 0 &&
                     // Don't add columns that are not listed.
-                    if (!visibleColumns.includes(columnName)) {
-                        return true;
-                    }
-
-                    // Show the other columns.
-                    return false;
-                }
-                return false;
-            });
+                    !visibleColumns.includes(columnName)
+                    // Else show the other columns.
+                ));
 
             // On a fresh table clone remove the columns that are not mapped.
             const filteredTable = table.clone();
