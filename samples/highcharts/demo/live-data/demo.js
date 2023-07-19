@@ -6,7 +6,7 @@ const pollingInput = document.getElementById('pollingTime');
 function createChart() {
     Highcharts.chart('container', {
         chart: {
-            type: 'spline'
+            type: 'areaspline'
         },
         title: {
             text: 'Live Data'
@@ -23,6 +23,25 @@ function createChart() {
                         return 'New point added. Value: ' + newPoint.y;
                     }
                     return false;
+                }
+            }
+        },
+        plotOptions: {
+            areaspline: {
+                color: {
+                    linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+                    stops: [
+                        [0, 'lime'],
+                        [2, 'tomato'],
+                        [2.5, 'red']
+                    ]
+                },
+                fillOpacity: 0.3,
+                threshold: null,
+                marker: {
+                    lineWidth: 1,
+                    lineColor: 'blue',
+                    fillColor: 'white'
                 }
             }
         },
