@@ -224,7 +224,7 @@ class DataGridComponent extends Component {
         this.innerResizeTimeouts = [];
 
 
-        this.on('setConnector', (e: any): void => {
+        this.on('afterSetConnector', (e: any): void => {
             this.disableEditingModifiedColumns(e.connector);
         });
 
