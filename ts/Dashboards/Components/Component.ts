@@ -730,10 +730,6 @@ abstract class Component {
             width,
             height
         });
-
-        fireEvent(this, 'redraw', {
-            component: this
-        });
     }
 
     /**
@@ -1254,7 +1250,7 @@ namespace Component {
          */
         navigationBindings?: Array<Globals.AnyRecord>;
         /**
-         * Events attached to the component : `mount`, `unmount`, `redraw`.
+         * Events attached to the component : `mount`, `unmount`, `resize`, `update`.
          *
          * Try it:
          *

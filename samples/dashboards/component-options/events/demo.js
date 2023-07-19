@@ -132,8 +132,11 @@ Dashboards.board('container', {
             unmount: function () {
                 console.log('unmount');
             },
-            redraw: function () {
-                console.log('redraw');
+            resize: function () {
+                console.log('resize');
+            },
+            update: function () {
+                console.log('update');
             }
         }
     },
