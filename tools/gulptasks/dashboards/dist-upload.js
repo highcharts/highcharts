@@ -352,7 +352,7 @@ async function distUpload() {
         path.join(buildFolder, '..', 'products.js'),
         targetStorage,
         bucket,
-        '/'
+        '.'
     );
 
     const cdnVersionFolder = path.join(cdnFolder, release, '/');
