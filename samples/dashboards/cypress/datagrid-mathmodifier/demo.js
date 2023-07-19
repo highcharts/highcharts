@@ -86,4 +86,4 @@ Dashboards.board('container', {
             editable: true
         }
     ]
-}, true);
+});
