@@ -45,5 +45,7 @@ describe('Component events', () => {
     cy.get('.highcharts-dashboards-component').first().click();
     cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(2)').click();
     cy.contains('Confirm').click();
+
+    cy.get('#update').should('have.value', 'update');
   });
 });
