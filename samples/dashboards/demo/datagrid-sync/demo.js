@@ -61,8 +61,7 @@ const board = Dashboards.board('container', {
             type: 'CSV',
             id: 'synchro-data',
             options: {
-                csv: csvData,
-                firstRowAsNames: true
+                csv: csvData
             }
         }]
     },

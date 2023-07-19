@@ -6,8 +6,7 @@ Dashboards.board('container', {
             id: 'sample',
             type: 'CSV',
             options: {
-                csv: csvData,
-                firstRowAsNames: true
+                csv: csvData
             }
         }]
     },

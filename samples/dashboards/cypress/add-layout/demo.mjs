@@ -22,8 +22,7 @@ Dashboards.board('container', {
                 csv: `ABC,DEF
                     4,5
                     1,5
-                    41,23`,
-                firstRowAsNames: true
+                    41,23`
             }
         }]
     },

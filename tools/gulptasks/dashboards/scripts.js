@@ -14,7 +14,6 @@ const gulp = require('gulp');
  * Gulp task to run the building process of distribution js files the classic
  * way.
  *
- * @deprecated
  * @return {Promise<void>}
  * Promise to keep
  */
@@ -26,22 +25,30 @@ async function dashboardsScripts() {
     const fsLib = require('../lib/fs');
     const logLib = require('../lib/log');
     const processLib = require('../lib/process');
-    const tasksConfig = require('./_config.json');
+
+    const {
+        bundleTargetFolder,
+        esModulesFolder,
+        typeScriptFolder
+    } = require('./_config.json');
 
     try {
         logLib.message('Generating Dashboards code...');
 
         processLib.isRunning('scripts-dashboards', true);
 
+        fsLib.deleteDirectory(bundleTargetFolder, true);
         fsLib.deleteDirectory('js/', true);
 
         // Transpile
-        await processLib.exec('npx tsc -p ts/masters-dashboards/');
+        await processLib.exec(`npx tsc -p ${typeScriptFolder}`);
 
         // Remove Highcharts
         fsLib.deleteDirectory('js/Accessibility/', true);
+        fsLib.deleteDirectory('js/Core/Axis/', true);
         fsLib.deleteDirectory('js/Core/Legend/', true);
         fsLib.deleteDirectory('js/Core/Renderer/SVG/', true);
+        fsLib.deleteDirectory('js/Core/Series/', true);
         fsLib.deleteDirectory('js/Extensions/', true);
         fsLib.deleteDirectory('js/Gantt/', true);
         fsLib.deleteDirectory('js/Maps/', true);
@@ -62,9 +69,18 @@ async function dashboardsScripts() {
                         null
                 ),
                 namespace: 'Dashboards',
-                output: tasksConfig.bundleTargetFolder
+                output: bundleTargetFolder,
+                version: (argv.release || '0.9.9')
             })
             .fnFirstBuild();
+
+        // Copy valid native DTS
+        fsLib.copyAllFiles(
+            'js/',
+            esModulesFolder,
+            true,
+            sourcePath => sourcePath.endsWith('.d.ts')
+        );
 
         logLib.success('Created Dashboards code');
     } finally {
@@ -72,4 +88,11 @@ async function dashboardsScripts() {
     }
 }
 
-gulp.task('dashboards/scripts', gulp.series('scripts-css', dashboardsScripts));
+require('../scripts-css');
+require('./scripts-dts');
+
+gulp.task('dashboards/scripts', gulp.series(
+    'scripts-css',
+    dashboardsScripts,
+    'dashboards/scripts-dts'
+));

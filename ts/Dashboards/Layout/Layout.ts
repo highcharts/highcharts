@@ -418,6 +418,33 @@ class Layout extends GUIElement {
             }
         };
     }
+
+    /**
+     * Get the layout's options.
+     * @returns
+     * The JSON of layout's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Globals.DeepPartial<Layout.Options> {
+        const layout = this,
+            rows = [];
+
+        // Get rows JSON.
+        for (let i = 0, iEnd = layout.rows.length; i < iEnd; ++i) {
+            rows.push(layout.rows[i].getOptions());
+        }
+
+        return {
+            id: this.options.id,
+            layoutClassName: this.options.layoutClassName,
+            rowClassName: this.options.rowClassName,
+            cellClassName: this.options.cellClassName,
+            style: this.options.style,
+            rows
+        };
+    }
 }
 
 interface Layout {

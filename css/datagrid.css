@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Dashboards v0.0.1
+ * @license Highcharts Dashboards v@product.version@
  *
  * (c) 2009-2023 Highsoft AS
  *
@@ -93,7 +93,7 @@
     position: absolute;
     width: 100%;
     bottom: 0;
-    overflow: scroll;
+    overflow: auto;
     z-index: 0;
     background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-100);

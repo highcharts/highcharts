@@ -24,17 +24,19 @@
 
 import type Cell from '../Layout/Cell';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type Options from '../../Core/Options';
+import type {
+    Chart,
+    Options,
+    Highcharts
+} from '../Plugins/HighchartsTypes';
 import type TextOptions from './TextOptions';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import Templating from '../../Core/Templating.js';
 const {
     format
 } = Templating;
-import G from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -43,7 +45,8 @@ const {
     getStyle,
     isArray,
     isNumber,
-    merge
+    merge,
+    diffObjects
 } = U;
 
 /* *
@@ -106,7 +109,7 @@ class KPIComponent extends Component {
      * */
 
     /** @internal */
-    public static charter?: typeof G;
+    public static charter?: typeof Highcharts;
     /**
      * Default options of the KPI component.
      */
@@ -386,9 +389,14 @@ class KPIComponent extends Component {
 
     public render(): this {
         super.render();
-        const charter = (KPIComponent.charter || G);
+        const charter = KPIComponent.charter;
 
-        if (this.options.chartOptions && !this.chart && this.chartContainer) {
+        if (
+            charter &&
+            this.options.chartOptions &&
+            !this.chart &&
+            this.chartContainer
+        ) {
             this.chart = charter.chart(this.chartContainer, merge(
                 KPIComponent.defaultChartOptions,
                 this.options.chartOptions
@@ -616,6 +624,21 @@ class KPIComponent extends Component {
 
         return json;
     }
+
+    /**
+     * Get the KPI component's options.
+     * @returns
+     * The JSON of KPI component's options.
+     *
+     * @internal
+     *
+     */
+    public getOptions(): Partial<KPIComponent.ComponentOptions> {
+        return {
+            ...diffObjects(this.options, KPIComponent.defaultOptions),
+            type: 'KPI'
+        };
+    }
 }
 
 /* *
@@ -661,11 +684,21 @@ namespace KPIComponent {
         /**
          * The threshold declares the value when color is applied
          * (according to the `thresholdColors`).
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/threshold/ | Set a threshold}
+         *
          */
         threshold?: number|Array<number>;
         /**
          * Array of two colors strings that are applied when threshold is
          * achieved.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/threshold/ | Threshold colors}
+         *
          */
         thresholdColors?: Array<string>;
         type: 'KPI';
@@ -684,6 +717,11 @@ namespace KPIComponent {
         subtitle?: string|SubtitleOptions;
         /**
          * A format string for the value text.
+         *
+         * Try it:
+         *
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/value-format/ | Add a value format}
+         *
          */
         valueFormat?: string;
         /**
