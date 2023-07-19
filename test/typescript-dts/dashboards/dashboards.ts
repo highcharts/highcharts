@@ -16,7 +16,13 @@ test_board();
 function test_board() {
     Dashboards.board('container', {
         dataPool: {
-            connectors: []
+            connectors: [{
+                id: "My Data",
+                type: "CSV",
+                options: {
+                    csv: ''
+                }
+            }]
         }
     });
 }

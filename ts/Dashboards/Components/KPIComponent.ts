@@ -30,6 +30,7 @@ import type {
     Highcharts
 } from '../Plugins/HighchartsTypes';
 import type TextOptions from './TextOptions';
+import type Types from '../../Shared/Types';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Component from './Component.js';
@@ -135,7 +136,7 @@ class KPIComponent extends Component {
     /**
      * Default options of the KPI component.
      */
-    public static defaultChartOptions: DeepPartial<Options> = {
+    public static defaultChartOptions: Types.DeepPartial<Options> = {
         chart: {
             type: 'spline',
             backgroundColor: 'transparent'
@@ -145,13 +146,13 @@ class KPIComponent extends Component {
         },
         xAxis: {
             visible: false
-        } as DeepPartial<Options['xAxis']>,
+        } as Types.DeepPartial<Options['xAxis']>,
         yAxis: {
             visible: false,
             title: {
                 text: null
             }
-        } as DeepPartial<Options['yAxis']>,
+        } as Types.DeepPartial<Options['yAxis']>,
         legend: {
             enabled: false
         },
