@@ -605,7 +605,7 @@ class HighchartsComponent extends Component {
             }
 
             const table = this.presentationTable,
-                modifierOoptions = table.getModifier()?.options;
+                modifierOptions = table.getModifier()?.options;
 
             this.emit({ type: 'afterPresentationModifier', table: table });
 
@@ -662,8 +662,8 @@ class HighchartsComponent extends Component {
                 // Disable dragging on series, which were created out of a
                 // columns which are created by MathModifier.
                 const shouldBeDraggable = !(
-                    modifierOoptions?.type == 'Math' &&
-                    (modifierOoptions as MathModifierOptions)
+                    modifierOptions?.type == 'Math' &&
+                    (modifierOptions as MathModifierOptions)
                     .columnFormulas?.some(
                         (formula) => formula.column == seriesName
                     )
