@@ -22,7 +22,6 @@
 import type Cell from '../Layout/Cell';
 import type DataGrid from '../../DataGrid/DataGrid';
 import type DataTable from '../../Data/DataTable';
-import type DataGridOptions from '../../DataGrid/DataGridOptions';
 import type BaseDataGridOptions from '../../DataGrid/DataGridOptions';
 import type { ColumnOptions } from '../../DataGrid/DataGridOptions';
 import type MathModifierOptions from '../../Data/Modifiers/MathModifierOptions';
@@ -180,7 +179,7 @@ class DataGridComponent extends Component {
     /** @private */
     public dataGrid?: DataGrid;
     /** @private */
-    public dataGridOptions: Partial<DataGridOptions>;
+    public dataGridOptions: Partial<BaseDataGridOptions>;
     /** @private */
     public options: DataGridComponent.ComponentOptions;
     /** @private */
@@ -219,7 +218,7 @@ class DataGridComponent extends Component {
             this.syncHandlers
         );
 
-        this.dataGridOptions = this.options.dataGridOptions || ({} as DataGridOptions);
+        this.dataGridOptions = this.options.dataGridOptions || ({} as BaseDataGridOptions);
 
         this.innerResizeTimeouts = [];
 
@@ -244,12 +243,12 @@ class DataGridComponent extends Component {
      * Attached connector
      */
     private disableEditingModifiedColumns(connector: DataConnectorType) {
-        const dataModifier = connector.options.dataModifier;
+        const modifierOptions = connector.options.dataModifier;
 
-        if (!dataModifier || dataModifier.type !== 'Math') {
+        if (!modifierOptions || modifierOptions.type !== 'Math') {
             return;
         }
-        const modifierColumns = (dataModifier as MathModifierOptions).columnFormulas;
+        const modifierColumns = (modifierOptions as MathModifierOptions).columnFormulas;
         if (!modifierColumns) {
             return;
         }
