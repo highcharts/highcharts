@@ -63,15 +63,23 @@ async function distRelease() {
         cwd: distRepository
     });
 
+    // Remove deprecated files and folders
+
+    fsLib.deleteDirectory(
+        path.join(distRepository, 'css', 'dashboards'),
+        true
+    );
+
+    fsLib.deleteDirectory(path.join(distRepository, 'examples'), true);
+
+    fsLib.deleteDirectory(
+        path.join(distRepository, 'gfx', 'dashboard-icons'),
+        true
+    );
+
     // Copy build/dist into repository
 
     fsLib.copyAllFiles(path.join(buildFolder, 'code'), distRepository, true);
-
-    fsLib.copyAllFiles(
-        path.join(buildFolder, 'examples'),
-        path.join(distRepository, 'examples'),
-        true
-    );
 
     fsLib.copyFile(
         config.readmeFile,
